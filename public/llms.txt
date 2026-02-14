@@ -1,0 +1,39 @@
+# PRUVIQ - Transparent Algorithmic Crypto Trading
+
+> PRUVIQ is a crypto trading transparency project that publishes every trade, every loss, and every strategy change with full data. Built by one developer, verified by evidence. The system trades 500+ coins on Binance Futures using a BB Squeeze SHORT strategy with a 70.4% win rate and 2.55 profit factor, validated across 2+ years of data.
+
+PRUVIQ provides educational content on algorithmic crypto trading, backtesting methodology, risk management, and exchange fee optimization. All strategies are tested on 536 coins across 2+ years before live deployment.
+
+## Core Content
+
+- [Home](https://pruviq.com/): Overview of the PRUVIQ trading transparency approach
+- [Strategy Graveyard](https://pruviq.com/graveyard): Autopsy reports of killed strategies with full P&L data
+- [Changelog](https://pruviq.com/changelog): Complete version history with reasoning for every change
+- [Exchange Fee Comparison](https://pruviq.com/fees): 9 exchanges compared with referral discounts
+
+## Educational Articles
+
+- [What is Bollinger Band Squeeze?](https://pruviq.com/blog/what-is-bb-squeeze): How volatility compression creates trading opportunities
+- [Why Most Backtests Are Lies](https://pruviq.com/blog/why-backtests-lie): Look-ahead bias, overfitting, and the $14K lesson
+- [Risk Management: The Only Edge That Lasts](https://pruviq.com/blog/risk-management-101): Position sizing, Kelly Criterion, daily loss limits
+- [How to Save 20% on Binance Futures Fees](https://pruviq.com/blog/save-on-binance-futures-fees): Fee breakdown and optimization guide
+- [Why PRUVIQ?](https://pruviq.com/blog/why-pruviq): Origin story and philosophy
+
+## Key Statistics
+
+- Strategy: BB Squeeze SHORT (Bollinger Band Squeeze)
+- Win Rate: 70.4% (backtested), 54.69% (live, 7 days)
+- Profit Factor: 2.55 (backtested)
+- Coins Monitored: 535
+- Backtest Period: 2+ years, 2,898 trades
+- Position Size: $60 x 5x leverage
+- Stop Loss: 10% | Take Profit: 8%
+- Failed Strategies Killed: 4 (Momentum LONG -$14,115, BB Squeeze LONG -$26, HV Squeeze, ATR Breakout)
+
+## Community
+
+- [Telegram](https://t.me/PRUVIQ): Live trade feed with every entry and exit
+
+## Optional
+
+- [Blog Archive](https://pruviq.com/blog): All educational articles and updates
