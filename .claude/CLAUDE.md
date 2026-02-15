@@ -5,28 +5,29 @@
 ## 프로젝트 상태
 
 ```
-버전: v0.1.3 (콘텐츠 피봇 완료)
-Phase: 0 (기반 구축) → v0.2.0 준비 중
+버전: v0.3.0 (UX 구조조정 + 한국어 지원)
+Phase: 0 (기반 구축) → v0.5.0 준비 중
 시작일: 2026-02-14
-상태: 시뮬레이션 플랫폼으로 전환 완료, 인터랙티브 데모 준비
-GitHub: poong92/pruviq-website (→ pruviq로 rename 예정)
+상태: NAV 간소화 + i18n + 한국어 19페이지 완료
+GitHub: poong92/pruviq
 배포: Cloudflare Pages (pruviq.com)
 
-v0.1.x 완료 (2026-02-15):
-  ✅ 모노레포 구조 (Astro + Python backend)
-  ✅ SimulationEngine 5/5 테스트 PASS
-  ✅ 랜딩 페이지: "live trading" → "simulation platform" 전환
-  ✅ 전체 콘텐츠 "verified" 프레이밍 (12개 파일)
-  ✅ autotrader 참조 제거 (fees, strategies, blog)
-  ✅ P0 UX 버그 수정 (nav CTA 링크)
-  ✅ 비즈니스 모델 문서 (무료 + 레퍼럴)
-  ✅ 블로그 9개 + 전략 5개 + Graveyard + Changelog
+v0.3.0 완료 (2026-02-15):
+  ✅ NAV 간소화 (8→3: Simulate, Learn, Fees + EN/KO 토글)
+  ✅ 홈페이지 섹션 정리 (6→4)
+  ✅ Graveyard 독립 페이지 삭제 (전략 카드에 KILLED 뱃지)
+  ✅ i18n 인프라 (Astro i18n routing, 번역 파일, hreflang)
+  ✅ 한국어 19페이지 (홈, 전략, 블로그, 수수료, 변경이력)
+  ✅ 한국어 콘텐츠 4개 (bb-squeeze-short, 블로그 3개)
+  ✅ Demo 컴포넌트 한국어 대응 (lang prop)
+  ✅ 레포 통합 (pruviq-website → pruviq)
+  ✅ 설계 문서 8개 통합
 
 버전 체계:
   v0.1.x — 기반 뼈대 (완료)
-  v0.2.x — 시뮬레이션 데모 (다음)
-  v0.3.x — 시장 컨텍스트
-  v0.5.x — 테스트 오픈 (베타)
+  v0.2.x — 시뮬레이션 데모 (완료)
+  v0.3.x — UX 구조조정 + i18n (완료)
+  v0.5.x — 테스트 오픈 (베타) (다음)
   v0.8.x — 오픈 준비 완료
   v1.0.0 — 정식 출시
 ```
@@ -90,7 +91,7 @@ pruviq/
 
 ## 인프라
 
-- 개발: MacBook (jplee) ~/Desktop/pruviq-website
+- 개발: MacBook (jplee) ~/Desktop/pruviq
 - 프론트엔드: Cloudflare Pages (pruviq.com)
 - 백엔드 API: Mac Mini (jepo) :8400 (Phase 1+)
 - autotrader 서버 (DO): 절대 건드리지 않음
@@ -111,16 +112,16 @@ Phase 0: 기반 구축 ✅ (2026-02-15 완료)
   ✅ 콘텐츠 피봇 (simulation 프레이밍)
   ✅ UX 감사 + P0 수정
 
-v0.2.0: 시뮬레이션 데모 (다음 목표)
-  - Interactive Strategy Demo (SL/TP 슬라이더, 즉시 결과)
-  - Pre-computed 25 파라미터 조합 (JSON, client-side)
-  - Strategy vs Buy & Hold 비교 차트
-  - 이메일 캡처 (전환 퍼널 시작)
+v0.2.0: 시뮬레이션 데모 ✅ (2026-02-15 완료)
+  ✅ Interactive Strategy Demo (SL/TP 슬라이더, 즉시 결과)
+  ✅ Pre-computed 25 파라미터 조합 (JSON, client-side)
+  ✅ Strategy vs Buy & Hold 비교 차트
 
-v0.3.0: 시장 컨텍스트
-  - 이벤트 어노테이션 (equity curve + 시장 이벤트)
-  - BTC 도미넌스, Fear & Greed 표시
-  - FastAPI 백엔드 (Mac Mini)
+v0.3.0: UX 구조조정 + i18n ✅ (2026-02-15 완료)
+  ✅ NAV 간소화 (8→3 + EN/KO 토글)
+  ✅ 한국어 19페이지 완료
+  ✅ hreflang SEO + 콘텐츠 번역 4개
+  ✅ 레포 통합 (pruviq-website → pruviq)
 
 v0.5.0: 테스트 오픈 (베타)
   - 50명 유저 테스트
