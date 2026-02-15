@@ -95,8 +95,9 @@ export const ko: Record<TranslationKey, string> = {
   'cta.title': 'Pruv It.',
   'cta.desc1': '5개 전략 테스트. 4개 제거. 1개 검증. 535개 코인에서 2,898건 거래. $14,115 손실 포함 모든 결과 공개. 이것이 투명한 전략 개발입니다.',
   'cta.desc2': '영원히 무료. 이메일 불필요. 숨겨진 비용 없음. 직접 검증할 수 있는 데이터만.',
-  'cta.button1': '전략 검증하기',
+  'cta.button1': '라이브 데모 체험',
   'cta.button2': '커뮤니티 참여',
+  'cta.button3': '수수료 절약하기',
   'cta.disclaimer': '투자 조언이 아닙니다. 암호화폐 트레이딩은 상당한 손실 위험을 수반합니다. 과거 성과는 미래 결과를 보장하지 않습니다. PRUVIQ는 교육 및 연구 프로젝트입니다.',
 
   // Footer

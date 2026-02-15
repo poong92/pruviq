@@ -43,6 +43,10 @@ const labels = {
     error: 'Failed to load demo data.',
     noData: 'No data for this combination.',
     disclaimer: '* Default parameter (SL=10%, TP=8%) is the current verified live setting. Simulation includes 0.04% futures fees + 0.02% slippage per trade. Past performance does not guarantee future results.',
+    ctaTitle: 'Ready to Trade?',
+    ctaDesc: 'Save up to 20% on trading fees with PRUVIQ referral links. Lifetime discount.',
+    ctaFees: 'Compare Exchange Fees',
+    ctaCommunity: 'Join Community',
   },
   ko: {
     tag: '인터랙티브 시뮬레이션',
@@ -55,6 +59,10 @@ const labels = {
     error: '데모 데이터 로딩 실패.',
     noData: '이 조합에 대한 데이터가 없습니다.',
     disclaimer: '* 기본 파라미터 (SL=10%, TP=8%)는 현재 검증된 라이브 설정입니다. 시뮬레이션은 0.04% 선물 수수료 + 0.02% 슬리피지를 포함합니다. 과거 성과는 미래 결과를 보장하지 않습니다.',
+    ctaTitle: '실제 거래를 시작하려면?',
+    ctaDesc: 'PRUVIQ 제휴 링크로 거래소 수수료 최대 20% 할인. 평생 적용.',
+    ctaFees: '거래소 수수료 비교',
+    ctaCommunity: '커뮤니티 참여',
   },
 };
 
@@ -339,6 +347,52 @@ export default function StrategyDemo({ lang = 'en' }: { lang?: 'en' | 'ko' }) {
       }}>
         {t.disclaimer}
       </p>
+
+      {/* CTA after demo */}
+      <div style={{
+        marginTop: '2rem',
+        padding: '1.5rem',
+        backgroundColor: 'var(--color-bg-card)',
+        border: '1px solid var(--color-border)',
+        borderRadius: '0.75rem',
+      }}>
+        <h3 style={{ fontSize: '1.125rem', fontWeight: 700, marginBottom: '0.5rem' }}>
+          {t.ctaTitle}
+        </h3>
+        <p style={{
+          color: 'var(--color-text-muted)',
+          fontSize: '0.875rem',
+          marginBottom: '1rem',
+        }}>
+          {t.ctaDesc}
+        </p>
+        <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+          <a href={lang === 'ko' ? '/ko/fees' : '/fees'} style={{
+            display: 'inline-block',
+            backgroundColor: 'var(--color-accent)',
+            color: 'var(--color-bg)',
+            padding: '0.625rem 1.25rem',
+            borderRadius: '0.5rem',
+            fontWeight: 600,
+            fontSize: '0.875rem',
+            textDecoration: 'none',
+          }}>
+            {t.ctaFees} &rarr;
+          </a>
+          <a href="https://t.me/PRUVIQ" target="_blank" rel="noopener" style={{
+            display: 'inline-block',
+            border: '1px solid var(--color-border)',
+            color: 'var(--color-text)',
+            padding: '0.625rem 1.25rem',
+            borderRadius: '0.5rem',
+            fontWeight: 600,
+            fontSize: '0.875rem',
+            textDecoration: 'none',
+          }}>
+            {t.ctaCommunity}
+          </a>
+        </div>
+      </div>
     </div>
   );
 }

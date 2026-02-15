@@ -108,10 +108,16 @@ const statusLabels: Record<string, string> = {
         <p class="text-[--color-text-muted] text-sm mb-4">
           {showDemo ? t('strategies.detail_demo_footer') : t('strategies.detail_nodemo_footer')}
         </p>
-        <a href="/strategies"
-           class="inline-block bg-[--color-accent] text-[--color-bg] px-6 py-2 rounded font-semibold text-sm hover:bg-[--color-accent-dim] transition-colors">
-          {t('strategies.explore')} &rarr;
-        </a>
+        <div class="flex flex-col sm:flex-row gap-3 justify-center">
+          <a href="/strategies"
+             class="inline-block bg-[--color-accent] text-[--color-bg] px-6 py-2 rounded font-semibold text-sm hover:bg-[--color-accent-dim] transition-colors">
+            {t('strategies.explore')} &rarr;
+          </a>
+          <a href="/fees"
+             class="inline-block border border-[--color-border] text-[--color-text] px-6 py-2 rounded font-semibold text-sm hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
+            {t('cta.button3')}
+          </a>
+        </div>
       </div>
     </div>
   </article>

@@ -93,8 +93,9 @@ export const en = {
   'cta.title': 'Pruv It.',
   'cta.desc1': "5 strategies tested. 4 killed. 1 verified. 2,898 trades across 535 coins. Every result published — including $14,115 in losses. This is what transparent strategy development looks like.",
   'cta.desc2': 'Free forever. No email required. No hidden fees. Just data you can verify yourself.',
-  'cta.button1': 'Verify Strategies',
+  'cta.button1': 'Try Live Demo',
   'cta.button2': 'Join Community',
+  'cta.button3': 'Save on Fees',
   'cta.disclaimer': 'Not financial advice. Crypto trading involves substantial risk of loss. Past performance does not guarantee future results. PRUVIQ is an educational and research project.',
 
   // Footer
