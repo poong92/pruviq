@@ -1,43 +1,54 @@
-# Astro Starter Kit: Minimal
+# PRUVIQ
 
-```sh
-npm create astro@latest -- --template minimal
+**Don't Believe. Verify.**
+
+Free crypto strategy simulation platform with market context.
+
+## What is PRUVIQ?
+
+Test crypto trading strategies on 500+ coins with 2+ years of data. No coding required. No hidden fees. All results transparent.
+
+**Two Pillars:**
+1. **Strategy Simulation** - Select a strategy, adjust parameters, see realistic results (fees + slippage included)
+2. **Market Context** - News, events, macro data overlaid with strategy performance
+
+## Project Structure
+
+```
+pruviq/
+├── src/                 # Astro frontend (website)
+├── backend/             # Python simulation engine
+│   ├── src/simulation/  # Core engine
+│   ├── src/strategies/  # Strategy plugins
+│   ├── src/data/        # Data collection (ccxt)
+│   └── tests/           # pytest
+├── docs/                # Architecture & design docs
+└── public/              # Static assets
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## Quick Start
 
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
+**Frontend:**
+```bash
+npm install
+npm run dev          # localhost:4321
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+**Backend:**
+```bash
+cd backend
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+python3 tests/test_engine.py    # 5/5 tests
+```
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+## Tech Stack
 
-Any static assets, like images, can be placed in the `public/` directory.
+- **Frontend**: Astro 5.x + Tailwind 4.x (Cloudflare Pages)
+- **Backend**: Python 3.11+ (FastAPI planned)
+- **Data**: ccxt + Parquet storage
+- **Deploy**: Cloudflare Pages (frontend) + Mac Mini (backend API)
 
-## 🧞 Commands
+## License
 
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+All rights reserved.
