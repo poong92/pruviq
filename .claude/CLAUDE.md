@@ -5,16 +5,26 @@
 ## 프로젝트 상태
 
 ```
-버전: v0.1.0 (기반 뼈대)
-Phase: 0 (기반 구축)
+버전: v0.1.3 (콘텐츠 피봇 완료)
+Phase: 0 (기반 구축) → v0.2.0 준비 중
 시작일: 2026-02-14
-상태: 초기 개발 중
+상태: 시뮬레이션 플랫폼으로 전환 완료, 인터랙티브 데모 준비
 GitHub: poong92/pruviq-website (→ pruviq로 rename 예정)
 배포: Cloudflare Pages (pruviq.com)
 
+v0.1.x 완료 (2026-02-15):
+  ✅ 모노레포 구조 (Astro + Python backend)
+  ✅ SimulationEngine 5/5 테스트 PASS
+  ✅ 랜딩 페이지: "live trading" → "simulation platform" 전환
+  ✅ 전체 콘텐츠 "verified" 프레이밍 (12개 파일)
+  ✅ autotrader 참조 제거 (fees, strategies, blog)
+  ✅ P0 UX 버그 수정 (nav CTA 링크)
+  ✅ 비즈니스 모델 문서 (무료 + 레퍼럴)
+  ✅ 블로그 9개 + 전략 5개 + Graveyard + Changelog
+
 버전 체계:
-  v0.1.x — 기반 뼈대 (현재)
-  v0.2.x — 시뮬레이션 데모
+  v0.1.x — 기반 뼈대 (완료)
+  v0.2.x — 시뮬레이션 데모 (다음)
   v0.3.x — 시장 컨텍스트
   v0.5.x — 테스트 오픈 (베타)
   v0.8.x — 오픈 준비 완료
@@ -95,25 +105,32 @@ pruviq/
 ## 로드맵
 
 ```
-Phase 0: 기반 구축 (현재)
-  - 모노레포 구조 완성
-  - 시뮬레이션 엔진 검증 (5/5 테스트 통과)
-  - BB Squeeze 전략 시뮬레이션 결과 생성
-  - 데이터 수집 파이프라인 (Parquet)
+Phase 0: 기반 구축 ✅ (2026-02-15 완료)
+  ✅ 모노레포 구조 (Astro + Python backend)
+  ✅ 시뮬레이션 엔진 (5/5 테스트, look-ahead 방지)
+  ✅ 콘텐츠 피봇 (simulation 프레이밍)
+  ✅ UX 감사 + P0 수정
 
-Phase 1: MVP
-  - 전략 3개 추가 + 검증
-  - 웹 대시보드 (시뮬레이션 결과 표시)
-  - 기본 시장 지표 (BTC, Fear & Greed)
+v0.2.0: 시뮬레이션 데모 (다음 목표)
+  - Interactive Strategy Demo (SL/TP 슬라이더, 즉시 결과)
+  - Pre-computed 25 파라미터 조합 (JSON, client-side)
+  - Strategy vs Buy & Hold 비교 차트
+  - 이메일 캡처 (전환 퍼널 시작)
+
+v0.3.0: 시장 컨텍스트
+  - 이벤트 어노테이션 (equity curve + 시장 이벤트)
+  - BTC 도미넌스, Fear & Greed 표시
   - FastAPI 백엔드 (Mac Mini)
 
-Phase 2: 확장
+v0.5.0: 테스트 오픈 (베타)
+  - 50명 유저 테스트
   - 파라미터 커스텀 UI
-  - 시장 이벤트 타임라인
-  - 멀티 거래소 데이터
+  - 멀티 전략 비교
 
-Phase 3: 고도화
-  - AI 시황 요약 (Ollama)
+v0.8.0: 오픈 준비
+  - 거래소 Affiliate 연동
   - 커뮤니티 기능
-  - 거래소 Affiliate 최적화
+  - AI 시황 요약 (Ollama)
+
+v1.0.0: 정식 출시
 ```
