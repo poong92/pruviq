@@ -1,0 +1,17 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import CoinListTable from '../../components/CoinListTable';
+---
+
+<Layout title="Coin Explorer - PRUVIQ" description="Explore 500+ coins with candlestick charts and BB Squeeze strategy simulation. See entry/exit signals, win rates, and profit factors for every coin.">
+  <section class="py-12">
+    <div class="max-w-6xl mx-auto px-4">
+      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">COIN EXPLORER</p>
+      <h1 class="text-3xl md:text-4xl font-bold mb-4">Browse All Coins</h1>
+      <p class="text-[--color-text-muted] text-lg mb-8 max-w-2xl">
+        Explore 500+ coins with BB Squeeze simulation stats. Click any coin to see its candlestick chart and apply strategies.
+      </p>
+      <CoinListTable client:visible lang="en" apiUrl="https://api.pruviq.com" />
+    </div>
+  </section>
+</Layout>

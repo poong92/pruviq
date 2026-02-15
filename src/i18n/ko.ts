@@ -2,7 +2,8 @@ import type { TranslationKey } from './en';
 
 export const ko: Record<TranslationKey, string> = {
   // NAV
-  'nav.simulate': '시뮬레이션',
+  'nav.coins': '코인',
+  'nav.simulate': '전략',
   'nav.learn': '학습',
   'nav.fees': '수수료',
   'nav.lang': 'EN',
@@ -191,7 +192,35 @@ export const ko: Record<TranslationKey, string> = {
   'changelog.why_title': '왜 변경 이력을 공개하나요?',
   'changelog.why_desc': '"버전 2.0"은 맥락 없이는 의미가 없습니다. 모든 변경에는 이유가 있고, 모든 이유에는 데이터가 있습니다. 이것이 투명한 시스템 개발의 모습입니다.',
 
+  // Coins
+  'coins.tag': '코인 탐색기',
+  'coins.title': '전체 코인 탐색',
+  'coins.desc': '500개 이상의 코인에서 BB Squeeze 시뮬레이션 결과를 탐색하세요. 코인을 클릭하면 캔들 차트와 전략을 적용할 수 있습니다.',
+  'coins.search': '코인 검색...',
+  'coins.apply': '전략 적용',
+  'coins.resim': '재시뮬레이션',
+  'coins.trades': '거래 내역',
+  'coins.no_trades': '전략을 적용하면 결과를 볼 수 있습니다',
+  'coins.back': '코인',
+  'coins.bb_bands': 'BB 밴드',
+  'coins.ema': 'EMA',
+  'coins.col_coin': '코인',
+  'coins.col_price': '가격',
+  'coins.col_change': '24h %',
+  'coins.col_volume': '거래량',
+  'coins.col_trades': '거래 수',
+  'coins.col_wr': '승률',
+  'coins.col_pf': 'PF',
+  'coins.col_return': '수익률',
+  'coins.col_entry': '진입',
+  'coins.col_exit': '청산',
+  'coins.col_result': '결과',
+  'coins.col_pnl': 'PnL',
+  'coins.col_bars': '봉',
+
   // Meta
+  'meta.coins_title': '코인 탐색기 - PRUVIQ',
+  'meta.coins_desc': '500개 이상 코인의 캔들 차트와 BB Squeeze 전략 시뮬레이션. 모든 코인의 진입/청산 신호, 승률, 수익 팩터를 확인하세요.',
   'meta.home_title': 'PRUVIQ - 믿지 마세요. 검증하세요.',
   'meta.home_desc': '믿지 마세요. 검증하세요. 500개 이상 코인에서 무료 암호화폐 전략 시뮬레이션. 트레이딩 전에 테스트하세요.',
   'meta.strategies_title': '전략 라이브러리 - PRUVIQ',

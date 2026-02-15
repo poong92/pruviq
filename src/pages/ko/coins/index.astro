@@ -1,0 +1,17 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import CoinListTable from '../../../components/CoinListTable';
+---
+
+<Layout title="코인 탐색기 - PRUVIQ" description="500개 이상 코인의 캔들 차트와 BB Squeeze 전략 시뮬레이션. 모든 코인의 진입/청산 신호, 승률, 수익 팩터를 확인하세요.">
+  <section class="py-12">
+    <div class="max-w-6xl mx-auto px-4">
+      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">코인 탐색기</p>
+      <h1 class="text-3xl md:text-4xl font-bold mb-4">전체 코인 탐색</h1>
+      <p class="text-[--color-text-muted] text-lg mb-8 max-w-2xl">
+        500개 이상의 코인에서 BB Squeeze 시뮬레이션 결과를 탐색하세요. 코인을 클릭하면 캔들 차트와 전략을 적용할 수 있습니다.
+      </p>
+      <CoinListTable client:visible lang="ko" apiUrl="https://api.pruviq.com" />
+    </div>
+  </section>
+</Layout>

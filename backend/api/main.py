@@ -23,6 +23,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 import numpy as np
+import pandas as pd
+from datetime import datetime, timezone
 
 # Add backend to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -30,6 +32,9 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from api.schemas import (
     SimulationRequest, SimulationResponse, EquityPoint,
     CoinInfo, StrategyInfo, HealthResponse,
+    OhlcvBar, OhlcvResponse,
+    CoinSimRequest, CoinSimResponse, TradeDetail,
+    CoinStats, CoinStatsResponse,
 )
 from api.data_manager import DataManager
 from api.indicator_cache import IndicatorCache
@@ -53,6 +58,7 @@ data_manager = DataManager()
 indicator_cache = IndicatorCache()
 sim_cache: OrderedDict = OrderedDict()
 rate_limits: Dict[str, list] = {}
+coin_stats_cache: Optional[dict] = None
 
 
 @asynccontextmanager
@@ -67,6 +73,12 @@ async def lifespan(app: FastAPI):
         strategy = BBSqueezeStrategy(avoid_hours=AVOID_HOURS)
         indicator_cache.build(data_manager, strategy)
         print(f"Indicators cached for {indicator_cache.count} coins in {indicator_cache._build_time:.1f}s")
+
+        # Pre-compute coin stats for /coins/stats endpoint
+        print("Pre-computing coin stats...")
+        global coin_stats_cache
+        coin_stats_cache = _build_coin_stats(strategy)
+        print(f"Coin stats cached for {len(coin_stats_cache['coins'])} coins")
     yield
 
 
@@ -109,7 +121,7 @@ def check_rate_limit(client_ip: str) -> bool:
 
 @app.middleware("http")
 async def rate_limit_middleware(request: Request, call_next):
-    if request.url.path == "/simulate":
+    if request.url.path in ("/simulate", "/simulate/coin"):
         client_ip = request.client.host if request.client else "unknown"
         if not check_rate_limit(client_ip):
             return JSONResponse(
@@ -336,3 +348,148 @@ async def simulate(req: SimulationRequest):
 
     set_cached(ckey, resp_data)
     return SimulationResponse(**resp_data)
+
+
+# --- Coin Explorer Helpers ---
+
+def _ts_to_unix(ts) -> int:
+    """Convert pandas Timestamp or string to Unix seconds."""
+    if hasattr(ts, 'timestamp'):
+        return int(ts.timestamp())
+    return int(pd.Timestamp(str(ts)).timestamp())
+
+
+def _build_coin_stats(strategy) -> dict:
+    """Pre-compute stats for all coins."""
+    cost_model = CostModel.futures()
+    coins_list = []
+
+    for info in data_manager.coins:
+        symbol = info["symbol"]
+        df = indicator_cache.get(symbol)
+        if df is None or len(df) < 100:
+            continue
+
+        result = run_fast(
+            df, strategy, symbol,
+            sl_pct=0.10, tp_pct=0.08, max_bars=48,
+            fee_pct=cost_model.fee_pct,
+            slippage_pct=cost_model.slippage_pct,
+            direction="short", market_type="futures",
+        )
+
+        # Price & 24h change from last 2 bars
+        last_close = float(df["close"].iloc[-1])
+        prev_close = float(df["close"].iloc[-2]) if len(df) >= 2 else last_close
+        change_24h = round(((last_close - prev_close) / prev_close) * 100, 2) if prev_close else 0
+        volume_24h = float(df["volume"].iloc[-24:].sum()) if len(df) >= 24 else float(df["volume"].sum())
+
+        coins_list.append(CoinStats(
+            symbol=symbol,
+            price=round(last_close, 6),
+            change_24h=change_24h,
+            volume_24h=round(volume_24h, 2),
+            trades=result.total_trades,
+            win_rate=result.win_rate,
+            profit_factor=result.profit_factor,
+            total_return_pct=result.total_return_pct,
+        ))
+
+    return {
+        "generated": datetime.now(timezone.utc).isoformat(),
+        "strategy": "bb-squeeze-short",
+        "params": {"sl_pct": 10, "tp_pct": 8, "max_bars": 48},
+        "coins": coins_list,
+    }
+
+
+# --- Coin Explorer Endpoints ---
+
+@app.get("/ohlcv/{symbol}", response_model=OhlcvResponse)
+async def get_ohlcv(symbol: str, limit: int = 3000):
+    """Get OHLCV + indicator data for a single coin."""
+    symbol = symbol.upper()
+    df = indicator_cache.get(symbol)
+    if df is None:
+        df = data_manager.get_df(symbol)
+        if df is None:
+            raise HTTPException(404, f"Symbol not found: {symbol}")
+
+    if limit > 0:
+        df = df.tail(limit)
+
+    bars = []
+    for _, row in df.iterrows():
+        bars.append(OhlcvBar(
+            t=_ts_to_unix(row["timestamp"]),
+            o=round(float(row["open"]), 6),
+            h=round(float(row["high"]), 6),
+            l=round(float(row["low"]), 6),
+            c=round(float(row["close"]), 6),
+            v=round(float(row["volume"]), 2),
+            bb_upper=round(float(row["bb_upper"]), 6) if "bb_upper" in df.columns and pd.notna(row.get("bb_upper")) else None,
+            bb_lower=round(float(row["bb_lower"]), 6) if "bb_lower" in df.columns and pd.notna(row.get("bb_lower")) else None,
+            bb_mid=round((float(row["bb_upper"]) + float(row["bb_lower"])) / 2, 6) if "bb_upper" in df.columns and pd.notna(row.get("bb_upper")) and pd.notna(row.get("bb_lower")) else None,
+            ema20=round(float(row["ema_fast"]), 6) if "ema_fast" in df.columns and pd.notna(row.get("ema_fast")) else None,
+            ema50=round(float(row["ema_slow"]), 6) if "ema_slow" in df.columns and pd.notna(row.get("ema_slow")) else None,
+            vol_ratio=round(float(row["vol_ratio"]), 2) if "vol_ratio" in df.columns and pd.notna(row.get("vol_ratio")) else None,
+        ))
+
+    return OhlcvResponse(symbol=symbol, total_bars=len(bars), data=bars)
+
+
+@app.post("/simulate/coin", response_model=CoinSimResponse)
+async def simulate_coin(req: CoinSimRequest):
+    """Simulate a single coin and return individual trade details."""
+    symbol = req.symbol.upper()
+    df = indicator_cache.get(symbol)
+    if df is None:
+        raise HTTPException(404, f"Symbol not found: {symbol}")
+
+    strategy = BBSqueezeStrategy(avoid_hours=AVOID_HOURS)
+    cost_model = CostModel.futures() if req.market_type == "futures" else CostModel.spot()
+
+    result = run_fast(
+        df, strategy, symbol,
+        sl_pct=req.sl_pct / 100,
+        tp_pct=req.tp_pct / 100,
+        max_bars=req.max_bars,
+        fee_pct=cost_model.fee_pct,
+        slippage_pct=cost_model.slippage_pct,
+        direction=req.direction,
+        market_type=req.market_type,
+    )
+
+    trades = [
+        TradeDetail(
+            entry_time=_ts_to_unix(t.entry_time),
+            entry_price=round(t.entry_price, 6),
+            exit_time=_ts_to_unix(t.exit_time),
+            exit_price=round(t.exit_price, 6),
+            pnl_pct=t.pnl_pct,
+            exit_reason=t.exit_reason,
+            bars_held=t.bars_held,
+        )
+        for t in result.trades
+    ]
+
+    return CoinSimResponse(
+        symbol=symbol,
+        total_trades=result.total_trades,
+        win_rate=result.win_rate,
+        profit_factor=result.profit_factor,
+        total_return_pct=result.total_return_pct,
+        max_drawdown_pct=result.max_drawdown_pct,
+        tp_count=result.tp_count,
+        sl_count=result.sl_count,
+        timeout_count=result.timeout_count,
+        trades=trades,
+    )
+
+
+@app.get("/coins/stats", response_model=CoinStatsResponse)
+async def get_coin_stats():
+    """Get pre-computed stats for all coins."""
+    if coin_stats_cache is None:
+        raise HTTPException(503, "Coin stats not computed yet.")
+    return CoinStatsResponse(**coin_stats_cache)

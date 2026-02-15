@@ -80,3 +80,77 @@ class HealthResponse(BaseModel):
     version: str
     coins_loaded: int
     uptime_seconds: float
+
+
+# --- Coin Explorer Schemas ---
+
+class OhlcvBar(BaseModel):
+    t: int  # Unix timestamp (seconds)
+    o: float
+    h: float
+    l: float
+    c: float
+    v: float
+    bb_upper: Optional[float] = None
+    bb_lower: Optional[float] = None
+    bb_mid: Optional[float] = None
+    ema20: Optional[float] = None
+    ema50: Optional[float] = None
+    vol_ratio: Optional[float] = None
+
+
+class OhlcvResponse(BaseModel):
+    symbol: str
+    timeframe: str = "1H"
+    total_bars: int
+    data: List[OhlcvBar]
+
+
+class CoinSimRequest(BaseModel):
+    symbol: str
+    sl_pct: float = Field(default=10.0, ge=1.0, le=30.0)
+    tp_pct: float = Field(default=8.0, ge=1.0, le=30.0)
+    max_bars: int = Field(default=48, ge=6, le=168)
+    direction: str = Field(default="short")
+    market_type: str = Field(default="futures")
+
+
+class TradeDetail(BaseModel):
+    entry_time: int  # Unix timestamp (seconds)
+    entry_price: float
+    exit_time: int  # Unix timestamp (seconds)
+    exit_price: float
+    pnl_pct: float
+    exit_reason: str
+    bars_held: int
+
+
+class CoinSimResponse(BaseModel):
+    symbol: str
+    total_trades: int
+    win_rate: float
+    profit_factor: float
+    total_return_pct: float
+    max_drawdown_pct: float
+    tp_count: int
+    sl_count: int
+    timeout_count: int
+    trades: List[TradeDetail]
+
+
+class CoinStats(BaseModel):
+    symbol: str
+    price: float
+    change_24h: float
+    volume_24h: float
+    trades: int
+    win_rate: float
+    profit_factor: float
+    total_return_pct: float
+
+
+class CoinStatsResponse(BaseModel):
+    generated: str
+    strategy: str
+    params: dict
+    coins: List[CoinStats]

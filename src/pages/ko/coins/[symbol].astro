@@ -1,0 +1,27 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import CoinChart from '../../../components/CoinChart';
+import { COIN_SYMBOLS } from '../../../data/coin-symbols';
+
+export async function getStaticPaths() {
+  return COIN_SYMBOLS.map(s => ({
+    params: { symbol: s.toLowerCase() },
+    props: { symbolUpper: s },
+  }));
+}
+
+const { symbol } = Astro.params;
+const { symbolUpper } = Astro.props;
+const displayName = symbolUpper.replace('USDT', '') + '/USDT';
+---
+
+<Layout title={`${displayName} - 코인 탐색기 - PRUVIQ`} description={`${displayName} 캔들 차트와 BB Squeeze 전략 시뮬레이션. 진입/청산 신호, 승률, 수익 팩터를 확인하세요.`}>
+  <section class="py-8">
+    <div class="max-w-6xl mx-auto px-4">
+      <a href="/ko/coins" class="inline-flex items-center gap-1 text-[--color-text-muted] hover:text-[--color-accent] transition-colors text-sm font-mono mb-4">
+        &larr; 코인
+      </a>
+      <CoinChart client:visible symbol={symbolUpper} lang="ko" />
+    </div>
+  </section>
+</Layout>

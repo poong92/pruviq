@@ -20,6 +20,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://pruviq.c
 const enURL = new URL(basePath, Astro.site || 'https://pruviq.com');
 const koURL = new URL(`/ko${basePath === '/' ? '' : basePath}`, Astro.site || 'https://pruviq.com');
 
+const coinsPath = lang === 'ko' ? '/ko/coins' : '/coins';
 const strategiesPath = lang === 'ko' ? '/ko/strategies' : '/strategies';
 const blogPath = lang === 'ko' ? '/ko/blog' : '/blog';
 const feesPath = lang === 'ko' ? '/ko/fees' : '/fees';
@@ -94,6 +95,7 @@ const changelogPath = lang === 'ko' ? '/ko/changelog' : '/changelog';
           <span class="text-[--color-accent] font-mono font-bold text-xl">PRUVIQ</span>
         </a>
         <div class="hidden md:flex items-center gap-8 text-sm">
+          <a href={coinsPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('nav.coins')}</a>
           <a href={strategiesPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('nav.simulate')}</a>
           <a href={blogPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('nav.learn')}</a>
           <a href={feesPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('nav.fees')}</a>
@@ -105,6 +107,7 @@ const changelogPath = lang === 'ko' ? '/ko/changelog' : '/changelog';
       </div>
       <div id="mobile-menu" class="hidden md:hidden border-t border-[--color-border] bg-[--color-bg]">
         <div class="flex flex-col px-4 py-4 gap-4 text-sm">
+          <a href={coinsPath} class="text-[--color-text-muted]">{t('nav.coins')}</a>
           <a href={strategiesPath} class="text-[--color-text-muted]">{t('nav.simulate')}</a>
           <a href={blogPath} class="text-[--color-text-muted]">{t('nav.learn')}</a>
           <a href={feesPath} class="text-[--color-text-muted]">{t('nav.fees')}</a>
@@ -125,6 +128,7 @@ const changelogPath = lang === 'ko' ? '/ko/changelog' : '/changelog';
               <span class="text-[--color-accent] font-mono font-bold">PRUVIQ</span> &mdash; {t('footer.tagline')}
             </div>
             <div class="flex items-center gap-6 text-xs text-[--color-text-muted]">
+              <a href={coinsPath} class="hover:text-[--color-text] transition-colors">{t('nav.coins')}</a>
               <a href={strategiesPath} class="hover:text-[--color-text] transition-colors">{t('footer.strategies')}</a>
               <a href={blogPath} class="hover:text-[--color-text] transition-colors">{t('footer.learn')}</a>
               <a href={feesPath} class="hover:text-[--color-text] transition-colors">{t('footer.fees')}</a>

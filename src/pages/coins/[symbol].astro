@@ -1,0 +1,27 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import CoinChart from '../../components/CoinChart';
+import { COIN_SYMBOLS } from '../../data/coin-symbols';
+
+export async function getStaticPaths() {
+  return COIN_SYMBOLS.map(s => ({
+    params: { symbol: s.toLowerCase() },
+    props: { symbolUpper: s },
+  }));
+}
+
+const { symbol } = Astro.params;
+const { symbolUpper } = Astro.props;
+const displayName = symbolUpper.replace('USDT', '') + '/USDT';
+---
+
+<Layout title={`${displayName} - Coin Explorer - PRUVIQ`} description={`${displayName} candlestick chart with BB Squeeze strategy simulation. See entry/exit signals, win rate, and profit factor.`}>
+  <section class="py-8">
+    <div class="max-w-6xl mx-auto px-4">
+      <a href="/coins" class="inline-flex items-center gap-1 text-[--color-text-muted] hover:text-[--color-accent] transition-colors text-sm font-mono mb-4">
+        &larr; Coins
+      </a>
+      <CoinChart client:visible symbol={symbolUpper} lang="en" />
+    </div>
+  </section>
+</Layout>
