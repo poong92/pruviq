@@ -13,6 +13,8 @@ import sys
 import time
 import hashlib
 import json
+import asyncio
+import logging
 from pathlib import Path
 from typing import Optional, Dict, List
 from collections import OrderedDict
@@ -25,6 +27,8 @@ from fastapi.responses import JSONResponse
 import numpy as np
 import pandas as pd
 from datetime import datetime, timezone
+
+logger = logging.getLogger("pruviq")
 
 # Add backend to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -61,6 +65,48 @@ rate_limits: Dict[str, list] = {}
 coin_stats_cache: Optional[dict] = None
 
 
+REFRESH_INTERVAL = 3600  # seconds (1 hour)
+
+def _refresh_data():
+    """Refresh CSV data from Binance, rebuild caches."""
+    try:
+        from scripts.update_ohlcv import update_symbol, SKIP
+        files = sorted(DATA_DIR.glob("*_1h.csv"))
+        updated = 0
+        for f in files:
+            stem = f.stem.replace("_1h", "")
+            if stem in SKIP:
+                continue
+            try:
+                n = update_symbol(f, stem.upper())
+                if n > 0:
+                    updated += 1
+                time.sleep(0.05)
+            except Exception:
+                continue
+
+        if updated > 0:
+            logger.info(f"Updated {updated} symbols from Binance, reloading...")
+            data_manager.load(DATA_DIR)
+            strategy = BBSqueezeStrategy(avoid_hours=AVOID_HOURS)
+            indicator_cache.build(data_manager, strategy)
+            global coin_stats_cache
+            coin_stats_cache = _build_coin_stats(strategy)
+            logger.info(f"Reload complete: {indicator_cache.count} coins")
+        else:
+            logger.info("No new data from Binance")
+    except Exception as e:
+        logger.error(f"Data refresh failed: {e}")
+
+
+async def _background_refresh():
+    """Periodically refresh data from Binance."""
+    while True:
+        await asyncio.sleep(REFRESH_INTERVAL)
+        loop = asyncio.get_event_loop()
+        await loop.run_in_executor(None, _refresh_data)
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Load data and pre-compute indicators on startup."""
@@ -79,7 +125,14 @@ async def lifespan(app: FastAPI):
         global coin_stats_cache
         coin_stats_cache = _build_coin_stats(strategy)
         print(f"Coin stats cached for {len(coin_stats_cache['coins'])} coins")
+
+    # Start background refresh
+    refresh_task = asyncio.create_task(_background_refresh())
+    print(f"Background data refresh scheduled every {REFRESH_INTERVAL}s")
+
     yield
+
+    refresh_task.cancel()
 
 
 app = FastAPI(
@@ -493,3 +546,11 @@ async def get_coin_stats():
     if coin_stats_cache is None:
         raise HTTPException(503, "Coin stats not computed yet.")
     return CoinStatsResponse(**coin_stats_cache)
+
+
+@app.post("/admin/refresh")
+async def refresh_data():
+    """Manually trigger data refresh from Binance."""
+    loop = asyncio.get_event_loop()
+    await loop.run_in_executor(None, _refresh_data)
+    return {"status": "ok", "coins": indicator_cache.count, "generated": coin_stats_cache["generated"] if coin_stats_cache else None}
