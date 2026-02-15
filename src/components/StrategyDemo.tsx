@@ -30,6 +30,7 @@ interface DemoData {
 
 const DEFAULT_SL = 10;
 const DEFAULT_TP = 8;
+const API_URL = import.meta.env.PUBLIC_PRUVIQ_API_URL || '';
 
 const labels = {
   en: {
@@ -175,24 +176,53 @@ export default function StrategyDemo({ lang = 'en' }: { lang?: 'en' | 'ko' }) {
     };
   }, [data]);
 
+  // Fetch from live API when combo not in static grid
+  const fetchFromApi = async (slVal: number, tpVal: number): Promise<ResultData | null> => {
+    if (!API_URL) return null;
+    try {
+      const res = await fetch(`${API_URL}/simulate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          strategy: 'bb-squeeze', direction: 'short',
+          sl_pct: slVal, tp_pct: tpVal, top_n: 50,
+        }),
+      });
+      if (!res.ok) return null;
+      return await res.json();
+    } catch { return null; }
+  };
+
   // Update chart when SL/TP changes
   useEffect(() => {
     if (!data || !seriesRef.current) return;
 
     const key = `sl${sl}_tp${tp}`;
-    const result = data.results[key];
-    if (!result?.equity_curve?.length) return;
+    const cached = data.results[key];
 
-    const isPositive = result.equity_curve[result.equity_curve.length - 1]?.value >= 0;
-    const color = isPositive ? '#00ff88' : '#ff4444';
+    const updateChart = (result: ResultData) => {
+      if (!result?.equity_curve?.length || !seriesRef.current) return;
+      const isPositive = result.equity_curve[result.equity_curve.length - 1]?.value >= 0;
+      const color = isPositive ? '#00ff88' : '#ff4444';
+      seriesRef.current.applyOptions({
+        lineColor: color,
+        topColor: isPositive ? 'rgba(0, 255, 136, 0.2)' : 'rgba(255, 68, 68, 0.2)',
+        bottomColor: isPositive ? 'rgba(0, 255, 136, 0.0)' : 'rgba(255, 68, 68, 0.0)',
+      });
+      seriesRef.current.setData(result.equity_curve);
+      chartRef.current?.timeScale().fitContent();
+    };
 
-    seriesRef.current.applyOptions({
-      lineColor: color,
-      topColor: isPositive ? 'rgba(0, 255, 136, 0.2)' : 'rgba(255, 68, 68, 0.2)',
-      bottomColor: isPositive ? 'rgba(0, 255, 136, 0.0)' : 'rgba(255, 68, 68, 0.0)',
-    });
-    seriesRef.current.setData(result.equity_curve);
-    chartRef.current?.timeScale().fitContent();
+    if (cached) {
+      updateChart(cached);
+    } else {
+      fetchFromApi(sl, tp).then((apiResult) => {
+        if (apiResult) {
+          setData((prev) => prev ? { ...prev, results: { ...prev.results, [key]: apiResult } } : prev);
+          updateChart(apiResult);
+        }
+      });
+    }
   }, [sl, tp, data]);
 
   if (loading) {
