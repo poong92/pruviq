@@ -46,10 +46,14 @@ const changelogPath = lang === 'ko' ? '/ko/changelog' : '/changelog';
     <meta property="og:type" content={type} />
     <meta property="og:url" content={canonicalURL.href} />
     <meta property="og:site_name" content="PRUVIQ" />
+    <meta property="og:image" content={new URL('/og-image.png', Astro.site || 'https://pruviq.com').href} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={new URL('/og-image.png', Astro.site || 'https://pruviq.com').href} />
     <title>{title}</title>
     <!-- JSON-LD Organization -->
     {type === 'website' && (
@@ -84,7 +88,7 @@ const changelogPath = lang === 'ko' ? '/ko/changelog' : '/changelog';
     )}
   </head>
   <body class="min-h-screen">
-    <nav class="fixed top-0 w-full z-50 border-b border-[--color-border] bg-[--color-bg]/80 backdrop-blur-md">
+    <nav class="fixed top-0 w-full z-50 border-b border-[--color-border] bg-[--color-bg]/80 backdrop-blur-md" role="navigation" aria-label="Main">
       <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
         <a href={lang === 'ko' ? '/ko/' : '/'} class="flex items-center gap-2">
           <span class="text-[--color-accent] font-mono font-bold text-xl">PRUVIQ</span>
@@ -95,8 +99,8 @@ const changelogPath = lang === 'ko' ? '/ko/changelog' : '/changelog';
           <a href={feesPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('nav.fees')}</a>
           <a href={altPath} class="font-mono text-xs px-2 py-1 border border-[--color-border] rounded hover:border-[--color-accent] hover:text-[--color-accent] text-[--color-text-muted] transition-colors">{t('nav.lang')}</a>
         </div>
-        <button id="mobile-menu-btn" class="md:hidden text-[--color-text-muted]">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+        <button id="mobile-menu-btn" class="md:hidden text-[--color-text-muted]" aria-label="Toggle menu" aria-expanded="false">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
         </button>
       </div>
       <div id="mobile-menu" class="hidden md:hidden border-t border-[--color-border] bg-[--color-bg]">
@@ -137,8 +141,11 @@ const changelogPath = lang === 'ko' ? '/ko/changelog' : '/changelog';
     </footer>
 
     <script>
-      document.getElementById('mobile-menu-btn')?.addEventListener('click', () => {
-        document.getElementById('mobile-menu')?.classList.toggle('hidden');
+      const menuBtn = document.getElementById('mobile-menu-btn');
+      const mobileMenu = document.getElementById('mobile-menu');
+      menuBtn?.addEventListener('click', () => {
+        const isHidden = mobileMenu?.classList.toggle('hidden');
+        menuBtn.setAttribute('aria-expanded', String(!isHidden));
       });
     </script>
   </body>
