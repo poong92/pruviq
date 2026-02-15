@@ -1,4 +1,4 @@
-# PRUVIQ Business Model v2.0: Free + Referral
+# PRUVIQ Business Model (Draft)
 
 > Last updated: 2026-02-15
 > Model: 100% Free service, revenue from exchange referrals

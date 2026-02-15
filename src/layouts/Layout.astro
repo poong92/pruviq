@@ -9,7 +9,7 @@ interface Props {
   category?: string;
 }
 
-const { title, description = "Don't believe. Verify. Algorithmic crypto trading with every trade published and every loss shown.", type = 'website', date, category } = Astro.props;
+const { title, description = "Don't believe. Verify. Free crypto strategy simulation on 500+ coins. Test before you trade.", type = 'website', date, category } = Astro.props;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://pruviq.com');
 ---
 
@@ -42,7 +42,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://pruviq.c
         "@type": "Organization",
         "name": "PRUVIQ",
         "url": "https://pruviq.com",
-        "description": "Transparent algorithmic crypto trading. Every trade published, every loss shown.",
+        "description": "Free crypto strategy simulation platform. Test strategies on 500+ coins before risking real money.",
         "founder": { "@type": "Person", "name": "JPLee" },
         "sameAs": ["https://t.me/PRUVIQ"]
       })} />
@@ -81,7 +81,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://pruviq.c
           <a href="/graveyard" class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">Graveyard</a>
           <a href="/blog" class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">Trading IQ</a>
           <a href="/fees" class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">Fees</a>
-          <a href="https://t.me/PRUVIQ" target="_blank" rel="noopener" class="bg-[--color-accent] text-[--color-bg] px-4 py-2 rounded font-medium hover:bg-[--color-accent-dim] transition-colors">See Live Trades</a>
+          <a href="https://t.me/PRUVIQ" target="_blank" rel="noopener" class="bg-[--color-accent] text-[--color-bg] px-4 py-2 rounded font-medium hover:bg-[--color-accent-dim] transition-colors">Explore Strategies</a>
         </div>
         <button id="mobile-menu-btn" class="md:hidden text-[--color-text-muted]">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
@@ -96,7 +96,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://pruviq.c
           <a href="/graveyard" class="text-[--color-text-muted]">Graveyard</a>
           <a href="/blog" class="text-[--color-text-muted]">Trading IQ</a>
           <a href="/fees" class="text-[--color-text-muted]">Fees</a>
-          <a href="https://t.me/PRUVIQ" target="_blank" rel="noopener" class="bg-[--color-accent] text-[--color-bg] px-4 py-2 rounded font-medium text-center">See Live Trades</a>
+          <a href="https://t.me/PRUVIQ" target="_blank" rel="noopener" class="bg-[--color-accent] text-[--color-bg] px-4 py-2 rounded font-medium text-center">Explore Strategies</a>
         </div>
       </div>
     </nav>
