@@ -55,6 +55,7 @@ class DataManager:
                     continue
 
                 df["timestamp"] = pd.to_datetime(df["timestamp"])
+                df = df.drop_duplicates(subset=["timestamp"], keep="last").reset_index(drop=True)
                 symbol = stem.upper()
                 self._data[symbol] = df
                 self._coin_info.append({
