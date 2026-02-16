@@ -3,13 +3,13 @@ import Layout from '../../../layouts/Layout.astro';
 import CoinListTable from '../../../components/CoinListTable';
 ---
 
-<Layout title="코인 탐색기 - PRUVIQ" description="500개 이상 코인의 실시간 가격, 캔들 차트, 전략 시뮬레이션. 코인을 클릭하여 차트와 전략을 적용해보세요.">
+<Layout title="코인 탐색기 — 535개 코인 전략 통계 - PRUVIQ" description="535개 바이낸스 선물 코인의 승률, 수익팩터, 백테스트 결과를 한눈에. 코인 클릭으로 캔들 차트와 전략 시뮬레이션.">
   <section class="py-12">
     <div class="max-w-6xl mx-auto px-4">
       <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">코인 탐색기</p>
       <h1 class="text-3xl md:text-4xl font-bold mb-4">전체 코인 탐색</h1>
       <p class="text-[--color-text-muted] text-lg mb-8 max-w-2xl">
-        500개 이상의 바이낸스 선물 코인을 탐색하세요. 코인을 클릭하면 캔들 차트와 전략 시뮬레이션을 적용할 수 있습니다.
+        535개 바이낸스 선물 코인의 전략 통계를 한눈에 비교하세요. 승률, 수익팩터 순으로 정렬 가능. 코인 클릭으로 캔들 차트와 시뮬레이션.
       </p>
       <CoinListTable client:visible lang="ko" apiUrl="https://api.pruviq.com" />
     </div>
