@@ -108,6 +108,8 @@ export const en = {
   'footer.fees': 'Save on Fees',
   'footer.telegram': 'Telegram',
   'footer.changelog': 'Changelog',
+  'footer.privacy': 'Privacy',
+  'footer.terms': 'Terms',
   'footer.disclaimer': 'Not financial advice. Past performance does not guarantee future results.',
   'footer.affiliate': 'This site contains affiliate links.',
   'footer.details': 'Details',

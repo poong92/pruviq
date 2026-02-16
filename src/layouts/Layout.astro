@@ -28,6 +28,8 @@ const strategiesPath = lang === 'ko' ? '/ko/strategies' : '/strategies';
 const blogPath = lang === 'ko' ? '/ko/blog' : '/blog';
 const feesPath = lang === 'ko' ? '/ko/fees' : '/fees';
 const changelogPath = lang === 'ko' ? '/ko/changelog' : '/changelog';
+const privacyPath = lang === 'ko' ? '/ko/privacy' : '/privacy';
+const termsPath = lang === 'ko' ? '/ko/terms' : '/terms';
 ---
 
 <!doctype html>
@@ -166,9 +168,17 @@ const changelogPath = lang === 'ko' ? '/ko/changelog' : '/changelog';
               <a href="https://t.me/PRUVIQ" target="_blank" rel="noopener" class="hover:text-[--color-text] transition-colors">{t('footer.telegram')}</a>
             </div>
           </div>
+          <div class="flex items-center gap-6 text-xs text-[--color-text-muted]">
+            <a href={privacyPath} class="hover:text-[--color-text] transition-colors">{t('footer.privacy')}</a>
+            <a href={termsPath} class="hover:text-[--color-text] transition-colors">{t('footer.terms')}</a>
+            <a href="mailto:pruviq@gmail.com" class="hover:text-[--color-text] transition-colors">pruviq@gmail.com</a>
+          </div>
           <div class="flex flex-col md:flex-row justify-between items-center gap-2 text-xs text-[--color-text-muted]">
             <p>{t('footer.disclaimer')}</p>
             <p>{t('footer.affiliate')} <a href={feesPath} class="text-[--color-accent] hover:underline">{t('footer.details')}</a></p>
+          </div>
+          <div class="text-center text-xs text-[--color-text-muted] mt-2">
+            <p>&copy; 2026 PRUVIQ. All rights reserved.</p>
           </div>
         </div>
       </div>
