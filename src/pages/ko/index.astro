@@ -12,7 +12,11 @@ const t = useTranslations('ko');
     <div class="max-w-6xl mx-auto px-4 py-20">
       <div class="max-w-3xl">
         <p class="font-mono text-[--color-accent] text-sm mb-4 tracking-wider">{t('hero.tag')}</p>
-        <p class="font-mono text-[--color-accent] text-xs mb-2 opacity-60">PRUVIQ /pruːv·ɪk/ — PROVE + IQ</p>
+        <div class="flex items-baseline gap-3 mb-3">
+          <span class="font-mono text-[--color-accent] text-2xl md:text-3xl font-bold tracking-tight">PRUVIQ</span>
+          <span class="font-mono text-[--color-text-muted] text-sm">/pruːv·ɪk/</span>
+          <span class="font-mono text-sm"><span class="text-[--color-accent] font-bold">PRUV</span><span class="text-[--color-text-muted]">e</span> + <span class="text-[--color-accent] font-bold">IQ</span></span>
+        </div>
         <h1 class="text-4xl md:text-6xl font-bold leading-tight mb-6">
           {t('hero.title1')}<br/>
           <span class="text-[--color-accent]">{t('hero.title2')}</span>
@@ -143,115 +147,6 @@ const t = useTranslations('ko');
         </div>
       </div>
 
-      <div class="grid md:grid-cols-2 gap-8 mb-8">
-        <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card]">
-          <h3 class="font-mono text-[--color-accent] text-sm mb-4">{t('evidence.publish_tag')}</h3>
-          <div class="space-y-3 text-sm">
-            <div class="flex gap-3"><span class="text-[--color-accent] shrink-0">+</span><p>{t('evidence.publish1')}</p></div>
-            <div class="flex gap-3"><span class="text-[--color-accent] shrink-0">+</span><p>{t('evidence.publish2')}</p></div>
-            <div class="flex gap-3"><span class="text-[--color-accent] shrink-0">+</span><p>{t('evidence.publish3')}</p></div>
-            <div class="flex gap-3"><span class="text-[--color-accent] shrink-0">+</span><p>{t('evidence.publish4')}</p></div>
-            <div class="flex gap-3"><span class="text-[--color-accent] shrink-0">+</span><p>{t('evidence.publish5')}</p></div>
-          </div>
-        </div>
-        <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card]">
-          <h3 class="font-mono text-[--color-red] text-sm mb-4">{t('evidence.nopromise_tag')}</h3>
-          <div class="space-y-3 text-sm">
-            <div class="flex gap-3"><span class="text-[--color-red] shrink-0">&times;</span><p>{t('evidence.nopromise1')}</p></div>
-            <div class="flex gap-3"><span class="text-[--color-red] shrink-0">&times;</span><p>{t('evidence.nopromise2')}</p></div>
-            <div class="flex gap-3"><span class="text-[--color-red] shrink-0">&times;</span><p>{t('evidence.nopromise3')}</p></div>
-            <div class="flex gap-3"><span class="text-[--color-red] shrink-0">&times;</span><p>{t('evidence.nopromise4')}</p></div>
-            <div class="flex gap-3"><span class="text-[--color-red] shrink-0">&times;</span><p>{t('evidence.nopromise5')}</p></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- TRY IT YOURSELF teaser -->
-      <div class="border border-[--color-accent] rounded-lg p-6 bg-[--color-bg-card] mb-8">
-        <h3 class="font-mono text-[--color-accent] text-sm mb-3">{t('evidence.try_tag')}</h3>
-        <p class="text-[--color-text-muted] text-sm leading-relaxed mb-4">{t('evidence.try_desc')}</p>
-        <a href="/ko/strategies/bb-squeeze-short#demo"
-           class="inline-block bg-[--color-accent] text-[--color-bg] px-6 py-2 rounded font-semibold text-sm hover:bg-[--color-accent-dim] transition-colors">
-          {t('evidence.try_cta')} &rarr;
-        </a>
-      </div>
-
-      <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card]">
-        <h3 class="font-mono text-[--color-accent] text-sm mb-4">{t('evidence.sim_tag')}</h3>
-        <div class="grid sm:grid-cols-4 gap-6 font-mono text-sm">
-          <div>
-            <span class="text-[--color-text-muted]">{t('evidence.sim_coins')}</span>
-            <p class="text-xl font-bold">535</p>
-          </div>
-          <div>
-            <span class="text-[--color-text-muted]">{t('evidence.sim_data')}</span>
-            <p class="text-xl font-bold">{t('hero.stat2_val')}</p>
-          </div>
-          <div>
-            <span class="text-[--color-text-muted]">{t('evidence.sim_fees')}</span>
-            <p class="text-xl font-bold">{t('evidence.sim_fees_val')}</p>
-          </div>
-          <div>
-            <span class="text-[--color-text-muted]">{t('evidence.sim_slippage')}</span>
-            <p class="text-xl font-bold">{t('evidence.sim_slippage_val')}</p>
-          </div>
-        </div>
-        <p class="text-[--color-text-muted] text-xs mt-4">{t('evidence.sim_note')}</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- THE SYSTEM -->
-  <section id="system" class="py-20 border-t border-[--color-border]">
-    <div class="max-w-6xl mx-auto px-4">
-      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('system.tag')}</p>
-      <h2 class="text-3xl md:text-4xl font-bold mb-4">{t('system.title')}</h2>
-      <p class="text-[--color-text-muted] text-lg mb-12 max-w-2xl">{t('system.desc')}</p>
-
-      <div class="grid md:grid-cols-3 gap-6 mb-8">
-        <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] text-center">
-          <p class="font-mono text-[--color-accent] text-4xl font-bold mb-2">{t('system.step1')}</p>
-          <p class="text-[--color-text-muted] text-sm">{t('system.step1_desc')}</p>
-        </div>
-        <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] text-center">
-          <p class="font-mono text-[--color-accent] text-4xl font-bold mb-2">{t('system.step2')}</p>
-          <p class="text-[--color-text-muted] text-sm">{t('system.step2_desc')}</p>
-        </div>
-        <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] text-center">
-          <p class="font-mono text-[--color-accent] text-4xl font-bold mb-2">{t('system.step3')}</p>
-          <p class="text-[--color-text-muted] text-sm">{t('system.step3_desc')}</p>
-        </div>
-      </div>
-
-      <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card]">
-        <h3 class="font-mono text-[--color-accent] text-sm mb-4">{t('system.engine_tag')}</h3>
-        <div class="grid sm:grid-cols-3 gap-4 font-mono text-sm">
-          <div class="flex justify-between border-b border-[--color-border] pb-2 sm:border-0">
-            <span class="text-[--color-text-muted]">Engine</span>
-            <span>Python + Pandas</span>
-          </div>
-          <div class="flex justify-between border-b border-[--color-border] pb-2 sm:border-0">
-            <span class="text-[--color-text-muted]">Data</span>
-            <span>ccxt (Multi-Exchange)</span>
-          </div>
-          <div class="flex justify-between border-b border-[--color-border] pb-2 sm:border-0">
-            <span class="text-[--color-text-muted]">Storage</span>
-            <span>Parquet</span>
-          </div>
-          <div class="flex justify-between border-b border-[--color-border] pb-2 sm:border-0">
-            <span class="text-[--color-text-muted]">Bias Prevention</span>
-            <span>5 QA Tests</span>
-          </div>
-          <div class="flex justify-between border-b border-[--color-border] pb-2 sm:border-0">
-            <span class="text-[--color-text-muted]">Cost Model</span>
-            <span>Fees + Slippage</span>
-          </div>
-          <div class="flex justify-between">
-            <span class="text-[--color-text-muted]">Community</span>
-            <span>Telegram</span>
-          </div>
-        </div>
-      </div>
     </div>
   </section>
 
