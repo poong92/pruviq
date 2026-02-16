@@ -2,6 +2,10 @@ import { useState, useEffect, useRef } from 'preact/hooks';
 import DiscreteSlider from './DiscreteSlider';
 import ResultsCard from './ResultsCard';
 
+function getCssVar(name: string): string {
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+}
+
 interface EquityPoint {
   time: string;
   value: number;
@@ -141,25 +145,25 @@ export default function StrategyDemo({ lang = 'en' }: { lang?: 'en' | 'ko' }) {
         width: chartContainerRef.current.clientWidth,
         height: 300,
         layout: {
-          background: { color: '#111111' },
-          textColor: '#888888',
+          background: { color: getCssVar('--color-bg-card') },
+          textColor: getCssVar('--color-text-muted'),
           fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
           fontSize: 11,
         },
         grid: {
-          vertLines: { color: '#1a1a1a' },
-          horzLines: { color: '#1a1a1a' },
+          vertLines: { color: getCssVar('--color-bg-hover') },
+          horzLines: { color: getCssVar('--color-bg-hover') },
         },
-        rightPriceScale: { borderColor: '#222222' },
-        timeScale: { borderColor: '#222222', timeVisible: false },
+        rightPriceScale: { borderColor: getCssVar('--color-border') },
+        timeScale: { borderColor: getCssVar('--color-border'), timeVisible: false },
         crosshair: {
-          vertLine: { color: '#00ff8844', width: 1, style: 2 },
-          horzLine: { color: '#00ff8844', width: 1, style: 2 },
+          vertLine: { color: getCssVar('--color-chart-crosshair'), width: 1, style: 2 },
+          horzLine: { color: getCssVar('--color-chart-crosshair'), width: 1, style: 2 },
         },
       });
 
       const series = chart.addSeries(AreaSeries, {
-        lineColor: '#00ff88',
+        lineColor: getCssVar('--color-accent'),
         topColor: 'rgba(0, 255, 136, 0.2)',
         bottomColor: 'rgba(0, 255, 136, 0.0)',
         lineWidth: 2,
@@ -219,7 +223,7 @@ export default function StrategyDemo({ lang = 'en' }: { lang?: 'en' | 'ko' }) {
     const updateChart = (result: ResultData) => {
       if (!result?.equity_curve?.length || !seriesRef.current) return;
       const isPositive = result.equity_curve[result.equity_curve.length - 1]?.value >= 0;
-      const color = isPositive ? '#00ff88' : '#ff4444';
+      const color = isPositive ? getCssVar('--color-accent') : getCssVar('--color-red');
       seriesRef.current.applyOptions({
         lineColor: color,
         topColor: isPositive ? 'rgba(0, 255, 136, 0.2)' : 'rgba(255, 68, 68, 0.2)',

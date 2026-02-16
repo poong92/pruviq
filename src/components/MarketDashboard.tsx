@@ -303,7 +303,7 @@ export default function MarketDashboard({ lang = 'en' }: { lang?: 'en' | 'ko' })
           {/* BTC + ETH Price Bar */}
           <div className="flex gap-4 flex-wrap mb-4">
             <div className={`flex items-center gap-3 border border-[--color-border] rounded-lg py-3 px-5 bg-[--color-bg-card] flex-1 min-w-[200px] ${btcFlash}`}>
-              <span className="text-sm font-semibold text-[#f7931a]">BTC</span>
+              <span className="text-sm font-semibold text-[--color-btc]">BTC</span>
               <span className="text-xl font-bold font-mono text-[--color-text]">
                 ${market.btc_price.toLocaleString('en-US', { maximumFractionDigits: 0 })}
               </span>
@@ -312,7 +312,7 @@ export default function MarketDashboard({ lang = 'en' }: { lang?: 'en' | 'ko' })
               </span>
             </div>
             <div className={`flex items-center gap-3 border border-[--color-border] rounded-lg py-3 px-5 bg-[--color-bg-card] flex-1 min-w-[200px] ${ethFlash}`}>
-              <span className="text-sm font-semibold text-[#627eea]">ETH</span>
+              <span className="text-sm font-semibold text-[--color-eth]">ETH</span>
               <span className="text-xl font-bold font-mono text-[--color-text]">
                 ${market.eth_price.toLocaleString('en-US', { maximumFractionDigits: 0 })}
               </span>
@@ -380,6 +380,7 @@ export default function MarketDashboard({ lang = 'en' }: { lang?: 'en' | 'ko' })
           <div className="flex gap-1">
             <button
               onClick={() => setSourceFilter('')}
+              aria-pressed={sourceFilter === ''}
               className={`px-2 py-1 text-[10px] rounded font-semibold cursor-pointer border-none transition-colors ${
                 !sourceFilter ? 'bg-[--color-accent] text-[--color-bg]' : 'bg-[--color-bg-hover] text-[--color-text-muted] hover:text-[--color-text]'
               }`}
@@ -388,6 +389,7 @@ export default function MarketDashboard({ lang = 'en' }: { lang?: 'en' | 'ko' })
               <button
                 key={s}
                 onClick={() => setSourceFilter(sourceFilter === s ? '' : s)}
+                aria-pressed={sourceFilter === s}
                 className={`px-2 py-1 text-[10px] rounded font-semibold cursor-pointer border-none whitespace-nowrap transition-colors ${
                   sourceFilter === s ? 'bg-[--color-accent] text-[--color-bg]' : 'bg-[--color-bg-hover] text-[--color-text-muted] hover:text-[--color-text]'
                 }`}

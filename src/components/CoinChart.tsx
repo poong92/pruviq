@@ -2,6 +2,11 @@ import { useState, useEffect, useRef } from 'preact/hooks';
 import { formatPrice, formatVolume, formatVolumeRaw } from '../utils/format';
 import DiscreteSlider from './DiscreteSlider';
 
+// Helper function to get CSS variable values at runtime
+function getCssVar(name: string): string {
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+}
+
 interface OhlcvBar {
   t: number;
   o: number;
@@ -133,8 +138,11 @@ function formatChartPrice(p: number): string {
   return p.toFixed(7);
 }
 
-function formatTime(unix: number): string {
+function formatTime(unix: number, lang: string = 'en'): string {
   const d = new Date(unix * 1000);
+  if (lang === 'ko') {
+    return `${d.getMonth()+1}/${d.getDate()} ${d.getHours()}:00`;
+  }
   return `${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getDate().toString().padStart(2, '0')} ${d.getHours().toString().padStart(2, '0')}:00`;
 }
 
@@ -158,6 +166,7 @@ function ToggleBtn({ active, activeColor, label, onClick }: { active: boolean; a
   return (
     <button
       onClick={onClick}
+      aria-pressed={active}
       class="px-2.5 py-1 rounded font-mono text-[0.6875rem] cursor-pointer transition-all"
       style={{
         border: `1px solid ${active ? activeColor : 'var(--color-border)'}`,
@@ -172,7 +181,7 @@ function ToggleBtn({ active, activeColor, label, onClick }: { active: boolean; a
 
 function ChartSkeleton() {
   return (
-    <div class="bg-[#0a0a0a] border border-[--color-border] rounded-xl overflow-hidden mb-3">
+    <div class="bg-[--color-bg] border border-[--color-border] rounded-xl overflow-hidden mb-3">
       <div class="w-full h-[480px] relative">
         <div class="absolute top-4 left-4 flex gap-2">
           <div class="skeleton h-3 w-8" />
@@ -258,21 +267,21 @@ export default function CoinChart({ symbol, lang = 'en' }: { symbol: string; lan
         width: chartContainerRef.current.clientWidth,
         height: 480,
         layout: {
-          background: { color: '#0a0a0a' },
-          textColor: '#666666',
+          background: { color: getCssVar('--color-bg') },
+          textColor: getCssVar('--color-text-muted'),
           fontFamily: "'JetBrains Mono', monospace",
           fontSize: 11,
         },
         grid: {
-          vertLines: { color: '#131313' },
-          horzLines: { color: '#131313' },
+          vertLines: { color: getCssVar('--color-chart-grid') },
+          horzLines: { color: getCssVar('--color-chart-grid') },
         },
         rightPriceScale: {
-          borderColor: '#1a1a1a',
+          borderColor: getCssVar('--color-bg-hover'),
           scaleMargins: { top: 0.05, bottom: 0.25 },
         },
         timeScale: {
-          borderColor: '#1a1a1a',
+          borderColor: getCssVar('--color-bg-hover'),
           timeVisible: true,
           secondsVisible: false,
           rightOffset: 5,
@@ -280,8 +289,8 @@ export default function CoinChart({ symbol, lang = 'en' }: { symbol: string; lan
         },
         crosshair: {
           mode: 0,
-          vertLine: { color: '#00ff8833', width: 1, style: 2, labelBackgroundColor: '#111' },
-          horzLine: { color: '#00ff8833', width: 1, style: 2, labelBackgroundColor: '#111' },
+          vertLine: { color: `${getCssVar('--color-accent')}33`, width: 1, style: 2, labelBackgroundColor: '#111' },
+          horzLine: { color: `${getCssVar('--color-accent')}33`, width: 1, style: 2, labelBackgroundColor: '#111' },
         },
         watermark: {
           visible: true,
@@ -292,19 +301,19 @@ export default function CoinChart({ symbol, lang = 'en' }: { symbol: string; lan
       });
 
       const candleSeries = chart.addSeries(CandlestickSeries, {
-        upColor: '#00ff88',
-        downColor: '#ff4444',
-        wickUpColor: '#00ff88',
-        wickDownColor: '#ff4444',
+        upColor: getCssVar('--color-up'),
+        downColor: getCssVar('--color-down'),
+        wickUpColor: getCssVar('--color-up'),
+        wickDownColor: getCssVar('--color-down'),
         borderVisible: false,
         priceFormat: { type: 'price', minMove: ohlcv[0]?.c < 0.01 ? 0.0000001 : ohlcv[0]?.c < 1 ? 0.00001 : 0.01 },
       });
       candleSeries.setData(ohlcv.map(b => ({ time: b.t as any, open: b.o, high: b.h, low: b.l, close: b.c })));
       candleSeriesRef.current = candleSeries;
 
-      const bbUpper = chart.addSeries(LineSeries, { color: 'rgba(100,150,255,0.5)', lineWidth: 1, priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false });
+      const bbUpper = chart.addSeries(LineSeries, { color: getCssVar('--color-chart-bb'), lineWidth: 1, priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false });
       const bbMid = chart.addSeries(LineSeries, { color: 'rgba(100,150,255,0.25)', lineWidth: 1, lineStyle: 2, priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false });
-      const bbLower = chart.addSeries(LineSeries, { color: 'rgba(100,150,255,0.5)', lineWidth: 1, priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false });
+      const bbLower = chart.addSeries(LineSeries, { color: getCssVar('--color-chart-bb'), lineWidth: 1, priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false });
 
       bbUpper.setData(ohlcv.filter(b => b.bb_upper != null).map(b => ({ time: b.t as any, value: b.bb_upper! })));
       bbMid.setData(ohlcv.filter(b => b.bb_mid != null).map(b => ({ time: b.t as any, value: b.bb_mid! })));
@@ -313,8 +322,8 @@ export default function CoinChart({ symbol, lang = 'en' }: { symbol: string; lan
       bbMidRef.current = bbMid;
       bbLowerRef.current = bbLower;
 
-      const ema20 = chart.addSeries(LineSeries, { color: '#ffaa00', lineWidth: 1, priceLineVisible: false, lastValueVisible: false, visible: false, crosshairMarkerVisible: false });
-      const ema50 = chart.addSeries(LineSeries, { color: '#aa66ff', lineWidth: 1, priceLineVisible: false, lastValueVisible: false, visible: false, crosshairMarkerVisible: false });
+      const ema20 = chart.addSeries(LineSeries, { color: getCssVar('--color-chart-ema20'), lineWidth: 1, priceLineVisible: false, lastValueVisible: false, visible: false, crosshairMarkerVisible: false });
+      const ema50 = chart.addSeries(LineSeries, { color: getCssVar('--color-chart-ema50'), lineWidth: 1, priceLineVisible: false, lastValueVisible: false, visible: false, crosshairMarkerVisible: false });
       ema20.setData(ohlcv.filter(b => b.ema20 != null).map(b => ({ time: b.t as any, value: b.ema20! })));
       ema50.setData(ohlcv.filter(b => b.ema50 != null).map(b => ({ time: b.t as any, value: b.ema50! })));
       ema20Ref.current = ema20;
@@ -328,7 +337,7 @@ export default function CoinChart({ symbol, lang = 'en' }: { symbol: string; lan
       volumeSeries.setData(ohlcv.map(b => ({
         time: b.t as any,
         value: b.v,
-        color: b.c >= b.o ? 'rgba(0,255,136,0.25)' : 'rgba(255,68,68,0.25)',
+        color: b.c >= b.o ? getCssVar('--color-chart-vol-up') : getCssVar('--color-chart-vol-down'),
       })));
       volumeSeriesRef.current = volumeSeries;
 
@@ -389,8 +398,8 @@ export default function CoinChart({ symbol, lang = 'en' }: { symbol: string; lan
       if (candleSeriesRef.current && result.trades.length > 0) {
         const markers: any[] = [];
         for (const trade of result.trades) {
-          markers.push({ time: trade.entry_time as any, position: 'aboveBar', shape: 'arrowDown', color: '#ff6666', text: 'S' });
-          const exitColor = trade.exit_reason === 'tp' ? '#00ff88' : trade.exit_reason === 'sl' ? '#ff4444' : '#888888';
+          markers.push({ time: trade.entry_time as any, position: 'aboveBar', shape: 'arrowDown', color: getCssVar('--color-down'), text: 'S' });
+          const exitColor = trade.exit_reason === 'tp' ? getCssVar('--color-up') : trade.exit_reason === 'sl' ? getCssVar('--color-down') : getCssVar('--color-text-muted');
           const exitText = trade.exit_reason === 'tp' ? 'TP' : trade.exit_reason === 'sl' ? 'SL' : 'TO';
           markers.push({ time: trade.exit_time as any, position: 'belowBar', shape: 'arrowUp', color: exitColor, text: exitText });
         }
@@ -460,13 +469,13 @@ export default function CoinChart({ symbol, lang = 'en' }: { symbol: string; lan
           </h1>
           <span class="font-mono text-xl font-semibold">${formatChartPrice(lastBar.c)}</span>
           <span
-            class={`font-mono text-[0.8125rem] font-semibold px-2 py-0.5 rounded ${change >= 0 ? 'text-[#16c784] bg-[rgba(0,255,136,0.1)]' : 'text-[--color-red] bg-[rgba(255,68,68,0.1)]'}`}
+            class={`font-mono text-[0.8125rem] font-semibold px-2 py-0.5 rounded ${change >= 0 ? 'text-[--color-up] bg-[rgba(0,255,136,0.1)]' : 'text-[--color-red] bg-[rgba(255,68,68,0.1)]'}`}
           >
             {change > 0 ? '+' : ''}{change.toFixed(2)}%
           </span>
         </div>
         <div class="flex gap-6 flex-wrap font-mono text-[0.6875rem] text-[--color-text-muted]">
-          <span>{t.h24high}: <span class="text-[#16c784]">${formatChartPrice(high24)}</span></span>
+          <span>{t.h24high}: <span class="text-[--color-up]">${formatChartPrice(high24)}</span></span>
           <span>{t.h24low}: <span class="text-[--color-red]">${formatChartPrice(low24)}</span></span>
           <span>{t.h24vol}: <span class="text-[--color-text]">{formatVolumeRaw(vol24)}</span></span>
           <span>{t.dataRange}: {formatDateRange(ohlcv[0].t, lastBar.t)}</span>
@@ -474,15 +483,15 @@ export default function CoinChart({ symbol, lang = 'en' }: { symbol: string; lan
       </div>
 
       {/* Chart Container */}
-      <div class="bg-[#0a0a0a] border border-[--color-border] rounded-xl overflow-hidden mb-3 relative">
+      <div class="bg-[--color-bg] border border-[--color-border] rounded-xl overflow-hidden mb-3 relative">
         {/* OHLCV Overlay */}
         <div class="absolute top-2 left-3 z-10 font-mono text-[0.6875rem] flex gap-2.5 flex-wrap pointer-events-none">
-          <span class="text-[#666]">{t.open} <span class="text-[--color-text]">{formatChartPrice(displayBar.o)}</span></span>
-          <span class="text-[#666]">{t.high} <span class="text-[#16c784]">{formatChartPrice(displayBar.h)}</span></span>
-          <span class="text-[#666]">{t.low} <span class="text-[--color-red]">{formatChartPrice(displayBar.l)}</span></span>
-          <span class="text-[#666]">{t.close} <span style={{ color: displayBar.c >= displayBar.o ? '#16c784' : '#ff4444' }}>{formatChartPrice(displayBar.c)}</span></span>
-          <span class="text-[#666]">{t.vol} <span class="text-[--color-text-muted]">{formatVolumeRaw(displayBar.v)}</span></span>
-          <span class={`font-semibold ${displayChange >= 0 ? 'text-[#16c784]' : 'text-[--color-red]'}`}>
+          <span class="text-[--color-text-muted]">{t.open} <span class="text-[--color-text]">{formatChartPrice(displayBar.o)}</span></span>
+          <span class="text-[--color-text-muted]">{t.high} <span class="text-[--color-up]">{formatChartPrice(displayBar.h)}</span></span>
+          <span class="text-[--color-text-muted]">{t.low} <span class="text-[--color-red]">{formatChartPrice(displayBar.l)}</span></span>
+          <span class="text-[--color-text-muted]">{t.close} <span style={{ color: displayBar.c >= displayBar.o ? 'var(--color-up)' : 'var(--color-down)' }}>{formatChartPrice(displayBar.c)}</span></span>
+          <span class="text-[--color-text-muted]">{t.vol} <span class="text-[--color-text-muted]">{formatVolumeRaw(displayBar.v)}</span></span>
+          <span class={`font-semibold ${displayChange >= 0 ? 'text-[--color-up]' : 'text-[--color-red]'}`}>
             {displayChange > 0 ? '+' : ''}{displayChange.toFixed(2)}%
           </span>
         </div>
@@ -490,10 +499,11 @@ export default function CoinChart({ symbol, lang = 'en' }: { symbol: string; lan
         {/* Indicator toggles */}
         <div class="absolute top-2 right-3 z-10 flex gap-1.5">
           <ToggleBtn active={showBB} activeColor="rgba(100,150,255,0.8)" label={t.bbBands} onClick={() => setShowBB(!showBB)} />
-          <ToggleBtn active={showEMA} activeColor="#ffaa00" label={t.ema} onClick={() => setShowEMA(!showEMA)} />
+          <ToggleBtn active={showEMA} activeColor="var(--color-chart-ema20)" label={t.ema} onClick={() => setShowEMA(!showEMA)} />
           <ToggleBtn active={showVol} activeColor="rgba(0,255,136,0.6)" label={t.volume} onClick={() => setShowVol(!showVol)} />
           <button
             onClick={() => chartRef.current?.timeScale().fitContent()}
+            aria-label="Reset chart zoom"
             class="px-2 py-1 rounded border border-[--color-border] bg-[rgba(17,17,17,0.8)] text-[--color-text-muted] font-mono text-[0.6875rem] cursor-pointer hover:border-[--color-accent] transition-colors"
           >
             {t.resetZoom}
@@ -542,17 +552,17 @@ export default function CoinChart({ symbol, lang = 'en' }: { symbol: string; lan
                 <div class="font-mono text-[0.625rem] text-[--color-accent] tracking-widest mb-3 uppercase">{t.live}</div>
               )}
               <div class="grid grid-cols-2 gap-2 mb-3">
-                <MetricBox label={t.winRate} value={`${simResult.win_rate}%`} color={simResult.win_rate >= 55 ? '#16c784' : simResult.win_rate >= 50 ? '#eab308' : '#ff4444'} />
-                <MetricBox label={t.pf} value={`${simResult.profit_factor}`} color={simResult.profit_factor >= 1.5 ? '#16c784' : simResult.profit_factor >= 1.0 ? '#eab308' : '#ff4444'} />
-                <MetricBox label={t.totalReturn} value={`${simResult.total_return_pct > 0 ? '+' : ''}${simResult.total_return_pct}%`} color={simResult.total_return_pct >= 0 ? '#16c784' : '#ff4444'} />
-                <MetricBox label={t.maxDD} value={`${simResult.max_drawdown_pct}%`} color="#ff4444" />
+                <MetricBox label={t.winRate} value={`${simResult.win_rate}%`} color={simResult.win_rate >= 55 ? getCssVar('--color-up') : simResult.win_rate >= 50 ? getCssVar('--color-yellow') : getCssVar('--color-down')} />
+                <MetricBox label={t.pf} value={`${simResult.profit_factor}`} color={simResult.profit_factor >= 1.5 ? getCssVar('--color-up') : simResult.profit_factor >= 1.0 ? getCssVar('--color-yellow') : getCssVar('--color-down')} />
+                <MetricBox label={t.totalReturn} value={`${simResult.total_return_pct > 0 ? '+' : ''}${simResult.total_return_pct}%`} color={simResult.total_return_pct >= 0 ? getCssVar('--color-up') : getCssVar('--color-down')} />
+                <MetricBox label={t.maxDD} value={`${simResult.max_drawdown_pct}%`} color={getCssVar('--color-down')} />
               </div>
               <div class="font-mono text-xs text-[--color-text-muted] mb-2">
                 {simResult.total_trades} {t.tradesLabel} &middot; TP:{simResult.tp_count} SL:{simResult.sl_count} TO:{simResult.timeout_count}
               </div>
               <div class="flex h-1 rounded-sm overflow-hidden bg-[--color-border]">
                 {simResult.total_trades > 0 && (<>
-                  <div class="bg-[#16c784]" style={{ width: `${(simResult.tp_count / simResult.total_trades) * 100}%` }} />
+                  <div class="bg-[--color-up]" style={{ width: `${(simResult.tp_count / simResult.total_trades) * 100}%` }} />
                   <div class="bg-[--color-red]" style={{ width: `${(simResult.sl_count / simResult.total_trades) * 100}%` }} />
                   <div class="bg-[--color-text-muted]" style={{ width: `${(simResult.timeout_count / simResult.total_trades) * 100}%` }} />
                 </>)}
@@ -593,7 +603,7 @@ export default function CoinChart({ symbol, lang = 'en' }: { symbol: string; lan
                 </thead>
                 <tbody>
                   {simResult.trades.map((trade, i) => {
-                    const color = trade.exit_reason === 'tp' ? '#16c784' : trade.exit_reason === 'sl' ? '#ff4444' : '#888888';
+                    const color = trade.exit_reason === 'tp' ? getCssVar('--color-up') : trade.exit_reason === 'sl' ? getCssVar('--color-down') : getCssVar('--color-text-muted');
                     const label = trade.exit_reason.toUpperCase();
                     return (
                       <tr
@@ -609,10 +619,10 @@ export default function CoinChart({ symbol, lang = 'en' }: { symbol: string; lan
                         }}
                       >
                         <td class="px-3 py-2 text-center text-[--color-text-muted]">{i + 1}</td>
-                        <td class="px-3 py-2">{formatTime(trade.entry_time)}</td>
-                        <td class="px-3 py-2">{formatTime(trade.exit_time)}</td>
+                        <td class="px-3 py-2">{formatTime(trade.entry_time, lang)}</td>
+                        <td class="px-3 py-2">{formatTime(trade.exit_time, lang)}</td>
                         <td class="px-3 py-2 text-center font-semibold" style={{ color }}>{label}</td>
-                        <td class="px-3 py-2 text-right" style={{ color: trade.pnl_pct >= 0 ? '#16c784' : '#ff4444' }}>
+                        <td class="px-3 py-2 text-right" style={{ color: trade.pnl_pct >= 0 ? 'var(--color-up)' : 'var(--color-down)' }}>
                           {trade.pnl_pct > 0 ? '+' : ''}{trade.pnl_pct.toFixed(2)}%
                         </td>
                         <td class="px-3 py-2 text-right text-[--color-text-muted]">{trade.bars_held}</td>

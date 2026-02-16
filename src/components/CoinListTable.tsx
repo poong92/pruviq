@@ -182,14 +182,14 @@ export default function CoinListTable({ lang = 'en', apiUrl = '' }: { lang?: 'en
           <thead>
             <tr>
               <th class="px-2.5 py-2 text-center font-mono text-[0.625rem] tracking-wider uppercase border-b border-[--color-border] text-[--color-text-muted] w-10 cursor-default select-none">#</th>
-              <th class={thCls('symbol', 'left')} onClick={() => handleSort('symbol')}>{t.coin} {sortBy === 'symbol' ? (sortDesc ? '\u25BC' : '\u25B2') : ''}</th>
-              <th class={thCls('price')} onClick={() => handleSort('price')}>{t.price} {sortBy === 'price' ? (sortDesc ? '\u25BC' : '\u25B2') : ''}</th>
-              <th class={thCls('change_24h')} onClick={() => handleSort('change_24h')}>{t.change} {sortBy === 'change_24h' ? (sortDesc ? '\u25BC' : '\u25B2') : ''}</th>
-              <th class={thCls('volume_24h', 'right', true)} onClick={() => handleSort('volume_24h')}>{t.volume} {sortBy === 'volume_24h' ? (sortDesc ? '\u25BC' : '\u25B2') : ''}</th>
-              <th class={thCls('trades', 'right', true)} onClick={() => handleSort('trades')}>{t.trades} {sortBy === 'trades' ? (sortDesc ? '\u25BC' : '\u25B2') : ''}</th>
-              <th class={thCls('win_rate')} onClick={() => handleSort('win_rate')}>{t.winRate} {sortBy === 'win_rate' ? (sortDesc ? '\u25BC' : '\u25B2') : ''}</th>
-              <th class={thCls('profit_factor', 'right', true)} onClick={() => handleSort('profit_factor')}>{t.pf} {sortBy === 'profit_factor' ? (sortDesc ? '\u25BC' : '\u25B2') : ''}</th>
-              <th class={thCls('total_return_pct')} onClick={() => handleSort('total_return_pct')}>{t.returnPct} {sortBy === 'total_return_pct' ? (sortDesc ? '\u25BC' : '\u25B2') : ''}</th>
+              <th class={thCls('symbol', 'left')} onClick={() => handleSort('symbol')} aria-sort={sortBy === 'symbol' ? (sortDesc ? 'descending' : 'ascending') : 'none'}>{t.coin} {sortBy === 'symbol' ? (sortDesc ? '\u25BC' : '\u25B2') : ''}</th>
+              <th class={thCls('price')} onClick={() => handleSort('price')} aria-sort={sortBy === 'price' ? (sortDesc ? 'descending' : 'ascending') : 'none'}>{t.price} {sortBy === 'price' ? (sortDesc ? '\u25BC' : '\u25B2') : ''}</th>
+              <th class={thCls('change_24h')} onClick={() => handleSort('change_24h')} aria-sort={sortBy === 'change_24h' ? (sortDesc ? 'descending' : 'ascending') : 'none'}>{t.change} {sortBy === 'change_24h' ? (sortDesc ? '\u25BC' : '\u25B2') : ''}</th>
+              <th class={thCls('volume_24h', 'right', true)} onClick={() => handleSort('volume_24h')} aria-sort={sortBy === 'volume_24h' ? (sortDesc ? 'descending' : 'ascending') : 'none'}>{t.volume} {sortBy === 'volume_24h' ? (sortDesc ? '\u25BC' : '\u25B2') : ''}</th>
+              <th class={thCls('trades', 'right', true)} onClick={() => handleSort('trades')} aria-sort={sortBy === 'trades' ? (sortDesc ? 'descending' : 'ascending') : 'none'}>{t.trades} {sortBy === 'trades' ? (sortDesc ? '\u25BC' : '\u25B2') : ''}</th>
+              <th class={thCls('win_rate')} onClick={() => handleSort('win_rate')} aria-sort={sortBy === 'win_rate' ? (sortDesc ? 'descending' : 'ascending') : 'none'}>{t.winRate} {sortBy === 'win_rate' ? (sortDesc ? '\u25BC' : '\u25B2') : ''}</th>
+              <th class={thCls('profit_factor', 'right', true)} onClick={() => handleSort('profit_factor')} aria-sort={sortBy === 'profit_factor' ? (sortDesc ? 'descending' : 'ascending') : 'none'}>{t.pf} {sortBy === 'profit_factor' ? (sortDesc ? '\u25BC' : '\u25B2') : ''}</th>
+              <th class={thCls('total_return_pct')} onClick={() => handleSort('total_return_pct')} aria-sort={sortBy === 'total_return_pct' ? (sortDesc ? 'descending' : 'ascending') : 'none'}>{t.returnPct} {sortBy === 'total_return_pct' ? (sortDesc ? '\u25BC' : '\u25B2') : ''}</th>
             </tr>
           </thead>
           <tbody>
@@ -198,10 +198,10 @@ export default function CoinListTable({ lang = 'en', apiUrl = '' }: { lang?: 'en
             )}
             {pageItems.map((coin, i) => {
               const rank = page * PER_PAGE + i + 1;
-              const chgColor = coin.change_24h >= 0 ? 'text-[#16c784]' : 'text-[--color-red]';
-              const wrColor = coin.win_rate >= 60 ? 'text-[#16c784]' : coin.win_rate >= 50 ? 'text-[--color-yellow]' : 'text-[--color-red]';
-              const pfColor = coin.profit_factor >= 2 ? 'text-[#16c784]' : coin.profit_factor >= 1 ? 'text-[--color-text]' : 'text-[--color-red]';
-              const retColor = coin.total_return_pct >= 0 ? 'text-[#16c784]' : 'text-[--color-red]';
+              const chgColor = coin.change_24h >= 0 ? 'text-[--color-up]' : 'text-[--color-down]';
+              const wrColor = coin.win_rate >= 60 ? 'text-[--color-up]' : coin.win_rate >= 50 ? 'text-[--color-yellow]' : 'text-[--color-red]';
+              const pfColor = coin.profit_factor >= 2 ? 'text-[--color-up]' : coin.profit_factor >= 1 ? 'text-[--color-text]' : 'text-[--color-red]';
+              const retColor = coin.total_return_pct >= 0 ? 'text-[--color-up]' : 'text-[--color-down]';
               return (
                 <tr
                   key={coin.symbol}

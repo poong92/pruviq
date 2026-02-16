@@ -47,15 +47,15 @@ export function formatReasonLabel(reason: string): string {
 }
 
 export function changeColor(v: number): string {
-  return v >= 0 ? '#16c784' : '#ea3943';
+  return v >= 0 ? 'var(--color-up)' : 'var(--color-down)';
 }
 
 export function fgColor(idx: number): string {
-  if (idx <= 25) return '#ea3943';
-  if (idx <= 45) return '#ea8c00';
-  if (idx <= 55) return '#c8c8c8';
-  if (idx <= 75) return '#93d900';
-  return '#16c784';
+  if (idx <= 25) return 'var(--color-fg-extreme-fear)';
+  if (idx <= 45) return 'var(--color-fg-fear)';
+  if (idx <= 55) return 'var(--color-fg-neutral)';
+  if (idx <= 75) return 'var(--color-fg-greed)';
+  return 'var(--color-fg-extreme-greed)';
 }
 
 export function timeAgo(dateStr: string): string {

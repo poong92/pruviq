@@ -1,6 +1,10 @@
 import { useState, useEffect, useRef } from 'preact/hooks';
 import { formatPrice, formatUsd, formatDate, formatDateFull, formatReasonLabel } from '../utils/format';
 
+function getCssVar(name: string): string {
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+}
+
 interface DailyEntry {
   date: string;
   pnl: number;
@@ -181,28 +185,28 @@ export default function PerformanceDashboard({ lang = 'en' }: { lang?: 'en' | 'k
         width: chartContainerRef.current.clientWidth,
         height: 320,
         layout: {
-          background: { color: '#0a0a0a' },
-          textColor: '#666666',
+          background: { color: getCssVar('--color-bg') },
+          textColor: getCssVar('--color-text-muted'),
           fontFamily: "'JetBrains Mono', monospace",
           fontSize: 11,
         },
         grid: {
-          vertLines: { color: '#131313' },
-          horzLines: { color: '#131313' },
+          vertLines: { color: getCssVar('--color-border') },
+          horzLines: { color: getCssVar('--color-border') },
         },
         rightPriceScale: {
-          borderColor: '#1a1a1a',
+          borderColor: getCssVar('--color-border'),
           scaleMargins: { top: 0.1, bottom: 0.1 },
         },
         timeScale: {
-          borderColor: '#1a1a1a',
+          borderColor: getCssVar('--color-border'),
           rightOffset: 3,
           barSpacing: 12,
         },
         crosshair: {
           mode: 0,
-          vertLine: { color: '#00ff8833', width: 1, style: 2, labelBackgroundColor: '#111' },
-          horzLine: { color: '#00ff8833', width: 1, style: 2, labelBackgroundColor: '#111' },
+          vertLine: { color: getCssVar('--color-accent') + '33', width: 1, style: 2, labelBackgroundColor: getCssVar('--color-bg-card') },
+          horzLine: { color: getCssVar('--color-accent') + '33', width: 1, style: 2, labelBackgroundColor: getCssVar('--color-bg-card') },
         },
         watermark: {
           visible: true,
@@ -213,7 +217,7 @@ export default function PerformanceDashboard({ lang = 'en' }: { lang?: 'en' | 'k
       });
 
       const finalValue = cumulativeData.length > 0 ? cumulativeData[cumulativeData.length - 1].value : 0;
-      const lineColor = finalValue >= 0 ? '#00ff88' : '#ff4444';
+      const lineColor = finalValue >= 0 ? getCssVar('--color-accent') : getCssVar('--color-red');
       const topColor = finalValue >= 0 ? 'rgba(0, 255, 136, 0.3)' : 'rgba(255, 68, 68, 0.3)';
       const bottomColor = finalValue >= 0 ? 'rgba(0, 255, 136, 0.0)' : 'rgba(255, 68, 68, 0.0)';
 
@@ -225,12 +229,12 @@ export default function PerformanceDashboard({ lang = 'en' }: { lang?: 'en' | 'k
         priceFormat: { type: 'custom', formatter: (price: number) => `$${price.toFixed(0)}` },
         crosshairMarkerRadius: 5,
         crosshairMarkerBackgroundColor: lineColor,
-        crosshairMarkerBorderColor: '#0a0a0a',
+        crosshairMarkerBorderColor: getCssVar('--color-bg'),
         crosshairMarkerBorderWidth: 2,
       });
 
       areaSeries.setData(cumulativeData as any);
-      areaSeries.createPriceLine({ price: 0, color: '#444444', lineWidth: 1, lineStyle: 2, axisLabelVisible: true, title: '' });
+      areaSeries.createPriceLine({ price: 0, color: getCssVar('--color-text-muted'), lineWidth: 1, lineStyle: 2, axisLabelVisible: true, title: '' });
 
       chart.timeScale().fitContent();
       chartRef.current = chart;
@@ -261,7 +265,7 @@ export default function PerformanceDashboard({ lang = 'en' }: { lang?: 'en' | 'k
           </div>
         </div>
         <SkeletonMetrics />
-        <div class="bg-[#0a0a0a] border border-[--color-border] rounded-xl overflow-hidden mb-6">
+        <div class="bg-[--color-bg] border border-[--color-border] rounded-xl overflow-hidden mb-6">
           <div class="px-4 py-3 border-b border-[--color-border] flex justify-between items-center">
             <div class="skeleton h-3 w-28" />
             <div class="skeleton h-4 w-16" />
@@ -288,9 +292,9 @@ export default function PerformanceDashboard({ lang = 'en' }: { lang?: 'en' | 'k
   const toPct = totalExits > 0 ? (s.timeout_count / totalExits) * 100 : 0;
   const otherPct = totalExits > 0 ? (s.other_count / totalExits) * 100 : 0;
 
-  const pnlColor = s.total_pnl >= 0 ? '#00ff88' : '#ff4444';
-  const pfColor = s.profit_factor >= 1.5 ? '#00ff88' : s.profit_factor >= 1.0 ? 'var(--color-yellow)' : '#ff4444';
-  const wrColor = s.win_rate >= 55 ? '#00ff88' : s.win_rate >= 50 ? 'var(--color-yellow)' : '#ff4444';
+  const pnlColor = s.total_pnl >= 0 ? 'var(--color-accent)' : 'var(--color-red)';
+  const pfColor = s.profit_factor >= 1.5 ? 'var(--color-accent)' : s.profit_factor >= 1.0 ? 'var(--color-yellow)' : 'var(--color-red)';
+  const wrColor = s.win_rate >= 55 ? 'var(--color-accent)' : s.win_rate >= 50 ? 'var(--color-yellow)' : 'var(--color-red)';
 
   return (
     <div class="fade-in">
@@ -311,11 +315,11 @@ export default function PerformanceDashboard({ lang = 'en' }: { lang?: 'en' | 'k
         <MetricCard label={t.winRate} value={`${s.win_rate}%`} color={wrColor} />
         <MetricCard label={t.pnl} value={formatUsd(s.total_pnl)} color={pnlColor} />
         <MetricCard label={t.pf} value={s.profit_factor.toFixed(2)} color={pfColor} />
-        <MetricCard label={t.mdd} value={`${s.max_drawdown_pct.toFixed(1)}%`} color="#ff4444" />
+        <MetricCard label={t.mdd} value={`${s.max_drawdown_pct.toFixed(1)}%`} color="var(--color-red)" />
       </div>
 
       {/* Cumulative PnL Chart */}
-      <div class="bg-[#0a0a0a] border border-[--color-border] rounded-xl overflow-hidden mb-6">
+      <div class="bg-[--color-bg] border border-[--color-border] rounded-xl overflow-hidden mb-6">
         <div class="px-4 py-3 border-b border-[--color-border] flex justify-between items-center">
           <span class="font-mono text-[0.6875rem] text-[--color-accent] tracking-widest uppercase font-semibold">{t.dailyChart}</span>
           <span class="font-mono text-xs font-semibold" style={{ color: pnlColor }}>{formatUsd(s.total_pnl)}</span>
@@ -334,22 +338,22 @@ export default function PerformanceDashboard({ lang = 'en' }: { lang?: 'en' | 'k
           <div class="flex flex-col gap-3">
             <div class="flex justify-between items-center">
               <span class="font-mono text-[0.8125rem] text-[--color-text-muted]">{t.bestDay}</span>
-              <span class="font-mono text-base font-bold text-[#00ff88]">{formatUsd(s.best_day_pnl)}</span>
+              <span class="font-mono text-base font-bold text-[--color-accent]">{formatUsd(s.best_day_pnl)}</span>
             </div>
             <div class="flex justify-between items-center">
               <span class="font-mono text-[0.8125rem] text-[--color-text-muted]">{t.worstDay}</span>
-              <span class="font-mono text-base font-bold text-[#ff4444]">{formatUsd(s.worst_day_pnl)}</span>
+              <span class="font-mono text-base font-bold text-[--color-red]">{formatUsd(s.worst_day_pnl)}</span>
             </div>
             <div class="h-px bg-[--color-border]" />
             <div class="flex justify-between items-center">
               <span class="font-mono text-[0.8125rem] text-[--color-text-muted]">{t.avgTrade}</span>
-              <span class="font-mono text-base font-bold" style={{ color: s.avg_trade_pnl >= 0 ? '#00ff88' : '#ff4444' }}>{formatUsd(s.avg_trade_pnl)}</span>
+              <span class="font-mono text-base font-bold" style={{ color: s.avg_trade_pnl >= 0 ? 'var(--color-accent)' : 'var(--color-red)' }}>{formatUsd(s.avg_trade_pnl)}</span>
             </div>
             <div class="h-px bg-[--color-border]" />
             <div class="flex justify-between items-center">
               <span class="font-mono text-[0.8125rem] text-[--color-text-muted]">{t.balance}</span>
               <span class="font-mono text-[0.8125rem] text-[--color-text-muted]">
-                ${s.starting_balance.toLocaleString()} &rarr; <span class="font-semibold" style={{ color: s.current_balance >= s.starting_balance ? '#00ff88' : '#ff4444' }}>${s.current_balance.toLocaleString()}</span>
+                ${s.starting_balance.toLocaleString()} &rarr; <span class="font-semibold" style={{ color: s.current_balance >= s.starting_balance ? 'var(--color-accent)' : 'var(--color-red)' }}>${s.current_balance.toLocaleString()}</span>
               </span>
             </div>
           </div>
@@ -362,21 +366,21 @@ export default function PerformanceDashboard({ lang = 'en' }: { lang?: 'en' | 'k
             {/* TP */}
             <div>
               <div class="flex justify-between mb-1">
-                <span class="font-mono text-xs text-[#00ff88]">{t.tp} ({s.tp_count})</span>
-                <span class="font-mono text-xs text-[#00ff88] font-semibold">{tpPct.toFixed(1)}%</span>
+                <span class="font-mono text-xs text-[--color-accent]">{t.tp} ({s.tp_count})</span>
+                <span class="font-mono text-xs text-[--color-accent] font-semibold">{tpPct.toFixed(1)}%</span>
               </div>
               <div class="h-1.5 rounded-full bg-[--color-border] overflow-hidden">
-                <div class="h-full bg-[#00ff88] rounded-full transition-[width] duration-500" style={{ width: `${tpPct}%` }} />
+                <div class="h-full bg-[--color-accent] rounded-full transition-[width] duration-500" style={{ width: `${tpPct}%` }} />
               </div>
             </div>
             {/* SL */}
             <div>
               <div class="flex justify-between mb-1">
-                <span class="font-mono text-xs text-[#ff4444]">{t.sl} ({s.sl_count})</span>
-                <span class="font-mono text-xs text-[#ff4444] font-semibold">{slPct.toFixed(1)}%</span>
+                <span class="font-mono text-xs text-[--color-red]">{t.sl} ({s.sl_count})</span>
+                <span class="font-mono text-xs text-[--color-red] font-semibold">{slPct.toFixed(1)}%</span>
               </div>
               <div class="h-1.5 rounded-full bg-[--color-border] overflow-hidden">
-                <div class="h-full bg-[#ff4444] rounded-full transition-[width] duration-500" style={{ width: `${slPct}%` }} />
+                <div class="h-full bg-[--color-red] rounded-full transition-[width] duration-500" style={{ width: `${slPct}%` }} />
               </div>
             </div>
             {/* TO */}
@@ -386,7 +390,7 @@ export default function PerformanceDashboard({ lang = 'en' }: { lang?: 'en' | 'k
                 <span class="font-mono text-xs text-[--color-text-muted] font-semibold">{toPct.toFixed(1)}%</span>
               </div>
               <div class="h-1.5 rounded-full bg-[--color-border] overflow-hidden">
-                <div class="h-full bg-[#888] rounded-full transition-[width] duration-500" style={{ width: `${toPct}%` }} />
+                <div class="h-full bg-[--color-text-muted] rounded-full transition-[width] duration-500" style={{ width: `${toPct}%` }} />
               </div>
             </div>
             {/* Other */}
@@ -404,9 +408,9 @@ export default function PerformanceDashboard({ lang = 'en' }: { lang?: 'en' | 'k
           </div>
           {/* Combined bar */}
           <div class="flex h-1 rounded-sm overflow-hidden mt-3">
-            <div class="bg-[#00ff88]" style={{ width: `${tpPct}%` }} />
-            <div class="bg-[#ff4444]" style={{ width: `${slPct}%` }} />
-            <div class="bg-[#888]" style={{ width: `${toPct}%` }} />
+            <div class="bg-[--color-accent]" style={{ width: `${tpPct}%` }} />
+            <div class="bg-[--color-red]" style={{ width: `${slPct}%` }} />
+            <div class="bg-[--color-text-muted]" style={{ width: `${toPct}%` }} />
             {s.other_count > 0 && <div class="bg-[--color-yellow]" style={{ width: `${otherPct}%` }} />}
           </div>
         </div>
@@ -436,8 +440,8 @@ export default function PerformanceDashboard({ lang = 'en' }: { lang?: 'en' | 'k
                 </thead>
                 <tbody>
                   {data.recent_trades.map((trade, i) => {
-                    const resultColor = trade.reason === 'TP' ? '#00ff88' : trade.reason === 'SL' ? '#ff4444' : 'var(--color-text-muted)';
-                    const tradePnlColor = trade.pnl_pct >= 0 ? '#00ff88' : '#ff4444';
+                    const resultColor = trade.reason === 'TP' ? 'var(--color-accent)' : trade.reason === 'SL' ? 'var(--color-red)' : 'var(--color-text-muted)';
+                    const tradePnlColor = trade.pnl_pct >= 0 ? 'var(--color-accent)' : 'var(--color-red)';
                     return (
                       <tr key={i} class="border-b border-[--color-border] row-hover">
                         <td class="px-3 py-2 font-semibold text-[--color-text]">{trade.symbol.replace('USDT', '')}</td>

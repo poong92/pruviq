@@ -14,7 +14,17 @@ export default defineConfig({
       prefixDefaultLocale: false
     }
   },
-  integrations: [sitemap(), preact()],
+  integrations: [
+    sitemap({
+      serialize(item) {
+        // Add lastmod to all URLs
+        // Use build date for all pages (blog posts will get their date from frontmatter in future enhancement)
+        item.lastmod = new Date();
+        return item;
+      }
+    }),
+    preact()
+  ],
   vite: {
     plugins: [tailwindcss()],
     define: {
