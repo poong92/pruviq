@@ -1,0 +1,17 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import MarketDashboard from '../../components/MarketDashboard';
+---
+
+<Layout title="Market Dashboard - PRUVIQ" description="Real-time crypto market overview. Fear & Greed Index, BTC dominance, top gainers/losers, funding rates, and aggregated crypto news.">
+  <section class="py-12">
+    <div class="max-w-6xl mx-auto px-4">
+      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">MARKET OVERVIEW</p>
+      <h1 class="text-3xl md:text-4xl font-bold mb-4">Market Dashboard</h1>
+      <p class="text-[--color-text-muted] text-lg mb-8 max-w-2xl">
+        Real-time crypto market data. Fear & Greed Index, top movers, funding rates, and aggregated news from major crypto outlets.
+      </p>
+      <MarketDashboard client:visible lang="en" />
+    </div>
+  </section>
+</Layout>

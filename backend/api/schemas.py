@@ -154,3 +154,47 @@ class CoinStatsResponse(BaseModel):
     strategy: str
     params: dict
     coins: List[CoinStats]
+
+
+# --- Market Dashboard Schemas ---
+
+class MarketMover(BaseModel):
+    symbol: str
+    price: float
+    change_24h: float
+    volume_24h: float
+
+
+class FundingRate(BaseModel):
+    symbol: str
+    rate: float
+    annual_pct: float
+
+
+class MarketOverview(BaseModel):
+    btc_price: float = 0
+    btc_change_24h: float = 0
+    eth_price: float = 0
+    eth_change_24h: float = 0
+    fear_greed_index: int = 0
+    fear_greed_label: str = "N/A"
+    total_market_cap_b: float = 0
+    btc_dominance: float = 0
+    total_volume_24h_b: float = 0
+    top_gainers: List[MarketMover] = []
+    top_losers: List[MarketMover] = []
+    extreme_funding: List[FundingRate] = []
+    generated: str = ""
+
+
+class NewsItem(BaseModel):
+    title: str
+    link: str
+    source: str
+    published: str
+    summary: str = ""
+
+
+class NewsResponse(BaseModel):
+    items: List[NewsItem]
+    generated: str

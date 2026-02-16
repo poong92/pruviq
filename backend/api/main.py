@@ -39,6 +39,8 @@ from api.schemas import (
     OhlcvBar, OhlcvResponse,
     CoinSimRequest, CoinSimResponse, TradeDetail,
     CoinStats, CoinStatsResponse,
+    MarketOverview, MarketMover, FundingRate,
+    NewsItem, NewsResponse,
 )
 from api.data_manager import DataManager
 from api.indicator_cache import IndicatorCache
@@ -554,3 +556,228 @@ async def refresh_data():
     loop = asyncio.get_event_loop()
     await loop.run_in_executor(None, _refresh_data)
     return {"status": "ok", "coins": indicator_cache.count, "generated": coin_stats_cache["generated"] if coin_stats_cache else None}
+
+
+# --- Market Dashboard ---
+
+import xml.etree.ElementTree as ET
+import requests as http_requests
+
+MARKET_CACHE_TTL = 300  # 5 minutes
+_market_cache: Optional[dict] = None
+_market_cache_time: float = 0
+_news_cache: Optional[dict] = None
+_news_cache_time: float = 0
+
+
+def _fetch_fear_greed() -> dict:
+    """Fetch Fear & Greed Index from Alternative.me."""
+    try:
+        resp = http_requests.get("https://api.alternative.me/fng/?limit=1", timeout=5)
+        resp.raise_for_status()
+        data = resp.json()["data"][0]
+        return {"index": int(data["value"]), "label": data["value_classification"]}
+    except Exception as e:
+        logger.warning(f"Fear & Greed fetch failed: {e}")
+        return {"index": 0, "label": "N/A"}
+
+
+def _fetch_coingecko_global() -> dict:
+    """Fetch global market data from CoinGecko."""
+    try:
+        resp = http_requests.get("https://api.coingecko.com/api/v3/global", timeout=5)
+        resp.raise_for_status()
+        data = resp.json()["data"]
+        return {
+            "total_market_cap_b": round(data["total_market_cap"].get("usd", 0) / 1e9, 1),
+            "btc_dominance": round(data.get("market_cap_percentage", {}).get("btc", 0), 1),
+            "total_volume_24h_b": round(data["total_volume"].get("usd", 0) / 1e9, 1),
+        }
+    except Exception as e:
+        logger.warning(f"CoinGecko fetch failed: {e}")
+        return {"total_market_cap_b": 0, "btc_dominance": 0, "total_volume_24h_b": 0}
+
+
+def _fetch_binance_tickers() -> tuple:
+    """Fetch 24hr tickers from Binance Futures. Returns (top_gainers, top_losers, btc_data, eth_data)."""
+    try:
+        resp = http_requests.get("https://fapi.binance.com/fapi/v1/ticker/24hr", timeout=10)
+        resp.raise_for_status()
+        tickers = resp.json()
+
+        # Filter USDT perpetuals only
+        usdt = [t for t in tickers if t["symbol"].endswith("USDT") and float(t["quoteVolume"]) > 0]
+
+        btc_data = next((t for t in usdt if t["symbol"] == "BTCUSDT"), None)
+        eth_data = next((t for t in usdt if t["symbol"] == "ETHUSDT"), None)
+
+        # Sort by price change
+        usdt.sort(key=lambda t: float(t["priceChangePercent"]), reverse=True)
+        top_gainers = [
+            MarketMover(
+                symbol=t["symbol"],
+                price=round(float(t["lastPrice"]), 4),
+                change_24h=round(float(t["priceChangePercent"]), 2),
+                volume_24h=round(float(t["quoteVolume"]), 0),
+            )
+            for t in usdt[:10]
+        ]
+        top_losers = [
+            MarketMover(
+                symbol=t["symbol"],
+                price=round(float(t["lastPrice"]), 4),
+                change_24h=round(float(t["priceChangePercent"]), 2),
+                volume_24h=round(float(t["quoteVolume"]), 0),
+            )
+            for t in usdt[-10:][::-1]  # worst 10, reversed
+        ]
+
+        return top_gainers, top_losers, btc_data, eth_data
+    except Exception as e:
+        logger.warning(f"Binance tickers fetch failed: {e}")
+        return [], [], None, None
+
+
+def _fetch_binance_funding() -> list:
+    """Fetch extreme funding rates from Binance Futures."""
+    try:
+        resp = http_requests.get("https://fapi.binance.com/fapi/v1/premiumIndex", timeout=10)
+        resp.raise_for_status()
+        data = resp.json()
+
+        # Filter USDT, sort by abs funding rate
+        usdt = [d for d in data if d["symbol"].endswith("USDT") and d.get("lastFundingRate")]
+        usdt.sort(key=lambda d: abs(float(d["lastFundingRate"])), reverse=True)
+
+        return [
+            FundingRate(
+                symbol=d["symbol"],
+                rate=round(float(d["lastFundingRate"]) * 100, 4),
+                annual_pct=round(float(d["lastFundingRate"]) * 3 * 365 * 100, 1),
+            )
+            for d in usdt[:10]
+        ]
+    except Exception as e:
+        logger.warning(f"Binance funding fetch failed: {e}")
+        return []
+
+
+def _build_market_overview() -> dict:
+    """Build complete market overview."""
+    fg = _fetch_fear_greed()
+    cg = _fetch_coingecko_global()
+    gainers, losers, btc, eth = _fetch_binance_tickers()
+    funding = _fetch_binance_funding()
+
+    btc_price = round(float(btc["lastPrice"]), 2) if btc else 0
+    btc_change = round(float(btc["priceChangePercent"]), 2) if btc else 0
+    eth_price = round(float(eth["lastPrice"]), 2) if eth else 0
+    eth_change = round(float(eth["priceChangePercent"]), 2) if eth else 0
+
+    return MarketOverview(
+        btc_price=btc_price,
+        btc_change_24h=btc_change,
+        eth_price=eth_price,
+        eth_change_24h=eth_change,
+        fear_greed_index=fg["index"],
+        fear_greed_label=fg["label"],
+        total_market_cap_b=cg["total_market_cap_b"],
+        btc_dominance=cg["btc_dominance"],
+        total_volume_24h_b=cg["total_volume_24h_b"],
+        top_gainers=gainers,
+        top_losers=losers,
+        extreme_funding=funding,
+        generated=datetime.now(timezone.utc).isoformat(),
+    ).model_dump()
+
+
+RSS_FEEDS = [
+    ("CoinDesk", "https://www.coindesk.com/arc/outboundfeeds/rss/"),
+    ("CoinTelegraph", "https://cointelegraph.com/rss"),
+    ("Decrypt", "https://decrypt.co/feed"),
+    ("Bitcoin Magazine", "https://bitcoinmagazine.com/feed"),
+]
+
+
+def _parse_rss(source: str, url: str) -> list:
+    """Parse a single RSS feed into NewsItem dicts."""
+    items = []
+    try:
+        resp = http_requests.get(url, timeout=8, headers={"User-Agent": "PRUVIQ/1.0"})
+        resp.raise_for_status()
+        root = ET.fromstring(resp.text)
+
+        # Handle both RSS 2.0 (<channel><item>) and Atom (<entry>)
+        ns = {"atom": "http://www.w3.org/2005/Atom"}
+        rss_items = root.findall(".//item")
+        if not rss_items:
+            rss_items = root.findall(".//atom:entry", ns)
+
+        for item in rss_items[:10]:  # max 10 per source
+            title = item.findtext("title") or item.findtext("atom:title", namespaces=ns) or ""
+            link = item.findtext("link") or ""
+            if not link:
+                link_el = item.find("atom:link", ns)
+                link = link_el.get("href", "") if link_el is not None else ""
+            published = item.findtext("pubDate") or item.findtext("atom:published", namespaces=ns) or ""
+            desc = item.findtext("description") or item.findtext("atom:summary", namespaces=ns) or ""
+            # Strip HTML from description
+            if "<" in desc:
+                desc = desc[:desc.find("<")] if "<" in desc else desc
+            desc = desc.strip()[:200]
+
+            if title and link:
+                items.append({
+                    "title": title.strip(),
+                    "link": link.strip(),
+                    "source": source,
+                    "published": published.strip(),
+                    "summary": desc,
+                })
+    except Exception as e:
+        logger.warning(f"RSS fetch failed for {source}: {e}")
+    return items
+
+
+def _build_news() -> dict:
+    """Build aggregated news from RSS feeds."""
+    all_items = []
+    for source, url in RSS_FEEDS:
+        all_items.extend(_parse_rss(source, url))
+
+    # Sort by published date (most recent first) — best effort since formats vary
+    # Just keep insertion order (already per-source newest first)
+    return {
+        "items": [NewsItem(**item) for item in all_items[:40]],
+        "generated": datetime.now(timezone.utc).isoformat(),
+    }
+
+
+@app.get("/market", response_model=MarketOverview)
+async def get_market():
+    """Get market overview with BTC/ETH prices, Fear & Greed, top movers, funding rates."""
+    global _market_cache, _market_cache_time
+    now = time.time()
+    if _market_cache and (now - _market_cache_time) < MARKET_CACHE_TTL:
+        return MarketOverview(**_market_cache)
+
+    loop = asyncio.get_event_loop()
+    data = await loop.run_in_executor(None, _build_market_overview)
+    _market_cache = data
+    _market_cache_time = now
+    return MarketOverview(**data)
+
+
+@app.get("/news", response_model=NewsResponse)
+async def get_news():
+    """Get aggregated crypto news from RSS feeds."""
+    global _news_cache, _news_cache_time
+    now = time.time()
+    if _news_cache and (now - _news_cache_time) < MARKET_CACHE_TTL:
+        return NewsResponse(**_news_cache)
+
+    loop = asyncio.get_event_loop()
+    data = await loop.run_in_executor(None, _build_news)
+    _news_cache = data
+    _news_cache_time = now
+    return NewsResponse(**data)

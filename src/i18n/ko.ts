@@ -2,6 +2,7 @@ import type { TranslationKey } from './en';
 
 export const ko: Record<TranslationKey, string> = {
   // NAV
+  'nav.market': '시장',
   'nav.coins': '코인',
   'nav.simulate': '전략',
   'nav.learn': '학습',
@@ -218,7 +219,29 @@ export const ko: Record<TranslationKey, string> = {
   'coins.col_pnl': 'PnL',
   'coins.col_bars': '봉',
 
+  // Market
+  'market.tag': '시장 현황',
+  'market.title': '시장 대시보드',
+  'market.desc': '실시간 암호화폐 시장 데이터. 공포/탐욕 지수, 상승/하락 순위, 펀딩 비율, 주요 뉴스를 한눈에 확인하세요.',
+  'market.fear_greed': '공포/탐욕 지수',
+  'market.total_mcap': '총 시가총액',
+  'market.btc_dom': 'BTC 도미넌스',
+  'market.volume_24h': '24시간 거래량',
+  'market.top_gainers': '상승 TOP 10',
+  'market.top_losers': '하락 TOP 10',
+  'market.funding_rates': '극단 펀딩 비율',
+  'market.annual': '연환산',
+  'market.latest_news': '최신 뉴스',
+  'market.loading': '시장 데이터 로딩 중...',
+  'market.error': '시장 데이터 로딩 실패.',
+  'market.news_loading': '뉴스 로딩 중...',
+  'market.news_error': '뉴스 로딩 실패.',
+  'market.updated': '업데이트',
+  'market.disclaimer': '시장 데이터는 정보 제공 목적으로만 제공됩니다. 투자 조언이 아닙니다. 5분마다 갱신됩니다.',
+
   // Meta
+  'meta.market_title': '시장 대시보드 - PRUVIQ',
+  'meta.market_desc': '실시간 암호화폐 시장 현황. 공포/탐욕 지수, BTC 도미넌스, 상승/하락 순위, 펀딩 비율, 주요 뉴스.',
   'meta.coins_title': '코인 탐색기 - PRUVIQ',
   'meta.coins_desc': '500개 이상 코인의 캔들 차트와 BB Squeeze 전략 시뮬레이션. 모든 코인의 진입/청산 신호, 승률, 수익 팩터를 확인하세요.',
   'meta.home_title': 'PRUVIQ - 믿지 마세요. 검증하세요.',
