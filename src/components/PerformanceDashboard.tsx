@@ -297,7 +297,7 @@ export default function PerformanceDashboard({ lang = 'en' }: { lang?: 'en' | 'k
   const wrColor = winRateColor(s.win_rate);
 
   return (
-    <div class="fade-in">
+    <div class="fade-in" data-perf-loaded>
       {/* Header */}
       <div class="mb-8">
         <div class="font-mono text-[0.6875rem] text-[--color-accent] tracking-[0.15em] uppercase mb-3">{t.tag}</div>

@@ -14,8 +14,10 @@ export const en = {
   'hero.title2': 'Verify.',
   'hero.subtitle': 'The crypto strategy lab where every result is published — including failures.',
   'hero.desc': 'Simulate trading strategies on 500+ coins with 2+ years of data. Realistic fees, slippage, and drawdowns. No cherry-picking. Free forever.',
+  'hero.cta_primary': 'Try Live Demo',
   'hero.cta1': 'Explore Strategies',
   'hero.cta2': 'Raise Your Trading IQ',
+  'hero.beginner_note': 'Backtesting = testing a trading strategy on historical data before risking real money. Like a flight simulator for trading.',
   'hero.stat1': 'Coins Simulated',
   'hero.stat2': 'Historical Data',
   'hero.stat2_val': '2+ yrs',
@@ -297,6 +299,27 @@ export const en = {
   'about.contact_desc': 'Questions, feedback, or partnership inquiries:',
   'about.contact_email': 'pruviq@gmail.com',
   'about.contact_telegram': 'Telegram Community',
+
+  // Performance page static fallback
+  'perf.tag': 'LIVE TRADING RESULTS',
+  'perf.title': 'Every Trade Published. Including Losses.',
+  'perf.desc': 'Real results from our live trading account. BB Squeeze SHORT strategy on 535 coins. Updated daily. No cherry-picking.',
+  'perf.loading': 'Loading live performance data...',
+  'perf.stat1_label': 'Strategy',
+  'perf.stat1_val': 'BB Squeeze SHORT',
+  'perf.stat2_label': 'Coins',
+  'perf.stat2_val': '535',
+  'perf.stat3_label': 'Leverage',
+  'perf.stat3_val': '5x',
+  'perf.stat4_label': 'Data Source',
+  'perf.stat4_val': 'Live Account',
+  'perf.note': 'Performance data is fetched from our live trading API. If the dashboard above is not loading, please enable JavaScript or try refreshing.',
+
+  // Blog article CTA
+  'blog.cta_title': 'Ready to test strategies yourself?',
+  'blog.cta_desc': 'Simulate trading strategies on 535 coins with 2+ years of data. Free.',
+  'blog.cta_button': 'Try Live Demo',
+  'blog.cta_community': 'Join Community',
 
   // Footer
   'footer.about': 'About',

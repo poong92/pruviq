@@ -16,8 +16,10 @@ export const ko: Record<TranslationKey, string> = {
   'hero.title2': '검증하세요.',
   'hero.subtitle': '모든 전략을 검증하고, 실패까지 공개하는 크립토 전략 실험실.',
   'hero.desc': '500개 이상의 코인, 2년 이상의 데이터로 트레이딩 전략을 시뮬레이션하세요. 수수료, 슬리피지, 드로다운까지 현실적으로 반영. 무료.',
+  'hero.cta_primary': '라이브 데모 체험',
   'hero.cta1': '전략 탐색하기',
   'hero.cta2': '트레이딩 IQ 높이기',
+  'hero.beginner_note': '백테스팅 = 실제 돈을 투입하기 전에 과거 데이터로 전략을 테스트하는 것. 트레이딩의 비행 시뮬레이터.',
   'hero.stat1': '코인 시뮬레이션',
   'hero.stat2': '과거 데이터',
   'hero.stat2_val': '2년+',
@@ -299,6 +301,27 @@ export const ko: Record<TranslationKey, string> = {
   'about.contact_desc': '질문, 피드백, 파트너십 문의:',
   'about.contact_email': 'pruviq@gmail.com',
   'about.contact_telegram': '텔레그램 커뮤니티',
+
+  // Performance page static fallback
+  'perf.tag': '실거래 결과',
+  'perf.title': '모든 거래 공개. 손실 포함.',
+  'perf.desc': '실거래 계좌의 실제 결과. BB Squeeze SHORT 전략, 535개 코인. 매일 업데이트. 체리피킹 없음.',
+  'perf.loading': '실거래 성과 데이터 로딩 중...',
+  'perf.stat1_label': '전략',
+  'perf.stat1_val': 'BB Squeeze SHORT',
+  'perf.stat2_label': '코인',
+  'perf.stat2_val': '535개',
+  'perf.stat3_label': '레버리지',
+  'perf.stat3_val': '5배',
+  'perf.stat4_label': '데이터 소스',
+  'perf.stat4_val': '실거래 계좌',
+  'perf.note': '성과 데이터는 실거래 API에서 실시간으로 가져옵니다. 대시보드가 로딩되지 않으면 JavaScript를 활성화하거나 새로고침해 주세요.',
+
+  // Blog article CTA
+  'blog.cta_title': '직접 전략을 테스트해 보시겠습니까?',
+  'blog.cta_desc': '535개 코인, 2년 이상의 데이터로 트레이딩 전략을 시뮬레이션하세요. 무료.',
+  'blog.cta_button': '라이브 데모 체험',
+  'blog.cta_community': '커뮤니티 참여',
 
   // Footer
   'footer.about': '소개',

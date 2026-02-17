@@ -61,6 +61,24 @@ const categoryLabels: Record<string, string> = {
       <div class="prose">
         <Content />
       </div>
+
+      <!-- Article end CTA -->
+      <div class="mt-12 border-t border-[--color-border] pt-8">
+        <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] text-center">
+          <h3 class="font-bold text-lg mb-2">{t('blog.cta_title')}</h3>
+          <p class="text-[--color-text-muted] text-sm mb-4">{t('blog.cta_desc')}</p>
+          <div class="flex flex-col sm:flex-row gap-3 justify-center">
+            <a href="/ko/strategies/bb-squeeze-short#demo"
+               class="inline-block bg-[--color-accent] text-[--color-bg] px-6 py-2 rounded font-semibold text-sm hover:bg-[--color-accent-dim] transition-colors">
+              {t('blog.cta_button')} &rarr;
+            </a>
+            <a href="https://t.me/PRUVIQ" target="_blank" rel="noopener"
+               class="inline-block border border-[--color-border] text-[--color-text] px-6 py-2 rounded font-semibold text-sm hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
+              {t('blog.cta_community')}
+            </a>
+          </div>
+        </div>
+      </div>
     </div>
   </article>
 </Layout>

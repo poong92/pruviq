@@ -1,12 +1,55 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import PerformanceDashboard from '../../components/PerformanceDashboard';
+import { useTranslations } from '../../i18n/index';
+
+const t = useTranslations('en');
 ---
 
-<Layout title="Live Performance - PRUVIQ" description="Real trading results from our live account. Every trade published, including losses. BB Squeeze SHORT strategy performance.">
+<Layout title={t('meta.performance_title')} description={t('meta.performance_desc')}>
   <section class="py-12">
     <div class="max-w-6xl mx-auto px-4">
+      <!-- Static fallback for SEO / no-JS -->
+      <div id="perf-fallback">
+        <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('perf.tag')}</p>
+        <h1 class="text-3xl md:text-4xl font-bold mb-4">{t('perf.title')}</h1>
+        <p class="text-[--color-text-muted] text-lg mb-8 max-w-2xl">{t('perf.desc')}</p>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+          <div class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card]">
+            <p class="text-[--color-text-muted] text-xs font-mono">{t('perf.stat1_label')}</p>
+            <p class="font-mono text-[--color-accent] font-bold mt-1">{t('perf.stat1_val')}</p>
+          </div>
+          <div class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card]">
+            <p class="text-[--color-text-muted] text-xs font-mono">{t('perf.stat2_label')}</p>
+            <p class="font-mono text-[--color-accent] font-bold mt-1">{t('perf.stat2_val')}</p>
+          </div>
+          <div class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card]">
+            <p class="text-[--color-text-muted] text-xs font-mono">{t('perf.stat3_label')}</p>
+            <p class="font-mono text-[--color-accent] font-bold mt-1">{t('perf.stat3_val')}</p>
+          </div>
+          <div class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card]">
+            <p class="text-[--color-text-muted] text-xs font-mono">{t('perf.stat4_label')}</p>
+            <p class="font-mono text-[--color-accent] font-bold mt-1">{t('perf.stat4_val')}</p>
+          </div>
+        </div>
+        <p class="text-[--color-text-muted] text-sm mb-4">{t('perf.note')}</p>
+      </div>
+
+      <!-- Interactive dashboard (replaces fallback on load) -->
       <PerformanceDashboard client:visible lang="en" />
     </div>
   </section>
 </Layout>
+
+<script>
+  // Hide static fallback once the JS dashboard loads
+  const observer = new MutationObserver(() => {
+    const dashboard = document.querySelector('[data-perf-loaded]');
+    if (dashboard) {
+      const fallback = document.getElementById('perf-fallback');
+      if (fallback) fallback.style.display = 'none';
+      observer.disconnect();
+    }
+  });
+  observer.observe(document.body, { childList: true, subtree: true, attributes: true });
+</script>
