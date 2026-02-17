@@ -46,6 +46,25 @@ export function formatReasonLabel(reason: string): string {
   return reason;
 }
 
+/** Win rate color: >=55 accent, >=50 yellow, else red */
+export function winRateColor(wr: number): string {
+  if (wr >= 55) return 'var(--color-accent)';
+  if (wr >= 50) return 'var(--color-yellow)';
+  return 'var(--color-red)';
+}
+
+/** Profit factor color: >=1.5 accent, >=1.0 yellow, else red */
+export function profitFactorColor(pf: number): string {
+  if (pf >= 1.5) return 'var(--color-accent)';
+  if (pf >= 1.0) return 'var(--color-yellow)';
+  return 'var(--color-red)';
+}
+
+/** Sign color: >=0 accent, else red */
+export function signColor(v: number): string {
+  return v >= 0 ? 'var(--color-accent)' : 'var(--color-red)';
+}
+
 export function changeColor(v: number): string {
   return v >= 0 ? 'var(--color-up)' : 'var(--color-down)';
 }

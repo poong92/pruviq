@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'preact/hooks';
-import { formatPrice, formatUsd, formatDate, formatDateFull, formatReasonLabel } from '../utils/format';
+import { formatPrice, formatUsd, formatDate, formatDateFull, formatReasonLabel, winRateColor, profitFactorColor, signColor } from '../utils/format';
 
 function getCssVar(name: string): string {
   return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
@@ -292,9 +292,9 @@ export default function PerformanceDashboard({ lang = 'en' }: { lang?: 'en' | 'k
   const toPct = totalExits > 0 ? (s.timeout_count / totalExits) * 100 : 0;
   const otherPct = totalExits > 0 ? (s.other_count / totalExits) * 100 : 0;
 
-  const pnlColor = s.total_pnl >= 0 ? 'var(--color-accent)' : 'var(--color-red)';
-  const pfColor = s.profit_factor >= 1.5 ? 'var(--color-accent)' : s.profit_factor >= 1.0 ? 'var(--color-yellow)' : 'var(--color-red)';
-  const wrColor = s.win_rate >= 55 ? 'var(--color-accent)' : s.win_rate >= 50 ? 'var(--color-yellow)' : 'var(--color-red)';
+  const pnlColor = signColor(s.total_pnl);
+  const pfColor = profitFactorColor(s.profit_factor);
+  const wrColor = winRateColor(s.win_rate);
 
   return (
     <div class="fade-in">

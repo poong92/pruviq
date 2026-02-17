@@ -1,3 +1,5 @@
+import { winRateColor, profitFactorColor, signColor } from '../utils/format';
+
 interface ResultsData {
   win_rate: number;
   profit_factor: number;
@@ -50,9 +52,9 @@ export default function ResultsCard({ data, isDefault, lang = 'en' }: ResultsCar
   const slPct = total > 0 ? (data.sl_count / total) * 100 : 0;
   const toPct = total > 0 ? (data.timeout_count / total) * 100 : 0;
 
-  const wrColor = data.win_rate >= 55 ? 'var(--color-accent)' : data.win_rate >= 50 ? 'var(--color-yellow)' : 'var(--color-red)';
-  const pfColor = data.profit_factor >= 1.5 ? 'var(--color-accent)' : data.profit_factor >= 1.0 ? 'var(--color-yellow)' : 'var(--color-red)';
-  const retColor = data.total_return_pct >= 0 ? 'var(--color-accent)' : 'var(--color-red)';
+  const wrColor = winRateColor(data.win_rate);
+  const pfColor = profitFactorColor(data.profit_factor);
+  const retColor = signColor(data.total_return_pct);
 
   return (
     <div>
