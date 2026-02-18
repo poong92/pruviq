@@ -20,6 +20,15 @@ interface Condition {
   shift: number;
 }
 
+interface YearlyStat {
+  year: number;
+  trades: number;
+  wins: number;
+  win_rate: number;
+  total_return_pct: number;
+  profit_factor: number;
+}
+
 interface BacktestResult {
   name: string;
   direction: string;
@@ -37,6 +46,7 @@ interface BacktestResult {
   sl_count: number;
   timeout_count: number;
   equity_curve: { time: string; value: number }[];
+  yearly_stats: YearlyStat[];
   indicators_used: string[];
   conditions_count: number;
   coins_used: number;
@@ -100,6 +110,12 @@ const labels = {
     crossBelow: 'Cross Below',
     disclaimer: '* Simulation includes 0.04% futures fees + 0.02% slippage. Past performance does not guarantee future results.',
     chart: 'CUMULATIVE RETURN (%)',
+    yearly: 'YEARLY BREAKDOWN',
+    year: 'Year',
+    yearTrades: 'Trades',
+    yearReturn: 'Return',
+    yearWR: 'Win Rate',
+    yearPF: 'PF',
   },
   ko: {
     tag: '전략 빌더',
@@ -143,6 +159,12 @@ const labels = {
     crossBelow: '하향 돌파',
     disclaimer: '* 시뮬레이션은 0.04% 선물 수수료 + 0.02% 슬리피지를 포함합니다. 과거 성과는 미래 결과를 보장하지 않습니다.',
     chart: '누적 수익률 (%)',
+    yearly: '연도별 분석',
+    year: '연도',
+    yearTrades: '거래수',
+    yearReturn: '수익률',
+    yearWR: '승률',
+    yearPF: 'PF',
   },
 };
 
@@ -204,10 +226,14 @@ export default function StrategyBuilder({ lang = 'en' }: Props) {
   const seriesRef = useRef<any>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
 
-  // Get all available fields from selected indicators
+  // Get all available fields from selected indicators, grouped by indicator
   const availableFields = availableIndicators
     .filter((ind) => selectedIndicators.has(ind.id))
     .flatMap((ind) => ind.fields);
+
+  const fieldGroups = availableIndicators
+    .filter((ind) => selectedIndicators.has(ind.id))
+    .map((ind) => ({ id: ind.id, name: ind.name, fields: ind.fields }));
 
   // Boolean fields (for value: true/false)
   const booleanFields = new Set([
@@ -496,10 +522,14 @@ export default function StrategyBuilder({ lang = 'en' }: Props) {
                     op: isBool ? '==' : '>=',
                   });
                 }}
-                class="bg-[--color-bg-card] border border-[--color-border] rounded px-2 py-1.5 text-sm font-mono text-[--color-text] min-w-[140px]"
+                class="bg-[--color-bg-card] border border-[--color-border] rounded px-2 py-1.5 text-sm font-mono text-[--color-text] min-w-[160px]"
               >
-                {availableFields.map((f) => (
-                  <option key={f} value={f}>{f}</option>
+                {fieldGroups.map((g) => (
+                  <optgroup key={g.id} label={g.name}>
+                    {g.fields.map((f) => (
+                      <option key={f} value={f}>{f}</option>
+                    ))}
+                  </optgroup>
                 ))}
               </select>
 
@@ -751,6 +781,9 @@ export default function StrategyBuilder({ lang = 'en' }: Props) {
                     tp_count: result.tp_count,
                     sl_count: result.sl_count,
                     timeout_count: result.timeout_count,
+                    avg_win_pct: result.avg_win_pct,
+                    avg_loss_pct: result.avg_loss_pct,
+                    max_consecutive_losses: result.max_consecutive_losses,
                   }}
                   isDefault={false}
                   lang={lang}
@@ -763,6 +796,43 @@ export default function StrategyBuilder({ lang = 'en' }: Props) {
               <div class="bg-[--color-bg-card] border border-[--color-border] rounded-xl overflow-hidden">
                 <div class="px-4 pt-3 font-mono text-[0.625rem] text-[--color-text-muted] tracking-widest uppercase">{t.chart}</div>
                 <div ref={chartContainerRef} class="w-full h-[300px]" />
+              </div>
+            </div>
+          )}
+
+          {/* Yearly Breakdown */}
+          {result.yearly_stats?.length > 0 && (
+            <div class="bg-[--color-bg-card] border border-[--color-border] rounded-xl overflow-hidden">
+              <div class="px-4 pt-3 pb-2 font-mono text-[0.625rem] text-[--color-accent] tracking-widest uppercase">{t.yearly}</div>
+              <div class="overflow-x-auto">
+                <table class="w-full text-sm font-mono">
+                  <thead>
+                    <tr class="border-b border-[--color-border] text-[--color-text-muted] text-xs">
+                      <th class="px-4 py-2 text-left">{t.year}</th>
+                      <th class="px-4 py-2 text-right">{t.yearTrades}</th>
+                      <th class="px-4 py-2 text-right">{t.yearWR}</th>
+                      <th class="px-4 py-2 text-right">{t.yearPF}</th>
+                      <th class="px-4 py-2 text-right">{t.yearReturn}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {result.yearly_stats.map((ys) => (
+                      <tr key={ys.year} class="border-b border-[--color-border]/50 hover:bg-[--color-bg-hover] transition-colors">
+                        <td class="px-4 py-2 font-bold">{ys.year}</td>
+                        <td class="px-4 py-2 text-right text-[--color-text-muted]">{ys.trades}</td>
+                        <td class="px-4 py-2 text-right" style={{ color: ys.win_rate >= 50 ? 'var(--color-accent)' : 'var(--color-red)' }}>
+                          {ys.win_rate}%
+                        </td>
+                        <td class="px-4 py-2 text-right" style={{ color: ys.profit_factor >= 1 ? 'var(--color-accent)' : 'var(--color-red)' }}>
+                          {ys.profit_factor}
+                        </td>
+                        <td class="px-4 py-2 text-right font-bold" style={{ color: ys.total_return_pct >= 0 ? 'var(--color-accent)' : 'var(--color-red)' }}>
+                          {ys.total_return_pct > 0 ? '+' : ''}{ys.total_return_pct}%
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </div>
           )}

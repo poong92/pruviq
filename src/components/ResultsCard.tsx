@@ -9,6 +9,9 @@ interface ResultsData {
   tp_count: number;
   sl_count: number;
   timeout_count: number;
+  avg_win_pct?: number;
+  avg_loss_pct?: number;
+  max_consecutive_losses?: number;
 }
 
 interface ResultsCardProps {
@@ -25,6 +28,10 @@ const labels = {
     totalReturn: 'Total Return',
     maxDD: 'Max Drawdown',
     trades: 'trades simulated',
+    avgWin: 'Avg Win',
+    avgLoss: 'Avg Loss',
+    maxConsec: 'Max Consec. Losses',
+    rr: 'R:R Ratio',
   },
   ko: {
     live: '현재 라이브 설정',
@@ -33,6 +40,10 @@ const labels = {
     totalReturn: '총 수익률',
     maxDD: '최대 드로다운',
     trades: '건 시뮬레이션됨',
+    avgWin: '평균 수익',
+    avgLoss: '평균 손실',
+    maxConsec: '최대 연속 손실',
+    rr: 'R:R 비율',
   },
 };
 
@@ -62,12 +73,32 @@ export default function ResultsCard({ data, isDefault, lang = 'en' }: ResultsCar
         <div class="font-mono text-[0.625rem] text-[--color-accent] tracking-widest mb-3 uppercase">{t.live}</div>
       )}
 
-      <div class="grid grid-cols-2 gap-2 mb-4">
+      <div class="grid grid-cols-2 gap-2 mb-3">
         <MetricBox label={t.winRate} value={`${data.win_rate}%`} color={wrColor} />
         <MetricBox label={t.pf} value={`${data.profit_factor}`} color={pfColor} />
         <MetricBox label={t.totalReturn} value={`${data.total_return_pct > 0 ? '+' : ''}${data.total_return_pct}%`} color={retColor} />
         <MetricBox label={t.maxDD} value={`${data.max_drawdown_pct}%`} color="var(--color-red)" />
       </div>
+
+      {(data.avg_win_pct !== undefined || data.avg_loss_pct !== undefined) && (
+        <div class="grid grid-cols-3 gap-2 mb-3">
+          <MetricBox
+            label={t.avgWin}
+            value={`+${(data.avg_win_pct ?? 0).toFixed(2)}%`}
+            color="var(--color-accent)"
+          />
+          <MetricBox
+            label={t.avgLoss}
+            value={`${(data.avg_loss_pct ?? 0).toFixed(2)}%`}
+            color="var(--color-red)"
+          />
+          <MetricBox
+            label={t.maxConsec}
+            value={`${data.max_consecutive_losses ?? 0}`}
+            color="var(--color-text-muted)"
+          />
+        </div>
+      )}
 
       <div class="font-mono text-xs text-[--color-text-muted] mb-3">
         {data.total_trades.toLocaleString()} {t.trades}
