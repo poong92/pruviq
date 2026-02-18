@@ -28,16 +28,6 @@ const exchanges: Exchange[] = [
     tag: '#1 Volume',
   },
   {
-    name: 'OKX',
-    spot: { maker: 0.0008, taker: 0.001 },
-    futures: { maker: 0.0002, taker: 0.0005 },
-    discount: 0.20,
-    discountLabel: '20%',
-    link: '#',
-    available: false,
-    tag: '120+ Countries',
-  },
-  {
     name: 'Bitget',
     spot: { maker: 0.001, taker: 0.001 },
     futures: { maker: 0.0002, taker: 0.0006 },
@@ -46,6 +36,16 @@ const exchanges: Exchange[] = [
     link: 'https://partner.bitget.com/bg/71KRCS',
     available: true,
     tag: 'Copy Trading',
+  },
+  {
+    name: 'OKX',
+    spot: { maker: 0.0008, taker: 0.001 },
+    futures: { maker: 0.0002, taker: 0.0005 },
+    discount: 0.20,
+    discountLabel: '20%',
+    link: '#',
+    available: false,
+    tag: '120+ Countries',
   },
 ];
 
