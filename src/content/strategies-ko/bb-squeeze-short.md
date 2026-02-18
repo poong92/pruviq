@@ -5,8 +5,8 @@ status: "verified"
 category: "volatility"
 direction: "short"
 difficulty: "intermediate"
-winRate: 70.4
-profitFactor: 2.55
+winRate: 68.6
+profitFactor: 2.22
 maxDrawdown: 26.7
 totalPnl: "+$794"
 timeframe: "1H"
@@ -42,8 +42,8 @@ BB Squeeze SHORT는 볼린저 밴드가 켈트너 채널 안으로 수축(스퀴
 ## 백테스트 결과 (2년+, 535 코인)
 
 - **총 거래 수**: 2,898
-- **승률**: 70.4%
-- **수익 팩터**: 2.55
+- **승률**: 68.6%
+- **수익 팩터**: 2.22
 - **평균 수익**: +4.8%
 - **평균 손실**: -5.2%
 - **SL 히트율**: 7.5%

@@ -98,7 +98,7 @@ After running an honest backtest, here's what healthy metrics look like:
 | Sharpe Ratio | 1.0-3.0 | >5.0 (check your math) |
 | Sample Size | 500+ trades | <100 (insufficient data) |
 
-**Our verified strategy (BB Squeeze SHORT)**: 70.4% win rate, 2.55 profit factor, 2,898 trades across 535 coins. These numbers survived out-of-sample validation across 2024, 2025, and 2026 data.
+**Our verified strategy (BB Squeeze SHORT)**: 68.6% win rate, 2.22 profit factor, 2,898 trades across 535 coins. These numbers survived out-of-sample validation across 2024, 2025, and 2026 data.
 
 ## Common Backtesting Mistakes
 

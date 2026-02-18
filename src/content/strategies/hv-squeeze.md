@@ -31,8 +31,8 @@ The hypothesis: HV might capture volatility compression that Bollinger Bands mis
 
 | Metric | HV Squeeze | BB Squeeze | Difference |
 |--------|-----------|-----------|------------|
-| Win Rate | 58.1% | 70.4% | -12.3%p |
-| Profit Factor | 1.42 | 2.55 | -44% |
+| Win Rate | 58.1% | 68.6% | -10.5%p |
+| Profit Factor | 1.42 | 2.22 | -36% |
 | Signal Overlap | 85% | — | — |
 | Unique Signals | 15% | — | — |
 

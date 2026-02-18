@@ -5,8 +5,8 @@ status: "verified"
 category: "volatility"
 direction: "short"
 difficulty: "intermediate"
-winRate: 70.4
-profitFactor: 2.55
+winRate: 68.6
+profitFactor: 2.22
 maxDrawdown: 26.7
 totalPnl: "+$794"
 timeframe: "1H"
@@ -42,8 +42,8 @@ BB Squeeze SHORT is a volatility expansion strategy that detects when Bollinger 
 ## Backtest Results (2+ Years, 535 Coins)
 
 - **Total Trades**: 2,898
-- **Win Rate**: 70.4%
-- **Profit Factor**: 2.55
+- **Win Rate**: 68.6%
+- **Profit Factor**: 2.22
 - **Average Win**: +4.8%
 - **Average Loss**: -5.2%
 - **SL Hit Rate**: 7.5%
