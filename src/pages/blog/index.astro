@@ -1,6 +1,9 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
+import { useTranslations } from '../../i18n/index';
+
+const t = useTranslations('en');
 
 const posts = (await getCollection('blog')).sort(
   (a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
@@ -23,28 +26,25 @@ const categoryColors: Record<string, string> = {
 };
 ---
 
-<Layout title="Trading IQ - PRUVIQ" description="Raise your trading IQ. Backtesting, risk management, algorithmic strategies, and lessons from real trades. Learn what works. See what doesn't.">
+<Layout title={t('meta.blog_title')} description={t('meta.blog_desc')}>
   <section class="py-12">
     <div class="max-w-4xl mx-auto px-4">
-      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">TRADING IQ</p>
-      <h1 class="text-3xl md:text-4xl font-bold mb-4">Raise Your Trading IQ.</h1>
+      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('blog.tag')}</p>
+      <h1 class="text-3xl md:text-4xl font-bold mb-4">{t('blog.title')}</h1>
       <p class="text-[--color-text-muted] text-lg mb-12 max-w-2xl">
-        Learn what works. See what doesn't.
-        Backtesting methodology, risk management, and lessons from 535 coins
-        and $14K in killed strategies.
+        {t('blog.desc')}
       </p>
 
       {posts.length === 0 ? (
         <div class="border border-[--color-border] rounded-lg p-12 bg-[--color-bg-card] text-center">
-          <p class="font-mono text-[--color-accent] text-sm mb-4">COMING SOON</p>
+          <p class="font-mono text-[--color-accent] text-sm mb-4">{t('blog.coming_soon')}</p>
           <p class="text-[--color-text-muted] mb-6">
-            Daily insights are being prepared. Market analysis, quant education,
-            and strategy simulation updates will appear here.
+            {t('blog.coming_desc')}
           </p>
           <p class="text-[--color-text-muted] text-sm">
-            In the meantime, join
+            {t('blog.coming_cta')}
             <a href="https://t.me/PRUVIQ" target="_blank" rel="noopener" class="text-[--color-accent] hover:underline">Telegram</a>
-            for strategy discussion and updates.
+            {t('blog.coming_cta2')}
           </p>
         </div>
       ) : (

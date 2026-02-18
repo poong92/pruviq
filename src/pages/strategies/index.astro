@@ -1,6 +1,9 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
+import { useTranslations } from '../../i18n/index';
+
+const t = useTranslations('en');
 
 const allStrategies = await getCollection('strategies');
 
@@ -15,18 +18,24 @@ const statusColors: Record<string, string> = {
 };
 
 const statusLabels: Record<string, string> = {
-  verified: 'VERIFIED',
-  testing: 'TESTING',
-  killed: 'KILLED',
-  shelved: 'SHELVED',
+  verified: t('strategy.verified'),
+  testing: t('strategy.testing'),
+  killed: t('strategy.killed'),
+  shelved: t('strategy.shelved'),
 };
 
 const categoryLabels: Record<string, string> = {
-  'mean-reversion': 'Mean Reversion',
-  'momentum': 'Momentum',
-  'breakout': 'Breakout',
-  'volatility': 'Volatility',
-  'hybrid': 'Hybrid',
+  'mean-reversion': t('strategy.mean_reversion'),
+  'momentum': t('strategy.momentum'),
+  'breakout': t('strategy.breakout'),
+  'volatility': t('strategy.volatility'),
+  'hybrid': t('strategy.hybrid'),
+};
+
+const difficultyLabels: Record<string, string> = {
+  beginner: t('strategy.beginner'),
+  intermediate: t('strategy.intermediate'),
+  advanced: t('strategy.advanced'),
 };
 
 const difficultyColors: Record<string, string> = {
@@ -36,41 +45,42 @@ const difficultyColors: Record<string, string> = {
 };
 ---
 
-<Layout title="Strategy Library - PRUVIQ" description="Every strategy we've tested, with full simulation results. Verified strategies, killed strategies, and everything in between. No cherry-picking.">
+<Layout title={t('meta.strategies_title')} description={t('meta.strategies_desc')}>
   <section class="py-12">
     <div class="max-w-5xl mx-auto px-4">
-      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">STRATEGY LIBRARY</p>
-      <h1 class="text-3xl md:text-4xl font-bold mb-4">Every Strategy. Every Result.</h1>
+      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('strategies.tag')}</p>
+      <h1 class="text-3xl md:text-4xl font-bold mb-4">{t('strategies.title')}</h1>
       <p class="text-[--color-text-muted] text-lg mb-4 max-w-2xl">
-        We don't hide failures. Every strategy we've tested is documented here with full
-        backtest data, real results, and honest analysis of what worked and what didn't.
+        {t('strategies.desc')}
       </p>
       <p class="text-[--color-text-muted] text-sm mb-12 max-w-2xl">
-        {strategies.length} strategies documented &mdash;
-        {strategies.filter(s => s.data.status === 'verified').length} verified,
-        {strategies.filter(s => s.data.status === 'killed').length} killed,
-        {strategies.filter(s => s.data.status === 'shelved').length} shelved.
+        {t('strategies.count')
+          .replace('{total}', String(strategies.length))
+          .replace('{verified}', String(strategies.filter(s => s.data.status === 'verified').length))
+          .replace('{killed}', String(strategies.filter(s => s.data.status === 'killed').length))
+          .replace('{shelved}', String(strategies.filter(s => s.data.status === 'shelved').length))
+        }
       </p>
 
       <div class="mb-4 flex flex-col sm:flex-row gap-3">
         <a href="/builder"
            class="inline-flex items-center gap-2 bg-[--color-accent] text-[--color-bg] px-5 py-2.5 rounded-lg font-semibold text-sm hover:bg-[--color-accent-dim] transition-colors">
-          Build Your Own Strategy &rarr;
+          {t('hero.cta_builder')} &rarr;
         </a>
         <a href="/strategies/compare"
            class="inline-flex items-center gap-2 border border-[--color-border] text-[--color-text] px-5 py-2.5 rounded-lg font-semibold text-sm hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
-          Compare All Strategies &rarr;
+          {t('strategies.compare')} &rarr;
         </a>
       </div>
 
       <div class="mb-8 border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card] flex flex-col sm:flex-row items-start sm:items-center gap-4">
         <div class="flex-1">
-          <p class="font-mono text-[--color-accent] text-xs font-bold mb-1">NEW TO CRYPTO TRADING?</p>
-          <p class="text-[--color-text-muted] text-sm">Start with our educational guides before exploring strategies. Learn backtesting basics, risk management, and common pitfalls.</p>
+          <p class="font-mono text-[--color-accent] text-xs font-bold mb-1">{t('strategies.beginner_tag')}</p>
+          <p class="text-[--color-text-muted] text-sm">{t('strategies.beginner_desc')}</p>
         </div>
         <a href="/blog"
            class="shrink-0 border border-[--color-accent] text-[--color-accent] px-5 py-2 rounded text-sm font-semibold hover:bg-[--color-accent] hover:text-[--color-bg] transition-colors whitespace-nowrap">
-          Start Learning &rarr;
+          {t('strategies.beginner_cta')} &rarr;
         </a>
       </div>
 
@@ -90,7 +100,7 @@ const difficultyColors: Record<string, string> = {
               </div>
               <span class="text-xs font-mono px-2 py-0.5 rounded border border-[--color-border]"
                     style={`color: var(${difficultyColors[strategy.data.difficulty]})`}>
-                {strategy.data.difficulty.toUpperCase()}
+                {difficultyLabels[strategy.data.difficulty] || strategy.data.difficulty.toUpperCase()}
               </span>
             </div>
 
@@ -103,7 +113,7 @@ const difficultyColors: Record<string, string> = {
               <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 font-mono text-sm">
                 {strategy.data.winRate !== undefined && (
                   <div>
-                    <span class="text-[--color-text-muted] text-xs">Win Rate</span>
+                    <span class="text-[--color-text-muted] text-xs">{t('strategy.win_rate')}</span>
                     <p class={`font-bold ${strategy.data.winRate >= 55 ? 'text-[--color-accent]' : strategy.data.winRate >= 50 ? 'text-[--color-yellow]' : 'text-[--color-red]'}`}>
                       {strategy.data.winRate}%
                     </p>
@@ -111,7 +121,7 @@ const difficultyColors: Record<string, string> = {
                 )}
                 {strategy.data.profitFactor !== undefined && (
                   <div>
-                    <span class="text-[--color-text-muted] text-xs">Profit Factor</span>
+                    <span class="text-[--color-text-muted] text-xs">{t('strategy.profit_factor')}</span>
                     <p class={`font-bold ${strategy.data.profitFactor >= 1.5 ? 'text-[--color-accent]' : strategy.data.profitFactor >= 1.0 ? 'text-[--color-yellow]' : 'text-[--color-red]'}`}>
                       {strategy.data.profitFactor}
                     </p>
@@ -119,7 +129,7 @@ const difficultyColors: Record<string, string> = {
                 )}
                 {strategy.data.totalPnl && (
                   <div>
-                    <span class="text-[--color-text-muted] text-xs">Total PnL</span>
+                    <span class="text-[--color-text-muted] text-xs">{t('strategy.total_pnl')}</span>
                     <p class={`font-bold ${strategy.data.totalPnl.startsWith('+') ? 'text-[--color-accent]' : 'text-[--color-red]'}`}>
                       {strategy.data.totalPnl}
                     </p>
@@ -127,7 +137,7 @@ const difficultyColors: Record<string, string> = {
                 )}
                 {strategy.data.coins !== undefined && (
                   <div>
-                    <span class="text-[--color-text-muted] text-xs">Coins Tested</span>
+                    <span class="text-[--color-text-muted] text-xs">{t('strategy.coins_tested')}</span>
                     <p class="font-bold">{strategy.data.coins}</p>
                   </div>
                 )}
@@ -138,14 +148,13 @@ const difficultyColors: Record<string, string> = {
       </div>
 
       <div class="mt-12 border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] text-center">
-        <p class="font-mono text-[--color-accent] text-sm mb-2">MORE STRATEGIES COMING</p>
+        <p class="font-mono text-[--color-accent] text-sm mb-2">{t('strategies.more_tag')}</p>
         <p class="text-[--color-text-muted] text-sm mb-4">
-          We continuously test new approaches. Documented strategies will appear here
-          as they complete backtesting validation.
+          {t('strategies.more_desc')}
         </p>
         <a href="https://t.me/PRUVIQ" target="_blank" rel="noopener"
            class="inline-block bg-[--color-accent] text-[--color-bg] px-6 py-2 rounded font-semibold text-sm hover:bg-[--color-accent-dim] transition-colors">
-          Join Community &rarr;
+          {t('strategies.join')} &rarr;
         </a>
       </div>
     </div>

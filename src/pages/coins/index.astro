@@ -1,15 +1,18 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import CoinListTable from '../../components/CoinListTable';
+import { useTranslations } from '../../i18n/index';
+
+const t = useTranslations('en');
 ---
 
-<Layout title="Coin Explorer — 535 Coins with Strategy Stats - PRUVIQ" description="Explore 535 Binance Futures coins with win rate, profit factor, and strategy backtest results. Click any coin for candlestick chart and interactive simulation.">
+<Layout title={t('meta.coins_title')} description={t('meta.coins_desc')}>
   <section class="py-12">
     <div class="max-w-6xl mx-auto px-4">
-      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">COIN EXPLORER</p>
-      <h1 class="text-3xl md:text-4xl font-bold mb-4">Browse All Coins</h1>
+      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('coins.tag')}</p>
+      <h1 class="text-3xl md:text-4xl font-bold mb-4">{t('coins.title')}</h1>
       <p class="text-[--color-text-muted] text-lg mb-8 max-w-2xl">
-        535 Binance Futures coins with pre-computed strategy stats. Sort by win rate, profit factor, or returns. Click any coin for interactive chart and simulation.
+        {t('coins.desc')}
       </p>
       <CoinListTable client:visible lang="en" apiUrl="https://api.pruviq.com" />
     </div>
