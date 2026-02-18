@@ -3,10 +3,8 @@ import type { TranslationKey } from './en';
 export const ko: Record<TranslationKey, string> = {
   // NAV
   'nav.market': '시장',
-  'nav.coins': '코인',
-  'nav.simulate': '전략',
+  'nav.simulate': '시뮬레이션',
   'nav.learn': '학습',
-  'nav.performance': '실거래',
   'nav.fees': '수수료',
   'nav.lang': 'EN',
 

@@ -1,0 +1,115 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+import { useTranslations } from '../../../i18n/index';
+
+const t = useTranslations('ko');
+
+// Get both Korean and English posts
+const koPosts = await getCollection('blog-ko');
+const enPosts = await getCollection('blog');
+const koIds = new Set(koPosts.map(p => p.id));
+
+// Combine: Korean posts + English posts without Korean version
+const allPosts = [
+  ...koPosts.map(p => ({ ...p, isKorean: true })),
+  ...enPosts.filter(p => !koIds.has(p.id)).map(p => ({ ...p, isKorean: false })),
+].sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
+
+// Group by level
+const beginner = allPosts.filter(p =>
+  p.data.tags?.includes('beginners') ||
+  p.id === 'what-is-bb-squeeze' ||
+  p.id === 'risk-management-101' ||
+  p.id === 'why-pruviq' ||
+  p.id === 'crypto-trading-fees-explained'
+);
+
+const intermediate = allPosts.filter(p =>
+  ['rsi-oversold-overbought-guide', 'ema-crossover-strategy-guide', 'macd-divergence-trading-guide',
+   'volume-analysis-crypto-trading', 'stochastic-adx-trend-strength', 'sl-tp-optimization-guide',
+   'save-on-binance-futures-fees'].includes(p.id)
+);
+
+const advanced = allPosts.filter(p =>
+  p.data.category === 'quant' ||
+  p.data.category === 'market' ||
+  ['tp8-decision-process'].includes(p.id)
+);
+
+const levelConfig = [
+  { level: 'beginner', label: '초급', title: '여기서 시작하세요', desc: '크립토 트레이딩이 처음이신가요? 기본 개념부터 배워보세요.', color: 'green', posts: beginner },
+  { level: 'intermediate', label: '중급', title: '지표 & 전술', desc: '트레이딩 도구의 원리와 실전 활용법을 익히세요.', color: 'yellow', posts: intermediate },
+  { level: 'advanced', label: '고급', title: '퀀트 & 전략', desc: '백테스팅, 포지션 사이징, 실제 의사결정 과정.', color: 'red', posts: advanced },
+];
+---
+
+<Layout title="학습 — 크립토 트레이딩 교육 | PRUVIQ" description="초급부터 고급까지 무료 크립토 트레이딩 교육. 지표, 백테스팅, 리스크 관리, 퀀트 트레이딩을 실제 데이터로 배우세요.">
+
+  <!-- HERO -->
+  <section class="py-16">
+    <div class="max-w-5xl mx-auto px-4">
+      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">교육</p>
+      <h1 class="text-3xl md:text-5xl font-bold mb-4">
+        트레이딩을 배우세요.<br/>과대광고 없이. 실제 데이터로.
+      </h1>
+      <p class="text-[--color-text-muted] text-lg mb-4 max-w-2xl">
+        레벨별로 정리된 {allPosts.length}개 가이드. 모든 주장은 데이터로 뒷받침됩니다.
+        유료 강의도, 업셀링도 없습니다 — 명확한 설명만 있습니다.
+      </p>
+    </div>
+  </section>
+
+  <!-- LEVELS -->
+  {levelConfig.map(({ level, label, title, desc, color, posts: levelPosts }) => (
+    <section class="pb-12 border-t border-[--color-border] pt-12">
+      <div class="max-w-5xl mx-auto px-4">
+        <div class="flex items-center gap-3 mb-2">
+          <span class={`text-xs font-mono px-2 py-0.5 rounded bg-${color}-500/10 text-${color}-400 border border-${color}-500/20`}>
+            {label}
+          </span>
+          <h2 class="text-2xl font-bold">{title}</h2>
+        </div>
+        <p class="text-[--color-text-muted] text-sm mb-6">{desc}</p>
+
+        <div class="grid md:grid-cols-2 gap-4">
+          {levelPosts.map(post => (
+            <a href={post.isKorean ? `/ko/learn/${post.id}` : `/learn/${post.id}`}
+               class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card] card-hover block group">
+              <div class="flex items-center gap-2 mb-1">
+                <h3 class="font-bold group-hover:text-[--color-accent] transition-colors text-sm">
+                  {post.data.title}
+                </h3>
+                {!post.isKorean && (
+                  <span class="font-mono text-[10px] px-1.5 py-0.5 rounded bg-[--color-border] text-[--color-text-muted] shrink-0">EN</span>
+                )}
+              </div>
+              <p class="text-[--color-text-muted] text-xs line-clamp-2">{post.data.description}</p>
+              {post.data.tags && (
+                <div class="flex flex-wrap gap-1 mt-2">
+                  {post.data.tags.slice(0, 3).map(tag => (
+                    <span class="text-[10px] font-mono text-[--color-text-muted] bg-[--color-border]/50 px-1.5 py-0.5 rounded">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  ))}
+
+  <!-- CTA -->
+  <section class="pb-16 border-t border-[--color-border] pt-12">
+    <div class="max-w-5xl mx-auto px-4 text-center">
+      <h2 class="text-xl font-bold mb-3">배운 것을 테스트할 준비가 되셨나요?</h2>
+      <p class="text-[--color-text-muted] text-sm mb-6">전략을 만들고 535개 이상의 코인에서 실행하세요 — 무료, 계정 불필요.</p>
+      <a href="/ko/simulate" class="inline-block bg-[--color-accent] text-[--color-bg] px-6 py-2.5 rounded font-semibold text-sm hover:opacity-90 transition-opacity">
+        시뮬레이터 사용하기 &rarr;
+      </a>
+    </div>
+  </section>
+
+</Layout>

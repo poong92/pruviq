@@ -22,23 +22,22 @@ const enURL = new URL(basePath, Astro.site || 'https://pruviq.com');
 const koURL = new URL(`/ko${basePath === '/' ? '' : basePath}`, Astro.site || 'https://pruviq.com');
 
 const marketPath = lang === 'ko' ? '/ko/market' : '/market';
-const coinsPath = lang === 'ko' ? '/ko/coins' : '/coins';
-const performancePath = lang === 'ko' ? '/ko/performance' : '/performance';
-const strategiesPath = lang === 'ko' ? '/ko/strategies' : '/strategies';
-const blogPath = lang === 'ko' ? '/ko/blog' : '/blog';
+const simulatePath = lang === 'ko' ? '/ko/simulate' : '/simulate';
+const learnPath = lang === 'ko' ? '/ko/learn' : '/learn';
 const feesPath = lang === 'ko' ? '/ko/fees' : '/fees';
 const aboutPath = lang === 'ko' ? '/ko/about' : '/about';
 const changelogPath = lang === 'ko' ? '/ko/changelog' : '/changelog';
 const privacyPath = lang === 'ko' ? '/ko/privacy' : '/privacy';
 const termsPath = lang === 'ko' ? '/ko/terms' : '/terms';
 
+// Legacy paths (for footer/redirects)
+const strategiesPath = lang === 'ko' ? '/ko/strategies' : '/strategies';
+
 // Active nav detection
 const navItems = [
   { href: marketPath, match: '/market', label: t('nav.market') },
-  { href: coinsPath, match: '/coins', label: t('nav.coins') },
-  { href: performancePath, match: '/performance', label: t('nav.performance') },
-  { href: strategiesPath, match: '/strategies', label: t('nav.simulate') },
-  { href: blogPath, match: '/blog', label: t('nav.learn') },
+  { href: simulatePath, match: '/simulate', label: t('nav.simulate') },
+  { href: learnPath, match: '/learn', label: t('nav.learn') },
   { href: feesPath, match: '/fees', label: t('nav.fees') },
 ];
 const isActive = (match: string) => basePath.startsWith(match);
@@ -225,16 +224,14 @@ const isActive = (match: string) => basePath.startsWith(match);
               <p class="font-mono text-[--color-text-muted] text-xs uppercase tracking-wider mb-3">{t('footer.col_product')}</p>
               <div class="flex flex-col gap-2">
                 <a href={marketPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('nav.market')}</a>
-                <a href={coinsPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('nav.coins')}</a>
-                <a href={strategiesPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('footer.strategies')}</a>
-                <a href={performancePath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('nav.performance')}</a>
+                <a href={simulatePath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('nav.simulate')}</a>
                 <a href={feesPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('footer.fees')}</a>
               </div>
             </div>
             <div>
               <p class="font-mono text-[--color-text-muted] text-xs uppercase tracking-wider mb-3">{t('footer.col_resources')}</p>
               <div class="flex flex-col gap-2">
-                <a href={blogPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('footer.learn')}</a>
+                <a href={learnPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('nav.learn')}</a>
                 <a href={aboutPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('footer.about')}</a>
                 <a href={changelogPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('footer.changelog')}</a>
                 <a href="https://t.me/PRUVIQ" target="_blank" rel="noopener" class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('footer.telegram')}</a>

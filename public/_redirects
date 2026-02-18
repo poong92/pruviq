@@ -1,0 +1,19 @@
+# PRUVIQ v1.2 redirects — old pages to new structure
+/builder /simulate 301
+/builder/* /simulate 301
+/coins /simulate 301
+/coins/* /simulate 301
+/performance /simulate 301
+/performance/* /simulate 301
+/blog /learn 301
+/blog/* /learn 301
+
+# KO equivalents
+/ko/builder /ko/simulate 301
+/ko/builder/* /ko/simulate 301
+/ko/coins /ko/simulate 301
+/ko/coins/* /ko/simulate 301
+/ko/performance /ko/simulate 301
+/ko/performance/* /ko/simulate 301
+/ko/blog /ko/learn 301
+/ko/blog/* /ko/learn 301

@@ -1,0 +1,103 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+import { useTranslations } from '../../i18n/index';
+
+const t = useTranslations('en');
+
+const posts = (await getCollection('blog')).sort(
+  (a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
+);
+
+// Group by level based on tags and category
+const beginner = posts.filter(p =>
+  p.data.tags?.includes('beginners') ||
+  p.id === 'what-is-bb-squeeze' ||
+  p.id === 'risk-management-101' ||
+  p.id === 'why-pruviq' ||
+  p.id === 'crypto-trading-fees-explained'
+);
+
+const intermediate = posts.filter(p =>
+  ['rsi-oversold-overbought-guide', 'ema-crossover-strategy-guide', 'macd-divergence-trading-guide',
+   'volume-analysis-crypto-trading', 'stochastic-adx-trend-strength', 'sl-tp-optimization-guide',
+   'save-on-binance-futures-fees'].includes(p.id)
+);
+
+const advanced = posts.filter(p =>
+  p.data.category === 'quant' ||
+  p.data.category === 'market' ||
+  ['tp8-decision-process'].includes(p.id)
+);
+
+const levelConfig = [
+  { level: 'beginner', label: 'BEGINNER', title: 'Start Here', desc: 'New to crypto trading? These guides cover the fundamentals.', color: 'green', posts: beginner },
+  { level: 'intermediate', label: 'INTERMEDIATE', title: 'Indicators & Tactics', desc: 'Understand the tools and how to use them in real strategies.', color: 'yellow', posts: intermediate },
+  { level: 'advanced', label: 'ADVANCED', title: 'Quant & Strategy', desc: 'Backtesting, position sizing, and real decision-making.', color: 'red', posts: advanced },
+];
+---
+
+<Layout title="Learn — Crypto Trading Education | PRUVIQ" description="Free crypto trading education from beginner to advanced. Learn indicators, backtesting, risk management, and quantitative trading — all with real data, no hype.">
+
+  <!-- HERO -->
+  <section class="py-16">
+    <div class="max-w-5xl mx-auto px-4">
+      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">EDUCATION</p>
+      <h1 class="text-3xl md:text-5xl font-bold mb-4">
+        Learn Trading.<br/>No Hype. Real Data.
+      </h1>
+      <p class="text-[--color-text-muted] text-lg mb-4 max-w-2xl">
+        {posts.length} guides organized by level. Every claim backed by data.
+        No paid courses, no upsells — just clear explanations.
+      </p>
+    </div>
+  </section>
+
+  <!-- LEVELS -->
+  {levelConfig.map(({ level, label, title, desc, color, posts: levelPosts }) => (
+    <section class="pb-12 border-t border-[--color-border] pt-12">
+      <div class="max-w-5xl mx-auto px-4">
+        <div class="flex items-center gap-3 mb-2">
+          <span class={`text-xs font-mono px-2 py-0.5 rounded bg-${color}-500/10 text-${color}-400 border border-${color}-500/20`}>
+            {label}
+          </span>
+          <h2 class="text-2xl font-bold">{title}</h2>
+        </div>
+        <p class="text-[--color-text-muted] text-sm mb-6">{desc}</p>
+
+        <div class="grid md:grid-cols-2 gap-4">
+          {levelPosts.map(post => (
+            <a href={`/learn/${post.id}`}
+               class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card] card-hover block group">
+              <h3 class="font-bold mb-1 group-hover:text-[--color-accent] transition-colors text-sm">
+                {post.data.title}
+              </h3>
+              <p class="text-[--color-text-muted] text-xs line-clamp-2">{post.data.description}</p>
+              {post.data.tags && (
+                <div class="flex flex-wrap gap-1 mt-2">
+                  {post.data.tags.slice(0, 3).map(tag => (
+                    <span class="text-[10px] font-mono text-[--color-text-muted] bg-[--color-border]/50 px-1.5 py-0.5 rounded">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  ))}
+
+  <!-- CTA -->
+  <section class="pb-16 border-t border-[--color-border] pt-12">
+    <div class="max-w-5xl mx-auto px-4 text-center">
+      <h2 class="text-xl font-bold mb-3">Ready to test what you've learned?</h2>
+      <p class="text-[--color-text-muted] text-sm mb-6">Build a strategy and run it on 535+ coins — free, no account needed.</p>
+      <a href="/simulate" class="inline-block bg-[--color-accent] text-[--color-bg] px-6 py-2.5 rounded font-semibold text-sm hover:opacity-90 transition-opacity">
+        Try the Simulator &rarr;
+      </a>
+    </div>
+  </section>
+
+</Layout>

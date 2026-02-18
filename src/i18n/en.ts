@@ -1,10 +1,8 @@
 export const en = {
   // NAV
   'nav.market': 'Market',
-  'nav.coins': 'Coins',
-  'nav.simulate': 'Strategies',
+  'nav.simulate': 'Simulate',
   'nav.learn': 'Learn',
-  'nav.performance': 'Performance',
   'nav.fees': 'Fees',
   'nav.lang': 'KO',
 

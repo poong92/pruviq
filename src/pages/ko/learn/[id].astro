@@ -67,12 +67,10 @@ const categoryLabels: Record<string, string> = {
         <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] text-center">
           <h3 class="font-bold text-lg mb-2">{t('blog.cta_title')}</h3>
           <p class="text-[--color-text-muted] text-sm mb-4">{t('blog.cta_desc')}</p>
-          <div class="flex flex-col sm:flex-row gap-3 justify-center">
-            <a href="/ko/simulate"
-               class="inline-block bg-[--color-accent] text-[--color-bg] px-6 py-2 rounded font-semibold text-sm hover:bg-[--color-accent-dim] transition-colors">
-              {t('blog.cta_button')} &rarr;
-            </a>
-          </div>
+          <a href="/ko/simulate"
+             class="inline-block bg-[--color-accent] text-[--color-bg] px-6 py-2 rounded font-semibold text-sm hover:bg-[--color-accent-dim] transition-colors">
+            {t('blog.cta_button')} &rarr;
+          </a>
         </div>
       </div>
     </div>
