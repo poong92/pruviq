@@ -196,9 +196,9 @@ export const ko: Record<TranslationKey, string> = {
 
   // Fees page
   'fees.tag': '거래소 수수료',
-  'fees.title1': '과도한 수수료 지불을 멈추세요.',
-  'fees.title2': '모든 거래소를 비교하세요.',
-  'fees.desc': '수수료는 매 거래마다 수익을 갉아먹습니다. 주요 거래소를 비교해 두었습니다. PRUVIQ를 통해 가입하고 할인을 받으세요.',
+  'fees.title1': '수수료 비교.',
+  'fees.title2': '매 거래마다 절약.',
+  'fees.desc': '3개 거래소, 현물 & 선물 수수료 한눈에. PRUVIQ를 통해 가입하면 최대 20% 할인.',
   'fees.disclosure': '제휴 공개: PRUVIQ는 추천 링크로 가입 시 거래소로부터 수수료를 받습니다. 회원의 수수료 할인에는 영향이 없습니다.',
 
   // Changelog

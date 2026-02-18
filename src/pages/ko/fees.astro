@@ -31,99 +31,112 @@ const t = useTranslations('ko');
     </div>
   </section>
 
-  <!-- MULTI-EXCHANGE COMPARISON -->
-  <section class="pb-20 border-t border-[--color-border] pt-12">
+  <!-- 현물 수수료 비교 -->
+  <section class="pb-12 border-t border-[--color-border] pt-12">
     <div class="max-w-5xl mx-auto px-4">
-      <h2 class="text-2xl font-bold mb-8">선물 수수료 비교 (VIP 0 / 기본 등급)</h2>
+      <h2 class="text-2xl font-bold mb-2">현물 수수료</h2>
+      <p class="text-[--color-text-muted] text-sm mb-6">기본 등급 (VIP 0). 암호화폐 직접 매매.</p>
 
-      <div class="border border-[--color-border] rounded-lg overflow-x-auto mb-8">
-        <table class="w-full text-sm min-w-[700px]">
+      <div class="border border-[--color-border] rounded-lg overflow-x-auto">
+        <table class="w-full text-sm">
           <thead>
             <tr class="bg-[--color-bg-card]">
               <th class="text-left p-4 font-mono text-[--color-text-muted]">거래소</th>
               <th class="text-center p-4 font-mono text-[--color-text-muted]">메이커</th>
               <th class="text-center p-4 font-mono text-[--color-text-muted]">테이커</th>
               <th class="text-center p-4 font-mono text-[--color-accent]">PRUVIQ 할인</th>
-              <th class="text-center p-4 font-mono text-[--color-text-muted]">기간</th>
               <th class="text-center p-4 font-mono"></th>
             </tr>
           </thead>
           <tbody>
             <tr class="border-t border-[--color-border]">
-              <td class="p-4">
-                <span class="font-bold">Binance</span>
-                <p class="text-[--color-text-muted] text-xs mt-1">세계 최대 거래량</p>
-              </td>
-              <td class="p-4 text-center font-mono">0.020%</td>
-              <td class="p-4 text-center font-mono">0.050%</td>
-              <td class="p-4 text-center font-mono font-bold text-[--color-accent]">
-                <span class="block">현물 19%</span>
-                <span class="block text-xs">선물 9%</span>
-              </td>
-              <td class="p-4 text-center text-xs text-[--color-text-muted]">12개월</td>
+              <td class="p-4 font-bold">Binance</td>
+              <td class="p-4 text-center font-mono">0.10%</td>
+              <td class="p-4 text-center font-mono">0.10%</td>
+              <td class="p-4 text-center font-mono font-bold text-[--color-accent]">최대 10% 할인</td>
               <td class="p-4 text-center">
                 <a href="https://accounts.binance.com/register?ref=PRUVIQ" target="_blank" rel="noopener"
-                   class="inline-block bg-[--color-accent] text-[--color-bg] px-4 py-1.5 rounded text-xs font-semibold whitespace-nowrap hover:opacity-90 transition-opacity">
+                   class="inline-block bg-[--color-accent] text-[--color-bg] px-4 py-1.5 rounded text-xs font-semibold hover:opacity-90 transition-opacity">
                   가입하기 &rarr;
                 </a>
               </td>
             </tr>
             <tr class="border-t border-[--color-border] bg-[--color-bg-card]">
-              <td class="p-4">
-                <span class="font-bold">Bybit</span>
-                <p class="text-[--color-text-muted] text-xs mt-1">선물 트레이더 최적</p>
-              </td>
-              <td class="p-4 text-center font-mono">0.020%</td>
-              <td class="p-4 text-center font-mono">0.055%</td>
-              <td class="p-4 text-center font-mono font-bold text-[--color-accent]">20% 할인</td>
-              <td class="p-4 text-center text-xs text-[--color-accent]">평생</td>
+              <td class="p-4 font-bold">OKX</td>
+              <td class="p-4 text-center font-mono">0.08%</td>
+              <td class="p-4 text-center font-mono">0.10%</td>
+              <td class="p-4 text-center font-mono font-bold text-[--color-accent]">최대 20% 할인</td>
               <td class="p-4 text-center">
-                <span class="inline-block bg-[--color-border] text-[--color-text-muted] px-4 py-1.5 rounded text-xs font-semibold whitespace-nowrap cursor-default">
+                <span class="inline-block bg-[--color-border] text-[--color-text-muted] px-4 py-1.5 rounded text-xs font-semibold cursor-default">
                   준비 중
                 </span>
               </td>
             </tr>
             <tr class="border-t border-[--color-border]">
-              <td class="p-4">
-                <span class="font-bold">OKX</span>
-                <p class="text-[--color-text-muted] text-xs mt-1">120개국 이상 지원</p>
-              </td>
-              <td class="p-4 text-center font-mono">0.020%</td>
-              <td class="p-4 text-center font-mono">0.050%</td>
-              <td class="p-4 text-center font-mono font-bold text-[--color-accent]">20% 할인</td>
-              <td class="p-4 text-center text-xs text-[--color-accent]">평생</td>
+              <td class="p-4 font-bold">Bitget</td>
+              <td class="p-4 text-center font-mono">0.10%</td>
+              <td class="p-4 text-center font-mono">0.10%</td>
+              <td class="p-4 text-center font-mono font-bold text-[--color-accent]">최대 20% 할인</td>
               <td class="p-4 text-center">
-                <span class="inline-block bg-[--color-border] text-[--color-text-muted] px-4 py-1.5 rounded text-xs font-semibold whitespace-nowrap cursor-default">
+                <span class="inline-block bg-[--color-border] text-[--color-text-muted] px-4 py-1.5 rounded text-xs font-semibold cursor-default">
                   준비 중
                 </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- 선물 수수료 비교 -->
+  <section class="pb-12 border-t border-[--color-border] pt-12">
+    <div class="max-w-5xl mx-auto px-4">
+      <h2 class="text-2xl font-bold mb-2">선물 수수료</h2>
+      <p class="text-[--color-text-muted] text-sm mb-6">기본 등급 (VIP 0). 레버리지 무기한 계약.</p>
+
+      <div class="border border-[--color-border] rounded-lg overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="bg-[--color-bg-card]">
+              <th class="text-left p-4 font-mono text-[--color-text-muted]">거래소</th>
+              <th class="text-center p-4 font-mono text-[--color-text-muted]">메이커</th>
+              <th class="text-center p-4 font-mono text-[--color-text-muted]">테이커</th>
+              <th class="text-center p-4 font-mono text-[--color-accent]">PRUVIQ 할인</th>
+              <th class="text-center p-4 font-mono"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="border-t border-[--color-border]">
+              <td class="p-4 font-bold">Binance</td>
+              <td class="p-4 text-center font-mono">0.020%</td>
+              <td class="p-4 text-center font-mono">0.050%</td>
+              <td class="p-4 text-center font-mono font-bold text-[--color-accent]">최대 10% 할인</td>
+              <td class="p-4 text-center">
+                <a href="https://accounts.binance.com/register?ref=PRUVIQ" target="_blank" rel="noopener"
+                   class="inline-block bg-[--color-accent] text-[--color-bg] px-4 py-1.5 rounded text-xs font-semibold hover:opacity-90 transition-opacity">
+                  가입하기 &rarr;
+                </a>
               </td>
             </tr>
             <tr class="border-t border-[--color-border] bg-[--color-bg-card]">
-              <td class="p-4">
-                <span class="font-bold">Bitget</span>
-                <p class="text-[--color-text-muted] text-xs mt-1">카피 트레이딩 + 온체인</p>
-              </td>
+              <td class="p-4 font-bold">OKX</td>
               <td class="p-4 text-center font-mono">0.020%</td>
-              <td class="p-4 text-center font-mono">0.060%</td>
-              <td class="p-4 text-center font-mono font-bold text-[--color-accent]">20% 할인</td>
-              <td class="p-4 text-center text-xs text-[--color-text-muted]">성과 기반</td>
+              <td class="p-4 text-center font-mono">0.050%</td>
+              <td class="p-4 text-center font-mono font-bold text-[--color-accent]">최대 20% 할인</td>
               <td class="p-4 text-center">
-                <span class="inline-block bg-[--color-border] text-[--color-text-muted] px-4 py-1.5 rounded text-xs font-semibold whitespace-nowrap cursor-default">
+                <span class="inline-block bg-[--color-border] text-[--color-text-muted] px-4 py-1.5 rounded text-xs font-semibold cursor-default">
                   준비 중
                 </span>
               </td>
             </tr>
             <tr class="border-t border-[--color-border]">
-              <td class="p-4">
-                <span class="font-bold">MEXC</span>
-                <p class="text-[--color-text-muted] text-xs mt-1">메이커 수수료 무료</p>
-              </td>
-              <td class="p-4 text-center font-mono text-[--color-accent]">0.000%</td>
+              <td class="p-4 font-bold">Bitget</td>
               <td class="p-4 text-center font-mono">0.020%</td>
-              <td class="p-4 text-center font-mono font-bold text-[--color-accent]">10% 할인</td>
-              <td class="p-4 text-center text-xs text-[--color-accent]">평생</td>
+              <td class="p-4 text-center font-mono">0.060%</td>
+              <td class="p-4 text-center font-mono font-bold text-[--color-accent]">최대 20% 할인</td>
               <td class="p-4 text-center">
-                <span class="inline-block bg-[--color-border] text-[--color-text-muted] px-4 py-1.5 rounded text-xs font-semibold whitespace-nowrap cursor-default">
+                <span class="inline-block bg-[--color-border] text-[--color-text-muted] px-4 py-1.5 rounded text-xs font-semibold cursor-default">
                   준비 중
                 </span>
               </td>
@@ -132,25 +145,29 @@ const t = useTranslations('ko');
         </table>
       </div>
 
-      <p class="text-[--color-text-muted] text-xs mb-8">
+      <p class="text-[--color-text-muted] text-xs mt-4">
         표시된 수수료는 기본 등급(VIP 0) 기준입니다. 거래량이 높으면 자동으로 낮은 등급이 적용됩니다.
         추천 할인은 VIP 등급 할인 위에 추가 적용됩니다. 최종 업데이트: 2026년 2월.
       </p>
+    </div>
+  </section>
 
-      <!-- Why it matters -->
-      <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] card-hover mb-8">
+  <!-- 수수료가 중요한 이유 -->
+  <section class="pb-12 border-t border-[--color-border] pt-12">
+    <div class="max-w-5xl mx-auto px-4">
+      <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] card-hover">
         <h3 class="font-mono text-[--color-accent] text-sm mb-4">수수료가 중요한 이유</h3>
         <div class="grid md:grid-cols-3 gap-6 text-center">
           <div>
-            <p class="font-mono text-[--color-red] text-2xl font-bold">$1,200</p>
-            <p class="text-[--color-text-muted] text-sm mt-1">월 $100K 거래량 기준 연간 수수료 (기본)</p>
+            <p class="font-mono text-[--color-red] text-2xl font-bold">$600</p>
+            <p class="text-[--color-text-muted] text-sm mt-1">월 $100K 거래량 기준 연간 수수료 (선물, 기본)</p>
           </div>
           <div>
-            <p class="font-mono text-[--color-accent] text-2xl font-bold">$960</p>
-            <p class="text-[--color-text-muted] text-sm mt-1">PRUVIQ 추천 적용 시 (20% 절약)</p>
+            <p class="font-mono text-[--color-accent] text-2xl font-bold">$540</p>
+            <p class="text-[--color-text-muted] text-sm mt-1">PRUVIQ 추천 적용 시 (10% 절약)</p>
           </div>
           <div>
-            <p class="font-mono text-[--color-accent] text-2xl font-bold">$240</p>
+            <p class="font-mono text-[--color-accent] text-2xl font-bold">$60+</p>
             <p class="text-[--color-text-muted] text-sm mt-1">매년 계정에 남는 금액</p>
           </div>
         </div>
@@ -158,125 +175,40 @@ const t = useTranslations('ko');
     </div>
   </section>
 
-  <!-- DEX COMPARISON -->
+  <!-- 어떤 거래소가 맞을까? -->
   <section class="pb-20 border-t border-[--color-border] pt-12">
     <div class="max-w-5xl mx-auto px-4">
-      <h2 class="text-2xl font-bold mb-4">탈중앙화 거래소 (DEX)</h2>
-      <p class="text-[--color-text-muted] text-sm mb-8">
-        온체인 트레이딩을 선호하시나요? 이 DEX들은 KYC 없이 경쟁력 있는 선물 수수료를 제공합니다.
-      </p>
+      <h2 class="text-2xl font-bold mb-8">어떤 거래소가 나에게 맞을까?</h2>
 
       <div class="grid md:grid-cols-3 gap-6">
         <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] card-hover">
-          <h3 class="font-bold mb-2">dYdX</h3>
-          <div class="space-y-2 text-sm">
-            <div class="flex justify-between">
-              <span class="text-[--color-text-muted]">메이커</span>
-              <span class="font-mono">0.020%</span>
-            </div>
-            <div class="flex justify-between">
-              <span class="text-[--color-text-muted]">테이커</span>
-              <span class="font-mono">0.050%</span>
-            </div>
-            <div class="flex justify-between">
-              <span class="text-[--color-text-muted]">추천</span>
-              <span class="font-mono text-[--color-accent]">최대 50%</span>
-            </div>
-          </div>
-          <p class="text-[--color-text-muted] text-xs mt-3">온체인 즉시 USDC 출금</p>
-        </div>
-
-        <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] card-hover">
-          <h3 class="font-bold mb-2">Hyperliquid</h3>
-          <div class="space-y-2 text-sm">
-            <div class="flex justify-between">
-              <span class="text-[--color-text-muted]">메이커</span>
-              <span class="font-mono">0.010%</span>
-            </div>
-            <div class="flex justify-between">
-              <span class="text-[--color-text-muted]">테이커</span>
-              <span class="font-mono">0.035%</span>
-            </div>
-            <div class="flex justify-between">
-              <span class="text-[--color-text-muted]">추천</span>
-              <span class="font-mono text-[--color-accent]">4% 할인</span>
-            </div>
-          </div>
-          <p class="text-[--color-text-muted] text-xs mt-3">가장 빠르게 성장하는 선물 DEX</p>
-        </div>
-
-        <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] card-hover">
-          <h3 class="font-bold mb-2">GMX</h3>
-          <div class="space-y-2 text-sm">
-            <div class="flex justify-between">
-              <span class="text-[--color-text-muted]">진입/청산</span>
-              <span class="font-mono">0.050-0.070%</span>
-            </div>
-            <div class="flex justify-between">
-              <span class="text-[--color-text-muted]">차입</span>
-              <span class="font-mono">변동</span>
-            </div>
-            <div class="flex justify-between">
-              <span class="text-[--color-text-muted]">추천</span>
-              <span class="font-mono text-[--color-accent]">5-15%</span>
-            </div>
-          </div>
-          <p class="text-[--color-text-muted] text-xs mt-3">ETH + esGMX 보상</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- WHICH EXCHANGE -->
-  <section class="pb-20 border-t border-[--color-border] pt-12">
-    <div class="max-w-5xl mx-auto px-4">
-      <h2 class="text-2xl font-bold mb-8">어떤 거래소를 사용해야 할까요?</h2>
-
-      <div class="space-y-6">
-        <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] card-hover">
-          <div class="flex items-center gap-3 mb-3">
-            <span class="font-mono text-[--color-accent] font-bold">최대 거래량</span>
-          </div>
-          <h3 class="font-bold mb-2">Binance &mdash; 유동성과 낮은 슬리피지 최적</h3>
+          <div class="font-mono text-[--color-accent] text-xs font-bold mb-3">거래량 1위</div>
+          <h3 class="font-bold mb-2">Binance</h3>
           <p class="text-[--color-text-muted] text-sm">
-            크립토 최대 오더북. 큰 포지션이나 시장가 주문을 자주 사용한다면
-            바이낸스의 유동성은 거래당 슬리피지를 줄여줍니다.
-            PRUVIQ의 시뮬레이션은 주로 바이낸스 선물 데이터로 테스트됩니다.
+            크립토 최대 오더북. 최고의 유동성과 최저 슬리피지.
+            PRUVIQ의 시뮬레이션은 바이낸스 선물 데이터를 사용합니다.
           </p>
+          <p class="font-mono text-xs mt-3 text-[--color-accent]">할인: 최대 10%</p>
         </div>
 
         <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] card-hover">
-          <div class="flex items-center gap-3 mb-3">
-            <span class="font-mono text-[--color-accent] font-bold">평생 할인</span>
-          </div>
-          <h3 class="font-bold mb-2">Bybit &mdash; 장기 수수료 절약 최적</h3>
+          <div class="font-mono text-[--color-accent] text-xs font-bold mb-3">120개국 이상</div>
+          <h3 class="font-bold mb-2">OKX</h3>
           <p class="text-[--color-text-muted] text-sm">
-            Bybit의 추천 할인은 만료되지 않습니다. 수년간 거래할 계획이라면
-            평생 할인이 상당한 절약으로 복리됩니다.
-            경쟁력 있는 수수료의 강력한 파생상품 플랫폼.
+            120개국 이상에서 이용 가능. 강력한 파생상품과 현물 시장.
+            바이낸스가 제한된 지역에서 좋은 대안.
           </p>
+          <p class="font-mono text-xs mt-3 text-[--color-accent]">할인: 최대 20%</p>
         </div>
 
         <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] card-hover">
-          <div class="flex items-center gap-3 mb-3">
-            <span class="font-mono text-[--color-accent] font-bold">메이커 수수료 무료</span>
-          </div>
-          <h3 class="font-bold mb-2">MEXC &mdash; 지정가 주문 트레이더 최적</h3>
+          <div class="font-mono text-[--color-accent] text-xs font-bold mb-3">카피 트레이딩</div>
+          <h3 class="font-bold mb-2">Bitget</h3>
           <p class="text-[--color-text-muted] text-sm">
-            MEXC는 선물 메이커 수수료가 0%입니다. 주로 지정가 주문을 사용한다면
-            실효 거래 비용이 거의 제로에 가깝습니다. 가장 넓은 알트코인 선택.
+            카피 트레이딩 선두 플랫폼. 성공한 트레이더를 자동으로 따라하세요.
+            경쟁력 있는 수수료와 빠른 성장.
           </p>
-        </div>
-
-        <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] card-hover">
-          <div class="flex items-center gap-3 mb-3">
-            <span class="font-mono text-[--color-accent] font-bold">KYC 불필요</span>
-          </div>
-          <h3 class="font-bold mb-2">dYdX / Hyperliquid &mdash; 온체인 트레이더 최적</h3>
-          <p class="text-[--color-text-muted] text-sm">
-            지갑에서 직접 무기한 선물을 거래하세요. 계정 생성 불필요, KYC 불필요.
-            온체인 정산과 경쟁력 있는 수수료.
-          </p>
+          <p class="font-mono text-xs mt-3 text-[--color-accent]">할인: 최대 20%</p>
         </div>
       </div>
     </div>
@@ -292,39 +224,22 @@ const t = useTranslations('ko');
           <h3 class="font-bold mb-2">PRUVIQ가 수익을 얻나요?</h3>
           <p class="text-[--color-text-muted] text-sm">
             네. 거래소가 PRUVIQ에 수익의 일부를 지급합니다.
-            이것은 회원의 주머니에서 나오지 않습니다. 추천을 통한 수수료는 추천 없이보다 항상 낮습니다.
+            이것은 회원님의 주머니에서 나오지 않습니다. 추천을 통한 수수료는 항상 더 낮습니다.
           </p>
         </div>
 
         <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] card-hover">
-          <h3 class="font-bold mb-2">여러 거래소를 사용할 수 있나요?</h3>
+          <h3 class="font-bold mb-2">현물과 선물의 차이는?</h3>
           <p class="text-[--color-text-muted] text-sm">
-            네. 많은 트레이더가 목적에 따라 다른 거래소를 사용합니다.
-            모든 거래소에서 PRUVIQ를 통해 가입하고 각각 할인을 받을 수 있습니다.
+            현물 = 암호화폐를 직접 매매. 선물 = 레버리지를 이용한 계약 거래 (높은 위험, 거래 금액당 낮은 수수료).
           </p>
         </div>
 
         <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] card-hover">
           <h3 class="font-bold mb-2">이미 계정이 있어도 할인 받을 수 있나요?</h3>
           <p class="text-[--color-text-muted] text-sm">
-            대부분의 거래소에서 추천 할인은 계정 생성 시 또는 선물 활성화 시 적용됩니다.
-            이미 계정이 활성화되어 있다면 추천이 소급 적용되지 않을 수 있습니다.
-          </p>
-        </div>
-
-        <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] card-hover">
-          <h3 class="font-bold mb-2">PRUVIQ는 어떤 거래소를 사용하나요?</h3>
-          <p class="text-[--color-text-muted] text-sm">
-            PRUVIQ의 시뮬레이션은 주로 바이낸스 선물 데이터를 사용합니다. 유동성과 API 안정성 때문입니다.
-            하지만 최적의 거래소는 필요에 따라 다릅니다 &mdash; 그래서 모든 거래소를 비교합니다.
-          </p>
-        </div>
-
-        <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] card-hover">
-          <h3 class="font-bold mb-2">미국 트레이더는요?</h3>
-          <p class="text-[--color-text-muted] text-sm">
-            일부 거래소(Binance, Bybit, OKX)는 미국 거주자가 이용할 수 없습니다.
-            미국 트레이더는 Coinbase, Kraken 또는 dYdX 같은 탈중앙화 거래소를 사용할 수 있습니다.
+            추천 할인은 계정 생성 시 적용됩니다.
+            이미 계정이 활성화되어 있다면 소급 적용이 안 될 수 있습니다.
           </p>
         </div>
 
@@ -332,7 +247,7 @@ const t = useTranslations('ko');
           <h3 class="font-bold mb-2">투자 조언인가요?</h3>
           <p class="text-[--color-text-muted] text-sm">
             아닙니다. PRUVIQ는 교육 프로젝트입니다. 수수료를 객관적으로 비교합니다.
-            암호화폐 선물 거래는 상당한 손실 위험을 수반합니다.
+            암호화폐 거래는 상당한 손실 위험을 수반합니다.
           </p>
         </div>
       </div>

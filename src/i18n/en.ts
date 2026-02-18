@@ -194,9 +194,9 @@ export const en = {
 
   // Fees page
   'fees.tag': 'EXCHANGE FEES',
-  'fees.title1': 'Stop Overpaying.',
-  'fees.title2': 'Compare Every Exchange.',
-  'fees.desc': "Fees eat your profits on every trade. We compared the top exchanges so you don't have to. Sign up through PRUVIQ and get discounted rates.",
+  'fees.title1': 'Compare Fees.',
+  'fees.title2': 'Save on Every Trade.',
+  'fees.desc': "3 exchanges, spot & futures fees side by side. Sign up through PRUVIQ and get up to 20% off.",
   'fees.disclosure': 'Affiliate disclosure: PRUVIQ earns a commission when you sign up through our referral links. Your fee discount is not affected.',
 
   // Changelog
