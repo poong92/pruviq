@@ -313,7 +313,7 @@ export const en = {
   'perf.stat3_val': '5x',
   'perf.stat4_label': 'Data Source',
   'perf.stat4_val': 'Live Account',
-  'perf.note': 'Performance data is fetched from our live trading API. If the dashboard above is not loading, please enable JavaScript or try refreshing.',
+  'perf.note': 'Performance data is sourced from our live trading account and updated periodically. If the dashboard above is not loading, please enable JavaScript or try refreshing.',
 
   // Blog article CTA
   'blog.cta_title': 'Ready to test strategies yourself?',

@@ -42,7 +42,7 @@ That's money that stays in your account instead of going to the exchange. Over y
 
 ### New Binance Users
 
-1. Sign up through [PRUVIQ's referral link](/fees)
+1. Sign up through [PRUVIQ's fee comparison page](/fees) (referral links launching soon)
 2. Complete KYC verification (5-15 minutes)
 3. Enable Futures trading
 4. Your 20% fee discount is automatically applied
@@ -95,7 +95,7 @@ It's a genuine win-win. You save money. We earn revenue to keep publishing free 
 
 > Every dollar saved on fees is a dollar that stays in your trading account. Over hundreds or thousands of trades, that adds up.
 
-Check out the [full fee comparison](/fees) for detailed breakdowns.
+Check out the [full fee comparison](/fees) for detailed breakdowns across all major exchanges.
 
 ---
 

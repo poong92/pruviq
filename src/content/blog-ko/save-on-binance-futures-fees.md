@@ -42,7 +42,7 @@ tags: ["binance", "fees", "referral", "futures"]
 
 ### 바이낸스 신규 사용자
 
-1. [PRUVIQ 추천 링크](/ko/fees)로 가입
+1. [PRUVIQ 수수료 비교 페이지](/ko/fees)에서 가입 (추천 링크 곧 오픈)
 2. KYC 인증 완료 (5-15분)
 3. 선물 거래 활성화
 4. 20% 수수료 할인 자동 적용

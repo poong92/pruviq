@@ -1,22 +1,24 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { useTranslations } from '../i18n/index';
+
+const t = useTranslations('en');
 ---
 
-<Layout title="Compare Exchange Fees - PRUVIQ" description="Compare trading fees across Binance, Bybit, OKX, and more. Save up to 70% with PRUVIQ referral links. Transparent fee comparison.">
+<Layout title={t('meta.fees_title')} description={t('meta.fees_desc')}>
 
   <!-- HERO -->
   <section class="py-20">
     <div class="max-w-5xl mx-auto px-4">
-      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">EXCHANGE FEES</p>
+      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('fees.tag')}</p>
       <h1 class="text-3xl md:text-5xl font-bold mb-4">
-        Stop Overpaying.<br/>Compare Every Exchange.
+        {t('fees.title1')}<br/>{t('fees.title2')}
       </h1>
       <p class="text-[--color-text-muted] text-lg mb-4 max-w-2xl">
-        Fees eat your profits on every trade. We compared the top exchanges so you don't have to.
-        Sign up through PRUVIQ and get discounted rates.
+        {t('fees.desc')}
       </p>
       <p class="text-[--color-text-muted] text-xs">
-        Affiliate disclosure: PRUVIQ earns a commission when you sign up through our referral links. Your fee discount is not affected.
+        {t('fees.disclosure')}
       </p>
     </div>
   </section>

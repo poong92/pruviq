@@ -1,24 +1,24 @@
 {
-  "generated": "2026-02-16T10:05:34Z",
+  "generated": "2026-02-18T02:54:59Z",
   "strategy": "BB Squeeze SHORT v1.7.0",
   "period": {
     "from": "2026-01-12",
-    "to": "2026-02-15"
+    "to": "2026-02-18"
   },
   "summary": {
-    "total_trades": 1291,
-    "win_rate": 54.45,
-    "profit_factor": 1.0,
-    "total_pnl": -6.63,
+    "total_trades": 1317,
+    "win_rate": 54.59,
+    "profit_factor": 1.01,
+    "total_pnl": 9.72,
     "starting_balance": 3102.0,
-    "current_balance": 3095.37,
+    "current_balance": 3111.72,
     "max_drawdown_pct": 12.97,
-    "avg_trade_pnl": -0.01,
+    "avg_trade_pnl": 0.01,
     "best_day_pnl": 415.43,
     "worst_day_pnl": -334.15,
-    "tp_count": 453,
-    "sl_count": 336,
-    "timeout_count": 198,
+    "tp_count": 464,
+    "sl_count": 341,
+    "timeout_count": 208,
     "other_count": 304
   },
   "daily": [
@@ -296,14 +296,272 @@
     },
     {
       "date": "2026-02-15",
-      "pnl": -17.76,
-      "trades": 7,
-      "cum_pnl": -6.63,
-      "wins": 1,
-      "losses": 6
+      "pnl": -14.23,
+      "trades": 10,
+      "cum_pnl": -3.09,
+      "wins": 3,
+      "losses": 7
+    },
+    {
+      "date": "2026-02-16",
+      "pnl": -0.73,
+      "trades": 5,
+      "cum_pnl": -3.82,
+      "wins": 2,
+      "losses": 3
+    },
+    {
+      "date": "2026-02-17",
+      "pnl": 5.67,
+      "trades": 14,
+      "cum_pnl": 1.85,
+      "wins": 9,
+      "losses": 5
+    },
+    {
+      "date": "2026-02-18",
+      "pnl": 7.87,
+      "trades": 4,
+      "cum_pnl": 9.72,
+      "wins": 3,
+      "losses": 1
     }
   ],
   "recent_trades": [
+    {
+      "symbol": "RIVERUSDT",
+      "entry_price": 10.7418929,
+      "exit_price": 9.877714330357144,
+      "pnl_pct": 8.04,
+      "pnl_usd": 4.84,
+      "reason": "TP",
+      "closed_at": "2026-02-18T05:22:42.299012"
+    },
+    {
+      "symbol": "USUSDT",
+      "entry_price": 0.0036034,
+      "exit_price": 0.0039849182242206235,
+      "pnl_pct": -10.59,
+      "pnl_usd": -6.36,
+      "reason": "SL",
+      "closed_at": "2026-02-18T02:48:51.964124"
+    },
+    {
+      "symbol": "IRYSUSDT",
+      "entry_price": 0.03147,
+      "exit_price": 0.02896,
+      "pnl_pct": 7.98,
+      "pnl_usd": 4.79,
+      "reason": "TP",
+      "closed_at": "2026-02-18T01:48:04.311985"
+    },
+    {
+      "symbol": "TRUTHUSDT",
+      "entry_price": 0.011971,
+      "exit_price": 0.011049000000000002,
+      "pnl_pct": 7.7,
+      "pnl_usd": 4.61,
+      "reason": "TP",
+      "closed_at": "2026-02-18T00:41:54.322651"
+    },
+    {
+      "symbol": "USUSDT",
+      "entry_price": 0.004108,
+      "exit_price": 0.0037869999999999996,
+      "pnl_pct": 7.81,
+      "pnl_usd": 4.69,
+      "reason": "TP",
+      "closed_at": "2026-02-17T23:46:13.789981"
+    },
+    {
+      "symbol": "MYXUSDT",
+      "entry_price": 1.568,
+      "exit_price": 1.4500000000000002,
+      "pnl_pct": 7.53,
+      "pnl_usd": 4.37,
+      "reason": "TP",
+      "closed_at": "2026-02-17T23:30:18.799792"
+    },
+    {
+      "symbol": "XVGUSDT",
+      "entry_price": 0.0060786,
+      "exit_price": 0.006006,
+      "pnl_pct": 1.11,
+      "pnl_usd": 0.67,
+      "reason": "TIMEOUT",
+      "closed_at": "2026-02-17T23:02:34.166061"
+    },
+    {
+      "symbol": "SYSUSDT",
+      "entry_price": 0.01363,
+      "exit_price": 0.01358,
+      "pnl_pct": 0.29,
+      "pnl_usd": 0.17,
+      "reason": "TIMEOUT",
+      "closed_at": "2026-02-17T23:02:22.387556"
+    },
+    {
+      "symbol": "SOPHUSDT",
+      "entry_price": 0.0096996,
+      "exit_price": 0.009864,
+      "pnl_pct": -1.77,
+      "pnl_usd": -1.06,
+      "reason": "TIMEOUT",
+      "closed_at": "2026-02-17T23:02:17.085658"
+    },
+    {
+      "symbol": "CHRUSDT",
+      "entry_price": 0.0255,
+      "exit_price": 0.0251,
+      "pnl_pct": 1.49,
+      "pnl_usd": 0.89,
+      "reason": "TIMEOUT",
+      "closed_at": "2026-02-17T23:01:28.779258"
+    },
+    {
+      "symbol": "MANTAUSDT",
+      "entry_price": 0.07684781,
+      "exit_price": 0.07962,
+      "pnl_pct": -3.69,
+      "pnl_usd": -2.21,
+      "reason": "TIMEOUT",
+      "closed_at": "2026-02-17T22:02:10.956706"
+    },
+    {
+      "symbol": "LPTUSDT",
+      "entry_price": 2.44,
+      "exit_price": 2.461,
+      "pnl_pct": -0.94,
+      "pnl_usd": -0.56,
+      "reason": "TIMEOUT",
+      "closed_at": "2026-02-17T22:01:25.465080"
+    },
+    {
+      "symbol": "BUSDT",
+      "entry_price": 0.143,
+      "exit_price": 0.1407,
+      "pnl_pct": 1.53,
+      "pnl_usd": 0.91,
+      "reason": "TIMEOUT",
+      "closed_at": "2026-02-17T22:00:58.266557"
+    },
+    {
+      "symbol": "LQTYUSDT",
+      "entry_price": 0.2708,
+      "exit_price": 0.2695,
+      "pnl_pct": 0.4,
+      "pnl_usd": 0.24,
+      "reason": "TIMEOUT",
+      "closed_at": "2026-02-17T20:01:45.362547"
+    },
+    {
+      "symbol": "MYXUSDT",
+      "entry_price": 1.73,
+      "exit_price": 1.5879999999999999,
+      "pnl_pct": 8.21,
+      "pnl_usd": 4.83,
+      "reason": "TP",
+      "closed_at": "2026-02-17T16:18:57.628255"
+    },
+    {
+      "symbol": "IRYSUSDT",
+      "entry_price": 0.03409,
+      "exit_price": 0.031450000000000006,
+      "pnl_pct": 7.74,
+      "pnl_usd": 4.64,
+      "reason": "TP",
+      "closed_at": "2026-02-17T14:56:14.227021"
+    },
+    {
+      "symbol": "RAYSOLUSDT",
+      "entry_price": 0.60576061,
+      "exit_price": 0.666300003939394,
+      "pnl_pct": -9.99,
+      "pnl_usd": -5.99,
+      "reason": "SL",
+      "closed_at": "2026-02-17T09:03:04.776513"
+    },
+    {
+      "symbol": "AWEUSDT",
+      "entry_price": 0.0879189,
+      "exit_price": 0.09657998504398826,
+      "pnl_pct": -9.85,
+      "pnl_usd": -5.91,
+      "reason": "SL",
+      "closed_at": "2026-02-17T02:41:14.930963"
+    },
+    {
+      "symbol": "DOLOUSDT",
+      "entry_price": 0.0345884,
+      "exit_price": 0.03816995889145496,
+      "pnl_pct": -10.35,
+      "pnl_usd": -6.2,
+      "reason": "SL",
+      "closed_at": "2026-02-16T20:08:28.870964"
+    },
+    {
+      "symbol": "EDUUSDT",
+      "entry_price": 0.1256,
+      "exit_price": 0.1324,
+      "pnl_pct": -5.49,
+      "pnl_usd": -3.29,
+      "reason": "TIMEOUT",
+      "closed_at": "2026-02-16T14:01:55.449249"
+    },
+    {
+      "symbol": "PLAYUSDT",
+      "entry_price": 0.0278,
+      "exit_price": 0.02565,
+      "pnl_pct": 7.73,
+      "pnl_usd": 4.62,
+      "reason": "TP",
+      "closed_at": "2026-02-16T13:23:25.676071"
+    },
+    {
+      "symbol": "RIFUSDT",
+      "entry_price": 0.03214,
+      "exit_price": 0.029670000000000002,
+      "pnl_pct": 7.69,
+      "pnl_usd": 4.61,
+      "reason": "TP",
+      "closed_at": "2026-02-16T08:10:20.474595"
+    },
+    {
+      "symbol": "HEMIUSDT",
+      "entry_price": 0.01003,
+      "exit_price": 0.0101,
+      "pnl_pct": -0.78,
+      "pnl_usd": -0.47,
+      "reason": "TIMEOUT",
+      "closed_at": "2026-02-16T01:01:46.612298"
+    },
+    {
+      "symbol": "PLAYUSDT",
+      "entry_price": 0.03323,
+      "exit_price": 0.030520000000000002,
+      "pnl_pct": 8.16,
+      "pnl_usd": 4.9,
+      "reason": "TP",
+      "closed_at": "2026-02-15T21:39:02.965661"
+    },
+    {
+      "symbol": "POWERUSDT",
+      "entry_price": 0.2190354,
+      "exit_price": 0.20191305578754576,
+      "pnl_pct": 7.82,
+      "pnl_usd": 4.67,
+      "reason": "TP",
+      "closed_at": "2026-02-15T19:30:01.132819"
+    },
+    {
+      "symbol": "1000CHEEMSUSDT",
+      "entry_price": 0.0005032,
+      "exit_price": 0.0005538856240506861,
+      "pnl_pct": -10.07,
+      "pnl_usd": -6.04,
+      "reason": "SL",
+      "closed_at": "2026-02-15T16:04:28.965828"
+    },
     {
       "symbol": "ENJUSDT",
       "entry_price": 0.02038,
@@ -519,240 +777,6 @@
       "pnl_usd": -3.85,
       "reason": "TIMEOUT",
       "closed_at": "2026-02-13T16:02:00.654254"
-    },
-    {
-      "symbol": "DOGEUSDT",
-      "entry_price": 0.09038,
-      "exit_price": 0.09255,
-      "pnl_pct": -2.48,
-      "pnl_usd": -1.49,
-      "reason": "TIMEOUT",
-      "closed_at": "2026-02-13T16:01:59.183157"
-    },
-    {
-      "symbol": "DODOXUSDT",
-      "entry_price": 0.013742,
-      "exit_price": 0.014673,
-      "pnl_pct": -6.85,
-      "pnl_usd": -4.11,
-      "reason": "TIMEOUT",
-      "closed_at": "2026-02-13T16:01:57.482794"
-    },
-    {
-      "symbol": "CVCUSDT",
-      "entry_price": 0.03152,
-      "exit_price": 0.03336,
-      "pnl_pct": -5.92,
-      "pnl_usd": -3.55,
-      "reason": "TIMEOUT",
-      "closed_at": "2026-02-13T16:01:54.033282"
-    },
-    {
-      "symbol": "CETUSUSDT",
-      "entry_price": 0.01487,
-      "exit_price": 0.01556,
-      "pnl_pct": -4.72,
-      "pnl_usd": -2.83,
-      "reason": "TIMEOUT",
-      "closed_at": "2026-02-13T16:01:49.349720"
-    },
-    {
-      "symbol": "CAKEUSDT",
-      "entry_price": 1.2823,
-      "exit_price": 1.2544,
-      "pnl_pct": 2.1,
-      "pnl_usd": 1.24,
-      "reason": "TIMEOUT",
-      "closed_at": "2026-02-13T16:01:47.190534"
-    },
-    {
-      "symbol": "BROCCOLI714USDT",
-      "entry_price": 0.01231,
-      "exit_price": 0.01314,
-      "pnl_pct": -6.82,
-      "pnl_usd": -4.09,
-      "reason": "TIMEOUT",
-      "closed_at": "2026-02-13T16:01:43.748695"
-    },
-    {
-      "symbol": "BOMEUSDT",
-      "entry_price": 0.0003745,
-      "exit_price": 0.0003909,
-      "pnl_pct": -4.46,
-      "pnl_usd": -2.67,
-      "reason": "TIMEOUT",
-      "closed_at": "2026-02-13T16:01:41.620670"
-    },
-    {
-      "symbol": "BIOUSDT",
-      "entry_price": 0.02434,
-      "exit_price": 0.02395,
-      "pnl_pct": 1.52,
-      "pnl_usd": 0.91,
-      "reason": "TIMEOUT",
-      "closed_at": "2026-02-13T16:01:38.990315"
-    },
-    {
-      "symbol": "BDXNUSDT",
-      "entry_price": 0.0111899,
-      "exit_price": 0.01113,
-      "pnl_pct": 0.46,
-      "pnl_usd": 0.27,
-      "reason": "TIMEOUT",
-      "closed_at": "2026-02-13T16:01:36.638909"
-    },
-    {
-      "symbol": "AVAAIUSDT",
-      "entry_price": 0.00704,
-      "exit_price": 0.00723,
-      "pnl_pct": -2.78,
-      "pnl_usd": -1.66,
-      "reason": "TIMEOUT",
-      "closed_at": "2026-02-13T16:01:32.237307"
-    },
-    {
-      "symbol": "ATOMUSDT",
-      "entry_price": 1.88,
-      "exit_price": 1.974,
-      "pnl_pct": -5.08,
-      "pnl_usd": -3.05,
-      "reason": "TIMEOUT",
-      "closed_at": "2026-02-13T16:01:30.362702"
-    },
-    {
-      "symbol": "ARKMUSDT",
-      "entry_price": 0.1145,
-      "exit_price": 0.1124,
-      "pnl_pct": 1.75,
-      "pnl_usd": 1.05,
-      "reason": "TIMEOUT",
-      "closed_at": "2026-02-13T16:01:27.491493"
-    },
-    {
-      "symbol": "ARBUSDT",
-      "entry_price": 0.107,
-      "exit_price": 0.1098,
-      "pnl_pct": -2.7,
-      "pnl_usd": -1.62,
-      "reason": "TIMEOUT",
-      "closed_at": "2026-02-13T16:01:25.522156"
-    },
-    {
-      "symbol": "APEUSDT",
-      "entry_price": 0.1203,
-      "exit_price": 0.1258,
-      "pnl_pct": -4.65,
-      "pnl_usd": -2.79,
-      "reason": "TIMEOUT",
-      "closed_at": "2026-02-13T16:01:23.653843"
-    },
-    {
-      "symbol": "ALLUSDT",
-      "entry_price": 0.4485,
-      "exit_price": 0.4669,
-      "pnl_pct": -4.18,
-      "pnl_usd": -2.49,
-      "reason": "TIMEOUT",
-      "closed_at": "2026-02-13T16:01:21.483962"
-    },
-    {
-      "symbol": "AIXBTUSDT",
-      "entry_price": 0.01861,
-      "exit_price": 0.01981,
-      "pnl_pct": -6.53,
-      "pnl_usd": -3.92,
-      "reason": "TIMEOUT",
-      "closed_at": "2026-02-13T16:01:18.881458"
-    },
-    {
-      "symbol": "AAVEUSDT",
-      "entry_price": 105.664,
-      "exit_price": 110.67,
-      "pnl_pct": -4.82,
-      "pnl_usd": -2.55,
-      "reason": "TIMEOUT",
-      "closed_at": "2026-02-13T16:01:14.894310"
-    },
-    {
-      "symbol": "1MBABYDOGEUSDT",
-      "entry_price": 0.0003639,
-      "exit_price": 0.0003819,
-      "pnl_pct": -5.03,
-      "pnl_usd": -3.02,
-      "reason": "TIMEOUT",
-      "closed_at": "2026-02-13T16:01:12.744949"
-    },
-    {
-      "symbol": "1000PEPEUSDT",
-      "entry_price": 0.0035401,
-      "exit_price": 0.0036705,
-      "pnl_pct": -3.76,
-      "pnl_usd": -2.26,
-      "reason": "TIMEOUT",
-      "closed_at": "2026-02-13T16:01:10.015576"
-    },
-    {
-      "symbol": "1000LUNCUSDT",
-      "entry_price": 0.03356,
-      "exit_price": 0.03271,
-      "pnl_pct": 2.45,
-      "pnl_usd": 1.47,
-      "reason": "TIMEOUT",
-      "closed_at": "2026-02-13T16:01:08.323660"
-    },
-    {
-      "symbol": "1000CATUSDT",
-      "entry_price": 0.001704,
-      "exit_price": 0.001781,
-      "pnl_pct": -4.6,
-      "pnl_usd": -2.76,
-      "reason": "TIMEOUT",
-      "closed_at": "2026-02-13T16:01:06.594316"
-    },
-    {
-      "symbol": "1000BONKUSDT",
-      "entry_price": 0.005772,
-      "exit_price": 0.005994,
-      "pnl_pct": -3.93,
-      "pnl_usd": -2.36,
-      "reason": "TIMEOUT",
-      "closed_at": "2026-02-13T16:01:04.869358"
-    },
-    {
-      "symbol": "TOWNSUSDT",
-      "entry_price": 0.003801,
-      "exit_price": 0.003715,
-      "pnl_pct": 2.18,
-      "pnl_usd": 1.31,
-      "reason": "TIMEOUT",
-      "closed_at": "2026-02-13T15:02:11.955856"
-    },
-    {
-      "symbol": "EDUUSDT",
-      "entry_price": 0.1317,
-      "exit_price": 0.1327,
-      "pnl_pct": -0.84,
-      "pnl_usd": -0.5,
-      "reason": "TIMEOUT",
-      "closed_at": "2026-02-13T15:02:10.692708"
-    },
-    {
-      "symbol": "1000SATSUSDT",
-      "entry_price": 1.11e-05,
-      "exit_price": 1.12e-05,
-      "pnl_pct": -0.98,
-      "pnl_usd": -0.58,
-      "reason": "TIMEOUT",
-      "closed_at": "2026-02-13T15:02:09.112757"
-    },
-    {
-      "symbol": "XTZUSDT",
-      "entry_price": 0.393,
-      "exit_price": 0.398,
-      "pnl_pct": -1.35,
-      "pnl_usd": -0.81,
-      "reason": "TIMEOUT",
-      "closed_at": "2026-02-13T14:03:20.946735"
     }
   ]
 }

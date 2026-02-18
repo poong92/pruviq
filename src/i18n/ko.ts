@@ -315,7 +315,7 @@ export const ko: Record<TranslationKey, string> = {
   'perf.stat3_val': '5배',
   'perf.stat4_label': '데이터 소스',
   'perf.stat4_val': '실거래 계좌',
-  'perf.note': '성과 데이터는 실거래 API에서 실시간으로 가져옵니다. 대시보드가 로딩되지 않으면 JavaScript를 활성화하거나 새로고침해 주세요.',
+  'perf.note': '성과 데이터는 실거래 계좌에서 수집되며 주기적으로 업데이트됩니다. 대시보드가 로딩되지 않으면 JavaScript를 활성화하거나 새로고침해 주세요.',
 
   // Blog article CTA
   'blog.cta_title': '직접 전략을 테스트해 보시겠습니까?',

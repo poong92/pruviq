@@ -58,7 +58,7 @@ const categoryColors: Record<string, string> = {
       ) : (
         <div class="space-y-6">
           {allPosts.map((post) => (
-            <a href={post.isKorean ? `/ko/blog/${post.id}` : `/ko/blog/${post.id}`}
+            <a href={post.isKorean ? `/ko/blog/${post.id}` : `/blog/${post.id}`}
                class="block border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] hover:border-[--color-accent] transition-colors group">
               <div class="flex items-center gap-3 mb-3">
                 <span class={`font-mono text-xs tracking-wider`}
