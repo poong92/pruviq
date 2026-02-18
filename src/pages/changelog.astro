@@ -1,17 +1,19 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { useTranslations } from '../i18n/index';
+
+const t = useTranslations('en');
 ---
 
-<Layout title="Changelog - PRUVIQ" description="Complete version history of PRUVIQ's trading system. Every change, every reason, every date.">
+<Layout title={t('meta.changelog_title')} description={t('meta.changelog_desc')}>
 
   <!-- HEADER -->
   <section class="py-20">
     <div class="max-w-6xl mx-auto px-4">
-      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">CHANGELOG</p>
-      <h1 class="text-3xl md:text-5xl font-bold mb-4">The Full History.</h1>
+      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('changelog.tag')}</p>
+      <h1 class="text-3xl md:text-5xl font-bold mb-4">{t('changelog.title')}</h1>
       <p class="text-[--color-text-muted] text-lg max-w-2xl">
-        Every version. Every change. Every reason.
-        This is how the system evolved from day one.
+        {t('changelog.desc')}
       </p>
     </div>
   </section>
@@ -168,16 +170,14 @@ import Layout from '../layouts/Layout.astro';
   <!-- PHILOSOPHY -->
   <section class="py-16 border-t border-[--color-border]">
     <div class="max-w-6xl mx-auto px-4 text-center">
-      <h2 class="text-2xl md:text-3xl font-bold mb-4">Why a Public Changelog?</h2>
+      <h2 class="text-2xl md:text-3xl font-bold mb-4">{t('changelog.why_title')}</h2>
       <p class="text-[--color-text-muted] text-lg max-w-2xl mx-auto mb-8">
-        Because "version 2.0" means nothing without context.
-        Every change has a reason. Every reason has data.
-        This is what transparent system development looks like.
+        {t('changelog.why_desc')}
       </p>
       <div class="flex flex-col sm:flex-row gap-4 justify-center">
         <a href="/strategies"
            class="bg-[--color-accent] text-[--color-bg] px-6 py-3 rounded font-semibold hover:bg-[--color-accent-dim] transition-colors">
-          Explore Strategies &rarr;
+          {t('strategies.explore')} &rarr;
         </a>
       </div>
     </div>

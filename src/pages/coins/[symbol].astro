@@ -2,6 +2,9 @@
 import Layout from '../../layouts/Layout.astro';
 import CoinChart from '../../components/CoinChart';
 import { COIN_SYMBOLS } from '../../data/coin-symbols';
+import { useTranslations } from '../../i18n/index';
+
+const t = useTranslations('en');
 
 export async function getStaticPaths() {
   return COIN_SYMBOLS.map(s => ({
@@ -26,12 +29,12 @@ const datasetJsonLd = JSON.stringify({
 });
 ---
 
-<Layout title={`${displayName} - Coin Explorer - PRUVIQ`} description={metaDesc}>
+<Layout title={`${displayName} - ${t('meta.coins_title')}`} description={metaDesc}>
   <script type="application/ld+json" set:html={datasetJsonLd} />
   <section class="py-8">
     <div class="max-w-6xl mx-auto px-4">
       <a href="/coins" class="inline-flex items-center gap-1 text-[--color-text-muted] hover:text-[--color-accent] transition-colors text-sm font-mono mb-4">
-        &larr; Coins
+        &larr; {t('coins.back')}
       </a>
       <CoinChart client:visible symbol={symbolUpper} lang="en" />
     </div>
