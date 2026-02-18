@@ -1,5 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import FeeCalculator from '../../components/FeeCalculator';
 import { useTranslations } from '../../i18n/index';
 
 const t = useTranslations('ko');
@@ -20,6 +21,13 @@ const t = useTranslations('ko');
       <p class="text-[--color-text-muted] text-xs">
         {t('fees.disclosure')}
       </p>
+    </div>
+  </section>
+
+  <!-- 인터랙티브 수수료 계산기 -->
+  <section class="pb-12 border-t border-[--color-border] pt-12">
+    <div class="max-w-5xl mx-auto px-4">
+      <FeeCalculator client:visible lang="ko" />
     </div>
   </section>
 

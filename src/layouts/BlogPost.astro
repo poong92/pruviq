@@ -40,20 +40,37 @@ const categoryLabels: Record<string, string> = {
 
       <!-- Article end CTA -->
       <div class="mt-12 border-t border-[--color-border] pt-8">
-        <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] text-center">
-          <h3 class="font-bold text-lg mb-2">Ready to test strategies yourself?</h3>
-          <p class="text-[--color-text-muted] text-sm mb-4">Simulate trading strategies on 535 coins with 2+ years of data. Free.</p>
-          <div class="flex flex-col sm:flex-row gap-3 justify-center">
-            <a href="/strategies/bb-squeeze-short#demo"
-               class="inline-block bg-[--color-accent] text-[--color-bg] px-6 py-2 rounded font-semibold text-sm hover:bg-[--color-accent-dim] transition-colors">
-              Try Live Demo &rarr;
-            </a>
-            <a href="https://t.me/PRUVIQ" target="_blank" rel="noopener"
-               class="inline-block border border-[--color-border] text-[--color-text] px-6 py-2 rounded font-semibold text-sm hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
-              Join Community
-            </a>
+        {category === 'education' ? (
+          <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] text-center">
+            <h3 class="font-bold text-lg mb-2">Build Your Own Strategy</h3>
+            <p class="text-[--color-text-muted] text-sm mb-4">Combine indicators, set conditions, and backtest on 535+ coins with 2+ years of data. No code required.</p>
+            <div class="flex flex-col sm:flex-row gap-3 justify-center">
+              <a href="/builder"
+                 class="inline-block bg-[--color-accent] text-[--color-bg] px-6 py-2 rounded font-semibold text-sm hover:bg-[--color-accent-dim] transition-colors">
+                Open Strategy Builder &rarr;
+              </a>
+              <a href="/strategies/bb-squeeze-short#demo"
+                 class="inline-block border border-[--color-border] text-[--color-text] px-6 py-2 rounded font-semibold text-sm hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
+                Try Live Demo
+              </a>
+            </div>
           </div>
-        </div>
+        ) : (
+          <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] text-center">
+            <h3 class="font-bold text-lg mb-2">Ready to test strategies yourself?</h3>
+            <p class="text-[--color-text-muted] text-sm mb-4">Simulate trading strategies on 535 coins with 2+ years of data. Free.</p>
+            <div class="flex flex-col sm:flex-row gap-3 justify-center">
+              <a href="/strategies/bb-squeeze-short#demo"
+                 class="inline-block bg-[--color-accent] text-[--color-bg] px-6 py-2 rounded font-semibold text-sm hover:bg-[--color-accent-dim] transition-colors">
+                Try Live Demo &rarr;
+              </a>
+              <a href="https://t.me/PRUVIQ" target="_blank" rel="noopener"
+                 class="inline-block border border-[--color-border] text-[--color-text] px-6 py-2 rounded font-semibold text-sm hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
+                Join Community
+              </a>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   </article>
