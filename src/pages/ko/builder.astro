@@ -5,11 +5,11 @@ import { useTranslations } from '../../i18n/index';
 const t = useTranslations('ko');
 ---
 
-<Layout title="전략 빌더 - PRUVIQ" description="코드 없이 나만의 트레이딩 전략을 설계하세요. 지표 선택, 조건 설정, 535+ 코인 2년+ 실제 데이터로 백테스트.">
+<Layout title={t('meta.builder_title')} description={t('meta.builder_desc')}>
   <section class="py-12">
     <div class="max-w-5xl mx-auto px-4">
       <a href="/ko/strategies" class="text-[--color-text-muted] text-sm hover:text-[--color-accent] transition-colors mb-8 inline-block">
-        &larr; 전략 라이브러리
+        &larr; {t('strategies.back')}
       </a>
 
       <div id="builder-mount">

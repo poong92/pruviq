@@ -1,12 +1,15 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { useTranslations } from '../i18n/index';
+
+const t = useTranslations('en');
 ---
 
-<Layout title="Strategy Builder - PRUVIQ" description="Build your own trading strategy with no code. Select indicators, set conditions, and backtest on 535+ coins with 2+ years of real data.">
+<Layout title={t('meta.builder_title')} description={t('meta.builder_desc')}>
   <section class="py-12">
     <div class="max-w-5xl mx-auto px-4">
       <a href="/strategies" class="text-[--color-text-muted] text-sm hover:text-[--color-accent] transition-colors mb-8 inline-block">
-        &larr; Strategy Library
+        &larr; {t('strategies.back')}
       </a>
 
       <div id="builder-mount">

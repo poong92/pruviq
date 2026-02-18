@@ -343,4 +343,11 @@ export const ko: Record<TranslationKey, string> = {
 
   // Footer
   'footer.about': '소개',
+  'footer.col_product': '서비스',
+  'footer.col_resources': '리소스',
+  'footer.col_legal': '법적 고지',
+
+  // Builder
+  'meta.builder_title': '전략 빌더 - PRUVIQ',
+  'meta.builder_desc': '코드 없이 나만의 트레이딩 전략을 설계하세요. 지표 선택, 조건 설정, 535+ 코인 2년+ 실제 데이터로 백테스트.',
 };

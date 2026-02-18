@@ -94,6 +94,10 @@ const labels = {
     computeTime: 'Computed in',
     validationFailed: 'Strategy validation failed:',
     noTrades: 'No signals found with these conditions. Try relaxing the criteria.',
+    presetError: 'Failed to load preset.',
+    serverError: 'Server error. Please try again.',
+    crossAbove: 'Cross Above',
+    crossBelow: 'Cross Below',
     disclaimer: '* Simulation includes 0.04% futures fees + 0.02% slippage. Past performance does not guarantee future results.',
     chart: 'CUMULATIVE RETURN (%)',
   },
@@ -133,21 +137,27 @@ const labels = {
     computeTime: '계산 시간',
     validationFailed: '전략 유효성 검증 실패:',
     noTrades: '이 조건으로 시그널이 발견되지 않았습니다. 조건을 완화해 보세요.',
+    presetError: '프리셋 로딩 실패.',
+    serverError: '서버 오류. 다시 시도해 주세요.',
+    crossAbove: '상향 돌파',
+    crossBelow: '하향 돌파',
     disclaimer: '* 시뮬레이션은 0.04% 선물 수수료 + 0.02% 슬리피지를 포함합니다. 과거 성과는 미래 결과를 보장하지 않습니다.',
     chart: '누적 수익률 (%)',
   },
 };
 
-const OPS = [
-  { value: '==', label: '==' },
-  { value: '!=', label: '!=' },
-  { value: '>', label: '>' },
-  { value: '>=', label: '>=' },
-  { value: '<', label: '<' },
-  { value: '<=', label: '<=' },
-  { value: 'cross_above', label: 'Cross Above' },
-  { value: 'cross_below', label: 'Cross Below' },
-];
+function getOps(t: typeof labels['en']) {
+  return [
+    { value: '==', label: '==' },
+    { value: '!=', label: '!=' },
+    { value: '>', label: '>' },
+    { value: '>=', label: '>=' },
+    { value: '<', label: '<' },
+    { value: '<=', label: '<=' },
+    { value: 'cross_above', label: t.crossAbove },
+    { value: 'cross_below', label: t.crossBelow },
+  ];
+}
 
 const HOURS = Array.from({ length: 24 }, (_, i) => i);
 
@@ -242,7 +252,7 @@ export default function StrategyBuilder({ lang = 'en' }: Props) {
       setResult(null);
       setError(null);
     } catch {
-      setError('Failed to load preset');
+      setError(t.presetError);
     }
   };
 
@@ -321,7 +331,7 @@ export default function StrategyBuilder({ lang = 'en' }: Props) {
       });
 
       if (!res.ok) {
-        const err = await res.json().catch(() => ({ detail: 'Server error' }));
+        const err = await res.json().catch(() => ({ detail: t.serverError }));
         throw new Error(err.detail || `HTTP ${res.status}`);
       }
 
@@ -499,7 +509,7 @@ export default function StrategyBuilder({ lang = 'en' }: Props) {
                 onChange={(e) => updateCondition(cond.id, { op: (e.target as HTMLSelectElement).value })}
                 class="bg-[--color-bg-card] border border-[--color-border] rounded px-2 py-1.5 text-sm font-mono text-[--color-accent] w-[100px]"
               >
-                {OPS.map((op) => (
+                {getOps(t).map((op) => (
                   <option key={op.value} value={op.value}>{op.label}</option>
                 ))}
               </select>

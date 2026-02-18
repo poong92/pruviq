@@ -341,6 +341,13 @@ export const en = {
 
   // Footer
   'footer.about': 'About',
+  'footer.col_product': 'Product',
+  'footer.col_resources': 'Resources',
+  'footer.col_legal': 'Legal',
+
+  // Builder
+  'meta.builder_title': 'Strategy Builder - PRUVIQ',
+  'meta.builder_desc': 'Build your own trading strategy with no code. Select indicators, set conditions, and backtest on 535+ coins with 2+ years of real data.',
 } as const;
 
 export type TranslationKey = keyof typeof en;
