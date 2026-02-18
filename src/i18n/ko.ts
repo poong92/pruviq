@@ -323,6 +323,24 @@ export const ko: Record<TranslationKey, string> = {
   'blog.cta_button': '라이브 데모 체험',
   'blog.cta_community': '커뮤니티 참여',
 
+  // Compare page
+  'compare.tag': '전략 비교',
+  'compare.title': '모든 전략 비교',
+  'compare.desc': '동일한 조건, 동일한 데이터. 어떤 전략이 나에게 맞는지 확인하세요. SL/TP를 조정하면 5개 전략이 실시간으로 변합니다.',
+  'compare.disclaimer': '* 모든 전략은 50개 코인, 동일한 수수료(0.04% + 0.02% 슬리피지)로 시뮬레이션됩니다. 과거 성과는 미래 결과를 보장하지 않습니다.',
+  'compare.loading': '비교 데이터 로딩 중...',
+  'compare.error': '비교 데이터 로딩 실패.',
+  'compare.name': '전략',
+  'compare.direction': '방향',
+  'compare.status': '상태',
+  'compare.trades': '거래 수',
+  'compare.no_data': '데이터 없음',
+  'compare.back': '전략 라이브러리로 돌아가기',
+  'compare.view': '자세히 보기',
+  'meta.compare_title': '전략 비교 - PRUVIQ',
+  'meta.compare_desc': '5개 트레이딩 전략을 나란히 비교하세요. 동일 조건, 동일 데이터. SL/TP를 조정하고 승률, 수익 팩터, 드로다운을 한눈에 확인.',
+  'strategies.compare': '전체 비교',
+
   // Footer
   'footer.about': '소개',
 };

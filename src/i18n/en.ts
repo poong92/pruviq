@@ -321,6 +321,24 @@ export const en = {
   'blog.cta_button': 'Try Live Demo',
   'blog.cta_community': 'Join Community',
 
+  // Compare page
+  'compare.tag': 'STRATEGY COMPARISON',
+  'compare.title': 'Compare All Strategies',
+  'compare.desc': 'Same conditions, same data. See which strategy fits your style. Adjust SL/TP and watch all 5 strategies respond in real time.',
+  'compare.disclaimer': '* All strategies simulated on 50 coins with identical fees (0.04% + 0.02% slippage). Past performance does not guarantee future results.',
+  'compare.loading': 'Loading comparison data...',
+  'compare.error': 'Failed to load comparison data.',
+  'compare.name': 'Strategy',
+  'compare.direction': 'Direction',
+  'compare.status': 'Status',
+  'compare.trades': 'Trades',
+  'compare.no_data': 'No data',
+  'compare.back': 'Back to Strategy Library',
+  'compare.view': 'View Details',
+  'meta.compare_title': 'Compare Strategies - PRUVIQ',
+  'meta.compare_desc': 'Compare all 5 trading strategies side by side. Same conditions, same data. Adjust SL/TP and see win rate, profit factor, drawdown across all strategies.',
+  'strategies.compare': 'Compare All',
+
   // Footer
   'footer.about': 'About',
 } as const;

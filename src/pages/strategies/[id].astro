@@ -16,7 +16,15 @@ export async function getStaticPaths() {
 
 const { strategy } = Astro.props;
 const { Content } = await render(strategy);
-const showDemo = strategy.id === 'bb-squeeze-short';
+
+const demoDefaults: Record<string, { sl: number; tp: number; direction: string }> = {
+  'bb-squeeze-short': { sl: 10, tp: 8, direction: 'short' },
+  'bb-squeeze-long':  { sl: 7,  tp: 6, direction: 'long' },
+  'momentum-long':    { sl: 5, tp: 10, direction: 'long' },
+  'atr-breakout':     { sl: 7, tp: 10, direction: 'long' },
+  'hv-squeeze':       { sl: 10, tp: 6, direction: 'short' },
+};
+const demo = demoDefaults[strategy.id];
 
 const statusColors: Record<string, string> = {
   verified: '--color-accent',
@@ -111,13 +119,19 @@ const statusLabels: Record<string, string> = {
         </div>
       )}
 
-      {showDemo && (
-        <StrategyDemo client:visible />
+      {demo && (
+        <StrategyDemo
+          client:visible
+          strategy={strategy.id}
+          direction={demo.direction}
+          defaultSl={demo.sl}
+          defaultTp={demo.tp}
+        />
       )}
 
       <div class="mt-12 border-t border-[--color-border] pt-8 text-center">
         <p class="text-[--color-text-muted] text-sm mb-4">
-          {showDemo ? t('strategies.detail_demo_footer') : t('strategies.detail_nodemo_footer')}
+          {demo ? t('strategies.detail_demo_footer') : t('strategies.detail_nodemo_footer')}
         </p>
         <div class="flex flex-col sm:flex-row gap-3 justify-center">
           <a href="/strategies"

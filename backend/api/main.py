@@ -41,12 +41,14 @@ from api.schemas import (
     CoinStats, CoinStatsResponse,
     MarketOverview, MarketMover, FundingRate,
     NewsItem, NewsResponse,
+    CompareRequest, CompareResponse, StrategyResult,
 )
 from api.data_manager import DataManager
 from api.indicator_cache import IndicatorCache
 from src.simulation.engine import CostModel
 from src.simulation.engine_fast import run_fast
 from src.strategies.bb_squeeze import BBSqueezeStrategy
+from src.strategies.registry import STRATEGY_REGISTRY, get_strategy, get_all_strategies
 
 # Config
 VERSION = "0.1.0"
@@ -90,8 +92,9 @@ def _refresh_data():
         if updated > 0:
             logger.info(f"Updated {updated} symbols from Binance, reloading...")
             data_manager.load(DATA_DIR)
+            all_strategies = get_all_strategies()
+            indicator_cache.build_multi(data_manager, all_strategies)
             strategy = BBSqueezeStrategy(avoid_hours=AVOID_HOURS)
-            indicator_cache.build(data_manager, strategy)
             global coin_stats_cache
             coin_stats_cache = _build_coin_stats(strategy)
             logger.info(f"Reload complete: {indicator_cache.count} coins")
@@ -117,13 +120,18 @@ async def lifespan(app: FastAPI):
     print(f"Loaded {data_manager.coin_count} coins in {data_manager._load_time:.1f}s")
 
     if data_manager.coin_count > 0:
-        print("Pre-computing indicators...")
-        strategy = BBSqueezeStrategy(avoid_hours=AVOID_HOURS)
-        indicator_cache.build(data_manager, strategy)
-        print(f"Indicators cached for {indicator_cache.count} coins in {indicator_cache._build_time:.1f}s")
+        # Build multi-strategy indicator cache
+        print("Pre-computing indicators for all strategies...")
+        all_strategies = get_all_strategies()
+        indicator_cache.build_multi(data_manager, all_strategies)
+        for sid in all_strategies:
+            cnt = indicator_cache.strategy_count(sid)
+            print(f"  {sid}: {cnt} coins cached")
+        print(f"Total build time: {indicator_cache._build_time:.1f}s")
 
-        # Pre-compute coin stats for /coins/stats endpoint
+        # Pre-compute coin stats for /coins/stats endpoint (primary strategy)
         print("Pre-computing coin stats...")
+        strategy = BBSqueezeStrategy(avoid_hours=AVOID_HOURS)
         global coin_stats_cache
         coin_stats_cache = _build_coin_stats(strategy)
         print(f"Coin stats cached for {len(coin_stats_cache['coins'])} coins")
@@ -176,7 +184,7 @@ def check_rate_limit(client_ip: str) -> bool:
 
 @app.middleware("http")
 async def rate_limit_middleware(request: Request, call_next):
-    if request.url.path in ("/simulate", "/simulate/coin"):
+    if request.url.path in ("/simulate", "/simulate/coin", "/simulate/compare"):
         client_ip = request.client.host if request.client else "unknown"
         if not check_rate_limit(client_ip):
             return JSONResponse(
@@ -252,31 +260,42 @@ async def list_coins():
 
 @app.get("/strategies", response_model=List[StrategyInfo])
 async def list_strategies():
-    return [
-        StrategyInfo(
-            id="bb-squeeze",
-            name="BB Squeeze",
-            description="Bollinger Band squeeze breakout. Enters on volatility expansion after contraction.",
+    result = []
+    for sid, entry in STRATEGY_REGISTRY.items():
+        instance, direction, defaults = get_strategy(sid)
+        result.append(StrategyInfo(
+            id=sid,
+            name=entry["name"],
+            description=entry["description"],
             default_params={
-                "sl_pct": 10.0,
-                "tp_pct": 8.0,
+                "sl_pct": float(defaults["sl"]),
+                "tp_pct": float(defaults["tp"]),
                 "max_bars": 48,
-                "direction": "short",
-                "avoid_hours": AVOID_HOURS,
+                "direction": direction,
+                "status": entry["status"],
             },
-        ),
-    ]
+        ))
+    return result
 
 
 @app.post("/simulate", response_model=SimulationResponse)
 async def simulate(req: SimulationRequest):
     """Run a strategy simulation with pre-computed indicators."""
 
-    if req.strategy != "bb-squeeze":
-        raise HTTPException(400, f"Unknown strategy: {req.strategy}")
-
     if data_manager.coin_count == 0:
         raise HTTPException(503, "Data not loaded yet. Try again shortly.")
+
+    # Resolve strategy from registry
+    # Support both "bb-squeeze" (legacy) and "bb-squeeze-short" (new) formats
+    strategy_id = req.strategy
+    if strategy_id == "bb-squeeze":
+        strategy_id = f"bb-squeeze-{req.direction}"
+
+    if strategy_id not in STRATEGY_REGISTRY:
+        raise HTTPException(400, f"Unknown strategy: {req.strategy}")
+
+    strategy, default_direction, defaults = get_strategy(strategy_id)
+    direction = req.direction or default_direction
 
     # Check cache
     ckey = cache_key(req)
@@ -284,24 +303,22 @@ async def simulate(req: SimulationRequest):
     if cached:
         return SimulationResponse(**cached)
 
-    # Get pre-computed indicator data (or raw data as fallback)
-    use_precomputed = indicator_cache.count > 0
+    # Get pre-computed indicator data
+    has_cache = indicator_cache.strategy_count(strategy_id) > 0
 
     if req.symbols:
-        coins = indicator_cache.get_symbols(req.symbols) if use_precomputed else data_manager.get_symbols(req.symbols)
+        coins = indicator_cache.get_symbols_for_strategy(strategy_id, req.symbols) if has_cache else data_manager.get_symbols(req.symbols)
         if not coins:
             raise HTTPException(404, "None of the requested symbols found.")
     else:
-        coins = indicator_cache.get_top_n(data_manager, req.top_n) if use_precomputed else data_manager.get_top_n(req.top_n)
+        coins = indicator_cache.get_top_n_for_strategy(strategy_id, data_manager, req.top_n) if has_cache else data_manager.get_top_n(req.top_n)
 
-    # Build strategy + cost model
-    strategy = BBSqueezeStrategy(avoid_hours=AVOID_HOURS)
     cost_model = CostModel.futures() if req.market_type == "futures" else CostModel.spot()
 
-    # Run simulation across all coins (vectorized fast engine)
+    # Run simulation across all coins
     all_trades = []
     for sym, df in coins:
-        if not use_precomputed:
+        if not has_cache:
             df = strategy.calculate_indicators(df.copy())
 
         result = run_fast(
@@ -311,8 +328,9 @@ async def simulate(req: SimulationRequest):
             max_bars=req.max_bars,
             fee_pct=cost_model.fee_pct,
             slippage_pct=cost_model.slippage_pct,
-            direction=req.direction,
+            direction=direction,
             market_type=req.market_type,
+            strategy_id=strategy_id,
         )
 
         for trade in result.trades:
@@ -497,11 +515,20 @@ async def get_ohlcv(symbol: str, limit: int = 3000):
 async def simulate_coin(req: CoinSimRequest):
     """Simulate a single coin and return individual trade details."""
     symbol = req.symbol.upper()
-    df = indicator_cache.get(symbol)
+
+    # Use bb-squeeze-short by default for backwards compat
+    strategy_id = f"bb-squeeze-{req.direction}"
+    if strategy_id not in STRATEGY_REGISTRY:
+        strategy_id = "bb-squeeze-short"
+
+    df = indicator_cache.get_for_strategy(strategy_id, symbol)
+    if df is None:
+        # Fallback to legacy flat cache
+        df = indicator_cache.get(symbol)
     if df is None:
         raise HTTPException(404, f"Symbol not found: {symbol}")
 
-    strategy = BBSqueezeStrategy(avoid_hours=AVOID_HOURS)
+    strategy, _, _ = get_strategy(strategy_id)
     cost_model = CostModel.futures() if req.market_type == "futures" else CostModel.spot()
 
     result = run_fast(
@@ -513,6 +540,7 @@ async def simulate_coin(req: CoinSimRequest):
         slippage_pct=cost_model.slippage_pct,
         direction=req.direction,
         market_type=req.market_type,
+        strategy_id=strategy_id,
     )
 
     trades = [
@@ -548,6 +576,98 @@ async def get_coin_stats():
     if coin_stats_cache is None:
         raise HTTPException(503, "Coin stats not computed yet.")
     return CoinStatsResponse(**coin_stats_cache)
+
+
+@app.post("/simulate/compare", response_model=CompareResponse)
+async def simulate_compare(req: CompareRequest):
+    """Run all strategies under identical SL/TP conditions for comparison."""
+    if data_manager.coin_count == 0:
+        raise HTTPException(503, "Data not loaded yet. Try again shortly.")
+
+    cost_model = CostModel.futures()
+    results = []
+
+    for strategy_id, entry in STRATEGY_REGISTRY.items():
+        strategy, direction, _ = get_strategy(strategy_id)
+
+        # Get coins for this strategy
+        has_cache = indicator_cache.strategy_count(strategy_id) > 0
+        coins = indicator_cache.get_top_n_for_strategy(strategy_id, data_manager, req.top_n) if has_cache else data_manager.get_top_n(req.top_n)
+
+        all_trades = []
+        for sym, df in coins:
+            if not has_cache:
+                df = strategy.calculate_indicators(df.copy())
+
+            result = run_fast(
+                df, strategy, sym,
+                sl_pct=req.sl_pct / 100,
+                tp_pct=req.tp_pct / 100,
+                max_bars=req.max_bars,
+                fee_pct=cost_model.fee_pct,
+                slippage_pct=cost_model.slippage_pct,
+                direction=direction,
+                market_type="futures",
+                strategy_id=strategy_id,
+            )
+            for trade in result.trades:
+                all_trades.append({"time": trade.entry_time, "pnl_pct": trade.pnl_pct, "exit_reason": trade.exit_reason})
+
+        all_trades.sort(key=lambda t: t["time"])
+
+        if not all_trades:
+            results.append(StrategyResult(
+                strategy_id=strategy_id, name=entry["name"],
+                direction=direction, status=entry["status"],
+                total_trades=0, wins=0, losses=0, win_rate=0,
+                total_return_pct=0, profit_factor=0, max_drawdown_pct=0,
+                tp_count=0, sl_count=0, timeout_count=0, equity_curve=[],
+            ))
+            continue
+
+        wins = [t for t in all_trades if t["pnl_pct"] > 0]
+        losses = [t for t in all_trades if t["pnl_pct"] <= 0]
+        gross_profit = sum(t["pnl_pct"] for t in wins) if wins else 0
+        gross_loss = abs(sum(t["pnl_pct"] for t in losses)) if losses else 0.001
+
+        equity = 0.0
+        peak = 0.0
+        max_dd = 0.0
+        eq_times = []
+        eq_values = []
+        for t in all_trades:
+            equity += t["pnl_pct"]
+            peak = max(peak, equity)
+            max_dd = max(max_dd, peak - equity)
+            eq_times.append(t["time"][:10])
+            eq_values.append(equity)
+
+        results.append(StrategyResult(
+            strategy_id=strategy_id,
+            name=entry["name"],
+            direction=direction,
+            status=entry["status"],
+            total_trades=len(all_trades),
+            wins=len(wins),
+            losses=len(losses),
+            win_rate=round(len(wins) / len(all_trades) * 100, 2),
+            total_return_pct=round(sum(t["pnl_pct"] for t in all_trades), 2),
+            profit_factor=round(gross_profit / gross_loss, 2),
+            max_drawdown_pct=round(max_dd, 2),
+            tp_count=sum(1 for t in all_trades if t["exit_reason"] == "tp"),
+            sl_count=sum(1 for t in all_trades if t["exit_reason"] == "sl"),
+            timeout_count=sum(1 for t in all_trades if t["exit_reason"] == "timeout"),
+            equity_curve=downsample_equity(eq_times, eq_values),
+        ))
+
+    return CompareResponse(
+        sl_pct=req.sl_pct,
+        tp_pct=req.tp_pct,
+        max_bars=req.max_bars,
+        coins_used=req.top_n,
+        data_range=data_manager.data_range(),
+        strategies=results,
+    )
 
 
 @app.post("/admin/refresh")

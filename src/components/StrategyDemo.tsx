@@ -32,8 +32,14 @@ interface DemoData {
   results: Record<string, ResultData>;
 }
 
-const DEFAULT_SL = 10;
-const DEFAULT_TP = 8;
+interface Props {
+  lang?: 'en' | 'ko';
+  strategy?: string;
+  direction?: string;
+  defaultSl?: number;
+  defaultTp?: number;
+}
+
 const API_URL = import.meta.env.PUBLIC_PRUVIQ_API_URL || '';
 
 const labels = {
@@ -47,7 +53,7 @@ const labels = {
     loading: 'Loading simulation data...',
     error: 'Failed to load demo data.',
     noData: 'No data for this combination.',
-    disclaimer: '* Default parameter (SL=10%, TP=8%) is the current verified live setting. Simulation includes 0.04% futures fees + 0.02% slippage per trade. Past performance does not guarantee future results.',
+    disclaimer: '* Simulation includes 0.04% futures fees + 0.02% slippage per trade. Past performance does not guarantee future results.',
     ctaTitle: 'Ready to Trade?',
     ctaDesc: 'Save up to 20% on trading fees with PRUVIQ referral links. Lifetime discount.',
     ctaFees: 'Compare Exchange Fees',
@@ -63,7 +69,7 @@ const labels = {
     loading: '시뮬레이션 데이터 로딩 중...',
     error: '데모 데이터 로딩 실패.',
     noData: '이 조합에 대한 데이터가 없습니다.',
-    disclaimer: '* 기본 파라미터 (SL=10%, TP=8%)는 현재 검증된 라이브 설정입니다. 시뮬레이션은 0.04% 선물 수수료 + 0.02% 슬리피지를 포함합니다. 과거 성과는 미래 결과를 보장하지 않습니다.',
+    disclaimer: '* 시뮬레이션은 0.04% 선물 수수료 + 0.02% 슬리피지를 포함합니다. 과거 성과는 미래 결과를 보장하지 않습니다.',
     ctaTitle: '실제 거래를 시작하려면?',
     ctaDesc: 'PRUVIQ 제휴 링크로 거래소 수수료 최대 20% 할인. 평생 적용.',
     ctaFees: '거래소 수수료 비교',
@@ -106,11 +112,17 @@ function DemoSkeleton() {
   );
 }
 
-export default function StrategyDemo({ lang = 'en' }: { lang?: 'en' | 'ko' }) {
+export default function StrategyDemo({
+  lang = 'en',
+  strategy = 'bb-squeeze-short',
+  direction = 'short',
+  defaultSl = 10,
+  defaultTp = 8,
+}: Props) {
   const t = labels[lang] || labels.en;
   const [data, setData] = useState<DemoData | null>(null);
-  const [sl, setSl] = useState(DEFAULT_SL);
-  const [tp, setTp] = useState(DEFAULT_TP);
+  const [sl, setSl] = useState(defaultSl);
+  const [tp, setTp] = useState(defaultTp);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -118,8 +130,11 @@ export default function StrategyDemo({ lang = 'en' }: { lang?: 'en' | 'ko' }) {
   const chartRef = useRef<any>(null);
   const seriesRef = useRef<any>(null);
 
+  // Load strategy-specific demo JSON
+  const demoUrl = `/data/demo-${strategy}.json`;
+
   useEffect(() => {
-    fetch('/data/demo-results.json')
+    fetch(demoUrl)
       .then((res) => {
         if (!res.ok) throw new Error('Failed to load demo data');
         return res.json();
@@ -129,10 +144,18 @@ export default function StrategyDemo({ lang = 'en' }: { lang?: 'en' | 'ko' }) {
         setLoading(false);
       })
       .catch((err) => {
-        setError(err.message);
-        setLoading(false);
+        // Fallback to legacy demo-results.json for bb-squeeze-short
+        if (strategy === 'bb-squeeze-short') {
+          fetch('/data/demo-results.json')
+            .then((res) => res.ok ? res.json() : Promise.reject('no fallback'))
+            .then((json: DemoData) => { setData(json); setLoading(false); })
+            .catch(() => { setError(err.message); setLoading(false); });
+        } else {
+          setError(err.message);
+          setLoading(false);
+        }
       });
-  }, []);
+  }, [demoUrl]);
 
   useEffect(() => {
     if (!data || !chartContainerRef.current) return;
@@ -204,10 +227,12 @@ export default function StrategyDemo({ lang = 'en' }: { lang?: 'en' | 'ko' }) {
   const fetchFromApi = async (slVal: number, tpVal: number): Promise<ResultData | null> => {
     if (!API_URL) return null;
     try {
+      // Extract base strategy name for API (e.g., "bb-squeeze-short" -> "bb-squeeze")
+      const apiStrategy = strategy.replace(/-short$|-long$/, '');
       const res = await fetch(`${API_URL}/simulate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ strategy: 'bb-squeeze', direction: 'short', sl_pct: slVal, tp_pct: tpVal, top_n: 50 }),
+        body: JSON.stringify({ strategy: apiStrategy, direction, sl_pct: slVal, tp_pct: tpVal, top_n: 50 }),
       });
       if (!res.ok) return null;
       return await res.json();
@@ -253,7 +278,7 @@ export default function StrategyDemo({ lang = 'en' }: { lang?: 'en' | 'ko' }) {
 
   const key = `sl${sl}_tp${tp}`;
   const result = data.results[key];
-  const isDefault = sl === DEFAULT_SL && tp === DEFAULT_TP;
+  const isDefault = sl === defaultSl && tp === defaultTp;
 
   return (
     <div id="demo" class="border-t border-[--color-border] pt-10 mt-10 fade-in">
@@ -269,8 +294,8 @@ export default function StrategyDemo({ lang = 'en' }: { lang?: 'en' | 'ko' }) {
         {/* Sliders */}
         <div class="p-5 bg-[--color-bg-card] border border-[--color-border] rounded-xl">
           <div class="grid gap-4" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))' }}>
-            <DiscreteSlider label={t.sl} values={data.grid.sl_values} value={sl} defaultValue={DEFAULT_SL} onChange={setSl} />
-            <DiscreteSlider label={t.tp} values={data.grid.tp_values} value={tp} defaultValue={DEFAULT_TP} onChange={setTp} />
+            <DiscreteSlider label={t.sl} values={data.grid.sl_values} value={sl} defaultValue={defaultSl} onChange={setSl} />
+            <DiscreteSlider label={t.tp} values={data.grid.tp_values} value={tp} defaultValue={defaultTp} onChange={setTp} />
           </div>
         </div>
 

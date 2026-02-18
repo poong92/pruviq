@@ -198,3 +198,42 @@ class NewsItem(BaseModel):
 class NewsResponse(BaseModel):
     items: List[NewsItem]
     generated: str
+
+
+# --- Strategy Comparison Schemas ---
+
+class CompareRequest(BaseModel):
+    """Compare all strategies under identical conditions."""
+    sl_pct: float = Field(default=10.0, ge=1.0, le=30.0, description="Stop Loss %")
+    tp_pct: float = Field(default=8.0, ge=1.0, le=30.0, description="Take Profit %")
+    max_bars: int = Field(default=48, ge=6, le=168, description="Max holding period (bars)")
+    top_n: int = Field(default=50, ge=1, le=535, description="Number of coins")
+
+
+class StrategyResult(BaseModel):
+    """Result for a single strategy in comparison."""
+    strategy_id: str
+    name: str
+    direction: str
+    status: str
+    total_trades: int
+    wins: int
+    losses: int
+    win_rate: float
+    total_return_pct: float
+    profit_factor: float
+    max_drawdown_pct: float
+    tp_count: int
+    sl_count: int
+    timeout_count: int
+    equity_curve: List[EquityPoint]
+
+
+class CompareResponse(BaseModel):
+    """Comparison across all strategies."""
+    sl_pct: float
+    tp_pct: float
+    max_bars: int
+    coins_used: int
+    data_range: str
+    strategies: List[StrategyResult]

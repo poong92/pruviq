@@ -52,6 +52,13 @@ const difficultyColors: Record<string, string> = {
         {strategies.filter(s => s.data.status === 'shelved').length} shelved.
       </p>
 
+      <div class="mb-4 flex flex-col sm:flex-row gap-3">
+        <a href="/strategies/compare"
+           class="inline-flex items-center gap-2 bg-[--color-accent] text-[--color-bg] px-5 py-2.5 rounded-lg font-semibold text-sm hover:bg-[--color-accent-dim] transition-colors">
+          Compare All Strategies &rarr;
+        </a>
+      </div>
+
       <div class="mb-8 border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card] flex flex-col sm:flex-row items-start sm:items-center gap-4">
         <div class="flex-1">
           <p class="font-mono text-[--color-accent] text-xs font-bold mb-1">NEW TO CRYPTO TRADING?</p>

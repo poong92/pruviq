@@ -49,10 +49,11 @@ class SimResult:
     equity_curve: list = field(default_factory=list)
 
 
-def find_signals_vectorized(df: pd.DataFrame, strategy) -> np.ndarray:
+def find_signals_vectorized(df: pd.DataFrame, strategy, direction: str = "short") -> np.ndarray:
     """
-    Vectorized signal detection — returns array of signal indices.
+    Vectorized signal detection for BB Squeeze — returns array of signal indices.
     Much faster than calling check_signal() per bar.
+    Supports both short and long directions.
     """
     n = len(df)
     if n < 100:
@@ -91,11 +92,31 @@ def find_signals_vectorized(df: pd.DataFrame, strategy) -> np.ndarray:
     # Combine base conditions
     base_ok = valid_range & has_width & is_near_squeeze & has_expansion & has_volume & next_hour_ok
 
-    # Direction: short = ema_fast < ema_slow AND bearish
-    short_signal = base_ok & (ema_fast < ema_slow) & is_bearish
-    # long_signal = base_ok & (ema_fast > ema_slow) & is_bullish
+    # Direction-aware signal
+    if direction == "short":
+        signal = base_ok & (ema_fast < ema_slow) & is_bearish
+    else:
+        signal = base_ok & (ema_fast > ema_slow) & is_bullish
 
-    return np.where(short_signal)[0]
+    return np.where(signal)[0]
+
+
+def find_signals_generic(df: pd.DataFrame, strategy, direction: str) -> np.ndarray:
+    """
+    Generic signal detection fallback — calls strategy.check_signal() per bar.
+    ~5x slower than vectorized but works for any strategy.
+    """
+    n = len(df)
+    if n < 100:
+        return np.array([], dtype=int)
+
+    signals = []
+    for idx in range(n - 1):
+        result = strategy.check_signal(df, idx)
+        if result == direction:
+            signals.append(idx)
+
+    return np.array(signals, dtype=int) if signals else np.array([], dtype=int)
 
 
 def simulate_vectorized(
@@ -222,11 +243,15 @@ def run_fast(
     slippage_pct: float = 0.0002,
     direction: str = "short",
     market_type: str = "futures",
+    strategy_id: str = None,
 ) -> SimResult:
     """Complete fast simulation pipeline."""
 
-    # Find signals (vectorized)
-    signal_indices = find_signals_vectorized(df, strategy)
+    # Find signals: use vectorized for BB Squeeze, generic for others
+    if strategy_id in ("bb-squeeze-short", "bb-squeeze-long", None):
+        signal_indices = find_signals_vectorized(df, strategy, direction)
+    else:
+        signal_indices = find_signals_generic(df, strategy, direction)
 
     # Simulate trades
     trades = simulate_vectorized(
