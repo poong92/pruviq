@@ -155,7 +155,7 @@ function formatDateRange(startUnix: number, endUnix: number): string {
 
 function MetricBox({ label, value, color }: { label: string; value: string; color: string }) {
   return (
-    <div class="p-2.5 rounded-md bg-[rgba(17,17,17,0.8)] border border-[--color-border]">
+    <div class="p-2.5 rounded-md bg-[--color-bg-tooltip] border border-[--color-border]">
       <div class="font-mono text-[0.5625rem] text-[--color-text-muted] uppercase tracking-wider mb-0.5">{label}</div>
       <div class="font-mono text-base font-bold" style={{ color }}>{value}</div>
     </div>
@@ -167,7 +167,7 @@ function ToggleBtn({ active, activeColor, label, onClick }: { active: boolean; a
     <button
       onClick={onClick}
       aria-pressed={active}
-      class="px-2.5 py-1 rounded font-mono text-[0.6875rem] cursor-pointer transition-all"
+      class="px-2.5 py-1 rounded font-mono text-[0.6875rem] cursor-pointer transition-all min-h-[44px]"
       style={{
         border: `1px solid ${active ? activeColor : 'var(--color-border)'}`,
         backgroundColor: active ? `${activeColor}15` : 'transparent',
@@ -504,7 +504,7 @@ export default function CoinChart({ symbol, lang = 'en' }: { symbol: string; lan
           <button
             onClick={() => chartRef.current?.timeScale().fitContent()}
             aria-label="Reset chart zoom"
-            class="px-2 py-1 rounded border border-[--color-border] bg-[rgba(17,17,17,0.8)] text-[--color-text-muted] font-mono text-[0.6875rem] cursor-pointer hover:border-[--color-accent] transition-colors"
+            class="px-2 py-1 rounded border border-[--color-border] bg-[--color-bg-tooltip] text-[--color-text-muted] font-mono text-[0.6875rem] cursor-pointer hover:border-[--color-accent] transition-colors min-h-[44px]"
           >
             {t.resetZoom}
           </button>

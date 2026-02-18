@@ -45,6 +45,11 @@
   --color-chart-vol-down: rgba(234, 57, 67, 0.3);
   --color-btc: #f7931a;
   --color-eth: #627eea;
+  --color-bg-tooltip: rgba(17, 17, 17, 0.8);
+  --color-accent-glow: rgba(0, 255, 136, 0.3);
+  --color-up-fill: rgba(0, 255, 136, 0.2);
+  --color-down-fill: rgba(255, 68, 68, 0.2);
+  --color-bg-subtle: rgba(255, 255, 255, 0.02);
   --font-sans: 'Inter', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 }

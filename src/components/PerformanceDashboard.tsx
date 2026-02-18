@@ -218,7 +218,7 @@ export default function PerformanceDashboard({ lang = 'en' }: { lang?: 'en' | 'k
 
       const finalValue = cumulativeData.length > 0 ? cumulativeData[cumulativeData.length - 1].value : 0;
       const lineColor = finalValue >= 0 ? getCssVar('--color-accent') : getCssVar('--color-red');
-      const topColor = finalValue >= 0 ? 'rgba(0, 255, 136, 0.3)' : 'rgba(255, 68, 68, 0.3)';
+      const topColor = finalValue >= 0 ? getCssVar('--color-accent-glow') : 'rgba(255, 68, 68, 0.3)';
       const bottomColor = finalValue >= 0 ? 'rgba(0, 255, 136, 0.0)' : 'rgba(255, 68, 68, 0.0)';
 
       const areaSeries = chart.addSeries(AreaSeries, {
@@ -463,7 +463,7 @@ export default function PerformanceDashboard({ lang = 'en' }: { lang?: 'en' | 'k
       )}
 
       {/* Disclaimer */}
-      <p class="font-mono text-[0.625rem] text-[--color-text-muted] leading-relaxed px-4 py-3 bg-[rgba(255,255,255,0.02)] border border-[--color-border] rounded-lg">
+      <p class="font-mono text-[0.625rem] text-[--color-text-muted] leading-relaxed px-4 py-3 bg-[--color-bg-subtle] border border-[--color-border] rounded-lg">
         * {t.disclaimer}
       </p>
     </div>

@@ -413,7 +413,7 @@ export default function StrategyBuilder({ lang = 'en' }: Props) {
 
       const series = chart.addSeries(AreaSeries, {
         lineColor: color,
-        topColor: isPositive ? 'rgba(0, 255, 136, 0.2)' : 'rgba(255, 68, 68, 0.2)',
+        topColor: isPositive ? getCssVar('--color-up-fill') : getCssVar('--color-down-fill'),
         bottomColor: isPositive ? 'rgba(0, 255, 136, 0.0)' : 'rgba(255, 68, 68, 0.0)',
         lineWidth: 2,
         priceFormat: {
@@ -499,7 +499,7 @@ export default function StrategyBuilder({ lang = 'en' }: Props) {
                 {active && Object.keys(ind.default_params).length > 0 && (
                   <button
                     onClick={() => setShowParams(showParams === ind.id ? null : ind.id)}
-                    class={`px-2 py-1.5 rounded-r-lg border border-l-0 text-[10px] font-mono cursor-pointer transition-colors
+                    class={`px-2 py-1.5 rounded-r-lg border border-l-0 text-[10px] font-mono cursor-pointer transition-colors min-h-[44px]
                       ${showParams === ind.id
                         ? 'border-[--color-accent] text-[--color-accent] bg-[--color-accent]/20'
                         : 'border-[--color-accent] text-[--color-text-muted] hover:text-[--color-accent]'}`}
@@ -667,7 +667,7 @@ export default function StrategyBuilder({ lang = 'en' }: Props) {
               {/* Remove */}
               <button
                 onClick={() => removeCondition(cond.id)}
-                class="text-[--color-red] hover:text-[--color-text] text-sm cursor-pointer transition-colors px-1"
+                class="text-[--color-red] hover:text-[--color-text] text-sm cursor-pointer transition-colors px-1 min-w-[44px] min-h-[44px] flex items-center justify-center"
                 title={t.remove}
               >
                 ✕
@@ -781,7 +781,7 @@ export default function StrategyBuilder({ lang = 'en' }: Props) {
                 <button
                   key={h}
                   onClick={() => toggleHour(h)}
-                  class={`w-8 h-8 rounded text-xs font-mono cursor-pointer transition-colors
+                  class={`w-11 h-11 rounded text-xs font-mono cursor-pointer transition-colors
                     ${active
                       ? 'bg-[--color-red]/20 text-[--color-red] border border-[--color-red]/40'
                       : 'bg-[--color-bg] text-[--color-text-muted] border border-[--color-border] hover:border-[--color-text-muted]'
@@ -802,7 +802,7 @@ export default function StrategyBuilder({ lang = 'en' }: Props) {
         class={`w-full py-4 rounded-xl font-bold text-lg font-mono cursor-pointer transition-all
           ${isRunning || conditions.length === 0
             ? 'bg-[--color-border] text-[--color-text-muted] cursor-not-allowed'
-            : 'bg-[--color-accent] text-[--color-bg] hover:shadow-[0_0_20px_rgba(0,255,136,0.3)]'
+            : 'bg-[--color-accent] text-[--color-bg] hover:shadow-[0_0_20px_var(--color-accent-glow)]'
           }`}
       >
         {isRunning ? t.running : t.runBacktest}

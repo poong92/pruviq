@@ -380,7 +380,7 @@ export default function MarketDashboard({ lang = 'en' }: { lang?: 'en' | 'ko' })
             <button
               onClick={() => setSourceFilter('')}
               aria-pressed={sourceFilter === ''}
-              className={`px-2 py-1 text-[10px] rounded font-semibold cursor-pointer border-none transition-colors ${
+              className={`px-2 py-1 text-[10px] rounded font-semibold cursor-pointer border-none transition-colors min-h-[44px] ${
                 !sourceFilter ? 'bg-[--color-accent] text-[--color-bg]' : 'bg-[--color-bg-hover] text-[--color-text-muted] hover:text-[--color-text]'
               }`}
             >{l.allSources}</button>
@@ -389,7 +389,7 @@ export default function MarketDashboard({ lang = 'en' }: { lang?: 'en' | 'ko' })
                 key={s}
                 onClick={() => setSourceFilter(sourceFilter === s ? '' : s)}
                 aria-pressed={sourceFilter === s}
-                className={`px-2 py-1 text-[10px] rounded font-semibold cursor-pointer border-none whitespace-nowrap transition-colors ${
+                className={`px-2 py-1 text-[10px] rounded font-semibold cursor-pointer border-none whitespace-nowrap transition-colors min-h-[44px] ${
                   sourceFilter === s ? 'bg-[--color-accent] text-[--color-bg]' : 'bg-[--color-bg-hover] text-[--color-text-muted] hover:text-[--color-text]'
                 }`}
               >{s.replace('Bitcoin Magazine', 'BTC Mag')}</button>

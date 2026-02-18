@@ -49,7 +49,7 @@ const labels = {
 
 function MetricBox({ label, value, color }: { label: string; value: string; color: string }) {
   return (
-    <div class="p-3 rounded-lg bg-[rgba(17,17,17,0.8)] border border-[--color-border]">
+    <div class="p-3 rounded-lg bg-[--color-bg-tooltip] border border-[--color-border]">
       <div class="font-mono text-[0.625rem] text-[--color-text-muted] uppercase tracking-wider mb-1">{label}</div>
       <div class="font-mono text-xl font-bold" style={{ color }}>{value}</div>
     </div>
