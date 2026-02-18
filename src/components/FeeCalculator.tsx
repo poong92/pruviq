@@ -43,8 +43,8 @@ const exchanges: Exchange[] = [
     futures: { maker: 0.0002, taker: 0.0006 },
     discount: 0.20,
     discountLabel: '20%',
-    link: '#',
-    available: false,
+    link: 'https://partner.bitget.com/bg/71KRCS',
+    available: true,
     tag: 'Copy Trading',
   },
 ];
