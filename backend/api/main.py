@@ -766,7 +766,11 @@ def _fetch_coingecko_tickers() -> tuple:
 
 
 def _fetch_coingecko_funding() -> list:
-    """Fetch extreme funding rates from CoinGecko derivatives (NO Binance API)."""
+    """Fetch extreme funding rates from CoinGecko derivatives (NO Binance API).
+    CoinGecko funding_rate is already a percentage decimal (e.g. -0.005 = -0.5%).
+    We filter to major exchanges only to avoid noisy data.
+    """
+    MAJOR_EXCHANGES = {"binance", "bybit", "okx", "bitget", "dydx", "htx", "gate", "kucoin", "mexc"}
     try:
         resp = http_requests.get(
             "https://api.coingecko.com/api/v3/derivatives"
@@ -776,19 +780,26 @@ def _fetch_coingecko_funding() -> list:
         resp.raise_for_status()
         data = resp.json()
 
-        # Filter perpetual USDT pairs with funding rate
+        # Filter perpetual USDT pairs from major exchanges
         perps = []
         for d in data:
             fr = d.get("funding_rate")
             sym = d.get("symbol", "")
-            if fr is not None and "USDT" in sym.upper() and d.get("contract_type") == "perpetual":
+            market = (d.get("market", "") or "").lower()
+            if (fr is not None and "USDT" in sym.upper()
+                    and d.get("contract_type") == "perpetual"
+                    and any(ex in market for ex in MAJOR_EXCHANGES)):
                 try:
                     rate = float(fr)
-                    perps.append({"symbol": sym.upper().replace("/", "").replace(" ", ""), "rate": rate})
+                    # CoinGecko rate is decimal: -0.005 = -0.5%
+                    clean_sym = sym.upper().replace("/", "").replace(" ", "").replace("_", "")
+                    # Remove PERP suffix if present
+                    clean_sym = clean_sym.replace("PERP", "")
+                    perps.append({"symbol": clean_sym, "rate": rate})
                 except (ValueError, TypeError):
                     continue
 
-        # Deduplicate by symbol (keep first = highest volume exchange)
+        # Deduplicate by symbol (keep first occurrence)
         seen = set()
         unique = []
         for p in perps:
@@ -802,8 +813,8 @@ def _fetch_coingecko_funding() -> list:
         return [
             FundingRate(
                 symbol=d["symbol"],
-                rate=round(d["rate"] * 100, 4),
-                annual_pct=round(d["rate"] * 3 * 365 * 100, 1),
+                rate=round(d["rate"], 4),  # already % decimal
+                annual_pct=round(d["rate"] * 3 * 365, 1),  # 3 periods/day * 365
             )
             for d in unique[:10]
         ]
