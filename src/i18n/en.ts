@@ -312,7 +312,7 @@ export const en = {
   'meta.blog_title': 'Trading IQ - PRUVIQ',
   'meta.blog_desc': "Raise your trading IQ. Backtesting, risk management, algorithmic strategies, and lessons from real trades. Learn what works. See what doesn't.",
   'meta.fees_title': 'Compare Exchange Fees - PRUVIQ',
-  'meta.fees_desc': 'Compare trading fees across Binance, Bybit, OKX, and more. Save up to 30% with PRUVIQ referral links. Transparent fee comparison.',
+  'meta.fees_desc': 'Compare trading fees across Binance, Bitget, and OKX. Save up to 20% with PRUVIQ referral links. Transparent fee comparison.',
   'meta.changelog_title': 'Changelog - PRUVIQ',
   'meta.changelog_desc': "Complete version history of PRUVIQ's trading system. Every change, every reason, every date.",
   'meta.performance_title': 'Live Performance - PRUVIQ',

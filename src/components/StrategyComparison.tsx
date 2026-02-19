@@ -53,6 +53,9 @@ const labels = {
     computeTime: 'Computed in',
     useDefault: 'Use each strategy\'s default SL/TP',
     view: 'Details',
+    ctaTitle: 'Build Your Own',
+    ctaDesc: 'Combine indicators and test with the strategy builder.',
+    ctaButton: 'Try Simulator',
   },
   ko: {
     tag: '전략 비교',
@@ -76,6 +79,9 @@ const labels = {
     computeTime: '계산 시간',
     useDefault: '각 전략의 기본 SL/TP 사용',
     view: '자세히',
+    ctaTitle: '나만의 전략 만들기',
+    ctaDesc: '인디케이터를 조합하고 전략 빌더로 테스트하세요.',
+    ctaButton: '시뮬레이터 시작',
   },
 };
 
@@ -431,6 +437,19 @@ export default function StrategyComparison({ lang = 'en' }: Props) {
           </div>
         </>
       )}
+
+      {/* CTA */}
+      <div class="mt-8 p-5 bg-[--color-bg-card] border border-[--color-border] rounded-xl">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div>
+            <h3 class="font-bold text-sm mb-1">{t.ctaTitle}</h3>
+            <p class="text-[--color-text-muted] text-xs">{t.ctaDesc}</p>
+          </div>
+          <a href={lang === 'ko' ? '/ko/simulate' : '/simulate'} class="shrink-0 bg-[--color-accent] text-[--color-bg] px-5 py-2.5 rounded-lg font-semibold text-sm no-underline hover:opacity-90 transition-opacity whitespace-nowrap">
+            {t.ctaButton} &rarr;
+          </a>
+        </div>
+      </div>
 
       <p class="font-mono text-[0.625rem] text-[--color-text-muted] leading-relaxed">{t.disclaimer}</p>
     </div>

@@ -89,6 +89,10 @@ const labels = {
     change: 'Chg',
     dataRange: 'Data Range',
     disclaimer: 'Simulation includes 0.04% fees + 0.02% slippage. Past performance does not guarantee future results.',
+    ctaTitle: 'Build Your Own Strategy',
+    ctaDesc: 'Customize conditions and test across all coins.',
+    ctaSimulate: 'Strategy Builder',
+    ctaFees: 'Save on Fees',
   },
   ko: {
     apply: '전략 적용',
@@ -127,6 +131,10 @@ const labels = {
     change: '변동',
     dataRange: '데이터 범위',
     disclaimer: '시뮬레이션은 0.04% 수수료 + 0.02% 슬리피지를 포함합니다. 과거 성과는 미래 결과를 보장하지 않습니다.',
+    ctaTitle: '나만의 전략 만들기',
+    ctaDesc: '조건을 커스텀하고 모든 코인에서 테스트하세요.',
+    ctaSimulate: '전략 빌더',
+    ctaFees: '수수료 절약',
   },
 };
 
@@ -639,6 +647,24 @@ export default function CoinChart({ symbol, lang = 'en' }: { symbol: string; lan
           )}
         </div>
       )}
+
+      {/* CTA */}
+      <div class="mt-6 p-5 bg-[--color-bg-card] border border-[--color-border] rounded-xl">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div>
+            <h3 class="font-bold text-sm mb-1">{t.ctaTitle}</h3>
+            <p class="text-[--color-text-muted] text-xs">{t.ctaDesc}</p>
+          </div>
+          <div class="flex gap-2 shrink-0">
+            <a href={lang === 'ko' ? '/ko/simulate' : '/simulate'} class="bg-[--color-accent] text-[--color-bg] px-4 py-2 rounded-lg font-semibold text-xs no-underline hover:opacity-90 transition-opacity whitespace-nowrap">
+              {t.ctaSimulate} &rarr;
+            </a>
+            <a href={lang === 'ko' ? '/ko/fees' : '/fees'} class="border border-[--color-border] text-[--color-text] px-4 py-2 rounded-lg font-semibold text-xs no-underline hover:border-[--color-accent] transition-colors whitespace-nowrap">
+              {t.ctaFees}
+            </a>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

@@ -38,6 +38,9 @@ const labels = {
     macroError: 'Failed to load macro data.',
     economicCalendar: 'Economic Calendar',
     calendarNote: 'Powered by TradingView',
+    ctaTitle: 'Test a Strategy',
+    ctaDesc: 'Use our free strategy builder to backtest on 535+ coins.',
+    ctaButton: 'Try Simulator',
   },
   ko: {
     tag: '시장 현황',
@@ -74,6 +77,9 @@ const labels = {
     macroError: '거시경제 데이터 로딩 실패.',
     economicCalendar: '경제 캘린더',
     calendarNote: 'TradingView 제공',
+    ctaTitle: '전략 테스트',
+    ctaDesc: '535개 이상의 코인에서 무료 전략 빌더로 백테스트하세요.',
+    ctaButton: '시뮬레이터 시작',
   },
 };
 
@@ -569,6 +575,19 @@ export default function MarketDashboard({ lang = 'en' }: { lang?: 'en' | 'ko' })
             {lang === 'ko' ? '검색 결과가 없습니다.' : 'No results found.'}
           </div>
         )}
+      </div>
+
+      {/* CTA */}
+      <div className="mt-8 p-6 bg-[--color-bg-card] border border-[--color-border] rounded-xl">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div>
+            <h3 className="font-bold text-sm mb-1">{l.ctaTitle}</h3>
+            <p className="text-[--color-text-muted] text-xs">{l.ctaDesc}</p>
+          </div>
+          <a href={lang === 'ko' ? '/ko/simulate' : '/simulate'} className="shrink-0 bg-[--color-accent] text-[--color-bg] px-5 py-2.5 rounded-lg font-semibold text-sm no-underline hover:opacity-90 transition-opacity whitespace-nowrap">
+            {l.ctaButton} &rarr;
+          </a>
+        </div>
       </div>
 
       {/* Last Updated + Disclaimer */}

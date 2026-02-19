@@ -1,15 +1,18 @@
 ---
 import Layout from '../../../layouts/Layout.astro';
 import MarketDashboard from '../../../components/MarketDashboard';
+import { useTranslations } from '../../../i18n/index';
+
+const t = useTranslations('ko');
 ---
 
-<Layout title="시장 대시보드 - PRUVIQ" description="실시간 암호화폐 시장 현황. 공포/탐욕 지수, BTC 도미넌스, 상승/하락 순위, 펀딩 비율, 주요 뉴스.">
+<Layout title={t('meta.market_title')} description={t('meta.market_desc')}>
   <section class="py-12">
     <div class="max-w-6xl mx-auto px-4">
-      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">시장 현황</p>
-      <h1 class="text-3xl md:text-4xl font-bold mb-4">시장 대시보드</h1>
+      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('market.tag')}</p>
+      <h1 class="text-3xl md:text-4xl font-bold mb-4">{t('market.title')}</h1>
       <p class="text-[--color-text-muted] text-lg mb-8 max-w-2xl">
-        실시간 암호화폐 시장 데이터. 공포/탐욕 지수, 상승/하락 순위, 펀딩 비율, 주요 뉴스를 한눈에 확인하세요.
+        {t('market.desc')}
       </p>
       <MarketDashboard client:visible lang="ko" />
     </div>

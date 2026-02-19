@@ -208,6 +208,7 @@ export default function CoinListTable({ lang = 'en' }: { lang?: 'en' | 'ko' }) {
             )}
             {pageItems.map((coin, i) => {
               const rank = page * PER_PAGE + i + 1;
+              const coinUrl = `${basePath}/${coin.symbol.toLowerCase()}`;
               const chgColor = coin.change_24h >= 0 ? 'text-[--color-up]' : 'text-[--color-down]';
               const wrColor = coin.win_rate >= 60 ? 'text-[--color-up]' : coin.win_rate >= 50 ? 'text-[--color-yellow]' : 'text-[--color-red]';
               const pfColor = coin.profit_factor >= 2 ? 'text-[--color-up]' : coin.profit_factor >= 1 ? 'text-[--color-text]' : 'text-[--color-red]';
@@ -215,11 +216,13 @@ export default function CoinListTable({ lang = 'en' }: { lang?: 'en' | 'ko' }) {
               return (
                 <tr
                   key={coin.symbol}
-                  onClick={() => { window.location.href = `${basePath}/${coin.symbol.toLowerCase()}`; }}
+                  onClick={(e: MouseEvent) => { if (!(e.target as HTMLElement).closest('a')) { window.location.href = coinUrl; } }}
                   class="cursor-pointer border-b border-[--color-border] row-hover"
                 >
                   <td class="px-2.5 py-2 text-center text-[--color-text-muted] text-[0.6875rem]">{rank}</td>
-                  <td class="px-2.5 py-2 font-semibold whitespace-nowrap">{coin.symbol.replace('USDT', '')}<span class="text-[--color-text-muted] font-normal">/USDT</span></td>
+                  <td class="px-2.5 py-2 font-semibold whitespace-nowrap">
+                    <a href={coinUrl} class="hover:text-[--color-accent] transition-colors">{coin.symbol.replace('USDT', '')}<span class="text-[--color-text-muted] font-normal">/USDT</span></a>
+                  </td>
                   <td class="px-2.5 py-2 text-right">${formatPrice(coin.price)}</td>
                   <td class={`px-2.5 py-2 text-right ${chgColor}`}>{coin.change_24h > 0 ? '+' : ''}{coin.change_24h}%</td>
                   <td class="px-2.5 py-2 text-right text-[--color-text-muted] hidden md:table-cell">{formatVolume(coin.volume_24h)}</td>

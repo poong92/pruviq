@@ -125,6 +125,9 @@ const labels = {
     toggleVal: '[val]',
     toggleField: '[field]',
     coinsUnit: 'coins',
+    ctaTitle: 'Ready to Trade?',
+    ctaDesc: 'Save up to 20% on exchange fees with PRUVIQ referral links.',
+    ctaButton: 'Compare Fees',
   },
   ko: {
     tag: '전략 빌더',
@@ -184,6 +187,9 @@ const labels = {
     toggleVal: '[값]',
     toggleField: '[필드]',
     coinsUnit: '코인',
+    ctaTitle: '실제 거래를 시작하려면?',
+    ctaDesc: 'PRUVIQ 추천 링크로 거래소 수수료 최대 20% 할인.',
+    ctaButton: '수수료 비교',
   },
 };
 
@@ -943,6 +949,19 @@ export default function StrategyBuilder({ lang = 'en' }: Props) {
           )}
 
           <p class="font-mono text-[0.625rem] text-[--color-text-muted] leading-relaxed">{t.disclaimer}</p>
+
+          {/* CTA after results */}
+          <div class="mt-6 p-5 bg-[--color-bg-card] border border-[--color-border] rounded-xl">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div>
+                <h3 class="font-bold text-sm mb-1">{t.ctaTitle}</h3>
+                <p class="text-[--color-text-muted] text-xs">{t.ctaDesc}</p>
+              </div>
+              <a href={lang === 'ko' ? '/ko/fees' : '/fees'} class="shrink-0 bg-[--color-accent] text-[--color-bg] px-5 py-2.5 rounded-lg font-semibold text-sm no-underline hover:opacity-90 transition-opacity whitespace-nowrap">
+                {t.ctaButton} &rarr;
+              </a>
+            </div>
+          </div>
         </div>
       )}
     </div>

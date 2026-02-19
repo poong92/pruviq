@@ -314,7 +314,7 @@ export const ko: Record<TranslationKey, string> = {
   'meta.blog_title': '트레이딩 IQ - PRUVIQ',
   'meta.blog_desc': '트레이딩 IQ를 높이세요. 백테스팅, 리스크 관리, 알고리즘 전략, 실제 트레이딩의 교훈.',
   'meta.fees_title': '거래소 수수료 비교 - PRUVIQ',
-  'meta.fees_desc': 'Binance, Bybit, OKX 등 거래소 수수료 비교. PRUVIQ 추천 링크로 최대 30% 절약. 투명한 수수료 비교.',
+  'meta.fees_desc': 'Binance, Bitget, OKX 거래소 수수료 비교. PRUVIQ 추천 링크로 최대 20% 절약. 투명한 수수료 비교.',
   'meta.changelog_title': '변경 이력 - PRUVIQ',
   'meta.changelog_desc': 'PRUVIQ 트레이딩 시스템의 전체 버전 히스토리. 모든 변경, 모든 이유, 모든 날짜.',
   'meta.performance_title': '실거래 성과 - PRUVIQ',
