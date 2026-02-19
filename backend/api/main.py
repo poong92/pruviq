@@ -794,7 +794,7 @@ def _fetch_coingecko_funding() -> list:
                     # CoinGecko rate is decimal: -0.005 = -0.5%
                     clean_sym = sym.upper().replace("/", "").replace(" ", "").replace("_", "")
                     # Remove exchange-specific suffixes
-                    for suffix in ("PERP", "UMCBL", "CMCBL", "DMCBL"):
+                    for suffix in ("PERP", "UMCBL", "CMCBL", "DMCBL", "SWAP"):
                         clean_sym = clean_sym.replace(suffix, "")
                     # Kucoin uses trailing M (e.g. NKNUSDTM)
                     if clean_sym.endswith("USDTM"):
