@@ -793,19 +793,25 @@ def _fetch_coingecko_funding() -> list:
                     rate = float(fr)
                     # CoinGecko rate is decimal: -0.005 = -0.5%
                     clean_sym = sym.upper().replace("/", "").replace(" ", "").replace("_", "")
-                    # Remove PERP suffix if present
-                    clean_sym = clean_sym.replace("PERP", "")
+                    # Remove exchange-specific suffixes
+                    for suffix in ("PERP", "UMCBL", "CMCBL", "DMCBL"):
+                        clean_sym = clean_sym.replace(suffix, "")
+                    # Kucoin uses trailing M (e.g. NKNUSDTM)
+                    if clean_sym.endswith("USDTM"):
+                        clean_sym = clean_sym[:-1]
+                    # Remove hyphens (e.g. INJ-USDT -> INJUSDT)
+                    clean_sym = clean_sym.replace("-", "")
                     perps.append({"symbol": clean_sym, "rate": rate})
                 except (ValueError, TypeError):
                     continue
 
-        # Deduplicate by symbol (keep first occurrence)
-        seen = set()
-        unique = []
+        # Deduplicate by symbol (keep highest abs rate)
+        best: dict = {}
         for p in perps:
-            if p["symbol"] not in seen:
-                seen.add(p["symbol"])
-                unique.append(p)
+            s = p["symbol"]
+            if s not in best or abs(p["rate"]) > abs(best[s]["rate"]):
+                best[s] = p
+        unique = list(best.values())
 
         # Sort by abs funding rate
         unique.sort(key=lambda d: abs(d["rate"]), reverse=True)
