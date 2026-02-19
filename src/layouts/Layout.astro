@@ -45,7 +45,6 @@ const navItems = [
   { href: marketPath, match: '/market', label: t('nav.market') },
   { href: strategiesPath, match: '/strategies', label: t('nav.strategies') },
   { href: coinsPath, match: '/coins', label: t('nav.coins') },
-  { href: builderPath, match: '/builder', label: t('nav.builder') },
   { href: simulatePath, match: '/simulate', label: t('nav.simulate') },
   { href: learnPath, match: '/learn', label: t('nav.learn') },
   { href: feesPath, match: '/fees', label: t('nav.fees') },
@@ -291,7 +290,6 @@ const isActive = (match: string) => basePath.startsWith(match);
                 <a href={simulatePath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('nav.simulate')}</a>
                 <a href={strategiesPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('nav.strategies')}</a>
                 <a href={coinsPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('nav.coins')}</a>
-                <a href={builderPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('nav.builder')}</a>
                 <a href={feesPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('footer.fees')}</a>
               </div>
             </div>
