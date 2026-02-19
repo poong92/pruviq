@@ -42,6 +42,7 @@ from api.schemas import (
     MarketOverview, MarketMover, FundingRate,
     NewsItem, NewsResponse,
     CompareRequest, CompareResponse, StrategyResult,
+    MacroIndicator, DerivativesData, EconomicEvent, MacroResponse,
 )
 from api.data_manager import DataManager
 from api.indicator_cache import IndicatorCache
@@ -926,6 +927,177 @@ async def get_news():
     _news_cache = data
     _news_cache_time = now
     return NewsResponse(**data)
+
+
+# --- Macro Economic Endpoints ---
+
+MACRO_CACHE_TTL = 300  # 5 minutes
+_macro_cache: Optional[dict] = None
+_macro_cache_time: float = 0
+
+# FRED API (free, no key needed for public series, 120 req/min)
+FRED_SERIES = {
+    "DFF": {"name": "Fed Funds Rate", "unit": "%", "source": "FRED"},
+    "DGS10": {"name": "US 10Y Treasury", "unit": "%", "source": "FRED"},
+    "DGS2": {"name": "US 2Y Treasury", "unit": "%", "source": "FRED"},
+    "DTWEXBGS": {"name": "US Dollar Index (Broad)", "unit": "Index", "source": "FRED"},
+    "T10Y2Y": {"name": "10Y-2Y Yield Spread", "unit": "%", "source": "FRED"},
+    "VIXCLS": {"name": "VIX (Volatility Index)", "unit": "Index", "source": "FRED"},
+}
+
+
+def _fetch_fred_series(series_id: str) -> dict:
+    """Fetch latest value from FRED public API (no API key needed for observation)."""
+    try:
+        url = f"https://fred.stlouisfed.org/graph/fredgraph.csv?id={series_id}"
+        resp = http_requests.get(url, timeout=8)
+        resp.raise_for_status()
+        lines = resp.text.strip().split("\n")
+        if len(lines) < 2:
+            return {}
+        # Parse CSV: DATE,VALUE
+        latest_line = None
+        prev_line = None
+        for line in reversed(lines):
+            parts = line.strip().split(",")
+            if len(parts) == 2 and parts[1] not in (".", ""):
+                if latest_line is None:
+                    latest_line = parts
+                elif prev_line is None:
+                    prev_line = parts
+                    break
+        if not latest_line:
+            return {}
+        result = {
+            "value": float(latest_line[1]),
+            "updated": latest_line[0],
+        }
+        if prev_line:
+            result["previous"] = float(prev_line[1])
+        return result
+    except Exception as e:
+        logger.warning(f"FRED fetch failed for {series_id}: {e}")
+        return {}
+
+
+def _fetch_binance_oi(symbol: str = "BTCUSDT") -> dict:
+    """Fetch Open Interest from Binance Futures (free, no key)."""
+    try:
+        resp = http_requests.get(
+            f"https://fapi.binance.com/fapi/v1/openInterest?symbol={symbol}",
+            timeout=8
+        )
+        resp.raise_for_status()
+        data = resp.json()
+        oi = float(data.get("openInterest", 0))
+
+        # Get price to calculate USD value
+        price_resp = http_requests.get(
+            f"https://fapi.binance.com/fapi/v1/ticker/price?symbol={symbol}",
+            timeout=5
+        )
+        price_resp.raise_for_status()
+        price = float(price_resp.json().get("price", 0))
+
+        oi_usd_b = round(oi * price / 1e9, 2)
+        return {"oi_b": oi_usd_b, "oi_raw": oi}
+    except Exception as e:
+        logger.warning(f"Binance OI fetch failed for {symbol}: {e}")
+        return {"oi_b": 0, "oi_raw": 0}
+
+
+def _fetch_binance_ls_ratio(symbol: str = "BTCUSDT") -> float:
+    """Fetch global Long/Short ratio from Binance (free, no key)."""
+    try:
+        resp = http_requests.get(
+            f"https://fapi.binance.com/futures/data/globalLongShortAccountRatio"
+            f"?symbol={symbol}&period=1h&limit=1",
+            timeout=8
+        )
+        resp.raise_for_status()
+        data = resp.json()
+        if data:
+            return round(float(data[0].get("longShortRatio", 0)), 3)
+    except Exception as e:
+        logger.warning(f"Binance L/S ratio fetch failed for {symbol}: {e}")
+    return 0
+
+
+def _fetch_binance_oi_change(symbol: str = "BTCUSDT") -> float:
+    """Fetch OI change over 24h from Binance historical OI."""
+    try:
+        resp = http_requests.get(
+            f"https://fapi.binance.com/futures/data/openInterestHist"
+            f"?symbol={symbol}&period=1h&limit=25",
+            timeout=8
+        )
+        resp.raise_for_status()
+        data = resp.json()
+        if len(data) >= 2:
+            current = float(data[-1].get("sumOpenInterestValue", 0))
+            past = float(data[0].get("sumOpenInterestValue", 0))
+            if past > 0:
+                return round((current - past) / past * 100, 2)
+    except Exception as e:
+        logger.warning(f"Binance OI history fetch failed for {symbol}: {e}")
+    return 0
+
+
+def _build_macro_data() -> dict:
+    """Build macro economic dashboard data from free APIs."""
+    # 1. FRED macro indicators
+    indicators = []
+    for series_id, info in FRED_SERIES.items():
+        data = _fetch_fred_series(series_id)
+        if data:
+            indicators.append(MacroIndicator(
+                id=series_id,
+                name=info["name"],
+                value=data["value"],
+                previous=data.get("previous"),
+                unit=info["unit"],
+                updated=data.get("updated", ""),
+                source=info["source"],
+            ))
+
+    # 2. Binance derivatives data
+    btc_oi = _fetch_binance_oi("BTCUSDT")
+    eth_oi = _fetch_binance_oi("ETHUSDT")
+    btc_ls = _fetch_binance_ls_ratio("BTCUSDT")
+    eth_ls = _fetch_binance_ls_ratio("ETHUSDT")
+    btc_oi_chg = _fetch_binance_oi_change("BTCUSDT")
+    eth_oi_chg = _fetch_binance_oi_change("ETHUSDT")
+
+    derivatives = DerivativesData(
+        btc_open_interest_b=btc_oi["oi_b"],
+        eth_open_interest_b=eth_oi["oi_b"],
+        btc_ls_ratio=btc_ls,
+        eth_ls_ratio=eth_ls,
+        btc_oi_change_24h=btc_oi_chg,
+        eth_oi_change_24h=eth_oi_chg,
+    )
+
+    return MacroResponse(
+        indicators=indicators,
+        derivatives=derivatives,
+        events=[],  # TradingView widget handles calendar on frontend
+        generated=datetime.now(timezone.utc).isoformat(),
+    ).model_dump()
+
+
+@app.get("/macro", response_model=MacroResponse)
+async def get_macro():
+    """Get macro economic indicators and derivatives data."""
+    global _macro_cache, _macro_cache_time
+    now = time.time()
+    if _macro_cache and (now - _macro_cache_time) < MACRO_CACHE_TTL:
+        return MacroResponse(**_macro_cache)
+
+    loop = asyncio.get_event_loop()
+    data = await loop.run_in_executor(None, _build_macro_data)
+    _macro_cache = data
+    _macro_cache_time = now
+    return MacroResponse(**data)
 
 
 # --- Strategy Builder Endpoints (v1.1) ---

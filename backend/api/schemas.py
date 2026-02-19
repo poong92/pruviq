@@ -335,3 +335,42 @@ class IndicatorInfo(BaseModel):
     name: str
     fields: List[str]
     default_params: dict
+
+
+# --- Macro Economic Schemas ---
+
+class MacroIndicator(BaseModel):
+    """A single macro economic indicator."""
+    id: str
+    name: str
+    value: float
+    previous: Optional[float] = None
+    unit: str = ""
+    updated: str = ""
+    source: str = ""
+
+class DerivativesData(BaseModel):
+    """Crypto derivatives market data."""
+    btc_open_interest_b: float = 0
+    eth_open_interest_b: float = 0
+    btc_ls_ratio: float = 0  # long/short ratio
+    eth_ls_ratio: float = 0
+    btc_oi_change_24h: float = 0
+    eth_oi_change_24h: float = 0
+
+class EconomicEvent(BaseModel):
+    """Upcoming economic calendar event."""
+    date: str
+    time_utc: str = ""
+    country: str = ""
+    event: str
+    impact: str = ""  # high, medium, low
+    forecast: Optional[str] = None
+    previous: Optional[str] = None
+
+class MacroResponse(BaseModel):
+    """Macro economic dashboard response."""
+    indicators: List[MacroIndicator] = []
+    derivatives: Optional[DerivativesData] = None
+    events: List[EconomicEvent] = []
+    generated: str = ""
