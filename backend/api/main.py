@@ -720,81 +720,104 @@ def _fetch_coingecko_global() -> dict:
         return {"total_market_cap_b": 0, "btc_dominance": 0, "total_volume_24h_b": 0}
 
 
-def _fetch_binance_tickers() -> tuple:
-    """Fetch 24hr tickers from Binance Futures. Returns (top_gainers, top_losers, btc_data, eth_data)."""
+def _fetch_coingecko_tickers() -> tuple:
+    """Fetch market tickers from CoinGecko (NO Binance API).
+    Returns (top_gainers, top_losers, btc_price, btc_change, eth_price, eth_change).
+    """
     try:
-        resp = http_requests.get("https://fapi.binance.com/fapi/v1/ticker/24hr", timeout=10)
+        resp = http_requests.get(
+            "https://api.coingecko.com/api/v3/coins/markets"
+            "?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false"
+            "&price_change_percentage=24h",
+            timeout=10,
+        )
         resp.raise_for_status()
-        tickers = resp.json()
+        coins = resp.json()
 
-        # Filter USDT perpetuals only
-        usdt = [t for t in tickers if t["symbol"].endswith("USDT") and float(t["quoteVolume"]) > 0]
+        # BTC / ETH
+        btc = next((c for c in coins if c["symbol"] == "btc"), None)
+        eth = next((c for c in coins if c["symbol"] == "eth"), None)
+        btc_price = round(btc["current_price"], 2) if btc else 0
+        btc_change = round(btc.get("price_change_percentage_24h") or 0, 2) if btc else 0
+        eth_price = round(eth["current_price"], 2) if eth else 0
+        eth_change = round(eth.get("price_change_percentage_24h") or 0, 2) if eth else 0
 
-        btc_data = next((t for t in usdt if t["symbol"] == "BTCUSDT"), None)
-        eth_data = next((t for t in usdt if t["symbol"] == "ETHUSDT"), None)
+        # Filter coins with valid change data, convert symbol to USDT format
+        valid = [c for c in coins if c.get("price_change_percentage_24h") is not None
+                 and c.get("total_volume", 0) > 0]
+        valid.sort(key=lambda c: c["price_change_percentage_24h"], reverse=True)
 
-        # Sort by price change
-        usdt.sort(key=lambda t: float(t["priceChangePercent"]), reverse=True)
-        top_gainers = [
-            MarketMover(
-                symbol=t["symbol"],
-                price=round(float(t["lastPrice"]), 4),
-                change_24h=round(float(t["priceChangePercent"]), 2),
-                volume_24h=round(float(t["quoteVolume"]), 0),
+        def _to_mover(c):
+            sym = c["symbol"].upper() + "USDT"
+            return MarketMover(
+                symbol=sym,
+                price=round(c["current_price"], 4),
+                change_24h=round(c["price_change_percentage_24h"], 2),
+                volume_24h=round(c.get("total_volume", 0), 0),
             )
-            for t in usdt[:10]
-        ]
-        top_losers = [
-            MarketMover(
-                symbol=t["symbol"],
-                price=round(float(t["lastPrice"]), 4),
-                change_24h=round(float(t["priceChangePercent"]), 2),
-                volume_24h=round(float(t["quoteVolume"]), 0),
-            )
-            for t in usdt[-10:][::-1]  # worst 10, reversed
-        ]
 
-        return top_gainers, top_losers, btc_data, eth_data
+        top_gainers = [_to_mover(c) for c in valid[:10]]
+        top_losers = [_to_mover(c) for c in valid[-10:][::-1]]
+
+        return top_gainers, top_losers, btc_price, btc_change, eth_price, eth_change
     except Exception as e:
-        logger.warning(f"Binance tickers fetch failed: {e}")
-        return [], [], None, None
+        logger.warning(f"CoinGecko tickers fetch failed: {e}")
+        return [], [], 0, 0, 0, 0
 
 
-def _fetch_binance_funding() -> list:
-    """Fetch extreme funding rates from Binance Futures."""
+def _fetch_coingecko_funding() -> list:
+    """Fetch extreme funding rates from CoinGecko derivatives (NO Binance API)."""
     try:
-        resp = http_requests.get("https://fapi.binance.com/fapi/v1/premiumIndex", timeout=10)
+        resp = http_requests.get(
+            "https://api.coingecko.com/api/v3/derivatives"
+            "?include_tickers=unexpired",
+            timeout=10,
+        )
         resp.raise_for_status()
         data = resp.json()
 
-        # Filter USDT, sort by abs funding rate
-        usdt = [d for d in data if d["symbol"].endswith("USDT") and d.get("lastFundingRate")]
-        usdt.sort(key=lambda d: abs(float(d["lastFundingRate"])), reverse=True)
+        # Filter perpetual USDT pairs with funding rate
+        perps = []
+        for d in data:
+            fr = d.get("funding_rate")
+            sym = d.get("symbol", "")
+            if fr is not None and "USDT" in sym.upper() and d.get("contract_type") == "perpetual":
+                try:
+                    rate = float(fr)
+                    perps.append({"symbol": sym.upper().replace("/", "").replace(" ", ""), "rate": rate})
+                except (ValueError, TypeError):
+                    continue
+
+        # Deduplicate by symbol (keep first = highest volume exchange)
+        seen = set()
+        unique = []
+        for p in perps:
+            if p["symbol"] not in seen:
+                seen.add(p["symbol"])
+                unique.append(p)
+
+        # Sort by abs funding rate
+        unique.sort(key=lambda d: abs(d["rate"]), reverse=True)
 
         return [
             FundingRate(
                 symbol=d["symbol"],
-                rate=round(float(d["lastFundingRate"]) * 100, 4),
-                annual_pct=round(float(d["lastFundingRate"]) * 3 * 365 * 100, 1),
+                rate=round(d["rate"] * 100, 4),
+                annual_pct=round(d["rate"] * 3 * 365 * 100, 1),
             )
-            for d in usdt[:10]
+            for d in unique[:10]
         ]
     except Exception as e:
-        logger.warning(f"Binance funding fetch failed: {e}")
+        logger.warning(f"CoinGecko funding fetch failed: {e}")
         return []
 
 
 def _build_market_overview() -> dict:
-    """Build complete market overview."""
+    """Build complete market overview. All data from CoinGecko + Alternative.me (NO Binance)."""
     fg = _fetch_fear_greed()
     cg = _fetch_coingecko_global()
-    gainers, losers, btc, eth = _fetch_binance_tickers()
-    funding = _fetch_binance_funding()
-
-    btc_price = round(float(btc["lastPrice"]), 2) if btc else 0
-    btc_change = round(float(btc["priceChangePercent"]), 2) if btc else 0
-    eth_price = round(float(eth["lastPrice"]), 2) if eth else 0
-    eth_change = round(float(eth["priceChangePercent"]), 2) if eth else 0
+    gainers, losers, btc_price, btc_change, eth_price, eth_change = _fetch_coingecko_tickers()
+    funding = _fetch_coingecko_funding()
 
     return MarketOverview(
         btc_price=btc_price,
