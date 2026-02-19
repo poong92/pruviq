@@ -2,7 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import FeeCalculator from '../components/FeeCalculator';
 import { useTranslations } from '../i18n/index';
-import { exchanges, koreanExchanges, formatFeeRange } from '../data/exchanges';
+import { exchanges, formatFeeRange } from '../data/exchanges';
 
 const t = useTranslations('en');
 
@@ -93,40 +93,6 @@ const exchangeCards: Record<string, { tagLabel: string; description: string }> =
       <p class="text-[--color-text-muted] text-xs mt-4">
         {t('fees.footnote')}
       </p>
-    </div>
-  </section>
-
-  <!-- KOREAN EXCHANGES (reference) -->
-  <section class="pb-12 border-t border-[--color-border] pt-12">
-    <div class="max-w-5xl mx-auto px-4">
-      <h2 class="text-2xl font-bold mb-2">{t('fees.korean_title')}</h2>
-      <p class="text-[--color-text-muted] text-sm mb-6">{t('fees.korean_desc')}</p>
-
-      <div class="grid md:grid-cols-2 gap-6 max-w-2xl">
-        {koreanExchanges.map((ex) => (
-          <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] flex flex-col">
-            <div class="font-mono text-[--color-text-muted] text-xs font-bold mb-1">
-              {t(`fees.card_${ex.id}_tag`)}
-            </div>
-            <h3 class="text-xl font-bold mb-3">{ex.name}</h3>
-            <div class="space-y-2 text-sm mb-4 flex-grow">
-              <div class="flex justify-between">
-                <span class="text-[--color-text-muted]">{t('fees.label_spot')}</span>
-                <span class="font-mono">{formatFeeRange(ex.spot, 'spot')}</span>
-              </div>
-              <div class="flex justify-between">
-                <span class="text-[--color-text-muted]">{t('fees.label_futures')}</span>
-                <span class="font-mono text-[--color-text-muted]">{t('fees.no_futures')}</span>
-              </div>
-            </div>
-            <p class="text-[--color-text-muted] text-xs mb-4">{t(`fees.card_${ex.id}_desc`)}</p>
-            <a href={ex.referralUrl} target="_blank" rel="noopener"
-               class="block text-center border border-[--color-border] text-[--color-text-muted] px-4 py-2 min-h-[44px] flex items-center justify-center rounded text-sm font-semibold hover:border-[--color-accent] transition-colors">
-              {t('fees.visit')} &rarr;
-            </a>
-          </div>
-        ))}
-      </div>
     </div>
   </section>
 
