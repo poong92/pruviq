@@ -116,7 +116,7 @@ export default function DiscreteSlider({
               <div
                 class={`rounded-full transition-colors duration-100 ${dotSize} ${isActive ? 'bg-[--color-accent]' : 'bg-[--color-border]'}`}
               />
-              <span class={`font-mono text-[0.625rem] mt-0.5 whitespace-nowrap ${isDefault ? 'text-[--color-accent]' : 'text-[--color-text-muted]'}`}>
+              <span class={`font-mono text-[0.6875rem] mt-0.5 whitespace-nowrap ${isDefault ? 'text-[--color-accent]' : 'text-[--color-text-muted]'}`}>
                 {v}{isDefault ? '*' : ''}
               </span>
             </div>

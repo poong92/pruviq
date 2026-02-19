@@ -156,7 +156,7 @@ function formatDateRange(startUnix: number, endUnix: number): string {
 function MetricBox({ label, value, color }: { label: string; value: string; color: string }) {
   return (
     <div class="p-2.5 rounded-md bg-[--color-bg-tooltip] border border-[--color-border]">
-      <div class="font-mono text-[0.5625rem] text-[--color-text-muted] uppercase tracking-wider mb-0.5">{label}</div>
+      <div class="font-mono text-[0.6875rem] text-[--color-text-muted] uppercase tracking-wider mb-0.5">{label}</div>
       <div class="font-mono text-base font-bold" style={{ color }}>{value}</div>
     </div>
   );
@@ -167,7 +167,7 @@ function ToggleBtn({ active, activeColor, label, onClick }: { active: boolean; a
     <button
       onClick={onClick}
       aria-pressed={active}
-      class="px-2.5 py-1 rounded font-mono text-[0.6875rem] cursor-pointer transition-all min-h-[44px]"
+      class="px-2.5 py-1 rounded font-mono text-[0.5625rem] md:text-[0.6875rem] cursor-pointer transition-all min-h-[44px]"
       style={{
         border: `1px solid ${active ? activeColor : 'var(--color-border)'}`,
         backgroundColor: active ? `${activeColor}15` : 'transparent',
@@ -182,7 +182,7 @@ function ToggleBtn({ active, activeColor, label, onClick }: { active: boolean; a
 function ChartSkeleton() {
   return (
     <div class="bg-[--color-bg] border border-[--color-border] rounded-xl overflow-hidden mb-3">
-      <div class="w-full h-[480px] relative">
+      <div class="w-full h-[320px] md:h-[480px] relative">
         <div class="absolute top-4 left-4 flex gap-2">
           <div class="skeleton h-3 w-8" />
           <div class="skeleton h-3 w-12" />
@@ -265,7 +265,7 @@ export default function CoinChart({ symbol, lang = 'en' }: { symbol: string; lan
 
       const chart = createChart(chartContainerRef.current, {
         width: chartContainerRef.current.clientWidth,
-        height: 480,
+        height: chartContainerRef.current.clientHeight,
         layout: {
           background: { color: getCssVar('--color-bg') },
           textColor: getCssVar('--color-text-muted'),
@@ -345,7 +345,7 @@ export default function CoinChart({ symbol, lang = 'en' }: { symbol: string; lan
       chart.timeScale().fitContent();
 
       const ro = new ResizeObserver(entries => {
-        for (const entry of entries) chart.applyOptions({ width: entry.contentRect.width });
+        for (const entry of entries) chart.applyOptions({ width: entry.contentRect.width, height: entry.contentRect.height });
       });
       ro.observe(chartContainerRef.current);
       return () => ro.disconnect();
@@ -479,7 +479,7 @@ export default function CoinChart({ symbol, lang = 'en' }: { symbol: string; lan
       {/* Chart Container */}
       <div class="bg-[--color-bg] border border-[--color-border] rounded-xl overflow-hidden mb-3 relative">
         {/* OHLCV Overlay */}
-        <div class="absolute top-2 left-3 z-10 font-mono text-[0.6875rem] flex gap-2.5 flex-wrap pointer-events-none">
+        <div class="absolute top-2 left-3 z-10 font-mono text-[0.5625rem] md:text-[0.6875rem] flex gap-1.5 md:gap-2.5 flex-wrap pointer-events-none">
           <span class="text-[--color-text-muted]">{t.open} <span class="text-[--color-text]">{formatChartPrice(displayBar.o)}</span></span>
           <span class="text-[--color-text-muted]">{t.high} <span class="text-[--color-up]">{formatChartPrice(displayBar.h)}</span></span>
           <span class="text-[--color-text-muted]">{t.low} <span class="text-[--color-red]">{formatChartPrice(displayBar.l)}</span></span>
@@ -491,20 +491,20 @@ export default function CoinChart({ symbol, lang = 'en' }: { symbol: string; lan
         </div>
 
         {/* Indicator toggles */}
-        <div class="absolute top-2 right-3 z-10 flex gap-1.5">
+        <div class="absolute top-2 right-3 z-10 flex flex-wrap gap-1.5">
           <ToggleBtn active={showBB} activeColor="rgba(100,150,255,0.8)" label={t.bbBands} onClick={() => setShowBB(!showBB)} />
           <ToggleBtn active={showEMA} activeColor="var(--color-chart-ema20)" label={t.ema} onClick={() => setShowEMA(!showEMA)} />
           <ToggleBtn active={showVol} activeColor="rgba(0,255,136,0.6)" label={t.volume} onClick={() => setShowVol(!showVol)} />
           <button
             onClick={() => chartRef.current?.timeScale().fitContent()}
             aria-label="Reset chart zoom"
-            class="px-2 py-1 rounded border border-[--color-border] bg-[--color-bg-tooltip] text-[--color-text-muted] font-mono text-[0.6875rem] cursor-pointer hover:border-[--color-accent] transition-colors min-h-[44px]"
+            class="px-2 py-1 rounded border border-[--color-border] bg-[--color-bg-tooltip] text-[--color-text-muted] font-mono text-[0.5625rem] md:text-[0.6875rem] cursor-pointer hover:border-[--color-accent] transition-colors min-h-[44px]"
           >
             {t.resetZoom}
           </button>
         </div>
 
-        <div ref={chartContainerRef} class="w-full h-[480px]" />
+        <div ref={chartContainerRef} class="w-full h-[320px] md:h-[480px]" />
 
         {/* TradingView Attribution */}
         <div class="absolute bottom-1.5 right-3 z-10 font-mono text-[0.5625rem]">
@@ -515,9 +515,9 @@ export default function CoinChart({ symbol, lang = 'en' }: { symbol: string; lan
       </div>
 
       {/* Strategy Controls */}
-      <div class="flex flex-wrap gap-3 items-center mb-4 px-4 py-3 bg-[--color-bg-card] border border-[--color-border] rounded-xl">
-        <span class="font-mono text-[0.625rem] text-[--color-accent] tracking-widest uppercase font-semibold">{t.strategy}</span>
-        <div class="flex-1" />
+      <div class="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center mb-4 px-4 py-3 bg-[--color-bg-card] border border-[--color-border] rounded-xl">
+        <span class="font-mono text-[0.6875rem] text-[--color-accent] tracking-widest uppercase font-semibold">{t.strategy}</span>
+        <div class="hidden sm:block flex-1" />
         <button
           onClick={runSimulation}
           disabled={simLoading}
@@ -533,7 +533,7 @@ export default function CoinChart({ symbol, lang = 'en' }: { symbol: string; lan
       </div>
 
       {/* SL/TP Sliders + Results */}
-      <div class="grid gap-4 mb-4" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))' }}>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div class="p-5 bg-[--color-bg-card] border border-[--color-border] rounded-xl">
           <DiscreteSlider label={t.sl} values={SL_VALUES} value={sl} defaultValue={DEFAULT_SL} onChange={setSl} />
           <DiscreteSlider label={t.tp} values={TP_VALUES} value={tp} defaultValue={DEFAULT_TP} onChange={setTp} />
@@ -543,7 +543,7 @@ export default function CoinChart({ symbol, lang = 'en' }: { symbol: string; lan
           {simResult ? (
             <div>
               {isDefault && (
-                <div class="font-mono text-[0.625rem] text-[--color-accent] tracking-widest mb-3 uppercase">{t.live}</div>
+                <div class="font-mono text-[0.6875rem] text-[--color-accent] tracking-widest mb-3 uppercase">{t.live}</div>
               )}
               <div class="grid grid-cols-2 gap-2 mb-3">
                 <MetricBox label={t.winRate} value={`${simResult.win_rate}%`} color={simResult.win_rate >= 55 ? getCssVar('--color-up') : simResult.win_rate >= 50 ? getCssVar('--color-yellow') : getCssVar('--color-down')} />
@@ -587,12 +587,12 @@ export default function CoinChart({ symbol, lang = 'en' }: { symbol: string; lan
               <table class="w-full border-collapse font-mono text-xs">
                 <thead>
                   <tr class="border-b border-[--color-border]">
-                    <th class="px-3 py-2 text-center text-[--color-text-muted] text-[0.625rem]">#</th>
-                    <th class="px-3 py-2 text-left text-[--color-text-muted] text-[0.625rem]">{t.entry}</th>
-                    <th class="px-3 py-2 text-left text-[--color-text-muted] text-[0.625rem]">{t.exit}</th>
-                    <th class="px-3 py-2 text-center text-[--color-text-muted] text-[0.625rem]">{t.result}</th>
-                    <th class="px-3 py-2 text-right text-[--color-text-muted] text-[0.625rem]">{t.pnl}</th>
-                    <th class="px-3 py-2 text-right text-[--color-text-muted] text-[0.625rem]">{t.bars}</th>
+                    <th class="hidden sm:table-cell px-3 py-2 text-center text-[--color-text-muted] text-[0.6875rem]">#</th>
+                    <th class="px-3 py-2 text-left text-[--color-text-muted] text-[0.6875rem]">{t.entry}</th>
+                    <th class="px-3 py-2 text-left text-[--color-text-muted] text-[0.6875rem]">{t.exit}</th>
+                    <th class="px-3 py-2 text-center text-[--color-text-muted] text-[0.6875rem]">{t.result}</th>
+                    <th class="px-3 py-2 text-right text-[--color-text-muted] text-[0.6875rem]">{t.pnl}</th>
+                    <th class="hidden sm:table-cell px-3 py-2 text-right text-[--color-text-muted] text-[0.6875rem]">{t.bars}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -612,14 +612,14 @@ export default function CoinChart({ symbol, lang = 'en' }: { symbol: string; lan
                           }
                         }}
                       >
-                        <td class="px-3 py-2 text-center text-[--color-text-muted]">{i + 1}</td>
+                        <td class="hidden sm:table-cell px-3 py-2 text-center text-[--color-text-muted]">{i + 1}</td>
                         <td class="px-3 py-2">{formatTime(trade.entry_time, lang)}</td>
                         <td class="px-3 py-2">{formatTime(trade.exit_time, lang)}</td>
                         <td class="px-3 py-2 text-center font-semibold" style={{ color }}>{label}</td>
                         <td class="px-3 py-2 text-right" style={{ color: trade.pnl_pct >= 0 ? 'var(--color-up)' : 'var(--color-down)' }}>
                           {trade.pnl_pct > 0 ? '+' : ''}{trade.pnl_pct.toFixed(2)}%
                         </td>
-                        <td class="px-3 py-2 text-right text-[--color-text-muted]">{trade.bars_held}</td>
+                        <td class="hidden sm:table-cell px-3 py-2 text-right text-[--color-text-muted]">{trade.bars_held}</td>
                       </tr>
                     );
                   })}

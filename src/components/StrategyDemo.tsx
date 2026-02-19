@@ -308,7 +308,7 @@ export default function StrategyDemo({
           </div>
 
           <div class="bg-[--color-bg-card] border border-[--color-border] rounded-xl overflow-hidden">
-            <div class="px-4 pt-3 font-mono text-[0.625rem] text-[--color-text-muted] tracking-widest uppercase">{t.chart}</div>
+            <div class="px-4 pt-3 font-mono text-[0.6875rem] text-[--color-text-muted] tracking-widest uppercase">{t.chart}</div>
             <div ref={chartContainerRef} class="w-full h-[300px]" />
           </div>
         </div>

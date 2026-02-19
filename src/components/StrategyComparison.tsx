@@ -314,7 +314,7 @@ export default function StrategyComparison({ lang = 'en' }: Props) {
                     <tr key={preset.id} class="border-b border-[--color-border] last:border-0 hover:bg-[--color-bg-hover] transition-colors">
                       <td class="px-4 py-3">
                         <div class="flex items-center gap-2">
-                          <span class="text-[10px] px-1.5 py-0.5 rounded border"
+                          <span class="text-[0.6875rem] px-1.5 py-0.5 rounded border"
                                 style={{ color: status?.color, borderColor: status?.color }}>
                             {status?.[lang] || ''}
                           </span>
@@ -378,7 +378,7 @@ export default function StrategyComparison({ lang = 'en' }: Props) {
                    href={`${strategyBase}/${preset.id}`}
                    class="block border border-[--color-border] rounded-xl p-4 bg-[--color-bg-card] hover:border-[--color-accent] transition-colors">
                   <div class="flex items-center gap-2 mb-3">
-                    <span class="text-[10px] px-1.5 py-0.5 rounded border font-mono"
+                    <span class="text-[0.6875rem] px-1.5 py-0.5 rounded border font-mono"
                           style={{ color: status?.color, borderColor: status?.color }}>
                       {status?.[lang] || ''}
                     </span>
@@ -390,21 +390,21 @@ export default function StrategyComparison({ lang = 'en' }: Props) {
 
                   <div class="grid grid-cols-2 gap-2 font-mono text-sm mb-3">
                     <div class="p-2 rounded bg-[--color-bg-tooltip] border border-[--color-border]">
-                      <div class="text-[10px] text-[--color-text-muted] uppercase">{t.winRate}</div>
+                      <div class="text-[0.6875rem] text-[--color-text-muted] uppercase">{t.winRate}</div>
                       <div class="font-bold" style={{ color: winRateColor(r.win_rate) }}>{r.win_rate}%</div>
                     </div>
                     <div class="p-2 rounded bg-[--color-bg-tooltip] border border-[--color-border]">
-                      <div class="text-[10px] text-[--color-text-muted] uppercase">{t.pf}</div>
+                      <div class="text-[0.6875rem] text-[--color-text-muted] uppercase">{t.pf}</div>
                       <div class="font-bold" style={{ color: profitFactorColor(r.profit_factor) }}>{r.profit_factor}</div>
                     </div>
                     <div class="p-2 rounded bg-[--color-bg-tooltip] border border-[--color-border]">
-                      <div class="text-[10px] text-[--color-text-muted] uppercase">{t.totalReturn}</div>
+                      <div class="text-[0.6875rem] text-[--color-text-muted] uppercase">{t.totalReturn}</div>
                       <div class="font-bold" style={{ color: signColor(r.total_return_pct) }}>
                         {r.total_return_pct > 0 ? '+' : ''}{r.total_return_pct}%
                       </div>
                     </div>
                     <div class="p-2 rounded bg-[--color-bg-tooltip] border border-[--color-border]">
-                      <div class="text-[10px] text-[--color-text-muted] uppercase">{t.maxDD}</div>
+                      <div class="text-[0.6875rem] text-[--color-text-muted] uppercase">{t.maxDD}</div>
                       <div class="font-bold text-[--color-red]">{r.max_drawdown_pct}%</div>
                     </div>
                   </div>
@@ -415,7 +415,7 @@ export default function StrategyComparison({ lang = 'en' }: Props) {
                     <div class="bg-[--color-red]" style={{ width: `${slPctVal}%` }} />
                     <div class="bg-[--color-text-muted]" style={{ width: `${toPctVal}%` }} />
                   </div>
-                  <div class="flex gap-3 font-mono text-[10px]">
+                  <div class="flex gap-3 font-mono text-[0.6875rem]">
                     <span class="text-[--color-accent]">TP {tpPctVal}%</span>
                     <span class="text-[--color-red]">SL {slPctVal}%</span>
                     <span class="text-[--color-text-muted]">TO {toPctVal}%</span>
@@ -426,7 +426,7 @@ export default function StrategyComparison({ lang = 'en' }: Props) {
             })}
           </div>
 
-          <div class="font-mono text-[10px] text-[--color-text-muted]">
+          <div class="font-mono text-[0.6875rem] text-[--color-text-muted]">
             {t.computeTime} {(totalTime / 1000).toFixed(1)}s
           </div>
         </>

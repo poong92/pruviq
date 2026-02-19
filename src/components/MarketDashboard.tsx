@@ -385,7 +385,7 @@ export default function MarketDashboard({ lang = 'en' }: { lang?: 'en' | 'ko' })
                       <span className="font-mono text-[13px] font-semibold" style={{ color: changeColor(f.rate) }}>
                         {f.rate > 0 ? '+' : ''}{f.rate.toFixed(4)}%
                       </span>
-                      <div className="text-[10px] text-[--color-text-muted]">
+                      <div className="text-[0.6875rem] text-[--color-text-muted]">
                         {l.annual}: {f.annual_pct > 0 ? '+' : ''}{f.annual_pct.toFixed(0)}%
                       </div>
                     </div>
@@ -427,7 +427,7 @@ export default function MarketDashboard({ lang = 'en' }: { lang?: 'en' | 'ko' })
                       <tr key={ind.id} className="row-hover border-b border-[--color-border] last:border-0">
                         <td className="px-4 py-2">
                           <div className="font-medium text-[--color-text] text-[13px]">{ind.name}</div>
-                          <div className="text-[10px] text-[--color-text-muted]">{ind.source}</div>
+                          <div className="text-[0.6875rem] text-[--color-text-muted]">{ind.source}</div>
                         </td>
                         <td className="text-right px-4 py-2 font-mono font-semibold text-[--color-text]">
                           {ind.value.toFixed(2)}{ind.unit === '%' ? '%' : ''}
@@ -455,7 +455,7 @@ export default function MarketDashboard({ lang = 'en' }: { lang?: 'en' | 'ko' })
               <span className="text-xs font-semibold text-[--color-text-muted] uppercase tracking-wider">
                 {l.economicCalendar}
               </span>
-              <span className="text-[10px] text-[--color-text-muted] opacity-60">{l.calendarNote}</span>
+              <span className="text-[0.6875rem] text-[--color-text-muted] opacity-60">{l.calendarNote}</span>
             </div>
             <div className="w-full h-[300px] md:h-[400px]">
               <iframe
@@ -485,11 +485,11 @@ export default function MarketDashboard({ lang = 'en' }: { lang?: 'en' | 'ko' })
             onInput={(e: Event) => setSearchQuery((e.target as HTMLInputElement).value)}
             className="bg-[--color-bg-hover] border border-[--color-border] rounded-md px-2.5 py-1 text-xs text-[--color-text] outline-none w-44 font-sans focus:border-[--color-accent] transition-colors"
           />
-          <div className="flex gap-1">
+          <div className="flex flex-wrap gap-1">
             <button
               onClick={() => setSourceFilter('')}
               aria-pressed={sourceFilter === ''}
-              className={`px-2 py-1 text-[10px] rounded font-semibold cursor-pointer border-none transition-colors min-h-[44px] ${
+              className={`px-2 py-1 text-[0.6875rem] rounded font-semibold cursor-pointer border-none transition-colors min-h-[44px] ${
                 !sourceFilter ? 'bg-[--color-accent] text-[--color-bg]' : 'bg-[--color-bg-hover] text-[--color-text-muted] hover:text-[--color-text]'
               }`}
             >{l.allSources}</button>
@@ -498,7 +498,7 @@ export default function MarketDashboard({ lang = 'en' }: { lang?: 'en' | 'ko' })
                 key={s}
                 onClick={() => setSourceFilter(sourceFilter === s ? '' : s)}
                 aria-pressed={sourceFilter === s}
-                className={`px-2 py-1 text-[10px] rounded font-semibold cursor-pointer border-none whitespace-nowrap transition-colors min-h-[44px] ${
+                className={`px-2 py-1 text-[0.6875rem] rounded font-semibold cursor-pointer border-none whitespace-nowrap transition-colors min-h-[44px] ${
                   sourceFilter === s ? 'bg-[--color-accent] text-[--color-bg]' : 'bg-[--color-bg-hover] text-[--color-text-muted] hover:text-[--color-text]'
                 }`}
               >{s.replace('Bitcoin Magazine', 'BTC Mag')}</button>
@@ -532,8 +532,8 @@ export default function MarketDashboard({ lang = 'en' }: { lang?: 'en' | 'ko' })
                     )}
                   </div>
                   <div className="shrink-0 text-right">
-                    <div className="text-[10px] text-[--color-accent] font-semibold tracking-wide">{item.source}</div>
-                    <div className="text-[10px] text-[--color-text-muted] mt-0.5">{timeAgo(item.published)}</div>
+                    <div className="text-[0.6875rem] text-[--color-accent] font-semibold tracking-wide">{item.source}</div>
+                    <div className="text-[0.6875rem] text-[--color-text-muted] mt-0.5">{timeAgo(item.published)}</div>
                   </div>
                 </div>
               </a>

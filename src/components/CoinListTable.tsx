@@ -114,15 +114,15 @@ export default function CoinListTable({ lang = 'en' }: { lang?: 'en' | 'ko' }) {
           <table class="w-full border-collapse font-mono text-[0.8125rem]">
             <thead>
               <tr>
-                <th class="px-2.5 py-2 text-center font-mono text-[0.625rem] tracking-wider uppercase border-b border-[--color-border] text-[--color-text-muted] w-10">#</th>
-                <th class="px-2.5 py-2 text-left font-mono text-[0.625rem] tracking-wider uppercase border-b border-[--color-border] text-[--color-text-muted]">{t.coin}</th>
-                <th class="px-2.5 py-2 text-right font-mono text-[0.625rem] tracking-wider uppercase border-b border-[--color-border] text-[--color-text-muted]">{t.price}</th>
-                <th class="px-2.5 py-2 text-right font-mono text-[0.625rem] tracking-wider uppercase border-b border-[--color-border] text-[--color-text-muted]">{t.change}</th>
-                <th class="px-2.5 py-2 text-right font-mono text-[0.625rem] tracking-wider uppercase border-b border-[--color-border] text-[--color-text-muted] hidden md:table-cell">{t.volume}</th>
-                <th class="px-2.5 py-2 text-right font-mono text-[0.625rem] tracking-wider uppercase border-b border-[--color-border] text-[--color-text-muted] hidden md:table-cell">{t.trades}</th>
-                <th class="px-2.5 py-2 text-right font-mono text-[0.625rem] tracking-wider uppercase border-b border-[--color-border] text-[--color-text-muted]">{t.winRate}</th>
-                <th class="px-2.5 py-2 text-right font-mono text-[0.625rem] tracking-wider uppercase border-b border-[--color-border] text-[--color-text-muted] hidden md:table-cell">{t.pf}</th>
-                <th class="px-2.5 py-2 text-right font-mono text-[0.625rem] tracking-wider uppercase border-b border-[--color-border] text-[--color-text-muted]">{t.returnPct}</th>
+                <th class="px-2.5 py-2 text-center font-mono text-[0.6875rem] tracking-wider uppercase border-b border-[--color-border] text-[--color-text-muted] w-10">#</th>
+                <th class="px-2.5 py-2 text-left font-mono text-[0.6875rem] tracking-wider uppercase border-b border-[--color-border] text-[--color-text-muted]">{t.coin}</th>
+                <th class="px-2.5 py-2 text-right font-mono text-[0.6875rem] tracking-wider uppercase border-b border-[--color-border] text-[--color-text-muted]">{t.price}</th>
+                <th class="px-2.5 py-2 text-right font-mono text-[0.6875rem] tracking-wider uppercase border-b border-[--color-border] text-[--color-text-muted]">{t.change}</th>
+                <th class="px-2.5 py-2 text-right font-mono text-[0.6875rem] tracking-wider uppercase border-b border-[--color-border] text-[--color-text-muted] hidden md:table-cell">{t.volume}</th>
+                <th class="px-2.5 py-2 text-right font-mono text-[0.6875rem] tracking-wider uppercase border-b border-[--color-border] text-[--color-text-muted] hidden md:table-cell">{t.trades}</th>
+                <th class="px-2.5 py-2 text-right font-mono text-[0.6875rem] tracking-wider uppercase border-b border-[--color-border] text-[--color-text-muted]">{t.winRate}</th>
+                <th class="px-2.5 py-2 text-right font-mono text-[0.6875rem] tracking-wider uppercase border-b border-[--color-border] text-[--color-text-muted] hidden md:table-cell">{t.pf}</th>
+                <th class="px-2.5 py-2 text-right font-mono text-[0.6875rem] tracking-wider uppercase border-b border-[--color-border] text-[--color-text-muted]">{t.returnPct}</th>
               </tr>
             </thead>
             <tbody>
@@ -156,7 +156,7 @@ export default function CoinListTable({ lang = 'en' }: { lang?: 'en' | 'ko' }) {
   const basePath = lang === 'ko' ? '/ko/coins' : '/coins';
 
   const thCls = (key: SortKey, align: 'left' | 'right' | 'center' = 'right', hide = false) =>
-    `px-2.5 py-2 cursor-pointer select-none font-mono text-[0.625rem] tracking-wider uppercase whitespace-nowrap border-b border-[--color-border] text-${align} ${hide ? 'hidden md:table-cell' : ''} ${sortBy === key ? 'text-[--color-accent]' : 'text-[--color-text-muted]'}`;
+    `px-2.5 py-2 cursor-pointer select-none font-mono text-[0.6875rem] tracking-wider uppercase whitespace-nowrap border-b border-[--color-border] text-${align} ${hide ? 'hidden md:table-cell' : ''} ${sortBy === key ? 'text-[--color-accent]' : 'text-[--color-text-muted]'}`;
 
   return (
     <div class="fade-in">
@@ -173,7 +173,7 @@ export default function CoinListTable({ lang = 'en' }: { lang?: 'en' | 'ko' }) {
 
       {/* Strategy badge */}
       <div class="mb-3 flex items-center gap-2 font-mono text-[0.6875rem] text-[--color-text-muted]">
-        <span class="text-[--color-accent] text-[0.625rem] tracking-widest uppercase font-semibold">{t.cta}</span>
+        <span class="text-[--color-accent] text-[0.6875rem] tracking-widest uppercase font-semibold">{t.cta}</span>
       </div>
 
       {/* Table */}
@@ -181,7 +181,7 @@ export default function CoinListTable({ lang = 'en' }: { lang?: 'en' | 'ko' }) {
         <table class="w-full border-collapse font-mono text-[0.8125rem]">
           <thead>
             <tr>
-              <th class="px-2.5 py-2 text-center font-mono text-[0.625rem] tracking-wider uppercase border-b border-[--color-border] text-[--color-text-muted] w-10 cursor-default select-none">#</th>
+              <th class="px-2.5 py-2 text-center font-mono text-[0.6875rem] tracking-wider uppercase border-b border-[--color-border] text-[--color-text-muted] w-10 cursor-default select-none">#</th>
               <th class={thCls('symbol', 'left')} onClick={() => handleSort('symbol')} aria-sort={sortBy === 'symbol' ? (sortDesc ? 'descending' : 'ascending') : 'none'}>{t.coin} {sortBy === 'symbol' ? (sortDesc ? '\u25BC' : '\u25B2') : ''}</th>
               <th class={thCls('price')} onClick={() => handleSort('price')} aria-sort={sortBy === 'price' ? (sortDesc ? 'descending' : 'ascending') : 'none'}>{t.price} {sortBy === 'price' ? (sortDesc ? '\u25BC' : '\u25B2') : ''}</th>
               <th class={thCls('change_24h')} onClick={() => handleSort('change_24h')} aria-sort={sortBy === 'change_24h' ? (sortDesc ? 'descending' : 'ascending') : 'none'}>{t.change} {sortBy === 'change_24h' ? (sortDesc ? '\u25BC' : '\u25B2') : ''}</th>

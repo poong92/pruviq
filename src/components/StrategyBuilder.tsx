@@ -537,7 +537,7 @@ export default function StrategyBuilder({ lang = 'en' }: Props) {
                 {active && Object.keys(ind.default_params).length > 0 && (
                   <button
                     onClick={() => setShowParams(showParams === ind.id ? null : ind.id)}
-                    class={`px-2 py-1.5 rounded-r-lg border border-l-0 text-[10px] font-mono cursor-pointer transition-colors min-h-[44px]
+                    class={`px-2 py-1.5 rounded-r-lg border border-l-0 text-[0.6875rem] font-mono cursor-pointer transition-colors min-h-[44px]
                       ${showParams === ind.id
                         ? 'border-[--color-accent] text-[--color-accent] bg-[--color-accent]/20'
                         : 'border-[--color-accent] text-[--color-text-muted] hover:text-[--color-accent]'}`}
@@ -569,15 +569,15 @@ export default function StrategyBuilder({ lang = 'en' }: Props) {
                     delete next[ind.id];
                     setIndicatorParams(next);
                   }}
-                  class="font-mono text-[10px] text-[--color-text-muted] hover:text-[--color-accent] cursor-pointer transition-colors"
+                  class="font-mono text-[0.6875rem] text-[--color-text-muted] hover:text-[--color-accent] cursor-pointer transition-colors"
                 >
                   {t.resetParams}
                 </button>
               </div>
-              <div class="grid gap-3" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))' }}>
+              <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 {Object.entries(ind.default_params).map(([key, defaultVal]) => (
                   <div key={key}>
-                    <label class="font-mono text-[10px] text-[--color-text-muted] block mb-1">{key}</label>
+                    <label class="font-mono text-[0.6875rem] text-[--color-text-muted] block mb-1">{key}</label>
                     <input
                       type="number"
                       step="any"
@@ -592,7 +592,7 @@ export default function StrategyBuilder({ lang = 'en' }: Props) {
                       }}
                       class="w-full bg-[--color-bg-card] border border-[--color-border] rounded px-2 py-1 text-xs font-mono text-[--color-text]"
                     />
-                    <span class="font-mono text-[8px] text-[--color-text-muted]">default: {defaultVal}</span>
+                    <span class="font-mono text-[0.5625rem] text-[--color-text-muted]">default: {defaultVal}</span>
                   </div>
                 ))}
               </div>
@@ -627,7 +627,7 @@ export default function StrategyBuilder({ lang = 'en' }: Props) {
                     op: isBool ? '==' : '>=',
                   });
                 }}
-                class="bg-[--color-bg-card] border border-[--color-border] rounded px-2 py-1.5 text-sm font-mono text-[--color-text] min-w-[160px]"
+                class="bg-[--color-bg-card] border border-[--color-border] rounded px-2 py-1.5 text-sm font-mono text-[--color-text] min-w-[120px] sm:min-w-[160px]"
               >
                 {fieldGroups.map((g) => (
                   <optgroup key={g.id} label={g.name}>
@@ -642,7 +642,7 @@ export default function StrategyBuilder({ lang = 'en' }: Props) {
               <select
                 value={cond.op}
                 onChange={(e: Event) => updateCondition(cond.id, { op: (e.target as HTMLSelectElement).value })}
-                class="bg-[--color-bg-card] border border-[--color-border] rounded px-2 py-1.5 text-sm font-mono text-[--color-accent] w-[100px]"
+                class="bg-[--color-bg-card] border border-[--color-border] rounded px-2 py-1.5 text-sm font-mono text-[--color-accent] w-[80px] sm:w-[100px]"
               >
                 {getOps(t).map((op) => (
                   <option key={op.value} value={op.value}>{op.label}</option>
@@ -664,7 +664,7 @@ export default function StrategyBuilder({ lang = 'en' }: Props) {
                 <select
                   value={String(cond.value)}
                   onChange={(e: Event) => updateCondition(cond.id, { value: (e.target as HTMLSelectElement).value === 'true' })}
-                  class="bg-[--color-bg-card] border border-[--color-border] rounded px-2 py-1.5 text-sm font-mono text-[--color-text] w-[80px]"
+                  class="bg-[--color-bg-card] border border-[--color-border] rounded px-2 py-1.5 text-sm font-mono text-[--color-text] w-[70px] sm:w-[80px]"
                 >
                   <option value="true">true</option>
                   <option value="false">false</option>
@@ -675,7 +675,7 @@ export default function StrategyBuilder({ lang = 'en' }: Props) {
                   step="any"
                   value={cond.value as number}
                   onChange={(e: Event) => updateCondition(cond.id, { value: parseFloat((e.target as HTMLInputElement).value) || 0 })}
-                  class="bg-[--color-bg-card] border border-[--color-border] rounded px-2 py-1.5 text-sm font-mono text-[--color-text] w-[80px]"
+                  class="bg-[--color-bg-card] border border-[--color-border] rounded px-2 py-1.5 text-sm font-mono text-[--color-text] w-[70px] sm:w-[80px]"
                 />
               )}
 
@@ -690,7 +690,7 @@ export default function StrategyBuilder({ lang = 'en' }: Props) {
                       updateCondition(cond.id, { field2: other, value: undefined });
                     }
                   }}
-                  class="text-[10px] font-mono text-[--color-text-muted] hover:text-[--color-accent] cursor-pointer transition-colors"
+                  class="text-[0.6875rem] font-mono text-[--color-text-muted] hover:text-[--color-accent] cursor-pointer transition-colors"
                   title={cond.field2 !== undefined ? t.literalValue : t.anotherField}
                 >
                   {cond.field2 !== undefined ? t.toggleVal : t.toggleField}
@@ -698,7 +698,7 @@ export default function StrategyBuilder({ lang = 'en' }: Props) {
               )}
 
               {/* Shift */}
-              <span class="text-[10px] font-mono text-[--color-text-muted] ml-auto">
+              <span class="text-[0.6875rem] font-mono text-[--color-text-muted] ml-auto">
                 {cond.shift === 1 ? t.prevShift : t.currShift}
               </span>
 
@@ -728,7 +728,7 @@ export default function StrategyBuilder({ lang = 'en' }: Props) {
       <div class="border border-[--color-border] rounded-xl p-5 bg-[--color-bg-card]">
         <h3 class="font-mono text-xs text-[--color-accent] tracking-widest mb-4 uppercase">{t.params}</h3>
 
-        <div class="grid gap-4" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))' }}>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {/* Direction */}
           <div>
             <label class="font-mono text-xs text-[--color-text-muted] block mb-1">{t.direction}</label>
@@ -874,7 +874,7 @@ export default function StrategyBuilder({ lang = 'en' }: Props) {
           )}
 
           {result.is_valid && result.total_trades > 0 && (
-            <div class="grid gap-6" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))' }}>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div class="p-5 bg-[--color-bg-card] border border-[--color-border] rounded-xl">
                 <ResultsCard
                   data={{
@@ -893,7 +893,7 @@ export default function StrategyBuilder({ lang = 'en' }: Props) {
                   isDefault={false}
                   lang={lang}
                 />
-                <div class="mt-3 font-mono text-[10px] text-[--color-text-muted]">
+                <div class="mt-3 font-mono text-[0.6875rem] text-[--color-text-muted]">
                   {result.coins_used} {t.coinsUnit} &middot; {result.data_range} &middot; {t.computeTime} {result.compute_time_ms}ms
                 </div>
               </div>
