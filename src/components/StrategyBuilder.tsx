@@ -1064,7 +1064,7 @@ export default function StrategyBuilder({ lang = 'en' }: Props) {
         {/* Avoid Hours */}
         <div class="mt-4">
           <label class="font-mono text-xs text-[--color-text-muted] block mb-2">{t.avoidHours}</label>
-          <div class="flex flex-wrap gap-1">
+          <div class="flex flex-wrap gap-1.5" style={{ touchAction: 'manipulation' }}>
             {HOURS.map((h) => {
               const active = avoidHours.has(h);
               return (
@@ -1072,11 +1072,12 @@ export default function StrategyBuilder({ lang = 'en' }: Props) {
                   type="button"
                   key={h}
                   onClick={() => toggleHour(h)}
-                  class={`w-11 h-11 rounded text-xs font-mono cursor-pointer transition-colors
+                  class={`w-11 h-11 rounded text-xs font-mono cursor-pointer transition-colors select-none
                     ${active
                       ? 'bg-[--color-red]/20 text-[--color-red] border border-[--color-red]/40'
                       : 'bg-[--color-bg] text-[--color-text-muted] border border-[--color-border] hover:border-[--color-text-muted]'
                     }`}
+                  style={{ touchAction: 'manipulation', WebkitTapHighlightColor: 'transparent' }}
                 >
                   {h}
                 </button>
