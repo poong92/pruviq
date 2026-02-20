@@ -502,6 +502,7 @@ export default function StrategyBuilder({ lang = 'en' }: Props) {
           <div class="flex flex-wrap gap-2">
             {presets.map((p) => (
               <button
+                type="button"
                 key={p.id}
                 onClick={() => loadPreset(p.id)}
                 class="px-4 py-2 rounded-lg border border-[--color-border] bg-[--color-bg] text-sm font-mono
@@ -532,6 +533,7 @@ export default function StrategyBuilder({ lang = 'en' }: Props) {
             return (
               <div key={ind.id} class="inline-flex items-center gap-0">
                 <button
+                  type="button"
                   onClick={() => toggleIndicator(ind.id)}
                   class={`px-3 py-1.5 rounded-l-lg border text-sm font-mono cursor-pointer transition-colors
                     ${active
@@ -544,6 +546,7 @@ export default function StrategyBuilder({ lang = 'en' }: Props) {
                 </button>
                 {active && Object.keys(ind.default_params).length > 0 && (
                   <button
+                    type="button"
                     onClick={() => setShowParams(showParams === ind.id ? null : ind.id)}
                     class={`px-2 py-1.5 rounded-r-lg border border-l-0 text-[0.6875rem] font-mono cursor-pointer transition-colors min-h-[44px]
                       ${showParams === ind.id
@@ -572,6 +575,7 @@ export default function StrategyBuilder({ lang = 'en' }: Props) {
               <div class="flex items-center justify-between mb-3">
                 <span class="font-mono text-xs text-[--color-accent] font-bold">{ind.name} {t.paramTitle}</span>
                 <button
+                  type="button"
                   onClick={() => {
                     const next = { ...indicatorParams };
                     delete next[ind.id];
@@ -690,6 +694,7 @@ export default function StrategyBuilder({ lang = 'en' }: Props) {
               {/* Toggle value/field2 */}
               {!booleanFields.has(cond.field) && (
                 <button
+                  type="button"
                   onClick={() => {
                     if (cond.field2 !== undefined) {
                       updateCondition(cond.id, { field2: undefined, value: 0 });
@@ -712,6 +717,7 @@ export default function StrategyBuilder({ lang = 'en' }: Props) {
 
               {/* Remove */}
               <button
+                type="button"
                 onClick={() => removeCondition(cond.id)}
                 class="text-[--color-red] hover:text-[--color-text] text-sm cursor-pointer transition-colors px-1 min-w-[44px] min-h-[44px] flex items-center justify-center"
                 title={t.remove}
@@ -723,6 +729,7 @@ export default function StrategyBuilder({ lang = 'en' }: Props) {
         </div>
 
         <button
+          type="button"
           onClick={addCondition}
           class="mt-3 px-4 py-2 rounded-lg border border-dashed border-[--color-border] text-sm font-mono
                  text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent]
@@ -742,6 +749,7 @@ export default function StrategyBuilder({ lang = 'en' }: Props) {
             <label class="font-mono text-xs text-[--color-text-muted] block mb-1">{t.direction}</label>
             <div class="flex gap-2">
               <button
+                type="button"
                 onClick={() => setDirection('short')}
                 class={`flex-1 py-2 rounded-lg border text-sm font-mono font-bold cursor-pointer transition-colors
                   ${direction === 'short'
@@ -751,6 +759,7 @@ export default function StrategyBuilder({ lang = 'en' }: Props) {
                 {t.short}
               </button>
               <button
+                type="button"
                 onClick={() => setDirection('long')}
                 class={`flex-1 py-2 rounded-lg border text-sm font-mono font-bold cursor-pointer transition-colors
                   ${direction === 'long'
@@ -825,6 +834,7 @@ export default function StrategyBuilder({ lang = 'en' }: Props) {
               const active = avoidHours.has(h);
               return (
                 <button
+                  type="button"
                   key={h}
                   onClick={() => toggleHour(h)}
                   class={`w-11 h-11 rounded text-xs font-mono cursor-pointer transition-colors
@@ -843,6 +853,7 @@ export default function StrategyBuilder({ lang = 'en' }: Props) {
 
       {/* Run Button */}
       <button
+        type="button"
         onClick={runBacktest}
         disabled={isRunning || conditions.length === 0}
         class={`btn-primary w-full py-4 rounded-xl font-bold text-lg font-mono cursor-pointer transition-all
