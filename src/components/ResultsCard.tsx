@@ -18,6 +18,7 @@ interface ResultsCardProps {
   data: ResultsData;
   isDefault: boolean;
   lang?: 'en' | 'ko';
+  isDemo?: boolean;
 }
 
 const labels = {
@@ -32,6 +33,7 @@ const labels = {
     avgLoss: 'Avg Loss',
     maxConsec: 'Max Consec. Losses',
     rr: 'R:R Ratio',
+    demoNote: 'DEMO · Pre-computed results for BB Squeeze SHORT',
   },
   ko: {
     live: '현재 라이브 설정',
@@ -44,6 +46,7 @@ const labels = {
     avgLoss: '평균 손실',
     maxConsec: '최대 연속 손실',
     rr: 'R:R 비율',
+    demoNote: 'DEMO · BB Squeeze SHORT 사전 계산 결과',
   },
 };
 
@@ -56,7 +59,7 @@ function MetricBox({ label, value, color }: { label: string; value: string; colo
   );
 }
 
-export default function ResultsCard({ data, isDefault, lang = 'en' }: ResultsCardProps) {
+export default function ResultsCard({ data, isDefault, lang = 'en', isDemo = false }: ResultsCardProps) {
   const t = labels[lang] || labels.en;
   const total = data.tp_count + data.sl_count + data.timeout_count;
   const tpPct = total > 0 ? (data.tp_count / total) * 100 : 0;
@@ -71,6 +74,12 @@ export default function ResultsCard({ data, isDefault, lang = 'en' }: ResultsCar
     <div>
       {isDefault && (
         <div class="font-mono text-[0.625rem] text-[--color-accent] tracking-widest mb-3 uppercase">{t.live}</div>
+      )}
+
+      {isDemo && (
+        <div class="mb-3 px-3 py-2 rounded-lg bg-[--color-yellow]/10 border border-[--color-yellow]/20">
+          <span class="font-mono text-xs text-[--color-yellow]">{t.demoNote}</span>
+        </div>
       )}
 
       <div class="grid grid-cols-2 gap-2 mb-3">
