@@ -252,7 +252,6 @@ export default function MarketDashboard({ lang = 'en' }: { lang?: 'en' | 'ko' })
 
   const fetchMarket = () => {
     fetchWithFallback('/market', STATIC_DATA.market)
-      .then(r => { if (!r.ok) throw new Error(); return r.json(); })
       .then((d: MarketData) => {
         // Price flash detection
         if (prevBtc.current && d.btc_price !== prevBtc.current) {
@@ -274,16 +273,13 @@ export default function MarketDashboard({ lang = 'en' }: { lang?: 'en' | 'ko' })
 
   const fetchNews = () => {
     fetchWithFallback('/news', STATIC_DATA.news)
-      .then(r => { if (!r.ok) throw new Error(); return r.json(); })
       .then(d => { setNews(d); setNewsErr(false); })
       .catch(() => setNewsErr(true));
   };
 
   const fetchMacro = () => {
-    Promise.resolve({})
-      .then(r => { if (!r.ok) throw new Error(); return r.json(); })
-      .then((d: MacroData) => { setMacro(d); setMacroErr(false); })
-      .catch(() => setMacroErr(true));
+    // Macro endpoint removed - set empty data without error
+    setMacro({} as MacroData);
   };
 
   useEffect(() => {

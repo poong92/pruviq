@@ -275,11 +275,9 @@ export default function StrategyBuilder({ lang = 'en' }: Props) {
   // Load indicators and presets
   useEffect(() => {
     fetchWithFallback('/builder/indicators', STATIC_DATA.builderIndicators)
-      .then((r) => r.json())
       .then((data) => { setAvailableIndicators(data); setApiLoadError(false); })
       .catch(() => setApiLoadError(true));
     fetchWithFallback('/builder/presets', STATIC_DATA.builderPresets)
-      .then((r) => r.json())
       .then(setPresets)
       .catch(() => {});
   }, []);
