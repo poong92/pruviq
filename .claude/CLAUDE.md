@@ -236,10 +236,52 @@ pruviq/
 ```
 개발: MacBook (jplee) ~/Desktop/pruviq
 프론트엔드: Cloudflare Pages (pruviq.com)
-백엔드 API: Mac Mini (jepo@172.30.1.16) :8400 → api.pruviq.com
+백엔드 API: Mac Mini (jepo@172.30.1.16) :8080 → api.pruviq.com
   - SSH: ssh -o IdentitiesOnly=yes -i ~/.ssh/id_ed25519 jepo@172.30.1.16
   - Tailscale: jepo@100.93.138.124
 autotrader 서버 (DO): 절대 건드리지 않음
+```
+
+## Mac Mini 2계정 구조 (CRITICAL)
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  Mac Mini에 같은 레포(poong92/pruviq)가 2곳에 clone 됨     │
+│                                                             │
+│  jepo (/Users/jepo/pruviq)                                 │
+│    - API 서버 (uvicorn --workers 1)                        │
+│    - LaunchAgent: com.pruviq.api.plist                     │
+│    - 데이터: /Users/jepo/pruviq-data/futures               │
+│    - 용도: 백엔드 API 전용                                  │
+│    - 주의: backend/ 코드 변경 시 여기도 git pull 필요       │
+│                                                             │
+│  openclaw (/Users/openclaw/pruviq)                         │
+│    - OpenClaw 스킬봇 워크스페이스                           │
+│    - 프론트엔드/스킬/메모리 작업 전용                       │
+│    - OpenClaw이 자동 커밋+푸시 가능                         │
+│    - 용도: 프론트엔드 + 콘텐츠 + 스킬                      │
+│                                                             │
+│  ⚠️ 충돌 방지 규칙:                                        │
+│  1. backend/api/main.py 변경 → jepo 쪽 pull + 서버 재시작  │
+│  2. openclaw은 backend/ 코드 직접 수정 금지                │
+│  3. 프론트엔드만 변경하면 jepo pull 불필요 (Cloudflare 배포)│
+│  4. 양쪽에서 동시 push 시 충돌 가능 → rebase로 해결        │
+│                                                             │
+│  API 서버 배포 절차:                                        │
+│  1. MacBook에서 코드 수정 + git push                       │
+│  2. ssh jepo → cd /Users/jepo/pruviq && git pull           │
+│  3. kill uvicorn → nohup 재시작 (또는 LaunchAgent reload)  │
+│  4. curl localhost:8080/health 확인                         │
+└─────────────────────────────────────────────────────────────┘
+```
+
+## 백엔드 API 서버 설정 (2026-02-22)
+
+```
+- uvicorn --workers 1 (필수! 인메모리 캐시 공유 안 됨)
+- CoinGecko 60초 백그라운드 폴링 (API 키 없음, 월간 한도 없음)
+- 시작 시 pre-fetch (startup race condition 방지)
+- LaunchAgent: ~/Library/LaunchAgents/com.pruviq.api.plist (jepo)
 ```
 
 ## autotrader와의 관계
