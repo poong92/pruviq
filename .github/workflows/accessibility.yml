@@ -1,48 +1,37 @@
-name: Accessibility
+name: Accessibility checks (axe-core)
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
   pull_request:
-    branches: [main]
+    branches: [ main ]
 
 jobs:
   accessibility:
-    name: axe Accessibility Audit
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    - uses: actions/setup-node@v4
-      with:
-        node-version: '22'
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
 
-    - name: Install dependencies
-      run: npm ci
+      - name: Install dependencies
+        run: npm ci
 
-    - name: Build site
-      run: npm run build
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
 
-    - name: Install axe CLI + browsers
-      run: |
-        npm install -g @axe-core/cli
-        npx playwright install --with-deps chromium
+      - name: Build site
+        run: npm run build
 
-    - name: Start preview server
-      run: |
-        npx astro preview --host 0.0.0.0 --port 4321 &
-        sleep 5
+      - name: Run accessibility tests
+        run: npm run test:accessibility
 
-    - name: Run axe on key pages
-      run: |
-        echo "=== EN Home ==="
-        axe http://localhost:4321 --exit || true
-        echo ""
-        echo "=== KO Home ==="
-        axe http://localhost:4321/ko/ --exit || true
-        echo ""
-        echo "=== Performance ==="
-        axe http://localhost:4321/performance --exit || true
-        echo ""
-        echo "=== Simulate ==="
-        axe http://localhost:4321/simulate --exit || true
+      - name: Upload accessibility reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: axe-reports
+          path: reports
