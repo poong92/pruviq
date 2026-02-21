@@ -120,7 +120,7 @@ def build_coins_list(cg_coins: list[dict]) -> list[dict]:
     return coins
 
 
-def build_market_json(global_data: dict | None, fear_index: int, fear_label: str,
+def build_market_json(global_data: Optional[dict], fear_index: int, fear_label: str,
                       coins: list[dict]) -> dict:
     """Build market.json from global data + top movers."""
     by_change = sorted(coins, key=lambda c: c.get("change_24h", 0), reverse=True)
@@ -157,6 +157,7 @@ def build_market_json(global_data: dict | None, fear_index: int, fear_label: str
         ),
         "top_gainers": top_gainers,
         "top_losers": top_losers,
+        "extreme_funding": [],
         "generated": datetime.now(timezone.utc).isoformat(),
     }
 
