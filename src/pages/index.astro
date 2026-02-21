@@ -9,7 +9,7 @@ const verifiedCount = allStrategies.filter(s => s.data.status === 'verified').le
 const lastUpdated = new Date().toLocaleDateString('en-US');
 ---
 
-<Layout title={t('meta.home_title')}>
+<Layout title={t('meta.home_title')} description={t('meta.index_desc')}>
 
   <!-- HERO -->
   <section class="min-h-[80vh] flex items-center">
