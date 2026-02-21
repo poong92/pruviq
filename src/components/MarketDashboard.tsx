@@ -279,7 +279,7 @@ export default function MarketDashboard({ lang = 'en' }: { lang?: 'en' | 'ko' })
 
   const fetchMacro = () => {
     // Macro endpoint removed - set empty data without error
-    setMacro({} as MacroData);
+    setMacro({ indicators: [], generated: "" });
   };
 
   useEffect(() => {
@@ -415,7 +415,7 @@ export default function MarketDashboard({ lang = 'en' }: { lang?: 'en' | 'ko' })
           </div>
 
           {/* Macro Economic Indicators Table */}
-          {macro.indicators.length > 0 && (
+          {macro.indicators?.length > 0 && (
             <div className="border border-[--color-border] rounded-lg bg-[--color-bg-card] overflow-hidden mb-4">
               <div className="px-4 py-3 border-b border-[--color-border] text-xs font-semibold text-[--color-text-muted] uppercase tracking-wider">
                 {l.macroIndicators}
