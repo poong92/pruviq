@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'preact/hooks';
 import { formatPrice, formatVolume } from '../utils/format';
-import { API_BASE_URL } from '../config/api';
+import { STATIC_DATA, fetchWithFallback } from '../config/api';
 
 interface CoinRow {
   symbol: string;
@@ -86,11 +86,7 @@ export default function CoinListTable({ lang = 'en' }: { lang?: 'en' | 'ko' }) {
   const [page, setPage] = useState(0);
 
   useEffect(() => {
-    fetch(`${API_BASE_URL}/coins/stats`)
-      .then(res => {
-        if (!res.ok) throw new Error('Failed');
-        return res.json();
-      })
+    fetchWithFallback('/coins/stats', STATIC_DATA.coinsStats)
       .then((json: StatsData) => {
         setData(json.coins);
         setLoading(false);
@@ -138,7 +134,7 @@ export default function CoinListTable({ lang = 'en' }: { lang?: 'en' | 'ko' }) {
       <div class="py-8 text-center">
         <p class="font-mono text-sm text-[--color-red] mb-3">{t.error}</p>
         <button
-          onClick={() => { setError(null); setLoading(true); fetch(`${API_BASE_URL}/coins/stats`).then(res => { if (!res.ok) throw new Error('Failed'); return res.json(); }).then((json: StatsData) => { setData(json.coins); setLoading(false); }).catch(err => { setError(err.message); setLoading(false); }); }}
+          onClick={() => { setError(null); setLoading(true); fetchWithFallback('/coins/stats', STATIC_DATA.coinsStats).then((json: StatsData) => { setData(json.coins); setLoading(false); }).catch(err => { setError(err.message); setLoading(false); }); }}
           class="px-4 py-2 rounded-lg border border-[--color-border] bg-[--color-bg-card] text-[--color-text] font-mono text-sm cursor-pointer hover:border-[--color-accent] transition-colors min-h-[44px]"
         >
           {lang === 'ko' ? '다시 시도' : 'Retry'}

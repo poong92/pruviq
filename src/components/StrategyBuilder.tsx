@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'preact/hooks';
 import ResultsCard from './ResultsCard';
-import { API_BASE_URL as API_URL } from '../config/api';
+import { API_BASE_URL as API_URL, STATIC_DATA, fetchWithFallback } from '../config/api';
 
 // --- Types ---
 interface IndicatorInfo {
@@ -274,11 +274,11 @@ export default function StrategyBuilder({ lang = 'en' }: Props) {
 
   // Load indicators and presets
   useEffect(() => {
-    fetch(`${API_URL}/builder/indicators`)
+    fetchWithFallback('/builder/indicators', STATIC_DATA.builderIndicators)
       .then((r) => r.json())
       .then((data) => { setAvailableIndicators(data); setApiLoadError(false); })
       .catch(() => setApiLoadError(true));
-    fetch(`${API_URL}/builder/presets`)
+    fetchWithFallback('/builder/presets', STATIC_DATA.builderPresets)
       .then((r) => r.json())
       .then(setPresets)
       .catch(() => {});
