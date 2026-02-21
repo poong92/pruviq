@@ -1,37 +1,42 @@
-name: Accessibility checks (axe-core)
+name: Accessibility
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   accessibility:
+    name: axe Accessibility Audit
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+    - uses: actions/checkout@v4
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
+    - uses: actions/setup-node@v4
+      with:
+        node-version: '22'
 
-      - name: Install dependencies
-        run: npm ci
+    - name: Install dependencies
+      run: npm ci
 
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps
+    - name: Build site
+      run: npm run build
 
-      - name: Build site
-        run: npm run build
+    - name: Install Playwright + axe-core
+      run: |
+        npm install -D @playwright/test axe-core
+        npx playwright install --with-deps chromium
 
-      - name: Run accessibility tests
-        run: npm run test:accessibility
+    - name: Run accessibility tests
+      run: npx playwright test tests/accessibility/
+      env:
+        CI: true
 
-      - name: Upload accessibility reports
-        uses: actions/upload-artifact@v4
-        with:
-          name: axe-reports
-          path: reports
+    - name: Upload axe reports
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: axe-reports
+        path: reports/
+        retention-days: 14

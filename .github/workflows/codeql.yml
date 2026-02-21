@@ -1,3 +1,7 @@
+# NOTE: CodeQL requires "Code scanning" to be enabled in GitHub repo settings.
+# Go to: Settings → Code security → Code scanning → Set up → Advanced
+# Then this workflow will work automatically.
+
 name: "CodeQL"
 
 on:

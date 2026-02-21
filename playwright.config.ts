@@ -4,6 +4,7 @@ export default defineConfig({
   testDir: './tests',
   timeout: 30000,
   retries: 1,
+  reporter: [['html', { open: 'never' }]],
   use: {
     baseURL: process.env.BASE_URL || 'http://localhost:4321',
     screenshot: 'only-on-failure',
@@ -20,4 +21,9 @@ export default defineConfig({
       },
     },
   ],
+  webServer: {
+    command: 'npm run preview -- --host 0.0.0.0 --port 4321',
+    port: 4321,
+    reuseExistingServer: !process.env.CI,
+  },
 });
