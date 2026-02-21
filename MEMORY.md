@@ -1,6 +1,6 @@
 # MEMORY.md - PRUVIQ Project Knowledge
 
-Last updated: 2026-02-22 00:00 KST
+Last updated: 2026-02-22 02:00 KST
 
 ## Project Overview
 
@@ -331,6 +331,34 @@ Logs & artifacts (local):
 - Build artifacts: dist/ (static site) and dist/sitemap-0.xml, dist/sitemap-index.xml, dist/robots.txt.
 
 Conclusion: Production pages are SEO-sound for the checks requested (titles, meta descriptions, sitemap, robots, hreflang, JSON-LD). No fixes required at this time.
+
+
+## DAILY SEO AUDIT (cron:f4164126-c2e9-476a-9319-bce7ec625b75) — 2026-02-22 02:00 KST
+
+- Action: Automated daily SEO audit requested by cron job. Steps executed:
+  1) Read SOUL.md and MEMORY.md for context.
+  2) git pull (repo up-to-date) and npm run build (local build) to ensure the latest static output.
+  3) Scanned all generated HTML in dist/ for <title> and <meta name="description">.
+  4) Validated sitemap-index.xml and referenced sitemaps (dist and production URL).
+  5) Fetched production robots.txt and verified Sitemap directive.
+  6) Verified rel="alternate" hreflang links for EN/KO pages.
+  7) Parsed all application/ld+json blocks and validated JSON.
+
+- Results (summary):
+  - Build: SUCCESS (Astro build completed; ~1283 pages built).
+  - Pages scanned: all dist/*.html (including verification and redirect files).
+  - Missing titles: 3 files (search-engine verification pages: google/naver/yandex) — expected.
+  - Missing meta descriptions: 53 files (all redirects with meta robots noindex or verification files). After excluding those, 0 public pages missing meta description.
+  - hreflang: Present on all non-redirect pages (EN <-> KO alternates + x-default present).
+  - JSON-LD: All JSON-LD blocks parsed as valid JSON; Article entities include datePublished/dateModified.
+  - robots.txt: Accessible and references sitemap-index.xml. OK.
+  - sitemap: sitemap-index.xml and sitemap-0.xml accessible and well-formed.
+
+- Issues requiring fixes: NONE. No source edits required.
+
+- Artifacts (local): /tmp/seo_missing_title.txt, /tmp/seo_missing_meta.txt, /tmp/seo_hreflang_missing.txt, /tmp/seo_json_errors.txt — all contain only verification/redirect pages.
+
+- Recommendation: Schedule this audit weekly (or keep daily cron). If you want, I can create an automated PR when regressions are detected.
 
 
 ## 2026-02-21 — Day summary (by 프루빅)
