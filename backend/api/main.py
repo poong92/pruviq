@@ -5,7 +5,8 @@ FastAPI server for running strategy simulations on-demand.
 Designed for Mac Mini deployment with Cloudflare Tunnel.
 
 Usage:
-    uvicorn backend.api.main:app --host 0.0.0.0 --port 8080 --workers 4
+    uvicorn backend.api.main:app --host 0.0.0.0 --port 8080 --workers 1
+    NOTE: Must use --workers 1 (background tasks use in-process global cache)
 """
 
 import os
@@ -109,8 +110,38 @@ async def _background_refresh():
     """Periodically refresh data from Binance."""
     while True:
         await asyncio.sleep(REFRESH_INTERVAL)
-        loop = asyncio.get_event_loop()
-        await loop.run_in_executor(None, _refresh_data)
+        try:
+            await asyncio.to_thread(_refresh_data)
+        except asyncio.CancelledError:
+            raise
+        except Exception as e:
+            logger.warning(f"Binance data refresh failed: {e}")
+
+
+async def _background_market_refresh():
+    """Fetch CoinGecko + news every 60s. Runs independently of user requests."""
+    global _market_cache, _news_cache
+    consecutive_failures = 0
+    while True:
+        try:
+            data = await asyncio.to_thread(_build_market_overview)
+            _market_cache = data
+            consecutive_failures = 0
+            logger.info("Market data refreshed from CoinGecko")
+        except asyncio.CancelledError:
+            raise
+        except Exception as e:
+            consecutive_failures += 1
+            level = logging.ERROR if consecutive_failures >= 5 else logging.WARNING
+            logger.log(level, f"Market background refresh failed ({consecutive_failures}x): {e}")
+        try:
+            data = await asyncio.to_thread(_build_news)
+            _news_cache = data
+        except asyncio.CancelledError:
+            raise
+        except Exception as e:
+            logger.warning(f"News background refresh failed: {e}")
+        await asyncio.sleep(MARKET_REFRESH_INTERVAL)
 
 
 @asynccontextmanager
@@ -137,13 +168,32 @@ async def lifespan(app: FastAPI):
         coin_stats_cache = _build_coin_stats(strategy)
         print(f"Coin stats cached for {len(coin_stats_cache['coins'])} coins")
 
-    # Start background refresh
+    # Pre-fetch market data before accepting requests (avoid startup race)
+    print("Pre-fetching market data...")
+    global _market_cache, _news_cache
+    try:
+        _market_cache = await asyncio.to_thread(_build_market_overview)
+        _news_cache = await asyncio.to_thread(_build_news)
+        print("Market cache initialized")
+    except Exception as e:
+        print(f"Initial market fetch failed (will retry in background): {e}")
+
+    # Start background refresh tasks
+    # IMPORTANT: Deploy with --workers 1 (global cache not shared across processes)
     refresh_task = asyncio.create_task(_background_refresh())
+    market_task = asyncio.create_task(_background_market_refresh())
     print(f"Background data refresh scheduled every {REFRESH_INTERVAL}s")
+    print(f"Background market refresh scheduled every {MARKET_REFRESH_INTERVAL}s")
 
     yield
 
     refresh_task.cancel()
+    market_task.cancel()
+    for t in (refresh_task, market_task):
+        try:
+            await t
+        except asyncio.CancelledError:
+            pass
 
 
 app = FastAPI(
@@ -674,8 +724,7 @@ async def simulate_compare(req: CompareRequest):
 @app.post("/admin/refresh")
 async def refresh_data():
     """Manually trigger data refresh from Binance."""
-    loop = asyncio.get_event_loop()
-    await loop.run_in_executor(None, _refresh_data)
+    await asyncio.to_thread(_refresh_data)
     return {"status": "ok", "coins": indicator_cache.count, "generated": coin_stats_cache["generated"] if coin_stats_cache else None}
 
 
@@ -685,11 +734,9 @@ import xml.etree.ElementTree as ET
 import requests as http_requests
 from email.utils import parsedate_to_datetime
 
-MARKET_CACHE_TTL = 120  # 2 minutes
+MARKET_REFRESH_INTERVAL = 60  # seconds — background fetch every 60s
 _market_cache: Optional[dict] = None
-_market_cache_time: float = 0
 _news_cache: Optional[dict] = None
-_news_cache_time: float = 0
 
 
 def _fetch_fear_greed() -> dict:
@@ -941,31 +988,28 @@ def _build_news() -> dict:
 
 @app.get("/market", response_model=MarketOverview)
 async def get_market():
-    """Get market overview with BTC/ETH prices, Fear & Greed, top movers, funding rates."""
-    global _market_cache, _market_cache_time
-    now = time.time()
-    if _market_cache and (now - _market_cache_time) < MARKET_CACHE_TTL:
+    """Get market overview with BTC/ETH prices, Fear & Greed, top movers, funding rates.
+    Data is refreshed every 60s by background task — no on-demand CoinGecko calls.
+    """
+    global _market_cache
+    if _market_cache is not None:
         return MarketOverview(**_market_cache)
-
-    loop = asyncio.get_event_loop()
-    data = await loop.run_in_executor(None, _build_market_overview)
+    # First request before background task has run — fetch once
+    data = await asyncio.to_thread(_build_market_overview)
     _market_cache = data
-    _market_cache_time = now
     return MarketOverview(**data)
 
 
 @app.get("/news", response_model=NewsResponse)
 async def get_news():
-    """Get aggregated crypto news from RSS feeds."""
-    global _news_cache, _news_cache_time
-    now = time.time()
-    if _news_cache and (now - _news_cache_time) < MARKET_CACHE_TTL:
+    """Get aggregated crypto news from RSS feeds.
+    Data is refreshed every 60s by background task.
+    """
+    global _news_cache
+    if _news_cache is not None:
         return NewsResponse(**_news_cache)
-
-    loop = asyncio.get_event_loop()
-    data = await loop.run_in_executor(None, _build_news)
+    data = await asyncio.to_thread(_build_news)
     _news_cache = data
-    _news_cache_time = now
     return NewsResponse(**data)
 
 
@@ -1052,8 +1096,7 @@ async def get_macro():
     if _macro_cache and (now - _macro_cache_time) < MACRO_CACHE_TTL:
         return MacroResponse(**_macro_cache)
 
-    loop = asyncio.get_event_loop()
-    data = await loop.run_in_executor(None, _build_macro_data)
+    data = await asyncio.to_thread(_build_macro_data)
     _macro_cache = data
     _macro_cache_time = now
     return MacroResponse(**data)
