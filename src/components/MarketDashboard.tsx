@@ -65,7 +65,7 @@ const labels = {
     change: '24h %',
     volume: '거래량',
     rate: '비율',
-    readMore: '자세히',
+    readMore: '자세히 보기',
     searchNews: '뉴스 검색...',
     allSources: '전체',
     lastUpdated: '마지막 업데이트',

@@ -142,7 +142,7 @@ export const ko: Record<TranslationKey, string> = {
   'footer.terms': '이용약관',
   'footer.disclaimer': '투자 조언이 아닙니다. 과거 성과는 미래 결과를 보장하지 않습니다.',
   'footer.affiliate': '이 사이트에는 제휴 링크가 포함되어 있습니다.',
-  'footer.details': '자세히',
+  'footer.details': '수수료 자세히 보기',
 
   // Strategies page
   'strategies.tag': '전략 라이브러리',

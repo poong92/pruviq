@@ -78,7 +78,7 @@ const labels = {
     disclaimer: '* 모든 전략은 50개 코인, 동일한 수수료(0.04% + 0.02% 슬리피지)로 시뮬레이션됩니다. 과거 성과는 미래 결과를 보장하지 않습니다.',
     computeTime: '계산 시간',
     useDefault: '각 전략의 기본 SL/TP 사용',
-    view: '자세히',
+    view: '자세히 보기',
     ctaTitle: '나만의 전략 만들기',
     ctaDesc: '인디케이터를 조합하고 전략 빌더로 테스트하세요.',
     ctaButton: '시뮬레이터 시작',
