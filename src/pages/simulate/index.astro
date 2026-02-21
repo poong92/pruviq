@@ -27,8 +27,16 @@ const t = useTranslations('en');
   <section class="pb-12 border-t border-[--color-border] pt-8">
     <div class="max-w-5xl mx-auto px-4">
       <div id="builder-mount">
-        <div class="border border-[--color-border] rounded-xl p-8 bg-[--color-bg-card] text-center">
-          <div class="spinner mx-auto mb-4"></div>
+        <div class="border border-[--color-border] rounded-xl p-8 bg-[--color-bg-card]">
+          <div class="animate-pulse space-y-4">
+            <div class="h-6 bg-[--color-bg-muted] rounded w-1/2"></div>
+            <div class="grid grid-cols-2 gap-4">
+              <div class="h-10 bg-[--color-bg-muted] rounded"></div>
+              <div class="h-10 bg-[--color-bg-muted] rounded"></div>
+            </div>
+            <div class="h-40 bg-[--color-bg-muted] rounded"></div>
+          </div>
+          <div class="spinner mx-auto mb-4 mt-4"></div>
           <p class="text-[--color-text-muted] text-sm">{t('simulate.loading')}</p>
         </div>
       </div>
