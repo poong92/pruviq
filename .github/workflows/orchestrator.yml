@@ -8,6 +8,7 @@ on:
 jobs:
   orchestrate:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -59,13 +60,54 @@ jobs:
           name: lighthouse-reports
           path: reports/lighthouse-home*
 
+      - name: Analyze test artifacts and create issues for accessibility failures
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+
+            function findFiles(dir, pattern) {
+              if (!fs.existsSync(dir)) return [];
+              const files = fs.readdirSync(dir);
+              const matched = [];
+              files.forEach(f => {
+                const full = path.join(dir, f);
+                if (fs.statSync(full).isFile() && pattern.test(f)) matched.push(full);
+                if (fs.statSync(full).isDirectory()) {
+                  const nested = findFiles(full, pattern);
+                  nested.forEach(n => matched.push(n));
+                }
+              });
+              return matched;
+            }
+
+            // Find axe reports
+            const axeReports = findFiles('./reports', /^axe-.*\.json$/i).concat(findFiles('./reports', /^axe-.*\.json$/i));
+            let created = 0;
+            for (const rpt of axeReports) {
+              try {
+                const j = JSON.parse(fs.readFileSync(rpt, 'utf8'));
+                if (j && j.violations && j.violations.length > 0) {
+                  const short = j.violations.map(v => ({ id: v.id, impact: v.impact, nodes: v.nodes.length }));
+                  const body = `Automated accessibility report detected ${j.violations.length} violations in ${rpt}\n\nSummary:\n${JSON.stringify(short, null, 2)}\n\nSee attached artifact in workflow run.`;
+                  await github.rest.issues.create({ owner, repo, title: `A11Y violations detected: ${path.basename(rpt)}`, body });
+                  created++;
+                }
+              } catch(e) {
+                core.warning(`Failed to parse ${rpt}: ${e}`);
+              }
+            }
+            if (created === 0) core.info('No A11Y violations found in reports.');
+            else core.info(`Created ${created} accessibility issue(s).`);
+
       - name: Summarize results
         uses: actions/github-script@v6
         with:
           script: |
-            const fs = require('fs')
-            const owner = context.repo.owner
-            const repo = context.repo.repo
-            const body = `Agent Orchestrator run completed. Artifacts uploaded: playwright-report, axe-reports, lighthouse-reports.`
-            // Create an issue to record the daily orchestrator run (informational)
-            await github.rest.issues.create({ owner, repo, title: 'Orchestrator daily run: results available', body })
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const body = `Agent Orchestrator run completed. Artifacts uploaded: playwright-report, axe-reports, lighthouse-reports.`;
+            await github.rest.issues.create({ owner, repo, title: 'Orchestrator daily run: results available', body });
