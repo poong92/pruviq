@@ -1,6 +1,6 @@
 # MEMORY.md - PRUVIQ Project Knowledge
 
-Last updated: 2026-02-21
+Last updated: 2026-02-21 18:30 KST
 
 ## Project Overview
 
@@ -188,3 +188,80 @@ Notes: Quick-wins copy (hero/nav) applied and meta.index_desc synced with hero.d
 - Cron timeout: 1800s (30분) x 6 jobs
 - Models: GPT-5 mini (primary) + Ollama qwen2.5:32b (fallback)
 - Organization: 이재풍(오너) → JEPO(상사) → 프루빅(전담개발자)
+
+## CRON RUN LOGS
+
+- cron:63c0583a-741f-4b76-9f53-861ab7456f81 (gh-issues-autofix)
+  - Time: 2026-02-21 18:30 KST
+  - Action requested: list open GitHub issues (limit 10), assess fixability, create branches/PRs for fixable issues or comment when not fixable, and update MEMORY.md.
+  - What I did:
+    1. Read SOUL.md and MEMORY.md (confirmed project context and rules).
+    2. Attempted to run: `cd /Users/openclaw/pruviq && gh issue list --state open --limit 10`.
+    3. `gh` CLI is not authenticated in this environment (gh reported: "You are not logged into any GitHub hosts").
+    4. Attempted unauthenticated GitHub API fetch; repository issues endpoint returned 404 (likely private repo).
+    5. Verified git remote is configured (git@github.com:poong92/pruviq.git) and `git fetch` succeeded — SSH is available for git operations, but `gh` requires separate auth.
+    6. Because `gh` is unauthenticated and the GitHub API is inaccessible without credentials, I could not list issues, comment on them, create branches on remote, push, or open PRs via `gh`.
+  - Result: No issues were processed. No changes made to source code or branches.
+  - Next steps (options):
+    a) Configure GitHub CLI authentication for this environment: run `gh auth login` (interactive) or set `GH_TOKEN` env var with a repo-scoped PAT that has repo access. After auth, re-run this cron to proceed.
+    b) Alternatively, provide me a scoped `GH_TOKEN` (securely) so I can run non-interactive `gh` commands and complete the requested workflow.
+    c) If you prefer manual actions: I can create a local branch and patch candidate fixes here and push (git SSH already works). But I still need issue list/details from GitHub to know what to fix.
+  - Notes for JEPO/owner: since SSH git fetch/push works, it is possible to push branches and open PRs via the GitHub web UI if someone wants to do the PR creation step manually.
+
+
+## 2026-02-21 — Day summary (by 프루빅)
+
+### 1) 오늘 완료한 작업 (커밋 기준, 시간순)
+- 34d3961 2026-02-21 15:54:07 — feat(copy): emphasize transparency (hero) + rename nav.simulate→Backtest + blog copy quick-win
+- 96127c8 2026-02-21 17:56:58 — chore(i18n): sync meta.index_desc with hero.desc (en/ko); chore(mem): update MEMORY.md JEPO review
+- b471d1a 2026-02-21 18:04:40 — style(i18n): fix indentation for meta.index_desc & meta.strategies_title (en/ko)
+- 690be8c 2026-02-21 18:08:26 — chore(ci): add Lighthouse audit workflow
+- 69f5f31 2026-02-21 18:21:47 — fix(ko-seo): descriptive fees link text ('수수료 자세히 보기') + change '자세히' -> '자세히 보기'
+- 5a30736 2026-02-21 18:23:47 — fix(ko-seo): make link texts descriptive ('자세히' -> '자세히 보기', footer -> '수수료 자세히 보기')
+
+### 2) 각 작업의 결과 (빌드 상태, 배포 여부)
+- Build: npm run build 성공 (Astro 빌드 완료). 빌드 로그: "1281 page(s) built". dist 폴더에 HTML 파일 1,284개 확인.
+- 배포: Quick-wins copy(히어로 카피) main에 반영되어 프로덕션에 표시됨(https://pruviq.com에 변경 반영 확인). chore/lighthouse-ci 브랜치에 CI 워크플로우 및 KO SEO 수정이 푸시되어 있음.
+- 기타: 워크스페이스 문서(IDENTITY.md 등)를 정리해 로컬에 보관(필요 시 커밋) — 주요 문서는 MEMORY.md에 기록됨.
+
+### 3) Lighthouse 최종 점수 (제포가 제공한 값)
+- EN
+  - Performance: 88
+  - Accessibility: 100
+  - Best Practices: 83  (Cloudflare beacon 관련 항목으로 인한 감점 — 현재로선 수정 불가)
+  - SEO: 100
+- KO
+  - Performance: 95
+  - Accessibility: 100
+  - Best Practices: 83  (동일 이슈)
+  - SEO: 100  ("자세히" → "자세히 보기" 수정으로 KO 점수 92→100 개선)
+
+### 4) 현재 사이트 상태
+- 빌드: 성공 (npm run build → 1281 페이지 빌드 완료)
+- API: https://api.pruviq.com/market → 200 OK
+- 페이지 수: 빌드 로그 기준 1,281 페이지(정적 HTML 파일 1,284개 확인)
+- 배포: Cloudflare Pages 자동 배포 활성화 (main 머지 시 자동 배포)
+
+### 5) 남은 이슈 / 다음 할 일 제안 (우선순위)
+P0 (이번 주)
+- Merge chore/lighthouse-ci PR 및 실행 결과(artifacts) 확인 → Lighthouse scores 검증
+- 운영 모니터링 설정(Upptime/Pingdom) 및 Sentry 연동(백엔드 5xx 추적)
+- 홈페이지에 Trust block(실거래 요약/Verified 배지) 추가 작업
+
+P1 (1–4주)
+- Reproducible package PoC (백테스트 데이터 스냅샷 + 실행 스크립트 번들링)
+- CI에 Golden regression tests 및 look-ahead bias 검사 추가
+- i18n 완결성 점검 및 번역 누락 보완
+
+P2 (중기)
+- Verification badge UI 및 자동 QA 파이프라인 완성
+- 마케팅용 심층 사례 연구(예: BB Squeeze SHORT) 공개 및 reproducible package 링크
+
+기타: 워킹트리의 미추적 파일(.openclaw/, backend/src/engine/) 처리(커밋/무시) 권장.
+
+### 6) MEMORY.md 반영 여부
+- 본 "2026-02-21 — Day summary"는 MEMORY.md에 추가되어 저장되었습니다.
+
+---
+
+Generated and committed by 프루빅 on 2026-02-21 18:38 KST.
