@@ -1,0 +1,19 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import { useTranslations } from '../../../i18n/index';
+
+const t = useTranslations('ko');
+---
+
+<Layout title={t('meta.home_title')}>
+  <section class="min-h-[60vh] flex items-center justify-center">
+    <div class="text-center max-w-2xl px-6">
+      <h1 class="text-3xl md:text-4xl font-bold mb-4">페이지를 찾을 수 없습니다 (404)</h1>
+      <p class="text-[--color-text-muted] mb-6">요청하신 페이지를 찾을 수 없습니다. URL을 확인하거나 아래 버튼으로 홈으로 돌아가세요.</p>
+      <div class="flex items-center justify-center gap-4">
+        <a href="/ko/" class="inline-block bg-[--color-accent] text-[--color-bg] px-4 py-2 rounded font-semibold">홈으로 돌아가기</a>
+        <a href="/ko/" class="text-sm text-[--color-text-muted]">사이트 맵 보기</a>
+      </div>
+    </div>
+  </section>
+</Layout>

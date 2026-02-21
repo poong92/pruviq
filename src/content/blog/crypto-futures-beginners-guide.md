@@ -117,4 +117,4 @@ We use Binance Futures (highest liquidity, 500+ perpetual pairs). See our [full 
 
 ---
 
-*PRUVIQ trades perpetual futures on 535 coins with 5x leverage. Every trade is published in real-time on [Telegram](https://t.me/PRUVIQ). See our [approach](/), [killed strategies](/graveyard), and [version history](/changelog).*
+*PRUVIQ trades perpetual futures on 535 coins with 5x leverage. Every trade is published in real-time on [Telegram](https://t.me/PRUVIQ). See our [approach](/), [killed strategies](/strategies), and [version history](/changelog).*

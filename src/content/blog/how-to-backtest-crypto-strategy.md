@@ -132,4 +132,4 @@ The gap between backtest and live trading is where most strategies die. Honest b
 
 ---
 
-*At PRUVIQ, every strategy is backtested on 500+ coins across 2+ years before risking real capital. [See our killed strategies](/graveyard) and [version history](/changelog) for the full transparency trail.*
+*At PRUVIQ, every strategy is backtested on 500+ coins across 2+ years before risking real capital. [See our killed strategies](/strategies) and [version history](/changelog) for the full transparency trail.*
