@@ -2,6 +2,7 @@
 import Layout from '../../layouts/Layout.astro';
 import CoinListTable from '../../components/CoinListTable';
 import { useTranslations } from '../../i18n/index';
+import ErrorBoundary from '../../components/ErrorBoundary';
 
 const t = useTranslations('en');
 ---
@@ -14,7 +15,7 @@ const t = useTranslations('en');
       <p class="text-[--color-text-muted] text-lg mb-8 max-w-2xl">
         {t('coins.desc')}
       </p>
-      <CoinListTable client:visible lang="en" />
+      <ErrorBoundary client:visible name="Coin List"><CoinListTable client:visible lang="en" /></ErrorBoundary>
     </div>
   </section>
 </Layout>

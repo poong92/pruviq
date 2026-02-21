@@ -2,6 +2,7 @@
 import Layout from '../../../layouts/Layout.astro';
 import CoinChart from '../../../components/CoinChart';
 import { COIN_SYMBOLS } from '../../../data/coin-symbols';
+import ErrorBoundary from '../../../components/ErrorBoundary';
 
 export async function getStaticPaths() {
   return COIN_SYMBOLS.map(s => ({
@@ -34,7 +35,7 @@ const datasetJsonLd = JSON.stringify({
         &larr; 코인
       </a>
       <h1 class="text-2xl font-bold mb-4">{displayName}</h1>
-      <CoinChart client:visible symbol={symbolUpper} lang="ko" />
+      <ErrorBoundary client:visible name="Coin Chart"><CoinChart client:visible symbol={symbolUpper} lang="ko" /></ErrorBoundary>
     </div>
   </section>
 </Layout>

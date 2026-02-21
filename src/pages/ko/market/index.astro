@@ -2,6 +2,7 @@
 import Layout from '../../../layouts/Layout.astro';
 import MarketDashboard from '../../../components/MarketDashboard';
 import { useTranslations } from '../../../i18n/index';
+import ErrorBoundary from '../../../components/ErrorBoundary';
 
 const t = useTranslations('ko');
 ---
@@ -14,7 +15,7 @@ const t = useTranslations('ko');
       <p class="text-[--color-text-muted] text-lg mb-8 max-w-2xl">
         {t('market.desc')}
       </p>
-      <MarketDashboard client:visible lang="ko" />
+      <ErrorBoundary client:visible name="Market Dashboard"><MarketDashboard client:visible lang="ko" /></ErrorBoundary>
     </div>
   </section>
 </Layout>

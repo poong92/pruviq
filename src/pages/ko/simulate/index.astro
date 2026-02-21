@@ -109,9 +109,10 @@ const t = useTranslations('ko');
 <script>
   import { h, render } from 'preact';
   import StrategyBuilder from '../../../components/StrategyBuilder';
+  import ErrorBoundary from '../../../components/ErrorBoundary';
 
   const mount = document.getElementById('builder-mount');
   if (mount) {
-    render(h(StrategyBuilder, { lang: 'ko' }), mount);
+    render(h(ErrorBoundary, { name: 'Strategy Builder' }, h(StrategyBuilder, { lang: 'ko' })), mount);
   }
 </script>

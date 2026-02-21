@@ -2,6 +2,7 @@
 import Layout from '../../../layouts/Layout.astro';
 import StrategyComparison from '../../../components/StrategyComparison';
 import { useTranslations } from '../../../i18n/index';
+import ErrorBoundary from '../../../components/ErrorBoundary';
 
 const t = useTranslations('ko');
 ---
@@ -15,7 +16,7 @@ const t = useTranslations('ko');
 
       <h1 class="text-3xl font-bold mb-6">{t('meta.compare_title')}</h1>
 
-      <StrategyComparison client:visible lang="ko" />
+      <ErrorBoundary client:visible name="Strategy Comparison"><StrategyComparison client:visible lang="ko" /></ErrorBoundary>
     </div>
   </section>
 </Layout>

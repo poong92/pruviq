@@ -117,9 +117,10 @@ const t = useTranslations('en');
 <script>
   import { h, render } from 'preact';
   import StrategyBuilder from '../../components/StrategyBuilder';
+  import ErrorBoundary from '../../components/ErrorBoundary';
 
   const mount = document.getElementById('builder-mount');
   if (mount) {
-    render(h(StrategyBuilder, { lang: 'en' }), mount);
+    render(h(ErrorBoundary, { name: 'Strategy Builder' }, h(StrategyBuilder, { lang: 'en' })), mount);
   }
 </script>
