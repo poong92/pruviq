@@ -1,9 +1,10 @@
-// Static data fallback configuration
-// Components first try API, then fall back to static JSON in /data/
+// Static-first data configuration
+// Static JSON files are refreshed every 15 min by cron (CoinGecko → JSON → CDN)
+// API server is fallback only (for when CDN is unavailable)
 export const API_BASE_URL: string =
   import.meta.env.PUBLIC_PRUVIQ_API_URL || 'https://api.pruviq.com';
 
-// Static data paths (always available, generated at build time)
+// Static data paths (refreshed every 15 min by cron)
 export const STATIC_DATA = {
   coinsStats: '/data/coins-stats.json',
   market: '/data/market.json',
@@ -16,18 +17,24 @@ export const STATIC_DATA = {
   comparisonResults: '/data/comparison-results.json',
 };
 
-// Fetch with static fallback: try API first, fall back to static JSON
+// Static-first fetch: try CDN/static first (fast, no API limits),
+// fall back to API server only if static is unavailable
 export async function fetchWithFallback(apiPath: string, staticPath: string): Promise<any> {
+  // 1. Try static data first (CDN, always available, updated every 15 min)
   try {
-    const res = await fetch(`${API_BASE_URL}${apiPath}`, {
-      signal: AbortSignal.timeout(5000),
-    });
-    if (!res.ok) throw new Error(`API ${res.status}`);
+    const res = await fetch(staticPath);
+    if (!res.ok) throw new Error(`Static ${res.status}`);
     return await res.json();
   } catch {
-    // Fall back to static data
-    const res = await fetch(staticPath);
-    if (!res.ok) throw new Error(`Static data unavailable: ${staticPath}`);
-    return await res.json();
+    // 2. Fallback to API (if CDN/static fails)
+    try {
+      const res = await fetch(`${API_BASE_URL}${apiPath}`, {
+        signal: AbortSignal.timeout(5000),
+      });
+      if (!res.ok) throw new Error(`API ${res.status}`);
+      return await res.json();
+    } catch {
+      throw new Error(`Data unavailable: ${staticPath}`);
+    }
   }
 }
