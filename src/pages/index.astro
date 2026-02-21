@@ -57,13 +57,13 @@ const lastUpdated = new Date().toLocaleDateString('en-US');
         </div>
 
         <!-- TRUST BLOCK -->
-        <div class="mt-6 border border-[--color-border] rounded p-4 bg-[--color-bg-card] flex items-center justify-between gap-4">
+        <div class="mt-6 border border-[--color-border] rounded p-4 bg-[--color-bg-card] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <p class="text-sm font-mono text-[--color-text-muted]">Verified strategies</p>
             <p class="text-xl font-bold text-[--color-accent]">{verifiedCount} verified</p>
             <p class="text-xs text-[--color-text-muted]">Last updated: {lastUpdated}</p>
           </div>
-          <div class="text-right">
+          <div class="sm:text-right">
             <a href="/performance" class="inline-block bg-[--color-accent] text-[--color-bg] px-4 py-2 rounded font-semibold text-sm hover:bg-[--color-accent-dim]">View live performance</a>
           </div>
         </div>
