@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'preact/hooks';
 import { formatPrice, formatVolume, formatVolumeRaw } from '../utils/format';
 import DiscreteSlider from './DiscreteSlider';
-import { API_BASE_URL as API_URL } from '../config/api';
+import { API_BASE_URL as API_URL, fetchWithFallback } from '../config/api';
 import type { MouseEventParams, Time, SeriesMarker } from 'lightweight-charts';
 
 // Helper function to get CSS variable values at runtime

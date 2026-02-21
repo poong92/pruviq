@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'preact/hooks';
 import { winRateColor, profitFactorColor, signColor } from '../utils/format';
-import { API_BASE_URL as API_URL } from '../config/api';
+import { API_BASE_URL as API_URL, STATIC_DATA, fetchWithFallback } from '../config/api';
 
 interface PresetFull {
   id: string;
@@ -113,7 +113,7 @@ export default function StrategyComparison({ lang = 'en' }: Props) {
   useEffect(() => {
     const loadPresets = async () => {
       try {
-        const listRes = await fetch(`${API_URL}/builder/presets`);
+        const listData = await fetchWithFallback('/builder/presets', STATIC_DATA.builderPresets);
         const list = await listRes.json();
         const fullPresets: PresetFull[] = [];
         for (const item of list) {

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'preact/hooks';
 import { formatPrice, formatVolume, changeColor, fgColor, timeAgo } from '../utils/format';
-import { API_BASE_URL as API_URL } from '../config/api';
+import { STATIC_DATA, fetchWithFallback } from '../config/api';
 
 const labels = {
   en: {
@@ -251,7 +251,7 @@ export default function MarketDashboard({ lang = 'en' }: { lang?: 'en' | 'ko' })
   const [ethFlash, setEthFlash] = useState('');
 
   const fetchMarket = () => {
-    fetch(`${API_URL}/market`)
+    fetchWithFallback('/market', STATIC_DATA.market)
       .then(r => { if (!r.ok) throw new Error(); return r.json(); })
       .then((d: MarketData) => {
         // Price flash detection
@@ -273,14 +273,14 @@ export default function MarketDashboard({ lang = 'en' }: { lang?: 'en' | 'ko' })
   };
 
   const fetchNews = () => {
-    fetch(`${API_URL}/news`)
+    fetchWithFallback('/news', STATIC_DATA.news)
       .then(r => { if (!r.ok) throw new Error(); return r.json(); })
       .then(d => { setNews(d); setNewsErr(false); })
       .catch(() => setNewsErr(true));
   };
 
   const fetchMacro = () => {
-    fetch(`${API_URL}/macro`)
+    Promise.resolve({})
       .then(r => { if (!r.ok) throw new Error(); return r.json(); })
       .then((d: MacroData) => { setMacro(d); setMacroErr(false); })
       .catch(() => setMacroErr(true));

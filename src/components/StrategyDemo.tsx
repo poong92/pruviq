@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'preact/hooks';
 import DiscreteSlider from './DiscreteSlider';
 import ResultsCard from './ResultsCard';
-import { API_BASE_URL as API_URL } from '../config/api';
+import { API_BASE_URL as API_URL, STATIC_DATA, fetchWithFallback } from '../config/api';
 
 function getCssVar(name: string): string {
   return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
