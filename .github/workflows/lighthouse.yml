@@ -1,0 +1,109 @@
+name: Lighthouse Audit
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'Optional PR number to comment the summary on'
+        required: false
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: lighthouse-audit
+  cancel-in-progress: false
+
+jobs:
+  run-lighthouse:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install Lighthouse
+        run: npm install -g lighthouse@10 || npm install -g lighthouse
+
+      - name: Run Lighthouse (EN)
+        run: |
+          mkdir -p reports
+          echo "Running Lighthouse for https://pruviq.com"
+          lighthouse https://pruviq.com --output=json --output=html --output-path=./reports/lighthouse-home --chrome-flags="--headless --no-sandbox" || true
+
+      - name: Run Lighthouse (KO)
+        run: |
+          echo "Running Lighthouse for https://pruviq.com/ko/"
+          lighthouse https://pruviq.com/ko/ --output=json --output=html --output-path=./reports/lighthouse-home-ko --chrome-flags="--headless --no-sandbox" || true
+
+      - name: List reports
+        run: ls -la reports || true
+
+      - name: Upload Lighthouse reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-reports
+          path: reports/
+
+      - name: Summarize and comment on PR (if available)
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs')
+            const owner = context.repo.owner
+            const repo = context.repo.repo
+            const branch = process.env.GITHUB_REF ? process.env.GITHUB_REF.replace('refs/heads/','') : null
+            const prInput = (github && github.context && github.context.payload && github.context.payload.inputs && github.context.payload.inputs.pr_number) ? github.context.payload.inputs.pr_number : null
+
+            function readJSON(path){
+              if(!fs.existsSync(path)) return null
+              try{ return JSON.parse(fs.readFileSync(path,'utf8')) }catch(e){ return null }
+            }
+
+            const enPathCandidates = ['reports/lighthouse-home.report.json','reports/lighthouse-home.json','reports/lighthouse-home.report.json']
+            const koPathCandidates = ['reports/lighthouse-home-ko.report.json','reports/lighthouse-home-ko.json','reports/lighthouse-home-ko.report.json']
+            let en=null, ko=null
+            for(const p of enPathCandidates){ if(fs.existsSync(p)){ en = readJSON(p); break } }
+            for(const p of koPathCandidates){ if(fs.existsSync(p)){ ko = readJSON(p); break } }
+
+            const cats = ['performance','accessibility','best-practices','seo']
+            function scores(obj){
+              if(!obj || !obj.lighthouseResult || !obj.lighthouseResult.categories) return null
+              return cats.map(c => {
+                const v = obj.lighthouseResult.categories[c]
+                return v && typeof v.score === 'number' ? Math.round(v.score*100) : null
+              })
+            }
+
+            const enScores = scores(en)
+            const koScores = scores(ko)
+
+            let body = '## Lighthouse Audit Results\n'
+            if(enScores){ body += '\n**EN (https://pruviq.com)**\n' + cats.map((c,i)=>`- **${c}**: ${enScores[i] !== null ? enScores[i] : 'N/A'}`).join('\n') + '\n' }
+            if(koScores){ body += '\n**KO (https://pruviq.com/ko/)**\n' + cats.map((c,i)=>`- **${c}**: ${koScores[i] !== null ? koScores[i] : 'N/A'}`).join('\n') + '\n' }
+            body += '\nArtifacts (HTML + JSON) are attached to this workflow run.\n'
+
+            // Try to determine PR to comment on
+            let prNumber = null
+            if(prInput) prNumber = prInput
+            if(!prNumber && branch){
+              const pulls = await github.rest.pulls.list({ owner, repo, state: 'open', per_page: 100 })
+              const found = pulls.data.find(p => p.head.ref === branch || p.head.sha === process.env.GITHUB_SHA)
+              if(found) prNumber = found.number
+            }
+
+            if(prNumber){
+              await github.rest.issues.createComment({ owner, repo, issue_number: prNumber, body })
+              core.info(`Posted Lighthouse summary to PR #${prNumber}`)
+            } else {
+              core.info('No PR found to comment on. Summary:')
+              core.info(body)
+            }
