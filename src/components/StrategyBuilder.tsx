@@ -130,9 +130,12 @@ const labels = {
     ctaDesc: 'Sign up through PRUVIQ to save on exchange fees.',
     ctaExchange: 'Binance (10% off)',
     ctaButton: 'Compare Fees',
+    scratchName: 'Build from Scratch',
+    scratchDesc: 'Start with a blank canvas. Pick your own indicators and conditions.',
+    scratchTag: 'CUSTOM',
     // New labels for demo mode + steps
-    step1: 'Quick Start',
-    step1Desc: 'Pick a verified preset or build from scratch.',
+    step1: 'Choose a Starting Point',
+    step1Desc: 'Pick a verified preset or start from scratch.',
     step2: 'Indicators',
     step2Desc: 'Select indicators to use in your conditions.',
     step3: 'Entry Conditions',
@@ -213,8 +216,11 @@ const labels = {
     ctaDesc: 'PRUVIQ를 통해 가입하면 수수료를 절약할 수 있습니다.',
     ctaExchange: '바이낸스 (10% 할인)',
     ctaButton: '전체 비교',
+    scratchName: '처음부터 만들기',
+    scratchDesc: '빈 캔버스에서 시작. 지표와 조건을 직접 선택하세요.',
+    scratchTag: '커스텀',
     // New labels for demo mode + steps
-    step1: '빠른 시작',
+    step1: '시작 방법 선택',
     step1Desc: '검증된 프리셋을 선택하거나 직접 만드세요.',
     step2: '지표',
     step2Desc: '조건에 사용할 지표를 선택하세요.',
@@ -318,6 +324,7 @@ export default function StrategyBuilder({ lang = 'en' }: Props) {
   const [maxBars, setMaxBars] = useState(48);
   const [topN, setTopN] = useState(50);
   const [avoidHours, setAvoidHours] = useState<Set<number>>(new Set([2, 3, 10, 20, 21, 22, 23]));
+  const [activePreset, setActivePreset] = useState<string | null>('bb-squeeze-short');
   const [isRunning, setIsRunning] = useState(false);
   const [progressStep, setProgressStep] = useState(0);
   const [result, setResult] = useState<BacktestResult | null>(null);
@@ -420,11 +427,29 @@ export default function StrategyBuilder({ lang = 'en' }: Props) {
         }));
         setConditions(newConds);
       }
+      setActivePreset(presetId);
       setResult(null);
       setError(null);
     } catch {
       setError(t.presetError);
     }
+  };
+
+  // Start from scratch: clear everything
+  const startFromScratch = () => {
+    setSelectedIndicators(new Set());
+    setIndicatorParams({});
+    setShowParams(null);
+    setConditions([]);
+    setDirection('short');
+    setSlPct(10);
+    setTpPct(8);
+    setMaxBars(48);
+    setTopN(50);
+    setAvoidHours(new Set());
+    setActivePreset('scratch');
+    setResult(null);
+    setError(null);
   };
 
   // Toggle indicator
@@ -667,37 +692,59 @@ export default function StrategyBuilder({ lang = 'en' }: Props) {
         )}
       </div>
 
-      {/* Step 1: Presets */}
-      {presets.length > 0 && (
-        <div class="border border-[--color-border] rounded-xl p-5 bg-[--color-bg-card]">
-          <StepHeader step={1} title={t.step1} desc={t.step1Desc} />
-          <div class="grid md:grid-cols-3 gap-3">
-            {presets.map((p) => (
-              <button
-                type="button"
-                key={p.id}
-                onClick={() => loadPreset(p.id)}
-                class="p-4 rounded-lg border border-[--color-border] bg-[--color-bg] text-left
-                       hover:border-[--color-accent] hover:bg-[--color-accent]/5 transition-all cursor-pointer card-hover"
-              >
-                <div class="flex items-center gap-2 mb-2">
-                  <span class={`text-[0.625rem] font-mono font-bold px-1.5 py-0.5 rounded ${
-                    p.direction === 'short'
-                      ? 'bg-[--color-red]/10 text-[--color-red]'
-                      : 'bg-[--color-accent]/10 text-[--color-accent]'
-                  }`}>
-                    {p.direction.toUpperCase()}
-                  </span>
-                  <span class="font-bold text-sm">{p.name}</span>
-                </div>
-                <div class="font-mono text-[0.6875rem] text-[--color-text-muted]">
-                  SL {p.sl_pct}% / TP {p.tp_pct}% &middot; {p.conditions_count} conditions
-                </div>
-              </button>
-            ))}
-          </div>
+      {/* Step 1: Choose Starting Point */}
+      <div class="border border-[--color-border] rounded-xl p-5 bg-[--color-bg-card]">
+        <StepHeader step={1} title={t.step1} desc={t.step1Desc} />
+        <div class="grid md:grid-cols-3 gap-3">
+          {/* Build from Scratch card */}
+          <button
+            type="button"
+            onClick={startFromScratch}
+            class={`p-4 rounded-lg border-2 border-dashed text-left transition-all cursor-pointer
+              ${activePreset === 'scratch'
+                ? 'border-[--color-accent] bg-[--color-accent]/10'
+                : 'border-[--color-border] bg-[--color-bg] hover:border-[--color-accent] hover:bg-[--color-accent]/5'
+              }`}
+          >
+            <div class="flex items-center gap-2 mb-2">
+              <span class="text-[0.625rem] font-mono font-bold px-1.5 py-0.5 rounded bg-[--color-accent]/10 text-[--color-accent]">
+                {t.scratchTag}
+              </span>
+              <span class="font-bold text-sm">{t.scratchName}</span>
+            </div>
+            <div class="font-mono text-[0.6875rem] text-[--color-text-muted]">
+              {t.scratchDesc}
+            </div>
+          </button>
+          {/* Preset cards */}
+          {presets.map((p) => (
+            <button
+              type="button"
+              key={p.id}
+              onClick={() => loadPreset(p.id)}
+              class={`p-4 rounded-lg border text-left transition-all cursor-pointer card-hover
+                ${activePreset === p.id
+                  ? 'border-[--color-accent] bg-[--color-accent]/5 border-2'
+                  : 'border-[--color-border] bg-[--color-bg] hover:border-[--color-accent] hover:bg-[--color-accent]/5'
+                }`}
+            >
+              <div class="flex items-center gap-2 mb-2">
+                <span class={`text-[0.625rem] font-mono font-bold px-1.5 py-0.5 rounded ${
+                  p.direction === 'short'
+                    ? 'bg-[--color-red]/10 text-[--color-red]'
+                    : 'bg-[--color-accent]/10 text-[--color-accent]'
+                }`}>
+                  {p.direction.toUpperCase()}
+                </span>
+                <span class="font-bold text-sm">{p.name}</span>
+              </div>
+              <div class="font-mono text-[0.6875rem] text-[--color-text-muted]">
+                SL {p.sl_pct}% / TP {p.tp_pct}% &middot; {p.conditions_count} conditions
+              </div>
+            </button>
+          ))}
         </div>
-      )}
+      </div>
 
       {/* Step 2: Indicators */}
       <div class="border border-[--color-border] rounded-xl p-5 bg-[--color-bg-card]">
