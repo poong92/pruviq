@@ -312,3 +312,13 @@ a:focus-visible,
   font-family: var(--font-mono);
   font-size: 0.8rem;
 }
+
+/* Mobile touch targets - safe approach (only CTA buttons, not all links) */
+@media (pointer: coarse) {
+  .btn-primary,
+  .btn-secondary,
+  nav a,
+  button[type="submit"] {
+    min-height: 44px;
+  }
+}

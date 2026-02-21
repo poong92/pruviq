@@ -1,8 +1,0 @@
-/* Touch target improvements */
-a, button, .btn, .btn-primary, .btn-secondary, .nav a, .footer a, .filter-button {
-  min-height: 44px !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  touch-action: manipulation;
-}
