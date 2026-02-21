@@ -1,8 +1,6 @@
 ---
 import Layout from '../../../layouts/Layout.astro';
-import MarketDashboard from '../../../components/MarketDashboard';
 import { useTranslations } from '../../../i18n/index';
-import ErrorBoundary from '../../../components/ErrorBoundary';
 
 const t = useTranslations('ko');
 ---
@@ -15,7 +13,32 @@ const t = useTranslations('ko');
       <p class="text-[--color-text-muted] text-lg mb-8 max-w-2xl">
         {t('market.desc')}
       </p>
-      <ErrorBoundary client:visible name="Market Dashboard"><MarketDashboard client:visible lang="ko" /></ErrorBoundary>
+      <div id="market-mount">
+        <div class="animate-pulse space-y-4">
+          <div class="flex gap-4 flex-wrap">
+            <div class="flex-1 min-w-[200px] h-16 bg-[--color-bg-hover] rounded-lg"></div>
+            <div class="flex-1 min-w-[200px] h-16 bg-[--color-bg-hover] rounded-lg"></div>
+          </div>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="h-24 bg-[--color-bg-hover] rounded-lg"></div>
+            <div class="h-24 bg-[--color-bg-hover] rounded-lg"></div>
+            <div class="h-24 bg-[--color-bg-hover] rounded-lg"></div>
+            <div class="h-24 bg-[--color-bg-hover] rounded-lg"></div>
+          </div>
+          <div class="h-64 bg-[--color-bg-hover] rounded-lg"></div>
+        </div>
+      </div>
     </div>
   </section>
 </Layout>
+
+<script>
+  import { h, render } from 'preact';
+  import MarketDashboard from '../../../components/MarketDashboard';
+  import ErrorBoundary from '../../../components/ErrorBoundary';
+
+  const mount = document.getElementById('market-mount');
+  if (mount) {
+    render(h(ErrorBoundary, { name: 'Market Dashboard' }, h(MarketDashboard, { lang: 'ko' })), mount);
+  }
+</script>

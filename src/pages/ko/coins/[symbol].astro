@@ -1,8 +1,6 @@
 ---
 import Layout from '../../../layouts/Layout.astro';
-import CoinChart from '../../../components/CoinChart';
 import { COIN_SYMBOLS } from '../../../data/coin-symbols';
-import ErrorBoundary from '../../../components/ErrorBoundary';
 
 export async function getStaticPaths() {
   return COIN_SYMBOLS.map(s => ({
@@ -35,7 +33,24 @@ const datasetJsonLd = JSON.stringify({
         &larr; 코인
       </a>
       <h1 class="text-2xl font-bold mb-4">{displayName}</h1>
-      <ErrorBoundary client:visible name="Coin Chart"><CoinChart client:visible symbol={symbolUpper} lang="ko" /></ErrorBoundary>
+      <div id="coin-mount" data-symbol={symbolUpper}>
+        <div class="animate-pulse">
+          <div class="h-64 bg-[--color-bg-hover] rounded mb-4"></div>
+          <div class="h-4 bg-[--color-bg-hover] rounded w-1/3"></div>
+        </div>
+      </div>
     </div>
   </section>
 </Layout>
+
+<script>
+  import { h, render } from 'preact';
+  import CoinChart from '../../../components/CoinChart';
+  import ErrorBoundary from '../../../components/ErrorBoundary';
+
+  const mount = document.getElementById('coin-mount');
+  if (mount) {
+    const symbol = mount.dataset.symbol;
+    render(h(ErrorBoundary, { name: 'Coin Chart' }, h(CoinChart, { symbol, lang: 'ko' })), mount);
+  }
+</script>

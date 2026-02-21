@@ -1,8 +1,6 @@
 ---
 import Layout from '../../../layouts/Layout.astro';
-import StrategyComparison from '../../../components/StrategyComparison';
 import { useTranslations } from '../../../i18n/index';
-import ErrorBoundary from '../../../components/ErrorBoundary';
 
 const t = useTranslations('ko');
 ---
@@ -16,7 +14,23 @@ const t = useTranslations('ko');
 
       <h1 class="text-3xl font-bold mb-6">{t('meta.compare_title')}</h1>
 
-      <ErrorBoundary client:visible name="Strategy Comparison"><StrategyComparison client:visible lang="ko" /></ErrorBoundary>
+      <div id="compare-mount">
+        <div class="animate-pulse space-y-4">
+          <div class="h-10 bg-[--color-bg-hover] rounded w-1/2"></div>
+          <div class="h-64 bg-[--color-bg-hover] rounded"></div>
+        </div>
+      </div>
     </div>
   </section>
 </Layout>
+
+<script>
+  import { h, render } from 'preact';
+  import StrategyComparison from '../../../components/StrategyComparison';
+  import ErrorBoundary from '../../../components/ErrorBoundary';
+
+  const mount = document.getElementById('compare-mount');
+  if (mount) {
+    render(h(ErrorBoundary, { name: 'Strategy Comparison' }, h(StrategyComparison, { lang: 'ko' })), mount);
+  }
+</script>
