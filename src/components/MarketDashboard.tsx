@@ -20,7 +20,7 @@ const labels = {
     newsLoading: 'Loading news...',
     newsError: 'Failed to load news.',
     updated: 'Updated',
-    disclaimer: 'Market data is for informational purposes only. Not financial advice. Auto-refreshed every 2 min.',
+    disclaimer: 'Market data is for informational purposes only. Not financial advice. Data refreshed every 15 min.',
     symbol: 'Symbol',
     price: 'Price',
     change: '24h %',
@@ -59,7 +59,7 @@ const labels = {
     newsLoading: '뉴스 로딩 중...',
     newsError: '뉴스 로딩 실패.',
     updated: '업데이트',
-    disclaimer: '시장 데이터는 정보 제공 목적으로만 제공됩니다. 투자 조언이 아닙니다. 2분마다 자동 갱신.',
+    disclaimer: '시장 데이터는 정보 제공 목적으로만 제공됩니다. 투자 조언이 아닙니다. 15분마다 자동 갱신.',
     symbol: '심볼',
     price: '가격',
     change: '24h %',
@@ -229,7 +229,7 @@ function MoverTable({ title, movers, l }: { title: string; movers: MarketMover[]
 }
 
 const NEWS_SOURCES = ['CoinDesk', 'CoinTelegraph', 'Decrypt', 'Bitcoin Magazine'];
-const REFRESH_MS = 120_000;
+const REFRESH_MS = 300_000; // 5 min (static data refreshed every 15 min)
 
 export default function MarketDashboard({ lang = 'en' }: { lang?: 'en' | 'ko' }) {
   const l = labels[lang] || labels.en;
