@@ -265,3 +265,29 @@ P2 (중기)
 ---
 
 Generated and committed by 프루빅 on 2026-02-21 18:38 KST.
+
+
+## UX Audit & Changes (2026-02-21)
+
+Summary:
+- Per JEPO instruction, performed user-focused UX review and applied P0 improvements to increase discoverability and trust.
+
+P0 (done, committed):
+- Added Hero trust block (verified strategies count + link to /performance) and made primary CTA 'Try Live Demo' more prominent (min-height for touch targets).
+  - Commit: 3570408 — feat(ux): hero trust block + primary CTA reorder; coin page apply-strategy CTA (P0)
+- Added "Apply this strategy" CTA on coin detail pages linking to /simulate?coin=<SYMBOL> to lower friction from browsing to testing.
+  - Commit: 3570408
+
+P1 (short-term, this week) — recorded to create issues / track:
+- Implement 60-second interactive demo flow (auto-fill demo parameters and one-click run) — improves first-time activation.
+- Create 'Verified' badge system & UI for strategy cards (automated QA pass indicator).
+- Mobile: audit & enforce 44px touch targets across primary buttons and nav (QA + minor CSS adjustments).
+
+P2 (mid-term):
+- Reproducible package PoC (backend job + UI download link) — ties into verification claims.
+- CI: add golden regression tests (look-ahead bias detection) and PR gating.
+- Accessibility deep scan (axe), fix any non-critical ARIA/contrast issues.
+
+Next steps:
+- Create GitHub Issues for P1/P2 tasks and drive implementation (requires repo issue API access). For now, tasks are in MEMORY.md for sprint planning.
+

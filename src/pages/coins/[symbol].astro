@@ -38,6 +38,13 @@ const datasetJsonLd = JSON.stringify({
       </a>
       <h1 class="text-2xl font-bold mb-4">{displayName}</h1>
       <CoinChart client:visible symbol={symbolUpper} lang="en" />
+      <div class="mt-6">
+        <a href={`/simulate?coin=${symbolUpper}`}
+           class="inline-flex items-center gap-2 bg-[--color-accent] text-[--color-bg] px-4 py-2 rounded font-semibold text-sm hover:bg-[--color-accent-dim]">
+          Apply this strategy →
+        </a>
+        <a href="/coins" class="ml-4 text-sm text-[--color-text-muted] hover:text-[--color-accent]">Back to coins</a>
+      </div>
     </div>
   </section>
 </Layout>
