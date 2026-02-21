@@ -53,6 +53,7 @@ interface BacktestResult {
   is_valid: boolean;
   validation_errors: string[];
   compute_time_ms: number;
+  _isDemo?: boolean;
 }
 
 interface PresetItem {
@@ -129,6 +130,26 @@ const labels = {
     ctaDesc: 'Sign up through PRUVIQ to save on exchange fees.',
     ctaExchange: 'Binance (10% off)',
     ctaButton: 'Compare Fees',
+    // New labels for demo mode + steps
+    step1: 'Quick Start',
+    step1Desc: 'Pick a verified preset or build from scratch.',
+    step2: 'Indicators',
+    step2Desc: 'Select indicators to use in your conditions.',
+    step3: 'Entry Conditions',
+    step3Desc: 'All conditions must be true (AND logic).',
+    step4: 'Parameters',
+    step4Desc: 'Tune risk, direction, and time filters.',
+    apiReady: 'Live API connected',
+    apiDemo: 'Demo mode',
+    apiDemoDesc: 'Pre-computed results',
+    apiChecking: 'Connecting...',
+    demoLabel: 'DEMO',
+    demoNote: 'Pre-computed results for BB Squeeze SHORT',
+    progressPreparing: 'Preparing',
+    progressLoading: 'Loading data',
+    progressScanning: 'Scanning signals',
+    progressSimulating: 'Simulating trades',
+    progressComputing: 'Computing results',
   },
   ko: {
     tag: '전략 빌더',
@@ -192,6 +213,26 @@ const labels = {
     ctaDesc: 'PRUVIQ를 통해 가입하면 수수료를 절약할 수 있습니다.',
     ctaExchange: '바이낸스 (10% 할인)',
     ctaButton: '전체 비교',
+    // New labels for demo mode + steps
+    step1: '빠른 시작',
+    step1Desc: '검증된 프리셋을 선택하거나 직접 만드세요.',
+    step2: '지표',
+    step2Desc: '조건에 사용할 지표를 선택하세요.',
+    step3: '진입 조건',
+    step3Desc: '모든 조건이 참이어야 진입합니다 (AND 논리).',
+    step4: '파라미터',
+    step4Desc: '리스크, 방향, 시간 필터를 조정하세요.',
+    apiReady: 'Live API 연결됨',
+    apiDemo: '데모 모드',
+    apiDemoDesc: '사전 계산된 결과',
+    apiChecking: '연결 중...',
+    demoLabel: 'DEMO',
+    demoNote: 'BB Squeeze SHORT 사전 계산 결과',
+    progressPreparing: '준비 중',
+    progressLoading: '데이터 로딩',
+    progressScanning: '시그널 스캔',
+    progressSimulating: '매매 시뮬레이션',
+    progressComputing: '결과 계산',
   },
 };
 
@@ -217,6 +258,37 @@ function getCssVar(name: string): string {
 let condIdCounter = 0;
 function nextCondId() {
   return `c${++condIdCounter}`;
+}
+
+// --- Step Header Component ---
+function StepHeader({ step, title, desc }: { step: number; title: string; desc: string }) {
+  return (
+    <div class="flex items-center gap-3 mb-4">
+      <span class="step-badge shrink-0">{step}</span>
+      <div>
+        <h3 class="font-mono text-xs text-[--color-accent] tracking-widest uppercase">{title}</h3>
+        <p class="text-[--color-text-muted] text-sm">{desc}</p>
+      </div>
+    </div>
+  );
+}
+
+// --- Progress Steps Component ---
+function ProgressSteps({ currentStep, t }: { currentStep: number; t: typeof labels['en'] }) {
+  const steps = [t.progressPreparing, t.progressLoading, t.progressScanning, t.progressSimulating, t.progressComputing];
+  return (
+    <div class="flex items-center justify-center gap-2 flex-wrap">
+      {steps.map((label, i) => (
+        <div key={i} class="flex items-center gap-1.5">
+          <span class={`w-1.5 h-1.5 rounded-full ${i <= currentStep ? 'progress-dot-active bg-[--color-accent]' : 'progress-dot bg-[--color-border]'}`} />
+          <span class={`font-mono text-[0.6875rem] ${i === currentStep ? 'text-[--color-accent] font-bold' : i < currentStep ? 'text-[--color-text-muted]' : 'text-[--color-text-muted]/50'}`}>
+            {label}
+          </span>
+          {i < steps.length - 1 && <span class="text-[--color-border] mx-1">&middot;</span>}
+        </div>
+      ))}
+    </div>
+  );
 }
 
 // --- Component ---
@@ -247,9 +319,15 @@ export default function StrategyBuilder({ lang = 'en' }: Props) {
   const [topN, setTopN] = useState(50);
   const [avoidHours, setAvoidHours] = useState<Set<number>>(new Set([2, 3, 10, 20, 21, 22, 23]));
   const [isRunning, setIsRunning] = useState(false);
+  const [progressStep, setProgressStep] = useState(0);
   const [result, setResult] = useState<BacktestResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [apiLoadError, setApiLoadError] = useState(false);
+
+  // Demo mode state
+  const [apiStatus, setApiStatus] = useState<'checking' | 'ready' | 'no-data' | 'down'>('checking');
+  const [demoMode, setDemoMode] = useState(false);
+  const [coinsLoaded, setCoinsLoaded] = useState(0);
 
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<any>(null);
@@ -272,6 +350,25 @@ export default function StrategyBuilder({ lang = 'en' }: Props) {
     'stoch_oversold', 'stoch_overbought', 'strong_trend', 'breakout_up', 'breakout_down',
   ]);
 
+  // Healthcheck on mount
+  useEffect(() => {
+    fetch(`${API_URL}/health`, { signal: AbortSignal.timeout(3000) })
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.coins_loaded > 0) {
+          setApiStatus('ready');
+          setCoinsLoaded(d.coins_loaded);
+        } else {
+          setApiStatus('no-data');
+          setDemoMode(true);
+        }
+      })
+      .catch(() => {
+        setApiStatus('down');
+        setDemoMode(true);
+      });
+  }, []);
+
   // Load indicators and presets
   useEffect(() => {
     fetchWithFallback('/builder/indicators', STATIC_DATA.builderIndicators)
@@ -285,9 +382,24 @@ export default function StrategyBuilder({ lang = 'en' }: Props) {
   // Load preset
   const loadPreset = async (presetId: string) => {
     try {
-      const res = await fetch(`${API_URL}/builder/presets/${presetId}`);
-      const preset = await res.json();
-      setSelectedIndicators(new Set(Object.keys(preset.indicators)));
+      let preset: any;
+      try {
+        const res = await fetch(`${API_URL}/builder/presets/${presetId}`, { signal: AbortSignal.timeout(3000) });
+        if (!res.ok) throw new Error();
+        preset = await res.json();
+      } catch {
+        // Fallback: load from static presets
+        const allPresets = await fetch(STATIC_DATA.builderPresets).then((r) => r.json());
+        preset = allPresets.find((p: any) => p.id === presetId);
+        if (!preset) throw new Error();
+        // For static presets, set defaults
+        if (!preset.entry) {
+          preset.entry = { conditions: [] };
+          preset.avoid_hours = preset.avoid_hours || [2, 3, 10, 20, 21, 22, 23];
+          preset.max_bars = preset.max_bars || 48;
+        }
+      }
+      setSelectedIndicators(new Set(Object.keys(preset.indicators || {})));
       setIndicatorParams({});
       setShowParams(null);
       setDirection(preset.direction);
@@ -297,15 +409,17 @@ export default function StrategyBuilder({ lang = 'en' }: Props) {
       setTopN(50);
       setAvoidHours(new Set(preset.avoid_hours));
 
-      const newConds: Condition[] = preset.entry.conditions.map((c: Omit<Condition, 'id'>) => ({
-        id: nextCondId(),
-        field: c.field,
-        op: c.op,
-        value: c.value,
-        field2: c.field2,
-        shift: c.shift ?? 1,
-      }));
-      setConditions(newConds);
+      if (preset.entry?.conditions) {
+        const newConds: Condition[] = preset.entry.conditions.map((c: Omit<Condition, 'id'>) => ({
+          id: nextCondId(),
+          field: c.field,
+          op: c.op,
+          value: c.value,
+          field2: c.field2,
+          shift: c.shift ?? 1,
+        }));
+        setConditions(newConds);
+      }
       setResult(null);
       setError(null);
     } catch {
@@ -319,7 +433,6 @@ export default function StrategyBuilder({ lang = 'en' }: Props) {
       const next = new Set(prev);
       if (next.has(id)) {
         next.delete(id);
-        // Clean up conditions referencing fields from this indicator
         const removedFields = new Set(
           availableIndicators.find((ind) => ind.id === id)?.fields || []
         );
@@ -363,12 +476,33 @@ export default function StrategyBuilder({ lang = 'en' }: Props) {
     });
   };
 
-  // Run backtest
+  // Run backtest (with demo mode support)
   const runBacktest = async () => {
     setIsRunning(true);
     setError(null);
     setResult(null);
+    setProgressStep(0);
 
+    // Demo mode: load pre-computed results
+    if (demoMode) {
+      const stepTimings = [300, 400, 500, 200, 100];
+      for (let i = 0; i < stepTimings.length; i++) {
+        setProgressStep(i);
+        await new Promise((r) => setTimeout(r, stepTimings[i]));
+      }
+      try {
+        const demoData = await fetch('/data/demo-backtest-result.json').then((r) => r.json());
+        setResult({ ...demoData, _isDemo: true });
+        setTimeout(() => resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+      } catch {
+        setError(t.backtestFailed);
+      } finally {
+        setIsRunning(false);
+      }
+      return;
+    }
+
+    // Live mode
     const indicatorConfigs: Record<string, Record<string, number>> = {};
     for (const id of selectedIndicators) {
       indicatorConfigs[id] = indicatorParams[id] || {};
@@ -393,6 +527,11 @@ export default function StrategyBuilder({ lang = 'en' }: Props) {
       top_n: topN,
     };
 
+    // Animate progress while waiting
+    const progressInterval = setInterval(() => {
+      setProgressStep((prev) => (prev < 4 ? prev + 1 : prev));
+    }, 2000);
+
     try {
       const res = await fetch(`${API_URL}/backtest`, {
         method: 'POST',
@@ -407,12 +546,11 @@ export default function StrategyBuilder({ lang = 'en' }: Props) {
 
       const data: BacktestResult = await res.json();
       setResult(data);
-
-      // Scroll to results
       setTimeout(() => resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : t.backtestFailed);
     } finally {
+      clearInterval(progressInterval);
       setIsRunning(false);
     }
   };
@@ -485,41 +623,85 @@ export default function StrategyBuilder({ lang = 'en' }: Props) {
 
   return (
     <div class="space-y-8">
-      {/* Header */}
-      <div>
-        <div class="font-mono text-xs text-[--color-accent] tracking-widest mb-2 uppercase">{t.tag}</div>
-        <h1 class="text-3xl md:text-4xl font-bold mb-3">{t.title}</h1>
-        <p class="text-[--color-text-muted] text-lg max-w-2xl">{t.desc}</p>
+      {/* Status Banner */}
+      <div class={`flex items-center gap-2 px-4 py-2.5 rounded-lg border text-sm font-mono ${
+        apiStatus === 'ready'
+          ? 'border-[--color-accent]/30 bg-[--color-accent]/5'
+          : apiStatus === 'checking'
+          ? 'border-[--color-border] bg-[--color-bg-card]'
+          : 'border-[--color-yellow]/30 bg-[--color-yellow]/5'
+      }`}>
+        <span class={`w-2 h-2 rounded-full shrink-0 ${
+          apiStatus === 'ready' ? 'bg-[--color-accent]'
+          : apiStatus === 'checking' ? 'bg-[--color-text-muted] animate-pulse'
+          : 'bg-[--color-yellow]'
+        }`} />
+        <span class={`text-xs ${
+          apiStatus === 'ready' ? 'text-[--color-accent]'
+          : apiStatus === 'checking' ? 'text-[--color-text-muted]'
+          : 'text-[--color-yellow]'
+        }`}>
+          {apiStatus === 'ready'
+            ? `${t.apiReady} · ${coinsLoaded} ${t.coinsUnit}`
+            : apiStatus === 'checking'
+            ? t.apiChecking
+            : `${t.apiDemo} · ${t.apiDemoDesc}`}
+        </span>
+        {apiStatus === 'ready' && demoMode && (
+          <button
+            type="button"
+            onClick={() => setDemoMode(false)}
+            class="ml-auto text-[0.6875rem] text-[--color-accent] hover:underline cursor-pointer"
+          >
+            Switch to Live
+          </button>
+        )}
+        {apiStatus === 'ready' && !demoMode && (
+          <button
+            type="button"
+            onClick={() => setDemoMode(true)}
+            class="ml-auto text-[0.6875rem] text-[--color-text-muted] hover:text-[--color-accent] cursor-pointer"
+          >
+            Try Demo
+          </button>
+        )}
       </div>
 
-      {/* Presets */}
+      {/* Step 1: Presets */}
       {presets.length > 0 && (
         <div class="border border-[--color-border] rounded-xl p-5 bg-[--color-bg-card]">
-          <h3 class="font-mono text-xs text-[--color-accent] tracking-widest mb-1 uppercase">{t.presets}</h3>
-          <p class="text-[--color-text-muted] text-sm mb-4">{t.presetsDesc}</p>
-          <div class="flex flex-wrap gap-2">
+          <StepHeader step={1} title={t.step1} desc={t.step1Desc} />
+          <div class="grid md:grid-cols-3 gap-3">
             {presets.map((p) => (
               <button
                 type="button"
                 key={p.id}
                 onClick={() => loadPreset(p.id)}
-                class="px-4 py-2 rounded-lg border border-[--color-border] bg-[--color-bg] text-sm font-mono
-                       hover:border-[--color-accent] hover:text-[--color-accent] transition-colors cursor-pointer"
+                class="p-4 rounded-lg border border-[--color-border] bg-[--color-bg] text-left
+                       hover:border-[--color-accent] hover:bg-[--color-accent]/5 transition-all cursor-pointer card-hover"
               >
-                <span class="font-bold">{p.name}</span>
-                <span class="text-[--color-text-muted] ml-2 text-xs">
-                  {p.direction.toUpperCase()} &middot; SL {p.sl_pct}% / TP {p.tp_pct}%
-                </span>
+                <div class="flex items-center gap-2 mb-2">
+                  <span class={`text-[0.625rem] font-mono font-bold px-1.5 py-0.5 rounded ${
+                    p.direction === 'short'
+                      ? 'bg-[--color-red]/10 text-[--color-red]'
+                      : 'bg-[--color-accent]/10 text-[--color-accent]'
+                  }`}>
+                    {p.direction.toUpperCase()}
+                  </span>
+                  <span class="font-bold text-sm">{p.name}</span>
+                </div>
+                <div class="font-mono text-[0.6875rem] text-[--color-text-muted]">
+                  SL {p.sl_pct}% / TP {p.tp_pct}% &middot; {p.conditions_count} conditions
+                </div>
               </button>
             ))}
           </div>
         </div>
       )}
 
-      {/* Indicators */}
+      {/* Step 2: Indicators */}
       <div class="border border-[--color-border] rounded-xl p-5 bg-[--color-bg-card]">
-        <h3 class="font-mono text-xs text-[--color-accent] tracking-widest mb-1 uppercase">{t.indicators}</h3>
-        <p class="text-[--color-text-muted] text-sm mb-4">{t.indicatorsDesc}</p>
+        <StepHeader step={2} title={t.step2} desc={t.step2Desc} />
         {apiLoadError && (
           <div class="mb-4 p-3 rounded-lg border border-[--color-red]/40 bg-[--color-red]/5">
             <p class="font-mono text-xs text-[--color-red]">{t.apiLoadError}</p>
@@ -611,10 +793,9 @@ export default function StrategyBuilder({ lang = 'en' }: Props) {
         })()}
       </div>
 
-      {/* Conditions */}
+      {/* Step 3: Conditions */}
       <div class="border border-[--color-border] rounded-xl p-5 bg-[--color-bg-card]">
-        <h3 class="font-mono text-xs text-[--color-accent] tracking-widest mb-1 uppercase">{t.conditions}</h3>
-        <p class="text-[--color-text-muted] text-sm mb-4">{t.conditionsDesc}</p>
+        <StepHeader step={3} title={t.step3} desc={t.step3Desc} />
 
         <div class="space-y-3">
           {conditions.map((cond, i) => (
@@ -625,69 +806,78 @@ export default function StrategyBuilder({ lang = 'en' }: Props) {
               {i === 0 && <span class="font-mono text-xs text-[--color-text-muted] w-8">IF</span>}
 
               {/* Field */}
-              <select
-                value={cond.field}
-                onChange={(e: Event) => {
-                  const f = (e.target as HTMLSelectElement).value;
-                  const isBool = booleanFields.has(f);
-                  updateCondition(cond.id, {
-                    field: f,
-                    value: isBool ? true : 0,
-                    field2: undefined,
-                    op: isBool ? '==' : '>=',
-                  });
-                }}
-                class="bg-[--color-bg-card] border border-[--color-border] rounded px-2 py-1.5 text-sm font-mono text-[--color-text] min-w-[100px] sm:min-w-[160px]"
-              >
-                {fieldGroups.map((g) => (
-                  <optgroup key={g.id} label={g.name}>
-                    {g.fields.map((f) => (
-                      <option key={f} value={f}>{f}</option>
-                    ))}
-                  </optgroup>
-                ))}
-              </select>
-
-              {/* Op */}
-              <select
-                value={cond.op}
-                onChange={(e: Event) => updateCondition(cond.id, { op: (e.target as HTMLSelectElement).value })}
-                class="bg-[--color-bg-card] border border-[--color-border] rounded px-2 py-1.5 text-sm font-mono text-[--color-accent] w-[70px] sm:w-[100px]"
-              >
-                {getOps(t).map((op) => (
-                  <option key={op.value} value={op.value}>{op.label}</option>
-                ))}
-              </select>
-
-              {/* Value or Field2 */}
-              {cond.field2 !== undefined ? (
+              <div class="flex flex-col sm:contents">
+                <label class="font-mono text-[0.5625rem] text-[--color-text-muted] sm:hidden mb-0.5">{t.field}</label>
                 <select
-                  value={cond.field2}
-                  onChange={(e: Event) => updateCondition(cond.id, { field2: (e.target as HTMLSelectElement).value })}
-                  class="bg-[--color-bg-card] border border-[--color-border] rounded px-2 py-1.5 text-sm font-mono text-[--color-text] min-w-[100px] sm:min-w-[140px]"
+                  value={cond.field}
+                  onChange={(e: Event) => {
+                    const f = (e.target as HTMLSelectElement).value;
+                    const isBool = booleanFields.has(f);
+                    updateCondition(cond.id, {
+                      field: f,
+                      value: isBool ? true : 0,
+                      field2: undefined,
+                      op: isBool ? '==' : '>=',
+                    });
+                  }}
+                  class="bg-[--color-bg-card] border border-[--color-border] rounded px-2 py-1.5 text-sm font-mono text-[--color-text] min-w-[100px] sm:min-w-[160px]"
                 >
-                  {availableFields.filter((f) => f !== cond.field).map((f) => (
-                    <option key={f} value={f}>{f}</option>
+                  {fieldGroups.map((g) => (
+                    <optgroup key={g.id} label={g.name}>
+                      {g.fields.map((f) => (
+                        <option key={f} value={f}>{f}</option>
+                      ))}
+                    </optgroup>
                   ))}
                 </select>
-              ) : booleanFields.has(cond.field) ? (
+              </div>
+
+              {/* Op */}
+              <div class="flex flex-col sm:contents">
+                <label class="font-mono text-[0.5625rem] text-[--color-text-muted] sm:hidden mb-0.5">{t.operator}</label>
                 <select
-                  value={String(cond.value)}
-                  onChange={(e: Event) => updateCondition(cond.id, { value: (e.target as HTMLSelectElement).value === 'true' })}
-                  class="bg-[--color-bg-card] border border-[--color-border] rounded px-2 py-1.5 text-sm font-mono text-[--color-text] w-[70px] sm:w-[80px]"
+                  value={cond.op}
+                  onChange={(e: Event) => updateCondition(cond.id, { op: (e.target as HTMLSelectElement).value })}
+                  class="bg-[--color-bg-card] border border-[--color-border] rounded px-2 py-1.5 text-sm font-mono text-[--color-accent] w-[70px] sm:w-[100px]"
                 >
-                  <option value="true">true</option>
-                  <option value="false">false</option>
+                  {getOps(t).map((op) => (
+                    <option key={op.value} value={op.value}>{op.label}</option>
+                  ))}
                 </select>
-              ) : (
-                <input
-                  type="number"
-                  step="any"
-                  value={cond.value as number}
-                  onChange={(e: Event) => updateCondition(cond.id, { value: parseFloat((e.target as HTMLInputElement).value) || 0 })}
-                  class="bg-[--color-bg-card] border border-[--color-border] rounded px-2 py-1.5 text-sm font-mono text-[--color-text] w-[70px] sm:w-[80px]"
-                />
-              )}
+              </div>
+
+              {/* Value or Field2 */}
+              <div class="flex flex-col sm:contents">
+                <label class="font-mono text-[0.5625rem] text-[--color-text-muted] sm:hidden mb-0.5">{t.literalValue}</label>
+                {cond.field2 !== undefined ? (
+                  <select
+                    value={cond.field2}
+                    onChange={(e: Event) => updateCondition(cond.id, { field2: (e.target as HTMLSelectElement).value })}
+                    class="bg-[--color-bg-card] border border-[--color-border] rounded px-2 py-1.5 text-sm font-mono text-[--color-text] min-w-[100px] sm:min-w-[140px]"
+                  >
+                    {availableFields.filter((f) => f !== cond.field).map((f) => (
+                      <option key={f} value={f}>{f}</option>
+                    ))}
+                  </select>
+                ) : booleanFields.has(cond.field) ? (
+                  <select
+                    value={String(cond.value)}
+                    onChange={(e: Event) => updateCondition(cond.id, { value: (e.target as HTMLSelectElement).value === 'true' })}
+                    class="bg-[--color-bg-card] border border-[--color-border] rounded px-2 py-1.5 text-sm font-mono text-[--color-text] w-[70px] sm:w-[80px]"
+                  >
+                    <option value="true">true</option>
+                    <option value="false">false</option>
+                  </select>
+                ) : (
+                  <input
+                    type="number"
+                    step="any"
+                    value={cond.value as number}
+                    onChange={(e: Event) => updateCondition(cond.id, { value: parseFloat((e.target as HTMLInputElement).value) || 0 })}
+                    class="bg-[--color-bg-card] border border-[--color-border] rounded px-2 py-1.5 text-sm font-mono text-[--color-text] w-[70px] sm:w-[80px]"
+                  />
+                )}
+              </div>
 
               {/* Toggle value/field2 */}
               {!booleanFields.has(cond.field) && (
@@ -720,7 +910,7 @@ export default function StrategyBuilder({ lang = 'en' }: Props) {
                 class="text-[--color-red] hover:text-[--color-text] text-sm cursor-pointer transition-colors px-1 min-w-[44px] min-h-[44px] flex items-center justify-center"
                 title={t.remove}
               >
-                ✕
+                &#10005;
               </button>
             </div>
           ))}
@@ -737,9 +927,9 @@ export default function StrategyBuilder({ lang = 'en' }: Props) {
         </button>
       </div>
 
-      {/* Parameters */}
+      {/* Step 4: Parameters */}
       <div class="border border-[--color-border] rounded-xl p-5 bg-[--color-bg-card]">
-        <h3 class="font-mono text-xs text-[--color-accent] tracking-widest mb-4 uppercase">{t.params}</h3>
+        <StepHeader step={4} title={t.step4} desc={t.step4Desc} />
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {/* Direction */}
@@ -860,7 +1050,19 @@ export default function StrategyBuilder({ lang = 'en' }: Props) {
             : 'bg-[--color-accent] text-[--color-bg]'
           }`}
       >
-        {isRunning ? t.running : t.runBacktest}
+        {isRunning ? (
+          <div class="space-y-2">
+            <div>{t.running}</div>
+            <ProgressSteps currentStep={progressStep} t={t} />
+          </div>
+        ) : (
+          <>
+            {t.runBacktest}
+            {demoMode && (
+              <span class="ml-2 text-xs font-normal opacity-70">({t.demoLabel})</span>
+            )}
+          </>
+        )}
       </button>
 
       {/* Error */}
@@ -874,6 +1076,15 @@ export default function StrategyBuilder({ lang = 'en' }: Props) {
       {result && (
         <div ref={resultsRef} class="space-y-6 fade-in">
           <div class="font-mono text-xs text-[--color-accent] tracking-widest uppercase">{t.results}</div>
+
+          {/* Demo badge */}
+          {result._isDemo && (
+            <div class="px-3 py-2 rounded-lg bg-[--color-yellow]/10 border border-[--color-yellow]/20">
+              <span class="font-mono text-xs text-[--color-yellow]">
+                {t.demoLabel} &middot; {t.demoNote}
+              </span>
+            </div>
+          )}
 
           {!result.is_valid && (
             <div class="border border-[--color-red]/40 rounded-xl p-4 bg-[--color-red]/5">
@@ -909,6 +1120,7 @@ export default function StrategyBuilder({ lang = 'en' }: Props) {
                   }}
                   isDefault={false}
                   lang={lang}
+                  isDemo={result._isDemo}
                 />
                 <div class="mt-3 font-mono text-[0.6875rem] text-[--color-text-muted]">
                   {result.coins_used} {t.coinsUnit} &middot; {result.data_range} &middot; {t.computeTime} {result.compute_time_ms}ms
