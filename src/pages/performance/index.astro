@@ -1,3 +1,245 @@
 ---
-return Astro.redirect('/simulate', 301);
+import Layout from '../../layouts/Layout.astro';
+import { useTranslations } from '../../i18n/index';
+
+const t = useTranslations('en');
 ---
+
+<Layout title={t('meta.performance_title')} description={t('meta.performance_desc')}>
+
+  <!-- HERO -->
+  <section class="py-12 md:py-16">
+    <div class="max-w-5xl mx-auto px-4">
+      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('perf.tag')}</p>
+      <h1 class="text-3xl md:text-4xl font-bold mb-4">{t('perf.title')}</h1>
+      <p class="text-[--color-text-muted] text-lg mb-6 max-w-2xl">{t('perf.desc')}</p>
+
+      <!-- Strategy Info -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card]">
+          <p class="text-xs text-[--color-text-muted] font-mono mb-1">{t('perf.stat1_label')}</p>
+          <p class="font-bold text-[--color-accent]">{t('perf.stat1_val')}</p>
+        </div>
+        <div class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card]">
+          <p class="text-xs text-[--color-text-muted] font-mono mb-1">{t('perf.stat2_label')}</p>
+          <p class="font-bold">{t('perf.stat2_val')}</p>
+        </div>
+        <div class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card]">
+          <p class="text-xs text-[--color-text-muted] font-mono mb-1">{t('perf.stat3_label')}</p>
+          <p class="font-bold">{t('perf.stat3_val')}</p>
+        </div>
+        <div class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card]">
+          <p class="text-xs text-[--color-text-muted] font-mono mb-1">{t('perf.stat4_label')}</p>
+          <p class="font-bold">{t('perf.stat4_val')}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BACKTEST RESULTS -->
+  <section class="pb-12 border-t border-[--color-border] pt-8">
+    <div class="max-w-5xl mx-auto px-4">
+      <h2 class="text-2xl font-bold mb-2">Backtest Results</h2>
+      <p class="text-[--color-text-muted] text-sm mb-6">
+        2+ years, 535 coins, 2,898 trades. Includes 0.08%/side fees.
+      </p>
+
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card] text-center">
+          <p class="font-mono text-3xl font-bold text-[--color-accent]">68.6%</p>
+          <p class="text-sm text-[--color-text-muted] mt-1">{t('strategy.win_rate')}</p>
+        </div>
+        <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card] text-center">
+          <p class="font-mono text-3xl font-bold text-[--color-accent]">2.22</p>
+          <p class="text-sm text-[--color-text-muted] mt-1">{t('strategy.profit_factor')}</p>
+        </div>
+        <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card] text-center">
+          <p class="font-mono text-3xl font-bold text-green-400">+$794</p>
+          <p class="text-sm text-[--color-text-muted] mt-1">{t('strategy.total_pnl')}</p>
+        </div>
+        <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card] text-center">
+          <p class="font-mono text-3xl font-bold">2,898</p>
+          <p class="text-sm text-[--color-text-muted] mt-1">{t('compare.trades')}</p>
+        </div>
+      </div>
+
+      <!-- Detailed Breakdown -->
+      <div class="border border-[--color-border] rounded-lg bg-[--color-bg-card] overflow-hidden">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-[--color-border] bg-[--color-bg-subtle]">
+              <th class="text-left p-3 font-mono text-xs text-[--color-text-muted]">Metric</th>
+              <th class="text-right p-3 font-mono text-xs text-[--color-text-muted]">Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="border-b border-[--color-border]">
+              <td class="p-3">Stop Loss</td>
+              <td class="p-3 text-right font-mono">10%</td>
+            </tr>
+            <tr class="border-b border-[--color-border]">
+              <td class="p-3">Take Profit</td>
+              <td class="p-3 text-right font-mono">8%</td>
+            </tr>
+            <tr class="border-b border-[--color-border]">
+              <td class="p-3">Max Hold Time</td>
+              <td class="p-3 text-right font-mono">48 hours</td>
+            </tr>
+            <tr class="border-b border-[--color-border]">
+              <td class="p-3">SL Hit Rate</td>
+              <td class="p-3 text-right font-mono">8.0%</td>
+            </tr>
+            <tr class="border-b border-[--color-border]">
+              <td class="p-3">TP Hit Rate</td>
+              <td class="p-3 text-right font-mono">42.0%</td>
+            </tr>
+            <tr class="border-b border-[--color-border]">
+              <td class="p-3">Timeout Rate</td>
+              <td class="p-3 text-right font-mono">50.0%</td>
+            </tr>
+            <tr class="border-b border-[--color-border]">
+              <td class="p-3">Max Drawdown</td>
+              <td class="p-3 text-right font-mono text-red-400">33%</td>
+            </tr>
+            <tr class="border-b border-[--color-border]">
+              <td class="p-3">Break-Even Win Rate</td>
+              <td class="p-3 text-right font-mono">55.6%</td>
+            </tr>
+            <tr>
+              <td class="p-3">Safety Margin</td>
+              <td class="p-3 text-right font-mono text-green-400">+13.0%p</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- KILLED STRATEGIES -->
+  <section class="pb-12 border-t border-[--color-border] pt-8">
+    <div class="max-w-5xl mx-auto px-4">
+      <h2 class="text-2xl font-bold mb-2">Killed Strategies</h2>
+      <p class="text-[--color-text-muted] text-sm mb-6">
+        Strategies we tested and rejected. We show failures because they're just as important as successes.
+      </p>
+
+      <div class="grid md:grid-cols-2 gap-4">
+        <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card] opacity-60">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="text-xs font-mono px-2 py-0.5 rounded bg-red-500/10 text-red-400 border border-red-500/20">{t('strategy.killed')}</span>
+          </div>
+          <h3 class="font-bold mb-2">BB Squeeze LONG</h3>
+          <p class="text-[--color-text-muted] text-xs mb-3">Mirror of SHORT strategy applied to long entries. Failed due to structural crypto market asymmetry.</p>
+          <div class="grid grid-cols-3 gap-2 text-sm">
+            <div>
+              <span class="text-[--color-text-muted] text-xs block">WR</span>
+              <span class="font-mono">51.0%</span>
+            </div>
+            <div>
+              <span class="text-[--color-text-muted] text-xs block">PF</span>
+              <span class="font-mono">0.98</span>
+            </div>
+            <div>
+              <span class="text-[--color-text-muted] text-xs block">PnL</span>
+              <span class="font-mono text-red-400">-$26</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card] opacity-60">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="text-xs font-mono px-2 py-0.5 rounded bg-red-500/10 text-red-400 border border-red-500/20">{t('strategy.killed')}</span>
+          </div>
+          <h3 class="font-bold mb-2">Momentum Breakout LONG</h3>
+          <p class="text-[--color-text-muted] text-xs mb-3">Price breakout above 20-period high with volume confirmation. Catastrophic loss in all market conditions.</p>
+          <div class="grid grid-cols-3 gap-2 text-sm">
+            <div>
+              <span class="text-[--color-text-muted] text-xs block">WR</span>
+              <span class="font-mono">37.5%</span>
+            </div>
+            <div>
+              <span class="text-[--color-text-muted] text-xs block">PF</span>
+              <span class="font-mono">0.42</span>
+            </div>
+            <div>
+              <span class="text-[--color-text-muted] text-xs block">PnL</span>
+              <span class="font-mono text-red-400">-$14,115</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card] opacity-60">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="text-xs font-mono px-2 py-0.5 rounded bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">88+ Variations</span>
+          </div>
+          <h3 class="font-bold mb-2">All LONG Strategies</h3>
+          <p class="text-[--color-text-muted] text-xs mb-3">Tested BB Squeeze LONG (18 variations), PVD Mean Reversion (88 combinations), and DUAL mode. Every single one failed.</p>
+          <div class="grid grid-cols-3 gap-2 text-sm">
+            <div>
+              <span class="text-[--color-text-muted] text-xs block">Best PF</span>
+              <span class="font-mono">1.07</span>
+            </div>
+            <div>
+              <span class="text-[--color-text-muted] text-xs block">Tested</span>
+              <span class="font-mono">88+</span>
+            </div>
+            <div>
+              <span class="text-[--color-text-muted] text-xs block">Verdict</span>
+              <span class="font-mono text-red-400">All Failed</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card] opacity-60">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="text-xs font-mono px-2 py-0.5 rounded bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">Rejected Filter</span>
+          </div>
+          <h3 class="font-bold mb-2">BTC Regime Filter</h3>
+          <p class="text-[--color-text-muted] text-xs mb-3">6/6 expert analysts recommended it. We backtested 4 variations — all made performance worse. Data beats intuition.</p>
+          <div class="grid grid-cols-3 gap-2 text-sm">
+            <div>
+              <span class="text-[--color-text-muted] text-xs block">Experts</span>
+              <span class="font-mono">6/6 Yes</span>
+            </div>
+            <div>
+              <span class="text-[--color-text-muted] text-xs block">Backtest</span>
+              <span class="font-mono">4/4 Worse</span>
+            </div>
+            <div>
+              <span class="text-[--color-text-muted] text-xs block">Verdict</span>
+              <span class="font-mono text-red-400">Rejected</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TRY IT YOURSELF -->
+  <section class="pb-12 border-t border-[--color-border] pt-8">
+    <div class="max-w-5xl mx-auto px-4 text-center">
+      <h2 class="text-2xl font-bold mb-3">Verify It Yourself</h2>
+      <p class="text-[--color-text-muted] text-sm mb-6 max-w-lg mx-auto">
+        Don't trust us. Use our strategy simulator to adjust SL/TP parameters and see results change in real-time.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="/simulate" class="inline-block bg-[--color-accent] text-[--color-bg] px-6 py-2.5 rounded font-semibold text-sm hover:bg-[--color-accent-dim]">
+          Open Strategy Simulator &rarr;
+        </a>
+        <a href="/methodology" class="inline-block border border-[--color-border] text-[--color-text] px-6 py-2.5 rounded font-semibold text-sm hover:border-[--color-accent] transition-colors">
+          Read Methodology
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- DISCLAIMER -->
+  <section class="pb-16 bg-[--color-bg-subtle]">
+    <div class="max-w-5xl mx-auto px-4 text-center pt-12">
+      <p class="text-[--color-text-muted] text-xs max-w-lg mx-auto">
+        {t('cta.disclaimer')}
+      </p>
+    </div>
+  </section>
+
+</Layout>

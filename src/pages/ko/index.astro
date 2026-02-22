@@ -1,8 +1,11 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { useTranslations } from '../../i18n/index';
+import { getCollection } from 'astro:content';
 
 const t = useTranslations('ko');
+const allStrategies = await getCollection('strategies');
+const verifiedCount = allStrategies.filter(s => s.data.status === 'verified').length;
 ---
 
 <Layout title={t('meta.home_title')}>
@@ -56,7 +59,7 @@ const t = useTranslations('ko');
         <div class="mt-6 border border-[--color-border] rounded p-4 bg-[--color-bg-card] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <p class="text-sm font-mono text-[--color-text-muted]">{t('simulate.strategies_title')}</p>
-            <p class="text-xl font-bold text-[--color-accent]">{t('strategy.verified')}</p>
+            <p class="text-xl font-bold text-[--color-accent]">{verifiedCount}개 {t('strategy.verified')}</p>
           </div>
           <div class="sm:text-right">
             <a href="/ko/simulate" class="inline-block bg-[--color-accent] text-[--color-bg] px-4 py-2 rounded font-semibold text-sm hover:bg-[--color-accent-dim]">{t('cta.button1')}</a>
