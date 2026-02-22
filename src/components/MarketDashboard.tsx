@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'preact/hooks';
 import { formatPrice, formatVolume, changeColor, fgColor, timeAgo } from '../utils/format';
-import { STATIC_DATA, fetchWithFallback } from '../config/api';
+import { STATIC_DATA, fetchWithFallback, API_BASE_URL } from '../config/api';
 
 const labels = {
   en: {
@@ -30,6 +30,11 @@ const labels = {
     ago: 'ago',
     economicCalendar: 'Economic Calendar',
     calendarNote: 'Powered by TradingView',
+    macroTitle: 'Macro Indicators',
+    macroNote: 'Federal Reserve (FRED)',
+    macroLoading: 'Loading macro data...',
+    macroError: 'Macro data unavailable',
+    macroPrevious: 'prev',
     ctaTitle: 'Test a Strategy',
     ctaDesc: 'Use our free strategy builder to backtest on 535+ coins.',
     ctaButton: 'Try Simulator',
@@ -67,6 +72,11 @@ const labels = {
     calendarNote: 'TradingView 제공',
     ctaTitle: '전략 테스트',
     ctaDesc: '535개 이상의 코인에서 무료 전략 빌더로 백테스트하세요.',
+    macroTitle: '거시경제 지표',
+    macroNote: '미국 연방준비제도 (FRED)',
+    macroLoading: '매크로 데이터 로딩 중...',
+    macroError: '매크로 데이터 없음',
+    macroPrevious: '이전',
     ctaButton: '시뮬레이터 시작',
     showMore: '전체 보기',
     showLess: '접기',
@@ -95,6 +105,21 @@ type MarketData = {
 
 type NewsData = {
   items: NewsItem[];
+  generated: string;
+};
+
+type MacroIndicator = {
+  id: string;
+  name: string;
+  value: number;
+  previous: number | null;
+  unit: string;
+  updated: string;
+  source: string;
+};
+
+type MacroData = {
+  indicators: MacroIndicator[];
   generated: string;
 };
 
@@ -244,8 +269,10 @@ export default function MarketDashboard({ lang = 'en' }: { lang?: 'en' | 'ko' })
   const l = labels[lang] || labels.en;
   const [market, setMarket] = useState<MarketData | null>(null);
   const [news, setNews] = useState<NewsData | null>(null);
+  const [macro, setMacro] = useState<MacroData | null>(null);
   const [marketErr, setMarketErr] = useState(false);
   const [newsErr, setNewsErr] = useState(false);
+  const [macroErr, setMacroErr] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [sourceFilter, setSourceFilter] = useState('');
   const [lastRefresh, setLastRefresh] = useState<Date | null>(null);
@@ -289,11 +316,21 @@ export default function MarketDashboard({ lang = 'en' }: { lang?: 'en' | 'ko' })
       .catch(() => setNewsErr(true));
   };
 
+  const fetchMacro = () => {
+    fetch(`${API_BASE_URL}/macro`, { signal: AbortSignal.timeout(8000) })
+      .then(r => { if (!r.ok) throw new Error(`${r.status}`); return r.json(); })
+      .then((d: MacroData) => { setMacro(d); setMacroErr(false); })
+      .catch(() => setMacroErr(true));
+  };
+
   useEffect(() => {
     fetchMarket();
     fetchNews();
+    fetchMacro();
     const interval = setInterval(() => { fetchMarket(); fetchNews(); }, REFRESH_MS);
-    return () => clearInterval(interval);
+    // Macro refreshes less frequently (FRED data updates daily)
+    const macroInterval = setInterval(fetchMacro, 30 * 60 * 1000);
+    return () => { clearInterval(interval); clearInterval(macroInterval); };
   }, []);
 
   // Live "updated X ago" counter
@@ -444,6 +481,62 @@ export default function MarketDashboard({ lang = 'en' }: { lang?: 'en' | 'ko' })
                 />
               )}
             </div>
+          </div>
+
+          {/* Macro Economic Indicators */}
+          <div class="border border-[--color-border] rounded-lg bg-[--color-bg-card] overflow-hidden mb-6">
+            <div class="px-4 py-3 border-b border-[--color-border] flex items-center justify-between">
+              <span class="text-xs font-semibold text-[--color-text-muted] uppercase tracking-wider">
+                {l.macroTitle}
+              </span>
+              <span class="text-[0.6875rem] text-[--color-text-muted] opacity-60">{l.macroNote}</span>
+            </div>
+            {!macro && !macroErr && (
+              <div class="p-4 grid grid-cols-2 md:grid-cols-3 gap-3">
+                {[...Array(6)].map((_, i) => (
+                  <div key={i} class="p-3 bg-[--color-bg-hover] rounded-lg">
+                    <div class="skeleton h-3 w-24 mb-2" />
+                    <div class="skeleton h-5 w-16" />
+                  </div>
+                ))}
+              </div>
+            )}
+            {macroErr && (
+              <div class="p-4 text-center text-[--color-text-muted] text-xs">
+                {l.macroError}
+              </div>
+            )}
+            {macro && macro.indicators.length > 0 && (
+              <div class="p-4 grid grid-cols-2 md:grid-cols-3 gap-3">
+                {macro.indicators.map(ind => {
+                  const delta = ind.previous != null ? ind.value - ind.previous : null;
+                  const deltaColor = delta != null ? (delta >= 0 ? 'text-[--color-up]' : 'text-[--color-down]') : '';
+                  const arrow = delta != null ? (delta >= 0 ? '\u25B2' : '\u25BC') : '';
+                  return (
+                    <div key={ind.id} class="p-3 bg-[--color-bg-hover] rounded-lg">
+                      <div class="text-[0.625rem] text-[--color-text-muted] uppercase tracking-wider mb-1 truncate" title={ind.name}>
+                        {ind.name}
+                      </div>
+                      <div class="flex items-baseline gap-1.5">
+                        <span class="text-lg font-bold font-mono tabular-nums">
+                          {ind.value.toFixed(2)}{ind.unit === '%' ? '%' : ''}
+                        </span>
+                        {delta != null && (
+                          <span class={`text-[0.625rem] font-mono ${deltaColor}`}>
+                            <span aria-hidden="true">{arrow}</span> {Math.abs(delta).toFixed(2)}
+                          </span>
+                        )}
+                      </div>
+                      {ind.previous != null && (
+                        <div class="text-[0.5625rem] text-[--color-text-muted] mt-0.5 font-mono">
+                          {l.macroPrevious}: {ind.previous.toFixed(2)}{ind.unit === '%' ? '%' : ''}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
 
           {/* TradingView Economic Calendar Widget */}

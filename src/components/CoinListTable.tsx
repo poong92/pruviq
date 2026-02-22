@@ -468,7 +468,8 @@ export default function CoinListTable({ lang = 'en' }: { lang?: 'en' | 'ko' }) {
             )}
             {pageItems.map((coin, i) => {
               const rank = page * PER_PAGE + i + 1;
-              const coinUrl = `${basePath}/${coin.symbol.toLowerCase()}`;
+              const slug = coin.symbol.toLowerCase().endsWith('usdt') ? coin.symbol.toLowerCase() : `${coin.symbol.toLowerCase()}usdt`;
+              const coinUrl = `${basePath}/${slug}`;
               const sparkPositive = (coin.change_7d ?? coin.change_24h ?? 0) >= 0;
               const hasStrategies = coin.strategies && Object.keys(coin.strategies).length > 1;
               const isExpanded = expandedCoin === coin.symbol;
