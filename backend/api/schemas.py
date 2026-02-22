@@ -56,6 +56,10 @@ class SimulationResponse(BaseModel):
     sl_count: int
     timeout_count: int
 
+    sharpe_ratio: float = 0.0
+    sortino_ratio: float = 0.0
+    calmar_ratio: float = 0.0
+
     coins_used: int
     data_range: str
     equity_curve: List[EquityPoint]
@@ -135,6 +139,9 @@ class CoinSimResponse(BaseModel):
     tp_count: int
     sl_count: int
     timeout_count: int
+    sharpe_ratio: float = 0.0
+    sortino_ratio: float = 0.0
+    calmar_ratio: float = 0.0
     trades: List[TradeDetail]
 
 
@@ -306,6 +313,10 @@ class BacktestResponse(BaseModel):
     tp_count: int
     sl_count: int
     timeout_count: int
+
+    sharpe_ratio: float = 0.0
+    sortino_ratio: float = 0.0
+    calmar_ratio: float = 0.0
 
     coins_used: int
     data_range: str

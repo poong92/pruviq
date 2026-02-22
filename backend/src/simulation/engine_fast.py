@@ -45,6 +45,9 @@ class SimResult:
     tp_count: int
     sl_count: int
     timeout_count: int
+    sharpe_ratio: float = 0.0
+    sortino_ratio: float = 0.0
+    calmar_ratio: float = 0.0
     trades: list = field(default_factory=list)
     equity_curve: list = field(default_factory=list)
 
@@ -330,6 +333,19 @@ def run_fast(
         else:
             cur_consec = 0
 
+    # Risk-adjusted metrics
+    trade_returns = np.array([t.pnl_pct for t in trades])
+    if len(trade_returns) >= 2:
+        avg_ret = float(np.mean(trade_returns))
+        std_ret = float(np.std(trade_returns, ddof=1))
+        sharpe = round(avg_ret / std_ret * np.sqrt(len(trade_returns)), 2) if std_ret > 0 else 0.0
+        downside = trade_returns[trade_returns < 0]
+        down_std = float(np.std(downside, ddof=1)) if len(downside) >= 2 else 0.0
+        sortino = round(avg_ret / down_std * np.sqrt(len(trade_returns)), 2) if down_std > 0 else 0.0
+        calmar = round(total_return / max_dd, 2) if max_dd > 0 else 0.0
+    else:
+        sharpe, sortino, calmar = 0.0, 0.0, 0.0
+
     return SimResult(
         strategy_name=strategy.name, symbol=symbol,
         params=strategy.get_params(), market_type=market_type,
@@ -346,6 +362,9 @@ def run_fast(
         tp_count=sum(1 for t in trades if t.exit_reason == "tp"),
         sl_count=sum(1 for t in trades if t.exit_reason == "sl"),
         timeout_count=sum(1 for t in trades if t.exit_reason == "timeout"),
+        sharpe_ratio=sharpe,
+        sortino_ratio=sortino,
+        calmar_ratio=calmar,
         trades=trades,
         equity_curve=eq,
     )

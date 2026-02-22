@@ -480,7 +480,10 @@ export const ko: Record<TranslationKey, string> = {
   'methodology.metric_return': '총 수익률 % — 시작 자본 대비 순 손익 비율.',
   'methodology.metric_mdd': '최대 드로다운 — 자산 곡선에서 고점 대비 최대 하락폭.',
   'methodology.metric_trades': '거래 수 — 완료된 왕복 거래의 총 수.',
-  'methodology.metrics_coming': '준비 중: 샤프 비율, 소르티노 비율, 칼마 비율.',
+  'methodology.metric_sharpe': '샤프 비율 — 변동성 대비 위험 조정 수익률. 높을수록 좋습니다.',
+  'methodology.metric_sortino': '소르티노 비율 — 샤프와 유사하지만 하방 변동성만 고려합니다.',
+  'methodology.metric_calmar': '칼마 비율 — 총 수익률을 최대 드로다운으로 나눈 값. 위험 단위당 수익을 측정합니다.',
+  'methodology.metrics_coming': '샤프, 소르티노, 칼마 비율이 모든 시뮬레이션에서 계산됩니다.',
 
   'methodology.not_modeled_title': '모델링하지 않는 것',
   'methodology.not_modeled_desc': '투명성은 빈틈을 보여주는 것입니다. 다음 요소들은 백테스트에 포함되지 않습니다:',

@@ -478,7 +478,10 @@ export const en = {
   'methodology.metric_return': 'Total Return % — Net P&L as a percentage of starting capital.',
   'methodology.metric_mdd': 'Max Drawdown — Largest peak-to-trough decline in equity.',
   'methodology.metric_trades': 'Trade Count — Total number of completed round-trip trades.',
-  'methodology.metrics_coming': 'Coming soon: Sharpe Ratio, Sortino Ratio, and Calmar Ratio.',
+  'methodology.metric_sharpe': 'Sharpe Ratio — Risk-adjusted return relative to volatility. Higher is better.',
+  'methodology.metric_sortino': 'Sortino Ratio — Like Sharpe, but only penalizes downside volatility.',
+  'methodology.metric_calmar': 'Calmar Ratio — Total return divided by max drawdown. Measures return per unit of risk.',
+  'methodology.metrics_coming': 'Sharpe, Sortino, and Calmar ratios are calculated for every simulation.',
 
   'methodology.not_modeled_title': 'What We Don\'t Model',
   'methodology.not_modeled_desc': 'Transparency means showing the gaps. These factors are not included in our backtests:',
