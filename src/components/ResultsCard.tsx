@@ -12,6 +12,9 @@ interface ResultsData {
   avg_win_pct?: number;
   avg_loss_pct?: number;
   max_consecutive_losses?: number;
+  sharpe_ratio?: number;
+  sortino_ratio?: number;
+  calmar_ratio?: number;
 }
 
 interface ResultsCardProps {
@@ -33,6 +36,10 @@ const labels = {
     avgLoss: 'Avg Loss',
     maxConsec: 'Max Consec. Losses',
     rr: 'R:R Ratio',
+    sharpe: 'Sharpe',
+    sortino: 'Sortino',
+    calmar: 'Calmar',
+    riskMetrics: 'Risk-Adjusted',
     demoNote: 'DEMO · Pre-computed results for BB Squeeze SHORT',
   },
   ko: {
@@ -46,6 +53,10 @@ const labels = {
     avgLoss: '평균 손실',
     maxConsec: '최대 연속 손실',
     rr: 'R:R 비율',
+    sharpe: '샤프',
+    sortino: '소르티노',
+    calmar: '칼마',
+    riskMetrics: '리스크 조정',
     demoNote: 'DEMO · BB Squeeze SHORT 사전 계산 결과',
   },
 };
@@ -105,6 +116,26 @@ export default function ResultsCard({ data, isDefault, lang = 'en', isDemo = fal
             label={t.maxConsec}
             value={`${data.max_consecutive_losses ?? 0}`}
             color="var(--color-text-muted)"
+          />
+        </div>
+      )}
+
+      {(data.sharpe_ratio !== undefined && data.sharpe_ratio !== 0) && (
+        <div class="grid grid-cols-3 gap-2 mb-3">
+          <MetricBox
+            label={t.sharpe}
+            value={`${(data.sharpe_ratio ?? 0).toFixed(2)}`}
+            color={(data.sharpe_ratio ?? 0) > 1 ? 'var(--color-accent)' : 'var(--color-text-muted)'}
+          />
+          <MetricBox
+            label={t.sortino}
+            value={`${(data.sortino_ratio ?? 0).toFixed(2)}`}
+            color={(data.sortino_ratio ?? 0) > 1.5 ? 'var(--color-accent)' : 'var(--color-text-muted)'}
+          />
+          <MetricBox
+            label={t.calmar}
+            value={`${(data.calmar_ratio ?? 0).toFixed(2)}`}
+            color={(data.calmar_ratio ?? 0) > 1 ? 'var(--color-accent)' : 'var(--color-text-muted)'}
           />
         </div>
       )}

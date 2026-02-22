@@ -446,6 +446,19 @@ async def simulate(req: SimulationRequest):
     sl_count = sum(1 for t in all_trades if t["exit_reason"] == "sl")
     timeout_count = sum(1 for t in all_trades if t["exit_reason"] == "timeout")
 
+    # Risk-adjusted metrics (aggregate)
+    trade_pnls = np.array([t["pnl_pct"] for t in all_trades])
+    if len(trade_pnls) >= 2:
+        avg_ret = float(np.mean(trade_pnls))
+        std_ret = float(np.std(trade_pnls, ddof=1))
+        sharpe = round(avg_ret / std_ret * np.sqrt(len(trade_pnls)), 2) if std_ret > 0 else 0.0
+        downside = trade_pnls[trade_pnls < 0]
+        down_std = float(np.std(downside, ddof=1)) if len(downside) >= 2 else 0.0
+        sortino = round(avg_ret / down_std * np.sqrt(len(trade_pnls)), 2) if down_std > 0 else 0.0
+        calmar = round(total_return / max_dd, 2) if max_dd > 0 else 0.0
+    else:
+        sharpe, sortino, calmar = 0.0, 0.0, 0.0
+
     resp_data = {
         "strategy": req.strategy,
         "direction": direction,
@@ -465,6 +478,9 @@ async def simulate(req: SimulationRequest):
         "tp_count": tp_count,
         "sl_count": sl_count,
         "timeout_count": timeout_count,
+        "sharpe_ratio": sharpe,
+        "sortino_ratio": sortino,
+        "calmar_ratio": calmar,
         "coins_used": len(coins),
         "data_range": data_manager.data_range(),
         "equity_curve": downsample_equity(eq_times, eq_values),
@@ -617,6 +633,9 @@ async def simulate_coin(req: CoinSimRequest):
         tp_count=result.tp_count,
         sl_count=result.sl_count,
         timeout_count=result.timeout_count,
+        sharpe_ratio=result.sharpe_ratio,
+        sortino_ratio=result.sortino_ratio,
+        calmar_ratio=result.calmar_ratio,
         trades=trades,
     )
 
@@ -1299,6 +1318,18 @@ async def run_backtest(req: BacktestRequest):
     sl_count = sum(1 for t in all_trades if t["exit_reason"] == "sl")
     timeout_count = sum(1 for t in all_trades if t["exit_reason"] == "timeout")
 
+    # Risk-adjusted metrics (backtest aggregate)
+    bt_pnls = np.array([t["pnl_pct"] for t in all_trades])
+    if len(bt_pnls) >= 2:
+        bt_avg = float(np.mean(bt_pnls))
+        bt_std = float(np.std(bt_pnls, ddof=1))
+        bt_sharpe = round(bt_avg / bt_std * np.sqrt(len(bt_pnls)), 2) if bt_std > 0 else 0.0
+        bt_down = bt_pnls[bt_pnls < 0]
+        bt_down_std = float(np.std(bt_down, ddof=1)) if len(bt_down) >= 2 else 0.0
+        bt_sortino = round(bt_avg / bt_down_std * np.sqrt(len(bt_pnls)), 2) if bt_down_std > 0 else 0.0
+        bt_calmar = round(total_return / max_dd, 2) if max_dd > 0 else 0.0
+    else:
+        bt_sharpe, bt_sortino, bt_calmar = 0.0, 0.0, 0.0
 
     # Yearly breakdown
     from collections import defaultdict
@@ -1350,6 +1381,9 @@ async def run_backtest(req: BacktestRequest):
         tp_count=tp_count,
         sl_count=sl_count,
         timeout_count=timeout_count,
+        sharpe_ratio=bt_sharpe,
+        sortino_ratio=bt_sortino,
+        calmar_ratio=bt_calmar,
         coins_used=len(coin_list),
         data_range=data_manager.data_range(),
         equity_curve=downsample_equity(eq_times, eq_values),

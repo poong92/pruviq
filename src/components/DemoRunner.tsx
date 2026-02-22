@@ -1,5 +1,6 @@
 import { h } from 'preact';
 import { useState } from 'preact/hooks';
+import { generateCSV, downloadCSV } from '../utils/csv';
 
 type Trade = { entry: string; exit: string; pnl: number };
 type DemoData = { total_return: number; win_rate: number; profit_factor: number; max_drawdown: number; trades: Trade[] };
@@ -38,6 +39,24 @@ export default function DemoRunner() {
     URL.revokeObjectURL(url);
   }
 
+  function handleDownloadCSV() {
+    if (!data) return;
+    const summaryHeaders = ['Metric', 'Value'];
+    const summaryRows: (string | number | null)[][] = [
+      ['Total Return %', data.total_return],
+      ['Win Rate %', data.win_rate],
+      ['Profit Factor', data.profit_factor],
+      ['Max Drawdown %', data.max_drawdown],
+    ];
+    const tradeHeaders = ['Entry', 'Exit', 'PnL'];
+    const tradeRows: (string | number | null)[][] = data.trades.map(t => [t.entry, t.exit, t.pnl]);
+
+    const csv = generateCSV(summaryHeaders, summaryRows)
+      + '\n\n'
+      + generateCSV(tradeHeaders, tradeRows);
+    downloadCSV(csv, 'pruviq-demo-result.csv');
+  }
+
   return (
     <div class="demo-runner">
       <div class="flex gap-3 items-center">
@@ -46,6 +65,9 @@ export default function DemoRunner() {
         </button>
         {data && (
           <button class="btn-secondary border px-3 py-2 rounded" onClick={downloadJSON}>Download JSON</button>
+        )}
+        {data && (
+          <button class="btn-secondary border px-3 py-2 rounded" onClick={handleDownloadCSV}>Download CSV</button>
         )}
       </div>
 
