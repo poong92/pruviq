@@ -20,10 +20,12 @@ if [ -f "$VENV_DIR/bin/activate" ]; then
     source "$VENV_DIR/bin/activate"
 fi
 
-# Run the refresh script
+# Run the refresh script (exit 0 even if CoinGecko fails — macro/news still update)
 log "Running refresh_static.py..."
-if ! python3 backend/scripts/refresh_static.py; then
-    log "ERROR: refresh_static.py failed"
+python3 backend/scripts/refresh_static.py
+REFRESH_EXIT=$?
+if [ $REFRESH_EXIT -ne 0 ]; then
+    log "ERROR: refresh_static.py exited with code $REFRESH_EXIT"
     exit 1
 fi
 
