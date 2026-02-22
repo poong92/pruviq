@@ -131,7 +131,7 @@ function StrategyComparisonRow({ coin, bestStrategyId, colSpan, lang }: {
       <td colSpan={colSpan} class="px-0 py-0">
         <div class="px-4 py-3 ml-4 border-l-2 border-[--color-accent]/30">
           <div class="text-[0.625rem] text-[--color-text-muted] uppercase tracking-wider mb-2 font-semibold">
-            {lang === 'ko' ? '전략 비교' : 'Strategy Comparison'} — {coin.symbol}
+            {lang === 'ko' ? '전략 비교' : 'Strategy Comparison'} — {coin.symbol.endsWith('USDT') ? coin.symbol.slice(0, -4) : coin.symbol}
           </div>
           <div class="overflow-x-auto">
             <table class="w-full text-[0.75rem] font-mono">
@@ -371,7 +371,8 @@ export default function CoinListTable({ lang = 'en' }: { lang?: 'en' | 'ko' }) {
 
   const filtered = data.filter(c => {
     const q = search.toLowerCase();
-    return c.symbol.toLowerCase().includes(q) || (c.name && c.name.toLowerCase().includes(q));
+    const base = c.symbol.endsWith('USDT') ? c.symbol.slice(0, -4).toLowerCase() : c.symbol.toLowerCase();
+    return c.symbol.toLowerCase().includes(q) || base.includes(q) || (c.name && c.name.toLowerCase().includes(q));
   });
 
   const sorted = [...filtered].sort((a, b) => {
@@ -399,7 +400,7 @@ export default function CoinListTable({ lang = 'en' }: { lang?: 'en' | 'ko' }) {
     const headers = ['Rank', 'Symbol', 'Name', 'Price', '24h Change %', 'Market Cap', 'Trades', 'Win Rate %', 'Profit Factor', 'Return %', 'Best Strategy'];
     const rows = sorted.map((coin, i) => [
       i + 1,
-      coin.symbol,
+      coin.symbol.endsWith('USDT') ? coin.symbol.slice(0, -4) : coin.symbol,
       coin.name || '',
       coin.price,
       coin.change_24h != null ? coin.change_24h.toFixed(2) : null,
@@ -468,7 +469,7 @@ export default function CoinListTable({ lang = 'en' }: { lang?: 'en' | 'ko' }) {
             )}
             {pageItems.map((coin, i) => {
               const rank = page * PER_PAGE + i + 1;
-              const slug = coin.symbol.toLowerCase().endsWith('usdt') ? coin.symbol.toLowerCase() : `${coin.symbol.toLowerCase()}usdt`;
+              const slug = coin.symbol.toLowerCase();
               const coinUrl = `${basePath}/${slug}`;
               const sparkPositive = (coin.change_7d ?? coin.change_24h ?? 0) >= 0;
               const hasStrategies = coin.strategies && Object.keys(coin.strategies).length > 1;
@@ -504,7 +505,7 @@ export default function CoinListTable({ lang = 'en' }: { lang?: 'en' | 'ko' }) {
                     <a href={coinUrl} class="flex items-center gap-2.5 hover:text-[--color-accent] transition-colors" tabIndex={-1} aria-hidden="true">
                       <CoinLogo image={coin.image} symbol={coin.symbol} />
                       <div class="flex items-center gap-1.5">
-                        <span class="font-semibold">{coin.symbol}</span>
+                        <span class="font-semibold">{coin.symbol.endsWith('USDT') ? coin.symbol.slice(0, -4) : coin.symbol}</span>
                         {coin.name && <span class="text-[--color-text-muted] text-[0.6875rem] hidden sm:inline">{coin.name}</span>}
                       </div>
                     </a>

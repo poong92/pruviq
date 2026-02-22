@@ -1,13 +1,16 @@
 #!/usr/bin/env python3
 """
-PRUVIQ — Static Data Refresher
+PRUVIQ — Static Data Refresher (v0.2.1 — Binance-first)
 
-Fetches CoinGecko market data (top 500 coins by market cap) and merges
-with per-coin strategy backtest stats (WR/PF/Return) from daily pipeline.
+PRIMARY: Binance Futures ticker API (575 coins, unlimited, real-time)
+SECONDARY: CoinGecko (logos, market cap, sparklines — supplementary only)
+
+This ensures the coin list exactly matches our detail pages (coin-symbols.ts)
+and eliminates 404s caused by CoinGecko↔Binance symbol mismatches.
 
 Called every 15 minutes by cron via refresh_static.sh.
+Binance ticker: unlimited free API (no key needed)
 CoinGecko Free API: ~8,640 calls/month (3 calls x 4/hr x 24hr x 30d)
-FRED API: 120 req/min (6 calls per cycle = trivial)
 
 Output:
   public/data/coins-stats.json  — market data + strategy overlay
@@ -36,8 +39,12 @@ SCRIPT_DIR = Path(__file__).parent
 REPO_DIR = SCRIPT_DIR.parent.parent
 OUTPUT_DIR = REPO_DIR / "public" / "data"
 STRATEGY_STATS = SCRIPT_DIR.parent / "data" / "coin-strategy-stats.json"
+COIN_SYMBOLS_TS = REPO_DIR / "src" / "data" / "coin-symbols.ts"
 
-# CoinGecko Free API (no key needed)
+# Binance Futures API (PRIMARY — unlimited, no key needed)
+BINANCE_TICKER_URL = "https://fapi.binance.com/fapi/v1/ticker/24hr"
+
+# CoinGecko Free API (SECONDARY — logos, market cap, sparklines)
 CG_BASE = "https://api.coingecko.com/api/v3"
 CG_MARKETS = f"{CG_BASE}/coins/markets"
 CG_GLOBAL = f"{CG_BASE}/global"
@@ -58,8 +65,31 @@ def fetch_json(url: str) -> Optional[dict]:
         return None
 
 
+def load_coin_symbols() -> list[str]:
+    """Load USDT futures symbols from coin-symbols.ts (source of truth for pages)."""
+    if not COIN_SYMBOLS_TS.exists():
+        print("  WARN: coin-symbols.ts not found, using Binance ticker symbols")
+        return []
+    text = COIN_SYMBOLS_TS.read_text()
+    import re
+    return re.findall(r"'([A-Z0-9]+USDT)'", text)
+
+
+def fetch_binance_tickers() -> list[dict]:
+    """Fetch all USDT futures tickers from Binance (1 API call, unlimited)."""
+    print("  Fetching Binance Futures tickers...")
+    data = fetch_json(BINANCE_TICKER_URL)
+    if not data or not isinstance(data, list):
+        print("  ERROR: Binance ticker API failed")
+        return []
+    # Filter USDT pairs only
+    usdt_tickers = [t for t in data if t.get("symbol", "").endswith("USDT")]
+    print(f"  Got {len(usdt_tickers)} USDT tickers from Binance")
+    return usdt_tickers
+
+
 def fetch_coingecko_markets(max_retries: int = 2) -> list[dict]:
-    """Fetch top 500 coins from CoinGecko markets endpoint with retry."""
+    """Fetch top 500 coins from CoinGecko (SECONDARY — logos, market cap, sparklines)."""
     for attempt in range(max_retries + 1):
         all_coins = []
         for page in [1, 2]:
@@ -77,14 +107,59 @@ def fetch_coingecko_markets(max_retries: int = 2) -> list[dict]:
             if page == 1:
                 time.sleep(12)
         if all_coins:
-            print(f"  Got {len(all_coins)} coins from CoinGecko")
+            print(f"  Got {len(all_coins)} coins from CoinGecko (supplementary)")
             return all_coins
         if attempt < max_retries:
             wait = 30 * (attempt + 1)
             print(f"  WARN: CoinGecko returned 0 coins, retrying in {wait}s...")
             time.sleep(wait)
-    print("  ERROR: CoinGecko failed after all retries")
+    print("  WARN: CoinGecko unavailable — coins will lack logos/market cap/sparklines")
     return []
+
+
+def build_coingecko_lookup(cg_coins: list[dict]) -> dict[str, dict]:
+    """Build symbol→CoinGecko data lookup for merging into Binance-based list.
+
+    Maps CoinGecko symbols (BTC, ETH) to Binance futures symbols (BTCUSDT).
+    Handles special cases like 1000SHIB, 1000PEPE etc.
+    """
+    # First pass: simple symbol→data mapping
+    by_symbol = {}  # e.g. "BTC" → cg_data
+    for cg in cg_coins:
+        sym = cg.get("symbol", "").upper()
+        if sym:
+            by_symbol[sym] = cg
+
+    # Build BTCUSDT→cg_data lookup
+    lookup = {}  # "BTCUSDT" → cg_data
+
+    # Direct mapping: BTC → BTCUSDT
+    for sym, cg in by_symbol.items():
+        usdt_sym = f"{sym}USDT"
+        lookup[usdt_sym] = cg
+
+    # Special 1000x multiplier coins: SHIB → 1000SHIBUSDT, PEPE → 1000PEPEUSDT etc.
+    multiplier_map = {
+        "SHIB": "1000SHIBUSDT",
+        "PEPE": "1000PEPEUSDT",
+        "FLOKI": "1000FLOKIUSDT",
+        "BONK": "1000BONKUSDT",
+        "SATS": "1000SATSUSDT",
+        "RATS": "1000RATSUSDT",
+        "LUNC": "1000LUNCUSDT",
+        "XEC": "1000XECUSDT",
+        "CAT": "1000CATUSDT",
+        "WHY": "1000WHYUSDT",
+        "CHEEMS": "1000CHEEMSUSDT",
+        "MOG": "1000000MOGUSDT",
+        "BOB": "1000000BOBUSDT",
+        "BABYDOGE": "1MBABYDOGEUSDT",
+    }
+    for cg_sym, binance_sym in multiplier_map.items():
+        if cg_sym in by_symbol:
+            lookup[binance_sym] = by_symbol[cg_sym]
+
+    return lookup
 
 
 def fetch_global_data() -> Optional[dict]:
@@ -148,15 +223,10 @@ def load_strategy_stats() -> dict:
         return {}
 
 
-def _sym_to_base(sym: str) -> str:
-    """Convert BTCUSDT → BTC, 1000PEPEUSDT → 1000PEPE."""
-    return sym.replace("USDT", "") if sym.endswith("USDT") else sym
-
-
 def _load_multi_strategy(data: dict) -> dict:
-    """Parse new multi-strategy schema."""
+    """Parse new multi-strategy schema. Keys kept as BTCUSDT (Binance format)."""
     strategies_meta = {}
-    per_coin = {}
+    per_coin = {}  # keyed by BTCUSDT
     best_strategy_raw = data.get("best_strategy", {})
 
     for sid, sdata in data.get("strategies", {}).items():
@@ -167,15 +237,11 @@ def _load_multi_strategy(data: dict) -> dict:
             "status": sdata.get("status", "experimental"),
         }
         for sym, stats in sdata.get("coins", {}).items():
-            base = _sym_to_base(sym)
-            if base not in per_coin:
-                per_coin[base] = {}
-            per_coin[base][sid] = stats
+            if sym not in per_coin:
+                per_coin[sym] = {}
+            per_coin[sym][sid] = stats
 
-    # Convert best_strategy keys
-    best_strategy = {}
-    for sym, sid in best_strategy_raw.items():
-        best_strategy[_sym_to_base(sym)] = sid
+    best_strategy = dict(best_strategy_raw)
 
     print(f"  Strategy stats: {len(per_coin)} coins, {len(strategies_meta)} strategies")
     return {
@@ -190,10 +256,10 @@ def _load_legacy_strategy(data: dict) -> dict:
     sid = data.get("strategy", "bb-squeeze-short")
     per_coin = {}
     for sym, stats in data.get("coins", {}).items():
-        base = _sym_to_base(sym)
-        per_coin[base] = {sid: stats}
+        # Keep as-is (BTCUSDT format)
+        per_coin[sym] = {sid: stats}
 
-    best_strategy = {base: sid for base in per_coin}
+    best_strategy = {sym: sid for sym in per_coin}
     strategies_meta = {
         sid: {
             "name": "BB Squeeze SHORT",
@@ -210,36 +276,74 @@ def _load_legacy_strategy(data: dict) -> dict:
     }
 
 
-def build_coins_list(cg_coins: list[dict], strategy_stats: dict) -> list[dict]:
-    """Build coins list from CoinGecko data + multi-strategy stats overlay.
+def build_coins_list(
+    our_symbols: list[str],
+    binance_tickers: list[dict],
+    cg_lookup: dict[str, dict],
+    strategy_stats: dict,
+) -> list[dict]:
+    """Build coins list: Binance tickers (PRIMARY) + CoinGecko (logos/mcap) + strategy stats.
 
     Each coin gets:
-    - CoinGecko market data (price, change, market_cap, sparkline)
-    - Best strategy summary (trades, win_rate, profit_factor, total_return_pct)
-    - All strategies object (for comparison mode)
+    - Binance: price, 24h change, volume (real-time, all 575 coins)
+    - CoinGecko: name, logo, market_cap, sparkline, 1h/7d change (when matched)
+    - Strategy: trades, win_rate, profit_factor, total_return_pct (from backtest)
     """
     per_coin = strategy_stats.get("per_coin", {})
     best_map = strategy_stats.get("best_strategy", {})
     meta = strategy_stats.get("strategies_meta", {})
 
+    # Index Binance tickers by symbol
+    bn_by_sym = {t["symbol"]: t for t in binance_tickers}
+
     coins = []
-    merged_count = 0
-    for cg in cg_coins:
-        sparkline_raw = cg.get("sparkline_in_7d", {}).get("price", [])
-        cg_symbol = cg.get("symbol", "").upper()
+    cg_merged = 0
+    strat_merged = 0
+
+    for sym in our_symbols:
+        bn = bn_by_sym.get(sym, {})
+        cg = cg_lookup.get(sym)
+
+        # Base symbol for display: BTCUSDT → BTC
+        base = sym[:-4] if sym.endswith("USDT") else sym
+
+        # Price: Binance is authoritative (futures mark price)
+        price = float(bn.get("lastPrice", 0)) if bn else 0
+        change_24h = float(bn.get("priceChangePercent", 0)) if bn else 0
+        volume_24h = float(bn.get("quoteVolume", 0)) if bn else 0  # USDT volume
+
+        # CoinGecko supplementary data (may be None)
+        name = ""
+        image = ""
+        market_cap = 0
+        market_cap_rank = None
+        change_1h = 0
+        change_7d = 0
+        sparkline_7d: list[float] = []
+
+        if cg:
+            cg_merged += 1
+            name = cg.get("name", "")
+            image = cg.get("image", "")
+            market_cap = cg.get("market_cap", 0) or 0
+            market_cap_rank = cg.get("market_cap_rank")
+            change_1h = round(cg.get("price_change_percentage_1h_in_currency", 0) or 0, 2)
+            change_7d = round(cg.get("price_change_percentage_7d_in_currency", 0) or 0, 2)
+            sparkline_raw = cg.get("sparkline_in_7d", {}).get("price", [])
+            sparkline_7d = downsample_sparkline(sparkline_raw)
 
         coin = {
-            "symbol": cg_symbol,
-            "name": cg.get("name", ""),
-            "image": cg.get("image", ""),
-            "price": cg.get("current_price", 0) or 0,
-            "change_1h": round(cg.get("price_change_percentage_1h_in_currency", 0) or 0, 2),
-            "change_24h": round(cg.get("price_change_percentage_24h_in_currency", 0) or 0, 2),
-            "change_7d": round(cg.get("price_change_percentage_7d_in_currency", 0) or 0, 2),
-            "market_cap": cg.get("market_cap", 0) or 0,
-            "market_cap_rank": cg.get("market_cap_rank"),
-            "volume_24h": cg.get("total_volume", 0) or 0,
-            "sparkline_7d": downsample_sparkline(sparkline_raw),
+            "symbol": sym,  # BTCUSDT format (matches detail pages)
+            "name": name,
+            "image": image,
+            "price": price,
+            "change_1h": change_1h,
+            "change_24h": round(change_24h, 2),
+            "change_7d": change_7d,
+            "market_cap": market_cap,
+            "market_cap_rank": market_cap_rank,
+            "volume_24h": round(volume_24h, 2),
+            "sparkline_7d": sparkline_7d,
             # Best strategy fields (Level 0 — default view)
             "best_strategy": None,
             "best_strategy_name": None,
@@ -251,13 +355,13 @@ def build_coins_list(cg_coins: list[dict], strategy_stats: dict) -> list[dict]:
             "strategies": None,
         }
 
-        # Merge strategy stats if available
-        coin_strategies = per_coin.get(cg_symbol)
+        # Merge strategy stats if available (keyed by BTCUSDT)
+        coin_strategies = per_coin.get(sym)
         if coin_strategies:
-            merged_count += 1
+            strat_merged += 1
 
             # Best strategy summary (for default view)
-            best_sid = best_map.get(cg_symbol)
+            best_sid = best_map.get(sym)
             if best_sid and best_sid in coin_strategies:
                 best_stats = coin_strategies[best_sid]
                 best_meta = meta.get(best_sid, {})
@@ -284,8 +388,7 @@ def build_coins_list(cg_coins: list[dict], strategy_stats: dict) -> list[dict]:
 
         coins.append(coin)
 
-    if per_coin:
-        print(f"  Merged strategy stats: {merged_count}/{len(coins)} coins")
+    print(f"  Built {len(coins)} coins: CoinGecko matched {cg_merged}, strategy stats {strat_merged}")
     return coins
 
 
@@ -309,8 +412,8 @@ def build_market_json(global_data: Optional[dict], fear_index: int, fear_label: 
         for c in reversed(by_change) if c.get("change_24h", 0) < 0
     ][:10]
 
-    btc = next((c for c in coins if c["symbol"] == "BTC"), {})
-    eth = next((c for c in coins if c["symbol"] == "ETH"), {})
+    btc = next((c for c in coins if c["symbol"] == "BTCUSDT"), {})
+    eth = next((c for c in coins if c["symbol"] == "ETHUSDT"), {})
 
     # Fallback calculations when global_data is unavailable
     if global_data:
@@ -320,7 +423,7 @@ def build_market_json(global_data: Optional[dict], fear_index: int, fear_label: 
     else:
         total_market_cap_usd = sum(c.get("market_cap", 0) for c in coins)
         total_volume_usd = sum(c.get("volume_24h", 0) for c in coins)
-        btc_market_cap = next((c.get("market_cap", 0) for c in coins if c["symbol"] == "BTC"), 0)
+        btc_market_cap = next((c.get("market_cap", 0) for c in coins if c["symbol"] == "BTCUSDT"), 0)
         btc_dominance = (btc_market_cap / total_market_cap_usd * 100) if total_market_cap_usd else 0
 
     return {
@@ -568,39 +671,50 @@ def build_news_json() -> dict:
 
 
 def main():
-    print(f"=== PRUVIQ Static Refresh — {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')} ===")
+    print(f"=== PRUVIQ Static Refresh (Binance-first) — {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')} ===")
 
-    # 1. Fetch CoinGecko market data (PRIMARY source)
-    cg_coins = fetch_coingecko_markets()
-    if not cg_coins:
-        print("WARN: CoinGecko unavailable. Keeping existing stale files (next cron will retry).")
-        # Still refresh macro + news (independent of CoinGecko)
+    # 1. Load our coin symbols (source of truth for detail pages)
+    our_symbols = load_coin_symbols()
+    if not our_symbols:
+        print("  WARN: No coin-symbols.ts found, falling back to all Binance USDT futures")
+
+    # 2. Fetch Binance tickers (PRIMARY — unlimited, real-time)
+    binance_tickers = fetch_binance_tickers()
+    if not binance_tickers:
+        print("WARN: Binance unavailable. Keeping existing stale files.")
+        # Still refresh macro + news
         macro_json = build_macro_json()
         if macro_json:
             (OUTPUT_DIR / "macro.json").write_text(json.dumps(macro_json, ensure_ascii=False))
-            print("  Updated macro.json (FRED + stale coins)")
         news_json = build_news_json()
         if news_json:
             (OUTPUT_DIR / "news.json").write_text(json.dumps(news_json, ensure_ascii=False))
-            print("  Updated news.json (RSS)")
-        sys.exit(0)  # exit 0 so cron doesn't spam error logs
+        sys.exit(0)
 
-    # 2. Fetch global data
-    # Wait longer between markets and global to avoid CoinGecko rate limits on free tier
-    time.sleep(12)
+    # If no coin-symbols.ts, use all Binance USDT symbols
+    if not our_symbols:
+        our_symbols = sorted(t["symbol"] for t in binance_tickers)
+
+    # 3. Fetch CoinGecko (SECONDARY — logos, market cap, sparklines)
+    cg_coins = fetch_coingecko_markets()
+    cg_lookup = build_coingecko_lookup(cg_coins) if cg_coins else {}
+
+    # 4. Fetch global data
+    if cg_coins:
+        time.sleep(12)
     global_data = fetch_global_data()
 
-    # 3. Fetch Fear & Greed
+    # 5. Fetch Fear & Greed
     fear_index, fear_label = fetch_fear_greed()
     print(f"  Fear & Greed: {fear_index} ({fear_label})")
 
-    # 4. Load strategy stats (generated daily by full_pipeline.sh)
+    # 6. Load strategy stats (generated daily by full_pipeline.sh)
     strategy_stats = load_strategy_stats()
 
-    # 5. Build coins list (CoinGecko + strategy overlay)
-    coins = build_coins_list(cg_coins, strategy_stats)
+    # 7. Build coins list (Binance + CoinGecko + strategy overlay)
+    coins = build_coins_list(our_symbols, binance_tickers, cg_lookup, strategy_stats)
 
-    # 6. Write coins-stats.json
+    # 8. Write coins-stats.json
     strategies_meta = strategy_stats.get("strategies_meta", {
         "bb-squeeze-short": {"name": "BB Squeeze SHORT", "direction": "short",
                              "params": {"sl_pct": 10.0, "tp_pct": 8.0}}
@@ -618,21 +732,21 @@ def main():
         json.dump(output, f, separators=(",", ":"))
     print(f"  Wrote {coins_path} ({coins_path.stat().st_size / 1024:.1f} KB)")
 
-    # 7. Write market.json
+    # 9. Write market.json
     market = build_market_json(global_data, fear_index, fear_label, coins)
     market_path = OUTPUT_DIR / "market.json"
     with open(market_path, "w") as f:
         json.dump(market, f, separators=(",", ":"))
     print(f"  Wrote {market_path} ({market_path.stat().st_size / 1024:.1f} KB)")
 
-    # 8. Write macro.json (FRED indicators)
+    # 10. Write macro.json
     macro = build_macro_json()
     macro_path = OUTPUT_DIR / "macro.json"
     with open(macro_path, "w") as f:
         json.dump(macro, f, separators=(",", ":"))
     print(f"  Wrote {macro_path} ({macro_path.stat().st_size / 1024:.1f} KB)")
 
-    # 9. Write news.json (crypto + macro RSS)
+    # 11. Write news.json
     news = build_news_json()
     news_path = OUTPUT_DIR / "news.json"
     with open(news_path, "w") as f:
