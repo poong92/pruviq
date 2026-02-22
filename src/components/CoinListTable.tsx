@@ -2,6 +2,7 @@ import { useState, useEffect } from 'preact/hooks';
 import { formatPrice, formatVolume, winRateColor, profitFactorColor, signColor } from '../utils/format';
 import { STATIC_DATA, fetchWithFallback } from '../config/api';
 import MiniSparkline from './MiniSparkline';
+import ExchangeCTA from './ExchangeCTA';
 
 interface StrategyStats {
   name: string;
@@ -104,7 +105,7 @@ const DIRECTION_LABELS: Record<string, { label: string; color: string }> = {
 };
 
 function StrategyComparisonRow({ coin, bestStrategyId, colSpan, lang }: {
-  coin: CoinRow; bestStrategyId: string | null; colSpan: number; lang: string;
+  coin: CoinRow; bestStrategyId: string | null; colSpan: number; lang: 'en' | 'ko';
 }) {
   const strategies = coin.strategies;
   if (!strategies || Object.keys(strategies).length === 0) return null;
@@ -174,6 +175,7 @@ function StrategyComparisonRow({ coin, bestStrategyId, colSpan, lang }: {
               </tbody>
             </table>
           </div>
+          <ExchangeCTA mode="inline" lang={lang} coin={coin.symbol} strategy={bestStrategyId || undefined} />
         </div>
       </td>
     </tr>

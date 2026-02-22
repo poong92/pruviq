@@ -39,6 +39,7 @@ const datasetJsonLd = JSON.stringify({
           <div class="h-4 bg-[--color-bg-hover] rounded w-1/3"></div>
         </div>
       </div>
+      <div id="exchange-cta-mount" data-coin={symbolUpper}></div>
     </div>
   </section>
 </Layout>
@@ -47,10 +48,17 @@ const datasetJsonLd = JSON.stringify({
   import { h, render } from 'preact';
   import CoinChart from '../../../components/CoinChart';
   import ErrorBoundary from '../../../components/ErrorBoundary';
+  import ExchangeCTA from '../../../components/ExchangeCTA';
 
   const mount = document.getElementById('coin-mount');
   if (mount) {
     const symbol = mount.dataset.symbol;
     render(h(ErrorBoundary, { name: 'Coin Chart' }, h(CoinChart, { symbol, lang: 'ko' })), mount);
+  }
+
+  const ctaMount = document.getElementById('exchange-cta-mount');
+  if (ctaMount) {
+    const coin = ctaMount.dataset.coin;
+    render(h(ExchangeCTA, { mode: 'card', lang: 'ko', coin }), ctaMount);
   }
 </script>
