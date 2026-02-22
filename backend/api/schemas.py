@@ -350,6 +350,80 @@ class IndicatorInfo(BaseModel):
 
 # --- Macro Economic Schemas ---
 
+# --- OOS Validation & Monte Carlo Schemas ---
+
+class OOSPeriodMetrics(BaseModel):
+    """Metrics for one period (IS or OOS)."""
+    trades: int
+    win_rate: float
+    total_return: float
+    profit_factor: float
+    max_dd: float
+    avg_win: float
+    avg_loss: float
+
+
+class OOSResult(BaseModel):
+    """IS vs OOS comparison."""
+    is_metrics: OOSPeriodMetrics
+    oos_metrics: OOSPeriodMetrics
+    degradation_ratio: float
+    overfit_risk: str  # LOW, MEDIUM, HIGH
+
+
+class MCEquityBand(BaseModel):
+    """Equity percentile at a trade index."""
+    trade_idx: int
+    p5: float
+    p25: float
+    p50: float
+    p75: float
+    p95: float
+
+
+class MonteCarloResult(BaseModel):
+    """Monte Carlo simulation result."""
+    mean_return: float
+    median_return: float
+    std_return: float
+    percentile_5: float
+    percentile_25: float
+    percentile_75: float
+    percentile_95: float
+    worst_case_return: float
+    best_case_return: float
+    worst_case_mdd: float
+    positive_pct: float
+    n_simulations: int
+    n_trades: int
+    equity_bands: List[MCEquityBand]
+
+
+class ValidateRequest(BaseModel):
+    """OOS validation + Monte Carlo request."""
+    strategy: str = Field(default="bb-squeeze", description="Strategy ID")
+    direction: Optional[str] = Field(default=None)
+    sl_pct: float = Field(default=10.0, ge=1.0, le=30.0)
+    tp_pct: float = Field(default=8.0, ge=1.0, le=30.0)
+    max_bars: int = Field(default=48, ge=6, le=168)
+    market_type: str = Field(default="futures")
+    top_n: int = Field(default=50, ge=1, le=535)
+    symbols: Optional[List[str]] = Field(default=None)
+    oos_pct: float = Field(default=30.0, ge=10.0, le=50.0, description="OOS split %")
+    mc_runs: int = Field(default=1000, ge=100, le=5000, description="Monte Carlo runs")
+
+
+class ValidateResponse(BaseModel):
+    """OOS validation + Monte Carlo response."""
+    strategy: str
+    direction: str
+    coins_used: int
+    data_range: str
+    oos_pct: float
+    oos: OOSResult
+    monte_carlo: MonteCarloResult
+
+
 class MacroIndicator(BaseModel):
     """A single macro economic indicator."""
     id: str

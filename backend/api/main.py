@@ -44,11 +44,14 @@ from api.schemas import (
     NewsItem, NewsResponse,
     CompareRequest, CompareResponse, StrategyResult,
     MacroIndicator, DerivativesData, EconomicEvent, MacroResponse,
+    ValidateRequest, ValidateResponse, OOSResult, OOSPeriodMetrics,
+    MonteCarloResult, MCEquityBand,
 )
 from api.data_manager import DataManager
 from api.indicator_cache import IndicatorCache
 from src.simulation.engine import CostModel
 from src.simulation.engine_fast import run_fast
+from src.simulation.monte_carlo import bootstrap_trades, compute_oos_metrics
 from src.strategies.bb_squeeze import BBSqueezeStrategy
 from src.strategies.registry import STRATEGY_REGISTRY, get_strategy, get_all_strategies
 
@@ -737,6 +740,87 @@ async def simulate_compare(req: CompareRequest):
         coins_used=req.top_n,
         data_range=data_manager.data_range(),
         strategies=results,
+    )
+
+
+@app.post("/simulate/validate", response_model=ValidateResponse)
+async def simulate_validate(req: ValidateRequest):
+    """Run OOS validation + Monte Carlo on a strategy."""
+    if data_manager.coin_count == 0:
+        raise HTTPException(503, "Data not loaded yet. Try again shortly.")
+
+    strategy_id = req.strategy
+    if strategy_id == "bb-squeeze":
+        strategy_id = f"bb-squeeze-{req.direction or 'short'}"
+
+    if strategy_id not in STRATEGY_REGISTRY:
+        raise HTTPException(400, f"Unknown strategy: {req.strategy}")
+
+    strategy, default_direction, defaults = get_strategy(strategy_id)
+    direction = req.direction if req.direction is not None else default_direction
+    cost_model = CostModel.futures() if req.market_type == "futures" else CostModel.spot()
+
+    has_cache = indicator_cache.strategy_count(strategy_id) > 0
+
+    if req.symbols:
+        coins = indicator_cache.get_symbols_for_strategy(strategy_id, req.symbols) if has_cache else data_manager.get_symbols(req.symbols)
+        if not coins:
+            raise HTTPException(404, "None of the requested symbols found.")
+    else:
+        coins = indicator_cache.get_top_n_for_strategy(strategy_id, data_manager, req.top_n) if has_cache else data_manager.get_top_n(req.top_n)
+
+    oos_frac = req.oos_pct / 100.0
+    is_trades_all = []
+    oos_trades_all = []
+
+    for sym, df in coins:
+        if not has_cache:
+            df = strategy.calculate_indicators(df.copy())
+
+        # Split data into IS and OOS by row count
+        split_idx = int(len(df) * (1.0 - oos_frac))
+        df_is = df.iloc[:split_idx]
+        df_oos = df.iloc[split_idx:]
+
+        for period_df, trade_list in [(df_is, is_trades_all), (df_oos, oos_trades_all)]:
+            if len(period_df) < 100:
+                continue
+            result = run_fast(
+                period_df, strategy, sym,
+                sl_pct=req.sl_pct / 100,
+                tp_pct=req.tp_pct / 100,
+                max_bars=req.max_bars,
+                fee_pct=cost_model.fee_pct,
+                slippage_pct=cost_model.slippage_pct,
+                direction=direction,
+                market_type=req.market_type,
+                strategy_id=strategy_id,
+            )
+            for trade in result.trades:
+                trade_list.append(trade.pnl_pct)
+
+    # OOS comparison
+    oos_result = compute_oos_metrics(is_trades_all, oos_trades_all)
+
+    # Monte Carlo on IS trades
+    mc_result = bootstrap_trades(is_trades_all, n_simulations=req.mc_runs)
+
+    return ValidateResponse(
+        strategy=req.strategy,
+        direction=direction,
+        coins_used=len(coins),
+        data_range=data_manager.data_range(),
+        oos_pct=req.oos_pct,
+        oos=OOSResult(
+            is_metrics=OOSPeriodMetrics(**oos_result["is_metrics"]),
+            oos_metrics=OOSPeriodMetrics(**oos_result["oos_metrics"]),
+            degradation_ratio=oos_result["degradation_ratio"],
+            overfit_risk=oos_result["overfit_risk"],
+        ),
+        monte_carlo=MonteCarloResult(
+            **{k: v for k, v in mc_result.items() if k != "equity_bands"},
+            equity_bands=[MCEquityBand(**b) for b in mc_result["equity_bands"]],
+        ),
     )
 
 

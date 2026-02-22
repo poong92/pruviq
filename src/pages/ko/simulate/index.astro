@@ -45,6 +45,13 @@ const t = useTranslations('ko');
     </div>
   </section>
 
+  <!-- OOS VALIDATION -->
+  <section class="pb-12 border-t border-[--color-border] pt-8">
+    <div class="max-w-5xl mx-auto px-4">
+      <div id="oos-mount"></div>
+    </div>
+  </section>
+
   <!-- TESTED STRATEGIES -->
   <section class="pb-12 border-t border-[--color-border] pt-12">
     <div class="max-w-5xl mx-auto px-4">
@@ -120,10 +127,16 @@ const t = useTranslations('ko');
 <script>
   import { h, render } from 'preact';
   import StrategyBuilder from '../../../components/StrategyBuilder';
+  import OOSValidation from '../../../components/OOSValidation';
   import ErrorBoundary from '../../../components/ErrorBoundary';
 
   const mount = document.getElementById('builder-mount');
   if (mount) {
     render(h(ErrorBoundary, { name: 'Strategy Builder' }, h(StrategyBuilder, { lang: 'ko' })), mount);
+  }
+
+  const oosMount = document.getElementById('oos-mount');
+  if (oosMount) {
+    render(h(ErrorBoundary, { name: 'OOS Validation' }, h(OOSValidation, { lang: 'ko' })), oosMount);
   }
 </script>
