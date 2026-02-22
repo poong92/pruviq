@@ -195,6 +195,23 @@ Notes: Quick-wins copy (hero/nav) applied and meta.index_desc synced with hero.d
 ## CRON RUN LOGS
 
 - cron:63c0583a-741f-4b76-9f53-861ab7456f81 (gh-issues-autofix)
+  - Time: 2026-02-22 22:30 KST
+  - Action requested: list open GitHub issues (limit 10), assess fixability, create branches/PRs for fixable issues or comment when not fixable, and update MEMORY.md.
+  - What I did:
+    1. Read SOUL.md and MEMORY.md to confirm project context and rules.
+    2. Ran: `cd /Users/openclaw/pruviq && gh issue list --state open --limit 10` — found issues #12 → #7.
+    3. For each open issue I assessed fixability and acted accordingly:
+       - #12: Frontend PoC already implemented; PR #13 exists (ReproBadge). Commented on the issue with PR link and next steps (backend/CI must provide reproducible package metadata or I can add a demo package if requested).
+       - #11: Opened a focused CSS PR to widen mobile touch-target selectors (PR #14). Build passed locally. Commented on the issue with PR link and suggested adding a Playwright mobile audit.
+       - #10: Verified i18n parity (en/ko keys equal) and /ko/learn pages built. Commented with findings; no code changes required.
+       - #9: Performed quick SEO checks (sitemap, robots, basic meta tags) and left recommendations for content PRs. Commented on the issue.
+       - #8: Accessibility artifact referenced a summary-only axe JSON. Requested full axe node-level output or offered to re-run Playwright+axe locally and open a minimal CSS PR to fix contrast issues. Commented on the issue.
+       - #7: Reproduced /coins/stats 503 (curl returned 503). Asked ops to collect logs and Sentry traces and offered help analyzing them. Commented on the issue.
+    4. Comments were posted on issues #12, #11, #10, #9, #8, and #7. PR #13 and PR #14 exist for frontend PoC and touch-target fix respectively.
+  - Result: PR #13 and PR #14 are open; comments added to the other issues. No additional code was merged to main in this run.
+  - Next steps: follow-ups listed on each issue (generate reproducible package metadata for #12, run Playwright mobile audit for #11, re-run axe for #8, ops logs for #7, content PRs for #9). Memory updated.
+
+- cron:63c0583a-741f-4b76-9f53-861ab7456f81 (gh-issues-autofix)
   - Time: 2026-02-22 14:32 KST
   - Action requested: list open GitHub issues (limit 10), assess fixability, create branches/PRs for fixable issues or comment when not fixable, and update MEMORY.md.
   - What I did:
