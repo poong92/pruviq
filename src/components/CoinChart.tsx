@@ -1,8 +1,7 @@
 import { useState, useEffect, useRef } from 'preact/hooks';
 import { formatPrice, formatVolume, formatVolumeRaw } from '../utils/format';
-import DiscreteSlider from './DiscreteSlider';
-import { API_BASE_URL as API_URL, fetchWithFallback } from '../config/api';
-import type { MouseEventParams, Time, SeriesMarker } from 'lightweight-charts';
+import { API_BASE_URL as API_URL } from '../config/api';
+import type { MouseEventParams, Time } from 'lightweight-charts';
 
 // Helper function to get CSS variable values at runtime
 function getCssVar(name: string): string {
@@ -24,59 +23,13 @@ interface OhlcvBar {
   vol_ratio: number | null;
 }
 
-interface TradeDetail {
-  entry_time: number;
-  entry_price: number;
-  exit_time: number;
-  exit_price: number;
-  pnl_pct: number;
-  exit_reason: string;
-  bars_held: number;
-}
-
-interface SimResult {
-  symbol: string;
-  total_trades: number;
-  win_rate: number;
-  profit_factor: number;
-  total_return_pct: number;
-  max_drawdown_pct: number;
-  tp_count: number;
-  sl_count: number;
-  timeout_count: number;
-  trades: TradeDetail[];
-}
-
-const SL_VALUES = [5, 7, 8, 10, 12];
-const TP_VALUES = [4, 6, 8, 10, 12];
-const DEFAULT_SL = 10;
-const DEFAULT_TP = 8;
 const labels = {
   en: {
-    apply: 'Apply Strategy',
-    resim: 'Re-simulate',
     bbBands: 'BB Bands',
     ema: 'EMA 20/50',
     volume: 'Volume',
-    sl: 'STOP LOSS',
-    tp: 'TAKE PROFIT',
-    strategy: 'BB Squeeze SHORT',
     loading: 'Loading chart data...',
-    simLoading: 'Simulating...',
     error: 'Failed to load data.',
-    noTrades: 'Apply a strategy to see trade signals on the chart.',
-    trades: 'Trade History',
-    entry: 'Entry',
-    exit: 'Exit',
-    result: 'Result',
-    pnl: 'PnL',
-    bars: 'Bars',
-    winRate: 'Win Rate',
-    pf: 'Profit Factor',
-    totalReturn: 'Total Return',
-    maxDD: 'Max Drawdown',
-    tradesLabel: 'trades',
-    live: 'CURRENT LIVE SETTINGS',
     h24high: '24h High',
     h24low: '24h Low',
     h24vol: '24h Volume',
@@ -88,37 +41,17 @@ const labels = {
     vol: 'Vol',
     change: 'Chg',
     dataRange: 'Data Range',
-    disclaimer: 'Simulation includes 0.04% fees + 0.02% slippage. Past performance does not guarantee future results.',
     ctaTitle: 'Build Your Own Strategy',
     ctaDesc: 'Customize conditions and test across all coins.',
     ctaSimulate: 'Strategy Builder',
     ctaFees: 'Save on Fees',
   },
   ko: {
-    apply: '전략 적용',
-    resim: '재시뮬레이션',
     bbBands: 'BB 밴드',
     ema: 'EMA 20/50',
     volume: '거래량',
-    sl: '손절 (STOP LOSS)',
-    tp: '익절 (TAKE PROFIT)',
-    strategy: 'BB Squeeze SHORT',
     loading: '차트 데이터 로딩 중...',
-    simLoading: '시뮬레이션 중...',
     error: '데이터 로딩 실패.',
-    noTrades: '전략을 적용하면 차트에 매매 신호가 표시됩니다.',
-    trades: '거래 내역',
-    entry: '진입',
-    exit: '청산',
-    result: '결과',
-    pnl: 'PnL',
-    bars: '봉',
-    winRate: '승률',
-    pf: '수익 팩터',
-    totalReturn: '총 수익률',
-    maxDD: '최대 드로다운',
-    tradesLabel: '건',
-    live: '현재 라이브 설정',
     h24high: '24h 고가',
     h24low: '24h 저가',
     h24vol: '24h 거래량',
@@ -130,7 +63,6 @@ const labels = {
     vol: '거래량',
     change: '변동',
     dataRange: '데이터 범위',
-    disclaimer: '시뮬레이션은 0.04% 수수료 + 0.02% 슬리피지를 포함합니다. 과거 성과는 미래 결과를 보장하지 않습니다.',
     ctaTitle: '나만의 전략 만들기',
     ctaDesc: '조건을 커스텀하고 모든 코인에서 테스트하세요.',
     ctaSimulate: '전략 빌더',
@@ -159,15 +91,6 @@ function formatDateRange(startUnix: number, endUnix: number): string {
   const e = new Date(endUnix * 1000);
   const fmt = (d: Date) => `${d.getFullYear()}-${(d.getMonth()+1).toString().padStart(2,'0')}-${d.getDate().toString().padStart(2,'0')}`;
   return `${fmt(s)} ~ ${fmt(e)}`;
-}
-
-function MetricBox({ label, value, color }: { label: string; value: string; color: string }) {
-  return (
-    <div class="p-2.5 rounded-md bg-[--color-bg-tooltip] border border-[--color-border]">
-      <div class="font-mono text-[0.6875rem] text-[--color-text-muted] uppercase tracking-wider mb-0.5">{label}</div>
-      <div class="font-mono text-base font-bold" style={{ color }}>{value}</div>
-    </div>
-  );
 }
 
 function ToggleBtn({ active, activeColor, label, onClick }: { active: boolean; activeColor: string; label: string; onClick: () => void }) {
@@ -217,16 +140,11 @@ export default function CoinChart({ symbol, lang = 'en' }: { symbol: string; lan
   const SYMBOL = symbol.toUpperCase();
 
   const [ohlcv, setOhlcv] = useState<OhlcvBar[] | null>(null);
-  const [simResult, setSimResult] = useState<SimResult | null>(null);
-  const [sl, setSl] = useState(DEFAULT_SL);
-  const [tp, setTp] = useState(DEFAULT_TP);
   const [showBB, setShowBB] = useState(true);
   const [showEMA, setShowEMA] = useState(false);
   const [showVol, setShowVol] = useState(true);
   const [loading, setLoading] = useState(true);
-  const [simLoading, setSimLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [showTrades, setShowTrades] = useState(false);
   const [crosshairData, setCrosshairData] = useState<OhlcvBar | null>(null);
 
   const chartContainerRef = useRef<HTMLDivElement>(null);
@@ -239,7 +157,6 @@ export default function CoinChart({ symbol, lang = 'en' }: { symbol: string; lan
   const ema50Ref = useRef<any>(null);
   const volumeSeriesRef = useRef<any>(null);
   const ohlcvMapRef = useRef<Map<number, OhlcvBar>>(new Map());
-  const autoSimDoneRef = useRef(false);
 
   // Load OHLCV data
   useEffect(() => {
@@ -384,44 +301,6 @@ export default function CoinChart({ symbol, lang = 'en' }: { symbol: string; lan
     if (volumeSeriesRef.current) volumeSeriesRef.current.applyOptions({ visible: showVol });
   }, [showVol]);
 
-  const runSimulation = async () => {
-    setSimLoading(true);
-    try {
-      const url = `${API_URL}/simulate/coin`;
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ symbol: SYMBOL, sl_pct: sl, tp_pct: tp }),
-      });
-      if (!res.ok) throw new Error('Simulation failed');
-      const result: SimResult = await res.json();
-      setSimResult(result);
-
-      if (candleSeriesRef.current && result.trades.length > 0) {
-        const markers: SeriesMarker<Time>[] = [];
-        for (const trade of result.trades) {
-          markers.push({ time: trade.entry_time as any, position: 'aboveBar', shape: 'arrowDown', color: getCssVar('--color-down'), text: 'S' });
-          const exitColor = trade.exit_reason === 'tp' ? getCssVar('--color-up') : trade.exit_reason === 'sl' ? getCssVar('--color-down') : getCssVar('--color-text-muted');
-          const exitText = trade.exit_reason === 'tp' ? 'TP' : trade.exit_reason === 'sl' ? 'SL' : 'TO';
-          markers.push({ time: trade.exit_time as any, position: 'belowBar', shape: 'arrowUp', color: exitColor, text: exitText });
-        }
-        markers.sort((a, b) => (a.time as number) - (b.time as number));
-        candleSeriesRef.current.setMarkers(markers);
-      }
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setSimLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (ohlcv && !autoSimDoneRef.current && chartRef.current) {
-      autoSimDoneRef.current = true;
-      setTimeout(() => runSimulation(), 300);
-    }
-  }, [ohlcv, chartRef.current]);
-
   if (loading) {
     return (
       <div class="fade-in">
@@ -459,8 +338,6 @@ export default function CoinChart({ symbol, lang = 'en' }: { symbol: string; lan
   const lastBar = ohlcv[ohlcv.length - 1];
   const prevBar = ohlcv.length >= 2 ? ohlcv[ohlcv.length - 2] : lastBar;
   const change = prevBar.c ? ((lastBar.c - prevBar.c) / prevBar.c * 100) : 0;
-  const isDefault = sl === DEFAULT_SL && tp === DEFAULT_TP;
-
   const last24 = ohlcv.slice(-24);
   const high24 = Math.max(...last24.map(b => b.h));
   const low24 = Math.min(...last24.map(b => b.l));
@@ -531,122 +408,6 @@ export default function CoinChart({ symbol, lang = 'en' }: { symbol: string; lan
           </a>
         </div>
       </div>
-
-      {/* Strategy Controls */}
-      <div class="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center mb-4 px-4 py-3 bg-[--color-bg-card] border border-[--color-border] rounded-xl">
-        <span class="font-mono text-[0.6875rem] text-[--color-accent] tracking-widest uppercase font-semibold">{t.strategy}</span>
-        <div class="hidden sm:block flex-1" />
-        <button
-          onClick={runSimulation}
-          disabled={simLoading}
-          class={`px-6 py-2 rounded-md border-none bg-[--color-accent] text-[--color-bg] font-mono text-[0.8125rem] font-semibold transition-opacity ${simLoading ? 'opacity-70 cursor-wait' : 'opacity-100 cursor-pointer hover:opacity-90'}`}
-        >
-          {simLoading ? (
-            <span class="flex items-center gap-2">
-              <span class="spinner w-3.5 h-3.5 border-2" />
-              {t.simLoading}
-            </span>
-          ) : (simResult ? t.resim : t.apply)}
-        </button>
-      </div>
-
-      {/* SL/TP Sliders + Results */}
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-        <div class="p-5 bg-[--color-bg-card] border border-[--color-border] rounded-xl">
-          <DiscreteSlider label={t.sl} values={SL_VALUES} value={sl} defaultValue={DEFAULT_SL} onChange={setSl} />
-          <DiscreteSlider label={t.tp} values={TP_VALUES} value={tp} defaultValue={DEFAULT_TP} onChange={setTp} />
-        </div>
-
-        <div class="p-5 bg-[--color-bg-card] border border-[--color-border] rounded-xl">
-          {simResult ? (
-            <div>
-              {isDefault && (
-                <div class="font-mono text-[0.6875rem] text-[--color-accent] tracking-widest mb-3 uppercase">{t.live}</div>
-              )}
-              <div class="grid grid-cols-2 gap-2 mb-3">
-                <MetricBox label={t.winRate} value={`${simResult.win_rate}%`} color={simResult.win_rate >= 55 ? getCssVar('--color-up') : simResult.win_rate >= 50 ? getCssVar('--color-yellow') : getCssVar('--color-down')} />
-                <MetricBox label={t.pf} value={`${simResult.profit_factor}`} color={simResult.profit_factor >= 1.5 ? getCssVar('--color-up') : simResult.profit_factor >= 1.0 ? getCssVar('--color-yellow') : getCssVar('--color-down')} />
-                <MetricBox label={t.totalReturn} value={`${simResult.total_return_pct > 0 ? '+' : ''}${simResult.total_return_pct}%`} color={simResult.total_return_pct >= 0 ? getCssVar('--color-up') : getCssVar('--color-down')} />
-                <MetricBox label={t.maxDD} value={`${simResult.max_drawdown_pct}%`} color={getCssVar('--color-down')} />
-              </div>
-              <div class="font-mono text-xs text-[--color-text-muted] mb-2">
-                {simResult.total_trades} {t.tradesLabel} &middot; TP:{simResult.tp_count} SL:{simResult.sl_count} TO:{simResult.timeout_count}
-              </div>
-              <div class="flex h-1 rounded-sm overflow-hidden bg-[--color-border]">
-                {simResult.total_trades > 0 && (<>
-                  <div class="bg-[--color-up]" style={{ width: `${(simResult.tp_count / simResult.total_trades) * 100}%` }} />
-                  <div class="bg-[--color-red]" style={{ width: `${(simResult.sl_count / simResult.total_trades) * 100}%` }} />
-                  <div class="bg-[--color-text-muted]" style={{ width: `${(simResult.timeout_count / simResult.total_trades) * 100}%` }} />
-                </>)}
-              </div>
-            </div>
-          ) : (
-            <div class="font-mono text-[0.8125rem] text-[--color-text-muted] py-4">{t.noTrades}</div>
-          )}
-        </div>
-      </div>
-
-      {/* Disclaimer */}
-      <p class="font-mono text-[0.5625rem] text-[--color-text-muted] mb-4 leading-relaxed">
-        * {t.disclaimer}
-      </p>
-
-      {/* Trade History */}
-      {simResult && simResult.trades.length > 0 && (
-        <div class="bg-[--color-bg-card] border border-[--color-border] rounded-xl overflow-hidden">
-          <button
-            onClick={() => setShowTrades(!showTrades)}
-            class={`w-full px-4 py-3 bg-transparent border-none text-[--color-text] font-mono text-[0.8125rem] font-semibold cursor-pointer text-left flex justify-between items-center hover:bg-[--color-bg-hover] transition-colors ${showTrades ? 'border-b border-[--color-border]' : ''}`}
-          >
-            <span>{showTrades ? '\u25BC' : '\u25B6'} {t.trades} ({simResult.trades.length})</span>
-          </button>
-          {showTrades && (
-            <div class="overflow-x-auto">
-              <table class="w-full border-collapse font-mono text-xs">
-                <thead>
-                  <tr class="border-b border-[--color-border]">
-                    <th class="hidden sm:table-cell px-3 py-2 text-center text-[--color-text-muted] text-[0.6875rem]">#</th>
-                    <th class="px-3 py-2 text-left text-[--color-text-muted] text-[0.6875rem]">{t.entry}</th>
-                    <th class="px-3 py-2 text-left text-[--color-text-muted] text-[0.6875rem]">{t.exit}</th>
-                    <th class="px-3 py-2 text-center text-[--color-text-muted] text-[0.6875rem]">{t.result}</th>
-                    <th class="px-3 py-2 text-right text-[--color-text-muted] text-[0.6875rem]">{t.pnl}</th>
-                    <th class="hidden sm:table-cell px-3 py-2 text-right text-[--color-text-muted] text-[0.6875rem]">{t.bars}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {simResult.trades.map((trade, i) => {
-                    const color = trade.exit_reason === 'tp' ? getCssVar('--color-up') : trade.exit_reason === 'sl' ? getCssVar('--color-down') : getCssVar('--color-text-muted');
-                    const label = trade.exit_reason.toUpperCase();
-                    return (
-                      <tr
-                        key={i}
-                        class="border-b border-[--color-border] cursor-pointer row-hover"
-                        onClick={() => {
-                          if (chartRef.current) {
-                            chartRef.current.timeScale().setVisibleRange({
-                              from: (trade.entry_time - 3600 * 24) as any,
-                              to: (trade.exit_time + 3600 * 24) as any,
-                            });
-                          }
-                        }}
-                      >
-                        <td class="hidden sm:table-cell px-3 py-2 text-center text-[--color-text-muted]">{i + 1}</td>
-                        <td class="px-3 py-2">{formatTime(trade.entry_time, lang)}</td>
-                        <td class="px-3 py-2">{formatTime(trade.exit_time, lang)}</td>
-                        <td class="px-3 py-2 text-center font-semibold" style={{ color }}>{label}</td>
-                        <td class="px-3 py-2 text-right" style={{ color: trade.pnl_pct >= 0 ? 'var(--color-up)' : 'var(--color-down)' }}>
-                          {trade.pnl_pct > 0 ? '+' : ''}{trade.pnl_pct.toFixed(2)}%
-                        </td>
-                        <td class="hidden sm:table-cell px-3 py-2 text-right text-[--color-text-muted]">{trade.bars_held}</td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
-      )}
 
       {/* CTA */}
       <div class="mt-6 p-5 bg-[--color-bg-card] border border-[--color-border] rounded-xl">
