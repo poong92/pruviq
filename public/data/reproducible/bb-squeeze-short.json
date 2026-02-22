@@ -1,0 +1,9 @@
+{
+  "strategy": "bb-squeeze-short",
+  "data_version": "2026-02-22",
+  "engine_version": "autotrader-1.7.0",
+  "result_hash": "sha256:demo000000000000000000000000000000000000000000000000000000000dead",
+  "package_url": "/data/reproducible/bb-squeeze-short.zip",
+  "created": "2026-02-22T14:00:00Z",
+  "notes": "Demo reproducible package for UI PoC. Contains sample manifest and parameters for reproduction."
+}
