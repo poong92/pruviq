@@ -317,11 +317,19 @@ a:focus-visible,
 @media (pointer: coarse) {
   .btn-primary,
   .btn-secondary,
+  .btn,
+  .btn-ghost,
+  .btn-icon,
+  .icon-button,
   nav a,
-  button[type="submit"] {
+  button[type="submit"],
+  .icon-link {
     min-height: 44px;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
   }
 }
+
 
 /* Step badge */
 .step-badge {
