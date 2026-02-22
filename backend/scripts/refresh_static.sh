@@ -27,6 +27,14 @@ if ! python3 backend/scripts/refresh_static.py; then
     exit 1
 fi
 
+# Safety: only commit on main branch (agent workflows may switch branches)
+CURRENT_BRANCH=$(git branch --show-current 2>/dev/null)
+if [ "$CURRENT_BRANCH" != "main" ]; then
+    log "WARN: On branch '$CURRENT_BRANCH', not main. Skipping git commit/push."
+    log "Data files updated locally but not pushed."
+    exit 0
+fi
+
 # Git push only if data changed
 if ! git diff --quiet public/data/market.json public/data/coins-stats.json 2>/dev/null; then
     git add -f public/data/market.json public/data/coins-stats.json
