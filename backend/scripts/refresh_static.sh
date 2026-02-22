@@ -1,6 +1,6 @@
 #!/bin/bash
-# PRUVIQ — Static Data Refresh (every 15 min via cron)
-# Fetches CoinGecko data → updates coins-stats.json + market.json → git push
+# PRUVIQ — Static Data Refresh (every hour via cron)
+# Fetches Binance+CoinGecko data → updates coins-stats.json + market.json → git push
 #
 # Runs as openclaw user (owner of /Users/openclaw/pruviq/)
 set -euo pipefail

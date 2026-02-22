@@ -1,10 +1,10 @@
 // Static-first data configuration
-// Static JSON files are refreshed every 15 min by cron (CoinGecko → JSON → CDN)
+// Static JSON files are refreshed every hour by cron (Binance+CoinGecko → JSON → CDN)
 // API server is fallback only (for when CDN is unavailable)
 export const API_BASE_URL: string =
   import.meta.env.PUBLIC_PRUVIQ_API_URL || 'https://api.pruviq.com';
 
-// Static data paths (refreshed every 15 min by cron)
+// Static data paths (refreshed every hour by cron)
 export const STATIC_DATA = {
   coinsStats: '/data/coins-stats.json',
   market: '/data/market.json',

@@ -1,16 +1,21 @@
 #!/usr/bin/env python3
 """
-PRUVIQ — Static Data Refresher (v0.2.1 — Binance-first)
+PRUVIQ — Static Data Refresher (v0.2.2 — Binance-first)
 
-PRIMARY: Binance Futures ticker API (575 coins, unlimited, real-time)
+PRIMARY: Binance Futures ticker API (575 coins, unlimited, no API key)
 SECONDARY: CoinGecko (logos, market cap, sparklines — supplementary only)
 
 This ensures the coin list exactly matches our detail pages (coin-symbols.ts)
 and eliminates 404s caused by CoinGecko↔Binance symbol mismatches.
 
-Called every 15 minutes by cron via refresh_static.sh.
-Binance ticker: unlimited free API (no key needed)
-CoinGecko Free API: ~8,640 calls/month (3 calls x 4/hr x 24hr x 30d)
+Called every HOUR by cron via refresh_static.sh.
+Binance ticker: unlimited free API (no key needed, PUBLIC endpoint, weight 40)
+CoinGecko Free API: ~2,160 calls/month (3 calls x 1/hr x 24hr x 30d)
+
+NOTE: Binance Futures PUBLIC API does NOT affect AutoTrader bot.
+  - Different IPs: Mac Mini (172.30.1.16) vs DO server (167.172.81.145)
+  - AutoTrader uses Private API (different endpoints, different rate limits)
+  - Weight budget: 40/2400 per minute = 1.7% (negligible)
 
 Output:
   public/data/coins-stats.json  — market data (prices, volume, market cap)
@@ -39,6 +44,7 @@ SCRIPT_DIR = Path(__file__).parent
 REPO_DIR = SCRIPT_DIR.parent.parent
 OUTPUT_DIR = REPO_DIR / "public" / "data"
 COIN_SYMBOLS_TS = REPO_DIR / "src" / "data" / "coin-symbols.ts"
+COIN_METADATA = OUTPUT_DIR / "coin-metadata.json"  # fallback names/logos when CoinGecko is down
 
 # Binance Futures API (PRIMARY — unlimited, no key needed)
 BINANCE_TICKER_URL = "https://fapi.binance.com/fapi/v1/ticker/24hr"
@@ -62,6 +68,27 @@ def fetch_json(url: str) -> Optional[dict]:
     except (urllib.error.URLError, json.JSONDecodeError, TimeoutError) as e:
         print(f"  WARN: Failed to fetch {url}: {e}")
         return None
+
+
+def load_coin_metadata() -> dict[str, dict]:
+    """Load static coin metadata (names/logos) as fallback when CoinGecko is down."""
+    if COIN_METADATA.exists():
+        try:
+            return json.loads(COIN_METADATA.read_text())
+        except (json.JSONDecodeError, OSError):
+            pass
+    return {}
+
+
+def save_coin_metadata(coins: list[dict]) -> None:
+    """Update coin-metadata.json with latest CoinGecko names/logos."""
+    metadata = {}
+    for c in coins:
+        if c.get("name") and c.get("image"):
+            metadata[c["symbol"]] = {"name": c["name"], "image": c["image"]}
+    if metadata:
+        COIN_METADATA.write_text(json.dumps(metadata, separators=(",", ":")))
+        print(f"  Updated coin-metadata.json ({len(metadata)} coins)")
 
 
 def load_coin_symbols() -> list[str]:
@@ -193,15 +220,18 @@ def build_coins_list(
     our_symbols: list[str],
     binance_tickers: list[dict],
     cg_lookup: dict[str, dict],
+    metadata: dict[str, dict] | None = None,
 ) -> list[dict]:
     """Build coins list: Binance tickers (PRIMARY) + CoinGecko (logos/mcap).
 
     Each coin gets:
     - Binance: price, 24h change, volume (real-time, all 575 coins)
     - CoinGecko: name, logo, market_cap, sparkline, 1h/7d change (when matched)
+    - Metadata fallback: name, logo from coin-metadata.json (when CoinGecko is down)
     """
     # Index Binance tickers by symbol
     bn_by_sym = {t["symbol"]: t for t in binance_tickers}
+    metadata = metadata or {}
 
     coins = []
     cg_merged = 0
@@ -209,6 +239,7 @@ def build_coins_list(
     for sym in our_symbols:
         bn = bn_by_sym.get(sym, {})
         cg = cg_lookup.get(sym)
+        meta = metadata.get(sym, {})
 
         # Price: Binance is authoritative (futures mark price)
         price = float(bn.get("lastPrice", 0)) if bn else 0
@@ -234,6 +265,10 @@ def build_coins_list(
             change_7d = round(cg.get("price_change_percentage_7d_in_currency", 0) or 0, 2)
             sparkline_raw = cg.get("sparkline_in_7d", {}).get("price", [])
             sparkline_7d = downsample_sparkline(sparkline_raw)
+        elif meta:
+            # Fallback: use cached metadata for name/image when CoinGecko is down
+            name = meta.get("name", "")
+            image = meta.get("image", "")
 
         coin = {
             "symbol": sym,  # BTCUSDT format (matches detail pages)
@@ -558,23 +593,32 @@ def main():
     if not our_symbols:
         our_symbols = sorted(t["symbol"] for t in binance_tickers)
 
-    # 3. Fetch CoinGecko (SECONDARY — logos, market cap, sparklines)
+    # 3. Load cached metadata (fallback for when CoinGecko is down)
+    metadata = load_coin_metadata()
+    if metadata:
+        print(f"  Loaded coin-metadata.json ({len(metadata)} cached names/logos)")
+
+    # 4. Fetch CoinGecko (SECONDARY — logos, market cap, sparklines)
     cg_coins = fetch_coingecko_markets()
     cg_lookup = build_coingecko_lookup(cg_coins) if cg_coins else {}
 
-    # 4. Fetch global data
+    # 5. Fetch global data
     if cg_coins:
         time.sleep(12)
     global_data = fetch_global_data()
 
-    # 5. Fetch Fear & Greed
+    # 6. Fetch Fear & Greed
     fear_index, fear_label = fetch_fear_greed()
     print(f"  Fear & Greed: {fear_index} ({fear_label})")
 
-    # 6. Build coins list (Binance + CoinGecko)
-    coins = build_coins_list(our_symbols, binance_tickers, cg_lookup)
+    # 7. Build coins list (Binance + CoinGecko + metadata fallback)
+    coins = build_coins_list(our_symbols, binance_tickers, cg_lookup, metadata)
 
-    # 7. Write coins-stats.json
+    # Update metadata cache if CoinGecko succeeded
+    if cg_coins:
+        save_coin_metadata(coins)
+
+    # 8. Write coins-stats.json
     output = {
         "generated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "total_coins": len(coins),
@@ -586,21 +630,21 @@ def main():
         json.dump(output, f, separators=(",", ":"))
     print(f"  Wrote {coins_path} ({coins_path.stat().st_size / 1024:.1f} KB)")
 
-    # 8. Write market.json
+    # 9. Write market.json
     market = build_market_json(global_data, fear_index, fear_label, coins)
     market_path = OUTPUT_DIR / "market.json"
     with open(market_path, "w") as f:
         json.dump(market, f, separators=(",", ":"))
     print(f"  Wrote {market_path} ({market_path.stat().st_size / 1024:.1f} KB)")
 
-    # 9. Write macro.json
+    # 10. Write macro.json
     macro = build_macro_json()
     macro_path = OUTPUT_DIR / "macro.json"
     with open(macro_path, "w") as f:
         json.dump(macro, f, separators=(",", ":"))
     print(f"  Wrote {macro_path} ({macro_path.stat().st_size / 1024:.1f} KB)")
 
-    # 10. Write news.json
+    # 11. Write news.json
     news = build_news_json()
     news_path = OUTPUT_DIR / "news.json"
     with open(news_path, "w") as f:
