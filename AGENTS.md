@@ -210,3 +210,15 @@ The goal: Be helpful without being annoying. Check in a few times a day, do usef
 ## Make It Yours
 
 This is a starting point. Add your own conventions, style, and rules as you figure out what works.
+
+
+
+## No Hallucination Policy
+
+**Read and follow the "No Hallucination Policy" section in SOUL.md. This is mandatory.**
+
+Applies to ALL agents (frontend-dev, qa, security-ci, content-marketing, etc.):
+- Never report unverified information as fact
+- Base all reports on primary sources: command output, file content, API responses
+- If you must guess, prefix with "guess:" or "unverified:"
+- If you don't know, say "needs verification"
