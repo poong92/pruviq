@@ -246,7 +246,7 @@ export default function CoinListTable({ lang = 'en' }: { lang?: 'en' | 'ko' }) {
     <div class="fade-in">
       {/* Search */}
       <div class="mb-4">
-        <label for="coin-search" class="sr-only">{t.search}</label>
+        <label htmlFor="coin-search" class="sr-only">{t.search}</label>
         <input
           id="coin-search"
           type="text"
@@ -303,7 +303,7 @@ export default function CoinListTable({ lang = 'en' }: { lang?: 'en' | 'ko' }) {
 
                   {/* Coin: logo + symbol + name */}
                   <td class="px-2 py-2.5 whitespace-nowrap">
-                    <a href={coinUrl} class="flex items-center gap-2.5 hover:text-[--color-accent] transition-colors" tabIndex={-1}>
+                    <a href={coinUrl} class="flex items-center gap-2.5 hover:text-[--color-accent] transition-colors" tabIndex={-1} aria-hidden="true">
                       <CoinLogo image={coin.image} symbol={coin.symbol} />
                       <div class="flex items-center gap-1.5">
                         <span class="font-semibold">{coin.symbol}</span>
