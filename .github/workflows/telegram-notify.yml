@@ -1,0 +1,54 @@
+name: Telegram Notify
+
+on:
+  workflow_dispatch:
+    inputs:
+      message:
+        description: 'Custom message to send (optional)'
+        required: false
+        default: ''
+  # Can be called from other workflows
+  workflow_call:
+    inputs:
+      message:
+        type: string
+        required: false
+        default: ''
+    secrets:
+      PRUVIQ_TELEGRAM_TOKEN:
+        required: true
+      PRUVIQ_TELEGRAM_CHAT_ID:
+        required: true
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Telegram message
+        env:
+          TOKEN: ${{ secrets.PRUVIQ_TELEGRAM_TOKEN }}
+          CHAT_ID: ${{ secrets.PRUVIQ_TELEGRAM_CHAT_ID }}
+          CUSTOM_MSG: ${{ inputs.message }}
+        run: |
+          if [ -z "$TOKEN" ] || [ -z "$CHAT_ID" ]; then
+            echo "ERROR: PRUVIQ_TELEGRAM_TOKEN or PRUVIQ_TELEGRAM_CHAT_ID not set"
+            exit 1
+          fi
+
+          if [ -n "$CUSTOM_MSG" ]; then
+            MSG="$CUSTOM_MSG"
+          else
+            MSG="✅ PRUVIQ Telegram 연동 테스트 성공!
+
+🕐 $(date -u '+%Y-%m-%d %H:%M UTC')
+📦 Repo: ${{ github.repository }}
+🔗 Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          fi
+
+          curl -s -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" \
+            -d chat_id="${CHAT_ID}" \
+            -d text="${MSG}" \
+            -d parse_mode="Markdown" \
+            || curl -s -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" \
+              -d chat_id="${CHAT_ID}" \
+              -d text="${MSG}"
