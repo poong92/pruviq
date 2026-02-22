@@ -429,6 +429,7 @@ class MacroIndicator(BaseModel):
     id: str
     name: str
     value: float
+    change: Optional[float] = None
     previous: Optional[float] = None
     unit: str = ""
     updated: str = ""

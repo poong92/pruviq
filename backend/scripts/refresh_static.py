@@ -340,22 +340,59 @@ def build_market_json(global_data: Optional[dict], fear_index: int, fear_label: 
     }
 
 
-# --- FRED Macro Economic Indicators ---
+# --- Macro Economic Indicators (CNBC primary + FRED fallback for Fed Rate) ---
 
-FRED_SERIES = {
-    "DFF": {"name": "Fed Funds Rate", "unit": "%", "source": "FRED"},
-    "DGS10": {"name": "US 10Y Treasury", "unit": "%", "source": "FRED"},
-    "DGS2": {"name": "US 2Y Treasury", "unit": "%", "source": "FRED"},
-    "DTWEXBGS": {"name": "USD Trade-Weighted (Broad)", "unit": "Index", "source": "FRED"},
-    "T10Y2Y": {"name": "10Y-2Y Yield Spread", "unit": "%", "source": "FRED"},
-    "VIXCLS": {"name": "VIX (Volatility Index)", "unit": "Index", "source": "FRED"},
-}
+CNBC_QUOTE_URL = (
+    "https://quote.cnbc.com/quote-html-webservice/restQuote/symbolType/symbol"
+    "?symbols={symbols}&requestMethod=itv&no498498=1&partnerId=2"
+    "&fund=1&exthrs=1&output=json"
+)
+
+# 7 indicators via CNBC batch (1 HTTP call)
+CNBC_INDICATORS = [
+    {"symbol": ".SPX", "name": "S&P 500", "unit": "Index", "id": "SPX"},
+    {"symbol": ".IXIC", "name": "Nasdaq", "unit": "Index", "id": "IXIC"},
+    {"symbol": ".DXY", "name": "DXY (US Dollar)", "unit": "Index", "id": "DXY"},
+    {"symbol": "US10Y", "name": "US 10Y Treasury", "unit": "%", "id": "US10Y"},
+    {"symbol": "US2Y", "name": "US 2Y Treasury", "unit": "%", "id": "US2Y"},
+    {"symbol": ".VIX", "name": "VIX", "unit": "Index", "id": "VIX"},
+    {"symbol": "@GC.1", "name": "Gold", "unit": "USD", "id": "GOLD"},
+]
+
+# Fed Rate only from FRED (CNBC doesn't have this ticker)
+FRED_FED_RATE = {"id": "DFF", "name": "Fed Funds Rate", "unit": "%", "source": "FRED"}
+
+
+def fetch_cnbc_quotes() -> list[dict]:
+    """Fetch all macro indicators from CNBC in a single batch call."""
+    symbols = "|".join(ind["symbol"] for ind in CNBC_INDICATORS)
+    url = CNBC_QUOTE_URL.format(symbols=symbols)
+    try:
+        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+        resp = urllib.request.urlopen(req, timeout=TIMEOUT)
+        data = json.loads(resp.read())
+        quotes = data.get("FormattedQuoteResult", {}).get("FormattedQuote", [])
+        if isinstance(quotes, dict):
+            quotes = [quotes]
+        return quotes
+    except Exception as e:
+        print(f"  WARN: CNBC fetch failed: {e}")
+        return []
+
+
+def _parse_cnbc_value(raw: str) -> Optional[float]:
+    """Parse CNBC value string like '6,909.51' or '4.086%' to float."""
+    if not raw:
+        return None
+    cleaned = raw.replace(",", "").replace("%", "").strip()
+    try:
+        return float(cleaned)
+    except ValueError:
+        return None
 
 
 def fetch_fred_series(series_id: str) -> Optional[dict]:
-    """Fetch latest value from FRED public CSV endpoint (no API key needed).
-    Uses 30-day window to minimize payload (29 lines vs 26K lines = 80% faster).
-    """
+    """Fetch latest value from FRED public CSV endpoint (no API key needed)."""
     end = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     start = (datetime.now(timezone.utc) - timedelta(days=30)).strftime("%Y-%m-%d")
     url = f"https://fred.stlouisfed.org/graph/fredgraph.csv?id={series_id}&cosd={start}&coed={end}"
@@ -378,10 +415,7 @@ def fetch_fred_series(series_id: str) -> Optional[dict]:
                     break
         if not latest_line:
             return None
-        result = {
-            "value": float(latest_line[1]),
-            "updated": latest_line[0],
-        }
+        result = {"value": float(latest_line[1]), "updated": latest_line[0]}
         if prev_line:
             result["previous"] = float(prev_line[1])
         return result
@@ -391,22 +425,48 @@ def fetch_fred_series(series_id: str) -> Optional[dict]:
 
 
 def build_macro_json() -> dict:
-    """Build macro.json from FRED data."""
-    print("  Fetching FRED macro indicators...")
+    """Build macro.json from CNBC (primary) + FRED (Fed Rate only)."""
     indicators = []
-    for series_id, info in FRED_SERIES.items():
-        data = fetch_fred_series(series_id)
-        if data:
+
+    # 1. CNBC batch: 7 indicators in 1 call
+    print("  Fetching CNBC macro indicators (batch)...")
+    quotes = fetch_cnbc_quotes()
+    symbol_map = {ind["symbol"]: ind for ind in CNBC_INDICATORS}
+
+    for q in quotes:
+        sym = q.get("symbol", "")
+        ind = symbol_map.get(sym)
+        if not ind:
+            continue
+        value = _parse_cnbc_value(q.get("last", ""))
+        change = _parse_cnbc_value(q.get("change", ""))
+        if value is not None:
             indicators.append({
-                "id": series_id,
-                "name": info["name"],
-                "value": data["value"],
-                "previous": data.get("previous"),
-                "unit": info["unit"],
-                "updated": data.get("updated", ""),
-                "source": info["source"],
+                "id": ind["id"],
+                "name": ind["name"],
+                "value": value,
+                "change": change,
+                "unit": ind["unit"],
+                "updated": q.get("last_timedate", ""),
+                "source": "CNBC",
             })
-    print(f"  Got {len(indicators)}/{len(FRED_SERIES)} FRED indicators")
+    print(f"  Got {len(indicators)}/7 CNBC indicators")
+
+    # 2. FRED: Fed Funds Rate only (changes ~8x/year at FOMC)
+    print("  Fetching Fed Funds Rate from FRED...")
+    fed = fetch_fred_series(FRED_FED_RATE["id"])
+    if fed:
+        indicators.append({
+            "id": FRED_FED_RATE["id"],
+            "name": FRED_FED_RATE["name"],
+            "value": fed["value"],
+            "change": round(fed["value"] - fed.get("previous", fed["value"]), 3) if fed.get("previous") else None,
+            "unit": FRED_FED_RATE["unit"],
+            "updated": fed.get("updated", ""),
+            "source": "FRED",
+        })
+        print(f"  Fed Rate: {fed['value']}%")
+
     return {
         "indicators": indicators,
         "generated": datetime.now(timezone.utc).isoformat(),

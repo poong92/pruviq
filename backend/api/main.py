@@ -1122,21 +1122,38 @@ MACRO_CACHE_TTL = 300  # 5 minutes
 _macro_cache: Optional[dict] = None
 _macro_cache_time: float = 0
 
-# FRED API (free, no key needed for public series, 120 req/min)
-FRED_SERIES = {
-    "DFF": {"name": "Fed Funds Rate", "unit": "%", "source": "FRED"},
-    "DGS10": {"name": "US 10Y Treasury", "unit": "%", "source": "FRED"},
-    "DGS2": {"name": "US 2Y Treasury", "unit": "%", "source": "FRED"},
-    "DTWEXBGS": {"name": "USD Trade-Weighted (Broad)", "unit": "Index", "source": "FRED"},
-    "T10Y2Y": {"name": "10Y-2Y Yield Spread", "unit": "%", "source": "FRED"},
-    "VIXCLS": {"name": "VIX (Volatility Index)", "unit": "Index", "source": "FRED"},
-}
+# CNBC Quote API (no key, batch via pipe separator) + FRED for Fed Rate
+CNBC_QUOTE_URL = (
+    "https://quote.cnbc.com/quote-html-webservice/restQuote/symbolType/symbol"
+    "?symbols={symbols}&requestMethod=itv&no498498=1&partnerId=2"
+    "&fund=1&exthrs=1&output=json"
+)
+
+CNBC_INDICATORS = [
+    {"symbol": ".SPX", "name": "S&P 500", "unit": "Index", "id": "SPX"},
+    {"symbol": ".IXIC", "name": "Nasdaq", "unit": "Index", "id": "IXIC"},
+    {"symbol": ".DXY", "name": "DXY (US Dollar)", "unit": "Index", "id": "DXY"},
+    {"symbol": "US10Y", "name": "US 10Y Treasury", "unit": "%", "id": "US10Y"},
+    {"symbol": "US2Y", "name": "US 2Y Treasury", "unit": "%", "id": "US2Y"},
+    {"symbol": ".VIX", "name": "VIX", "unit": "Index", "id": "VIX"},
+    {"symbol": "@GC.1", "name": "Gold", "unit": "USD", "id": "GOLD"},
+]
+
+FRED_FED_RATE = {"id": "DFF", "name": "Fed Funds Rate", "unit": "%", "source": "FRED"}
+
+
+def _parse_cnbc_value(raw: str):
+    if not raw:
+        return None
+    cleaned = raw.replace(",", "").replace("%", "").strip()
+    try:
+        return float(cleaned)
+    except ValueError:
+        return None
 
 
 def _fetch_fred_series(series_id: str) -> dict:
-    """Fetch latest value from FRED public API (no API key needed for observation).
-    Uses 30-day window for faster response (0.4s vs 2s per call).
-    """
+    """Fetch latest value from FRED public CSV (no API key needed)."""
     try:
         end = datetime.now(timezone.utc).strftime("%Y-%m-%d")
         start = (datetime.now(timezone.utc) - timedelta(days=30)).strftime("%Y-%m-%d")
@@ -1146,7 +1163,6 @@ def _fetch_fred_series(series_id: str) -> dict:
         lines = resp.text.strip().split("\n")
         if len(lines) < 2:
             return {}
-        # Parse CSV: DATE,VALUE
         latest_line = None
         prev_line = None
         for line in reversed(lines):
@@ -1159,10 +1175,7 @@ def _fetch_fred_series(series_id: str) -> dict:
                     break
         if not latest_line:
             return {}
-        result = {
-            "value": float(latest_line[1]),
-            "updated": latest_line[0],
-        }
+        result = {"value": float(latest_line[1]), "updated": latest_line[0]}
         if prev_line:
             result["previous"] = float(prev_line[1])
         return result
@@ -1172,26 +1185,48 @@ def _fetch_fred_series(series_id: str) -> dict:
 
 
 def _build_macro_data() -> dict:
-    """Build macro economic dashboard data. NO Binance API (shared IP with autotrader)."""
+    """Build macro data from CNBC (primary) + FRED (Fed Rate only)."""
     indicators = []
-    for series_id, info in FRED_SERIES.items():
-        data = _fetch_fred_series(series_id)
-        if data:
-            indicators.append(MacroIndicator(
-                id=series_id,
-                name=info["name"],
-                value=data["value"],
-                previous=data.get("previous"),
-                unit=info["unit"],
-                updated=data.get("updated", ""),
-                source=info["source"],
-            ))
+    symbol_map = {ind["symbol"]: ind for ind in CNBC_INDICATORS}
+
+    # 1. CNBC batch (7 indicators, 1 HTTP call)
+    try:
+        symbols = "|".join(ind["symbol"] for ind in CNBC_INDICATORS)
+        url = CNBC_QUOTE_URL.format(symbols=symbols)
+        resp = http_requests.get(url, headers={"User-Agent": "Mozilla/5.0"}, timeout=10)
+        resp.raise_for_status()
+        data = resp.json()
+        quotes = data.get("FormattedQuoteResult", {}).get("FormattedQuote", [])
+        if isinstance(quotes, dict):
+            quotes = [quotes]
+        for q in quotes:
+            ind = symbol_map.get(q.get("symbol", ""))
+            if not ind:
+                continue
+            value = _parse_cnbc_value(q.get("last", ""))
+            change = _parse_cnbc_value(q.get("change", ""))
+            if value is not None:
+                indicators.append(MacroIndicator(
+                    id=ind["id"], name=ind["name"], value=value,
+                    change=change, unit=ind["unit"],
+                    updated=q.get("last_timedate", ""), source="CNBC",
+                ))
+    except Exception as e:
+        logger.warning(f"CNBC macro fetch failed: {e}")
+
+    # 2. FRED: Fed Funds Rate only
+    fed = _fetch_fred_series(FRED_FED_RATE["id"])
+    if fed:
+        change = round(fed["value"] - fed.get("previous", fed["value"]), 3) if fed.get("previous") else None
+        indicators.append(MacroIndicator(
+            id=FRED_FED_RATE["id"], name=FRED_FED_RATE["name"],
+            value=fed["value"], change=change, unit=FRED_FED_RATE["unit"],
+            updated=fed.get("updated", ""), source="FRED",
+        ))
 
     return MacroResponse(
-        indicators=indicators,
-        derivatives=None,
-        events=[],  # TradingView widget handles calendar on frontend
-        generated=datetime.now(timezone.utc).isoformat(),
+        indicators=indicators, derivatives=None,
+        events=[], generated=datetime.now(timezone.utc).isoformat(),
     ).model_dump()
 
 

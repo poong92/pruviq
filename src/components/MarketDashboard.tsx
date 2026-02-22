@@ -116,7 +116,8 @@ type MacroIndicator = {
   id: string;
   name: string;
   value: number;
-  previous: number | null;
+  change: number | null;
+  previous?: number | null;
   unit: string;
   updated: string;
   source: string;
@@ -519,9 +520,14 @@ export default function MarketDashboard({ lang = 'en' }: { lang?: 'en' | 'ko' })
             {macro && macro.indicators.length > 0 && (
               <div class="p-4 grid grid-cols-2 md:grid-cols-3 gap-3">
                 {macro.indicators.map(ind => {
-                  const delta = ind.previous != null ? ind.value - ind.previous : null;
+                  const delta = ind.change ?? (ind.previous != null ? ind.value - ind.previous : null);
                   const deltaColor = delta != null ? (delta >= 0 ? 'text-[--color-up]' : 'text-[--color-down]') : '';
                   const arrow = delta != null ? (delta >= 0 ? '\u25B2' : '\u25BC') : '';
+                  // Format large numbers (S&P, Nasdaq, Gold)
+                  const fmtValue = ind.value >= 1000
+                    ? ind.value.toLocaleString('en-US', { maximumFractionDigits: 2 })
+                    : ind.value.toFixed(2);
+                  const suffix = ind.unit === '%' ? '%' : '';
                   return (
                     <div key={ind.id} class="p-3 bg-[--color-bg-hover] rounded-lg">
                       <div class="text-[0.625rem] text-[--color-text-muted] uppercase tracking-wider mb-1 truncate" title={ind.name}>
@@ -529,7 +535,7 @@ export default function MarketDashboard({ lang = 'en' }: { lang?: 'en' | 'ko' })
                       </div>
                       <div class="flex items-baseline gap-1.5">
                         <span class="text-lg font-bold font-mono tabular-nums">
-                          {ind.value.toFixed(2)}{ind.unit === '%' ? '%' : ''}
+                          {ind.unit === 'USD' ? '$' : ''}{fmtValue}{suffix}
                         </span>
                         {delta != null && (
                           <span class={`text-[0.625rem] font-mono ${deltaColor}`}>
@@ -537,11 +543,9 @@ export default function MarketDashboard({ lang = 'en' }: { lang?: 'en' | 'ko' })
                           </span>
                         )}
                       </div>
-                      {ind.previous != null && (
-                        <div class="text-[0.5625rem] text-[--color-text-muted] mt-0.5 font-mono">
-                          {l.macroPrevious}: {ind.previous.toFixed(2)}{ind.unit === '%' ? '%' : ''}
-                        </div>
-                      )}
+                      <div class="text-[0.5625rem] text-[--color-text-muted] mt-0.5">
+                        {ind.source} · {ind.updated}
+                      </div>
                     </div>
                   );
                 })}
