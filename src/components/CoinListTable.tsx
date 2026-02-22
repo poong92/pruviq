@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'preact/hooks';
 import { formatPrice, formatVolume, winRateColor, profitFactorColor, signColor } from '../utils/format';
+import { generateCSV, downloadCSV } from '../utils/csv';
 import { STATIC_DATA, fetchWithFallback } from '../config/api';
 import MiniSparkline from './MiniSparkline';
 import ExchangeCTA from './ExchangeCTA';
@@ -73,6 +74,7 @@ const labels = {
     nextPage: 'Next page',
     disclaimer: 'Past performance does not guarantee future results',
     nStrategies: (n: number) => `${n} strategies tested`,
+    downloadCsv: 'Download CSV',
   },
   ko: {
     search: '코인 검색...',
@@ -100,6 +102,7 @@ const labels = {
     nextPage: '다음 페이지',
     disclaimer: '과거 성과가 미래 수익을 보장하지 않습니다',
     nStrategies: (n: number) => `${n}개 전략 테스트`,
+    downloadCsv: 'CSV 다운로드',
   },
 };
 
@@ -392,10 +395,30 @@ export default function CoinListTable({ lang = 'en' }: { lang?: 'en' | 'ko' }) {
 
   const basePath = lang === 'ko' ? '/ko/coins' : '/coins';
 
+  const handleDownloadCsv = () => {
+    const headers = ['Rank', 'Symbol', 'Name', 'Price', '24h Change %', 'Market Cap', 'Trades', 'Win Rate %', 'Profit Factor', 'Return %', 'Best Strategy'];
+    const rows = sorted.map((coin, i) => [
+      i + 1,
+      coin.symbol,
+      coin.name || '',
+      coin.price,
+      coin.change_24h != null ? coin.change_24h.toFixed(2) : null,
+      coin.market_cap,
+      coin.trades,
+      coin.win_rate != null ? coin.win_rate.toFixed(1) : null,
+      coin.profit_factor != null ? coin.profit_factor.toFixed(2) : null,
+      coin.total_return_pct != null ? coin.total_return_pct.toFixed(1) : null,
+      coin.best_strategy_name || '',
+    ]);
+    const csv = generateCSV(headers, rows);
+    const dateStr = new Date().toISOString().slice(0, 10);
+    downloadCSV(csv, `pruviq-coins-${dateStr}.csv`);
+  };
+
   return (
     <div class="fade-in">
-      {/* Search */}
-      <div class="mb-4">
+      {/* Search + CSV download */}
+      <div class="mb-4 flex flex-wrap items-center gap-3">
         <label htmlFor="coin-search" class="sr-only">{t.search}</label>
         <input
           id="coin-search"
@@ -406,6 +429,16 @@ export default function CoinListTable({ lang = 'en' }: { lang?: 'en' | 'ko' }) {
           onInput={(e: Event) => { setSearch((e.target as HTMLInputElement).value); setPage(0); }}
           class="w-full max-w-xs px-4 py-2.5 bg-[--color-bg-card] border border-[--color-border] rounded-lg text-[--color-text] font-mono text-sm outline-none focus:border-[--color-accent] transition-colors"
         />
+        {sorted.length > 0 && (
+          <button
+            type="button"
+            onClick={handleDownloadCsv}
+            class="px-3 py-2.5 border border-[--color-border] rounded-lg bg-[--color-bg-card] text-[--color-text] font-mono text-sm cursor-pointer hover:border-[--color-accent] transition-colors min-h-[44px] whitespace-nowrap"
+            title={t.downloadCsv}
+          >
+            {t.downloadCsv}
+          </button>
+        )}
       </div>
 
       {/* Table */}

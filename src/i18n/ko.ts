@@ -496,4 +496,7 @@ export const ko: Record<TranslationKey, string> = {
   'methodology.disclaimer_title': '면책 조항',
   'methodology.disclaimer_text': '과거 성과는 미래 결과를 보장하지 않습니다. 백테스트는 시뮬레이션이지 예측이 아닙니다. 실제 트레이딩에는 어떤 모델로도 포착할 수 없는 위험이 있으며, 감정적 의사결정, 연결 문제, 시장 레짐 변화 등이 포함됩니다. 항상 감당할 수 있는 자본으로만 테스트하세요.',
   'footer.methodology': '방법론',
+
+  // CSV download
+  'csv.download': 'CSV 다운로드',
 };

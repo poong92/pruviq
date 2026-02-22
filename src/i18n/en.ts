@@ -494,6 +494,9 @@ export const en = {
   'methodology.disclaimer_title': 'Disclaimer',
   'methodology.disclaimer_text': 'Past performance does not guarantee future results. Backtests are simulations — not predictions. Real trading involves risks not captured in any model, including emotional decision-making, connectivity issues, and market regime changes. Always test with capital you can afford to lose.',
   'footer.methodology': 'Methodology',
+
+  // CSV download
+  'csv.download': 'Download CSV',
 } as const;
 
 export type TranslationKey = keyof typeof en;
