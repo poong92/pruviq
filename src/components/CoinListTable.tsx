@@ -3,6 +3,15 @@ import { formatPrice, formatVolume, winRateColor, profitFactorColor, signColor }
 import { STATIC_DATA, fetchWithFallback } from '../config/api';
 import MiniSparkline from './MiniSparkline';
 
+interface StrategyStats {
+  name: string;
+  direction: string;
+  trades: number | null;
+  win_rate: number | null;
+  profit_factor: number | null;
+  total_return_pct: number | null;
+}
+
 interface CoinRow {
   symbol: string;
   name: string;
@@ -15,16 +24,22 @@ interface CoinRow {
   market_cap_rank: number | null;
   volume_24h: number;
   sparkline_7d: number[];
-  // Strategy overlay (null if no backtest data)
+  // Best strategy (Level 0 — default view)
+  best_strategy: string | null;
+  best_strategy_name: string | null;
   trades: number | null;
   win_rate: number | null;
   profit_factor: number | null;
   total_return_pct: number | null;
+  // All strategies (Level 1 — comparison mode)
+  strategies: Record<string, StrategyStats> | null;
 }
 
 interface StatsData {
   generated: string;
   total_coins: number;
+  total_strategies?: number;
+  strategies_meta?: Record<string, { name: string; direction: string; params: Record<string, number> }>;
   coins: CoinRow[];
 }
 
@@ -41,6 +56,7 @@ const labels = {
     mcap: 'Market Cap',
     volume: 'Volume (24h)',
     chart: 'Last 7 Days',
+    strategy: 'Best Strategy',
     wr: 'WR',
     pf: 'PF',
     ret: 'Return',
@@ -51,6 +67,8 @@ const labels = {
     tableCaption: 'Cryptocurrency prices, market cap, strategy performance, and 7-day charts',
     prevPage: 'Previous page',
     nextPage: 'Next page',
+    disclaimer: 'Past performance does not guarantee future results',
+    nStrategies: (n: number) => `${n} strategies tested`,
   },
   ko: {
     search: '코인 검색...',
@@ -62,6 +80,7 @@ const labels = {
     mcap: '시가총액',
     volume: '거래량 (24h)',
     chart: '7일 차트',
+    strategy: '최적 전략',
     wr: '승률',
     pf: 'PF',
     ret: '수익률',
@@ -72,6 +91,8 @@ const labels = {
     tableCaption: '암호화폐 가격, 시가총액, 전략 성과, 7일 차트',
     prevPage: '이전 페이지',
     nextPage: '다음 페이지',
+    disclaimer: '과거 성과가 미래 수익을 보장하지 않습니다',
+    nStrategies: (n: number) => `${n}개 전략 테스트`,
   },
 };
 
@@ -120,6 +141,28 @@ function CoinLogo({ image, symbol }: { image: string; symbol: string }) {
   );
 }
 
+const STRATEGY_SHORT_NAMES: Record<string, string> = {
+  'bb-squeeze-short': 'BB Squeeze',
+  'bb-squeeze-long': 'BB Squeeze',
+  'rsi-reversal-long': 'RSI Reversal',
+  'macd-momentum-long': 'MACD',
+  'stochastic-oversold-short': 'Stochastic',
+};
+
+function StrategyBadge({ strategyId, name, direction }: { strategyId: string | null; name: string | null; direction?: string }) {
+  if (!strategyId || !name) return <span class="text-[--color-text-muted]">-</span>;
+  const shortName = STRATEGY_SHORT_NAMES[strategyId] || name;
+  const dir = direction || (strategyId.includes('long') ? 'long' : 'short');
+  const dirColor = dir === 'long' ? 'text-[--color-up]' : 'text-[--color-down]';
+  const dirLabel = dir === 'long' ? 'L' : 'S';
+  return (
+    <span class="inline-flex items-center gap-1 text-[0.6875rem]" title={name}>
+      <span class={`font-semibold ${dirColor}`}>{dirLabel}</span>
+      <span class="text-[--color-text]">{shortName}</span>
+    </span>
+  );
+}
+
 function SkeletonRow() {
   return (
     <tr class="border-b border-[--color-border]">
@@ -132,6 +175,7 @@ function SkeletonRow() {
       <td class="px-2 py-3 text-right hidden md:table-cell"><div class="skeleton h-3 w-16 ml-auto" /></td>
       <td class="px-2 py-3 text-right hidden md:table-cell"><div class="skeleton h-3 w-14 ml-auto" /></td>
       <td class="px-2 py-3 hidden lg:table-cell"><div class="skeleton h-6 w-[120px] ml-auto" /></td>
+      <td class="px-2 py-3 hidden md:table-cell"><div class="skeleton h-3 w-20" /></td>
       <td class="px-2 py-3 text-right"><div class="skeleton h-3 w-10 ml-auto" /></td>
       <td class="px-2 py-3 text-right hidden lg:table-cell"><div class="skeleton h-3 w-10 ml-auto" /></td>
       <td class="px-2 py-3 text-right"><div class="skeleton h-3 w-12 ml-auto" /></td>
@@ -287,6 +331,7 @@ export default function CoinListTable({ lang = 'en' }: { lang?: 'en' | 'ko' }) {
               <SortableHeader sortKey="market_cap" currentSort={sortBy} sortDesc={sortDesc} onClick={handleSort} className="text-right hidden md:table-cell">{t.mcap}</SortableHeader>
               <SortableHeader sortKey="volume_24h" currentSort={sortBy} sortDesc={sortDesc} onClick={handleSort} className="text-right hidden md:table-cell">{t.volume}</SortableHeader>
               <th scope="col" class="px-2 py-2 text-center font-mono text-[0.6875rem] tracking-wider uppercase border-b border-[--color-border] text-[--color-text-muted] hidden lg:table-cell cursor-default select-none w-[140px]">{t.chart}</th>
+              <th scope="col" class="px-2 py-2 text-left font-mono text-[0.6875rem] tracking-wider uppercase border-b border-[--color-border] text-[--color-text-muted] hidden md:table-cell cursor-default select-none">{t.strategy}</th>
               <SortableHeader sortKey="win_rate" currentSort={sortBy} sortDesc={sortDesc} onClick={handleSort} className="text-right">{t.wr}</SortableHeader>
               <SortableHeader sortKey="profit_factor" currentSort={sortBy} sortDesc={sortDesc} onClick={handleSort} className="text-right hidden lg:table-cell">{t.pf}</SortableHeader>
               <SortableHeader sortKey="total_return_pct" currentSort={sortBy} sortDesc={sortDesc} onClick={handleSort} className="text-right">{t.ret}</SortableHeader>
@@ -294,7 +339,7 @@ export default function CoinListTable({ lang = 'en' }: { lang?: 'en' | 'ko' }) {
           </thead>
           <tbody>
             {pageItems.length === 0 && (
-              <tr><td colSpan={12} class="py-8 text-center text-[--color-text-muted]">{t.noResults}</td></tr>
+              <tr><td colSpan={13} class="py-8 text-center text-[--color-text-muted]">{t.noResults}</td></tr>
             )}
             {pageItems.map((coin, i) => {
               const rank = page * PER_PAGE + i + 1;
@@ -354,6 +399,11 @@ export default function CoinListTable({ lang = 'en' }: { lang?: 'en' | 'ko' }) {
                       : <span class="text-[--color-text-muted]">-</span>}
                   </td>
 
+                  {/* Best Strategy Name */}
+                  <td class="px-2 py-2.5 hidden md:table-cell">
+                    <StrategyBadge strategyId={coin.best_strategy} name={coin.best_strategy_name} />
+                  </td>
+
                   {/* Strategy: WR */}
                   <td class="px-2 py-2.5 text-right tabular-nums">
                     {coin.win_rate != null
@@ -380,6 +430,11 @@ export default function CoinListTable({ lang = 'en' }: { lang?: 'en' | 'ko' }) {
           </tbody>
         </table>
       </div>
+
+      {/* Disclaimer */}
+      <p class="mt-2 text-[0.625rem] text-[--color-text-muted] font-mono px-1">
+        {t.disclaimer}. {data.length > 0 && t.nStrategies(Object.keys(data[0]?.strategies || {}).length || 1)}
+      </p>
 
       {/* Pagination */}
       {totalPages > 1 && (

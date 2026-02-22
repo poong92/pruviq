@@ -101,11 +101,17 @@ def downsample_sparkline(prices: list[float], target: int = 42) -> list[float]:
     return [round(prices[int(i * step)], 2) for i in range(target)]
 
 
-def load_strategy_stats() -> dict[str, dict]:
-    """Load per-coin strategy stats from daily-generated JSON.
+def load_strategy_stats() -> dict:
+    """Load per-coin multi-strategy stats from daily-generated JSON.
 
-    Returns a dict: {"BTCUSDT": {"trades": 45, "win_rate": 62.5, ...}, ...}
-    Maps CoinGecko symbol (e.g. "BTC") → our "BTCUSDT" by appending USDT.
+    Supports both legacy (single strategy) and new (multi-strategy) schema.
+
+    Returns:
+        {
+            "strategies_meta": {"bb-squeeze-short": {"name": ..., "direction": ...}, ...},
+            "best_strategy": {"BTC": "bb-squeeze-short", ...},
+            "per_coin": {"BTC": {"bb-squeeze-short": {...}, "rsi-reversal-long": {...}}, ...},
+        }
     """
     if not STRATEGY_STATS.exists():
         print("  INFO: No strategy stats file, coins will have market data only")
@@ -113,21 +119,95 @@ def load_strategy_stats() -> dict[str, dict]:
     try:
         with open(STRATEGY_STATS) as f:
             data = json.load(f)
-        # Build symbol lookup: "BTC" → stats (our keys are like "BTCUSDT")
-        lookup = {}
-        for sym, stats in data.get("coins", {}).items():
-            # "BTCUSDT" → key "BTC", "1000PEPEUSDT" → key "1000PEPE"
-            base = sym.replace("USDT", "") if sym.endswith("USDT") else sym
-            lookup[base] = stats
-        print(f"  Strategy stats: {len(lookup)} coins loaded")
-        return lookup
+
+        # Detect schema version
+        if "strategies" in data:
+            # New multi-strategy schema
+            return _load_multi_strategy(data)
+        elif "coins" in data:
+            # Legacy single-strategy schema (backward compatible)
+            return _load_legacy_strategy(data)
+        else:
+            return {}
     except (json.JSONDecodeError, KeyError) as e:
         print(f"  WARN: Failed to load strategy stats: {e}")
         return {}
 
 
-def build_coins_list(cg_coins: list[dict], strategy_stats: dict[str, dict]) -> list[dict]:
-    """Build coins list from CoinGecko data + strategy stats overlay."""
+def _sym_to_base(sym: str) -> str:
+    """Convert BTCUSDT → BTC, 1000PEPEUSDT → 1000PEPE."""
+    return sym.replace("USDT", "") if sym.endswith("USDT") else sym
+
+
+def _load_multi_strategy(data: dict) -> dict:
+    """Parse new multi-strategy schema."""
+    strategies_meta = {}
+    per_coin = {}
+    best_strategy_raw = data.get("best_strategy", {})
+
+    for sid, sdata in data.get("strategies", {}).items():
+        strategies_meta[sid] = {
+            "name": sdata.get("name", sid),
+            "direction": sdata.get("direction", "short"),
+            "params": sdata.get("params", {}),
+            "status": sdata.get("status", "experimental"),
+        }
+        for sym, stats in sdata.get("coins", {}).items():
+            base = _sym_to_base(sym)
+            if base not in per_coin:
+                per_coin[base] = {}
+            per_coin[base][sid] = stats
+
+    # Convert best_strategy keys
+    best_strategy = {}
+    for sym, sid in best_strategy_raw.items():
+        best_strategy[_sym_to_base(sym)] = sid
+
+    print(f"  Strategy stats: {len(per_coin)} coins, {len(strategies_meta)} strategies")
+    return {
+        "strategies_meta": strategies_meta,
+        "best_strategy": best_strategy,
+        "per_coin": per_coin,
+    }
+
+
+def _load_legacy_strategy(data: dict) -> dict:
+    """Parse legacy single-strategy schema (backward compatible)."""
+    sid = data.get("strategy", "bb-squeeze-short")
+    per_coin = {}
+    for sym, stats in data.get("coins", {}).items():
+        base = _sym_to_base(sym)
+        per_coin[base] = {sid: stats}
+
+    best_strategy = {base: sid for base in per_coin}
+    strategies_meta = {
+        sid: {
+            "name": "BB Squeeze SHORT",
+            "direction": "short",
+            "params": data.get("params", {}),
+            "status": "verified",
+        }
+    }
+    print(f"  Strategy stats (legacy): {len(per_coin)} coins loaded")
+    return {
+        "strategies_meta": strategies_meta,
+        "best_strategy": best_strategy,
+        "per_coin": per_coin,
+    }
+
+
+def build_coins_list(cg_coins: list[dict], strategy_stats: dict) -> list[dict]:
+    """Build coins list from CoinGecko data + multi-strategy stats overlay.
+
+    Each coin gets:
+    - CoinGecko market data (price, change, market_cap, sparkline)
+    - Best strategy summary (trades, win_rate, profit_factor, total_return_pct)
+    - All strategies object (for comparison mode)
+    """
+    per_coin = strategy_stats.get("per_coin", {})
+    best_map = strategy_stats.get("best_strategy", {})
+    meta = strategy_stats.get("strategies_meta", {})
+
     coins = []
     merged_count = 0
     for cg in cg_coins:
@@ -146,25 +226,51 @@ def build_coins_list(cg_coins: list[dict], strategy_stats: dict[str, dict]) -> l
             "market_cap_rank": cg.get("market_cap_rank"),
             "volume_24h": cg.get("total_volume", 0) or 0,
             "sparkline_7d": downsample_sparkline(sparkline_raw),
-            # Strategy fields (null if no backtest data)
+            # Best strategy fields (Level 0 — default view)
+            "best_strategy": None,
+            "best_strategy_name": None,
             "trades": None,
             "win_rate": None,
             "profit_factor": None,
             "total_return_pct": None,
+            # All strategies (Level 1 — comparison mode)
+            "strategies": None,
         }
 
         # Merge strategy stats if available
-        stats = strategy_stats.get(cg_symbol)
-        if stats:
-            coin["trades"] = stats.get("trades")
-            coin["win_rate"] = stats.get("win_rate")
-            coin["profit_factor"] = stats.get("profit_factor")
-            coin["total_return_pct"] = stats.get("total_return_pct")
+        coin_strategies = per_coin.get(cg_symbol)
+        if coin_strategies:
             merged_count += 1
+
+            # Best strategy summary (for default view)
+            best_sid = best_map.get(cg_symbol)
+            if best_sid and best_sid in coin_strategies:
+                best_stats = coin_strategies[best_sid]
+                best_meta = meta.get(best_sid, {})
+                coin["best_strategy"] = best_sid
+                coin["best_strategy_name"] = best_meta.get("name", best_sid)
+                coin["trades"] = best_stats.get("trades")
+                coin["win_rate"] = best_stats.get("win_rate")
+                coin["profit_factor"] = best_stats.get("profit_factor")
+                coin["total_return_pct"] = best_stats.get("total_return_pct")
+
+            # All strategies (for comparison table)
+            strategies_list = {}
+            for sid, stats in coin_strategies.items():
+                s_meta = meta.get(sid, {})
+                strategies_list[sid] = {
+                    "name": s_meta.get("name", sid),
+                    "direction": s_meta.get("direction", "short"),
+                    "trades": stats.get("trades"),
+                    "win_rate": stats.get("win_rate"),
+                    "profit_factor": stats.get("profit_factor"),
+                    "total_return_pct": stats.get("total_return_pct"),
+                }
+            coin["strategies"] = strategies_list
 
         coins.append(coin)
 
-    if strategy_stats:
+    if per_coin:
         print(f"  Merged strategy stats: {merged_count}/{len(coins)} coins")
     return coins
 
@@ -245,10 +351,14 @@ def main():
     coins = build_coins_list(cg_coins, strategy_stats)
 
     # 6. Write coins-stats.json
+    strategies_meta = strategy_stats.get("strategies_meta", {
+        "bb-squeeze-short": {"name": "BB Squeeze SHORT", "direction": "short",
+                             "params": {"sl_pct": 10.0, "tp_pct": 8.0}}
+    })
     output = {
         "generated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
-        "strategy": "BB Squeeze SHORT",
-        "params": {"sl_pct": 10.0, "tp_pct": 8.0},
+        "total_strategies": len(strategies_meta),
+        "strategies_meta": strategies_meta,
         "total_coins": len(coins),
         "coins": coins,
     }
