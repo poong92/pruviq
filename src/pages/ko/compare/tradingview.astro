@@ -1,0 +1,167 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import { useTranslations } from '../../../i18n/index';
+
+const t = useTranslations('ko');
+
+const rows = [
+  { label: t('vs.row_price'), p: t('vs.row_price_p'), tv: t('vs.row_price_tv'), highlight: true },
+  { label: t('vs.row_coding'), p: t('vs.row_coding_p'), tv: t('vs.row_coding_tv'), highlight: true },
+  { label: t('vs.row_coins'), p: t('vs.row_coins_p'), tv: t('vs.row_coins_tv') },
+  { label: t('vs.row_data'), p: t('vs.row_data_p'), tv: t('vs.row_data_tv') },
+  { label: t('vs.row_fees'), p: t('vs.row_fees_p'), tv: t('vs.row_fees_tv') },
+  { label: t('vs.row_multi'), p: t('vs.row_multi_p'), tv: t('vs.row_multi_tv'), highlight: true },
+  { label: t('vs.row_live'), p: t('vs.row_live_p'), tv: t('vs.row_live_tv') },
+  { label: t('vs.row_builder'), p: t('vs.row_builder_p'), tv: t('vs.row_builder_tv') },
+  { label: t('vs.row_api'), p: t('vs.row_api_p'), tv: t('vs.row_api_tv') },
+  { label: t('vs.row_community'), p: t('vs.row_community_p'), tv: t('vs.row_community_tv') },
+];
+---
+
+<Layout title={t('meta.vs_tv_title')} description={t('meta.vs_tv_desc')}>
+
+  <!-- HERO -->
+  <section class="py-16">
+    <div class="max-w-5xl mx-auto px-4">
+      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('vs.tag')}</p>
+      <h1 class="text-3xl md:text-5xl font-bold mb-4">
+        {t('vs.title')}
+        <span class="block text-lg md:text-2xl font-normal text-[--color-text-muted] mt-2">{t('vs.subtitle')}</span>
+      </h1>
+      <p class="text-[--color-text-muted] text-lg max-w-2xl mb-6">
+        {t('vs.desc')}
+      </p>
+      <div class="border border-[--color-accent]/30 rounded-lg p-4 bg-[--color-accent]/5 max-w-2xl">
+        <p class="font-mono text-[--color-accent] text-xs font-bold mb-1">{t('vs.tldr')}</p>
+        <p class="text-sm text-[--color-text-muted]">{t('vs.tldr_text')}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMPARISON TABLE -->
+  <section class="pb-12 border-t border-[--color-border] pt-12">
+    <div class="max-w-5xl mx-auto px-4">
+      <!-- Desktop table -->
+      <div class="hidden md:block overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-[--color-border]">
+              <th class="text-left py-3 px-4 font-mono text-[--color-text-muted] text-xs uppercase tracking-wider w-1/4">{t('vs.feature')}</th>
+              <th class="text-left py-3 px-4 font-mono text-[--color-accent] text-xs uppercase tracking-wider w-[37.5%]">{t('vs.pruviq')}</th>
+              <th class="text-left py-3 px-4 font-mono text-[--color-text-muted] text-xs uppercase tracking-wider w-[37.5%]">{t('vs.tradingview')}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((row) => (
+              <tr class={`border-b border-[--color-border] ${row.highlight ? 'bg-[--color-accent]/5' : ''}`}>
+                <td class="py-3 px-4 font-medium">{row.label}</td>
+                <td class="py-3 px-4 text-[--color-accent]">{row.p}</td>
+                <td class="py-3 px-4 text-[--color-text-muted]">{row.tv}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Mobile cards -->
+      <div class="md:hidden space-y-4">
+        {rows.map((row) => (
+          <div class={`border border-[--color-border] rounded-lg p-4 ${row.highlight ? 'bg-[--color-accent]/5 border-[--color-accent]/30' : 'bg-[--color-bg-card]'}`}>
+            <p class="font-mono text-xs text-[--color-text-muted] uppercase tracking-wider mb-2">{row.label}</p>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <p class="text-xs text-[--color-accent] font-mono mb-1">PRUVIQ</p>
+                <p class="text-sm text-[--color-accent]">{row.p}</p>
+              </div>
+              <div>
+                <p class="text-xs text-[--color-text-muted] font-mono mb-1">{t('vs.tradingview')}</p>
+                <p class="text-sm text-[--color-text-muted]">{row.tv}</p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- WHEN TO CHOOSE -->
+  <section class="pb-12 border-t border-[--color-border] pt-12 bg-[--color-bg-subtle]">
+    <div class="max-w-5xl mx-auto px-4">
+      <div class="grid md:grid-cols-2 gap-8">
+        <!-- Choose PRUVIQ -->
+        <div class="border border-[--color-accent]/30 rounded-lg p-6 bg-[--color-bg-card]">
+          <div class="flex items-center gap-3 mb-4">
+            <span class="inline-flex items-center justify-center w-8 h-8 rounded bg-[--color-accent]/10 text-[--color-accent] font-mono text-sm font-bold shrink-0">P</span>
+            <h3 class="font-bold text-lg">{t('vs.when_pruviq')}</h3>
+          </div>
+          <ul class="space-y-3">
+            <li class="flex gap-2 text-sm">
+              <span class="text-[--color-accent] shrink-0 mt-0.5">+</span>
+              <span>{t('vs.when_pruviq_1')}</span>
+            </li>
+            <li class="flex gap-2 text-sm">
+              <span class="text-[--color-accent] shrink-0 mt-0.5">+</span>
+              <span>{t('vs.when_pruviq_2')}</span>
+            </li>
+            <li class="flex gap-2 text-sm">
+              <span class="text-[--color-accent] shrink-0 mt-0.5">+</span>
+              <span>{t('vs.when_pruviq_3')}</span>
+            </li>
+            <li class="flex gap-2 text-sm">
+              <span class="text-[--color-accent] shrink-0 mt-0.5">+</span>
+              <span>{t('vs.when_pruviq_4')}</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Choose TradingView -->
+        <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card]">
+          <div class="flex items-center gap-3 mb-4">
+            <span class="inline-flex items-center justify-center w-8 h-8 rounded bg-[--color-bg-subtle] text-[--color-text-muted] font-mono text-sm font-bold shrink-0">TV</span>
+            <h3 class="font-bold text-lg">{t('vs.when_tv')}</h3>
+          </div>
+          <ul class="space-y-3">
+            <li class="flex gap-2 text-sm text-[--color-text-muted]">
+              <span class="shrink-0 mt-0.5">+</span>
+              <span>{t('vs.when_tv_1')}</span>
+            </li>
+            <li class="flex gap-2 text-sm text-[--color-text-muted]">
+              <span class="shrink-0 mt-0.5">+</span>
+              <span>{t('vs.when_tv_2')}</span>
+            </li>
+            <li class="flex gap-2 text-sm text-[--color-text-muted]">
+              <span class="shrink-0 mt-0.5">+</span>
+              <span>{t('vs.when_tv_3')}</span>
+            </li>
+            <li class="flex gap-2 text-sm text-[--color-text-muted]">
+              <span class="shrink-0 mt-0.5">+</span>
+              <span>{t('vs.when_tv_4')}</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="py-20 border-t border-[--color-border]">
+    <div class="max-w-5xl mx-auto px-4 text-center">
+      <h2 class="text-3xl md:text-4xl font-bold mb-4">
+        <span class="text-[--color-accent]">{t('vs.cta_title')}</span>
+      </h2>
+      <p class="text-[--color-text-muted] text-lg mb-8 max-w-xl mx-auto">{t('vs.cta_desc')}</p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center mb-4">
+        <a href="/ko/simulate"
+           class="btn-primary inline-block bg-[--color-accent] text-[--color-bg] px-8 py-3 rounded font-semibold text-lg hover:bg-[--color-accent-dim]">
+          {t('cta.button1')} &rarr;
+        </a>
+        <a href="/ko/strategies"
+           class="inline-block border border-[--color-border] text-[--color-text] px-8 py-3 rounded font-semibold text-lg hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
+          {t('hero.cta1')}
+        </a>
+      </div>
+      <p class="text-[--color-text-muted] text-xs mt-6 max-w-lg mx-auto">{t('cta.disclaimer')}</p>
+    </div>
+  </section>
+
+</Layout>
