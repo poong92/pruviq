@@ -40,6 +40,9 @@ const labels = {
     error: 'Failed to load coin data.',
     noResults: 'No coins match your search.',
     showing: (from: number, to: number, total: number) => `${from}-${to} of ${total}`,
+    tableCaption: 'Cryptocurrency prices, market cap, and 7-day charts',
+    prevPage: 'Previous page',
+    nextPage: 'Next page',
   },
   ko: {
     search: '코인 검색...',
@@ -55,6 +58,9 @@ const labels = {
     error: '코인 데이터 로딩 실패.',
     noResults: '검색 결과가 없습니다.',
     showing: (from: number, to: number, total: number) => `${from}-${to} / ${total}`,
+    tableCaption: '암호화폐 가격, 시가총액, 7일 차트',
+    prevPage: '이전 페이지',
+    nextPage: '다음 페이지',
   },
 };
 
@@ -75,7 +81,7 @@ function ChangeCell({ value, className = '' }: { value: number | null; className
   const arrow = value >= 0 ? '\u25B2' : '\u25BC';
   return (
     <td class={`px-2 py-2.5 text-right ${color} ${className}`}>
-      <span class="text-[0.625rem]">{arrow}</span> {Math.abs(value).toFixed(1)}%
+      <span class="text-[0.625rem]" aria-hidden="true">{arrow}</span> {Math.abs(value).toFixed(1)}%
     </td>
   );
 }
@@ -84,7 +90,7 @@ function CoinLogo({ image, symbol }: { image: string; symbol: string }) {
   const letter = symbol.charAt(0);
   if (!image) {
     return (
-      <div class="w-6 h-6 rounded-full bg-[--color-border] flex items-center justify-center text-[0.625rem] font-bold text-[--color-text-muted] flex-shrink-0">
+      <div class="w-6 h-6 rounded-full bg-[--color-border] flex items-center justify-center text-[0.625rem] font-bold text-[--color-text-muted] flex-shrink-0" aria-hidden="true">
         {letter}
       </div>
     );
@@ -98,6 +104,7 @@ function CoinLogo({ image, symbol }: { image: string; symbol: string }) {
       loading="lazy"
       class="rounded-full flex-shrink-0"
       style="background: var(--color-border)"
+      aria-hidden="true"
     />
   );
 }
@@ -115,6 +122,31 @@ function SkeletonRow() {
       <td class="px-2 py-3 text-right hidden md:table-cell"><div class="skeleton h-3 w-14 ml-auto" /></td>
       <td class="px-2 py-3 hidden lg:table-cell"><div class="skeleton h-6 w-[120px] ml-auto" /></td>
     </tr>
+  );
+}
+
+function SortableHeader({ sortKey, currentSort, sortDesc, onClick, children, className = '' }: {
+  sortKey: SortKey; currentSort: SortKey; sortDesc: boolean;
+  onClick: (key: SortKey) => void; children: any; className?: string;
+}) {
+  const isActive = currentSort === sortKey;
+  const ariaSortValue = isActive ? (sortDesc ? 'descending' : 'ascending') : 'none';
+  const arrowChar = isActive ? (sortDesc ? ' \u25BC' : ' \u25B2') : '';
+  return (
+    <th
+      scope="col"
+      aria-sort={ariaSortValue}
+      class={`px-2 py-2 font-mono text-[0.6875rem] tracking-wider uppercase whitespace-nowrap border-b border-[--color-border] ${className} ${isActive ? 'text-[--color-accent]' : 'text-[--color-text-muted]'}`}
+    >
+      <button
+        type="button"
+        onClick={() => onClick(sortKey)}
+        class="w-full text-inherit cursor-pointer select-none bg-transparent border-none p-0 font-inherit text-inherit tracking-inherit uppercase"
+        style="text-align: inherit"
+      >
+        {children}<span aria-hidden="true">{arrowChar}</span>
+      </button>
+    </th>
   );
 }
 
@@ -145,12 +177,13 @@ export default function CoinListTable({ lang = 'en' }: { lang?: 'en' | 'ko' }) {
       <div>
         <div class="mb-4"><div class="skeleton h-10 w-80 max-w-full rounded-lg" /></div>
         <div class="overflow-x-auto border border-[--color-border] rounded-xl bg-[--color-bg-card]">
-          <table class="w-full border-collapse font-mono text-[0.8125rem]">
+          <table class="w-full border-collapse font-mono text-[0.8125rem]" aria-busy="true">
+            <caption class="sr-only">{t.tableCaption}</caption>
             <thead>
               <tr>
-                <th class="px-2 py-2 w-10 border-b border-[--color-border]" />
+                <th scope="col" class="px-2 py-2 w-10 border-b border-[--color-border]" />
                 {[t.coin, t.price, t.h1, t.h24, t.d7, t.mcap, t.volume, t.chart].map((h, i) => (
-                  <th key={i} class="px-2 py-2 text-left font-mono text-[0.6875rem] tracking-wider uppercase border-b border-[--color-border] text-[--color-text-muted]">{h}</th>
+                  <th scope="col" key={i} class="px-2 py-2 text-left font-mono text-[0.6875rem] tracking-wider uppercase border-b border-[--color-border] text-[--color-text-muted]">{h}</th>
                 ))}
               </tr>
             </thead>
@@ -209,18 +242,16 @@ export default function CoinListTable({ lang = 'en' }: { lang?: 'en' | 'ko' }) {
 
   const basePath = lang === 'ko' ? '/ko/coins' : '/coins';
 
-  const thCls = (key: SortKey, extra = '') =>
-    `px-2 py-2 cursor-pointer select-none font-mono text-[0.6875rem] tracking-wider uppercase whitespace-nowrap border-b border-[--color-border] ${extra} ${sortBy === key ? 'text-[--color-accent]' : 'text-[--color-text-muted]'}`;
-
-  const arrow = (key: SortKey) => sortBy === key ? (sortDesc ? ' \u25BC' : ' \u25B2') : '';
-
   return (
     <div class="fade-in">
       {/* Search */}
       <div class="mb-4">
+        <label for="coin-search" class="sr-only">{t.search}</label>
         <input
+          id="coin-search"
           type="text"
           placeholder={t.search}
+          aria-label={t.search}
           value={search}
           onInput={(e: Event) => { setSearch((e.target as HTMLInputElement).value); setPage(0); }}
           class="w-full max-w-xs px-4 py-2.5 bg-[--color-bg-card] border border-[--color-border] rounded-lg text-[--color-text] font-mono text-sm outline-none focus:border-[--color-accent] transition-colors"
@@ -230,17 +261,18 @@ export default function CoinListTable({ lang = 'en' }: { lang?: 'en' | 'ko' }) {
       {/* Table */}
       <div class="overflow-x-auto border border-[--color-border] rounded-xl bg-[--color-bg-card]">
         <table class="w-full border-collapse font-mono text-[0.8125rem]">
+          <caption class="sr-only">{t.tableCaption}</caption>
           <thead>
             <tr>
-              <th class="px-2 py-2 text-center font-mono text-[0.6875rem] tracking-wider uppercase border-b border-[--color-border] text-[--color-text-muted] w-10 cursor-default select-none">#</th>
-              <th class={thCls('symbol', 'text-left min-w-[160px]')} onClick={() => handleSort('symbol')}>{t.coin}{arrow('symbol')}</th>
-              <th class={thCls('price', 'text-right')} onClick={() => handleSort('price')}>{t.price}{arrow('price')}</th>
-              <th class={thCls('change_1h', 'text-right hidden lg:table-cell')} onClick={() => handleSort('change_1h')}>{t.h1}{arrow('change_1h')}</th>
-              <th class={thCls('change_24h', 'text-right')} onClick={() => handleSort('change_24h')}>{t.h24}{arrow('change_24h')}</th>
-              <th class={thCls('change_7d', 'text-right hidden lg:table-cell')} onClick={() => handleSort('change_7d')}>{t.d7}{arrow('change_7d')}</th>
-              <th class={thCls('market_cap', 'text-right hidden md:table-cell')} onClick={() => handleSort('market_cap')}>{t.mcap}{arrow('market_cap')}</th>
-              <th class={thCls('volume_24h', 'text-right hidden md:table-cell')} onClick={() => handleSort('volume_24h')}>{t.volume}{arrow('volume_24h')}</th>
-              <th class="px-2 py-2 text-center font-mono text-[0.6875rem] tracking-wider uppercase border-b border-[--color-border] text-[--color-text-muted] hidden lg:table-cell cursor-default select-none w-[140px]">{t.chart}</th>
+              <th scope="col" class="px-2 py-2 text-center font-mono text-[0.6875rem] tracking-wider uppercase border-b border-[--color-border] text-[--color-text-muted] w-10 cursor-default select-none">#</th>
+              <SortableHeader sortKey="symbol" currentSort={sortBy} sortDesc={sortDesc} onClick={handleSort} className="text-left min-w-[160px]">{t.coin}</SortableHeader>
+              <SortableHeader sortKey="price" currentSort={sortBy} sortDesc={sortDesc} onClick={handleSort} className="text-right">{t.price}</SortableHeader>
+              <SortableHeader sortKey="change_1h" currentSort={sortBy} sortDesc={sortDesc} onClick={handleSort} className="text-right hidden lg:table-cell">{t.h1}</SortableHeader>
+              <SortableHeader sortKey="change_24h" currentSort={sortBy} sortDesc={sortDesc} onClick={handleSort} className="text-right">{t.h24}</SortableHeader>
+              <SortableHeader sortKey="change_7d" currentSort={sortBy} sortDesc={sortDesc} onClick={handleSort} className="text-right hidden lg:table-cell">{t.d7}</SortableHeader>
+              <SortableHeader sortKey="market_cap" currentSort={sortBy} sortDesc={sortDesc} onClick={handleSort} className="text-right hidden md:table-cell">{t.mcap}</SortableHeader>
+              <SortableHeader sortKey="volume_24h" currentSort={sortBy} sortDesc={sortDesc} onClick={handleSort} className="text-right hidden md:table-cell">{t.volume}</SortableHeader>
+              <th scope="col" class="px-2 py-2 text-center font-mono text-[0.6875rem] tracking-wider uppercase border-b border-[--color-border] text-[--color-text-muted] hidden lg:table-cell cursor-default select-none w-[140px]">{t.chart}</th>
             </tr>
           </thead>
           <tbody>
@@ -255,7 +287,15 @@ export default function CoinListTable({ lang = 'en' }: { lang?: 'en' | 'ko' }) {
               return (
                 <tr
                   key={coin.symbol}
+                  tabIndex={0}
+                  role="link"
                   onClick={(e: MouseEvent) => { if (!(e.target as HTMLElement).closest('a')) window.location.href = coinUrl; }}
+                  onKeyDown={(e: KeyboardEvent) => {
+                    if ((e.key === 'Enter' || e.key === ' ') && !(e.target as HTMLElement).closest('a')) {
+                      e.preventDefault();
+                      window.location.href = coinUrl;
+                    }
+                  }}
                   class="cursor-pointer border-b border-[--color-border] row-hover"
                 >
                   {/* # */}
@@ -263,7 +303,7 @@ export default function CoinListTable({ lang = 'en' }: { lang?: 'en' | 'ko' }) {
 
                   {/* Coin: logo + symbol + name */}
                   <td class="px-2 py-2.5 whitespace-nowrap">
-                    <a href={coinUrl} class="flex items-center gap-2.5 hover:text-[--color-accent] transition-colors">
+                    <a href={coinUrl} class="flex items-center gap-2.5 hover:text-[--color-accent] transition-colors" tabIndex={-1}>
                       <CoinLogo image={coin.image} symbol={coin.symbol} />
                       <div class="flex items-center gap-1.5">
                         <span class="font-semibold">{coin.symbol}</span>
@@ -313,6 +353,7 @@ export default function CoinListTable({ lang = 'en' }: { lang?: 'en' | 'ko' }) {
             <button
               disabled={page === 0}
               onClick={() => setPage(p => p - 1)}
+              aria-label={t.prevPage}
               class={`px-3 py-1.5 border border-[--color-border] rounded-md bg-transparent font-mono text-xs transition-colors min-h-[44px] min-w-[44px] ${page === 0 ? 'text-[--color-text-muted] cursor-default' : 'text-[--color-text] hover:border-[--color-accent] cursor-pointer'}`}
             >
               &lt;
@@ -323,6 +364,7 @@ export default function CoinListTable({ lang = 'en' }: { lang?: 'en' | 'ko' }) {
             <button
               disabled={page >= totalPages - 1}
               onClick={() => setPage(p => p + 1)}
+              aria-label={t.nextPage}
               class={`px-3 py-1.5 border border-[--color-border] rounded-md bg-transparent font-mono text-xs transition-colors min-h-[44px] min-w-[44px] ${page >= totalPages - 1 ? 'text-[--color-text-muted] cursor-default' : 'text-[--color-text] hover:border-[--color-accent] cursor-pointer'}`}
             >
               &gt;
