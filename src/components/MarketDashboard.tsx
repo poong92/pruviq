@@ -12,8 +12,6 @@ const labels = {
     volume24h: '24h Volume',
     topGainers: 'Top Gainers',
     topLosers: 'Top Losers',
-    fundingRates: 'Extreme Funding Rates',
-    annual: 'Annual',
     latestNews: 'Latest News',
     loading: 'Loading market data...',
     error: 'Failed to load market data.',
@@ -25,17 +23,11 @@ const labels = {
     price: 'Price',
     change: '24h %',
     volume: 'Volume',
-    rate: 'Rate',
     readMore: 'Read more',
     searchNews: 'Search news...',
     allSources: 'All',
     lastUpdated: 'Last updated',
     ago: 'ago',
-    macroTitle: 'Macro Economic',
-    macroIndicators: 'Economic Indicators',
-    previous: 'prev',
-    current: 'current',
-    macroError: 'Failed to load macro data.',
     economicCalendar: 'Economic Calendar',
     calendarNote: 'Powered by TradingView',
     ctaTitle: 'Test a Strategy',
@@ -45,7 +37,6 @@ const labels = {
     showLess: 'Show less',
     showMoreNews: 'Show more news',
     showLessNews: 'Show less',
-    noFunding: 'No extreme funding rates at this time.',
   },
   ko: {
     tag: '시장 현황',
@@ -56,8 +47,6 @@ const labels = {
     volume24h: '24시간 거래량',
     topGainers: '상승 TOP',
     topLosers: '하락 TOP',
-    fundingRates: '극단 펀딩 비율',
-    annual: '연환산',
     latestNews: '최신 뉴스',
     loading: '시장 데이터 로딩 중...',
     error: '시장 데이터 로딩 실패.',
@@ -69,17 +58,11 @@ const labels = {
     price: '가격',
     change: '24h %',
     volume: '거래량',
-    rate: '비율',
     readMore: '자세히 보기',
     searchNews: '뉴스 검색...',
     allSources: '전체',
     lastUpdated: '마지막 업데이트',
     ago: '전',
-    macroTitle: '거시경제',
-    macroIndicators: '경제 지표',
-    previous: '이전',
-    current: '현재',
-    macroError: '거시경제 데이터 로딩 실패.',
     economicCalendar: '경제 캘린더',
     calendarNote: 'TradingView 제공',
     ctaTitle: '전략 테스트',
@@ -89,22 +72,11 @@ const labels = {
     showLess: '접기',
     showMoreNews: '더 보기',
     showLessNews: '접기',
-    noFunding: '현재 극단적 펀딩 비율이 없습니다.',
   },
 };
 
 type MarketMover = { symbol: string; price: number; change_24h: number; volume_24h: number };
-type FundingRate = { symbol: string; rate: number; annual_pct: number };
 type NewsItem = { title: string; link: string; source: string; published: string; summary: string };
-
-type MacroIndicator = {
-  id: string; name: string; value: number; previous?: number;
-  unit: string; updated: string; source: string;
-};
-type MacroData = {
-  indicators: MacroIndicator[];
-  generated: string;
-};
 
 type MarketData = {
   btc_price: number;
@@ -118,7 +90,6 @@ type MarketData = {
   total_volume_24h_b: number;
   top_gainers: MarketMover[];
   top_losers: MarketMover[];
-  extreme_funding: FundingRate[];
   generated: string;
 };
 
@@ -275,8 +246,6 @@ export default function MarketDashboard({ lang = 'en' }: { lang?: 'en' | 'ko' })
   const [news, setNews] = useState<NewsData | null>(null);
   const [marketErr, setMarketErr] = useState(false);
   const [newsErr, setNewsErr] = useState(false);
-  const [macro, setMacro] = useState<MacroData | null>(null);
-  const [macroErr, setMacroErr] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [sourceFilter, setSourceFilter] = useState('');
   const [lastRefresh, setLastRefresh] = useState<Date | null>(null);
@@ -286,7 +255,6 @@ export default function MarketDashboard({ lang = 'en' }: { lang?: 'en' | 'ko' })
   const [gainersExpanded, setGainersExpanded] = useState(false);
   const [losersExpanded, setLosersExpanded] = useState(false);
   const [newsExpanded, setNewsExpanded] = useState(false);
-  const [fundingExpanded, setFundingExpanded] = useState(false);
 
   // Price flash tracking
   const prevBtc = useRef<number>(0);
@@ -321,18 +289,11 @@ export default function MarketDashboard({ lang = 'en' }: { lang?: 'en' | 'ko' })
       .catch(() => setNewsErr(true));
   };
 
-  const fetchMacro = () => {
-    // Macro endpoint removed - set empty data without error
-    setMacro({ indicators: [], generated: "" });
-  };
-
   useEffect(() => {
     fetchMarket();
     fetchNews();
-    fetchMacro();
     const interval = setInterval(() => { fetchMarket(); fetchNews(); }, REFRESH_MS);
-    const macroInterval = setInterval(fetchMacro, 300_000); // 5 min
-    return () => { clearInterval(interval); clearInterval(macroInterval); };
+    return () => clearInterval(interval);
   }, []);
 
   // Live "updated X ago" counter
@@ -485,44 +446,22 @@ export default function MarketDashboard({ lang = 'en' }: { lang?: 'en' | 'ko' })
             </div>
           </div>
 
-          {/* Funding Rates — always show section */}
+          {/* TradingView Economic Calendar Widget */}
           <div class="border border-[--color-border] rounded-lg bg-[--color-bg-card] overflow-hidden mb-6">
-            <div class="px-4 py-3 border-b border-[--color-border] text-xs font-semibold text-[--color-text-muted] uppercase tracking-wider">
-              {l.fundingRates}
+            <div class="px-4 py-3 border-b border-[--color-border] flex items-center justify-between">
+              <span class="text-xs font-semibold text-[--color-text-muted] uppercase tracking-wider">
+                {l.economicCalendar}
+              </span>
+              <span class="text-[0.6875rem] text-[--color-text-muted] opacity-60">{l.calendarNote}</span>
             </div>
-            {market.extreme_funding.length > 0 ? (
-              <>
-                <div class="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] overflow-x-auto">
-                  {(fundingExpanded ? market.extreme_funding.slice(0, 20) : market.extreme_funding.slice(0, 5)).map(f => (
-                    <div key={f.symbol} class="flex justify-between items-center px-4 py-2.5 border-b border-[--color-border] last:border-0">
-                      <a href={`${lang === 'ko' ? '/ko' : ''}/coins/${f.symbol.toLowerCase().replace('usdt', '')}usdt`} class="font-mono text-[13px] font-medium text-[--color-text-muted] no-underline hover:text-[--color-accent] transition-colors">
-                        {f.symbol.replace('USDT', '')}
-                      </a>
-                      <div class="text-right">
-                        <span class="font-mono text-[13px] font-semibold" style={{ color: changeColor(f.rate) }}>
-                          {f.rate > 0 ? '+' : ''}{f.rate.toFixed(4)}%
-                        </span>
-                        <div class="text-[0.6875rem] text-[--color-text-muted]">
-                          {l.annual}: {f.annual_pct > 0 ? '+' : ''}{f.annual_pct.toFixed(0)}%
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                {market.extreme_funding.length > 5 && (
-                  <ExpandButton
-                    expanded={fundingExpanded}
-                    onClick={() => setFundingExpanded(e => !e)}
-                    expandLabel={l.showMore}
-                    collapseLabel={l.showLess}
-                  />
-                )}
-              </>
-            ) : (
-              <div class="text-center py-6 text-[--color-text-muted] text-[13px]">
-                {l.noFunding}
-              </div>
-            )}
+            <div class="w-full h-[300px] md:h-[400px]">
+              <iframe
+                src={`https://s.tradingview.com/embed-widget/events/?locale=${lang === 'ko' ? 'kr' : 'en'}#%7B%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Atrue%2C%22width%22%3A%22100%25%22%2C%22height%22%3A%22100%25%22%2C%22importanceFilter%22%3A%220%2C1%22%7D`}
+                title="Economic Calendar"
+                class="w-full h-full border-0"
+                loading="lazy"
+              />
+            </div>
           </div>
 
           {/* News Feed */}

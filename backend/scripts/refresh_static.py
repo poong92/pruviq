@@ -35,14 +35,11 @@ CG_MARKETS = f"{CG_BASE}/coins/markets"
 CG_GLOBAL = f"{CG_BASE}/global"
 FEAR_GREED_URL = "https://api.alternative.me/fng/?limit=1"
 
-# Binance Futures API (public, no auth)
-BINANCE_FUNDING_URL = "https://fapi.binance.com/fapi/v1/premiumIndex"
-
 HEADERS = {"User-Agent": "PRUVIQ/1.0 (https://pruviq.com)"}
 TIMEOUT = 15
 
 
-def fetch_json(url: str) -> Optional[dict | list]:
+def fetch_json(url: str) -> Optional[dict]:
     """Fetch JSON from URL with error handling."""
     try:
         req = urllib.request.Request(url, headers=HEADERS)
@@ -93,41 +90,6 @@ def fetch_fear_greed() -> tuple[int, str]:
     return 0, "Unknown"
 
 
-def fetch_extreme_funding() -> list[dict]:
-    """Fetch extreme funding rates from Binance Futures.
-
-    Returns top 10 most extreme (positive + negative) funding rates.
-    Binance premiumIndex is public, no auth needed, generous rate limit.
-    """
-    print("  Fetching Binance funding rates...")
-    data = fetch_json(BINANCE_FUNDING_URL)
-    if not data or not isinstance(data, list):
-        print("  WARN: Binance funding rates unavailable")
-        return []
-
-    # Filter USDT perpetuals only, parse funding rate
-    funding = []
-    for item in data:
-        symbol = item.get("symbol", "")
-        if not symbol.endswith("USDT"):
-            continue
-        rate = float(item.get("lastFundingRate", "0"))
-        if rate == 0:
-            continue
-        annual_pct = rate * 3 * 365 * 100  # 8h rate -> annual %
-        funding.append({
-            "symbol": symbol,
-            "rate": round(rate * 100, 4),  # as percentage
-            "annual_pct": round(annual_pct, 1),
-        })
-
-    # Sort by absolute rate, take top 10 most extreme
-    funding.sort(key=lambda f: abs(f["rate"]), reverse=True)
-    extreme = funding[:10]
-    print(f"  Got {len(extreme)} extreme funding rates from {len(funding)} USDT pairs")
-    return extreme
-
-
 def downsample_sparkline(prices: list[float], target: int = 42) -> list[float]:
     """Downsample 168-point hourly sparkline to ~42 points (4h intervals)."""
     if not prices or len(prices) < 2:
@@ -160,7 +122,7 @@ def build_coins_list(cg_coins: list[dict]) -> list[dict]:
 
 
 def build_market_json(global_data: Optional[dict], fear_index: int, fear_label: str,
-                      coins: list[dict], extreme_funding: list[dict]) -> dict:
+                      coins: list[dict]) -> dict:
     """Build market.json from global data + top movers.
 
     If CoinGecko /global API fails (rate limit), fallback to calculating totals
@@ -205,7 +167,7 @@ def build_market_json(global_data: Optional[dict], fear_index: int, fear_label: 
         "total_volume_24h_b": round((total_volume_usd / 1e9) if total_volume_usd else 0, 1),
         "top_gainers": top_gainers,
         "top_losers": top_losers,
-        "extreme_funding": extreme_funding,
+        "extreme_funding": [],
         "generated": datetime.now(timezone.utc).isoformat(),
     }
 
@@ -228,13 +190,10 @@ def main():
     fear_index, fear_label = fetch_fear_greed()
     print(f"  Fear & Greed: {fear_index} ({fear_label})")
 
-    # 4. Fetch Binance extreme funding rates (no rate limit concern)
-    extreme_funding = fetch_extreme_funding()
-
-    # 5. Build coins list (pure CoinGecko)
+    # 4. Build coins list (pure CoinGecko)
     coins = build_coins_list(cg_coins)
 
-    # 6. Write coins-stats.json
+    # 5. Write coins-stats.json
     output = {
         "generated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "total_coins": len(coins),
@@ -246,8 +205,8 @@ def main():
         json.dump(output, f, separators=(",", ":"))
     print(f"  Wrote {coins_path} ({coins_path.stat().st_size / 1024:.1f} KB)")
 
-    # 7. Write market.json
-    market = build_market_json(global_data, fear_index, fear_label, coins, extreme_funding)
+    # 6. Write market.json
+    market = build_market_json(global_data, fear_index, fear_label, coins)
     market_path = OUTPUT_DIR / "market.json"
     with open(market_path, "w") as f:
         json.dump(market, f, separators=(",", ":"))
