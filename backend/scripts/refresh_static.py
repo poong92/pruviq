@@ -58,26 +58,33 @@ def fetch_json(url: str) -> Optional[dict]:
         return None
 
 
-def fetch_coingecko_markets() -> list[dict]:
-    """Fetch top 500 coins from CoinGecko markets endpoint."""
-    all_coins = []
-    for page in [1, 2]:
-        url = (
-            f"{CG_MARKETS}?vs_currency=usd&order=market_cap_desc"
-            f"&per_page=250&page={page}&sparkline=true"
-            f"&price_change_percentage=1h,24h,7d"
-        )
-        print(f"  Fetching CoinGecko markets page {page}...")
-        data = fetch_json(url)
-        if data:
-            all_coins.extend(data)
-        else:
-            print(f"  WARN: Page {page} failed, continuing...")
-        if page == 1:
-            # Increase sleep to avoid CoinGecko free-tier rate limits
-            time.sleep(12)
-    print(f"  Got {len(all_coins)} coins from CoinGecko")
-    return all_coins
+def fetch_coingecko_markets(max_retries: int = 2) -> list[dict]:
+    """Fetch top 500 coins from CoinGecko markets endpoint with retry."""
+    for attempt in range(max_retries + 1):
+        all_coins = []
+        for page in [1, 2]:
+            url = (
+                f"{CG_MARKETS}?vs_currency=usd&order=market_cap_desc"
+                f"&per_page=250&page={page}&sparkline=true"
+                f"&price_change_percentage=1h,24h,7d"
+            )
+            print(f"  Fetching CoinGecko markets page {page} (attempt {attempt+1})...")
+            data = fetch_json(url)
+            if data:
+                all_coins.extend(data)
+            else:
+                print(f"  WARN: Page {page} failed")
+            if page == 1:
+                time.sleep(12)
+        if all_coins:
+            print(f"  Got {len(all_coins)} coins from CoinGecko")
+            return all_coins
+        if attempt < max_retries:
+            wait = 30 * (attempt + 1)
+            print(f"  WARN: CoinGecko returned 0 coins, retrying in {wait}s...")
+            time.sleep(wait)
+    print("  ERROR: CoinGecko failed after all retries")
+    return []
 
 
 def fetch_global_data() -> Optional[dict]:
@@ -506,8 +513,17 @@ def main():
     # 1. Fetch CoinGecko market data (PRIMARY source)
     cg_coins = fetch_coingecko_markets()
     if not cg_coins:
-        print("ERROR: CoinGecko returned no data. Keeping existing files.")
-        sys.exit(1)
+        print("WARN: CoinGecko unavailable. Keeping existing stale files (next cron will retry).")
+        # Still refresh macro + news (independent of CoinGecko)
+        macro_json = build_macro_json()
+        if macro_json:
+            (OUTPUT_DIR / "macro.json").write_text(json.dumps(macro_json, ensure_ascii=False))
+            print("  Updated macro.json (FRED + stale coins)")
+        news_json = build_news_json()
+        if news_json:
+            (OUTPUT_DIR / "news.json").write_text(json.dumps(news_json, ensure_ascii=False))
+            print("  Updated news.json (RSS)")
+        sys.exit(0)  # exit 0 so cron doesn't spam error logs
 
     # 2. Fetch global data
     # Wait longer between markets and global to avoid CoinGecko rate limits on free tier
