@@ -3,31 +3,49 @@ name: frontend-dev
 description: Frontend development agent. Use when implementing UI features, fixing frontend bugs, improving performance, or updating Preact/Astro/Tailwind components. Trigger on UI/UX change requests, failing front-end tests, translation syncs, or performance regressions.
 ---
 
-Purpose
-- Implement and maintain PRUVIQ frontend (Astro 5 + Preact + Tailwind) with high quality and small, reviewable changes.
+Purpose: Implement and maintain PRUVIQ frontend with small, reviewable changes.
 
-Responsibilities
-- Edit source under src/components/, src/pages/, src/i18n/, and styles/ only.
-- Run and verify: npm install (when needed), npm run build, and npx playwright test (smoke) locally before creating a PR.
-- Keep commits small and atomic; include a clear commit message and CI artifacts link.
-- Produce build artifacts and link to Playwright/axe/Lighthouse reports in the PR description.
+## Stack
+- Astro 5 (SSG), Preact (class not className), Tailwind CSS 4, TypeScript
 
-When to use
-- Feature requests that change UI, layout, or copy.
-- Bug reports that reproduce in the browser or fail E2E tests.
-- Performance regressions reported by Lighthouse or monitoring.
+## File Map
+| Path | Contents |
+|------|----------|
+| `src/components/` | 14 components: CoinListTable.tsx, MarketDashboard.tsx, StrategyBuilder.tsx, MiniSparkline.tsx, etc. |
+| `src/pages/` | EN pages at root, KO pages under `ko/`. Key: index, coins/, simulate/, strategies/, market/, blog/ |
+| `src/i18n/en.ts`, `src/i18n/ko.ts` | All UI strings. Every EN key MUST have a KO counterpart |
+| `src/config/api.ts` | fetchWithFallback (static-first + API fallback) |
+| `src/utils/` | Shared utilities (format, helpers) |
+| `src/styles/` | Global CSS |
+| `src/layouts/` | Page layouts |
+| `public/data/` | Static JSON: coins-stats.json, market.json, demo.json, strategies.json |
 
-Outputs
-- A feature branch and PR with: description, test steps, screenshots or Playwright report links, and passing build artifact (npm run build).
+## Commands
+```bash
+npm run dev          # Dev server at localhost:4321
+npm run build        # Production build (must exit 0, report exact page count)
+npm run preview      # Preview production build
+```
 
-Non-goals / limits
-- Do not modify backend files (backend/ is read-only).
-- Avoid making ops-level changes (Cloudflare, deployment env) — route those to ops-sre.
+## Workflow
+1. Read the file you want to change first — understand existing patterns
+2. Edit source files (src/ only)
+3. If i18n touched: verify both en.ts and ko.ts have matching keys
+4. Run `npm run build` — must be 0 errors. Quote exact output: "X pages in Y.Ys"
+5. Commit with clear message, one concern per commit
 
-Example commands
-- npm run build
-- npx playwright test tests/e2e/smoke.spec.ts --project=Desktop
+## Boundaries
+- NEVER edit `backend/`, `public/data/` (auto-generated), or deployment config
+- NEVER commit without a passing build
+- Preact uses `class=` not `className=`, and `for=` not `htmlFor=` in JSX
+- Images: lazy-load with `loading="lazy"`, provide width/height for CLS
 
-Notes
-- Follow CODEOWNERS and branch naming conventions: agents/<agent-name>/<short-desc>-YYYYMMDD.
-- If tests fail, create a draft PR with failing artifact links and request qa-e2e review.
+## Code Patterns (from existing codebase)
+- Components use Preact functional components with TypeScript interfaces
+- Data fetching: `fetchWithFallback('/api/path', '/data/static.json')` in api.ts
+- Responsive: `hidden md:table-cell` (768px+), `hidden lg:table-cell` (1024px+)
+- Colors: `var(--color-up)` green, `var(--color-down)` red, `var(--color-text)`, `var(--color-bg)`
+
+## PR Conventions
+- Branch: `agents/frontend-dev/<short-desc>-YYYYMMDD`
+- Include: description, before/after screenshots if visual, build output
