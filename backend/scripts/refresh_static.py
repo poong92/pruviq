@@ -13,7 +13,7 @@ Binance ticker: unlimited free API (no key needed)
 CoinGecko Free API: ~8,640 calls/month (3 calls x 4/hr x 24hr x 30d)
 
 Output:
-  public/data/coins-stats.json  — market data + strategy overlay
+  public/data/coins-stats.json  — market data (prices, volume, market cap)
   public/data/market.json       — global market overview
   public/data/macro.json        — macro economic indicators (FRED)
   public/data/news.json         — crypto + macro news (RSS)
@@ -38,7 +38,6 @@ from typing import Optional
 SCRIPT_DIR = Path(__file__).parent
 REPO_DIR = SCRIPT_DIR.parent.parent
 OUTPUT_DIR = REPO_DIR / "public" / "data"
-STRATEGY_STATS = SCRIPT_DIR.parent / "data" / "coin-strategy-stats.json"
 COIN_SYMBOLS_TS = REPO_DIR / "src" / "data" / "coin-symbols.ts"
 
 # Binance Futures API (PRIMARY — unlimited, no key needed)
@@ -190,122 +189,26 @@ def downsample_sparkline(prices: list[float], target: int = 42) -> list[float]:
     return [round(prices[int(i * step)], 2) for i in range(target)]
 
 
-def load_strategy_stats() -> dict:
-    """Load per-coin multi-strategy stats from daily-generated JSON.
-
-    Supports both legacy (single strategy) and new (multi-strategy) schema.
-
-    Returns:
-        {
-            "strategies_meta": {"bb-squeeze-short": {"name": ..., "direction": ...}, ...},
-            "best_strategy": {"BTC": "bb-squeeze-short", ...},
-            "per_coin": {"BTC": {"bb-squeeze-short": {...}, "rsi-reversal-long": {...}}, ...},
-        }
-    """
-    if not STRATEGY_STATS.exists():
-        print("  INFO: No strategy stats file, coins will have market data only")
-        return {}
-    try:
-        with open(STRATEGY_STATS) as f:
-            data = json.load(f)
-
-        # Detect schema version
-        if "strategies" in data:
-            # New multi-strategy schema
-            return _load_multi_strategy(data)
-        elif "coins" in data:
-            # Legacy single-strategy schema (backward compatible)
-            return _load_legacy_strategy(data)
-        else:
-            return {}
-    except (json.JSONDecodeError, KeyError) as e:
-        print(f"  WARN: Failed to load strategy stats: {e}")
-        return {}
-
-
-def _load_multi_strategy(data: dict) -> dict:
-    """Parse new multi-strategy schema. Keys kept as BTCUSDT (Binance format)."""
-    strategies_meta = {}
-    per_coin = {}  # keyed by BTCUSDT
-    best_strategy_raw = data.get("best_strategy", {})
-
-    for sid, sdata in data.get("strategies", {}).items():
-        strategies_meta[sid] = {
-            "name": sdata.get("name", sid),
-            "direction": sdata.get("direction", "short"),
-            "params": sdata.get("params", {}),
-            "status": sdata.get("status", "experimental"),
-        }
-        for sym, stats in sdata.get("coins", {}).items():
-            if sym not in per_coin:
-                per_coin[sym] = {}
-            per_coin[sym][sid] = stats
-
-    best_strategy = dict(best_strategy_raw)
-
-    print(f"  Strategy stats: {len(per_coin)} coins, {len(strategies_meta)} strategies")
-    return {
-        "strategies_meta": strategies_meta,
-        "best_strategy": best_strategy,
-        "per_coin": per_coin,
-    }
-
-
-def _load_legacy_strategy(data: dict) -> dict:
-    """Parse legacy single-strategy schema (backward compatible)."""
-    sid = data.get("strategy", "bb-squeeze-short")
-    per_coin = {}
-    for sym, stats in data.get("coins", {}).items():
-        # Keep as-is (BTCUSDT format)
-        per_coin[sym] = {sid: stats}
-
-    best_strategy = {sym: sid for sym in per_coin}
-    strategies_meta = {
-        sid: {
-            "name": "BB Squeeze SHORT",
-            "direction": "short",
-            "params": data.get("params", {}),
-            "status": "verified",
-        }
-    }
-    print(f"  Strategy stats (legacy): {len(per_coin)} coins loaded")
-    return {
-        "strategies_meta": strategies_meta,
-        "best_strategy": best_strategy,
-        "per_coin": per_coin,
-    }
-
-
 def build_coins_list(
     our_symbols: list[str],
     binance_tickers: list[dict],
     cg_lookup: dict[str, dict],
-    strategy_stats: dict,
 ) -> list[dict]:
-    """Build coins list: Binance tickers (PRIMARY) + CoinGecko (logos/mcap) + strategy stats.
+    """Build coins list: Binance tickers (PRIMARY) + CoinGecko (logos/mcap).
 
     Each coin gets:
     - Binance: price, 24h change, volume (real-time, all 575 coins)
     - CoinGecko: name, logo, market_cap, sparkline, 1h/7d change (when matched)
-    - Strategy: trades, win_rate, profit_factor, total_return_pct (from backtest)
     """
-    per_coin = strategy_stats.get("per_coin", {})
-    best_map = strategy_stats.get("best_strategy", {})
-    meta = strategy_stats.get("strategies_meta", {})
-
     # Index Binance tickers by symbol
     bn_by_sym = {t["symbol"]: t for t in binance_tickers}
 
     coins = []
     cg_merged = 0
-    strat_merged = 0
 
     for sym in our_symbols:
         bn = bn_by_sym.get(sym, {})
         cg = cg_lookup.get(sym)
-
-        # Base symbol for display: BTCUSDT → BTC
-        base = sym[:-4] if sym.endswith("USDT") else sym
 
         # Price: Binance is authoritative (futures mark price)
         price = float(bn.get("lastPrice", 0)) if bn else 0
@@ -344,51 +247,11 @@ def build_coins_list(
             "market_cap_rank": market_cap_rank,
             "volume_24h": round(volume_24h, 2),
             "sparkline_7d": sparkline_7d,
-            # Best strategy fields (Level 0 — default view)
-            "best_strategy": None,
-            "best_strategy_name": None,
-            "trades": None,
-            "win_rate": None,
-            "profit_factor": None,
-            "total_return_pct": None,
-            # All strategies (Level 1 — comparison mode)
-            "strategies": None,
         }
-
-        # Merge strategy stats if available (keyed by BTCUSDT)
-        coin_strategies = per_coin.get(sym)
-        if coin_strategies:
-            strat_merged += 1
-
-            # Best strategy summary (for default view)
-            best_sid = best_map.get(sym)
-            if best_sid and best_sid in coin_strategies:
-                best_stats = coin_strategies[best_sid]
-                best_meta = meta.get(best_sid, {})
-                coin["best_strategy"] = best_sid
-                coin["best_strategy_name"] = best_meta.get("name", best_sid)
-                coin["trades"] = best_stats.get("trades")
-                coin["win_rate"] = best_stats.get("win_rate")
-                coin["profit_factor"] = best_stats.get("profit_factor")
-                coin["total_return_pct"] = best_stats.get("total_return_pct")
-
-            # All strategies (for comparison table)
-            strategies_list = {}
-            for sid, stats in coin_strategies.items():
-                s_meta = meta.get(sid, {})
-                strategies_list[sid] = {
-                    "name": s_meta.get("name", sid),
-                    "direction": s_meta.get("direction", "short"),
-                    "trades": stats.get("trades"),
-                    "win_rate": stats.get("win_rate"),
-                    "profit_factor": stats.get("profit_factor"),
-                    "total_return_pct": stats.get("total_return_pct"),
-                }
-            coin["strategies"] = strategies_list
 
         coins.append(coin)
 
-    print(f"  Built {len(coins)} coins: CoinGecko matched {cg_merged}, strategy stats {strat_merged}")
+    print(f"  Built {len(coins)} coins: CoinGecko matched {cg_merged}")
     return coins
 
 
@@ -708,21 +571,12 @@ def main():
     fear_index, fear_label = fetch_fear_greed()
     print(f"  Fear & Greed: {fear_index} ({fear_label})")
 
-    # 6. Load strategy stats (generated daily by full_pipeline.sh)
-    strategy_stats = load_strategy_stats()
+    # 6. Build coins list (Binance + CoinGecko)
+    coins = build_coins_list(our_symbols, binance_tickers, cg_lookup)
 
-    # 7. Build coins list (Binance + CoinGecko + strategy overlay)
-    coins = build_coins_list(our_symbols, binance_tickers, cg_lookup, strategy_stats)
-
-    # 8. Write coins-stats.json
-    strategies_meta = strategy_stats.get("strategies_meta", {
-        "bb-squeeze-short": {"name": "BB Squeeze SHORT", "direction": "short",
-                             "params": {"sl_pct": 10.0, "tp_pct": 8.0}}
-    })
+    # 7. Write coins-stats.json
     output = {
         "generated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
-        "total_strategies": len(strategies_meta),
-        "strategies_meta": strategies_meta,
         "total_coins": len(coins),
         "coins": coins,
     }
@@ -732,21 +586,21 @@ def main():
         json.dump(output, f, separators=(",", ":"))
     print(f"  Wrote {coins_path} ({coins_path.stat().st_size / 1024:.1f} KB)")
 
-    # 9. Write market.json
+    # 8. Write market.json
     market = build_market_json(global_data, fear_index, fear_label, coins)
     market_path = OUTPUT_DIR / "market.json"
     with open(market_path, "w") as f:
         json.dump(market, f, separators=(",", ":"))
     print(f"  Wrote {market_path} ({market_path.stat().st_size / 1024:.1f} KB)")
 
-    # 10. Write macro.json
+    # 9. Write macro.json
     macro = build_macro_json()
     macro_path = OUTPUT_DIR / "macro.json"
     with open(macro_path, "w") as f:
         json.dump(macro, f, separators=(",", ":"))
     print(f"  Wrote {macro_path} ({macro_path.stat().st_size / 1024:.1f} KB)")
 
-    # 11. Write news.json
+    # 10. Write news.json
     news = build_news_json()
     news_path = OUTPUT_DIR / "news.json"
     with open(news_path, "w") as f:
