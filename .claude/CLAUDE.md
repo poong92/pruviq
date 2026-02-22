@@ -214,12 +214,12 @@ pruviq/
 - **Binance API 완전 제거** — CoinGecko로 전환 (autotrader IP 공유 문제 해결)
 - **Market 거시경제 섹션** — TradingView Economic Calendar 추가
 
-### v1.3.0 (2026-02-18)
+### v0.1.0 (2026-02-18, was v1.3.0)
 - **6-Agent 종합 감사 완료**
-- 감사 보고서: `docs/UNIFIED_AUDIT_v1.3.0.md`, `docs/COMPETITIVE_AUDIT_v1.3.0.md`
+- 감사 보고서: `docs/UNIFIED_AUDIT_v0.1.0.md`, `docs/COMPETITIVE_AUDIT_v0.1.0.md`
 
-### v1.3.0 감사 점수 (before → after)
-| 항목 | v1.3.0 감사 | v1.5.0 현재 | 변화 |
+### v0.1.0 감사 점수 (before → after)
+| 항목 | v0.1.0 감사 | v0.1.2 현재 | 변화 |
 |------|------------|------------|------|
 | 신뢰 신호 | 4/10 | 7/10 | +3 |
 | SEO/인덱싱 | 6/10 | 8/10 | +2 |
@@ -304,24 +304,24 @@ autotrader 서버 (DO): 절대 건드리지 않음
 ## 로드맵
 
 ```
-v0.1.x ✅ 기반 뼈대
-v0.2.0 ✅ 시뮬레이션 데모 (SL/TP 슬라이더, 즉시 결과)
-v0.3.0 ✅ UX 구조조정 + i18n (NAV 간소화, 한국어 19페이지)
-v1.0.0 ✅ 콘텐츠 확장 (블로그 17x2, 전략 5x2)
-v1.1.0 ✅ 시장 대시보드 + 코인 차트
-v1.2.0 ✅ 전략 비교 + 성과 대시보드
-v1.3.0 ✅ 6-Agent 종합 감사 완료
-v1.4.0 ✅ Sprint 1 P0 수정 + Sprint 2 P1 수정
-v1.5.0 ✅ MEDIUM 수정 + 리다이렉트 QA + 전체 검증 PASS (현재)
+v0.0.1 ✅ 기반 뼈대
+v0.0.2 ✅ 시뮬레이션 데모 (SL/TP 슬라이더, 즉시 결과)
+v0.0.3 ✅ UX 구조조정 + i18n (NAV 간소화, 한국어 19페이지) [tag: v0.0.3]
+v0.0.4 ✅ 콘텐츠 확장 (블로그 17x2, 전략 5x2)
+v0.0.5 ✅ 시장 대시보드 + 코인 차트
+v0.0.6 ✅ 전략 비교 + 성과 대시보드
+v0.1.0 ✅ 6-Agent 종합 감사 완료 [tag: v0.1.0]
+v0.1.1 ✅ Sprint 1 P0 수정 + Sprint 2 P1 수정
+v0.1.2 ✅ MEDIUM 수정 + 리다이렉트 QA + 전체 검증 PASS
+v0.2.0 ✅ 백엔드 API 연동 + 멀티 전략 + 5명 전문가 감사 (현재) [tag: v0.2.0]
 
-v2.0.0: 백엔드 API 연동 + 멀티 전략
-  - Mac Mini API 서버 가동 (api.pruviq.com)
-  - 5개 전략 실시간 시뮬레이션
-  - 사용자 커스텀 파라미터 백테스트
-  - 전략 비교 라이브 데이터
-
-v2.1.0: 성장
+v0.3.0: 성장 + 감사 수정
+  - CRITICAL 4건 수정 (admin auth, memory leak, alt text, sitemap hreflang)
   - 블로그 트래픽 확보 (SEO 효과 측정)
   - 레퍼럴 전환 추적
+
+v1.0.0: 정식 오픈
   - Product Hunt 런칭
+  - 유료 기능 (있다면)
+  - 안정성 확보 후
 ```

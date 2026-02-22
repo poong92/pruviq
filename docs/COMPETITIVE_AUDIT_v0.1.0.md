@@ -1,4 +1,4 @@
-# PRUVIQ v1.3.0 Competitive Gap Analysis
+# PRUVIQ v0.1.0 Competitive Gap Analysis
 # Date: 2026-02-19
 
 Audited against: CoinGecko, CoinMarketCap, TradingView, Investing.com, CoinNess

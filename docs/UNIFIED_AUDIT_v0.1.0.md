@@ -1,4 +1,4 @@
-# PRUVIQ v1.3.0 Unified Site Audit Report
+# PRUVIQ v0.1.0 Unified Site Audit Report
 
 > Generated: 2026-02-18 | 6 Expert Agents | Benchmark: CoinGecko, TradingView, Investing.com
 

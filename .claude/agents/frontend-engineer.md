@@ -82,10 +82,10 @@ pruviq/
 │       └── format.ts           # 포맷팅 유틸리티
 ├── public/                     # 정적 파일
 │   └── data/                   # pre-computed JSON
-└── package.json                # v1.3.0
+└── package.json                # v0.2.0
 ```
 
-## 알려진 기술 부채 (v1.3.0 검증 완료 2026-02-18)
+## 알려진 기술 부채 (v0.1.0 검증 완료 2026-02-18)
 
 ### ✅ 해결됨
 - ~~localhost:8400 하드코딩~~ → `import.meta.env.PUBLIC_PRUVIQ_API_URL` 전환 완료
