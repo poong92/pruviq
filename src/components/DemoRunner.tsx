@@ -2,8 +2,19 @@ import { h } from 'preact';
 import { useState } from 'preact/hooks';
 import { generateCSV, downloadCSV } from '../utils/csv';
 
-type Trade = { entry: string; exit: string; pnl: number };
-type DemoData = { total_return: number; win_rate: number; profit_factor: number; max_drawdown: number; trades: Trade[] };
+type DemoData = {
+  total_return: number;
+  win_rate: number;
+  profit_factor: number;
+  max_drawdown: number;
+  total_trades: number;
+  tp_count: number;
+  sl_count: number;
+  timeout_count: number;
+  strategy: string;
+  data_range: string;
+  coins: number;
+};
 
 export default function DemoRunner() {
   const [loading, setLoading] = useState(false);
@@ -15,10 +26,25 @@ export default function DemoRunner() {
     setError(null);
     setData(null);
     try {
-      const res = await fetch('/data/demo.json');
+      const res = await fetch('/data/demo-results.json');
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const json = await res.json();
-      setData(json);
+      // Extract default params result (SL10/TP8)
+      const r = json.results?.sl10_tp8;
+      if (!r) throw new Error('Default result not found');
+      setData({
+        total_return: r.total_return_pct ?? 0,
+        win_rate: r.win_rate ?? 0,
+        profit_factor: r.profit_factor ?? 0,
+        max_drawdown: r.max_drawdown_pct ?? 0,
+        total_trades: r.total_trades ?? 0,
+        tp_count: r.tp_count ?? 0,
+        sl_count: r.sl_count ?? 0,
+        timeout_count: r.timeout_count ?? 0,
+        strategy: json.strategy ?? 'BB Squeeze SHORT',
+        data_range: json.data_range ?? '',
+        coins: json.coins ?? 0,
+      });
     } catch (e:any) {
       setError(String(e));
     } finally {
@@ -43,17 +69,20 @@ export default function DemoRunner() {
     if (!data) return;
     const summaryHeaders = ['Metric', 'Value'];
     const summaryRows: (string | number | null)[][] = [
+      ['Strategy', data.strategy],
+      ['Data Range', data.data_range],
+      ['Coins', data.coins],
       ['Total Return %', data.total_return],
       ['Win Rate %', data.win_rate],
       ['Profit Factor', data.profit_factor],
       ['Max Drawdown %', data.max_drawdown],
+      ['Total Trades', data.total_trades],
+      ['TP Count', data.tp_count],
+      ['SL Count', data.sl_count],
+      ['Timeout Count', data.timeout_count],
     ];
-    const tradeHeaders = ['Entry', 'Exit', 'PnL'];
-    const tradeRows: (string | number | null)[][] = data.trades.map(t => [t.entry, t.exit, t.pnl]);
 
-    const csv = generateCSV(summaryHeaders, summaryRows)
-      + '\n\n'
-      + generateCSV(tradeHeaders, tradeRows);
+    const csv = generateCSV(summaryHeaders, summaryRows);
     downloadCSV(csv, 'pruviq-demo-result.csv');
   }
 
@@ -76,40 +105,41 @@ export default function DemoRunner() {
       )}
 
       {data && (
-        <div class="mt-4 grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div class="border rounded p-3 bg-[--color-bg-card]">
-            <div class="text-sm text-[--color-text-muted]">Total Return</div>
-            <div class="text-xl font-bold">{data.total_return}%</div>
-          </div>
-          <div class="border rounded p-3 bg-[--color-bg-card]">
-            <div class="text-sm text-[--color-text-muted]">Win Rate</div>
-            <div class="text-xl font-bold">{data.win_rate}%</div>
-          </div>
-          <div class="border rounded p-3 bg-[--color-bg-card]">
-            <div class="text-sm text-[--color-text-muted]">Profit Factor</div>
-            <div class="text-xl font-bold">{data.profit_factor}</div>
-          </div>
-          <div class="border rounded p-3 bg-[--color-bg-card]">
-            <div class="text-sm text-[--color-text-muted]">Max Drawdown</div>
-            <div class="text-xl font-bold">{data.max_drawdown}%</div>
-          </div>
-        </div>
-      )}
-
-      {data && (
         <div class="mt-4">
-          <h4 class="font-semibold">Trades (sample)</h4>
-          <div class="overflow-auto max-h-48 mt-2">
-            <table class="w-full text-sm">
-              <thead>
-                <tr class="text-left text-[--color-text-muted]"><th>Entry</th><th>Exit</th><th>PnL</th></tr>
-              </thead>
-              <tbody>
-                {data.trades.slice(0,20).map((t, i) => (
-                  <tr key={i}><td class="pr-4">{t.entry}</td><td class="pr-4">{t.exit}</td><td>{t.pnl}</td></tr>
-                ))}
-              </tbody>
-            </table>
+          <div class="text-sm text-[--color-text-muted] mb-2">
+            {data.strategy} | {data.coins} coins | {data.data_range}
+          </div>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="border rounded p-3 bg-[--color-bg-card]">
+              <div class="text-sm text-[--color-text-muted]">Total Return</div>
+              <div class="text-xl font-bold">{data.total_return}%</div>
+            </div>
+            <div class="border rounded p-3 bg-[--color-bg-card]">
+              <div class="text-sm text-[--color-text-muted]">Win Rate</div>
+              <div class="text-xl font-bold">{data.win_rate}%</div>
+            </div>
+            <div class="border rounded p-3 bg-[--color-bg-card]">
+              <div class="text-sm text-[--color-text-muted]">Profit Factor</div>
+              <div class="text-xl font-bold">{data.profit_factor}</div>
+            </div>
+            <div class="border rounded p-3 bg-[--color-bg-card]">
+              <div class="text-sm text-[--color-text-muted]">Max Drawdown</div>
+              <div class="text-xl font-bold">{data.max_drawdown}%</div>
+            </div>
+          </div>
+          <div class="grid grid-cols-3 gap-4 mt-3">
+            <div class="border rounded p-3 bg-[--color-bg-card] text-center">
+              <div class="text-sm text-[--color-text-muted]">Trades</div>
+              <div class="font-bold">{data.total_trades}</div>
+            </div>
+            <div class="border rounded p-3 bg-[--color-bg-card] text-center">
+              <div class="text-sm text-[--color-text-muted]">TP / SL</div>
+              <div class="font-bold">{data.tp_count} / {data.sl_count}</div>
+            </div>
+            <div class="border rounded p-3 bg-[--color-bg-card] text-center">
+              <div class="text-sm text-[--color-text-muted]">Timeout</div>
+              <div class="font-bold">{data.timeout_count}</div>
+            </div>
           </div>
         </div>
       )}

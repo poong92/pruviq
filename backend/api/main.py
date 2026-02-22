@@ -837,7 +837,7 @@ import xml.etree.ElementTree as ET
 import requests as http_requests
 from email.utils import parsedate_to_datetime
 
-MARKET_REFRESH_INTERVAL = 60  # seconds — background fetch every 60s
+MARKET_REFRESH_INTERVAL = 900  # seconds — background fetch every 15min (matches static CDN refresh)
 _market_cache: Optional[dict] = None
 _news_cache: Optional[dict] = None
 
