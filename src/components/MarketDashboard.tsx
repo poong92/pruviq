@@ -41,6 +41,11 @@ const labels = {
     ctaTitle: 'Test a Strategy',
     ctaDesc: 'Use our free strategy builder to backtest on 535+ coins.',
     ctaButton: 'Try Simulator',
+    // new i18n keys
+    showMore: 'Show all',
+    showLess: 'Show less',
+    showMoreNews: 'Show more news',
+    showLessNews: 'Show less',
   },
   ko: {
     tag: '시장 현황',
@@ -80,6 +85,11 @@ const labels = {
     ctaTitle: '전략 테스트',
     ctaDesc: '535개 이상의 코인에서 무료 전략 빌더로 백테스트하세요.',
     ctaButton: '시뮬레이터 시작',
+    // new i18n keys
+    showMore: '전체 보기',
+    showLess: '접기',
+    showMoreNews: '더 보기',
+    showLessNews: '접기',
   },
 };
 
@@ -244,6 +254,12 @@ export default function MarketDashboard({ lang = 'en' }: { lang?: 'en' | 'ko' })
   const [lastRefresh, setLastRefresh] = useState<Date | null>(null);
   const [refreshAgo, setRefreshAgo] = useState('');
 
+  // Expansion states
+  const [gainersExpanded, setGainersExpanded] = useState(false);
+  const [losersExpanded, setLosersExpanded] = useState(false);
+  const [newsExpanded, setNewsExpanded] = useState(false);
+  const [fundingExpanded, setFundingExpanded] = useState(false);
+
   // Price flash tracking
   const prevBtc = useRef<number>(0);
   const prevEth = useRef<number>(0);
@@ -318,14 +334,15 @@ export default function MarketDashboard({ lang = 'en' }: { lang?: 'en' | 'ko' })
   const btcDomDisplay = market && market.btc_dominance ? `${market.btc_dominance}%` : '—';
   const volume24hDisplay = market && market.total_volume_24h_b ? `$${market.total_volume_24h_b.toFixed(0)}B` : '—';
 
-  // Fear & Greed subtle background tint
+  // Fear & Greed subtle background tint and fill color
   let fearGreedBg: string | undefined = undefined;
+  let fearGreedFill: string | undefined = undefined;
   if (market && market.fear_greed_index != null) {
     const fgi = market.fear_greed_index;
-    if (fgi >= 0 && fgi <= 25) fearGreedBg = 'rgba(255,0,0,0.08)'; // red tint
-    else if (fgi <= 50) fearGreedBg = 'rgba(255,140,0,0.08)'; // orange tint
-    else if (fgi <= 75) fearGreedBg = 'rgba(144,238,144,0.08)'; // light green tint
-    else fearGreedBg = 'rgba(0,128,0,0.08)'; // green tint
+    if (fgi >= 0 && fgi <= 25) { fearGreedBg = 'rgba(255,0,0,0.08)'; fearGreedFill = 'rgb(255,0,0)'; }
+    else if (fgi <= 50) { fearGreedBg = 'rgba(255,140,0,0.08)'; fearGreedFill = 'rgb(255,140,0)'; }
+    else if (fgi <= 75) { fearGreedBg = 'rgba(144,238,144,0.08)'; fearGreedFill = 'rgb(144,238,144)'; }
+    else { fearGreedBg = 'rgba(0,128,0,0.08)'; fearGreedFill = 'rgb(0,128,0)'; }
   }
 
   return (
@@ -382,16 +399,55 @@ export default function MarketDashboard({ lang = 'en' }: { lang?: 'en' | 'ko' })
 
           {/* Stat Cards */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-            <StatCard label={l.fearGreed} value={`${market.fear_greed_index}`} sub={market.fear_greed_label} color={fgColor(market.fear_greed_index)} style={fearGreedBg ? { backgroundColor: fearGreedBg } : undefined} />
+            {/* Fear & Greed with gauge */}
+            <div className="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card] card-hover" style={fearGreedBg ? { backgroundColor: fearGreedBg } : undefined}>
+              <div className="text-[11px] text-[--color-text-muted] uppercase tracking-wider mb-1.5">{l.fearGreed}</div>
+              <div className="text-2xl font-bold font-mono" style={{ color: fgColor(market.fear_greed_index) }}>{`${market.fear_greed_index} / 100`}</div>
+
+              {/* Gauge bar */}
+              <div className="w-full mt-3">
+                <div className="w-full bg-[--color-bg-hover] rounded-full h-1.5 overflow-hidden" role="img" aria-label={`Fear and Greed gauge ${market.fear_greed_index} out of 100`}>
+                  <div style={{ width: `${Math.max(0, Math.min(100, market.fear_greed_index))}%`, backgroundColor: fearGreedFill, height: '6px' }} className="rounded-full transition-all" />
+                </div>
+              </div>
+
+              <div className="text-xs text-[--color-text-muted] mt-2">{market.fear_greed_label}</div>
+            </div>
+
             <StatCard label={l.totalMcap} value={totalMcapDisplay} />
             <StatCard label={l.btcDom} value={btcDomDisplay} />
             <StatCard label={l.volume24h} value={volume24hDisplay} />
           </div>
 
-          {/* Top Gainers / Losers */}
+          {/* Top Gainers / Losers (collapsible) */}
           <div className="grid md:grid-cols-2 gap-4 mb-6">
-            <MoverTable title={l.topGainers} movers={market.top_gainers} l={l} />
-            <MoverTable title={l.topLosers} movers={market.top_losers} l={l} />
+            <div>
+              <MoverTable title={l.topGainers} movers={market.top_gainers.slice(0, gainersExpanded ? 20 : 3)} l={l} />
+              {market.top_gainers.length > 3 && (
+                <div className="text-center">
+                  <button
+                    onClick={() => setGainersExpanded(e => !e)}
+                    className="text-xs text-[--color-accent] py-2 cursor-pointer"
+                  >
+                    {gainersExpanded ? l.showLess : l.showMore}
+                  </button>
+                </div>
+              )}
+            </div>
+
+            <div>
+              <MoverTable title={l.topLosers} movers={market.top_losers.slice(0, losersExpanded ? 20 : 3)} l={l} />
+              {market.top_losers.length > 3 && (
+                <div className="text-center">
+                  <button
+                    onClick={() => setLosersExpanded(e => !e)}
+                    className="text-xs text-[--color-accent] py-2 cursor-pointer"
+                  >
+                    {losersExpanded ? l.showLess : l.showMore}
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Funding Rates */}
@@ -401,7 +457,7 @@ export default function MarketDashboard({ lang = 'en' }: { lang?: 'en' | 'ko' })
                 {l.fundingRates}
               </div>
               <div className="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] overflow-x-auto">
-                {market.extreme_funding.map(f => (
+                {(fundingExpanded ? market.extreme_funding.slice(0, 20) : market.extreme_funding.slice(0, 5)).map(f => (
                   <div key={f.symbol} className="flex justify-between items-center px-4 py-2.5 border-b border-[--color-border] last:border-0">
                     <a href={`${lang === 'ko' ? '/ko' : ''}/coins/${f.symbol.toLowerCase().replace('usdt', '')}usdt`} className="font-mono text-[13px] font-medium text-[--color-text-muted] no-underline hover:text-[--color-accent] transition-colors">
                       {f.symbol.replace('USDT', '')}
@@ -417,197 +473,134 @@ export default function MarketDashboard({ lang = 'en' }: { lang?: 'en' | 'ko' })
                   </div>
                 ))}
               </div>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Macro & Derivatives Section */}
-      {macro && (
-        <div className="fade-in mb-6">
-          <div className="text-xs font-semibold text-[--color-text-muted] uppercase tracking-wider mb-3">
-            {l.macroTitle}
-          </div>
-
-          {/* Macro Economic Indicators Table */}
-          {macro.indicators?.length > 0 && (
-            <div className="border border-[--color-border] rounded-lg bg-[--color-bg-card] overflow-hidden mb-4">
-              <div className="px-4 py-3 border-b border-[--color-border] text-xs font-semibold text-[--color-text-muted] uppercase tracking-wider">
-                {l.macroIndicators}
-              </div>
-              <table className="w-full text-[13px] border-collapse">
-                <thead>
-                  <tr className="border-b border-[--color-border]">
-                    <th className="text-left px-4 py-2 text-[--color-text-muted] font-medium text-[11px]">Indicator</th>
-                    <th className="text-right px-4 py-2 text-[--color-text-muted] font-medium text-[11px]">{l.current}</th>
-                    <th className="text-right px-4 py-2 text-[--color-text-muted] font-medium text-[11px] hidden md:table-cell">{l.previous}</th>
-                    <th className="text-right px-4 py-2 text-[--color-text-muted] font-medium text-[11px] hidden md:table-cell">Change</th>
-                    <th className="text-right px-4 py-2 text-[--color-text-muted] font-medium text-[11px] hidden lg:table-cell">Updated</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {macro.indicators.map(ind => {
-                    const change = ind.previous != null ? ind.value - ind.previous : null;
-                    return (
-                      <tr key={ind.id} className="row-hover border-b border-[--color-border] last:border-0">
-                        <td className="px-4 py-2">
-                          <div className="font-medium text-[--color-text] text-[13px]">{ind.name}</div>
-                          <div className="text-[0.6875rem] text-[--color-text-muted]">{ind.source}</div>
-                        </td>
-                        <td className="text-right px-4 py-2 font-mono font-semibold text-[--color-text]">
-                          {ind.value.toFixed(2)}{ind.unit === '%' ? '%' : ''}
-                        </td>
-                        <td className="text-right px-4 py-2 font-mono text-[--color-text-muted] hidden md:table-cell">
-                          {ind.previous != null ? `${ind.previous.toFixed(2)}${ind.unit === '%' ? '%' : ''}` : '—'}
-                        </td>
-                        <td className="text-right px-4 py-2 font-mono hidden md:table-cell" style={{ color: change != null ? changeColor(change) : 'var(--color-text-muted)' }}>
-                          {change != null ? `${change > 0 ? '+' : ''}${change.toFixed(2)}` : '—'}
-                        </td>
-                        <td className="text-right px-4 py-2 text-[11px] text-[--color-text-muted] font-mono hidden lg:table-cell">
-                          {ind.updated || '—'}
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          )}
-
-          {/* TradingView Economic Calendar Widget */}
-          <div className="border border-[--color-border] rounded-lg bg-[--color-bg-card] overflow-hidden mb-4">
-            <div className="px-4 py-3 border-b border-[--color-border] flex items-center justify-between">
-              <span className="text-xs font-semibold text-[--color-text-muted] uppercase tracking-wider">
-                {l.economicCalendar}
-              </span>
-              <span className="text-[0.6875rem] text-[--color-text-muted] opacity-60">{l.calendarNote}</span>
-            </div>
-            <div className="w-full h-[300px] md:h-[400px]">
-              <iframe
-                src={`https://s.tradingview.com/embed-widget/events/?locale=${lang === 'ko' ? 'kr' : 'en'}#%7B%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Atrue%2C%22width%22%3A%22100%25%22%2C%22height%22%3A%22100%25%22%2C%22importanceFilter%22%3A%220%2C1%22%7D`}
-                title="Economic Calendar"
-                className="w-full h-full border-0"
-                loading="lazy"
-              />
-            </div>
-          </div>
-        </div>
-      )}
-      {macroErr && (
-        <div className="text-center py-6 mb-6">
-          <p className="font-mono text-sm text-[--color-red] mb-3">{l.macroError}</p>
-          <button
-            onClick={() => { setMacroErr(false); fetchMacro(); }}
-            className="px-4 py-2 rounded-lg border border-[--color-border] bg-[--color-bg-card] text-[--color-text] font-mono text-sm cursor-pointer hover:border-[--color-accent] transition-colors min-h-[44px]"
-          >
-            {lang === 'ko' ? '다시 시도' : 'Retry'}
-          </button>
-        </div>
-      )}
-
-      {/* News Feed */}
-      <div className="border border-[--color-border] rounded-lg bg-[--color-bg-card] overflow-hidden mb-6">
-        <div className="px-4 py-3 border-b border-[--color-border] flex flex-wrap items-center gap-2.5">
-          <span className="text-xs font-semibold text-[--color-text-muted] uppercase tracking-wider mr-auto">
-            {l.latestNews}
-          </span>
-          <input
-            type="text"
-            placeholder={l.searchNews}
-            value={searchQuery}
-            onInput={(e: Event) => setSearchQuery((e.target as HTMLInputElement).value)}
-            className="bg-[--color-bg-hover] border border-[--color-border] rounded-md px-2.5 py-1 text-xs text-[--color-text] outline-none w-44 font-sans focus:border-[--color-accent] transition-colors"
-          />
-          <div className="flex flex-wrap gap-1">
-            <button
-              onClick={() => setSourceFilter('')}
-              aria-pressed={sourceFilter === ''}
-              className={`px-2 py-1 text-[0.6875rem] rounded font-semibold cursor-pointer border-none transition-colors min-h-[44px] ${
-                !sourceFilter ? 'bg-[--color-accent] text-[--color-bg]' : 'bg-[--color-bg-hover] text-[--color-text-muted] hover:text-[--color-text]'
-              }`}
-            >{l.allSources}</button>
-            {NEWS_SOURCES.map(s => (
-              <button
-                key={s}
-                onClick={() => setSourceFilter(sourceFilter === s ? '' : s)}
-                aria-pressed={sourceFilter === s}
-                className={`px-2 py-1 text-[0.6875rem] rounded font-semibold cursor-pointer border-none whitespace-nowrap transition-colors min-h-[44px] ${
-                  sourceFilter === s ? 'bg-[--color-accent] text-[--color-bg]' : 'bg-[--color-bg-hover] text-[--color-text-muted] hover:text-[--color-text]'
-                }`}
-              >{s.replace('Bitcoin Magazine', 'BTC Mag')}</button>
-            ))}
-          </div>
-        </div>
-
-        {!news && !newsErr && <SkeletonNews />}
-        {newsErr && (
-          <div className="text-center py-8">
-            <p className="font-mono text-sm text-[--color-red] mb-3">{l.newsError}</p>
-            <button
-              onClick={() => { setNewsErr(false); fetchNews(); }}
-              className="px-4 py-2 rounded-lg border border-[--color-border] bg-[--color-bg-card] text-[--color-text] font-mono text-sm cursor-pointer hover:border-[--color-accent] transition-colors min-h-[44px]"
-            >
-              {lang === 'ko' ? '다시 시도' : 'Retry'}
-            </button>
-          </div>
-        )}
-        {news && filteredNews.length > 0 && (
-          <div className="fade-in">
-            {filteredNews.map((item, i) => (
-              <a
-                key={`${item.source}-${i}`}
-                href={item.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block px-4 py-3 border-b border-[--color-border] last:border-0 no-underline text-inherit row-hover"
-              >
-                <div className="flex items-start gap-3">
-                  <div className="flex-1 min-w-0">
-                    <div className="text-sm font-medium text-[--color-text] leading-snug mb-1 truncate">
-                      {item.title}
-                    </div>
-                    {item.summary && (
-                      <div className="text-xs text-[--color-text-muted] leading-snug truncate">
-                        {item.summary}
-                      </div>
-                    )}
-                  </div>
-                  <div className="shrink-0 text-right">
-                    <div className="text-[0.6875rem] text-[--color-accent] font-semibold tracking-wide">{item.source}</div>
-                    <div className="text-[0.6875rem] text-[--color-text-muted] mt-0.5">{timeAgo(item.published)}</div>
-                  </div>
+              {market.extreme_funding.length > 5 && (
+                <div className="text-center">
+                  <button
+                    onClick={() => setFundingExpanded(e => !e)}
+                    className="text-xs text-[--color-accent] py-2 cursor-pointer"
+                  >
+                    {fundingExpanded ? l.showLess : l.showMore}
+                  </button>
                 </div>
+              )}
+            </div>
+          )}
+
+          {/* Top Gainers / Losers already rendered above */}
+
+          {/* News Feed */}
+          <div className="border border-[--color-border] rounded-lg bg-[--color-bg-card] overflow-hidden mb-6">
+            <div className="px-4 py-3 border-b border-[--color-border] flex flex-wrap items-center gap-2.5">
+              <span className="text-xs font-semibold text-[--color-text-muted] uppercase tracking-wider mr-auto">
+                {l.latestNews}
+              </span>
+              <input
+                type="text"
+                placeholder={l.searchNews}
+                value={searchQuery}
+                onInput={(e: Event) => setSearchQuery((e.target as HTMLInputElement).value)}
+                className="bg-[--color-bg-hover] border border-[--color-border] rounded-md px-2.5 py-1 text-xs text-[--color-text] outline-none w-44 font-sans focus:border-[--color-accent] transition-colors"
+              />
+              <div className="flex flex-wrap gap-1">
+                <button
+                  onClick={() => setSourceFilter('')}
+                  aria-pressed={sourceFilter === ''}
+                  className={`px-2 py-1 text-[0.6875rem] rounded font-semibold cursor-pointer border-none transition-colors min-h-[44px] ${
+                    !sourceFilter ? 'bg-[--color-accent] text-[--color-bg]' : 'bg-[--color-bg-hover] text-[--color-text-muted] hover:text-[--color-text]'
+                  }`}
+                >{l.allSources}</button>
+                {NEWS_SOURCES.map(s => (
+                  <button
+                    key={s}
+                    onClick={() => setSourceFilter(sourceFilter === s ? '' : s)}
+                    aria-pressed={sourceFilter === s}
+                    className={`px-2 py-1 text-[0.6875rem] rounded font-semibold cursor-pointer border-none whitespace-nowrap transition-colors min-h-[44px] ${
+                      sourceFilter === s ? 'bg-[--color-accent] text-[--color-bg]' : 'bg-[--color-bg-hover] text-[--color-text-muted] hover:text-[--color-text]'
+                    }`}
+                  >{s.replace('Bitcoin Magazine', 'BTC Mag')}</button>
+                ))}
+              </div>
+            </div>
+
+            {!news && !newsErr && <SkeletonNews />}
+            {newsErr && (
+              <div className="text-center py-8">
+                <p className="font-mono text-sm text-[--color-red] mb-3">{l.newsError}</p>
+                <button
+                  onClick={() => { setNewsErr(false); fetchNews(); }}
+                  className="px-4 py-2 rounded-lg border border-[--color-border] bg-[--color-bg-card] text-[--color-text] font-mono text-sm cursor-pointer hover:border-[--color-accent] transition-colors min-h-[44px]"
+                >
+                  {lang === 'ko' ? '다시 시도' : 'Retry'}
+                </button>
+              </div>
+            )}
+            {news && filteredNews.length > 0 && (
+              <div className="fade-in">
+                {(newsExpanded ? filteredNews : filteredNews.slice(0, 5)).map((item, i) => (
+                  <a
+                    key={`${item.source}-${i}`}
+                    href={item.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block px-4 py-3 border-b border-[--color-border] last:border-0 no-underline text-inherit row-hover"
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm font-medium text-[--color-text] leading-snug mb-1 truncate">
+                          {item.title}
+                        </div>
+                        {item.summary && (
+                          <div className="text-xs text-[--color-text-muted] leading-snug truncate">
+                            {item.summary}
+                          </div>
+                        )}
+                      </div>
+                      <div className="shrink-0 text-right">
+                        <div className="text-[0.6875rem] text-[--color-accent] font-semibold tracking-wide">{item.source}</div>
+                        <div className="text-[0.6875rem] text-[--color-text-muted] mt-0.5">{timeAgo(item.published)}</div>
+                      </div>
+                    </div>
+                  </a>
+                ))}
+
+                {filteredNews.length > 5 && (
+                  <div className="text-center">
+                    <button onClick={() => setNewsExpanded(e => !e)} className="text-xs text-[--color-accent] py-2 cursor-pointer">
+                      {newsExpanded ? l.showLessNews : l.showMoreNews}
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+            {news && filteredNews.length === 0 && (
+              <div className="text-center py-8 text-[--color-text-muted] text-[13px]">
+                {lang === 'ko' ? '검색 결과가 없습니다.' : 'No results found.'}
+              </div>
+            )}
+          </div>
+
+          {/* CTA */}
+          <div className="mt-8 p-6 bg-[--color-bg-card] border border-[--color-border] rounded-xl">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div>
+                <h3 className="font-bold text-sm mb-1">{l.ctaTitle}</h3>
+                <p className="text-[--color-text-muted] text-xs">{l.ctaDesc}</p>
+              </div>
+              <a href={lang === 'ko' ? '/ko/simulate' : '/simulate'} className="shrink-0 bg-[--color-accent] text-[--color-bg] px-5 py-2.5 rounded-lg font-semibold text-sm no-underline hover:opacity-90 transition-opacity whitespace-nowrap">
+                {l.ctaButton} &rarr;
               </a>
-            ))}
+            </div>
           </div>
-        )}
-        {news && filteredNews.length === 0 && (
-          <div className="text-center py-8 text-[--color-text-muted] text-[13px]">
-            {lang === 'ko' ? '검색 결과가 없습니다.' : 'No results found.'}
-          </div>
-        )}
-      </div>
 
-      {/* CTA */}
-      <div className="mt-8 p-6 bg-[--color-bg-card] border border-[--color-border] rounded-xl">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div>
-            <h3 className="font-bold text-sm mb-1">{l.ctaTitle}</h3>
-            <p className="text-[--color-text-muted] text-xs">{l.ctaDesc}</p>
-          </div>
-          <a href={lang === 'ko' ? '/ko/simulate' : '/simulate'} className="shrink-0 bg-[--color-accent] text-[--color-bg] px-5 py-2.5 rounded-lg font-semibold text-sm no-underline hover:opacity-90 transition-opacity whitespace-nowrap">
-            {l.ctaButton} &rarr;
-          </a>
+          {/* Last Updated + Disclaimer */}
+          {lastRefresh && (
+            <p className="text-[11px] text-[--color-text-muted] text-center mt-4 font-mono">
+              {l.lastUpdated}: {refreshAgo} {l.ago}
+            </p>
+          )}
+          <p className="text-[11px] text-[--color-text-muted] text-center mt-1 opacity-60">{l.disclaimer}</p>
         </div>
-      </div>
-
-      {/* Last Updated + Disclaimer */}
-      {lastRefresh && (
-        <p className="text-[11px] text-[--color-text-muted] text-center mt-4 font-mono">
-          {l.lastUpdated}: {refreshAgo} {l.ago}
-        </p>
       )}
-      <p className="text-[11px] text-[--color-text-muted] text-center mt-1 opacity-60">{l.disclaimer}</p>
     </div>
   );
 }
