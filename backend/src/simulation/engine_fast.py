@@ -115,7 +115,10 @@ def find_signals_vectorized(df: pd.DataFrame, strategy, direction: str = "short"
     next_hour_ok = np.ones(n, dtype=bool)
     if avoid_set:
         for i in range(n - 1):
-            if int(hour[i + 1]) in avoid_set:
+            h = hour[i + 1]
+            if np.isnan(h):
+                next_hour_ok[i] = False
+            elif int(h) in avoid_set:
                 next_hour_ok[i] = False
     next_hour_ok[n - 1] = False  # Can't enter on last bar
 
