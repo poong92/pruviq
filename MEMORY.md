@@ -268,7 +268,7 @@ Notes: Quick-wins copy (hero/nav) applied and meta.index_desc synced with hero.d
   - Next steps / options:
     a) No action required for issues (none open).
     b) If you'd like, I can create GitHub Issues for Pending Tasks listed in MEMORY.md (SEO, i18n, mobile touch targets, trust signals) and then implement fixes — gh is authenticated so I can both create issues and open PRs.
-    c) Otherwise I will re-run this cron on schedule and report any new issues.
+    c) Otherwise I will re-run this cron on schedule and report changes.
   - Notes: MEMORY.md updated with this run.
 
 - cron:63c0583a-741f-4b76-9f53-861ab7456f81 (gh-issues-autofix)
@@ -283,7 +283,7 @@ Notes: Quick-wins copy (hero/nav) applied and meta.index_desc synced with hero.d
   - Next steps / options:
     a) No action required for issues (none open).
     b) If you'd like, I can create GitHub Issues for Pending Tasks listed in MEMORY.md (SEO, i18n, mobile touch targets, trust signals) and then implement fixes — gh is authenticated so I can both create issues and open PRs.
-    c) Otherwise I will re-run this cron on schedule and report any new issues.
+    c) Otherwise I will re-run this cron on schedule and report changes.
   - Notes: MEMORY.md updated with this run.
 
 - cron:63c0583a-741f-4b76-9f53-861ab7456f81 (gh-issues-autofix)
@@ -318,6 +318,7 @@ Notes: Quick-wins copy (hero/nav) applied and meta.index_desc synced with hero.d
     b) Paste the output of `gh issue list --state open --limit 10` or the issue URLs here; I will assess each issue locally, create branches, make fixes, run `npm run build`, commit, push via SSH, and prepare PRs (PR creation requires gh auth unless done manually via web UI).
     c) If you want me to act without issue API data, tell me which Pending Task from MEMORY.md to prioritize; I can create branches, implement changes, run build, and push — PR creation still needs gh auth or a manual web PR.
     6. Notes: I will not proceed with any destructive git actions (no force-push, no history rewrites) and will ensure `npm run build` passes before committing.
+  - Notes: MEMORY.md updated with this run.
 
 - cron:63c0583a-741f-4b76-9f53-861ab7456f81 (gh-issues-autofix)
   - Time: 2026-02-22 02:30 KST
@@ -349,6 +350,26 @@ Notes: Quick-wins copy (hero/nav) applied and meta.index_desc synced with hero.d
     - Create a PR to merge agents/init into main (requires GitHub PR via gh or web UI).
     - Optionally run E2E tests or Lighthouse on the branch/PR before merging.
   - Notes: MEMORY.md updated to reflect this fix.
+
+- cron:424c24a9-bdc0-4506-8f39-cafbd917d7cf (i18n-fix)
+  - Time: 2026-02-23 06:00 KST
+  - Action requested: Read SOUL.md and MEMORY.md. Check i18n completeness: 1) Compare src/i18n/en.ts and src/i18n/ko.ts — find any keys in EN that are missing in KO. 2) Check all pages under src/pages/ that have a /ko/ equivalent — list any EN pages missing their KO version. 3) If missing translations are found, add them to ko.ts with proper Korean translations. 4) If missing KO pages exist, create them by copying the EN version and translating. 5) Run npm run build to verify. 6) Commit and push if changes were made. Update MEMORY.md with what was fixed.
+  - What I did:
+    1. Read SOUL.md and MEMORY.md to confirm context and rules.
+    2. Compared src/i18n/en.ts and src/i18n/ko.ts — no missing translation keys were found (parity confirmed).
+    3. Scanned src/pages/ and compared against src/pages/ko/ — no missing KO pages found. All EN pages have a KO equivalent (considering both file and /index.astro forms).
+    4. Ran npm run build to verify. Build succeeded.
+       - Build output (excerpt):
+         - Completed in 10.53s.
+         - [@astrojs/sitemap] `sitemap-index.xml` created at `dist`
+         - [build] 1290 page(s) built in 22.37s
+         - [build] Complete!
+    5. No source changes were necessary. Updated MEMORY.md to record this verification.
+  - Result: i18n parity verified; no translation or page changes required. Site built successfully (1290 pages).
+  - Next steps:
+    - No code changes required. If you want, I can (a) run Playwright E2E for spot checks, or (b) open a PR if any minor copy fixes are requested.
+    - Continue monitoring i18n completeness during content updates.
+  - Notes: MEMORY.md updated and committed.
 
 ## 2026-02-21 — Day summary (by 프루빅)
 
