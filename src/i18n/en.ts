@@ -448,6 +448,52 @@ export const en = {
   'blog.cat_short.strategy': 'STRATEGY',
   'blog.cat_short.weekly': 'WEEKLY',
   'blog.cat_short.education': 'EDU',
+
+  // Methodology page
+  'meta.methodology_title': 'Methodology - PRUVIQ',
+  'meta.methodology_desc': 'How PRUVIQ backtests trading strategies. Data sources, fee assumptions, position sizing, evaluation metrics, and known limitations — fully transparent.',
+  'methodology.tag': 'METHODOLOGY',
+  'methodology.title': 'How We Test.',
+  'methodology.title2': 'No Shortcuts.',
+  'methodology.desc': 'Every number on PRUVIQ comes from a reproducible simulation. This page explains exactly how we backtest, what we measure, and what we leave out.',
+
+  'methodology.backtest_title': 'How We Backtest',
+  'methodology.data_label': 'Data',
+  'methodology.data_desc': '2+ years of 1-hour OHLCV candles sourced from Binance Futures. All candles are complete (closed) — no partial or in-progress data is used to avoid look-ahead bias.',
+  'methodology.universe_label': 'Universe',
+  'methodology.universe_desc': '500+ USDT perpetual futures pairs listed on Binance. Delisted and illiquid pairs are excluded. The exact count varies by strategy version.',
+  'methodology.execution_label': 'Execution',
+  'methodology.execution_desc': 'Entry is assumed at the candle close price. This is conservative — real fills may differ by a small amount due to timing and order book depth.',
+  'methodology.fees_label': 'Fees',
+  'methodology.fees_desc': '0.04% taker fee per side (0.08% round-trip). This is the Binance Futures default for VIP 0 tier.',
+  'methodology.slippage_label': 'Slippage',
+  'methodology.slippage_desc': 'Not modeled by default. Limit orders are assumed. In practice, our live trading shows entry slippage under 0.05% for most trades.',
+  'methodology.position_label': 'Position Sizing',
+  'methodology.position_desc': 'Fixed $60 per trade with 5x leverage ($300 notional). No compounding — each trade uses the same dollar amount regardless of account equity.',
+
+  'methodology.metrics_title': 'Strategy Evaluation Metrics',
+  'methodology.metrics_desc': 'Every strategy is evaluated using the same set of metrics, calculated after fees:',
+  'methodology.metric_wr': 'Win Rate — Percentage of trades that closed in profit.',
+  'methodology.metric_pf': 'Profit Factor — Gross profit divided by gross loss. Above 1.0 means profitable.',
+  'methodology.metric_return': 'Total Return % — Net P&L as a percentage of starting capital.',
+  'methodology.metric_mdd': 'Max Drawdown — Largest peak-to-trough decline in equity.',
+  'methodology.metric_trades': 'Trade Count — Total number of completed round-trip trades.',
+  'methodology.metrics_coming': 'Coming soon: Sharpe Ratio, Sortino Ratio, and Calmar Ratio.',
+
+  'methodology.not_modeled_title': 'What We Don\'t Model',
+  'methodology.not_modeled_desc': 'Transparency means showing the gaps. These factors are not included in our backtests:',
+  'methodology.not_modeled_funding': 'Funding rates — Perpetual futures charge/pay funding every 8 hours. This can add or subtract from returns depending on direction and market conditions.',
+  'methodology.not_modeled_impact': 'Market impact — Large orders can move the price. Our $60 position size minimizes this, but it exists.',
+  'methodology.not_modeled_outages': 'Exchange outages — Binance has occasional downtime. Backtests assume 100% uptime.',
+  'methodology.not_modeled_blackswan': 'Black swan events — Flash crashes, delistings, and regulatory shocks are not simulated.',
+  'methodology.not_modeled_liquidity': 'Liquidity variations — Order book depth changes throughout the day and across coins.',
+
+  'methodology.reproducibility_title': 'Reproducibility',
+  'methodology.reproducibility_desc': 'All strategy parameters are published openly — entry conditions, exit conditions, stop-loss, take-profit, time filters, and coin universe. Signal logic is documented so you can replicate or modify it. The interactive simulator lets you adjust SL/TP and see how results change in real time.',
+
+  'methodology.disclaimer_title': 'Disclaimer',
+  'methodology.disclaimer_text': 'Past performance does not guarantee future results. Backtests are simulations — not predictions. Real trading involves risks not captured in any model, including emotional decision-making, connectivity issues, and market regime changes. Always test with capital you can afford to lose.',
+  'footer.methodology': 'Methodology',
 } as const;
 
 export type TranslationKey = keyof typeof en;

@@ -58,9 +58,12 @@ const labels = {
     volume: 'Volume (24h)',
     chart: 'Last 7 Days',
     strategy: 'Best Strategy',
-    wr: 'WR',
-    pf: 'PF',
-    ret: 'Return',
+    wr: 'Win Rate',
+    pf: 'Profit',
+    ret: 'Return %',
+    wrTip: 'Percentage of trades that made a profit',
+    pfTip: 'Ratio of total profits to total losses. Above 1.0 = profitable',
+    retTip: 'Total return from backtesting this strategy',
     loading: 'Loading coin data...',
     error: 'Failed to load coin data.',
     noResults: 'No coins match your search.',
@@ -83,8 +86,11 @@ const labels = {
     chart: '7일 차트',
     strategy: '최적 전략',
     wr: '승률',
-    pf: 'PF',
-    ret: '수익률',
+    pf: '수익배수',
+    ret: '수익률 %',
+    wrTip: '수익이 난 거래의 비율',
+    pfTip: '총 수익 대 총 손실 비율. 1.0 이상 = 수익',
+    retTip: '이 전략 백테스트의 총 수익률',
     loading: '코인 데이터 로딩 중...',
     error: '코인 데이터 로딩 실패.',
     noResults: '검색 결과가 없습니다.',
@@ -267,9 +273,9 @@ function SkeletonRow() {
   );
 }
 
-function SortableHeader({ sortKey, currentSort, sortDesc, onClick, children, className = '' }: {
+function SortableHeader({ sortKey, currentSort, sortDesc, onClick, children, className = '', title }: {
   sortKey: SortKey; currentSort: SortKey; sortDesc: boolean;
-  onClick: (key: SortKey) => void; children: any; className?: string;
+  onClick: (key: SortKey) => void; children: any; className?: string; title?: string;
 }) {
   const isActive = currentSort === sortKey;
   const ariaSortValue = isActive ? (sortDesc ? 'descending' : 'ascending') : 'none';
@@ -278,6 +284,7 @@ function SortableHeader({ sortKey, currentSort, sortDesc, onClick, children, cla
     <th
       scope="col"
       aria-sort={ariaSortValue}
+      title={title}
       class={`px-2 py-2 font-mono text-[0.6875rem] tracking-wider uppercase whitespace-nowrap border-b border-[--color-border] ${className} ${isActive ? 'text-[--color-accent]' : 'text-[--color-text-muted]'}`}
     >
       <button
@@ -417,9 +424,9 @@ export default function CoinListTable({ lang = 'en' }: { lang?: 'en' | 'ko' }) {
               <SortableHeader sortKey="volume_24h" currentSort={sortBy} sortDesc={sortDesc} onClick={handleSort} className="text-right hidden md:table-cell">{t.volume}</SortableHeader>
               <th scope="col" class="px-2 py-2 text-center font-mono text-[0.6875rem] tracking-wider uppercase border-b border-[--color-border] text-[--color-text-muted] hidden lg:table-cell cursor-default select-none w-[140px]">{t.chart}</th>
               <th scope="col" class="px-2 py-2 text-left font-mono text-[0.6875rem] tracking-wider uppercase border-b border-[--color-border] text-[--color-text-muted] hidden md:table-cell cursor-default select-none">{t.strategy}</th>
-              <SortableHeader sortKey="win_rate" currentSort={sortBy} sortDesc={sortDesc} onClick={handleSort} className="text-right">{t.wr}</SortableHeader>
-              <SortableHeader sortKey="profit_factor" currentSort={sortBy} sortDesc={sortDesc} onClick={handleSort} className="text-right hidden lg:table-cell">{t.pf}</SortableHeader>
-              <SortableHeader sortKey="total_return_pct" currentSort={sortBy} sortDesc={sortDesc} onClick={handleSort} className="text-right">{t.ret}</SortableHeader>
+              <SortableHeader sortKey="win_rate" currentSort={sortBy} sortDesc={sortDesc} onClick={handleSort} className="text-right" title={t.wrTip}>{t.wr}</SortableHeader>
+              <SortableHeader sortKey="profit_factor" currentSort={sortBy} sortDesc={sortDesc} onClick={handleSort} className="text-right hidden lg:table-cell" title={t.pfTip}>{t.pf}</SortableHeader>
+              <SortableHeader sortKey="total_return_pct" currentSort={sortBy} sortDesc={sortDesc} onClick={handleSort} className="text-right" title={t.retTip}>{t.ret}</SortableHeader>
             </tr>
           </thead>
           <tbody>

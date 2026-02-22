@@ -151,9 +151,12 @@ class ConditionEngine:
         if not self.entry_conditions or "conditions" not in self.entry_conditions:
             return None
 
-        # Time filter
+        # Time filter on ENTRY bar (idx+1), matching vectorized path
         if self.avoid_hours and "hour" in df.columns:
-            hour_val = df["hour"].iloc[idx]
+            entry_idx = idx + 1
+            if entry_idx >= len(df):
+                return None
+            hour_val = df["hour"].iloc[entry_idx]
             if hour_val in self.avoid_hours:
                 return None
 
