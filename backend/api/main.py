@@ -1004,7 +1004,7 @@ def _build_market_overview() -> dict:
 
 
 RSS_FEEDS = [
-    ("CoinDesk", "https://www.coindesk.com/arc/outboundfeeds/rss/"),
+    ("CoinDesk", "https://www.coindesk.com/arc/outboundfeeds/rss"),
     ("CoinTelegraph", "https://cointelegraph.com/rss"),
     ("Decrypt", "https://decrypt.co/feed"),
     ("Bitcoin Magazine", "https://bitcoinmagazine.com/feed"),

@@ -13,6 +13,8 @@ const labels = {
     topGainers: 'Top Gainers',
     topLosers: 'Top Losers',
     latestNews: 'Latest News',
+    cryptoNews: 'Crypto',
+    macroNews: 'Macro',
     loading: 'Loading market data...',
     error: 'Failed to load market data.',
     newsLoading: 'Loading news...',
@@ -53,6 +55,8 @@ const labels = {
     topGainers: '상승 TOP',
     topLosers: '하락 TOP',
     latestNews: '최신 뉴스',
+    cryptoNews: '크립토',
+    macroNews: '매크로',
     loading: '시장 데이터 로딩 중...',
     error: '시장 데이터 로딩 실패.',
     newsLoading: '뉴스 로딩 중...',
@@ -86,7 +90,7 @@ const labels = {
 };
 
 type MarketMover = { symbol: string; price: number; change_24h: number; volume_24h: number };
-type NewsItem = { title: string; link: string; source: string; published: string; summary: string };
+type NewsItem = { title: string; link: string; source: string; category?: string; published: string; summary: string };
 
 type MarketData = {
   btc_price: number;
@@ -250,7 +254,8 @@ function MoverTable({ title, movers, l }: { title: string; movers: MarketMover[]
   );
 }
 
-const NEWS_SOURCES = ['CoinDesk', 'CoinTelegraph', 'Decrypt', 'Bitcoin Magazine'];
+const CRYPTO_SOURCES = ['CoinDesk', 'CoinTelegraph', 'Decrypt', 'Bitcoin Magazine'];
+const MACRO_SOURCES = ['Bloomberg', 'CNBC Economy', 'MarketWatch'];
 const REFRESH_MS = 300_000; // 5 min (static data refreshed every 15 min)
 
 // Fear & Greed gauge scale labels
@@ -275,6 +280,7 @@ export default function MarketDashboard({ lang = 'en' }: { lang?: 'en' | 'ko' })
   const [macroErr, setMacroErr] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [sourceFilter, setSourceFilter] = useState('');
+  const [newsTab, setNewsTab] = useState<'crypto' | 'macro'>('crypto');
   const [lastRefresh, setLastRefresh] = useState<Date | null>(null);
   const [refreshAgo, setRefreshAgo] = useState('');
 
@@ -317,8 +323,7 @@ export default function MarketDashboard({ lang = 'en' }: { lang?: 'en' | 'ko' })
   };
 
   const fetchMacro = () => {
-    fetch(`${API_BASE_URL}/macro`, { signal: AbortSignal.timeout(8000) })
-      .then(r => { if (!r.ok) throw new Error(`${r.status}`); return r.json(); })
+    fetchWithFallback('/macro', STATIC_DATA.macro)
       .then((d: MacroData) => { setMacro(d); setMacroErr(false); })
       .catch(() => setMacroErr(true));
   };
@@ -346,7 +351,12 @@ export default function MarketDashboard({ lang = 'en' }: { lang?: 'en' | 'ko' })
     return () => clearInterval(id);
   }, [lastRefresh]);
 
+  const activeNewsSources = newsTab === 'crypto' ? CRYPTO_SOURCES : MACRO_SOURCES;
+
   const filteredNews = news?.items.filter(item => {
+    // Tab filter: use category if available, otherwise match by source name
+    const itemCat = item.category || (MACRO_SOURCES.includes(item.source) ? 'macro' : 'crypto');
+    if (itemCat !== newsTab) return false;
     if (sourceFilter && item.source !== sourceFilter) return false;
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
@@ -563,6 +573,23 @@ export default function MarketDashboard({ lang = 'en' }: { lang?: 'en' | 'ko' })
               <span class="text-xs font-semibold text-[--color-text-muted] uppercase tracking-wider mr-auto">
                 {l.latestNews}
               </span>
+
+              {/* Crypto / Macro tab toggle */}
+              <div class="flex rounded-md overflow-hidden border border-[--color-border]">
+                <button
+                  onClick={() => { setNewsTab('crypto'); setSourceFilter(''); }}
+                  class={`px-3 py-1 text-[0.6875rem] font-semibold cursor-pointer border-none transition-colors min-h-[36px] ${
+                    newsTab === 'crypto' ? 'bg-[--color-accent] text-[--color-bg]' : 'bg-[--color-bg-hover] text-[--color-text-muted] hover:text-[--color-text]'
+                  }`}
+                >{l.cryptoNews}</button>
+                <button
+                  onClick={() => { setNewsTab('macro'); setSourceFilter(''); }}
+                  class={`px-3 py-1 text-[0.6875rem] font-semibold cursor-pointer border-none transition-colors min-h-[36px] ${
+                    newsTab === 'macro' ? 'bg-[--color-accent] text-[--color-bg]' : 'bg-[--color-bg-hover] text-[--color-text-muted] hover:text-[--color-text]'
+                  }`}
+                >{l.macroNews}</button>
+              </div>
+
               <input
                 type="text"
                 placeholder={l.searchNews}
@@ -578,7 +605,7 @@ export default function MarketDashboard({ lang = 'en' }: { lang?: 'en' | 'ko' })
                     !sourceFilter ? 'bg-[--color-accent] text-[--color-bg]' : 'bg-[--color-bg-hover] text-[--color-text-muted] hover:text-[--color-text]'
                   }`}
                 >{l.allSources}</button>
-                {NEWS_SOURCES.map(s => (
+                {activeNewsSources.map(s => (
                   <button
                     key={s}
                     onClick={() => setSourceFilter(sourceFilter === s ? '' : s)}
@@ -586,7 +613,7 @@ export default function MarketDashboard({ lang = 'en' }: { lang?: 'en' | 'ko' })
                     class={`px-2 py-1 text-[0.6875rem] rounded font-semibold cursor-pointer border-none whitespace-nowrap transition-colors min-h-[44px] ${
                       sourceFilter === s ? 'bg-[--color-accent] text-[--color-bg]' : 'bg-[--color-bg-hover] text-[--color-text-muted] hover:text-[--color-text]'
                     }`}
-                  >{s.replace('Bitcoin Magazine', 'BTC Mag')}</button>
+                  >{s.replace('Bitcoin Magazine', 'BTC Mag').replace('CNBC Economy', 'CNBC')}</button>
                 ))}
               </div>
             </div>

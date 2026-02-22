@@ -9,6 +9,7 @@ export const STATIC_DATA = {
   coinsStats: '/data/coins-stats.json',
   market: '/data/market.json',
   news: '/data/news.json',
+  macro: '/data/macro.json',
   strategies: '/data/strategies.json',
   performance: '/data/performance.json',
   builderIndicators: '/data/builder-indicators.json',

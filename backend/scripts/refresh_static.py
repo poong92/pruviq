@@ -7,20 +7,27 @@ with per-coin strategy backtest stats (WR/PF/Return) from daily pipeline.
 
 Called every 15 minutes by cron via refresh_static.sh.
 CoinGecko Free API: ~8,640 calls/month (3 calls x 4/hr x 24hr x 30d)
+FRED API: 120 req/min (6 calls per cycle = trivial)
 
 Output:
   public/data/coins-stats.json  — market data + strategy overlay
   public/data/market.json       — global market overview
+  public/data/macro.json        — macro economic indicators (FRED)
+  public/data/news.json         — crypto + macro news (RSS)
 """
 
 from __future__ import annotations
 
+import csv
+import io
 import json
 import sys
 import time
 import urllib.request
 import urllib.error
+import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
+from email.utils import parsedate_to_datetime
 from pathlib import Path
 from typing import Optional
 
@@ -326,6 +333,169 @@ def build_market_json(global_data: Optional[dict], fear_index: int, fear_label: 
     }
 
 
+# --- FRED Macro Economic Indicators ---
+
+FRED_SERIES = {
+    "DFF": {"name": "Fed Funds Rate", "unit": "%", "source": "FRED"},
+    "DGS10": {"name": "US 10Y Treasury", "unit": "%", "source": "FRED"},
+    "DGS2": {"name": "US 2Y Treasury", "unit": "%", "source": "FRED"},
+    "DTWEXBGS": {"name": "US Dollar Index (Broad)", "unit": "Index", "source": "FRED"},
+    "T10Y2Y": {"name": "10Y-2Y Yield Spread", "unit": "%", "source": "FRED"},
+    "VIXCLS": {"name": "VIX (Volatility Index)", "unit": "Index", "source": "FRED"},
+}
+
+
+def fetch_fred_series(series_id: str) -> Optional[dict]:
+    """Fetch latest value from FRED public CSV endpoint (no API key needed)."""
+    url = f"https://fred.stlouisfed.org/graph/fredgraph.csv?id={series_id}"
+    try:
+        req = urllib.request.Request(url, headers=HEADERS)
+        resp = urllib.request.urlopen(req, timeout=TIMEOUT)
+        text = resp.read().decode("utf-8").strip()
+        lines = text.split("\n")
+        if len(lines) < 2:
+            return None
+        latest_line = None
+        prev_line = None
+        for line in reversed(lines):
+            parts = line.strip().split(",")
+            if len(parts) == 2 and parts[1] not in (".", ""):
+                if latest_line is None:
+                    latest_line = parts
+                elif prev_line is None:
+                    prev_line = parts
+                    break
+        if not latest_line:
+            return None
+        result = {
+            "value": float(latest_line[1]),
+            "updated": latest_line[0],
+        }
+        if prev_line:
+            result["previous"] = float(prev_line[1])
+        return result
+    except Exception as e:
+        print(f"  WARN: FRED fetch failed for {series_id}: {e}")
+        return None
+
+
+def build_macro_json() -> dict:
+    """Build macro.json from FRED data."""
+    print("  Fetching FRED macro indicators...")
+    indicators = []
+    for series_id, info in FRED_SERIES.items():
+        data = fetch_fred_series(series_id)
+        if data:
+            indicators.append({
+                "id": series_id,
+                "name": info["name"],
+                "value": data["value"],
+                "previous": data.get("previous"),
+                "unit": info["unit"],
+                "updated": data.get("updated", ""),
+                "source": info["source"],
+            })
+    print(f"  Got {len(indicators)}/{len(FRED_SERIES)} FRED indicators")
+    return {
+        "indicators": indicators,
+        "generated": datetime.now(timezone.utc).isoformat(),
+    }
+
+
+# --- RSS News Aggregation ---
+
+RSS_FEEDS = [
+    # Crypto news
+    ("CoinDesk", "https://www.coindesk.com/arc/outboundfeeds/rss", "crypto"),
+    ("CoinTelegraph", "https://cointelegraph.com/rss", "crypto"),
+    ("Decrypt", "https://decrypt.co/feed", "crypto"),
+    ("Bitcoin Magazine", "https://bitcoinmagazine.com/feed", "crypto"),
+    # Macro economic news
+    ("Bloomberg", "https://feeds.bloomberg.com/business/news.rss", "macro"),
+    ("CNBC Economy", "https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=20910258", "macro"),
+    ("MarketWatch", "https://feeds.marketwatch.com/marketwatch/topstories/", "macro"),
+]
+
+
+def _parse_pub_date(raw: str) -> str:
+    """Parse various RSS date formats into ISO 8601 string."""
+    if not raw:
+        return ""
+    try:
+        dt = parsedate_to_datetime(raw)
+        return dt.isoformat()
+    except Exception:
+        pass
+    for fmt in ("%Y-%m-%dT%H:%M:%S%z", "%Y-%m-%dT%H:%M:%SZ", "%Y-%m-%d %H:%M:%S"):
+        try:
+            dt = datetime.strptime(raw, fmt)
+            if dt.tzinfo is None:
+                dt = dt.replace(tzinfo=timezone.utc)
+            return dt.isoformat()
+        except Exception:
+            continue
+    return raw
+
+
+def parse_rss_feed(source: str, url: str, category: str) -> list[dict]:
+    """Parse a single RSS feed into news items."""
+    items = []
+    try:
+        req = urllib.request.Request(url, headers=HEADERS)
+        resp = urllib.request.urlopen(req, timeout=10)
+        text = resp.read().decode("utf-8", errors="replace")
+        root = ET.fromstring(text)
+
+        ns = {"atom": "http://www.w3.org/2005/Atom"}
+        rss_items = root.findall(".//item")
+        if not rss_items:
+            rss_items = root.findall(".//atom:entry", ns)
+
+        for item in rss_items[:15]:
+            title = item.findtext("title") or item.findtext("atom:title", namespaces=ns) or ""
+            link = item.findtext("link") or ""
+            if not link:
+                link_el = item.find("atom:link", ns)
+                link = link_el.get("href", "") if link_el is not None else ""
+            published_raw = item.findtext("pubDate") or item.findtext("atom:published", namespaces=ns) or ""
+            published = _parse_pub_date(published_raw)
+            desc = item.findtext("description") or item.findtext("atom:summary", namespaces=ns) or ""
+            if "<" in desc:
+                desc = desc[:desc.find("<")]
+            desc = desc.strip()[:200]
+
+            if title and link:
+                items.append({
+                    "title": title.strip(),
+                    "link": link.strip(),
+                    "source": source,
+                    "category": category,
+                    "published": published,
+                    "summary": desc,
+                })
+    except Exception as e:
+        print(f"  WARN: RSS fetch failed for {source}: {e}")
+    return items
+
+
+def build_news_json() -> dict:
+    """Build news.json from all RSS feeds (crypto + macro)."""
+    print("  Fetching RSS news feeds...")
+    all_items = []
+    for source, url, category in RSS_FEEDS:
+        items = parse_rss_feed(source, url, category)
+        all_items.extend(items)
+        print(f"    {source}: {len(items)} items")
+
+    all_items.sort(key=lambda x: x.get("published", ""), reverse=True)
+    print(f"  Total news: {len(all_items)} items ({sum(1 for i in all_items if i['category']=='crypto')} crypto, {sum(1 for i in all_items if i['category']=='macro')} macro)")
+
+    return {
+        "items": all_items[:60],
+        "generated": datetime.now(timezone.utc).isoformat(),
+    }
+
+
 def main():
     print(f"=== PRUVIQ Static Refresh — {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')} ===")
 
@@ -374,6 +544,20 @@ def main():
     with open(market_path, "w") as f:
         json.dump(market, f, separators=(",", ":"))
     print(f"  Wrote {market_path} ({market_path.stat().st_size / 1024:.1f} KB)")
+
+    # 8. Write macro.json (FRED indicators)
+    macro = build_macro_json()
+    macro_path = OUTPUT_DIR / "macro.json"
+    with open(macro_path, "w") as f:
+        json.dump(macro, f, separators=(",", ":"))
+    print(f"  Wrote {macro_path} ({macro_path.stat().st_size / 1024:.1f} KB)")
+
+    # 9. Write news.json (crypto + macro RSS)
+    news = build_news_json()
+    news_path = OUTPUT_DIR / "news.json"
+    with open(news_path, "w") as f:
+        json.dump(news, f, separators=(",", ":"))
+    print(f"  Wrote {news_path} ({news_path.stat().st_size / 1024:.1f} KB)")
 
     print("=== Done ===")
 

@@ -36,8 +36,9 @@ if [ "$CURRENT_BRANCH" != "main" ]; then
 fi
 
 # Git push only if data changed
-if ! git diff --quiet public/data/market.json public/data/coins-stats.json 2>/dev/null; then
-    git add -f public/data/market.json public/data/coins-stats.json
+DATA_FILES="public/data/market.json public/data/coins-stats.json public/data/macro.json public/data/news.json"
+if ! git diff --quiet $DATA_FILES 2>/dev/null; then
+    git add -f $DATA_FILES
     git commit -m "chore: static data refresh [$(date -u '+%H:%M')]" --no-verify
     if git push origin main 2>&1; then
         log "Pushed updated data -> Cloudflare auto-deploy"
