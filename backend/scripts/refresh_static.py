@@ -2,14 +2,14 @@
 """
 PRUVIQ — Static Data Refresher
 
-Fetches CoinGecko market data (top 500 coins by market cap) as real-time
-market data. Pure CoinGecko data — no strategy/backtest overlay.
+Fetches CoinGecko market data (top 500 coins by market cap) and merges
+with per-coin strategy backtest stats (WR/PF/Return) from daily pipeline.
 
 Called every 15 minutes by cron via refresh_static.sh.
 CoinGecko Free API: ~8,640 calls/month (3 calls x 4/hr x 24hr x 30d)
 
 Output:
-  public/data/coins-stats.json  — real-time coin market data
+  public/data/coins-stats.json  — market data + strategy overlay
   public/data/market.json       — global market overview
 """
 
@@ -28,6 +28,7 @@ from typing import Optional
 SCRIPT_DIR = Path(__file__).parent
 REPO_DIR = SCRIPT_DIR.parent.parent
 OUTPUT_DIR = REPO_DIR / "public" / "data"
+STRATEGY_STATS = SCRIPT_DIR.parent / "data" / "coin-strategy-stats.json"
 
 # CoinGecko Free API (no key needed)
 CG_BASE = "https://api.coingecko.com/api/v3"
@@ -100,13 +101,41 @@ def downsample_sparkline(prices: list[float], target: int = 42) -> list[float]:
     return [round(prices[int(i * step)], 2) for i in range(target)]
 
 
-def build_coins_list(cg_coins: list[dict]) -> list[dict]:
-    """Build coins list from CoinGecko data. Pure market data."""
+def load_strategy_stats() -> dict[str, dict]:
+    """Load per-coin strategy stats from daily-generated JSON.
+
+    Returns a dict: {"BTCUSDT": {"trades": 45, "win_rate": 62.5, ...}, ...}
+    Maps CoinGecko symbol (e.g. "BTC") → our "BTCUSDT" by appending USDT.
+    """
+    if not STRATEGY_STATS.exists():
+        print("  INFO: No strategy stats file, coins will have market data only")
+        return {}
+    try:
+        with open(STRATEGY_STATS) as f:
+            data = json.load(f)
+        # Build symbol lookup: "BTC" → stats (our keys are like "BTCUSDT")
+        lookup = {}
+        for sym, stats in data.get("coins", {}).items():
+            # "BTCUSDT" → key "BTC", "1000PEPEUSDT" → key "1000PEPE"
+            base = sym.replace("USDT", "") if sym.endswith("USDT") else sym
+            lookup[base] = stats
+        print(f"  Strategy stats: {len(lookup)} coins loaded")
+        return lookup
+    except (json.JSONDecodeError, KeyError) as e:
+        print(f"  WARN: Failed to load strategy stats: {e}")
+        return {}
+
+
+def build_coins_list(cg_coins: list[dict], strategy_stats: dict[str, dict]) -> list[dict]:
+    """Build coins list from CoinGecko data + strategy stats overlay."""
     coins = []
+    merged_count = 0
     for cg in cg_coins:
         sparkline_raw = cg.get("sparkline_in_7d", {}).get("price", [])
-        coins.append({
-            "symbol": cg.get("symbol", "").upper(),
+        cg_symbol = cg.get("symbol", "").upper()
+
+        coin = {
+            "symbol": cg_symbol,
             "name": cg.get("name", ""),
             "image": cg.get("image", ""),
             "price": cg.get("current_price", 0) or 0,
@@ -117,7 +146,26 @@ def build_coins_list(cg_coins: list[dict]) -> list[dict]:
             "market_cap_rank": cg.get("market_cap_rank"),
             "volume_24h": cg.get("total_volume", 0) or 0,
             "sparkline_7d": downsample_sparkline(sparkline_raw),
-        })
+            # Strategy fields (null if no backtest data)
+            "trades": None,
+            "win_rate": None,
+            "profit_factor": None,
+            "total_return_pct": None,
+        }
+
+        # Merge strategy stats if available
+        stats = strategy_stats.get(cg_symbol)
+        if stats:
+            coin["trades"] = stats.get("trades")
+            coin["win_rate"] = stats.get("win_rate")
+            coin["profit_factor"] = stats.get("profit_factor")
+            coin["total_return_pct"] = stats.get("total_return_pct")
+            merged_count += 1
+
+        coins.append(coin)
+
+    if strategy_stats:
+        print(f"  Merged strategy stats: {merged_count}/{len(coins)} coins")
     return coins
 
 
@@ -190,12 +238,17 @@ def main():
     fear_index, fear_label = fetch_fear_greed()
     print(f"  Fear & Greed: {fear_index} ({fear_label})")
 
-    # 4. Build coins list (pure CoinGecko)
-    coins = build_coins_list(cg_coins)
+    # 4. Load strategy stats (generated daily by full_pipeline.sh)
+    strategy_stats = load_strategy_stats()
 
-    # 5. Write coins-stats.json
+    # 5. Build coins list (CoinGecko + strategy overlay)
+    coins = build_coins_list(cg_coins, strategy_stats)
+
+    # 6. Write coins-stats.json
     output = {
         "generated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "strategy": "BB Squeeze SHORT",
+        "params": {"sl_pct": 10.0, "tp_pct": 8.0},
         "total_coins": len(coins),
         "coins": coins,
     }
@@ -205,7 +258,7 @@ def main():
         json.dump(output, f, separators=(",", ":"))
     print(f"  Wrote {coins_path} ({coins_path.stat().st_size / 1024:.1f} KB)")
 
-    # 6. Write market.json
+    # 7. Write market.json
     market = build_market_json(global_data, fear_index, fear_label, coins)
     market_path = OUTPUT_DIR / "market.json"
     with open(market_path, "w") as f:

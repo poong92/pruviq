@@ -57,12 +57,21 @@ else
     ERRORS=$((ERRORS + 1))
 fi
 
-# Step 2: Regenerate demo data
-log "Step 2: Regenerating demo data..."
-if python3 scripts/generate_demo_data.py 2>&1 | tail -3 | tee -a "$LOG_FILE"; then
+# Step 2: Generate per-coin strategy stats (for coin table overlay)
+log "Step 2: Generating per-coin strategy stats..."
+if python3 scripts/generate_coin_strategy_stats.py 2>&1 | tail -5 | tee -a "$LOG_FILE"; then
     log "Step 2: OK"
 else
     log "Step 2: FAILED"
+    ERRORS=$((ERRORS + 1))
+fi
+
+# Step 2b: Regenerate demo data (for strategy comparison page)
+log "Step 2b: Regenerating demo data..."
+if python3 scripts/generate_demo_data.py 2>&1 | tail -3 | tee -a "$LOG_FILE"; then
+    log "Step 2b: OK"
+else
+    log "Step 2b: FAILED"
     ERRORS=$((ERRORS + 1))
 fi
 

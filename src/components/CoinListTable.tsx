@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'preact/hooks';
-import { formatPrice, formatVolume } from '../utils/format';
+import { formatPrice, formatVolume, winRateColor, profitFactorColor, signColor } from '../utils/format';
 import { STATIC_DATA, fetchWithFallback } from '../config/api';
 import MiniSparkline from './MiniSparkline';
 
@@ -15,6 +15,11 @@ interface CoinRow {
   market_cap_rank: number | null;
   volume_24h: number;
   sparkline_7d: number[];
+  // Strategy overlay (null if no backtest data)
+  trades: number | null;
+  win_rate: number | null;
+  profit_factor: number | null;
+  total_return_pct: number | null;
 }
 
 interface StatsData {
@@ -36,11 +41,14 @@ const labels = {
     mcap: 'Market Cap',
     volume: 'Volume (24h)',
     chart: 'Last 7 Days',
+    wr: 'WR',
+    pf: 'PF',
+    ret: 'Return',
     loading: 'Loading coin data...',
     error: 'Failed to load coin data.',
     noResults: 'No coins match your search.',
     showing: (from: number, to: number, total: number) => `${from}-${to} of ${total}`,
-    tableCaption: 'Cryptocurrency prices, market cap, and 7-day charts',
+    tableCaption: 'Cryptocurrency prices, market cap, strategy performance, and 7-day charts',
     prevPage: 'Previous page',
     nextPage: 'Next page',
   },
@@ -54,17 +62,20 @@ const labels = {
     mcap: '시가총액',
     volume: '거래량 (24h)',
     chart: '7일 차트',
+    wr: '승률',
+    pf: 'PF',
+    ret: '수익률',
     loading: '코인 데이터 로딩 중...',
     error: '코인 데이터 로딩 실패.',
     noResults: '검색 결과가 없습니다.',
     showing: (from: number, to: number, total: number) => `${from}-${to} / ${total}`,
-    tableCaption: '암호화폐 가격, 시가총액, 7일 차트',
+    tableCaption: '암호화폐 가격, 시가총액, 전략 성과, 7일 차트',
     prevPage: '이전 페이지',
     nextPage: '다음 페이지',
   },
 };
 
-type SortKey = 'symbol' | 'price' | 'change_1h' | 'change_24h' | 'change_7d' | 'market_cap' | 'volume_24h';
+type SortKey = 'symbol' | 'price' | 'change_1h' | 'change_24h' | 'change_7d' | 'market_cap' | 'volume_24h' | 'win_rate' | 'profit_factor' | 'total_return_pct';
 
 function formatMarketCap(v: number | null): string {
   if (v == null || v === 0) return '-';
@@ -121,6 +132,9 @@ function SkeletonRow() {
       <td class="px-2 py-3 text-right hidden md:table-cell"><div class="skeleton h-3 w-16 ml-auto" /></td>
       <td class="px-2 py-3 text-right hidden md:table-cell"><div class="skeleton h-3 w-14 ml-auto" /></td>
       <td class="px-2 py-3 hidden lg:table-cell"><div class="skeleton h-6 w-[120px] ml-auto" /></td>
+      <td class="px-2 py-3 text-right"><div class="skeleton h-3 w-10 ml-auto" /></td>
+      <td class="px-2 py-3 text-right hidden lg:table-cell"><div class="skeleton h-3 w-10 ml-auto" /></td>
+      <td class="px-2 py-3 text-right"><div class="skeleton h-3 w-12 ml-auto" /></td>
     </tr>
   );
 }
@@ -182,7 +196,7 @@ export default function CoinListTable({ lang = 'en' }: { lang?: 'en' | 'ko' }) {
             <thead>
               <tr>
                 <th scope="col" class="px-2 py-2 w-10 border-b border-[--color-border]" />
-                {[t.coin, t.price, t.h1, t.h24, t.d7, t.mcap, t.volume, t.chart].map((h, i) => (
+                {[t.coin, t.price, t.h1, t.h24, t.d7, t.mcap, t.volume, t.chart, t.wr, t.pf, t.ret].map((h, i) => (
                   <th scope="col" key={i} class="px-2 py-2 text-left font-mono text-[0.6875rem] tracking-wider uppercase border-b border-[--color-border] text-[--color-text-muted]">{h}</th>
                 ))}
               </tr>
@@ -273,11 +287,14 @@ export default function CoinListTable({ lang = 'en' }: { lang?: 'en' | 'ko' }) {
               <SortableHeader sortKey="market_cap" currentSort={sortBy} sortDesc={sortDesc} onClick={handleSort} className="text-right hidden md:table-cell">{t.mcap}</SortableHeader>
               <SortableHeader sortKey="volume_24h" currentSort={sortBy} sortDesc={sortDesc} onClick={handleSort} className="text-right hidden md:table-cell">{t.volume}</SortableHeader>
               <th scope="col" class="px-2 py-2 text-center font-mono text-[0.6875rem] tracking-wider uppercase border-b border-[--color-border] text-[--color-text-muted] hidden lg:table-cell cursor-default select-none w-[140px]">{t.chart}</th>
+              <SortableHeader sortKey="win_rate" currentSort={sortBy} sortDesc={sortDesc} onClick={handleSort} className="text-right">{t.wr}</SortableHeader>
+              <SortableHeader sortKey="profit_factor" currentSort={sortBy} sortDesc={sortDesc} onClick={handleSort} className="text-right hidden lg:table-cell">{t.pf}</SortableHeader>
+              <SortableHeader sortKey="total_return_pct" currentSort={sortBy} sortDesc={sortDesc} onClick={handleSort} className="text-right">{t.ret}</SortableHeader>
             </tr>
           </thead>
           <tbody>
             {pageItems.length === 0 && (
-              <tr><td colSpan={9} class="py-8 text-center text-[--color-text-muted]">{t.noResults}</td></tr>
+              <tr><td colSpan={12} class="py-8 text-center text-[--color-text-muted]">{t.noResults}</td></tr>
             )}
             {pageItems.map((coin, i) => {
               const rank = page * PER_PAGE + i + 1;
@@ -334,6 +351,27 @@ export default function CoinListTable({ lang = 'en' }: { lang?: 'en' | 'ko' }) {
                   <td class="px-2 py-2.5 hidden lg:table-cell">
                     {coin.sparkline_7d && coin.sparkline_7d.length > 1
                       ? <MiniSparkline data={coin.sparkline_7d} width={120} height={32} positive={sparkPositive} />
+                      : <span class="text-[--color-text-muted]">-</span>}
+                  </td>
+
+                  {/* Strategy: WR */}
+                  <td class="px-2 py-2.5 text-right tabular-nums">
+                    {coin.win_rate != null
+                      ? <span style={{ color: winRateColor(coin.win_rate) }}>{coin.win_rate.toFixed(1)}%</span>
+                      : <span class="text-[--color-text-muted]">-</span>}
+                  </td>
+
+                  {/* Strategy: PF */}
+                  <td class="px-2 py-2.5 text-right tabular-nums hidden lg:table-cell">
+                    {coin.profit_factor != null
+                      ? <span style={{ color: profitFactorColor(coin.profit_factor) }}>{coin.profit_factor.toFixed(2)}</span>
+                      : <span class="text-[--color-text-muted]">-</span>}
+                  </td>
+
+                  {/* Strategy: Return */}
+                  <td class="px-2 py-2.5 text-right tabular-nums">
+                    {coin.total_return_pct != null
+                      ? <span style={{ color: signColor(coin.total_return_pct) }}>{coin.total_return_pct > 0 ? '+' : ''}{coin.total_return_pct.toFixed(1)}%</span>
                       : <span class="text-[--color-text-muted]">-</span>}
                   </td>
                 </tr>
