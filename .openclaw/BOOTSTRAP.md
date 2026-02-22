@@ -255,7 +255,7 @@ Forbidden (Security Boundary):
 
 ---
 
-## 7. CURRENT STATE (v1.3.0)
+## 7. CURRENT STATE (v0.2.0)
 
 Audit Results (6-agent audit, 2026-02-18):
 - Trust signals: 4/10 (needs work)
@@ -267,7 +267,7 @@ Audit Results (6-agent audit, 2026-02-18):
 - Korean quality: 8.5/10 (OK)
 - Data accuracy: 9.5/10 (OK)
 
-All P0 critical issues resolved. See docs/UNIFIED_AUDIT_v1.3.0.md for details.
+All P0 critical issues resolved. See docs/UNIFIED_AUDIT_v0.1.0.md for details.
 
 Current Sprint Focus:
 - SEO optimization (meta tags, structured data)
@@ -295,7 +295,7 @@ When you need deeper context, read these files IN YOUR WORKSPACE (/Users/opencla
 - docs/MASTER_PLAN.md — Architecture + business plan
 - docs/BUSINESS_MODEL.md — Revenue model details
 - docs/BRAND_CONCEPT.md — Brand identity + copy
-- docs/UNIFIED_AUDIT_v1.3.0.md — Current audit findings
+- docs/UNIFIED_AUDIT_v0.1.0.md — Current audit findings
 - docs/UX_DESIGN.md — Design system
 - docs/ARCHITECTURE.md — Technical architecture
 - src/i18n/en.ts + ko.ts — Translation keys

@@ -130,7 +130,7 @@ grep -rn "hreflang" dist/**/*.html | head -10
 grep -rn "application/ld+json" dist/**/*.html | head -10
 ```
 
-## 알려진 결함 (v1.3.0 검증 완료 2026-02-18)
+## 알려진 결함 (v0.1.0 검증 완료 2026-02-18)
 
 ### ✅ 해결됨
 - ~~Privacy/Terms 한국어 없음~~ → ko/privacy.astro, ko/terms.astro 존재 확인

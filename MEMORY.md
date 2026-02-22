@@ -91,7 +91,7 @@ rm -rf node_modules && npm install       # npm issues
 npx playwright test --debug              # test debug
 ```
 
-## Current State (v1.3.0)
+## Current State (v0.2.0)
 
 ### Audit Results (2026-02-18, 6-agent audit)
 | Item | Score | Status |
@@ -112,7 +112,7 @@ npx playwright test --debug              # test debug
 - Trust signals improvement
 
 ### All P0 issues RESOLVED
-See docs/UNIFIED_AUDIT_v1.3.0.md for details.
+See docs/UNIFIED_AUDIT_v0.1.0.md for details.
 
 ## Strategy Data (from autotrader v1.7.0)
 
@@ -138,7 +138,7 @@ See docs/UNIFIED_AUDIT_v1.3.0.md for details.
 - .claude/CLAUDE.md — Full project spec (most detailed)
 - docs/MASTER_PLAN.md — Architecture + business plan
 - docs/BRAND_CONCEPT.md — Brand identity + copy
-- docs/UNIFIED_AUDIT_v1.3.0.md — Audit findings
+- docs/UNIFIED_AUDIT_v0.1.0.md — Audit findings
 - docs/UX_DESIGN.md — Design system
 - src/i18n/en.ts + ko.ts — Translation keys
 
