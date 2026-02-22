@@ -84,8 +84,11 @@ log "Reload result: $RELOAD_RESULT"
 log "Step 4: Git commit + push..."
 cd "$REPO_DIR"
 
-# Check if there are changes to commit
-if git diff --quiet public/data/ 2>/dev/null; then
+# Safety: only commit on main branch
+CURRENT_BRANCH=$(git branch --show-current 2>/dev/null)
+if [ "$CURRENT_BRANCH" != "main" ]; then
+    log "Step 4: WARN — on branch '$CURRENT_BRANCH', skipping git commit/push"
+elif git diff --quiet public/data/ 2>/dev/null; then
     log "Step 4: No data changes to commit"
 else
     git add public/data/
