@@ -31,6 +31,7 @@ const feesPath = lang === 'ko' ? '/ko/fees' : '/fees';
 const aboutPath = lang === 'ko' ? '/ko/about' : '/about';
 const changelogPath = lang === 'ko' ? '/ko/changelog' : '/changelog';
 const methodologyPath = lang === 'ko' ? '/ko/methodology' : '/methodology';
+const apiPath = lang === 'ko' ? '/ko/api' : '/api';
 const privacyPath = lang === 'ko' ? '/ko/privacy' : '/privacy';
 const termsPath = lang === 'ko' ? '/ko/terms' : '/terms';
 
@@ -304,6 +305,7 @@ const isActive = (match: string) => basePath.startsWith(match);
                 <a href={aboutPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('footer.about')}</a>
                 <a href={changelogPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('footer.changelog')}</a>
                 <a href={methodologyPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('footer.methodology')}</a>
+                <a href={apiPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('footer.api')}</a>
                 <a href="https://t.me/PRUVIQ" target="_blank" rel="noopener" class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('footer.telegram')}</a>
               </div>
             </div>

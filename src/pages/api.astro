@@ -1,0 +1,361 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { useTranslations } from '../i18n/index';
+
+const t = useTranslations('en');
+const API_BASE = 'https://api.pruviq.com';
+---
+
+<Layout title={t('meta.api_title')} description={t('meta.api_desc')}>
+
+  <!-- HERO -->
+  <section class="py-16">
+    <div class="max-w-5xl mx-auto px-4">
+      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('api.tag')}</p>
+      <h1 class="text-3xl md:text-5xl font-bold mb-4">
+        {t('api.title')}<br/><span class="text-[--color-accent]">{t('api.title2')}</span>
+      </h1>
+      <p class="text-[--color-text-muted] text-lg max-w-2xl">
+        {t('api.desc')}
+      </p>
+    </div>
+  </section>
+
+  <!-- OVERVIEW -->
+  <section class="pb-12 border-t border-[--color-border] pt-12">
+    <div class="max-w-5xl mx-auto px-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+        <div class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card]">
+          <div class="font-mono text-[--color-accent] text-xs font-bold mb-1">{t('api.base_url')}</div>
+          <code class="text-sm text-[--color-text] break-all">{API_BASE}</code>
+        </div>
+        <div class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card]">
+          <div class="font-mono text-[--color-accent] text-xs font-bold mb-1">{t('api.rate_limit')}</div>
+          <p class="text-sm text-[--color-text-muted]">{t('api.rate_limit_value')}</p>
+        </div>
+        <div class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card]">
+          <div class="font-mono text-[--color-accent] text-xs font-bold mb-1">{t('api.auth')}</div>
+          <p class="text-sm text-[--color-text-muted]">{t('api.auth_value')}</p>
+        </div>
+        <div class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card]">
+          <div class="font-mono text-[--color-accent] text-xs font-bold mb-1">{t('api.format')}</div>
+          <p class="text-sm text-[--color-text-muted]">{t('api.format_value')}</p>
+        </div>
+        <div class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card]">
+          <div class="font-mono text-[--color-accent] text-xs font-bold mb-1">{t('api.cors')}</div>
+          <p class="text-sm text-[--color-text-muted]">{t('api.cors_value')}</p>
+        </div>
+        <div class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card]">
+          <div class="font-mono text-[--color-accent] text-xs font-bold mb-1">{t('api.interactive')}</div>
+          <p class="text-sm text-[--color-text-muted]">{t('api.interactive_desc')}</p>
+          <a href={`${API_BASE}/docs`} target="_blank" rel="noopener" class="font-mono text-xs text-[--color-accent] hover:underline">/docs</a>
+          <span class="text-[--color-text-muted] mx-1">|</span>
+          <a href={`${API_BASE}/redoc`} target="_blank" rel="noopener" class="font-mono text-xs text-[--color-accent] hover:underline">/redoc</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ENDPOINTS: MARKET DATA -->
+  <section class="pb-12 border-t border-[--color-border] pt-12">
+    <div class="max-w-5xl mx-auto px-4">
+      <h2 class="text-2xl font-bold mb-6">{t('api.section_market')}</h2>
+      <div class="space-y-4 max-w-4xl">
+
+        <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card]">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="font-mono text-xs px-2 py-0.5 rounded bg-green-500/10 text-green-400 font-bold">GET</span>
+            <code class="font-mono text-sm text-[--color-text]">/health</code>
+          </div>
+          <p class="text-[--color-text-muted] text-sm">{t('api.endpoint_health')}</p>
+        </div>
+
+        <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card]">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="font-mono text-xs px-2 py-0.5 rounded bg-green-500/10 text-green-400 font-bold">GET</span>
+            <code class="font-mono text-sm text-[--color-text]">/market</code>
+          </div>
+          <p class="text-[--color-text-muted] text-sm">{t('api.endpoint_market')}</p>
+        </div>
+
+        <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card]">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="font-mono text-xs px-2 py-0.5 rounded bg-green-500/10 text-green-400 font-bold">GET</span>
+            <code class="font-mono text-sm text-[--color-text]">/news</code>
+          </div>
+          <p class="text-[--color-text-muted] text-sm">{t('api.endpoint_news')}</p>
+        </div>
+
+        <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card]">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="font-mono text-xs px-2 py-0.5 rounded bg-green-500/10 text-green-400 font-bold">GET</span>
+            <code class="font-mono text-sm text-[--color-text]">/macro</code>
+          </div>
+          <p class="text-[--color-text-muted] text-sm">{t('api.endpoint_macro')}</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ENDPOINTS: DATA -->
+  <section class="pb-12 border-t border-[--color-border] pt-12">
+    <div class="max-w-5xl mx-auto px-4">
+      <h2 class="text-2xl font-bold mb-6">{t('api.section_data')}</h2>
+      <div class="space-y-4 max-w-4xl">
+
+        <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card]">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="font-mono text-xs px-2 py-0.5 rounded bg-green-500/10 text-green-400 font-bold">GET</span>
+            <code class="font-mono text-sm text-[--color-text]">/coins</code>
+          </div>
+          <p class="text-[--color-text-muted] text-sm">{t('api.endpoint_coins')}</p>
+        </div>
+
+        <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card]">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="font-mono text-xs px-2 py-0.5 rounded bg-green-500/10 text-green-400 font-bold">GET</span>
+            <code class="font-mono text-sm text-[--color-text]">/coins/stats</code>
+          </div>
+          <p class="text-[--color-text-muted] text-sm">{t('api.endpoint_coins_stats')}</p>
+        </div>
+
+        <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card]">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="font-mono text-xs px-2 py-0.5 rounded bg-green-500/10 text-green-400 font-bold">GET</span>
+            <code class="font-mono text-sm text-[--color-text]">/ohlcv/&#123;symbol&#125;</code>
+          </div>
+          <p class="text-[--color-text-muted] text-sm">{t('api.endpoint_ohlcv')}</p>
+          <div class="mt-3 font-mono text-xs text-[--color-text-muted]">
+            <span class="text-[--color-accent]">Params:</span> symbol (path), limit (query, default: 3000)
+          </div>
+        </div>
+
+        <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card]">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="font-mono text-xs px-2 py-0.5 rounded bg-green-500/10 text-green-400 font-bold">GET</span>
+            <code class="font-mono text-sm text-[--color-text]">/strategies</code>
+          </div>
+          <p class="text-[--color-text-muted] text-sm">{t('api.endpoint_strategies')}</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ENDPOINTS: SIMULATION -->
+  <section class="pb-12 border-t border-[--color-border] pt-12">
+    <div class="max-w-5xl mx-auto px-4">
+      <h2 class="text-2xl font-bold mb-6">{t('api.section_simulation')}</h2>
+      <div class="space-y-4 max-w-4xl">
+
+        <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card]">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="font-mono text-xs px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 font-bold">POST</span>
+            <code class="font-mono text-sm text-[--color-text]">/simulate</code>
+          </div>
+          <p class="text-[--color-text-muted] text-sm mb-3">{t('api.endpoint_simulate')}</p>
+          <details class="text-sm">
+            <summary class="cursor-pointer text-[--color-accent] font-mono text-xs hover:underline">Request Body</summary>
+            <pre class="mt-2 p-3 rounded bg-[--color-bg] border border-[--color-border] overflow-x-auto text-xs"><code>{`{
+  "strategy": "bb-squeeze-short",
+  "sl_pct": 10.0,
+  "tp_pct": 8.0,
+  "max_bars": 48,
+  "market_type": "futures",
+  "top_n": 50
+}`}</code></pre>
+          </details>
+        </div>
+
+        <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card]">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="font-mono text-xs px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 font-bold">POST</span>
+            <code class="font-mono text-sm text-[--color-text]">/simulate/coin</code>
+          </div>
+          <p class="text-[--color-text-muted] text-sm mb-3">{t('api.endpoint_simulate_coin')}</p>
+          <details class="text-sm">
+            <summary class="cursor-pointer text-[--color-accent] font-mono text-xs hover:underline">Request Body</summary>
+            <pre class="mt-2 p-3 rounded bg-[--color-bg] border border-[--color-border] overflow-x-auto text-xs"><code>{`{
+  "symbol": "BTCUSDT",
+  "sl_pct": 10.0,
+  "tp_pct": 8.0,
+  "max_bars": 48,
+  "direction": "short",
+  "market_type": "futures"
+}`}</code></pre>
+          </details>
+        </div>
+
+        <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card]">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="font-mono text-xs px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 font-bold">POST</span>
+            <code class="font-mono text-sm text-[--color-text]">/simulate/compare</code>
+          </div>
+          <p class="text-[--color-text-muted] text-sm mb-3">{t('api.endpoint_compare')}</p>
+          <details class="text-sm">
+            <summary class="cursor-pointer text-[--color-accent] font-mono text-xs hover:underline">Request Body</summary>
+            <pre class="mt-2 p-3 rounded bg-[--color-bg] border border-[--color-border] overflow-x-auto text-xs"><code>{`{
+  "sl_pct": 10.0,
+  "tp_pct": 8.0,
+  "max_bars": 48,
+  "top_n": 50
+}`}</code></pre>
+          </details>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ENDPOINTS: STRATEGY BUILDER -->
+  <section class="pb-12 border-t border-[--color-border] pt-12">
+    <div class="max-w-5xl mx-auto px-4">
+      <h2 class="text-2xl font-bold mb-6">{t('api.section_builder')}</h2>
+      <div class="space-y-4 max-w-4xl">
+
+        <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card]">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="font-mono text-xs px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 font-bold">POST</span>
+            <code class="font-mono text-sm text-[--color-text]">/backtest</code>
+          </div>
+          <p class="text-[--color-text-muted] text-sm mb-3">{t('api.endpoint_backtest')}</p>
+          <details class="text-sm">
+            <summary class="cursor-pointer text-[--color-accent] font-mono text-xs hover:underline">Request Body</summary>
+            <pre class="mt-2 p-3 rounded bg-[--color-bg] border border-[--color-border] overflow-x-auto text-xs"><code>{`{
+  "name": "My Strategy",
+  "direction": "short",
+  "indicators": { "bb": {}, "volume": {} },
+  "entry": {
+    "type": "AND",
+    "conditions": [
+      { "field": "bb_squeeze", "op": "==", "value_bool": true },
+      { "field": "vol_ratio", "op": ">", "value": 2.0 }
+    ]
+  },
+  "sl_pct": 10.0,
+  "tp_pct": 8.0,
+  "max_bars": 48,
+  "top_n": 50
+}`}</code></pre>
+          </details>
+        </div>
+
+        <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card]">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="font-mono text-xs px-2 py-0.5 rounded bg-green-500/10 text-green-400 font-bold">GET</span>
+            <code class="font-mono text-sm text-[--color-text]">/builder/indicators</code>
+          </div>
+          <p class="text-[--color-text-muted] text-sm">{t('api.endpoint_indicators')}</p>
+        </div>
+
+        <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card]">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="font-mono text-xs px-2 py-0.5 rounded bg-green-500/10 text-green-400 font-bold">GET</span>
+            <code class="font-mono text-sm text-[--color-text]">/builder/presets</code>
+          </div>
+          <p class="text-[--color-text-muted] text-sm">{t('api.endpoint_presets')}</p>
+        </div>
+
+        <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card]">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="font-mono text-xs px-2 py-0.5 rounded bg-green-500/10 text-green-400 font-bold">GET</span>
+            <code class="font-mono text-sm text-[--color-text]">/builder/presets/&#123;preset_id&#125;</code>
+          </div>
+          <p class="text-[--color-text-muted] text-sm">{t('api.endpoint_preset_detail')}</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- QUICK START -->
+  <section class="pb-12 border-t border-[--color-border] pt-12">
+    <div class="max-w-5xl mx-auto px-4">
+      <h2 class="text-2xl font-bold mb-2">{t('api.quickstart')}</h2>
+      <p class="text-[--color-text-muted] text-sm mb-6">{t('api.quickstart_desc')}</p>
+
+      <div class="space-y-6 max-w-4xl">
+        <!-- Python -->
+        <div>
+          <div class="font-mono text-[--color-accent] text-xs font-bold mb-2">{t('api.example_python')}</div>
+          <pre class="p-4 rounded-lg bg-[--color-bg-card] border border-[--color-border] overflow-x-auto text-sm"><code class="text-[--color-text]">{`import requests
+
+# Get market overview
+market = requests.get("${API_BASE}/market").json()
+print(f"BTC: ${'{'}market['btc_price']:,.0f{'}'}")
+print(f"Fear & Greed: {'{'}market['fear_greed_index']{'}'}")
+
+# Simulate BB Squeeze SHORT on top 50 coins
+result = requests.post("${API_BASE}/simulate", json={
+    "strategy": "bb-squeeze-short",
+    "sl_pct": 10.0,
+    "tp_pct": 8.0,
+    "top_n": 50
+}).json()
+
+print(f"Win Rate: {'{'}result['win_rate']{'}'} %")
+print(f"Profit Factor: {'{'}result['profit_factor']{'}'}")
+print(f"Total Trades: {'{'}result['total_trades']{'}'}")
+
+# Get OHLCV data for BTCUSDT (last 168 bars = 7 days)
+ohlcv = requests.get("${API_BASE}/ohlcv/BTCUSDT", params={"limit": 168}).json()
+print(f"Bars: {'{'}ohlcv['total_bars']{'}'}")`}</code></pre>
+        </div>
+
+        <!-- cURL -->
+        <div>
+          <div class="font-mono text-[--color-accent] text-xs font-bold mb-2">{t('api.example_curl')}</div>
+          <pre class="p-4 rounded-lg bg-[--color-bg-card] border border-[--color-border] overflow-x-auto text-sm"><code class="text-[--color-text]">{`# Health check
+curl ${API_BASE}/health
+
+# Market overview
+curl ${API_BASE}/market
+
+# OHLCV data (last 168 bars)
+curl "${API_BASE}/ohlcv/ETHUSDT?limit=168"
+
+# Run simulation
+curl -X POST ${API_BASE}/simulate \\
+  -H "Content-Type: application/json" \\
+  -d '{"strategy":"bb-squeeze-short","sl_pct":10,"tp_pct":8,"top_n":50}'`}</code></pre>
+        </div>
+
+        <!-- JavaScript -->
+        <div>
+          <div class="font-mono text-[--color-accent] text-xs font-bold mb-2">{t('api.example_js')}</div>
+          <pre class="p-4 rounded-lg bg-[--color-bg-card] border border-[--color-border] overflow-x-auto text-sm"><code class="text-[--color-text]">{`// Fetch all available strategies
+const strategies = await fetch("${API_BASE}/strategies").then(r => r.json());
+console.log(strategies.map(s => s.name));
+
+// Simulate single coin
+const sim = await fetch("${API_BASE}/simulate/coin", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    symbol: "SOLUSDT",
+    sl_pct: 10, tp_pct: 8, max_bars: 48,
+    direction: "short", market_type: "futures"
+  })
+}).then(r => r.json());
+
+console.log(\`Trades: \${sim.total_trades}, WR: \${sim.win_rate}%\`);`}</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SDK / COMING SOON -->
+  <section class="pb-16 border-t border-[--color-border] pt-12">
+    <div class="max-w-5xl mx-auto px-4">
+      <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] max-w-3xl">
+        <h3 class="text-xl font-bold mb-2">{t('api.sdk_title')}</h3>
+        <p class="text-[--color-text-muted] text-sm">
+          {t('api.sdk_desc')}
+        </p>
+        <a href="https://t.me/PRUVIQ" target="_blank" rel="noopener" class="inline-block mt-3 font-mono text-xs text-[--color-accent] hover:underline">t.me/PRUVIQ</a>
+      </div>
+    </div>
+  </section>
+
+</Layout>
