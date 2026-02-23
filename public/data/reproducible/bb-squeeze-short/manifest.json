@@ -1,0 +1,6 @@
+{
+  "name": "bb-squeeze-short",
+  "version": "2026-02-22",
+  "description": "Demo reproducible package manifest for bb-squeeze-short",
+  "files": ["params.json"]
+}
