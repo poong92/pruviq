@@ -96,7 +96,7 @@ export default function FeeCalculator({ lang = 'en' }: Props) {
                   ? ''
                   : 'bg-[--color-bg-card] text-[--color-text-muted] hover:text-[--color-text]'
               }`}
-              style={market === 'spot' ? { background: '#3b82f6', color: '#fff' } : undefined}
+              style={market === 'spot' ? { background: 'var(--color-accent)', color: '#fff' } : undefined}
             >
               {t.spotTab}
             </button>
@@ -107,7 +107,7 @@ export default function FeeCalculator({ lang = 'en' }: Props) {
                   ? ''
                   : 'bg-[--color-bg-card] text-[--color-text-muted] hover:text-[--color-text]'
               }`}
-              style={market === 'futures' ? { background: '#3b82f6', color: '#fff' } : undefined}
+              style={market === 'futures' ? { background: 'var(--color-accent)', color: '#fff' } : undefined}
             >
               {t.futuresTab}
             </button>
@@ -170,7 +170,7 @@ export default function FeeCalculator({ lang = 'en' }: Props) {
                   href={ex.referralUrl}
                   target="_blank"
                   rel="noopener"
-                  class="inline-block w-full px-4 py-2 min-h-[44px] flex items-center justify-center rounded text-xs font-semibold hover:opacity-90 transition-opacity" style="background:#3b82f6;color:#fff"
+                  class="inline-block w-full px-4 py-2 min-h-[44px] flex items-center justify-center rounded text-xs font-semibold hover:opacity-90 transition-opacity" style="background:var(--color-accent);color:#fff"
                 >
                   {t.signup} &rarr;
                 </a>

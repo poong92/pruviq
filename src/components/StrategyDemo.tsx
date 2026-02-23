@@ -1,11 +1,9 @@
 import { useState, useEffect, useRef } from 'preact/hooks';
+import { getCssVar } from '../utils/format';
 import DiscreteSlider from './DiscreteSlider';
 import ResultsCard from './ResultsCard';
 import { API_BASE_URL as API_URL, STATIC_DATA, fetchWithFallback } from '../config/api';
 
-function getCssVar(name: string): string {
-  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-}
 
 interface EquityPoint {
   time: string;
@@ -339,7 +337,7 @@ export default function StrategyDemo({
         <p class="text-[--color-text-muted] text-sm mb-4">{t.ctaDesc}</p>
         <div class="flex gap-3 flex-wrap">
           <a href="https://accounts.binance.com/register?ref=PRUVIQ" target="_blank" rel="noopener"
-             class="inline-block px-5 py-2.5 rounded-lg font-semibold text-sm no-underline hover:opacity-90 transition-opacity" style="background:#3b82f6;color:#fff">
+             class="inline-block px-5 py-2.5 rounded-lg font-semibold text-sm no-underline hover:opacity-90 transition-opacity" style="background:var(--color-accent);color:#fff">
             {t.ctaExchange} &rarr;
           </a>
           <a href={lang === 'ko' ? '/ko/fees' : '/fees'}

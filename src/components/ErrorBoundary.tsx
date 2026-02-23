@@ -12,7 +12,7 @@ interface State {
 
 /**
  * Preact Error Boundary - prevents one component crash from blanking the entire page.
- * Wraps interactive components (MarketDashboard, CoinListTable, StrategyBuilder, etc.)
+ * Wraps interactive components (MarketDashboard, CoinListTable, SimulatorPage, etc.)
  * so a runtime error shows a recoverable error UI instead of skeleton/blank state.
  */
 export default class ErrorBoundary extends Component<Props, State> {

@@ -269,7 +269,7 @@ export default function StrategyComparison({ lang = 'en' }: Props) {
                 ? 'cursor-not-allowed'
                 : 'hover:shadow-[0_0_15px_var(--color-up-fill)]'
               }`}
-            style={isRunning ? { background: '#222', color: '#888' } : { background: '#3b82f6', color: '#fff' }}
+            style={isRunning ? { background: '#222', color: '#888' } : { background: 'var(--color-accent)', color: '#fff' }}
           >
             {isRunning ? t.running : t.run}
           </button>
@@ -446,7 +446,7 @@ export default function StrategyComparison({ lang = 'en' }: Props) {
             <h3 class="font-bold text-sm mb-1">{t.ctaTitle}</h3>
             <p class="text-[--color-text-muted] text-xs">{t.ctaDesc}</p>
           </div>
-          <a href={lang === 'ko' ? '/ko/simulate' : '/simulate'} class="shrink-0 px-5 py-2.5 rounded-lg font-semibold text-sm no-underline hover:opacity-90 transition-opacity whitespace-nowrap" style="background:#3b82f6;color:#fff">
+          <a href={lang === 'ko' ? '/ko/simulate' : '/simulate'} class="shrink-0 px-5 py-2.5 rounded-lg font-semibold text-sm no-underline hover:opacity-90 transition-opacity whitespace-nowrap" style="background:var(--color-accent);color:#fff">
             {t.ctaButton} &rarr;
           </a>
         </div>

@@ -1,12 +1,8 @@
 import { useState, useEffect, useRef } from 'preact/hooks';
-import { formatPrice, formatVolume, formatVolumeRaw } from '../utils/format';
+import { formatPrice, formatVolume, formatVolumeRaw, getCssVar } from '../utils/format';
 import { API_BASE_URL as API_URL } from '../config/api';
 import type { MouseEventParams, Time } from 'lightweight-charts';
 
-// Helper function to get CSS variable values at runtime
-function getCssVar(name: string): string {
-  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-}
 
 interface OhlcvBar {
   t: number;
@@ -417,7 +413,7 @@ export default function CoinChart({ symbol, lang = 'en' }: { symbol: string; lan
             <p class="text-[--color-text-muted] text-xs">{t.ctaDesc}</p>
           </div>
           <div class="flex gap-2 shrink-0">
-            <a href={lang === 'ko' ? '/ko/simulate' : '/simulate'} class="px-4 py-2 rounded-lg font-semibold text-xs no-underline hover:opacity-90 transition-opacity whitespace-nowrap" style="background:#3b82f6;color:#fff">
+            <a href={lang === 'ko' ? '/ko/simulate' : '/simulate'} class="px-4 py-2 rounded-lg font-semibold text-xs no-underline hover:opacity-90 transition-opacity whitespace-nowrap" style="background:var(--color-accent);color:#fff">
               {t.ctaSimulate} &rarr;
             </a>
             <a href={lang === 'ko' ? '/ko/fees' : '/fees'} class="border border-[--color-border] text-[--color-text] px-4 py-2 rounded-lg font-semibold text-xs no-underline hover:border-[--color-accent] transition-colors whitespace-nowrap">

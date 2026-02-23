@@ -2,6 +2,8 @@
  * simulator-types.ts - Shared types for Simulator components
  */
 
+export { getCssVar } from '../utils/format';
+
 export interface OhlcvBar {
   t: number; o: number; h: number; l: number; c: number; v: number;
   bb_upper: number | null; bb_lower: number | null; bb_mid: number | null;
@@ -52,10 +54,6 @@ export interface CoinOption { symbol: string; name?: string; }
 // ─── Helpers ───
 let _condId = 0;
 export function nextCondId() { return `c_${++_condId}`; }
-
-export function getCssVar(name: string): string {
-  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-}
 
 export const OPS = [
   { value: '>=', label: '>=' },

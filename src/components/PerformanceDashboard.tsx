@@ -1,9 +1,6 @@
 import { useState, useEffect, useRef } from 'preact/hooks';
-import { formatPrice, formatUsd, formatDate, formatDateFull, formatReasonLabel, winRateColor, profitFactorColor, signColor } from '../utils/format';
+import { formatPrice, formatUsd, formatDate, formatDateFull, formatReasonLabel, winRateColor, profitFactorColor, signColor, getCssVar } from '../utils/format';
 
-function getCssVar(name: string): string {
-  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-}
 
 interface DailyEntry {
   date: string;
