@@ -225,7 +225,7 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
 
       // Load indicators
       try {
-        const indRes = await fetch(`${API_URL}/indicators`);
+        const indRes = await fetch(`${API_URL}/builder/indicators`);
         if (indRes.ok) {
           const data = await indRes.json();
           if (!cancelled) setAvailableIndicators(data.indicators || []);
@@ -234,7 +234,7 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
 
       // Load presets
       try {
-        const presetRes = await fetch(`${API_URL}/presets`);
+        const presetRes = await fetch(`${API_URL}/builder/presets`);
         if (presetRes.ok) {
           const data = await presetRes.json();
           if (!cancelled) setPresets(data.presets || []);
@@ -470,7 +470,7 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
   const loadPreset = useCallback(async (presetId: string) => {
     setActivePreset(presetId);
     try {
-      const res = await fetch(`${API_URL}/presets/${presetId}`);
+      const res = await fetch(`${API_URL}/builder/presets/${presetId}`);
       if (!res.ok) return;
       const p = await res.json();
 
