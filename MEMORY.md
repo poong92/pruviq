@@ -251,3 +251,18 @@ Generated and committed by 프루빅 on 2026-02-24 02:30 KST.
        - For #7: ops/SRE should collect logs/traces and attach them here; I will analyze and propose remediation.
 
 Generated and committed by 프루빅 on 2026-02-23 22:30 KST.
+
+
+## CRON RUN - cron:424c24a9-bdc0-4506-8f39-cafbd917d7cf (i18n-fix)
+- Time: 2026-02-24 06:00 KST
+- Actor: PRUVIQ Bot (프루빅)
+- What I did:
+  1. Read SOUL.md and MEMORY.md to confirm context and rules. (confirmed in SOUL.md)
+  2. Compared translation keys in src/i18n/en.ts and src/i18n/ko.ts. Result: both files contain 551 keys; no keys missing in ko.ts. (confirmed by local key diff script)
+  3. Checked pages under src/pages for /ko/ equivalents. Result: all EN pages have a Korean equivalent (e.g., src/pages/404.astro -> src/pages/ko/404/index.astro). No missing KO pages.
+  4. No missing translation keys or KO pages were found, so no translations or page copies were added.
+  5. Ran `npm run build` to verify site builds. Result: Build succeeded — "1290 page(s) built" and exit code 0. (from npm run build output)
+  6. Updated MEMORY.md with this run log, committed, and pushed the change.
+- Files changed: MEMORY.md
+- Git: committed and pushed to origin/main (no other code changes).
+
