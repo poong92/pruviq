@@ -755,7 +755,7 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
                             updateCondition(c.id, 'value', true);
                           }
                         }}
-                        class="flex-1 min-w-0 px-1 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-[10px] outline-none"
+                        class="flex-1 min-w-0 px-1 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-[10px] text-[--color-text] outline-none focus:border-[--color-accent]"
                       >
                         {availableFields.map((f) => <option key={f} value={f}>{f}</option>)}
                       </select>
@@ -763,7 +763,7 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
                       <select
                         value={c.op}
                         onChange={(e: any) => updateCondition(c.id, 'op', e.target.value)}
-                        class="w-10 px-0.5 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-[10px] outline-none"
+                        class="w-10 px-0.5 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-[10px] text-[--color-text] outline-none focus:border-[--color-accent]"
                       >
                         {OPS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
                       </select>
@@ -772,7 +772,7 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
                         <select
                           value={String(c.value)}
                           onChange={(e: any) => updateCondition(c.id, 'value', e.target.value === 'true')}
-                          class="w-12 px-0.5 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-[10px] outline-none"
+                          class="w-12 px-0.5 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-[10px] text-[--color-text] outline-none focus:border-[--color-accent]"
                         >
                           <option value="true">true</option>
                           <option value="false">false</option>
@@ -783,14 +783,14 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
                           step="any"
                           value={c.value as number}
                           onChange={(e: any) => updateCondition(c.id, 'value', parseFloat(e.target.value))}
-                          class="w-14 px-1 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-[10px] outline-none"
+                          class="w-14 px-1 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-[10px] text-[--color-text] outline-none focus:border-[--color-accent]"
                         />
                       )}
                       {/* Shift */}
                       <select
                         value={c.shift}
                         onChange={(e: any) => updateCondition(c.id, 'shift', parseInt(e.target.value))}
-                        class="w-8 px-0.5 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-[10px] outline-none"
+                        class="w-8 px-0.5 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-[10px] text-[--color-text] outline-none focus:border-[--color-accent]"
                         title={c.shift === 1 ? 'Previous candle (safe)' : 'Current candle (risky)'}
                       >
                         <option value="1">P</option>
@@ -832,7 +832,7 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
                     <label class="text-[9px] text-[--color-text-muted]">{t.maxBars}</label>
                     <input type="number" value={maxBars} min={1} max={168}
                       onChange={(e: any) => setMaxBars(parseInt(e.target.value) || 48)}
-                      class="w-full mt-0.5 px-2 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-[11px] outline-none"
+                      class="w-full mt-0.5 px-2 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-[11px] text-[--color-text] outline-none focus:border-[--color-accent]"
                     />
                   </div>
                   {/* SL */}
@@ -840,7 +840,7 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
                     <label class="text-[9px] text-[--color-text-muted]">{t.sl}</label>
                     <input type="number" value={slPct} min={1} max={50} step={0.5}
                       onChange={(e: any) => setSlPct(parseFloat(e.target.value) || 10)}
-                      class="w-full mt-0.5 px-2 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-[11px] outline-none"
+                      class="w-full mt-0.5 px-2 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-[11px] text-[--color-text] outline-none focus:border-[--color-accent]"
                     />
                   </div>
                   {/* TP */}
@@ -848,7 +848,7 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
                     <label class="text-[9px] text-[--color-text-muted]">{t.tp}</label>
                     <input type="number" value={tpPct} min={1} max={50} step={0.5}
                       onChange={(e: any) => setTpPct(parseFloat(e.target.value) || 8)}
-                      class="w-full mt-0.5 px-2 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-[11px] outline-none"
+                      class="w-full mt-0.5 px-2 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-[11px] text-[--color-text] outline-none focus:border-[--color-accent]"
                     />
                   </div>
                 </div>
@@ -862,14 +862,14 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
                     <label class="text-[9px] text-[--color-text-muted]">{t.startDate}</label>
                     <input type="date" value={startDate}
                       onChange={(e: any) => setStartDate(e.target.value)}
-                      class="w-full mt-0.5 px-1.5 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-[10px] outline-none"
+                      class="w-full mt-0.5 px-1.5 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-[10px] text-[--color-text] outline-none focus:border-[--color-accent]"
                     />
                   </div>
                   <div>
                     <label class="text-[9px] text-[--color-text-muted]">{t.endDate}</label>
                     <input type="date" value={endDate}
                       onChange={(e: any) => setEndDate(e.target.value)}
-                      class="w-full mt-0.5 px-1.5 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-[10px] outline-none"
+                      class="w-full mt-0.5 px-1.5 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-[10px] text-[--color-text] outline-none focus:border-[--color-accent]"
                     />
                   </div>
                 </div>
@@ -899,7 +899,7 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
                 {coinMode === 'top' && (
                   <input type="number" value={topN} min={1} max={549}
                     onChange={(e: any) => setTopN(parseInt(e.target.value) || 50)}
-                    class="w-full px-2 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-[10px] outline-none"
+                    class="w-full px-2 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-[10px] text-[--color-text] outline-none focus:border-[--color-accent]"
                     placeholder="Number of top coins"
                   />
                 )}

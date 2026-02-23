@@ -194,6 +194,34 @@ a[href]:active {
   box-shadow: 0 0 8px rgba(255, 68, 68, 0.25), inset 0 0 12px rgba(255, 68, 68, 0.06);
 }
 
+/* ─── Dark-mode form elements (select, input, option) ─── */
+select,
+input[type="number"],
+input[type="text"],
+input[type="date"] {
+  color: var(--color-text);
+  background-color: var(--color-bg-card);
+  -webkit-appearance: none;
+  appearance: none;
+}
+select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M0 0l4 5 4-5z' fill='%23888'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 6px center;
+  padding-right: 18px;
+}
+select option {
+  background-color: #111;
+  color: var(--color-text);
+}
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.7);
+}
+select:focus,
+input:focus {
+  border-color: var(--color-accent) !important;
+}
+
 /* Focus visible (keyboard navigation) */
 button:focus-visible,
 a:focus-visible,
