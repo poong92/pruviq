@@ -114,7 +114,7 @@ export default function StrategyComparison({ lang = 'en' }: Props) {
     const loadPresets = async () => {
       try {
         const listData = await fetchWithFallback('/builder/presets', STATIC_DATA.builderPresets);
-        const list = await listRes.json();
+        const list = Array.isArray(listData) ? listData : [];
         const fullPresets: PresetFull[] = [];
         for (const item of list) {
           const res = await fetch(`${API_URL}/builder/presets/${item.id}`);
