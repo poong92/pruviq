@@ -339,7 +339,7 @@ export default function StrategyDemo({
         <p class="text-[--color-text-muted] text-sm mb-4">{t.ctaDesc}</p>
         <div class="flex gap-3 flex-wrap">
           <a href="https://accounts.binance.com/register?ref=PRUVIQ" target="_blank" rel="noopener"
-             class="inline-block bg-[--color-accent] text-[--color-bg] px-5 py-2.5 rounded-lg font-semibold text-sm no-underline hover:opacity-90 transition-opacity">
+             class="inline-block px-5 py-2.5 rounded-lg font-semibold text-sm no-underline hover:opacity-90 transition-opacity" style="background:#00ff88;color:#0a0a0a">
             {t.ctaExchange} &rarr;
           </a>
           <a href={lang === 'ko' ? '/ko/fees' : '/fees'}

@@ -86,7 +86,7 @@ export default function ExchangeCTA({ mode = 'card', lang = 'en', coin, strategy
                 {ex.tag} &middot; <span class="text-[--color-accent]">{ex.discountLabel} {t.discount}</span>
               </div>
             </div>
-            <span class="px-3 py-1.5 rounded-md bg-[--color-accent] text-[--color-bg] text-xs font-semibold group-hover:bg-[--color-accent-dim] transition-colors whitespace-nowrap">
+            <span class="px-3 py-1.5 rounded-md text-xs font-semibold transition-colors whitespace-nowrap" style="background:#00ff88;color:#0a0a0a">
               {t.signup} &rarr;
             </span>
           </a>

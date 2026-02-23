@@ -89,7 +89,7 @@ export default function DemoRunner() {
   return (
     <div class="demo-runner">
       <div class="flex gap-3 items-center">
-        <button class="btn-primary bg-[--color-accent] text-[--color-bg] px-4 py-2 rounded font-semibold" onClick={runDemo} disabled={loading}>
+        <button class="btn-primary px-4 py-2 rounded font-semibold" onClick={runDemo} disabled={loading}>
           {loading ? 'Running demo...' : 'Try Live Demo'}
         </button>
         {data && (

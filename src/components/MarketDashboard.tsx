@@ -583,14 +583,16 @@ export default function MarketDashboard({ lang = 'en' }: { lang?: 'en' | 'ko' })
                 <button
                   onClick={() => { setNewsTab('crypto'); setSourceFilter(''); }}
                   class={`px-3 py-1 text-[0.6875rem] font-semibold cursor-pointer border-none transition-colors min-h-[36px] ${
-                    newsTab === 'crypto' ? 'bg-[--color-accent] text-[--color-bg]' : 'bg-[--color-bg-hover] text-[--color-text-muted] hover:text-[--color-text]'
+                    newsTab === 'crypto' ? '' : 'bg-[--color-bg-hover] text-[--color-text-muted] hover:text-[--color-text]'
                   }`}
+                  style={newsTab === 'crypto' ? { background: '#00ff88', color: '#0a0a0a' } : undefined}
                 >{l.cryptoNews}</button>
                 <button
                   onClick={() => { setNewsTab('macro'); setSourceFilter(''); }}
                   class={`px-3 py-1 text-[0.6875rem] font-semibold cursor-pointer border-none transition-colors min-h-[36px] ${
-                    newsTab === 'macro' ? 'bg-[--color-accent] text-[--color-bg]' : 'bg-[--color-bg-hover] text-[--color-text-muted] hover:text-[--color-text]'
+                    newsTab === 'macro' ? '' : 'bg-[--color-bg-hover] text-[--color-text-muted] hover:text-[--color-text]'
                   }`}
+                  style={newsTab === 'macro' ? { background: '#00ff88', color: '#0a0a0a' } : undefined}
                 >{l.macroNews}</button>
               </div>
 
@@ -606,8 +608,9 @@ export default function MarketDashboard({ lang = 'en' }: { lang?: 'en' | 'ko' })
                   onClick={() => setSourceFilter('')}
                   aria-pressed={sourceFilter === ''}
                   class={`px-2 py-1 text-[0.6875rem] rounded font-semibold cursor-pointer border-none transition-colors min-h-[44px] ${
-                    !sourceFilter ? 'bg-[--color-accent] text-[--color-bg]' : 'bg-[--color-bg-hover] text-[--color-text-muted] hover:text-[--color-text]'
+                    !sourceFilter ? '' : 'bg-[--color-bg-hover] text-[--color-text-muted] hover:text-[--color-text]'
                   }`}
+                  style={!sourceFilter ? { background: '#00ff88', color: '#0a0a0a' } : undefined}
                 >{l.allSources}</button>
                 {activeNewsSources.map(s => (
                   <button
@@ -615,8 +618,9 @@ export default function MarketDashboard({ lang = 'en' }: { lang?: 'en' | 'ko' })
                     onClick={() => setSourceFilter(sourceFilter === s ? '' : s)}
                     aria-pressed={sourceFilter === s}
                     class={`px-2 py-1 text-[0.6875rem] rounded font-semibold cursor-pointer border-none whitespace-nowrap transition-colors min-h-[44px] ${
-                      sourceFilter === s ? 'bg-[--color-accent] text-[--color-bg]' : 'bg-[--color-bg-hover] text-[--color-text-muted] hover:text-[--color-text]'
+                      sourceFilter === s ? '' : 'bg-[--color-bg-hover] text-[--color-text-muted] hover:text-[--color-text]'
                     }`}
+                    style={sourceFilter === s ? { background: '#00ff88', color: '#0a0a0a' } : undefined}
                   >{s.replace('Bitcoin Magazine', 'BTC Mag').replace('CNBC Economy', 'CNBC')}</button>
                 ))}
               </div>
@@ -687,7 +691,7 @@ export default function MarketDashboard({ lang = 'en' }: { lang?: 'en' | 'ko' })
                 <h3 class="font-bold text-sm mb-1">{l.ctaTitle}</h3>
                 <p class="text-[--color-text-muted] text-xs">{l.ctaDesc}</p>
               </div>
-              <a href={lang === 'ko' ? '/ko/simulate' : '/simulate'} class="shrink-0 bg-[--color-accent] text-[--color-bg] px-5 py-2.5 rounded-lg font-semibold text-sm no-underline hover:opacity-90 transition-opacity whitespace-nowrap">
+              <a href={lang === 'ko' ? '/ko/simulate' : '/simulate'} class="shrink-0 px-5 py-2.5 rounded-lg font-semibold text-sm no-underline hover:opacity-90 transition-opacity whitespace-nowrap" style="background:#00ff88;color:#0a0a0a">
                 {l.ctaButton} &rarr;
               </a>
             </div>

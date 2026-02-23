@@ -109,9 +109,12 @@ body {
 
 /* Primary CTA glow */
 .btn-primary {
+  background-color: var(--color-accent, #00ff88) !important;
+  color: var(--color-bg, #0a0a0a) !important;
   transition: background-color 0.2s ease, box-shadow 0.2s ease;
 }
 .btn-primary:hover {
+  background-color: var(--color-accent-dim, #00cc6a) !important;
   box-shadow: 0 0 20px rgba(0, 255, 136, 0.3), 0 0 40px rgba(0, 255, 136, 0.1);
 }
 

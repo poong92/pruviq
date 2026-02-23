@@ -93,9 +93,10 @@ export default function FeeCalculator({ lang = 'en' }: Props) {
               onClick={() => setMarket('spot')}
               class={`px-4 py-2 min-h-[44px] text-sm font-semibold transition-colors ${
                 market === 'spot'
-                  ? 'bg-[--color-accent] text-[--color-bg]'
+                  ? ''
                   : 'bg-[--color-bg-card] text-[--color-text-muted] hover:text-[--color-text]'
               }`}
+              style={market === 'spot' ? { background: '#00ff88', color: '#0a0a0a' } : undefined}
             >
               {t.spotTab}
             </button>
@@ -103,9 +104,10 @@ export default function FeeCalculator({ lang = 'en' }: Props) {
               onClick={() => setMarket('futures')}
               class={`px-4 py-2 min-h-[44px] text-sm font-semibold transition-colors ${
                 market === 'futures'
-                  ? 'bg-[--color-accent] text-[--color-bg]'
+                  ? ''
                   : 'bg-[--color-bg-card] text-[--color-text-muted] hover:text-[--color-text]'
               }`}
+              style={market === 'futures' ? { background: '#00ff88', color: '#0a0a0a' } : undefined}
             >
               {t.futuresTab}
             </button>
@@ -168,7 +170,7 @@ export default function FeeCalculator({ lang = 'en' }: Props) {
                   href={ex.referralUrl}
                   target="_blank"
                   rel="noopener"
-                  class="inline-block w-full bg-[--color-accent] text-[--color-bg] px-4 py-2 min-h-[44px] flex items-center justify-center rounded text-xs font-semibold hover:opacity-90 transition-opacity"
+                  class="inline-block w-full px-4 py-2 min-h-[44px] flex items-center justify-center rounded text-xs font-semibold hover:opacity-90 transition-opacity" style="background:#00ff88;color:#0a0a0a"
                 >
                   {t.signup} &rarr;
                 </a>

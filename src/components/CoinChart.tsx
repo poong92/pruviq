@@ -417,7 +417,7 @@ export default function CoinChart({ symbol, lang = 'en' }: { symbol: string; lan
             <p class="text-[--color-text-muted] text-xs">{t.ctaDesc}</p>
           </div>
           <div class="flex gap-2 shrink-0">
-            <a href={lang === 'ko' ? '/ko/simulate' : '/simulate'} class="bg-[--color-accent] text-[--color-bg] px-4 py-2 rounded-lg font-semibold text-xs no-underline hover:opacity-90 transition-opacity whitespace-nowrap">
+            <a href={lang === 'ko' ? '/ko/simulate' : '/simulate'} class="px-4 py-2 rounded-lg font-semibold text-xs no-underline hover:opacity-90 transition-opacity whitespace-nowrap" style="background:#00ff88;color:#0a0a0a">
               {t.ctaSimulate} &rarr;
             </a>
             <a href={lang === 'ko' ? '/ko/fees' : '/fees'} class="border border-[--color-border] text-[--color-text] px-4 py-2 rounded-lg font-semibold text-xs no-underline hover:border-[--color-accent] transition-colors whitespace-nowrap">

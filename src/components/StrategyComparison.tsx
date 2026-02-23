@@ -266,9 +266,10 @@ export default function StrategyComparison({ lang = 'en' }: Props) {
             disabled={isRunning || presets.length === 0}
             class={`px-6 py-2.5 rounded-lg font-mono font-bold text-sm cursor-pointer transition-all
               ${isRunning
-                ? 'bg-[--color-border] text-[--color-text-muted] cursor-not-allowed'
-                : 'bg-[--color-accent] text-[--color-bg] hover:shadow-[0_0_15px_var(--color-up-fill)]'
+                ? 'cursor-not-allowed'
+                : 'hover:shadow-[0_0_15px_var(--color-up-fill)]'
               }`}
+            style={isRunning ? { background: '#222', color: '#888' } : { background: '#00ff88', color: '#0a0a0a' }}
           >
             {isRunning ? t.running : t.run}
           </button>
@@ -445,7 +446,7 @@ export default function StrategyComparison({ lang = 'en' }: Props) {
             <h3 class="font-bold text-sm mb-1">{t.ctaTitle}</h3>
             <p class="text-[--color-text-muted] text-xs">{t.ctaDesc}</p>
           </div>
-          <a href={lang === 'ko' ? '/ko/simulate' : '/simulate'} class="shrink-0 bg-[--color-accent] text-[--color-bg] px-5 py-2.5 rounded-lg font-semibold text-sm no-underline hover:opacity-90 transition-opacity whitespace-nowrap">
+          <a href={lang === 'ko' ? '/ko/simulate' : '/simulate'} class="shrink-0 px-5 py-2.5 rounded-lg font-semibold text-sm no-underline hover:opacity-90 transition-opacity whitespace-nowrap" style="background:#00ff88;color:#0a0a0a">
             {t.ctaButton} &rarr;
           </a>
         </div>
