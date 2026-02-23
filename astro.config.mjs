@@ -19,7 +19,7 @@ export default defineConfig({
       // Exclude legacy /learn/ redirect routes from the generated sitemap.
       // Those pages redirect to /blog/* and should not be indexed as separate URLs.
       filter(page) {
-        return !page.startsWith('/learn/') && !page.startsWith('/ko/learn/');
+        return !page.includes('/learn/');
       }
     }),
     preact()
