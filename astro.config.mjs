@@ -15,7 +15,19 @@ export default defineConfig({
     }
   },
   integrations: [
-    sitemap(),
+    sitemap({
+      // Exclude legacy /learn/ redirect routes from the generated sitemap.
+      // Those pages redirect to /blog/* and should not be indexed as separate URLs.
+      filter(page) {
+        return !page.includes('/learn/');
+      },
+      // As a second safeguard, filter out any generated sitemap items that include /learn/.
+      serialize(item) {
+        if (!item || !item.url) return item;
+        if (item.url.includes('/learn/')) return undefined;
+        return item;
+      }
+    }),
     preact()
   ],
   vite: {
