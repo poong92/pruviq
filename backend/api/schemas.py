@@ -16,6 +16,8 @@ class SimulationRequest(BaseModel):
     market_type: str = Field(default="futures", description="spot | futures")
     symbols: Optional[List[str]] = Field(default=None, description="Specific symbols (null = top 50)")
     top_n: int = Field(default=50, ge=1, le=535, description="Number of coins if symbols is null")
+    start_date: Optional[str] = Field(default=None, description="Backtest start date (YYYY-MM-DD)")
+    end_date: Optional[str] = Field(default=None, description="Backtest end date (YYYY-MM-DD)")
 
 
 class TradeItem(BaseModel):
@@ -117,6 +119,8 @@ class CoinSimRequest(BaseModel):
     max_bars: int = Field(default=48, ge=6, le=168)
     direction: str = Field(default="short")
     market_type: str = Field(default="futures")
+    start_date: Optional[str] = Field(default=None, description="Backtest start date (YYYY-MM-DD)")
+    end_date: Optional[str] = Field(default=None, description="Backtest end date (YYYY-MM-DD)")
 
 
 class TradeDetail(BaseModel):
@@ -276,6 +280,8 @@ class BacktestRequest(BaseModel):
     max_bars: int = Field(default=48, ge=1, le=168, description="Max holding period (bars)")
     top_n: int = Field(default=50, ge=1, le=535, description="Number of coins")
     symbols: Optional[List[str]] = Field(default=None, description="Specific symbols")
+    start_date: Optional[str] = Field(default=None, description="Backtest start date (YYYY-MM-DD)")
+    end_date: Optional[str] = Field(default=None, description="Backtest end date (YYYY-MM-DD)")
 
 
 
@@ -411,6 +417,8 @@ class ValidateRequest(BaseModel):
     symbols: Optional[List[str]] = Field(default=None)
     oos_pct: float = Field(default=30.0, ge=10.0, le=50.0, description="OOS split %")
     mc_runs: int = Field(default=1000, ge=100, le=5000, description="Monte Carlo runs")
+    start_date: Optional[str] = Field(default=None, description="Backtest start date (YYYY-MM-DD)")
+    end_date: Optional[str] = Field(default=None, description="Backtest end date (YYYY-MM-DD)")
 
 
 class ValidateResponse(BaseModel):

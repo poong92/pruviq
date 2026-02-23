@@ -297,6 +297,32 @@ def downsample_equity(times: list, values: list, n_points: int = 100) -> List[Eq
 
 # --- Endpoints ---
 
+# --- Date Range Filter ---
+
+def filter_df_by_date(df: pd.DataFrame, start_date=None, end_date=None) -> pd.DataFrame:
+    """Filter DataFrame by date range. No-op if dates are None."""
+    if not start_date and not end_date:
+        return df
+    if "timestamp" not in df.columns:
+        return df
+    ts = pd.to_datetime(df["timestamp"])
+    mask = pd.Series(True, index=df.index)
+    if start_date:
+        try:
+            mask &= ts >= pd.Timestamp(start_date)
+        except ValueError:
+            pass
+    if end_date:
+        try:
+            mask &= ts <= pd.Timestamp(end_date) + pd.Timedelta(days=1)
+        except ValueError:
+            pass
+    filtered = df[mask].copy()
+    if len(filtered) < 100:
+        return df
+    return filtered
+
+
 @app.get("/health", response_model=HealthResponse)
 async def health():
     return HealthResponse(
@@ -374,7 +400,9 @@ async def simulate(req: SimulationRequest):
     for sym, df in coins:
         if not has_cache:
             df = strategy.calculate_indicators(df.copy())
+            df = filter_df_by_date(df, getattr(req, 'start_date', None), getattr(req, 'end_date', None))
 
+        df = filter_df_by_date(df, getattr(req, 'start_date', None), getattr(req, 'end_date', None))
         result = run_fast(
             df, strategy, sym,
             sl_pct=req.sl_pct / 100,
@@ -601,6 +629,7 @@ async def simulate_coin(req: CoinSimRequest):
     strategy, _, _ = get_strategy(strategy_id)
     cost_model = CostModel.futures() if req.market_type == "futures" else CostModel.spot()
 
+    df = filter_df_by_date(df, getattr(req, 'start_date', None), getattr(req, 'end_date', None))
     result = run_fast(
         df, strategy, symbol,
         sl_pct=req.sl_pct / 100,
@@ -671,7 +700,9 @@ async def simulate_compare(req: CompareRequest):
         for sym, df in coins:
             if not has_cache:
                 df = strategy.calculate_indicators(df.copy())
+                df = filter_df_by_date(df, getattr(req, 'start_date', None), getattr(req, 'end_date', None))
 
+            df = filter_df_by_date(df, getattr(req, 'start_date', None), getattr(req, 'end_date', None))
             result = run_fast(
                 df, strategy, sym,
                 sl_pct=req.sl_pct / 100,
@@ -776,6 +807,7 @@ async def simulate_validate(req: ValidateRequest):
     for sym, df in coins:
         if not has_cache:
             df = strategy.calculate_indicators(df.copy())
+            df = filter_df_by_date(df, getattr(req, 'start_date', None), getattr(req, 'end_date', None))
 
         # Split data into IS and OOS by row count
         split_idx = int(len(df) * (1.0 - oos_frac))
@@ -785,6 +817,7 @@ async def simulate_validate(req: ValidateRequest):
         for period_df, trade_list in [(df_is, is_trades_all), (df_oos, oos_trades_all)]:
             if len(period_df) < 100:
                 continue
+            df = filter_df_by_date(df, getattr(req, 'start_date', None), getattr(req, 'end_date', None))
             result = run_fast(
                 period_df, strategy, sym,
                 sl_pct=req.sl_pct / 100,
@@ -1358,6 +1391,7 @@ async def run_backtest(req: BacktestRequest):
     for sym, df_raw in coin_list:
         # Compute indicators via ConditionEngine
         df = engine.prepare_dataframe(df_raw.copy())
+        df = filter_df_by_date(df, getattr(req, 'start_date', None), getattr(req, 'end_date', None))
 
         # Find signals using vectorized evaluation
         signal_indices = engine.find_signals_vectorized(df)
@@ -1514,4 +1548,54 @@ async def run_backtest(req: BacktestRequest):
         validation_errors=[],
         yearly_stats=yearly_stats,
         compute_time_ms=compute_ms,
+    )
+
+
+
+# --- Export Endpoints ---
+
+_export_cache = {}
+_MAX_EXPORT = 50
+
+
+def store_export(trades_list: list) -> str:
+    """Store trades for CSV export, return hash key."""
+    raw = json.dumps(trades_list, sort_keys=True, default=str)
+    h = hashlib.md5(raw.encode()).hexdigest()
+    _export_cache[h] = trades_list
+    if len(_export_cache) > _MAX_EXPORT:
+        oldest = next(iter(_export_cache))
+        del _export_cache[oldest]
+    return h
+
+
+@app.get("/export/csv")
+async def export_csv(hash: str):
+    """Download backtest results as CSV."""
+    if hash not in _export_cache:
+        raise HTTPException(404, "Result not found. Run a backtest first.")
+    trades = _export_cache[hash]
+    import io
+    import csv
+    from fastapi.responses import StreamingResponse
+    output = io.StringIO()
+    writer = csv.writer(output)
+    writer.writerow([
+        "symbol", "direction", "entry_time", "exit_time",
+        "entry_price", "exit_price", "pnl_pct", "exit_reason", "bars_held"
+    ])
+    for t in trades:
+        writer.writerow([
+            t.get("symbol", ""), t.get("direction", ""),
+            t.get("entry_time", ""), t.get("exit_time", ""),
+            t.get("entry_price", ""), t.get("exit_price", ""),
+            t.get("pnl_pct", ""), t.get("exit_reason", ""),
+            t.get("bars_held", ""),
+        ])
+    output.seek(0)
+    filename = f"pruviq_backtest_{hash[:8]}.csv"
+    return StreamingResponse(
+        iter([output.getvalue()]),
+        media_type="text/csv",
+        headers={"Content-Disposition": f"attachment; filename={filename}"}
     )
