@@ -595,8 +595,8 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
           <button
             key={tab}
             onClick={() => setMobileTab(tab)}
-            class={`flex-1 py-2.5 text-xs font-mono uppercase tracking-wider transition-colors
-              ${mobileTab === tab ? 'text-[--color-accent] border-b-2 border-[--color-accent]' : 'text-[--color-text-muted]'}`}
+            class={`flex-1 py-2.5 text-xs font-mono uppercase tracking-wider transition-all active:scale-95
+              ${mobileTab === tab ? 'text-[--color-accent] border-b-2 border-[--color-accent]' : 'text-[--color-text-muted] hover:text-[--color-text]'}`}
           >
             {t.mobile[tab]}
           </button>
@@ -621,8 +621,8 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
                   <button
                     key={sym}
                     onClick={() => setChartSymbol(sym)}
-                    class={`px-2 py-0.5 text-xs font-mono rounded transition-colors
-                      ${chartSymbol === sym ? 'bg-[--color-accent]/20 text-[--color-accent]' : 'text-[--color-text-muted] hover:text-[--color-text]'}`}
+                    class={`px-2 py-0.5 text-xs font-mono rounded transition-all active:scale-95
+                      ${chartSymbol === sym ? 'bg-[--color-accent]/20 text-[--color-accent]' : 'text-[--color-text-muted] hover:text-[--color-text] hover:bg-[--color-bg-hover]'}`}
                   >
                     {sym.replace('USDT', '')}
                   </button>
@@ -672,14 +672,33 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
                 <div class="px-3 py-2 border-b border-[--color-border]">
                   <div class="text-[10px] font-mono text-[--color-text-muted] uppercase mb-1.5">{t.preset}</div>
                   <div class="flex flex-wrap gap-1">
+                    {/* Custom from-scratch option */}
+                    <button
+                      onClick={() => {
+                        setActivePreset(null);
+                        setSelectedIndicators(new Set());
+                        setConditions([]);
+                        setDirection('short');
+                        setSlPct(10);
+                        setTpPct(8);
+                        setMaxBars(48);
+                        setAvoidHours(new Set());
+                      }}
+                      class={`px-2 py-1 text-[11px] font-mono rounded transition-all active:scale-95
+                        ${activePreset === null
+                          ? 'bg-[--color-accent]/20 text-[--color-accent] border border-[--color-accent]/30 shadow-sm shadow-[--color-accent]/10'
+                          : 'bg-[--color-bg-tooltip] text-[--color-text-muted] border border-[--color-border] hover:border-[--color-accent]/30 hover:text-[--color-text]'}`}
+                    >
+                      Custom
+                    </button>
                     {presets.map((p) => (
                       <button
                         key={p.id}
                         onClick={() => loadPreset(p.id)}
-                        class={`px-2 py-1 text-[11px] font-mono rounded transition-colors
+                        class={`px-2 py-1 text-[11px] font-mono rounded transition-all active:scale-95
                           ${activePreset === p.id
-                            ? 'bg-[--color-accent]/20 text-[--color-accent] border border-[--color-accent]/30'
-                            : 'bg-[--color-bg-tooltip] text-[--color-text-muted] border border-[--color-border] hover:border-[--color-accent]/30'}`}
+                            ? 'bg-[--color-accent]/20 text-[--color-accent] border border-[--color-accent]/30 shadow-sm shadow-[--color-accent]/10'
+                            : 'bg-[--color-bg-tooltip] text-[--color-text-muted] border border-[--color-border] hover:border-[--color-accent]/30 hover:text-[--color-text]'}`}
                       >
                         {p.name}
                       </button>
@@ -703,10 +722,10 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
                           return next;
                         });
                       }}
-                      class={`px-2 py-0.5 text-[10px] font-mono rounded transition-colors
+                      class={`px-2 py-0.5 text-[10px] font-mono rounded transition-all active:scale-95
                         ${selectedIndicators.has(ind.id)
                           ? 'bg-[--color-accent]/15 text-[--color-accent] border border-[--color-accent]/20'
-                          : 'bg-[--color-bg-tooltip] text-[--color-text-muted] border border-[--color-border]'}`}
+                          : 'bg-[--color-bg-tooltip] text-[--color-text-muted] border border-[--color-border] hover:border-[--color-accent]/20'}`}
                     >
                       {ind.name}
                     </button>
@@ -800,11 +819,11 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
                     <div class="flex gap-1 mt-0.5">
                       <button
                         onClick={() => setDirection('short')}
-                        class={`flex-1 py-1 text-[10px] font-mono rounded ${direction === 'short' ? 'bg-[--color-red]/20 text-[--color-red] border border-[--color-red]/30' : 'bg-[--color-bg-tooltip] text-[--color-text-muted] border border-[--color-border]'}`}
+                        class={`flex-1 py-1 text-[10px] font-mono rounded transition-all active:scale-95 ${direction === 'short' ? 'bg-[--color-red]/20 text-[--color-red] border border-[--color-red]/30' : 'bg-[--color-bg-tooltip] text-[--color-text-muted] border border-[--color-border] hover:border-[--color-red]/30'}`}
                       >{t.short}</button>
                       <button
                         onClick={() => setDirection('long')}
-                        class={`flex-1 py-1 text-[10px] font-mono rounded ${direction === 'long' ? 'bg-[--color-accent]/20 text-[--color-accent] border border-[--color-accent]/30' : 'bg-[--color-bg-tooltip] text-[--color-text-muted] border border-[--color-border]'}`}
+                        class={`flex-1 py-1 text-[10px] font-mono rounded transition-all active:scale-95 ${direction === 'long' ? 'bg-[--color-accent]/20 text-[--color-accent] border border-[--color-accent]/30' : 'bg-[--color-bg-tooltip] text-[--color-text-muted] border border-[--color-border] hover:border-[--color-accent]/30'}`}
                       >{t.long}</button>
                     </div>
                   </div>
@@ -868,10 +887,10 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
                     <button
                       key={mode}
                       onClick={() => setCoinMode(mode)}
-                      class={`px-2 py-0.5 text-[10px] font-mono rounded transition-colors
+                      class={`px-2 py-0.5 text-[10px] font-mono rounded transition-all active:scale-95
                         ${coinMode === mode
                           ? 'bg-[--color-accent]/15 text-[--color-accent] border border-[--color-accent]/20'
-                          : 'bg-[--color-bg-tooltip] text-[--color-text-muted] border border-[--color-border]'}`}
+                          : 'bg-[--color-bg-tooltip] text-[--color-text-muted] border border-[--color-border] hover:border-[--color-accent]/20'}`}
                     >
                       {label}
                     </button>
@@ -938,10 +957,10 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
                           return next;
                         });
                       }}
-                      class={`w-6 h-5 text-[9px] font-mono rounded transition-colors
+                      class={`w-6 h-5 text-[9px] font-mono rounded transition-all active:scale-90
                         ${avoidHours.has(i)
                           ? 'bg-[--color-red]/20 text-[--color-red] border border-[--color-red]/20'
-                          : 'bg-[--color-bg-tooltip] text-[--color-text-muted] border border-[--color-border]'}`}
+                          : 'bg-[--color-bg-tooltip] text-[--color-text-muted] border border-[--color-border] hover:border-[--color-red]/20'}`}
                     >
                       {i}
                     </button>
@@ -993,15 +1012,15 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
                 <button
                   key={tab}
                   onClick={() => setResultTab(tab)}
-                  class={`flex-1 py-2.5 text-xs font-mono uppercase tracking-wider transition-colors
-                    ${resultTab === tab ? 'text-[--color-accent] border-b-2 border-[--color-accent] bg-[--color-bg-hover]/30' : 'text-[--color-text-muted] hover:text-[--color-text]'}`}
+                  class={`flex-1 py-2.5 text-xs font-mono uppercase tracking-wider transition-all active:scale-95
+                    ${resultTab === tab ? 'text-[--color-accent] border-b-2 border-[--color-accent] bg-[--color-bg-hover]/30' : 'text-[--color-text-muted] hover:text-[--color-text] hover:bg-[--color-bg-hover]/20'}`}
                 >
                   {t[tab]}
                 </button>
               ))}
               {/* Export buttons */}
               <div class="flex items-center gap-1 px-3">
-                <button onClick={downloadCsv} class="px-2 py-1 text-[10px] font-mono bg-[--color-bg-tooltip] border border-[--color-border] rounded hover:border-[--color-accent] transition-colors">
+                <button onClick={downloadCsv} class="px-2 py-1 text-[10px] font-mono bg-[--color-bg-tooltip] border border-[--color-border] rounded hover:border-[--color-accent] transition-all active:scale-95 hover:bg-[--color-bg-hover]">
                   {t.exportCsv}
                 </button>
               </div>
