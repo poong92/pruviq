@@ -214,7 +214,7 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
         const healthRes = await fetch(`${API_URL}/health`, { signal: AbortSignal.timeout(5000) });
         if (healthRes.ok) {
           const h = await healthRes.json();
-          setCoinsLoaded(h.coins_loaded || 0);
+          setCoinsLoaded(h.coins_loaded || h.coin_count || 0);
           setApiReady(true);
         } else {
           setDemoMode(true);
@@ -228,7 +228,7 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
         const indRes = await fetch(`${API_URL}/builder/indicators`);
         if (indRes.ok) {
           const data = await indRes.json();
-          if (!cancelled) setAvailableIndicators(data.indicators || []);
+          if (!cancelled) setAvailableIndicators(Array.isArray(data) ? data : data.indicators || []);
         }
       } catch {}
 
@@ -237,7 +237,7 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
         const presetRes = await fetch(`${API_URL}/builder/presets`);
         if (presetRes.ok) {
           const data = await presetRes.json();
-          if (!cancelled) setPresets(data.presets || []);
+          if (!cancelled) setPresets(Array.isArray(data) ? data : data.presets || []);
         }
       } catch {}
 
@@ -246,7 +246,7 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
         const coinRes = await fetch(`${API_URL}/coins`);
         if (coinRes.ok) {
           const data = await coinRes.json();
-          if (!cancelled) setAllCoins((data.coins || []).map((c: any) => ({ symbol: c.symbol })));
+          if (!cancelled) { const arr = Array.isArray(data) ? data : data.coins || []; setAllCoins(arr.map((c: any) => ({ symbol: c.symbol || c }))); }
         }
       } catch {}
     }
@@ -264,8 +264,8 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
     fetch(`${API_URL}/ohlcv/${chartSymbol}?limit=500`)
       .then((r) => r.json())
       .then((data) => {
-        if (!cancelled && data.bars) {
-          setChartData(data.bars);
+        if (!cancelled && (data.data || data.bars)) {
+          setChartData(data.data || data.bars);
         }
       })
       .catch(() => {})
