@@ -1,0 +1,37 @@
+name: uptime-monitor
+
+on:
+  schedule:
+    - cron: '*/10 * * * *' # every 10 minutes
+  workflow_dispatch: {}
+
+jobs:
+  check-endpoints:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check endpoints
+        run: |
+          set -e
+          endpoints=("https://pruviq.com" "https://api.pruviq.com/market" "https://api.pruviq.com/coins/stats")
+          FAIL=0
+          for url in "${endpoints[@]}"; do
+            code=$(curl -s -o /dev/null -w "%{http_code}" "$url" || true)
+            echo "$url -> $code"
+            if [[ "$code" != "200" ]]; then
+              echo "FAIL: $url returned $code"
+              FAIL=1
+            fi
+          done
+          if [[ "$FAIL" -ne 0 ]]; then
+            echo "One or more endpoints failed. Creating issue."
+            echo "Endpoints check failed at $(date -u)" > /tmp/uptime-failure.txt
+            echo "Please attach run artifacts and investigate." >> /tmp/uptime-failure.txt
+            gh issue create --title "[monitor] uptime check failed" --body "$(cat /tmp/uptime-failure.txt)" --label "incident" || true
+            exit 1
+          fi
+      - name: Upload artifact (log)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: uptime-log
+          path: ./
