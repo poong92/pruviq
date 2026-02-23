@@ -596,7 +596,7 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
             key={tab}
             onClick={() => setMobileTab(tab)}
             class={`flex-1 py-2.5 text-xs font-mono uppercase tracking-wider transition-colors
-              ${mobileTab === tab ? 'text-[--color-accent] border-b-2 border-[--color-accent] sim-btn-active' : 'text-[--color-text-muted] hover:text-[--color-text]'}`}
+              ${mobileTab === tab ? 'text-[--color-accent] border-b-2 border-[--color-accent] bg-[--color-accent]/15 font-bold sim-btn-active' : 'text-[--color-text-muted] hover:text-[--color-text]'}`}
           >
             {t.mobile[tab]}
           </button>
@@ -622,7 +622,7 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
                     key={sym}
                     onClick={() => setChartSymbol(sym)}
                     class={`px-2 py-0.5 text-xs font-mono rounded transition-colors
-                      ${chartSymbol === sym ? 'bg-[--color-accent]/20 text-[--color-accent] sim-btn-active' : 'text-[--color-text-muted] hover:text-[--color-text] hover:bg-[--color-bg-hover]'}`}
+                      ${chartSymbol === sym ? 'bg-[--color-accent] text-[--color-bg] font-bold sim-btn-active' : 'text-[--color-text-muted] hover:text-[--color-text] hover:bg-[--color-bg-hover]'}`}
                   >
                     {sym.replace('USDT', '')}
                   </button>
@@ -686,7 +686,7 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
                       }}
                       class={`px-2 py-1 text-[11px] font-mono rounded transition-colors
                         ${activePreset === null
-                          ? 'bg-[--color-accent]/20 text-[--color-accent] border border-[--color-accent]/30 sim-btn-active'
+                          ? 'bg-[--color-accent] text-[--color-bg] border border-[--color-accent] font-bold sim-btn-active'
                           : 'bg-[--color-bg-tooltip] text-[--color-text-muted] border border-[--color-border] hover:border-[--color-accent]/30 hover:text-[--color-text]'}`}
                     >
                       Custom
@@ -697,7 +697,7 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
                         onClick={() => loadPreset(p.id)}
                         class={`px-2 py-1 text-[11px] font-mono rounded transition-colors
                           ${activePreset === p.id
-                            ? 'bg-[--color-accent]/20 text-[--color-accent] border border-[--color-accent]/30 sim-btn-active'
+                            ? 'bg-[--color-accent] text-[--color-bg] border border-[--color-accent] font-bold sim-btn-active'
                             : 'bg-[--color-bg-tooltip] text-[--color-text-muted] border border-[--color-border] hover:border-[--color-accent]/30 hover:text-[--color-text]'}`}
                       >
                         {p.name}
@@ -724,7 +724,7 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
                       }}
                       class={`px-2 py-0.5 text-[10px] font-mono rounded transition-colors
                         ${selectedIndicators.has(ind.id)
-                          ? 'bg-[--color-accent]/15 text-[--color-accent] border border-[--color-accent]/20 sim-btn-active'
+                          ? 'bg-[--color-accent] text-[--color-bg] border border-[--color-accent] font-bold sim-btn-active'
                           : 'bg-[--color-bg-tooltip] text-[--color-text-muted] border border-[--color-border] hover:border-[--color-accent]/20'}`}
                     >
                       {ind.name}
@@ -819,11 +819,11 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
                     <div class="flex gap-1 mt-0.5">
                       <button
                         onClick={() => setDirection('short')}
-                        class={`flex-1 py-1 text-[10px] font-mono rounded transition-colors ${direction === 'short' ? 'bg-[--color-red]/20 text-[--color-red] border border-[--color-red]/30 sim-btn-active-red' : 'bg-[--color-bg-tooltip] text-[--color-text-muted] border border-[--color-border] hover:border-[--color-red]/30'}`}
+                        class={`flex-1 py-1 text-[10px] font-mono rounded transition-colors ${direction === 'short' ? 'bg-[--color-red] text-white border border-[--color-red] font-bold sim-btn-active-red' : 'bg-[--color-bg-tooltip] text-[--color-text-muted] border border-[--color-border] hover:border-[--color-red]/30'}`}
                       >{t.short}</button>
                       <button
                         onClick={() => setDirection('long')}
-                        class={`flex-1 py-1 text-[10px] font-mono rounded transition-colors ${direction === 'long' ? 'bg-[--color-accent]/20 text-[--color-accent] border border-[--color-accent]/30 sim-btn-active' : 'bg-[--color-bg-tooltip] text-[--color-text-muted] border border-[--color-border] hover:border-[--color-accent]/30'}`}
+                        class={`flex-1 py-1 text-[10px] font-mono rounded transition-colors ${direction === 'long' ? 'bg-[--color-accent] text-[--color-bg] border border-[--color-accent] font-bold sim-btn-active' : 'bg-[--color-bg-tooltip] text-[--color-text-muted] border border-[--color-border] hover:border-[--color-accent]/30'}`}
                       >{t.long}</button>
                     </div>
                   </div>
@@ -889,7 +889,7 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
                       onClick={() => setCoinMode(mode)}
                       class={`px-2 py-0.5 text-[10px] font-mono rounded transition-colors
                         ${coinMode === mode
-                          ? 'bg-[--color-accent]/15 text-[--color-accent] border border-[--color-accent]/20 sim-btn-active'
+                          ? 'bg-[--color-accent] text-[--color-bg] border border-[--color-accent] font-bold sim-btn-active'
                           : 'bg-[--color-bg-tooltip] text-[--color-text-muted] border border-[--color-border] hover:border-[--color-accent]/20'}`}
                     >
                       {label}
@@ -959,7 +959,7 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
                       }}
                       class={`w-6 h-5 text-[9px] font-mono rounded transition-colors
                         ${avoidHours.has(i)
-                          ? 'bg-[--color-red]/20 text-[--color-red] border border-[--color-red]/20 sim-btn-active-red'
+                          ? 'bg-[--color-red] text-white border border-[--color-red] sim-btn-active-red'
                           : 'bg-[--color-bg-tooltip] text-[--color-text-muted] border border-[--color-border] hover:border-[--color-red]/20'}`}
                     >
                       {i}
@@ -1013,7 +1013,7 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
                   key={tab}
                   onClick={() => setResultTab(tab)}
                   class={`flex-1 py-2.5 text-xs font-mono uppercase tracking-wider transition-colors
-                    ${resultTab === tab ? 'text-[--color-accent] border-b-2 border-[--color-accent] bg-[--color-bg-hover]/30 sim-btn-active' : 'text-[--color-text-muted] hover:text-[--color-text] hover:bg-[--color-bg-hover]/20'}`}
+                    ${resultTab === tab ? 'text-[--color-accent] border-b-2 border-[--color-accent] bg-[--color-accent]/20 font-bold sim-btn-active' : 'text-[--color-text-muted] hover:text-[--color-text] hover:bg-[--color-bg-hover]/20'}`}
                 >
                   {t[tab]}
                 </button>
