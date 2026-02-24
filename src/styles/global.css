@@ -363,6 +363,8 @@ a:focus-visible,
   .btn-ghost,
   .btn-icon,
   .icon-button,
+  button,
+  [role="button"],
   nav a,
   button[type="submit"],
   .icon-link {
