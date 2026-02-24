@@ -3,10 +3,17 @@ import Layout from '../../../layouts/Layout.astro';
 import { COIN_SYMBOLS } from '../../../data/coin-symbols';
 
 export async function getStaticPaths() {
-  return COIN_SYMBOLS.map(s => ({
-    params: { symbol: s.toLowerCase() },
-    props: { symbolUpper: s },
-  }));
+  return COIN_SYMBOLS.flatMap(s => {
+    const slug = s.toLowerCase();
+    const entries = [
+      { params: { symbol: slug }, props: { symbolUpper: s } },
+    ];
+    if (slug.endsWith('usdt')) {
+      const base = slug.slice(0, -4);
+      if (base) entries.push({ params: { symbol: base }, props: { symbolUpper: s } });
+    }
+    return entries;
+  });
 }
 
 const { symbol } = Astro.params;
