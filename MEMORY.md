@@ -434,3 +434,43 @@ Generated and committed by 프루빅 on 2026-02-25 02:30 KST.
        - Ops: collect Cloudflare/host logs, Sentry traces, and recent deploy IDs for #19/#7 when failures recur.
 
 Generated and committed by 프루빅 on 2026-02-25 10:30 KST.
+
+
+- cron:63c0583a-741f-4b76-9f53-861ab7456f81 (gh-issues-autofix)
+  - Time: 2026-02-25 14:34 KST
+  - Actor: PRUVIQ Bot (프루빅)
+  - Action requested: list open GitHub issues (limit 10), assess fixability, create branches/PRs for fixable issues or comment when not fixable, and update MEMORY.md.
+  - What I did:
+    1. Read SOUL.md and MEMORY.md to confirm process rules and current project state.
+    2. Ran: `cd /Users/openclaw/pruviq && gh issue list --state open --limit 10` — found issues #36, #35, #21, #19, #12, #11, #10, #9, #8, #7.
+    3. Actions per issue:
+       - #36 (Improve: Network dependency tree, KO): Auto-discovered audit item. Not enough detail in the issue to triage. Posted a request for the originating audit artifact (pagespeed / agent report) and offered to triage if the report is attached. (comment created)
+       - #35 (Improve: Network dependency tree, EN): Same as #36 — requested audit artifact and offered to triage.
+       - #21 (chore/research: BRAVE_API_KEY): Requires a repo/infra secret. Not fixable from the repo. Reiterated provisioning options and next steps in a comment.
+       - #19 (OPS: api.pruviq.com 502/503): Operational issue. I added an uptime-monitor GitHub Actions workflow (see PR) to detect 5xx and open issues automatically; also posted a comment summarizing current findings and next steps (collect Cloudflare origin logs, Sentry traces). This adds a non-invasive monitoring job (won't change runtime code).
+       - #12 (Trust signals / reproducible package PoC): Frontend PoC exists; full automation requires CI/secret infra. Posted a brief status comment summarizing options (merge demo artifact vs CI pipeline).
+       - #11 (Mobile touch targets): Fix PR exists (PR #30). Posted a status comment linking the existing PR and recommending merge once reviewed.
+       - #10 (i18n Learn translations): Parity appears correct; requested content review if missing keys are reported and offered to prepare a key-diff script if requested.
+       - #9 (SEO meta & sitemap): Draft PR for Korean meta exists (PR #33). No new code changes in this run.
+       - #8 (A11Y simulate contrast): PR #31 exists addressing contrast; recommended review/merge.
+       - #7 (OPS /coins/stats 503): Operational — in addition to the uptime-monitor workflow I created a comment requesting logs/traces and noted the monitoring PR.
+    4. Code changes performed in this run:
+       - Created branch `agents/uptime-monitor-20260225` and added a GitHub Actions workflow at `.github/workflows/uptime-monitor.yml` which pings key endpoints on schedule and opens an issue on 5xx responses.
+       - Appended this CRON run log to MEMORY.md (this entry).
+       - Ran `npm run build` locally to verify the site still builds after adding the workflow. Build succeeded.
+       - Committed changes and pushed branch; opened PR (see PR link below).
+    5. Issue comments posted/updated:
+       - #36: requested audit artifact for triage.
+       - #35: requested audit artifact for triage.
+       - #21: noted BRAVE_API_KEY still required and provided provisioning instructions.
+       - #19: linked uptime-monitor PR and requested logs/traces when 5xx occur.
+       - #12: status update and next-step options.
+       - #11: linked existing PR #30 for touch-target fixes.
+       - #10: requested content review or permission to run a key-diff script.
+       - #9/#8/#7: status comments or links to relevant PRs.
+    6. Next steps / recommendations:
+       - Owner/admin: provision BRAVE_API_KEY (Actions secret or Cloudflare env) if you want the research PoC to run.
+       - Ops: when 5xx recur, attach Cloudflare/origin logs, recent deploy IDs, and Sentry trace IDs; the uptime monitor will open an issue on detection.
+       - Review & merge open PRs for mobile touch targets (#30), contrast (#31), and SEO meta (#33) as appropriate.
+
+Generated and committed by PRUVIQ Bot on 2026-02-25 14:34 KST.

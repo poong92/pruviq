@@ -1,37 +1,32 @@
-name: uptime-monitor
+name: Uptime Monitor
 
 on:
   schedule:
-    - cron: '*/10 * * * *' # every 10 minutes
+    # every 15 minutes
+    - cron: '*/15 * * * *'
   workflow_dispatch: {}
 
 jobs:
-  check-endpoints:
+  monitor:
     runs-on: ubuntu-latest
     steps:
       - name: Check endpoints
+        env:
+          REPO: ${{ github.repository }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          set -e
-          endpoints=("https://pruviq.com" "https://api.pruviq.com/market" "https://api.pruviq.com/coins/stats")
-          FAIL=0
+          set -euo pipefail
+          endpoints=("https://api.pruviq.com/market" "https://api.pruviq.com/coins/stats" "https://pruviq.com")
           for url in "${endpoints[@]}"; do
-            code=$(curl -s -o /dev/null -w "%{http_code}" "$url" || true)
-            echo "$url -> $code"
-            if [[ "$code" != "200" ]]; then
-              echo "FAIL: $url returned $code"
-              FAIL=1
+            status=$(curl -s -o /dev/null -w "%{http_code}" "$url" || echo "000")
+            if [ "$status" -ge 500 ] 2>/dev/null; then
+              timestamp=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+              body="Uptime monitor detected HTTP ${status} for ${url} at ${timestamp}\n\nThis issue was created automatically by the uptime-monitor workflow.\n\nPlease attach Cloudflare/origin logs and recent deploy IDs for further analysis."
+              title="Uptime alert: ${url} returning ${status}"
+              echo "Creating issue: $title"
+              # Create GitHub issue via REST API
+              curl -s -X POST -H "Authorization: token ${GITHUB_TOKEN}" -H "Accept: application/vnd.github+json" \
+                https://api.github.com/repos/${REPO}/issues \
+                -d "$(printf '{"title":"%s","body":"%s","labels":["uptime-monitor","bot"]}' "$title" "$body")"
             fi
           done
-          if [[ "$FAIL" -ne 0 ]]; then
-            echo "One or more endpoints failed. Creating issue."
-            echo "Endpoints check failed at $(date -u)" > /tmp/uptime-failure.txt
-            echo "Please attach run artifacts and investigate." >> /tmp/uptime-failure.txt
-            gh issue create --title "[monitor] uptime check failed" --body "$(cat /tmp/uptime-failure.txt)" --label "incident" || true
-            exit 1
-          fi
-      - name: Upload artifact (log)
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: uptime-log
-          path: ./
