@@ -12,6 +12,10 @@ concurrency:
   group: post-deploy
   cancel-in-progress: true
 
+permissions:
+  issues: read
+  contents: read
+
 jobs:
   verify:
     name: Verify Deployment
