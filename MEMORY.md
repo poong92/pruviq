@@ -236,7 +236,7 @@ Generated and committed by 프루빅 on 2026-02-24 02:30 KST.
        - #10 (i18n — Learn translations): Verified parity again between src/i18n/en.ts and src/i18n/ko.ts and confirmed build emits /ko/learn pages; recommended closing the issue if there are no specific untranslated keys. (Comment: https://github.com/poong92/pruviq/issues/10#issuecomment-3947470523)
        - #9 (SEO — meta descriptions & sitemap tuning): Created a branch and draft PR to make quick SEO copy improvements (index/strategies/meta desc). Branch: `agents/seo-meta-20260224`, PR #22 created (draft). Built locally; build succeeded. (PR: https://github.com/poong92/pruviq/pull/22). Also posted a comment on the issue. (Comment: https://github.com/poong92/pruviq/issues/9#issuecomment-3947471794)
        - #8 (A11Y /simulate): PR #16 is open and fixes color-contrast violations; the PR includes an axe test and the author reports no violations for /simulate after changes. Recommended review/merge of PR #16. (Comment: https://github.com/poong92/pruviq/issues/8#issuecomment-3947471406)
-       - #7 (OPS /coins/stats 503): I re-tested /coins/stats (https://api.pruviq.com/coins/stats) — returned 200 at test time. Posted an ops comment requesting logs/traces if the error recurs. (Comment: https://github.com/poong92/pruviq/issues/7#issuecomment-3947466794)
+       - #7 (OPS /coins/stats 503): I re-tested /coins/stats (https://api.pruviq.com/coins/stats) — returned 200 at test time. Posted an ops comment requesting logs/traces if the problem recurs. (Comment: https://github.com/poong92/pruviq/issues/7#issuecomment-3947466794)
     4. Code changes performed in this run:
        - Created branch `agents/seo-meta-20260224` and updated translation files:
          - src/i18n/en.ts — updated meta.home_desc, meta.index_desc, meta.strategies_desc
@@ -249,7 +249,7 @@ Generated and committed by 프루빅 on 2026-02-24 02:30 KST.
        - main: MEMORY.md (this entry)
     7. Next steps / recommendations:
        - Provision BRAVE_API_KEY as a secret or provide ops with instructions to set it; I will re-run the research PoC after it's set.
-       - Merge PR #17 to generate the mobile touch-target audit report, then triage and fix remaining elements <44×44.
+       - Merge PR #17 to generate the mobile touch-target audit report, then triage and fix remaining elements <44x44.
        - Review & merge PR #16 (a11y fixes) and PR #15 (demo package) as appropriate.
        - For OPS issues (#19/#7): collect Cloudflare/host logs, Sentry traces, and deploy IDs to help reproduce and triage.
 
@@ -266,7 +266,7 @@ Generated and committed by 프루빅 on 2026-02-24 06:37 KST.
        - #21 (chore/research: enable BRAVE_API_KEY): Not fixable from the repo — BRAVE_API_KEY must be provisioned as a secret or environment variable by a repo/org admin (GitHub Actions secret or Cloudflare Pages env). I posted a status comment with provisioning instructions and offered to draft a workflow that uses the secret once available. (Comment: https://github.com/poong92/pruviq/issues/21#issuecomment-3948358048)
        - #19 (OPS: api.pruviq.com returning 502/503): Operational issue. I re-tested endpoints at 2026-02-24 10:30 KST — https://api.pruviq.com/market → 200, https://api.pruviq.com/coins/stats → 200, https://pruviq.com → 200. I posted an ops comment noting the endpoints are currently healthy and requested Cloudflare/origin logs + Sentry traces if the problem recurs. (Comment: https://github.com/poong92/pruviq/issues/19#issuecomment-3948358700)
        - #12 (Task: Trust signals / reproducible package): Frontend PoC is merged (PR #13) and demo reproducible package PR #15 is open. No code changes performed in this run. (Status summarized in comments on the issue.)
-       - #11 (Task: Mobile — touch targets): PR #14 (CSS fallbacks) and PR #17 (Playwright mobile audit) are open. Recommended flow: merge PR #17 to generate the audit report, then triage fixes. No code changes performed in this run.
+       - #11 (Task: Mobile — touch targets): PR #14 (CSS fallbacks) and PR #17 (Playwright touch-target audit) are open. Recommended flow: merge PR #17 to generate the audit report, then triage fixes. No code changes performed in this run.
        - #10 (Task: i18n — Learn translations): I verified parity earlier and the build emits /ko/learn pages; recommended closing the issue if no specific untranslated keys are reported. No code changes performed in this run.
        - #9 (Task: SEO — meta descriptions & sitemap tuning): Draft PR already exists from earlier run: PR #22 (agents/seo-meta-20260224) which updates meta.home_desc, meta.index_desc, and meta.strategies_desc (built locally successfully). No new changes performed in this run.
        - #8 (A11Y /simulate): PR #16 is open and addresses color-contrast violations; recommended review/merge. No new changes performed in this run.
@@ -274,9 +274,9 @@ Generated and committed by 프루빅 on 2026-02-24 06:37 KST.
     4. Actions performed in this run:
        - Posted issue comments updating status for #21, #19, and #7 with current findings and next steps. (See comment links above.)
        - No new branches or PRs were created in this run; earlier runs created PR #22 (SEO) and other PRs remain open for review.
-    5. Files changed/committed in this run:
-       - MEMORY.md updated with this cron run log and committed to main. (Commit will be pushed.)
-    6. Next steps / recommendations:
+       - Files changed/committed in this run:
+         - MEMORY.md updated with this cron run log and committed to main. (Commit will be pushed.)
+    5. Next steps / recommendations:
        - Provision BRAVE_API_KEY as a secret (Actions/Cloudflare) or assign to ops to set it; I will re-run the research PoC after it's set.
        - Merge PR #17 (mobile audit) to generate the touch-target report, then triage and fix any remaining elements under 44×44.
        - Review & merge PR #16 (a11y fixes) and PR #15 (demo package) as appropriate.
@@ -294,8 +294,8 @@ Generated and committed by 프루빅 on 2026-02-24 10:30 KST.
     3. For each open issue I read the issue and recent comments, then assessed fixability and next actions:
        - #21 (chore/research: enable BRAVE_API_KEY): Not fixable from the repo. BRAVE_API_KEY must be provisioned as a secret/environment variable by a repo/org admin (Settings → Secrets → Actions or Cloudflare Pages env). I posted a status comment with options (add secret or let me draft a small Actions workflow that consumes it). (Comment: https://github.com/poong92/pruviq/issues/21#issuecomment-3949271167)
        - #19 (OPS: api.pruviq.com returning 502/503): Operational issue; cannot be fixed from the static repo. I re-tested endpoints (market, coins/stats, site root) — all returned 200 at test time. I posted an ops comment requesting Cloudflare/origin logs, recent deploy IDs, and Sentry traces if the error recurs; offered to add a simple uptime monitor (GitHub Action) that notifies on 5xx. (Comment: https://github.com/poong92/pruviq/issues/19#issuecomment-3948358700)
-       - #12 (Task: Trust signals / reproducible package): Frontend PoC merged (PR #13). Demo reproducible package PR #15 is open and mergeable. The full automation requires CI/infra to build/publish reproducible packages; I offered to draft a CI workflow if desired.
-       - #11 (Task: Mobile — touch targets): PR #14 (CSS fallbacks) and PR #17 (Playwright mobile audit) are open. Recommended flow: merge PR #17 (audit) to generate `reports/touch-targets.json` in CI, then triage and fix remaining <44×44 elements.
+       - #12 (Task: Trust signals / reproducible package): Frontend PoC merged (PR #13). Demo reproducible package PR #15 is open (mergeable). The full automation requires CI/infra to build/publish reproducible packages; I offered to draft a CI workflow if desired.
+       - #11 (Task: Mobile — touch targets): PR #14 (CSS fallbacks) and PR #17 (Playwright mobile touch-target audit) are open. Recommended flow: merge PR #17 to generate `reports/touch-targets.json` in CI, then triage and fix remaining <44×44 elements.
        - #10 (Task: i18n — Learn translations): Parity already verified (src/i18n/en.ts and ko.ts); build emits /ko/learn pages. No changes needed.
        - #9 (Task: SEO — meta descriptions & sitemap tuning): Fixable via copy. Draft PR #22 (agents/seo-meta-20260224) exists and updates meta.home_desc, meta.index_desc, and meta.strategies_desc. Built locally (site build passed).
        - #8 (A11Y /simulate): PR #16 fixes color-contrast violations and includes a full-axe Playwright test; recommend review/merge.
@@ -307,10 +307,10 @@ Generated and committed by 프루빅 on 2026-02-24 10:30 KST.
     5. Files changed/committed in this run:
        - MEMORY.md (appended this cron run log).
     6. Next steps / recommendations:
-       - Provision BRAVE_API_KEY as a secret (GitHub Actions or Cloudflare) so I can re-run the research PoC.
-       - Merge PR #17 to generate mobile audit report, then triage and fix remaining touch-target issues.
-       - Review & merge PR #16 (a11y fixes) and PR #15 (demo reproducible package) as appropriate.
-       - For OPS issues (#19/#7): collect Cloudflare/host logs, Sentry traces, and recent deploy IDs when failures occur.
+       - Provision BRAVE_API_KEY as a secret (GitHub Actions or Cloudflare) so I can re-run the research PoC and publish a full report.
+       - Merge PR #17 to generate the mobile touch-target audit report in CI, then triage and fix any remaining elements under 44×44.
+       - Review & merge PR #16 (a11y fixes) and PR #15 (demo package) as appropriate; I can run smoke/accessibility checks after merge.
+       - For OPS issues (#19/#7): collect Cloudflare/host logs, Sentry traces, and recent deploy IDs when failures occur so I can analyze them.
 
 Generated and committed by 프루빅 on 2026-02-24 14:50 KST.
 
@@ -406,3 +406,31 @@ Generated and committed by 프루빅 on 2026-02-24 22:30 KST.
        - For OPS issues (#19/#7): collect Cloudflare/host logs, Sentry traces, and recent deploy IDs when failures occur so I can analyze them.
 
 Generated and committed by 프루빅 on 2026-02-25 02:30 KST.
+
+- cron:63c0583a-741f-4b76-9f53-861ab7456f81 (gh-issues-autofix)
+  - Time: 2026-02-25 10:30 KST
+  - Actor: PRUVIQ Bot (프루빅)
+  - Action requested: list open GitHub issues (limit 10), assess fixability, create branches/PRs for fixable issues or comment when not fixable, and update MEMORY.md.
+  - What I did:
+    1. Read SOUL.md and MEMORY.md to confirm project context and process rules.
+    2. Ran: `cd /Users/openclaw/pruviq && gh issue list --state open --limit 10` — open issues: #21, #19, #12, #11, #10, #9, #8, #7.
+    3. Actions per issue:
+       - #21 (chore/research: enable BRAVE_API_KEY): Not fixable from repo (requires repo/org admin to add secret). Posted status comment with provisioning options and offer to draft workflow. (Comment: https://github.com/poong92/pruviq/issues/21#issuecomment-3956009323)
+       - #19 (OPS: api.pruviq.com returning 502/503): Operational; re-tested endpoints at test time (market, coins/stats, site root) — they returned 200. Posted ops comment requesting Cloudflare/origin logs, recent deploy IDs, and Sentry trace IDs if the problem recurs. (Comment: https://github.com/poong92/pruviq/issues/19#issuecomment-3956010086)
+       - #12 (Task: Trust signals / reproducible package): PR #15 open; frontend PoC merged. No repo-level fix required by this run.
+       - #11 (Mobile — touch targets): PRs exist to address this (PR #14 closed earlier; current PR: #30). No new code changes performed in this run.
+       - #10 (i18n): parity verified previously; build emits /ko/learn pages. No code changes required.
+       - #9 (SEO): Draft PR #22 exists (agents/seo-meta-20260224) to update meta keys. No new changes this run.
+       - #8 (A11Y /simulate): Fixes are merged or in PRs (#16 merged; PR #31 open for contrast). Recommend review/merge of open PRs.
+       - #7 (OPS /coins/stats 503): Re-tested endpoint — 200 at test time. Posted ops comment requesting logs/traces if error recurs. (Comment: https://github.com/poong92/pruviq/issues/7#issuecomment-3956010894)
+    4. Actions performed in this run:
+       - Posted issue comments updating status for #21, #19, and #7.
+       - No new branches/PRs created (existing PRs cover fixable items: PR #30, #31, #16, #15, #22).
+       - Appended this cron run log to MEMORY.md and committed the change to main.
+    5. Next steps:
+       - Provision BRAVE_API_KEY as a secret (GitHub Actions or Cloudflare) so I can re-run the Brave API PoC.
+       - Merge PR #17 to generate mobile touch-target audit report (if desired), then triage remaining elements <44x44.
+       - Review & merge PRs #16, #15, #22, #30, #31 as appropriate.
+       - Ops: collect Cloudflare/host logs, Sentry traces, and recent deploy IDs for #19/#7 when failures recur.
+
+Generated and committed by 프루빅 on 2026-02-25 10:30 KST.
