@@ -118,7 +118,7 @@ jobs:
               return;
             }
 
-            // Deduplicate by title prefix
+            // Deduplicate within this run by title prefix
             const seen = new Set();
             const unique = improvements.filter(i => {
               const key = i.title.substring(0, 40);
@@ -127,21 +127,49 @@ jobs:
               return true;
             });
 
-            // Check existing open issues to avoid duplicates
-            const existingIssues = await github.paginate(github.rest.issues.listForRepo, {
+            // Check ALL existing issues (open + closed) to avoid duplicates
+            // This prevents re-creating issues that were already fixed and closed
+            const existingOpen = await github.paginate(github.rest.issues.listForRepo, {
               owner: context.repo.owner,
               repo: context.repo.repo,
               state: 'open',
+              labels: 'auto-discovered',
               per_page: 100,
             });
-            const existingTitles = existingIssues.map(i => i.title.toLowerCase());
+            const existingClosed = await github.paginate(github.rest.issues.listForRepo, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'closed',
+              labels: 'auto-discovered',
+              per_page: 100,
+              since: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(), // last 30 days
+            });
+            const allExisting = [...existingOpen, ...existingClosed];
+
+            // Build a set of normalized title prefixes from existing issues
+            const existingPrefixes = new Set(
+              allExisting.map(i => i.title.toLowerCase().substring(0, 50))
+            );
+
+            core.info(`Found ${existingOpen.length} open + ${existingClosed.length} recently closed auto-discovered issues`);
 
             let created = 0;
             for (const imp of unique.slice(0, 3)) {
-              // Skip if similar issue already exists
-              const titleLower = imp.title.toLowerCase();
-              if (existingTitles.some(t => t.includes(imp.category) && t.includes(imp.lang.toLowerCase()))) {
-                core.info(`Skipping duplicate: ${imp.title}`);
+              // Build the full title as it would appear
+              const fullTitle = `Improve: ${imp.title}`;
+              const normalizedPrefix = fullTitle.toLowerCase().substring(0, 50);
+
+              // Check if any existing issue has a similar title prefix
+              let isDuplicate = false;
+              for (const prefix of existingPrefixes) {
+                if (prefix === normalizedPrefix || prefix.includes(normalizedPrefix.substring(9, 45)) || normalizedPrefix.includes(prefix.substring(9, 45))) {
+                  isDuplicate = true;
+                  break;
+                }
+              }
+
+              if (isDuplicate) {
+                core.info(`Skipping duplicate: ${fullTitle}`);
                 continue;
               }
 
@@ -160,12 +188,13 @@ jobs:
               await github.rest.issues.create({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                title: `Improve: ${imp.title}`,
+                title: fullTitle,
                 body: body,
                 labels: ['enhancement', 'auto-discovered'],
               });
               created++;
-              core.info(`Created issue: ${imp.title}`);
+              existingPrefixes.add(normalizedPrefix); // prevent duplicates within this run
+              core.info(`Created issue: ${fullTitle}`);
             }
 
             core.info(`Created ${created} new improvement issues`);
