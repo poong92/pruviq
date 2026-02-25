@@ -334,7 +334,7 @@ const isActive = (match: string) => basePath.startsWith(match);
 
     <script type="module" src="/scripts/layout-client.js" defer></script>
     {cfToken && (
-      <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon={`{"token":"${cfToken}"}`}></script>
+      <script type="module" src="/scripts/cf-beacon-loader.js" defer></script>
     )}
   </body>
 </html>
