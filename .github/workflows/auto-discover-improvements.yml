@@ -9,6 +9,10 @@ on:
     - cron: '0 4 * * 1'  # Weekly Monday 04:00 UTC
   workflow_dispatch: {}
 
+permissions:
+  issues: write
+  contents: read
+
 jobs:
   discover:
     name: Find New Improvements
@@ -36,6 +40,7 @@ jobs:
       - name: Run Lighthouse (EN homepage)
         id: lighthouse_en
         run: |
+          mkdir -p ./reports
           npx lighthouse https://pruviq.com \
             --output=json --output-path=./reports/lighthouse-en.json \
             --chrome-flags="--headless --no-sandbox" \
@@ -53,6 +58,7 @@ jobs:
 
       - name: Run Lighthouse (KO homepage)
         run: |
+          mkdir -p ./reports
           npx lighthouse https://pruviq.com/ko/ \
             --output=json --output-path=./reports/lighthouse-ko.json \
             --chrome-flags="--headless --no-sandbox" \
