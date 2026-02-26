@@ -105,6 +105,7 @@ function CoinLogo({ image, symbol }: { image: string; symbol: string }) {
       width="24"
       height="24"
       loading="lazy"
+      decoding="async"
       class="rounded-full flex-shrink-0"
       style="background: var(--color-border)"
       aria-hidden="true"
