@@ -8,7 +8,8 @@
     "preview": "astro preview",
     "astro": "astro",
     "test:e2e": "npx playwright test --project=Desktop --project=Mobile --reporter=list --reporter=html",
-    "test:accessibility": "npx playwright test tests/accessibility --project=Desktop --project=Mobile --reporter=list --reporter=html"
+    "test:accessibility": "npx playwright test tests/accessibility --project=Desktop --project=Mobile --reporter=list --reporter=html",
+    "validate:repro": "node scripts/validate_repro.cjs"
   },
   "dependencies": {
     "@astrojs/preact": "^4.1.3",
