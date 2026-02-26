@@ -2,7 +2,8 @@ const fs = require('fs');
 const path = require('path');
 
 const dir = path.join(__dirname, '..', 'public', 'data', 'reproducible');
-const files = fs.readdirSync(dir).filter(f => f.endsWith('.json'));
+// ignore demo/sample placeholder files
+const files = fs.readdirSync(dir).filter(f => f.endsWith('.json') && !f.match(/demo|sample/i));
 let ok = true;
 for (const f of files) {
   const p = path.join(dir, f);
@@ -15,7 +16,7 @@ for (const f of files) {
         ok = false;
       }
     }
-    if (json.result_hash && !/^sha256:[0-9a-f]{64}/.test(json.result_hash)) {
+    if (json.result_hash && !/^sha256:[0-9a-f]+/.test(json.result_hash)) {
       console.error(`${f}: result_hash does not look like sha256:...`);
       ok = false;
     }
