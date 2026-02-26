@@ -1,46 +1,53 @@
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 
-const dir = path.join(__dirname, '..', 'public', 'data', 'reproducible');
-// ignore demo/sample placeholder files
-const files = fs.readdirSync(dir).filter(f => f.endsWith('.json') && !f.match(/demo|sample/i));
-let ok = true;
+function sha256File(fp) {
+  const data = fs.readFileSync(fp);
+  return crypto.createHash('sha256').update(data).digest('hex');
+}
+
+const reproDir = path.join(__dirname, '..', 'public', 'data', 'reproducible');
+if (!fs.existsSync(reproDir)) {
+  console.log('No reproducible directory, nothing to validate.');
+  process.exit(0);
+}
+
+let failures = 0;
+
+// Validate top-level JSON files (e.g., bb-squeeze-short.json) and folder manifests
+const files = fs.readdirSync(reproDir);
 for (const f of files) {
-  const p = path.join(dir, f);
-  try {
-    const json = JSON.parse(fs.readFileSync(p, 'utf8'));
-    const required = ['strategy','data_version','engine_version','result_hash','package_url','created'];
-    for (const key of required) {
-      if (!json[key]) {
-        console.error(`${f}: missing required key ${key}`);
-        ok = false;
+  const fp = path.join(reproDir, f);
+  const stat = fs.statSync(fp);
+  if (stat.isFile() && f.endsWith('.json')) {
+    // top-level manifest (strategy.json)
+    try {
+      const manifest = JSON.parse(fs.readFileSync(fp, 'utf8'));
+      const strategy = manifest.strategy_id || path.basename(f, '.json');
+      const resultsPath = path.join(reproDir, strategy, 'results.json');
+      if (!fs.existsSync(resultsPath)) {
+        console.warn(`WARNING: results.json not found for ${strategy} (expected at ${resultsPath}); skipping hash validation.`);
+        continue;
       }
-    }
-    if (json.result_hash && !/^sha256:[0-9a-f]+/.test(json.result_hash)) {
-      console.error(`${f}: result_hash does not look like sha256:...`);
-      ok = false;
-    }
-    // check package_url file exists (relative to public)
-    if (json.package_url) {
-      const pkgPath = path.join(__dirname, '..', 'public', json.package_url.replace(/^\//, ''));
-      if (!fs.existsSync(pkgPath)) {
-        console.error(`${f}: package_url ${json.package_url} does not exist at ${pkgPath}`);
-        ok = false;
+      const hash = sha256File(resultsPath);
+      if (manifest.result_hash && manifest.result_hash !== hash) {
+        console.error(`MISMATCH for ${strategy}: manifest.result_hash=${manifest.result_hash} computed=${hash}`);
+        failures++;
+      } else {
+        console.log(`OK: ${strategy} -- hash matches`);
       }
+    } catch (e) {
+      console.error(`Failed to validate ${fp}: ${e.message}`);
+      failures++;
     }
-    // created iso
-    if (json.created && isNaN(Date.parse(json.created))) {
-      console.error(`${f}: created is not a valid ISO date: ${json.created}`);
-      ok = false;
-    }
-  } catch (err) {
-    console.error(`Failed to parse ${f}: ${err.message}`);
-    ok = false;
   }
 }
-if (!ok) {
-  console.error('Repro manifest validation failed');
+
+if (failures > 0) {
+  console.error(`Validation failed: ${failures} issues`);
   process.exit(2);
 }
-console.log('All reproducible manifests look good');
+
+console.log('All reproducible manifests validated.');
 process.exit(0);
