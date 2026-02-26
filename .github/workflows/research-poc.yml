@@ -1,0 +1,37 @@
+name: Research PoC (Brave Search)
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  run-research-poc:
+    if: ${{ secrets.BRAVE_API_KEY != '' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      BRAVE_API_KEY: ${{ secrets.BRAVE_API_KEY }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests feedparser
+
+      - name: Run research PoC
+        run: |
+          mkdir -p reports
+          python scripts/research_agent.py --out reports/agent-research-${{ github.run_number }}.md --topics "Auto-GPT,LangChain,agent evaluation"
+
+      - name: Upload report artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: research-report
+          path: reports/agent-research-${{ github.run_number }}.md
