@@ -163,15 +163,18 @@ export default function CoinListTable({ lang = 'en' }: { lang?: 'en' | 'ko' }) {
   const [sortBy, setSortBy] = useState<SortKey>('market_cap');
   const [sortDesc, setSortDesc] = useState(true);
   const [page, setPage] = useState(0);
+  const [generatedAt, setGeneratedAt] = useState<string | null>(null);
 
   useEffect(() => {
     fetchWithFallback('/coins/stats', STATIC_DATA.coinsStats)
       .then((json: StatsData) => {
         setData(json.coins || []);
+        setGeneratedAt(json.generated || null);
         setLoading(false);
       })
       .catch(err => {
         setError(err.message);
+        setGeneratedAt(null);
         setLoading(false);
       });
   }, []);
@@ -290,6 +293,12 @@ export default function CoinListTable({ lang = 'en' }: { lang?: 'en' | 'ko' }) {
           </button>
         )}
       </div>
+
+      {generatedAt && (
+        <div class="text-[--color-text-muted] text-xs mb-2">
+          {lang === 'ko' ? '데이터 시점: ' : 'Data as of: '} {new Date(generatedAt).toLocaleString()}
+        </div>
+      )}
 
       {/* Table */}
       <div class="overflow-x-auto border border-[--color-border] rounded-xl bg-[--color-bg-card]">
