@@ -334,7 +334,30 @@ const isActive = (match: string) => basePath.startsWith(match);
 
     <script type="module" src="/scripts/layout-client.js" defer></script>
     {cfToken && (
-      <script type="module" src="/scripts/cf-beacon-loader.js" defer></script>
+      <>
+        <script>
+          /* Lazy-load Cloudflare beacon loader during idle or after load to reduce main-thread work */
+          (function() {
+            function loadCF() {
+              try {
+                var s = document.createElement('script');
+                s.type = 'module';
+                s.src = '/scripts/cf-beacon-loader.js';
+                s.defer = true;
+                document.body.appendChild(s);
+              } catch (e) { /* ignore */ }
+            }
+            if (typeof window !== 'undefined') {
+              if ('requestIdleCallback' in window) {
+                requestIdleCallback(loadCF, { timeout: 2000 });
+              } else {
+                window.addEventListener('load', loadCF);
+                setTimeout(loadCF, 2000);
+              }
+            }
+          })();
+        </script>
+      </>
     )}
   </body>
 </html>
