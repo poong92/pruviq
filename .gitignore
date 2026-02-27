@@ -33,5 +33,5 @@ backend/src/__pycache__/
 *.pyo
 data/
 !src/data/
-\!public/data/
+!public/data/
 test-results/
