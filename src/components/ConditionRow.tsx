@@ -14,7 +14,7 @@ interface Props {
 
 export default function ConditionRow({ condition: c, availableFields, onUpdate, onRemove, removeLabel }: Props) {
   return (
-    <div class="flex items-center gap-1 text-[10px]">
+    <div class="flex items-center gap-1.5 text-xs">
       {/* Field */}
       <select
         value={c.field}
@@ -26,7 +26,7 @@ export default function ConditionRow({ condition: c, availableFields, onUpdate, 
             onUpdate(c.id, 'value', true);
           }
         }}
-        class="flex-1 min-w-0 px-1 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-[10px] text-[--color-text] outline-none focus:border-[--color-accent]"
+        class="flex-1 min-w-0 px-1.5 py-1.5 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
       >
         {availableFields.map((f) => <option key={f} value={f}>{f}</option>)}
       </select>
@@ -34,7 +34,7 @@ export default function ConditionRow({ condition: c, availableFields, onUpdate, 
       <select
         value={c.op}
         onChange={(e: any) => onUpdate(c.id, 'op', e.target.value)}
-        class="w-10 px-0.5 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-[10px] text-[--color-text] outline-none focus:border-[--color-accent]"
+        class="w-12 px-1 py-1.5 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
       >
         {OPS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
       </select>
@@ -43,7 +43,7 @@ export default function ConditionRow({ condition: c, availableFields, onUpdate, 
         <select
           value={String(c.value)}
           onChange={(e: any) => onUpdate(c.id, 'value', e.target.value === 'true')}
-          class="w-12 px-0.5 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-[10px] text-[--color-text] outline-none focus:border-[--color-accent]"
+          class="w-14 px-1 py-1.5 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
         >
           <option value="true">true</option>
           <option value="false">false</option>
@@ -54,14 +54,14 @@ export default function ConditionRow({ condition: c, availableFields, onUpdate, 
           step="any"
           value={c.value as number}
           onChange={(e: any) => onUpdate(c.id, 'value', parseFloat(e.target.value))}
-          class="w-14 px-1 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-[10px] text-[--color-text] outline-none focus:border-[--color-accent]"
+          class="w-16 px-1.5 py-1.5 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
         />
       )}
       {/* Shift */}
       <select
         value={c.shift}
         onChange={(e: any) => onUpdate(c.id, 'shift', parseInt(e.target.value))}
-        class="w-8 px-0.5 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-[10px] text-[--color-text] outline-none focus:border-[--color-accent]"
+        class="w-10 px-1 py-1.5 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
         title={c.shift === 1 ? 'Previous candle (safe)' : 'Current candle (risky)'}
       >
         <option value="1">P</option>
@@ -70,7 +70,7 @@ export default function ConditionRow({ condition: c, availableFields, onUpdate, 
       {/* Remove */}
       <button
         onClick={() => onRemove(c.id)}
-        class="text-[--color-text-muted] hover:text-[--color-red] px-0.5"
+        class="text-[--color-text-muted] hover:text-[--color-red] px-1"
         title={removeLabel}
       >
         x
