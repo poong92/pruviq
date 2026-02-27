@@ -10,6 +10,7 @@ interface Props {
   date?: string;
   category?: string;
   ogImage?: string;
+  canonicalOverride?: string;
 }
 
 const lang = getLangFromUrl(Astro.url);
@@ -18,9 +19,10 @@ const altPath = getAlternatePath(Astro.url.pathname, lang);
 const basePath = getBasePath(Astro.url.pathname);
 const cfToken = import.meta.env.PUBLIC_CF_ANALYTICS_TOKEN;
 
-const { title, description = t('meta.home_desc'), type = 'website', date, category } = Astro.props;
+const { title, description = t('meta.home_desc'), type = 'website', date, category, canonicalOverride } = Astro.props;
 const ogImage = new URL(Astro.props.ogImage || '/og-image.png', Astro.site || 'https://pruviq.com').href;
-const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://pruviq.com');
+const canonicalPath = canonicalOverride || Astro.url.pathname;
+const canonicalURL = new URL(canonicalPath, Astro.site || 'https://pruviq.com');
 const enURL = new URL(basePath, Astro.site || 'https://pruviq.com');
 const koURL = new URL(`/ko${basePath === '/' ? '/' : basePath}`, Astro.site || 'https://pruviq.com');
 
@@ -54,6 +56,7 @@ const navItems = [
 ];
 const isActive = (match: string) => basePath.startsWith(match);
 ---
+
 
 <!doctype html>
 <html lang={lang}>
@@ -163,14 +166,6 @@ const isActive = (match: string) => basePath.startsWith(match);
           },
           {
             "@type": "Question",
-            "name": "PRUVIQ가 트레이딩뷰나 다른 백테스팅 도구와 다른 점은?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "PRUVIQ는 코딩 없이 크립토 선물 전용으로 설계되었습니다. TradingView(Pine Script 필요)나 QuantConnect(Python/C# 필요)와 달리 비주얼 전략 빌더를 제공합니다. 또한 실패를 포함한 실거래 결과를 공개하고, 535개 이상 코인을 동시 테스트하며, 모든 시뮬레이션에 현실적인 수수료와 슬리피지를 포함합니다."
-            }
-          },
-          {
-            "@type": "Question",
             "name": "PRUVIQ에 실거래 검증이 있나요?",
             "acceptedAnswer": {
               "@type": "Answer",
@@ -250,10 +245,10 @@ const isActive = (match: string) => basePath.startsWith(match);
         </a>
         <div class="hidden md:flex items-center gap-6 text-[0.8125rem]">
           {navItems.map(item => (
-            <a href={item.href} class:list={[
+            <a href={item.href} class:list=[
               'transition-colors',
               isActive(item.match) ? 'text-[--color-accent] font-medium' : 'text-[--color-text-muted] hover:text-[--color-text]'
-            ]}>{item.label}</a>
+            ]>{item.label}</a>
           ))}
           <a href={altPath} class="font-mono text-xs px-3 py-1.5 border border-[--color-border] rounded hover:border-[--color-accent] hover:text-[--color-accent] text-[--color-text-muted] transition-colors">{t('nav.lang')}</a>
         </div>
@@ -264,10 +259,10 @@ const isActive = (match: string) => basePath.startsWith(match);
       <div id="mobile-menu" class="hidden md:hidden border-t border-[--color-border] bg-[--color-bg]">
         <div class="flex flex-col px-4 py-4 gap-1 text-sm">
           {navItems.map(item => (
-            <a href={item.href} class:list={[
+            <a href={item.href} class:list=[
               'min-h-[44px] flex items-center',
               isActive(item.match) ? 'text-[--color-accent] font-medium' : 'text-[--color-text-muted]'
-            ]}>{item.label}</a>
+            ]>{item.label}</a>
           ))}
           <a href={altPath} class="font-mono text-xs px-2 py-1 border border-[--color-border] rounded text-[--color-text-muted] w-fit min-h-[44px] flex items-center">{t('nav.lang')}</a>
         </div>
