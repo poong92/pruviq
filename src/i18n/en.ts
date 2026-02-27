@@ -313,7 +313,7 @@ export const en = {
   'meta.coins_title': 'Coin Explorer - PRUVIQ',
   'meta.coins_desc': 'Real-time cryptocurrency market data. Browse 500+ coins with prices, market cap, trading volume, and 7-day price charts. Updated every 15 minutes.',
   'meta.home_title': 'PRUVIQ - Free Crypto Backtesting Tool',
-  'meta.home_desc': 'Build and backtest crypto trading strategies on 535+ coins with 2+ years of real market data. No code required; realistic fees and slippage included. Free forever.',
+  'meta.home_desc': 'Free crypto strategy backtesting on 535+ coins with 2+ years of historical data. Realistic fees, slippage, and published verification — see wins and failures before you trade.',
   'meta.index_desc': 'Free crypto strategy backtesting — test strategies on 535+ coins with 2+ years of real market data, realistic fees, and published results, including failures.',
   'meta.strategies_title': 'Strategy Library - PRUVIQ',
   'meta.strategies_desc': "Every strategy we've tested with full simulation results — verified, killed, and everything in between. No cherry-picking.",
