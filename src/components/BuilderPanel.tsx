@@ -66,11 +66,11 @@ export default function BuilderPanel(props: Props) {
   return (
     <div class="border border-[--color-border] rounded-lg bg-[--color-bg-card] overflow-hidden flex flex-col" style={{ height: '640px' }}>
       {/* Panel header */}
-      <div class="px-3 py-2 border-b border-[--color-border] flex-shrink-0">
+      <div class="px-4 py-2.5 border-b border-[--color-border] flex-shrink-0">
         <div class="flex items-center justify-between">
-          <span class="font-mono text-xs text-[--color-accent] tracking-wider">STRATEGY BUILDER</span>
+          <span class="font-mono text-sm text-[--color-accent] tracking-wider font-bold">STRATEGY BUILDER</span>
           {props.coinsLoaded > 0 && (
-            <span class="text-[--color-text-muted] text-[10px] font-mono">{props.coinsLoaded} coins</span>
+            <span class="text-[--color-text-muted] text-xs font-mono">{props.coinsLoaded} coins</span>
           )}
         </div>
       </div>
@@ -86,9 +86,9 @@ export default function BuilderPanel(props: Props) {
         />
 
         {/* Indicators */}
-        <div class="px-3 py-1.5 border-b border-[--color-border]">
-          <div class="text-[10px] font-mono text-[--color-text-muted] uppercase mb-1">{t.indicators}</div>
-          <div class="flex flex-wrap gap-1">
+        <div class="px-4 py-2.5 border-b border-[--color-border]">
+          <div class="text-xs font-mono text-[--color-text-muted] uppercase mb-1.5">{t.indicators}</div>
+          <div class="flex flex-wrap gap-1.5">
             {props.availableIndicators.map((ind) => (
               <button
                 key={ind.id}
@@ -100,7 +100,7 @@ export default function BuilderPanel(props: Props) {
                     return next;
                   });
                 }}
-                class={`px-2 py-0.5 text-[10px] font-mono rounded transition-colors border
+                class={`px-3 py-1 text-xs font-mono rounded transition-colors border
                   ${props.selectedIndicators.has(ind.id)
                     ? 'font-bold'
                     : 'bg-[--color-bg-tooltip] text-[--color-text-muted] border-[--color-border] hover:border-[--color-accent]/20'}`}
@@ -113,14 +113,14 @@ export default function BuilderPanel(props: Props) {
         </div>
 
         {/* Entry Conditions */}
-        <div class="px-3 py-1.5 border-b border-[--color-border]">
-          <div class="flex items-center justify-between mb-1">
-            <span class="text-[10px] font-mono text-[--color-text-muted] uppercase">{t.conditions}</span>
-            <button onClick={props.addCondition} class="text-[10px] font-mono text-[--color-accent] hover:underline">
+        <div class="px-4 py-2.5 border-b border-[--color-border]">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="text-xs font-mono text-[--color-text-muted] uppercase">{t.conditions}</span>
+            <button onClick={props.addCondition} class="text-xs font-mono text-[--color-accent] hover:underline">
               {t.addCondition}
             </button>
           </div>
-          <div class="space-y-1">
+          <div class="space-y-1.5">
             {props.conditions.map((c) => (
               <ConditionRow
                 key={c.id}
@@ -135,77 +135,77 @@ export default function BuilderPanel(props: Props) {
         </div>
 
         {/* Parameters */}
-        <div class="px-3 py-1.5 border-b border-[--color-border]">
-          <div class="text-[10px] font-mono text-[--color-text-muted] uppercase mb-1">{t.parameters}</div>
-          <div class="grid grid-cols-2 gap-1.5">
+        <div class="px-4 py-2.5 border-b border-[--color-border]">
+          <div class="text-xs font-mono text-[--color-text-muted] uppercase mb-1.5">{t.parameters}</div>
+          <div class="grid grid-cols-2 gap-2">
             {/* Direction */}
             <div>
-              <label class="text-[9px] text-[--color-text-muted]">{t.direction}</label>
-              <div class="flex gap-1 mt-0.5">
+              <label class="text-[10px] text-[--color-text-muted]">{t.direction}</label>
+              <div class="flex gap-1.5 mt-0.5">
                 <button
                   onClick={() => props.setDirection('short')}
-                  class={`flex-1 py-1 text-[10px] font-mono rounded transition-colors border ${props.direction === 'short' ? 'font-bold' : 'bg-[--color-bg-tooltip] text-[--color-text-muted] border-[--color-border] hover:border-[--color-red]/30'}`}
+                  class={`flex-1 py-1.5 text-xs font-mono rounded transition-colors border ${props.direction === 'short' ? 'font-bold' : 'bg-[--color-bg-tooltip] text-[--color-text-muted] border-[--color-border] hover:border-[--color-red]/30'}`}
                   style={props.direction === 'short' ? shortActiveStyle : undefined}
                 >{t.short}</button>
                 <button
                   onClick={() => props.setDirection('long')}
-                  class={`flex-1 py-1 text-[10px] font-mono rounded transition-colors border ${props.direction === 'long' ? 'font-bold' : 'bg-[--color-bg-tooltip] text-[--color-text-muted] border-[--color-border] hover:border-[--color-accent]/30'}`}
+                  class={`flex-1 py-1.5 text-xs font-mono rounded transition-colors border ${props.direction === 'long' ? 'font-bold' : 'bg-[--color-bg-tooltip] text-[--color-text-muted] border-[--color-border] hover:border-[--color-accent]/30'}`}
                   style={props.direction === 'long' ? longActiveStyle : undefined}
                 >{t.long}</button>
               </div>
             </div>
             {/* Max bars */}
             <div>
-              <label class="text-[9px] text-[--color-text-muted]">{t.maxBars}</label>
+              <label class="text-[10px] text-[--color-text-muted]">{t.maxBars}</label>
               <input type="number" value={props.maxBars} min={1} max={168}
                 onChange={(e: any) => props.setMaxBars(parseInt(e.target.value) || 48)}
-                class="w-full mt-0.5 px-2 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-[11px] text-[--color-text] outline-none focus:border-[--color-accent]"
+                class="w-full mt-0.5 px-2.5 py-1.5 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
               />
             </div>
             {/* SL */}
             <div>
-              <label class="text-[9px] text-[--color-text-muted]">{t.sl}</label>
+              <label class="text-[10px] text-[--color-text-muted]">{t.sl}</label>
               <input type="number" value={props.slPct} min={1} max={50} step={0.5}
                 onChange={(e: any) => props.setSlPct(parseFloat(e.target.value) || 10)}
-                class="w-full mt-0.5 px-2 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-[11px] text-[--color-text] outline-none focus:border-[--color-accent]"
+                class="w-full mt-0.5 px-2.5 py-1.5 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
               />
             </div>
             {/* TP */}
             <div>
-              <label class="text-[9px] text-[--color-text-muted]">{t.tp}</label>
+              <label class="text-[10px] text-[--color-text-muted]">{t.tp}</label>
               <input type="number" value={props.tpPct} min={1} max={50} step={0.5}
                 onChange={(e: any) => props.setTpPct(parseFloat(e.target.value) || 8)}
-                class="w-full mt-0.5 px-2 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-[11px] text-[--color-text] outline-none focus:border-[--color-accent]"
+                class="w-full mt-0.5 px-2.5 py-1.5 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
               />
             </div>
           </div>
         </div>
 
         {/* Date Range */}
-        <div class="px-3 py-1.5 border-b border-[--color-border]">
-          <div class="text-[10px] font-mono text-[--color-text-muted] uppercase mb-1">{t.dateRange}</div>
-          <div class="grid grid-cols-2 gap-1.5">
+        <div class="px-4 py-2.5 border-b border-[--color-border]">
+          <div class="text-xs font-mono text-[--color-text-muted] uppercase mb-1.5">{t.dateRange}</div>
+          <div class="grid grid-cols-2 gap-2">
             <div>
-              <label class="text-[9px] text-[--color-text-muted]">{t.startDate}</label>
+              <label class="text-[10px] text-[--color-text-muted]">{t.startDate}</label>
               <input type="date" value={props.startDate}
                 onChange={(e: any) => props.setStartDate(e.target.value)}
-                class="w-full mt-0.5 px-1.5 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-[10px] text-[--color-text] outline-none focus:border-[--color-accent]"
+                class="w-full mt-0.5 px-2 py-1.5 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
               />
             </div>
             <div>
-              <label class="text-[9px] text-[--color-text-muted]">{t.endDate}</label>
+              <label class="text-[10px] text-[--color-text-muted]">{t.endDate}</label>
               <input type="date" value={props.endDate}
                 onChange={(e: any) => props.setEndDate(e.target.value)}
-                class="w-full mt-0.5 px-1.5 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-[10px] text-[--color-text] outline-none focus:border-[--color-accent]"
+                class="w-full mt-0.5 px-2 py-1.5 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
               />
             </div>
           </div>
         </div>
 
         {/* Coin Selection */}
-        <div class="px-3 py-1.5 border-b border-[--color-border]">
-          <div class="text-[10px] font-mono text-[--color-text-muted] uppercase mb-1">{t.coins}</div>
-          <div class="flex gap-1 mb-1">
+        <div class="px-4 py-2.5 border-b border-[--color-border]">
+          <div class="text-xs font-mono text-[--color-text-muted] uppercase mb-1.5">{t.coins}</div>
+          <div class="flex gap-1.5 mb-1.5">
             {[
               { mode: 'all' as const, label: t.allCoins },
               { mode: 'top' as const, label: `${t.topN} N` },
@@ -214,7 +214,7 @@ export default function BuilderPanel(props: Props) {
               <button
                 key={mode}
                 onClick={() => props.setCoinMode(mode)}
-                class={`px-2 py-0.5 text-[10px] font-mono rounded transition-colors border
+                class={`px-3 py-1 text-xs font-mono rounded transition-colors border
                   ${props.coinMode === mode
                     ? 'font-bold'
                     : 'bg-[--color-bg-tooltip] text-[--color-text-muted] border-[--color-border] hover:border-[--color-accent]/20'}`}
@@ -227,7 +227,7 @@ export default function BuilderPanel(props: Props) {
           {props.coinMode === 'top' && (
             <input type="number" value={props.topN} min={1} max={549}
               onChange={(e: any) => props.setTopN(parseInt(e.target.value) || 50)}
-              class="w-full px-2 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-[10px] text-[--color-text] outline-none focus:border-[--color-accent]"
+              class="w-full px-2.5 py-1.5 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
               placeholder="Number of top coins"
             />
           )}
@@ -238,19 +238,19 @@ export default function BuilderPanel(props: Props) {
                 value={props.coinSearch}
                 onInput={(e: any) => props.setCoinSearch(e.target.value)}
                 placeholder="Search coins..."
-                class="w-full px-2 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-[10px] outline-none mb-1"
+                class="w-full px-2.5 py-1.5 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs outline-none mb-1.5"
               />
               {props.selectedCoins.length > 0 && (
-                <div class="flex flex-wrap gap-0.5 mb-1">
+                <div class="flex flex-wrap gap-1 mb-1.5">
                   {props.selectedCoins.map((s) => (
-                    <span key={s} class="px-1.5 py-0.5 text-[9px] font-mono bg-[--color-accent]/10 text-[--color-accent] rounded flex items-center gap-0.5">
+                    <span key={s} class="px-2 py-0.5 text-[10px] font-mono bg-[--color-accent]/10 text-[--color-accent] rounded flex items-center gap-1">
                       {s.replace('USDT', '')}
                       <button onClick={() => props.setSelectedCoins((p) => p.filter((x) => x !== s))} class="hover:text-[--color-red]">x</button>
                     </span>
                   ))}
                 </div>
               )}
-              <div class="max-h-24 overflow-y-auto">
+              <div class="max-h-28 overflow-y-auto">
                 {props.filteredCoins.map((c) => (
                   <button
                     key={c.symbol}
@@ -259,7 +259,7 @@ export default function BuilderPanel(props: Props) {
                         prev.includes(c.symbol) ? prev.filter((x) => x !== c.symbol) : [...prev, c.symbol]
                       );
                     }}
-                    class={`block w-full text-left px-1.5 py-0.5 text-[10px] font-mono rounded hover:bg-[--color-bg-hover]
+                    class={`block w-full text-left px-2 py-1 text-xs font-mono rounded hover:bg-[--color-bg-hover]
                       ${props.selectedCoins.includes(c.symbol) ? 'text-[--color-accent]' : 'text-[--color-text-muted]'}`}
                   >
                     {props.selectedCoins.includes(c.symbol) ? '✓ ' : ''}{c.symbol}
@@ -271,9 +271,9 @@ export default function BuilderPanel(props: Props) {
         </div>
 
         {/* Avoid Hours */}
-        <div class="px-3 py-1.5 border-b border-[--color-border]">
-          <div class="text-[10px] font-mono text-[--color-text-muted] uppercase mb-1">{t.avoidHours}</div>
-          <div class="flex flex-wrap gap-0.5">
+        <div class="px-4 py-2.5 border-b border-[--color-border]">
+          <div class="text-xs font-mono text-[--color-text-muted] uppercase mb-1.5">{t.avoidHours}</div>
+          <div class="flex flex-wrap gap-1">
             {Array.from({ length: 24 }, (_, i) => (
               <button
                 key={i}
@@ -285,7 +285,7 @@ export default function BuilderPanel(props: Props) {
                     return next;
                   });
                 }}
-                class={`w-6 h-5 text-[9px] font-mono rounded transition-colors border
+                class={`w-7 h-6 text-[10px] font-mono rounded transition-colors border
                   ${props.avoidHours.has(i)
                     ? ''
                     : 'bg-[--color-bg-tooltip] text-[--color-text-muted] border-[--color-border] hover:border-[--color-red]/20'}`}
@@ -298,9 +298,9 @@ export default function BuilderPanel(props: Props) {
         </div>
 
         {/* Run Button */}
-        <div class="px-3 py-2">
+        <div class="px-4 py-3">
           {props.demoMode && (
-            <div class="text-[9px] text-[--color-yellow] font-mono mb-2 px-2 py-1 bg-[--color-yellow]/10 rounded border border-[--color-yellow]/20">
+            <div class="text-[10px] text-[--color-yellow] font-mono mb-2 px-2.5 py-1.5 bg-[--color-yellow]/10 rounded border border-[--color-yellow]/20">
               {t.apiDown}
             </div>
           )}
