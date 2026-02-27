@@ -34,4 +34,6 @@ backend/src/__pycache__/
 data/
 !src/data/
 !public/data/
+# Exclude volatile caches created by backend scripts
+public/data/cache/
 test-results/
