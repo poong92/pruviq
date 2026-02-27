@@ -1,10 +1,6 @@
 name: E2E Tests
 
 on:
-  push:
-    branches: [main]
-    paths-ignore:
-      - 'public/data/**'
   pull_request:
     branches: [main]
 
