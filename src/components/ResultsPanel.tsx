@@ -23,6 +23,8 @@ const tabActiveStyle = { color: COLORS.accent, borderColor: COLORS.accent, backg
 export default function ResultsPanel({ t, result, error, resultTab, setResultTab, activePreset, lang }: Props) {
   const equityChartRef = useRef<HTMLDivElement>(null);
   const equityInstanceRef = useRef<any>(null);
+  const ddChartRef = useRef<HTMLDivElement>(null);
+  const ddInstanceRef = useRef<any>(null);
 
   // ─── Equity curve chart ───
   useEffect(() => {
@@ -74,6 +76,66 @@ export default function ResultsPanel({ t, result, error, resultTab, setResultTab
     return () => {
       disposed = true;
       if (equityInstanceRef.current) { equityInstanceRef.current.remove(); equityInstanceRef.current = null; }
+    };
+  }, [resultTab, result]);
+
+  // ─── Drawdown chart ───
+  useEffect(() => {
+    if (resultTab !== 'equity' || !result?.equity_curve?.length || !ddChartRef.current) return;
+    let disposed = false;
+
+    import('lightweight-charts').then(({ createChart, AreaSeries }) => {
+      if (disposed || !ddChartRef.current) return;
+      if (ddInstanceRef.current) {
+        ddInstanceRef.current.remove();
+        ddInstanceRef.current = null;
+      }
+
+      // Calculate drawdown from equity curve
+      let peak = -Infinity;
+      const ddData = result.equity_curve.map((p) => {
+        if (p.value > peak) peak = p.value;
+        const dd = peak > 0 ? ((p.value - peak) / peak) * 100 : p.value - peak;
+        return { time: p.time, value: Math.min(0, dd) };
+      });
+
+      const chart = createChart(ddChartRef.current, {
+        width: ddChartRef.current.clientWidth,
+        height: 120,
+        layout: {
+          background: { color: getCssVar('--color-bg-card') },
+          textColor: getCssVar('--color-text-muted'),
+          fontFamily: "'JetBrains Mono', monospace",
+          fontSize: 10,
+        },
+        grid: {
+          vertLines: { color: getCssVar('--color-bg-hover') },
+          horzLines: { color: getCssVar('--color-bg-hover') },
+        },
+        rightPriceScale: { borderColor: getCssVar('--color-border') },
+        timeScale: { visible: false },
+      });
+
+      const series = chart.addSeries(AreaSeries, {
+        lineColor: COLORS.red,
+        topColor: 'transparent',
+        bottomColor: COLORS.redBg,
+        lineWidth: 1,
+        priceFormat: { type: 'custom', formatter: (p: number) => `${p.toFixed(1)}%` },
+      });
+      series.setData(ddData);
+      chart.timeScale().fitContent();
+      ddInstanceRef.current = chart;
+
+      const ro = new ResizeObserver((entries) => {
+        for (const e of entries) chart.applyOptions({ width: e.contentRect.width });
+      });
+      ro.observe(ddChartRef.current);
+    });
+
+    return () => {
+      disposed = true;
+      if (ddInstanceRef.current) { ddInstanceRef.current.remove(); ddInstanceRef.current = null; }
     };
   }, [resultTab, result]);
 
@@ -163,7 +225,15 @@ export default function ResultsPanel({ t, result, error, resultTab, setResultTab
           {/* Equity tab */}
           {resultTab === 'equity' && (
             <div class="p-4">
+              <div class="font-mono text-[0.625rem] text-[--color-text-muted] uppercase tracking-wider mb-1">Equity Curve</div>
               <div ref={equityChartRef} style={{ height: '300px' }} />
+              <div class="font-mono text-[0.625rem] text-[--color-text-muted] uppercase tracking-wider mt-3 mb-1">Drawdown</div>
+              <div ref={ddChartRef} style={{ height: '120px' }} />
+              {result && result.max_drawdown_pct !== undefined && (
+                <div class="mt-2 font-mono text-xs text-[--color-text-muted]">
+                  Max Drawdown: <span style={{ color: COLORS.red }}>{result.max_drawdown_pct.toFixed(1)}%</span>
+                </div>
+              )}
             </div>
           )}
 
