@@ -1,17 +1,17 @@
 {
-  "generated": "2026-02-27T10:03:04Z",
+  "generated": "2026-02-27T19:00:37Z",
   "strategy": "BB Squeeze SHORT",
   "period": {
     "from": "2026-01-13",
-    "to": "2026-02-27"
+    "to": "2026-02-28"
   },
   "summary": {
-    "total_trades": 1625,
-    "win_rate": 54.46,
-    "profit_factor": 1.01,
-    "total_pnl": 21.22,
+    "total_trades": 1633,
+    "win_rate": 54.32,
+    "profit_factor": 1.0,
+    "total_pnl": 7.46,
     "starting_balance": 3102.0,
-    "current_balance": 3123.22,
+    "current_balance": 3109.46,
     "max_drawdown_pct": 13.0
   },
   "daily": [
@@ -281,9 +281,15 @@
     },
     {
       "date": "2026-02-27",
-      "pnl": 7.87,
-      "trades": 8,
-      "cum_pnl": 21.22
+      "pnl": 12.21,
+      "trades": 10,
+      "cum_pnl": 25.56
+    },
+    {
+      "date": "2026-02-28",
+      "pnl": -18.1,
+      "trades": 6,
+      "cum_pnl": 7.46
     }
   ]
 }
