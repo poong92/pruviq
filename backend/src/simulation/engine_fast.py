@@ -249,10 +249,10 @@ def simulate_vectorized(
             pnl_gross = (exit_price_adj - entry_price) / entry_price
 
         fee = fee_pct * 2
+        bars_held = exit_idx - entry_idx
         funding_payments = bars_held // 8
         funding_cost = funding_payments * funding_rate_8h
         pnl_net = pnl_gross - fee - funding_cost
-        bars_held = exit_idx - entry_idx
 
         trades.append(Trade(
             symbol=symbol,
