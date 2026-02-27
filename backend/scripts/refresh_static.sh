@@ -11,7 +11,7 @@ export PATH="/opt/homebrew/bin:/Users/openclaw/.npm-global/bin:$PATH"
 REPO_DIR="/Users/openclaw/pruviq"
 VENV_DIR="$REPO_DIR/backend/.venv"
 
-log() { echo "$(date -u '+%Y-%m-%d %H:%M:%S UTC') — $*"; }
+log() { echo "$(date -u +%Y-%m-%d %H:%M:%S UTC) — $*"; }
 
 cd "$REPO_DIR"
 
@@ -41,8 +41,16 @@ fi
 DATA_FILES="public/data/market.json public/data/coins-stats.json public/data/macro.json public/data/news.json"
 if ! git diff --quiet $DATA_FILES 2>/dev/null; then
     git add -f $DATA_FILES
-    git commit -m "chore: static data refresh [$(date -u '+%H:%M')]" --no-verify
-    if git push origin main 2>&1; then
+    # Amend if last commit was a data refresh (reduce git history noise)
+    LAST_MSG=$(git log -1 --pretty=%s 2>/dev/null)
+    if echo "$LAST_MSG" | grep -q "^chore: static data refresh"; then
+        git commit --amend -m "chore: static data refresh [$(date -u +%H:%M)]" --no-verify
+        PUSH_FLAG="--force-with-lease"
+    else
+        git commit -m "chore: static data refresh [$(date -u +%H:%M)]" --no-verify
+        PUSH_FLAG=""
+    fi
+    if git push origin main $PUSH_FLAG 2>&1; then
         log "Pushed updated data -> Cloudflare auto-deploy"
     else
         log "WARN: git push failed"
