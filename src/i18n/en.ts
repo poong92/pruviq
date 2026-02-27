@@ -16,7 +16,7 @@ export const en = {
   'hero.title2': 'Before You Trade.',
   'hero.subtitle': "The only backtesting tool that publishes its failures.",
   'hero.desc': 'We have tested 5 strategies on 535 coins. 4 lost money. We published them all. Because you deserve to know what actually works before risking real money.',
-  'hero.cta_primary': 'Try Live Demo',
+  'hero.cta_primary': 'Start Backtesting Free',
   'hero.cta_builder': 'Build Your Own Strategy',
   'hero.cta1': 'Explore Strategies',
   'hero.cta2': 'Raise Your Trading IQ',
@@ -25,6 +25,9 @@ export const en = {
   'hero.stat2': 'Historical Data',
   'hero.stat2_val': '2+ yrs',
   'hero.stat3': 'Free & Transparent',
+  'hero.stat4': 'Backtested Trades',
+  'hero.stat5': 'Data Points Processed',
+  'hero.stat6': 'No Credit Card',
 
   // Problem
   'problem.tag': 'THE PROBLEM',

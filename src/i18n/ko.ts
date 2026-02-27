@@ -18,7 +18,7 @@ export const ko: Record<TranslationKey, string> = {
   'hero.title2': '전략을 검증하세요.',
   'hero.subtitle': '실패도 공개하는 유일한 백테스팅 도구.',
   'hero.desc': '우리는 535개 코인에서 5개의 전략을 테스트했습니다. 4개는 손실을 냈습니다. 우리는 모든 결과를 공개합니다. 실제 자금을 투입하기 전에 무엇이 실제로 작동하는지 확인하세요.',
-  'hero.cta_primary': '라이브 데모 체험',
+  'hero.cta_primary': '무료 백테스트 시작',
   'hero.cta_builder': '나만의 전략 만들기',
   'hero.cta1': '전략 탐색하기',
   'hero.cta2': '트레이딩 IQ 높이기',
@@ -27,6 +27,9 @@ export const ko: Record<TranslationKey, string> = {
   'hero.stat2': '과거 데이터',
   'hero.stat2_val': '2년+',
   'hero.stat3': '무료 & 투명',
+  'hero.stat4': '백테스트 거래 수',
+  'hero.stat5': '처리된 데이터 포인트',
+  'hero.stat6': '신용카드 불필요',
 
   // Problem
   'problem.tag': '문제점',
