@@ -440,7 +440,7 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
       {/* Main split layout */}
       <div class="flex flex-col md:flex-row gap-3">
         {/* Left: Chart (70%) */}
-        <div class={`md:w-[70%] flex-shrink-0 ${mobileTab !== 'chart' ? 'hidden md:block' : ''}`}>
+        <div class={`md:w-[55%] flex-shrink-0 ${mobileTab !== 'chart' ? 'hidden md:block' : ''}`}>
           <ChartPanel
             chartSymbol={chartSymbol}
             setChartSymbol={setChartSymbol}
@@ -452,7 +452,7 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
         </div>
 
         {/* Right: Conditions Panel (30%) */}
-        <div class={`md:w-[30%] flex-shrink-0 ${mobileTab !== 'config' ? 'hidden md:block' : ''}`}>
+        <div class={`md:w-[45%] flex-shrink-0 ${mobileTab !== 'config' ? 'hidden md:block' : ''}`}>
           <BuilderPanel
             t={t}
             coinsLoaded={coinsLoaded}
