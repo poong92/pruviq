@@ -413,6 +413,7 @@ async def simulate(req: SimulationRequest):
             direction=direction,
             market_type=req.market_type,
             strategy_id=strategy_id,
+            funding_rate_8h=getattr(cost_model, 'funding_rate_8h', 0.0001),
         )
 
         for trade in result.trades:
@@ -420,6 +421,7 @@ async def simulate(req: SimulationRequest):
                 "time": trade.entry_time,
                 "pnl_pct": trade.pnl_pct,
                 "exit_reason": trade.exit_reason,
+                "funding_pct": getattr(trade, 'funding_pct', 0),
             })
 
     # Aggregate
@@ -433,7 +435,7 @@ async def simulate(req: SimulationRequest):
             total_return_pct=0, profit_factor=0,
             avg_win_pct=0, avg_loss_pct=0,
             max_drawdown_pct=0, max_consecutive_losses=0,
-            total_fees_pct=0, tp_count=0, sl_count=0, timeout_count=0,
+            total_fees_pct=0, total_funding_pct=0, tp_count=0, sl_count=0, timeout_count=0,
             coins_used=len(coins), data_range=data_manager.data_range(),
             equity_curve=[],
         )
@@ -446,6 +448,7 @@ async def simulate(req: SimulationRequest):
     gross_loss = abs(sum(t["pnl_pct"] for t in losses)) if losses else 0.001
     total_return = sum(t["pnl_pct"] for t in all_trades)
     total_fees = len(all_trades) * (cost_model.fee_pct * 2 * 100)
+    total_funding = sum(t.get('funding_pct', 0) for t in all_trades)
 
     avg_win = (sum(t["pnl_pct"] for t in wins) / len(wins)) if wins else 0
     avg_loss = (sum(t["pnl_pct"] for t in losses) / len(losses)) if losses else 0
@@ -506,6 +509,7 @@ async def simulate(req: SimulationRequest):
         "max_drawdown_pct": round(max_dd, 2),
         "max_consecutive_losses": max_consec,
         "total_fees_pct": round(total_fees, 2),
+        "total_funding_pct": round(total_funding, 2),
         "tp_count": tp_count,
         "sl_count": sl_count,
         "timeout_count": timeout_count,
@@ -547,6 +551,7 @@ def _build_coin_stats(strategy) -> dict:
             fee_pct=cost_model.fee_pct,
             slippage_pct=cost_model.slippage_pct,
             direction="short", market_type="futures",
+            funding_rate_8h=getattr(cost_model, 'funding_rate_8h', 0.0001),
         )
 
         # Price & 24h change (compare last close vs 24 bars ago)
@@ -640,6 +645,7 @@ async def simulate_coin(req: CoinSimRequest):
         direction=req.direction,
         market_type=req.market_type,
         strategy_id=strategy_id,
+        funding_rate_8h=getattr(cost_model, 'funding_rate_8h', 0.0001),
     )
 
     trades = [
@@ -713,6 +719,7 @@ async def simulate_compare(req: CompareRequest):
                 direction=direction,
                 market_type="futures",
                 strategy_id=strategy_id,
+                funding_rate_8h=getattr(cost_model, 'funding_rate_8h', 0.0001),
             )
             for trade in result.trades:
                 all_trades.append({"time": trade.entry_time, "pnl_pct": trade.pnl_pct, "exit_reason": trade.exit_reason})
@@ -828,6 +835,7 @@ async def simulate_validate(req: ValidateRequest):
                 direction=direction,
                 market_type=req.market_type,
                 strategy_id=strategy_id,
+                funding_rate_8h=getattr(cost_model, 'funding_rate_8h', 0.0001),
             )
             for trade in result.trades:
                 trade_list.append(trade.pnl_pct)
@@ -1411,6 +1419,7 @@ async def run_backtest(req: BacktestRequest):
             slippage_pct=cost_model.slippage_pct,
             direction=req.direction,
             symbol=sym,
+            funding_rate_8h=getattr(cost_model, 'funding_rate_8h', 0.0001),
         )
 
         for trade in trades:
@@ -1418,6 +1427,7 @@ async def run_backtest(req: BacktestRequest):
                 "time": trade.entry_time,
                 "pnl_pct": trade.pnl_pct,
                 "exit_reason": trade.exit_reason,
+                "funding_pct": getattr(trade, 'funding_pct', 0),
             })
 
     all_trades.sort(key=lambda t: t["time"])
@@ -1433,7 +1443,7 @@ async def run_backtest(req: BacktestRequest):
             total_return_pct=0, profit_factor=0,
             avg_win_pct=0, avg_loss_pct=0,
             max_drawdown_pct=0, max_consecutive_losses=0,
-            tp_count=0, sl_count=0, timeout_count=0,
+            total_funding_pct=0, tp_count=0, sl_count=0, timeout_count=0,
             coins_used=len(coin_list), data_range=data_manager.data_range(),
             equity_curve=[],
             is_valid=True, validation_errors=[],
@@ -1515,6 +1525,7 @@ async def run_backtest(req: BacktestRequest):
             profit_factor=round(y["gross_profit"] / max(y["gross_loss"], 0.001), 2),
         ))
 
+    total_funding = sum(t.get('funding_pct', 0) for t in all_trades)
     compute_ms = int((time.time() - t_start) * 1000)
 
     return BacktestResponse(
@@ -1538,6 +1549,7 @@ async def run_backtest(req: BacktestRequest):
         tp_count=tp_count,
         sl_count=sl_count,
         timeout_count=timeout_count,
+        total_funding_pct=round(total_funding, 2),
         sharpe_ratio=bt_sharpe,
         sortino_ratio=bt_sortino,
         calmar_ratio=bt_calmar,

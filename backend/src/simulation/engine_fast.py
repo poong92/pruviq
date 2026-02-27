@@ -21,6 +21,7 @@ class Trade:
     pnl_pct: float
     pnl_gross_pct: float
     fee_pct: float
+    funding_pct: float
     exit_reason: str
     bars_held: int
 
@@ -42,6 +43,7 @@ class SimResult:
     max_drawdown_pct: float
     max_consecutive_losses: int
     total_fees_pct: float
+    total_funding_pct: float
     tp_count: int
     sl_count: int
     timeout_count: int
@@ -165,6 +167,7 @@ def simulate_vectorized(
     slippage_pct: float,
     direction: str,
     symbol: str,
+    funding_rate_8h: float = 0.0001,
 ) -> List[Trade]:
     """
     Vectorized simulation — given signal indices, process trades.
@@ -246,7 +249,9 @@ def simulate_vectorized(
             pnl_gross = (exit_price_adj - entry_price) / entry_price
 
         fee = fee_pct * 2
-        pnl_net = pnl_gross - fee
+        funding_payments = bars_held // 8
+        funding_cost = funding_payments * funding_rate_8h
+        pnl_net = pnl_gross - fee - funding_cost
         bars_held = exit_idx - entry_idx
 
         trades.append(Trade(
@@ -259,6 +264,7 @@ def simulate_vectorized(
             pnl_pct=round(pnl_net * 100, 4),
             pnl_gross_pct=round(pnl_gross * 100, 4),
             fee_pct=round(fee * 100, 4),
+            funding_pct=round(funding_cost * 100, 4),
             exit_reason=exit_reason,
             bars_held=bars_held,
         ))
@@ -280,6 +286,7 @@ def run_fast(
     direction: str = "short",
     market_type: str = "futures",
     strategy_id: str = None,
+    funding_rate_8h: float = 0.0001,
 ) -> SimResult:
     """Complete fast simulation pipeline."""
 
@@ -295,6 +302,7 @@ def run_fast(
         sl_pct, tp_pct, max_bars,
         fee_pct, slippage_pct,
         direction, symbol,
+        funding_rate_8h=funding_rate_8h,
     )
 
     # Build result
@@ -306,7 +314,7 @@ def run_fast(
             total_return_pct=0, profit_factor=0,
             avg_win_pct=0, avg_loss_pct=0,
             max_drawdown_pct=0, max_consecutive_losses=0,
-            total_fees_pct=0, tp_count=0, sl_count=0, timeout_count=0,
+            total_fees_pct=0, total_funding_pct=0, tp_count=0, sl_count=0, timeout_count=0,
         )
 
     wins = [t for t in trades if t.pnl_pct > 0]
@@ -315,6 +323,7 @@ def run_fast(
     gross_loss = abs(sum(t.pnl_pct for t in losses)) if losses else 0.001
     total_return = sum(t.pnl_pct for t in trades)
     total_fees = sum(t.fee_pct for t in trades)
+    total_funding = sum(t.funding_pct for t in trades)
 
     # MDD + consecutive
     equity = 0.0
@@ -362,6 +371,7 @@ def run_fast(
         max_drawdown_pct=round(max_dd, 2),
         max_consecutive_losses=max_consec,
         total_fees_pct=round(total_fees, 2),
+        total_funding_pct=round(total_funding, 2),
         tp_count=sum(1 for t in trades if t.exit_reason == "tp"),
         sl_count=sum(1 for t in trades if t.exit_reason == "sl"),
         timeout_count=sum(1 for t in trades if t.exit_reason == "timeout"),

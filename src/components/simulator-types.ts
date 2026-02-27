@@ -39,6 +39,8 @@ export interface BacktestResult {
   yearly_stats?: YearlyStat[];
   indicators_used: string[]; conditions_count: number; coins_used: number;
   data_range: string; is_valid: boolean; validation_errors: string[];
+  total_fees_pct?: number;
+  total_funding_pct?: number;
   compute_time_ms: number; _isDemo?: boolean;
   export_hash?: string;
   trades?: TradeItem[];

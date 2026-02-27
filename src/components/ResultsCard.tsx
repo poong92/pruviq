@@ -15,6 +15,8 @@ interface ResultsData {
   sharpe_ratio?: number;
   sortino_ratio?: number;
   calmar_ratio?: number;
+  total_fees_pct?: number;
+  total_funding_pct?: number;
 }
 
 interface ResultsCardProps {
@@ -43,6 +45,10 @@ const labels = {
     demoNote: 'DEMO · Pre-computed results for BB Squeeze SHORT',
     breakeven: 'Break-even WR',
     margin: 'Margin',
+    tradingFee: 'Trading Fee',
+    fundingFee: 'Funding Fee',
+    totalCost: 'Total Cost',
+    feeSaveTip: 'Save up to 20% on fees',
   },
   ko: {
     live: '현재 라이브 설정',
@@ -62,6 +68,10 @@ const labels = {
     demoNote: 'DEMO · BB Squeeze SHORT 사전 계산 결과',
     breakeven: '손익분기 승률',
     margin: '여유',
+    tradingFee: '거래 수수료',
+    fundingFee: '펀딩 수수료',
+    totalCost: '총 비용',
+    feeSaveTip: '수수료 최대 20% 절감',
   },
 };
 
@@ -91,6 +101,12 @@ export default function ResultsCard({ data, isDefault, lang = 'en', isDemo = fal
   const hasBreakeven = data.avg_win_pct !== undefined && data.avg_loss_pct !== undefined && avgLoss > 0 && avgWin > 0;
   const breakevenWR = hasBreakeven ? (avgLoss / (avgWin + avgLoss)) * 100 : 0;
   const wrMargin = data.win_rate - breakevenWR;
+
+  // Fee breakdown
+  const tradingFee = data.total_fees_pct ?? 0;
+  const fundingFee = data.total_funding_pct ?? 0;
+  const totalCost = tradingFee + fundingFee;
+  const hasFees = tradingFee > 0 || fundingFee > 0;
 
   return (
     <div>
@@ -163,6 +179,33 @@ export default function ResultsCard({ data, isDefault, lang = 'en', isDemo = fal
             value={`${(data.calmar_ratio ?? 0).toFixed(2)}`}
             color={(data.calmar_ratio ?? 0) > 1 ? 'var(--color-accent)' : 'var(--color-text-muted)'}
           />
+        </div>
+      )}
+
+      {/* Fee breakdown */}
+      {hasFees && (
+        <div class="mb-3 px-3 py-2.5 rounded-lg bg-[--color-bg-tooltip] border border-[--color-border]">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="font-mono text-[0.625rem] text-[--color-text-muted] uppercase tracking-wider">{t.totalCost}</span>
+            <a href="/fees" class="text-[10px] font-mono text-[--color-accent] hover:underline">
+              {t.feeSaveTip} &rarr;
+            </a>
+          </div>
+          <div class="flex gap-4 font-mono text-xs">
+            <span class="text-[--color-text-muted]">{t.tradingFee}: <span class="text-[--color-red]">{tradingFee.toFixed(1)}%</span></span>
+            {fundingFee > 0 && (
+              <span class="text-[--color-text-muted]">{t.fundingFee}: <span class="text-[--color-red]">{fundingFee.toFixed(1)}%</span></span>
+            )}
+            <span class="text-[--color-text-muted]">{t.totalCost}: <span class="text-[--color-red] font-bold">{totalCost.toFixed(1)}%</span></span>
+          </div>
+          <div class="mt-1.5 h-1 rounded-full overflow-hidden bg-[--color-border]">
+            <div class="h-full bg-[--color-red]/60 transition-[width] duration-300" style={{ width: `${Math.min(totalCost / Math.abs(data.total_return_pct || 1) * 100, 100)}%` }} />
+          </div>
+          <div class="mt-1 text-[10px] font-mono text-[--color-text-muted] opacity-60">
+            {lang === 'ko'
+              ? `수수료가 수익의 ${data.total_return_pct !== 0 ? Math.abs(totalCost / data.total_return_pct * 100).toFixed(0) : '—'}%를 차지합니다`
+              : `Fees consume ${data.total_return_pct !== 0 ? Math.abs(totalCost / data.total_return_pct * 100).toFixed(0) : '—'}% of returns`}
+          </div>
         </div>
       )}
 

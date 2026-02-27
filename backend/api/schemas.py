@@ -53,6 +53,7 @@ class SimulationResponse(BaseModel):
     max_drawdown_pct: float
     max_consecutive_losses: int
     total_fees_pct: float
+    total_funding_pct: float = 0.0
 
     tp_count: int
     sl_count: int
@@ -319,6 +320,8 @@ class BacktestResponse(BaseModel):
     tp_count: int
     sl_count: int
     timeout_count: int
+
+    total_funding_pct: float = 0.0
 
     sharpe_ratio: float = 0.0
     sortino_ratio: float = 0.0
