@@ -2,6 +2,7 @@
 import Layout from '../../layouts/Layout.astro';
 import { useTranslations } from '../../i18n/index';
 import { getCollection } from 'astro:content';
+import LiveStats from '../../components/LiveStats';
 
 const t = useTranslations('ko');
 const allStrategies = await getCollection('strategies');
@@ -145,24 +146,9 @@ const verifiedCount = allStrategies.filter(s => s.data.status === 'verified').le
       <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('trust.section_tag')}</p>
       <h2 class="text-3xl md:text-4xl font-bold mb-12">{t('trust.section_title')}</h2>
 
-      <!-- Stats row -->
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
-        <div class="text-center p-4">
-          <p class="font-mono text-[--color-accent] text-3xl md:text-4xl font-bold">2,898</p>
-          <p class="text-[--color-text-muted] text-sm mt-1">{t('trust.stat_trades')}</p>
-        </div>
-        <div class="text-center p-4">
-          <p class="font-mono text-[--color-accent] text-3xl md:text-4xl font-bold">9.4M+</p>
-          <p class="text-[--color-text-muted] text-sm mt-1">{t('trust.stat_datapoints')}</p>
-        </div>
-        <div class="text-center p-4">
-          <p class="font-mono text-[--color-accent] text-3xl md:text-4xl font-bold">40+</p>
-          <p class="text-[--color-text-muted] text-sm mt-1">{t('trust.stat_live_days')}</p>
-        </div>
-        <div class="text-center p-4">
-          <p class="font-mono text-[--color-accent] text-3xl md:text-4xl font-bold">5</p>
-          <p class="text-[--color-text-muted] text-sm mt-1">{t('trust.stat_strategies')}</p>
-        </div>
+      <!-- Stats row (live data from performance.json) -->
+      <div class="mb-12">
+        <LiveStats client:visible lang="ko" />
       </div>
 
       <!-- Verification badges -->
