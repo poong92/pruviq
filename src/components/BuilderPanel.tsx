@@ -64,7 +64,7 @@ export default function BuilderPanel(props: Props) {
   const { t } = props;
 
   return (
-    <div class="border border-[--color-border] rounded-lg bg-[--color-bg-card] overflow-hidden flex flex-col" style={{ height: '640px' }}>
+    <div class="border border-[--color-border] rounded-lg bg-[--color-bg-card] overflow-hidden flex flex-col h-auto md:h-[640px]">
       {/* Panel header */}
       <div class="px-4 py-2.5 border-b border-[--color-border] flex-shrink-0">
         <div class="flex items-center justify-between">

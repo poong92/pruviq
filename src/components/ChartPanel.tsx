@@ -167,7 +167,7 @@ export default function ChartPanel({ chartSymbol, setChartSymbol, chartData, cha
             <button
               key={sym}
               onClick={() => setChartSymbol(sym)}
-              class={`px-2 py-0.5 text-xs font-mono rounded transition-colors
+              class={`px-2 py-1 text-xs font-mono rounded transition-colors
                 ${chartSymbol === sym ? 'font-bold text-white' : 'text-[--color-text-muted] hover:text-[--color-text] hover:bg-[--color-bg-hover]'}`}
               style={chartSymbol === sym ? { background: COLORS.accent, boxShadow: `0 0 8px ${COLORS.accentGlow}` } : undefined}
             >
@@ -177,7 +177,7 @@ export default function ChartPanel({ chartSymbol, setChartSymbol, chartData, cha
           <input
             type="text"
             placeholder="Symbol..."
-            class="w-20 px-2 py-0.5 text-xs font-mono bg-[--color-bg-tooltip] border border-[--color-border] rounded outline-none focus:border-[--color-accent]"
+            class="w-20 px-2 py-1 text-xs font-mono bg-[--color-bg-tooltip] border border-[--color-border] rounded outline-none focus:border-[--color-accent] hidden sm:block"
             onKeyDown={(e: any) => {
               if (e.key === 'Enter') {
                 const val = e.target.value.toUpperCase().trim();
@@ -188,8 +188,8 @@ export default function ChartPanel({ chartSymbol, setChartSymbol, chartData, cha
           />
         </div>
       </div>
-      {/* Chart body */}
-      <div ref={chartContainerRef} style={{ height: '640px', minHeight: '400px' }}>
+      {/* Chart body — responsive height: 360px mobile, 640px desktop */}
+      <div ref={chartContainerRef} class="h-[360px] md:h-[640px]" style={{ minHeight: '300px' }}>
         {chartLoading && (
           <div class="flex items-center justify-center h-full text-[--color-text-muted] text-sm">
             <div class="spinner mr-2" />{loadingText}

@@ -65,7 +65,7 @@ function MetricBox({ label, value, color }: { label: string; value: string; colo
   return (
     <div class="p-3 rounded-lg bg-[--color-bg-tooltip] border border-[--color-border]">
       <div class="font-mono text-[0.625rem] text-[--color-text-muted] uppercase tracking-wider mb-1">{label}</div>
-      <div class="font-mono text-xl font-bold" style={{ color }}>{value}</div>
+      <div class="font-mono text-lg md:text-xl font-bold" style={{ color }}>{value}</div>
     </div>
   );
 }
@@ -101,7 +101,7 @@ export default function ResultsCard({ data, isDefault, lang = 'en', isDemo = fal
       </div>
 
       {(data.avg_win_pct !== undefined || data.avg_loss_pct !== undefined) && (
-        <div class="grid grid-cols-4 gap-2 mb-3">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-3">
           <MetricBox
             label={t.avgWin}
             value={`+${(data.avg_win_pct ?? 0).toFixed(2)}%`}

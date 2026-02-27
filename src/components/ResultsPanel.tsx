@@ -167,21 +167,23 @@ export default function ResultsPanel({ t, result, error, resultTab, setResultTab
 
       {result ? (
         <div class="border border-[--color-border] rounded-lg bg-[--color-bg-card] overflow-hidden">
-          {/* Result tabs */}
-          <div class="flex border-b border-[--color-border]">
-            {(['summary', 'equity', 'trades'] as const).map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setResultTab(tab)}
-                class={`flex-1 py-2.5 text-xs font-mono uppercase tracking-wider transition-colors
-                  ${resultTab === tab ? 'font-bold border-b-2' : 'text-[--color-text-muted] hover:text-[--color-text] hover:bg-[--color-bg-hover]/20'}`}
-                style={resultTab === tab ? tabActiveStyle : undefined}
-              >
-                {t[tab]}
-              </button>
-            ))}
-            <div class="flex items-center gap-1 px-3">
-              <button onClick={downloadCsv} class="px-2 py-1 text-[10px] font-mono bg-[--color-bg-tooltip] border border-[--color-border] rounded hover:border-[--color-accent] transition-colors hover:bg-[--color-bg-hover]">
+          {/* Result tabs + CSV button */}
+          <div class="flex flex-col sm:flex-row border-b border-[--color-border]">
+            <div class="flex flex-1">
+              {(['summary', 'equity', 'trades'] as const).map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setResultTab(tab)}
+                  class={`flex-1 py-2.5 text-xs font-mono uppercase tracking-wider transition-colors
+                    ${resultTab === tab ? 'font-bold border-b-2' : 'text-[--color-text-muted] hover:text-[--color-text] hover:bg-[--color-bg-hover]/20'}`}
+                  style={resultTab === tab ? tabActiveStyle : undefined}
+                >
+                  {t[tab]}
+                </button>
+              ))}
+            </div>
+            <div class="flex items-center justify-center gap-1 px-3 py-1.5 sm:py-0 border-t sm:border-t-0 border-[--color-border]">
+              <button onClick={downloadCsv} class="px-3 py-1.5 text-xs font-mono bg-[--color-bg-tooltip] border border-[--color-border] rounded hover:border-[--color-accent] transition-colors hover:bg-[--color-bg-hover]">
                 {t.exportCsv}
               </button>
             </div>
@@ -189,7 +191,7 @@ export default function ResultsPanel({ t, result, error, resultTab, setResultTab
 
           {/* Summary tab */}
           {resultTab === 'summary' && (
-            <div class="p-4">
+            <div class="p-3 md:p-4">
               <ResultsCard data={result} isDefault={activePreset === 'bb-squeeze-short'} lang={lang} isDemo={result._isDemo} />
               {result.yearly_stats && result.yearly_stats.length > 0 && (
                 <div class="mt-4">
@@ -224,7 +226,7 @@ export default function ResultsPanel({ t, result, error, resultTab, setResultTab
 
           {/* Equity tab */}
           {resultTab === 'equity' && (
-            <div class="p-4">
+            <div class="p-3 md:p-4">
               <div class="font-mono text-[0.625rem] text-[--color-text-muted] uppercase tracking-wider mb-1">Equity Curve</div>
               <div ref={equityChartRef} style={{ height: '300px' }} />
               <div class="font-mono text-[0.625rem] text-[--color-text-muted] uppercase tracking-wider mt-3 mb-1">Drawdown</div>
@@ -239,36 +241,36 @@ export default function ResultsPanel({ t, result, error, resultTab, setResultTab
 
           {/* Trades tab */}
           {resultTab === 'trades' && (
-            <div class="p-2 overflow-x-auto">
+            <div class="p-2 overflow-x-auto -webkit-overflow-scrolling-touch">
               {result.trades && result.trades.length > 0 ? (
-                <table class="w-full text-[10px] font-mono">
+                <table class="w-full text-xs font-mono" style={{ minWidth: '500px' }}>
                   <thead>
                     <tr class="text-[--color-text-muted] border-b border-[--color-border]">
-                      <th class="py-1.5 px-2 text-left">{t.symbol}</th>
-                      <th class="py-1.5 px-2 text-left">{t.entryTime}</th>
-                      <th class="py-1.5 px-2 text-left">{t.exitTime}</th>
-                      <th class="py-1.5 px-2 text-right">{t.pnl}</th>
-                      <th class="py-1.5 px-2 text-center">{t.reason}</th>
-                      <th class="py-1.5 px-2 text-right">{t.held}</th>
+                      <th class="py-2 px-2 text-left">{t.symbol}</th>
+                      <th class="py-2 px-2 text-left hidden sm:table-cell">{t.entryTime}</th>
+                      <th class="py-2 px-2 text-left">{t.exitTime}</th>
+                      <th class="py-2 px-2 text-right">{t.pnl}</th>
+                      <th class="py-2 px-2 text-center">{t.reason}</th>
+                      <th class="py-2 px-2 text-right">{t.held}</th>
                     </tr>
                   </thead>
                   <tbody>
                     {result.trades.slice(0, 200).map((tr, i) => (
                       <tr key={i} class="border-b border-[--color-border]/30 hover:bg-[--color-bg-hover]/30">
-                        <td class="py-1 px-2">{tr.symbol?.replace('USDT', '')}</td>
-                        <td class="py-1 px-2 text-[--color-text-muted]">{tr.entry_time?.slice(0, 16)}</td>
-                        <td class="py-1 px-2 text-[--color-text-muted]">{tr.exit_time?.slice(0, 16)}</td>
-                        <td class="py-1 px-2 text-right" style={{ color: signColor(tr.pnl_pct) }}>
+                        <td class="py-1.5 px-2">{tr.symbol?.replace('USDT', '')}</td>
+                        <td class="py-1.5 px-2 text-[--color-text-muted] hidden sm:table-cell">{tr.entry_time?.slice(0, 16)}</td>
+                        <td class="py-1.5 px-2 text-[--color-text-muted]">{tr.exit_time?.slice(0, 16)}</td>
+                        <td class="py-1.5 px-2 text-right" style={{ color: signColor(tr.pnl_pct) }}>
                           {tr.pnl_pct > 0 ? '+' : ''}{tr.pnl_pct.toFixed(2)}%
                         </td>
-                        <td class="py-1 px-2 text-center">
-                          <span class={`px-1 py-0.5 rounded text-[9px] ${
+                        <td class="py-1.5 px-2 text-center">
+                          <span class={`px-1.5 py-0.5 rounded text-[10px] ${
                             tr.exit_reason === 'TP' ? 'bg-emerald-500/10 text-emerald-400' :
                             tr.exit_reason === 'SL' ? 'bg-red-500/10 text-red-400' :
                             'bg-yellow-500/10 text-yellow-400'
                           }`}>{tr.exit_reason}</span>
                         </td>
-                        <td class="py-1 px-2 text-right text-[--color-text-muted]">{tr.bars_held}h</td>
+                        <td class="py-1.5 px-2 text-right text-[--color-text-muted]">{tr.bars_held}h</td>
                       </tr>
                     ))}
                   </tbody>
