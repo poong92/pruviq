@@ -21,11 +21,15 @@ export default defineConfig({
       filter(page) {
         return !page.includes('/learn/');
       },
-      // As a second safeguard, filter out any generated sitemap items that include /learn/.
+      // Add `lastmod` and filter out unwanted paths (double-check /learn/ and /ko/404/)
       serialize(item) {
         if (!item || !item.url) return item;
         if (item.url.includes('/learn/')) return undefined;
-        return item;
+        if (item.url.includes('/ko/404/')) return undefined;
+        return {
+          url: item.url,
+          lastmod: new Date().toISOString()
+        };
       }
     }),
     preact()

@@ -33,9 +33,12 @@ const datasetJsonLd = JSON.stringify({
   "creator": { "@type": "Organization", "name": "PRUVIQ" },
   "license": "https://creativecommons.org/licenses/by-nc/4.0/"
 });
+
+// Canonical override: prefer USDT variant as canonical when this page is the base symbol
+const canonicalOverride = symbol.endsWith('usdt') ? undefined : `/coins/${symbol}usdt/`;
 ---
 
-<Layout title={`${displayName} - ${t('meta.coins_title')}`} description={metaDesc}>
+<Layout title={`${displayName} - ${t('meta.coins_title')}`} description={metaDesc} canonicalOverride={canonicalOverride}>
   <script type="application/ld+json" set:html={datasetJsonLd} />
   <section class="py-8">
     <div class="max-w-6xl mx-auto px-4">
