@@ -8,9 +8,7 @@ on:
       - 'content/**'
       - 'public/**'
       - '.github/workflows/seo-check.yml'
-  push:
-    branches:
-      - main
+
 
 jobs:
   seo-check:
