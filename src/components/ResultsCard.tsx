@@ -101,7 +101,7 @@ export default function ResultsCard({ data, isDefault, lang = 'en', isDemo = fal
       </div>
 
       {(data.avg_win_pct !== undefined || data.avg_loss_pct !== undefined) && (
-        <div class="grid grid-cols-3 gap-2 mb-3">
+        <div class="grid grid-cols-4 gap-2 mb-3">
           <MetricBox
             label={t.avgWin}
             value={`+${(data.avg_win_pct ?? 0).toFixed(2)}%`}
@@ -111,6 +111,11 @@ export default function ResultsCard({ data, isDefault, lang = 'en', isDemo = fal
             label={t.avgLoss}
             value={`${(data.avg_loss_pct ?? 0).toFixed(2)}%`}
             color="var(--color-red)"
+          />
+          <MetricBox
+            label={t.rr}
+            value={data.avg_loss_pct && data.avg_loss_pct !== 0 ? `1:${(Math.abs(data.avg_win_pct ?? 0) / Math.abs(data.avg_loss_pct)).toFixed(2)}` : 'N/A'}
+            color={((data.avg_win_pct ?? 0) / Math.abs(data.avg_loss_pct ?? 1)) >= 1 ? 'var(--color-accent)' : 'var(--color-text-muted)'}
           />
           <MetricBox
             label={t.maxConsec}

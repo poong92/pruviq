@@ -441,6 +441,7 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
             chartData={chartData}
             chartLoading={chartLoading}
             loadingText={t.loading}
+            trades={result?.trades}
           />
         </div>
 

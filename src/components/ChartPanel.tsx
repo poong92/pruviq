@@ -2,7 +2,7 @@
  * ChartPanel.tsx - Chart display with symbol switching
  */
 import { useEffect, useRef } from 'preact/hooks';
-import type { OhlcvBar } from './simulator-types';
+import type { OhlcvBar, TradeItem } from './simulator-types';
 import { getCssVar, COLORS } from './simulator-types';
 
 interface Props {
@@ -11,9 +11,10 @@ interface Props {
   chartData: OhlcvBar[];
   chartLoading: boolean;
   loadingText: string;
+  trades?: TradeItem[];
 }
 
-export default function ChartPanel({ chartSymbol, setChartSymbol, chartData, chartLoading, loadingText }: Props) {
+export default function ChartPanel({ chartSymbol, setChartSymbol, chartData, chartLoading, loadingText, trades }: Props) {
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const chartInstanceRef = useRef<any>(null);
 
@@ -102,6 +103,36 @@ export default function ChartPanel({ chartSymbol, setChartSymbol, chartData, cha
         color: b.c >= b.o ? COLORS.greenFill : COLORS.redFill,
       })));
 
+      // Trade entry/exit markers
+      if (trades && trades.length > 0) {
+        const symbolTrades = trades.filter((t) => t.symbol === chartSymbol);
+        if (symbolTrades.length > 0) {
+          const markers = symbolTrades.flatMap((t) => {
+            const entryTs = Math.floor(new Date(t.entry_time).getTime() / 1000);
+            const exitTs = Math.floor(new Date(t.exit_time).getTime() / 1000);
+            const isShort = t.direction === 'short';
+            const isWin = t.pnl_pct > 0;
+            return [
+              {
+                time: entryTs as any,
+                position: isShort ? 'aboveBar' as const : 'belowBar' as const,
+                color: COLORS.accent,
+                shape: isShort ? 'arrowDown' as const : 'arrowUp' as const,
+                text: isShort ? 'S' : 'L',
+              },
+              {
+                time: exitTs as any,
+                position: isShort ? 'belowBar' as const : 'aboveBar' as const,
+                color: isWin ? COLORS.green : COLORS.red,
+                shape: 'circle' as const,
+                text: `${t.pnl_pct > 0 ? '+' : ''}${t.pnl_pct.toFixed(1)}%`,
+              },
+            ];
+          }).sort((a, b) => (a.time as number) - (b.time as number));
+          candleSeries.setMarkers(markers);
+        }
+      }
+
       chart.timeScale().fitContent();
       chartInstanceRef.current = chart;
 
@@ -121,7 +152,7 @@ export default function ChartPanel({ chartSymbol, setChartSymbol, chartData, cha
         chartInstanceRef.current = null;
       }
     };
-  }, [chartData]);
+  }, [chartData, trades]);
 
   return (
     <div class="border border-[--color-border] rounded-lg bg-[--color-bg-card] overflow-hidden">
