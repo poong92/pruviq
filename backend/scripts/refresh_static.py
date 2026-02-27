@@ -118,7 +118,7 @@ def fetch_coingecko_markets(max_retries: int = 2) -> list[dict]:
     """Fetch top 500 coins from CoinGecko (SECONDARY — logos, market cap, sparklines)."""
     for attempt in range(max_retries + 1):
         all_coins = []
-        for page in [1, 2]:
+        for page in [1, 2, 3]:
             url = (
                 f"{CG_MARKETS}?vs_currency=usd&order=market_cap_desc"
                 f"&per_page=250&page={page}&sparkline=true"
