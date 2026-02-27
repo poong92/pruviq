@@ -602,6 +602,75 @@ def main():
     cg_coins = fetch_coingecko_markets()
     cg_lookup = build_coingecko_lookup(cg_coins) if cg_coins else {}
 
+    # Try to improve coverage for low-cap coins by using CoinGecko /coins/list (cached weekly)
+    def fetch_coingecko_all_ids(cache_days: int = 7) -> list[dict]:
+        CACHE = OUTPUT_DIR / "coingecko-coins-list.json"
+        try:
+            if CACHE.exists():
+                mtime = datetime.fromtimestamp(CACHE.stat().st_mtime, timezone.utc)
+                if datetime.now(timezone.utc) - mtime < timedelta(days=cache_days):
+                    print(f"  Loaded CoinGecko coin-list cache ({CACHE})")
+                    return json.loads(CACHE.read_text())
+        except Exception:
+            pass
+        print("  Fetching CoinGecko /coins/list (cached weekly)...")
+        url = f"{CG_BASE}/coins/list"
+        data = fetch_json(url)
+        if data:
+            try:
+                CACHE.write_text(json.dumps(data, separators=(',', ':')))
+                print(f"  Saved coin-list ({len(data)} items) to {CACHE}")
+            except Exception as e:
+                print(f"  WARN: Failed to write coin-list cache: {e}")
+        return data or []
+
+    # If coverage is low (<75%), try an expansion step:
+    if len(our_symbols) > 0:
+        matched = sum(1 for s in our_symbols if cg_lookup.get(s))
+        match_rate = matched / len(our_symbols)
+        print(f"  CoinGecko initial match: {matched}/{len(our_symbols)} ({match_rate:.2%})")
+        if match_rate < 0.75:
+            coin_list = fetch_coingecko_all_ids()
+            if coin_list:
+                # build symbol->ids map
+                sym_to_ids: dict[str, list[str]] = {}
+                for c in coin_list:
+                    sym = c.get("symbol", "")
+                    cid = c.get("id")
+                    if not sym or not cid:
+                        continue
+                    sym_to_ids.setdefault(sym.lower(), []).append(cid)
+                ids_to_fetch = set()
+                unmatched = []
+                for s in our_symbols:
+                    if cg_lookup.get(s):
+                        continue
+                    base = s.replace("USDT", "").lower()
+                    ids = sym_to_ids.get(base)
+                    if ids:
+                        ids_to_fetch.update(ids)
+                        unmatched.append(s)
+                if ids_to_fetch:
+                    ids_list = list(ids_to_fetch)
+                    print(f"  Fetching CoinGecko markets for {len(ids_list)} candidate ids to improve matching (unmatched: {len(unmatched)})...")
+                    for i in range(0, len(ids_list), 250):
+                        chunk = ids_list[i:i+250]
+                        ids_param = ",".join(chunk)
+                        url = (
+                            f"{CG_MARKETS}?vs_currency=usd&order=market_cap_desc&ids={ids_param}"
+                            f"&per_page=250&page=1&sparkline=true&price_change_percentage=1h,24h,7d"
+                        )
+                        data = fetch_json(url)
+                        if data:
+                            by_sym = {cg.get("symbol", "").upper(): cg for cg in data if cg.get("symbol")}
+                            for sym_upper, cg in by_sym.items():
+                                cg_usdt = f"{sym_upper}USDT"
+                                if cg_usdt not in cg_lookup:
+                                    cg_lookup[cg_usdt] = cg
+                        time.sleep(1)
+                    matched_after = sum(1 for s in our_symbols if cg_lookup.get(s))
+                    print(f"  After expansion, CoinGecko matched {matched_after}/{len(our_symbols)} ({matched_after/len(our_symbols):.2%})")
+
     # 5. Fetch global data
     if cg_coins:
         time.sleep(12)
