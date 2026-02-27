@@ -33,6 +33,7 @@ const L = {
     preset: 'Presets',
     indicators: 'Indicators',
     run: 'Run Backtest',
+    runWithCoins: 'Simulate on {n} Coins',
     running: 'Running...',
     results: 'Results',
     noResults: 'Run a backtest to see results.',
@@ -57,6 +58,7 @@ const L = {
     loading: 'Loading...',
     error: 'Error',
     apiDown: 'API unavailable. Using demo mode.',
+    disclaimer: 'Past performance does not guarantee future results. Simulations include estimated fees (0.04%) and slippage (0.02%). This is not financial advice.',
     mobile: { chart: 'Chart', config: 'Settings', results: 'Results' },
     quickStart: 'New to backtesting?',
     quickStartDesc: 'Try our proven BB Squeeze SHORT strategy — pre-loaded and ready to run.',
@@ -80,6 +82,7 @@ const L = {
     preset: '프리셋',
     indicators: '지표',
     run: '백테스트 실행',
+    runWithCoins: '{n}개 코인 시뮬레이션',
     running: '실행 중...',
     results: '결과',
     noResults: '백테스트를 실행하면 결과가 표시됩니다.',
@@ -104,6 +107,7 @@ const L = {
     loading: '로딩 중...',
     error: '에러',
     apiDown: 'API 연결 불가. 데모 모드로 전환합니다.',
+    disclaimer: '과거 성과가 미래 수익을 보장하지 않습니다. 시뮬레이션에는 예상 수수료(0.04%)와 슬리피지(0.02%)가 포함됩니다. 이것은 투자 조언이 아닙니다.',
     mobile: { chart: '차트', config: '설정', results: '결과' },
     quickStart: '백테스팅이 처음이신가요?',
     quickStartDesc: '검증된 BB Squeeze SHORT 전략을 바로 실행해보세요.',
@@ -499,8 +503,7 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
       {/* Disclaimer */}
       <div class="mt-6 mb-8 text-center">
         <p class="text-[--color-text-muted] text-[10px] max-w-lg mx-auto">
-          Past performance does not guarantee future results. Simulations include estimated fees (0.04%) and slippage (0.02%).
-          This is not financial advice.
+          {t.disclaimer}
         </p>
       </div>
     </div>

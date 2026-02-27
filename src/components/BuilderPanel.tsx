@@ -318,7 +318,7 @@ export default function BuilderPanel(props: Props) {
               </span>
             ) : props.conditions.length === 0 ? (
               <span class="text-xs">{t.addCondition}</span>
-            ) : t.run}
+            ) : props.coinsLoaded > 0 ? t.runWithCoins?.replace('{n}', String(props.coinsLoaded)) || t.run : t.run}
           </button>
         </div>
       </div>
