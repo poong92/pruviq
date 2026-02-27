@@ -151,5 +151,8 @@ jobs:
               });
               core.info(`Successfully merged PR #${prNumber}`);
             } catch (err) {
-              core.setFailed(`Failed to merge PR #${prNumber}: ${err.message}`);
+              // Use warning instead of setFailed to prevent failure emails.
+              // Merge can fail when PR is behind main (common with data refresh commits).
+              // The next workflow run will retry automatically.
+              core.warning(`Merge attempt for PR #${prNumber} did not succeed: ${err.message}`);
             }
