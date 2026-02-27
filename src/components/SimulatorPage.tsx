@@ -58,7 +58,13 @@ const L = {
     loading: 'Loading...',
     error: 'Error',
     apiDown: 'API unavailable. Using demo mode.',
-    disclaimer: 'Past performance does not guarantee future results. Simulations include estimated fees (0.04%) and slippage (0.02%). Each coin is tested independently (no cross-coin position limits). Includes funding fees (0.01%/8h). This is not financial advice.',
+    disclaimer: 'Past performance does not guarantee future results. This is not financial advice.',
+    simNotes: [
+      'No duplicate entries — if a coin already has an open position, new signals for that coin are skipped until it closes.',
+      'Fees included — results are net of trading fees (0.04%/side) and funding (0.01%/8h).',
+      'Slippage not included — real fills may differ from simulated prices.',
+    ],
+    simNotesTitle: 'How it works',
     mobile: { chart: 'Chart', config: 'Settings', results: 'Results' },
     quickStart: 'New to backtesting?',
     quickStartDesc: 'Try our proven BB Squeeze SHORT strategy — pre-loaded and ready to run.',
@@ -108,7 +114,13 @@ const L = {
     loading: '로딩 중...',
     error: '에러',
     apiDown: 'API 연결 불가. 데모 모드로 전환합니다.',
-    disclaimer: '과거 성과가 미래 수익을 보장하지 않습니다. 시뮬레이션에는 예상 수수료(0.04%)와 슬리피지(0.02%)가 포함됩니다. 각 코인은 독립 시뮬레이션됩니다(동시 포지션 제한 없음). 펀딩 수수료(0.01%/8h) 포함. 이것은 투자 조언이 아닙니다.',
+    disclaimer: '과거 성과가 미래 수익을 보장하지 않습니다. 이것은 투자 조언이 아닙니다.',
+    simNotes: [
+      '중복 진입 불가 — 코인에 열린 포지션이 있으면 청산될 때까지 새 신호는 무시됩니다.',
+      '수수료 포함 — 결과는 거래 수수료(0.04%/편도) + 펀딩(0.01%/8h) 차감 후 순수익입니다.',
+      '슬리피지 미포함 — 실제 체결가는 시뮬레이션과 다를 수 있습니다.',
+    ],
+    simNotesTitle: '시뮬레이션 안내',
     mobile: { chart: '차트', config: '설정', results: '결과' },
     quickStart: '백테스팅이 처음이신가요?',
     quickStartDesc: '검증된 BB Squeeze SHORT 전략을 바로 실행해보세요.',
@@ -504,9 +516,24 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
         />
       </div>
 
-      {/* Disclaimer */}
-      <div class="mt-6 mb-8 text-center">
-        <p class="text-[--color-text-muted] text-[11px] max-w-lg mx-auto">
+      {/* How it works + Disclaimer */}
+      <div class="mt-6 mb-8 max-w-lg mx-auto">
+        {t.simNotes && (
+          <details class="mb-3 group">
+            <summary class="text-[11px] font-mono text-[--color-text-muted] cursor-pointer select-none hover:text-[--color-accent] transition-colors">
+              {t.simNotesTitle} <span class="opacity-50 group-open:rotate-90 inline-block transition-transform">\u25B6</span>
+            </summary>
+            <ul class="mt-2 space-y-1.5 text-[11px] text-[--color-text-muted] list-none pl-0">
+              {t.simNotes.map((note: string, i: number) => (
+                <li key={i} class="flex gap-2">
+                  <span class="text-[--color-accent] opacity-60 shrink-0">\u2022</span>
+                  <span>{note}</span>
+                </li>
+              ))}
+            </ul>
+          </details>
+        )}
+        <p class="text-[--color-text-muted] text-[10px] text-center opacity-60">
           {t.disclaimer}
         </p>
       </div>
