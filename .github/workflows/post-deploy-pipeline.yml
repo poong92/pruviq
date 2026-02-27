@@ -1,12 +1,7 @@
 name: "Post-Deploy: Verify & Improve"
 
 on:
-  push:
-    branches: [main]
-    paths-ignore:
-      - 'public/data/**'
-      - 'MEMORY.md'
-      - 'USER.md'
+  workflow_dispatch: {}
 
 concurrency:
   group: post-deploy

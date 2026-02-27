@@ -19,7 +19,7 @@ const basePath = getBasePath(Astro.url.pathname);
 const cfToken = import.meta.env.PUBLIC_CF_ANALYTICS_TOKEN;
 
 const { title, description = t('meta.home_desc'), type = 'website', date, category } = Astro.props;
-const ogImage = new URL(Astro.props.ogImage || '/og-image.png', Astro.site || 'https://pruviq.com').href;
+const ogImage = new URL(Astro.props.ogImage || '/og-image.svg', Astro.site || 'https://pruviq.com').href;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://pruviq.com');
 const enURL = new URL(basePath, Astro.site || 'https://pruviq.com');
 const koURL = new URL(`/ko${basePath === '/' ? '/' : basePath}`, Astro.site || 'https://pruviq.com');
@@ -76,8 +76,6 @@ const isActive = (match: string) => basePath.startsWith(match);
     <link rel="preconnect" href="https://api.pruviq.com" crossorigin />
     <link rel="preconnect" href="https://coin-images.coingecko.com" crossorigin />
     <link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin />
-    <link rel="preload" href="/fonts/inter.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/jetbrains-mono.woff2" as="font" type="font/woff2" crossorigin />
     <!-- Open Graph -->
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
