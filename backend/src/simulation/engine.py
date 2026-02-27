@@ -85,15 +85,16 @@ class CostModel:
     """거래 비용 모델"""
     fee_pct: float = 0.001      # 0.1% (현물 기본)
     slippage_pct: float = 0.0002  # 0.02%
+    funding_rate_8h: float = 0.0001  # 0.01% per 8h funding period
 
     @staticmethod
     def spot():
-        return CostModel(fee_pct=0.001, slippage_pct=0.0002)
+        return CostModel(fee_pct=0.001, slippage_pct=0.0002, funding_rate_8h=0.0)
 
     @staticmethod
     def futures():
         """Futures taker fee (0.08%/side) — AutoTrader parity."""
-        return CostModel(fee_pct=0.0008, slippage_pct=0.0)
+        return CostModel(fee_pct=0.0008, slippage_pct=0.0, funding_rate_8h=0.0001)
 
 
 class Strategy(Protocol):
