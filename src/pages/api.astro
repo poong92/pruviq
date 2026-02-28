@@ -193,6 +193,7 @@ const API_BASE = 'https://api.pruviq.com';
             <code class="font-mono text-sm text-[--color-text]">/simulate/compare</code>
           </div>
           <p class="text-[--color-text-muted] text-sm mb-3">{t('api.endpoint_compare')}</p>
+          <p class="text-sm text-[--color-red] mb-3">Warning: This endpoint runs heavy comparisons across all strategies and many coins. It can exceed Cloudflare's 30s execution limit and return a 524 Gateway Timeout. Recommended workarounds: call /backtest per strategy, reduce <code>top_n</code>, or use the asynchronous job API (coming soon).</p>
           <details class="text-sm">
             <summary class="cursor-pointer text-[--color-accent] font-mono text-xs hover:underline">Request Body</summary>
             <pre class="mt-2 p-3 rounded bg-[--color-bg] border border-[--color-border] overflow-x-auto text-xs"><code>{`{
