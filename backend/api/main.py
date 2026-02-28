@@ -422,7 +422,6 @@ async def simulate(req: SimulationRequest):
     for sym, df in coins:
         if not has_cache:
             df = strategy.calculate_indicators(df.copy())
-            df = filter_df_by_date(df, getattr(req, 'start_date', None), getattr(req, 'end_date', None))
 
         df = filter_df_by_date(df, getattr(req, 'start_date', None), getattr(req, 'end_date', None))
 
@@ -763,7 +762,6 @@ async def simulate_compare(req: CompareRequest):
         for sym, df in coins:
             if not has_cache:
                 df = strategy.calculate_indicators(df.copy())
-                df = filter_df_by_date(df, getattr(req, 'start_date', None), getattr(req, 'end_date', None))
 
             df = filter_df_by_date(df, getattr(req, 'start_date', None), getattr(req, 'end_date', None))
             result = run_fast(
@@ -871,7 +869,8 @@ async def simulate_validate(req: ValidateRequest):
     for sym, df in coins:
         if not has_cache:
             df = strategy.calculate_indicators(df.copy())
-            df = filter_df_by_date(df, getattr(req, 'start_date', None), getattr(req, 'end_date', None))
+
+        df = filter_df_by_date(df, getattr(req, 'start_date', None), getattr(req, 'end_date', None))
 
         # Split data into IS and OOS by row count
         split_idx = int(len(df) * (1.0 - oos_frac))
@@ -881,7 +880,6 @@ async def simulate_validate(req: ValidateRequest):
         for period_df, trade_list in [(df_is, is_trades_all), (df_oos, oos_trades_all)]:
             if len(period_df) < 100:
                 continue
-            df = filter_df_by_date(df, getattr(req, 'start_date', None), getattr(req, 'end_date', None))
             result = run_fast(
                 period_df, strategy, sym,
                 sl_pct=req.sl_pct / 100,

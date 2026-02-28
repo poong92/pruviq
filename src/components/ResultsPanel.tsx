@@ -63,6 +63,7 @@ export default function ResultsPanel({
   useEffect(() => {
     if (resultTab !== 'equity' || !result?.equity_curve?.length || !equityChartRef.current) return;
     let disposed = false;
+    let roRef: ResizeObserver | null = null;
 
     import('lightweight-charts').then(({ createChart, AreaSeries }) => {
       if (disposed || !equityChartRef.current) return;
@@ -104,10 +105,12 @@ export default function ResultsPanel({
         for (const e of entries) chart.applyOptions({ width: e.contentRect.width });
       });
       ro.observe(equityChartRef.current);
+      roRef = ro;
     });
 
     return () => {
       disposed = true;
+      roRef?.disconnect();
       if (equityInstanceRef.current) { equityInstanceRef.current.remove(); equityInstanceRef.current = null; }
     };
   }, [resultTab, result]);
@@ -116,6 +119,7 @@ export default function ResultsPanel({
   useEffect(() => {
     if (resultTab !== 'equity' || !result?.equity_curve?.length || !ddChartRef.current) return;
     let disposed = false;
+    let roRef: ResizeObserver | null = null;
 
     import('lightweight-charts').then(({ createChart, AreaSeries }) => {
       if (disposed || !ddChartRef.current) return;
@@ -164,10 +168,12 @@ export default function ResultsPanel({
         for (const e of entries) chart.applyOptions({ width: e.contentRect.width });
       });
       ro.observe(ddChartRef.current);
+      roRef = ro;
     });
 
     return () => {
       disposed = true;
+      roRef?.disconnect();
       if (ddInstanceRef.current) { ddInstanceRef.current.remove(); ddInstanceRef.current = null; }
     };
   }, [resultTab, result]);
