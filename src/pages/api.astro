@@ -202,6 +202,10 @@ const API_BASE = 'https://api.pruviq.com';
   "top_n": 50
 }`}</code></pre>
           </details>
+          <div class="mt-3 p-3 rounded bg-[--color-bg-subtle] border border-[--color-border] text-sm text-[--color-text-muted]">
+            <strong class="font-mono text-xs text-[--color-accent]">Note:</strong>
+            <span class="ml-2">The <code class="font-mono">/simulate/compare</code> endpoint can be long-running for large <code class="font-mono">top_n</code> values or wide date ranges and may return a 524 Gateway Timeout on some hosting platforms. To reduce the chance of timeouts, use a smaller <code class="font-mono">top_n</code>, narrow the date range, or run multiple smaller comparison jobs. A robust server-side fix requires backend changes (async job queue or caching).</span>
+          </div>
         </div>
 
       </div>
