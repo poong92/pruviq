@@ -94,6 +94,7 @@ const isActive = (match: string) => basePath.startsWith(match);
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:site" content="@pruviq_com" />
     <title>{title}</title>
     <!-- JSON-LD Organization -->
     {type === 'website' && (
@@ -237,7 +238,11 @@ const isActive = (match: string) => basePath.startsWith(match);
     )}
 </head>
   <body class="min-h-screen">
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:bg-[--color-accent] focus:text-white focus:rounded">
+      Skip to main content
+    </a>
     <div id="page-loader"></div>
+    <header>
     <nav class="fixed top-0 w-full z-50 border-b border-[--color-border] bg-[--color-bg]/80 backdrop-blur-md" role="navigation" aria-label="Main">
       <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
         <a href={lang === 'ko' ? '/ko/' : '/'} class="flex items-center gap-2">
@@ -268,13 +273,14 @@ const isActive = (match: string) => basePath.startsWith(match);
         </div>
       </div>
     </nav>
+    </header>
 
-    <main class="pt-16">
+    <main id="main-content" role="main" aria-label="Page content" class="pt-16">
       <Breadcrumbs />
       <slot />
     </main>
 
-    <footer class="border-t border-[--color-border] mt-20">
+    <footer class="border-t border-[--color-border] mt-20" role="contentinfo" aria-label="Site footer">
       <div class="max-w-6xl mx-auto px-4 py-12">
         <!-- Brand + 3-column links -->
         <div class="flex flex-col md:flex-row gap-10 mb-10">

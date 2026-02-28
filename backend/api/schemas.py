@@ -465,12 +465,13 @@ class MacroIndicator(BaseModel):
 
 class DerivativesData(BaseModel):
     """Crypto derivatives market data."""
-    btc_open_interest_b: float = 0
-    eth_open_interest_b: float = 0
-    btc_ls_ratio: float = 0  # long/short ratio
-    eth_ls_ratio: float = 0
-    btc_oi_change_24h: float = 0
-    eth_oi_change_24h: float = 0
+    btc_open_interest_b: Optional[float] = 0
+    eth_open_interest_b: Optional[float] = 0
+    btc_ls_ratio: Optional[float] = 0  # long/short ratio
+    eth_ls_ratio: Optional[float] = 0
+    btc_oi_change_24h: Optional[float] = 0
+    eth_oi_change_24h: Optional[float] = 0
+    note: Optional[str] = None
 
 class EconomicEvent(BaseModel):
     """Upcoming economic calendar event."""

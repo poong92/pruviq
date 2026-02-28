@@ -8,6 +8,8 @@ import type { BacktestResult, CoinResult } from './simulator-types';
 import { getCssVar, COLORS } from './simulator-types';
 import { API_BASE_URL as API_URL } from '../config/api';
 
+interface HistoryEntry { label: string; result: BacktestResult; }
+
 interface Props {
   t: Record<string, any>;
   result: BacktestResult | null;
@@ -16,16 +18,46 @@ interface Props {
   setResultTab: (tab: 'summary' | 'equity' | 'trades' | 'coins') => void;
   activePreset: string | null;
   lang: 'en' | 'ko';
+  // New QA props
+  onModifyRerun?: () => void;
+  onQuickAdjustRerun?: (sl: number, tp: number, coins: number) => void;
+  onCopyLink?: () => void;
+  linkCopied?: boolean;
+  slPct?: number;
+  tpPct?: number;
+  topN?: number;
+  isRunning?: boolean;
+  history?: HistoryEntry[];
+  showHistory?: boolean;
+  setShowHistory?: (v: boolean) => void;
+  onSelectHistory?: (idx: number) => void;
+  onClearHistory?: () => void;
 }
 
 const tabActiveStyle = { color: COLORS.accent, borderColor: COLORS.accent, background: COLORS.accentBg };
 
-export default function ResultsPanel({ t, result, error, resultTab, setResultTab, activePreset, lang }: Props) {
+export default function ResultsPanel({
+  t, result, error, resultTab, setResultTab, activePreset, lang,
+  onModifyRerun, onQuickAdjustRerun, onCopyLink, linkCopied,
+  slPct = 10, tpPct = 8, topN = 50, isRunning = false,
+  history = [], showHistory = false, setShowHistory, onSelectHistory, onClearHistory,
+}: Props) {
   const [coinSort, setCoinSort] = useState<{ key: string; asc: boolean }>({ key: 'total_return_pct', asc: false });
   const equityChartRef = useRef<HTMLDivElement>(null);
   const equityInstanceRef = useRef<any>(null);
   const ddChartRef = useRef<HTMLDivElement>(null);
   const ddInstanceRef = useRef<any>(null);
+
+  // Quick Adjust local state
+  const [qaSl, setQaSl] = useState(slPct);
+  const [qaTp, setQaTp] = useState(tpPct);
+  const [qaCoins, setQaCoins] = useState(topN);
+  const [showQuickAdjust, setShowQuickAdjust] = useState(false);
+
+  // Sync with parent state changes
+  useEffect(() => { setQaSl(slPct); }, [slPct]);
+  useEffect(() => { setQaTp(tpPct); }, [tpPct]);
+  useEffect(() => { setQaCoins(topN); }, [topN]);
 
   // ─── Equity curve chart ───
   useEffect(() => {
@@ -183,12 +215,144 @@ export default function ResultsPanel({ t, result, error, resultTab, setResultTab
                 </button>
               ))}
             </div>
-            <div class="flex items-center justify-center gap-1 px-3 py-1.5 sm:py-0 border-t sm:border-t-0 border-[--color-border]">
+            <div class="flex items-center justify-center gap-1 px-3 py-1.5 sm:py-0 border-t sm:border-t-0 border-[--color-border] flex-wrap">
               <button onClick={downloadCsv} class="px-3 py-1.5 text-xs font-mono bg-[--color-bg-tooltip] border border-[--color-border] rounded hover:border-[--color-accent] transition-colors hover:bg-[--color-bg-hover]">
                 {t.exportCsv}
               </button>
+              {onModifyRerun && (
+                <button onClick={onModifyRerun} class="px-3 py-1.5 text-xs font-mono bg-[--color-bg-tooltip] border border-[--color-border] rounded hover:border-[--color-accent] transition-colors hover:bg-[--color-bg-hover]">
+                  {t.modifyRerun || 'Modify & Re-run'}
+                </button>
+              )}
+              {onCopyLink && (
+                <button onClick={onCopyLink} class="px-3 py-1.5 text-xs font-mono bg-[--color-bg-tooltip] border border-[--color-border] rounded hover:border-[--color-accent] transition-colors hover:bg-[--color-bg-hover]"
+                  style={linkCopied ? { borderColor: COLORS.green, color: COLORS.green } : undefined}>
+                  {linkCopied ? (t.linkCopied || 'Copied!') : (t.copyLink || 'Copy Link')}
+                </button>
+              )}
+              <button
+                onClick={() => setShowQuickAdjust(!showQuickAdjust)}
+                class={`px-3 py-1.5 text-xs font-mono border rounded transition-colors ${showQuickAdjust ? 'border-[--color-accent] text-[--color-accent] bg-[--color-accent]/10' : 'bg-[--color-bg-tooltip] border-[--color-border] hover:border-[--color-accent] hover:bg-[--color-bg-hover]'}`}
+              >
+                {t.quickAdjust || 'Quick Adjust'}
+              </button>
+              {history.length > 1 && (
+                <button
+                  onClick={() => setShowHistory?.(!showHistory)}
+                  class={`px-3 py-1.5 text-xs font-mono border rounded transition-colors ${showHistory ? 'border-[--color-accent] text-[--color-accent] bg-[--color-accent]/10' : 'bg-[--color-bg-tooltip] border-[--color-border] hover:border-[--color-accent] hover:bg-[--color-bg-hover]'}`}
+                >
+                  {t.history || 'History'} ({history.length})
+                </button>
+              )}
             </div>
           </div>
+
+          {/* Quick Adjust Panel */}
+          {showQuickAdjust && (
+            <div class="px-4 py-3 border-b border-[--color-border] bg-[--color-bg]/50">
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div>
+                  <label class="text-[10px] font-mono text-[--color-text-muted] uppercase flex justify-between">
+                    <span>SL %</span>
+                    <span class="text-[--color-text]">{qaSl}%</span>
+                  </label>
+                  <input
+                    type="range" min="1" max="30" step="0.5" value={qaSl}
+                    onInput={(e: any) => setQaSl(parseFloat(e.target.value))}
+                    class="slider-range mt-1"
+                    style={{ background: `linear-gradient(to right, ${COLORS.red} 0%, ${COLORS.red} ${((qaSl - 1) / 29) * 100}%, var(--color-border) ${((qaSl - 1) / 29) * 100}%, var(--color-border) 100%)` }}
+                  />
+                </div>
+                <div>
+                  <label class="text-[10px] font-mono text-[--color-text-muted] uppercase flex justify-between">
+                    <span>TP %</span>
+                    <span class="text-[--color-text]">{qaTp}%</span>
+                  </label>
+                  <input
+                    type="range" min="1" max="30" step="0.5" value={qaTp}
+                    onInput={(e: any) => setQaTp(parseFloat(e.target.value))}
+                    class="slider-range mt-1"
+                    style={{ background: `linear-gradient(to right, ${COLORS.green} 0%, ${COLORS.green} ${((qaTp - 1) / 29) * 100}%, var(--color-border) ${((qaTp - 1) / 29) * 100}%, var(--color-border) 100%)` }}
+                  />
+                </div>
+                <div>
+                  <label class="text-[10px] font-mono text-[--color-text-muted] uppercase flex justify-between">
+                    <span>Coins</span>
+                    <span class="text-[--color-text]">{qaCoins}</span>
+                  </label>
+                  <input
+                    type="range" min="1" max="535" step="1" value={qaCoins}
+                    onInput={(e: any) => setQaCoins(parseInt(e.target.value))}
+                    class="slider-range mt-1"
+                    style={{ background: `linear-gradient(to right, ${COLORS.accent} 0%, ${COLORS.accent} ${((qaCoins - 1) / 534) * 100}%, var(--color-border) ${((qaCoins - 1) / 534) * 100}%, var(--color-border) 100%)` }}
+                  />
+                </div>
+              </div>
+              <button
+                onClick={() => onQuickAdjustRerun?.(qaSl, qaTp, qaCoins)}
+                disabled={isRunning}
+                class="mt-2 w-full py-2 rounded font-mono text-xs font-bold transition-colors hover:opacity-90"
+                style={isRunning ? { background: COLORS.disabled, color: COLORS.disabledText } : { background: COLORS.accent, color: '#fff', boxShadow: `0 0 12px ${COLORS.accentGlow}` }}
+              >
+                {isRunning ? '...' : `${t.rerun || 'Re-run'} (SL ${qaSl}% / TP ${qaTp}% / ${qaCoins} coins)`}
+              </button>
+            </div>
+          )}
+
+          {/* History Comparison Panel */}
+          {showHistory && history.length > 1 && (
+            <div class="px-4 py-3 border-b border-[--color-border] bg-[--color-bg]/50">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-[10px] font-mono text-[--color-text-muted] uppercase">{t.history || 'History'}</span>
+                <button onClick={onClearHistory} class="text-[10px] font-mono text-[--color-text-muted] hover:text-[--color-red] transition-colors">
+                  {t.clearHistory || 'Clear'}
+                </button>
+              </div>
+              <div class="overflow-x-auto">
+                <table class="w-full text-[10px] font-mono">
+                  <thead>
+                    <tr class="text-[--color-text-muted] border-b border-[--color-border]">
+                      <th class="py-1 px-2 text-left">#</th>
+                      <th class="py-1 px-2 text-left">Config</th>
+                      <th class="py-1 px-2 text-right">Trades</th>
+                      <th class="py-1 px-2 text-right">WR%</th>
+                      <th class="py-1 px-2 text-right">PF</th>
+                      <th class="py-1 px-2 text-right">Return</th>
+                      <th class="py-1 px-2 text-right">MDD</th>
+                      <th class="py-1 px-2"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {history.map((h, i) => {
+                      const r = h.result;
+                      const labels = [t.run1 || 'Run 1', t.run2 || 'Run 2', t.run3 || 'Run 3'];
+                      return (
+                        <tr key={i} class="border-b border-[--color-border]/30 hover:bg-[--color-bg-hover]/30">
+                          <td class="py-1 px-2">{labels[i]}</td>
+                          <td class="py-1 px-2 text-[--color-text-muted]">{h.label}</td>
+                          <td class="py-1 px-2 text-right">{r.total_trades}</td>
+                          <td class="py-1 px-2 text-right" style={{ color: winRateColor(r.win_rate) }}>{r.win_rate.toFixed(1)}%</td>
+                          <td class="py-1 px-2 text-right" style={{ color: profitFactorColor(r.profit_factor) }}>{r.profit_factor.toFixed(2)}</td>
+                          <td class="py-1 px-2 text-right" style={{ color: signColor(r.total_return_pct) }}>
+                            {r.total_return_pct > 0 ? '+' : ''}{r.total_return_pct.toFixed(1)}%
+                          </td>
+                          <td class="py-1 px-2 text-right" style={{ color: COLORS.red }}>{r.max_drawdown_pct.toFixed(1)}%</td>
+                          <td class="py-1 px-2">
+                            <button
+                              onClick={() => onSelectHistory?.(i)}
+                              class="text-[--color-accent] hover:underline"
+                            >
+                              {t.compareWith || 'View'}
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
 
           {/* Summary tab */}
           {resultTab === 'summary' && (

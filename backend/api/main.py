@@ -274,6 +274,19 @@ def set_cached(key: str, value: dict):
 
 # --- Helpers ---
 
+def _safe_float(v, default: float = 0.0) -> float:
+    """Convert value to float, returning default for None/NaN/inf."""
+    if v is None:
+        return default
+    try:
+        f = float(v)
+        if np.isnan(f) or np.isinf(f):
+            return default
+        return f
+    except (ValueError, TypeError):
+        return default
+
+
 def downsample_equity(times: list, values: list, n_points: int = 100) -> List[EquityPoint]:
     """Downsample equity curve to n_points."""
     if not values:
@@ -358,6 +371,12 @@ async def list_strategies():
     return result
 
 
+@app.get("/indicators")
+async def list_indicators_flat():
+    """Return the full INDICATOR_REGISTRY for frontend field discovery."""
+    return INDICATOR_REGISTRY
+
+
 @app.post("/simulate", response_model=SimulationResponse)
 async def simulate(req: SimulationRequest):
     """Run a strategy simulation with pre-computed indicators."""
@@ -398,12 +417,24 @@ async def simulate(req: SimulationRequest):
     # Run simulation across all coins
     all_trades = []
     coin_results = []
+    actual_date_min = None
+    actual_date_max = None
     for sym, df in coins:
         if not has_cache:
             df = strategy.calculate_indicators(df.copy())
             df = filter_df_by_date(df, getattr(req, 'start_date', None), getattr(req, 'end_date', None))
 
         df = filter_df_by_date(df, getattr(req, 'start_date', None), getattr(req, 'end_date', None))
+
+        # Track actual date range
+        if "timestamp" in df.columns and len(df) > 0:
+            df_min = str(df["timestamp"].iloc[0])[:10]
+            df_max = str(df["timestamp"].iloc[-1])[:10]
+            if actual_date_min is None or df_min < actual_date_min:
+                actual_date_min = df_min
+            if actual_date_max is None or df_max > actual_date_max:
+                actual_date_max = df_max
+
         result = run_fast(
             df, strategy, sym,
             sl_pct=req.sl_pct / 100,
@@ -424,10 +455,10 @@ async def simulate(req: SimulationRequest):
                 trades=result.total_trades,
                 wins=result.wins,
                 losses=result.losses,
-                win_rate=result.win_rate,
-                profit_factor=result.profit_factor,
-                total_return_pct=result.total_return_pct,
-                avg_pnl_pct=round(result.total_return_pct / result.total_trades, 4) if result.total_trades > 0 else 0,
+                win_rate=_safe_float(result.win_rate),
+                profit_factor=_safe_float(result.profit_factor),
+                total_return_pct=_safe_float(result.total_return_pct),
+                avg_pnl_pct=round(_safe_float(result.total_return_pct) / result.total_trades, 4) if result.total_trades > 0 else 0,
                 tp_count=result.tp_count,
                 sl_count=result.sl_count,
                 timeout_count=result.timeout_count,
@@ -513,6 +544,11 @@ async def simulate(req: SimulationRequest):
     else:
         sharpe, sortino, calmar = 0.0, 0.0, 0.0
 
+    # Use actual date range if tracked, otherwise fallback to data_manager
+    data_range = data_manager.data_range()
+    if actual_date_min and actual_date_max:
+        data_range = f"{actual_date_min} ~ {actual_date_max}"
+
     resp_data = {
         "strategy": req.strategy,
         "direction": direction,
@@ -521,23 +557,23 @@ async def simulate(req: SimulationRequest):
         "total_trades": len(all_trades),
         "wins": len(wins),
         "losses": len(losses),
-        "win_rate": round(len(wins) / len(all_trades) * 100, 2),
-        "total_return_pct": round(total_return, 2),
-        "profit_factor": round(gross_profit / gross_loss, 2),
-        "avg_win_pct": round(avg_win, 4),
-        "avg_loss_pct": round(avg_loss, 4),
-        "max_drawdown_pct": round(max_dd, 2),
+        "win_rate": _safe_float(round(len(wins) / len(all_trades) * 100, 2)),
+        "total_return_pct": _safe_float(round(total_return, 2)),
+        "profit_factor": _safe_float(round(gross_profit / gross_loss, 2)),
+        "avg_win_pct": _safe_float(round(avg_win, 4)),
+        "avg_loss_pct": _safe_float(round(avg_loss, 4)),
+        "max_drawdown_pct": _safe_float(round(max_dd, 2)),
         "max_consecutive_losses": max_consec,
-        "total_fees_pct": round(total_fees, 2),
-        "total_funding_pct": round(total_funding, 2),
+        "total_fees_pct": _safe_float(round(total_fees, 2)),
+        "total_funding_pct": _safe_float(round(total_funding, 2)),
         "tp_count": tp_count,
         "sl_count": sl_count,
         "timeout_count": timeout_count,
-        "sharpe_ratio": sharpe,
-        "sortino_ratio": sortino,
-        "calmar_ratio": calmar,
+        "sharpe_ratio": _safe_float(sharpe),
+        "sortino_ratio": _safe_float(sortino),
+        "calmar_ratio": _safe_float(calmar),
         "coins_used": len(coins),
-        "data_range": data_manager.data_range(),
+        "data_range": data_range,
         "equity_curve": downsample_equity(eq_times, eq_values),
         "coin_results": [cr.model_dump() for cr in coin_results],
     }
@@ -1246,6 +1282,36 @@ def _fetch_fred_series(series_id: str) -> dict:
         return {}
 
 
+def _fetch_derivatives_data() -> Optional[DerivativesData]:
+    """Fetch crypto derivatives OI data from CoinGecko with graceful fallback."""
+    try:
+        resp = http_requests.get(
+            "https://api.coingecko.com/api/v3/derivatives",
+            timeout=8,
+        )
+        resp.raise_for_status()
+        data = resp.json()
+
+        btc_oi = 0.0
+        eth_oi = 0.0
+        for d in data:
+            sym = (d.get("symbol") or "").upper()
+            oi = _safe_float(d.get("open_interest"))
+            if "BTC" in sym:
+                btc_oi += oi
+            elif "ETH" in sym:
+                eth_oi += oi
+
+        return DerivativesData(
+            btc_open_interest_b=round(btc_oi / 1e9, 2) if btc_oi else 0,
+            eth_open_interest_b=round(eth_oi / 1e9, 2) if eth_oi else 0,
+            note="OI data from CoinGecko derivatives endpoint",
+        )
+    except Exception as e:
+        logger.warning(f"Derivatives data fetch failed: {e}")
+        return DerivativesData(note=f"Fetch failed: {str(e)[:100]}")
+
+
 def _build_macro_data() -> dict:
     """Build macro data from CNBC (primary) + FRED (Fed Rate only)."""
     indicators = []
@@ -1286,8 +1352,11 @@ def _build_macro_data() -> dict:
             updated=fed.get("updated", ""), source="FRED",
         ))
 
+    # Fetch derivatives data with graceful fallback
+    derivatives = _fetch_derivatives_data()
+
     return MacroResponse(
-        indicators=indicators, derivatives=None,
+        indicators=indicators, derivatives=derivatives,
         events=[], generated=datetime.now(timezone.utc).isoformat(),
     ).model_dump()
 

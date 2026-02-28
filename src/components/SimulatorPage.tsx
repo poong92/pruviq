@@ -71,6 +71,15 @@ const L = {
     quickStartCta: 'Run BB Squeeze SHORT',
     quickStartDismiss: 'I\'ll build my own',
     lookAheadWarn: 'C = current candle (incomplete in live). P = previous candle (confirmed). Using C may cause look-ahead bias.',
+    modifyRerun: 'Modify & Re-run',
+    quickAdjust: 'Quick Adjust',
+    rerun: 'Re-run',
+    copyLink: 'Copy Link',
+    linkCopied: 'Copied!',
+    history: 'History',
+    clearHistory: 'Clear',
+    compareWith: 'Compare',
+    run1: 'Run 1', run2: 'Run 2', run3: 'Run 3',
   },
   ko: {
     title: '전략 시뮬레이터',
@@ -127,6 +136,15 @@ const L = {
     quickStartCta: 'BB Squeeze SHORT 실행',
     quickStartDismiss: '직접 만들기',
     lookAheadWarn: 'C = 현재 캔들(실거래에서 미완성). P = 이전 캔들(확정됨). C 사용 시 look-ahead bias 위험이 있습니다.',
+    modifyRerun: '수정 후 재실행',
+    quickAdjust: '빠른 조정',
+    rerun: '재실행',
+    copyLink: '링크 복사',
+    linkCopied: '복사됨!',
+    history: '히스토리',
+    clearHistory: '초기화',
+    compareWith: '비교',
+    run1: '실행 1', run2: '실행 2', run3: '실행 3',
   },
 };
 
@@ -197,7 +215,15 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
   // Quick Start banner
   const [showQuickStart, setShowQuickStart] = useState(true);
 
+  // History comparison (max 3 results)
+  const [history, setHistory] = useState<{ label: string; result: BacktestResult }[]>([]);
+  const [showHistory, setShowHistory] = useState(false);
+
+  // Copy link feedback
+  const [linkCopied, setLinkCopied] = useState(false);
+
   const resultsRef = useRef<HTMLDivElement>(null);
+  const builderRef = useRef<HTMLDivElement>(null);
 
   // Available fields from selected indicators
   const availableFields = availableIndicators
@@ -245,6 +271,58 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
 
     init();
     return () => { cancelled = true; };
+  }, []);
+
+  // ─── URL querystring: read on mount ───
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      if (params.has('sl')) setSlPct(parseFloat(params.get('sl')!) || 10);
+      if (params.has('tp')) setTpPct(parseFloat(params.get('tp')!) || 8);
+      if (params.has('bars')) setMaxBars(parseInt(params.get('bars')!) || 48);
+      if (params.has('dir')) {
+        const d = params.get('dir');
+        if (d === 'short' || d === 'long') setDirection(d);
+      }
+      if (params.has('coins')) setTopN(parseInt(params.get('coins')!) || 50);
+    } catch {}
+  }, []);
+
+  // Build shareable URL from current params
+  const buildShareUrl = useCallback(() => {
+    const url = new URL(window.location.href.split('?')[0]);
+    url.searchParams.set('sl', String(slPct));
+    url.searchParams.set('tp', String(tpPct));
+    url.searchParams.set('bars', String(maxBars));
+    url.searchParams.set('dir', direction);
+    if (coinMode === 'top') url.searchParams.set('coins', String(topN));
+    if (startDate) url.searchParams.set('start', startDate);
+    if (endDate) url.searchParams.set('end', endDate);
+    return url.toString();
+  }, [slPct, tpPct, maxBars, direction, coinMode, topN, startDate, endDate]);
+
+  const copyLink = useCallback(() => {
+    const url = buildShareUrl();
+    navigator.clipboard.writeText(url).then(() => {
+      // Update URL without reload
+      window.history.replaceState(null, '', url);
+      setLinkCopied(true);
+      setTimeout(() => setLinkCopied(false), 2000);
+    }).catch(() => {});
+  }, [buildShareUrl]);
+
+  // Scroll to builder panel (for Modify & Re-run)
+  const scrollToBuilder = useCallback(() => {
+    builderRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    setMobileTab('config');
+  }, []);
+
+  // Quick Adjust re-run (with changed SL/TP/coins)
+  const quickAdjustRerun = useCallback((newSl: number, newTp: number, newTopN: number) => {
+    setSlPct(newSl);
+    setTpPct(newTp);
+    setTopN(newTopN);
+    // runBacktest is triggered after state update via a separate effect
   }, []);
 
   // ─── Chart loading ───
@@ -339,6 +417,21 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
       setResult(data);
       setResultTab('summary');
       setMobileTab('results');
+      // Save to history (max 3)
+      setHistory((prev) => {
+        const label = `SL${slPct}/TP${tpPct}/${direction.toUpperCase()}`;
+        const next = [{ label, result: data }, ...prev].slice(0, 3);
+        return next;
+      });
+      // Update URL with current params
+      try {
+        const url = new URL(window.location.href.split('?')[0]);
+        url.searchParams.set('sl', String(slPct));
+        url.searchParams.set('tp', String(tpPct));
+        url.searchParams.set('bars', String(maxBars));
+        url.searchParams.set('dir', direction);
+        window.history.replaceState(null, '', url.toString());
+      } catch {}
       setTimeout(() => resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 200);
     } catch (e: any) {
       setError(e.message || 'Backtest failed');
@@ -466,7 +559,7 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
         </div>
 
         {/* Right: Conditions Panel (30%) */}
-        <div class={`md:w-[45%] flex-shrink-0 ${mobileTab !== 'config' ? 'hidden md:block' : ''}`}>
+        <div ref={builderRef} class={`md:w-[45%] flex-shrink-0 ${mobileTab !== 'config' ? 'hidden md:block' : ''}`}>
           <BuilderPanel
             t={t}
             coinsLoaded={coinsLoaded}
@@ -513,6 +606,19 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
           setResultTab={setResultTab}
           activePreset={activePreset}
           lang={lang}
+          onModifyRerun={scrollToBuilder}
+          onQuickAdjustRerun={(sl, tp, coins) => { setSlPct(sl); setTpPct(tp); setTopN(coins); setTimeout(runBacktest, 50); }}
+          onCopyLink={copyLink}
+          linkCopied={linkCopied}
+          slPct={slPct}
+          tpPct={tpPct}
+          topN={topN}
+          isRunning={isRunning}
+          history={history}
+          showHistory={showHistory}
+          setShowHistory={setShowHistory}
+          onSelectHistory={(idx) => { if (history[idx]) setResult(history[idx].result); }}
+          onClearHistory={() => setHistory([])}
         />
       </div>
 
