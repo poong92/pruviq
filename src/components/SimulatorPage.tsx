@@ -7,7 +7,7 @@
  * Split into: ChartPanel, BuilderPanel, ResultsPanel
  */
 import { useState, useEffect, useRef, useCallback } from 'preact/hooks';
-import { API_BASE_URL as API_URL } from '../config/api';
+import { API_BASE_URL as API_URL, STATIC_DATA, fetchWithFallback } from '../config/api';
 import type { OhlcvBar, IndicatorInfo, Condition, BacktestResult, PresetItem, CoinOption } from './simulator-types';
 import { nextCondId, COLORS } from './simulator-types';
 import ChartPanel from './ChartPanel';
@@ -245,19 +245,13 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
       } catch { setDemoMode(true); }
 
       try {
-        const indRes = await fetch(`${API_URL}/builder/indicators`);
-        if (indRes.ok) {
-          const data = await indRes.json();
-          if (!cancelled) setAvailableIndicators(Array.isArray(data) ? data : data.indicators || []);
-        }
+        const data = await fetchWithFallback('/builder/indicators', STATIC_DATA.builderIndicators);
+        if (!cancelled) setAvailableIndicators(Array.isArray(data) ? data : data.indicators || []);
       } catch {}
 
       try {
-        const presetRes = await fetch(`${API_URL}/builder/presets`);
-        if (presetRes.ok) {
-          const data = await presetRes.json();
-          if (!cancelled) setPresets(Array.isArray(data) ? data : data.presets || []);
-        }
+        const presetsData = await fetchWithFallback('/builder/presets', STATIC_DATA.builderPresets);
+        if (!cancelled) setPresets(Array.isArray(presetsData) ? presetsData : presetsData.presets || []);
       } catch {}
 
       try {
@@ -265,6 +259,14 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
         if (coinRes.ok) {
           const data = await coinRes.json();
           if (!cancelled) { const arr = Array.isArray(data) ? data : data.coins || []; setAllCoins(arr.map((c: any) => ({ symbol: c.symbol || c }))); }
+        } else {
+          // Fallback: try static coins-stats for a basic symbol list
+          try {
+            const stats = await fetchWithFallback('/coins/stats', STATIC_DATA.coinsStats);
+            if (!cancelled && Array.isArray(stats.coins)) {
+              setAllCoins(stats.coins.map((c: any) => ({ symbol: c.symbol || c })));
+            }
+          } catch {}
         }
       } catch {}
     }
