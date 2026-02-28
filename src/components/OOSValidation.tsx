@@ -135,9 +135,9 @@ export default function OOSValidation({ lang = 'en', strategy = 'bb-squeeze', di
   };
 
   const riskColor = (risk: string) => {
-    if (risk === 'LOW') return 'text-green-400';
-    if (risk === 'MEDIUM') return 'text-yellow-400';
-    return 'text-red-400';
+    if (risk === 'LOW') return 'text-[var(--color-green)]';
+    if (risk === 'MEDIUM') return 'text-[var(--color-yellow)]';
+    return 'text-[var(--color-red)]';
   };
 
   const riskLabel = (risk: string) => {
@@ -211,7 +211,7 @@ export default function OOSValidation({ lang = 'en', strategy = 'bb-squeeze', di
       </div>
 
       {error && (
-        <div class="border border-red-500/30 rounded-lg p-4 bg-red-500/5 text-red-400 text-sm">
+        <div class="border border-[var(--color-red)]/30 rounded-lg p-4 bg-[var(--color-red)]/5 text-[var(--color-red)] text-sm">
           {error}
         </div>
       )}
@@ -285,7 +285,7 @@ export default function OOSValidation({ lang = 'en', strategy = 'bb-squeeze', di
               </div>
               <div class="h-2 rounded-full overflow-hidden bg-[var(--color-border)]">
                 <div
-                  class={`h-full rounded-full ${result.oos.overfit_risk === 'LOW' ? 'bg-green-500' : result.oos.overfit_risk === 'MEDIUM' ? 'bg-yellow-500' : 'bg-red-500'}`}
+                  class={`h-full rounded-full ${result.oos.overfit_risk === 'LOW' ? 'bg-[var(--color-green)]' : result.oos.overfit_risk === 'MEDIUM' ? 'bg-[var(--color-yellow)]' : 'bg-[var(--color-red)]'}`}
                   style={{ width: `${Math.min(result.oos.degradation_ratio * 100, 100)}%` }}
                 />
               </div>
@@ -304,7 +304,7 @@ export default function OOSValidation({ lang = 'en', strategy = 'bb-squeeze', di
                 <p class="text-[var(--color-text-muted)] text-xs">{t(lang, 'mc.median', 'Median Return')}</p>
               </div>
               <div class="border border-[var(--color-border)] rounded p-3 text-center">
-                <p class="font-mono text-green-400 text-xl font-bold">{fmt(result.monte_carlo.positive_pct, 1)}%</p>
+                <p class="font-mono text-[var(--color-green)] text-xl font-bold">{fmt(result.monte_carlo.positive_pct, 1)}%</p>
                 <p class="text-[var(--color-text-muted)] text-xs">{t(lang, 'mc.positive', 'Win Probability')}</p>
               </div>
               <div class="border border-[var(--color-border)] rounded p-3 text-center">
@@ -312,7 +312,7 @@ export default function OOSValidation({ lang = 'en', strategy = 'bb-squeeze', di
                 <p class="text-[var(--color-text-muted)] text-xs">{t(lang, 'mc.p5', 'Pessimistic (5th)')}</p>
               </div>
               <div class="border border-[var(--color-border)] rounded p-3 text-center">
-                <p class="font-mono text-red-400 text-xl font-bold">{fmt(result.monte_carlo.worst_case_mdd)}%</p>
+                <p class="font-mono text-[var(--color-red)] text-xl font-bold">{fmt(result.monte_carlo.worst_case_mdd)}%</p>
                 <p class="text-[var(--color-text-muted)] text-xs">{t(lang, 'mc.worst_mdd', 'Worst MDD (95th)')}</p>
               </div>
             </div>
@@ -321,7 +321,7 @@ export default function OOSValidation({ lang = 'en', strategy = 'bb-squeeze', di
             <div class="border border-[var(--color-border)] rounded p-4 mb-4">
               <p class="text-xs text-[var(--color-text-muted)] font-mono mb-2">{t(lang, 'mc.ci95', '95% Confidence Interval')}</p>
               <div class="flex items-center gap-2">
-                <span class="text-sm text-red-400 font-mono">{fmt(result.monte_carlo.percentile_5)}%</span>
+                <span class="text-sm text-[var(--color-red)] font-mono">{fmt(result.monte_carlo.percentile_5)}%</span>
                 <div class="flex-1 h-3 rounded-full overflow-hidden bg-[var(--color-border)] relative">
                   {(() => {
                     const min = result.monte_carlo.worst_case_return;
@@ -338,7 +338,7 @@ export default function OOSValidation({ lang = 'en', strategy = 'bb-squeeze', di
                     );
                   })()}
                 </div>
-                <span class="text-sm text-green-400 font-mono">{fmt(result.monte_carlo.percentile_95)}%</span>
+                <span class="text-sm text-[var(--color-green)] font-mono">{fmt(result.monte_carlo.percentile_95)}%</span>
               </div>
               <p class="text-center text-xs text-[var(--color-accent)] mt-1 font-mono">{t(lang, 'mc.median', 'Median')}: {fmt(result.monte_carlo.median_return)}%</p>
             </div>
