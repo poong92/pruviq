@@ -19,12 +19,13 @@ export default defineConfig({
       // Exclude legacy /learn/ redirect routes from the generated sitemap.
       // Those pages redirect to /blog/* and should not be indexed as separate URLs.
       filter(page) {
-        return !page.includes('/learn/');
+        return !page.includes('/learn/') && !page.includes('/demo/');
       },
       // Add `lastmod` and filter out unwanted paths (double-check /learn/ and /ko/404/)
       serialize(item) {
         if (!item || !item.url) return item;
         if (item.url.includes('/learn/')) return undefined;
+        if (item.url.includes('/demo/')) return undefined;
         if (item.url.includes('/ko/404/')) return undefined;
         return {
           url: item.url,
