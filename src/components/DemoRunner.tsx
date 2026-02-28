@@ -101,7 +101,7 @@ export default function DemoRunner() {
       </div>
 
       {error && (
-        <div class="mt-3 text-red-500">Error: {error}</div>
+        <div class="mt-3 text-[var(--color-red)]">Error: {error}</div>
       )}
 
       {data && (

@@ -269,7 +269,7 @@ export default function StrategyComparison({ lang = 'en' }: Props) {
                 ? 'cursor-not-allowed'
                 : 'hover:shadow-[0_0_15px_var(--color-up-fill)]'
               }`}
-            style={isRunning ? { background: '#222', color: '#888' } : { background: 'var(--color-accent)', color: '#fff' }}
+            style={isRunning ? { background: 'var(--color-bg-hover)', color: 'var(--color-text-muted)' } : { background: 'var(--color-accent)', color: '#fff' }}
           >
             {isRunning ? t.running : t.run}
           </button>

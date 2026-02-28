@@ -441,9 +441,9 @@ export default function ResultsPanel({
                         </td>
                         <td class="py-1.5 px-2 text-center">
                           <span class={`px-1.5 py-0.5 rounded text-[10px] ${
-                            tr.exit_reason === 'TP' ? 'bg-emerald-500/10 text-emerald-400' :
-                            tr.exit_reason === 'SL' ? 'bg-red-500/10 text-red-400' :
-                            'bg-yellow-500/10 text-yellow-400'
+                            tr.exit_reason === 'TP' ? 'bg-[--color-green]/10 text-[--color-green]' :
+                            tr.exit_reason === 'SL' ? 'bg-[--color-red]/10 text-[--color-red]' :
+                            'bg-[--color-yellow]/10 text-[--color-yellow]'
                           }`}>{tr.exit_reason}</span>
                         </td>
                         <td class="py-1.5 px-2 text-right text-[--color-text-muted]">{tr.bars_held}h</td>
