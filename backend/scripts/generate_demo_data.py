@@ -186,8 +186,8 @@ def main():
         print("ERROR: No coins loaded.")
         sys.exit(1)
 
-    first_date = coins[0][1]["timestamp"].min().strftime("%Y-%m")
-    last_date = coins[0][1]["timestamp"].max().strftime("%Y-%m")
+    first_date = coins[0][1]["timestamp"].min().strftime("%Y-%m-%d")
+    last_date = coins[0][1]["timestamp"].max().strftime("%Y-%m-%d")
     data_range = f"{first_date} ~ {last_date}"
 
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
