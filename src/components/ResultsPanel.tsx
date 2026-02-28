@@ -287,7 +287,7 @@ export default function ResultsPanel({
                     <span class="text-[--color-text]">{qaCoins}</span>
                   </label>
                   <input
-                    type="range" min="1" max="535" step="1" value={qaCoins}
+                    type="range" min="1" max="549" step="1" value={qaCoins}
                     onInput={(e: any) => setQaCoins(parseInt(e.target.value))}
                     class="slider-range mt-1"
                     style={{ background: `linear-gradient(to right, ${COLORS.accent} 0%, ${COLORS.accent} ${((qaCoins - 1) / 534) * 100}%, var(--color-border) ${((qaCoins - 1) / 534) * 100}%, var(--color-border) 100%)` }}

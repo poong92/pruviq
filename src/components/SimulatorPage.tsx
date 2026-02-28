@@ -394,7 +394,7 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
 
     if (coinMode === 'top') body.top_n = topN;
     else if (coinMode === 'select' && selectedCoins.length > 0) body.symbols = selectedCoins;
-    else body.top_n = 535;
+    else body.top_n = 549;
 
     if (startDate) body.start_date = startDate;
     if (endDate) body.end_date = endDate;
