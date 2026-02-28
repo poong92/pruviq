@@ -30,6 +30,12 @@ export interface YearlyStat {
   total_return_pct: number; profit_factor: number;
 }
 
+export interface CoinResult {
+  symbol: string; trades: number; wins: number; losses: number;
+  win_rate: number; profit_factor: number; total_return_pct: number;
+  avg_pnl_pct: number; tp_count: number; sl_count: number; timeout_count: number;
+}
+
 export interface BacktestResult {
   name: string; direction: string; total_trades: number; wins: number; losses: number;
   win_rate: number; profit_factor: number; total_return_pct: number;
@@ -41,6 +47,7 @@ export interface BacktestResult {
   data_range: string; is_valid: boolean; validation_errors: string[];
   total_fees_pct?: number;
   total_funding_pct?: number;
+  coin_results?: CoinResult[];
   compute_time_ms: number; _isDemo?: boolean;
   export_hash?: string;
   trades?: TradeItem[];

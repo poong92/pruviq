@@ -35,7 +35,7 @@ logger = logging.getLogger("pruviq")
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from api.schemas import (
-    SimulationRequest, SimulationResponse, EquityPoint,
+    SimulationRequest, SimulationResponse, EquityPoint, CoinResult,
     CoinInfo, StrategyInfo, HealthResponse,
     OhlcvBar, OhlcvResponse,
     CoinSimRequest, CoinSimResponse, TradeDetail,
@@ -397,6 +397,7 @@ async def simulate(req: SimulationRequest):
 
     # Run simulation across all coins
     all_trades = []
+    coin_results = []
     for sym, df in coins:
         if not has_cache:
             df = strategy.calculate_indicators(df.copy())
@@ -416,6 +417,22 @@ async def simulate(req: SimulationRequest):
             funding_rate_8h=getattr(cost_model, 'funding_rate_8h', 0.0001),
         )
 
+        # Collect per-coin stats
+        if result.total_trades > 0:
+            coin_results.append(CoinResult(
+                symbol=sym,
+                trades=result.total_trades,
+                wins=result.wins,
+                losses=result.losses,
+                win_rate=result.win_rate,
+                profit_factor=result.profit_factor,
+                total_return_pct=result.total_return_pct,
+                avg_pnl_pct=round(result.total_return_pct / result.total_trades, 4) if result.total_trades > 0 else 0,
+                tp_count=result.tp_count,
+                sl_count=result.sl_count,
+                timeout_count=result.timeout_count,
+            ))
+
         for trade in result.trades:
             all_trades.append({
                 "time": trade.entry_time,
@@ -423,6 +440,9 @@ async def simulate(req: SimulationRequest):
                 "exit_reason": trade.exit_reason,
                 "funding_pct": getattr(trade, 'funding_pct', 0),
             })
+
+    # Sort coin_results by total_return descending
+    coin_results.sort(key=lambda x: x.total_return_pct, reverse=True)
 
     # Aggregate
     all_trades.sort(key=lambda t: t["time"])
@@ -437,7 +457,7 @@ async def simulate(req: SimulationRequest):
             max_drawdown_pct=0, max_consecutive_losses=0,
             total_fees_pct=0, total_funding_pct=0, tp_count=0, sl_count=0, timeout_count=0,
             coins_used=len(coins), data_range=data_manager.data_range(),
-            equity_curve=[],
+            equity_curve=[], coin_results=[],
         )
         set_cached(ckey, resp.model_dump())
         return resp
@@ -519,6 +539,7 @@ async def simulate(req: SimulationRequest):
         "coins_used": len(coins),
         "data_range": data_manager.data_range(),
         "equity_curve": downsample_equity(eq_times, eq_values),
+        "coin_results": [cr.model_dump() for cr in coin_results],
     }
 
     set_cached(ckey, resp_data)
@@ -1395,6 +1416,7 @@ async def run_backtest(req: BacktestRequest):
     # Run simulation
     cost_model = CostModel.futures()
     all_trades = []
+    coin_results = []
 
     for sym, df_raw in coin_list:
         # Compute indicators via ConditionEngine
@@ -1422,6 +1444,27 @@ async def run_backtest(req: BacktestRequest):
             funding_rate_8h=getattr(cost_model, 'funding_rate_8h', 0.0001),
         )
 
+        # Collect per-coin stats
+        if trades:
+            c_wins = [t for t in trades if t.pnl_pct > 0]
+            c_losses = [t for t in trades if t.pnl_pct <= 0]
+            c_gp = sum(t.pnl_pct for t in c_wins) if c_wins else 0
+            c_gl = abs(sum(t.pnl_pct for t in c_losses)) if c_losses else 0.001
+            c_total_ret = sum(t.pnl_pct for t in trades)
+            coin_results.append(CoinResult(
+                symbol=sym,
+                trades=len(trades),
+                wins=len(c_wins),
+                losses=len(c_losses),
+                win_rate=round(len(c_wins) / len(trades) * 100, 2),
+                profit_factor=round(c_gp / c_gl, 2),
+                total_return_pct=round(c_total_ret, 2),
+                avg_pnl_pct=round(c_total_ret / len(trades), 4),
+                tp_count=sum(1 for t in trades if t.exit_reason == "tp"),
+                sl_count=sum(1 for t in trades if t.exit_reason == "sl"),
+                timeout_count=sum(1 for t in trades if t.exit_reason == "timeout"),
+            ))
+
         for trade in trades:
             all_trades.append({
                 "time": trade.entry_time,
@@ -1429,6 +1472,9 @@ async def run_backtest(req: BacktestRequest):
                 "exit_reason": trade.exit_reason,
                 "funding_pct": getattr(trade, 'funding_pct', 0),
             })
+
+    # Sort coin_results by total_return descending
+    coin_results.sort(key=lambda x: x.total_return_pct, reverse=True)
 
     all_trades.sort(key=lambda t: t["time"])
 
@@ -1445,7 +1491,7 @@ async def run_backtest(req: BacktestRequest):
             max_drawdown_pct=0, max_consecutive_losses=0,
             total_funding_pct=0, tp_count=0, sl_count=0, timeout_count=0,
             coins_used=len(coin_list), data_range=data_manager.data_range(),
-            equity_curve=[],
+            equity_curve=[], coin_results=[],
             is_valid=True, validation_errors=[],
             compute_time_ms=int((time.time() - t_start) * 1000),
         )
@@ -1558,6 +1604,7 @@ async def run_backtest(req: BacktestRequest):
         equity_curve=downsample_equity(eq_times, eq_values),
         is_valid=True,
         validation_errors=[],
+        coin_results=[cr.model_dump() for cr in coin_results],
         yearly_stats=yearly_stats,
         compute_time_ms=compute_ms,
     )

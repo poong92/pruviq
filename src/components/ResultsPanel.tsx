@@ -1,10 +1,10 @@
 /**
  * ResultsPanel.tsx - Backtest results display (summary, equity, trades)
  */
-import { useEffect, useRef } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
 import ResultsCard from './ResultsCard';
 import { winRateColor, profitFactorColor, signColor } from '../utils/format';
-import type { BacktestResult } from './simulator-types';
+import type { BacktestResult, CoinResult } from './simulator-types';
 import { getCssVar, COLORS } from './simulator-types';
 import { API_BASE_URL as API_URL } from '../config/api';
 
@@ -12,8 +12,8 @@ interface Props {
   t: Record<string, any>;
   result: BacktestResult | null;
   error: string | null;
-  resultTab: 'summary' | 'equity' | 'trades';
-  setResultTab: (tab: 'summary' | 'equity' | 'trades') => void;
+  resultTab: 'summary' | 'equity' | 'trades' | 'coins';
+  setResultTab: (tab: 'summary' | 'equity' | 'trades' | 'coins') => void;
   activePreset: string | null;
   lang: 'en' | 'ko';
 }
@@ -21,6 +21,7 @@ interface Props {
 const tabActiveStyle = { color: COLORS.accent, borderColor: COLORS.accent, background: COLORS.accentBg };
 
 export default function ResultsPanel({ t, result, error, resultTab, setResultTab, activePreset, lang }: Props) {
+  const [coinSort, setCoinSort] = useState<{ key: string; asc: boolean }>({ key: 'total_return_pct', asc: false });
   const equityChartRef = useRef<HTMLDivElement>(null);
   const equityInstanceRef = useRef<any>(null);
   const ddChartRef = useRef<HTMLDivElement>(null);
@@ -170,7 +171,7 @@ export default function ResultsPanel({ t, result, error, resultTab, setResultTab
           {/* Result tabs + CSV button */}
           <div class="flex flex-col sm:flex-row border-b border-[--color-border]">
             <div class="flex flex-1">
-              {(['summary', 'equity', 'trades'] as const).map((tab) => (
+              {(['summary', 'equity', 'trades', 'coins'] as const).map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setResultTab(tab)}
@@ -287,6 +288,90 @@ export default function ResultsPanel({ t, result, error, resultTab, setResultTab
               )}
             </div>
           )}
+
+          {/* Coins tab */}
+          {resultTab === 'coins' && (() => {
+            const coins = result.coin_results || [];
+            if (coins.length === 0) {
+              return (
+                <div class="text-center py-8 text-[--color-text-muted] text-sm font-mono">
+                  {lang === 'ko' ? '코인별 데이터가 없습니다.' : 'No per-coin data available.'}
+                </div>
+              );
+            }
+            const sorted = [...coins].sort((a: any, b: any) => {
+              const av = a[coinSort.key] ?? 0;
+              const bv = b[coinSort.key] ?? 0;
+              return coinSort.asc ? av - bv : bv - av;
+            });
+            const profitable = coins.filter((c: any) => c.total_return_pct > 0).length;
+            const losing = coins.filter((c: any) => c.total_return_pct < 0).length;
+            const neutral = coins.filter((c: any) => c.total_return_pct === 0).length;
+            const profitPct = coins.length > 0 ? (profitable / coins.length * 100) : 0;
+            const toggleSort = (key: string) => {
+              setCoinSort(prev => prev.key === key ? { key, asc: !prev.asc } : { key, asc: false });
+            };
+            const arrow = (key: string) => coinSort.key === key ? (coinSort.asc ? ' \u25B2' : ' \u25BC') : '';
+
+            return (
+              <div class="p-2">
+                <div class="flex flex-wrap gap-3 mb-3 px-2 text-[10px] font-mono text-[--color-text-muted]">
+                  <span style={{ color: COLORS.green }}>{profitable} {lang === 'ko' ? '수익' : 'profitable'}</span>
+                  <span style={{ color: COLORS.red }}>{losing} {lang === 'ko' ? '손실' : 'losing'}</span>
+                  {neutral > 0 && <span>{neutral} {lang === 'ko' ? '보합' : 'flat'}</span>}
+                  <span>{profitPct.toFixed(0)}% {lang === 'ko' ? '수익 코인' : 'profitable'}</span>
+                </div>
+                <div class="overflow-x-auto -webkit-overflow-scrolling-touch">
+                  <table class="w-full text-xs font-mono" style={{ minWidth: '600px' }}>
+                    <thead>
+                      <tr class="text-[--color-text-muted] border-b border-[--color-border]">
+                        <th class="py-2 px-2 text-left cursor-pointer select-none hover:text-[--color-text]" onClick={() => toggleSort('symbol')}>
+                          {lang === 'ko' ? '코인' : 'Coin'}{arrow('symbol')}
+                        </th>
+                        <th class="py-2 px-2 text-right cursor-pointer select-none hover:text-[--color-text]" onClick={() => toggleSort('trades')}>
+                          {lang === 'ko' ? '거래' : 'Trades'}{arrow('trades')}
+                        </th>
+                        <th class="py-2 px-2 text-right cursor-pointer select-none hover:text-[--color-text]" onClick={() => toggleSort('win_rate')}>
+                          {lang === 'ko' ? '승률' : 'Win%'}{arrow('win_rate')}
+                        </th>
+                        <th class="py-2 px-2 text-right cursor-pointer select-none hover:text-[--color-text]" onClick={() => toggleSort('profit_factor')}>
+                          PF{arrow('profit_factor')}
+                        </th>
+                        <th class="py-2 px-2 text-right cursor-pointer select-none hover:text-[--color-text]" onClick={() => toggleSort('total_return_pct')}>
+                          {lang === 'ko' ? '수익률' : 'Return'}{arrow('total_return_pct')}
+                        </th>
+                        <th class="py-2 px-2 text-center hidden sm:table-cell">TP/SL/TO</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {sorted.map((coin: any) => (
+                        <tr key={coin.symbol} class="border-b border-[--color-border]/30 hover:bg-[--color-bg-hover]/30">
+                          <td class="py-1.5 px-2 font-bold">{coin.symbol.replace('USDT', '')}</td>
+                          <td class="py-1.5 px-2 text-right">{coin.trades}</td>
+                          <td class="py-1.5 px-2 text-right" style={{ color: winRateColor(coin.win_rate) }}>
+                            {coin.win_rate.toFixed(1)}%
+                          </td>
+                          <td class="py-1.5 px-2 text-right" style={{ color: profitFactorColor(coin.profit_factor) }}>
+                            {coin.profit_factor.toFixed(2)}
+                          </td>
+                          <td class="py-1.5 px-2 text-right" style={{ color: signColor(coin.total_return_pct) }}>
+                            {coin.total_return_pct > 0 ? '+' : ''}{coin.total_return_pct.toFixed(1)}%
+                          </td>
+                          <td class="py-1.5 px-2 text-center text-[10px] text-[--color-text-muted] hidden sm:table-cell">
+                            <span style={{ color: COLORS.green }}>{coin.tp_count}</span>
+                            {' / '}
+                            <span style={{ color: COLORS.red }}>{coin.sl_count}</span>
+                            {' / '}
+                            <span>{coin.timeout_count}</span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            );
+          })()}
         </div>
       ) : !error && (
         <div class="hidden md:block border border-[--color-border] rounded-lg bg-[--color-bg-card] p-8 text-center">

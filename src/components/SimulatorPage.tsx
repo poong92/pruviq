@@ -41,7 +41,7 @@ const L = {
     exportExcel: 'Download Excel',
     trades: 'Trade List',
     equity: 'Equity Curve',
-    summary: 'Summary',
+    summary: 'Summary', coins: 'Per Coin',
     field: 'Field',
     op: 'Op',
     val: 'Value',
@@ -97,7 +97,7 @@ const L = {
     exportExcel: 'Excel 다운로드',
     trades: '거래 목록',
     equity: '수익 곡선',
-    summary: '요약',
+    summary: '요약', coins: '코인별',
     field: '필드',
     op: '연산',
     val: '값',
@@ -189,7 +189,7 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
   const [error, setError] = useState<string | null>(null);
 
   // Results tab
-  const [resultTab, setResultTab] = useState<'summary' | 'equity' | 'trades'>('summary');
+  const [resultTab, setResultTab] = useState<'summary' | 'equity' | 'trades' | 'coins'>('summary');
 
   // Mobile tab
   const [mobileTab, setMobileTab] = useState<'chart' | 'config' | 'results'>('config');

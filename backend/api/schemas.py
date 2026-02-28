@@ -66,6 +66,7 @@ class SimulationResponse(BaseModel):
     coins_used: int
     data_range: str
     equity_curve: List[EquityPoint]
+    coin_results: List["CoinResult"] = []
 
 
 class CoinInfo(BaseModel):
@@ -159,6 +160,21 @@ class CoinStats(BaseModel):
     win_rate: float
     profit_factor: float
     total_return_pct: float
+
+
+class CoinResult(BaseModel):
+    """Per-coin simulation result in portfolio backtest."""
+    symbol: str
+    trades: int
+    wins: int
+    losses: int
+    win_rate: float
+    profit_factor: float
+    total_return_pct: float
+    avg_pnl_pct: float
+    tp_count: int
+    sl_count: int
+    timeout_count: int
 
 
 class CoinStatsResponse(BaseModel):
@@ -330,6 +346,7 @@ class BacktestResponse(BaseModel):
     coins_used: int
     data_range: str
     equity_curve: List[EquityPoint]
+    coin_results: List["CoinResult"] = []
 
     # Validation info
     is_valid: bool
