@@ -46,6 +46,7 @@ from api.schemas import (
     MacroIndicator, DerivativesData, EconomicEvent, MacroResponse,
     ValidateRequest, ValidateResponse, OOSResult, OOSPeriodMetrics,
     MonteCarloResult, MCEquityBand,
+    VALID_TIMEFRAMES,
 )
 from api.data_manager import DataManager
 from api.indicator_cache import IndicatorCache
@@ -336,6 +337,47 @@ def filter_df_by_date(df: pd.DataFrame, start_date=None, end_date=None) -> pd.Da
     return filtered
 
 
+def _validate_timeframe(timeframe: str) -> str:
+    """Validate and normalize timeframe string. Returns validated timeframe or raises HTTPException."""
+    tf = timeframe.upper()
+    if tf not in VALID_TIMEFRAMES:
+        raise HTTPException(400, f"Invalid timeframe: {timeframe}. Valid: {', '.join(VALID_TIMEFRAMES)}")
+    return tf
+
+
+def _is_resampled(timeframe: str) -> bool:
+    """Return True if timeframe requires resampling (anything other than 1H)."""
+    return timeframe != "1H"
+
+
+def _get_resampled_coins(
+    symbols: Optional[List[str]],
+    top_n: int,
+    timeframe: str,
+) -> List[tuple]:
+    """Get coin DataFrames resampled to the requested timeframe.
+
+    Returns list of (symbol, df) tuples with raw resampled OHLCV data (no indicators).
+    """
+    if symbols:
+        pairs = []
+        for sym in symbols:
+            df = data_manager.get_resampled(sym.upper(), timeframe)
+            if df is not None:
+                pairs.append((sym.upper(), df))
+        return pairs
+    else:
+        result = []
+        for info in data_manager.coins:
+            if len(result) >= top_n:
+                break
+            symbol = info["symbol"]
+            df = data_manager.get_resampled(symbol, timeframe)
+            if df is not None:
+                result.append((symbol, df))
+        return result
+
+
 @app.get("/health", response_model=HealthResponse)
 async def health():
     return HealthResponse(
@@ -384,6 +426,10 @@ async def simulate(req: SimulationRequest):
     if data_manager.coin_count == 0:
         raise HTTPException(503, "Data not loaded yet. Try again shortly.")
 
+    # Validate timeframe
+    timeframe = _validate_timeframe(getattr(req, 'timeframe', '1H') or '1H')
+    resampled = _is_resampled(timeframe)
+
     # Resolve strategy from registry
     # Support both "bb-squeeze" (legacy) and "bb-squeeze-short" (new) formats
     strategy_id = req.strategy
@@ -402,15 +448,20 @@ async def simulate(req: SimulationRequest):
     if cached:
         return SimulationResponse(**cached)
 
-    # Get pre-computed indicator data
-    has_cache = indicator_cache.strategy_count(strategy_id) > 0
-
-    if req.symbols:
-        coins = indicator_cache.get_symbols_for_strategy(strategy_id, req.symbols) if has_cache else data_manager.get_symbols(req.symbols)
-        if not coins:
+    # Get coin data — use indicator cache for 1H, resample + compute for other timeframes
+    if resampled:
+        coins = _get_resampled_coins(req.symbols, req.top_n, timeframe)
+        if req.symbols and not coins:
             raise HTTPException(404, "None of the requested symbols found.")
+        has_cache = False  # Resampled data always needs fresh indicator computation
     else:
-        coins = indicator_cache.get_top_n_for_strategy(strategy_id, data_manager, req.top_n) if has_cache else data_manager.get_top_n(req.top_n)
+        has_cache = indicator_cache.strategy_count(strategy_id) > 0
+        if req.symbols:
+            coins = indicator_cache.get_symbols_for_strategy(strategy_id, req.symbols) if has_cache else data_manager.get_symbols(req.symbols)
+            if not coins:
+                raise HTTPException(404, "None of the requested symbols found.")
+        else:
+            coins = indicator_cache.get_top_n_for_strategy(strategy_id, data_manager, req.top_n) if has_cache else data_manager.get_top_n(req.top_n)
 
     cost_model = CostModel.futures() if req.market_type == "futures" else CostModel.spot()
 
@@ -638,14 +689,29 @@ def _build_coin_stats(strategy) -> dict:
 # --- Coin Explorer Endpoints ---
 
 @app.get("/ohlcv/{symbol}", response_model=OhlcvResponse)
-async def get_ohlcv(symbol: str, limit: int = 3000):
-    """Get OHLCV + indicator data for a single coin."""
+async def get_ohlcv(symbol: str, limit: int = 3000, timeframe: str = "1H"):
+    """Get OHLCV + indicator data for a single coin.
+
+    Supports multi-timeframe via the `timeframe` query parameter.
+    For non-1H timeframes, data is resampled from 1H and indicators are recomputed.
+    """
     symbol = symbol.upper()
-    df = indicator_cache.get(symbol)
-    if df is None:
-        df = data_manager.get_df(symbol)
+    timeframe = _validate_timeframe(timeframe)
+
+    if _is_resampled(timeframe):
+        # Resample raw data and compute indicators fresh
+        df = data_manager.get_resampled(symbol, timeframe)
         if df is None:
             raise HTTPException(404, f"Symbol not found: {symbol}")
+        strategy = BBSqueezeStrategy(avoid_hours=AVOID_HOURS)
+        df = strategy.calculate_indicators(df.copy())
+    else:
+        # Use pre-computed 1H indicator cache
+        df = indicator_cache.get(symbol)
+        if df is None:
+            df = data_manager.get_df(symbol)
+            if df is None:
+                raise HTTPException(404, f"Symbol not found: {symbol}")
 
     if limit > 0:
         df = df.tail(limit)
@@ -667,28 +733,37 @@ async def get_ohlcv(symbol: str, limit: int = 3000):
             vol_ratio=round(float(row["vol_ratio"]), 2) if "vol_ratio" in df.columns and pd.notna(row.get("vol_ratio")) else None,
         ))
 
-    return OhlcvResponse(symbol=symbol, total_bars=len(bars), data=bars)
+    return OhlcvResponse(symbol=symbol, timeframe=timeframe, total_bars=len(bars), data=bars)
 
 
 @app.post("/simulate/coin", response_model=CoinSimResponse)
 async def simulate_coin(req: CoinSimRequest):
     """Simulate a single coin and return individual trade details."""
     symbol = req.symbol.upper()
+    timeframe = _validate_timeframe(getattr(req, 'timeframe', '1H') or '1H')
+    resampled = _is_resampled(timeframe)
 
     # Use bb-squeeze-short by default for backwards compat
     strategy_id = f"bb-squeeze-{req.direction}"
     if strategy_id not in STRATEGY_REGISTRY:
         strategy_id = "bb-squeeze-short"
 
-    df = indicator_cache.get_for_strategy(strategy_id, symbol)
-    if df is None:
-        # Fallback to legacy flat cache
-        df = indicator_cache.get(symbol)
-    if df is None:
-        raise HTTPException(404, f"Symbol not found: {symbol}")
-
     strategy, _, _ = get_strategy(strategy_id)
     cost_model = CostModel.futures() if req.market_type == "futures" else CostModel.spot()
+
+    if resampled:
+        # Resample raw data and compute indicators fresh
+        df = data_manager.get_resampled(symbol, timeframe)
+        if df is None:
+            raise HTTPException(404, f"Symbol not found: {symbol}")
+        df = strategy.calculate_indicators(df.copy())
+    else:
+        df = indicator_cache.get_for_strategy(strategy_id, symbol)
+        if df is None:
+            # Fallback to legacy flat cache
+            df = indicator_cache.get(symbol)
+        if df is None:
+            raise HTTPException(404, f"Symbol not found: {symbol}")
 
     df = filter_df_by_date(df, getattr(req, 'start_date', None), getattr(req, 'end_date', None))
     result = run_fast(
@@ -842,6 +917,9 @@ async def simulate_validate(req: ValidateRequest):
     if data_manager.coin_count == 0:
         raise HTTPException(503, "Data not loaded yet. Try again shortly.")
 
+    timeframe = _validate_timeframe(getattr(req, 'timeframe', '1H') or '1H')
+    resampled = _is_resampled(timeframe)
+
     strategy_id = req.strategy
     if strategy_id == "bb-squeeze":
         strategy_id = f"bb-squeeze-{req.direction or 'short'}"
@@ -853,14 +931,19 @@ async def simulate_validate(req: ValidateRequest):
     direction = req.direction if req.direction is not None else default_direction
     cost_model = CostModel.futures() if req.market_type == "futures" else CostModel.spot()
 
-    has_cache = indicator_cache.strategy_count(strategy_id) > 0
-
-    if req.symbols:
-        coins = indicator_cache.get_symbols_for_strategy(strategy_id, req.symbols) if has_cache else data_manager.get_symbols(req.symbols)
-        if not coins:
+    if resampled:
+        coins = _get_resampled_coins(req.symbols, req.top_n, timeframe)
+        if req.symbols and not coins:
             raise HTTPException(404, "None of the requested symbols found.")
+        has_cache = False
     else:
-        coins = indicator_cache.get_top_n_for_strategy(strategy_id, data_manager, req.top_n) if has_cache else data_manager.get_top_n(req.top_n)
+        has_cache = indicator_cache.strategy_count(strategy_id) > 0
+        if req.symbols:
+            coins = indicator_cache.get_symbols_for_strategy(strategy_id, req.symbols) if has_cache else data_manager.get_symbols(req.symbols)
+            if not coins:
+                raise HTTPException(404, "None of the requested symbols found.")
+        else:
+            coins = indicator_cache.get_top_n_for_strategy(strategy_id, data_manager, req.top_n) if has_cache else data_manager.get_top_n(req.top_n)
 
     oos_frac = req.oos_pct / 100.0
     is_trades_all = []
@@ -1435,6 +1518,9 @@ async def run_backtest(req: BacktestRequest):
     if data_manager.coin_count == 0:
         raise HTTPException(503, "Data not loaded yet. Try again shortly.")
 
+    timeframe = _validate_timeframe(getattr(req, 'timeframe', '1H') or '1H')
+    resampled = _is_resampled(timeframe)
+
     t_start = time.time()
 
     # Build strategy JSON from request
@@ -1471,11 +1557,14 @@ async def run_backtest(req: BacktestRequest):
     engine = ConditionEngine(strategy_json)
     params = engine.get_params()
 
-    # Get coins
-    if req.symbols:
-        coin_list = data_manager.get_symbols(req.symbols)
+    # Get coins — use resampled raw data for non-1H timeframes
+    if resampled:
+        coin_list = _get_resampled_coins(req.symbols, req.top_n, timeframe)
     else:
-        coin_list = data_manager.get_top_n(req.top_n)
+        if req.symbols:
+            coin_list = data_manager.get_symbols(req.symbols)
+        else:
+            coin_list = data_manager.get_top_n(req.top_n)
 
     if not coin_list:
         raise HTTPException(404, "No coins found.")

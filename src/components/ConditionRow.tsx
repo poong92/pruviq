@@ -44,6 +44,37 @@ export default function ConditionRow({ condition: c, availableFields, onUpdate, 
     'doji': 'Doji candle pattern',
   };
 
+  const fieldLabels: Record<string, string> = {
+    'is_squeeze': 'BB Squeeze (is_squeeze)',
+    'bb_width_change': 'BB Width \u0394% (bb_width_change)',
+    'vol_ratio': 'Volume Ratio (vol_ratio)',
+    'bearish': 'Bearish Pattern (bearish)',
+    'bullish': 'Bullish Pattern (bullish)',
+    'ema_fast': 'EMA Fast (ema_fast)',
+    'ema_slow': 'EMA Slow (ema_slow)',
+    'rsi': 'RSI (rsi)',
+    'macd_hist': 'MACD Histogram (macd_hist)',
+    'stoch_k': 'Stochastic %K (stoch_k)',
+    'stoch_d': 'Stochastic %D (stoch_d)',
+    'adx': 'ADX (adx)',
+    'atr': 'ATR (atr)',
+    'hv': 'Hist. Volatility (hv)',
+    'price_change': 'Price Change % (price_change)',
+    'close': 'Close (close)',
+    'open': 'Open (open)',
+    'high': 'High (high)',
+    'low': 'Low (low)',
+    'volume': 'Volume (volume)',
+    'bb_upper': 'BB Upper (bb_upper)',
+    'bb_lower': 'BB Lower (bb_lower)',
+    'bb_mid': 'BB Mid (bb_mid)',
+    'ema20': 'EMA 20 (ema20)',
+    'ema50': 'EMA 50 (ema50)',
+    'uptrend': 'Uptrend (uptrend)',
+    'downtrend': 'Downtrend (downtrend)',
+    'doji': 'Doji (doji)',
+  };
+
   return (
     <div class="flex items-center gap-1.5 text-xs">
       {/* Field */}
@@ -60,7 +91,7 @@ export default function ConditionRow({ condition: c, availableFields, onUpdate, 
         class="flex-1 min-w-0 px-1.5 py-1.5 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
         title={fieldDescriptions[c.field] || c.field}
       >
-        {availableFields.map((f) => <option key={f} value={f} title={fieldDescriptions[f] || f}>{f}</option>)}
+        {availableFields.map((f) => <option key={f} value={f} title={fieldDescriptions[f] || f}>{fieldLabels[f] || f}</option>)}
       </select>
       {/* Op */}
       <select

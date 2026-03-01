@@ -14,9 +14,10 @@ interface Props {
   trades?: TradeItem[];
   error?: string | null;
   onRetry?: () => void;
+  timeframe?: string;
 }
 
-export default function ChartPanel({ chartSymbol, setChartSymbol, chartData, chartLoading, loadingText, trades, error, onRetry }: Props) {
+export default function ChartPanel({ chartSymbol, setChartSymbol, chartData, chartLoading, loadingText, trades, error, onRetry, timeframe = '1H' }: Props) {
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const chartInstanceRef = useRef<any>(null);
 
@@ -162,7 +163,7 @@ export default function ChartPanel({ chartSymbol, setChartSymbol, chartData, cha
       <div class="flex items-center justify-between px-3 py-2 border-b border-[--color-border]">
         <div class="flex items-center gap-2">
           <span class="font-mono text-sm font-bold">{chartSymbol}</span>
-          <span class="text-[--color-text-muted] text-xs">1H</span>
+          <span class="text-[--color-text-muted] text-xs">{timeframe}</span>
         </div>
         <div class="flex items-center gap-1.5">
           {['BTCUSDT', 'ETHUSDT', 'SOLUSDT'].map((sym) => (
