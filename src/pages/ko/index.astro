@@ -185,8 +185,31 @@ const verifiedCount = allStrategies.filter(s => s.data.status === 'verified').le
     </div>
   </section>
 
-  <!-- CTA -->
+  <!-- BLOG / LEARN -->
   <section class="py-20 border-t border-[--color-border]">
+    <div class="max-w-6xl mx-auto px-4">
+      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('blog.coming_soon')}</p>
+      <h2 class="text-3xl md:text-4xl font-bold mb-4">{t('blog.title')}</h2>
+      <p class="text-[--color-text-muted] text-sm mb-8 max-w-2xl">{t('blog.desc')}</p>
+      <div class="flex flex-col sm:flex-row gap-4">
+        <a href="/ko/blog"
+           class="inline-flex items-center gap-2 bg-[--color-accent] text-[--color-bg] px-6 py-2.5 rounded font-semibold text-sm hover:bg-[--color-accent-dim]">
+          {t('blog.coming_cta')} &rarr;
+        </a>
+        <a href="/ko/learn"
+           class="inline-flex items-center gap-2 border border-[--color-border] text-[--color-text-muted] px-6 py-2.5 rounded text-sm hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
+          {t('nav.learn')}
+        </a>
+        <a href="https://t.me/PRUVIQ" target="_blank" rel="noopener"
+           class="inline-flex items-center gap-2 border border-[--color-border] text-[--color-text-muted] px-6 py-2.5 rounded text-sm hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
+          텔레그램 커뮤니티 &rarr;
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="py-20 border-t border-[--color-border] bg-[--color-bg-subtle]">
     <div class="max-w-6xl mx-auto px-4 text-center">
       <p class="font-mono text-[--color-text-muted] text-sm mb-4 tracking-wider">{t('cta.tag')}</p>
       <h2 class="text-3xl md:text-4xl font-bold mb-4">

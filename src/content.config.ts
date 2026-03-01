@@ -7,6 +7,7 @@ const blogSchema = z.object({
   date: z.string(),
   category: z.enum(['market', 'quant', 'strategy', 'weekly', 'education']),
   tags: z.array(z.string()).optional(),
+  author: z.string().optional().default('PRUVIQ Research'),
 });
 
 const strategySchema = z.object({
