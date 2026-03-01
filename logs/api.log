@@ -1,0 +1,165 @@
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.1s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 9.9s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+INFO:     14.52.126.36:0 - "GET /health HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /health HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /ohlcv/BTCUSDT?limit=500&timeframe=1H HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /ohlcv/BTCUSDT?limit=3&timeframe=4H HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /ohlcv/BTCUSDT?limit=1&timeframe=1H HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /ohlcv/BTCUSDT?limit=1&timeframe=2H HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /ohlcv/BTCUSDT?limit=1&timeframe=6H HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /ohlcv/BTCUSDT?limit=1&timeframe=12H HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /ohlcv/BTCUSDT?limit=1&timeframe=1D HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /ohlcv/BTCUSDT?limit=1&timeframe=1W HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /health HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /ohlcv/BTCUSDT?limit=500&timeframe=1H HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /coins HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /health HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /ohlcv/BTCUSDT?limit=500&timeframe=1H HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /coins HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /health HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /ohlcv/BTCUSDT?limit=500&timeframe=1H HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /coins HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /ohlcv/BTCUSDT?limit=500&timeframe=2H HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /health HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /ohlcv/BTCUSDT?limit=500&timeframe=1H HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /coins HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /ohlcv/BTCUSDT?limit=500&timeframe=1W HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /ohlcv/BTCUSDT?limit=500&timeframe=1D HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /ohlcv/BTCUSDT?limit=500&timeframe=12H HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /ohlcv/BTCUSDT?limit=500&timeframe=6H HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /ohlcv/BTCUSDT?limit=500&timeframe=4H HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /ohlcv/BTCUSDT?limit=500&timeframe=2H HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /ohlcv/BTCUSDT?limit=500&timeframe=1H HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /ohlcv/BTCUSDT?limit=500&timeframe=4H HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /ohlcv/BTCUSDT?limit=500&timeframe=1W HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /ohlcv/BTCUSDT?limit=500&timeframe=1D HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57954 - "GET /coins HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /ohlcv/ETHUSDT?limit=500&timeframe=1D HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /health HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /ohlcv/BTCUSDT?limit=500&timeframe=1H HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /coins HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "POST /simulate HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "POST /simulate HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "POST /simulate HTTP/1.1" 422 Unprocessable Content
+INFO:     14.52.126.36:0 - "POST /simulate HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /health HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /ohlcv/BTCUSDT?limit=500&timeframe=1H HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /coins HTTP/1.1" 200 OK
+INFO:     2001:e60:9086:3cfd:cce9:c7cf:e99e:9c74:0 - "GET /health HTTP/1.1" 200 OK
+INFO:     2001:e60:9086:3cfd:cce9:c7cf:e99e:9c74:0 - "GET /ohlcv/BTCUSDT?limit=500&timeframe=1H HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /health HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /ohlcv/BTCUSDT?limit=500&timeframe=1H HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /coins HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /health HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /ohlcv/BTCUSDT?limit=500&timeframe=1H HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /coins HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /health HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /ohlcv/BTCUSDT?limit=500&timeframe=1H HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /coins HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /ohlcv/BTCUSDT?limit=2&timeframe=1H HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58666 - "POST /admin/refresh HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58685 - "GET /coins HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /ohlcv/BTCUSDT?limit=2&timeframe=1H HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /ohlcv/BTCUSDT?limit=5&timeframe=1H HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58701 - "POST /admin/refresh HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /ohlcv/BTCUSDT?limit=3&timeframe=1H HTTP/1.1" 200 OK
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 2.8s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 9.9s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+INFO:     14.52.126.36:0 - "GET /ohlcv/BTCUSDT?limit=3&timeframe=1H HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /market HTTP/1.1" 200 OK
+INFO:     161.115.239.124:0 - "GET / HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:58848 - "GET /coins HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58981 - "GET /coins HTTP/1.1" 200 OK
+INFO:     172.174.165.226:0 - "GET /health HTTP/1.1" 200 OK
+INFO:     172.174.165.226:0 - "GET /ohlcv/BTCUSDT?limit=500&timeframe=1H HTTP/1.1" 200 OK
+INFO:     172.174.165.226:0 - "GET /coins HTTP/1.1" 200 OK
+INFO:     172.174.165.226:0 - "GET /health HTTP/1.1" 200 OK
+INFO:     172.174.165.226:0 - "GET /ohlcv/BTCUSDT?limit=500&timeframe=1H HTTP/1.1" 200 OK
+INFO:     172.174.165.226:0 - "GET /coins HTTP/1.1" 200 OK
+INFO:     172.174.165.226:0 - "GET /health HTTP/1.1" 200 OK
+INFO:     172.174.165.226:0 - "GET /ohlcv/BTCUSDT?limit=500&timeframe=1H HTTP/1.1" 200 OK
+INFO:     172.174.165.226:0 - "GET /coins HTTP/1.1" 200 OK
+INFO:     172.174.165.226:0 - "GET /health HTTP/1.1" 200 OK
+INFO:     172.174.165.226:0 - "GET /coins HTTP/1.1" 200 OK
+INFO:     172.174.165.226:0 - "GET /ohlcv/BTCUSDT?limit=500&timeframe=1H HTTP/1.1" 200 OK
+INFO:     52.159.229.66:0 - "GET /health HTTP/1.1" 200 OK
+INFO:     52.159.229.66:0 - "GET /coins HTTP/1.1" 200 OK
+INFO:     52.159.229.66:0 - "GET /ohlcv/BTCUSDT?limit=500&timeframe=1H HTTP/1.1" 200 OK
+INFO:     52.159.229.66:0 - "GET /health HTTP/1.1" 200 OK
+INFO:     52.159.229.66:0 - "GET /ohlcv/BTCUSDT?limit=500&timeframe=1H HTTP/1.1" 200 OK
+INFO:     52.159.229.66:0 - "GET /coins HTTP/1.1" 200 OK
+INFO:     52.159.229.66:0 - "GET /health HTTP/1.1" 200 OK
+INFO:     52.159.229.66:0 - "GET /ohlcv/BTCUSDT?limit=500&timeframe=1H HTTP/1.1" 200 OK
+INFO:     52.159.229.66:0 - "GET /coins HTTP/1.1" 200 OK
+INFO:     52.159.229.66:0 - "GET /health HTTP/1.1" 200 OK
+INFO:     52.159.229.66:0 - "GET /ohlcv/BTCUSDT?limit=500&timeframe=1H HTTP/1.1" 200 OK
+INFO:     52.159.229.66:0 - "GET /coins HTTP/1.1" 200 OK
+INFO:     52.159.229.66:0 - "GET /builder/presets/bb-squeeze-short HTTP/1.1" 200 OK
+INFO:     52.159.229.66:0 - "GET /builder/presets/bb-squeeze-long HTTP/1.1" 200 OK
+INFO:     52.159.229.66:0 - "GET /builder/presets/rsi-reversal-long HTTP/1.1" 200 OK
+INFO:     52.159.229.66:0 - "GET /builder/presets/macd-momentum-long HTTP/1.1" 200 OK
+INFO:     52.159.229.66:0 - "GET /builder/presets/stochastic-oversold-short HTTP/1.1" 200 OK
+INFO:     52.159.229.66:0 - "OPTIONS /backtest HTTP/1.1" 200 OK
+INFO:     52.159.229.66:0 - "OPTIONS /backtest HTTP/1.1" 200 OK
+INFO:     52.159.229.66:0 - "OPTIONS /backtest HTTP/1.1" 200 OK
+INFO:     52.159.229.66:0 - "OPTIONS /backtest HTTP/1.1" 200 OK
+INFO:     52.159.229.66:0 - "OPTIONS /backtest HTTP/1.1" 200 OK
+INFO:     52.159.229.66:0 - "POST /backtest HTTP/1.1" 200 OK
+INFO:     52.159.229.66:0 - "POST /backtest HTTP/1.1" 200 OK
+INFO:     52.159.229.66:0 - "GET /builder/presets/bb-squeeze-short HTTP/1.1" 200 OK
+INFO:     52.159.229.66:0 - "POST /backtest HTTP/1.1" 200 OK
+INFO:     52.159.229.66:0 - "POST /backtest HTTP/1.1" 200 OK
+INFO:     52.159.229.66:0 - "GET /builder/presets/bb-squeeze-long HTTP/1.1" 200 OK
+INFO:     52.159.229.66:0 - "POST /backtest HTTP/1.1" 200 OK
+INFO:     52.159.229.66:0 - "GET /builder/presets/rsi-reversal-long HTTP/1.1" 200 OK
+INFO:     52.159.229.66:0 - "GET /builder/presets/macd-momentum-long HTTP/1.1" 200 OK
+INFO:     52.159.229.66:0 - "GET /builder/presets/stochastic-oversold-short HTTP/1.1" 200 OK
+INFO:     52.159.229.66:0 - "OPTIONS /backtest HTTP/1.1" 200 OK
+INFO:     52.159.229.66:0 - "OPTIONS /backtest HTTP/1.1" 200 OK
+INFO:     52.159.229.66:0 - "OPTIONS /backtest HTTP/1.1" 200 OK
+INFO:     52.159.229.66:0 - "OPTIONS /backtest HTTP/1.1" 200 OK
+INFO:     52.159.229.66:0 - "OPTIONS /backtest HTTP/1.1" 200 OK
+INFO:     52.159.229.66:0 - "POST /backtest HTTP/1.1" 200 OK
+INFO:     52.159.229.66:0 - "POST /backtest HTTP/1.1" 200 OK
+INFO:     52.159.229.66:0 - "POST /backtest HTTP/1.1" 200 OK
+INFO:     52.159.229.66:0 - "POST /backtest HTTP/1.1" 200 OK
+INFO:     52.159.229.66:0 - "POST /backtest HTTP/1.1" 200 OK
+INFO:     52.159.229.66:0 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59213 - "GET /coins HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /health HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /ohlcv/BTCUSDT?limit=500&timeframe=1H HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /coins HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /ohlcv/BTCUSDT?limit=500&timeframe=2H HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /ohlcv/BTCUSDT?limit=500&timeframe=4H HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /ohlcv/BTCUSDT?limit=500&timeframe=6H HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /ohlcv/BTCUSDT?limit=500&timeframe=12H HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /ohlcv/BTCUSDT?limit=500&timeframe=1H HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /ohlcv/BTCUSDT?limit=500&timeframe=1W HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /market HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59817 - "POST /admin/refresh HTTP/1.1" 200 OK

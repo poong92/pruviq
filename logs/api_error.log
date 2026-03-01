@@ -1,0 +1,15 @@
+INFO:     Started server process [19771]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8080 (Press CTRL+C to quit)
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [22257]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8080 (Press CTRL+C to quit)
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [26894]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8080 (Press CTRL+C to quit)
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
