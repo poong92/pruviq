@@ -30,6 +30,10 @@ export const ko: Record<TranslationKey, string> = {
   'hero.stat4': '백테스트 거래 수',
   'hero.stat5': '처리된 데이터 포인트',
   'hero.stat6': '신용카드 불필요',
+  'hero.live_trades': '1,625+ 실거래',
+  'hero.live_wr': '승률 54%',
+  'hero.live_days': '47일 검증',
+  'hero.live_capital': '실제 자본 $3,000',
 
   // Problem
   'problem.tag': '문제점',

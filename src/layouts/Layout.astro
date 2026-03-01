@@ -80,6 +80,8 @@ const isActive = (match: string) => basePath.startsWith(match);
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#0a0e27" />
+    {basePath.startsWith('/404') && <meta name="robots" content="noindex" />}
     <link rel="preconnect" href="https://api.pruviq.com" crossorigin />
     <link rel="preconnect" href="https://coin-images.coingecko.com" crossorigin />
     <link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin />
@@ -112,7 +114,7 @@ const isActive = (match: string) => basePath.startsWith(match);
           ? '무료 크립토 전략 백테스팅 플랫폼. 549개 이상 코인에서 2년 이상의 실제 시장 데이터로 트레이딩 전략을 만들고 테스트하세요.'
           : 'Free crypto strategy backtesting platform. Build and test trading strategies on 549+ coins with 2+ years of real market data.',
         "founder": { "@type": "Organization", "name": "PRUVIQ Team" },
-        "sameAs": ["https://t.me/PRUVIQ"],
+        "sameAs": ["https://t.me/PRUVIQ", "https://github.com/poong92/pruviq"],
         "knowsAbout": lang === 'ko'
           ? ['암호화폐 트레이딩', '백테스팅', '알고리즘 트레이딩', '퀀트 금융']
           : ['cryptocurrency trading', 'backtesting', 'algorithmic trading', 'quantitative finance']
@@ -280,24 +282,18 @@ const isActive = (match: string) => basePath.startsWith(match);
         </a>
         <div class="hidden md:flex items-center gap-6 text-[0.8125rem]">
           {navItems.map(item => (
-            <a href={item.href} class:list=[
-              'transition-colors',
-              isActive(item.match) ? 'text-[--color-accent] font-medium' : 'text-[--color-text-muted] hover:text-[--color-text]'
-            ]>{item.label}</a>
+            <a href={item.href} aria-current={isActive(item.match) ? "page" : undefined} class={`transition-colors ${isActive(item.match) ? 'text-[--color-accent] font-medium' : 'text-[--color-text-muted] hover:text-[--color-text]'}`}>{item.label}</a>
           ))}
           <a href={altPath} class="font-mono text-xs px-3 py-1.5 border border-[--color-border] rounded hover:border-[--color-accent] hover:text-[--color-accent] text-[--color-text-muted] transition-colors">{t('nav.lang')}</a>
         </div>
-        <button id="mobile-menu-btn" class="md:hidden text-[--color-text-muted]" aria-label="Toggle menu" aria-expanded="false">
+        <button id="mobile-menu-btn" class="md:hidden text-[--color-text-muted]" aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-menu">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
         </button>
       </div>
       <div id="mobile-menu" class="hidden md:hidden border-t border-[--color-border] bg-[--color-bg]">
         <div class="flex flex-col px-4 py-4 gap-1 text-sm">
           {navItems.map(item => (
-            <a href={item.href} class:list=[
-              'min-h-[44px] flex items-center',
-              isActive(item.match) ? 'text-[--color-accent] font-medium' : 'text-[--color-text-muted]'
-            ]>{item.label}</a>
+            <a href={item.href} aria-current={isActive(item.match) ? "page" : undefined} class={`min-h-[44px] flex items-center ${isActive(item.match) ? 'text-[--color-accent] font-medium' : 'text-[--color-text-muted]'}`}>{item.label}</a>
           ))}
           <a href={altPath} class="font-mono text-xs px-2 py-1 border border-[--color-border] rounded text-[--color-text-muted] w-fit min-h-[44px] flex items-center">{t('nav.lang')}</a>
         </div>

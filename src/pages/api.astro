@@ -48,9 +48,9 @@ const API_BASE = 'https://api.pruviq.com';
         <div class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card]">
           <div class="font-mono text-[--color-accent] text-xs font-bold mb-1">{t('api.interactive')}</div>
           <p class="text-sm text-[--color-text-muted]">{t('api.interactive_desc')}</p>
-          <a href={`${API_BASE}/docs`} target="_blank" rel="noopener" class="font-mono text-xs text-[--color-accent] hover:underline">/docs</a>
+          <a href={`${API_BASE}/docs`} target="_blank" rel="noopener noreferrer" class="font-mono text-xs text-[--color-accent] hover:underline">/docs</a>
           <span class="text-[--color-text-muted] mx-1">|</span>
-          <a href={`${API_BASE}/redoc`} target="_blank" rel="noopener" class="font-mono text-xs text-[--color-accent] hover:underline">/redoc</a>
+          <a href={`${API_BASE}/redoc`} target="_blank" rel="noopener noreferrer" class="font-mono text-xs text-[--color-accent] hover:underline">/redoc</a>
         </div>
       </div>
     </div>
@@ -357,7 +357,7 @@ console.log(\`Trades: \${sim.total_trades}, WR: \${sim.win_rate}%\`);`}</code></
         <p class="text-[--color-text-muted] text-sm">
           {t('api.sdk_desc')}
         </p>
-        <a href="https://t.me/PRUVIQ" target="_blank" rel="noopener" class="inline-block mt-3 font-mono text-xs text-[--color-accent] hover:underline">t.me/PRUVIQ</a>
+        <a href="https://t.me/PRUVIQ" target="_blank" rel="noopener noreferrer" class="inline-block mt-3 font-mono text-xs text-[--color-accent] hover:underline">t.me/PRUVIQ</a>
       </div>
     </div>
   </section>

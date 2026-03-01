@@ -76,7 +76,7 @@ const exchangeCards: Record<string, { tagLabel: string; description: string }> =
               </div>
               <p class="text-[--color-text-muted] text-xs mb-4">{card.description}</p>
               {ex.available ? (
-                <a href={ex.referralUrl} target="_blank" rel="noopener"
+                <a href={ex.referralUrl} target="_blank" rel="noopener noreferrer"
                    class="block text-center bg-[--color-accent] text-[--color-bg] px-4 py-2 min-h-[44px] flex items-center justify-center rounded text-sm font-semibold hover:opacity-90 transition-opacity">
                   {t('fees.signup')} &rarr;
                 </a>

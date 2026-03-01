@@ -28,6 +28,10 @@ export const en = {
   'hero.stat4': 'Backtested Trades',
   'hero.stat5': 'Data Points Processed',
   'hero.stat6': 'No Credit Card',
+  'hero.live_trades': '1,625+ Live Trades',
+  'hero.live_wr': '54% Win Rate',
+  'hero.live_days': '47 Days Verified',
+  'hero.live_capital': '$3,000 Real Capital',
 
   // Problem
   'problem.tag': 'THE PROBLEM',

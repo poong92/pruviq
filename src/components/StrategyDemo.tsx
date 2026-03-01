@@ -336,7 +336,7 @@ export default function StrategyDemo({
         <h3 class="text-lg font-bold mb-2">{t.ctaTitle}</h3>
         <p class="text-[--color-text-muted] text-sm mb-4">{t.ctaDesc}</p>
         <div class="flex gap-3 flex-wrap">
-          <a href="https://accounts.binance.com/register?ref=PRUVIQ" target="_blank" rel="noopener"
+          <a href="https://accounts.binance.com/register?ref=PRUVIQ" target="_blank" rel="noopener noreferrer"
              class="inline-block px-5 py-2.5 rounded-lg font-semibold text-sm no-underline hover:opacity-90 transition-opacity" style="background:var(--color-accent);color:#fff">
             {t.ctaExchange} &rarr;
           </a>
@@ -344,7 +344,7 @@ export default function StrategyDemo({
              class="inline-block border border-[--color-border] text-[--color-text] px-5 py-2.5 rounded-lg font-semibold text-sm no-underline hover:border-[--color-accent] transition-colors">
             {t.ctaFees}
           </a>
-          <a href="https://t.me/PRUVIQ" target="_blank" rel="noopener" class="inline-block border border-[--color-border] text-[--color-text] px-5 py-2.5 rounded-lg font-semibold text-sm no-underline hover:border-[--color-accent] transition-colors">
+          <a href="https://t.me/PRUVIQ" target="_blank" rel="noopener noreferrer" class="inline-block border border-[--color-border] text-[--color-text] px-5 py-2.5 rounded-lg font-semibold text-sm no-underline hover:border-[--color-accent] transition-colors">
             {t.ctaCommunity}
           </a>
         </div>

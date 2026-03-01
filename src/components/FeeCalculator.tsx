@@ -169,7 +169,7 @@ export default function FeeCalculator({ lang = 'en' }: Props) {
                 <a
                   href={ex.referralUrl}
                   target="_blank"
-                  rel="noopener"
+                  rel="noopener noreferrer"
                   class="inline-block w-full px-4 py-2 min-h-[44px] flex items-center justify-center rounded text-xs font-semibold hover:opacity-90 transition-opacity" style="background:var(--color-accent);color:#fff"
                 >
                   {t.signup} &rarr;
