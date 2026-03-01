@@ -35,10 +35,9 @@
   menuBtn?.addEventListener('click', () => {
     const isHidden = mobileMenu?.classList.toggle('hidden');
     menuBtn.setAttribute('aria-expanded', String(!isHidden));
-    // Focus first link when menu opens
+    // Scroll menu into view without stealing focus (avoids outline on first link)
     if (!isHidden) {
-      const firstLink = mobileMenu?.querySelector('a');
-      firstLink?.focus();
+      mobileMenu?.scrollIntoView({ block: 'nearest' });
     }
   });
 
