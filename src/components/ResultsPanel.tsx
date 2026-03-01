@@ -217,7 +217,7 @@ export default function ResultsPanel({
                     ${resultTab === tab ? 'font-bold border-b-2' : 'text-[--color-text-muted] hover:text-[--color-text] hover:bg-[--color-bg-hover]/20'}`}
                   style={resultTab === tab ? tabActiveStyle : undefined}
                 >
-                  {t[tab]}
+                  {tab === "coins" ? (t.coinsTab || t.coins || "Coins") : (t[tab] || tab)}
                 </button>
               ))}
             </div>
