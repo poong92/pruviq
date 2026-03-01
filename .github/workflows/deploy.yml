@@ -1,0 +1,65 @@
+name: Deploy to Cloudflare Workers
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - 'scripts/**'
+
+concurrency:
+  group: deploy
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Build & Deploy
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run build
+
+      - name: Deploy to Cloudflare Workers
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+      - name: Smoke test
+        run: |
+          sleep 15
+          STATUS=$(curl -s -o /dev/null -w '%{http_code}' --max-time 15 https://pruviq.com/)
+          echo "Homepage: $STATUS"
+          [ "$STATUS" = "200" ] || exit 1
+
+      - name: Notify success
+        if: success()
+        env:
+          TOKEN: ${{ secrets.PRUVIQ_TELEGRAM_TOKEN }}
+          CHAT_ID: ${{ secrets.PRUVIQ_TELEGRAM_CHAT_ID }}
+        run: |
+          [ -z "$TOKEN" ] || [ -z "$CHAT_ID" ] && exit 0
+          MSG="✅ PRUVIQ deployed: $(echo '${{ github.event.head_commit.message }}' | head -1 | cut -c1-60)"
+          curl -sf -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" \
+            -d chat_id="${CHAT_ID}" -d text="${MSG}" || true
+
+      - name: Notify failure
+        if: failure()
+        env:
+          TOKEN: ${{ secrets.PRUVIQ_TELEGRAM_TOKEN }}
+          CHAT_ID: ${{ secrets.PRUVIQ_TELEGRAM_CHAT_ID }}
+        run: |
+          [ -z "$TOKEN" ] || [ -z "$CHAT_ID" ] && exit 0
+          MSG="❌ PRUVIQ deploy FAILED: $(echo '${{ github.event.head_commit.message }}' | head -1 | cut -c1-60)"
+          curl -sf -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" \
+            -d chat_id="${CHAT_ID}" -d text="${MSG}" || true
