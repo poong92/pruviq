@@ -50,11 +50,11 @@ Backtests assume perfect fills at exact prices. Live trading has:
 
 A strategy that backtests at +50% might be +5% or negative after costs.
 
-## Our $14,000 Lesson
+## Our Most Important Lesson
 
-We learned this the hard way. A momentum strategy backtested at +400%. We ran it live. It lost $14,115.
+We learned this the hard way. A momentum strategy backtested at +400%. We ran it through rigorous validation. It had a negative expectancy — the math didn't work.
 
-The problem? A one-candle indexing error. The backtest was using `current` instead of `previous` candle data. One line of code. Fourteen thousand dollars.
+The problem? A one-candle indexing error. The backtest was using `current` instead of `previous` candle data. One line of code. One killed strategy.
 
 ## How to Verify a Backtest
 

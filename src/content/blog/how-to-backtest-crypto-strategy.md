@@ -14,7 +14,7 @@ Backtesting means testing a trading strategy against historical market data to s
 
 **Why it matters**: Without backtesting, you're gambling. With proper backtesting, you have statistical evidence for whether a strategy has an edge.
 
-**Why most backtests lie**: The gap between a backtest and live trading is enormous. Our own Momentum LONG strategy backtested at +400% but lost $14,115 in live trading. The difference? Bugs that only show up when you trade with real money.
+**Why most backtests lie**: The gap between a backtest and live trading is enormous. Our own Momentum LONG strategy backtested at +400% but showed negative expectancy after fixing a candle index bug. The difference? Bugs that only show up under rigorous validation.
 
 ## The 5 Critical Rules of Honest Backtesting
 

@@ -32,9 +32,9 @@ While building our simulation engine, we discovered **look-ahead bias** in the b
 
 This became Rule #1: **The simulation must only use data available at the time of decision.**
 
-### The $14,000 Lesson
+### 88 Strategies, 1 Survivor
 
-A "momentum breakout" strategy simulated at +400%. Looked incredible. Then we found a single line of code using the wrong candle index. After fixing it: 37.5% win rate, -$14,115 in simulated losses. One line. Fourteen thousand dollars.
+We tested 88 strategy-parameter combinations on 549 coins over 2+ years. A momentum breakout strategy looked incredible at +400% in backtesting — until we found a candle index bug. After fixing it: 37.5% win rate, negative expectancy. One bug. One eliminated strategy.
 
 That day, a rule was written:
 
@@ -42,7 +42,7 @@ That day, a rule was written:
 
 ### Strategies Start Dying
 
-- **Momentum LONG**: -$14,115. Killed.
+- **Momentum LONG**: Negative expectancy. Killed.
 - **BB Squeeze LONG**: -$26. Killed.
 - **HV Squeeze**: No edge vs BB Squeeze. Abandoned.
 - **ATR Breakout**: Didn't outperform. Shelved.
