@@ -283,7 +283,7 @@ const isActive = (match: string) => basePath.startsWith(match);
           <span class="font-mono font-bold text-xl tracking-wider"><span class="text-[--color-text]">PRUV</span><span class="text-[#00E676]">IQ</span></span>
         </a>
         <!-- 2열: Nav (정중앙, 데스크톱 only) -->
-        <div class="hidden md:flex items-center justify-evenly text-sm">
+        <div class="hidden md:flex items-center justify-center gap-8 text-sm">
           {navItems.map(item => (
             <a href={item.href} aria-current={isActive(item.match) ? "page" : undefined} class={`transition-colors ${isActive(item.match) ? 'text-[--color-accent] font-medium' : 'text-[--color-text-muted] hover:text-[--color-text]'}`}>{item.label}</a>
           ))}
