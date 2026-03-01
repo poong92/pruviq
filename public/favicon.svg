@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
   <title>PRUVIQ</title>
-  <rect width="32" height="32" rx="4" fill="#0a0a0a"/>
-  <text x="16" y="22" text-anchor="middle" font-family="monospace" font-weight="700" font-size="16" fill="#00ff88">P</text>
+  <rect width="32" height="32" rx="6" fill="#0a0e27"/>
+  <rect x="6" y="6" width="20" height="20" rx="2" fill="#00ff88"/>
 </svg>

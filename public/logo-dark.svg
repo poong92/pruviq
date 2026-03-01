@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 40" fill="none">
+  <!-- QED Block Mark (for light backgrounds) -->
+  <rect x="0" y="4" width="32" height="32" rx="4" fill="#00cc66"/>
+  <!-- PRUVIQ Text -->
+  <text x="44" y="30" font-family="'JetBrains Mono', 'SF Mono', 'Fira Code', monospace" font-weight="700" font-size="26" fill="#0a0e27" letter-spacing="0.08em">PRUVIQ</text>
+  <!-- Beta superscript -->
+  <text x="222" y="18" font-family="'JetBrains Mono', 'SF Mono', 'Fira Code', monospace" font-weight="500" font-size="13" fill="#00cc66" opacity="0.8">β</text>
+</svg>

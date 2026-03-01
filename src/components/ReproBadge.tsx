@@ -56,9 +56,9 @@ export default function ReproBadge({ strategy, lang = 'en' }: Props) {
 
       <div class="ml-auto flex items-center gap-3">
         {meta.package_url ? (
-          <a href={meta.package_url} class="inline-block border border-[--color-border] text-[--color-text] px-3 py-2 rounded font-mono text-sm hover:border-[--color-accent]" target="_blank" rel="noopener">{lang === 'ko' ? '패키지 다운로드' : 'Download package'}</a>
+          <a href={meta.package_url} class="inline-block border border-[--color-border] text-[--color-text] px-3 py-2 rounded font-mono text-sm hover:border-[--color-accent]" target="_blank" rel="noopener noreferrer">{lang === 'ko' ? '패키지 다운로드' : 'Download package'}</a>
         ) : (
-          <a href={`/data/reproducible/${strategy}.zip`} class="inline-block border border-[--color-border] text-[--color-text] px-3 py-2 rounded font-mono text-sm hover:border-[--color-accent]" target="_blank" rel="noopener">{lang === 'ko' ? '패키지 다운로드' : 'Download package'}</a>
+          <a href={`/data/reproducible/${strategy}.zip`} class="inline-block border border-[--color-border] text-[--color-text] px-3 py-2 rounded font-mono text-sm hover:border-[--color-accent]" target="_blank" rel="noopener noreferrer">{lang === 'ko' ? '패키지 다운로드' : 'Download package'}</a>
         )}
       </div>
     </div>

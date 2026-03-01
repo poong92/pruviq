@@ -1,13 +1,13 @@
 ---
 name: "Momentum Breakout LONG"
-description: "Enters long when price breaks above the 20-candle high with volume confirmation. Killed after -$14,115 loss in backtesting."
+description: "Enters long when price breaks above the 20-candle high with volume confirmation. Killed after failing 2-year validation — negative expectancy across 549 coins."
 status: "killed"
 category: "momentum"
 direction: "long"
 difficulty: "intermediate"
 winRate: 37.5
 profitFactor: 0.42
-totalPnl: "-$14,115"
+totalPnl: "Negative"
 timeframe: "1H"
 dataPoints: 8420
 coins: 577
@@ -34,7 +34,7 @@ Momentum Breakout LONG was designed to capture strong upward moves by entering w
 | Win Rate | >50% | 37.5% |
 | Break-even Win Rate | 71.4% | - |
 | Profit Factor | >1.0 | 0.42 |
-| Total PnL | Positive | -$14,115 |
+| Total PnL | Positive | Negative |
 
 The strategy needed a 71.4% win rate to break even with its R:R profile. At 37.5%, it was mathematically guaranteed to lose money.
 
@@ -44,9 +44,9 @@ The strategy needed a 71.4% win rate to break even with its R:R profile. At 37.5
 2. **Crypto LONG structural weakness** — In the 2024-2026 bear/sideways market, momentum longs get caught in mean reversion repeatedly
 3. **18 LONG strategies tested, ALL failed** — This wasn't a parameter problem. LONG momentum in crypto has no edge in the current regime
 
-## The $14,000 Lesson
+## Why It Was Killed
 
-This failure was one of our most expensive lessons. But it was also one of our most valuable:
+This failure was one of our most important lessons. But it was also one of our most valuable:
 
 > "If you can't prove it survives 2+ years of out-of-sample data, don't trade it."
 

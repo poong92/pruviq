@@ -58,6 +58,28 @@ const statusLabels: Record<string, string> = {
 ---
 
 <Layout title={`${strategy.data.name} - PRUVIQ`} description={strategy.data.description} type="article" date={strategy.data.dateAdded}>
+  <!-- 3-level BreadcrumbList -->
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "PRUVIQ", "item": "https://pruviq.com/" },
+      { "@type": "ListItem", "position": 2, "name": "전략", "item": "https://pruviq.com/ko/strategies/" },
+      { "@type": "ListItem", "position": 3, "name": strategy.data.name, "item": `https://pruviq.com/ko/strategies/${strategy.id}/` }
+    ]
+  })} />
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": strategy.data.name,
+    "description": strategy.data.description,
+    "datePublished": strategy.data.dateAdded,
+    "dateModified": new Date().toISOString().split('T')[0],
+    "author": { "@type": "Organization", "name": "PRUVIQ" },
+    "publisher": { "@type": "Organization", "name": "PRUVIQ", "url": "https://pruviq.com" },
+    "mainEntityOfPage": `https://pruviq.com/ko/strategies/${strategy.id}/`,
+    "inLanguage": "ko"
+  })} />
   <article class="py-12">
     <div class="max-w-3xl mx-auto px-4">
       <a href="/ko/strategies" class="text-[--color-text-muted] text-sm hover:text-[--color-accent] transition-colors mb-8 inline-block">
@@ -159,8 +181,14 @@ const statusLabels: Record<string, string> = {
           {demo ? t('strategies.detail_demo_footer') : t('strategies.detail_nodemo_footer')}
         </p>
         <div class="flex flex-col sm:flex-row gap-3 justify-center">
+          {strategy.data.status === 'verified' && (
+            <a href={`/ko/simulate?preset=${strategy.id}`}
+               class="btn-primary inline-block bg-[--color-accent] text-[--color-bg] px-6 py-2 rounded font-semibold text-sm hover:bg-[--color-accent-dim]">
+              이 전략 시뮬레이션 &rarr;
+            </a>
+          )}
           <a href="/ko/strategies"
-             class="btn-primary inline-block bg-[--color-accent] text-[--color-bg] px-6 py-2 rounded font-semibold text-sm hover:bg-[--color-accent-dim]">
+             class={`inline-block ${strategy.data.status !== 'verified' ? 'bg-[--color-accent] text-[--color-bg] hover:bg-[--color-accent-dim]' : 'border border-[--color-border] text-[--color-text] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors'} px-6 py-2 rounded font-semibold text-sm`}>
             {t('strategies.explore')} &rarr;
           </a>
           <a href="/ko/fees"
