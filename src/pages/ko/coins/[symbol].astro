@@ -1,6 +1,13 @@
 ---
 import Layout from '../../../layouts/Layout.astro';
 import { COIN_SYMBOLS } from '../../../data/coin-symbols';
+import fs from 'node:fs';
+
+let coinMeta: Record<string, { name: string; image: string }> = {};
+try {
+  const raw = fs.readFileSync('public/data/coin-metadata.json', 'utf-8');
+  coinMeta = JSON.parse(raw);
+} catch {}
 
 export async function getStaticPaths() {
   return COIN_SYMBOLS.flatMap(s => {
@@ -20,36 +27,124 @@ const { symbol } = Astro.params;
 const { symbolUpper } = Astro.props;
 const displayName = symbolUpper.replace('USDT', '') + '/USDT';
 const coinName = symbolUpper.replace('USDT', '');
-const metaDesc = `${coinName} 트레이딩 전략 시뮬레이션 — ${displayName}에서 BB Squeeze 백테스트. 2년 이상 데이터로 진입/청산 신호, 승률, 수익 팩터 확인. PRUVIQ 무료 제공.`;
+const fullName = coinMeta[symbolUpper]?.name || coinName;
+const metaDesc = `${fullName} (${displayName}) 트레이딩 전략 시뮬레이션 — BB Squeeze SHORT 백테스트. 2년 이상 데이터로 진입/청산 신호, 승률, 수익 팩터 확인. PRUVIQ 무료 제공.`;
 const datasetJsonLd = JSON.stringify({
   "@context": "https://schema.org",
   "@type": "Dataset",
-  "name": `${coinName} Trading Strategy Backtest`,
+  "name": `${fullName} Trading Strategy Backtest`,
   "description": `BB Squeeze SHORT strategy simulation results for ${displayName} with 2+ years of historical OHLCV data`,
   "temporalCoverage": "2024/2026",
   "creator": { "@type": "Organization", "name": "PRUVIQ" },
   "license": "https://creativecommons.org/licenses/by-nc/4.0/"
+});
+const faqJsonLd = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": `${fullName}의 BB Squeeze SHORT 전략이란?`,
+      "acceptedAnswer": { "@type": "Answer", "text": `BB Squeeze SHORT 전략은 ${displayName}에서 볼린저밴드 압축을 감지하고, 하향 돌파 시 숏 포지션에 진입합니다. 손절 10%, 익절 8%, 최대 48시간 보유합니다.` }
+    },
+    {
+      "@type": "Question",
+      "name": `PRUVIQ의 ${fullName} 백테스트는 얼마나 신뢰할 수 있나요?`,
+      "acceptedAnswer": { "@type": "Answer", "text": "PRUVIQ 백테스트는 바이낸스 선물 2년 이상의 1시간 OHLCV 데이터를 사용합니다. 모든 결과는 Out-of-Sample 테스트와 몬테카를로 시뮬레이션(10,000회)으로 검증됩니다. Look-ahead bias 없이 완성된 캔들만 신호에 사용합니다." }
+    },
+    {
+      "@type": "Question",
+      "name": `${fullName} 시뮬레이션은 무료인가요?`,
+      "acceptedAnswer": { "@type": "Answer", "text": "네. PRUVIQ는 100% 무료입니다. 모든 지원 코인에서 BB Squeeze 전략을 시뮬레이션하고, 파라미터를 조정하고, 상세 에퀴티 커브와 거래 로그를 확인할 수 있습니다. 가입 불필요." }
+    }
+  ]
 });
 
 // Canonical override: prefer USDT variant as canonical when this page is the base symbol
 const canonicalOverride = symbol.endsWith('usdt') ? undefined : `/ko/coins/${symbol}usdt/`;
 ---
 
-<Layout title={`${displayName} - 코인 탐색기 - PRUVIQ`} description={metaDesc} canonicalOverride={canonicalOverride}>
+<Layout title={`${fullName} (${displayName}) - 코인 탐색기 - PRUVIQ`} description={metaDesc} canonicalOverride={canonicalOverride}>
   <script type="application/ld+json" set:html={datasetJsonLd} />
+  <script type="application/ld+json" set:html={faqJsonLd} />
   <section class="py-8">
     <div class="max-w-6xl mx-auto px-4">
       <a href="/ko/coins" class="inline-flex items-center gap-1 text-[--color-text-muted] hover:text-[--color-accent] transition-colors text-sm font-mono mb-4">
         &larr; 코인
       </a>
-      <h1 class="text-2xl font-bold mb-4">{displayName}</h1>
+
+      <!-- Header -->
+      <div class="mb-6">
+        <h1 class="text-2xl md:text-3xl font-bold mb-2">{fullName} <span class="text-[--color-text-muted] font-normal text-lg">({displayName})</span></h1>
+        <p class="text-[--color-text-muted] text-sm max-w-2xl">
+          {fullName} BB Squeeze SHORT 전략 시뮬레이션. 2년 이상 과거 데이터로 진입/청산 신호, 에퀴티 커브, 개별 거래 분석을 확인하세요.
+        </p>
+      </div>
+
+      <!-- Chart -->
       <div id="coin-mount" data-symbol={symbolUpper}>
         <div class="animate-pulse">
           <div class="h-64 bg-[--color-bg-hover] rounded mb-4"></div>
           <div class="h-4 bg-[--color-bg-hover] rounded w-1/3"></div>
         </div>
       </div>
+
+      <!-- CTA -->
+      <div class="mt-6 flex flex-wrap items-center gap-3">
+        <a href={`/ko/simulate?coin=${symbolUpper}`}
+           class="inline-flex items-center gap-2 bg-[--color-accent] text-[--color-bg] px-5 py-2.5 rounded font-semibold text-sm hover:bg-[--color-accent-dim]">
+          {coinName} 시뮬레이션 &rarr;
+        </a>
+        <a href="/ko/strategies" class="text-sm text-[--color-text-muted] hover:text-[--color-accent]">전체 전략</a>
+        <a href="/ko/coins" class="text-sm text-[--color-text-muted] hover:text-[--color-accent]">전체 코인</a>
+      </div>
+
       <div id="exchange-cta-mount" data-coin={symbolUpper}></div>
+
+      <!-- Strategy overview -->
+      <div class="mt-10 border-t border-[--color-border] pt-8">
+        <h2 class="text-lg font-bold mb-4">전략 개요</h2>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <div class="border border-[--color-border] rounded p-3 bg-[--color-bg-card]">
+            <p class="text-xs text-[--color-text-muted] font-mono mb-1">방향</p>
+            <p class="font-bold text-[--color-accent]">숏 전용</p>
+          </div>
+          <div class="border border-[--color-border] rounded p-3 bg-[--color-bg-card]">
+            <p class="text-xs text-[--color-text-muted] font-mono mb-1">손절 / 익절</p>
+            <p class="font-bold">10% / 8%</p>
+          </div>
+          <div class="border border-[--color-border] rounded p-3 bg-[--color-bg-card]">
+            <p class="text-xs text-[--color-text-muted] font-mono mb-1">최대 보유</p>
+            <p class="font-bold">48시간</p>
+          </div>
+          <div class="border border-[--color-border] rounded p-3 bg-[--color-bg-card]">
+            <p class="text-xs text-[--color-text-muted] font-mono mb-1">데이터 기간</p>
+            <p class="font-bold">2년 이상 (1H)</p>
+          </div>
+        </div>
+        <p class="text-sm text-[--color-text-muted] leading-relaxed max-w-3xl">
+          BB Squeeze 전략은 {fullName}에서 저변동성 구간(볼린저밴드 압축)을 식별합니다. 밴드가 확장되고 가격이 하향 돌파하면 숏 포지션에 진입합니다. 549개 코인에서 Out-of-Sample 테스트와 몬테카를로 시뮬레이션으로 검증되었습니다.
+        </p>
+      </div>
+
+      <!-- FAQ -->
+      <div class="mt-10 border-t border-[--color-border] pt-8">
+        <h2 class="text-lg font-bold mb-4">자주 묻는 질문</h2>
+        <div class="space-y-4 max-w-3xl">
+          <details class="border border-[--color-border] rounded bg-[--color-bg-card]">
+            <summary class="px-4 py-3 cursor-pointer font-semibold text-sm hover:text-[--color-accent]">{fullName}의 BB Squeeze SHORT 전략이란?</summary>
+            <p class="px-4 pb-3 text-sm text-[--color-text-muted]">BB Squeeze SHORT 전략은 {displayName}에서 볼린저밴드 압축을 감지하고, 하향 돌파 시 숏 포지션에 진입합니다. 손절 10%, 익절 8%, 최대 48시간 보유합니다.</p>
+          </details>
+          <details class="border border-[--color-border] rounded bg-[--color-bg-card]">
+            <summary class="px-4 py-3 cursor-pointer font-semibold text-sm hover:text-[--color-accent]">{fullName} 백테스트는 신뢰할 수 있나요?</summary>
+            <p class="px-4 pb-3 text-sm text-[--color-text-muted]">PRUVIQ 백테스트는 바이낸스 선물 2년 이상의 1시간 OHLCV 데이터를 사용합니다. 모든 결과는 Out-of-Sample 테스트와 몬테카를로 시뮬레이션(10,000회)으로 검증됩니다. Look-ahead bias 없이 완성된 캔들만 신호에 사용합니다.</p>
+          </details>
+          <details class="border border-[--color-border] rounded bg-[--color-bg-card]">
+            <summary class="px-4 py-3 cursor-pointer font-semibold text-sm hover:text-[--color-accent]">{fullName} 시뮬레이션은 무료인가요?</summary>
+            <p class="px-4 pb-3 text-sm text-[--color-text-muted]">네. PRUVIQ는 100% 무료입니다. 모든 지원 코인에서 BB Squeeze 전략을 시뮬레이션하고, 파라미터를 조정하고, 상세 에퀴티 커브와 거래 로그를 확인할 수 있습니다. 가입 불필요.</p>
+          </details>
+        </div>
+      </div>
     </div>
   </section>
 </Layout>

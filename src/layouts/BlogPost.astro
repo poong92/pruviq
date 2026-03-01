@@ -6,9 +6,10 @@ interface Props {
   description: string;
   date: string;
   category: string;
+  author?: string;
 }
 
-const { title, description, date, category } = Astro.props;
+const { title, description, date, category, author = 'PRUVIQ Research' } = Astro.props;
 
 const categoryLabels: Record<string, string> = {
   market: 'MARKET ANALYSIS',
@@ -31,11 +32,25 @@ const categoryLabels: Record<string, string> = {
           {categoryLabels[category] || category.toUpperCase()}
         </span>
         <h1 class="text-3xl md:text-4xl font-bold mt-2 mb-4">{title}</h1>
-        <p class="text-[--color-text-muted] text-sm font-mono">{date}</p>
+        <div class="flex items-center gap-3 text-sm text-[--color-text-muted]">
+          <span class="font-mono">{date}</span>
+          <span class="text-[--color-border]">|</span>
+          <span>{author}</span>
+        </div>
       </div>
 
       <div class="prose">
         <slot />
+      </div>
+
+      <!-- Newsletter CTA -->
+      <div class="mt-10 border border-[--color-accent]/30 rounded-lg p-5 bg-[--color-accent]/5 text-center">
+        <p class="font-bold text-sm mb-1">Get strategy updates</p>
+        <p class="text-[--color-text-muted] text-xs mb-3">Market analysis, new strategies, and backtest results — delivered to Telegram.</p>
+        <a href="https://t.me/PRUVIQ" target="_blank" rel="noopener"
+           class="inline-flex items-center gap-2 bg-[--color-accent] text-[--color-bg] px-5 py-2 rounded font-semibold text-sm hover:bg-[--color-accent-dim]">
+          Join PRUVIQ Channel &rarr;
+        </a>
       </div>
 
       <!-- Article end CTA -->
