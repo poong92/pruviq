@@ -28,9 +28,9 @@ const IQ_BLOCK_CSS = `
   .check-inner svg { display:block; }
 `;
 
-async function render(browser, html, outputPath, width, height, transparent = false) {
+async function render(browser, html, outputPath, width, height, transparent = false, dpi = 4) {
   const page = await browser.newPage();
-  await page.setViewport({ width, height, deviceScaleFactor: 2 });
+  await page.setViewport({ width, height, deviceScaleFactor: dpi });
   await page.setContent(html, { waitUntil: 'networkidle0' });
   await page.waitForFunction(() => document.fonts.ready);
   await page.screenshot({
@@ -39,7 +39,7 @@ async function render(browser, html, outputPath, width, height, transparent = fa
     clip: { x: 0, y: 0, width, height }
   });
   await page.close();
-  console.log(`  ✓ ${outputPath.split('/').pop()} (${width}x${height} @2x${transparent ? ' transparent' : ''})`);
+  console.log(`  ✓ ${outputPath.split('/').pop()} (${width}x${height} @${dpi}x = ${width*dpi}px${transparent ? ' transparent' : ''})`);
 }
 
 function iconHTML(size) {
@@ -72,6 +72,36 @@ function iconHTML(size) {
   </body></html>`;
 }
 
+// Circle-crop safe version: block = 58% (X/social profile won't clip the checkmark)
+function profileIconHTML(size) {
+  const block = Math.round(size * 0.58);
+  const radius = Math.round(block * 0.16);
+  const fontSize = Math.round(block * 0.45);
+  const checkOuter = Math.round(block * 0.36);
+  const checkInner = Math.round(checkOuter * 0.65);
+  const checkSvg = Math.round(checkInner * 0.65);
+  const shadowBlur = Math.round(block * 0.12);
+  const shadowSpread = Math.round(block * 0.06);
+
+  return `<!DOCTYPE html><html><head><style>
+    ${IQ_BLOCK_CSS}
+    body { width:${size}px;height:${size}px;display:flex;align-items:center;justify-content:center;background:transparent; }
+    .iq-block {
+      width:${block}px;height:${block}px;border-radius:${radius}px;
+      font-size:${fontSize}px;letter-spacing:${Math.round(fontSize*0.04)}px;
+      box-shadow:0 0 ${shadowBlur}px rgba(0,230,118,0.3),0 ${shadowSpread}px ${shadowSpread*2}px rgba(0,0,0,0.25);
+    }
+    .iq-block::before { border-radius:${radius}px ${radius}px 0 0; }
+    .check { top:${-Math.round(checkOuter*0.28)}px;right:${-Math.round(checkOuter*0.28)}px;width:${checkOuter}px;height:${checkOuter}px; }
+    .check-inner { width:${checkInner}px;height:${checkInner}px; }
+    .check-inner svg { width:${checkSvg}px;height:${checkSvg}px; }
+  </style></head><body>
+    <div class="iq-block">IQ
+      <div class="check"><div class="check-inner"><svg viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+    </div>
+  </body></html>`;
+}
+
 async function main() {
   console.log('Launching Chrome...');
   const browser = await puppeteer.launch({
@@ -79,11 +109,14 @@ async function main() {
     args: ['--font-render-hinting=none', '--disable-lcd-text']
   });
 
-  // === Icons (all CSS, transparent background) ===
+  // === Icons (75% block, tight, for favicons/website) @4x ===
   await render(browser, iconHTML(512), `${PUBLIC}/icon-512.png`, 512, 512, true);
   await render(browser, iconHTML(192), `${PUBLIC}/icon-192.png`, 192, 192, true);
   await render(browser, iconHTML(180), `${PUBLIC}/apple-touch-icon.png`, 180, 180, true);
   await render(browser, iconHTML(32),  `${PUBLIC}/favicon-32.png`, 32, 32, true);
+
+  // === pruviq-logo (58% block, circle-crop safe, for X/social profile) @4x ===
+  await render(browser, profileIconHTML(512), `${PUBLIC}/pruviq-logo.png`, 512, 512, true);
 
   // === Social Profile (800x800, dark bg) ===
   const socialHTML = `<!DOCTYPE html><html><head><style>

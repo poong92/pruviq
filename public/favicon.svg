@@ -12,10 +12,13 @@
       <stop offset="50%" stop-color="#ffffff" stop-opacity="0"/>
     </linearGradient>
   </defs>
-  <!-- Green IQ block only - no background -->
-  <rect x="1" y="1" width="30" height="30" rx="6" fill="url(#blk)"/>
-  <rect x="1" y="1" width="30" height="15" rx="6" fill="url(#sh)"/>
-  <text x="16" y="22" font-family="'JetBrains Mono','SF Mono','Menlo',monospace" font-size="15" font-weight="800" fill="#0a0e27" text-anchor="middle" letter-spacing="0.3">IQ</text>
+  <!-- Green IQ block -->
+  <rect x="1" y="1" width="30" height="30" rx="5" fill="url(#blk)"/>
+  <rect x="1" y="1" width="30" height="15" rx="5" fill="url(#sh)"/>
+  <!-- IQ text via foreignObject for CSS-quality rendering -->
+  <foreignObject x="1" y="1" width="30" height="30">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono','SF Mono','Menlo',monospace;font-size:14px;font-weight:800;color:#0a0e27;letter-spacing:0.3px;">IQ</div>
+  </foreignObject>
   <!-- Checkmark badge (36% ratio, white check) -->
   <circle cx="26" cy="6" r="5.4" fill="#2a2f4e"/>
   <circle cx="26" cy="6" r="3.5" fill="#00E676"/>
