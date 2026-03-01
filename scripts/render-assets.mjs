@@ -46,11 +46,12 @@ function iconHTML(size) {
   const block = Math.round(size * 0.75);
   const radius = Math.round(block * 0.16);
   const fontSize = Math.round(block * 0.45);
-  const checkOuter = Math.round(block * 0.22);
-  const checkInner = Math.round(checkOuter * 0.66);
+  const checkOuter = Math.round(block * 0.36);    // 1.8x from 0.20 (user spec)
+  const checkInner = Math.round(checkOuter * 0.65); // green inner circle
   const checkSvg = Math.round(checkInner * 0.65);
   const shadowBlur = Math.round(block * 0.12);
   const shadowSpread = Math.round(block * 0.06);
+  const skipCheck = size <= 48; // checkmark invisible at tiny sizes
 
   return `<!DOCTYPE html><html><head><style>
     ${IQ_BLOCK_CSS}
@@ -61,12 +62,12 @@ function iconHTML(size) {
       box-shadow:0 0 ${shadowBlur}px rgba(0,230,118,0.3),0 ${shadowSpread}px ${shadowSpread*2}px rgba(0,0,0,0.25);
     }
     .iq-block::before { border-radius:${radius}px ${radius}px 0 0; }
-    .check { top:${-Math.round(checkOuter*0.35)}px;right:${-Math.round(checkOuter*0.35)}px;width:${checkOuter}px;height:${checkOuter}px; }
+    .check { top:${-Math.round(checkOuter*0.28)}px;right:${-Math.round(checkOuter*0.28)}px;width:${checkOuter}px;height:${checkOuter}px; }
     .check-inner { width:${checkInner}px;height:${checkInner}px; }
     .check-inner svg { width:${checkSvg}px;height:${checkSvg}px; }
   </style></head><body>
     <div class="iq-block">IQ
-      <div class="check"><div class="check-inner"><svg viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="#0a0e27" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+      ${skipCheck ? '' : '<div class="check"><div class="check-inner"><svg viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>'}
     </div>
   </body></html>`;
 }
@@ -94,9 +95,9 @@ async function main() {
       box-shadow:0 0 60px rgba(0,230,118,0.3),0 8px 30px rgba(0,0,0,0.3);
     }
     .iq-block::before { border-radius:44px 44px 0 0; }
-    .check { top:-14px;right:-14px;width:56px;height:56px; }
-    .check-inner { width:38px;height:38px; }
-    .check-inner svg { width:24px;height:24px; }
+    .check { top:-18px;right:-18px;width:86px;height:86px; }
+    .check-inner { width:56px;height:56px; }
+    .check-inner svg { width:35px;height:35px; }
     .brand { font-size:52px;font-weight:600;letter-spacing:5px; }
     .pruv { color:#e8eaf0; }
     .iq-text { color:#00E676;font-weight:700; }
@@ -111,7 +112,7 @@ async function main() {
     <div class="grid"></div>
     <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
     <div class="iq-block">IQ
-      <div class="check"><div class="check-inner"><svg viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="#0a0e27" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+      <div class="check"><div class="check-inner"><svg viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
     </div>
     <div class="brand"><span class="pruv">PRUV</span><span class="iq-text">IQ</span></div>
     <div class="sep"></div>
@@ -132,9 +133,9 @@ async function main() {
       flex-shrink:0;
     }
     .iq-block::before { border-radius:42px 42px 0 0; }
-    .check { top:-14px;right:-14px;width:52px;height:52px; }
-    .check-inner { width:34px;height:34px; }
-    .check-inner svg { width:22px;height:22px; }
+    .check { top:-16px;right:-16px;width:83px;height:83px; }
+    .check-inner { width:54px;height:54px; }
+    .check-inner svg { width:34px;height:34px; }
     .text-group { display:flex;flex-direction:column;gap:12px; }
     .brand { font-size:72px;font-weight:600;letter-spacing:5px; }
     .pruv { color:#e8eaf0; }
@@ -150,7 +151,7 @@ async function main() {
     <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
     <div class="center">
       <div class="iq-block">IQ
-        <div class="check"><div class="check-inner"><svg viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="#0a0e27" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        <div class="check"><div class="check-inner"><svg viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
       </div>
       <div class="text-group">
         <div class="brand"><span class="pruv">PRUV</span><span class="iq-text">IQ</span></div>
@@ -173,9 +174,9 @@ async function main() {
       flex-shrink:0;
     }
     .iq-block::before { border-radius:26px 26px 0 0; }
-    .check { top:-10px;right:-10px;width:36px;height:36px; }
-    .check-inner { width:24px;height:24px; }
-    .check-inner svg { width:16px;height:16px; }
+    .check { top:-12px;right:-12px;width:50px;height:50px; }
+    .check-inner { width:33px;height:33px; }
+    .check-inner svg { width:21px;height:21px; }
     .brand { font-size:64px;font-weight:600;letter-spacing:5px; }
     .pruv { color:#e8eaf0; }
     .iq-text { color:#00E676;font-weight:700; }
@@ -192,7 +193,7 @@ async function main() {
     <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
     <div class="top">
       <div class="iq-block">IQ
-        <div class="check"><div class="check-inner"><svg viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="#0a0e27" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        <div class="check"><div class="check-inner"><svg viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
       </div>
       <div class="brand"><span class="pruv">PRUV</span><span class="iq-text">IQ</span></div>
     </div>

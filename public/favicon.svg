@@ -16,8 +16,8 @@
   <rect x="1" y="1" width="30" height="30" rx="6" fill="url(#blk)"/>
   <rect x="1" y="1" width="30" height="15" rx="6" fill="url(#sh)"/>
   <text x="16" y="22" font-family="'JetBrains Mono','SF Mono','Menlo',monospace" font-size="15" font-weight="800" fill="#0a0e27" text-anchor="middle" letter-spacing="0.3">IQ</text>
-  <!-- Checkmark badge -->
-  <circle cx="27" cy="5" r="4.5" fill="#2a2f4e"/>
-  <circle cx="27" cy="5" r="3" fill="#00E676"/>
-  <polyline points="25.2,5 26.4,6.2 29,3.8" fill="none" stroke="#0a0e27" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Checkmark badge (36% ratio, white check) -->
+  <circle cx="26" cy="6" r="5.4" fill="#2a2f4e"/>
+  <circle cx="26" cy="6" r="3.5" fill="#00E676"/>
+  <polyline points="24,6 25.5,7.8 28.5,4" fill="none" stroke="#ffffff" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
