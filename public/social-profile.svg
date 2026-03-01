@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800">
+  <defs>
+    <radialGradient id="bgV" cx="50%" cy="42%" r="70%">
+      <stop offset="0%" stop-color="#111633"/>
+      <stop offset="100%" stop-color="#0a0e27"/>
+    </radialGradient>
+    <linearGradient id="sBlockG" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#44ffbb"/>
+      <stop offset="30%" stop-color="#22ffaa"/>
+      <stop offset="60%" stop-color="#00E676"/>
+      <stop offset="100%" stop-color="#00cc66"/>
+    </linearGradient>
+    <filter id="sGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="16" result="b1"/>
+      <feColorMatrix in="b1" type="matrix" values="0 0 0 0 0  0 0 0 0 0.9  0 0 0 0 0.46  0 0 0 0.3 0" result="g1"/>
+      <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="b2"/>
+      <feColorMatrix in="b2" type="matrix" values="0 0 0 0 0  0 0 0 0 0.9  0 0 0 0 0.46  0 0 0 0.45 0" result="g2"/>
+      <feMerge><feMergeNode in="g1"/><feMergeNode in="g2"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <linearGradient id="sShine" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.18"/>
+      <stop offset="35%" stop-color="#ffffff" stop-opacity="0.04"/>
+      <stop offset="50%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="sInner" cx="38%" cy="35%" r="50%">
+      <stop offset="0%" stop-color="#aaffdd" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#00E676" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="sShadow" x="-20%" y="-10%" width="140%" height="150%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="10" result="s"/>
+      <feOffset in="s" dx="0" dy="8" result="os"/>
+      <feColorMatrix in="os" type="matrix" values="0 0 0 0 0  0 0 0 0 0.04  0 0 0 0 0.01  0 0 0 0.5 0"/>
+    </filter>
+    <linearGradient id="sBeta" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#00E676" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#00E676" stop-opacity="0.06"/>
+    </linearGradient>
+    <pattern id="grid" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+      <line x1="40" y1="0" x2="40" y2="40" stroke="#00E676" stroke-width="0.3" opacity="0.04"/>
+      <line x1="0" y1="40" x2="40" y2="40" stroke="#00E676" stroke-width="0.3" opacity="0.04"/>
+    </pattern>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="800" fill="url(#bgV)"/>
+  <rect width="800" height="800" fill="url(#grid)"/>
+
+  <!-- IQ Block: shadow → glow → main → inner → shine → border -->
+  <rect x="260" y="200" width="280" height="220" rx="36" filter="url(#sShadow)" fill="#000"/>
+  <rect x="260" y="200" width="280" height="220" rx="36" fill="#00E676" opacity="0.2" filter="url(#sGlow)"/>
+  <rect x="260" y="200" width="280" height="220" rx="36" fill="url(#sBlockG)"/>
+  <rect x="260" y="200" width="280" height="220" rx="36" fill="url(#sInner)"/>
+  <rect x="260" y="200" width="280" height="110" rx="36" fill="url(#sShine)"/>
+  <rect x="272" y="212" width="256" height="196" rx="26" fill="none" stroke="#ffffff" stroke-width="1" stroke-opacity="0.1"/>
+
+  <!-- IQ text -->
+  <text x="400" y="355" font-family="'JetBrains Mono','SF Mono','Menlo',monospace" font-size="120" font-weight="800" fill="#0a0e27" text-anchor="middle" letter-spacing="6">IQ</text>
+
+  <!-- Verification checkmark -->
+  <circle cx="510" cy="230" r="16" fill="#0a0e27" opacity="0.65"/>
+  <circle cx="510" cy="230" r="10" fill="#00E676"/>
+  <polyline points="504,230 508,234 518,224" fill="none" stroke="#0a0e27" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Wordmark: PRUV (white) + IQ (green) -->
+  <text x="310" y="510" font-family="'JetBrains Mono','SF Mono','Menlo',monospace" font-size="52" font-weight="600" fill="#e8eaf0" letter-spacing="5">PRUV</text>
+  <text x="530" y="510" font-family="'JetBrains Mono','SF Mono','Menlo',monospace" font-size="52" font-weight="700" fill="#00E676" letter-spacing="5">IQ</text>
+
+  <!-- Separator + Tagline -->
+  <line x1="320" y1="535" x2="480" y2="535" stroke="#00E676" stroke-width="0.8" stroke-opacity="0.18"/>
+  <text x="400" y="570" font-family="'JetBrains Mono','SF Mono','Menlo',monospace" font-size="18" font-weight="400" fill="#8892b0" text-anchor="middle" letter-spacing="4">PROVE YOUR STRATEGY</text>
+
+  <!-- Corner accents -->
+  <polyline points="55,75 55,55 75,55" fill="none" stroke="#00E676" stroke-width="1" stroke-opacity="0.12" stroke-linecap="round"/>
+  <polyline points="725,55 745,55 745,75" fill="none" stroke="#00E676" stroke-width="1" stroke-opacity="0.12" stroke-linecap="round"/>
+  <polyline points="55,725 55,745 75,745" fill="none" stroke="#00E676" stroke-width="1" stroke-opacity="0.12" stroke-linecap="round"/>
+  <polyline points="725,745 745,745 745,725" fill="none" stroke="#00E676" stroke-width="1" stroke-opacity="0.12" stroke-linecap="round"/>
+</svg>
