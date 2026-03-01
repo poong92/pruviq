@@ -90,3 +90,31 @@ If you want me to continue (autonomously):
 ---
 
 (End of automated perf-lighthouse run summary)
+
+---
+2026-03-02 06:00 KST — cron: i18n-fix
+
+What I checked
+- Read: SOUL.md and MEMORY.md (confirmed in workspace)
+- Compared translation keys: src/i18n/en.ts vs src/i18n/ko.ts
+  - en keys: 562
+  - ko keys: 562
+  - Missing keys in ko: none (confirmed by extracting keys from both files and diffing)
+- Checked pages under src/pages for /ko equivalents (allowing alt index variant)
+  - EN page files checked: 24
+  - Missing KO pages: 0 (404 route exists as src/pages/ko/404/index.astro)
+- Ran: npm run build to verify site builds (confirmed in session logs: "[build] ✓ Completed")
+
+What I changed
+- None — no missing translation keys or KO pages found, so no files needed edits.
+
+Next steps / notes
+- i18n parity is complete between en.ts and ko.ts for the keys present.
+- If new keys are added in future, add corresponding entries to src/i18n/ko.ts and update ko pages under src/pages/ko as needed.
+
+Commands & evidence
+- Key parity check (ran in repo): sed + sort -> en keys: 562, ko keys: 562, diff empty (no missing keys).
+  (confirmed via command run in session)
+- Page parity check (ran in repo): found 24 EN .astro pages and 0 missing KO equivalents (checked both exact and /index.astro variants).
+- Build: npm run build (confirmed via build output logs in the session; static routes generated and build completed).
+
