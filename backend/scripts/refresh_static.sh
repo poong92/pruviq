@@ -44,10 +44,10 @@ if ! git diff --quiet $DATA_FILES 2>/dev/null; then
     # Amend if last commit was a data refresh (reduce git history noise)
     LAST_MSG=$(git log -1 --pretty=%s 2>/dev/null)
     if echo "$LAST_MSG" | grep -q "^chore: static data refresh"; then
-        git commit --amend -m "chore: static data refresh [$(date -u +%H:%M)]" --no-verify
+        git commit --amend -m "chore: static data refresh [$(date -u +%H:%M)] [skip ci]" --no-verify
         PUSH_FLAG="--force-with-lease"
     else
-        git commit -m "chore: static data refresh [$(date -u +%H:%M)]" --no-verify
+        git commit -m "chore: static data refresh [$(date -u +%H:%M)] [skip ci]" --no-verify
         PUSH_FLAG=""
     fi
     if git push origin main $PUSH_FLAG 2>&1; then
