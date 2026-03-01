@@ -3,7 +3,10 @@ PRUVIQ API — Pydantic Models
 """
 
 from pydantic import BaseModel, Field
-from typing import Optional, List
+from typing import Optional, List, Literal
+
+# Valid candle timeframes (1H is the base; others are resampled on-demand)
+VALID_TIMEFRAMES = ("1H", "2H", "4H", "6H", "12H", "1D", "1W")
 
 
 class SimulationRequest(BaseModel):
@@ -18,6 +21,7 @@ class SimulationRequest(BaseModel):
     top_n: int = Field(default=50, ge=1, le=535, description="Number of coins if symbols is null")
     start_date: Optional[str] = Field(default=None, description="Backtest start date (YYYY-MM-DD)")
     end_date: Optional[str] = Field(default=None, description="Backtest end date (YYYY-MM-DD)")
+    timeframe: str = Field(default="1H", description="Candle timeframe: 1H, 2H, 4H, 6H, 12H, 1D, 1W")
 
 
 class TradeItem(BaseModel):
@@ -123,6 +127,7 @@ class CoinSimRequest(BaseModel):
     market_type: str = Field(default="futures")
     start_date: Optional[str] = Field(default=None, description="Backtest start date (YYYY-MM-DD)")
     end_date: Optional[str] = Field(default=None, description="Backtest end date (YYYY-MM-DD)")
+    timeframe: str = Field(default="1H", description="Candle timeframe: 1H, 2H, 4H, 6H, 12H, 1D, 1W")
 
 
 class TradeDetail(BaseModel):
@@ -299,6 +304,7 @@ class BacktestRequest(BaseModel):
     symbols: Optional[List[str]] = Field(default=None, description="Specific symbols")
     start_date: Optional[str] = Field(default=None, description="Backtest start date (YYYY-MM-DD)")
     end_date: Optional[str] = Field(default=None, description="Backtest end date (YYYY-MM-DD)")
+    timeframe: str = Field(default="1H", description="Candle timeframe: 1H, 2H, 4H, 6H, 12H, 1D, 1W")
 
 
 
@@ -439,6 +445,7 @@ class ValidateRequest(BaseModel):
     mc_runs: int = Field(default=1000, ge=100, le=5000, description="Monte Carlo runs")
     start_date: Optional[str] = Field(default=None, description="Backtest start date (YYYY-MM-DD)")
     end_date: Optional[str] = Field(default=None, description="Backtest end date (YYYY-MM-DD)")
+    timeframe: str = Field(default="1H", description="Candle timeframe: 1H, 2H, 4H, 6H, 12H, 1D, 1W")
 
 
 class ValidateResponse(BaseModel):

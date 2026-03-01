@@ -1,6 +1,7 @@
 /**
  * BuilderPanel.tsx - Strategy builder panel (compact layout, no internal scroll)
  */
+import { useState, useEffect } from 'preact/hooks';
 import type { Condition, IndicatorInfo, PresetItem, CoinOption } from './simulator-types';
 import { COLORS } from './simulator-types';
 import PresetBar from './PresetBar';
@@ -40,6 +41,7 @@ interface Props {
   selectedCoins: string[]; setSelectedCoins: (fn: (prev: string[]) => string[]) => void;
   coinSearch: string; setCoinSearch: (s: string) => void;
   filteredCoins: CoinOption[];
+  allCoinsCount: number;
   // Avoid hours
   avoidHours: Set<number>;
   setAvoidHours: (fn: (prev: Set<number>) => Set<number>) => void;
@@ -50,6 +52,9 @@ interface Props {
   // Preset loading state
   presetLoading?: boolean;
   presetError?: string | null;
+  // Timeframe
+  timeframe: string;
+  setTimeframe: (tf: string) => void;
   // Run
   isRunning: boolean;
   progressStep: number;
@@ -68,6 +73,22 @@ const runDisabledStyle = { background: COLORS.disabled, color: COLORS.disabledTe
 export default function BuilderPanel(props: Props) {
   const { t } = props;
   const hasLookAhead = props.conditions.some((c) => c.shift === 0);
+
+  // ─── Local state for numeric inputs (onBlur pattern) ───
+  const [localSl, setLocalSl] = useState(String(props.slPct));
+  const [localTp, setLocalTp] = useState(String(props.tpPct));
+  const [localMaxBars, setLocalMaxBars] = useState(String(props.maxBars));
+  const [localPerCoin, setLocalPerCoin] = useState(String(props.perCoinUsdt));
+  const [localLeverage, setLocalLeverage] = useState(String(props.leverage));
+  const [localTopN, setLocalTopN] = useState(String(props.topN));
+
+  // Sync local state when props change (e.g., preset load)
+  useEffect(() => { setLocalSl(String(props.slPct)); }, [props.slPct]);
+  useEffect(() => { setLocalTp(String(props.tpPct)); }, [props.tpPct]);
+  useEffect(() => { setLocalMaxBars(String(props.maxBars)); }, [props.maxBars]);
+  useEffect(() => { setLocalPerCoin(String(props.perCoinUsdt)); }, [props.perCoinUsdt]);
+  useEffect(() => { setLocalLeverage(String(props.leverage)); }, [props.leverage]);
+  useEffect(() => { setLocalTopN(String(props.topN)); }, [props.topN]);
 
   return (
     <div class="border border-[--color-border] rounded-lg bg-[--color-bg-card] overflow-hidden flex flex-col">
@@ -157,6 +178,24 @@ export default function BuilderPanel(props: Props) {
         <div class="px-4 py-2 border-b border-[--color-border]">
           <div class="text-xs font-mono text-[--color-text-muted] uppercase mb-1">{t.parameters}</div>
           <div class="grid grid-cols-3 gap-x-2 gap-y-1.5">
+            {/* Timeframe - spans full width */}
+            <div class="col-span-3 mb-1">
+              <label class="text-[10px] text-[--color-text-muted]">Timeframe</label>
+              <div class="flex gap-1 mt-0.5">
+                {['1H', '2H', '4H', '6H', '12H', '1D', '1W'].map((tf) => (
+                  <button
+                    key={tf}
+                    onClick={() => props.setTimeframe(tf)}
+                    class={`px-2 py-0.5 text-xs font-mono rounded border transition-colors
+                      ${props.timeframe === tf
+                        ? 'bg-[--color-accent]/20 text-[--color-accent] border-[--color-accent]/40 font-bold'
+                        : 'bg-[--color-bg-tooltip] text-[--color-text-muted] border-[--color-border] hover:border-[--color-accent]/20'}`}
+                  >
+                    {tf}
+                  </button>
+                ))}
+              </div>
+            </div>
             {/* Direction */}
             <div>
               <label class="text-[10px] text-[--color-text-muted]">{t.direction}</label>
@@ -176,40 +215,45 @@ export default function BuilderPanel(props: Props) {
             {/* SL */}
             <div>
               <label class="text-[10px] text-[--color-text-muted]">{t.sl}</label>
-              <input type="number" value={props.slPct} min={1} max={50} step={0.5}
-                onChange={(e: any) => props.setSlPct(parseFloat(e.target.value) || 10)}
+              <input type="number" value={localSl} min={1} max={50} step={0.5}
+                onChange={(e: any) => setLocalSl(e.target.value)}
+                onBlur={() => props.setSlPct(parseFloat(localSl) || 10)}
                 class="w-full mt-0.5 px-2 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
               />
             </div>
             {/* TP */}
             <div>
               <label class="text-[10px] text-[--color-text-muted]">{t.tp}</label>
-              <input type="number" value={props.tpPct} min={1} max={50} step={0.5}
-                onChange={(e: any) => props.setTpPct(parseFloat(e.target.value) || 8)}
+              <input type="number" value={localTp} min={1} max={50} step={0.5}
+                onChange={(e: any) => setLocalTp(e.target.value)}
+                onBlur={() => props.setTpPct(parseFloat(localTp) || 8)}
                 class="w-full mt-0.5 px-2 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
               />
             </div>
             {/* Max bars */}
             <div>
               <label class="text-[10px] text-[--color-text-muted]">{t.maxBars}</label>
-              <input type="number" value={props.maxBars} min={1} max={168}
-                onChange={(e: any) => props.setMaxBars(parseInt(e.target.value) || 48)}
+              <input type="number" value={localMaxBars} min={1} max={168}
+                onChange={(e: any) => setLocalMaxBars(e.target.value)}
+                onBlur={() => props.setMaxBars(parseInt(localMaxBars) || 48)}
                 class="w-full mt-0.5 px-2 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
               />
             </div>
             {/* Per-coin USDT */}
             <div>
               <label class="text-[10px] text-[--color-text-muted]">{t.perCoinUsdt || 'Per Coin $'}</label>
-              <input type="number" value={props.perCoinUsdt} min={1} max={10000} step={10}
-                onChange={(e: any) => props.setPerCoinUsdt(parseFloat(e.target.value) || 60)}
+              <input type="number" value={localPerCoin} min={1} max={10000} step={10}
+                onChange={(e: any) => setLocalPerCoin(e.target.value)}
+                onBlur={() => props.setPerCoinUsdt(parseFloat(localPerCoin) || 60)}
                 class="w-full mt-0.5 px-2 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
               />
             </div>
             {/* Leverage */}
             <div>
               <label class="text-[10px] text-[--color-text-muted]">{t.leverage || 'Leverage'}</label>
-              <input type="number" value={props.leverage} min={1} max={125} step={1}
-                onChange={(e: any) => props.setLeverage(parseInt(e.target.value) || 5)}
+              <input type="number" value={localLeverage} min={1} max={125} step={1}
+                onChange={(e: any) => setLocalLeverage(e.target.value)}
+                onBlur={() => props.setLeverage(parseInt(localLeverage) || 5)}
                 class="w-full mt-0.5 px-2 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
               />
             </div>
@@ -239,7 +283,7 @@ export default function BuilderPanel(props: Props) {
             {[
               { mode: 'all' as const, label: t.allCoins },
               { mode: 'top' as const, label: `${t.topN} N` },
-              { mode: 'select' as const, label: t.selectCoins },
+              { mode: 'select' as const, label: props.coinMode === 'select' && props.selectedCoins.length > 0 ? `${t.selectCoins} (${props.selectedCoins.length})` : t.selectCoins },
             ].map(({ mode, label }) => (
               <button
                 key={mode}
@@ -255,21 +299,48 @@ export default function BuilderPanel(props: Props) {
             ))}
           </div>
           {props.coinMode === 'top' && (
-            <input type="number" value={props.topN} min={1} max={549}
-              onChange={(e: any) => props.setTopN(parseInt(e.target.value) || 50)}
-              class="w-full px-2 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
-              placeholder="Number of top coins"
-            />
+            <div>
+              <input type="number" value={localTopN} min={1} max={549}
+                onChange={(e: any) => setLocalTopN(e.target.value)}
+                onBlur={() => props.setTopN(parseInt(localTopN) || 50)}
+                class="w-full px-2 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
+                placeholder="Number of top coins"
+              />
+              <p class="text-[10px] text-[--color-text-muted] mt-0.5 font-mono">Top {localTopN} coins by data size (most candles available)</p>
+            </div>
           )}
           {props.coinMode === 'select' && (
             <div>
-              <input
-                type="text"
-                value={props.coinSearch}
-                onInput={(e: any) => props.setCoinSearch(e.target.value)}
-                placeholder="Search coins..."
-                class="w-full px-2 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs outline-none mb-1"
-              />
+              <div class="flex items-center gap-1 mb-1">
+                <input
+                  type="text"
+                  value={props.coinSearch}
+                  onInput={(e: any) => props.setCoinSearch(e.target.value)}
+                  placeholder="Search coins..."
+                  class="flex-1 px-2 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs outline-none"
+                />
+                <button
+                  onClick={() => {
+                    const allSymbols = props.filteredCoins.map((c) => c.symbol);
+                    props.setSelectedCoins((prev) => {
+                      const combined = new Set([...prev, ...allSymbols]);
+                      return Array.from(combined);
+                    });
+                  }}
+                  class="px-2 py-1 text-[10px] font-mono text-[--color-accent] border border-[--color-border] rounded hover:bg-[--color-bg-hover] transition-colors whitespace-nowrap"
+                >
+                  All
+                </button>
+                <button
+                  onClick={() => props.setSelectedCoins(() => [])}
+                  class="px-2 py-1 text-[10px] font-mono text-[--color-text-muted] border border-[--color-border] rounded hover:bg-[--color-bg-hover] transition-colors whitespace-nowrap"
+                >
+                  None
+                </button>
+              </div>
+              <div class="text-[10px] text-[--color-text-muted] font-mono mb-1">
+                {props.selectedCoins.length} of {props.allCoinsCount} selected
+              </div>
               {props.selectedCoins.length > 0 && (
                 <div class="flex flex-wrap gap-1 mb-1">
                   {props.selectedCoins.map((s) => (
@@ -280,7 +351,7 @@ export default function BuilderPanel(props: Props) {
                   ))}
                 </div>
               )}
-              <div class="max-h-24 overflow-y-auto">
+              <div class="max-h-48 overflow-y-auto">
                 {props.filteredCoins.map((c) => (
                   <button
                     key={c.symbol}

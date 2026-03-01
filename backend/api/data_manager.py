@@ -95,6 +95,51 @@ class DataManager:
                 result.append((sym_upper, self._data[sym_upper]))
         return result
 
+    def get_resampled(self, symbol: str, timeframe: str = "1H") -> Optional[pd.DataFrame]:
+        """Get OHLCV data resampled to the requested timeframe.
+
+        Args:
+            symbol: Trading pair symbol (e.g. "BTCUSDT")
+            timeframe: Candle timeframe. One of: 1H, 2H, 4H, 6H, 12H, 1D, 1W
+
+        Returns:
+            Resampled DataFrame with columns: timestamp, open, high, low, close, volume.
+            Returns None if symbol not found.
+            Returns original 1H data if timeframe is "1H".
+        """
+        df = self.get_df(symbol)
+        if df is None:
+            return None
+
+        if timeframe == "1H":
+            return df  # Return original data as-is
+
+        # Map timeframe string to pandas offset alias
+        tf_map = {
+            "2H": "2h", "4H": "4h", "6H": "6h",
+            "12H": "12h", "1D": "1D", "1W": "1W",
+        }
+        offset = tf_map.get(timeframe)
+        if not offset:
+            return df  # Unknown timeframe, fall back to 1H
+
+        # Resample OHLCV using standard aggregation rules
+        resampled = (
+            df.set_index("timestamp")
+            .resample(offset)
+            .agg({
+                "open": "first",
+                "high": "max",
+                "low": "min",
+                "close": "last",
+                "volume": "sum",
+            })
+            .dropna()
+            .reset_index()
+        )
+
+        return resampled
+
     def data_range(self) -> str:
         """Overall data range."""
         if not self._coin_info:

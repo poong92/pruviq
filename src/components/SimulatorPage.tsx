@@ -203,6 +203,9 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
   const [perCoinUsdt, setPerCoinUsdt] = useState(60);
   const [leverage, setLeverage] = useState(5);
 
+  // Timeframe
+  const [timeframe, setTimeframe] = useState<string>('1H');
+
   // Chart
   const [chartSymbol, setChartSymbol] = useState('BTCUSDT');
   const [chartData, setChartData] = useState<OhlcvBar[]>([]);
@@ -220,6 +223,7 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
 
   // Mobile tab
   const [mobileTab, setMobileTab] = useState<'chart' | 'config' | 'results'>('config');
+  const scrollPositions = useRef<Record<string, number>>({});
 
   // Quick Start banner
   const [showQuickStart, setShowQuickStart] = useState(true);
@@ -327,11 +331,20 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
     }).catch(() => {});
   }, [buildShareUrl]);
 
+  // Mobile tab change with scroll position save/restore
+  const handleMobileTabChange = useCallback((newTab: typeof mobileTab) => {
+    scrollPositions.current[mobileTab] = window.scrollY;
+    setMobileTab(newTab);
+    requestAnimationFrame(() => {
+      window.scrollTo(0, scrollPositions.current[newTab] || 0);
+    });
+  }, [mobileTab]);
+
   // Scroll to builder panel (for Modify & Re-run)
   const scrollToBuilder = useCallback(() => {
     builderRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    setMobileTab('config');
-  }, []);
+    handleMobileTabChange('config');
+  }, [handleMobileTabChange]);
 
   // Quick Adjust re-run (with changed SL/TP/coins)
   const quickAdjustRerun = useCallback((newSl: number, newTp: number, newTopN: number) => {
@@ -353,7 +366,7 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
       return;
     }
 
-    fetch(`${API_URL}/ohlcv/${chartSymbol}?limit=500`)
+    fetch(`${API_URL}/ohlcv/${chartSymbol}?limit=500&timeframe=${timeframe}`)
       .then((r) => r.json())
       .then((data) => {
         if (data.data || data.bars) {
@@ -367,7 +380,7 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
         setChartError('Failed to load chart data');
       })
       .finally(() => { setChartLoading(false); });
-  }, [chartSymbol, apiReady, demoMode]);
+  }, [chartSymbol, apiReady, demoMode, timeframe]);
 
   useEffect(() => {
     if (!chartSymbol) return;
@@ -398,6 +411,7 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
         const demoData = await fetch('/data/demo-backtest-result.json').then((r) => r.json());
         setResult({ ...demoData, _isDemo: true });
         setResultTab('summary');
+        scrollPositions.current[mobileTab] = window.scrollY;
         setMobileTab('results');
       } catch { setError('Demo data load failed'); }
       finally { setIsRunning(false); }
@@ -419,6 +433,7 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
     const body: Record<string, any> = {
       name: 'Custom Strategy',
       direction,
+      timeframe,
       indicators: indicatorConfigs,
       entry: { type: 'AND', conditions: entryConditions },
       avoid_hours: Array.from(avoidHours).sort((a, b) => a - b),
@@ -455,6 +470,7 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
       const data: BacktestResult = await res.json();
       setResult(data);
       setResultTab('summary');
+      scrollPositions.current[mobileTab] = window.scrollY;
       setMobileTab('results');
       // Save to history (max 3)
       setHistory((prev) => {
@@ -478,7 +494,7 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
       clearInterval(progressInterval);
       setIsRunning(false);
     }
-  }, [demoMode, selectedIndicators, indicatorParams, conditions, direction, slPct, tpPct, maxBars, avoidHours, coinMode, topN, selectedCoins, startDate, endDate, perCoinUsdt, leverage]);
+  }, [demoMode, selectedIndicators, indicatorParams, conditions, direction, slPct, tpPct, maxBars, avoidHours, coinMode, topN, selectedCoins, startDate, endDate, perCoinUsdt, leverage, timeframe]);
 
   // ─── Load preset ───
   const loadPreset = useCallback(async (presetId: string) => {
@@ -558,7 +574,7 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
         {(['chart', 'config', 'results'] as const).map((tab) => (
           <button
             key={tab}
-            onClick={() => setMobileTab(tab)}
+            onClick={() => handleMobileTabChange(tab)}
             class={`flex-1 py-2.5 text-xs font-mono uppercase tracking-wider transition-colors
               ${mobileTab === tab ? 'font-bold border-b-2' : 'text-[--color-text-muted] hover:text-[--color-text]'}`}
             style={mobileTab === tab ? { color: COLORS.accent, borderColor: COLORS.accent, background: COLORS.accentBg } : undefined}
@@ -607,6 +623,7 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
             trades={result?.trades}
             error={chartError}
             onRetry={loadChart}
+            timeframe={timeframe}
           />
         </div>
 
@@ -638,12 +655,15 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
             selectedCoins={selectedCoins} setSelectedCoins={setSelectedCoins}
             coinSearch={coinSearch} setCoinSearch={setCoinSearch}
             filteredCoins={filteredCoins}
+            allCoinsCount={allCoins.length}
             avoidHours={avoidHours} setAvoidHours={setAvoidHours}
             presets={presets}
             activePreset={activePreset}
             onSelectPreset={onSelectPreset}
             presetLoading={presetLoading}
             presetError={presetError}
+            timeframe={timeframe}
+            setTimeframe={setTimeframe}
             isRunning={isRunning}
             progressStep={progressStep}
             progressLabels={progressLabels}

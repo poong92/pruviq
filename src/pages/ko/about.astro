@@ -16,10 +16,18 @@ const t = useTranslations('ko');
         {t('about.mission')}
       </p>
 
-      <!-- Team -->
+      <!-- Builder -->
       <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] mb-12">
         <p class="font-mono text-[--color-accent] text-xs tracking-wider mb-4">{t('about.team_tag')}</p>
         <p class="text-[--color-text-muted] text-sm leading-relaxed">{t('about.team_desc')}</p>
+
+        <!-- Builder info -->
+        <div class="mt-6 pt-6 border-t border-[--color-border]">
+          <p class="font-bold text-base">{t('about.builder_name')}</p>
+          <p class="text-[--color-text-muted] text-sm mt-1">{t('about.builder_bio')}</p>
+        </div>
+
+        <!-- Stats -->
         <div class="grid grid-cols-3 gap-2 sm:gap-4 mt-6 pt-6 border-t border-[--color-border]">
           <div class="text-center">
             <p class="font-mono text-[--color-accent] text-xl font-bold">{t('about.team_stat1_val')}</p>
