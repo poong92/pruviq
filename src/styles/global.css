@@ -119,6 +119,10 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible {
   outline-offset: 2px;
   border-radius: 2px;
 }
+/* Hide outline on programmatic focus (mobile menu auto-focus) */
+#mobile-menu a:focus:not(:focus-visible) {
+  outline: none;
+}
 
 /* Reduced motion preference */
 @media (prefers-reduced-motion: reduce) {
