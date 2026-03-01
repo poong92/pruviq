@@ -67,6 +67,7 @@ const coinActiveStyle = { background: COLORS.accent, color: '#fff', borderColor:
 const shortActiveStyle = { background: COLORS.red, color: '#fff', borderColor: COLORS.red, boxShadow: `0 0 12px ${COLORS.redGlowStrong}` };
 const longActiveStyle = { background: COLORS.green, color: '#fff', borderColor: COLORS.green, boxShadow: `0 0 12px ${COLORS.greenGlow}` };
 const avoidActiveStyle = { background: COLORS.red, color: '#fff', borderColor: COLORS.red, boxShadow: `0 0 6px ${COLORS.redGlow}` };
+const tfActiveStyle = { background: 'rgba(59,130,246,0.15)', color: COLORS.accent, borderColor: COLORS.accent, fontWeight: 'bold' as const };
 const runStyle = { background: COLORS.accent, color: '#fff', boxShadow: `0 0 20px ${COLORS.accentGlow}` };
 const runDisabledStyle = { background: COLORS.disabled, color: COLORS.disabledText };
 
@@ -188,8 +189,9 @@ export default function BuilderPanel(props: Props) {
                     onClick={() => props.setTimeframe(tf)}
                     class={`flex-1 py-1 text-xs font-mono rounded border transition-colors cursor-pointer
                       ${props.timeframe === tf
-                        ? 'bg-[--color-accent]/20 text-[--color-accent] border-[--color-accent]/50 font-bold'
-                        : 'bg-[--color-bg-tooltip] text-[--color-text-muted] border-[--color-border] hover:border-[--color-accent]/30 hover:text-[--color-text]'}`}
+                        ? ''
+                        : 'bg-[--color-bg-tooltip] text-[--color-text-muted] border-[--color-border] hover:text-[--color-text]'}`}
+                    style={props.timeframe === tf ? tfActiveStyle : undefined}
                   >
                     {tf}
                   </button>
