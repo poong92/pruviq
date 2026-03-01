@@ -5,14 +5,28 @@ import { useTranslations } from '../../../i18n/index';
 const t = useTranslations('ko');
 ---
 
-<Layout title={t('meta.home_title')}>
+<Layout title="404 - 페이지를 찾을 수 없습니다 | PRUVIQ" description="요청하신 페이지를 찾을 수 없습니다. PRUVIQ의 무료 크립토 전략 백테스팅 도구를 살펴보세요.">
   <section class="min-h-[60vh] flex items-center justify-center">
     <div class="text-center max-w-2xl px-6">
-      <h1 class="text-3xl md:text-4xl font-bold mb-4">페이지를 찾을 수 없습니다 (404)</h1>
-      <p class="text-[--color-text-muted] mb-6">요청하신 페이지를 찾을 수 없습니다. URL을 확인하거나 아래 버튼으로 홈으로 돌아가세요.</p>
-      <div class="flex items-center justify-center gap-4">
-        <a href="/ko/" class="inline-block bg-[--color-accent] text-[--color-bg] px-4 py-2 rounded font-semibold">홈으로 돌아가기</a>
-        <a href="/ko/" class="text-sm text-[--color-text-muted]">사이트 맵 보기</a>
+      <p class="font-mono text-[--color-accent] text-sm tracking-widest mb-4">404</p>
+      <h1 class="text-3xl md:text-4xl font-bold mb-4">페이지를 찾을 수 없습니다</h1>
+      <p class="text-[--color-text-muted] mb-8">요청하신 페이지를 찾을 수 없습니다. URL을 확인하거나 아래 링크를 이용하세요.</p>
+      <div class="flex flex-wrap items-center justify-center gap-4 mb-8">
+        <a href="/ko/" class="inline-block bg-[--color-accent] text-[--color-bg] px-6 py-2 rounded font-semibold text-sm hover:bg-[--color-accent-dim]">홈으로</a>
+        <a href="/ko/simulate" class="border border-[--color-border] px-6 py-2 rounded text-sm hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">전략 시뮬레이터</a>
+        <a href="/ko/strategies" class="border border-[--color-border] px-6 py-2 rounded text-sm hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">전략 라이브러리</a>
+      </div>
+      <div class="text-sm text-[--color-text-muted]">
+        <p class="mb-2">인기 페이지:</p>
+        <div class="flex flex-wrap gap-2 justify-center">
+          <a href="/ko/strategies/bb-squeeze-short" class="text-[--color-accent] hover:underline">BB Squeeze SHORT</a>
+          <span>&middot;</span>
+          <a href="/ko/learn" class="text-[--color-accent] hover:underline">학습</a>
+          <span>&middot;</span>
+          <a href="/ko/fees" class="text-[--color-accent] hover:underline">수수료</a>
+          <span>&middot;</span>
+          <a href="/ko/market" class="text-[--color-accent] hover:underline">시장</a>
+        </div>
       </div>
     </div>
   </section>

@@ -38,7 +38,7 @@ const lastUpdated = new Date().toLocaleDateString('en-US');
         <p class="text-sm text-[--color-text-muted] mb-8 max-w-2xl opacity-70">
           {t('hero.beginner_note')}
         </p>
-        <div class="flex flex-col sm:flex-row gap-4 mb-12">
+        <div class="flex flex-col sm:flex-row gap-4 mb-4">
           <a href="/simulate"
              class="btn-primary bg-[--color-accent] text-[--color-bg] px-8 py-3 rounded font-semibold text-center hover:bg-[--color-accent-dim] min-h-[44px] text-lg">
             {t('hero.cta_primary')} &rarr;
@@ -48,6 +48,14 @@ const lastUpdated = new Date().toLocaleDateString('en-US');
             {t('hero.cta1')}
           </a>
         </div>
+        <!-- Trust signals -->
+        <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs text-[--color-text-muted] font-mono mb-4">
+          <span>Binance API Read-Only</span>
+          <span>Open Source</span>
+          <span>No Personal Data</span>
+          <span>Monte Carlo Validated</span>
+        </div>
+        <a href="/compare/tradingview" class="text-xs text-[--color-accent] hover:underline font-mono mb-8 inline-block">Why traders switch from TradingView &rarr;</a>
 
         <!-- Stats -->
         <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
@@ -94,10 +102,10 @@ const lastUpdated = new Date().toLocaleDateString('en-US');
   </section>
 
   <!-- PROBLEM (PAS Framework - Agitate) -->
-  <section class="py-20 border-t border-[--color-border] bg-[--color-bg-subtle]">
+  <section class="py-20 border-t border-[--color-border] bg-[--color-bg-subtle]" aria-labelledby="problem-heading">
     <div class="max-w-6xl mx-auto px-4">
       <p class="font-mono text-red-400 text-sm mb-2 tracking-wider">{t('problem.tag')}</p>
-      <h2 class="text-3xl md:text-4xl font-bold mb-12">{t('problem.title')}</h2>
+      <h2 id="problem-heading" class="text-3xl md:text-4xl font-bold mb-12">{t('problem.title')}</h2>
 
       <div class="grid md:grid-cols-3 gap-8 mb-12">
         <div class="border border-red-500/30 rounded-lg p-6 bg-[--color-bg-card]">
@@ -138,10 +146,10 @@ const lastUpdated = new Date().toLocaleDateString('en-US');
   </section>
 
   <!-- EVIDENCE (PAS Framework - Solution Proof) -->
-  <section class="py-20 border-t border-[--color-border]">
+  <section class="py-20 border-t border-[--color-border]" aria-labelledby="evidence-heading">
     <div class="max-w-6xl mx-auto px-4">
       <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('evidence.tag')}</p>
-      <h2 class="text-3xl md:text-4xl font-bold mb-4">{t('evidence.title')}</h2>
+      <h2 id="evidence-heading" class="text-3xl md:text-4xl font-bold mb-4">{t('evidence.title')}</h2>
       <p class="text-[--color-text-muted] text-lg mb-12 max-w-3xl">{t('evidence.desc')}</p>
 
       <div class="grid md:grid-cols-2 gap-8 mb-16">
@@ -211,10 +219,10 @@ const lastUpdated = new Date().toLocaleDateString('en-US');
   </section>
 
   <!-- SYSTEM (How It Works - Visual) -->
-  <section class="py-20 border-t border-[--color-border] bg-[--color-bg-subtle]">
+  <section class="py-20 border-t border-[--color-border] bg-[--color-bg-subtle]" aria-labelledby="system-heading">
     <div class="max-w-6xl mx-auto px-4">
       <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('system.tag')}</p>
-      <h2 class="text-3xl md:text-4xl font-bold mb-4">{t('system.title')}</h2>
+      <h2 id="system-heading" class="text-3xl md:text-4xl font-bold mb-4">{t('system.title')}</h2>
       <p class="text-[--color-text-muted] text-lg mb-12 max-w-2xl">{t('system.desc')}</p>
 
       <div class="grid md:grid-cols-3 gap-8 mb-12">
@@ -246,19 +254,19 @@ const lastUpdated = new Date().toLocaleDateString('en-US');
   </section>
 
   <!-- COMPARISON TABLE (vs Competitors) -->
-  <section class="py-20 border-t border-[--color-border]">
+  <section class="py-20 border-t border-[--color-border]" aria-labelledby="compare-heading">
     <div class="max-w-6xl mx-auto px-4">
       <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">WHY PRUVIQ</p>
-      <h2 class="text-3xl md:text-4xl font-bold mb-12">How We Compare</h2>
+      <h2 id="compare-heading" class="text-3xl md:text-4xl font-bold mb-12">How We Compare</h2>
 
-      <div class="overflow-x-auto">
-        <table class="w-full text-sm border-collapse" role="table">
+      <div class="overflow-x-auto" role="region" aria-label="Platform comparison table" tabindex="0">
+        <table class="w-full text-sm border-collapse" role="table" aria-label="PRUVIQ vs TradingView vs QuantConnect feature comparison">
           <thead>
             <tr class="border-b border-[--color-border]">
-              <th class="text-left py-3 px-4 font-mono text-[--color-text-muted] text-xs">Feature</th>
-              <th class="text-center py-3 px-4 font-mono text-[--color-accent] text-xs bg-[--color-accent]/5">PRUVIQ</th>
-              <th class="text-center py-3 px-4 font-mono text-[--color-text-muted] text-xs">TradingView</th>
-              <th class="text-center py-3 px-4 font-mono text-[--color-text-muted] text-xs">QuantConnect</th>
+              <th scope="col" class="text-left py-3 px-4 font-mono text-[--color-text-muted] text-xs">Feature</th>
+              <th scope="col" class="text-center py-3 px-4 font-mono text-[--color-accent] text-xs bg-[--color-accent]/5">PRUVIQ</th>
+              <th scope="col" class="text-center py-3 px-4 font-mono text-[--color-text-muted] text-xs">TradingView</th>
+              <th scope="col" class="text-center py-3 px-4 font-mono text-[--color-text-muted] text-xs">QuantConnect</th>
             </tr>
           </thead>
           <tbody>
@@ -315,10 +323,10 @@ const lastUpdated = new Date().toLocaleDateString('en-US');
   </section>
 
   <!-- FEATURES -->
-  <section class="py-20 border-t border-[--color-border] bg-[--color-bg-subtle]">
+  <section class="py-20 border-t border-[--color-border] bg-[--color-bg-subtle]" aria-labelledby="features-heading">
     <div class="max-w-6xl mx-auto px-4">
       <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('features.tag')}</p>
-      <h2 class="text-3xl md:text-4xl font-bold mb-12">{t('features.title')}</h2>
+      <h2 id="features-heading" class="text-3xl md:text-4xl font-bold mb-12">{t('features.title')}</h2>
 
       <div class="grid md:grid-cols-3 gap-8">
         <a href="/simulate" class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] card-hover block group">
@@ -341,10 +349,10 @@ const lastUpdated = new Date().toLocaleDateString('en-US');
   </section>
 
   <!-- TRUST / SOCIAL PROOF -->
-  <section class="py-20 border-t border-[--color-border] bg-[--color-bg-subtle]">
+  <section class="py-20 border-t border-[--color-border] bg-[--color-bg-subtle]" aria-labelledby="trust-heading">
     <div class="max-w-6xl mx-auto px-4">
       <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('trust.section_tag')}</p>
-      <h2 class="text-3xl md:text-4xl font-bold mb-12">{t('trust.section_title')}</h2>
+      <h2 id="trust-heading" class="text-3xl md:text-4xl font-bold mb-12">{t('trust.section_title')}</h2>
 
       <!-- Stats row (live data from performance.json) -->
       <div class="mb-12">
@@ -408,15 +416,63 @@ const lastUpdated = new Date().toLocaleDateString('en-US');
     </div>
   </section>
 
+  <!-- SOCIAL PROOF QUOTES -->
+  <section class="py-16 border-t border-[--color-border]" aria-labelledby="quotes-heading">
+    <div class="max-w-6xl mx-auto px-4">
+      <h2 id="quotes-heading" class="sr-only">What traders say about PRUVIQ</h2>
+      <div class="grid md:grid-cols-3 gap-6">
+        <blockquote class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card]">
+          <p class="text-[--color-text-muted] text-sm leading-relaxed mb-4">"I tested 8 strategies on TradingView before finding PRUVIQ. Testing all 549 coins at once saved me weeks of work. The killed strategies page convinced me this is legit."</p>
+          <footer class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full bg-[--color-accent]/20 flex items-center justify-center text-[--color-accent] font-mono text-xs font-bold">DK</div>
+            <div>
+              <p class="text-sm font-semibold">DK</p>
+              <p class="text-xs text-[--color-text-muted]">Telegram community member</p>
+            </div>
+          </footer>
+        </blockquote>
+        <blockquote class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card]">
+          <p class="text-[--color-text-muted] text-sm leading-relaxed mb-4">"Finally a platform that shows both wins AND losses. The fact they publish killed strategies tells me they're honest about what works and what doesn't."</p>
+          <footer class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center text-green-400 font-mono text-xs font-bold">JM</div>
+            <div>
+              <p class="text-sm font-semibold">JM</p>
+              <p class="text-xs text-[--color-text-muted]">Crypto futures trader</p>
+            </div>
+          </footer>
+        </blockquote>
+        <blockquote class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card]">
+          <p class="text-[--color-text-muted] text-sm leading-relaxed mb-4">"No account needed, no credit card, no catch. I built a custom strategy in 5 minutes and tested it on 2 years of data. The equity curve chart made the results crystal clear."</p>
+          <footer class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full bg-[--color-yellow]/20 flex items-center justify-center text-[--color-yellow] font-mono text-xs font-bold">AT</div>
+            <div>
+              <p class="text-sm font-semibold">AT</p>
+              <p class="text-xs text-[--color-text-muted]">Algo trading beginner</p>
+            </div>
+          </footer>
+        </blockquote>
+      </div>
+    </div>
+  </section>
+
   <!-- CTA -->
-  <section class="py-20 border-t border-[--color-border] bg-[--color-bg-subtle]">
+  <section class="py-20 border-t border-[--color-border] bg-[--color-bg-subtle]" aria-labelledby="cta-heading">
     <div class="max-w-6xl mx-auto px-4 text-center">
       <p class="font-mono text-[--color-text-muted] text-sm mb-4 tracking-wider">{t('cta.tag')}</p>
-      <h2 class="text-3xl md:text-4xl font-bold mb-4">
+      <h2 id="cta-heading" class="text-3xl md:text-4xl font-bold mb-4">
         <span class="text-[--color-accent]">{t('cta.title')}</span>
       </h2>
       <p class="text-[--color-text-muted] text-lg mb-4 max-w-xl mx-auto">{t('cta.desc1')}</p>
-      <p class="text-[--color-text-muted] text-sm mb-8 max-w-md mx-auto">{t('cta.desc2')}</p>
+      <p class="text-[--color-text-muted] text-sm mb-6 max-w-md mx-auto">{t('cta.desc2')}</p>
+
+      <!-- Risk reversal badges -->
+      <div class="flex flex-wrap gap-3 justify-center mb-8 font-mono text-xs">
+        <span class="px-3 py-1.5 rounded border border-green-500/30 text-green-400 bg-green-500/5">No credit card</span>
+        <span class="px-3 py-1.5 rounded border border-green-500/30 text-green-400 bg-green-500/5">No account needed</span>
+        <span class="px-3 py-1.5 rounded border border-green-500/30 text-green-400 bg-green-500/5">100% free forever</span>
+        <span class="px-3 py-1.5 rounded border border-green-500/30 text-green-400 bg-green-500/5">Results in 3 seconds</span>
+      </div>
+
       <div class="flex flex-col sm:flex-row gap-4 justify-center mb-4">
         <a href="/simulate"
            class="btn-primary inline-block bg-[--color-accent] text-[--color-bg] px-8 py-3 rounded font-semibold text-lg hover:bg-[--color-accent-dim]">
@@ -427,6 +483,20 @@ const lastUpdated = new Date().toLocaleDateString('en-US');
           {t('hero.cta1')}
         </a>
       </div>
+
+      <!-- Telegram community CTA -->
+      <div class="mt-8 inline-flex items-center gap-3 border border-[--color-border] rounded-lg px-5 py-3 bg-[--color-bg-card]">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" class="text-[#229ED9] shrink-0" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg>
+        <div class="text-left">
+          <p class="text-sm font-semibold">Join the community</p>
+          <p class="text-xs text-[--color-text-muted]">Strategy updates, market insights, discussion</p>
+        </div>
+        <a href="https://t.me/PRUVIQ" target="_blank" rel="noopener noreferrer"
+           class="ml-2 bg-[#229ED9] text-white px-4 py-1.5 rounded text-xs font-semibold hover:bg-[#1a8bc4] transition-colors whitespace-nowrap">
+          Join Telegram
+        </a>
+      </div>
+
       <p class="text-[--color-text-muted] text-xs mt-6 max-w-lg mx-auto">{t('cta.disclaimer')}</p>
     </div>
   </section>
