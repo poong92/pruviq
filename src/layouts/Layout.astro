@@ -238,6 +238,32 @@ const isActive = (match: string) => basePath.startsWith(match);
         "articleSection": category || "education"
       })} />
     )}
+    <!-- JSON-LD BreadcrumbList -->
+    {basePath !== '/' && (
+      <script type="application/ld+json" set:html={JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://pruviq.com/" },
+          { "@type": "ListItem", "position": 2, "name": title, "item": canonicalURL.href }
+        ]
+      })} />
+    )}
+    <!-- JSON-LD HowTo (homepage) -->
+    {type === 'website' && basePath === '/' && (
+      <script type="application/ld+json" set:html={JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "HowTo",
+        "name": lang === 'ko' ? 'PRUVIQ로 크립토 전략 백테스트하는 방법' : 'How to Backtest a Crypto Strategy with PRUVIQ',
+        "description": lang === 'ko' ? '3단계로 트레이딩 전략을 무료로 검증하세요' : 'Verify your trading strategy in 3 steps for free',
+        "totalTime": "PT3M",
+        "step": [
+          { "@type": "HowToStep", "position": 1, "name": "Select", "text": "Pick a strategy from the library or build your own using the no-code builder with 11+ indicators." },
+          { "@type": "HowToStep", "position": 2, "name": "Simulate", "text": "Run it on 549+ coins with 2+ years of historical data. Fees and slippage included." },
+          { "@type": "HowToStep", "position": 3, "name": "Verify", "text": "Review win rate, drawdown, profit factor, and losing streaks. Then decide if it's worth trading." }
+        ]
+      })} />
+    )}
 </head>
   <body class="min-h-screen">
     <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:bg-[--color-accent] focus:text-white focus:rounded">
@@ -337,7 +363,33 @@ const isActive = (match: string) => basePath.startsWith(match);
       </div>
     </footer>
 
+    <!-- Sticky CTA Bar (appears on scroll) -->
+    <div id="sticky-cta" class="fixed bottom-0 left-0 right-0 z-40 translate-y-full transition-transform duration-300 border-t border-[--color-border] bg-[--color-bg]/95 backdrop-blur-md" role="complementary" aria-label="Quick action bar">
+      <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+        <p class="text-sm text-[--color-text-muted] hidden sm:block">{t('hero.subtitle')}</p>
+        <a href={simulatePath} class="bg-[--color-accent] text-[--color-bg] px-6 py-2 rounded font-semibold text-sm hover:bg-[--color-accent-dim] whitespace-nowrap shrink-0">
+          {t('hero.cta_primary')} &rarr;
+        </a>
+      </div>
+    </div>
+
     <script type="module" src="/scripts/layout-client.js" defer></script>
+    <script>
+      /* Sticky CTA bar - show after scrolling past hero */
+      (function() {
+        var bar = document.getElementById('sticky-cta');
+        if (!bar) return;
+        var shown = false;
+        function check() {
+          var shouldShow = window.scrollY > 600;
+          if (shouldShow !== shown) {
+            shown = shouldShow;
+            bar.style.transform = shown ? 'translateY(0)' : 'translateY(100%)';
+          }
+        }
+        window.addEventListener('scroll', check, { passive: true });
+      })();
+    </script>
     {cfToken && (
       <>
         <script>

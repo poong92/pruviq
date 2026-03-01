@@ -85,6 +85,227 @@ const lastUpdated = new Date().toLocaleDateString('en-US');
     </div>
   </section>
 
+  <!-- PROBLEM (PAS Framework - Agitate) -->
+  <section class="py-20 border-t border-[--color-border] bg-[--color-bg-subtle]">
+    <div class="max-w-6xl mx-auto px-4">
+      <p class="font-mono text-red-400 text-sm mb-2 tracking-wider">{t('problem.tag')}</p>
+      <h2 class="text-3xl md:text-4xl font-bold mb-12">{t('problem.title')}</h2>
+
+      <div class="grid md:grid-cols-3 gap-8 mb-12">
+        <div class="border border-red-500/30 rounded-lg p-6 bg-[--color-bg-card]">
+          <div class="text-red-400 font-mono text-xs font-bold mb-3 flex items-center gap-2">
+            <span class="inline-block w-2 h-2 rounded-full bg-red-400"></span>
+            CASE STUDY #1
+          </div>
+          <h3 class="font-bold text-lg mb-2">{t('problem.card1_title')}</h3>
+          <p class="text-[--color-text-muted] text-sm leading-relaxed mb-3">{t('problem.card1_desc')}</p>
+          <p class="text-xs text-[--color-text-muted] opacity-60 italic">{t('problem.card1_source')}</p>
+        </div>
+        <div class="border border-red-500/30 rounded-lg p-6 bg-[--color-bg-card]">
+          <div class="text-red-400 font-mono text-xs font-bold mb-3 flex items-center gap-2">
+            <span class="inline-block w-2 h-2 rounded-full bg-red-400"></span>
+            CASE STUDY #2
+          </div>
+          <h3 class="font-bold text-lg mb-2">{t('problem.card2_title')}</h3>
+          <p class="text-[--color-text-muted] text-sm leading-relaxed mb-3">{t('problem.card2_desc')}</p>
+          <p class="text-xs text-[--color-text-muted] opacity-60 italic">{t('problem.card2_source')}</p>
+        </div>
+        <div class="border border-red-500/30 rounded-lg p-6 bg-[--color-bg-card]">
+          <div class="text-red-400 font-mono text-xs font-bold mb-3 flex items-center gap-2">
+            <span class="inline-block w-2 h-2 rounded-full bg-red-400"></span>
+            CASE STUDY #3
+          </div>
+          <h3 class="font-bold text-lg mb-2">{t('problem.card3_title')}</h3>
+          <p class="text-[--color-text-muted] text-sm leading-relaxed mb-3">{t('problem.card3_desc')}</p>
+          <p class="text-xs text-[--color-text-muted] opacity-60 italic">{t('problem.card3_source')}</p>
+        </div>
+      </div>
+
+      <div class="text-center">
+        <p class="text-xl md:text-2xl font-bold">
+          {t('problem.hook')} <span class="text-[--color-accent]">{t('problem.hook_accent')}</span>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- EVIDENCE (PAS Framework - Solution Proof) -->
+  <section class="py-20 border-t border-[--color-border]">
+    <div class="max-w-6xl mx-auto px-4">
+      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('evidence.tag')}</p>
+      <h2 class="text-3xl md:text-4xl font-bold mb-4">{t('evidence.title')}</h2>
+      <p class="text-[--color-text-muted] text-lg mb-12 max-w-3xl">{t('evidence.desc')}</p>
+
+      <div class="grid md:grid-cols-2 gap-8 mb-16">
+        <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card]">
+          <div class="font-mono text-[--color-accent] text-xs font-bold mb-3">STEP 01</div>
+          <h3 class="font-bold text-lg mb-2">{t('evidence.step1_title')}</h3>
+          <p class="text-[--color-text-muted] text-sm leading-relaxed">{t('evidence.step1_desc')}</p>
+        </div>
+        <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card]">
+          <div class="font-mono text-[--color-accent] text-xs font-bold mb-3">STEP 02</div>
+          <h3 class="font-bold text-lg mb-2">{t('evidence.step2_title')}</h3>
+          <p class="text-[--color-text-muted] text-sm leading-relaxed">{t('evidence.step2_desc')}</p>
+        </div>
+        <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card]">
+          <div class="font-mono text-[--color-accent] text-xs font-bold mb-3">STEP 03</div>
+          <h3 class="font-bold text-lg mb-2">{t('evidence.step3_title')}</h3>
+          <p class="text-[--color-text-muted] text-sm leading-relaxed">{t('evidence.step3_desc')}</p>
+        </div>
+        <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card]">
+          <div class="font-mono text-[--color-accent] text-xs font-bold mb-3">STEP 04</div>
+          <h3 class="font-bold text-lg mb-2">{t('evidence.step4_title')}</h3>
+          <p class="text-[--color-text-muted] text-sm leading-relaxed">{t('evidence.step4_desc')}</p>
+        </div>
+      </div>
+
+      <!-- The $14K Lesson -->
+      <div class="border border-[--color-accent]/30 rounded-lg p-8 bg-[--color-bg-card] max-w-3xl mx-auto mb-12">
+        <p class="font-mono text-[--color-accent] text-xs font-bold mb-4">{t('evidence.lesson_tag')}</p>
+        <p class="text-[--color-text-muted] leading-relaxed mb-3">
+          {t('evidence.lesson1')} <span class="text-red-400 font-bold text-lg">{t('evidence.lesson_loss')}</span> {t('evidence.lesson1_end')}
+        </p>
+        <p class="text-[--color-text-muted] leading-relaxed mb-3">{t('evidence.lesson2')}</p>
+        <p class="text-[--color-text-muted] leading-relaxed mb-4">{t('evidence.lesson3')}</p>
+        <p class="text-[--color-accent] font-bold text-lg italic">{t('evidence.lesson_rule')}</p>
+      </div>
+
+      <!-- What we publish vs don't promise -->
+      <div class="grid md:grid-cols-2 gap-8 mb-12">
+        <div class="border border-green-500/30 rounded-lg p-6 bg-[--color-bg-card]">
+          <p class="font-mono text-green-400 text-xs font-bold mb-4">{t('evidence.publish_tag')}</p>
+          <ul class="space-y-2 text-sm text-[--color-text-muted]">
+            <li class="flex items-start gap-2"><span class="text-green-400 shrink-0 mt-0.5">&#10003;</span> {t('evidence.publish1')}</li>
+            <li class="flex items-start gap-2"><span class="text-green-400 shrink-0 mt-0.5">&#10003;</span> {t('evidence.publish2')}</li>
+            <li class="flex items-start gap-2"><span class="text-green-400 shrink-0 mt-0.5">&#10003;</span> {t('evidence.publish3')}</li>
+            <li class="flex items-start gap-2"><span class="text-green-400 shrink-0 mt-0.5">&#10003;</span> {t('evidence.publish4')}</li>
+            <li class="flex items-start gap-2"><span class="text-green-400 shrink-0 mt-0.5">&#10003;</span> {t('evidence.publish5')}</li>
+          </ul>
+        </div>
+        <div class="border border-red-500/30 rounded-lg p-6 bg-[--color-bg-card]">
+          <p class="font-mono text-red-400 text-xs font-bold mb-4">{t('evidence.nopromise_tag')}</p>
+          <ul class="space-y-2 text-sm text-[--color-text-muted]">
+            <li class="flex items-start gap-2"><span class="text-red-400 shrink-0 mt-0.5">&#10007;</span> {t('evidence.nopromise1')}</li>
+            <li class="flex items-start gap-2"><span class="text-red-400 shrink-0 mt-0.5">&#10007;</span> {t('evidence.nopromise2')}</li>
+            <li class="flex items-start gap-2"><span class="text-red-400 shrink-0 mt-0.5">&#10007;</span> {t('evidence.nopromise3')}</li>
+            <li class="flex items-start gap-2"><span class="text-red-400 shrink-0 mt-0.5">&#10007;</span> {t('evidence.nopromise4')}</li>
+            <li class="flex items-start gap-2"><span class="text-red-400 shrink-0 mt-0.5">&#10007;</span> {t('evidence.nopromise5')}</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="text-center">
+        <a href="/demo" class="inline-block bg-[--color-accent] text-[--color-bg] px-8 py-3 rounded font-semibold text-lg hover:bg-[--color-accent-dim]">
+          {t('evidence.try_cta')} &rarr;
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- SYSTEM (How It Works - Visual) -->
+  <section class="py-20 border-t border-[--color-border] bg-[--color-bg-subtle]">
+    <div class="max-w-6xl mx-auto px-4">
+      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('system.tag')}</p>
+      <h2 class="text-3xl md:text-4xl font-bold mb-4">{t('system.title')}</h2>
+      <p class="text-[--color-text-muted] text-lg mb-12 max-w-2xl">{t('system.desc')}</p>
+
+      <div class="grid md:grid-cols-3 gap-8 mb-12">
+        <div class="relative">
+          <div class="font-mono text-[--color-accent] text-5xl font-bold opacity-20 absolute -top-4 -left-2">1</div>
+          <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] relative">
+            <h3 class="font-mono text-[--color-accent] font-bold mb-2">{t('system.step1')}</h3>
+            <p class="text-[--color-text-muted] text-sm leading-relaxed">{t('system.step1_desc')}</p>
+          </div>
+          <div class="hidden md:block absolute top-1/2 -right-4 text-[--color-text-muted] text-2xl">&rarr;</div>
+        </div>
+        <div class="relative">
+          <div class="font-mono text-[--color-accent] text-5xl font-bold opacity-20 absolute -top-4 -left-2">2</div>
+          <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] relative">
+            <h3 class="font-mono text-[--color-accent] font-bold mb-2">{t('system.step2')}</h3>
+            <p class="text-[--color-text-muted] text-sm leading-relaxed">{t('system.step2_desc')}</p>
+          </div>
+          <div class="hidden md:block absolute top-1/2 -right-4 text-[--color-text-muted] text-2xl">&rarr;</div>
+        </div>
+        <div class="relative">
+          <div class="font-mono text-[--color-accent] text-5xl font-bold opacity-20 absolute -top-4 -left-2">3</div>
+          <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] relative">
+            <h3 class="font-mono text-[--color-accent] font-bold mb-2">{t('system.step3')}</h3>
+            <p class="text-[--color-text-muted] text-sm leading-relaxed">{t('system.step3_desc')}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMPARISON TABLE (vs Competitors) -->
+  <section class="py-20 border-t border-[--color-border]">
+    <div class="max-w-6xl mx-auto px-4">
+      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">WHY PRUVIQ</p>
+      <h2 class="text-3xl md:text-4xl font-bold mb-12">How We Compare</h2>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm border-collapse" role="table">
+          <thead>
+            <tr class="border-b border-[--color-border]">
+              <th class="text-left py-3 px-4 font-mono text-[--color-text-muted] text-xs">Feature</th>
+              <th class="text-center py-3 px-4 font-mono text-[--color-accent] text-xs bg-[--color-accent]/5">PRUVIQ</th>
+              <th class="text-center py-3 px-4 font-mono text-[--color-text-muted] text-xs">TradingView</th>
+              <th class="text-center py-3 px-4 font-mono text-[--color-text-muted] text-xs">QuantConnect</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="border-b border-[--color-border]/50">
+              <td class="py-3 px-4">No-code strategy builder</td>
+              <td class="py-3 px-4 text-center text-green-400 bg-[--color-accent]/5">&#10003;</td>
+              <td class="py-3 px-4 text-center text-red-400">&#10007; Pine Script</td>
+              <td class="py-3 px-4 text-center text-red-400">&#10007; Python/C#</td>
+            </tr>
+            <tr class="border-b border-[--color-border]/50">
+              <td class="py-3 px-4">549+ coins simultaneously</td>
+              <td class="py-3 px-4 text-center text-green-400 bg-[--color-accent]/5">&#10003;</td>
+              <td class="py-3 px-4 text-center text-red-400">&#10007; 1 at a time</td>
+              <td class="py-3 px-4 text-center text-yellow-400">Limited</td>
+            </tr>
+            <tr class="border-b border-[--color-border]/50">
+              <td class="py-3 px-4">Publishes failures</td>
+              <td class="py-3 px-4 text-center text-green-400 bg-[--color-accent]/5">&#10003;</td>
+              <td class="py-3 px-4 text-center text-red-400">&#10007;</td>
+              <td class="py-3 px-4 text-center text-red-400">&#10007;</td>
+            </tr>
+            <tr class="border-b border-[--color-border]/50">
+              <td class="py-3 px-4">Real trading verification</td>
+              <td class="py-3 px-4 text-center text-green-400 bg-[--color-accent]/5">&#10003; Live</td>
+              <td class="py-3 px-4 text-center text-red-400">&#10007;</td>
+              <td class="py-3 px-4 text-center text-yellow-400">Paper only</td>
+            </tr>
+            <tr class="border-b border-[--color-border]/50">
+              <td class="py-3 px-4">Realistic fees & slippage</td>
+              <td class="py-3 px-4 text-center text-green-400 bg-[--color-accent]/5">&#10003;</td>
+              <td class="py-3 px-4 text-center text-yellow-400">Basic</td>
+              <td class="py-3 px-4 text-center text-green-400">&#10003;</td>
+            </tr>
+            <tr class="border-b border-[--color-border]/50">
+              <td class="py-3 px-4">Free tier</td>
+              <td class="py-3 px-4 text-center text-green-400 bg-[--color-accent]/5">100% Free</td>
+              <td class="py-3 px-4 text-center text-yellow-400">$14.95/mo+</td>
+              <td class="py-3 px-4 text-center text-yellow-400">Limited</td>
+            </tr>
+            <tr>
+              <td class="py-3 px-4">No account required</td>
+              <td class="py-3 px-4 text-center text-green-400 bg-[--color-accent]/5">&#10003;</td>
+              <td class="py-3 px-4 text-center text-red-400">&#10007;</td>
+              <td class="py-3 px-4 text-center text-red-400">&#10007;</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="mt-8 text-center">
+        <a href="/compare/tradingview" class="text-sm text-[--color-accent] hover:underline">See detailed comparison &rarr;</a>
+      </div>
+    </div>
+  </section>
+
   <!-- FEATURES -->
   <section class="py-20 border-t border-[--color-border] bg-[--color-bg-subtle]">
     <div class="max-w-6xl mx-auto px-4">
@@ -107,38 +328,6 @@ const lastUpdated = new Date().toLocaleDateString('en-US');
           <h3 class="font-bold text-lg mb-2 group-hover:text-[--color-accent] transition-colors">{t('features.card3_title')}</h3>
           <p class="text-[--color-text-muted] text-sm leading-relaxed">{t('features.card3_desc')}</p>
         </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- HOW IT WORKS -->
-  <section class="py-20 border-t border-[--color-border]">
-    <div class="max-w-6xl mx-auto px-4">
-      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('how.tag')}</p>
-      <h2 class="text-3xl md:text-4xl font-bold mb-12">{t('how.title')}</h2>
-
-      <div class="grid md:grid-cols-3 gap-8">
-        <div class="flex gap-4">
-          <div class="font-mono text-[--color-accent] text-3xl font-bold shrink-0 w-12">01</div>
-          <div>
-            <h3 class="font-bold text-lg mb-2">{t('how.step1')}</h3>
-            <p class="text-[--color-text-muted] text-sm leading-relaxed">{t('how.step1_desc')}</p>
-          </div>
-        </div>
-        <div class="flex gap-4">
-          <div class="font-mono text-[--color-accent] text-3xl font-bold shrink-0 w-12">02</div>
-          <div>
-            <h3 class="font-bold text-lg mb-2">{t('how.step2')}</h3>
-            <p class="text-[--color-text-muted] text-sm leading-relaxed">{t('how.step2_desc')}</p>
-          </div>
-        </div>
-        <div class="flex gap-4">
-          <div class="font-mono text-[--color-accent] text-3xl font-bold shrink-0 w-12">03</div>
-          <div>
-            <h3 class="font-bold text-lg mb-2">{t('how.step3')}</h3>
-            <p class="text-[--color-text-muted] text-sm leading-relaxed">{t('how.step3_desc')}</p>
-          </div>
-        </div>
       </div>
     </div>
   </section>

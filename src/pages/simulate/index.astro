@@ -6,7 +6,7 @@ const t = useTranslations('en');
 ---
 
 <Layout title={t('meta.builder_title')} description={t('meta.builder_desc')}>
-  <!-- Onboarding header (visible before JS loads, hidden after) -->
+  <!-- Onboarding header -->
   <section id="simulator-onboarding" class="py-6 md:py-8">
     <div class="max-w-[1400px] mx-auto px-4">
       <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-4">
@@ -19,8 +19,9 @@ const t = useTranslations('en');
         </div>
         <div class="flex items-center gap-3 shrink-0">
           <a href="/simulate?preset=bb-squeeze-short"
-             class="inline-flex items-center gap-2 bg-[--color-accent] text-[--color-bg] px-4 py-2 rounded font-semibold text-sm hover:bg-[--color-accent-dim]">
-            Try BB Squeeze (Verified) &rarr;
+             class="inline-flex items-center gap-2 bg-[--color-accent] text-[--color-bg] px-4 py-2 rounded font-semibold text-sm hover:bg-[--color-accent-dim]"
+             title="Verified = backtested + live traded with real money on Binance Futures">
+            Start with BB Squeeze (Verified) &rarr;
           </a>
           <a href="/strategies"
              class="inline-flex items-center gap-2 border border-[--color-border] text-[--color-text-muted] px-4 py-2 rounded text-sm hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
@@ -28,6 +29,32 @@ const t = useTranslations('en');
           </a>
         </div>
       </div>
+
+      <!-- 3-step onboarding guide -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
+        <div class="flex items-center gap-3 border border-[--color-border] rounded-lg px-4 py-3 bg-[--color-bg-card]">
+          <span class="font-mono text-[--color-accent] text-lg font-bold shrink-0">1</span>
+          <div>
+            <p class="text-sm font-semibold">Choose a preset or pick indicators</p>
+            <p class="text-xs text-[--color-text-muted]">11+ indicators, AND/OR logic</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3 border border-[--color-border] rounded-lg px-4 py-3 bg-[--color-bg-card]">
+          <span class="font-mono text-[--color-accent] text-lg font-bold shrink-0">2</span>
+          <div>
+            <p class="text-sm font-semibold">Set entry conditions and risk</p>
+            <p class="text-xs text-[--color-text-muted]">SL, TP, time filters, position size</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3 border border-[--color-border] rounded-lg px-4 py-3 bg-[--color-bg-card]">
+          <span class="font-mono text-[--color-accent] text-lg font-bold shrink-0">3</span>
+          <div>
+            <p class="text-sm font-semibold">Run backtest on 549+ coins</p>
+            <p class="text-xs text-[--color-text-muted]">Results in seconds, fees included</p>
+          </div>
+        </div>
+      </div>
+
       <p class="text-xs text-[--color-text-muted] opacity-70">{t('simulate.note')}</p>
     </div>
   </section>

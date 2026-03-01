@@ -46,6 +46,19 @@ const difficultyColors: Record<string, string> = {
 ---
 
 <Layout title={t('meta.strategies_title')} description={t('meta.strategies_desc')}>
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": "PRUVIQ Strategy Library",
+    "description": "Crypto trading strategies tested with real market data. Verified and killed — all results published.",
+    "numberOfItems": strategies.length,
+    "itemListElement": strategies.map((s, i) => ({
+      "@type": "ListItem",
+      "position": i + 1,
+      "name": s.data.name,
+      "url": `https://pruviq.com/strategies/${s.id}`
+    }))
+  })} />
   <section class="py-12">
     <div class="max-w-5xl mx-auto px-4">
       <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('strategies.tag')}</p>
@@ -86,64 +99,74 @@ const difficultyColors: Record<string, string> = {
 
       <div class="space-y-4">
         {strategies.map((strategy) => (
-          <a href={`/strategies/${strategy.id}`}
-             class="block border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] hover:border-[--color-accent] transition-colors group">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
-              <div class="flex items-center gap-3">
-                <span class="font-mono text-xs tracking-wider px-2 py-0.5 rounded border"
-                      style={`color: var(${statusColors[strategy.data.status]}); border-color: var(${statusColors[strategy.data.status]})`}>
-                  {statusLabels[strategy.data.status]}
-                </span>
-                <span class="text-[--color-text-muted] text-xs font-mono">
-                  {categoryLabels[strategy.data.category]} &middot; {strategy.data.direction.toUpperCase()} &middot; {strategy.data.timeframe}
+          <div class="block border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] hover:border-[--color-accent] transition-colors group">
+            <a href={`/strategies/${strategy.id}`} class="block">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
+                <div class="flex items-center gap-3">
+                  <span class="font-mono text-xs tracking-wider px-2 py-0.5 rounded border"
+                        style={`color: var(${statusColors[strategy.data.status]}); border-color: var(${statusColors[strategy.data.status]})`}>
+                    {statusLabels[strategy.data.status]}
+                  </span>
+                  <span class="text-[--color-text-muted] text-xs font-mono">
+                    {categoryLabels[strategy.data.category]} &middot; {strategy.data.direction.toUpperCase()} &middot; {strategy.data.timeframe}
+                  </span>
+                </div>
+                <span class="text-xs font-mono px-2 py-0.5 rounded border border-[--color-border]"
+                      style={`color: var(${difficultyColors[strategy.data.difficulty]})`}>
+                  {difficultyLabels[strategy.data.difficulty] || strategy.data.difficulty.toUpperCase()}
                 </span>
               </div>
-              <span class="text-xs font-mono px-2 py-0.5 rounded border border-[--color-border]"
-                    style={`color: var(${difficultyColors[strategy.data.difficulty]})`}>
-                {difficultyLabels[strategy.data.difficulty] || strategy.data.difficulty.toUpperCase()}
-              </span>
-            </div>
 
-            <h2 class="text-xl font-bold mb-2 group-hover:text-[--color-accent] transition-colors">
-              {strategy.data.name}
-            </h2>
-            <p class="text-[--color-text-muted] text-sm mb-4">{strategy.data.description}</p>
+              <h2 class="text-xl font-bold mb-2 group-hover:text-[--color-accent] transition-colors">
+                {strategy.data.name}
+              </h2>
+              <p class="text-[--color-text-muted] text-sm mb-4">{strategy.data.description}</p>
 
-            {(strategy.data.winRate || strategy.data.profitFactor || strategy.data.totalPnl) && (
-              <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 font-mono text-sm">
-                {strategy.data.winRate !== undefined && (
-                  <div>
-                    <span class="text-[--color-text-muted] text-xs">{t('strategy.win_rate')}</span>
-                    <p class={`font-bold ${strategy.data.winRate >= 55 ? 'text-[--color-accent]' : strategy.data.winRate >= 50 ? 'text-[--color-yellow]' : 'text-[--color-red]'}`}>
-                      {strategy.data.winRate}%
-                    </p>
-                  </div>
-                )}
-                {strategy.data.profitFactor !== undefined && (
-                  <div>
-                    <span class="text-[--color-text-muted] text-xs">{t('strategy.profit_factor')}</span>
-                    <p class={`font-bold ${strategy.data.profitFactor >= 1.5 ? 'text-[--color-accent]' : strategy.data.profitFactor >= 1.0 ? 'text-[--color-yellow]' : 'text-[--color-red]'}`}>
-                      {strategy.data.profitFactor}
-                    </p>
-                  </div>
-                )}
-                {strategy.data.totalPnl && (
-                  <div>
-                    <span class="text-[--color-text-muted] text-xs">{t('strategy.total_pnl')}</span>
-                    <p class={`font-bold ${strategy.data.totalPnl.startsWith('+') ? 'text-[--color-accent]' : 'text-[--color-red]'}`}>
-                      {strategy.data.totalPnl}
-                    </p>
-                  </div>
-                )}
-                {strategy.data.coins !== undefined && (
-                  <div>
-                    <span class="text-[--color-text-muted] text-xs">{t('strategy.coins_tested')}</span>
-                    <p class="font-bold">{strategy.data.coins}</p>
-                  </div>
-                )}
+              {(strategy.data.winRate || strategy.data.profitFactor || strategy.data.totalPnl) && (
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 font-mono text-sm">
+                  {strategy.data.winRate !== undefined && (
+                    <div>
+                      <span class="text-[--color-text-muted] text-xs">{t('strategy.win_rate')}</span>
+                      <p class={`font-bold ${strategy.data.winRate >= 55 ? 'text-[--color-accent]' : strategy.data.winRate >= 50 ? 'text-[--color-yellow]' : 'text-[--color-red]'}`}>
+                        {strategy.data.winRate}%
+                      </p>
+                    </div>
+                  )}
+                  {strategy.data.profitFactor !== undefined && (
+                    <div>
+                      <span class="text-[--color-text-muted] text-xs">{t('strategy.profit_factor')}</span>
+                      <p class={`font-bold ${strategy.data.profitFactor >= 1.5 ? 'text-[--color-accent]' : strategy.data.profitFactor >= 1.0 ? 'text-[--color-yellow]' : 'text-[--color-red]'}`}>
+                        {strategy.data.profitFactor}
+                      </p>
+                    </div>
+                  )}
+                  {strategy.data.totalPnl && (
+                    <div>
+                      <span class="text-[--color-text-muted] text-xs">{t('strategy.total_pnl')}</span>
+                      <p class={`font-bold ${strategy.data.totalPnl.startsWith('+') ? 'text-[--color-accent]' : 'text-[--color-red]'}`}>
+                        {strategy.data.totalPnl}
+                      </p>
+                    </div>
+                  )}
+                  {strategy.data.coins !== undefined && (
+                    <div>
+                      <span class="text-[--color-text-muted] text-xs">{t('strategy.coins_tested')}</span>
+                      <p class="font-bold">{strategy.data.coins}</p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </a>
+            {strategy.data.status === 'verified' && (
+              <div class="mt-4 pt-4 border-t border-[--color-border]/50 flex items-center justify-between">
+                <span class="text-xs text-green-400 font-mono">Verified = backtested + live traded with real money</span>
+                <a href={`/simulate?preset=${strategy.id}`}
+                   class="inline-flex items-center gap-1 bg-[--color-accent] text-[--color-bg] px-4 py-1.5 rounded font-semibold text-xs hover:bg-[--color-accent-dim]">
+                  Simulate This &rarr;
+                </a>
               </div>
             )}
-          </a>
+          </div>
         ))}
       </div>
 
