@@ -28,6 +28,8 @@ interface Props {
   slPct: number; setSlPct: (n: number) => void;
   tpPct: number; setTpPct: (n: number) => void;
   maxBars: number; setMaxBars: (n: number) => void;
+  perCoinUsdt: number; setPerCoinUsdt: (n: number) => void;
+  leverage: number; setLeverage: (n: number) => void;
   // Date range
   startDate: string; setStartDate: (s: string) => void;
   endDate: string; setEndDate: (s: string) => void;
@@ -45,6 +47,9 @@ interface Props {
   presets: PresetItem[];
   activePreset: string | null;
   onSelectPreset: (id: string | null) => void;
+  // Preset loading state
+  presetLoading?: boolean;
+  presetError?: string | null;
   // Run
   isRunning: boolean;
   progressStep: number;
@@ -84,7 +89,13 @@ export default function BuilderPanel(props: Props) {
           activePreset={props.activePreset}
           onSelectPreset={props.onSelectPreset}
           label={t.preset}
+          loading={props.presetLoading}
         />
+        {props.presetError && (
+          <div class="mx-4 mt-1 mb-0 px-2.5 py-1 rounded bg-[--color-red]/10 border border-[--color-red]/20">
+            <span class="text-[10px] font-mono text-[--color-red]">{props.presetError}</span>
+          </div>
+        )}
 
         {/* Indicators */}
         <div class="px-4 py-2 border-b border-[--color-border]">
@@ -186,6 +197,22 @@ export default function BuilderPanel(props: Props) {
                 class="w-full mt-0.5 px-2 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
               />
             </div>
+            {/* Per-coin USDT */}
+            <div>
+              <label class="text-[10px] text-[--color-text-muted]">{t.perCoinUsdt || 'Per Coin $'}</label>
+              <input type="number" value={props.perCoinUsdt} min={1} max={10000} step={10}
+                onChange={(e: any) => props.setPerCoinUsdt(parseFloat(e.target.value) || 60)}
+                class="w-full mt-0.5 px-2 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
+              />
+            </div>
+            {/* Leverage */}
+            <div>
+              <label class="text-[10px] text-[--color-text-muted]">{t.leverage || 'Leverage'}</label>
+              <input type="number" value={props.leverage} min={1} max={125} step={1}
+                onChange={(e: any) => props.setLeverage(parseInt(e.target.value) || 5)}
+                class="w-full mt-0.5 px-2 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
+              />
+            </div>
             {/* Start Date */}
             <div>
               <label class="text-[10px] text-[--color-text-muted]">{t.startDate}</label>
@@ -280,7 +307,7 @@ export default function BuilderPanel(props: Props) {
             <span class="text-[10px] opacity-50">{props.avoidHours.size > 0 ? `${props.avoidHours.size}h selected` : 'none'}</span>
           </summary>
           <div class="px-4 pb-2">
-            <div class="flex flex-wrap gap-0.5">
+            <div class="flex flex-wrap gap-1 sm:gap-0.5">
               {Array.from({ length: 24 }, (_, i) => (
                 <button
                   key={i}
@@ -292,7 +319,7 @@ export default function BuilderPanel(props: Props) {
                       return next;
                     });
                   }}
-                  class={`w-[26px] h-[22px] text-[10px] font-mono rounded transition-colors border
+                  class={`w-8 h-8 sm:w-[26px] sm:h-[22px] text-xs sm:text-[10px] font-mono rounded transition-colors border
                     ${props.avoidHours.has(i)
                       ? ''
                       : 'bg-[--color-bg-tooltip] text-[--color-text-muted] border-[--color-border] hover:border-[--color-red]/20'}`}

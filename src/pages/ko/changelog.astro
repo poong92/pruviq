@@ -35,12 +35,28 @@ const t = useTranslations('ko');
   <section class="pb-20">
     <div class="max-w-4xl mx-auto px-4">
 
-      <!-- v1.7.0 -->
+      <!-- v1.7.1 -->
       <div class="border-l-2 border-[--color-accent] pl-6 pb-12 relative">
         <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-[--color-accent]"></div>
         <div class="flex items-center gap-3 mb-2">
-          <span class="font-mono font-bold text-lg">v1.7.0</span>
+          <span class="font-mono font-bold text-lg">v1.7.1</span>
           <span class="bg-[--color-accent]/20 text-[--color-accent] font-mono text-xs px-2 py-0.5 rounded">CURRENT</span>
+          <span class="text-[--color-text-muted] font-mono text-xs">2026년 2월 26일</span>
+        </div>
+        <h3 class="font-bold mb-2">P0 버그 수정: reduceOnly 파라미터</h3>
+        <ul class="text-[--color-text-muted] text-sm space-y-1">
+          <li>&bull; 시장가 청산 주문에 reduceOnly=True 추가하여 유령 역포지션 방지</li>
+          <li>&bull; execute_market_order에 reduce_only 파라미터 지원 추가 (4곳 수정)</li>
+          <li>&bull; RSI&lt;30 필터 및 TIMEOUT 조기청산 평가 완료, 적용 보류 (충분한 엣지 없음)</li>
+        </ul>
+        <p class="text-[--color-text-muted] text-xs mt-2 font-mono">근거: 1,650건 실거래, 48일 검증</p>
+      </div>
+
+      <!-- v1.7.0 -->
+      <div class="border-l-2 border-[--color-border] pl-6 pb-12 relative">
+        <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-[--color-border] border-2 border-[--color-bg]"></div>
+        <div class="flex items-center gap-3 mb-2">
+          <span class="font-mono font-bold text-lg">v1.7.0</span>
           <span class="text-[--color-text-muted] font-mono text-xs">2026년 2월 15일</span>
         </div>
         <h3 class="font-bold mb-2">R:R 최적화 + 블랙리스트</h3>

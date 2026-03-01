@@ -122,7 +122,7 @@ function MetricCard({ label, value, color }: { label: string; value: string; col
   return (
     <div class="p-3 md:p-4 rounded-lg bg-[--color-bg-card] border border-[--color-border] text-center min-w-0">
       <div class="font-mono text-[0.6875rem] text-[--color-text-muted] uppercase tracking-wider mb-1.5 whitespace-nowrap overflow-hidden text-ellipsis">{label}</div>
-      <div class="font-mono text-base md:text-lg font-bold" style={{ color }}>{value}</div>
+      <div class="font-mono text-sm sm:text-base md:text-lg font-bold truncate" style={{ color }}>{value}</div>
     </div>
   );
 }
@@ -307,9 +307,7 @@ export default function PerformanceDashboard({ lang = 'en' }: { lang?: 'en' | 'k
         <MetricCard label={t.winRate} value={`${s.win_rate}%`} color={wrColor} />
         <MetricCard label={t.pnl} value={formatUsd(s.total_pnl)} color={pnlColor} />
         <MetricCard label={t.pf} value={s.profit_factor.toFixed(2)} color={pfColor} />
-        <div class="col-span-2 md:col-span-1">
-          <MetricCard label={t.mdd} value={`${s.max_drawdown_pct.toFixed(1)}%`} color="var(--color-red)" />
-        </div>
+        <MetricCard label={t.mdd} value={`${s.max_drawdown_pct.toFixed(1)}%`} color="var(--color-red)" />
       </div>
 
       {/* Cumulative PnL Chart */}
@@ -346,7 +344,7 @@ export default function PerformanceDashboard({ lang = 'en' }: { lang?: 'en' | 'k
             <div class="h-px bg-[--color-border]" />
             <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-1 sm:gap-0">
               <span class="font-mono text-[0.8125rem] text-[--color-text-muted]">{t.balance}</span>
-              <span class="font-mono text-[0.8125rem] text-[--color-text-muted]">
+              <span class="font-mono text-xs sm:text-[0.8125rem] text-[--color-text-muted] truncate">
                 ${s.starting_balance.toLocaleString()} &rarr; <span class="font-semibold" style={{ color: s.current_balance >= s.starting_balance ? 'var(--color-accent)' : 'var(--color-red)' }}>${s.current_balance.toLocaleString()}</span>
               </span>
             </div>

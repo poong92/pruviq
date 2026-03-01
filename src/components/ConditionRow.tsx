@@ -13,6 +13,37 @@ interface Props {
 }
 
 export default function ConditionRow({ condition: c, availableFields, onUpdate, onRemove, removeLabel }: Props) {
+  const fieldDescriptions: Record<string, string> = {
+    'is_squeeze': 'Bollinger Band Squeeze detected',
+    'bb_width_change': 'BB width expansion rate (%)',
+    'vol_ratio': 'Volume ratio vs average',
+    'bearish': 'Bearish candle pattern',
+    'bullish': 'Bullish candle pattern',
+    'ema_fast': 'Fast EMA value',
+    'ema_slow': 'Slow EMA value',
+    'rsi': 'RSI (Relative Strength Index)',
+    'macd_hist': 'MACD Histogram',
+    'stoch_k': 'Stochastic %K',
+    'stoch_d': 'Stochastic %D',
+    'adx': 'ADX (Average Directional Index)',
+    'atr': 'ATR (Average True Range)',
+    'hv': 'Historical Volatility',
+    'price_change': 'Price change (%)',
+    'close': 'Close price',
+    'open': 'Open price',
+    'high': 'High price',
+    'low': 'Low price',
+    'volume': 'Trading volume',
+    'bb_upper': 'Bollinger Band upper',
+    'bb_lower': 'Bollinger Band lower',
+    'bb_mid': 'Bollinger Band middle',
+    'ema20': 'EMA 20-period',
+    'ema50': 'EMA 50-period',
+    'uptrend': 'Uptrend detected',
+    'downtrend': 'Downtrend detected',
+    'doji': 'Doji candle pattern',
+  };
+
   return (
     <div class="flex items-center gap-1.5 text-xs">
       {/* Field */}
@@ -27,8 +58,9 @@ export default function ConditionRow({ condition: c, availableFields, onUpdate, 
           }
         }}
         class="flex-1 min-w-0 px-1.5 py-1.5 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
+        title={fieldDescriptions[c.field] || c.field}
       >
-        {availableFields.map((f) => <option key={f} value={f}>{f}</option>)}
+        {availableFields.map((f) => <option key={f} value={f} title={fieldDescriptions[f] || f}>{f}</option>)}
       </select>
       {/* Op */}
       <select
@@ -61,16 +93,19 @@ export default function ConditionRow({ condition: c, availableFields, onUpdate, 
       <select
         value={c.shift}
         onChange={(e: any) => onUpdate(c.id, 'shift', parseInt(e.target.value))}
-        class={`w-10 px-1 py-1.5 bg-[--color-bg-tooltip] border rounded font-mono text-xs outline-none focus:border-[--color-accent] ${
+        class={`w-12 px-1 py-1.5 bg-[--color-bg-tooltip] border rounded font-mono text-xs outline-none focus:border-[--color-accent] ${
           c.shift === 0
-            ? 'border-[--color-yellow] text-[--color-yellow]'
+            ? 'border-[--color-yellow] text-[--color-yellow] font-bold'
             : 'border-[--color-border] text-[--color-text]'
         }`}
-        title={c.shift === 1 ? 'Previous candle (safe)' : 'Current candle — look-ahead bias risk in live trading'}
+        title={c.shift === 1 ? 'Previous candle (confirmed/safe for live trading)' : 'Current candle (incomplete in live) — look-ahead bias risk!'}
       >
-        <option value="1">P</option>
-        <option value="0">C</option>
+        <option value="1">Prev</option>
+        <option value="0">Curr</option>
       </select>
+      {c.shift === 0 && (
+        <span class="text-[--color-yellow] text-[9px] font-mono shrink-0" title="Using current (incomplete) candle data may cause look-ahead bias in live trading">!</span>
+      )}
       {/* Remove */}
       <button
         onClick={() => onRemove(c.id)}

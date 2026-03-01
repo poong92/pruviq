@@ -24,6 +24,7 @@ const L = {
     parameters: 'Parameters',
     direction: 'Direction',
     sl: 'Stop Loss %', tp: 'Take Profit %', maxBars: 'Max Hold (h)',
+    perCoinUsdt: 'Per Coin $', leverage: 'Leverage',
     dateRange: 'Test Period',
     startDate: 'Start', endDate: 'End',
     coins: 'Coins',
@@ -89,6 +90,7 @@ const L = {
     parameters: '파라미터',
     direction: '방향',
     sl: '손절 %', tp: '익절 %', maxBars: '최대 보유 (h)',
+    perCoinUsdt: '코인당 $', leverage: '레버리지',
     dateRange: '테스트 기간',
     startDate: '시작', endDate: '종료',
     coins: '코인',
@@ -194,11 +196,18 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
   // Presets
   const [presets, setPresets] = useState<PresetItem[]>([]);
   const [activePreset, setActivePreset] = useState<string | null>('bb-squeeze-short');
+  const [presetLoading, setPresetLoading] = useState(false);
+  const [presetError, setPresetError] = useState<string | null>(null);
+
+  // Per-coin USDT + Leverage
+  const [perCoinUsdt, setPerCoinUsdt] = useState(60);
+  const [leverage, setLeverage] = useState(5);
 
   // Chart
   const [chartSymbol, setChartSymbol] = useState('BTCUSDT');
   const [chartData, setChartData] = useState<OhlcvBar[]>([]);
   const [chartLoading, setChartLoading] = useState(false);
+  const [chartError, setChartError] = useState<string | null>(null);
 
   // Backtest
   const [isRunning, setIsRunning] = useState(false);
@@ -229,6 +238,11 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
   const availableFields = availableIndicators
     .filter((ind) => selectedIndicators.has(ind.id))
     .flatMap((ind) => ind.fields);
+
+  // Dynamic coin count based on selection mode
+  const currentCoinCount = coinMode === 'all' ? coinsLoaded :
+                           coinMode === 'top' ? topN :
+                           selectedCoins.length;
 
   // ─── Init: healthcheck + load indicators + coins ───
   useEffect(() => {
@@ -328,23 +342,44 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
   }, []);
 
   // ─── Chart loading ───
-  useEffect(() => {
-    if (!chartSymbol || !apiReady) return;
-    let cancelled = false;
+  const loadChart = useCallback(() => {
+    if (!chartSymbol) return;
     setChartLoading(true);
+    setChartError(null);
+
+    if (!apiReady) {
+      setChartError(demoMode ? 'API unavailable — chart data not available in demo mode' : 'Waiting for API...');
+      setChartLoading(false);
+      return;
+    }
 
     fetch(`${API_URL}/ohlcv/${chartSymbol}?limit=500`)
       .then((r) => r.json())
       .then((data) => {
-        if (!cancelled && (data.data || data.bars)) {
+        if (data.data || data.bars) {
           setChartData(data.data || data.bars);
+          setChartError(null);
+        } else {
+          setChartError('No chart data returned for ' + chartSymbol);
         }
       })
-      .catch(() => {})
-      .finally(() => { if (!cancelled) setChartLoading(false); });
+      .catch(() => {
+        setChartError('Failed to load chart data');
+      })
+      .finally(() => { setChartLoading(false); });
+  }, [chartSymbol, apiReady, demoMode]);
 
-    return () => { cancelled = true; };
-  }, [chartSymbol, apiReady]);
+  useEffect(() => {
+    if (!chartSymbol) return;
+    // In demo mode, show error immediately
+    if (demoMode && !apiReady) {
+      setChartError('API unavailable — chart data not available in demo mode');
+      setChartData([]);
+      return;
+    }
+    if (!apiReady) return;
+    loadChart();
+  }, [chartSymbol, apiReady, demoMode, loadChart]);
 
   // ─── Run backtest ───
   const runBacktest = useCallback(async () => {
@@ -390,6 +425,8 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
       sl_pct: slPct,
       tp_pct: tpPct,
       max_bars: maxBars,
+      per_coin_usdt: perCoinUsdt,
+      leverage,
     };
 
     if (coinMode === 'top') body.top_n = topN;
@@ -441,14 +478,20 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
       clearInterval(progressInterval);
       setIsRunning(false);
     }
-  }, [demoMode, selectedIndicators, indicatorParams, conditions, direction, slPct, tpPct, maxBars, avoidHours, coinMode, topN, selectedCoins, startDate, endDate]);
+  }, [demoMode, selectedIndicators, indicatorParams, conditions, direction, slPct, tpPct, maxBars, avoidHours, coinMode, topN, selectedCoins, startDate, endDate, perCoinUsdt, leverage]);
 
   // ─── Load preset ───
   const loadPreset = useCallback(async (presetId: string) => {
     setActivePreset(presetId);
+    setPresetLoading(true);
+    setPresetError(null);
     try {
       const res = await fetch(`${API_URL}/builder/presets/${presetId}`);
-      if (!res.ok) return;
+      if (!res.ok) {
+        setPresetError(`Failed to load preset (HTTP ${res.status})`);
+        setTimeout(() => setPresetError(null), 3000);
+        return;
+      }
       const p = await res.json();
 
       if (p.indicators) {
@@ -463,7 +506,12 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
       if (p.tp_pct) setTpPct(p.tp_pct);
       if (p.max_bars) setMaxBars(p.max_bars);
       if (p.avoid_hours) setAvoidHours(new Set(p.avoid_hours));
-    } catch {}
+    } catch {
+      setPresetError('Failed to load preset. Check connection.');
+      setTimeout(() => setPresetError(null), 3000);
+    } finally {
+      setPresetLoading(false);
+    }
   }, []);
 
   const onSelectPreset = useCallback((id: string | null) => {
@@ -557,6 +605,8 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
             chartLoading={chartLoading}
             loadingText={t.loading}
             trades={result?.trades}
+            error={chartError}
+            onRetry={loadChart}
           />
         </div>
 
@@ -564,7 +614,7 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
         <div ref={builderRef} class={`md:w-[45%] flex-shrink-0 ${mobileTab !== 'config' ? 'hidden md:block' : ''}`}>
           <BuilderPanel
             t={t}
-            coinsLoaded={coinsLoaded}
+            coinsLoaded={currentCoinCount}
             demoMode={demoMode}
             availableIndicators={availableIndicators}
             selectedIndicators={selectedIndicators}
@@ -579,6 +629,8 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
             slPct={slPct} setSlPct={setSlPct}
             tpPct={tpPct} setTpPct={setTpPct}
             maxBars={maxBars} setMaxBars={setMaxBars}
+            perCoinUsdt={perCoinUsdt} setPerCoinUsdt={setPerCoinUsdt}
+            leverage={leverage} setLeverage={setLeverage}
             startDate={startDate} setStartDate={setStartDate}
             endDate={endDate} setEndDate={setEndDate}
             coinMode={coinMode} setCoinMode={setCoinMode}
@@ -590,6 +642,8 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
             presets={presets}
             activePreset={activePreset}
             onSelectPreset={onSelectPreset}
+            presetLoading={presetLoading}
+            presetError={presetError}
             isRunning={isRunning}
             progressStep={progressStep}
             progressLabels={progressLabels}

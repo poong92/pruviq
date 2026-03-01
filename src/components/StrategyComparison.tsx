@@ -395,23 +395,23 @@ export default function StrategyComparison({ lang = 'en' }: Props) {
                     </span>
                   </div>
 
-                  <div class="grid grid-cols-2 gap-2 font-mono text-sm mb-3">
-                    <div class="p-2 rounded bg-[--color-bg-tooltip] border border-[--color-border]">
-                      <div class="text-[0.6875rem] text-[--color-text-muted] uppercase">{t.winRate}</div>
+                  <div class="grid grid-cols-2 gap-2 font-mono text-xs sm:text-sm mb-3">
+                    <div class="p-1.5 sm:p-2 rounded bg-[--color-bg-tooltip] border border-[--color-border]">
+                      <div class="text-[0.625rem] sm:text-[0.6875rem] text-[--color-text-muted] uppercase">{t.winRate}</div>
                       <div class="font-bold" style={{ color: winRateColor(r.win_rate) }}>{r.win_rate}%</div>
                     </div>
-                    <div class="p-2 rounded bg-[--color-bg-tooltip] border border-[--color-border]">
-                      <div class="text-[0.6875rem] text-[--color-text-muted] uppercase">{t.pf}</div>
+                    <div class="p-1.5 sm:p-2 rounded bg-[--color-bg-tooltip] border border-[--color-border]">
+                      <div class="text-[0.625rem] sm:text-[0.6875rem] text-[--color-text-muted] uppercase">{t.pf}</div>
                       <div class="font-bold" style={{ color: profitFactorColor(r.profit_factor) }}>{r.profit_factor}</div>
                     </div>
-                    <div class="p-2 rounded bg-[--color-bg-tooltip] border border-[--color-border]">
-                      <div class="text-[0.6875rem] text-[--color-text-muted] uppercase">{t.totalReturn}</div>
+                    <div class="p-1.5 sm:p-2 rounded bg-[--color-bg-tooltip] border border-[--color-border]">
+                      <div class="text-[0.625rem] sm:text-[0.6875rem] text-[--color-text-muted] uppercase">{t.totalReturn}</div>
                       <div class="font-bold" style={{ color: signColor(r.total_return_pct) }}>
                         {r.total_return_pct > 0 ? '+' : ''}{r.total_return_pct}%
                       </div>
                     </div>
-                    <div class="p-2 rounded bg-[--color-bg-tooltip] border border-[--color-border]">
-                      <div class="text-[0.6875rem] text-[--color-text-muted] uppercase">{t.maxDD}</div>
+                    <div class="p-1.5 sm:p-2 rounded bg-[--color-bg-tooltip] border border-[--color-border]">
+                      <div class="text-[0.625rem] sm:text-[0.6875rem] text-[--color-text-muted] uppercase">{t.maxDD}</div>
                       <div class="font-bold text-[--color-red]">{r.max_drawdown_pct}%</div>
                     </div>
                   </div>

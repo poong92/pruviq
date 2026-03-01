@@ -12,9 +12,11 @@ interface Props {
   chartLoading: boolean;
   loadingText: string;
   trades?: TradeItem[];
+  error?: string | null;
+  onRetry?: () => void;
 }
 
-export default function ChartPanel({ chartSymbol, setChartSymbol, chartData, chartLoading, loadingText, trades }: Props) {
+export default function ChartPanel({ chartSymbol, setChartSymbol, chartData, chartLoading, loadingText, trades, error, onRetry }: Props) {
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const chartInstanceRef = useRef<any>(null);
 
@@ -193,6 +195,21 @@ export default function ChartPanel({ chartSymbol, setChartSymbol, chartData, cha
         {chartLoading && (
           <div class="flex items-center justify-center h-full text-[--color-text-muted] text-sm">
             <div class="spinner mr-2" />{loadingText}
+          </div>
+        )}
+        {!chartLoading && chartData.length === 0 && (
+          <div class="flex flex-col items-center justify-center h-full gap-3">
+            <div class="text-[--color-text-muted] text-sm font-mono text-center px-4">
+              {error || 'Unable to load chart data. Check API connection.'}
+            </div>
+            {onRetry && (
+              <button
+                onClick={onRetry}
+                class="px-4 py-2 text-xs font-mono rounded border border-[--color-border] text-[--color-accent] hover:bg-[--color-bg-hover] transition-colors"
+              >
+                Retry
+              </button>
+            )}
           </div>
         )}
       </div>

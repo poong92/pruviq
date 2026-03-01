@@ -256,14 +256,14 @@ const lastUpdated = new Date().toLocaleDateString('en-US');
   <!-- COMPARISON TABLE (vs Competitors) -->
   <section class="py-20 border-t border-[--color-border]" aria-labelledby="compare-heading">
     <div class="max-w-6xl mx-auto px-4">
-      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">WHY PRUVIQ</p>
-      <h2 id="compare-heading" class="text-3xl md:text-4xl font-bold mb-12">How We Compare</h2>
+      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('compare_table.tag')}</p>
+      <h2 id="compare-heading" class="text-3xl md:text-4xl font-bold mb-12">{t('compare_table.title')}</h2>
 
       <div class="overflow-x-auto" role="region" aria-label="Platform comparison table" tabindex="0">
         <table class="w-full text-sm border-collapse" role="table" aria-label="PRUVIQ vs TradingView vs QuantConnect feature comparison">
           <thead>
             <tr class="border-b border-[--color-border]">
-              <th scope="col" class="text-left py-3 px-4 font-mono text-[--color-text-muted] text-xs">Feature</th>
+              <th scope="col" class="text-left py-3 px-4 font-mono text-[--color-text-muted] text-xs">{t('compare_table.feature')}</th>
               <th scope="col" class="text-center py-3 px-4 font-mono text-[--color-accent] text-xs bg-[--color-accent]/5">PRUVIQ</th>
               <th scope="col" class="text-center py-3 px-4 font-mono text-[--color-text-muted] text-xs">TradingView</th>
               <th scope="col" class="text-center py-3 px-4 font-mono text-[--color-text-muted] text-xs">QuantConnect</th>
@@ -317,7 +317,7 @@ const lastUpdated = new Date().toLocaleDateString('en-US');
       </div>
 
       <div class="mt-8 text-center">
-        <a href="/compare/tradingview" class="text-sm text-[--color-accent] hover:underline">See detailed comparison &rarr;</a>
+        <a href="/compare/tradingview" class="text-sm text-[--color-accent] hover:underline">{t('compare_table.detail_link')} &rarr;</a>
       </div>
     </div>
   </section>
@@ -400,7 +400,7 @@ const lastUpdated = new Date().toLocaleDateString('en-US');
       <h2 id="blog-heading" class="text-3xl md:text-4xl font-bold mb-4">{t('blog.title')}</h2>
       <p class="text-[--color-text-muted] text-sm mb-8 max-w-2xl">{t('blog.desc')}</p>
       <div class="flex flex-col sm:flex-row gap-4">
-        <a href="/blog"
+        <a href="/learn"
            class="inline-flex items-center gap-2 bg-[--color-accent] text-[--color-bg] px-6 py-2.5 rounded font-semibold text-sm hover:bg-[--color-accent-dim]">
           {t('blog.coming_cta')} &rarr;
         </a>

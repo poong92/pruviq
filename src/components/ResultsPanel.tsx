@@ -419,7 +419,7 @@ export default function ResultsPanel({
           {resultTab === 'trades' && (
             <div class="p-2 overflow-x-auto -webkit-overflow-scrolling-touch">
               {result.trades && result.trades.length > 0 ? (
-                <table class="w-full text-xs font-mono" style={{ minWidth: '500px' }}>
+                <table class="w-full text-xs font-mono min-w-[500px] md:min-w-0">
                   <thead>
                     <tr class="text-[--color-text-muted] border-b border-[--color-border]">
                       <th class="py-2 px-2 text-left">{t.symbol}</th>
@@ -492,7 +492,7 @@ export default function ResultsPanel({
                   <span>{profitPct.toFixed(0)}% {lang === 'ko' ? '수익 코인' : 'profitable'}</span>
                 </div>
                 <div class="overflow-x-auto -webkit-overflow-scrolling-touch">
-                  <table class="w-full text-xs font-mono" style={{ minWidth: '600px' }}>
+                  <table class="w-full text-xs font-mono min-w-[600px] md:min-w-0">
                     <thead>
                       <tr class="text-[--color-text-muted] border-b border-[--color-border]">
                         <th class="py-2 px-2 text-left cursor-pointer select-none hover:text-[--color-text]" onClick={() => toggleSort('symbol')}>

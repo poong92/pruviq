@@ -147,16 +147,16 @@ export default function FeeCalculator({ lang = 'en' }: Props) {
             {/* Fees */}
             <div class="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-2 text-center">
               <div>
-                <div class="font-mono text-xs text-[--color-text-muted] mb-1">{t.standard}</div>
-                <div class="font-mono text-sm line-through text-[--color-text-muted]">{fmt(standard)}<span class="text-[0.6rem]">/mo</span></div>
+                <div class="font-mono text-[0.625rem] sm:text-xs text-[--color-text-muted] mb-1">{t.standard}</div>
+                <div class="font-mono text-xs sm:text-sm line-through text-[--color-text-muted]">{fmt(standard)}<span class="text-[0.6rem]">/mo</span></div>
               </div>
               <div>
-                <div class="font-mono text-xs text-[--color-accent] mb-1">{t.withPruviq} ({ex.discountLabel})</div>
-                <div class="font-mono text-sm font-bold text-[--color-accent]">{fmt(discounted)}<span class="text-[0.6rem]">/mo</span></div>
+                <div class="font-mono text-[0.625rem] sm:text-xs text-[--color-accent] mb-1">{t.withPruviq} ({ex.discountLabel})</div>
+                <div class="font-mono text-xs sm:text-sm font-bold text-[--color-accent]">{fmt(discounted)}<span class="text-[0.6rem]">/mo</span></div>
               </div>
               <div>
-                <div class="font-mono text-xs text-[--color-text-muted] mb-1">{t.savings}</div>
-                <div class="font-mono text-sm font-bold text-[--color-accent]">
+                <div class="font-mono text-[0.625rem] sm:text-xs text-[--color-text-muted] mb-1">{t.savings}</div>
+                <div class="font-mono text-xs sm:text-sm font-bold text-[--color-accent]">
                   {fmtFull(Math.round(savingsYear))}
                   {lang === 'ko' && <div class="text-[0.6rem] text-[--color-text-muted]">({fmtKrw(savingsYear)})</div>}
                 </div>

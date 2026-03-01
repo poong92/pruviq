@@ -529,12 +529,12 @@ export default function MarketDashboard({ lang = 'en' }: { lang?: 'en' | 'ko' })
                     : ind.value.toFixed(2);
                   const suffix = ind.unit === '%' ? '%' : '';
                   return (
-                    <div key={ind.id} class="p-3 bg-[--color-bg-hover] rounded-lg">
+                    <div key={ind.id} class="p-2 sm:p-3 bg-[--color-bg-hover] rounded-lg">
                       <div class="text-[0.625rem] text-[--color-text-muted] uppercase tracking-wider mb-1 truncate" title={ind.name}>
                         {ind.name}
                       </div>
                       <div class="flex items-baseline gap-1.5">
-                        <span class="text-lg font-bold font-mono tabular-nums">
+                        <span class="text-sm sm:text-lg font-bold font-mono tabular-nums">
                           {ind.unit === 'USD' ? '$' : ''}{fmtValue}{suffix}
                         </span>
                         {delta != null && (
@@ -601,7 +601,7 @@ export default function MarketDashboard({ lang = 'en' }: { lang?: 'en' | 'ko' })
                 placeholder={l.searchNews}
                 value={searchQuery}
                 onInput={(e: Event) => setSearchQuery((e.target as HTMLInputElement).value)}
-                class="bg-[--color-bg-hover] border border-[--color-border] rounded-md px-2.5 py-1 text-xs text-[--color-text] outline-none w-44 font-sans focus:border-[--color-accent] transition-colors"
+                class="bg-[--color-bg-hover] border border-[--color-border] rounded-md px-2.5 py-1 text-xs text-[--color-text] outline-none w-full sm:w-44 font-sans focus:border-[--color-accent] transition-colors"
               />
               <div class="flex flex-wrap gap-1">
                 <button

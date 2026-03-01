@@ -9,16 +9,20 @@ interface Props {
   activePreset: string | null;
   onSelectPreset: (id: string | null) => void;
   label: string;
+  loading?: boolean;
 }
 
 const activeStyle = { background: COLORS.accent, color: '#fff', borderColor: COLORS.accent, boxShadow: `0 0 12px ${COLORS.accentGlowStrong}` };
 
-export default function PresetBar({ presets, activePreset, onSelectPreset, label }: Props) {
+export default function PresetBar({ presets, activePreset, onSelectPreset, label, loading }: Props) {
   if (presets.length === 0) return null;
 
   return (
     <div class="px-4 py-2 border-b border-[--color-border]" style={{ background: `linear-gradient(135deg, ${COLORS.accentBg}, transparent)` }}>
-      <div class="text-xs font-mono uppercase mb-1" style={{ color: COLORS.accent }}>{label}</div>
+      <div class="text-xs font-mono uppercase mb-1 flex items-center gap-1.5" style={{ color: COLORS.accent }}>
+        {label}
+        {loading && <span class="spinner" style={{ width: '10px', height: '10px' }} />}
+      </div>
       <div class="flex flex-wrap gap-1">
         <button
           onClick={() => onSelectPreset(null)}

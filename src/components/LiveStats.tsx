@@ -86,10 +86,10 @@ export default function LiveStats({ lang = 'en' }: Props) {
     return (
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
-          { val: '1,300+', label: t.liveTrades },
-          { val: '40+', label: t.liveDays },
+          { val: '1,650+', label: t.liveTrades },
+          { val: '48+', label: t.liveDays },
           { val: '54%+', label: t.winRate },
-          { val: '5', label: t.strategies },
+          { val: '1', label: t.strategies },
         ].map(({ val, label }) => (
           <div key={label} class="text-center p-4">
             <p class="font-mono text-[--color-accent] text-3xl md:text-4xl font-bold">{val}</p>
@@ -125,7 +125,7 @@ export default function LiveStats({ lang = 'en' }: Props) {
           <p class="text-[--color-text-muted] text-sm mt-1">{t.winRate}</p>
         </div>
         <div class="text-center p-4">
-          <p class="font-mono text-[--color-accent] text-3xl md:text-4xl font-bold">5</p>
+          <p class="font-mono text-[--color-accent] text-3xl md:text-4xl font-bold">1</p>
           <p class="text-[--color-text-muted] text-sm mt-1">{t.strategies}</p>
         </div>
       </div>

@@ -28,9 +28,9 @@ export const en = {
   'hero.stat4': 'Backtested Trades',
   'hero.stat5': 'Data Points Processed',
   'hero.stat6': 'No Credit Card',
-  'hero.live_trades': '1,625+ Live Trades',
-  'hero.live_wr': '54% Win Rate',
-  'hero.live_days': '47 Days Verified',
+  'hero.live_trades': '1,650+ Live Trades',
+  'hero.live_wr': '54.6% Win Rate',
+  'hero.live_days': '48 Days Verified',
   'hero.live_capital': '$3,000 Real Capital',
 
   // Problem
@@ -488,7 +488,7 @@ export const en = {
   'methodology.metric_sharpe': 'Sharpe Ratio — Risk-adjusted return relative to volatility. Higher is better.',
   'methodology.metric_sortino': 'Sortino Ratio — Like Sharpe, but only penalizes downside volatility.',
   'methodology.metric_calmar': 'Calmar Ratio — Total return divided by max drawdown. Measures return per unit of risk.',
-  'methodology.metrics_coming': 'Sharpe, Sortino, and Calmar ratios are calculated for every simulation.',
+  'methodology.metrics_coming': 'Advanced metrics (Sharpe, Sortino, Calmar) are calculated for every simulation and will be displayed in strategy detail pages in future updates.',
 
   'methodology.not_modeled_title': 'What We Don\'t Model',
   'methodology.not_modeled_desc': 'Transparency means showing the gaps. These factors are not included in our backtests:',
@@ -554,6 +554,12 @@ export const en = {
   'api.sdk_desc': 'Python SDK and WebSocket feed are in development. Join our Telegram for updates.',
   'footer.api': 'API',
   'footer.compare': 'vs TradingView',
+
+  // Comparison table (index page)
+  'compare_table.tag': 'WHY PRUVIQ',
+  'compare_table.title': 'How We Compare',
+  'compare_table.feature': 'Feature',
+  'compare_table.detail_link': 'See detailed comparison',
 
   // Social proof / trust section
   'trust.section_tag': 'VERIFIED BY DATA',

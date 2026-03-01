@@ -307,7 +307,7 @@ const isActive = (match: string) => basePath.startsWith(match);
     </nav>
     </header>
 
-    <main id="main-content" role="main" aria-label="Page content" class="pt-16">
+    <main id="main-content" role="main" aria-label="Page content" class="pt-16 pb-16">
       {!basePath.startsWith('/404') && <Breadcrumbs />}
       <slot />
     </main>

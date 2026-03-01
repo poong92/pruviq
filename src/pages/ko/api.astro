@@ -204,7 +204,7 @@ const API_BASE = 'https://api.pruviq.com';
           </details>
           <div class="mt-3 p-3 rounded bg-[--color-bg-subtle] border border-[--color-border] text-sm text-[--color-text-muted]">
             <strong class="font-mono text-xs text-[--color-accent]">참고:</strong>
-            <span class="ml-2"><code class="font-mono">/simulate/compare</code> 엔드포인트는 <code class="font-mono">top_n</code> 값이 크거나 기간이 넓을 경우 실행 시간이 길어져 일부 호스팅 환경에서 524 Gateway Timeout 응답을 반환할 수 있습니다. 타임아웃 가능성을 줄이려면 <code class="font-mono">top_n</code>을 줄이거나 기간을 좁히거나 여러 개의 작은 비교 작업으로 분할해 실행하세요. 근본적인 해결은 백엔드 변경(비동기 작업 큐 또는 캐싱)이 필요합니다.</span>
+            <span class="ml-2">장시간 실행되는 백테스트(<code class="font-mono">top_n</code>이 크거나 기간이 넓은 경우)는 비동기 처리가 필요할 수 있습니다. 타임아웃을 방지하려면 <code class="font-mono">top_n</code>을 줄이거나(예: 50), 기간을 좁히거나, 여러 개의 작은 요청으로 분할하세요. 비동기 처리를 위한 작업 상태 엔드포인트가 향후 릴리스에 예정되어 있습니다.</span>
           </div>
         </div>
 

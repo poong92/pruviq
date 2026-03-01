@@ -75,17 +75,51 @@ const labels = {
   },
 };
 
-function MetricBox({ label, value, color }: { label: string; value: string; color: string }) {
+function MetricBox({ label, value, color, description }: { label: string; value: string; color: string; description?: string }) {
   return (
-    <div class="p-3 rounded-lg bg-[--color-bg-tooltip] border border-[--color-border]">
+    <div class="p-3 rounded-lg bg-[--color-bg-tooltip] border border-[--color-border]" title={description}>
       <div class="font-mono text-[0.625rem] text-[--color-text-muted] uppercase tracking-wider mb-1">{label}</div>
       <div class="font-mono text-lg md:text-xl font-bold" style={{ color }}>{value}</div>
     </div>
   );
 }
 
+const metricDescriptions = {
+  en: {
+    winRate: 'Percentage of trades that were profitable',
+    pf: 'Ratio of gross profit to gross loss. PF > 1.5 is good, > 2.0 is excellent',
+    totalReturn: 'Cumulative percentage return over the test period',
+    maxDD: 'Largest peak-to-trough decline during the test period',
+    avgWin: 'Average percentage gain on winning trades',
+    avgLoss: 'Average percentage loss on losing trades',
+    rr: 'Risk-Reward ratio — average win divided by average loss',
+    maxConsec: 'Longest streak of consecutive losing trades',
+    sharpe: 'Risk-adjusted return (excess return / volatility). > 1.0 is good, > 2.0 is excellent',
+    sortino: 'Like Sharpe but only penalizes downside volatility. > 1.5 is good, > 3.0 is excellent',
+    calmar: 'Annual return divided by max drawdown. > 1.0 is good, > 3.0 is excellent',
+    breakeven: 'Minimum win rate needed to break even, given the average win/loss sizes',
+    margin: 'How far above the break-even win rate the actual win rate is',
+  },
+  ko: {
+    winRate: '수익을 낸 거래의 비율',
+    pf: '총 수익 / 총 손실 비율. PF > 1.5 양호, > 2.0 우수',
+    totalReturn: '테스트 기간 동안의 누적 수익률',
+    maxDD: '테스트 기간 중 최대 고점 대비 하락 폭',
+    avgWin: '수익 거래의 평균 수익률',
+    avgLoss: '손실 거래의 평균 손실률',
+    rr: '리스크-보상 비율 — 평균 수익 / 평균 손실',
+    maxConsec: '가장 긴 연속 손실 거래 수',
+    sharpe: '위험 조정 수익률 (초과수익 / 변동성). > 1.0 양호, > 2.0 우수',
+    sortino: '샤프와 유사하나 하방 변동성만 반영. > 1.5 양호, > 3.0 우수',
+    calmar: '연간 수익률 / 최대 드로다운. > 1.0 양호, > 3.0 우수',
+    breakeven: '평균 손익 규모 기준 손익분기에 필요한 최소 승률',
+    margin: '실제 승률이 손익분기 승률보다 얼마나 높은지',
+  },
+} as const;
+
 export default function ResultsCard({ data, isDefault, lang = 'en', isDemo = false }: ResultsCardProps) {
   const t = labels[lang] || labels.en;
+  const desc = metricDescriptions[lang] || metricDescriptions.en;
   const total = data.tp_count + data.sl_count + data.timeout_count;
   const tpPct = total > 0 ? (data.tp_count / total) * 100 : 0;
   const slPct = total > 0 ? (data.sl_count / total) * 100 : 0;
@@ -121,17 +155,17 @@ export default function ResultsCard({ data, isDefault, lang = 'en', isDemo = fal
       )}
 
       <div class="grid grid-cols-2 gap-2 mb-3">
-        <MetricBox label={t.winRate} value={`${data.win_rate}%`} color={wrColor} />
-        <MetricBox label={t.pf} value={`${data.profit_factor}`} color={pfColor} />
-        <MetricBox label={t.totalReturn} value={`${data.total_return_pct > 0 ? '+' : ''}${data.total_return_pct}%`} color={retColor} />
-        <MetricBox label={t.maxDD} value={`${data.max_drawdown_pct}%`} color="var(--color-red)" />
+        <MetricBox label={t.winRate} value={`${data.win_rate}%`} color={wrColor} description={desc.winRate} />
+        <MetricBox label={t.pf} value={`${data.profit_factor}`} color={pfColor} description={desc.pf} />
+        <MetricBox label={t.totalReturn} value={`${data.total_return_pct > 0 ? '+' : ''}${data.total_return_pct}%`} color={retColor} description={desc.totalReturn} />
+        <MetricBox label={t.maxDD} value={`${data.max_drawdown_pct}%`} color="var(--color-red)" description={desc.maxDD} />
       </div>
 
       {/* Break-even win rate */}
       {hasBreakeven && (
         <div class="flex gap-3 text-[10px] font-mono text-[--color-text-muted] mb-3 px-1">
-          <span>{t.breakeven}: {breakevenWR.toFixed(1)}%</span>
-          <span style={{ color: wrMargin > 0 ? 'var(--color-accent)' : 'var(--color-red)' }}>
+          <span title={desc.breakeven}>{t.breakeven}: {breakevenWR.toFixed(1)}%</span>
+          <span style={{ color: wrMargin > 0 ? 'var(--color-accent)' : 'var(--color-red)' }} title={desc.margin}>
             {t.margin}: {wrMargin > 0 ? '+' : ''}{wrMargin.toFixed(1)}%p
           </span>
         </div>
@@ -143,21 +177,25 @@ export default function ResultsCard({ data, isDefault, lang = 'en', isDemo = fal
             label={t.avgWin}
             value={`+${(data.avg_win_pct ?? 0).toFixed(2)}%`}
             color="var(--color-accent)"
+            description={desc.avgWin}
           />
           <MetricBox
             label={t.avgLoss}
             value={`${(data.avg_loss_pct ?? 0).toFixed(2)}%`}
             color="var(--color-red)"
+            description={desc.avgLoss}
           />
           <MetricBox
             label={t.rr}
             value={data.avg_loss_pct && data.avg_loss_pct !== 0 ? `1:${(Math.abs(data.avg_win_pct ?? 0) / Math.abs(data.avg_loss_pct)).toFixed(2)}` : 'N/A'}
             color={((data.avg_win_pct ?? 0) / Math.abs(data.avg_loss_pct ?? 1)) >= 1 ? 'var(--color-accent)' : 'var(--color-text-muted)'}
+            description={desc.rr}
           />
           <MetricBox
             label={t.maxConsec}
             value={`${data.max_consecutive_losses ?? 0}`}
             color="var(--color-text-muted)"
+            description={desc.maxConsec}
           />
         </div>
       )}
@@ -168,16 +206,19 @@ export default function ResultsCard({ data, isDefault, lang = 'en', isDemo = fal
             label={t.sharpe}
             value={`${(data.sharpe_ratio ?? 0).toFixed(2)}`}
             color={(data.sharpe_ratio ?? 0) > 1 ? 'var(--color-accent)' : 'var(--color-text-muted)'}
+            description={desc.sharpe}
           />
           <MetricBox
             label={t.sortino}
             value={`${(data.sortino_ratio ?? 0).toFixed(2)}`}
             color={(data.sortino_ratio ?? 0) > 1.5 ? 'var(--color-accent)' : 'var(--color-text-muted)'}
+            description={desc.sortino}
           />
           <MetricBox
             label={t.calmar}
             value={`${(data.calmar_ratio ?? 0).toFixed(2)}`}
             color={(data.calmar_ratio ?? 0) > 1 ? 'var(--color-accent)' : 'var(--color-text-muted)'}
+            description={desc.calmar}
           />
         </div>
       )}
