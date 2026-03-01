@@ -56,7 +56,7 @@ We tested both LONG and SHORT variants. The results were definitive:
 
 - **BB Squeeze SHORT**: +$794, 68.6% win rate
 - **BB Squeeze LONG**: -$26, 51.0% win rate
-- **Momentum LONG**: -$14,115, 37.5% win rate
+- **Momentum LONG**: Negative PnL, 37.5% win rate
 
 In the current crypto market structure (2024-2026), short-side mean reversion has a consistent edge. Long strategies showed no statistical significance.
 
