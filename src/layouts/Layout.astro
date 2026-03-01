@@ -240,8 +240,8 @@ const isActive = (match: string) => basePath.startsWith(match);
         "articleSection": category || "education"
       })} />
     )}
-    <!-- JSON-LD BreadcrumbList -->
-    {basePath !== '/' && (
+    <!-- JSON-LD BreadcrumbList (skip for 404 pages) -->
+    {basePath !== '/' && !basePath.startsWith('/404') && (
       <script type="application/ld+json" set:html={JSON.stringify({
         "@context": "https://schema.org",
         "@type": "BreadcrumbList",
@@ -306,7 +306,7 @@ const isActive = (match: string) => basePath.startsWith(match);
     </header>
 
     <main id="main-content" role="main" aria-label="Page content" class="pt-16">
-      <Breadcrumbs />
+      {!basePath.startsWith('/404') && <Breadcrumbs />}
       <slot />
     </main>
 

@@ -12,11 +12,11 @@ const verifiedCount = allStrategies.filter(s => s.data.status === 'verified').le
 <Layout title={t('meta.home_title')} description={t('meta.index_desc')}>
 
   <!-- HERO -->
-  <section class="min-h-[80vh] flex items-center">
+  <section class="min-h-[80vh] flex items-center" aria-labelledby="hero-heading-ko">
     <div class="max-w-6xl mx-auto px-4 py-20">
       <div class="max-w-3xl">
         <p class="font-mono text-[--color-accent] text-sm mb-4 tracking-wider">{t('hero.tag')}</p>
-        <h1 class="text-4xl md:text-6xl font-bold leading-tight mb-6">
+        <h1 id="hero-heading-ko" class="text-4xl md:text-6xl font-bold leading-tight mb-6">
           {t('hero.title1')}<br/>
           <span class="text-[--color-accent]">{t('hero.title2')}</span>
         </h1>
@@ -391,10 +391,10 @@ const verifiedCount = allStrategies.filter(s => s.data.status === 'verified').le
   </section>
 
   <!-- BLOG / LEARN -->
-  <section class="py-20 border-t border-[--color-border]">
+  <section class="py-20 border-t border-[--color-border]" aria-labelledby="blog-heading-ko">
     <div class="max-w-6xl mx-auto px-4">
       <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('blog.coming_soon')}</p>
-      <h2 class="text-3xl md:text-4xl font-bold mb-4">{t('blog.title')}</h2>
+      <h2 id="blog-heading-ko" class="text-3xl md:text-4xl font-bold mb-4">{t('blog.title')}</h2>
       <p class="text-[--color-text-muted] text-sm mb-8 max-w-2xl">{t('blog.desc')}</p>
       <div class="flex flex-col sm:flex-row gap-4">
         <a href="/ko/blog"
