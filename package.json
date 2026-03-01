@@ -4,6 +4,7 @@
   "version": "0.3.0",
   "scripts": {
     "dev": "astro dev",
+    "convert-og-image": "node scripts/convert-og-image.js",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
@@ -23,6 +24,7 @@
   "devDependencies": {
     "@axe-core/playwright": "^4.11.1",
     "@playwright/test": "^1.50.0",
-    "axe-core": "^4.10.0"
+    "axe-core": "^4.10.0",
+    "sharp": "^0.34.5"
   }
 }
