@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'preact/hooks';
-import { formatPrice, formatVolume, changeColor, fgColor, timeAgo } from '../utils/format';
+import { changeColor, timeAgo } from '../utils/format';
 import { STATIC_DATA, fetchWithFallback, API_BASE_URL } from '../config/api';
 
 const labels = {
@@ -10,8 +10,6 @@ const labels = {
     totalMcap: 'Total Market Cap',
     btcDom: 'BTC Dominance',
     volume24h: '24h Volume',
-    topGainers: 'Top Gainers',
-    topLosers: 'Top Losers',
     latestNews: 'Latest News',
     cryptoNews: 'Crypto',
     macroNews: 'Macro',
@@ -21,10 +19,6 @@ const labels = {
     newsError: 'Failed to load news.',
     updated: 'Updated',
     disclaimer: 'Market data is for informational purposes only. Not financial advice. Data refreshed every 15 min.',
-    symbol: 'Symbol',
-    price: 'Price',
-    change: '24h %',
-    volume: 'Volume',
     readMore: 'Read more',
     searchNews: 'Search news...',
     allSources: 'All',
@@ -52,8 +46,6 @@ const labels = {
     totalMcap: '총 시가총액',
     btcDom: 'BTC 도미넌스',
     volume24h: '24시간 거래량',
-    topGainers: '상승 TOP',
-    topLosers: '하락 TOP',
     latestNews: '최신 뉴스',
     cryptoNews: '크립토',
     macroNews: '매크로',
@@ -63,10 +55,6 @@ const labels = {
     newsError: '뉴스 로딩 실패.',
     updated: '업데이트',
     disclaimer: '시장 데이터는 정보 제공 목적으로만 제공됩니다. 투자 조언이 아닙니다. 15분마다 자동 갱신.',
-    symbol: '심볼',
-    price: '가격',
-    change: '24h %',
-    volume: '거래량',
     readMore: '자세히 보기',
     searchNews: '뉴스 검색...',
     allSources: '전체',
@@ -89,7 +77,6 @@ const labels = {
   },
 };
 
-type MarketMover = { symbol: string; price: number; change_24h: number; volume_24h: number };
 type NewsItem = { title: string; link: string; source: string; category?: string; published: string; summary: string };
 
 type MarketData = {
@@ -102,8 +89,6 @@ type MarketData = {
   total_market_cap_b: number;
   btc_dominance: number;
   total_volume_24h_b: number;
-  top_gainers: MarketMover[];
-  top_losers: MarketMover[];
   generated: string;
 };
 
@@ -157,23 +142,6 @@ function SkeletonPriceBar() {
   );
 }
 
-function SkeletonTable() {
-  return (
-    <div class="border border-[--color-border] rounded-lg bg-[--color-bg-card] overflow-hidden">
-      <div class="px-4 py-3 border-b border-[--color-border]">
-        <div class="skeleton h-3 w-24" />
-      </div>
-      {[...Array(3)].map((_, i) => (
-        <div key={i} class="flex items-center justify-between px-4 py-2 border-b border-[--color-border] last:border-0">
-          <div class="skeleton h-4 w-16" />
-          <div class="skeleton h-4 w-20" />
-          <div class="skeleton h-4 w-14" />
-        </div>
-      ))}
-    </div>
-  );
-}
-
 function SkeletonNews() {
   return (
     <div>
@@ -215,46 +183,6 @@ function ExpandButton({ expanded, onClick, expandLabel, collapseLabel }: { expan
   );
 }
 
-function MoverTable({ title, movers, l }: { title: string; movers: MarketMover[]; l: typeof labels.en }) {
-  return (
-    <div class="border border-[--color-border] rounded-lg bg-[--color-bg-card] overflow-hidden overflow-x-auto">
-      <div class="px-4 py-3 border-b border-[--color-border] text-xs font-semibold text-[--color-text-muted] uppercase tracking-wider">
-        {title}
-      </div>
-      <table class="w-full text-[13px] border-collapse">
-        <thead>
-          <tr class="border-b border-[--color-border]">
-            <th class="text-left px-4 py-2 text-[--color-text-muted] font-medium text-[11px]">{l.symbol}</th>
-            <th class="text-right px-4 py-2 text-[--color-text-muted] font-medium text-[11px]">{l.price}</th>
-            <th class="text-right px-4 py-2 text-[--color-text-muted] font-medium text-[11px]">{l.change}</th>
-            <th class="text-right px-4 py-2 text-[--color-text-muted] font-medium text-[11px] hidden md:table-cell">{l.volume}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {movers.map((m, i) => (
-            <tr key={m.symbol} class="row-hover border-b border-[--color-border] last:border-0">
-              <td class="px-4 py-2 font-mono font-medium text-[--color-text]">
-                <a href={`/coins/${m.symbol.toLowerCase().replace('usdt', '')}usdt`} class="text-[--color-text] no-underline hover:text-[--color-accent] transition-colors">
-                  {m.symbol.replace('USDT', '')}
-                </a>
-              </td>
-              <td class="text-right px-4 py-2 font-mono text-[--color-text-muted]">
-                ${formatPrice(m.price)}
-              </td>
-              <td class="text-right px-4 py-2 font-mono font-semibold" style={{ color: changeColor(m.change_24h) }}>
-                {m.change_24h > 0 ? '+' : ''}{m.change_24h.toFixed(2)}%
-              </td>
-              <td class="text-right px-4 py-2 font-mono text-[--color-text-muted] text-xs hidden md:table-cell">
-                {formatVolume(m.volume_24h)}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
 const CRYPTO_SOURCES = ['CoinDesk', 'CoinTelegraph', 'Decrypt', 'Bitcoin Magazine'];
 const MACRO_SOURCES = ['Bloomberg', 'CNBC Economy', 'MarketWatch'];
 const REFRESH_MS = 300_000; // 5 min (static data refreshed every 15 min)
@@ -286,8 +214,6 @@ export default function MarketDashboard({ lang = 'en' }: { lang?: 'en' | 'ko' })
   const [refreshAgo, setRefreshAgo] = useState('');
 
   // Expansion states
-  const [gainersExpanded, setGainersExpanded] = useState(false);
-  const [losersExpanded, setLosersExpanded] = useState(false);
   const [newsExpanded, setNewsExpanded] = useState(false);
 
   // Price flash tracking
@@ -384,10 +310,6 @@ export default function MarketDashboard({ lang = 'en' }: { lang?: 'en' | 'ko' })
           <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
             {[...Array(4)].map((_, i) => <SkeletonCard key={i} />)}
           </div>
-          <div class="grid md:grid-cols-2 gap-4 mb-6">
-            <SkeletonTable />
-            <SkeletonTable />
-          </div>
         </div>
       )}
 
@@ -465,33 +387,6 @@ export default function MarketDashboard({ lang = 'en' }: { lang?: 'en' | 'ko' })
             <StatCard label={l.totalMcap} value={totalMcapDisplay} />
             <StatCard label={l.btcDom} value={btcDomDisplay} />
             <StatCard label={l.volume24h} value={volume24hDisplay} />
-          </div>
-
-          {/* Top Gainers / Losers (collapsible) */}
-          <div class="grid md:grid-cols-2 gap-4 mb-6">
-            <div>
-              <MoverTable title={l.topGainers} movers={market.top_gainers.slice(0, gainersExpanded ? 20 : 3)} l={l} />
-              {market.top_gainers.length > 3 && (
-                <ExpandButton
-                  expanded={gainersExpanded}
-                  onClick={() => setGainersExpanded(e => !e)}
-                  expandLabel={l.showMore}
-                  collapseLabel={l.showLess}
-                />
-              )}
-            </div>
-
-            <div>
-              <MoverTable title={l.topLosers} movers={market.top_losers.slice(0, losersExpanded ? 20 : 3)} l={l} />
-              {market.top_losers.length > 3 && (
-                <ExpandButton
-                  expanded={losersExpanded}
-                  onClick={() => setLosersExpanded(e => !e)}
-                  expandLabel={l.showMore}
-                  collapseLabel={l.showLess}
-                />
-              )}
-            </div>
           </div>
 
           {/* Macro Economic Indicators */}
