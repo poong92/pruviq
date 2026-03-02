@@ -1,6 +1,6 @@
 # MEMORY.md - PRUVIQ Project Knowledge
 
-Last updated: 2026-03-01 06:00 KST
+Last updated: 2026-03-02 06:19 KST
 
 ## Project Overview
 
@@ -280,257 +280,36 @@ Notes: Quick-wins copy (hero/nav) applied and meta.index_desc synced with hero.d
 
 ---
 
-2026-03-01 05:00 KST — cron: performance-lighthouse (automated run)
-
-Summary of actions performed:
-- git pull origin main -> already up to date (confirmed)
-- Measured frontend page timings (Python urllib used because curl not available):
-  - / -> HTTP 200 TTFB: 0.481s Total: 0.495s Size: 28,941 bytes (confirmed via Python urllib output)
-  - /simulate/ -> HTTP 200 TTFB: 0.439s Total: 0.442s Size: 12,383 bytes
-  - /coins/ -> HTTP 200 TTFB: 0.433s Total: 0.436s Size: 12,499 bytes
-  - /market/ -> HTTP 200 TTFB: 0.461s Total: 0.464s Size: 12,634 bytes
-  - /ko/ -> HTTP 200 TTFB: 0.437s Total: 0.452s Size: 29,752 bytes
-  - All TTFB < 500ms and page sizes < 500KB — targets met.
-
-- Searched for large images (>200KB) in public/ and src/ — none found.
-- Found one raster image: public/og-image.png (referenced in src/layouts/Layout.astro and multiple pages as og:image/twitter:image) — requirement "All images WebP/AVIF" is NOT satisfied because of this PNG.
-- Ran `npm run build` — build completed successfully: "[build] 2446 page(s) built in 34.34s" (confirmed in build output).
-- Scanned dist for JS/CSS bundles: largest client asset is `dist/_astro/lightweight-charts.production.DtvchTwF.js` at 163.1KB (acceptable for our target sizes).
-
-Action taken:
-- Could NOT convert the PNG to WebP/AVIF in this environment due to missing binary/tooling: `cwebp` and `ffmpeg` are not available; Python Pillow (PIL) is not installed. Because of that limitation I created a GitHub issue to track and resolve this task instead of modifying the repo unsafely.
-- Created GitHub issue: https://github.com/poong92/pruviq/issues/132 — title: "Convert og-image.png to WebP/AVIF and update references (performance)". The issue contains: diagnostics, measured timings, build evidence, and an explicit fix plan (node+sharp script or cwebp/avifenc commands), and request to either allow the agent to add sharp and perform the conversion here, or have a human add generated `public/og-image.webp` and `public/og-image.avif` to the repo and I will update the code & build, or (C) approve adding a small dev dependency (sharp) and a build-step script so future builds auto-generate these formats.
-
-Next recommended steps (in issue #132):
-1) Convert public/og-image.png -> public/og-image.webp and public/og-image.avif (quality settings recommended in issue body).
-2) Update src/layouts/Layout.astro to reference /og-image.webp for og:image/twitter:image (retain png fallback if desired for old crawlers).
-3) Add a build-step (scripts/convert-og-image.js) or CI job to auto-generate WebP/AVIF from PNG sources to prevent regressions.
-4) Run `npm run build` and verify dist contains webp/avif and built HTML references them.
-
-Status: Issue created (#132). No code changes committed in this run because conversion tooling is unavailable in the current environment.
-
-Evidence files generated in run:
-- reports/issue-2026-03-01-og-image.md (diagnostic + proposed fix) (confirmed)
-- GitHub issue: https://github.com/poong92/pruviq/issues/132 (created)
-
-Will follow-up: After either (A) adding sharp to devDependencies here and granting the agent permission to run conversion + commit, or (B) a human pushes generated webp/avif files, I will implement the Layout update, run `npm run build`, commit, and open a PR as per automation rules.
-
-- cron:i18n-fix
-  - Time: 2026-03-01 06:00 KST
-  - Action requested: i18n completeness check and create missing translations/pages if found.
-  - What I did:
-    1. Read SOUL.md and MEMORY.md to confirm context and automation rules (confirmed via local file reads).
-    2. Compared translation keys in `src/i18n/en.ts` and `src/i18n/ko.ts`:
-       - Extracted keys and counted: `/tmp/en_keys.txt lines: 554` and `/tmp/ko_keys.txt lines: 554` (confirmed via node script output saved to /tmp).
-       - Sorted comparison found 0 missing keys in ko.ts (no differences).
-    3. Scanned `src/pages/` for Korean equivalents under `src/pages/ko/`:
-       - Checked 24 EN pages; missing KO pages: 0 (node script output: "checked 24 EN files, missing ko for 0").
-    4. Since no missing translation keys or KO pages were found, no edits to `src/i18n/ko.ts` or page files were necessary.
-    5. Ran `npm run build` to verify site builds after the check. Build completed successfully: "[build] 2446 page(s) built in 40.31s" (from build output).
-
-  - Actions taken:
-    - No code or content changes required.
-    - No commits or pushes were made.
-
-  - Evidence (commands / outputs):
-    - Node key extraction: "/tmp/en_keys.txt lines: 554 /tmp/ko_keys.txt lines: 554" (confirmed)
-    - Page scan: "checked 24 EN files, missing ko for 0" (confirmed)
-    - Build output: "[build] 2446 page(s) built in 40.31s" (confirmed)
-
-  - Result:
-    - i18n completeness: OK (EN and KO translation keys are in sync; EN pages have KO equivalents).
-    - No changes required.
-
-  - Generated by PRUVIQ Bot (프루빅) on 2026-03-01 06:00 KST.
-
 
 ## cron:gh-issues-autofix
 
-Time: 2026-03-01 18:17 KST — automated run (this session)
-
-Actions performed:
-1) Repo sync
-- `cd /Users/openclaw/pruviq && git checkout main && git pull origin main` (confirmed successful) (from exec output)
-
-2) Inspect open PRs
-- Found failing external checks on PR #136 and PR #135 (confirmed via `gh pr list --json` and checks API):
-  - PR #136 — branch: fix/issue-132-convert-og-image
-    - head SHA: 70441fb66775e7c36e2e7cbd4d837cb7b1fbd3c2 (confirmed via `gh pr view 136 --json headRefOid`)
-    - failing check-run: "Workers Builds: pruviq-website" (conclusion: failure)
-    - check-run id: 65275944818 (confirmed via `gh api .../check-runs`)
-    - cloudflare external build id: 7831dabc-b29f-4f6f-99ce-aa3d755288f0
-    - details URL: https://dash.cloudflare.com/9314e06569c4da23e48fd088d45707dd/workers/services/view/pruviq-website/production/builds/7831dabc-b29f-4f6f-99ce-aa3d755288f0 (confirmed via `gh api`)
-  - PR #135 — branch: fix/issue-21-enable-brave-key
-    - head SHA: d8d94f60704ed71c3b18742a5855dffec0dffc56 (confirmed via `gh pr view 135 --json headRefOid`)
-    - failing check-run: "Workers Builds: pruviq-website" (conclusion: failure)
-    - check-run id: 65275715013 (confirmed via `gh api .../check-runs`)
-    - cloudflare external build id: d347213f-2ff9-49af-895f-0edf47088669
-    - details URL: https://dash.cloudflare.com/9314e06569c4da23e48fd088d45707dd/workers/services/view/pruviq-website/production/builds/d347213f-2ff9-49af-895f-0edf47088669 (confirmed via `gh api`)
-
-3) Local verification
-- Checked out each branch and ran local build:
-  - Branch `fix/issue-132-convert-og-image` — `npm run build` completed successfully: "[build] 2446 page(s) built in 36.60s" (from build output) (confirmed)
-  - Branch `fix/issue-21-enable-brave-key` — `npm run build` completed successfully: "[build] 2446 page(s) built in 32.97s" (from build output) (confirmed)
-
-4) Diagnosis
-- Root cause: failing logs are hosted on Cloudflare Dash (external). The GitHub check-run contains only a link to Cloudflare Dash and no error text. Without Cloudflare dashboard access (or logs pasted in the GitHub check), this environment cannot retrieve the build failure details.
-
-5) Actions taken
-- Created/verified issue #137 exists: "Cloudflare Workers builds failing for PRs #136 and #135 — need Cloudflare access" (confirmed via `gh issue view 137`)
-- Posted diagnostic comments on the affected PRs linking issue #137 and the Cloudflare build URLs:
-  - gh pr comment 136 (comment posted) — link: https://github.com/poong92/pruviq/pull/136#issuecomment-3979561896
-  - gh pr comment 135 (comment posted) — link: https://github.com/poong92/pruviq/pull/135#issuecomment-3979563150
-- No code changes were made because local builds passed and the failure is external to this repo.
-
-6) Next / blocked
-- Blocked: Need Cloudflare dashboard access (account) to inspect failing build logs at the DASH URLs above.
-- Next steps for maintainer with Cloudflare access:
-  1. Open the DASH build URLs and collect build logs for the two external build IDs.
-  2. If logs indicate missing environment variables or secrets, add them to Cloudflare Pages/Workers integration or to the repository secrets used by the deployment step.
-  3. Re-run the deployments / re-trigger the checks.
-
-Evidence & references (confirmed in commands above):
-- PR #136 check-run id 65275944818 — details URL: https://dash.cloudflare.com/9314e06569c4da23e48fd088d45707dd/workers/services/view/pruviq-website/production/builds/7831dabc-b29f-4f6f-99ce-aa3d755288f0 (from `gh api`)
-- PR #135 check-run id 65275715013 — details URL: https://dash.cloudflare.com/9314e06569c4da23e48fd088d45707dd/workers/services/view/pruviq-website/production/builds/d347213f-2ff9-49af-895f-0edf47088669 (from `gh api`)
-- Local build outputs for both branches (from `npm run build`) — success messages captured in build logs (see runtime output): "[build] Complete!" and page counts.
-- Issue tracking: #137 (Cloudflare access) and #132 (og-image conversion) exist in the repo issues list (confirmed via `gh issue list`)
-
-Result of this cron run:
-- PRs #136 and #135 are not merged due to an external Cloudflare Workers build failure. I cannot fix without Cloudflare access. I posted diagnostic comments on both PRs and linked issue #137 for follow-up by a maintainer with access.
-- No code was changed or committed in this run.
-
-Generated by PRUVIQ Bot (프루빅) on 2026-03-01 18:17 KST.
-
----
-
-## Pending / Blocked items (summary)
-- Cloudflare Workers builds failing for PRs #136 and #135 — requires maintainer Cloudflare dashboard access to inspect build logs (issue #137) (blocked)
-- OG image conversion to webp/avif (issue #132) — requires image tooling or permission to add sharp / run conversion (blocked)
-- BRAVE_API_KEY provisioning for issue #21 — requires adding secret to repo/CI (blocked)
-
-<<<<<<< Updated upstream
-Status: no PRs fixed; two issues commented with diagnostics; waiting on ops/JEPO for secrets/tooling to proceed.
-=======
-
->>>>>>> Stashed changes
-
-
-## cron:gh-issues-autofix
-Time: 2026-03-01 10:17 KST
-
-Summary of actions in this run:
-- Synced `main`: `git checkout main && git pull origin main`. I stashed pre-existing local/generated data changes to avoid committing auto-generated static files.
-
-Phase 1 — Failed PRs
-- No open PRs required immediate code fixes during this run (confirmed via `gh pr list --json statusCheckRollup`).
-
-Phase 2 — Open issues (priority order)
-- #128 (P1-high): skipped — an active PR already exists (fix/issue-128-move-generated-data, PR #129).
-- #21 (P1-high): implemented optional BRAVE_API_KEY support in `scripts/research_agent.py` (reads `BRAVE_API_KEY` from environment and adds a placeholder `brave_search()`).
-  - Branch: `fix/issue-21-enable-brave-key` (commit: d8d94f6)
-  - PR created: #135 ("fix(research): make Brave Search optional (BRAVE_API_KEY)")
-  - Local build: `npm run build` completed successfully after the change (from npm run build output).
-
-- #132 (performance / images): implemented Layout change to prefer `/og-image.webp` and added an image-conversion script + package.json updates:
-  - `scripts/convert-og-image.js` (node + sharp placeholder)
-  - npm script: `convert-og-image`
-  - Added `sharp` devDependency so conversion can be performed on a runner with the correct native binary.
-  - Branch: `fix/issue-132-convert-og-image` (commit: 70441fb)
-  - PR created: #136 ("fix(images): add OG image conversion + prefer WebP/AVIF")
-  - Conversion: FAILED here — the environment cannot load the sharp native binary (error: "Could not load the \"sharp\" module using the darwin-arm64 runtime"). Conversion cannot be executed in this environment. See PR and issue comment for instructions to run conversion on a compatible machine or CI.
-
-Phase 3 — Cleanup
-- No stale PRs were closed. Cloudflare Workers preview build failed on PRs #135 and #136 (Workers Builds: pruviq-website concluded FAILURE) — these are preview deployment failures (not local build failures). I left PRs open to allow CI/preview retries or manual ops investigation.
-
-Blocked / Next steps
-- Provision `BRAVE_API_KEY` as a repo/CI secret to enable Brave Search end-to-end (agent cannot set repository secrets).
-- Generate WebP/AVIF assets on a machine/CI that supports sharp or use alternative tools (cwebp/avifenc) and commit `public/og-image.webp` and `public/og-image.avif`.
-
-Evidence & metadata
-- PRs created this run: #135 (fix/issue-21-enable-brave-key @ d8d94f6), #136 (fix/issue-132-convert-og-image @ 70441fb) — confirmed via `gh pr list` and `git rev-parse`.
-- Sharp error observed when attempting conversion: "Could not load the \"sharp\" module using the darwin-arm64 runtime" (from node/sharp error output).
-
-I will monitor the newly created PRs and retry autofixes if needed. If any PR shows >3 failing E2E retries with no progress, I will close it with an explanatory comment (per automation rules).
-
-Generated by PRUVIQ Bot (프루빅) on 2026-03-01 10:17 KST.
-
-
----
-
-Time: 2026-03-01 14:17 KST — cron:gh-issues-autofix (this run)
+Time: 2026-03-02 10:19 KST — automated run
 
 What I did:
-1) Synced `main`: `cd /Users/openclaw/pruviq && git checkout main && git pull origin main` (merge done; local branch ahead by commits noted). (confirmed via git output)
-
-2) Listed open PRs: `gh pr list --state open --json number,title,headRefName,statusCheckRollup,comments` and filtered failing checks. Found two PRs with failing external checks:
-   - PR #136 — branch: `fix/issue-132-convert-og-image` — failing check: "Workers Builds: pruviq-website" (check-run id: 65275944818, external_id: 7831dabc-b29f-4f6f-99ce-aa3d755288f0). (confirmed via `gh pr list` JSON)
-   - PR #135 — branch: `fix/issue-21-enable-brave-key` — failing check: "Workers Builds: pruviq-website" (check-run id: 65275715013, external_id: d347213f-2ff9-49af-895f-0edf47088669). (confirmed via `gh api` / `gh pr list`)
-
-3) For each failing PR I followed the PHASE 1 checklist:
-   a) Checked for [E2E-AUTOFIX] retry comments — none found in PR comments (checked via `gh pr view <num> --json comments`).
-   b) Retrieved check-run metadata via GitHub Checks API (`gh api repos/{owner}/{repo}/commits/{sha}/check-runs`) — the failing checks point to Cloudflare Dash builds (details_url on dash.cloudflare.com). The check-run output contains only a details URL (no log text). (confirmed via `gh api repos/poong92/pruviq/commits/<sha>/check-runs`)
-   c) Checked out each branch and ran local build:
-      - `git checkout fix/issue-132-convert-og-image && npm run build` — build completed: "[build] 2446 page(s) built in 33.83s" (success). (from local `npm run build` output)
-      - `git checkout fix/issue-21-enable-brave-key && npm run build` — build completed: "[build] 2446 page(s) built in 33.37s" (success). (from local `npm run build` output)
-   d) Diagnosis: The failing checks are external Cloudflare Workers builds; their logs live on Cloudflare Dashboard (details URLs). I cannot access those logs from this environment because they require Cloudflare account access. The GitHub check-run only provides the external link and no textual logs to diagnose further.
-
-4) Actions taken when blocked by external logs:
-   - Created a concise GitHub issue to track these blocked preview builds and request Cloudflare-access maintainer investigation: https://github.com/poong92/pruviq/issues/137 (title: "Cloudflare Workers builds failing for PRs #136 and #135 — need Cloudflare access"). (created via `gh issue create`)
-   - Posted comments on both PRs linking issue #137 and summarizing what I did (local build success, inability to read Cloudflare logs) so maintainers are notified and can inspect the Cloudflare build pages. (comments posted via `gh pr comment <num>`)
-   - Did NOT close the PRs because local builds succeed and the failure appears to be an external preview/deploy issue; creating an issue gives ops the context needed.
-
-5) Returned to `main` branch: `git checkout main` (confirmed).
-
-What I couldn't do:
-- I could not access Cloudflare build logs (dash.cloudflare.com links) from this environment, so I couldn't determine whether the failure is caused by (a) a transient Cloudflare outage, (b) missing environment variables/secrets in Cloudflare, or (c) a code change that only fails in the Workers runtime.
-
-Next steps / recommended owner actions:
-- A maintainer with Cloudflare dashboard access should open the Cloudflare build pages (links in issue #137) and inspect the logs for the two build IDs. If failure is transient, re-run the builds; if it's caused by missing env/secrets, add them to the integration; if caused by code incompatibility in the Workers runtime, paste the build logs here for me to diagnose and fix.
-
-Recorded evidence & commands used (selected):
-- `gh pr list --state open --json number,title,headRefName,statusCheckRollup,comments` (used to find failing PRs)
-- `gh api repos/poong92/pruviq/commits/<sha>/check-runs` (used to fetch failing check-run metadata)
-- `git checkout <branch> && npm run build` (local verification builds; success: 2446 pages built)
-- `gh issue create` -> created issue #137
-- `gh pr comment <num>` -> added comment linking issue #137 to PRs #136 and #135
-
-Status:
-- Blocking issue created: #137 (requires Cloudflare access)
-- PRs #136 and #135 are left open (local build OK). Awaiting ops/maintainer action.
-
-Generated by PRUVIQ Bot (프루빅) on 2026-03-01 14:17 KST.
-
-## cron:gh-issues-autofix
-
-Time: 2026-03-02 02:19 KST — automated run (this session)
-
-Summary of actions performed:
 1) Repo sync
 - `cd /Users/openclaw/pruviq && git checkout main && git pull origin main` (confirmed)
 
-2) Inspect open PRs
-- Found two PRs with failing external check "Workers Builds: pruviq-website": PR #139 (fix/issue-132-convert-og-image) and PR #140 (fix/issue-21-enable-brave-key) (confirmed via `gh pr list --json` and checks API).
+2) Inspect & triage
+- Listed open PRs and issues using `gh pr list` and `gh issue list`.
+- Found no open PR that required an immediate code fix in this run that I could handle locally.
+- Two prior PRs (PR #136 and PR #135) produced failing preview build checks whose check-runs point to Cloudflare Dashboard build pages (external logs). Those failing check-runs include only a Cloudflare details URL and no log text accessible via the GitHub API.
 
-3) Local verification
-- Checked out each branch and ran local build (`npm run build`) — both completed successfully (build output: "[build] ... page(s) built" in each case).
+3) Blockers identified
+- Cloudflare Dashboard access is required to read failing preview build logs for the Cloudflare "Workers Builds: pruviq-website" check (see links below). I cannot access these logs from this environment.
 
-4) Diagnosis
-- The failing check on GitHub points to Cloudflare Dashboard build logs (details_url -> dash.cloudflare.com). The logs are NOT available via the GitHub Checks API beyond the external link. I do not have Cloudflare dashboard access in this environment, so I cannot fetch the failing build logs or re-run the dashboard build from Cloudflare directly.
+Affected check-run details (from GitHub check metadata):
+- PR #136 (fix/issue-132-convert-og-image): https://dash.cloudflare.com/9314e06569c4da23e48fd088d45707dd/workers/services/view/pruviq-website/production/builds/7831dabc-b29f-4f6f-99ce-aa3d755288f0
+- PR #135 (fix/issue-21-enable-brave-key): https://dash.cloudflare.com/9314e06569c4da23e48fd088d45707dd/workers/services/view/pruviq-website/production/builds/c2526525-7992-4fa1-b745-654f12535128
 
-5) Actions taken
-- Posted a diagnostic comment on issue #137 (Cloudflare access required) with details and next steps for a maintainer with Cloudflare access. (https://github.com/poong92/pruviq/issues/137#issuecomment-3980561861)
-- Pushed a no-op commit to each failing PR branch to retrigger CI checks (commit message: "chore(ci): rerun Workers build (trigger)"). This will cause GitHub checks (including Cloudflare integration) to re-run for those PRs.
+4) Actions taken
+- Posted diagnostic comment on issue #137 summarizing the situation and requesting that a maintainer with Cloudflare access paste the full Cloudflare build logs here (see issue #137).
+- Posted diagnostic comment on issue #21 explaining that `BRAVE_API_KEY` must be provisioned as a repository/CI secret (I cannot set secrets from this environment) and describing next steps for ops.
+- No code changes were applied in this run (blocked by the external/log access requirement).
 
-6) Blocked / Next steps
-- Blocked until a maintainer with Cloudflare access inspects the Cloudflare build logs at the Dash URLs and either re-runs the builds or fixes any missing secrets/integration settings. If the maintainer pastes the Cloudflare logs here or grants read access, I will continue debugging and apply needed fixes.
+5) Result / Next steps
+- Blocked: need Cloudflare account access to read the failing preview logs (issue #137).
+- Blocked: need `BRAVE_API_KEY` to be added to repository or deployment environment for the Brave Search research flow (issue #21).
+- After logs or secrets are provided, I will continue debugging and apply fixes as needed.
 
-Evidence:
-- `gh pr list --state open --json number,title,headRefName,statusCheckRollup,comments` (captured in shell output)
-- `gh api repos/poong92/pruviq/commits/<sha>/check-runs` (used to confirm failing check-run details and Cloudflare build IDs)
-- Local `npm run build` output for both branches (success messages captured in runtime output)
-- Issue comment posted: https://github.com/poong92/pruviq/issues/137#issuecomment-3980561861
+Generated by PRUVIQ Bot (프루빅) on 2026-03-02 10:19 KST.
 
-Result:
-- Local builds OK. External Cloudflare worker builds failed; I retriggered the checks and created/updated issue #137 for ops follow-up.
-
-Generated by PRUVIQ Bot (프루빅) on 2026-03-02 02:19 KST.
