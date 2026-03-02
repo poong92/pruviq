@@ -11,7 +11,7 @@
 
 ```
                         ┌──────────────────────────────────────────┐
-                        │              GitHub (poong92)             │
+                        │              GitHub (pruviq)             │
                         │  ┌──────────────┐  ┌──────────────────┐  │
                         │  │  autotrader   │  │     pruviq       │  │
                         │  │  (private)    │  │    (private)     │  │
@@ -680,7 +680,7 @@ Phase 3 (스케일):
 
 | 항목 | autotrader | PRUVIQ | 공유 |
 |------|-----------|--------|------|
-| GitHub Repo | poong92/autotrader | poong92/pruviq | X |
+| GitHub Repo | pruviq/autotrader | pruviq/pruviq | X |
 | 실행 서버 | DO 서버 | Mac Mini | X |
 | Python venv | .venv-at | .venv-pv | X |
 | Binance API Key | 거래 권한 | 읽기 전용 | X (별도 키) |

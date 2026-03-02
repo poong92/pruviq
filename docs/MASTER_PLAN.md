@@ -218,7 +218,7 @@ git push                 git pull               Docker
 
 ## 11. 즉시 실행 (이번 주)
 
-1. **GitHub repo 생성** — poong92/pruviq
+1. **GitHub repo 생성** — pruviq/pruviq
 2. **Parquet 저장소** — downloader.py → Parquet 출력으로 전환
 3. **Binance 현물 전체 다운로드** — 거래량 상위 300개
 4. **BB Squeeze 검증** — QA 5종 테스트 통과

@@ -114,7 +114,7 @@ const isActive = (match: string) => basePath.startsWith(match);
           ? '무료 크립토 전략 백테스팅 플랫폼. 549개 이상 코인에서 2년 이상의 실제 시장 데이터로 트레이딩 전략을 만들고 테스트하세요.'
           : 'Free crypto strategy backtesting platform. Build and test trading strategies on 549+ coins with 2+ years of real market data.',
         "founder": { "@type": "Organization", "name": "PRUVIQ Team" },
-        "sameAs": ["https://t.me/PRUVIQ", "https://github.com/poong92/pruviq"],
+        "sameAs": ["https://t.me/PRUVIQ", "https://github.com/pruviq/pruviq"],
         "knowsAbout": lang === 'ko'
           ? ['암호화폐 트레이딩', '백테스팅', '알고리즘 트레이딩', '퀀트 금융']
           : ['cryptocurrency trading', 'backtesting', 'algorithmic trading', 'quantitative finance']
@@ -173,10 +173,10 @@ const isActive = (match: string) => basePath.startsWith(match);
           },
           {
             "@type": "Question",
-            "name": "PRUVIQ에 실거래 검증이 있나요?",
+            "name": "PRUVIQ의 전략은 어떻게 검증되나요?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "네. BB Squeeze SHORT 전략이 $3,000 자본의 실제 바이낸스 선물 계좌에서 운영되고 있습니다. 손실을 포함한 모든 거래가 공개됩니다. 실거래 성과 페이지에서 38일 이상의 검증된 트레이딩 데이터와 전체 버전 히스토리를 확인할 수 있습니다."
+              "text": "PRUVIQ는 549개 이상의 코인에서 2년 이상의 과거 데이터로 모든 전략을 백테스트합니다. 수수료, 슬리피지, 펀딩비를 포함한 현실적인 시뮬레이션으로 검증하며, 실패한 전략도 모두 공개합니다."
             }
           }
         ] : [
@@ -214,10 +214,10 @@ const isActive = (match: string) => basePath.startsWith(match);
           },
           {
             "@type": "Question",
-            "name": "Does PRUVIQ have real trading verification?",
+            "name": "How does PRUVIQ verify strategies?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "Yes. One strategy (BB Squeeze SHORT) runs on a real Binance Futures account with $3,000 capital. Every trade is published publicly, including losses. The live performance page shows 38+ days of verified trading data with full version history."
+              "text": "PRUVIQ backtests all strategies on 549+ coins with 2+ years of historical data. Every simulation includes realistic fees, slippage, and funding costs. Failed strategies are published alongside successful ones for full transparency."
             }
           }
         ]
@@ -350,7 +350,7 @@ const isActive = (match: string) => basePath.startsWith(match);
                 <a href={compareTvPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('footer.compare')}</a>
                 <a href="https://t.me/PRUVIQ" target="_blank" rel="noopener noreferrer" class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('footer.telegram')}</a>
                 <a href="https://x.com/pruviq_com" target="_blank" rel="noopener noreferrer" class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">Twitter / X</a>
-                <a href="https://github.com/poong92/pruviq" target="_blank" rel="noopener noreferrer" class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">GitHub</a>
+                <a href="https://github.com/pruviq/pruviq" target="_blank" rel="noopener noreferrer" class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">GitHub</a>
               </div>
             </div>
             <div>

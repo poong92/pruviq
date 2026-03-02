@@ -30,10 +30,10 @@ export const ko: Record<TranslationKey, string> = {
   'hero.stat4': '백테스트 거래 수',
   'hero.stat5': '처리된 데이터 포인트',
   'hero.stat6': '신용카드 불필요',
-  'hero.live_trades': '1,650+ 실거래',
-  'hero.live_wr': '승률 54.6%',
-  'hero.live_days': '48일 검증',
-  'hero.live_capital': '실제 자본 $3,000',
+  'hero.tool_coins': '549+ 코인 테스트',
+  'hero.tool_strategies': '88+ 전략 백테스트',
+  'hero.tool_data': '2년+ 과거 데이터',
+  'hero.tool_free': '100% 무료, 가입 불필요',
 
   // Problem
   'problem.tag': '문제점',
@@ -576,7 +576,7 @@ export const ko: Record<TranslationKey, string> = {
   'trust.badge_open_desc': '모든 전략 코드를 GitHub에 공개. 직접 확인하세요.',
   'trust.stat_trades': '백테스트 거래 수',
   'trust.stat_datapoints': '처리된 데이터 포인트',
-  'trust.stat_live_days': '실거래 결과 공개 일수',
+  'trust.stat_live_days': '백테스트 코인 수',
   'trust.stat_strategies': '테스트된 전략 (4개 실패)',
 
   // TradingView comparison page

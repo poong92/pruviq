@@ -220,7 +220,7 @@ Every claim needs evidence:
 - [ ] SEO: meta tags optimization
 - [ ] i18n: complete learn page translations
 - [ ] Mobile: touch targets 44px minimum
-- [x] Trust: add more trust signals — small footer trust badges PR created (#138 - https://github.com/poong92/pruviq/pull/138) (build verified locally)
+- [x] Trust: add more trust signals — small footer trust badges PR created (#138 - https://github.com/pruviq/pruviq/pull/138) (build verified locally)
 - [P0] Cloudflare Workers preview builds failing for PRs #136 and #135 — blocked; requires Cloudflare dashboard access (issue #137) (labelled P0-critical)
 - [P1] Convert public/og-image.png to WebP/AVIF and update OG references — issue #132 (labelled P1-high); PR #136 exists but is blocked by Cloudflare preview failures
 - [P1] BRAVE_API_KEY provisioning for issue #21 — requires adding secret to repository/CI (issue #21)
