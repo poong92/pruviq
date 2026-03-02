@@ -28,10 +28,10 @@ export const en = {
   'hero.stat4': 'Backtested Trades',
   'hero.stat5': 'Data Points Processed',
   'hero.stat6': 'No Credit Card',
-  'hero.live_trades': '1,650+ Live Trades',
-  'hero.live_wr': '54.6% Win Rate',
-  'hero.live_days': '48 Days Verified',
-  'hero.live_capital': '$3,000 Real Capital',
+  'hero.tool_coins': '549+ Coins Tested',
+  'hero.tool_strategies': '88+ Strategies Backtested',
+  'hero.tool_data': '2+ Years Historical Data',
+  'hero.tool_free': '100% Free, No Signup',
 
   // Problem
   'problem.tag': 'THE PROBLEM',
@@ -574,7 +574,7 @@ export const en = {
   'trust.badge_open_desc': 'All strategy code public on GitHub. Verify it yourself.',
   'trust.stat_trades': 'Trades Backtested',
   'trust.stat_datapoints': 'Data Points Processed',
-  'trust.stat_live_days': 'Days Live Trading Published',
+  'trust.stat_live_days': 'Coins Backtested',
   'trust.stat_strategies': 'Strategies Tested (4 Failed)',
 
   // TradingView comparison page

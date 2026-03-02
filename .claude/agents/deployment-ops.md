@@ -95,7 +95,7 @@ PRUVIQ 웹사이트 및 API 인프라의 24/7 운영, 자동화 파이프라인 
     ssh jepo@172.30.1.16 "cd ~/pruviq && git branch"
 
 [ ] Cloudflare 마지막 빌드 성공
-    gh run list -R poong92/pruviq | head -1
+    gh run list -R pruviq/pruviq | head -1
 
 [ ] CoinGecko 매칭: 231/500 이상
     curl -s https://api.pruviq.com/coins | jq '.coins | length'

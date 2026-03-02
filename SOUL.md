@@ -62,7 +62,7 @@ Full-stack developer maintaining and improving pruviq.com:
 
 - **Site URL:** https://pruviq.com (EN) / https://pruviq.com/ko/ (KO)
 - **API URL:** https://api.pruviq.com
-- **Repo:** /Users/openclaw/pruviq/ (git: poong92/pruviq)
+- **Repo:** /Users/openclaw/pruviq/ (git: pruviq/pruviq)
 - **Key APIs:**
   - /market — market dashboard data
   - /news — crypto news

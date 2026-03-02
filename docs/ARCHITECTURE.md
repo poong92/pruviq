@@ -122,7 +122,7 @@
 │  │  - 결과 분석                 - Ollama AI 요약                    │     │
 │  │                              - API 서버 (FastAPI)                │     │
 │  │                                                                    │     │
-│  │  GitHub (poong92/pruviq)     Cloudflare Pages (웹 대시보드)      │     │
+│  │  GitHub (pruviq/pruviq)     Cloudflare Pages (웹 대시보드)      │     │
 │  │  - 코드 관리                 - 정적 프론트엔드                    │     │
 │  │  - CI/CD                     - API 프록시                         │     │
 │  └────────────────────────────────────────────────────────────────────┘     │
@@ -973,7 +973,7 @@ httpx>=0.27.0            # 비동기 HTTP 클라이언트
                         │ git push
                         ▼
 ┌─────────────────────────────────────────────────────────┐
-│  GitHub (poong92/pruviq)                                │
+│  GitHub (pruviq/pruviq)                                │
 │                                                         │
 │  역할:                                                  │
 │  - 소스 코드 관리                                       │

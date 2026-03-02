@@ -41,7 +41,7 @@ P3: SEO meta 태그 누락 페이지 보완
 Phase: 프로덕션 안정화
 시작일: 2026-02-14
 상태: P0/P1/MEDIUM 전부 해결 + 전체 검증 PASS
-GitHub: poong92/pruviq
+GitHub: pruviq/pruviq
 배포: Cloudflare Pages (pruviq.com)
 백엔드: api.pruviq.com (Mac Mini, FastAPI)
 빌드: 1,257 pages (0 errors)
@@ -281,7 +281,7 @@ autotrader 서버 (DO): 절대 건드리지 않음
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│  Mac Mini에 같은 레포(poong92/pruviq)가 2곳에 clone 됨     │
+│  Mac Mini에 같은 레포(pruviq/pruviq)가 2곳에 clone 됨     │
 │                                                             │
 │  jepo (/Users/jepo/pruviq)                                 │
 │    - API 서버 (uvicorn --workers 1)                        │

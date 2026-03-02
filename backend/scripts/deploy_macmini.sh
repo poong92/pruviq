@@ -22,7 +22,7 @@ if [ -d "$REPO_DIR" ]; then
     cd "$REPO_DIR" && git pull
 else
     echo "Cloning repo..."
-    git clone https://github.com/poong92/pruviq.git "$REPO_DIR"
+    git clone https://github.com/pruviq/pruviq.git "$REPO_DIR"
     cd "$REPO_DIR"
 fi
 
