@@ -80,7 +80,7 @@ const isActive = (match: string) => basePath.startsWith(match);
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/manifest.json" />
-    <meta name="theme-color" content="#0a0e27" />
+    <meta name="theme-color" content="#0a0a0a" />
     {basePath.startsWith('/404') && <meta name="robots" content="noindex" />}
     <link rel="preconnect" href="https://api.pruviq.com" crossorigin />
     <link rel="preconnect" href="https://coin-images.coingecko.com" crossorigin />
@@ -100,7 +100,7 @@ const isActive = (match: string) => basePath.startsWith(match);
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
-    <meta name="twitter:site" content="@pruviq_com" />
+    <meta name="twitter:site" content="@pruviq" />
     <title>{title}</title>
     <!-- JSON-LD Organization -->
     {type === 'website' && (
@@ -114,7 +114,7 @@ const isActive = (match: string) => basePath.startsWith(match);
           ? '무료 크립토 전략 백테스팅 플랫폼. 549개 이상 코인에서 2년 이상의 실제 시장 데이터로 트레이딩 전략을 만들고 테스트하세요.'
           : 'Free crypto strategy backtesting platform. Build and test trading strategies on 549+ coins with 2+ years of real market data.',
         "founder": { "@type": "Organization", "name": "PRUVIQ Team" },
-        "sameAs": ["https://t.me/PRUVIQ", "https://github.com/pruviq/pruviq"],
+        "sameAs": ["https://t.me/PRUVIQ", "https://x.com/pruviq", "https://github.com/pruviq/pruviq"],
         "knowsAbout": lang === 'ko'
           ? ['암호화폐 트레이딩', '백테스팅', '알고리즘 트레이딩', '퀀트 금융']
           : ['cryptocurrency trading', 'backtesting', 'algorithmic trading', 'quantitative finance']
@@ -137,8 +137,8 @@ const isActive = (match: string) => basePath.startsWith(match);
           ? '549개 이상 코인에서 크립토 트레이딩 전략을 만들고 테스트하세요. 노코드 전략 빌더, 인터랙티브 차트, 진입/청산 마커 제공.'
           : 'Build and test crypto trading strategies on 549+ coins. No-code strategy builder with interactive charts and entry/exit markers.',
         "featureList": lang === 'ko'
-          ? ['노코드 전략 빌더', '549+ 코인 백테스팅', '11개 이상 기술 지표', '인터랙티브 차트', '실거래 검증']
-          : ['No-code strategy builder', '549+ coin backtesting', '11+ technical indicators', 'Interactive charts', 'Real trading verification']
+          ? ['노코드 전략 빌더', '549+ 코인 백테스팅', '11개 이상 기술 지표', '인터랙티브 차트', '전략 검증']
+          : ['No-code strategy builder', '549+ coin backtesting', '11+ technical indicators', 'Interactive charts', 'Strategy verification']
       })} />
     )}
     <!-- JSON-LD FAQPage (homepage only) -->
@@ -169,6 +169,14 @@ const isActive = (match: string) => basePath.startsWith(match);
             "acceptedAnswer": {
               "@type": "Answer",
               "text": "네, PRUVIQ의 핵심 백테스팅 기능은 완전 무료입니다. 전략 만들기, 549개 이상 코인 백테스트, 모든 교육 콘텐츠 이용이 결제나 계정 생성 없이 가능합니다."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "PRUVIQ는 TradingView 등 다른 백테스팅 도구와 어떻게 다른가요?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "PRUVIQ는 코딩 없이 사용할 수 있는 크립토 선물 전용 백테스팅 플랫폼입니다. TradingView(Pine Script 필요)나 QuantConnect(Python/C# 필요)와 달리, 시각적 전략 빌더를 제공합니다. 549개 이상 코인 동시 테스트, 현실적 수수료·슬리피지 반영, 실패 전략까지 모두 공개합니다."
             }
           },
           {
@@ -209,7 +217,7 @@ const isActive = (match: string) => basePath.startsWith(match);
             "name": "What makes PRUVIQ different from TradingView or other backtesting tools?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "PRUVIQ is specifically built for crypto futures with no coding required. Unlike TradingView (requires Pine Script) or QuantConnect (requires Python/C#), PRUVIQ offers a visual strategy builder. It also publishes real trading results including failures, tests on 549+ coins simultaneously, and includes realistic fees and slippage in all simulations."
+              "text": "PRUVIQ is specifically built for crypto futures with no coding required. Unlike TradingView (requires Pine Script) or QuantConnect (requires Python/C#), PRUVIQ offers a visual strategy builder. It also publishes all backtest results including failures, tests on 549+ coins simultaneously, and includes realistic fees and slippage in all simulations."
             }
           },
           {
@@ -300,7 +308,7 @@ const isActive = (match: string) => basePath.startsWith(match);
           </button>
         </div>
       </div>
-      <div id="mobile-menu" class="hidden md:hidden border-t border-[--color-border] bg-[--color-bg]">
+      <div id="mobile-menu" class="hidden md:hidden border-t border-[--color-border] bg-[--color-bg]" aria-hidden="true">
         <div class="flex flex-col px-4 py-4 gap-1 text-sm">
           {navItems.map(item => (
             <a href={item.href} aria-current={isActive(item.match) ? "page" : undefined} class="min-h-[44px] flex items-center" style={isActive(item.match) ? 'color:#3b82f6;font-weight:500' : 'color:var(--color-text-muted)'}>{item.label}</a>
@@ -349,7 +357,7 @@ const isActive = (match: string) => basePath.startsWith(match);
                 <a href={apiPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('footer.api')}</a>
                 <a href={compareTvPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('footer.compare')}</a>
                 <a href="https://t.me/PRUVIQ" target="_blank" rel="noopener noreferrer" class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('footer.telegram')}</a>
-                <a href="https://x.com/pruviq_com" target="_blank" rel="noopener noreferrer" class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">Twitter / X</a>
+                <a href="https://x.com/pruviq" target="_blank" rel="noopener noreferrer" class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">X / Twitter</a>
                 <a href="https://github.com/pruviq/pruviq" target="_blank" rel="noopener noreferrer" class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">GitHub</a>
               </div>
             </div>

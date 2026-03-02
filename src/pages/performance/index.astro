@@ -12,7 +12,12 @@ const t = useTranslations('en');
     <div class="max-w-5xl mx-auto px-4">
       <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('perf.tag')}</p>
       <h1 class="text-3xl md:text-4xl font-bold mb-4">{t('perf.title')}</h1>
-      <p class="text-[--color-text-muted] text-lg mb-6 max-w-2xl">{t('perf.desc')}</p>
+      <p class="text-[--color-text-muted] text-lg mb-4 max-w-2xl">{t('perf.desc')}</p>
+      <p class="font-mono text-xs text-[--color-text-muted] mb-6">
+        {t('perf.updated_label')}: <span class="text-[--color-text]">{t('perf.updated_val')}</span>
+        &nbsp;&middot;&nbsp;
+        {t('perf.period_label')}: <span class="text-[--color-text]">{t('perf.period_val')}</span>
+      </p>
 
       <!-- Strategy Info -->
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
@@ -66,6 +71,7 @@ const t = useTranslations('en');
       <!-- Detailed Breakdown -->
       <div class="border border-[--color-border] rounded-lg bg-[--color-bg-card] overflow-hidden">
         <table class="w-full text-sm">
+          <caption class="sr-only">BB Squeeze SHORT strategy performance metrics</caption>
           <thead>
             <tr class="border-b border-[--color-border] bg-[--color-bg-subtle]">
               <th class="text-left p-3 font-mono text-xs text-[--color-text-muted]">Metric</th>

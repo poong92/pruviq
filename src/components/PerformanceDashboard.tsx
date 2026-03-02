@@ -47,9 +47,9 @@ interface RawPerformanceData {
 
 const labels = {
   en: {
-    tag: 'LIVE PERFORMANCE',
-    title: 'Real Money. Real Results.',
-    desc: 'Every trade from our live account, delayed by 15 minutes. Including the losses.',
+    tag: 'BACKTEST RESULTS',
+    title: 'Strategy Performance.',
+    desc: 'BB Squeeze SHORT backtest results across 549+ coins, 2+ years of data. Including the losses.',
     trades: 'Total Trades',
     winRate: 'Win Rate',
     pnl: 'Total PnL',
@@ -67,7 +67,8 @@ const labels = {
     other: 'Other',
     loading: 'Loading performance data...',
     error: 'Failed to load performance data.',
-    disclaimer: 'Data delayed 15 minutes. Past performance does not guarantee future results. Not financial advice.',
+    disclaimer: 'Past performance does not guarantee future results. Backtest results include fees and slippage. Not financial advice.',
+    updated: 'Last updated',
     noResults: 'Performance data not available.',
     strategy: 'Strategy',
     period: 'Period',
@@ -82,9 +83,9 @@ const labels = {
     curBal: 'Current',
   },
   ko: {
-    tag: '실거래 성과',
-    title: '실제 자금. 실제 결과.',
-    desc: '실거래 계좌의 모든 거래 내역, 15분 지연. 손실 포함.',
+    tag: '백테스트 결과',
+    title: '전략 성과.',
+    desc: 'BB Squeeze SHORT 백테스트 결과 — 549개+ 코인, 2년+ 데이터. 손실 포함.',
     trades: '총 거래',
     winRate: '승률',
     pnl: '총 손익',
@@ -102,7 +103,8 @@ const labels = {
     other: '기타',
     loading: '성과 데이터 로딩 중...',
     error: '성과 데이터 로딩 실패.',
-    disclaimer: '15분 지연 데이터. 과거 성과가 미래 수익을 보장하지 않습니다. 투자 조언이 아닙니다.',
+    disclaimer: '과거 성과가 미래 수익을 보장하지 않습니다. 백테스트 결과에 수수료·슬리피지 포함. 투자 조언이 아닙니다.',
+    updated: '최종 업데이트',
     noResults: '성과 데이터를 사용할 수 없습니다.',
     strategy: '전략',
     period: '기간',
@@ -298,6 +300,7 @@ export default function PerformanceDashboard({ lang = 'en' }: { lang?: 'en' | 'k
         <div class="font-mono text-xs text-[--color-text-muted] flex gap-6 flex-wrap">
           <span>{t.strategy}: <span class="text-[--color-text]">{data.strategy}</span></span>
           <span>{t.period}: <span class="text-[--color-text]">{formatDateFull(data.period.from)} &mdash; {formatDateFull(data.period.to)}</span></span>
+          {data.generated && <span>{t.updated}: <span class="text-[--color-text]">{formatDateFull(data.generated.split('T')[0])}</span></span>}
         </div>
       </div>
 
@@ -420,6 +423,7 @@ export default function PerformanceDashboard({ lang = 'en' }: { lang?: 'en' | 'k
           {showTrades && (
             <div class="overflow-x-auto">
               <table class="w-full border-collapse font-mono text-xs">
+                <caption class="sr-only">Recent backtest trades</caption>
                 <thead>
                   <tr class="border-b border-[--color-border]">
                     <th class="px-3 py-2 text-left text-[--color-text-muted] text-[0.6875rem] font-semibold">{t.symbol}</th>

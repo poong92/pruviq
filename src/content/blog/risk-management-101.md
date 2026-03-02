@@ -29,10 +29,10 @@ A 50% drawdown requires a 100% gain just to break even. In crypto with 5x levera
 ### 1. Position Sizing
 
 ```
-Account: $3,000
-Position: $60 (2% of account)
+Account: $10,000
+Position: $200 (2% of account)
 Leverage: 5x
-Exposure: $300 (10% of account)
+Exposure: $1,000 (10% of account)
 ```
 
 No single trade can ruin the account. Even 10 consecutive stop-losses only cost ~$60 (about 2% of the account, since each individual SL loss is capped).

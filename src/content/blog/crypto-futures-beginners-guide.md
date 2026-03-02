@@ -78,7 +78,7 @@ Beginners see 100x leverage and think "I'll make 100x profits." What actually ha
 
 Putting 50% of your account into one trade means one bad trade wipes half your capital.
 
-**Our approach**: $60 per position with $3,000 capital = 2% per trade. Even 10 consecutive losses only cost 20%.
+**Example**: $200 per position with $10,000 capital = 2% per trade. Even 10 consecutive losses only cost 20%.
 
 ### Mistake 4: Ignoring Fees
 

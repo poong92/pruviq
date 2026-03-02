@@ -63,10 +63,10 @@ Most practitioners use 1/4 to 1/2 Kelly:
 
 We use approximately **1/20 Kelly** (2% of capital per trade):
 
-- Capital: $3,000
-- Position: $60 (2% of capital)
+- Capital: $10,000
+- Position: $200 (2% of capital)
 - Leverage: 5x
-- Effective exposure: $300 per trade
+- Effective exposure: $1,000 per trade
 
 **Why so conservative?**
 
@@ -84,12 +84,12 @@ A critical mistake: forgetting that leverage multiplies both exposure and risk.
 
 ```
 # Without leverage
-Position size = $60
-Risk if 10% SL hit = $6 (0.2% of $3,000 capital)
+Position size = $200
+Risk if 10% SL hit = $20 (0.2% of $10,000 capital)
 
 # With 5x leverage
-Position size = $60, but controls $300
-Risk if 10% SL hit = $30 (1% of $3,000 capital)
+Position size = $200, but controls $1,000
+Risk if 10% SL hit = $100 (1% of $10,000 capital)
 ```
 
 **Kelly must account for leverage**:
@@ -100,10 +100,10 @@ Effective Kelly position = Kelly % / Leverage
 
 At 1/20 Kelly with 5x leverage:
 = 5.2% / 20 = 0.26% per position
-→ $3,000 * 0.026 = ~$78 per position
+→ $10,000 * 0.026 = ~$260 per position
 ```
 
-Our $60 per position is slightly below this, giving extra margin of safety.
+A $200 position size is slightly below this, giving extra margin of safety.
 
 ## Practical Position Sizing Framework
 

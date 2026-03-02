@@ -2,6 +2,8 @@
 import Layout from '../../../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
 import { useTranslations } from '../../../i18n/index';
+import LearnProgress from '../../../components/LearnProgress.tsx';
+import LearnCard from '../../../components/LearnCard.tsx';
 
 const t = useTranslations('ko');
 
@@ -90,6 +92,7 @@ const levelConfig = [
       <p class="text-[--color-text-muted] text-lg mb-4 max-w-2xl">
         {t('learn.desc').replace('{count}', String(allPosts.length))}
       </p>
+      <LearnProgress client:visible postIds={allPosts.map(p => p.id)} lang="ko" />
     </div>
   </section>
 
@@ -107,27 +110,16 @@ const levelConfig = [
 
         <div class="grid md:grid-cols-2 gap-4">
           {levelPosts.map(post => (
-            <a href={post.isKorean ? `/ko/blog/${post.id}` : `/blog/${post.id}`}
-               class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card] card-hover block group">
-              <div class="flex items-center gap-2 mb-1">
-                <h3 class="font-bold group-hover:text-[--color-accent] transition-colors text-sm">
-                  {post.data.title}
-                </h3>
-                {!post.isKorean && (
-                  <span class="font-mono text-[10px] px-1.5 py-0.5 rounded bg-[--color-border] text-[--color-text-muted] shrink-0">EN</span>
-                )}
-              </div>
-              <p class="text-[--color-text-muted] text-xs line-clamp-2">{post.data.description}</p>
-              {post.data.tags && (
-                <div class="flex flex-wrap gap-1 mt-2">
-                  {post.data.tags.slice(0, 3).map(tag => (
-                    <span class="text-[10px] font-mono text-[--color-text-muted] bg-[--color-border]/50 px-1.5 py-0.5 rounded">
-                      {tagMap[tag] || tag}
-                    </span>
-                  ))}
-                </div>
-              )}
-            </a>
+            <LearnCard
+              client:visible
+              postId={post.id}
+              href={post.isKorean ? `/ko/blog/${post.id}` : `/blog/${post.id}`}
+              title={post.data.title}
+              description={post.data.description}
+              tags={post.data.tags}
+              tagMap={tagMap}
+              isEnglish={!post.isKorean}
+            />
           ))}
         </div>
       </div>

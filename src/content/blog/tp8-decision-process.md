@@ -10,7 +10,7 @@ tags: ["tp", "decision", "bb-squeeze", "v1.7.0", "expert-panel"]
 
 Should we change BB Squeeze SHORT's take-profit from 6% to 8%?
 
-This seems simple. It's not. A wrong decision here means leaving money on the table (if TP is too tight) or never hitting targets (if TP is too wide). We had $3,000 of real capital running. We needed to get this right.
+This seems simple. It's not. A wrong decision here means leaving money on the table (if TP is too tight) or never hitting targets (if TP is too wide). The strategy was already verified across 549+ coins. We needed to get this right.
 
 ## The Data
 

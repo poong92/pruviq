@@ -25,27 +25,27 @@ BB Squeeze SHORT runs automatically. It doesn't know about news, doesn't read Tw
 - The short squeeze on Feb 7 hit hard. 75 positions were open.
 - 16 stop-losses triggered. 4 take-profits.
 - Unrealized PnL: -$190
-- Account dropped from $3,102 → $2,916 (-6%)
+- Portfolio dropped -6% in 48 hours
 - Daily loss limit reached 86% of the 7% cap
 
 **Week 2 (Feb 12-15):**
 - 48-hour timeout wave: 62+ positions hit max holding period
 - Positions dropped from 79 → 14 → 10
 - Average timeout PnL: -2.14%
-- Account: $2,844 (total drawdown: -8.3%)
+- Total drawdown reached -8.3%
 
 ## Was This Normal?
 
 We checked the 2-year backtest (762 trading days):
 
-| Metric | Live (worst 3 days) | Backtest (worst 3 days) | Ratio |
+| Metric | Feb 2026 (worst 3 days) | Backtest (worst 3 days) | Ratio |
 |--------|-------------------|----------------------|-------|
-| Loss | -$198 | -$1,182 | 17% of worst case |
+| Loss | -6.4% | -33% | 17% of worst case |
 | Max consecutive loss days | 3 | 10 | Much better |
 | MDD | 4.5% | 33% | Well within range |
 | 3-day periods worse than ours | — | 84 out of 762 (11.1%) | 1 in 9 days |
 
-**Conclusion: Our worst real trading period was in the bottom 17% of what the backtest showed was possible.** The system is performing within expected parameters.
+**Conclusion: The worst period was in the bottom 17% of what the backtest showed was possible.** The system is performing within expected parameters.
 
 ## What We Did NOT Do
 
@@ -69,6 +69,6 @@ This doesn't guarantee future performance. But it means the system is working as
 
 ---
 
-*All data sourced from our live trading account on Binance Futures and backtests run on 535 coins with 2+ years of hourly OHLCV data. Full methodology documented in our [changelog](/changelog).*
+*All data sourced from backtests run on 535 coins with 2+ years of hourly OHLCV data on Binance Futures. Full methodology documented in our [changelog](/changelog).*
 
 *Not financial advice. Past performance does not guarantee future results.*

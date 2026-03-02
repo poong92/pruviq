@@ -703,6 +703,27 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
         />
       </div>
 
+      {/* Mobile sticky Run button */}
+      {mobileTab === 'config' && conditions.length > 0 && (
+        <div class="md:hidden fixed bottom-0 left-0 right-0 z-50 px-4 py-3 border-t border-[--color-border]"
+          style={{ background: 'var(--color-bg)', boxShadow: '0 -4px 12px rgba(0,0,0,0.3)' }}>
+          <button
+            onClick={runBacktest}
+            disabled={isRunning || conditions.length === 0}
+            class={`w-full py-3 rounded-lg font-mono text-sm font-bold transition-colors
+              ${isRunning ? 'cursor-not-allowed opacity-60' : 'hover:opacity-90'}`}
+            style={isRunning ? { background: COLORS.border, color: COLORS.textMuted } : { background: COLORS.accent, color: '#fff', boxShadow: `0 0 12px ${COLORS.accentGlow}` }}
+          >
+            {isRunning ? (
+              <span class="flex items-center justify-center gap-2">
+                <span class="spinner" />
+                {progressLabels[progressStep] || t.running}
+              </span>
+            ) : currentCoinCount > 0 ? t.runWithCoins?.replace('{n}', String(currentCoinCount)) || t.run : t.run}
+          </button>
+        </div>
+      )}
+
       {/* How it works + Disclaimer */}
       <div class="mt-6 mb-8 max-w-lg mx-auto">
         {t.simNotes && (

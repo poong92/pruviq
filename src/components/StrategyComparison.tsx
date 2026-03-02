@@ -298,6 +298,7 @@ export default function StrategyComparison({ lang = 'en' }: Props) {
           {/* Desktop table */}
           <div class="hidden md:block overflow-x-auto border border-[--color-border] rounded-xl bg-[--color-bg-card]">
             <table class="w-full font-mono text-sm">
+              <caption class="sr-only">Strategy comparison results</caption>
               <thead>
                 <tr class="border-b border-[--color-border] text-[--color-text-muted] text-xs uppercase tracking-wider">
                   <th class="px-4 py-3 text-left">{t.strategy}</th>
