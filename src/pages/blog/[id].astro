@@ -23,3 +23,15 @@ const { Content } = await render(post);
 >
   <Content />
 </BlogPost>
+
+<script define:vars={{ postId: post.id }}>
+  try {
+    const KEY = 'pruviq_learn_read';
+    const raw = localStorage.getItem(KEY);
+    const read = raw ? JSON.parse(raw) : [];
+    if (!read.includes(postId)) {
+      read.push(postId);
+      localStorage.setItem(KEY, JSON.stringify(read));
+    }
+  } catch {}
+</script>

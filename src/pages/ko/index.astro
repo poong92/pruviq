@@ -50,7 +50,7 @@ const verifiedCount = allStrategies.filter(s => s.data.status === 'verified').le
         <!-- 신뢰 신호 -->
         <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs text-[--color-text-muted] font-mono mb-4">
           <span>바이낸스 API 읽기 전용</span>
-          <span>오픈소스</span>
+          <span>소스 공개</span>
           <span>개인정보 불필요</span>
           <span>몬테카를로 검증</span>
         </div>
@@ -258,6 +258,7 @@ const verifiedCount = allStrategies.filter(s => s.data.status === 'verified').le
 
       <div class="overflow-x-auto" role="region" aria-label="플랫폼 비교 테이블" tabindex="0">
         <table class="w-full text-sm border-collapse" role="table" aria-label="PRUVIQ vs TradingView vs QuantConnect 기능 비교">
+          <caption class="sr-only">PRUVIQ, TradingView, QuantConnect 백테스팅 플랫폼 기능 비교표</caption>
           <thead>
             <tr class="border-b border-[--color-border]">
               <th scope="col" class="text-left py-3 px-4 font-mono text-[--color-text-muted] text-xs">기능</th>
@@ -286,8 +287,8 @@ const verifiedCount = allStrategies.filter(s => s.data.status === 'verified').le
               <td class="py-3 px-4 text-center text-red-400">&#10007;</td>
             </tr>
             <tr class="border-b border-[--color-border]/50">
-              <td class="py-3 px-4">실거래 검증</td>
-              <td class="py-3 px-4 text-center text-green-400 bg-[--color-accent]/5">&#10003; 실거래</td>
+              <td class="py-3 px-4">백테스트 투명성</td>
+              <td class="py-3 px-4 text-center text-green-400 bg-[--color-accent]/5">&#10003; 전체 공개</td>
               <td class="py-3 px-4 text-center text-red-400">&#10007;</td>
               <td class="py-3 px-4 text-center text-yellow-400">모의만</td>
             </tr>
@@ -448,6 +449,51 @@ const verifiedCount = allStrategies.filter(s => s.data.status === 'verified').le
             </div>
           </footer>
         </blockquote>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ (JSON-LD와 매칭되는 표시 섹션) -->
+  <section class="py-20 border-t border-[--color-border]" aria-labelledby="faq-heading-ko">
+    <div class="max-w-6xl mx-auto px-4">
+      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">FAQ</p>
+      <h2 id="faq-heading-ko" class="text-3xl md:text-4xl font-bold mb-12">{t('faq.title')}</h2>
+      <div class="max-w-3xl space-y-6">
+        <details class="group border border-[--color-border] rounded-lg bg-[--color-bg-card]">
+          <summary class="cursor-pointer px-6 py-4 font-semibold text-sm flex items-center justify-between gap-4 min-h-[44px]">
+            {t('faq.q1')}
+            <span class="text-[--color-text-muted] group-open:rotate-180 transition-transform shrink-0">&#9662;</span>
+          </summary>
+          <p class="px-6 pb-4 text-[--color-text-muted] text-sm leading-relaxed">{t('faq.a1')}</p>
+        </details>
+        <details class="group border border-[--color-border] rounded-lg bg-[--color-bg-card]">
+          <summary class="cursor-pointer px-6 py-4 font-semibold text-sm flex items-center justify-between gap-4 min-h-[44px]">
+            {t('faq.q2')}
+            <span class="text-[--color-text-muted] group-open:rotate-180 transition-transform shrink-0">&#9662;</span>
+          </summary>
+          <p class="px-6 pb-4 text-[--color-text-muted] text-sm leading-relaxed">{t('faq.a2')}</p>
+        </details>
+        <details class="group border border-[--color-border] rounded-lg bg-[--color-bg-card]">
+          <summary class="cursor-pointer px-6 py-4 font-semibold text-sm flex items-center justify-between gap-4 min-h-[44px]">
+            {t('faq.q3')}
+            <span class="text-[--color-text-muted] group-open:rotate-180 transition-transform shrink-0">&#9662;</span>
+          </summary>
+          <p class="px-6 pb-4 text-[--color-text-muted] text-sm leading-relaxed">{t('faq.a3')}</p>
+        </details>
+        <details class="group border border-[--color-border] rounded-lg bg-[--color-bg-card]">
+          <summary class="cursor-pointer px-6 py-4 font-semibold text-sm flex items-center justify-between gap-4 min-h-[44px]">
+            {t('faq.q4')}
+            <span class="text-[--color-text-muted] group-open:rotate-180 transition-transform shrink-0">&#9662;</span>
+          </summary>
+          <p class="px-6 pb-4 text-[--color-text-muted] text-sm leading-relaxed">{t('faq.a4')}</p>
+        </details>
+        <details class="group border border-[--color-border] rounded-lg bg-[--color-bg-card]">
+          <summary class="cursor-pointer px-6 py-4 font-semibold text-sm flex items-center justify-between gap-4 min-h-[44px]">
+            {t('faq.q5')}
+            <span class="text-[--color-text-muted] group-open:rotate-180 transition-transform shrink-0">&#9662;</span>
+          </summary>
+          <p class="px-6 pb-4 text-[--color-text-muted] text-sm leading-relaxed">{t('faq.a5')}</p>
+        </details>
       </div>
     </div>
   </section>

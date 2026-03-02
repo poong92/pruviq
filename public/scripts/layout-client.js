@@ -29,12 +29,14 @@
 
   function closeMenu() {
     mobileMenu?.classList.add('hidden');
+    mobileMenu?.setAttribute('aria-hidden', 'true');
     menuBtn?.setAttribute('aria-expanded', 'false');
   }
 
   menuBtn?.addEventListener('click', () => {
     const isHidden = mobileMenu?.classList.toggle('hidden');
     menuBtn.setAttribute('aria-expanded', String(!isHidden));
+    mobileMenu?.setAttribute('aria-hidden', String(!!isHidden));
     // Scroll menu into view without stealing focus (avoids outline on first link)
     if (!isHidden) {
       mobileMenu?.scrollIntoView({ block: 'nearest' });

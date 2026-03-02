@@ -76,9 +76,9 @@ Don't calculate returns as percentages and add them up. Simulate actual capital 
 total_return = sum(trade_returns)  # Shows +2,090%
 
 # Right: Simulate actual account balance
-balance = 3000  # Starting capital
+balance = 10000  # Starting capital
 for trade in trades:
-    position_size = min(60, balance * 0.02)  # $60 or 2% of balance
+    position_size = min(200, balance * 0.02)  # $200 or 2% of balance
     pnl = position_size * trade_return * leverage
     balance += pnl
 # Shows +103% (reality)

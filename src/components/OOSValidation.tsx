@@ -230,6 +230,7 @@ export default function OOSValidation({ lang = 'en', strategy = 'bb-squeeze', di
             {/* Desktop table */}
             <div class="hidden sm:block overflow-x-auto">
               <table class="w-full text-sm">
+                <caption class="sr-only">Out-of-sample validation results</caption>
                 <thead>
                   <tr class="border-b border-[var(--color-border)]">
                     <th class="text-left py-2 px-3 font-mono text-xs text-[var(--color-text-muted)]">{t(lang, 'vs.feature', 'Metric')}</th>

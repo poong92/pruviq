@@ -20,7 +20,7 @@ OUTPUT_PATH = "/Users/jplee/Desktop/pruviq/public/data/performance.json"
 
 # ── 전략 메타데이터 ────────────────────────────────────────
 STRATEGY_NAME = "BB Squeeze SHORT v1.7.0"
-STARTING_BALANCE = 3102.0
+STARTING_BALANCE = 10000.0
 
 
 def classify_reason(reason: str) -> str:

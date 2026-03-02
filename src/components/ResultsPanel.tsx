@@ -316,6 +316,7 @@ export default function ResultsPanel({
               </div>
               <div class="overflow-x-auto">
                 <table class="w-full text-[10px] font-mono">
+                  <caption class="sr-only">Backtest run history</caption>
                   <thead>
                     <tr class="text-[--color-text-muted] border-b border-[--color-border]">
                       <th class="py-1 px-2 text-left">#</th>
@@ -420,6 +421,7 @@ export default function ResultsPanel({
             <div class="p-2 overflow-x-auto -webkit-overflow-scrolling-touch">
               {result.trades && result.trades.length > 0 ? (
                 <table class="w-full text-xs font-mono min-w-[500px] md:min-w-0">
+                  <caption class="sr-only">Simulated trade details</caption>
                   <thead>
                     <tr class="text-[--color-text-muted] border-b border-[--color-border]">
                       <th class="py-2 px-2 text-left">{t.symbol}</th>
@@ -493,6 +495,7 @@ export default function ResultsPanel({
                 </div>
                 <div class="overflow-x-auto -webkit-overflow-scrolling-touch">
                   <table class="w-full text-xs font-mono min-w-[600px] md:min-w-0">
+                    <caption class="sr-only">Per-coin backtest results</caption>
                     <thead>
                       <tr class="text-[--color-text-muted] border-b border-[--color-border]">
                         <th class="py-2 px-2 text-left cursor-pointer select-none hover:text-[--color-text]" onClick={() => toggleSort('symbol')}>

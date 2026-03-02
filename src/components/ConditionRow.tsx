@@ -1,6 +1,7 @@
 /**
  * ConditionRow.tsx - Single entry condition row
  */
+import { useState } from 'preact/hooks';
 import type { Condition } from './simulator-types';
 import { OPS, booleanFields } from './simulator-types';
 
@@ -75,24 +76,38 @@ export default function ConditionRow({ condition: c, availableFields, onUpdate, 
     'doji': 'Doji (doji)',
   };
 
+  const [showInfo, setShowInfo] = useState(false);
+
   return (
-    <div class="flex items-center gap-1.5 text-xs">
-      {/* Field */}
-      <select
-        value={c.field}
-        onChange={(e: any) => {
-          const newField = e.target.value;
-          onUpdate(c.id, 'field', newField);
-          if (booleanFields.has(newField)) {
-            onUpdate(c.id, 'op', '==');
-            onUpdate(c.id, 'value', true);
-          }
-        }}
-        class="flex-1 min-w-0 px-1.5 py-1.5 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
-        title={fieldDescriptions[c.field] || c.field}
-      >
-        {availableFields.map((f) => <option key={f} value={f} title={fieldDescriptions[f] || f}>{fieldLabels[f] || f}</option>)}
-      </select>
+    <div class="text-xs">
+      <div class="flex items-center gap-1.5">
+        {/* Field */}
+        <select
+          value={c.field}
+          onChange={(e: any) => {
+            const newField = e.target.value;
+            onUpdate(c.id, 'field', newField);
+            if (booleanFields.has(newField)) {
+              onUpdate(c.id, 'op', '==');
+              onUpdate(c.id, 'value', true);
+            }
+            setShowInfo(false);
+          }}
+          class="flex-1 min-w-0 px-1.5 py-1.5 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
+          title={fieldDescriptions[c.field] || c.field}
+        >
+          {availableFields.map((f) => <option key={f} value={f} title={fieldDescriptions[f] || f}>{fieldLabels[f] || f}</option>)}
+        </select>
+        {/* Info toggle */}
+        <button
+          type="button"
+          onClick={() => setShowInfo(!showInfo)}
+          class="w-5 h-5 shrink-0 rounded-full border border-[--color-border] text-[--color-text-muted] hover:text-[--color-accent] hover:border-[--color-accent] flex items-center justify-center text-[10px] font-mono transition-colors"
+          title={fieldDescriptions[c.field] || c.field}
+          aria-label={`Info about ${c.field}`}
+        >
+          i
+        </button>
       {/* Op */}
       <select
         value={c.op}
@@ -145,6 +160,13 @@ export default function ConditionRow({ condition: c, availableFields, onUpdate, 
       >
         x
       </button>
+      </div>
+      {/* Info panel */}
+      {showInfo && fieldDescriptions[c.field] && (
+        <div class="mt-1 ml-1 px-2 py-1.5 rounded bg-[--color-bg-tooltip] border border-[--color-border] text-[10px] text-[--color-text-muted] font-mono">
+          {fieldDescriptions[c.field]}
+        </div>
+      )}
     </div>
   );
 }
