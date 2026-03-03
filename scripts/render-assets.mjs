@@ -28,16 +28,27 @@ const IQ_BLOCK_CSS = `
   .check-inner svg { display:block; }
 `;
 
-async function render(browser, html, outputPath, width, height, transparent = false, dpi = 4) {
+async function render(browser, html, outputPath, width, height, transparent = false, dpi = 2, opts = {}) {
   const page = await browser.newPage();
   await page.setViewport({ width, height, deviceScaleFactor: dpi });
   await page.setContent(html, { waitUntil: 'networkidle0' });
   await page.waitForFunction(() => document.fonts.ready);
-  await page.screenshot({
-    path: outputPath, type: 'png',
-    omitBackground: transparent,
-    clip: { x: 0, y: 0, width, height }
-  });
+
+  // Determine screenshot options. Default to PNG for transparent images, JPEG for opaque unless overridden.
+  const isPng = opts.forcePng || transparent || outputPath.toLowerCase().endsWith('.png');
+  const type = isPng ? 'png' : (opts.type || 'jpeg');
+  const shotOpts = {
+    path: outputPath,
+    type,
+    clip: { x: 0, y: 0, width, height },
+  };
+  if (type === 'png') {
+    shotOpts.omitBackground = transparent;
+  } else if (type === 'jpeg') {
+    shotOpts.quality = opts.quality || 80;
+  }
+
+  await page.screenshot(shotOpts);
   await page.close();
   console.log(`  ✓ ${outputPath.split('/').pop()} (${width}x${height} @${dpi}x = ${width*dpi}px${transparent ? ' transparent' : ''})`);
 }
@@ -110,13 +121,13 @@ async function main() {
   });
 
   // === Icons (75% block, tight, for favicons/website) @4x ===
-  await render(browser, iconHTML(512), `${PUBLIC}/icon-512.png`, 512, 512, true);
-  await render(browser, iconHTML(192), `${PUBLIC}/icon-192.png`, 192, 192, true);
-  await render(browser, iconHTML(180), `${PUBLIC}/apple-touch-icon.png`, 180, 180, true);
-  await render(browser, iconHTML(32),  `${PUBLIC}/favicon-32.png`, 32, 32, true);
+  await render(browser, iconHTML(512), `${PUBLIC}/icon-512.png`, 512, 512, true, 1);
+  await render(browser, iconHTML(192), `${PUBLIC}/icon-192.png`, 192, 192, true, 1);
+  await render(browser, iconHTML(180), `${PUBLIC}/apple-touch-icon.png`, 180, 180, true, 1);
+  await render(browser, iconHTML(32),  `${PUBLIC}/favicon-32.png`, 32, 32, true, 1);
 
   // === pruviq-logo (58% block, circle-crop safe, for X/social profile) @4x ===
-  await render(browser, profileIconHTML(512), `${PUBLIC}/pruviq-logo.png`, 512, 512, true);
+  await render(browser, profileIconHTML(512), `${PUBLIC}/pruviq-logo.png`, 512, 512, true, 1, { forcePng: true });
 
   // === Social Profile (800x800, dark bg) ===
   const socialHTML = `<!DOCTYPE html><html><head><style>
@@ -152,7 +163,7 @@ async function main() {
     <div class="tagline">PROVE YOUR STRATEGY</div>
   </body></html>`;
 
-  await render(browser, socialHTML, `${PUBLIC}/social-profile.png`, 800, 800, false);
+  await render(browser, socialHTML, `${PUBLIC}/social-profile.jpg`, 800, 800, false, 2, { type: 'jpeg', quality: 80 });
 
   // === X Banner (1500x500, dark bg) ===
   const bannerHTML = `<!DOCTYPE html><html><head><style>
@@ -193,7 +204,7 @@ async function main() {
     </div>
   </body></html>`;
 
-  await render(browser, bannerHTML, `${PUBLIC}/x-banner.png`, 1500, 500, false);
+  await render(browser, bannerHTML, `${PUBLIC}/x-banner.jpg`, 1500, 500, false, 2, { type: 'jpeg', quality: 80 });
 
   // === OG Image (1200x630, dark bg) ===
   const ogHTML = `<!DOCTYPE html><html><head><style>
@@ -239,7 +250,7 @@ async function main() {
     </div>
   </body></html>`;
 
-  await render(browser, ogHTML, `${PUBLIC}/og-image.png`, 1200, 630, false);
+  await render(browser, ogHTML, `${PUBLIC}/og-image.jpg`, 1200, 630, false, 2, { type: 'jpeg', quality: 80 });
 
   await browser.close();
   console.log('\nAll assets rendered!');
