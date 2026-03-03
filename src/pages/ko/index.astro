@@ -1,0 +1,547 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { useTranslations } from '../../i18n/index';
+import { getCollection } from 'astro:content';
+import LiveStats from '../../components/LiveStats';
+
+const t = useTranslations('ko');
+const allStrategies = await getCollection('strategies');
+const verifiedCount = allStrategies.filter(s => s.data.status === 'verified').length;
+---
+
+<Layout title={t('meta.home_title')} description={t('meta.index_desc')}>
+
+  <!-- HERO -->
+  <section class="min-h-[80vh] flex items-center" aria-labelledby="hero-heading-ko">
+    <div class="max-w-6xl mx-auto px-4 py-20">
+      <div class="max-w-3xl">
+        <p class="font-mono text-[--color-accent] text-sm mb-4 tracking-wider">{t('hero.tag')}</p>
+        <h1 id="hero-heading-ko" class="text-4xl md:text-6xl font-bold leading-tight mb-6">
+          {t('hero.title1')}<br/>
+          <span class="text-[--color-accent]">{t('hero.title2')}</span>
+        </h1>
+        <p class="text-lg text-[--color-text-muted] mb-2 font-mono">
+          {t('hero.subtitle')}
+        </p>
+        <p class="text-lg md:text-xl text-[--color-text-muted] mb-4 max-w-2xl">
+          {t('hero.desc')}
+        </p>
+        <!-- 도구 스탯 바 -->
+        <div class="flex flex-wrap gap-3 mb-4 font-mono text-sm">
+          <span class="px-3 py-1.5 rounded bg-green-500/10 text-green-400 border border-green-500/20">{t('hero.tool_coins')}</span>
+          <span class="px-3 py-1.5 rounded bg-[--color-accent]/10 text-[--color-accent] border border-[--color-accent]/20">{t('hero.tool_strategies')}</span>
+          <span class="px-3 py-1.5 rounded bg-[--color-accent]/10 text-[--color-accent] border border-[--color-accent]/20">{t('hero.tool_data')}</span>
+          <span class="px-3 py-1.5 rounded bg-[--color-accent]/10 text-[--color-accent] border border-[--color-accent]/20">{t('hero.tool_free')}</span>
+        </div>
+
+        <p class="text-sm text-[--color-text-muted] mb-8 max-w-2xl opacity-70">
+          {t('hero.beginner_note')}
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 mb-4">
+          <a href="/ko/simulate"
+             class="btn-primary bg-[--color-accent] text-[--color-bg] px-8 py-3 rounded font-semibold text-center hover:bg-[--color-accent-dim]">
+            {t('hero.cta_primary')} &rarr;
+          </a>
+          <a href="/ko/strategies"
+             class="border border-[--color-border] text-[--color-text] px-8 py-3 rounded font-semibold text-center hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
+            {t('hero.cta1')}
+          </a>
+        </div>
+        <!-- 신뢰 신호 -->
+        <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs text-[--color-text-muted] font-mono mb-4">
+          <span>바이낸스 API 읽기 전용</span>
+          <span>소스 공개</span>
+          <span>개인정보 불필요</span>
+          <span>몬테카를로 검증</span>
+        </div>
+        <a href="/ko/compare/tradingview" class="text-xs text-[--color-accent] hover:underline font-mono mb-8 inline-block">TradingView에서 전환하는 이유 &rarr;</a>
+
+        <!-- Stats -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+          <div class="border border-[--color-border] rounded p-4 bg-[--color-bg-card] card-hover">
+            <p class="font-mono text-[--color-accent] text-2xl font-bold">549</p>
+            <p class="text-[--color-text-muted] text-sm">{t('hero.stat1')}</p>
+          </div>
+          <div class="border border-[--color-border] rounded p-4 bg-[--color-bg-card] card-hover">
+            <p class="font-mono text-[--color-accent] text-2xl font-bold">2,898+</p>
+            <p class="text-[--color-text-muted] text-sm">{t('hero.stat4')}</p>
+          </div>
+          <div class="border border-[--color-border] rounded p-4 bg-[--color-bg-card] card-hover">
+            <p class="font-mono text-[--color-accent] text-2xl font-bold">9.4M+</p>
+            <p class="text-[--color-text-muted] text-sm">{t('hero.stat5')}</p>
+          </div>
+          <div class="border border-[--color-border] rounded p-4 bg-[--color-bg-card] card-hover">
+            <p class="font-mono text-[--color-accent] text-2xl font-bold">{t('hero.stat2_val')}</p>
+            <p class="text-[--color-text-muted] text-sm">{t('hero.stat2')}</p>
+          </div>
+          <div class="border border-[--color-border] rounded p-4 bg-[--color-bg-card] card-hover">
+            <p class="font-mono text-[--color-accent] text-2xl font-bold">100%</p>
+            <p class="text-[--color-text-muted] text-sm">{t('hero.stat3')}</p>
+          </div>
+          <div class="border border-[--color-border] rounded p-4 bg-[--color-bg-card] card-hover">
+            <p class="font-mono text-[--color-accent] text-2xl font-bold">$0</p>
+            <p class="text-[--color-text-muted] text-sm">{t('hero.stat6')}</p>
+          </div>
+        </div>
+
+        <!-- TRUST BLOCK -->
+        <div class="mt-6 border border-[--color-border] rounded p-4 bg-[--color-bg-card] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <p class="text-sm font-mono text-[--color-text-muted]">{t('simulate.strategies_title')}</p>
+            <p class="text-xl font-bold text-[--color-accent]">{verifiedCount}개 {t('strategy.verified')}</p>
+          </div>
+          <div class="sm:text-right">
+            <a href="/ko/simulate" class="inline-block bg-[--color-accent] text-[--color-bg] px-4 py-2 rounded font-semibold text-sm hover:bg-[--color-accent-dim]">{t('cta.button1')}</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROBLEM (PAS Framework - Agitate) -->
+  <section class="py-20 border-t border-[--color-border] bg-[--color-bg-subtle]" aria-labelledby="problem-heading-ko">
+    <div class="max-w-6xl mx-auto px-4">
+      <p class="font-mono text-red-400 text-sm mb-2 tracking-wider">{t('problem.tag')}</p>
+      <h2 id="problem-heading-ko" class="text-3xl md:text-4xl font-bold mb-12">{t('problem.title')}</h2>
+
+      <div class="grid md:grid-cols-3 gap-8 mb-12">
+        <div class="border border-red-500/30 rounded-lg p-6 bg-[--color-bg-card]">
+          <div class="text-red-400 font-mono text-xs font-bold mb-3 flex items-center gap-2">
+            <span class="inline-block w-2 h-2 rounded-full bg-red-400"></span>
+            CASE STUDY #1
+          </div>
+          <h3 class="font-bold text-lg mb-2">{t('problem.card1_title')}</h3>
+          <p class="text-[--color-text-muted] text-sm leading-relaxed mb-3">{t('problem.card1_desc')}</p>
+          <p class="text-xs text-[--color-text-muted] opacity-60 italic">{t('problem.card1_source')}</p>
+        </div>
+        <div class="border border-red-500/30 rounded-lg p-6 bg-[--color-bg-card]">
+          <div class="text-red-400 font-mono text-xs font-bold mb-3 flex items-center gap-2">
+            <span class="inline-block w-2 h-2 rounded-full bg-red-400"></span>
+            CASE STUDY #2
+          </div>
+          <h3 class="font-bold text-lg mb-2">{t('problem.card2_title')}</h3>
+          <p class="text-[--color-text-muted] text-sm leading-relaxed mb-3">{t('problem.card2_desc')}</p>
+          <p class="text-xs text-[--color-text-muted] opacity-60 italic">{t('problem.card2_source')}</p>
+        </div>
+        <div class="border border-red-500/30 rounded-lg p-6 bg-[--color-bg-card]">
+          <div class="text-red-400 font-mono text-xs font-bold mb-3 flex items-center gap-2">
+            <span class="inline-block w-2 h-2 rounded-full bg-red-400"></span>
+            CASE STUDY #3
+          </div>
+          <h3 class="font-bold text-lg mb-2">{t('problem.card3_title')}</h3>
+          <p class="text-[--color-text-muted] text-sm leading-relaxed mb-3">{t('problem.card3_desc')}</p>
+          <p class="text-xs text-[--color-text-muted] opacity-60 italic">{t('problem.card3_source')}</p>
+        </div>
+      </div>
+
+      <div class="text-center">
+        <p class="text-xl md:text-2xl font-bold">
+          {t('problem.hook')} <span class="text-[--color-accent]">{t('problem.hook_accent')}</span>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- EVIDENCE (PAS Framework - Solution Proof) -->
+  <section class="py-20 border-t border-[--color-border]" aria-labelledby="evidence-heading-ko">
+    <div class="max-w-6xl mx-auto px-4">
+      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('evidence.tag')}</p>
+      <h2 id="evidence-heading-ko" class="text-3xl md:text-4xl font-bold mb-4">{t('evidence.title')}</h2>
+      <p class="text-[--color-text-muted] text-lg mb-12 max-w-3xl">{t('evidence.desc')}</p>
+
+      <div class="grid md:grid-cols-2 gap-8 mb-16">
+        <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card]">
+          <div class="font-mono text-[--color-accent] text-xs font-bold mb-3">STEP 01</div>
+          <h3 class="font-bold text-lg mb-2">{t('evidence.step1_title')}</h3>
+          <p class="text-[--color-text-muted] text-sm leading-relaxed">{t('evidence.step1_desc')}</p>
+        </div>
+        <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card]">
+          <div class="font-mono text-[--color-accent] text-xs font-bold mb-3">STEP 02</div>
+          <h3 class="font-bold text-lg mb-2">{t('evidence.step2_title')}</h3>
+          <p class="text-[--color-text-muted] text-sm leading-relaxed">{t('evidence.step2_desc')}</p>
+        </div>
+        <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card]">
+          <div class="font-mono text-[--color-accent] text-xs font-bold mb-3">STEP 03</div>
+          <h3 class="font-bold text-lg mb-2">{t('evidence.step3_title')}</h3>
+          <p class="text-[--color-text-muted] text-sm leading-relaxed">{t('evidence.step3_desc')}</p>
+        </div>
+        <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card]">
+          <div class="font-mono text-[--color-accent] text-xs font-bold mb-3">STEP 04</div>
+          <h3 class="font-bold text-lg mb-2">{t('evidence.step4_title')}</h3>
+          <p class="text-[--color-text-muted] text-sm leading-relaxed">{t('evidence.step4_desc')}</p>
+        </div>
+      </div>
+
+      <!-- The Elimination Process -->
+      <div class="border border-[--color-accent]/30 rounded-lg p-8 bg-[--color-bg-card] max-w-3xl mx-auto mb-12">
+        <p class="font-mono text-[--color-accent] text-xs font-bold mb-4">{t('evidence.lesson_tag')}</p>
+        <p class="text-[--color-text-muted] leading-relaxed mb-3">
+          {t('evidence.lesson1')} <span class="text-[--color-accent] font-bold text-lg">{t('evidence.lesson_loss')}</span> <span class="text-green-400 font-bold text-lg">{t('evidence.lesson1_end')}</span>
+        </p>
+        <p class="text-[--color-text-muted] leading-relaxed mb-3">{t('evidence.lesson2')}</p>
+        <p class="text-[--color-text-muted] leading-relaxed mb-4">{t('evidence.lesson3')}</p>
+        <p class="text-[--color-accent] font-bold text-lg italic">{t('evidence.lesson_rule')}</p>
+      </div>
+
+      <!-- What we publish vs don't promise -->
+      <div class="grid md:grid-cols-2 gap-8 mb-12">
+        <div class="border border-green-500/30 rounded-lg p-6 bg-[--color-bg-card]">
+          <p class="font-mono text-green-400 text-xs font-bold mb-4">{t('evidence.publish_tag')}</p>
+          <ul class="space-y-2 text-sm text-[--color-text-muted]">
+            <li class="flex items-start gap-2"><span class="text-green-400 shrink-0 mt-0.5">&#10003;</span> {t('evidence.publish1')}</li>
+            <li class="flex items-start gap-2"><span class="text-green-400 shrink-0 mt-0.5">&#10003;</span> {t('evidence.publish2')}</li>
+            <li class="flex items-start gap-2"><span class="text-green-400 shrink-0 mt-0.5">&#10003;</span> {t('evidence.publish3')}</li>
+            <li class="flex items-start gap-2"><span class="text-green-400 shrink-0 mt-0.5">&#10003;</span> {t('evidence.publish4')}</li>
+            <li class="flex items-start gap-2"><span class="text-green-400 shrink-0 mt-0.5">&#10003;</span> {t('evidence.publish5')}</li>
+          </ul>
+        </div>
+        <div class="border border-red-500/30 rounded-lg p-6 bg-[--color-bg-card]">
+          <p class="font-mono text-red-400 text-xs font-bold mb-4">{t('evidence.nopromise_tag')}</p>
+          <ul class="space-y-2 text-sm text-[--color-text-muted]">
+            <li class="flex items-start gap-2"><span class="text-red-400 shrink-0 mt-0.5">&#10007;</span> {t('evidence.nopromise1')}</li>
+            <li class="flex items-start gap-2"><span class="text-red-400 shrink-0 mt-0.5">&#10007;</span> {t('evidence.nopromise2')}</li>
+            <li class="flex items-start gap-2"><span class="text-red-400 shrink-0 mt-0.5">&#10007;</span> {t('evidence.nopromise3')}</li>
+            <li class="flex items-start gap-2"><span class="text-red-400 shrink-0 mt-0.5">&#10007;</span> {t('evidence.nopromise4')}</li>
+            <li class="flex items-start gap-2"><span class="text-red-400 shrink-0 mt-0.5">&#10007;</span> {t('evidence.nopromise5')}</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="text-center">
+        <a href="/ko/demo" class="inline-block bg-[--color-accent] text-[--color-bg] px-8 py-3 rounded font-semibold text-lg hover:bg-[--color-accent-dim]">
+          {t('evidence.try_cta')} &rarr;
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- SYSTEM (How It Works - Visual) -->
+  <section class="py-20 border-t border-[--color-border] bg-[--color-bg-subtle]" aria-labelledby="system-heading-ko">
+    <div class="max-w-6xl mx-auto px-4">
+      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('system.tag')}</p>
+      <h2 id="system-heading-ko" class="text-3xl md:text-4xl font-bold mb-4">{t('system.title')}</h2>
+      <p class="text-[--color-text-muted] text-lg mb-12 max-w-2xl">{t('system.desc')}</p>
+
+      <div class="grid md:grid-cols-3 gap-8 mb-12">
+        <div class="relative">
+          <div class="font-mono text-[--color-accent] text-5xl font-bold opacity-20 absolute -top-4 -left-2">1</div>
+          <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] relative">
+            <h3 class="font-mono text-[--color-accent] font-bold mb-2">{t('system.step1')}</h3>
+            <p class="text-[--color-text-muted] text-sm leading-relaxed">{t('system.step1_desc')}</p>
+          </div>
+          <div class="hidden md:block absolute top-1/2 -right-4 text-[--color-text-muted] text-2xl">&rarr;</div>
+        </div>
+        <div class="relative">
+          <div class="font-mono text-[--color-accent] text-5xl font-bold opacity-20 absolute -top-4 -left-2">2</div>
+          <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] relative">
+            <h3 class="font-mono text-[--color-accent] font-bold mb-2">{t('system.step2')}</h3>
+            <p class="text-[--color-text-muted] text-sm leading-relaxed">{t('system.step2_desc')}</p>
+          </div>
+          <div class="hidden md:block absolute top-1/2 -right-4 text-[--color-text-muted] text-2xl">&rarr;</div>
+        </div>
+        <div class="relative">
+          <div class="font-mono text-[--color-accent] text-5xl font-bold opacity-20 absolute -top-4 -left-2">3</div>
+          <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] relative">
+            <h3 class="font-mono text-[--color-accent] font-bold mb-2">{t('system.step3')}</h3>
+            <p class="text-[--color-text-muted] text-sm leading-relaxed">{t('system.step3_desc')}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMPARISON TABLE (vs Competitors) -->
+  <section class="py-20 border-t border-[--color-border]" aria-labelledby="compare-heading-ko">
+    <div class="max-w-6xl mx-auto px-4">
+      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">WHY PRUVIQ</p>
+      <h2 id="compare-heading-ko" class="text-3xl md:text-4xl font-bold mb-12">경쟁사 비교</h2>
+
+      <div class="overflow-x-auto" role="region" aria-label="플랫폼 비교 테이블" tabindex="0">
+        <table class="w-full text-sm border-collapse" role="table" aria-label="PRUVIQ vs TradingView vs QuantConnect 기능 비교">
+          <caption class="sr-only">PRUVIQ, TradingView, QuantConnect 백테스팅 플랫폼 기능 비교표</caption>
+          <thead>
+            <tr class="border-b border-[--color-border]">
+              <th scope="col" class="text-left py-3 px-4 font-mono text-[--color-text-muted] text-xs">기능</th>
+              <th scope="col" class="text-center py-3 px-4 font-mono text-[--color-accent] text-xs bg-[--color-accent]/5">PRUVIQ</th>
+              <th scope="col" class="text-center py-3 px-4 font-mono text-[--color-text-muted] text-xs">TradingView</th>
+              <th scope="col" class="text-center py-3 px-4 font-mono text-[--color-text-muted] text-xs">QuantConnect</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="border-b border-[--color-border]/50">
+              <td class="py-3 px-4">노코드 전략 빌더</td>
+              <td class="py-3 px-4 text-center text-green-400 bg-[--color-accent]/5">&#10003;</td>
+              <td class="py-3 px-4 text-center text-red-400">&#10007; Pine Script</td>
+              <td class="py-3 px-4 text-center text-red-400">&#10007; Python/C#</td>
+            </tr>
+            <tr class="border-b border-[--color-border]/50">
+              <td class="py-3 px-4">549+ 코인 동시 테스트</td>
+              <td class="py-3 px-4 text-center text-green-400 bg-[--color-accent]/5">&#10003;</td>
+              <td class="py-3 px-4 text-center text-red-400">&#10007; 1개씩</td>
+              <td class="py-3 px-4 text-center text-yellow-400">제한적</td>
+            </tr>
+            <tr class="border-b border-[--color-border]/50">
+              <td class="py-3 px-4">실패 사례 공개</td>
+              <td class="py-3 px-4 text-center text-green-400 bg-[--color-accent]/5">&#10003;</td>
+              <td class="py-3 px-4 text-center text-red-400">&#10007;</td>
+              <td class="py-3 px-4 text-center text-red-400">&#10007;</td>
+            </tr>
+            <tr class="border-b border-[--color-border]/50">
+              <td class="py-3 px-4">백테스트 투명성</td>
+              <td class="py-3 px-4 text-center text-green-400 bg-[--color-accent]/5">&#10003; 전체 공개</td>
+              <td class="py-3 px-4 text-center text-red-400">&#10007;</td>
+              <td class="py-3 px-4 text-center text-yellow-400">모의만</td>
+            </tr>
+            <tr class="border-b border-[--color-border]/50">
+              <td class="py-3 px-4">현실적 수수료 & 슬리피지</td>
+              <td class="py-3 px-4 text-center text-green-400 bg-[--color-accent]/5">&#10003;</td>
+              <td class="py-3 px-4 text-center text-yellow-400">기본</td>
+              <td class="py-3 px-4 text-center text-green-400">&#10003;</td>
+            </tr>
+            <tr class="border-b border-[--color-border]/50">
+              <td class="py-3 px-4">무료 플랜</td>
+              <td class="py-3 px-4 text-center text-green-400 bg-[--color-accent]/5">100% 무료</td>
+              <td class="py-3 px-4 text-center text-yellow-400">$14.95/월~</td>
+              <td class="py-3 px-4 text-center text-yellow-400">제한적</td>
+            </tr>
+            <tr>
+              <td class="py-3 px-4">계정 불필요</td>
+              <td class="py-3 px-4 text-center text-green-400 bg-[--color-accent]/5">&#10003;</td>
+              <td class="py-3 px-4 text-center text-red-400">&#10007;</td>
+              <td class="py-3 px-4 text-center text-red-400">&#10007;</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="mt-8 text-center">
+        <a href="/ko/compare/tradingview" class="text-sm text-[--color-accent] hover:underline">상세 비교 보기 &rarr;</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="py-20 border-t border-[--color-border] bg-[--color-bg-subtle]" aria-labelledby="features-heading-ko">
+    <div class="max-w-6xl mx-auto px-4">
+      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('features.tag')}</p>
+      <h2 id="features-heading-ko" class="text-3xl md:text-4xl font-bold mb-12">{t('features.title')}</h2>
+
+      <div class="grid md:grid-cols-3 gap-8">
+        <a href="/ko/simulate" class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] card-hover block group">
+          <p class="font-mono text-[--color-accent] text-xs font-bold mb-3">{t('features.card1_tag')}</p>
+          <h3 class="font-bold text-lg mb-2 group-hover:text-[--color-accent] transition-colors">{t('features.card1_title')}</h3>
+          <p class="text-[--color-text-muted] text-sm leading-relaxed">{t('features.card1_desc')}</p>
+        </a>
+        <a href="/ko/strategies" class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] card-hover block group">
+          <p class="font-mono text-[--color-accent] text-xs font-bold mb-3">{t('features.card2_tag')}</p>
+          <h3 class="font-bold text-lg mb-2 group-hover:text-[--color-accent] transition-colors">{t('features.card2_title')}</h3>
+          <p class="text-[--color-text-muted] text-sm leading-relaxed">{t('features.card2_desc')}</p>
+        </a>
+        <a href="/ko/fees" class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] card-hover block group">
+          <p class="font-mono text-[--color-accent] text-xs font-bold mb-3">{t('features.card3_tag')}</p>
+          <h3 class="font-bold text-lg mb-2 group-hover:text-[--color-accent] transition-colors">{t('features.card3_title')}</h3>
+          <p class="text-[--color-text-muted] text-sm leading-relaxed">{t('features.card3_desc')}</p>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- TRUST / SOCIAL PROOF -->
+  <section class="py-20 border-t border-[--color-border] bg-[--color-bg-subtle]" aria-labelledby="trust-heading-ko">
+    <div class="max-w-6xl mx-auto px-4">
+      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('trust.section_tag')}</p>
+      <h2 id="trust-heading-ko" class="text-3xl md:text-4xl font-bold mb-12">{t('trust.section_title')}</h2>
+
+      <!-- Stats row (live data from performance.json) -->
+      <div class="mb-12">
+        <LiveStats client:visible lang="ko" />
+      </div>
+
+      <!-- Verification badges -->
+      <div class="grid md:grid-cols-2 gap-6">
+        <a href="/ko/methodology" class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card] card-hover block group">
+          <div class="flex items-center gap-3 mb-2">
+            <span class="inline-flex items-center justify-center w-8 h-8 rounded bg-[--color-accent]/10 text-[--color-accent] font-mono text-sm font-bold shrink-0">MC</span>
+            <h3 class="font-bold group-hover:text-[--color-accent] transition-colors">{t('trust.badge_mc')}</h3>
+          </div>
+          <p class="text-[--color-text-muted] text-sm">{t('trust.badge_mc_desc')}</p>
+        </a>
+        <a href="/ko/methodology" class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card] card-hover block group">
+          <div class="flex items-center gap-3 mb-2">
+            <span class="inline-flex items-center justify-center w-8 h-8 rounded bg-[--color-accent]/10 text-[--color-accent] font-mono text-sm font-bold shrink-0">OOS</span>
+            <h3 class="font-bold group-hover:text-[--color-accent] transition-colors">{t('trust.badge_oos')}</h3>
+          </div>
+          <p class="text-[--color-text-muted] text-sm">{t('trust.badge_oos_desc')}</p>
+        </a>
+        <a href="/ko/strategies/bb-squeeze-short" class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card] card-hover block group">
+          <div class="flex items-center gap-3 mb-2">
+            <span class="inline-flex items-center justify-center w-8 h-8 rounded bg-[--color-green]/10 text-[--color-green] font-mono text-xs font-bold shrink-0">LIVE</span>
+            <h3 class="font-bold group-hover:text-[--color-accent] transition-colors">{t('trust.badge_live')}</h3>
+          </div>
+          <p class="text-[--color-text-muted] text-sm">{t('trust.badge_live_desc')}</p>
+        </a>
+        <a href="/ko/api" class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card] card-hover block group">
+          <div class="flex items-center gap-3 mb-2">
+            <span class="inline-flex items-center justify-center w-8 h-8 rounded bg-[--color-accent]/10 text-[--color-accent] font-mono text-xs font-bold shrink-0">&lt;/&gt;</span>
+            <h3 class="font-bold group-hover:text-[--color-accent] transition-colors">{t('trust.badge_open')}</h3>
+          </div>
+          <p class="text-[--color-text-muted] text-sm">{t('trust.badge_open_desc')}</p>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- BLOG / LEARN -->
+  <section class="py-20 border-t border-[--color-border]" aria-labelledby="blog-heading-ko">
+    <div class="max-w-6xl mx-auto px-4">
+      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('blog.coming_soon')}</p>
+      <h2 id="blog-heading-ko" class="text-3xl md:text-4xl font-bold mb-4">{t('blog.title')}</h2>
+      <p class="text-[--color-text-muted] text-sm mb-8 max-w-2xl">{t('blog.desc')}</p>
+      <div class="flex flex-col sm:flex-row gap-4">
+        <a href="/ko/blog"
+           class="inline-flex items-center gap-2 bg-[--color-accent] text-[--color-bg] px-6 py-2.5 rounded font-semibold text-sm hover:bg-[--color-accent-dim]">
+          {t('blog.coming_cta')} &rarr;
+        </a>
+        <a href="/ko/learn"
+           class="inline-flex items-center gap-2 border border-[--color-border] text-[--color-text-muted] px-6 py-2.5 rounded text-sm hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
+          {t('nav.learn')}
+        </a>
+        <a href="https://t.me/PRUVIQ" target="_blank" rel="noopener noreferrer"
+           class="inline-flex items-center gap-2 border border-[--color-border] text-[--color-text-muted] px-6 py-2.5 rounded text-sm hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
+          텔레그램 커뮤니티 &rarr;
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 사용자 후기 -->
+  <section class="py-16 border-t border-[--color-border]" aria-labelledby="quotes-heading-ko">
+    <div class="max-w-6xl mx-auto px-4">
+      <h2 id="quotes-heading-ko" class="sr-only">트레이더들의 PRUVIQ 사용 후기</h2>
+      <div class="grid md:grid-cols-3 gap-6">
+        <blockquote class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card]">
+          <p class="text-[--color-text-muted] text-sm leading-relaxed mb-4">"TradingView에서 8개 전략을 테스트하다가 PRUVIQ를 발견했습니다. 549개 코인을 한 번에 테스트할 수 있어서 몇 주가 절약됐어요. 킬된 전략까지 공개하는 게 신뢰가 갔습니다."</p>
+          <footer class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full bg-[--color-accent]/20 flex items-center justify-center text-[--color-accent] font-mono text-xs font-bold">DK</div>
+            <div>
+              <p class="text-sm font-semibold">DK</p>
+              <p class="text-xs text-[--color-text-muted]">텔레그램 커뮤니티 멤버</p>
+            </div>
+          </footer>
+        </blockquote>
+        <blockquote class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card]">
+          <p class="text-[--color-text-muted] text-sm leading-relaxed mb-4">"수익뿐 아니라 손실까지 공개하는 플랫폼은 처음입니다. 킬된 전략을 공개한다는 건 뭐가 효과 있고 없는지 정직하게 보여준다는 뜻이죠."</p>
+          <footer class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center text-green-400 font-mono text-xs font-bold">JM</div>
+            <div>
+              <p class="text-sm font-semibold">JM</p>
+              <p class="text-xs text-[--color-text-muted]">크립토 선물 트레이더</p>
+            </div>
+          </footer>
+        </blockquote>
+        <blockquote class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card]">
+          <p class="text-[--color-text-muted] text-sm leading-relaxed mb-4">"계정도 필요 없고, 카드도 필요 없고, 숨은 비용도 없었어요. 5분 만에 커스텀 전략을 만들어서 2년 데이터로 테스트했습니다. 에쿼티 커브가 결과를 한눈에 보여줬어요."</p>
+          <footer class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full bg-[--color-yellow]/20 flex items-center justify-center text-[--color-yellow] font-mono text-xs font-bold">AT</div>
+            <div>
+              <p class="text-sm font-semibold">AT</p>
+              <p class="text-xs text-[--color-text-muted]">알고리즘 트레이딩 입문자</p>
+            </div>
+          </footer>
+        </blockquote>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ (JSON-LD와 매칭되는 표시 섹션) -->
+  <section class="py-20 border-t border-[--color-border]" aria-labelledby="faq-heading-ko">
+    <div class="max-w-6xl mx-auto px-4">
+      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">FAQ</p>
+      <h2 id="faq-heading-ko" class="text-3xl md:text-4xl font-bold mb-12">{t('faq.title')}</h2>
+      <div class="max-w-3xl space-y-6">
+        <details class="group border border-[--color-border] rounded-lg bg-[--color-bg-card]">
+          <summary class="cursor-pointer px-6 py-4 font-semibold text-sm flex items-center justify-between gap-4 min-h-[44px]">
+            {t('faq.q1')}
+            <span class="text-[--color-text-muted] group-open:rotate-180 transition-transform shrink-0">&#9662;</span>
+          </summary>
+          <p class="px-6 pb-4 text-[--color-text-muted] text-sm leading-relaxed">{t('faq.a1')}</p>
+        </details>
+        <details class="group border border-[--color-border] rounded-lg bg-[--color-bg-card]">
+          <summary class="cursor-pointer px-6 py-4 font-semibold text-sm flex items-center justify-between gap-4 min-h-[44px]">
+            {t('faq.q2')}
+            <span class="text-[--color-text-muted] group-open:rotate-180 transition-transform shrink-0">&#9662;</span>
+          </summary>
+          <p class="px-6 pb-4 text-[--color-text-muted] text-sm leading-relaxed">{t('faq.a2')}</p>
+        </details>
+        <details class="group border border-[--color-border] rounded-lg bg-[--color-bg-card]">
+          <summary class="cursor-pointer px-6 py-4 font-semibold text-sm flex items-center justify-between gap-4 min-h-[44px]">
+            {t('faq.q3')}
+            <span class="text-[--color-text-muted] group-open:rotate-180 transition-transform shrink-0">&#9662;</span>
+          </summary>
+          <p class="px-6 pb-4 text-[--color-text-muted] text-sm leading-relaxed">{t('faq.a3')}</p>
+        </details>
+        <details class="group border border-[--color-border] rounded-lg bg-[--color-bg-card]">
+          <summary class="cursor-pointer px-6 py-4 font-semibold text-sm flex items-center justify-between gap-4 min-h-[44px]">
+            {t('faq.q4')}
+            <span class="text-[--color-text-muted] group-open:rotate-180 transition-transform shrink-0">&#9662;</span>
+          </summary>
+          <p class="px-6 pb-4 text-[--color-text-muted] text-sm leading-relaxed">{t('faq.a4')}</p>
+        </details>
+        <details class="group border border-[--color-border] rounded-lg bg-[--color-bg-card]">
+          <summary class="cursor-pointer px-6 py-4 font-semibold text-sm flex items-center justify-between gap-4 min-h-[44px]">
+            {t('faq.q5')}
+            <span class="text-[--color-text-muted] group-open:rotate-180 transition-transform shrink-0">&#9662;</span>
+          </summary>
+          <p class="px-6 pb-4 text-[--color-text-muted] text-sm leading-relaxed">{t('faq.a5')}</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="py-20 border-t border-[--color-border] bg-[--color-bg-subtle]" aria-labelledby="cta-heading-ko">
+    <div class="max-w-6xl mx-auto px-4 text-center">
+      <p class="font-mono text-[--color-text-muted] text-sm mb-4 tracking-wider">{t('cta.tag')}</p>
+      <h2 id="cta-heading-ko" class="text-3xl md:text-4xl font-bold mb-4">
+        <span class="text-[--color-accent]">{t('cta.title')}</span>
+      </h2>
+      <p class="text-[--color-text-muted] text-lg mb-4 max-w-xl mx-auto">{t('cta.desc1')}</p>
+      <p class="text-[--color-text-muted] text-sm mb-6 max-w-md mx-auto">{t('cta.desc2')}</p>
+
+      <!-- 리스크 리버설 뱃지 -->
+      <div class="flex flex-wrap gap-3 justify-center mb-8 font-mono text-xs">
+        <span class="px-3 py-1.5 rounded border border-green-500/30 text-green-400 bg-green-500/5">신용카드 불필요</span>
+        <span class="px-3 py-1.5 rounded border border-green-500/30 text-green-400 bg-green-500/5">계정 생성 불필요</span>
+        <span class="px-3 py-1.5 rounded border border-green-500/30 text-green-400 bg-green-500/5">영구 무료</span>
+        <span class="px-3 py-1.5 rounded border border-green-500/30 text-green-400 bg-green-500/5">3초 만에 결과</span>
+      </div>
+
+      <div class="flex flex-col sm:flex-row gap-4 justify-center mb-4">
+        <a href="/ko/simulate"
+           class="btn-primary inline-block bg-[--color-accent] text-[--color-bg] px-8 py-3 rounded font-semibold text-lg hover:bg-[--color-accent-dim]">
+          {t('cta.button1')} &rarr;
+        </a>
+        <a href="/ko/strategies"
+           class="inline-block border border-[--color-border] text-[--color-text] px-8 py-3 rounded font-semibold text-lg hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
+          {t('hero.cta1')}
+        </a>
+      </div>
+
+      <!-- 텔레그램 커뮤니티 CTA -->
+      <div class="mt-8 inline-flex items-center gap-3 border border-[--color-border] rounded-lg px-5 py-3 bg-[--color-bg-card]">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" class="text-[#229ED9] shrink-0" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg>
+        <div class="text-left">
+          <p class="text-sm font-semibold">커뮤니티 참여</p>
+          <p class="text-xs text-[--color-text-muted]">전략 업데이트, 시장 인사이트, 토론</p>
+        </div>
+        <a href="https://t.me/PRUVIQ" target="_blank" rel="noopener noreferrer"
+           class="ml-2 bg-[#229ED9] text-white px-4 py-1.5 rounded text-xs font-semibold hover:bg-[#1a8bc4] transition-colors whitespace-nowrap">
+          텔레그램 참여
+        </a>
+      </div>
+
+      <p class="text-[--color-text-muted] text-xs mt-6 max-w-lg mx-auto">{t('cta.disclaimer')}</p>
+    </div>
+  </section>
+
+</Layout>

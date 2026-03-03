@@ -1,0 +1,137 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { useTranslations } from '../../i18n/index';
+
+const t = useTranslations('ko');
+---
+
+<Layout title={t('meta.methodology_title')} description={t('meta.methodology_desc')}>
+
+  <!-- HERO -->
+  <section class="py-16">
+    <div class="max-w-5xl mx-auto px-4">
+      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('methodology.tag')}</p>
+      <h1 class="text-3xl md:text-5xl font-bold mb-4">
+        {t('methodology.title')}<br/>{t('methodology.title2')}
+      </h1>
+      <p class="text-[--color-text-muted] text-lg max-w-2xl">
+        {t('methodology.desc')}
+      </p>
+    </div>
+  </section>
+
+  <!-- 백테스트 방법 -->
+  <section class="pb-12 border-t border-[--color-border] pt-12">
+    <div class="max-w-5xl mx-auto px-4">
+      <h2 class="text-2xl font-bold mb-6">{t('methodology.backtest_title')}</h2>
+
+      <div class="space-y-6 max-w-3xl">
+        <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card]">
+          <div class="font-mono text-[--color-accent] text-xs font-bold mb-1">{t('methodology.data_label')}</div>
+          <p class="text-[--color-text-muted] text-sm">{t('methodology.data_desc')}</p>
+        </div>
+
+        <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card]">
+          <div class="font-mono text-[--color-accent] text-xs font-bold mb-1">{t('methodology.universe_label')}</div>
+          <p class="text-[--color-text-muted] text-sm">{t('methodology.universe_desc')}</p>
+        </div>
+
+        <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card]">
+          <div class="font-mono text-[--color-accent] text-xs font-bold mb-1">{t('methodology.execution_label')}</div>
+          <p class="text-[--color-text-muted] text-sm">{t('methodology.execution_desc')}</p>
+        </div>
+
+        <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card]">
+          <div class="font-mono text-[--color-accent] text-xs font-bold mb-1">{t('methodology.fees_label')}</div>
+          <p class="text-[--color-text-muted] text-sm">{t('methodology.fees_desc')}</p>
+        </div>
+
+        <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card]">
+          <div class="font-mono text-[--color-accent] text-xs font-bold mb-1">{t('methodology.slippage_label')}</div>
+          <p class="text-[--color-text-muted] text-sm">{t('methodology.slippage_desc')}</p>
+        </div>
+
+        <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card]">
+          <div class="font-mono text-[--color-accent] text-xs font-bold mb-1">{t('methodology.position_label')}</div>
+          <p class="text-[--color-text-muted] text-sm">{t('methodology.position_desc')}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 전략 평가 지표 -->
+  <section class="pb-12 border-t border-[--color-border] pt-12">
+    <div class="max-w-5xl mx-auto px-4">
+      <h2 class="text-2xl font-bold mb-2">{t('methodology.metrics_title')}</h2>
+      <p class="text-[--color-text-muted] text-sm mb-6">{t('methodology.metrics_desc')}</p>
+
+      <div class="prose max-w-3xl">
+        <ul>
+          <li>{t('methodology.metric_wr')}</li>
+          <li>{t('methodology.metric_pf')}</li>
+          <li>{t('methodology.metric_return')}</li>
+          <li>{t('methodology.metric_mdd')}</li>
+          <li>{t('methodology.metric_trades')}</li>
+        </ul>
+      </div>
+
+      <p class="text-[--color-text-muted] text-xs mt-4 font-mono">
+        {t('methodology.metrics_coming')}
+      </p>
+    </div>
+  </section>
+
+  <!-- 모델링하지 않는 것 -->
+  <section class="pb-12 border-t border-[--color-border] pt-12">
+    <div class="max-w-5xl mx-auto px-4">
+      <h2 class="text-2xl font-bold mb-2">{t('methodology.not_modeled_title')}</h2>
+      <p class="text-[--color-text-muted] text-sm mb-6">{t('methodology.not_modeled_desc')}</p>
+
+      <div class="space-y-4 max-w-3xl">
+        <div class="flex gap-3">
+          <span class="text-[--color-accent] font-mono text-sm mt-0.5 shrink-0">&times;</span>
+          <p class="text-[--color-text-muted] text-sm">{t('methodology.not_modeled_funding')}</p>
+        </div>
+        <div class="flex gap-3">
+          <span class="text-[--color-accent] font-mono text-sm mt-0.5 shrink-0">&times;</span>
+          <p class="text-[--color-text-muted] text-sm">{t('methodology.not_modeled_impact')}</p>
+        </div>
+        <div class="flex gap-3">
+          <span class="text-[--color-accent] font-mono text-sm mt-0.5 shrink-0">&times;</span>
+          <p class="text-[--color-text-muted] text-sm">{t('methodology.not_modeled_outages')}</p>
+        </div>
+        <div class="flex gap-3">
+          <span class="text-[--color-accent] font-mono text-sm mt-0.5 shrink-0">&times;</span>
+          <p class="text-[--color-text-muted] text-sm">{t('methodology.not_modeled_blackswan')}</p>
+        </div>
+        <div class="flex gap-3">
+          <span class="text-[--color-accent] font-mono text-sm mt-0.5 shrink-0">&times;</span>
+          <p class="text-[--color-text-muted] text-sm">{t('methodology.not_modeled_liquidity')}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 재현 가능성 -->
+  <section class="pb-12 border-t border-[--color-border] pt-12">
+    <div class="max-w-5xl mx-auto px-4">
+      <h2 class="text-2xl font-bold mb-4">{t('methodology.reproducibility_title')}</h2>
+      <div class="prose max-w-3xl">
+        <p>{t('methodology.reproducibility_desc')}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 면책 조항 -->
+  <section class="pb-16 border-t border-[--color-border] pt-12">
+    <div class="max-w-5xl mx-auto px-4">
+      <h2 class="text-2xl font-bold mb-4">{t('methodology.disclaimer_title')}</h2>
+      <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] max-w-3xl">
+        <p class="text-[--color-text-muted] text-sm">
+          {t('methodology.disclaimer_text')}
+        </p>
+      </div>
+    </div>
+  </section>
+
+</Layout>

@@ -1,0 +1,92 @@
+---
+import Layout from './Layout.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  date: string;
+  category: string;
+  author?: string;
+}
+
+const { title, description, date, category, author = 'PRUVIQ Research' } = Astro.props;
+
+const categoryLabels: Record<string, string> = {
+  market: 'MARKET ANALYSIS',
+  quant: 'QUANT CONCEPTS',
+  strategy: 'STRATEGY UPDATE',
+  weekly: 'WEEKLY REVIEW',
+  education: 'EDUCATION',
+};
+---
+
+<Layout title={`${title} - PRUVIQ`} description={description} type="article" date={date} category={category}>
+  <article class="py-12">
+    <div class="max-w-[45rem] mx-auto px-4">
+      <a href="/learn" class="text-[--color-text-muted] text-sm hover:text-[--color-accent] transition-colors mb-8 inline-block">
+        &larr; Back to Learn
+      </a>
+
+      <div class="mb-8">
+        <span class="font-mono text-[--color-accent] text-xs tracking-wider">
+          {categoryLabels[category] || category.toUpperCase()}
+        </span>
+        <h1 class="text-3xl md:text-4xl font-bold mt-2 mb-4">{title}</h1>
+        <div class="flex items-center gap-3 text-sm text-[--color-text-muted]">
+          <span class="font-mono">{date}</span>
+          <span class="text-[--color-border]">|</span>
+          <span>{author}</span>
+        </div>
+      </div>
+
+      <div class="prose">
+        <slot />
+      </div>
+
+      <!-- Newsletter CTA -->
+      <div class="mt-10 border border-[--color-accent]/30 rounded-lg p-5 bg-[--color-accent]/5 text-center">
+        <p class="font-bold text-sm mb-1">Get strategy updates</p>
+        <p class="text-[--color-text-muted] text-xs mb-3">Market analysis, new strategies, and backtest results — delivered to Telegram.</p>
+        <a href="https://t.me/PRUVIQ" target="_blank" rel="noopener noreferrer"
+           class="inline-flex items-center gap-2 bg-[--color-accent] text-[--color-bg] px-5 py-2 rounded font-semibold text-sm hover:bg-[--color-accent-dim]">
+          Join PRUVIQ Channel &rarr;
+        </a>
+      </div>
+
+      <!-- Article end CTA -->
+      <div class="mt-12 border-t border-[--color-border] pt-8">
+        {category === 'education' ? (
+          <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] text-center">
+            <h3 class="font-bold text-lg mb-2">Build Your Own Strategy</h3>
+            <p class="text-[--color-text-muted] text-sm mb-4">Combine indicators, set conditions, and backtest on 549+ coins with 2+ years of data. No code required.</p>
+            <div class="flex flex-col sm:flex-row gap-3 justify-center">
+              <a href="/simulate"
+                 class="btn-primary inline-block bg-[--color-accent] text-[--color-bg] px-6 py-2 rounded font-semibold text-sm hover:bg-[--color-accent-dim]">
+                Open Strategy Builder &rarr;
+              </a>
+              <a href="/fees"
+                 class="inline-block border border-[--color-border] text-[--color-text] px-6 py-2 rounded font-semibold text-sm hover:border-[--color-accent] transition-colors">
+                Save on Fees
+              </a>
+            </div>
+          </div>
+        ) : (
+          <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] text-center">
+            <h3 class="font-bold text-lg mb-2">Ready to test strategies yourself?</h3>
+            <p class="text-[--color-text-muted] text-sm mb-4">Simulate trading strategies on 549 coins with 2+ years of data. Free.</p>
+            <div class="flex flex-col sm:flex-row gap-3 justify-center">
+              <a href="/simulate"
+                 class="btn-primary inline-block bg-[--color-accent] text-[--color-bg] px-6 py-2 rounded font-semibold text-sm hover:bg-[--color-accent-dim]">
+                Try the Simulator &rarr;
+              </a>
+              <a href="/fees"
+                 class="inline-block border border-[--color-border] text-[--color-text] px-6 py-2 rounded font-semibold text-sm hover:border-[--color-accent] transition-colors">
+                Save on Fees
+              </a>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  </article>
+</Layout>
