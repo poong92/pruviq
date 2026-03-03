@@ -1,0 +1,30 @@
+name: Reproducible Package (draft)
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 3 * * *' # daily at 03:00 UTC (example)
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: Install deps
+        run: npm ci
+      - name: Run reproducible package script (placeholder)
+        run: |
+          # Placeholder: replace with actual packaging script
+          echo "Packaging demo reproducible package..."
+          mkdir -p artifacts/repro
+          echo '{"manifest":"demo"}' > artifacts/repro/manifest.json
+      - name: Upload artifact (for review)
+        uses: actions/upload-artifact@v4
+        with:
+          name: reproducible-demo
+          path: artifacts/repro
+      # NOTE: To upload to R2/S3 you need to add secrets and use upload actions or s3 cli
