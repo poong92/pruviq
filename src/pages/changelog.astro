@@ -1,0 +1,215 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { useTranslations } from '../i18n/index';
+
+const t = useTranslations('en');
+---
+
+<Layout title={t('meta.changelog_title')} description={t('meta.changelog_desc')}>
+
+  <!-- HEADER -->
+  <section class="py-20">
+    <div class="max-w-6xl mx-auto px-4">
+      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('changelog.tag')}</p>
+      <h1 class="text-3xl md:text-5xl font-bold mb-4">{t('changelog.title')}</h1>
+      <p class="text-[--color-text-muted] text-lg max-w-2xl">
+        {t('changelog.desc')}
+      </p>
+    </div>
+  </section>
+
+  <!-- CONTEXT CALLOUT -->
+  <section class="pb-8">
+    <div class="max-w-4xl mx-auto px-4">
+      <div class="bg-[--color-bg-card] border-l-4 border-[--color-accent] p-4 rounded-r">
+        <p class="text-sm text-[--color-text-muted]">
+          <strong class="text-[--color-text] font-semibold">What&rsquo;s versioned here?</strong><br/>
+          This changelog tracks the <strong class="text-[--color-text]">BB Squeeze SHORT trading strategy</strong> running live on Binance Futures.
+          Platform version (website, simulator, API) is managed separately.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- TIMELINE -->
+  <section class="pb-20">
+    <div class="max-w-4xl mx-auto px-4">
+
+      <!-- v1.7.1 -->
+      <div class="border-l-2 border-[--color-accent] pl-6 pb-12 relative">
+        <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-[--color-accent]"></div>
+        <div class="flex items-center gap-3 mb-2">
+          <span class="font-mono font-bold text-lg">v1.7.1</span>
+          <span class="bg-[--color-accent]/20 text-[--color-accent] font-mono text-xs px-2 py-0.5 rounded">CURRENT</span>
+          <span class="text-[--color-text-muted] font-mono text-xs">Feb 26, 2026</span>
+        </div>
+        <h3 class="font-bold mb-2">P0 Bug Fix: reduceOnly Parameter</h3>
+        <ul class="text-[--color-text-muted] text-sm space-y-1">
+          <li>&bull; Added reduceOnly=True to market close orders to prevent ghost reverse positions</li>
+          <li>&bull; Fixed execute_market_order to accept reduce_only parameter (4 call sites updated)</li>
+          <li>&bull; RSI&lt;30 filter and TIMEOUT early exit evaluated and deferred (insufficient edge)</li>
+        </ul>
+        <p class="text-[--color-text-muted] text-xs mt-2 font-mono">Evidence: 2,898 trades backtested, 549 coins, 2+ years</p>
+      </div>
+
+      <!-- v1.7.0 -->
+      <div class="border-l-2 border-[--color-border] pl-6 pb-12 relative">
+        <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-[--color-border] border-2 border-[--color-bg]"></div>
+        <div class="flex items-center gap-3 mb-2">
+          <span class="font-mono font-bold text-lg">v1.7.0</span>
+          <span class="text-[--color-text-muted] font-mono text-xs">Feb 15, 2026</span>
+        </div>
+        <h3 class="font-bold mb-2">R:R Optimization + Blacklist</h3>
+        <ul class="text-[--color-text-muted] text-sm space-y-1">
+          <li>&bull; TP 6% &rarr; 8% (backed by 2-year backtest: +24.3% PnL improvement)</li>
+          <li>&bull; GUNUSDT blacklisted (anomalous -$378 loss pattern)</li>
+          <li>&bull; BTC Regime Filter tested and rejected (4 variants, all failed)</li>
+          <li>&bull; 6 expert agents validated every change</li>
+        </ul>
+        <p class="text-[--color-text-muted] text-xs mt-2 font-mono">Evidence: 2,898 trades, 549 coins, 2+ years</p>
+      </div>
+
+      <!-- v1.6.2 -->
+      <div class="border-l-2 border-[--color-border] pl-6 pb-12 relative">
+        <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-[--color-border] border-2 border-[--color-bg]"></div>
+        <div class="flex items-center gap-3 mb-2">
+          <span class="font-mono font-bold text-lg">v1.6.2</span>
+          <span class="text-[--color-text-muted] font-mono text-xs">Feb 11, 2026</span>
+        </div>
+        <h3 class="font-bold mb-2">Partial Fill Aggregation Fix</h3>
+        <ul class="text-[--color-text-muted] text-sm space-y-1">
+          <li>&bull; Income API partial fills now aggregated (42% of exits were split)</li>
+          <li>&bull; Fixed PnL under-calculation bug (was using last fill only)</li>
+          <li>&bull; 16 new tests + 25 existing tests all pass</li>
+        </ul>
+      </div>
+
+      <!-- v1.6.1 -->
+      <div class="border-l-2 border-[--color-border] pl-6 pb-12 relative">
+        <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-[--color-border] border-2 border-[--color-bg]"></div>
+        <div class="flex items-center gap-3 mb-2">
+          <span class="font-mono font-bold text-lg">v1.6.1</span>
+          <span class="text-[--color-text-muted] font-mono text-xs">Feb 11, 2026</span>
+        </div>
+        <h3 class="font-bold mb-2">LIMIT IOC + Slippage Optimization</h3>
+        <ul class="text-[--color-text-muted] text-sm space-y-1">
+          <li>&bull; TIMEOUT exits use LIMIT IOC (63% fill rate, ~$960/year savings)</li>
+          <li>&bull; Slippage logging: signal_price vs fill_price tracked</li>
+          <li>&bull; Non-crypto pairs removed (INTC/TSLA/HOOD/PAXG)</li>
+        </ul>
+      </div>
+
+      <!-- v1.6.0 -->
+      <div class="border-l-2 border-[--color-border] pl-6 pb-12 relative">
+        <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-[--color-border] border-2 border-[--color-bg]"></div>
+        <div class="flex items-center gap-3 mb-2">
+          <span class="font-mono font-bold text-lg">v1.6.0</span>
+          <span class="text-[--color-text-muted] font-mono text-xs">Feb 10, 2026</span>
+        </div>
+        <h3 class="font-bold mb-2">SL Optimization (10%)</h3>
+        <ul class="text-[--color-text-muted] text-sm space-y-1">
+          <li>&bull; Stop-loss changed from 7% to 10% based on OOS validation</li>
+          <li>&bull; Reduces unnecessary early stops while maintaining risk control</li>
+          <li>&bull; Verified across 2024/2025/2026 periods (no overfitting)</li>
+        </ul>
+      </div>
+
+      <!-- v1.5.0 -->
+      <div class="border-l-2 border-[--color-border] pl-6 pb-12 relative">
+        <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-[--color-border] border-2 border-[--color-bg]"></div>
+        <div class="flex items-center gap-3 mb-2">
+          <span class="font-mono font-bold text-lg">v1.5.0</span>
+          <span class="text-[--color-text-muted] font-mono text-xs">Feb 5, 2026</span>
+        </div>
+        <h3 class="font-bold mb-2">SHORT ONLY Confirmed</h3>
+        <ul class="text-[--color-text-muted] text-sm space-y-1">
+          <li>&bull; 6 expert agents confirmed SHORT-only is optimal</li>
+          <li>&bull; Momentum LONG killed (failed validation — negative expectancy over 2 years)</li>
+          <li>&bull; BB Squeeze LONG killed (-$26, no edge)</li>
+          <li>&bull; Only BB Squeeze SHORT survives all validation tests</li>
+        </ul>
+      </div>
+
+      <!-- v1.4.x -->
+      <div class="border-l-2 border-[--color-border] pl-6 pb-12 relative">
+        <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-[--color-border] border-2 border-[--color-bg]"></div>
+        <div class="flex items-center gap-3 mb-2">
+          <span class="font-mono font-bold text-lg">v1.4.x</span>
+          <span class="text-[--color-text-muted] font-mono text-xs">Jan 31 &ndash; Feb 5, 2026</span>
+        </div>
+        <h3 class="font-bold mb-2">DUAL Mode Experiment &rarr; Killed</h3>
+        <ul class="text-[--color-text-muted] text-sm space-y-1">
+          <li>&bull; v1.4.0: Added Momentum LONG alongside SHORT</li>
+          <li>&bull; v1.4.3: Time filter moved to step 0 (bypass fix)</li>
+          <li>&bull; v1.4.4: Time filter optimized (577 coins, 2yr data)</li>
+          <li>&bull; v1.4.5: 5 expert agents killed LONG strategies</li>
+        </ul>
+      </div>
+
+      <!-- v1.2-1.3 -->
+      <div class="border-l-2 border-[--color-border] pl-6 pb-12 relative">
+        <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-[--color-border] border-2 border-[--color-bg]"></div>
+        <div class="flex items-center gap-3 mb-2">
+          <span class="font-mono font-bold text-lg">v1.2 &ndash; v1.3</span>
+          <span class="text-[--color-text-muted] font-mono text-xs">Jan 25 &ndash; 31, 2026</span>
+        </div>
+        <h3 class="font-bold mb-2">BB Squeeze Optimization Era</h3>
+        <ul class="text-[--color-text-muted] text-sm space-y-1">
+          <li>&bull; SL 10% &rarr; 7%, TP 4% &rarr; 6%, Volume filter 2.0x &rarr; 2.5x &rarr; 2.0x</li>
+          <li>&bull; Time filter: 4 hours &rarr; 6 &rarr; 10 &rarr; 7 (evidence-based each time)</li>
+          <li>&bull; BB expansion speed filter added (&ge; 10%)</li>
+          <li>&bull; SHORT-only mode introduced (v1.3.0)</li>
+          <li>&bull; 6x Sharpe improvement (0.39 &rarr; 2.43)</li>
+        </ul>
+      </div>
+
+      <!-- v0.5-1.1 -->
+      <div class="border-l-2 border-[--color-border] pl-6 pb-12 relative">
+        <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-[--color-border] border-2 border-[--color-bg]"></div>
+        <div class="flex items-center gap-3 mb-2">
+          <span class="font-mono font-bold text-lg">v0.5 &ndash; v1.1</span>
+          <span class="text-[--color-text-muted] font-mono text-xs">Jan 10 &ndash; 25, 2026</span>
+        </div>
+        <h3 class="font-bold mb-2">Discovery &amp; First Simulations</h3>
+        <ul class="text-[--color-text-muted] text-sm space-y-1">
+          <li>&bull; BB Squeeze strategy discovered (Jan 10)</li>
+          <li>&bull; Look-ahead bias found and fixed (the first hard lesson)</li>
+          <li>&bull; Simulation engine validated against exchange data</li>
+          <li>&bull; Cost modeling: realistic fees + slippage</li>
+          <li>&bull; First expert code review (5 agents)</li>
+        </ul>
+      </div>
+
+      <!-- v0.1 -->
+      <div class="border-l-2 border-[--color-border] pl-6 relative">
+        <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-[--color-border] border-2 border-[--color-bg]"></div>
+        <div class="flex items-center gap-3 mb-2">
+          <span class="font-mono font-bold text-lg">v0.1</span>
+          <span class="text-[--color-text-muted] font-mono text-xs">Jan 2026</span>
+        </div>
+        <h3 class="font-bold mb-2">Genesis</h3>
+        <p class="text-[--color-text-muted] text-sm">
+          First backtest engine built. One question: can a systematic approach actually make money in crypto futures?
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- PHILOSOPHY -->
+  <section class="py-16 border-t border-[--color-border]">
+    <div class="max-w-6xl mx-auto px-4 text-center">
+      <h2 class="text-2xl md:text-3xl font-bold mb-4">{t('changelog.why_title')}</h2>
+      <p class="text-[--color-text-muted] text-lg max-w-2xl mx-auto mb-8">
+        {t('changelog.why_desc')}
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="/strategies"
+           class="btn-primary bg-[--color-accent] text-[--color-bg] px-6 py-3 rounded font-semibold hover:bg-[--color-accent-dim]">
+          {t('strategies.explore')} &rarr;
+        </a>
+      </div>
+    </div>
+  </section>
+
+</Layout>

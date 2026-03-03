@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>PRUVIQ — Expert Review & Implementation Status (2026-02-22)</title>
+  <style>
+    body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;line-height:1.6;color:#0f172a;background:#f8fafc;padding:28px}
+    .wrap{max-width:900px;margin:0 auto;background:#fff;padding:28px;border-radius:8px;box-shadow:0 8px 20px rgba(2,6,23,0.06)}
+    h1{font-size:22px;margin-bottom:8px}
+    h2{font-size:16px;margin-top:22px}
+    h3{font-size:14px;margin-top:16px}
+    p{margin:8px 0}
+    ul{margin:8px 0 16px 20px}
+    code{background:#f1f5f9;padding:2px 6px;border-radius:4px;font-family:monospace}
+    .kpi{display:flex;gap:12px;margin:12px 0}
+    .card{background:#f1f5f9;padding:10px;border-radius:6px}
+    table{border-collapse:collapse;width:100%;margin-top:8px}
+    th,td{border:1px solid #e6eef6;padding:8px;text-align:left}
+    .small{font-size:13px;color:#475569}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>PRUVIQ — Expert Review & Implementation Status</h1>
+    <p class="small">Prepared by: 프루빅 (Automated coordinator agent)<br/>Date: 2026-02-22 03:16 KST</p>
+
+    <h2>Executive summary</h2>
+    <p>This report consolidates expert-level review across product, UX/design, frontend, QA, ops, security, data and content. It summarizes current implementation state, results of automated checks (E2E smoke + accessibility + Lighthouse work), outstanding risks, and a prioritized action plan to make the backtesting/simulation product usable, trustworthy and production-ready.</p>
+
+    <h2>Current implementation snapshot</h2>
+    <ul>
+      <li>One‑Click Demo PoC implemented on branch <code>feat/sim-rework</code>: <code>src/components/DemoRunner.tsx</code>, <code>public/data/demo.json</code>, <code>src/pages/demo.astro</code>.</li>
+      <li>CI / Automation: CodeQL, Playwright E2E, Axe accessibility, Lighthouse workflows added; an orchestrator workflow (daily) was added to run smoke/a11y/Lighthouse and upload artifacts.</li>
+      <li>Agents & skills: SKILL.md templates were added under <code>.openclaw/skills/</code>, and an agents registry <code>.openclaw/agents_registry.json</code> was created on branch <code>agents/init</code>.</li>
+      <li>Playwright smoke (Desktop + Mobile) and Axe accessibility runs executed; artifacts placed under <code>./playwright-report/</code> and <code>./reports/axe-*.json</code>. Playwright artifacts zipped: <code>/tmp/playwright_reports.zip</code>.</li>
+      <li>Local build: <code>npm run build</code> succeeded (dist ~1,286+ pages).</li>
+    </ul>
+
+    <h2>Automated check highlights</h2>
+    <div class="kpi">
+      <div class="card"><strong>Playwright Smoke</strong><div class="small">/demo flows (Desktop & Mobile) — PASSED (no blocking console errors)</div></div>
+      <div class="card"><strong>Axe Accessibility</strong><div class="small">1 violation found on <code>/simulate</code> (WCAG 2.1 AA) — see reports/axe-*.json</div></div>
+      <div class="card"><strong>Lighthouse (user-provided)</strong><div class="small">EN Performance: 88 | KO Performance: 95 | Accessibility: 100 | BestPractices: 83 | SEO: 100</div></div>
+    </div>
+
+    <h2>Expert findings by area</h2>
+
+    <h3>Product / Planning</h3>
+    <ul>
+      <li><strong>Observation:</strong> High entry friction — users need a fast "taste" of the simulator to convert. One-Click Demo PoC addresses this.</li>
+      <li><strong>Recommendation:</strong> Deploy demo CTA on prod behind a flag; measure "demo → full run" conversion and TTF (target <15s for demo).</li>
+    </ul>
+
+    <h3>UX / Design</h3>
+    <ul>
+      <li><strong>Observation:</strong> Summary-first view missing. Users must scan charts/tables to understand results.</li>
+      <li><strong>Recommendations:</strong>
+        <ol>
+          <li>Result Summary Card: Total Return / Win Rate / Profit Factor / Max Drawdown</li>
+          <li>Interpretation microcopy (auto-generated hints)</li>
+          <li>Mobile-first: ensure all primary buttons >=44px and that skeletons are used while loading</li>
+        </ol>
+      </li>
+    </ul>
+
+    <h3>Frontend</h3>
+    <ul>
+      <li>One-Click Demo implemented as a client component; uses static <code>public/data/demo.json</code> for PoC — safe and reversible.</li>
+      <li>Ensure Storybook & component docs added for all new UI pieces (DemoRunner, Summary cards).</li>
+    </ul>
+
+    <h3>QA / E2E</h3>
+    <ul>
+      <li>Playwright smoke executed (Desktop + Mobile). Artifacts available.</li>
+      <li>Axe produced one accessibility violation on <code>/simulate</code> — priority to triage and fix (likely form/aria or contrast).</li>
+      <li>Automate these runs on PR and nightly orchestrator (already added).</li>
+    </ul>
+
+    <h3>Ops / SRE</h3>
+    <ul>
+      <li><strong>Risk:</strong> Backend <code>/coins/stats</code> previously returned 503 — requires ops investigation (logs/Sentry).</li>
+      <li>Upptime + Sentry should be connected to Trigger alerts; Telegram webhook preferred (per your note) — please add TELEGRAM_BOT_TOKEN and CHAT_ID to repo secrets.</li>
+    </ul>
+
+    <h3>Data / Backtest</h3>
+    <ul>
+      <li>Reproducible package functionality planned (data snapshot + engine_version + run script). PoC requires backend worker + S3 for package storage.</li>
+      <li>Short-term: precompute demo JSON for common presets to provide instant results.</li>
+    </ul>
+
+    <h3>Security / CI</h3>
+    <ul>
+      <li>CodeQL workflow present. Recommend adding Snyk/Sonar if desired later.</li>
+      <li>All agent actions are recorded and should be restricted with fine-grained GH PAT (already set as PRUVIQ_GH_TOKEN).</li>
+    </ul>
+
+    <h3>Content / Marketing</h3>
+    <ul>
+      <li>SEO audit passed for titles/meta/hreflang in dist; JSON-LD present and valid. Good baseline.</li>
+      <li>Content Agent SKILL.md created — ready to produce launch drafts for procedural transparency ("Download reproducible package").</li>
+    </ul>
+
+    <h2>Outstanding issues & risks</h2>
+    <ol>
+      <li><strong>Backend 503:</strong> /coins/stats returned 503 in earlier checks. Action: ops ticket with logs + Sentry traces needed (I can draft the ticket).</li>
+      <li><strong>Best Practices score (Lighthouse):</strong> 83 (Cloudflare beacon external script). Ops/Cloudflare review may be required to mitigate.</li>
+      <li><strong>Accessibility violation:</strong> 1 WCAG 2.1 AA violation on /simulate — fix recommended before wide rollout.</li>
+      <li><strong>Auto-PR verification:</strong> auto-create-pr workflow added; verify PR creation in GitHub Actions UI (I can monitor and report).</li>
+    </ol>
+
+    <h2>Prioritized action plan (P0 / P1 / P2)</h2>
+    <h3>P0 — Immediate (today → 48h)</h3>
+    <ul>
+      <li>Deploy One-Click Demo behind feature flag; expose /demo preview to internal testers.</li>
+      <li>Fix accessibility violation on /simulate (priority)</li>
+      <li>Ops: open incident ticket for /coins/stats 503 and attach sample traces (I'll draft)</li>
+    </ul>
+
+    <h3>P1 — Short term (this week)</h3>
+    <ul>
+      <li>Background job queue for full runs + progress UI</li>
+      <li>Connect Upptime + Telegram webhook; wire Sentry DSN for error aggregation</li>
+      <li>Automate visual regression baseline capture and incorporate into PR checks</li>
+    </ul>
+
+    <h3>P2 — Mid term (1–3 months)</h3>
+    <ul>
+      <li>Reproducible package builder (worker + S3) and Verified badge pipeline</li>
+      <li>Golden dataset regression tests in CI</li>
+    </ul>
+
+    <h2>Action owners & ETA (suggested)</h2>
+    <table>
+      <thead><tr><th>Action</th><th>Owner</th><th>ETA</th></tr></thead>
+      <tbody>
+        <tr><td>One-Click Demo deploy to preview</td><td>Frontend Agent / 프루빅</td><td>4–8 hours</td></tr>
+        <tr><td>Accessibility fix on /simulate</td><td>Frontend + QA</td><td>1 day</td></tr>
+        <tr><td>Ops ticket: /coins/stats 503 investigation</td><td>Ops Agent / jePo</td><td>ASAP (today)</td></tr>
+        <tr><td>Orchestrator daily runs + artifact analysis</td><td>QA Agent / 프루빅</td><td>Installed (daily)</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Artifacts & where to find them</h2>
+    <ul>
+      <li>Playwright report: <code>./playwright-report/</code> (zipped: <code>/tmp/playwright_reports.zip</code>)</li>
+      <li>Axe reports: <code>./reports/axe-*.json</code></li>
+      <li>Lighthouse reports: <code>./reports/lighthouse-home*.json/html</code></li>
+      <li>Agent SKILL templates: <code>.openclaw/skills/</code> on branch <code>agents/init</code></li>
+    </ul>
+
+    <h2>Final recommendation</h2>
+    <p>Proceed with the P0 items immediately. Use the GH token and orchestrator workflows to run CI and collect artifacts; connect Telegram webhook for alerts. I will coordinate the agents, parse results, and create follow-up issues. We will iterate fast: small, safe frontend PoCs → CI gating → ops triage for backend issues → reproducibility automation.</p>
+
+    <p class="small">Prepared and appended by <strong>프루빅</strong>. If you want this exported as a standalone HTML file to download, it is saved in the repository at <code>reports/pruviq-expert-review-2026-02-22.html</code>.</p>
+  </div>
+</body>
+</html>
