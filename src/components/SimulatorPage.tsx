@@ -451,7 +451,7 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
 
     if (coinMode === 'top') body.top_n = topN;
     else if (coinMode === 'select' && selectedCoins.length > 0) body.symbols = selectedCoins;
-    else body.top_n = 549;
+    else if (coinsLoaded > 0) body.top_n = coinsLoaded;
 
     if (startDate) body.start_date = startDate;
     if (endDate) body.end_date = endDate;
@@ -469,7 +469,11 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
 
       if (!res.ok) {
         const err = await res.json().catch(() => ({ detail: 'Server error' }));
-        throw new Error(err.detail || `HTTP ${res.status}`);
+        const detail = err.detail;
+        const msg = Array.isArray(detail)
+          ? detail.map((d: any) => d.msg || d.message || JSON.stringify(d)).join('; ')
+          : (typeof detail === 'string' ? detail : `HTTP ${res.status}`);
+        throw new Error(msg);
       }
 
       const data: BacktestResult = await res.json();
@@ -494,7 +498,8 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
       } catch {}
       setTimeout(() => resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 200);
     } catch (e: any) {
-      setError(e.message || 'Backtest failed');
+      const errMsg = typeof e?.message === 'string' ? e.message : (typeof e === 'string' ? e : 'Backtest failed');
+      setError(errMsg);
     } finally {
       clearInterval(progressInterval);
       setIsRunning(false);
