@@ -1,6 +1,6 @@
 #!/bin/bash
-# PRUVIQ — Static Data Refresh (Hardened v3.0)
-# Fetches Binance+CoinGecko data → git push → build → deploy → alert
+# PRUVIQ — Static Data Refresh (Hardened v3.1)
+# Fetches Binance+CoinGecko data → push snapshot branch (generated-data) → build → deploy → alert
 #
 # Cron: 0 */4 * * * (every 4 hours — reduced from hourly)
 # Runs as openclaw user (owner of /Users/openclaw/pruviq/)
@@ -68,14 +68,7 @@ if ! python3 backend/scripts/refresh_static.py 2>&1; then
     exit 1
 fi
 
-# --- Step 2: Safety check ---
-CURRENT_BRANCH=$(git branch --show-current 2>/dev/null)
-if [ "$CURRENT_BRANCH" != "main" ]; then
-    log "WARN: On branch '$CURRENT_BRANCH', not main. Skipping."
-    exit 0
-fi
-
-# All data files that refresh_static.py may update
+# --- Data files that refresh_static.py may update ---
 DATA_FILES="public/data/market.json public/data/coins-stats.json public/data/macro.json public/data/news.json public/data/coin-metadata.json"
 
 if git diff --quiet $DATA_FILES 2>/dev/null; then
@@ -83,41 +76,63 @@ if git diff --quiet $DATA_FILES 2>/dev/null; then
     exit 0
 fi
 
-# --- Step 3: Commit ---
-git add -f $DATA_FILES
-git commit -m "chore: static data refresh [$(date -u '+%H:%M')]" --no-verify
+# --- Step 2: Push snapshot to dedicated branch (generated-data) ---
+BRANCH="generated-data"
 
-# --- Step 4: Pull + Push ---
-if ! git pull --rebase origin main 2>&1; then
-    log "WARN: rebase conflict, resolving with local data..."
-    git checkout --ours $DATA_FILES 2>/dev/null || true
-    git add -f $DATA_FILES
-    GIT_EDITOR=true git rebase --continue 2>/dev/null || {
-        git rebase --abort 2>/dev/null || true
-        git pull -X ours origin main 2>&1 || true
-    }
+# Ensure public/data exists
+if [ ! -d public/data ]; then
+  echo "No public/data directory found — nothing to commit" >&2
+  exit 0
 fi
 
-if ! git push origin main 2>&1; then
-    send_alert "ERROR" "git push failed. Data not deployed."
-    git reset --hard origin/main 2>/dev/null || true
-    exit 1
+# Create or update generated-data branch (keep branch limited to public/data)
+log "Preparing $BRANCH branch for snapshot"
+if git show-ref --verify --quiet refs/heads/$BRANCH; then
+  git checkout $BRANCH
+else
+  git checkout --orphan $BRANCH
+  # Remove all files from index and working tree for a clean snapshot
+  git rm -rf . >/dev/null 2>&1 || true
 fi
-log "Pushed to GitHub"
 
-# --- Step 5: Build ---
-log "Building site..."
+# Add only the public/data directory
+git add -f public/data
+
+if git diff --cached --quiet; then
+  log "No changes to public/data — nothing to commit"
+  # Return to main branch and exit
+  git checkout main 2>/dev/null || true
+  exit 0
+fi
+
+git commit -m "chore: update generated static data snapshot [$(date -u '+%Y-%m-%d %H:%M UTC')]" --no-verify
+
+# Push snapshot branch (force to keep it as a single snapshot branch)
+if ! git push --set-upstream origin $BRANCH --force 2>&1; then
+  send_alert "ERROR" "git push to $BRANCH failed. Data not published."
+  # Attempt to return to main and abort
+  git checkout main 2>/dev/null || true
+  exit 1
+fi
+
+log "Pushed snapshot to branch $BRANCH"
+
+# Return to main branch for build/deploy steps
+git checkout main 2>/dev/null || true
+
+# --- Step 3: Build (optional local build to validate) ---
+log "Building site locally to validate snapshot integration..."
 if ! npm run build 2>&1 | tail -5; then
-    send_alert "ERROR" "npm run build failed. Data pushed but not deployed."
+    send_alert "ERROR" "npm run build failed. Snapshot committed but build failed locally."
     exit 1
 fi
 log "Build complete"
 
-# --- Step 6: Deploy ---
+# --- Step 4: Deploy (unchanged) ---
 log "Deploying to Cloudflare..."
 if npx wrangler deploy 2>&1 | tail -5; then
     log "Deployed to Cloudflare Workers"
-    send_alert "OK" "Data refreshed & deployed ✓ ($(date -u '+%H:%M UTC'))"
+    send_alert "OK" "Data snapshot updated & deployed ✓ ($(date -u '+%H:%M UTC'))"
 else
-    send_alert "ERROR" "wrangler deploy failed. Git is updated but site is stale."
+    send_alert "ERROR" "wrangler deploy failed. Snapshot pushed but site may be stale."
 fi
