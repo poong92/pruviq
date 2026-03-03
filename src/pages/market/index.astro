@@ -30,15 +30,15 @@ const t = useTranslations('en');
       </div>
     </div>
   </section>
+
+  <script>
+    import { h, render } from 'preact';
+    import MarketDashboard from '../../components/MarketDashboard';
+    import ErrorBoundary from '../../components/ErrorBoundary';
+
+    const mount = document.getElementById('market-mount');
+    if (mount) {
+      render(h(ErrorBoundary, { name: 'Market Dashboard' }, h(MarketDashboard, { lang: 'en' })), mount);
+    }
+  </script>
 </Layout>
-
-<script>
-  import { h, render } from 'preact';
-  import MarketDashboard from '../../components/MarketDashboard';
-  import ErrorBoundary from '../../components/ErrorBoundary';
-
-  const mount = document.getElementById('market-mount');
-  if (mount) {
-    render(h(ErrorBoundary, { name: 'Market Dashboard' }, h(MarketDashboard, { lang: 'en' })), mount);
-  }
-</script>
