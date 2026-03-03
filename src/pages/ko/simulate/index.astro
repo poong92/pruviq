@@ -81,15 +81,15 @@ const t = useTranslations('ko');
       </div>
     </div>
   </section>
+
+  <script>
+    import { h, render } from 'preact';
+    import SimulatorPage from '../../../components/SimulatorPage';
+    import ErrorBoundary from '../../../components/ErrorBoundary';
+
+    const mount = document.getElementById('simulator-mount');
+    if (mount) {
+      render(h(ErrorBoundary, { name: 'Simulator' }, h(SimulatorPage, { lang: 'ko' })), mount);
+    }
+  </script>
 </Layout>
-
-<script>
-  import { h, render } from 'preact';
-  import SimulatorPage from '../../../components/SimulatorPage';
-  import ErrorBoundary from '../../../components/ErrorBoundary';
-
-  const mount = document.getElementById('simulator-mount');
-  if (mount) {
-    render(h(ErrorBoundary, { name: 'Simulator' }, h(SimulatorPage, { lang: 'ko' })), mount);
-  }
-</script>

@@ -150,23 +150,23 @@ const canonicalOverride = symbol.endsWith('usdt') ? undefined : `/coins/${symbol
       </div>
     </div>
   </section>
+
+  <script>
+    import { h, render } from 'preact';
+    import CoinChart from '../../components/CoinChart';
+    import ErrorBoundary from '../../components/ErrorBoundary';
+    import ExchangeCTA from '../../components/ExchangeCTA';
+
+    const mount = document.getElementById('coin-mount');
+    if (mount) {
+      const symbol = mount.dataset.symbol;
+      render(h(ErrorBoundary, { name: 'Coin Chart' }, h(CoinChart, { symbol, lang: 'en' })), mount);
+    }
+
+    const ctaMount = document.getElementById('exchange-cta-mount');
+    if (ctaMount) {
+      const coin = ctaMount.dataset.coin;
+      render(h(ExchangeCTA, { mode: 'card', lang: 'en', coin }), ctaMount);
+    }
+  </script>
 </Layout>
-
-<script>
-  import { h, render } from 'preact';
-  import CoinChart from '../../components/CoinChart';
-  import ErrorBoundary from '../../components/ErrorBoundary';
-  import ExchangeCTA from '../../components/ExchangeCTA';
-
-  const mount = document.getElementById('coin-mount');
-  if (mount) {
-    const symbol = mount.dataset.symbol;
-    render(h(ErrorBoundary, { name: 'Coin Chart' }, h(CoinChart, { symbol, lang: 'en' })), mount);
-  }
-
-  const ctaMount = document.getElementById('exchange-cta-mount');
-  if (ctaMount) {
-    const coin = ctaMount.dataset.coin;
-    render(h(ExchangeCTA, { mode: 'card', lang: 'en', coin }), ctaMount);
-  }
-</script>
