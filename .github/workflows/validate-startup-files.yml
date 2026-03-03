@@ -1,0 +1,37 @@
+name: validate-startup-files
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check required startup files
+        run: |
+          set -e
+          MISSING=0
+          for F in SOUL.md USER.md IDENTITY.md MEMORY.md WORKFLOW_AUTO.md; do
+            if [ ! -f "$F" ]; then
+              echo "MISSING: $F"
+              MISSING=1
+            fi
+          done
+          if [ "$MISSING" -eq 1 ]; then
+            echo "One or more required startup files are missing. See AUTONOMY.md for guidance." >&2
+            exit 1
+          fi
+      - name: Summarize recent memories (PoC)
+        if: always()
+        run: |
+          python3 scripts/summarize_memories.py --recent 7 --out memory/summaries/latest.summary.md || true
+      - name: Run npm build (sanity)
+        run: |
+          if [ -f package.json ]; then
+            npm ci
+            npm run build
+          else
+            echo "No package.json found; skipping build check."
+          fi

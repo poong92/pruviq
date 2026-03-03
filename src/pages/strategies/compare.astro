@@ -1,0 +1,36 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { useTranslations } from '../../i18n/index';
+
+const t = useTranslations('en');
+---
+
+<Layout title={t('meta.compare_title')} description={t('meta.compare_desc')}>
+  <section class="py-12">
+    <div class="max-w-5xl mx-auto px-4">
+      <a href="/strategies" class="text-[--color-text-muted] text-sm hover:text-[--color-accent] transition-colors mb-8 inline-block">
+        &larr; {t('compare.back')}
+      </a>
+
+      <h1 class="text-3xl font-bold mb-6">{t('meta.compare_title')}</h1>
+
+      <div id="compare-mount">
+        <div class="animate-pulse space-y-4">
+          <div class="h-10 bg-[--color-bg-hover] rounded w-1/2"></div>
+          <div class="h-64 bg-[--color-bg-hover] rounded"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    import { h, render } from 'preact';
+    import StrategyComparison from '../../components/StrategyComparison';
+    import ErrorBoundary from '../../components/ErrorBoundary';
+
+    const mount = document.getElementById('compare-mount');
+    if (mount) {
+      render(h(ErrorBoundary, { name: 'Strategy Comparison' }, h(StrategyComparison, { lang: 'en' })), mount);
+    }
+  </script>
+</Layout>

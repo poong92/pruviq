@@ -1,0 +1,213 @@
+---
+import { getCollection, render } from 'astro:content';
+import Layout from '../../../layouts/Layout.astro';
+import StrategyDemo from '../../../components/StrategyDemo';
+import { useTranslations } from '../../../i18n/index';
+
+const t = useTranslations('ko');
+
+export async function getStaticPaths() {
+  const koStrategies = await getCollection('strategies-ko');
+  const enStrategies = await getCollection('strategies');
+
+  // Korean versions
+  const koIds = new Set(koStrategies.map(s => s.id));
+  const paths = koStrategies.map((strategy) => ({
+    params: { id: strategy.id },
+    props: { strategy, isKorean: true },
+  }));
+
+  // English fallback for strategies without Korean translation
+  for (const strategy of enStrategies) {
+    if (!koIds.has(strategy.id)) {
+      paths.push({
+        params: { id: strategy.id },
+        props: { strategy, isKorean: false },
+      });
+    }
+  }
+
+  return paths;
+}
+
+const { strategy, isKorean } = Astro.props;
+const { Content } = await render(strategy);
+
+const demoDefaults: Record<string, { sl: number; tp: number; direction: string }> = {
+  'bb-squeeze-short': { sl: 10, tp: 8, direction: 'short' },
+  'bb-squeeze-long':  { sl: 7,  tp: 6, direction: 'long' },
+  'momentum-long':    { sl: 5, tp: 10, direction: 'long' },
+  'atr-breakout':     { sl: 7, tp: 10, direction: 'long' },
+  'hv-squeeze':       { sl: 10, tp: 6, direction: 'short' },
+};
+const demo = demoDefaults[strategy.id];
+
+const statusColors: Record<string, string> = {
+  verified: '--color-accent',
+  testing: '--color-yellow',
+  killed: '--color-red',
+  shelved: '--color-text-muted',
+};
+
+const statusLabels: Record<string, string> = {
+  verified: t('strategy.verified'),
+  testing: t('strategy.testing'),
+  killed: t('strategy.killed'),
+  shelved: t('strategy.shelved'),
+};
+---
+
+<Layout title={`${strategy.data.name} - PRUVIQ`} description={strategy.data.description} type="article" date={strategy.data.dateAdded}>
+  <!-- 3-level BreadcrumbList -->
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "PRUVIQ", "item": "https://pruviq.com/" },
+      { "@type": "ListItem", "position": 2, "name": "전략", "item": "https://pruviq.com/ko/strategies/" },
+      { "@type": "ListItem", "position": 3, "name": strategy.data.name, "item": `https://pruviq.com/ko/strategies/${strategy.id}/` }
+    ]
+  })} />
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": strategy.data.name,
+    "description": strategy.data.description,
+    "datePublished": strategy.data.dateAdded,
+    "dateModified": new Date().toISOString().split('T')[0],
+    "author": { "@type": "Organization", "name": "PRUVIQ" },
+    "publisher": { "@type": "Organization", "name": "PRUVIQ", "url": "https://pruviq.com" },
+    "mainEntityOfPage": `https://pruviq.com/ko/strategies/${strategy.id}/`,
+    "inLanguage": "ko"
+  })} />
+  <article class="py-12">
+    <div class="max-w-3xl mx-auto px-4">
+      <a href="/ko/strategies" class="text-[--color-text-muted] text-sm hover:text-[--color-accent] transition-colors mb-8 inline-block">
+        &larr; {t('strategies.back')}
+      </a>
+
+      {!isKorean && (
+        <div class="mb-4 px-3 py-2 border border-[--color-border] rounded bg-[--color-bg-card] text-sm text-[--color-text-muted]">
+          This content is available in English only.
+        </div>
+      )}
+
+      <div class="mb-8">
+        <div class="flex items-center gap-3 mb-3">
+          <span class="font-mono text-xs tracking-wider px-2 py-0.5 rounded border"
+                style={`color: var(${statusColors[strategy.data.status]}); border-color: var(${statusColors[strategy.data.status]})`}>
+            {statusLabels[strategy.data.status]}
+          </span>
+          <span class="text-[--color-text-muted] text-xs font-mono">
+            {strategy.data.direction.toUpperCase()} &middot; {strategy.data.timeframe} &middot; {strategy.data.difficulty.toUpperCase()}
+          </span>
+        </div>
+        <h1 class="text-3xl md:text-4xl font-bold mt-2 mb-4">{strategy.data.name}</h1>
+        <p class="text-[--color-text-muted]">{strategy.data.description}</p>
+      </div>
+
+      {(strategy.data.winRate || strategy.data.profitFactor || strategy.data.totalPnl || strategy.data.maxDrawdown) && (
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 font-mono text-sm border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card] mb-8">
+          {strategy.data.winRate !== undefined && (
+            <div>
+              <span class="text-[--color-text-muted] text-xs">{t('strategy.win_rate')}</span>
+              <p class={`text-xl font-bold ${strategy.data.winRate >= 55 ? 'text-[--color-accent]' : strategy.data.winRate >= 50 ? 'text-[--color-yellow]' : 'text-[--color-red]'}`}>
+                {strategy.data.winRate}%
+              </p>
+              <p class="text-[--color-text-muted] text-[10px] mt-0.5 leading-tight">{t('strategy.wr_desc')}</p>
+            </div>
+          )}
+          {strategy.data.profitFactor !== undefined && (
+            <div>
+              <span class="text-[--color-text-muted] text-xs">{t('strategy.profit_factor')}</span>
+              <p class={`text-xl font-bold ${strategy.data.profitFactor >= 1.5 ? 'text-[--color-accent]' : strategy.data.profitFactor >= 1.0 ? 'text-[--color-yellow]' : 'text-[--color-red]'}`}>
+                {strategy.data.profitFactor}
+              </p>
+              <p class="text-[--color-text-muted] text-[10px] mt-0.5 leading-tight">{t('strategy.pf_desc')}</p>
+            </div>
+          )}
+          {strategy.data.totalPnl && (
+            <div>
+              <span class="text-[--color-text-muted] text-xs">{t('strategy.total_pnl')}</span>
+              <p class={`text-xl font-bold ${strategy.data.totalPnl.startsWith('+') ? 'text-[--color-accent]' : 'text-[--color-red]'}`}>
+                {strategy.data.totalPnl}
+              </p>
+              <p class="text-[--color-text-muted] text-[10px] mt-0.5 leading-tight">{t('strategy.pnl_desc')}</p>
+            </div>
+          )}
+          {strategy.data.maxDrawdown !== undefined && (
+            <div>
+              <span class="text-[--color-text-muted] text-xs">{t('strategy.max_drawdown')}</span>
+              <p class="text-xl font-bold text-[--color-red]">{strategy.data.maxDrawdown}%</p>
+              <p class="text-[--color-text-muted] text-[10px] mt-0.5 leading-tight">{t('strategy.mdd_desc')}</p>
+            </div>
+          )}
+        </div>
+      )}
+
+      <div class="flex flex-wrap gap-4 text-xs font-mono text-[--color-text-muted] mb-8">
+        <span>{t('strategy.added')}: {strategy.data.dateAdded}</span>
+        {strategy.data.dateKilled && <span>{t('strategy.killed_date')}: {strategy.data.dateKilled}</span>}
+        {strategy.data.coins && <span>{strategy.data.coins} {t('strategy.coins_tested')}</span>}
+        {strategy.data.dataPoints && <span>{strategy.data.dataPoints.toLocaleString()} {t('strategy.trades_analyzed')}</span>}
+      </div>
+
+      <div class="prose">
+        <Content />
+      </div>
+
+      {strategy.data.status === 'verified' && (
+        <div class="mt-8 mb-8 border border-[--color-yellow]/30 rounded-lg p-4 bg-[--color-yellow]/5">
+          <p class="font-mono text-[--color-yellow] text-xs font-bold mb-2">{t('strategy.leverage_warning_title')}</p>
+          <p class="text-[--color-text-muted] text-sm leading-relaxed">{t('strategy.leverage_warning')}</p>
+        </div>
+      )}
+
+      {demo && (
+        <StrategyDemo
+          client:visible
+          lang="ko"
+          strategy={strategy.id}
+          direction={demo.direction}
+          defaultSl={demo.sl}
+          defaultTp={demo.tp}
+        />
+      )}
+
+      <div id="exchange-cta-mount" data-strategy={strategy.id}></div>
+
+      <div class="mt-12 border-t border-[--color-border] pt-8 text-center">
+        <p class="text-[--color-text-muted] text-sm mb-4">
+          {demo ? t('strategies.detail_demo_footer') : t('strategies.detail_nodemo_footer')}
+        </p>
+        <div class="flex flex-col sm:flex-row gap-3 justify-center">
+          {strategy.data.status === 'verified' && (
+            <a href={`/ko/simulate?preset=${strategy.id}`}
+               class="btn-primary inline-block bg-[--color-accent] text-[--color-bg] px-6 py-2 rounded font-semibold text-sm hover:bg-[--color-accent-dim]">
+              이 전략 시뮬레이션 &rarr;
+            </a>
+          )}
+          <a href="/ko/strategies"
+             class={`inline-block ${strategy.data.status !== 'verified' ? 'bg-[--color-accent] text-[--color-bg] hover:bg-[--color-accent-dim]' : 'border border-[--color-border] text-[--color-text] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors'} px-6 py-2 rounded font-semibold text-sm`}>
+            {t('strategies.explore')} &rarr;
+          </a>
+          <a href="/ko/fees"
+             class="inline-block border border-[--color-border] text-[--color-text] px-6 py-2 rounded font-semibold text-sm hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
+            {t('cta.button3')}
+          </a>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <script>
+    import { h, render } from 'preact';
+    import ExchangeCTA from '../../../components/ExchangeCTA';
+
+    const mount = document.getElementById('exchange-cta-mount');
+    if (mount) {
+      const strategy = mount.dataset.strategy;
+      render(h(ExchangeCTA, { mode: 'card', lang: 'ko', strategy }), mount);
+    }
+  </script>
+</Layout>
