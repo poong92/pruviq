@@ -68,7 +68,7 @@ export default function ChartPanel({ chartSymbol, setChartSymbol, chartData, cha
       const hasBB = chartData.some((b) => b.bb_upper != null);
       if (hasBB) {
         const bbUpper = chart.addSeries(LineSeries, {
-          color: 'rgba(100, 150, 255, 0.4)', lineWidth: 1, priceLineVisible: false,
+          color: getCssVar('--color-chart-bb'), lineWidth: 1, priceLineVisible: false,
           lastValueVisible: false,
         });
         bbUpper.setData(chartData.filter((b) => b.bb_upper != null).map((b) => ({
@@ -76,7 +76,7 @@ export default function ChartPanel({ chartSymbol, setChartSymbol, chartData, cha
         })));
 
         const bbLower = chart.addSeries(LineSeries, {
-          color: 'rgba(100, 150, 255, 0.4)', lineWidth: 1, priceLineVisible: false,
+          color: getCssVar('--color-chart-bb'), lineWidth: 1, priceLineVisible: false,
           lastValueVisible: false,
         });
         bbLower.setData(chartData.filter((b) => b.bb_lower != null).map((b) => ({
@@ -84,7 +84,7 @@ export default function ChartPanel({ chartSymbol, setChartSymbol, chartData, cha
         })));
 
         const bbMid = chart.addSeries(LineSeries, {
-          color: 'rgba(100, 150, 255, 0.2)', lineWidth: 1, lineStyle: 2,
+          color: getCssVar('--color-chart-bb-mid'), lineWidth: 1, lineStyle: 2,
           priceLineVisible: false, lastValueVisible: false,
         });
         bbMid.setData(chartData.filter((b) => b.bb_mid != null).map((b) => ({

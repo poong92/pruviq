@@ -29,7 +29,7 @@ const lastUpdated = new Date().toLocaleDateString('en-US');
         </p>
         <!-- Tool Stats Bar -->
         <div class="flex flex-wrap gap-3 mb-4 font-mono text-sm">
-          <span class="px-3 py-1.5 rounded bg-green-500/10 text-green-400 border border-green-500/20">{t('hero.tool_coins')}</span>
+          <span class="px-3 py-1.5 rounded bg-[--color-up]/10 text-[--color-up] border border-[--color-up]/20">{t('hero.tool_coins')}</span>
           <span class="px-3 py-1.5 rounded bg-[--color-accent]/10 text-[--color-accent] border border-[--color-accent]/20">{t('hero.tool_strategies')}</span>
           <span class="px-3 py-1.5 rounded bg-[--color-accent]/10 text-[--color-accent] border border-[--color-accent]/20">{t('hero.tool_data')}</span>
           <span class="px-3 py-1.5 rounded bg-[--color-accent]/10 text-[--color-accent] border border-[--color-accent]/20">{t('hero.tool_free')}</span>
@@ -44,7 +44,7 @@ const lastUpdated = new Date().toLocaleDateString('en-US');
             {t('hero.cta_primary')} &rarr;
           </a>
           <a href="/strategies"
-             class="border border-[--color-border] text-[--color-text] px-8 py-3 rounded font-semibold text-center hover:border-[--color-accent] hover:text-[--color-accent] transition-colors min-h-[44px] text-lg">
+             class="border border-[--color-border] text-[--color-text] px-8 py-3 rounded font-semibold text-center hover:border-[--color-accent] hover:text-[--color-accent] hover:bg-[--color-accent]/5 transition-colors min-h-[44px] text-lg">
             {t('hero.cta1')}
           </a>
         </div>
@@ -104,31 +104,31 @@ const lastUpdated = new Date().toLocaleDateString('en-US');
   <!-- PROBLEM (PAS Framework - Agitate) -->
   <section class="py-20 border-t border-[--color-border] bg-[--color-bg-subtle]" aria-labelledby="problem-heading">
     <div class="max-w-6xl mx-auto px-4">
-      <p class="font-mono text-red-400 text-sm mb-2 tracking-wider">{t('problem.tag')}</p>
+      <p class="font-mono text-[--color-down] text-sm mb-2 tracking-wider">{t('problem.tag')}</p>
       <h2 id="problem-heading" class="text-3xl md:text-4xl font-bold mb-12">{t('problem.title')}</h2>
 
       <div class="grid md:grid-cols-3 gap-8 mb-12">
-        <div class="border border-red-500/30 rounded-lg p-6 bg-[--color-bg-card]">
-          <div class="text-red-400 font-mono text-xs font-bold mb-3 flex items-center gap-2">
-            <span class="inline-block w-2 h-2 rounded-full bg-red-400"></span>
+        <div class="border border-[--color-down]/30 rounded-lg p-6 bg-[--color-bg-card]">
+          <div class="text-[--color-down] font-mono text-xs font-bold mb-3 flex items-center gap-2">
+            <span class="inline-block w-2 h-2 rounded-full bg-[--color-down]"></span>
             CASE STUDY #1
           </div>
           <h3 class="font-bold text-lg mb-2">{t('problem.card1_title')}</h3>
           <p class="text-[--color-text-muted] text-sm leading-relaxed mb-3">{t('problem.card1_desc')}</p>
           <p class="text-xs text-[--color-text-muted] opacity-60 italic">{t('problem.card1_source')}</p>
         </div>
-        <div class="border border-red-500/30 rounded-lg p-6 bg-[--color-bg-card]">
-          <div class="text-red-400 font-mono text-xs font-bold mb-3 flex items-center gap-2">
-            <span class="inline-block w-2 h-2 rounded-full bg-red-400"></span>
+        <div class="border border-[--color-down]/30 rounded-lg p-6 bg-[--color-bg-card]">
+          <div class="text-[--color-down] font-mono text-xs font-bold mb-3 flex items-center gap-2">
+            <span class="inline-block w-2 h-2 rounded-full bg-[--color-down]"></span>
             CASE STUDY #2
           </div>
           <h3 class="font-bold text-lg mb-2">{t('problem.card2_title')}</h3>
           <p class="text-[--color-text-muted] text-sm leading-relaxed mb-3">{t('problem.card2_desc')}</p>
           <p class="text-xs text-[--color-text-muted] opacity-60 italic">{t('problem.card2_source')}</p>
         </div>
-        <div class="border border-red-500/30 rounded-lg p-6 bg-[--color-bg-card]">
-          <div class="text-red-400 font-mono text-xs font-bold mb-3 flex items-center gap-2">
-            <span class="inline-block w-2 h-2 rounded-full bg-red-400"></span>
+        <div class="border border-[--color-down]/30 rounded-lg p-6 bg-[--color-bg-card]">
+          <div class="text-[--color-down] font-mono text-xs font-bold mb-3 flex items-center gap-2">
+            <span class="inline-block w-2 h-2 rounded-full bg-[--color-down]"></span>
             CASE STUDY #3
           </div>
           <h3 class="font-bold text-lg mb-2">{t('problem.card3_title')}</h3>
@@ -179,7 +179,7 @@ const lastUpdated = new Date().toLocaleDateString('en-US');
       <div class="border border-[--color-accent]/30 rounded-lg p-8 bg-[--color-bg-card] max-w-3xl mx-auto mb-12">
         <p class="font-mono text-[--color-accent] text-xs font-bold mb-4">{t('evidence.lesson_tag')}</p>
         <p class="text-[--color-text-muted] leading-relaxed mb-3">
-          {t('evidence.lesson1')} <span class="text-[--color-accent] font-bold text-lg">{t('evidence.lesson_loss')}</span> <span class="text-green-400 font-bold text-lg">{t('evidence.lesson1_end')}</span>
+          {t('evidence.lesson1')} <span class="text-[--color-accent] font-bold text-lg">{t('evidence.lesson_loss')}</span> <span class="text-[--color-up] font-bold text-lg">{t('evidence.lesson1_end')}</span>
         </p>
         <p class="text-[--color-text-muted] leading-relaxed mb-3">{t('evidence.lesson2')}</p>
         <p class="text-[--color-text-muted] leading-relaxed mb-4">{t('evidence.lesson3')}</p>
@@ -188,24 +188,24 @@ const lastUpdated = new Date().toLocaleDateString('en-US');
 
       <!-- What we publish vs don't promise -->
       <div class="grid md:grid-cols-2 gap-8 mb-12">
-        <div class="border border-green-500/30 rounded-lg p-6 bg-[--color-bg-card]">
-          <p class="font-mono text-green-400 text-xs font-bold mb-4">{t('evidence.publish_tag')}</p>
+        <div class="border border-[--color-up]/30 rounded-lg p-6 bg-[--color-bg-card]">
+          <p class="font-mono text-[--color-up] text-xs font-bold mb-4">{t('evidence.publish_tag')}</p>
           <ul class="space-y-2 text-sm text-[--color-text-muted]">
-            <li class="flex items-start gap-2"><span class="text-green-400 shrink-0 mt-0.5">&#10003;</span> {t('evidence.publish1')}</li>
-            <li class="flex items-start gap-2"><span class="text-green-400 shrink-0 mt-0.5">&#10003;</span> {t('evidence.publish2')}</li>
-            <li class="flex items-start gap-2"><span class="text-green-400 shrink-0 mt-0.5">&#10003;</span> {t('evidence.publish3')}</li>
-            <li class="flex items-start gap-2"><span class="text-green-400 shrink-0 mt-0.5">&#10003;</span> {t('evidence.publish4')}</li>
-            <li class="flex items-start gap-2"><span class="text-green-400 shrink-0 mt-0.5">&#10003;</span> {t('evidence.publish5')}</li>
+            <li class="flex items-start gap-2"><span class="text-[--color-up] shrink-0 mt-0.5">&#10003;</span> {t('evidence.publish1')}</li>
+            <li class="flex items-start gap-2"><span class="text-[--color-up] shrink-0 mt-0.5">&#10003;</span> {t('evidence.publish2')}</li>
+            <li class="flex items-start gap-2"><span class="text-[--color-up] shrink-0 mt-0.5">&#10003;</span> {t('evidence.publish3')}</li>
+            <li class="flex items-start gap-2"><span class="text-[--color-up] shrink-0 mt-0.5">&#10003;</span> {t('evidence.publish4')}</li>
+            <li class="flex items-start gap-2"><span class="text-[--color-up] shrink-0 mt-0.5">&#10003;</span> {t('evidence.publish5')}</li>
           </ul>
         </div>
-        <div class="border border-red-500/30 rounded-lg p-6 bg-[--color-bg-card]">
-          <p class="font-mono text-red-400 text-xs font-bold mb-4">{t('evidence.nopromise_tag')}</p>
+        <div class="border border-[--color-down]/30 rounded-lg p-6 bg-[--color-bg-card]">
+          <p class="font-mono text-[--color-down] text-xs font-bold mb-4">{t('evidence.nopromise_tag')}</p>
           <ul class="space-y-2 text-sm text-[--color-text-muted]">
-            <li class="flex items-start gap-2"><span class="text-red-400 shrink-0 mt-0.5">&#10007;</span> {t('evidence.nopromise1')}</li>
-            <li class="flex items-start gap-2"><span class="text-red-400 shrink-0 mt-0.5">&#10007;</span> {t('evidence.nopromise2')}</li>
-            <li class="flex items-start gap-2"><span class="text-red-400 shrink-0 mt-0.5">&#10007;</span> {t('evidence.nopromise3')}</li>
-            <li class="flex items-start gap-2"><span class="text-red-400 shrink-0 mt-0.5">&#10007;</span> {t('evidence.nopromise4')}</li>
-            <li class="flex items-start gap-2"><span class="text-red-400 shrink-0 mt-0.5">&#10007;</span> {t('evidence.nopromise5')}</li>
+            <li class="flex items-start gap-2"><span class="text-[--color-down] shrink-0 mt-0.5">&#10007;</span> {t('evidence.nopromise1')}</li>
+            <li class="flex items-start gap-2"><span class="text-[--color-down] shrink-0 mt-0.5">&#10007;</span> {t('evidence.nopromise2')}</li>
+            <li class="flex items-start gap-2"><span class="text-[--color-down] shrink-0 mt-0.5">&#10007;</span> {t('evidence.nopromise3')}</li>
+            <li class="flex items-start gap-2"><span class="text-[--color-down] shrink-0 mt-0.5">&#10007;</span> {t('evidence.nopromise4')}</li>
+            <li class="flex items-start gap-2"><span class="text-[--color-down] shrink-0 mt-0.5">&#10007;</span> {t('evidence.nopromise5')}</li>
           </ul>
         </div>
       </div>
@@ -273,45 +273,45 @@ const lastUpdated = new Date().toLocaleDateString('en-US');
           <tbody>
             <tr class="border-b border-[--color-border]/50">
               <td class="py-3 px-4">No-code strategy builder</td>
-              <td class="py-3 px-4 text-center text-green-400 bg-[--color-accent]/5">&#10003;</td>
-              <td class="py-3 px-4 text-center text-red-400">&#10007; Pine Script</td>
-              <td class="py-3 px-4 text-center text-red-400">&#10007; Python/C#</td>
+              <td class="py-3 px-4 text-center text-[--color-up] bg-[--color-accent]/5">&#10003;</td>
+              <td class="py-3 px-4 text-center text-[--color-down]">&#10007; Pine Script</td>
+              <td class="py-3 px-4 text-center text-[--color-down]">&#10007; Python/C#</td>
             </tr>
             <tr class="border-b border-[--color-border]/50">
               <td class="py-3 px-4">549+ coins simultaneously</td>
-              <td class="py-3 px-4 text-center text-green-400 bg-[--color-accent]/5">&#10003;</td>
-              <td class="py-3 px-4 text-center text-red-400">&#10007; 1 at a time</td>
+              <td class="py-3 px-4 text-center text-[--color-up] bg-[--color-accent]/5">&#10003;</td>
+              <td class="py-3 px-4 text-center text-[--color-down]">&#10007; 1 at a time</td>
               <td class="py-3 px-4 text-center text-yellow-400">Limited</td>
             </tr>
             <tr class="border-b border-[--color-border]/50">
               <td class="py-3 px-4">Publishes failures</td>
-              <td class="py-3 px-4 text-center text-green-400 bg-[--color-accent]/5">&#10003;</td>
-              <td class="py-3 px-4 text-center text-red-400">&#10007;</td>
-              <td class="py-3 px-4 text-center text-red-400">&#10007;</td>
+              <td class="py-3 px-4 text-center text-[--color-up] bg-[--color-accent]/5">&#10003;</td>
+              <td class="py-3 px-4 text-center text-[--color-down]">&#10007;</td>
+              <td class="py-3 px-4 text-center text-[--color-down]">&#10007;</td>
             </tr>
             <tr class="border-b border-[--color-border]/50">
               <td class="py-3 px-4">Real trading verification</td>
-              <td class="py-3 px-4 text-center text-green-400 bg-[--color-accent]/5">&#10003; Live</td>
-              <td class="py-3 px-4 text-center text-red-400">&#10007;</td>
+              <td class="py-3 px-4 text-center text-[--color-up] bg-[--color-accent]/5">&#10003; Live</td>
+              <td class="py-3 px-4 text-center text-[--color-down]">&#10007;</td>
               <td class="py-3 px-4 text-center text-yellow-400">Paper only</td>
             </tr>
             <tr class="border-b border-[--color-border]/50">
               <td class="py-3 px-4">Realistic fees & slippage</td>
-              <td class="py-3 px-4 text-center text-green-400 bg-[--color-accent]/5">&#10003;</td>
+              <td class="py-3 px-4 text-center text-[--color-up] bg-[--color-accent]/5">&#10003;</td>
               <td class="py-3 px-4 text-center text-yellow-400">Basic</td>
-              <td class="py-3 px-4 text-center text-green-400">&#10003;</td>
+              <td class="py-3 px-4 text-center text-[--color-up]">&#10003;</td>
             </tr>
             <tr class="border-b border-[--color-border]/50">
               <td class="py-3 px-4">Free tier</td>
-              <td class="py-3 px-4 text-center text-green-400 bg-[--color-accent]/5">100% Free</td>
+              <td class="py-3 px-4 text-center text-[--color-up] bg-[--color-accent]/5">100% Free</td>
               <td class="py-3 px-4 text-center text-yellow-400">$14.95/mo+</td>
               <td class="py-3 px-4 text-center text-yellow-400">Limited</td>
             </tr>
             <tr>
               <td class="py-3 px-4">No account required</td>
-              <td class="py-3 px-4 text-center text-green-400 bg-[--color-accent]/5">&#10003;</td>
-              <td class="py-3 px-4 text-center text-red-400">&#10007;</td>
-              <td class="py-3 px-4 text-center text-red-400">&#10007;</td>
+              <td class="py-3 px-4 text-center text-[--color-up] bg-[--color-accent]/5">&#10003;</td>
+              <td class="py-3 px-4 text-center text-[--color-down]">&#10007;</td>
+              <td class="py-3 px-4 text-center text-[--color-down]">&#10007;</td>
             </tr>
           </tbody>
         </table>
@@ -435,7 +435,7 @@ const lastUpdated = new Date().toLocaleDateString('en-US');
         <blockquote class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card]">
           <p class="text-[--color-text-muted] text-sm leading-relaxed mb-4">"Finally a platform that shows both wins AND losses. The fact they publish killed strategies tells me they're honest about what works and what doesn't."</p>
           <footer class="flex items-center gap-3">
-            <div class="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center text-green-400 font-mono text-xs font-bold">JM</div>
+            <div class="w-8 h-8 rounded-full bg-[--color-up]/20 flex items-center justify-center text-[--color-up] font-mono text-xs font-bold">JM</div>
             <div>
               <p class="text-sm font-semibold">JM</p>
               <p class="text-xs text-[--color-text-muted]">Crypto futures trader</p>
@@ -513,10 +513,10 @@ const lastUpdated = new Date().toLocaleDateString('en-US');
 
       <!-- Risk reversal badges -->
       <div class="flex flex-wrap gap-3 justify-center mb-8 font-mono text-xs">
-        <span class="px-3 py-1.5 rounded border border-green-500/30 text-green-400 bg-green-500/5">No credit card</span>
-        <span class="px-3 py-1.5 rounded border border-green-500/30 text-green-400 bg-green-500/5">No account needed</span>
-        <span class="px-3 py-1.5 rounded border border-green-500/30 text-green-400 bg-green-500/5">100% free forever</span>
-        <span class="px-3 py-1.5 rounded border border-green-500/30 text-green-400 bg-green-500/5">Results in 3 seconds</span>
+        <span class="px-3 py-1.5 rounded border border-[--color-up]/30 text-[--color-up] bg-[--color-up]/5">No credit card</span>
+        <span class="px-3 py-1.5 rounded border border-[--color-up]/30 text-[--color-up] bg-[--color-up]/5">No account needed</span>
+        <span class="px-3 py-1.5 rounded border border-[--color-up]/30 text-[--color-up] bg-[--color-up]/5">100% free forever</span>
+        <span class="px-3 py-1.5 rounded border border-[--color-up]/30 text-[--color-up] bg-[--color-up]/5">Results in 3 seconds</span>
       </div>
 
       <div class="flex flex-col sm:flex-row gap-4 justify-center mb-4">
@@ -525,7 +525,7 @@ const lastUpdated = new Date().toLocaleDateString('en-US');
           {t('cta.button1')} &rarr;
         </a>
         <a href="/strategies"
-           class="inline-block border border-[--color-border] text-[--color-text] px-8 py-3 rounded font-semibold text-lg hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
+           class="inline-block border border-[--color-border] text-[--color-text] px-8 py-3 rounded font-semibold text-lg hover:border-[--color-accent] hover:text-[--color-accent] hover:bg-[--color-accent]/5 transition-colors">
           {t('hero.cta1')}
         </a>
       </div>
@@ -538,7 +538,7 @@ const lastUpdated = new Date().toLocaleDateString('en-US');
           <p class="text-xs text-[--color-text-muted]">Strategy updates, market insights, discussion</p>
         </div>
         <a href="https://t.me/PRUVIQ" target="_blank" rel="noopener noreferrer"
-           class="ml-2 bg-[#229ED9] text-white px-4 py-1.5 rounded text-xs font-semibold hover:bg-[#1a8bc4] transition-colors whitespace-nowrap">
+           class="ml-2 bg-[--color-accent] text-white px-4 py-1.5 rounded text-xs font-semibold hover:bg-[--color-accent-dim] transition-colors whitespace-nowrap">
           Join Telegram
         </a>
       </div>

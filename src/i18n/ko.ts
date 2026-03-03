@@ -10,6 +10,7 @@ export const ko: Record<TranslationKey, string> = {
   'nav.coins': '코인',
   'nav.builder': '빌더',
   'nav.blog': '블로그',
+  'nav.performance': '성과',
   'nav.lang': 'EN',
 
   // Hero
@@ -18,7 +19,7 @@ export const ko: Record<TranslationKey, string> = {
   'hero.title2': '전략을 검증하세요.',
   'hero.subtitle': '실패도 공개하는 유일한 백테스팅 도구.',
   'hero.desc': '우리는 549개 코인에서 5개의 전략을 테스트했습니다. 4개는 손실을 냈습니다. 우리는 모든 결과를 공개합니다. 실제 자금을 투입하기 전에 무엇이 실제로 작동하는지 확인하세요.',
-  'hero.cta_primary': '무료 백테스트 시작',
+  'hero.cta_primary': '무료 시뮬레이터 체험',
   'hero.cta_builder': '나만의 전략 만들기',
   'hero.cta1': '전략 탐색하기',
   'hero.cta2': '트레이딩 IQ 높이기',
@@ -133,7 +134,7 @@ export const ko: Record<TranslationKey, string> = {
   'cta.title': '검증할 준비 되셨나요?',
   'cta.desc1': '전략을 만들고, 백테스트를 돌리고, 결과를 확인하세요. 계정 불필요.',
   'cta.desc2': '영원히 무료. 이메일 불필요. 숨겨진 비용 없음.',
-  'cta.button1': '시뮬레이터 체험',
+  'cta.button1': '무료 시뮬레이터 체험',
   'cta.button2': '커뮤니티 참여',
   'cta.button3': '수수료 절약하기',
   'cta.disclaimer': '투자 조언이 아닙니다. 암호화폐 트레이딩은 상당한 손실 위험을 수반합니다. 과거 성과는 미래 결과를 보장하지 않습니다. PRUVIQ는 교육 및 연구 프로젝트입니다.',

@@ -227,7 +227,7 @@ export default function CoinChart({ symbol, lang = 'en' }: { symbol: string; lan
       candleSeriesRef.current = candleSeries;
 
       const bbUpper = chart.addSeries(LineSeries, { color: getCssVar('--color-chart-bb'), lineWidth: 1, priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false });
-      const bbMid = chart.addSeries(LineSeries, { color: 'rgba(100,150,255,0.25)', lineWidth: 1, lineStyle: 2, priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false });
+      const bbMid = chart.addSeries(LineSeries, { color: getCssVar('--color-chart-bb-mid'), lineWidth: 1, lineStyle: 2, priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false });
       const bbLower = chart.addSeries(LineSeries, { color: getCssVar('--color-chart-bb'), lineWidth: 1, priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false });
 
       bbUpper.setData(ohlcv.filter(b => b.bb_upper != null).map(b => ({ time: b.t as any, value: b.bb_upper! })));
@@ -354,7 +354,7 @@ export default function CoinChart({ symbol, lang = 'en' }: { symbol: string; lan
           </h1>
           <span class="font-mono text-xl font-semibold">${formatChartPrice(lastBar.c)}</span>
           <span
-            class={`font-mono text-[0.8125rem] font-semibold px-2 py-0.5 rounded ${change >= 0 ? 'text-[--color-up] bg-[rgba(16,185,129,0.1)]' : 'text-[--color-red] bg-[rgba(255,68,68,0.1)]'}`}
+            class={`font-mono text-[0.8125rem] font-semibold px-2 py-0.5 rounded ${change >= 0 ? 'text-[--color-up] bg-[var(--color-up-fill)]' : 'text-[--color-red] bg-[var(--color-down-fill)]'}`}
           >
             {change > 0 ? '+' : ''}{change.toFixed(2)}%
           </span>
@@ -383,9 +383,9 @@ export default function CoinChart({ symbol, lang = 'en' }: { symbol: string; lan
 
         {/* Indicator toggles */}
         <div class="absolute top-2 right-3 z-10 flex flex-wrap gap-1.5">
-          <ToggleBtn active={showBB} activeColor="rgba(100,150,255,0.8)" label={t.bbBands} onClick={() => setShowBB(!showBB)} />
-          <ToggleBtn active={showEMA} activeColor="var(--color-chart-ema20)" label={t.ema} onClick={() => setShowEMA(!showEMA)} />
-          <ToggleBtn active={showVol} activeColor="rgba(59,130,246,0.6)" label={t.volume} onClick={() => setShowVol(!showVol)} />
+          <ToggleBtn active={showBB} activeColor={getCssVar('--color-accent')} label={t.bbBands} onClick={() => setShowBB(!showBB)} />
+          <ToggleBtn active={showEMA} activeColor={getCssVar('--color-chart-ema20')} label={t.ema} onClick={() => setShowEMA(!showEMA)} />
+          <ToggleBtn active={showVol} activeColor={getCssVar('--color-accent')} label={t.volume} onClick={() => setShowVol(!showVol)} />
           <button
             onClick={() => chartRef.current?.timeScale().fitContent()}
             aria-label="Reset chart zoom"

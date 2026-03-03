@@ -80,7 +80,7 @@ const isActive = (match: string) => basePath.startsWith(match);
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/manifest.json" />
-    <meta name="theme-color" content="#0a0a0a" />
+    <meta name="theme-color" content="#17171c" />
     {basePath.startsWith('/404') && <meta name="robots" content="noindex" />}
     <link rel="preconnect" href="https://api.pruviq.com" crossorigin />
     <link rel="preconnect" href="https://coin-images.coingecko.com" crossorigin />
@@ -292,17 +292,17 @@ const isActive = (match: string) => basePath.startsWith(match);
         <!-- 1열: Logo (좌측) -->
         <a href={lang === 'ko' ? '/ko/' : '/'} class="flex items-center gap-2">
           <img src="/favicon.svg" alt="PRUVIQ" width="28" height="28" class="w-7 h-7" />
-          <span class="font-mono font-bold text-xl tracking-wider"><span class="text-[--color-text]">PRUV</span><span class="text-[#00E676]">IQ</span></span>
+          <span class="font-mono font-bold text-xl tracking-wider"><span class="text-[--color-text]">PRUV</span><span class="text-[#3182f6]">IQ</span></span>
         </a>
         <!-- 2열: Nav (정중앙, 데스크톱 only) -->
         <div class="hidden md:flex items-center justify-center gap-8 text-sm">
           {navItems.map(item => (
-            <a href={item.href} aria-current={isActive(item.match) ? "page" : undefined} class="transition-colors" style={isActive(item.match) ? 'color:#3b82f6;font-weight:500' : 'color:var(--color-text-muted)'}>{item.label}</a>
+            <a href={item.href} aria-current={isActive(item.match) ? "page" : undefined} class="transition-colors" style={isActive(item.match) ? 'color:var(--color-accent);font-weight:500' : 'color:var(--color-text-muted)'}>{item.label}</a>
           ))}
         </div>
         <!-- 3열: Lang + Mobile hamburger (우측) -->
         <div class="flex items-center justify-end gap-3">
-          <a href={altPath} class="hidden md:inline-flex font-mono text-xs px-3 py-1.5 border border-[--color-border] rounded hover:border-[--color-accent] hover:text-[--color-accent] text-[--color-text-muted] transition-colors">{t('nav.lang')}</a>
+          <a href={altPath} class="hidden md:inline-flex font-mono text-xs px-3 py-1.5 border border-[--color-border] rounded hover:border-[--color-accent] hover:text-[--color-accent] hover:bg-[--color-accent]/5 text-[--color-text-muted] transition-colors">{t('nav.lang')}</a>
           <button id="mobile-menu-btn" class="md:hidden text-[--color-text-muted]" aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-menu">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
           </button>
@@ -311,9 +311,13 @@ const isActive = (match: string) => basePath.startsWith(match);
       <div id="mobile-menu" class="hidden md:hidden border-t border-[--color-border] bg-[--color-bg]" aria-hidden="true">
         <div class="flex flex-col px-4 py-4 gap-1 text-sm">
           {navItems.map(item => (
-            <a href={item.href} aria-current={isActive(item.match) ? "page" : undefined} class="min-h-[44px] flex items-center" style={isActive(item.match) ? 'color:#3b82f6;font-weight:500' : 'color:var(--color-text-muted)'}>{item.label}</a>
+            <a href={item.href} aria-current={isActive(item.match) ? "page" : undefined} class="min-h-[44px] flex items-center" style={isActive(item.match) ? 'color:var(--color-accent);font-weight:500' : 'color:var(--color-text-muted)'}>{item.label}</a>
           ))}
-          <a href={altPath} class="font-mono text-xs px-2 py-1 border border-[--color-border] rounded text-[--color-text-muted] w-fit min-h-[44px] flex items-center">{t('nav.lang')}</a>
+          <a href={methodologyPath} class="min-h-[44px] flex items-center text-[--color-text-muted]">{t('footer.methodology')}</a>
+          <a href={performancePath} class="min-h-[44px] flex items-center text-[--color-text-muted]">{t('nav.performance')}</a>
+          <div class="border-t border-[--color-border] mt-2 pt-2">
+            <a href={altPath} class="font-mono text-xs px-2 py-1 border border-[--color-border] rounded text-[--color-text-muted] w-fit min-h-[44px] flex items-center hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">{t('nav.lang')}</a>
+          </div>
         </div>
       </div>
     </nav>
@@ -331,7 +335,7 @@ const isActive = (match: string) => basePath.startsWith(match);
           <div class="md:w-1/3">
             <span class="flex items-center gap-1.5">
               <img src="/favicon.svg" alt="PRUVIQ" width="24" height="24" class="w-6 h-6" />
-              <span class="font-mono font-bold text-lg tracking-wider"><span class="text-[--color-text]">PRUV</span><span class="text-[#00E676]">IQ</span></span>
+              <span class="font-mono font-bold text-lg tracking-wider"><span class="text-[--color-text]">PRUV</span><span class="text-[#3182f6]">IQ</span></span>
             </span>
             <p class="text-[--color-text-muted] text-sm mt-2">{t('footer.tagline')}</p>
           </div>
@@ -400,7 +404,7 @@ const isActive = (match: string) => basePath.startsWith(match);
         if (!bar) return;
         var shown = false;
         function check() {
-          var shouldShow = window.scrollY > 600;
+          var shouldShow = window.scrollY > 300;
           if (shouldShow !== shown) {
             shown = shouldShow;
             bar.style.transform = shown ? 'translateY(0)' : 'translateY(100%)';

@@ -188,7 +188,7 @@ export default function StrategyDemo({
       const series = chart.addSeries(AreaSeries, {
         lineColor: getCssVar('--color-accent'),
         topColor: getCssVar('--color-up-fill'),
-        bottomColor: 'rgba(16, 185, 129, 0.0)',
+        bottomColor: 'rgba(0, 192, 115, 0.0)',
         lineWidth: 2,
         priceFormat: {
           type: 'custom',
@@ -254,7 +254,7 @@ export default function StrategyDemo({
       seriesRef.current.applyOptions({
         lineColor: color,
         topColor: isPositive ? getCssVar('--color-up-fill') : getCssVar('--color-down-fill'),
-        bottomColor: isPositive ? 'rgba(16, 185, 129, 0.0)' : 'rgba(255, 68, 68, 0.0)',
+        bottomColor: isPositive ? 'rgba(0, 192, 115, 0.0)' : 'rgba(240, 66, 81, 0.0)',
       });
       seriesRef.current.setData(result.equity_curve);
       chartRef.current?.timeScale().fitContent();

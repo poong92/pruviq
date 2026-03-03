@@ -8,6 +8,7 @@ export const en = {
   'nav.coins': 'Coins',
   'nav.builder': 'Builder',
   'nav.blog': 'Blog',
+  'nav.performance': 'Performance',
   'nav.lang': 'KO',
 
   // Hero
@@ -16,7 +17,7 @@ export const en = {
   'hero.title2': 'Before You Trade.',
   'hero.subtitle': "The only backtesting tool that publishes its failures.",
   'hero.desc': 'We have tested 5 strategies on 549 coins. 4 lost money. We published them all. Because you deserve to know what actually works before risking real money.',
-  'hero.cta_primary': 'Start Backtesting Free',
+  'hero.cta_primary': 'Try Simulator Free',
   'hero.cta_builder': 'Build Your Own Strategy',
   'hero.cta1': 'Explore Strategies',
   'hero.cta2': 'Raise Your Trading IQ',
@@ -131,7 +132,7 @@ export const en = {
   'cta.title': 'Ready to Test?',
   'cta.desc1': 'Build a strategy, run a backtest, see the results. No account needed.',
   'cta.desc2': 'Free forever. No email required. No hidden fees.',
-  'cta.button1': 'Try Simulator',
+  'cta.button1': 'Try Simulator Free',
   'cta.button2': 'Join Community',
   'cta.button3': 'Save on Fees',
   'cta.disclaimer': 'Not financial advice. Crypto trading involves substantial risk of loss. Past performance does not guarantee future results. PRUVIQ is an educational and research project.',
