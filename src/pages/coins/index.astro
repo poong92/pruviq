@@ -28,15 +28,15 @@ const t = useTranslations('en');
       </div>
     </div>
   </section>
+
+  <script>
+    import { h, render } from 'preact';
+    import CoinListTable from '../../components/CoinListTable';
+    import ErrorBoundary from '../../components/ErrorBoundary';
+
+    const mount = document.getElementById('coins-mount');
+    if (mount) {
+      render(h(ErrorBoundary, { name: 'Coin List' }, h(CoinListTable, { lang: 'en' })), mount);
+    }
+  </script>
 </Layout>
-
-<script>
-  import { h, render } from 'preact';
-  import CoinListTable from '../../components/CoinListTable';
-  import ErrorBoundary from '../../components/ErrorBoundary';
-
-  const mount = document.getElementById('coins-mount');
-  if (mount) {
-    render(h(ErrorBoundary, { name: 'Coin List' }, h(CoinListTable, { lang: 'en' })), mount);
-  }
-</script>

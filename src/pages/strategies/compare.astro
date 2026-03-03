@@ -22,15 +22,15 @@ const t = useTranslations('en');
       </div>
     </div>
   </section>
+
+  <script>
+    import { h, render } from 'preact';
+    import StrategyComparison from '../../components/StrategyComparison';
+    import ErrorBoundary from '../../components/ErrorBoundary';
+
+    const mount = document.getElementById('compare-mount');
+    if (mount) {
+      render(h(ErrorBoundary, { name: 'Strategy Comparison' }, h(StrategyComparison, { lang: 'en' })), mount);
+    }
+  </script>
 </Layout>
-
-<script>
-  import { h, render } from 'preact';
-  import StrategyComparison from '../../components/StrategyComparison';
-  import ErrorBoundary from '../../components/ErrorBoundary';
-
-  const mount = document.getElementById('compare-mount');
-  if (mount) {
-    render(h(ErrorBoundary, { name: 'Strategy Comparison' }, h(StrategyComparison, { lang: 'en' })), mount);
-  }
-</script>

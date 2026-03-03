@@ -199,15 +199,15 @@ const statusLabels: Record<string, string> = {
       </div>
     </div>
   </article>
+
+  <script>
+    import { h, render } from 'preact';
+    import ExchangeCTA from '../../../components/ExchangeCTA';
+
+    const mount = document.getElementById('exchange-cta-mount');
+    if (mount) {
+      const strategy = mount.dataset.strategy;
+      render(h(ExchangeCTA, { mode: 'card', lang: 'ko', strategy }), mount);
+    }
+  </script>
 </Layout>
-
-<script>
-  import { h, render } from 'preact';
-  import ExchangeCTA from '../../../components/ExchangeCTA';
-
-  const mount = document.getElementById('exchange-cta-mount');
-  if (mount) {
-    const strategy = mount.dataset.strategy;
-    render(h(ExchangeCTA, { mode: 'card', lang: 'ko', strategy }), mount);
-  }
-</script>
