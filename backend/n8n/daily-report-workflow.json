@@ -1,0 +1,128 @@
+{
+  "name": "PRUVIQ Daily Market Report",
+  "nodes": [
+    {
+      "name": "Daily 06:00 UTC",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "parameters": {
+        "rule": {"interval": [{"field": "cronExpression", "expression": "0 6 * * *"}]}
+      },
+      "position": [250, 300]
+    },
+    {
+      "name": "Fetch BTC",
+      "type": "n8n-nodes-base.httpRequest",
+      "parameters": {
+        "url": "https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT",
+        "method": "GET",
+        "responseFormat": "json"
+      },
+      "position": [450, 200]
+    },
+    {
+      "name": "Fetch PRUVIQ Stats",
+      "type": "n8n-nodes-base.httpRequest",
+      "parameters": {
+        "url": "http://localhost:8080/simulate",
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\"strategy\":\"bb-squeeze\",\"direction\":\"short\",\"sl_pct\":10,\"tp_pct\":8,\"top_n\":50}",
+        "responseFormat": "json"
+      },
+      "position": [450, 400]
+    },
+    {
+      "name": "Fetch Fear Greed",
+      "type": "n8n-nodes-base.httpRequest",
+      "parameters": {
+        "url": "https://api.alternative.me/fng/",
+        "method": "GET",
+        "responseFormat": "json"
+      },
+      "position": [450, 600]
+    },
+    {
+      "name": "Generate with Ollama",
+      "type": "n8n-nodes-base.httpRequest",
+      "parameters": {
+        "url": "http://localhost:11434/api/generate",
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"model\":\"qwen2.5:32b\",\"prompt\":\"Write a 200-word daily crypto market report. BTC: ${{ $node['Fetch BTC'].json.lastPrice }} ({{ $node['Fetch BTC'].json.priceChangePercent }}% 24h). Fear & Greed: {{ $node['Fetch Fear Greed'].json.data[0].value }} ({{ $node['Fetch Fear Greed'].json.data[0].value_classification }}). BB Squeeze SHORT sim: WR={{ $node['Fetch PRUVIQ Stats'].json.win_rate }}%, PF={{ $node['Fetch PRUVIQ Stats'].json.profit_factor }}. Use ONLY provided data. No predictions. End with disclaimer.\",\"stream\":false}",
+        "responseFormat": "json",
+        "options": {"timeout": 120000}
+      },
+      "position": [700, 300],
+      "notes": "Ollama qwen2.5:32b - may take 30-60s"
+    },
+    {
+      "name": "Fact Check",
+      "type": "n8n-nodes-base.httpRequest",
+      "parameters": {
+        "url": "http://localhost:11434/api/generate",
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"model\":\"qwen2.5:32b\",\"prompt\":\"Fact-check this report. Reply PASS or FAIL with reasons. Check: 1) prices match data 2) no predictions 3) has disclaimer. Report: {{ $node['Generate with Ollama'].json.response }}. Data: BTC=${{ $node['Fetch BTC'].json.lastPrice }}\",\"stream\":false}",
+        "responseFormat": "json",
+        "options": {"timeout": 120000}
+      },
+      "position": [900, 300]
+    },
+    {
+      "name": "Passed?",
+      "type": "n8n-nodes-base.if",
+      "parameters": {
+        "conditions": {
+          "string": [{
+            "value1": "={{ $json.response }}",
+            "operation": "contains",
+            "value2": "PASS"
+          }]
+        }
+      },
+      "position": [1100, 300]
+    },
+    {
+      "name": "Save Report",
+      "type": "n8n-nodes-base.executeCommand",
+      "parameters": {
+        "command": "=echo '{{ $node[\"Generate with Ollama\"].json.response }}' > /Users/jepo/pruviq-reports/$(date -u +%Y-%m-%d).md"
+      },
+      "position": [1300, 200]
+    },
+    {
+      "name": "Notify Review",
+      "type": "n8n-nodes-base.httpRequest",
+      "parameters": {
+        "url": "=https://api.telegram.org/bot{{ $env.TELEGRAM_BOT_TOKEN }}/sendMessage",
+        "method": "POST",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {"name": "chat_id", "value": "={{ $env.TELEGRAM_CHAT_ID }}"},
+            {"name": "text", "value": "📝 Daily report ready for review"},
+            {"name": "parse_mode", "value": "Markdown"}
+          ]
+        }
+      },
+      "position": [1300, 400]
+    }
+  ],
+  "connections": {
+    "Daily 06:00 UTC": {"main": [[{"node": "Fetch BTC", "type": "main", "index": 0}, {"node": "Fetch PRUVIQ Stats", "type": "main", "index": 0}, {"node": "Fetch Fear Greed", "type": "main", "index": 0}]]},
+    "Fetch BTC": {"main": [[{"node": "Generate with Ollama", "type": "main", "index": 0}]]},
+    "Fetch PRUVIQ Stats": {"main": [[{"node": "Generate with Ollama", "type": "main", "index": 0}]]},
+    "Fetch Fear Greed": {"main": [[{"node": "Generate with Ollama", "type": "main", "index": 0}]]},
+    "Generate with Ollama": {"main": [[{"node": "Fact Check", "type": "main", "index": 0}]]},
+    "Fact Check": {"main": [[{"node": "Passed?", "type": "main", "index": 0}]]},
+    "Passed?": {
+      "main": [
+        [{"node": "Save Report", "type": "main", "index": 0}],
+        [{"node": "Notify Review", "type": "main", "index": 0}]
+      ]
+    }
+  }
+}

@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <title>PRUVIQ</title>
+  <defs>
+    <linearGradient id="blk" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#5cff9f"/>
+      <stop offset="30%" stop-color="#33ff88"/>
+      <stop offset="70%" stop-color="#00E676"/>
+      <stop offset="100%" stop-color="#00b85c"/>
+    </linearGradient>
+    <linearGradient id="sh" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.22"/>
+      <stop offset="50%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <!-- Green IQ block -->
+  <rect x="1" y="1" width="30" height="30" rx="5" fill="url(#blk)"/>
+  <rect x="1" y="1" width="30" height="15" rx="5" fill="url(#sh)"/>
+  <!-- IQ text via foreignObject for CSS-quality rendering -->
+  <foreignObject x="1" y="1" width="30" height="30">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono','SF Mono','Menlo',monospace;font-size:14px;font-weight:800;color:#0a0e27;letter-spacing:0.3px;">IQ</div>
+  </foreignObject>
+  <!-- Checkmark badge (36% ratio, white check) -->
+  <circle cx="26" cy="6" r="5.4" fill="#2a2f4e"/>
+  <circle cx="26" cy="6" r="3.5" fill="#00E676"/>
+  <polyline points="24,6 25.5,7.8 28.5,4" fill="none" stroke="#ffffff" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

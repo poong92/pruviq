@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 40" fill="none">
+  <defs>
+    <linearGradient id="blk" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#5cff9f"/>
+      <stop offset="30%" stop-color="#33ff88"/>
+      <stop offset="70%" stop-color="#00E676"/>
+      <stop offset="100%" stop-color="#00b85c"/>
+    </linearGradient>
+    <linearGradient id="sh" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.22"/>
+      <stop offset="50%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <!-- IQ Block -->
+  <rect x="1" y="4" width="32" height="32" rx="6" fill="url(#blk)"/>
+  <rect x="1" y="4" width="32" height="16" rx="6" fill="url(#sh)"/>
+  <text x="17" y="27" font-family="'JetBrains Mono','SF Mono','Menlo',monospace" font-size="16" font-weight="800" fill="#0a0e27" text-anchor="middle" letter-spacing="0.5">IQ</text>
+  <!-- Checkmark (36% ratio, white check) -->
+  <circle cx="29" cy="8.5" r="5.8" fill="#2a2f4e"/>
+  <circle cx="29" cy="8.5" r="3.8" fill="#00E676"/>
+  <polyline points="26.8,8.5 28.4,10.4 31.6,6.4" fill="none" stroke="#ffffff" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- PRUV (white) + IQ (green) -->
+  <text x="44" y="29" font-family="'JetBrains Mono','SF Mono','Menlo',monospace" font-size="23" font-weight="600" fill="#e8eaf0" letter-spacing="0.06em">PRUV</text>
+  <text x="138" y="29" font-family="'JetBrains Mono','SF Mono','Menlo',monospace" font-size="23" font-weight="700" fill="#00E676" letter-spacing="0.06em">IQ</text>
+</svg>

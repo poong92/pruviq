@@ -1,0 +1,52 @@
+name: Update generated-data branch
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  snapshot-generated-data:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create or update generated-data branch
+        run: |
+          set -euo pipefail
+          git config user.name "autofix-bot"
+          git config user.email "autofix@example.com"
+          BRANCH=generated-data
+          # Create orphan branch if missing, otherwise checkout
+          if git show-ref --verify --quiet refs/heads/$BRANCH; then
+            git checkout $BRANCH
+          else
+            git checkout --orphan $BRANCH
+            git rm -rf . || true
+          fi
+
+          # Ensure public/data exists
+          if [ ! -d public/data ]; then
+            echo "No public/data directory found — nothing to commit" >&2
+            exit 0
+          fi
+
+          # Copy public/data contents into repo workspace root (already present)
+          git add -A public/data
+
+          if git diff --cached --quiet; then
+            echo "No changes to public/data — nothing to commit"
+            exit 0
+          fi
+
+          git commit -m "chore: update generated static data snapshot"
+
+          # Push branch
+          git push --set-upstream origin $BRANCH --force
+
+      - name: Done
+        run: echo "generated-data branch updated"
