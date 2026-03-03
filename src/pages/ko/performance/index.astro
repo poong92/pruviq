@@ -1,0 +1,251 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import { useTranslations } from '../../../i18n/index';
+
+const t = useTranslations('ko');
+---
+
+<Layout title={t('meta.performance_title')} description={t('meta.performance_desc')}>
+
+  <!-- HERO -->
+  <section class="py-12 md:py-16">
+    <div class="max-w-5xl mx-auto px-4">
+      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('perf.tag')}</p>
+      <h1 class="text-3xl md:text-4xl font-bold mb-4">{t('perf.title')}</h1>
+      <p class="text-[--color-text-muted] text-lg mb-4 max-w-2xl">{t('perf.desc')}</p>
+      <p class="font-mono text-xs text-[--color-text-muted] mb-6">
+        {t('perf.updated_label')}: <span class="text-[--color-text]">{t('perf.updated_val')}</span>
+        &nbsp;&middot;&nbsp;
+        {t('perf.period_label')}: <span class="text-[--color-text]">{t('perf.period_val')}</span>
+      </p>
+
+      <!-- Strategy Info -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card]">
+          <p class="text-xs text-[--color-text-muted] font-mono mb-1">{t('perf.stat1_label')}</p>
+          <p class="font-bold text-[--color-accent]">{t('perf.stat1_val')}</p>
+        </div>
+        <div class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card]">
+          <p class="text-xs text-[--color-text-muted] font-mono mb-1">{t('perf.stat2_label')}</p>
+          <p class="font-bold">{t('perf.stat2_val')}</p>
+        </div>
+        <div class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card]">
+          <p class="text-xs text-[--color-text-muted] font-mono mb-1">{t('perf.stat3_label')}</p>
+          <p class="font-bold">{t('perf.stat3_val')}</p>
+        </div>
+        <div class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card]">
+          <p class="text-xs text-[--color-text-muted] font-mono mb-1">{t('perf.stat4_label')}</p>
+          <p class="font-bold">{t('perf.stat4_val')}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BACKTEST RESULTS -->
+  <section class="pb-12 border-t border-[--color-border] pt-8">
+    <div class="max-w-5xl mx-auto px-4">
+      <h2 class="text-2xl font-bold mb-2">백테스트 결과</h2>
+      <p class="text-[--color-text-muted] text-sm mb-6">
+        2년+, 549개 코인, 2,898건 거래. 0.08%/side 수수료 포함.
+      </p>
+
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card] text-center">
+          <p class="font-mono text-3xl font-bold text-[--color-accent]">68.6%</p>
+          <p class="text-sm text-[--color-text-muted] mt-1">{t('strategy.win_rate')}</p>
+        </div>
+        <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card] text-center">
+          <p class="font-mono text-3xl font-bold text-[--color-accent]">2.22</p>
+          <p class="text-sm text-[--color-text-muted] mt-1">{t('strategy.profit_factor')}</p>
+        </div>
+        <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card] text-center">
+          <p class="font-mono text-3xl font-bold text-[--color-green]">+$794</p>
+          <p class="text-sm text-[--color-text-muted] mt-1">{t('strategy.total_pnl')}</p>
+        </div>
+        <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card] text-center">
+          <p class="font-mono text-3xl font-bold">2,898</p>
+          <p class="text-sm text-[--color-text-muted] mt-1">{t('compare.trades')}</p>
+        </div>
+      </div>
+
+      <!-- Detailed Breakdown -->
+      <div class="border border-[--color-border] rounded-lg bg-[--color-bg-card] overflow-hidden">
+        <table class="w-full text-sm">
+          <caption class="sr-only">BB Squeeze SHORT 전략 성과 지표</caption>
+          <thead>
+            <tr class="border-b border-[--color-border] bg-[--color-bg-subtle]">
+              <th class="text-left p-3 font-mono text-xs text-[--color-text-muted]">지표</th>
+              <th class="text-right p-3 font-mono text-xs text-[--color-text-muted]">값</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="border-b border-[--color-border]">
+              <td class="p-3">손절 (SL)</td>
+              <td class="p-3 text-right font-mono">10%</td>
+            </tr>
+            <tr class="border-b border-[--color-border]">
+              <td class="p-3">익절 (TP)</td>
+              <td class="p-3 text-right font-mono">8%</td>
+            </tr>
+            <tr class="border-b border-[--color-border]">
+              <td class="p-3">최대 보유 시간</td>
+              <td class="p-3 text-right font-mono">48시간</td>
+            </tr>
+            <tr class="border-b border-[--color-border]">
+              <td class="p-3">SL 비율</td>
+              <td class="p-3 text-right font-mono">8.0%</td>
+            </tr>
+            <tr class="border-b border-[--color-border]">
+              <td class="p-3">TP 비율</td>
+              <td class="p-3 text-right font-mono">42.0%</td>
+            </tr>
+            <tr class="border-b border-[--color-border]">
+              <td class="p-3">타임아웃 비율</td>
+              <td class="p-3 text-right font-mono">50.0%</td>
+            </tr>
+            <tr class="border-b border-[--color-border]">
+              <td class="p-3">최대 손실폭 (MDD)</td>
+              <td class="p-3 text-right font-mono text-[--color-red]">33%</td>
+            </tr>
+            <tr class="border-b border-[--color-border]">
+              <td class="p-3">손익분기 승률</td>
+              <td class="p-3 text-right font-mono">55.6%</td>
+            </tr>
+            <tr>
+              <td class="p-3">안전 마진</td>
+              <td class="p-3 text-right font-mono text-[--color-green]">+13.0%p</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- KILLED STRATEGIES -->
+  <section class="pb-12 border-t border-[--color-border] pt-8">
+    <div class="max-w-5xl mx-auto px-4">
+      <h2 class="text-2xl font-bold mb-2">기각된 전략</h2>
+      <p class="text-[--color-text-muted] text-sm mb-6">
+        테스트 후 기각한 전략들. 실패도 성공만큼 중요하기에 공개합니다.
+      </p>
+
+      <div class="grid md:grid-cols-2 gap-4">
+        <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card] opacity-60">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="text-xs font-mono px-2 py-0.5 rounded bg-[--color-red]/10 text-[--color-text] border border-[--color-red]/20">{t('strategy.killed')}</span>
+          </div>
+          <h3 class="font-bold mb-2">BB Squeeze LONG</h3>
+          <p class="text-[--color-text-muted] text-xs mb-3">SHORT 전략의 미러. 크립토 시장의 구조적 비대칭성으로 실패.</p>
+          <div class="grid grid-cols-3 gap-2 text-sm">
+            <div>
+              <span class="text-[--color-text-muted] text-xs block">{t('strategy.win_rate')}</span>
+              <span class="font-mono">51.0%</span>
+            </div>
+            <div>
+              <span class="text-[--color-text-muted] text-xs block">{t('strategy.profit_factor')}</span>
+              <span class="font-mono">0.98</span>
+            </div>
+            <div>
+              <span class="text-[--color-text-muted] text-xs block">PnL</span>
+              <span class="font-mono px-1 py-0.5 rounded bg-[--color-red]/10 text-[--color-text]">-$26</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card] opacity-60">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="text-xs font-mono px-2 py-0.5 rounded bg-[--color-red]/10 text-[--color-text] border border-[--color-red]/20">{t('strategy.killed')}</span>
+          </div>
+          <h3 class="font-bold mb-2">Momentum Breakout LONG</h3>
+          <p class="text-[--color-text-muted] text-xs mb-3">20봉 최고가 돌파 + 거래량 확인. 모든 시장 조건에서 치명적 손실.</p>
+          <div class="grid grid-cols-3 gap-2 text-sm">
+            <div>
+              <span class="text-[--color-text-muted] text-xs block">{t('strategy.win_rate')}</span>
+              <span class="font-mono">37.5%</span>
+            </div>
+            <div>
+              <span class="text-[--color-text-muted] text-xs block">{t('strategy.profit_factor')}</span>
+              <span class="font-mono">0.42</span>
+            </div>
+            <div>
+              <span class="text-[--color-text-muted] text-xs block">PnL</span>
+              <span class="font-mono px-1 py-0.5 rounded bg-[--color-red]/10 text-[--color-text]">중단</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card] opacity-60">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="text-xs font-mono px-2 py-0.5 rounded bg-[--color-yellow]/10 text-[--color-yellow] border border-[--color-yellow]/20">88+ 변형</span>
+          </div>
+          <h3 class="font-bold mb-2">모든 LONG 전략</h3>
+          <p class="text-[--color-text-muted] text-xs mb-3">BB Squeeze LONG 18변형, PVD Mean Reversion 88조합, DUAL 모드. 전부 실패.</p>
+          <div class="grid grid-cols-3 gap-2 text-sm">
+            <div>
+              <span class="text-[--color-text-muted] text-xs block">최고 PF</span>
+              <span class="font-mono">1.07</span>
+            </div>
+            <div>
+              <span class="text-[--color-text-muted] text-xs block">테스트</span>
+              <span class="font-mono">88+</span>
+            </div>
+            <div>
+              <span class="text-[--color-text-muted] text-xs block">판정</span>
+              <span class="font-mono text-[--color-red]">전부 실패</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card] opacity-60">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="text-xs font-mono px-2 py-0.5 rounded bg-[--color-yellow]/10 text-[--color-yellow] border border-[--color-yellow]/20">기각된 필터</span>
+          </div>
+          <h3 class="font-bold mb-2">BTC Regime 필터</h3>
+          <p class="text-[--color-text-muted] text-xs mb-3">6/6 전문가가 권장. 4가지 변형 백테스트 결과 전부 성과 악화. 데이터 > 직관.</p>
+          <div class="grid grid-cols-3 gap-2 text-sm">
+            <div>
+              <span class="text-[--color-text-muted] text-xs block">전문가</span>
+              <span class="font-mono">6/6 찬성</span>
+            </div>
+            <div>
+              <span class="text-[--color-text-muted] text-xs block">백테스트</span>
+              <span class="font-mono">4/4 악화</span>
+            </div>
+            <div>
+              <span class="text-[--color-text-muted] text-xs block">판정</span>
+              <span class="font-mono text-[--color-red]">기각</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TRY IT YOURSELF -->
+  <section class="pb-12 border-t border-[--color-border] pt-8">
+    <div class="max-w-5xl mx-auto px-4 text-center">
+      <h2 class="text-2xl font-bold mb-3">직접 검증해보세요</h2>
+      <p class="text-[--color-text-muted] text-sm mb-6 max-w-lg mx-auto">
+        저희 말을 믿지 마세요. 전략 시뮬레이터로 SL/TP를 조절하며 결과를 실시간으로 확인하세요.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="/ko/simulate" class="inline-block bg-[--color-accent] text-[--color-bg] px-6 py-2.5 rounded font-semibold text-sm hover:bg-[--color-accent-dim]">
+          전략 시뮬레이터 열기 &rarr;
+        </a>
+        <a href="/ko/methodology" class="inline-block border border-[--color-border] text-[--color-text] px-6 py-2.5 rounded font-semibold text-sm hover:border-[--color-accent] transition-colors">
+          검증 방법론
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- DISCLAIMER -->
+  <section class="pb-16 bg-[--color-bg-subtle]">
+    <div class="max-w-5xl mx-auto px-4 text-center pt-12">
+      <p class="text-[--color-text-muted] text-xs max-w-lg mx-auto">
+        {t('cta.disclaimer')}
+      </p>
+    </div>
+  </section>
+
+</Layout>

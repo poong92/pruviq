@@ -1,0 +1,54 @@
+# PRUVIQ - Free Crypto Strategy Backtesting Platform
+
+> Don't Believe. Verify.
+
+## What is PRUVIQ?
+PRUVIQ (pruviq.com) is a free, no-code crypto strategy backtesting platform. Users build custom trading strategies by combining 11+ technical indicators, then backtest on 535+ coins with 2+ years of real market data. Results include realistic fees (0.04%) and slippage (0.02%).
+
+## Key Features
+- **No-Code Strategy Builder**: Combine Bollinger Bands, RSI, MACD, EMA, Stochastic, ADX, ATR, Historical Volatility, Volume, Candle Patterns, and Price Action with AND/OR logic
+- **535+ Coin Backtesting**: All Binance USDT perpetual futures, 1-hour OHLCV candles
+- **Full Backtest in <3 Seconds**: Vectorized execution across all coins
+- **Live Trading Verification**: One strategy (BB Squeeze SHORT) runs on a real Binance Futures account. Every trade published, including losses
+- **Yearly Breakdown**: Performance split by year to detect overfitting
+- **Interactive SL/TP Simulation**: 5x5 grid with equity curves for any strategy
+- **Bilingual**: Full English + Korean support
+
+## Strategy Library (with transparency)
+| Strategy | Direction | Status | Win Rate | Profit Factor |
+|----------|-----------|--------|----------|---------------|
+| BB Squeeze SHORT | Short | Verified (live) | 70.4% | 2.55 |
+| BB Squeeze LONG | Long | Killed | 51.0% | 0.98 |
+| Momentum LONG | Long | Killed (-$14,115) | 37.5% | 0.71 |
+| ATR Breakout | Long | Shelved | - | - |
+| HV Squeeze | Short | Shelved | - | - |
+
+## Education Content
+- What is BB Squeeze? (/blog/what-is-bb-squeeze)
+- RSI Oversold/Overbought Guide (/blog/rsi-oversold-overbought-guide)
+- EMA Crossover Strategy (/blog/ema-crossover-strategy-guide)
+- MACD Divergence Trading (/blog/macd-divergence-trading-guide)
+- Volume Analysis for Crypto (/blog/volume-analysis-crypto-trading)
+- SL/TP Optimization Guide (/blog/sl-tp-optimization-guide)
+- Why Backtests Lie (/blog/why-backtests-lie)
+- Position Sizing with Kelly Criterion (/blog/position-sizing-kelly-criterion)
+- Risk Management 101 (/blog/risk-management-101)
+
+## Important URLs
+- Homepage: https://pruviq.com
+- Strategy Builder: https://pruviq.com/builder
+- Strategy Library: https://pruviq.com/strategies
+- Live Performance: https://pruviq.com/performance
+- Fee Calculator: https://pruviq.com/fees
+- Blog / Education: https://pruviq.com/blog
+- Telegram: https://t.me/PRUVIQ
+
+## Tech Stack
+- Frontend: Astro 5.x + Preact + Tailwind 4.x on Cloudflare Pages
+- Backend: Python 3.12 + FastAPI on Mac Mini M4 Pro
+- Data: 613 CSV files (1H OHLCV), 2+ years
+- Charts: lightweight-charts (TradingView)
+
+## Contact
+- Email: pruviq@gmail.com
+- Telegram: https://t.me/PRUVIQ

@@ -1,0 +1,142 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import FeeCalculator from '../../components/FeeCalculator';
+import { useTranslations } from '../../i18n/index';
+import { exchanges, formatFeeRange } from '../../data/exchanges';
+
+const t = useTranslations('ko');
+
+const exchangeCards: Record<string, { tagLabel: string; description: string }> = {
+  binance: {
+    tagLabel: t('fees.card_binance_tag'),
+    description: t('fees.card_binance_desc'),
+  },
+  bitget: {
+    tagLabel: t('fees.card_bitget_tag'),
+    description: t('fees.card_bitget_desc'),
+  },
+  okx: {
+    tagLabel: t('fees.card_okx_tag'),
+    description: t('fees.card_okx_desc'),
+  },
+};
+---
+
+<Layout title={t('meta.fees_title')} description={t('meta.fees_desc')}>
+
+  <!-- HERO -->
+  <section class="py-16">
+    <div class="max-w-5xl mx-auto px-4">
+      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('fees.tag')}</p>
+      <h1 class="text-3xl md:text-5xl font-bold mb-4">
+        {t('fees.title1')}<br/>{t('fees.title2')}
+      </h1>
+      <p class="text-[--color-text-muted] text-lg mb-4 max-w-2xl">
+        {t('fees.desc')}
+      </p>
+      <p class="text-[--color-text-muted] text-xs">
+        {t('fees.disclosure')}
+      </p>
+    </div>
+  </section>
+
+  <!-- 인터랙티브 수수료 계산기 -->
+  <section class="pb-12 border-t border-[--color-border] pt-12">
+    <div class="max-w-5xl mx-auto px-4">
+      <FeeCalculator client:visible lang="ko" />
+    </div>
+  </section>
+
+  <!-- 3개 거래소 카드 -->
+  <section class="pb-12 border-t border-[--color-border] pt-12">
+    <div class="max-w-5xl mx-auto px-4">
+      <h2 class="text-2xl font-bold mb-2">{t('fees.compare_title')}</h2>
+      <p class="text-[--color-text-muted] text-sm mb-6">{t('fees.compare_desc')}</p>
+
+      <div class="grid md:grid-cols-3 gap-6">
+        {exchanges.map((ex) => {
+          const card = exchangeCards[ex.id];
+          return (
+            <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] flex flex-col">
+              <div class="font-mono text-[--color-accent] text-xs font-bold mb-1">{card.tagLabel}</div>
+              <h3 class="text-xl font-bold mb-3">{ex.name}</h3>
+              <div class="space-y-2 text-sm mb-4 flex-grow">
+                <div class="flex justify-between">
+                  <span class="text-[--color-text-muted]">{t('fees.label_spot')}</span>
+                  <span class="font-mono">{formatFeeRange(ex.spot, 'spot')}</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-[--color-text-muted]">{t('fees.label_futures')}</span>
+                  <span class="font-mono">{formatFeeRange(ex.futures, 'futures')}</span>
+                </div>
+                <div class="flex justify-between border-t border-[--color-border] pt-2 mt-2">
+                  <span class="text-[--color-accent] font-medium">{t('fees.pruviq_discount')}</span>
+                  <span class="font-mono font-bold text-[--color-accent]">{ex.discountLabel} {t('fees.discount_off')}</span>
+                </div>
+              </div>
+              <p class="text-[--color-text-muted] text-xs mb-4">{card.description}</p>
+              {ex.available ? (
+                <a href={ex.referralUrl} target="_blank" rel="noopener noreferrer"
+                   class="block text-center bg-[--color-accent] text-[--color-bg] px-4 py-2 min-h-[44px] flex items-center justify-center rounded text-sm font-semibold hover:opacity-90 transition-opacity">
+                  {t('fees.signup')} &rarr;
+                </a>
+              ) : (
+                <span class="block text-center bg-[--color-border] text-[--color-text-muted] px-4 py-2 min-h-[44px] flex items-center justify-center rounded text-sm font-semibold cursor-default">
+                  {t('fees.coming_soon')}
+                </span>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      <p class="text-[--color-text-muted] text-xs mt-4">
+        {t('fees.footnote')}
+      </p>
+    </div>
+  </section>
+
+  <!-- FAQ (compact) -->
+  <section class="pb-16 border-t border-[--color-border] pt-12">
+    <div class="max-w-5xl mx-auto px-4">
+      <h2 class="text-2xl font-bold mb-6">{t('fees.faq_title')}</h2>
+
+      <div class="space-y-4 max-w-3xl">
+        <details class="border border-[--color-border] rounded-lg bg-[--color-bg-card] group">
+          <summary class="p-4 cursor-pointer font-medium flex justify-between items-center min-h-[44px]">
+            {t('fees.faq1_q')}
+            <span class="text-[--color-text-muted] group-open:rotate-45 transition-transform text-xl leading-none">+</span>
+          </summary>
+          <p class="px-4 pb-4 text-[--color-text-muted] text-sm">
+            {t('fees.faq1_a')}
+          </p>
+        </details>
+
+        <details class="border border-[--color-border] rounded-lg bg-[--color-bg-card] group">
+          <summary class="p-4 cursor-pointer font-medium flex justify-between items-center min-h-[44px]">
+            {t('fees.faq2_q')}
+            <span class="text-[--color-text-muted] group-open:rotate-45 transition-transform text-xl leading-none">+</span>
+          </summary>
+          <p class="px-4 pb-4 text-[--color-text-muted] text-sm">
+            {t('fees.faq2_a')}
+          </p>
+        </details>
+
+        <details class="border border-[--color-border] rounded-lg bg-[--color-bg-card] group">
+          <summary class="p-4 cursor-pointer font-medium flex justify-between items-center min-h-[44px]">
+            {t('fees.faq3_q')}
+            <span class="text-[--color-text-muted] group-open:rotate-45 transition-transform text-xl leading-none">+</span>
+          </summary>
+          <p class="px-4 pb-4 text-[--color-text-muted] text-sm">
+            {t('fees.faq3_a')}
+          </p>
+        </details>
+      </div>
+
+      <p class="text-[--color-text-muted] text-xs mt-8 max-w-lg">
+        {t('fees.affiliate_disclosure')}
+      </p>
+    </div>
+  </section>
+
+</Layout>

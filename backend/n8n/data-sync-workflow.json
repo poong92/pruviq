@@ -1,0 +1,72 @@
+{
+  "name": "PRUVIQ Data Sync (Daily)",
+  "nodes": [
+    {
+      "name": "Schedule: Daily 02:30 UTC",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "parameters": {
+        "rule": {
+          "interval": [{"field": "cronExpression", "expression": "30 2 * * *"}]
+        }
+      },
+      "position": [250, 300]
+    },
+    {
+      "name": "Run Pipeline",
+      "type": "n8n-nodes-base.executeCommand",
+      "parameters": {
+        "command": "/Users/jepo/pruviq/backend/scripts/full_pipeline.sh"
+      },
+      "position": [450, 300]
+    },
+    {
+      "name": "Check Exit Code",
+      "type": "n8n-nodes-base.if",
+      "parameters": {
+        "conditions": {
+          "number": [{
+            "value1": "={{ $json.exitCode }}",
+            "operation": "equal",
+            "value2": 0
+          }]
+        }
+      },
+      "position": [650, 300]
+    },
+    {
+      "name": "Success Log",
+      "type": "n8n-nodes-base.set",
+      "parameters": {
+        "values": {"string": [{"name": "status", "value": "Pipeline completed successfully"}]}
+      },
+      "position": [850, 200]
+    },
+    {
+      "name": "Failure Alert",
+      "type": "n8n-nodes-base.httpRequest",
+      "parameters": {
+        "url": "=https://api.telegram.org/bot{{ $env.TELEGRAM_BOT_TOKEN }}/sendMessage",
+        "method": "POST",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {"name": "chat_id", "value": "={{ $env.TELEGRAM_CHAT_ID }}"},
+            {"name": "text", "value": "⚠️ PRUVIQ Pipeline FAILED\nCheck logs: ~/pruviq-pipeline.log"},
+            {"name": "parse_mode", "value": "Markdown"}
+          ]
+        }
+      },
+      "position": [850, 400]
+    }
+  ],
+  "connections": {
+    "Schedule: Daily 02:30 UTC": {"main": [[{"node": "Run Pipeline", "type": "main", "index": 0}]]},
+    "Run Pipeline": {"main": [[{"node": "Check Exit Code", "type": "main", "index": 0}]]},
+    "Check Exit Code": {
+      "main": [
+        [{"node": "Success Log", "type": "main", "index": 0}],
+        [{"node": "Failure Alert", "type": "main", "index": 0}]
+      ]
+    }
+  }
+}

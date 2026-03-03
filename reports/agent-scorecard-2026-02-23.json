@@ -1,0 +1,14 @@
+{
+  "generated": "2026-02-23",
+  "pr_counts": {
+    "system-upgrade-20260223": 1,
+    "mobile-audit-20260223": 1,
+    "a11y-simulate-20260223": 1,
+    "repro-demo-data-20260223": 1,
+    "mobile-touch-fix-20260222": 1,
+    "repro-ui-20260222": 1,
+    "init": 1,
+    "unknown": 5
+  },
+  "total_prs": 12
+}
