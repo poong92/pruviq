@@ -1,0 +1,10 @@
+{
+  "strategy_id": "bb-squeeze-short",
+  "strategy_name": "BB Squeeze SHORT",
+  "data_version": "2026-02-18T10:00:03.744725",
+  "engine_version": "0.0.1",
+  "result_hash": "0f9286cf22a0fbd9252ffc5636d5df982501bb0d1974433b0494f471948b2586",
+  "source": "/data/demo-results.json",
+  "package_url": "/data/reproducible/bb-squeeze-short.zip",
+  "verified_at": "2026-02-26T16:15:22.101Z"
+}

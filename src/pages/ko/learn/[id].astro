@@ -1,0 +1,18 @@
+---
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const koPosts = await getCollection('blog-ko');
+  const enPosts = await getCollection('blog');
+  const koIds = new Set(koPosts.map(p => p.id));
+
+  return [
+    ...koPosts.map((post) => ({ params: { id: post.id } })),
+    ...enPosts.filter(p => !koIds.has(p.id)).map((post) => ({ params: { id: post.id } })),
+  ];
+}
+
+// Redirect /ko/learn/[id] → /ko/blog/[id] (canonical URL is blog)
+const { id } = Astro.params;
+return Astro.redirect(`/ko/blog/${id}`, 301);
+---

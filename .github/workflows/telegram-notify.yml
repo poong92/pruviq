@@ -1,0 +1,35 @@
+name: Telegram Notify
+
+on:
+  workflow_dispatch:
+    inputs:
+      message:
+        description: 'Custom message to send (optional)'
+        required: false
+        default: ''
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Telegram message
+        env:
+          TOKEN: ${{ secrets.PRUVIQ_TELEGRAM_TOKEN }}
+          CHAT_ID: ${{ secrets.PRUVIQ_TELEGRAM_CHAT_ID }}
+          CUSTOM_MSG: ${{ inputs.message }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          REPO: ${{ github.repository }}
+        run: |
+          if [ -z "$TOKEN" ] || [ -z "$CHAT_ID" ]; then
+            echo "ERROR: Telegram secrets not set"
+            exit 1
+          fi
+          if [ -n "$CUSTOM_MSG" ]; then
+            MSG="$CUSTOM_MSG"
+          else
+            TIMESTAMP=$(date -u '+%Y-%m-%d %H:%M UTC')
+            MSG="PRUVIQ Telegram test OK -- ${TIMESTAMP} -- Repo: ${REPO} -- Run: ${RUN_URL}"
+          fi
+          curl -s -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" \
+            -d chat_id="${CHAT_ID}" \
+            -d text="${MSG}"
