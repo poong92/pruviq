@@ -241,6 +241,19 @@ async function main() {
 
   await render(browser, ogHTML, `${PUBLIC}/og-image.png`, 1200, 630, false);
 
+  // Attempt to convert og-image.png → webp/avif using optional sharp (if installed)
+  try {
+    const { spawn } = await import('child_process');
+    const scriptPath = new URL('./convert-og-image.mjs', import.meta.url).pathname;
+    const p = spawn('node', [scriptPath], { stdio: 'inherit' });
+    await new Promise((resolve) => {
+      p.on('close', () => resolve());
+      p.on('error', () => resolve());
+    });
+  } catch (e) {
+    console.log('Skipping og-image conversion spawn:', e && (e.message || e));
+  }
+
   await browser.close();
   console.log('\nAll assets rendered!');
 }
