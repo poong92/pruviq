@@ -661,7 +661,10 @@ def main():
 
     # Try to improve coverage for low-cap coins by using CoinGecko /coins/list (cached weekly)
     def fetch_coingecko_all_ids(cache_days: int = 7) -> list[dict]:
-        CACHE = OUTPUT_DIR / "coingecko-coins-list.json"
+        # Write the heavy CoinGecko /coins/list cache to public/data/cache/ to avoid
+        # bloating the deployed public/data/ assets. This directory is gitignored.
+        CACHE_DIR = OUTPUT_DIR / "cache"
+        CACHE = CACHE_DIR / "coingecko-coins-list.json"
         try:
             if CACHE.exists():
                 mtime = datetime.fromtimestamp(CACHE.stat().st_mtime, timezone.utc)
@@ -675,6 +678,7 @@ def main():
         data = fetch_json(url)
         if data:
             try:
+                CACHE_DIR.mkdir(parents=True, exist_ok=True)
                 CACHE.write_text(json.dumps(data, separators=(',', ':')))
                 print(f"  Saved coin-list ({len(data)} items) to {CACHE}")
             except Exception as e:
