@@ -3,14 +3,14 @@
 # 검증: bash scripts/qa-redirects.sh
 # 참고: 코인 대소문자 리다이렉트는 _worker.js에서 처리 (Cloudflare 100개 제한)
 
-/builder /simulate 301
-/builder/* /simulate 301
+/builder /simulate/ 301
+/builder/* /simulate/ 301
 
 # /performance page exists — no redirect needed
 
 /sitemap.xml /sitemap-index.xml 301
 
 # KO equivalents
-/ko/builder /ko/simulate 301
-/ko/builder/* /ko/simulate 301
+/ko/builder /ko/simulate/ 301
+/ko/builder/* /ko/simulate/ 301
 # /ko/performance page exists — no redirect needed
