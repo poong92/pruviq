@@ -39,3 +39,22 @@ export async function fetchWithFallback(apiPath: string, staticPath: string): Pr
     }
   }
 }
+
+// API-first fetch: try live API first (real-time), fall back to static
+export async function fetchLiveFirst(apiPath: string, staticPath: string): Promise<any> {
+  try {
+    const res = await fetch(`${API_BASE_URL}${apiPath}`, {
+      signal: AbortSignal.timeout(3000),
+    });
+    if (!res.ok) throw new Error(`API ${res.status}`);
+    return await res.json();
+  } catch {
+    try {
+      const res = await fetch(staticPath);
+      if (!res.ok) throw new Error(`Static ${res.status}`);
+      return await res.json();
+    } catch {
+      throw new Error(`Data unavailable: ${apiPath} (static: ${staticPath})`);
+    }
+  }
+}

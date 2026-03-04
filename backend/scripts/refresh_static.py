@@ -46,8 +46,28 @@ OUTPUT_DIR = REPO_DIR / "public" / "data"
 COIN_SYMBOLS_TS = REPO_DIR / "src" / "data" / "coin-symbols.ts"
 COIN_METADATA = OUTPUT_DIR / "coin-metadata.json"  # fallback names/logos when CoinGecko is down
 
-# Binance Futures API (PRIMARY — unlimited, no key needed)
-BINANCE_TICKER_URL = "https://fapi.binance.com/fapi/v1/ticker/24hr"
+# Binance Spot API (PRIMARY — unlimited, no key needed)
+# Changed from Futures (fapi) to Spot (api) for dashboard consistency
+BINANCE_SPOT_TICKER_URL = "https://api.binance.com/api/v3/ticker/24hr"
+# Futures fallback for coins not listed on Spot (e.g. KASUSDT, TRUMPUSDT, 1000RATSUSDT...)
+BINANCE_FUTURES_TICKER_URL = "https://fapi.binance.com/fapi/v1/ticker/24hr"
+
+# Spot symbol → internal (futures-style) symbol mapping for 1000x coins
+SPOT_TO_INTERNAL = {
+    "SHIBUSDT": "1000SHIBUSDT", "PEPEUSDT": "1000PEPEUSDT",
+    "FLOKIUSDT": "1000FLOKIUSDT", "BONKUSDT": "1000BONKUSDT",
+    "SATSUSDT": "1000SATSUSDT", "RATSUSDT": "1000RATSUSDT",
+    "LUNCUSDT": "1000LUNCUSDT", "XECUSDT": "1000XECUSDT",
+    "CATUSDT": "1000CATUSDT", "WHYUSDT": "1000WHYUSDT",
+    "CHEEMSUSDT": "1000CHEEMSUSDT",
+    "MOGUSDT": "1000000MOGUSDT", "BOBUSDT": "1000000BOBUSDT",
+    "BABYDOGEUSDT": "1MBABYDOGEUSDT",
+}
+SPOT_MULTIPLIER: dict[str, int] = {k: 1000 for k in [
+    "SHIBUSDT", "PEPEUSDT", "FLOKIUSDT", "BONKUSDT", "SATSUSDT",
+    "RATSUSDT", "LUNCUSDT", "XECUSDT", "CATUSDT", "WHYUSDT", "CHEEMSUSDT",
+]}
+SPOT_MULTIPLIER.update({"MOGUSDT": 1_000_000, "BOBUSDT": 1_000_000, "BABYDOGEUSDT": 1_000_000})
 
 # CoinGecko Free API (SECONDARY — logos, market cap, sparklines)
 CG_BASE = "https://api.coingecko.com/api/v3"
@@ -102,15 +122,52 @@ def load_coin_symbols() -> list[str]:
 
 
 def fetch_binance_tickers() -> list[dict]:
-    """Fetch all USDT futures tickers from Binance (1 API call, unlimited)."""
-    print("  Fetching Binance Futures tickers...")
-    data = fetch_json(BINANCE_TICKER_URL)
+    """Fetch USDT tickers: Spot (primary) + Futures fallback for Spot-missing coins.
+
+    Applies SPOT_TO_INTERNAL reverse mapping so that Spot symbols (SHIBUSDT)
+    become internal symbols (1000SHIBUSDT) with price × multiplier.
+    Futures-only coins (KASUSDT, TRUMPUSDT, etc.) are fetched via Futures API
+    to avoid price=0 gaps. Total weight: 40 (Spot) + 40 (Futures) = 80.
+    """
+    print("  Fetching Binance Spot tickers...")
+    data = fetch_json(BINANCE_SPOT_TICKER_URL)
     if not data or not isinstance(data, list):
-        print("  ERROR: Binance ticker API failed")
+        print("  ERROR: Binance Spot ticker API failed")
         return []
-    # Filter USDT pairs only
-    usdt_tickers = [t for t in data if t.get("symbol", "").endswith("USDT")]
-    print(f"  Got {len(usdt_tickers)} USDT tickers from Binance")
+    # Filter USDT pairs, remap 1000x symbols
+    usdt_tickers = []
+    spot_internal_symbols: set[str] = set()
+    for t in data:
+        sym = t.get("symbol", "")
+        if not sym.endswith("USDT"):
+            continue
+        mul = SPOT_MULTIPLIER.get(sym, 1)
+        mapped_sym = SPOT_TO_INTERNAL.get(sym, sym)
+        ticker = dict(t)
+        ticker["symbol"] = mapped_sym
+        # NOTE: Only lastPrice needs multiplier. priceChangePercent is %, quoteVolume is USDT.
+        if mul != 1:
+            ticker["lastPrice"] = str(float(t.get("lastPrice", 0)) * mul)
+        usdt_tickers.append(ticker)
+        spot_internal_symbols.add(mapped_sym)
+    print(f"  Got {len(usdt_tickers)} USDT tickers from Binance Spot")
+
+    # Futures fallback: fill gaps for Futures-only symbols
+    our_symbols = load_coin_symbols()
+    if our_symbols:
+        missing = set(our_symbols) - spot_internal_symbols
+        if missing:
+            print(f"  {len(missing)} symbols missing from Spot, fetching Futures fallback...")
+            futures_data = fetch_json(BINANCE_FUTURES_TICKER_URL)
+            if futures_data and isinstance(futures_data, list):
+                added = 0
+                for t in futures_data:
+                    sym = t.get("symbol", "")
+                    if sym in missing:
+                        usdt_tickers.append(t)
+                        added += 1
+                print(f"  Added {added}/{len(missing)} from Futures fallback")
+
     return usdt_tickers
 
 

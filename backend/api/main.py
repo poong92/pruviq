@@ -1036,6 +1036,30 @@ MARKET_REFRESH_INTERVAL = 900  # seconds — background fetch every 15min (match
 _market_cache: Optional[dict] = None
 _news_cache: Optional[dict] = None
 
+# --- Binance Spot live ticker (30s TTL) + Futures fallback ---
+BINANCE_SPOT_URL = "https://api.binance.com/api/v3/ticker/24hr"
+BINANCE_FUTURES_URL = "https://fapi.binance.com/fapi/v1/ticker/24hr"
+_live_spot_cache: Optional[dict] = None
+_live_spot_ts: float = 0.0
+_live_spot_lock = asyncio.Lock()
+
+# Spot symbol → internal (futures-style) symbol mapping for 1000x coins
+SPOT_TO_INTERNAL = {
+    "SHIBUSDT": "1000SHIBUSDT", "PEPEUSDT": "1000PEPEUSDT",
+    "FLOKIUSDT": "1000FLOKIUSDT", "BONKUSDT": "1000BONKUSDT",
+    "SATSUSDT": "1000SATSUSDT", "RATSUSDT": "1000RATSUSDT",
+    "LUNCUSDT": "1000LUNCUSDT", "XECUSDT": "1000XECUSDT",
+    "CATUSDT": "1000CATUSDT", "WHYUSDT": "1000WHYUSDT",
+    "CHEEMSUSDT": "1000CHEEMSUSDT",
+    "MOGUSDT": "1000000MOGUSDT", "BOBUSDT": "1000000BOBUSDT",
+    "BABYDOGEUSDT": "1MBABYDOGEUSDT",
+}
+SPOT_MULTIPLIER: Dict[str, int] = {k: 1000 for k in [
+    "SHIBUSDT", "PEPEUSDT", "FLOKIUSDT", "BONKUSDT", "SATSUSDT",
+    "RATSUSDT", "LUNCUSDT", "XECUSDT", "CATUSDT", "WHYUSDT", "CHEEMSUSDT",
+]}
+SPOT_MULTIPLIER.update({"MOGUSDT": 1_000_000, "BOBUSDT": 1_000_000, "BABYDOGEUSDT": 1_000_000})
+
 
 def _fetch_fear_greed() -> dict:
     """Fetch Fear & Greed Index from Alternative.me."""
@@ -1296,6 +1320,92 @@ async def get_market():
     data = await asyncio.to_thread(_build_market_overview)
     _market_cache = data
     return MarketOverview(**data)
+
+
+def _fetch_spot_tickers() -> list:
+    """Fetch all USDT tickers from Binance Spot API. Weight 40 per call."""
+    try:
+        resp = http_requests.get(BINANCE_SPOT_URL, timeout=10)
+        resp.raise_for_status()
+        return resp.json()
+    except Exception as e:
+        logger.warning(f"Binance Spot fetch: {e}")
+        return []
+
+
+def _fetch_futures_tickers() -> list:
+    """Fetch Futures tickers for Spot-missing coins. Weight 40 per call."""
+    try:
+        resp = http_requests.get(BINANCE_FUTURES_URL, timeout=10)
+        resp.raise_for_status()
+        return resp.json()
+    except Exception as e:
+        logger.warning(f"Binance Futures fallback fetch: {e}")
+        return []
+
+
+def _build_live_coins(spot_tickers: list, futures_tickers: list) -> list:
+    """Build coins list from Spot (primary) + Futures (fallback for gaps)."""
+    coins = []
+    seen_symbols: set = set()
+    # 1. Spot tickers (primary)
+    for t in spot_tickers:
+        sym = t.get("symbol", "")
+        if not sym.endswith("USDT"):
+            continue
+        mul = SPOT_MULTIPLIER.get(sym, 1)
+        display_sym = SPOT_TO_INTERNAL.get(sym, sym)
+        coins.append({
+            "symbol": display_sym,
+            "price": float(t.get("lastPrice", 0)) * mul,
+            "change_24h": round(float(t.get("priceChangePercent", 0)), 2),
+            "volume_24h": round(float(t.get("quoteVolume", 0)), 2),
+        })
+        seen_symbols.add(display_sym)
+    # 2. Futures fallback (only for symbols not covered by Spot)
+    for t in futures_tickers:
+        sym = t.get("symbol", "")
+        if not sym.endswith("USDT") or sym in seen_symbols:
+            continue
+        coins.append({
+            "symbol": sym,
+            "price": float(t.get("lastPrice", 0)),
+            "change_24h": round(float(t.get("priceChangePercent", 0)), 2),
+            "volume_24h": round(float(t.get("quoteVolume", 0)), 2),
+        })
+        seen_symbols.add(sym)
+    return coins
+
+
+@app.get("/market/live")
+async def market_live():
+    """Real-time Binance prices (30s TTL cache).
+    Spot (primary) + Futures (fallback for Spot-missing coins).
+    Weight: 40 (Spot) + 40 (Futures) = 80/refresh × 2/min = 160 (6000 limit = 2.7%).
+    """
+    global _live_spot_cache, _live_spot_ts
+    if _live_spot_cache and time.time() - _live_spot_ts < 30:
+        return _live_spot_cache
+    async with _live_spot_lock:
+        # Double-check after acquiring lock (prevents thundering herd)
+        if _live_spot_cache and time.time() - _live_spot_ts < 30:
+            return _live_spot_cache
+        spot, futures = await asyncio.gather(
+            asyncio.to_thread(_fetch_spot_tickers),
+            asyncio.to_thread(_fetch_futures_tickers),
+        )
+        if not spot and not futures:
+            if _live_spot_cache:
+                return _live_spot_cache
+            raise HTTPException(503, "Binance unavailable")
+        coins = _build_live_coins(spot or [], futures or [])
+        result = {
+            "coins": coins,
+            "source": "binance_spot+futures",
+            "generated": datetime.now(timezone.utc).isoformat(),
+        }
+        _live_spot_cache, _live_spot_ts = result, time.time()
+        return result
 
 
 @app.get("/news", response_model=NewsResponse)
