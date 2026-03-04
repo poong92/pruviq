@@ -263,7 +263,7 @@ def fetch_fear_greed() -> tuple[int, str]:
     return 0, "Unknown"
 
 
-def downsample_sparkline(prices: list[float], target: int = 42) -> list[float]:
+def downsample_sparkline(prices: list[float], target: int = 12) -> list[float]:
     """Downsample 168-point hourly sparkline to ~42 points (4h intervals)."""
     if not prices or len(prices) < 2:
         return prices or []
