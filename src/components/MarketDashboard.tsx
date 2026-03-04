@@ -1,6 +1,9 @@
-import { useState, useEffect, useRef } from 'preact/hooks';
+import { useState, useEffect } from 'preact/hooks';
 import { changeColor, timeAgo } from '../utils/format';
-import { STATIC_DATA, fetchWithFallback, API_BASE_URL } from '../config/api';
+import { useMarketLive } from '../hooks/useMarketLive';
+import { useMarketOverview } from '../hooks/useMarketOverview';
+import { useNews } from '../hooks/useNews';
+import { useMacro } from '../hooks/useMacro';
 
 const labels = {
   en: {
@@ -18,7 +21,7 @@ const labels = {
     newsLoading: 'Loading news...',
     newsError: 'Failed to load news.',
     updated: 'Updated',
-    disclaimer: 'Market data is for informational purposes only. Not financial advice. Data refreshed every 15 min.',
+    disclaimer: 'Market data is for informational purposes only. Not financial advice. Prices update every 30s. Market data refreshed every 5 min.',
     readMore: 'Read more',
     searchNews: 'Search news...',
     allSources: 'All',
@@ -54,7 +57,7 @@ const labels = {
     newsLoading: '뉴스 로딩 중...',
     newsError: '뉴스 로딩 실패.',
     updated: '업데이트',
-    disclaimer: '시장 데이터는 정보 제공 목적으로만 제공됩니다. 투자 조언이 아닙니다. 15분마다 자동 갱신.',
+    disclaimer: '시장 데이터는 정보 제공 목적으로만 제공됩니다. 투자 조언이 아닙니다. 가격 30초 갱신. 시장 데이터 5분 갱신.',
     readMore: '자세히 보기',
     searchNews: '뉴스 검색...',
     allSources: '전체',
@@ -75,42 +78,6 @@ const labels = {
     showMoreNews: '더 보기',
     showLessNews: '접기',
   },
-};
-
-type NewsItem = { title: string; link: string; source: string; category?: string; published: string; summary: string };
-
-type MarketData = {
-  btc_price: number;
-  btc_change_24h: number;
-  eth_price: number;
-  eth_change_24h: number;
-  fear_greed_index: number;
-  fear_greed_label: string;
-  total_market_cap_b: number;
-  btc_dominance: number;
-  total_volume_24h_b: number;
-  generated: string;
-};
-
-type NewsData = {
-  items: NewsItem[];
-  generated: string;
-};
-
-type MacroIndicator = {
-  id: string;
-  name: string;
-  value: number;
-  change: number | null;
-  previous?: number | null;
-  unit: string;
-  updated: string;
-  source: string;
-};
-
-type MacroData = {
-  indicators: MacroIndicator[];
-  generated: string;
 };
 
 /* --- Skeleton Components --- */
@@ -185,7 +152,6 @@ function ExpandButton({ expanded, onClick, expandLabel, collapseLabel }: { expan
 
 const CRYPTO_SOURCES = ['CoinDesk', 'CoinTelegraph', 'Decrypt', 'Bitcoin Magazine'];
 const MACRO_SOURCES = ['Bloomberg', 'CNBC Economy', 'MarketWatch'];
-const REFRESH_MS = 300_000; // 5 min (static data refreshed every 15 min)
 
 // Fear & Greed gauge scale labels
 const FG_SCALE = [
@@ -201,87 +167,40 @@ function getFGSegment(value: number) {
 
 export default function MarketDashboard({ lang = 'en' }: { lang?: 'en' | 'ko' }) {
   const l = labels[lang] || labels.en;
-  const [market, setMarket] = useState<MarketData | null>(null);
-  const [news, setNews] = useState<NewsData | null>(null);
-  const [macro, setMacro] = useState<MacroData | null>(null);
-  const [marketErr, setMarketErr] = useState(false);
-  const [newsErr, setNewsErr] = useState(false);
-  const [macroErr, setMacroErr] = useState(false);
+
+  // 4 independent hooks — each polls at its own interval
+  const { btcPrice, btcChange, ethPrice, ethChange, flash, generated, error: liveErr, retry: retryLive } = useMarketLive();
+  const { market, error: marketErr, retry: retryMarket } = useMarketOverview();
+  const { news, error: newsErr, retry: retryNews } = useNews();
+  const { macro, error: macroErr } = useMacro();
+
   const [searchQuery, setSearchQuery] = useState('');
   const [sourceFilter, setSourceFilter] = useState('');
   const [newsTab, setNewsTab] = useState<'crypto' | 'macro'>('crypto');
-  const [lastRefresh, setLastRefresh] = useState<Date | null>(null);
-  const [refreshAgo, setRefreshAgo] = useState('');
-
-  // Expansion states
   const [newsExpanded, setNewsExpanded] = useState(false);
 
-  // Price flash tracking
-  const prevBtc = useRef<number>(0);
-  const prevEth = useRef<number>(0);
-  const [btcFlash, setBtcFlash] = useState('');
-  const [ethFlash, setEthFlash] = useState('');
-
-  const fetchMarket = () => {
-    fetchWithFallback('/market', STATIC_DATA.market)
-      .then((d: MarketData) => {
-        // Price flash detection
-        if (prevBtc.current && d.btc_price !== prevBtc.current) {
-          setBtcFlash(d.btc_price > prevBtc.current ? 'flash-up' : 'flash-down');
-          setTimeout(() => setBtcFlash(''), 600);
-        }
-        if (prevEth.current && d.eth_price !== prevEth.current) {
-          setEthFlash(d.eth_price > prevEth.current ? 'flash-up' : 'flash-down');
-          setTimeout(() => setEthFlash(''), 600);
-        }
-        prevBtc.current = d.btc_price;
-        prevEth.current = d.eth_price;
-        setMarket(d);
-        setMarketErr(false);
-        setLastRefresh(new Date());
-      })
-      .catch(() => setMarketErr(true));
-  };
-
-  const fetchNews = () => {
-    fetchWithFallback('/news', STATIC_DATA.news)
-      .then(d => { setNews(d); setNewsErr(false); })
-      .catch(() => setNewsErr(true));
-  };
-
-  const fetchMacro = () => {
-    fetchWithFallback('/macro', STATIC_DATA.macro)
-      .then((d: MacroData) => { setMacro(d); setMacroErr(false); })
-      .catch(() => setMacroErr(true));
-  };
-
+  // Live "updated X ago" counter (based on live price generated timestamp)
+  const [refreshAgo, setRefreshAgo] = useState('');
   useEffect(() => {
-    fetchMarket();
-    fetchNews();
-    fetchMacro();
-    const interval = setInterval(() => { fetchMarket(); fetchNews(); }, REFRESH_MS);
-    // Macro refreshes less frequently (FRED data updates daily)
-    const macroInterval = setInterval(fetchMacro, 30 * 60 * 1000);
-    return () => { clearInterval(interval); clearInterval(macroInterval); };
-  }, []);
-
-  // Live "updated X ago" counter
-  useEffect(() => {
+    if (!generated) return;
+    const genTime = new Date(generated).getTime();
     const tick = () => {
-      if (!lastRefresh) return;
-      const sec = Math.floor((Date.now() - lastRefresh.getTime()) / 1000);
+      const sec = Math.max(0, Math.floor((Date.now() - genTime) / 1000));
       if (sec < 60) setRefreshAgo(`${sec}s`);
       else setRefreshAgo(`${Math.floor(sec / 60)}m`);
     };
     tick();
     const id = setInterval(tick, 10_000);
     return () => clearInterval(id);
-  }, [lastRefresh]);
+  }, [generated]);
+
+  // Determine if we have enough data to render (either live prices or market overview)
+  const hasData = btcPrice > 0 || market;
+  const hasError = liveErr && marketErr;
 
   const activeNewsSources = newsTab === 'crypto' ? CRYPTO_SOURCES : MACRO_SOURCES;
 
   const filteredNews = news?.items.filter(item => {
-    // Tab filter: use category if available, otherwise match by source name
     const itemCat = item.category || (MACRO_SOURCES.includes(item.source) ? 'macro' : 'crypto');
     if (itemCat !== newsTab) return false;
     if (sourceFilter && item.source !== sourceFilter) return false;
@@ -292,7 +211,13 @@ export default function MarketDashboard({ lang = 'en' }: { lang?: 'en' | 'ko' })
     return true;
   }) ?? [];
 
-  // Display helpers: show dash (—) when certain market values are 0 or missing
+  // Use live prices (30s) with fallback to market overview (5min)
+  const displayBtcPrice = btcPrice || market?.btc_price || 0;
+  const displayBtcChange = btcPrice ? btcChange : (market?.btc_change_24h ?? 0);
+  const displayEthPrice = ethPrice || market?.eth_price || 0;
+  const displayEthChange = ethPrice ? ethChange : (market?.eth_change_24h ?? 0);
+
+  // Display helpers
   const totalMcapDisplay = market && market.total_market_cap_b ? `$${market.total_market_cap_b.toFixed(0)}B` : '—';
   const btcDomDisplay = market && market.btc_dominance ? `${market.btc_dominance}%` : '—';
   const volume24hDisplay = market && market.total_volume_24h_b ? `$${market.total_volume_24h_b.toFixed(0)}B` : '—';
@@ -304,7 +229,7 @@ export default function MarketDashboard({ lang = 'en' }: { lang?: 'en' | 'ko' })
   return (
     <div class="max-w-[1100px] mx-auto">
       {/* Loading skeleton */}
-      {!market && !marketErr && (
+      {!hasData && !hasError && (
         <div>
           <SkeletonPriceBar />
           <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
@@ -313,11 +238,11 @@ export default function MarketDashboard({ lang = 'en' }: { lang?: 'en' | 'ko' })
         </div>
       )}
 
-      {marketErr && (
+      {hasError && (
         <div class="text-center py-10">
           <p class="font-mono text-sm text-[--color-red] mb-3">{l.error}</p>
           <button
-            onClick={() => { setMarketErr(false); fetchMarket(); }}
+            onClick={() => { retryLive(); retryMarket(); }}
             class="px-4 py-2 rounded-lg border border-[--color-border] bg-[--color-bg-card] text-[--color-text] font-mono text-sm cursor-pointer hover:border-[--color-accent] transition-colors min-h-[44px]"
           >
             {lang === 'ko' ? '다시 시도' : 'Retry'}
@@ -325,71 +250,75 @@ export default function MarketDashboard({ lang = 'en' }: { lang?: 'en' | 'ko' })
         </div>
       )}
 
-      {market && (
+      {hasData && (
         <div class="fade-in">
-          {/* BTC + ETH Price Bar */}
+          {/* BTC + ETH Price Bar — 30s live refresh */}
           <div class="flex gap-4 flex-wrap mb-4">
-            <div class={`flex items-center gap-3 border border-[--color-border] rounded-lg py-3 px-5 bg-[--color-bg-card] flex-1 min-w-[200px] ${btcFlash}`}>
+            <div class={`flex items-center gap-3 border border-[--color-border] rounded-lg py-3 px-5 bg-[--color-bg-card] flex-1 min-w-[200px] ${flash.btc}`}>
               <span class="text-sm font-semibold text-[--color-btc]">BTC</span>
               <span class="text-xl font-bold font-mono text-[--color-text]">
-                ${market.btc_price.toLocaleString('en-US', { maximumFractionDigits: 0 })}
+                ${displayBtcPrice.toLocaleString('en-US', { maximumFractionDigits: 0 })}
               </span>
-              <span class="text-sm font-semibold font-mono" style={{ color: changeColor(market.btc_change_24h) }}>
-                {market.btc_change_24h > 0 ? '+' : ''}{market.btc_change_24h.toFixed(2)}%
+              <span class="text-sm font-semibold font-mono" style={{ color: changeColor(displayBtcChange) }}>
+                {displayBtcChange > 0 ? '+' : ''}{displayBtcChange.toFixed(2)}%
               </span>
             </div>
-            <div class={`flex items-center gap-3 border border-[--color-border] rounded-lg py-3 px-5 bg-[--color-bg-card] flex-1 min-w-[200px] ${ethFlash}`}>
+            <div class={`flex items-center gap-3 border border-[--color-border] rounded-lg py-3 px-5 bg-[--color-bg-card] flex-1 min-w-[200px] ${flash.eth}`}>
               <span class="text-sm font-semibold text-[--color-eth]">ETH</span>
               <span class="text-xl font-bold font-mono text-[--color-text]">
-                ${market.eth_price.toLocaleString('en-US', { maximumFractionDigits: 0 })}
+                ${displayEthPrice.toLocaleString('en-US', { maximumFractionDigits: 0 })}
               </span>
-              <span class="text-sm font-semibold font-mono" style={{ color: changeColor(market.eth_change_24h) }}>
-                {market.eth_change_24h > 0 ? '+' : ''}{market.eth_change_24h.toFixed(2)}%
+              <span class="text-sm font-semibold font-mono" style={{ color: changeColor(displayEthChange) }}>
+                {displayEthChange > 0 ? '+' : ''}{displayEthChange.toFixed(2)}%
               </span>
             </div>
           </div>
 
-          {/* Stat Cards */}
+          {/* Stat Cards — 5min market overview refresh */}
           <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
             {/* Fear & Greed with enhanced gauge */}
-            <div class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card] card-hover" style={{ backgroundColor: `${fgSegment.color}10` }}>
-              <div class="text-[11px] text-[--color-text-muted] uppercase tracking-wider mb-1.5">{l.fearGreed}</div>
-              <div class="flex items-baseline gap-1.5">
-                <span class="text-2xl font-bold font-mono" style={{ color: fgSegment.color }}>{market.fear_greed_index}</span>
-                <span class="text-sm font-mono text-[--color-text-muted]">/ 100</span>
-              </div>
-
-              {/* Gauge bar */}
-              <div class="mt-3 mb-2">
-                <div class="w-full bg-[--color-bg-hover] rounded-full overflow-hidden" style={{ height: '8px' }} role="img" aria-label={`Fear and Greed gauge ${market.fear_greed_index} out of 100`}>
-                  <div
-                    style={{
-                      width: `${fgPct}%`,
-                      backgroundColor: fgSegment.color,
-                      height: '8px',
-                    }}
-                    class="rounded-full transition-all duration-500"
-                  />
+            {market ? (
+              <div class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card] card-hover" style={{ backgroundColor: `${fgSegment.color}10` }}>
+                <div class="text-[11px] text-[--color-text-muted] uppercase tracking-wider mb-1.5">{l.fearGreed}</div>
+                <div class="flex items-baseline gap-1.5">
+                  <span class="text-2xl font-bold font-mono" style={{ color: fgSegment.color }}>{market.fear_greed_index}</span>
+                  <span class="text-sm font-mono text-[--color-text-muted]">/ 100</span>
                 </div>
-                {/* Scale markers */}
-                <div class="flex justify-between mt-1">
-                  <span class="text-[9px] text-[--color-text-muted] font-mono">0</span>
-                  <span class="text-[9px] text-[--color-text-muted] font-mono">25</span>
-                  <span class="text-[9px] text-[--color-text-muted] font-mono">50</span>
-                  <span class="text-[9px] text-[--color-text-muted] font-mono">75</span>
-                  <span class="text-[9px] text-[--color-text-muted] font-mono">100</span>
-                </div>
-              </div>
 
-              <div class="text-xs font-semibold" style={{ color: fgSegment.color }}>{market.fear_greed_label}</div>
-            </div>
+                {/* Gauge bar */}
+                <div class="mt-3 mb-2">
+                  <div class="w-full bg-[--color-bg-hover] rounded-full overflow-hidden" style={{ height: '8px' }} role="img" aria-label={`Fear and Greed gauge ${market.fear_greed_index} out of 100`}>
+                    <div
+                      style={{
+                        width: `${fgPct}%`,
+                        backgroundColor: fgSegment.color,
+                        height: '8px',
+                      }}
+                      class="rounded-full transition-all duration-500"
+                    />
+                  </div>
+                  {/* Scale markers */}
+                  <div class="flex justify-between mt-1">
+                    <span class="text-[9px] text-[--color-text-muted] font-mono">0</span>
+                    <span class="text-[9px] text-[--color-text-muted] font-mono">25</span>
+                    <span class="text-[9px] text-[--color-text-muted] font-mono">50</span>
+                    <span class="text-[9px] text-[--color-text-muted] font-mono">75</span>
+                    <span class="text-[9px] text-[--color-text-muted] font-mono">100</span>
+                  </div>
+                </div>
+
+                <div class="text-xs font-semibold" style={{ color: fgSegment.color }}>{market.fear_greed_label}</div>
+              </div>
+            ) : (
+              <SkeletonCard />
+            )}
 
             <StatCard label={l.totalMcap} value={totalMcapDisplay} />
             <StatCard label={l.btcDom} value={btcDomDisplay} />
             <StatCard label={l.volume24h} value={volume24hDisplay} />
           </div>
 
-          {/* Macro Economic Indicators */}
+          {/* Macro Economic Indicators — 30min refresh */}
           <div class="border border-[--color-border] rounded-lg bg-[--color-bg-card] overflow-hidden mb-6">
             <div class="px-4 py-3 border-b border-[--color-border] flex items-center justify-between">
               <span class="text-xs font-semibold text-[--color-text-muted] uppercase tracking-wider">
@@ -418,7 +347,6 @@ export default function MarketDashboard({ lang = 'en' }: { lang?: 'en' | 'ko' })
                   const delta = ind.change ?? (ind.previous != null ? ind.value - ind.previous : null);
                   const deltaColor = delta != null ? (delta >= 0 ? 'text-[--color-up]' : 'text-[--color-down]') : '';
                   const arrow = delta != null ? (delta >= 0 ? '\u25B2' : '\u25BC') : '';
-                  // Format large numbers (S&P, Nasdaq, Gold)
                   const fmtValue = ind.value >= 1000
                     ? ind.value.toLocaleString('en-US', { maximumFractionDigits: 2 })
                     : ind.value.toFixed(2);
@@ -466,7 +394,7 @@ export default function MarketDashboard({ lang = 'en' }: { lang?: 'en' | 'ko' })
             </div>
           </div>
 
-          {/* News Feed */}
+          {/* News Feed — 5min refresh */}
           <div class="border border-[--color-border] rounded-lg bg-[--color-bg-card] overflow-hidden mb-6">
             <div class="px-4 py-3 border-b border-[--color-border] flex flex-wrap items-center gap-2.5">
               <span class="text-xs font-semibold text-[--color-text-muted] uppercase tracking-wider mr-auto">
@@ -526,7 +454,7 @@ export default function MarketDashboard({ lang = 'en' }: { lang?: 'en' | 'ko' })
               <div class="text-center py-8">
                 <p class="font-mono text-sm text-[--color-red] mb-3">{l.newsError}</p>
                 <button
-                  onClick={() => { setNewsErr(false); fetchNews(); }}
+                  onClick={retryNews}
                   class="px-4 py-2 rounded-lg border border-[--color-border] bg-[--color-bg-card] text-[--color-text] font-mono text-sm cursor-pointer hover:border-[--color-accent] transition-colors min-h-[44px]"
                 >
                   {lang === 'ko' ? '다시 시도' : 'Retry'}
@@ -593,7 +521,7 @@ export default function MarketDashboard({ lang = 'en' }: { lang?: 'en' | 'ko' })
           </div>
 
           {/* Last Updated + Disclaimer */}
-          {lastRefresh && (
+          {generated && (
             <p class="text-[11px] text-[--color-text-muted] text-center mt-4 font-mono">
               {l.lastUpdated}: {refreshAgo} {l.ago}
             </p>
