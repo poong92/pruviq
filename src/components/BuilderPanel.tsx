@@ -302,7 +302,7 @@ export default function BuilderPanel(props: Props) {
           </div>
           {props.coinMode === 'top' && (
             <div>
-              <input type="number" value={localTopN} min={1} max={549}
+              <input type="number" value={localTopN} min={1} max={535}
                 onChange={(e: any) => setLocalTopN(e.target.value)}
                 onBlur={() => props.setTopN(parseInt(localTopN) || 50)}
                 class="w-full px-2 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
