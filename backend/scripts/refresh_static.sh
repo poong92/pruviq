@@ -1,9 +1,8 @@
 #!/bin/bash
-# PRUVIQ — Static Data Refresh (Hardened v3.0)
-# Fetches Binance+CoinGecko data → git push → build → deploy → alert
-#
-# Cron: 0 */4 * * * (every 4 hours — reduced from hourly)
-# Runs as openclaw user (owner of /Users/openclaw/pruviq/)
+# PRUVIQ — Static Data Refresh (Hardened v3.1)
+# Fetches Binance+CoinGecko data → push generated snapshots to dedicated branch (generated-data)
+# This avoids noisy commits on main and prevents recurring merge conflicts.
+# Cron: 0 */4 * * * (every 4 hours)
 set -euo pipefail
 
 export HOME="/Users/openclaw"
@@ -34,7 +33,7 @@ send_alert() {
         -d parse_mode="HTML" >/dev/null 2>&1 || true
 }
 
-# --- Concurrency lock (prevents OpenClaw ↔ refresh conflict) ---
+# --- Concurrency lock (prevents concurrent refresh runs) ---
 acquire_lock() {
     if [ -f "$LOCK_FILE" ]; then
         local lock_pid
@@ -68,13 +67,6 @@ if ! python3 backend/scripts/refresh_static.py 2>&1; then
     exit 1
 fi
 
-# --- Step 2: Safety check ---
-CURRENT_BRANCH=$(git branch --show-current 2>/dev/null)
-if [ "$CURRENT_BRANCH" != "main" ]; then
-    log "WARN: On branch '$CURRENT_BRANCH', not main. Skipping."
-    exit 0
-fi
-
 # All data files that refresh_static.py may update
 DATA_FILES="public/data/market.json public/data/coins-stats.json public/data/macro.json public/data/news.json public/data/coin-metadata.json"
 
@@ -83,41 +75,41 @@ if git diff --quiet $DATA_FILES 2>/dev/null; then
     exit 0
 fi
 
-# --- Step 3: Commit ---
-git add -f $DATA_FILES
-git commit -m "chore: static data refresh [$(date -u '+%H:%M')]" --no-verify
+# --- Step 2: Commit to dedicated branch (generated-data) ---
+PREV_BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "main")
+BRANCH="generated-data"
 
-# --- Step 4: Pull + Push ---
-if ! git pull --rebase origin main 2>&1; then
-    log "WARN: rebase conflict, resolving with local data..."
-    git checkout --ours $DATA_FILES 2>/dev/null || true
-    git add -f $DATA_FILES
-    GIT_EDITOR=true git rebase --continue 2>/dev/null || {
-        git rebase --abort 2>/dev/null || true
-        git pull -X ours origin main 2>&1 || true
-    }
-fi
+# Ensure we have latest refs
+git fetch origin --prune || true
 
-if ! git push origin main 2>&1; then
-    send_alert "ERROR" "git push failed. Data not deployed."
-    git reset --hard origin/main 2>/dev/null || true
-    exit 1
-fi
-log "Pushed to GitHub"
-
-# --- Step 5: Build ---
-log "Building site..."
-if ! npm run build 2>&1 | tail -5; then
-    send_alert "ERROR" "npm run build failed. Data pushed but not deployed."
-    exit 1
-fi
-log "Build complete"
-
-# --- Step 6: Deploy ---
-log "Deploying to Cloudflare..."
-if npx wrangler deploy 2>&1 | tail -5; then
-    log "Deployed to Cloudflare Workers"
-    send_alert "OK" "Data refreshed & deployed ✓ ($(date -u '+%H:%M UTC'))"
+if git show-ref --verify --quiet refs/heads/$BRANCH; then
+    git checkout $BRANCH
 else
-    send_alert "ERROR" "wrangler deploy failed. Git is updated but site is stale."
+    # Create orphan branch if missing
+    git checkout --orphan $BRANCH
+    git rm -rf . || true
 fi
+
+# Add only generated data files
+git add -f $DATA_FILES
+
+if git diff --cached --quiet; then
+    log "No changes to public/data — nothing to commit"
+    # restore previous branch and exit
+    git checkout $PREV_BRANCH 2>/dev/null || true
+    exit 0
+fi
+
+git commit -m "chore: update generated static data snapshot [$(date -u '+%Y-%m-%d %H:%M UTC')]" --no-verify
+
+# Push branch (force is acceptable for a dedicated snapshot branch)
+git push --set-upstream origin $BRANCH --force
+log "Pushed generated-data branch"
+
+# Restore previous branch for safety
+git checkout $PREV_BRANCH 2>/dev/null || true
+
+send_alert "OK" "Generated data snapshot pushed to branch '${BRANCH}'"
+
+# Done — do not push generated snapshots to main to avoid merge conflicts
+exit 0
