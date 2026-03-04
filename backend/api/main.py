@@ -350,9 +350,14 @@ def _is_resampled(timeframe: str) -> bool:
     return timeframe != "1H"
 
 
+def _resolve_top_n(top_n: Optional[int]) -> int:
+    """Resolve top_n: None means all coins."""
+    return top_n if top_n is not None else data_manager.coin_count
+
+
 def _get_resampled_coins(
     symbols: Optional[List[str]],
-    top_n: int,
+    top_n: Optional[int],
     timeframe: str,
 ) -> List[tuple]:
     """Get coin DataFrames resampled to the requested timeframe.
@@ -367,9 +372,10 @@ def _get_resampled_coins(
                 pairs.append((sym.upper(), df))
         return pairs
     else:
+        n = _resolve_top_n(top_n)
         result = []
         for info in data_manager.coins:
-            if len(result) >= top_n:
+            if len(result) >= n:
                 break
             symbol = info["symbol"]
             df = data_manager.get_resampled(symbol, timeframe)
@@ -461,7 +467,8 @@ async def simulate(req: SimulationRequest):
             if not coins:
                 raise HTTPException(404, "None of the requested symbols found.")
         else:
-            coins = indicator_cache.get_top_n_for_strategy(strategy_id, data_manager, req.top_n) if has_cache else data_manager.get_top_n(req.top_n)
+            n = _resolve_top_n(req.top_n)
+            coins = indicator_cache.get_top_n_for_strategy(strategy_id, data_manager, n) if has_cache else data_manager.get_top_n(n)
 
     cost_model = CostModel.futures() if req.market_type == "futures" else CostModel.spot()
 
@@ -817,6 +824,81 @@ async def get_coin_stats():
     return CoinStatsResponse(**coin_stats_cache)
 
 
+def _run_one_compare_strategy(
+    strategy_id: str, entry: dict, req: CompareRequest,
+    cost_model, n: int,
+) -> StrategyResult:
+    """Run a single strategy for compare — designed to run in a thread."""
+    strategy, direction, _ = get_strategy(strategy_id)
+    has_cache = indicator_cache.strategy_count(strategy_id) > 0
+    coins = (
+        indicator_cache.get_top_n_for_strategy(strategy_id, data_manager, n)
+        if has_cache else data_manager.get_top_n(n)
+    )
+
+    all_trades = []
+    for sym, df in coins:
+        if not has_cache:
+            df = strategy.calculate_indicators(df.copy())
+        df = filter_df_by_date(df, getattr(req, 'start_date', None), getattr(req, 'end_date', None))
+        result = run_fast(
+            df, strategy, sym,
+            sl_pct=req.sl_pct / 100, tp_pct=req.tp_pct / 100,
+            max_bars=req.max_bars,
+            fee_pct=cost_model.fee_pct, slippage_pct=cost_model.slippage_pct,
+            direction=direction, market_type="futures",
+            strategy_id=strategy_id,
+            funding_rate_8h=getattr(cost_model, 'funding_rate_8h', 0.0001),
+        )
+        for trade in result.trades:
+            all_trades.append({"time": trade.entry_time, "pnl_pct": trade.pnl_pct, "exit_reason": trade.exit_reason})
+
+    all_trades.sort(key=lambda t: t["time"])
+
+    if not all_trades:
+        return StrategyResult(
+            strategy_id=strategy_id, name=entry["name"],
+            direction=direction, status=entry["status"],
+            total_trades=0, wins=0, losses=0, win_rate=0,
+            total_return_pct=0, profit_factor=0, max_drawdown_pct=0,
+            tp_count=0, sl_count=0, timeout_count=0, equity_curve=[],
+        )
+
+    wins = [t for t in all_trades if t["pnl_pct"] > 0]
+    losses = [t for t in all_trades if t["pnl_pct"] <= 0]
+    gross_profit = sum(t["pnl_pct"] for t in wins) if wins else 0
+    gross_loss = abs(sum(t["pnl_pct"] for t in losses)) if losses else 0.001
+
+    equity = 0.0
+    peak = 0.0
+    max_dd = 0.0
+    eq_times = []
+    eq_values = []
+    for t in all_trades:
+        equity += t["pnl_pct"]
+        peak = max(peak, equity)
+        max_dd = max(max_dd, peak - equity)
+        eq_times.append(t["time"][:10])
+        eq_values.append(equity)
+
+    return StrategyResult(
+        strategy_id=strategy_id, name=entry["name"],
+        direction=direction, status=entry["status"],
+        total_trades=len(all_trades), wins=len(wins), losses=len(losses),
+        win_rate=round(len(wins) / len(all_trades) * 100, 2),
+        total_return_pct=round(sum(t["pnl_pct"] for t in all_trades), 2),
+        profit_factor=round(gross_profit / gross_loss, 2),
+        max_drawdown_pct=round(max_dd, 2),
+        tp_count=sum(1 for t in all_trades if t["exit_reason"] == "tp"),
+        sl_count=sum(1 for t in all_trades if t["exit_reason"] == "sl"),
+        timeout_count=sum(1 for t in all_trades if t["exit_reason"] == "timeout"),
+        equity_curve=downsample_equity(eq_times, eq_values),
+    )
+
+
+COMPARE_MAX_COINS = 50  # Cap to prevent CF tunnel timeout
+
+
 @app.post("/simulate/compare", response_model=CompareResponse)
 async def simulate_compare(req: CompareRequest):
     """Run all strategies under identical SL/TP conditions for comparison."""
@@ -824,90 +906,23 @@ async def simulate_compare(req: CompareRequest):
         raise HTTPException(503, "Data not loaded yet. Try again shortly.")
 
     cost_model = CostModel.futures()
-    results = []
+    n = min(_resolve_top_n(req.top_n), COMPARE_MAX_COINS)
 
-    for strategy_id, entry in STRATEGY_REGISTRY.items():
-        strategy, direction, _ = get_strategy(strategy_id)
-
-        # Get coins for this strategy
-        has_cache = indicator_cache.strategy_count(strategy_id) > 0
-        coins = indicator_cache.get_top_n_for_strategy(strategy_id, data_manager, req.top_n) if has_cache else data_manager.get_top_n(req.top_n)
-
-        all_trades = []
-        for sym, df in coins:
-            if not has_cache:
-                df = strategy.calculate_indicators(df.copy())
-
-            df = filter_df_by_date(df, getattr(req, 'start_date', None), getattr(req, 'end_date', None))
-            result = run_fast(
-                df, strategy, sym,
-                sl_pct=req.sl_pct / 100,
-                tp_pct=req.tp_pct / 100,
-                max_bars=req.max_bars,
-                fee_pct=cost_model.fee_pct,
-                slippage_pct=cost_model.slippage_pct,
-                direction=direction,
-                market_type="futures",
-                strategy_id=strategy_id,
-                funding_rate_8h=getattr(cost_model, 'funding_rate_8h', 0.0001),
-            )
-            for trade in result.trades:
-                all_trades.append({"time": trade.entry_time, "pnl_pct": trade.pnl_pct, "exit_reason": trade.exit_reason})
-
-        all_trades.sort(key=lambda t: t["time"])
-
-        if not all_trades:
-            results.append(StrategyResult(
-                strategy_id=strategy_id, name=entry["name"],
-                direction=direction, status=entry["status"],
-                total_trades=0, wins=0, losses=0, win_rate=0,
-                total_return_pct=0, profit_factor=0, max_drawdown_pct=0,
-                tp_count=0, sl_count=0, timeout_count=0, equity_curve=[],
-            ))
-            continue
-
-        wins = [t for t in all_trades if t["pnl_pct"] > 0]
-        losses = [t for t in all_trades if t["pnl_pct"] <= 0]
-        gross_profit = sum(t["pnl_pct"] for t in wins) if wins else 0
-        gross_loss = abs(sum(t["pnl_pct"] for t in losses)) if losses else 0.001
-
-        equity = 0.0
-        peak = 0.0
-        max_dd = 0.0
-        eq_times = []
-        eq_values = []
-        for t in all_trades:
-            equity += t["pnl_pct"]
-            peak = max(peak, equity)
-            max_dd = max(max_dd, peak - equity)
-            eq_times.append(t["time"][:10])
-            eq_values.append(equity)
-
-        results.append(StrategyResult(
-            strategy_id=strategy_id,
-            name=entry["name"],
-            direction=direction,
-            status=entry["status"],
-            total_trades=len(all_trades),
-            wins=len(wins),
-            losses=len(losses),
-            win_rate=round(len(wins) / len(all_trades) * 100, 2),
-            total_return_pct=round(sum(t["pnl_pct"] for t in all_trades), 2),
-            profit_factor=round(gross_profit / gross_loss, 2),
-            max_drawdown_pct=round(max_dd, 2),
-            tp_count=sum(1 for t in all_trades if t["exit_reason"] == "tp"),
-            sl_count=sum(1 for t in all_trades if t["exit_reason"] == "sl"),
-            timeout_count=sum(1 for t in all_trades if t["exit_reason"] == "timeout"),
-            equity_curve=downsample_equity(eq_times, eq_values),
-        ))
+    # Run all strategies in parallel threads
+    results = await asyncio.gather(*[
+        asyncio.to_thread(
+            _run_one_compare_strategy, strategy_id, entry, req, cost_model, n
+        )
+        for strategy_id, entry in STRATEGY_REGISTRY.items()
+    ])
 
     return CompareResponse(
         sl_pct=req.sl_pct,
         tp_pct=req.tp_pct,
         max_bars=req.max_bars,
-        coins_used=req.top_n,
+        coins_used=n,
         data_range=data_manager.data_range(),
-        strategies=results,
+        strategies=list(results),
     )
 
 
@@ -943,7 +958,8 @@ async def simulate_validate(req: ValidateRequest):
             if not coins:
                 raise HTTPException(404, "None of the requested symbols found.")
         else:
-            coins = indicator_cache.get_top_n_for_strategy(strategy_id, data_manager, req.top_n) if has_cache else data_manager.get_top_n(req.top_n)
+            n = _resolve_top_n(req.top_n)
+            coins = indicator_cache.get_top_n_for_strategy(strategy_id, data_manager, n) if has_cache else data_manager.get_top_n(n)
 
     oos_frac = req.oos_pct / 100.0
     is_trades_all = []
@@ -1564,7 +1580,7 @@ async def run_backtest(req: BacktestRequest):
         if req.symbols:
             coin_list = data_manager.get_symbols(req.symbols)
         else:
-            coin_list = data_manager.get_top_n(req.top_n)
+            coin_list = data_manager.get_top_n(_resolve_top_n(req.top_n))
 
     if not coin_list:
         raise HTTPException(404, "No coins found.")

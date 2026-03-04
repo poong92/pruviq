@@ -3,7 +3,6 @@
   <rect x="1" y="4" width="32" height="32" rx="6" fill="#0C1829"/>
   <path d="M11.73 27L8.45 27L8.45 10.99L14.69 10.99Q16.52 10.99 17.80 11.69Q19.07 12.38 19.75 13.60Q20.42 14.82 20.42 16.40L20.42 16.40Q20.42 17.99 19.73 19.20Q19.05 20.40 17.75 21.09Q16.45 21.77 14.62 21.77L14.62 21.77L11.73 21.77L11.73 27ZM11.73 13.70L11.73 19.13L14.09 19.13Q15.59 19.13 16.31 18.36Q17.03 17.60 17.03 16.40L17.03 16.40Q17.03 15.18 16.31 14.44Q15.59 13.70 14.08 13.70L14.08 13.70L11.73 13.70Z" fill="#2CB5E8" fill-rule="nonzero"/>
   <path d="M20 21 L22 23.5 L29 17" stroke="#2CB5E8" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-  <!-- PRUV (light text) + IQ (Proof Cyan) -->
-  <text x="44" y="29" font-family="'Inter','system-ui',sans-serif" font-size="23" font-weight="700" fill="#e8eaf0" letter-spacing="0.04em">PRUV</text>
-  <text x="107" y="29" font-family="'Inter','system-ui',sans-serif" font-size="23" font-weight="700" fill="#2CB5E8" letter-spacing="0.04em">IQ</text>
+  <!-- PRUVIQ (single text, uniform spacing) -->
+  <text x="44" y="29" font-family="'Inter','system-ui',sans-serif" font-size="23" font-weight="700" letter-spacing="0.04em"><tspan fill="#e8eaf0">PRUV</tspan><tspan fill="#2CB5E8">IQ</tspan></text>
 </svg>

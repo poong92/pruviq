@@ -453,9 +453,9 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
       leverage,
     };
 
-    if (coinMode === 'top') body.top_n = Math.min(topN, 535);
+    if (coinMode === 'top') body.top_n = topN;
     else if (coinMode === 'select' && selectedCoins.length > 0) body.symbols = selectedCoins;
-    else body.top_n = 535; // 'all' mode: use max allowed by backend
+    // 'all' mode: don't send top_n → backend defaults to all coins
 
     if (startDate) body.start_date = startDate;
     if (endDate) body.end_date = endDate;
@@ -646,6 +646,7 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
           <BuilderPanel
             t={t}
             coinsLoaded={currentCoinCount}
+            totalCoins={coinsLoaded}
             demoMode={demoMode}
             availableIndicators={availableIndicators}
             selectedIndicators={selectedIndicators}
