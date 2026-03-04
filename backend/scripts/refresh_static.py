@@ -661,9 +661,9 @@ def main():
 
     # Try to improve coverage for low-cap coins by using CoinGecko /coins/list (cached weekly)
     def fetch_coingecko_all_ids(cache_days: int = 7) -> list[dict]:
-        # Write the heavy CoinGecko /coins/list cache to public/data/cache/ to avoid
-        # bloating the deployed public/data/ assets. This directory is gitignored.
-        CACHE_DIR = OUTPUT_DIR / "cache"
+        # Write the heavy CoinGecko /coins/list cache to repo-root data_cache/ so
+        # it does not get copied to public/ or dist/ (avoid bloating deployed assets).
+        CACHE_DIR = REPO_DIR / "data_cache"
         CACHE = CACHE_DIR / "coingecko-coins-list.json"
         try:
             if CACHE.exists():
