@@ -608,7 +608,7 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
           </div>
           <div class="flex gap-2 flex-shrink-0">
             <button
-              onClick={() => { loadPreset('bb-squeeze-short'); setShowQuickStart(false); runBacktest(); }}
+              onClick={async () => { await loadPreset('bb-squeeze-short'); setShowQuickStart(false); runBacktest(); }}
               class="px-4 py-2 rounded font-mono text-xs font-bold transition-colors hover:opacity-90"
               style={{ background: COLORS.accent, color: '#fff', boxShadow: `0 0 12px ${COLORS.accentGlow}` }}
             >
