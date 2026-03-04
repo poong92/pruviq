@@ -187,7 +187,11 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
   const [endDate, setEndDate] = useState('');
 
   // Coin selection
-  const [coinMode, setCoinMode] = useState<'all' | 'top' | 'select'>('all');
+  const [coinMode, setCoinModeRaw] = useState<'all' | 'top' | 'select'>('all');
+  const setCoinMode = (mode: 'all' | 'top' | 'select') => {
+    setCoinModeRaw(mode);
+    if (mode === 'all') setSelectedCoins([]);
+  };
   const [topN, setTopN] = useState(50);
   const [selectedCoins, setSelectedCoins] = useState<string[]>([]);
   const [coinSearch, setCoinSearch] = useState('');
@@ -449,9 +453,9 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
       leverage,
     };
 
-    if (coinMode === 'top') body.top_n = topN;
+    if (coinMode === 'top') body.top_n = Math.min(topN, 535);
     else if (coinMode === 'select' && selectedCoins.length > 0) body.symbols = selectedCoins;
-    else if (coinsLoaded > 0) body.top_n = coinsLoaded;
+    else body.top_n = 535; // 'all' mode: use max allowed by backend
 
     if (startDate) body.start_date = startDate;
     if (endDate) body.end_date = endDate;
