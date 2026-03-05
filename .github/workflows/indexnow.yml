@@ -1,0 +1,73 @@
+name: IndexNow — Notify Search Engines
+
+on:
+  # Trigger after successful deployment (Workers Builds)
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'public/data/**'
+      - 'public/_redirects'
+
+jobs:
+  indexnow:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Detect changed pages
+        id: changes
+        run: |
+          # Get changed files between last 2 commits
+          CHANGED=$(git diff --name-only HEAD~1 HEAD 2>/dev/null || echo "")
+
+          # Build URL list from changed files
+          URLS="https://pruviq.com/,https://pruviq.com/ko/"
+
+          # If blog changed, add blog URLs
+          if echo "$CHANGED" | grep -q "src/pages/blog/"; then
+            URLS="${URLS},https://pruviq.com/blog/,https://pruviq.com/ko/blog/"
+          fi
+
+          # If coins changed, add coins URLs
+          if echo "$CHANGED" | grep -q "src/pages/coins/"; then
+            URLS="${URLS},https://pruviq.com/coins/,https://pruviq.com/ko/coins/"
+          fi
+
+          # If simulator changed
+          if echo "$CHANGED" | grep -q "Simulator\|simulate"; then
+            URLS="${URLS},https://pruviq.com/simulate/,https://pruviq.com/ko/simulate/"
+          fi
+
+          # If data files changed
+          if echo "$CHANGED" | grep -q "public/data/"; then
+            URLS="${URLS},https://pruviq.com/strategies/,https://pruviq.com/performance/"
+          fi
+
+          echo "urls=${URLS}" >> "$GITHUB_OUTPUT"
+          echo "Changed files: $(echo "$CHANGED" | wc -l | tr -d ' ')"
+          echo "URLs to submit: ${URLS}"
+
+      - name: Submit to IndexNow
+        run: |
+          IFS=',' read -ra URL_ARRAY <<< "${{ steps.changes.outputs.urls }}"
+
+          # Build JSON array
+          URL_JSON=""
+          for url in "${URL_ARRAY[@]}"; do
+            [ -n "$URL_JSON" ] && URL_JSON="${URL_JSON},"
+            URL_JSON="${URL_JSON}\"${url}\""
+          done
+
+          curl -s -f -X POST "https://api.indexnow.org/indexnow" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"host\": \"pruviq.com\",
+              \"key\": \"5818182d5955f57743a192861969669d\",
+              \"keyLocation\": \"https://pruviq.com/5818182d5955f57743a192861969669d.txt\",
+              \"urlList\": [${URL_JSON}]
+            }" && echo "✓ IndexNow submitted ${#URL_ARRAY[@]} URLs" \
+               || echo "⚠ IndexNow submission failed (non-blocking)"

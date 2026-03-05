@@ -1,0 +1,167 @@
+name: "Review Feedback Loop"
+
+# When JEPO posts a "Needs Changes" review on an OPEN PR,
+# close the PR and post fix instructions on the linked issue.
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: feedback-loop
+  cancel-in-progress: false
+
+jobs:
+  process-needs-changes:
+    name: Process JEPO Review Feedback
+    runs-on: ubuntu-latest
+    if: |
+      github.event.issue.pull_request &&
+      contains(github.event.comment.body, 'JEPO Code Review') &&
+      contains(github.event.comment.body, 'Needs Changes')
+    steps:
+      - name: Extract review and create feedback
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prNumber = context.issue.number;
+            const comment = context.payload.comment;
+            const reviewBody = comment.body;
+
+            // --- Guard: only accept reviews from authorized accounts ---
+            const ALLOWED_REVIEWERS = ['poong92', 'pruviq-bot'];
+            if (!ALLOWED_REVIEWERS.includes(comment.user.login)) {
+              core.info(`Ignoring comment from unauthorized user: ${comment.user.login}`);
+              return;
+            }
+            core.info(`Processing JEPO review from ${comment.user.login} on PR #${prNumber}`);
+
+            // --- Guard: skip if PR is already merged or closed ---
+            const pr = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber,
+            });
+            if (pr.data.state !== 'open') {
+              core.info(`PR #${prNumber} is ${pr.data.state}, skipping.`);
+              return;
+            }
+            const prTitle = pr.data.title;
+            const prBody = pr.data.body || '';
+            const prBranch = pr.data.head.ref;
+
+            // --- Find linked issue from PR body (e.g. "Closes: #153") ---
+            const issueMatch = prBody.match(/(?:closes|fixes|resolves):?\s*#(\d+)/i);
+            const linkedIssue = issueMatch ? parseInt(issueMatch[1]) : null;
+            core.info(`Linked issue: ${linkedIssue ? '#' + linkedIssue : 'none'}`);
+
+            // --- Build fix instructions using review body directly ---
+            // Instead of keyword matching, pass the full review as-is.
+            // This is more accurate and doesn't break when review format changes.
+            let fixInstructions = [
+              `## JEPO Review Feedback (PR #${prNumber})`,
+              ``,
+              `**원본 PR**: #${prNumber} — ${prTitle}`,
+              `**리뷰 결과**: Needs Changes`,
+              `**리뷰어**: ${comment.user.login}`,
+              `**날짜**: ${new Date().toISOString().split('T')[0]}`,
+              ``,
+              `---`,
+              ``,
+              `## 수정 지침`,
+              ``,
+              `아래 JEPO 리뷰의 모든 지적 사항을 수정하세요.`,
+              `\`.github/OPENCLAW_LESSONS.md\`를 반드시 읽고 동일한 패턴의 실수를 반복하지 마세요.`,
+              ``,
+              `## JEPO 원문 리뷰`,
+              ``,
+              reviewBody,
+              ``,
+              `---`,
+              `_Automated by Review Feedback Loop_`,
+            ].join('\n');
+
+            // --- Post fix instructions (issue comment first, then close PR) ---
+            // Order matters: instructions must be delivered before PR is closed.
+            try {
+              if (linkedIssue) {
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: linkedIssue,
+                  body: fixInstructions,
+                });
+                core.info(`Posted fix instructions on issue #${linkedIssue}`);
+
+                try {
+                  await github.rest.issues.addLabels({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: linkedIssue,
+                    labels: ['fix-requested'],
+                  });
+                } catch (e) {
+                  core.warning(`Failed to add label: ${e.message}`);
+                }
+              } else {
+                const newIssue = await github.rest.issues.create({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  title: `Fix: ${prTitle}`,
+                  body: fixInstructions,
+                  labels: ['fix-requested', 'P1-high'],
+                });
+                core.info(`Created fix issue #${newIssue.data.number}`);
+              }
+            } catch (e) {
+              core.setFailed(`Failed to post fix instructions: ${e.message}. PR will NOT be closed.`);
+              return;
+            }
+
+            // --- Close the buggy PR (only after instructions are delivered) ---
+            try {
+              const closeMsg = linkedIssue
+                ? `수정 지침이 원본 이슈 #${linkedIssue}에 추가되었습니다. OpenClaw가 수정된 PR을 새로 생성할 예정입니다.`
+                : `수정 지침이 포함된 새 이슈가 생성되었습니다.`;
+
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                body: [
+                  `## PR Closed by Review Feedback Loop`,
+                  ``,
+                  `JEPO 리뷰에서 **Needs Changes**가 감지되어 이 PR을 닫습니다.`,
+                  ``,
+                  closeMsg,
+                  ``,
+                  `---`,
+                  `_Automated by Review Feedback Loop_`,
+                ].join('\n'),
+              });
+
+              await github.rest.pulls.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: prNumber,
+                state: 'closed',
+              });
+              core.info(`Closed PR #${prNumber}`);
+
+              // Delete the source branch to prevent stale branches
+              try {
+                await github.rest.git.deleteRef({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  ref: `heads/${prBranch}`,
+                });
+                core.info(`Deleted branch ${prBranch}`);
+              } catch (e) {
+                core.warning(`Failed to delete branch ${prBranch}: ${e.message}`);
+              }
+            } catch (e) {
+              core.setFailed(`Failed to close PR: ${e.message}`);
+            }

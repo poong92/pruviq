@@ -1,0 +1,33 @@
+name: "SEO: title & meta check"
+
+on:
+  pull_request:
+    paths:
+      - '**/*.astro'
+      - 'src/**'
+      - 'content/**'
+      - 'public/**'
+      - '.github/workflows/seo-check.yml'
+
+
+jobs:
+  seo-check:
+    name: Check titles & meta descriptions
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Run SEO check
+        run: node scripts/check-seo.js

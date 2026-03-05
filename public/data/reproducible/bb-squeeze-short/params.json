@@ -1,0 +1,16 @@
+{
+  "entry": {
+    "symbol": "BTCUSDT",
+    "timeframe": "1h",
+    "start": "2022-01-01T00:00:00Z",
+    "end": "2023-01-01T00:00:00Z"
+  },
+  "strategy": {
+    "name": "BB Squeeze Short",
+    "params": {
+      "bb_length": 20,
+      "bb_std": 2,
+      "atr_length": 14
+    }
+  }
+}

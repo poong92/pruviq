@@ -1,0 +1,72 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+import { useTranslations } from '../../i18n/index';
+
+const t = useTranslations('en');
+
+const posts = (await getCollection('blog')).sort(
+  (a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
+);
+
+const categoryLabels: Record<string, string> = {
+  market: t('blog.cat_short.market'),
+  quant: t('blog.cat_short.quant'),
+  strategy: t('blog.cat_short.strategy'),
+  weekly: t('blog.cat_short.weekly'),
+  education: t('blog.cat_short.education'),
+};
+
+const categoryColors: Record<string, string> = {
+  market: '--color-yellow',
+  quant: '--color-accent',
+  strategy: '--color-text',
+  weekly: '--color-accent',
+  education: '--color-text-muted',
+};
+---
+
+<Layout title={t('meta.blog_title')} description={t('meta.blog_desc')}>
+  <section class="py-12">
+    <div class="max-w-4xl mx-auto px-4">
+      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('blog.tag')}</p>
+      <h1 class="text-3xl md:text-4xl font-bold mb-4">{t('blog.title')}</h1>
+      <p class="text-[--color-text-muted] text-lg mb-12 max-w-2xl">
+        {t('blog.desc')}
+      </p>
+
+      {posts.length === 0 ? (
+        <div class="border border-[--color-border] rounded-lg p-12 bg-[--color-bg-card] text-center">
+          <p class="font-mono text-[--color-accent] text-sm mb-4">{t('blog.coming_soon')}</p>
+          <p class="text-[--color-text-muted] mb-6">
+            {t('blog.coming_desc')}
+          </p>
+          <p class="text-[--color-text-muted] text-sm">
+            {t('blog.coming_cta')}
+            <a href="https://t.me/PRUVIQ" target="_blank" rel="noopener noreferrer" class="text-[--color-accent] hover:underline">Telegram</a>
+            {t('blog.coming_cta2')}
+          </p>
+        </div>
+      ) : (
+        <div class="space-y-6">
+          {posts.map((post) => (
+            <a href={`/blog/${post.id}`}
+               class="block border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] hover:border-[--color-accent] transition-colors group">
+              <div class="flex items-center gap-3 mb-3">
+                <span class={`font-mono text-xs tracking-wider`}
+                      style={`color: var(${categoryColors[post.data.category] || '--color-text-muted'})`}>
+                  {categoryLabels[post.data.category] || post.data.category.toUpperCase()}
+                </span>
+                <span class="text-[--color-text-muted] text-xs font-mono">{post.data.date}</span>
+              </div>
+              <h2 class="text-xl font-bold mb-2 group-hover:text-[--color-accent] transition-colors">
+                {post.data.title}
+              </h2>
+              <p class="text-[--color-text-muted] text-sm">{post.data.description}</p>
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
+  </section>
+</Layout>
