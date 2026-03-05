@@ -1,3 +1,19 @@
+- cron: gh-issues-autofix (autonomous run)
+  - Time: 2026-03-05 10:19 KST
+  - Actions performed (autonomous):
+    1. git checkout main && git pull origin main (confirmed).
+    2. gh pr list: found open PRs but none with failing CI checks at this time.
+    3. Fixed code in existing PR branches (author = PRUVIQ Bot) addressing reviewer comments:
+       - PR #176 (fix/issue-171-resizeobserver-disconnect): declare ResizeObserver in outer effect scope so cleanup can disconnect safely.
+       - PR #177 (fix/issue-172-presets-parallelize): replace unbounded Promise.all with bounded concurrency (concurrency=5) and encode preset id in URL.
+       - PR #174 (fix/issue-169-quickstart-preset-load): make loadPreset return the loaded preset and wait for state to flush before running quick-start backtest.
+    4. Pushed updated branches: fix/issue-171-resizeobserver-disconnect, fix/issue-172-presets-parallelize, fix/issue-169-quickstart-preset-load.
+    5. Verified local builds on each branch (build completed successfully).
+    6. Open issues #137 (P0) and #21 (P1) are blocked by external access/secrets:
+       - #137: needs Cloudflare Workers build logs / dashboard access.
+       - #21: needs BRAVE_API_KEY secret to be provisioned.
+    7. No additional PRs created in this run.
+  - Result: Code fixes applied and pushed for existing PRs created earlier; local builds verified; two ops-blocked issues remain.
 # MEMORY.md - PRUVIQ Project Knowledge
 
 Last updated: 2026-03-04 22:12 KST
