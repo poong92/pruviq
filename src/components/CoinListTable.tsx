@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'preact/hooks';
 import { formatPrice, formatVolume } from '../utils/format';
 import { generateCSV, downloadCSV } from '../utils/csv';
-import { STATIC_DATA, fetchWithFallback } from '../config/api';
+import { STATIC_DATA, fetchWithFallback, fetchLiveFirst } from '../config/api';
 import MiniSparkline from './MiniSparkline';
 
 interface CoinRow {
@@ -167,11 +167,26 @@ export default function CoinListTable({ lang = 'en' }: { lang?: 'en' | 'ko' }) {
   const [generatedAt, setGeneratedAt] = useState<string | null>(null);
 
   useEffect(() => {
+    // Hybrid: load static first (metadata: name, image, sparkline), then overlay live prices
     fetchWithFallback('/coins/stats', STATIC_DATA.coinsStats)
       .then((json: StatsData) => {
         setData(json.coins || []);
         setGeneratedAt(json.generated || null);
         setLoading(false);
+        // Overlay live prices from API
+        fetchLiveFirst('/market/live', STATIC_DATA.coinsStats)
+          .then((live: any) => {
+            const priceMap = new Map<string, { price: number; change_24h: number; volume_24h: number }>();
+            for (const c of (live.coins || [])) {
+              priceMap.set(c.symbol, { price: c.price, change_24h: c.change_24h, volume_24h: c.volume_24h });
+            }
+            setData(prev => prev.map(coin => {
+              const lp = priceMap.get(coin.symbol);
+              return lp ? { ...coin, price: lp.price, change_24h: lp.change_24h, volume_24h: lp.volume_24h } : coin;
+            }));
+            setGeneratedAt(live.generated || json.generated || null);
+          })
+          .catch(() => {}); // Live price overlay failure is non-critical
       })
       .catch(err => {
         setError(err.message);
