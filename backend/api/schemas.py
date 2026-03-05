@@ -161,10 +161,18 @@ class CoinStats(BaseModel):
     price: float
     change_24h: float
     volume_24h: float
-    trades: int
-    win_rate: float
-    profit_factor: float
-    total_return_pct: float
+    trades: int = 0
+    win_rate: float = 0.0
+    profit_factor: float = 0.0
+    total_return_pct: float = 0.0
+    # CoinGecko metadata (enriched from coins-stats.json)
+    name: Optional[str] = None
+    image: Optional[str] = None
+    change_1h: Optional[float] = None
+    change_7d: Optional[float] = None
+    market_cap: Optional[float] = None
+    market_cap_rank: Optional[int] = None
+    sparkline_7d: Optional[list] = None
 
 
 class CoinResult(BaseModel):
