@@ -263,7 +263,7 @@ def fetch_fear_greed() -> tuple[int, str]:
     return 0, "Unknown"
 
 
-def downsample_sparkline(prices: list[float], target: int = 42) -> list[float]:
+def downsample_sparkline(prices: list[float], target: int = 12) -> list[float]:
     """Downsample 168-point hourly sparkline to ~42 points (4h intervals)."""
     if not prices or len(prices) < 2:
         return prices or []
@@ -661,7 +661,10 @@ def main():
 
     # Try to improve coverage for low-cap coins by using CoinGecko /coins/list (cached weekly)
     def fetch_coingecko_all_ids(cache_days: int = 7) -> list[dict]:
-        CACHE = OUTPUT_DIR / "coingecko-coins-list.json"
+        # Write the heavy CoinGecko /coins/list cache to repo-root data_cache/ so
+        # it does not get copied to public/ or dist/ (avoid bloating deployed assets).
+        CACHE_DIR = REPO_DIR / "data_cache"
+        CACHE = CACHE_DIR / "coingecko-coins-list.json"
         try:
             if CACHE.exists():
                 mtime = datetime.fromtimestamp(CACHE.stat().st_mtime, timezone.utc)
@@ -675,6 +678,7 @@ def main():
         data = fetch_json(url)
         if data:
             try:
+                CACHE_DIR.mkdir(parents=True, exist_ok=True)
                 CACHE.write_text(json.dumps(data, separators=(',', ':')))
                 print(f"  Saved coin-list ({len(data)} items) to {CACHE}")
             except Exception as e:

@@ -465,11 +465,19 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
     }, 2500);
 
     try {
+      // Abortable fetch with timeout to avoid hanging 'Running...' state
+      const controller = new AbortController();
+      const timeoutMs = 120000; // 2 minutes
+      const abortTimeout = setTimeout(() => controller.abort(), timeoutMs);
+
       const res = await fetch(`${API_URL}/backtest`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
+        signal: controller.signal,
       });
+
+      clearTimeout(abortTimeout);
 
       if (!res.ok) {
         const err = await res.json().catch(() => ({ detail: 'Server error' }));
@@ -503,7 +511,9 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
       setTimeout(() => resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 200);
     } catch (e: any) {
       const errMsg = typeof e?.message === 'string' ? e.message : (typeof e === 'string' ? e : 'Backtest failed');
-      setError(errMsg);
+      // If the request was aborted, provide a clearer message
+      if (e?.name === 'AbortError') setError('Backtest request timed out or was cancelled');
+      else setError(errMsg);
     } finally {
       clearInterval(progressInterval);
       setIsRunning(false);
@@ -516,11 +526,12 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
     setPresetLoading(true);
     setPresetError(null);
     try {
-      const res = await fetch(`${API_URL}/builder/presets/${presetId}`);
+          const res = await fetch(`${API_URL}/builder/presets/${encodeURIComponent(presetId)}`);
       if (!res.ok) {
         setPresetError(`Failed to load preset (HTTP ${res.status})`);
         setTimeout(() => setPresetError(null), 3000);
-        return;
+        setPresetLoading(false);
+        return null;
       }
       const p = await res.json();
 
@@ -536,11 +547,15 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
       if (p.tp_pct) setTpPct(p.tp_pct);
       if (p.max_bars) setMaxBars(p.max_bars);
       if (p.avoid_hours) setAvoidHours(new Set(p.avoid_hours));
+      setPresetLoading(false);
+      return p;
     } catch {
       setPresetError('Failed to load preset. Check connection.');
       setTimeout(() => setPresetError(null), 3000);
-    } finally {
       setPresetLoading(false);
+      return null;
+    } finally {
+      /* presetLoading state handled above */
     }
   }, []);
 
@@ -608,7 +623,14 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
           </div>
           <div class="flex gap-2 flex-shrink-0">
             <button
-              onClick={() => { loadPreset('bb-squeeze-short'); setShowQuickStart(false); runBacktest(); }}
+              onClick={async () => {
+                const p = await loadPreset('bb-squeeze-short');
+                if (!p) return;
+                setShowQuickStart(false);
+                // wait briefly to allow React state updates to flush before running backtest
+                await new Promise((r) => setTimeout(r, 50));
+                try { await runBacktest(); } catch {}
+              }}
               class="px-4 py-2 rounded font-mono text-xs font-bold transition-colors hover:opacity-90"
               style={{ background: COLORS.accent, color: '#fff', boxShadow: `0 0 12px ${COLORS.accentGlow}` }}
             >

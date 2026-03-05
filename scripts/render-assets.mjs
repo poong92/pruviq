@@ -163,7 +163,7 @@ async function main() {
     <div class="tagline">PROVE YOUR STRATEGY</div>
   </body></html>`;
 
-  await render(browser, socialHTML, `${PUBLIC}/social-profile.jpg`, 800, 800, false, 2, { type: 'jpeg', quality: 80 });
+  await render(browser, socialHTML, `${PUBLIC}/social-profile.png`, 800, 800, false, 2, { type: 'png' });
 
   // === X Banner (1500x500, dark bg) ===
   const bannerHTML = `<!DOCTYPE html><html><head><style>
@@ -204,7 +204,7 @@ async function main() {
     </div>
   </body></html>`;
 
-  await render(browser, bannerHTML, `${PUBLIC}/x-banner.jpg`, 1500, 500, false, 2, { type: 'jpeg', quality: 80 });
+  await render(browser, bannerHTML, `${PUBLIC}/x-banner.png`, 1500, 500, false, 2, { type: 'png' });
 
   // === OG Image (1200x630, dark bg) ===
   const ogHTML = `<!DOCTYPE html><html><head><style>
@@ -250,7 +250,7 @@ async function main() {
     </div>
   </body></html>`;
 
-  await render(browser, ogHTML, `${PUBLIC}/og-image.jpg`, 1200, 630, false, 2, { type: 'jpeg', quality: 80 });
+  await render(browser, ogHTML, `${PUBLIC}/og-image.png`, 1200, 630, false, 2, { type: 'png' });
 
   // Attempt to convert og-image.png → webp/avif using optional sharp (if installed)
   try {

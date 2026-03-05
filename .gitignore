@@ -34,4 +34,6 @@ backend/src/__pycache__/
 data/
 !src/data/
 !public/data/
+# Ignore generated cache files (CoinGecko coin-list etc.)
+data_cache/
 test-results/

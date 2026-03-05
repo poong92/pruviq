@@ -73,6 +73,8 @@ indicator_cache = IndicatorCache()
 sim_cache: OrderedDict = OrderedDict()
 rate_limits: Dict[str, list] = {}
 coin_stats_cache: Optional[dict] = None
+_cg_metadata: Dict[str, dict] = {}
+_cg_ts: float = 0.0
 
 
 REFRESH_INTERVAL = 3600  # seconds (1 hour)
@@ -102,6 +104,7 @@ def _refresh_data():
             indicator_cache.build_multi(data_manager, all_strategies)
             strategy = BBSqueezeStrategy(avoid_hours=AVOID_HOURS)
             global coin_stats_cache
+            _load_coingecko_metadata()
             coin_stats_cache = _build_coin_stats(strategy)
             logger.info(f"Reload complete: {indicator_cache.count} coins")
         else:
@@ -169,6 +172,7 @@ async def lifespan(app: FastAPI):
         print("Pre-computing coin stats...")
         strategy = BBSqueezeStrategy(avoid_hours=AVOID_HOURS)
         global coin_stats_cache
+        _load_coingecko_metadata()
         coin_stats_cache = _build_coin_stats(strategy)
         print(f"Coin stats cached for {len(coin_stats_cache['coins'])} coins")
 
@@ -648,6 +652,39 @@ def _ts_to_unix(ts) -> int:
     return int(pd.Timestamp(str(ts)).timestamp())
 
 
+def _load_coingecko_metadata():
+    """Load CoinGecko metadata from static coins-stats.json for enrichment."""
+    global _cg_metadata, _cg_ts
+    cg_path = Path(__file__).parent.parent.parent / "public" / "data" / "coins-stats.json"
+    try:
+        if not cg_path.exists():
+            logger.warning("CoinGecko metadata file not found")
+            return
+        mtime = cg_path.stat().st_mtime
+        if mtime == _cg_ts:
+            return  # no change
+        with open(cg_path) as f:
+            raw = json.load(f)
+        meta = {}
+        for coin in raw.get("coins", []):
+            sym = coin.get("symbol", "")
+            if sym:
+                meta[sym] = {
+                    "name": coin.get("name"),
+                    "image": coin.get("image"),
+                    "change_1h": coin.get("change_1h"),
+                    "change_7d": coin.get("change_7d"),
+                    "market_cap": coin.get("market_cap"),
+                    "market_cap_rank": coin.get("market_cap_rank"),
+                    "sparkline_7d": coin.get("sparkline_7d"),
+                }
+        _cg_metadata = meta
+        _cg_ts = mtime
+        logger.info(f"CoinGecko metadata loaded: {len(meta)} coins")
+    except Exception as e:
+        logger.warning(f"CoinGecko metadata load failed: {e}")
+
+
 def _build_coin_stats(strategy) -> dict:
     """Pre-compute stats for all coins."""
     cost_model = CostModel.futures()
@@ -674,6 +711,7 @@ def _build_coin_stats(strategy) -> dict:
         change_24h = round(((last_close - close_24h_ago) / close_24h_ago) * 100, 2) if close_24h_ago else 0
         volume_24h = float(df["volume"].iloc[-24:].sum()) if len(df) >= 24 else float(df["volume"].sum())
 
+        cg = _cg_metadata.get(symbol, {})
         coins_list.append(CoinStats(
             symbol=symbol,
             price=round(last_close, 6),
@@ -683,6 +721,13 @@ def _build_coin_stats(strategy) -> dict:
             win_rate=result.win_rate,
             profit_factor=result.profit_factor,
             total_return_pct=result.total_return_pct,
+            name=cg.get("name"),
+            image=cg.get("image"),
+            change_1h=cg.get("change_1h"),
+            change_7d=cg.get("change_7d"),
+            market_cap=cg.get("market_cap"),
+            market_cap_rank=cg.get("market_cap_rank"),
+            sparkline_7d=cg.get("sparkline_7d"),
         ))
 
     return {
