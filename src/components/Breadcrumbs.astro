@@ -63,20 +63,17 @@ for (const seg of segments) {
 
 {segments.length > 0 && (
   <nav aria-label="Breadcrumb" class="max-w-6xl mx-auto px-4 pt-4 pb-2">
-    <ol class="flex flex-wrap items-center gap-1.5 font-mono text-[0.6875rem] text-[--color-text-muted]"
-        itemscope itemtype="https://schema.org/BreadcrumbList">
+    <ol class="flex flex-wrap items-center gap-1.5 font-mono text-[0.6875rem] text-[--color-text-muted]">
       {items.map((item, i) => (
-        <li class="flex items-center gap-1.5"
-            itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <li class="flex items-center gap-1.5">
           {i > 0 && <span class="text-[--color-border]">/</span>}
           {i < items.length - 1 ? (
-            <a href={item.href} itemprop="item" class="hover:text-[--color-accent] transition-colors">
-              <span itemprop="name">{item.label}</span>
+            <a href={item.href} class="hover:text-[--color-accent] transition-colors">
+              <span>{item.label}</span>
             </a>
           ) : (
-            <span itemprop="name" class="text-[--color-text]">{item.label}</span>
+            <span class="text-[--color-text]">{item.label}</span>
           )}
-          <meta itemprop="position" content={String(i + 1)} />
         </li>
       ))}
     </ol>
