@@ -1,0 +1,150 @@
+name: "Post-Deploy: Verify & Improve"
+
+on:
+  workflow_dispatch: {}
+
+concurrency:
+  group: post-deploy
+  cancel-in-progress: true
+
+permissions:
+  issues: read
+  contents: read
+
+jobs:
+  verify:
+    name: Verify Deployment
+    runs-on: ubuntu-latest
+    outputs:
+      site_ok: ${{ steps.smoke.outputs.site_ok }}
+      api_ok: ${{ steps.smoke.outputs.api_ok }}
+      commit_msg: ${{ steps.meta.outputs.commit_msg }}
+    steps:
+      - name: Gather commit metadata
+        id: meta
+        run: |
+          MSG=$(cat <<'CMSG'
+          ${{ github.event.head_commit.message }}
+          CMSG
+          )
+          echo "commit_msg=$(echo "$MSG" | head -1 | cut -c1-80)" >> "$GITHUB_OUTPUT"
+
+      - name: Wait for Cloudflare Pages deployment
+        run: |
+          echo "Waiting 90s for Cloudflare Pages to deploy..."
+          sleep 90
+
+      - name: Smoke test live site
+        id: smoke
+        run: |
+          PASS=true
+          check_url() {
+            local url="$1" label="$2"
+            local status
+            status=$(curl -s -o /dev/null -w '%{http_code}' --max-time 15 "$url" || echo "000")
+            echo "$label: $status"
+            [ "$status" = "200" ] && return 0 || return 1
+          }
+          echo "=== Site Pages ==="
+          check_url "https://pruviq.com" "Homepage EN" || PASS=false
+          check_url "https://pruviq.com/ko/" "Homepage KO" || PASS=false
+          check_url "https://pruviq.com/simulate/" "Simulator EN" || PASS=false
+          check_url "https://pruviq.com/ko/simulate/" "Simulator KO" || PASS=false
+          check_url "https://pruviq.com/market/" "Market EN" || PASS=false
+          echo "site_ok=$PASS" >> "$GITHUB_OUTPUT"
+
+          echo ""
+          echo "=== API Endpoints ==="
+          API_OK=true
+          check_url "https://api.pruviq.com/market" "API /market" || API_OK=false
+          check_url "https://api.pruviq.com/coins/stats" "API /coins/stats" || API_OK=false
+          check_url "https://api.pruviq.com/builder/presets" "API /presets" || API_OK=false
+          echo "api_ok=$API_OK" >> "$GITHUB_OUTPUT"
+
+  trigger-improvement:
+    name: Trigger Next Improvement
+    needs: verify
+    if: needs.verify.outputs.site_ok == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Find next improvement task
+        id: next_task
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issues = await github.paginate(github.rest.issues.listForRepo, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              sort: 'created',
+              direction: 'asc',
+              per_page: 50,
+            });
+            const realIssues = issues.filter(i => !i.pull_request);
+            if (realIssues.length === 0) {
+              core.setOutput('has_task', 'false');
+              return;
+            }
+            // Skip OPS issues (infra, not code)
+            const codeIssues = realIssues.filter(i => !i.title.startsWith('OPS:'));
+            const nextIssue = codeIssues.length > 0 ? codeIssues[0] : realIssues[0];
+            core.setOutput('has_task', 'true');
+            core.setOutput('issue_number', nextIssue.number.toString());
+            core.setOutput('issue_title', nextIssue.title);
+            core.setOutput('remaining_count', realIssues.length.toString());
+
+      - name: Notify via Telegram
+        if: steps.next_task.outputs.has_task == 'true'
+        env:
+          TOKEN: ${{ secrets.PRUVIQ_TELEGRAM_TOKEN }}
+          CHAT_ID: ${{ secrets.PRUVIQ_TELEGRAM_CHAT_ID }}
+          ISSUE_NUM: ${{ steps.next_task.outputs.issue_number }}
+          ISSUE_TITLE: ${{ steps.next_task.outputs.issue_title }}
+          REMAINING: ${{ steps.next_task.outputs.remaining_count }}
+          COMMIT_MSG: ${{ needs.verify.outputs.commit_msg }}
+          API_OK: ${{ needs.verify.outputs.api_ok }}
+        run: |
+          [ -z "$TOKEN" ] || [ -z "$CHAT_ID" ] && exit 0
+          MSG="PRUVIQ Deploy Pipeline
+          ---
+          Commit: ${COMMIT_MSG}
+          Site: OK | API: $([ "$API_OK" = "true" ] && echo "OK" || echo "WARN")
+          ---
+          Next: #${ISSUE_NUM} ${ISSUE_TITLE}
+          Remaining: ${REMAINING} issues
+          ---
+          Check this issue and create a PR:
+          https://github.com/pruviq/pruviq/issues/${ISSUE_NUM}"
+          MSG=$(echo "$MSG" | sed 's/^          //g')
+          curl -sf -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" \
+            -d chat_id="${CHAT_ID}" -d text="${MSG}" || echo "Telegram send failed"
+
+      - name: Notify all clear
+        if: steps.next_task.outputs.has_task == 'false'
+        env:
+          TOKEN: ${{ secrets.PRUVIQ_TELEGRAM_TOKEN }}
+          CHAT_ID: ${{ secrets.PRUVIQ_TELEGRAM_CHAT_ID }}
+        run: |
+          [ -z "$TOKEN" ] || [ -z "$CHAT_ID" ] && exit 0
+          MSG="PRUVIQ: All issues resolved! Run Lighthouse/A11y to find new improvements."
+          curl -sf -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" \
+            -d chat_id="${CHAT_ID}" -d text="${MSG}" || true
+
+  notify-failure:
+    name: Alert Deploy Failure
+    needs: verify
+    if: needs.verify.outputs.site_ok == 'false'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send failure alert
+        env:
+          TOKEN: ${{ secrets.PRUVIQ_TELEGRAM_TOKEN }}
+          CHAT_ID: ${{ secrets.PRUVIQ_TELEGRAM_CHAT_ID }}
+          COMMIT_MSG: ${{ needs.verify.outputs.commit_msg }}
+        run: |
+          [ -z "$TOKEN" ] || [ -z "$CHAT_ID" ] && exit 0
+          MSG="PRUVIQ DEPLOY FAIL! Commit: ${COMMIT_MSG} - Site not responding. Check: https://pruviq.com"
+          curl -sf -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" \
+            -d chat_id="${CHAT_ID}" -d text="${MSG}" || true

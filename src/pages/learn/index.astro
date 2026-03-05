@@ -1,0 +1,99 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+import { useTranslations } from '../../i18n/index';
+import LearnProgress from '../../components/LearnProgress.tsx';
+import LearnCard from '../../components/LearnCard.tsx';
+
+const t = useTranslations('en');
+
+const posts = (await getCollection('blog')).sort(
+  (a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
+);
+
+// Group by level based on tags and category
+const beginner = posts.filter(p =>
+  p.data.tags?.includes('beginners') ||
+  p.id === 'what-is-bb-squeeze' ||
+  p.id === 'risk-management-101' ||
+  p.id === 'why-pruviq' ||
+  p.id === 'crypto-trading-fees-explained'
+);
+
+const intermediate = posts.filter(p =>
+  ['rsi-oversold-overbought-guide', 'ema-crossover-strategy-guide', 'macd-divergence-trading-guide',
+   'volume-analysis-crypto-trading', 'stochastic-adx-trend-strength', 'sl-tp-optimization-guide',
+   'save-on-binance-futures-fees', 'ichimoku-cloud-trading-guide', 'fibonacci-retracement-guide',
+   'vwap-trading-guide', 'support-resistance-guide', 'candlestick-patterns-guide',
+   'atr-volatility-guide'].includes(p.id)
+);
+
+const advanced = posts.filter(p =>
+  p.data.category === 'quant' ||
+  p.data.category === 'market' ||
+  ['tp8-decision-process'].includes(p.id)
+);
+
+const levelConfig = [
+  { level: 'beginner', label: t('learn.level_beginner'), title: t('learn.level_beginner_title'), desc: t('learn.level_beginner_desc'), color: 'green', posts: beginner },
+  { level: 'intermediate', label: t('learn.level_intermediate'), title: t('learn.level_intermediate_title'), desc: t('learn.level_intermediate_desc'), color: 'yellow', posts: intermediate },
+  { level: 'advanced', label: t('learn.level_advanced'), title: t('learn.level_advanced_title'), desc: t('learn.level_advanced_desc'), color: 'red', posts: advanced },
+];
+---
+
+<Layout title={t('meta.learn_title')} description={t('meta.learn_desc')}>
+
+  <!-- HERO -->
+  <section class="py-16">
+    <div class="max-w-5xl mx-auto px-4">
+      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('learn.tag')}</p>
+      <h1 class="text-3xl md:text-5xl font-bold mb-4">
+        {t('learn.title')}<br/>{t('learn.title2')}
+      </h1>
+      <p class="text-[--color-text-muted] text-lg mb-4 max-w-2xl">
+        {t('learn.desc').replace('{count}', String(posts.length))}
+      </p>
+      <LearnProgress client:visible postIds={posts.map(p => p.id)} lang="en" />
+    </div>
+  </section>
+
+  <!-- LEVELS -->
+  {levelConfig.map(({ level, label, title, desc, color, posts: levelPosts }) => (
+    <section class="pb-12 border-t border-[--color-border] pt-12">
+      <div class="max-w-5xl mx-auto px-4">
+        <div class="flex items-center gap-3 mb-2">
+          <span class={`text-xs font-mono px-2 py-0.5 rounded bg-${color}-500/10 text-${color}-400 border border-${color}-500/20`}>
+            {label}
+          </span>
+          <h2 class="text-2xl font-bold">{title}</h2>
+        </div>
+        <p class="text-[--color-text-muted] text-sm mb-6">{desc}</p>
+
+        <div class="grid md:grid-cols-2 gap-4">
+          {levelPosts.map(post => (
+            <LearnCard
+              client:visible
+              postId={post.id}
+              href={`/blog/${post.id}`}
+              title={post.data.title}
+              description={post.data.description}
+              tags={post.data.tags}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+  ))}
+
+  <!-- CTA -->
+  <section class="pb-16 border-t border-[--color-border] pt-12">
+    <div class="max-w-5xl mx-auto px-4 text-center">
+      <h2 class="text-xl font-bold mb-3">{t('learn.cta_title')}</h2>
+      <p class="text-[--color-text-muted] text-sm mb-6">{t('learn.cta_desc')}</p>
+      <a href="/simulate" class="btn-primary inline-block bg-[--color-accent] text-[--color-bg] px-6 py-2.5 rounded font-semibold text-sm hover:bg-[--color-accent-dim]">
+        {t('learn.cta_button')} &rarr;
+      </a>
+    </div>
+  </section>
+
+</Layout>

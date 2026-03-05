@@ -1,0 +1,35 @@
+name: Auto Create PR for Agent SKILLs
+
+on:
+  push:
+    branches: [ agents/init ]
+
+jobs:
+  create-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create or find PR
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const head = 'agents/init';
+            const base = 'main';
+            const title = 'chore: add initial agent SKILL templates';
+            const body = `This PR adds initial SKILL.md templates for core agents (frontend-dev, qa-e2e, ops-sre, data-backtest, security-ci, content-marketing).
+
+Please review the templates and suggest adjustments to roles/permissions before we spawn agent sessions.`;
+
+            // Check for existing open PR from this head
+            const pulls = await github.rest.pulls.list({ owner, repo, state: 'open', per_page: 100 });
+            const existing = pulls.data.find(p => p.head && p.head.ref === head && p.base && p.base.ref === base);
+            if (existing) {
+              core.info(`Found existing PR: #${existing.number} ${existing.html_url}`);
+            } else {
+              const created = await github.rest.pulls.create({ owner, repo, title, head, base, body });
+              core.info(`Created PR #${created.data.number}: ${created.data.html_url}`);
+            }

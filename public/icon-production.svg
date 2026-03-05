@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="512" height="512">
+  <title>PRUVIQ</title>
+  <rect width="32" height="32" rx="6" fill="#0C1829"/>
+  <path d="M9.73 23L6.45 23L6.45 6.99L12.69 6.99Q14.52 6.99 15.80 7.69Q17.07 8.38 17.75 9.60Q18.42 10.82 18.42 12.40L18.42 12.40Q18.42 13.99 17.73 15.20Q17.05 16.40 15.75 17.09Q14.45 17.77 12.62 17.77L12.62 17.77L9.73 17.77L9.73 23ZM9.73 9.70L9.73 15.13L12.09 15.13Q13.59 15.13 14.31 14.36Q15.03 13.60 15.03 12.40L15.03 12.40Q15.03 11.18 14.31 10.44Q13.59 9.70 12.08 9.70L12.08 9.70L9.73 9.70Z" fill="#2CB5E8" fill-rule="nonzero"/>
+  <path d="M18 17 L20 19.5 L27 13" stroke="#2CB5E8" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
