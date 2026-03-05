@@ -465,11 +465,19 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
     }, 2500);
 
     try {
+      // Abortable fetch with timeout to avoid hanging 'Running...' state
+      const controller = new AbortController();
+      const timeoutMs = 120000; // 2 minutes
+      const abortTimeout = setTimeout(() => controller.abort(), timeoutMs);
+
       const res = await fetch(`${API_URL}/backtest`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
+        signal: controller.signal,
       });
+
+      clearTimeout(abortTimeout);
 
       if (!res.ok) {
         const err = await res.json().catch(() => ({ detail: 'Server error' }));
@@ -503,7 +511,9 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
       setTimeout(() => resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 200);
     } catch (e: any) {
       const errMsg = typeof e?.message === 'string' ? e.message : (typeof e === 'string' ? e : 'Backtest failed');
-      setError(errMsg);
+      // If the request was aborted, provide a clearer message
+      if (e?.name === 'AbortError') setError('Backtest request timed out or was cancelled');
+      else setError(errMsg);
     } finally {
       clearInterval(progressInterval);
       setIsRunning(false);
