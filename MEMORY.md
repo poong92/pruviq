@@ -147,3 +147,30 @@ Last updated: 2026-03-05 06:19 KST
     - PRs created: #174, #175, #176, #177 (links above).
     - Local build: `npm run build` output includes "[build] 2446 page(s) built" and "✓ Completed in 26.33s." (build logs saved in shell output of this run).
     - Issue comment posted on #137 requesting Cloudflare logs (see issue timeline on GitHub).
+
+- cron: daily-seo-audit
+  - Time: 2026-03-06 00:00 KST
+  - Actions performed:
+    1. git checkout main && git pull origin main (confirmed up-to-date).
+    2. Verified sitemap: fetched https://pruviq.com/sitemap-index.xml and referenced sitemaps (sitemap-0.xml) — sitemap accessible (200) and includes EN + KO pages (confirmed via curl) (evidence: /seo_audit/sitemaps.txt and live fetch).
+    3. Checked robots.txt: fetched https://pruviq.com/robots.txt — no disallow rules blocking indexing, sitemap included (evidence: robots.txt content fetched).
+    4. Scanned built site (dist/) for SEO tags instead of crawling live site (faster, deterministic):
+       - Ran `npm run build` (local) to ensure dist is fresh (build succeeded).
+       - Walked dist/ and extracted <title> and <meta name="description"> plus presence of JSON-LD and hreflang for every generated HTML file. Output: /seo_audit/dist_pages_meta.csv
+    5. Checked homepage EN/KO manually (curl) for hreflang, meta, JSON-LD (confirmed present).
+  - Findings (from dist scan):
+    - Total pages scanned: 2449 (dist HTML files)
+    - Pages missing <title>: 3 (these are verification files / special pages)
+    - Pages missing meta description: 55
+    - Pages without application/ld+json: 55
+    - Pages without hreflang link alternates: 55
+    - Diagnostics: All 55 pages with missing meta/JSON-LD/hreflang are either:
+      - static verification files (google*.html, yandex*.html, naver*.html), OR
+      - redirect-only pages (e.g. /learn/<slug> redirect stubs and /builder redirect pages)
+      These are intentionally minimal/redirect pages created by the site (not canonical content). Canonical pages (blog posts, /learn index, coin pages, market pages) include proper <title>, meta description, hreflang alternates, and JSON-LD where applicable (evidence: sampled pages in /dist, e.g. /dist/blog/* and /dist/coins/*).
+  - Actions taken / Fixes:
+    - No code changes applied. Rationale: missing tags are limited to redirect stubs and verification files where a 301/302 response or verification token is intentionally provided; canonical pages (the pages that should rank) already include proper title, meta, hreflang, and JSON-LD. Adding meta to redirect/verification pages is unnecessary and could be noisy.
+    - Recorded audit artifacts in repo: /seo_audit/dist_pages_meta.csv, /seo_audit/pages_unique.txt, /seo_audit/sitemaps.txt
+  - Result: Build OK. Sitemap & robots OK. Hreflang and JSON-LD present on canonical pages. No immediate code fixes required.
+  - Next: Re-run weekly (cron) and monitor for any canonical pages appearing without meta/JSON-LD. If any canonical page lacks meta, I'll patch the template or content immediately and push the fix.
+  - Evidence files saved in repository under /seo_audit/ and build output in session logs.
