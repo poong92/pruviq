@@ -1,0 +1,94 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { useTranslations } from '../../i18n/index';
+
+const t = useTranslations('ko');
+---
+
+<Layout title={t('meta.about_title')} description={t('meta.about_desc')}>
+  <section class="py-12">
+    <div class="max-w-3xl mx-auto px-4">
+
+      <!-- Header -->
+      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('about.tag')}</p>
+      <h1 class="text-3xl md:text-4xl font-bold mb-6">{t('about.title')}</h1>
+      <p class="text-[--color-text-muted] text-lg mb-12 max-w-2xl leading-relaxed">
+        {t('about.mission')}
+      </p>
+
+      <!-- Team -->
+      <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] mb-12">
+        <p class="font-mono text-[--color-accent] text-xs tracking-wider mb-4">{t('about.team_tag')}</p>
+        <p class="text-[--color-text-muted] text-sm leading-relaxed">{t('about.team_desc')}</p>
+
+        <!-- Stats -->
+        <div class="grid grid-cols-3 gap-2 sm:gap-4 mt-6 pt-6 border-t border-[--color-border]">
+          <div class="text-center">
+            <p class="font-mono text-[--color-accent] text-xl font-bold">{t('about.team_stat1_val')}</p>
+            <p class="text-[--color-text-muted] text-xs">{t('about.team_stat1_label')}</p>
+          </div>
+          <div class="text-center">
+            <p class="font-mono text-[--color-accent] text-xl font-bold">{t('about.team_stat2_val')}</p>
+            <p class="text-[--color-text-muted] text-xs">{t('about.team_stat2_label')}</p>
+          </div>
+          <div class="text-center">
+            <p class="font-mono text-[--color-accent] text-xl font-bold">{t('about.team_stat3_val')}</p>
+            <p class="text-[--color-text-muted] text-xs">{t('about.team_stat3_label')}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Philosophy -->
+      <div class="mb-12">
+        <p class="font-mono text-[--color-accent] text-xs tracking-wider mb-2">{t('about.philosophy_tag')}</p>
+        <h2 class="text-2xl font-bold mb-8">{t('about.philosophy_title')}</h2>
+        <div class="grid sm:grid-cols-2 gap-6">
+          <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card]">
+            <h3 class="font-bold mb-2">{t('about.philosophy1_title')}</h3>
+            <p class="text-[--color-text-muted] text-sm">{t('about.philosophy1_desc')}</p>
+          </div>
+          <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card]">
+            <h3 class="font-bold mb-2">{t('about.philosophy2_title')}</h3>
+            <p class="text-[--color-text-muted] text-sm">{t('about.philosophy2_desc')}</p>
+          </div>
+          <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card]">
+            <h3 class="font-bold mb-2">{t('about.philosophy3_title')}</h3>
+            <p class="text-[--color-text-muted] text-sm">{t('about.philosophy3_desc')}</p>
+          </div>
+          <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card]">
+            <h3 class="font-bold mb-2">{t('about.philosophy4_title')}</h3>
+            <p class="text-[--color-text-muted] text-sm">{t('about.philosophy4_desc')}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tech Stack -->
+      <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card] mb-12">
+        <p class="font-mono text-[--color-accent] text-xs tracking-wider mb-2">{t('about.stack_tag')}</p>
+        <p class="text-[--color-text-muted] text-sm">{t('about.stack_desc')}</p>
+        <div class="flex flex-wrap gap-2 mt-4">
+          {['Python', 'Astro', 'Preact', 'Tailwind CSS', 'Cloudflare Pages', 'CoinGecko API'].map(tech => (
+            <span class="font-mono text-xs px-2 py-1 rounded border border-[--color-border] text-[--color-text-muted]">{tech}</span>
+          ))}
+        </div>
+      </div>
+
+      <!-- Contact -->
+      <div class="text-center">
+        <p class="font-mono text-[--color-accent] text-xs tracking-wider mb-2">{t('about.contact_tag')}</p>
+        <p class="text-[--color-text-muted] text-sm mb-4">{t('about.contact_desc')}</p>
+        <div class="flex flex-col sm:flex-row gap-3 justify-center">
+          <a href="mailto:pruviq@gmail.com"
+             class="btn-primary inline-block bg-[--color-accent] text-[--color-bg] px-6 py-2 rounded font-semibold text-sm hover:bg-[--color-accent-dim]">
+            {t('about.contact_email')}
+          </a>
+          <a href="https://t.me/PRUVIQ" target="_blank" rel="noopener noreferrer"
+             class="inline-block border border-[--color-border] text-[--color-text] px-6 py-2 rounded font-semibold text-sm hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
+            {t('about.contact_telegram')} &rarr;
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+</Layout>

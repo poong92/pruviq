@@ -1,0 +1,200 @@
+name: "Auto-Discover Improvements"
+
+# Runs after post-deploy verification passes, or on weekly schedule
+on:
+  workflow_run:
+    workflows: ["Post-Deploy: Verify & Improve"]
+    types: [completed]
+  schedule:
+    - cron: '0 4 * * 1'  # Weekly Monday 04:00 UTC
+  workflow_dispatch: {}
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  discover:
+    name: Find New Improvements
+    runs-on: ubuntu-latest
+    # Only run if post-deploy succeeded, or if triggered manually/schedule
+    if: |
+      github.event_name != 'workflow_run' ||
+      github.event.workflow_run.conclusion == 'success'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build site
+        run: npm run build
+
+      - name: Install Playwright
+        run: npx playwright install --with-deps chromium
+
+      - name: Run Lighthouse (EN homepage)
+        id: lighthouse_en
+        run: |
+          mkdir -p ./reports
+          npx lighthouse https://pruviq.com \
+            --output=json --output-path=./reports/lighthouse-en.json \
+            --chrome-flags="--headless --no-sandbox" \
+            --only-categories=performance,accessibility,best-practices,seo \
+            2>/dev/null || true
+          if [ -f ./reports/lighthouse-en.json ]; then
+            PERF=$(cat ./reports/lighthouse-en.json | python3 -c "import sys,json; d=json.load(sys.stdin); print(int(d.get('categories',{}).get('performance',{}).get('score',0)*100))" 2>/dev/null || echo "0")
+            A11Y=$(cat ./reports/lighthouse-en.json | python3 -c "import sys,json; d=json.load(sys.stdin); print(int(d.get('categories',{}).get('accessibility',{}).get('score',0)*100))" 2>/dev/null || echo "0")
+            SEO=$(cat ./reports/lighthouse-en.json | python3 -c "import sys,json; d=json.load(sys.stdin); print(int(d.get('categories',{}).get('seo',{}).get('score',0)*100))" 2>/dev/null || echo "0")
+            echo "perf=$PERF" >> "$GITHUB_OUTPUT"
+            echo "a11y=$A11Y" >> "$GITHUB_OUTPUT"
+            echo "seo=$SEO" >> "$GITHUB_OUTPUT"
+            echo "Lighthouse EN: Perf=$PERF A11y=$A11Y SEO=$SEO"
+          fi
+
+      - name: Run Lighthouse (KO homepage)
+        run: |
+          mkdir -p ./reports
+          npx lighthouse https://pruviq.com/ko/ \
+            --output=json --output-path=./reports/lighthouse-ko.json \
+            --chrome-flags="--headless --no-sandbox" \
+            --only-categories=performance,accessibility,best-practices,seo \
+            2>/dev/null || true
+
+      - name: Analyze and create improvement issues
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+
+            // Read Lighthouse results
+            let improvements = [];
+
+            for (const file of ['./reports/lighthouse-en.json', './reports/lighthouse-ko.json']) {
+              try {
+                const data = JSON.parse(fs.readFileSync(file, 'utf8'));
+                const cats = data.categories || {};
+                const lang = file.includes('-en') ? 'EN' : 'KO';
+
+                for (const [key, cat] of Object.entries(cats)) {
+                  const score = Math.round((cat.score || 0) * 100);
+                  if (score < 90) {
+                    improvements.push({
+                      category: key,
+                      score: score,
+                      lang: lang,
+                      title: `Lighthouse ${key} score ${score}/100 (${lang})`,
+                    });
+                  }
+                }
+
+                // Extract specific failing audits
+                const audits = data.audits || {};
+                for (const [id, audit] of Object.entries(audits)) {
+                  if (audit.score !== null && audit.score < 0.5 && audit.details?.items?.length > 0) {
+                    const impact = audit.details.items.length;
+                    if (impact >= 3) {
+                      improvements.push({
+                        category: 'audit',
+                        score: Math.round(audit.score * 100),
+                        lang: lang,
+                        title: `${audit.title} (${impact} items, ${lang})`,
+                        auditId: id,
+                      });
+                    }
+                  }
+                }
+              } catch (e) {
+                core.warning(`Failed to parse ${file}: ${e.message}`);
+              }
+            }
+
+            if (improvements.length === 0) {
+              core.info('No improvements found — site scores are excellent!');
+              return;
+            }
+
+            // Deduplicate within this run by title prefix
+            const seen = new Set();
+            const unique = improvements.filter(i => {
+              const key = i.title.substring(0, 40);
+              if (seen.has(key)) return false;
+              seen.add(key);
+              return true;
+            });
+
+            // Check ALL existing issues (open + closed) to avoid duplicates
+            // This prevents re-creating issues that were already fixed and closed
+            const existingOpen = await github.paginate(github.rest.issues.listForRepo, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: 'auto-discovered',
+              per_page: 100,
+            });
+            const existingClosed = await github.paginate(github.rest.issues.listForRepo, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'closed',
+              labels: 'auto-discovered',
+              per_page: 100,
+              since: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(), // last 30 days
+            });
+            const allExisting = [...existingOpen, ...existingClosed];
+
+            // Build a set of normalized title prefixes from existing issues
+            const existingPrefixes = new Set(
+              allExisting.map(i => i.title.toLowerCase().substring(0, 50))
+            );
+
+            core.info(`Found ${existingOpen.length} open + ${existingClosed.length} recently closed auto-discovered issues`);
+
+            let created = 0;
+            for (const imp of unique.slice(0, 3)) {
+              // Build the full title as it would appear
+              const fullTitle = `Improve: ${imp.title}`;
+              const normalizedPrefix = fullTitle.toLowerCase().substring(0, 50);
+
+              // Check if any existing issue has a similar title prefix
+              let isDuplicate = false;
+              for (const prefix of existingPrefixes) {
+                if (prefix === normalizedPrefix || prefix.includes(normalizedPrefix.substring(9, 45)) || normalizedPrefix.includes(prefix.substring(9, 45))) {
+                  isDuplicate = true;
+                  break;
+                }
+              }
+
+              if (isDuplicate) {
+                core.info(`Skipping duplicate: ${fullTitle}`);
+                continue;
+              }
+
+              const body = `## Auto-discovered improvement
+
+            **Category**: ${imp.category}
+            **Score**: ${imp.score}/100
+            **Language**: ${imp.lang}
+
+            This issue was automatically created by the improvement discovery pipeline.
+            Fix this to improve the ${imp.category} score.
+
+            ---
+            _Created by Auto-Discover Improvements workflow_`;
+
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: fullTitle,
+                body: body,
+                labels: ['enhancement', 'auto-discovered'],
+              });
+              created++;
+              existingPrefixes.add(normalizedPrefix); // prevent duplicates within this run
+              core.info(`Created issue: ${fullTitle}`);
+            }
+
+            core.info(`Created ${created} new improvement issues`);

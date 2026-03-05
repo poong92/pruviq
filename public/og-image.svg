@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <pattern id="grid" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+      <line x1="40" y1="0" x2="40" y2="40" stroke="#2CB5E8" stroke-width="0.3" opacity="0.04"/>
+      <line x1="0" y1="40" x2="40" y2="40" stroke="#2CB5E8" stroke-width="0.3" opacity="0.04"/>
+    </pattern>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="#0C1829"/>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+
+  <!-- Accent line chart decoration (same as old, color changed) -->
+  <polyline points="100,450 200,420 300,380 400,400 500,350 600,300 700,320 750,250 800,200 850,220 900,180 950,150 1000,170 1050,140 1100,120" fill="none" stroke="#2CB5E8" stroke-width="2" opacity="0.08"/>
+  <polyline points="100,450 200,420 300,380 400,400 500,350 600,300 700,320 750,250 800,200 850,220 900,180 950,150 1000,170 1050,140 1100,120" fill="none" stroke="#2CB5E8" stroke-width="2" opacity="0.04" stroke-dasharray="4,4" transform="translate(0,20)"/>
+
+  <!-- P✓ Icon (centered, where old green text was) -->
+  <g transform="translate(320, 80) scale(5)">
+    <rect width="32" height="32" rx="6" fill="#111E33"/>
+    <path d="M9.73 23L6.45 23L6.45 6.99L12.69 6.99Q14.52 6.99 15.80 7.69Q17.07 8.38 17.75 9.60Q18.42 10.82 18.42 12.40L18.42 12.40Q18.42 13.99 17.73 15.20Q17.05 16.40 15.75 17.09Q14.45 17.77 12.62 17.77L12.62 17.77L9.73 17.77L9.73 23ZM9.73 9.70L9.73 15.13L12.09 15.13Q13.59 15.13 14.31 14.36Q15.03 13.60 15.03 12.40L15.03 12.40Q15.03 11.18 14.31 10.44Q13.59 9.70 12.08 9.70L12.08 9.70L9.73 9.70Z" fill="#2CB5E8" fill-rule="nonzero"/>
+    <path d="M18 17 L20 19.5 L27 13" stroke="#2CB5E8" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <!-- PRUVIQ (single text, uniform spacing) -->
+  <text x="520" y="195" font-family="'JetBrains Mono','SF Mono','Menlo',monospace" font-size="72" font-weight="700" letter-spacing="4"><tspan fill="#e8eaf0">PRUV</tspan><tspan fill="#2CB5E8">IQ</tspan></text>
+
+  <!-- Tagline -->
+  <text x="600" y="300" text-anchor="middle" font-family="'JetBrains Mono','SF Mono','Menlo',monospace" font-size="24" fill="#8892b0" letter-spacing="4">PROVE YOUR STRATEGY</text>
+
+  <!-- Stats bar -->
+  <rect x="200" y="380" width="800" height="1" fill="#1E2D44"/>
+  <text x="330" y="430" text-anchor="middle" font-family="'JetBrains Mono','SF Mono','Menlo',monospace" font-size="28" font-weight="700" fill="#2CB5E8">535+</text>
+  <text x="330" y="460" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#5A6B82">Coins Simulated</text>
+  <text x="600" y="430" text-anchor="middle" font-family="'JetBrains Mono','SF Mono','Menlo',monospace" font-size="28" font-weight="700" fill="#2CB5E8">2+ yrs</text>
+  <text x="600" y="460" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#5A6B82">Historical Data</text>
+  <text x="870" y="430" text-anchor="middle" font-family="'JetBrains Mono','SF Mono','Menlo',monospace" font-size="28" font-weight="700" fill="#2CB5E8">Free</text>
+  <text x="870" y="460" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#5A6B82">Forever</text>
+
+  <!-- URL -->
+  <text x="600" y="560" text-anchor="middle" font-family="'JetBrains Mono','SF Mono','Menlo',monospace" font-size="18" fill="#3A4B62">pruviq.com</text>
+</svg>

@@ -1,0 +1,445 @@
+---
+import '../styles/global.css'
+import { getLangFromUrl, useTranslations, getAlternatePath, getBasePath } from '../i18n/index';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  type?: 'website' | 'article';
+  date?: string;
+  category?: string;
+  ogImage?: string;
+  canonicalOverride?: string;
+}
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const altPath = getAlternatePath(Astro.url.pathname, lang);
+const basePath = getBasePath(Astro.url.pathname);
+const cfToken = import.meta.env.PUBLIC_CF_ANALYTICS_TOKEN;
+
+const { title, description = t('meta.home_desc'), type = 'website', date, category, canonicalOverride } = Astro.props;
+const ogImage = new URL(Astro.props.ogImage || '/og-image.jpg', Astro.site || 'https://pruviq.com').href;
+const canonicalPath = canonicalOverride || Astro.url.pathname;
+const canonicalURL = new URL(canonicalPath, Astro.site || 'https://pruviq.com');
+const enURL = new URL(basePath, Astro.site || 'https://pruviq.com');
+const koURL = new URL(`/ko${basePath === '/' ? '/' : basePath}`, Astro.site || 'https://pruviq.com');
+
+const marketPath = lang === 'ko' ? '/ko/market' : '/market';
+const simulatePath = lang === 'ko' ? '/ko/simulate' : '/simulate';
+const learnPath = lang === 'ko' ? '/ko/learn' : '/learn';
+const feesPath = lang === 'ko' ? '/ko/fees' : '/fees';
+const aboutPath = lang === 'ko' ? '/ko/about' : '/about';
+const changelogPath = lang === 'ko' ? '/ko/changelog' : '/changelog';
+const methodologyPath = lang === 'ko' ? '/ko/methodology' : '/methodology';
+const apiPath = lang === 'ko' ? '/ko/api' : '/api';
+const compareTvPath = lang === 'ko' ? '/ko/compare/tradingview' : '/compare/tradingview';
+const privacyPath = lang === 'ko' ? '/ko/privacy' : '/privacy';
+const termsPath = lang === 'ko' ? '/ko/terms' : '/terms';
+
+// Legacy paths (for footer/redirects)
+const strategiesPath = lang === 'ko' ? '/ko/strategies' : '/strategies';
+const coinsPath = lang === 'ko' ? '/ko/coins' : '/coins';
+const builderPath = lang === 'ko' ? '/ko/builder' : '/builder';
+const performancePath = lang === 'ko' ? '/ko/performance' : '/performance';
+const blogPath = lang === 'ko' ? '/ko/blog' : '/blog';
+
+// Active nav detection
+const navItems = [
+  { href: marketPath, match: '/market', label: t('nav.market') },
+  { href: simulatePath, match: '/simulate', label: t('nav.simulate') },
+  { href: strategiesPath, match: '/strategies', label: t('nav.strategies') },
+  { href: coinsPath, match: '/coins', label: t('nav.coins') },
+  { href: learnPath, match: '/learn', label: t('nav.learn') },
+  { href: feesPath, match: '/fees', label: t('nav.fees') },
+];
+const isActive = (match: string) => basePath.startsWith(match);
+---
+
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalURL.href} />
+    <link rel="alternate" hreflang="en" href={enURL.href} />
+    <link rel="alternate" hreflang="ko" href={koURL.href} />
+    <link rel="alternate" hreflang="x-default" href={enURL.href} />
+    <meta name="naver-site-verification" content="ece19c45b3e33ec86f4fc79060c3283cea1493ee" />
+    <meta name="yandex-verification" content="a20aa9b1eacf8e51" />
+    <meta name="keywords" content={lang === 'ko'
+      ? '크립토 백테스팅, 트레이딩 전략 빌더, 노코드 백테스터, 암호화폐 전략 시뮬레이터, 무료 백테스팅 도구, 볼린저 밴드 전략, RSI 전략, 크립토 선물 백테스트, 가상화폐 자동매매, 퀀트 트레이딩'
+      : 'crypto backtesting, trading strategy builder, no-code backtester, cryptocurrency strategy simulator, free backtesting tool, Bollinger Bands strategy, RSI strategy, crypto futures backtest'
+    } />
+    <meta name="application-name" content="PRUVIQ" />
+    <link rel="preload" href="/fonts/inter.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/jetbrains-mono.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#0C1829" />
+    {basePath.startsWith('/404') && <meta name="robots" content="noindex" />}
+    <link rel="preconnect" href="https://api.pruviq.com" crossorigin />
+    <link rel="preconnect" href="https://coin-images.coingecko.com" crossorigin />
+    <link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin />
+    <!-- Open Graph -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content={type} />
+    <meta property="og:url" content={canonicalURL.href} />
+    <meta property="og:site_name" content="PRUVIQ" />
+    <meta property="og:locale" content={lang === 'ko' ? 'ko_KR' : 'en_US'} />
+    <meta property="og:image" content={ogImage} />
+    <link rel="preload" href={ogImage.replace('.png', '.avif')} as="image" type="image/avif" />
+    <link rel="preload" href={ogImage.replace('.png', '.webp')} as="image" type="image/webp" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:site" content="@pruviq" />
+    <title>{title}</title>
+    <!-- JSON-LD Organization -->
+    {type === 'website' && (
+      <script type="application/ld+json" set:html={JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "PRUVIQ",
+        "alternateName": lang === 'ko' ? '크립토 전략 검증 플랫폼' : 'Crypto Strategy Lab',
+        "url": "https://pruviq.com",
+        "description": lang === 'ko'
+          ? '무료 크립토 전략 백테스팅 플랫폼. 549개 이상 코인에서 2년 이상의 실제 시장 데이터로 트레이딩 전략을 만들고 테스트하세요.'
+          : 'Free crypto strategy backtesting platform. Build and test trading strategies on 549+ coins with 2+ years of real market data.',
+        "founder": { "@type": "Organization", "name": "PRUVIQ Team" },
+        "sameAs": ["https://t.me/PRUVIQ", "https://x.com/pruviq", "https://github.com/pruviq/pruviq"],
+        "knowsAbout": lang === 'ko'
+          ? ['암호화폐 트레이딩', '백테스팅', '알고리즘 트레이딩', '퀀트 금융']
+          : ['cryptocurrency trading', 'backtesting', 'algorithmic trading', 'quantitative finance']
+      })} />
+    )}
+    <!-- JSON-LD WebApplication (homepage only) -->
+    {type === 'website' && basePath === '/' && (
+      <script type="application/ld+json" set:html={JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": lang === 'ko' ? 'PRUVIQ 전략 시뮬레이터' : 'PRUVIQ Strategy Simulator',
+        "applicationCategory": "FinanceApplication",
+        "operatingSystem": "Web",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "description": lang === 'ko'
+          ? '549개 이상 코인에서 크립토 트레이딩 전략을 만들고 테스트하세요. 노코드 전략 빌더, 인터랙티브 차트, 진입/청산 마커 제공.'
+          : 'Build and test crypto trading strategies on 549+ coins. No-code strategy builder with interactive charts and entry/exit markers.',
+        "featureList": lang === 'ko'
+          ? ['노코드 전략 빌더', '549+ 코인 백테스팅', '11개 이상 기술 지표', '인터랙티브 차트', '전략 검증']
+          : ['No-code strategy builder', '549+ coin backtesting', '11+ technical indicators', 'Interactive charts', 'Strategy verification']
+      })} />
+    )}
+    <!-- JSON-LD FAQPage (homepage only) -->
+    {type === 'website' && basePath === '/' && (
+      <script type="application/ld+json" set:html={JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": lang === 'ko' ? [
+          {
+            "@type": "Question",
+            "name": "PRUVIQ란 무엇인가요?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "PRUVIQ는 무료 크립토 전략 백테스팅 플랫폼입니다. 11개 이상의 기술 지표를 사용하여 맞춤 트레이딩 전략을 만들고, 549개 이상의 코인에서 2년 이상의 실제 시장 데이터로 백테스트하며, 수수료와 슬리피지를 포함한 현실적인 결과를 확인할 수 있습니다. 코딩 불필요."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "PRUVIQ 전략 빌더는 어떻게 작동하나요?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "노코드 전략 빌더에서 지표(볼린저 밴드, RSI, MACD, EMA, 스토캐스틱, ADX, ATR, 거래량 등)를 AND/OR 논리와 비교 연산자로 조합할 수 있습니다. 진입 조건, 손절, 익절, 시간 필터를 설정한 후 3초 이내에 전체 코인 백테스트를 실행합니다."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "PRUVIQ는 무료인가요?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "네, PRUVIQ의 핵심 백테스팅 기능은 완전 무료입니다. 전략 만들기, 549개 이상 코인 백테스트, 모든 교육 콘텐츠 이용이 결제나 계정 생성 없이 가능합니다."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "PRUVIQ는 TradingView 등 다른 백테스팅 도구와 어떻게 다른가요?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "PRUVIQ는 코딩 없이 사용할 수 있는 크립토 선물 전용 백테스팅 플랫폼입니다. TradingView(Pine Script 필요)나 QuantConnect(Python/C# 필요)와 달리, 시각적 전략 빌더를 제공합니다. 549개 이상 코인 동시 테스트, 현실적 수수료·슬리피지 반영, 실패 전략까지 모두 공개합니다."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "PRUVIQ의 전략은 어떻게 검증되나요?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "PRUVIQ는 549개 이상의 코인에서 2년 이상의 과거 데이터로 모든 전략을 백테스트합니다. 수수료, 슬리피지, 펀딩비를 포함한 현실적인 시뮬레이션으로 검증하며, 실패한 전략도 모두 공개합니다."
+            }
+          }
+        ] : [
+          {
+            "@type": "Question",
+            "name": "What is PRUVIQ?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "PRUVIQ is a free crypto strategy backtesting platform. You can build custom trading strategies using 11+ technical indicators, backtest them on 549+ coins with 2+ years of real market data, and see realistic results including fees and slippage. No coding required."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How does PRUVIQ's strategy builder work?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "The no-code strategy builder lets you combine indicators (Bollinger Bands, RSI, MACD, EMA, Stochastic, ADX, ATR, Volume, etc.) with AND/OR logic and comparison operators. You set entry conditions, stop-loss, take-profit, and time filters, then run a full backtest across all coins in under 3 seconds."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is PRUVIQ free?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes, PRUVIQ's core backtesting features are completely free. You can build strategies, run backtests on 549+ coins, and access all education content without any payment or account creation."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What makes PRUVIQ different from TradingView or other backtesting tools?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "PRUVIQ is specifically built for crypto futures with no coding required. Unlike TradingView (requires Pine Script) or QuantConnect (requires Python/C#), PRUVIQ offers a visual strategy builder. It also publishes all backtest results including failures, tests on 549+ coins simultaneously, and includes realistic fees and slippage in all simulations."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How does PRUVIQ verify strategies?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "PRUVIQ backtests all strategies on 549+ coins with 2+ years of historical data. Every simulation includes realistic fees, slippage, and funding costs. Failed strategies are published alongside successful ones for full transparency."
+            }
+          }
+        ]
+      })} />
+    )}
+    <!-- JSON-LD Article (for blog posts) -->
+    {type === 'article' && date && (
+      <script type="application/ld+json" set:html={JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "headline": title,
+        "description": description,
+        "datePublished": date,
+        "dateModified": date,
+        "author": { "@type": "Organization", "name": "PRUVIQ" },
+        "publisher": {
+          "@type": "Organization",
+          "name": "PRUVIQ",
+          "url": "https://pruviq.com"
+        },
+        "mainEntityOfPage": canonicalURL.href,
+        "articleSection": category || "education"
+      })} />
+    )}
+    <!-- JSON-LD BreadcrumbList (skip for 404 pages) -->
+    {basePath !== '/' && !basePath.startsWith('/404') && (
+      <script type="application/ld+json" set:html={JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://pruviq.com/" },
+          { "@type": "ListItem", "position": 2, "name": title, "item": canonicalURL.href }
+        ]
+      })} />
+    )}
+    <!-- JSON-LD HowTo (homepage) -->
+    {type === 'website' && basePath === '/' && (
+      <script type="application/ld+json" set:html={JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "HowTo",
+        "name": lang === 'ko' ? 'PRUVIQ로 크립토 전략 백테스트하는 방법' : 'How to Backtest a Crypto Strategy with PRUVIQ',
+        "description": lang === 'ko' ? '3단계로 트레이딩 전략을 무료로 검증하세요' : 'Verify your trading strategy in 3 steps for free',
+        "totalTime": "PT3M",
+        "step": lang === 'ko' ? [
+          { "@type": "HowToStep", "position": 1, "name": "전략 선택", "text": "라이브러리에서 전략을 고르거나 11개 이상의 지표로 나만의 전략을 만드세요." },
+          { "@type": "HowToStep", "position": 2, "name": "시뮬레이션", "text": "549개 이상의 코인에서 2년 이상의 과거 데이터로 백테스트하세요. 수수료와 슬리피지 포함." },
+          { "@type": "HowToStep", "position": 3, "name": "검증", "text": "승률, 최대 낙폭, 수익 팩터, 연패 기록을 확인한 후 실거래 투입 여부를 결정하세요." }
+        ] : [
+          { "@type": "HowToStep", "position": 1, "name": "Select", "text": "Pick a strategy from the library or build your own using the no-code builder with 11+ indicators." },
+          { "@type": "HowToStep", "position": 2, "name": "Simulate", "text": "Run it on 549+ coins with 2+ years of historical data. Fees and slippage included." },
+          { "@type": "HowToStep", "position": 3, "name": "Verify", "text": "Review win rate, drawdown, profit factor, and losing streaks. Then decide if it's worth trading." }
+        ]
+      })} />
+    )}
+</head>
+  <body class="min-h-screen">
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:bg-[--color-accent] focus:text-white focus:rounded">
+      Skip to main content
+    </a>
+    <div id="page-loader"></div>
+    <header>
+    <nav class="fixed top-0 w-full z-50 border-b border-[--color-border] bg-[--color-bg]/80 backdrop-blur-md" role="navigation" aria-label="Main">
+      <div class="max-w-6xl mx-auto px-4 h-16 grid grid-cols-[auto_1fr_auto] items-center">
+        <!-- 1열: Logo (좌측) -->
+        <a href={lang === 'ko' ? '/ko/' : '/'} class="flex items-center gap-2">
+          <img src="/favicon.svg" alt="PRUVIQ" width="28" height="28" class="w-7 h-7" />
+          <span class="font-mono font-bold text-xl tracking-wider"><span class="text-[--color-text]">PRUV</span><span class="text-[#2CB5E8]">IQ</span></span>
+        </a>
+        <!-- 2열: Nav (정중앙, 데스크톱 only) -->
+        <div class="hidden md:flex items-center justify-center gap-8 text-sm">
+          {navItems.map(item => (
+            <a href={item.href} aria-current={isActive(item.match) ? "page" : undefined} class="transition-colors" style={isActive(item.match) ? 'color:var(--color-accent);font-weight:500' : 'color:var(--color-text-muted)'}>{item.label}</a>
+          ))}
+        </div>
+        <!-- 3열: Lang + Mobile hamburger (우측) -->
+        <div class="flex items-center justify-end gap-3">
+          <a href={altPath} class="hidden md:inline-flex font-mono text-xs px-3 py-1.5 border border-[--color-border] rounded hover:border-[--color-accent] hover:text-[--color-accent] hover:bg-[--color-accent]/5 text-[--color-text-muted] transition-colors">{t('nav.lang')}</a>
+          <button id="mobile-menu-btn" class="md:hidden text-[--color-text-muted]" aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-menu">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+          </button>
+        </div>
+      </div>
+      <div id="mobile-menu" class="hidden md:hidden border-t border-[--color-border] bg-[--color-bg]" aria-hidden="true">
+        <div class="flex flex-col px-4 py-4 gap-1 text-sm">
+          {navItems.map(item => (
+            <a href={item.href} aria-current={isActive(item.match) ? "page" : undefined} class="min-h-[44px] flex items-center" style={isActive(item.match) ? 'color:var(--color-accent);font-weight:500' : 'color:var(--color-text-muted)'}>{item.label}</a>
+          ))}
+          <a href={methodologyPath} class="min-h-[44px] flex items-center text-[--color-text-muted]">{t('footer.methodology')}</a>
+          <a href={performancePath} class="min-h-[44px] flex items-center text-[--color-text-muted]">{t('nav.performance')}</a>
+          <div class="border-t border-[--color-border] mt-2 pt-2">
+            <a href={altPath} class="font-mono text-xs px-2 py-1 border border-[--color-border] rounded text-[--color-text-muted] w-fit min-h-[44px] flex items-center hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">{t('nav.lang')}</a>
+          </div>
+        </div>
+      </div>
+    </nav>
+    </header>
+
+    <main id="main-content" role="main" aria-label="Page content" class="pt-16 pb-16">
+      {!basePath.startsWith('/404') && <Breadcrumbs />}
+      <slot />
+    </main>
+
+    <footer class="border-t border-[--color-border] mt-20" role="contentinfo" aria-label="Site footer">
+      <div class="max-w-6xl mx-auto px-4 py-12">
+        <!-- Brand + 3-column links -->
+        <div class="flex flex-col md:flex-row gap-10 mb-10">
+          <div class="md:w-1/3">
+            <span class="flex items-center gap-1.5">
+              <img src="/favicon.svg" alt="PRUVIQ" width="24" height="24" class="w-6 h-6" />
+              <span class="font-mono font-bold text-lg tracking-wider"><span class="text-[--color-text]">PRUV</span><span class="text-[#2CB5E8]">IQ</span></span>
+            </span>
+            <p class="text-[--color-text-muted] text-sm mt-2">{t('footer.tagline')}</p>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-8 md:w-2/3 text-sm">
+            <div>
+              <p class="font-mono text-[--color-text-muted] text-xs uppercase tracking-wider mb-3">{t('footer.col_product')}</p>
+              <div class="flex flex-col gap-2">
+                <a href={marketPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('nav.market')}</a>
+                <a href={simulatePath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('nav.simulate')}</a>
+                <a href={strategiesPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('nav.strategies')}</a>
+                <a href={coinsPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('nav.coins')}</a>
+                <a href={feesPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('footer.fees')}</a>
+              </div>
+            </div>
+            <div>
+              <p class="font-mono text-[--color-text-muted] text-xs uppercase tracking-wider mb-3">{t('footer.col_resources')}</p>
+              <div class="flex flex-col gap-2">
+                <a href={learnPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('nav.learn')}</a>
+                <a href={blogPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('nav.blog')}</a>
+                <a href={aboutPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('footer.about')}</a>
+                <a href={changelogPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('footer.changelog')}</a>
+                <a href={methodologyPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('footer.methodology')}</a>
+                <a href={apiPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('footer.api')}</a>
+                <a href={compareTvPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('footer.compare')}</a>
+                <a href="https://t.me/PRUVIQ" target="_blank" rel="noopener noreferrer" class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('footer.telegram')}</a>
+                <a href="https://x.com/pruviq" target="_blank" rel="noopener noreferrer" class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">X / Twitter</a>
+                <a href="https://github.com/pruviq/pruviq" target="_blank" rel="noopener noreferrer" class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">GitHub</a>
+              </div>
+            </div>
+            <div>
+              <p class="font-mono text-[--color-text-muted] text-xs uppercase tracking-wider mb-3">{t('footer.col_legal')}</p>
+              <div class="flex flex-col gap-2">
+                <a href={privacyPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('footer.privacy')}</a>
+                <a href={termsPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('footer.terms')}</a>
+                <a href="mailto:pruviq@gmail.com" class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">pruviq@gmail.com</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Divider -->
+        <div class="border-t border-[--color-border] pt-6 flex flex-col md:flex-row justify-between items-center gap-3 text-xs text-[--color-text-muted]">
+          <p>{t('footer.disclaimer')}</p>
+          <div class="flex items-center gap-4 flex-wrap">
+            <p>{t('footer.affiliate')} <a href={feesPath} class="text-[--color-accent] hover:underline">{t('footer.details')}</a></p>
+            <span>&copy; 2026 PRUVIQ</span>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Sticky CTA Bar (appears on scroll) -->
+    <div id="sticky-cta" class="fixed bottom-0 left-0 right-0 z-40 translate-y-full transition-transform duration-300 border-t border-[--color-border] bg-[--color-bg]/95 backdrop-blur-md" role="complementary" aria-label="Quick action bar">
+      <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+        <p class="text-sm text-[--color-text-muted] hidden sm:block">{t('hero.subtitle')}</p>
+        <a href={simulatePath} class="bg-[--color-accent] text-[--color-bg] px-6 py-2 rounded font-semibold text-sm hover:bg-[--color-accent-dim] whitespace-nowrap shrink-0">
+          {t('hero.cta_primary')} &rarr;
+        </a>
+      </div>
+    </div>
+
+    <script type="module" src="/scripts/layout-client.js" defer></script>
+    <script>
+      /* Sticky CTA bar - show after scrolling past hero */
+      (function() {
+        var bar = document.getElementById('sticky-cta');
+        if (!bar) return;
+        var shown = false;
+        function check() {
+          var shouldShow = window.scrollY > 300;
+          if (shouldShow !== shown) {
+            shown = shouldShow;
+            bar.style.transform = shown ? 'translateY(0)' : 'translateY(100%)';
+          }
+        }
+        window.addEventListener('scroll', check, { passive: true });
+      })();
+    </script>
+    {cfToken && (
+      <>
+        <script>
+          /* Lazy-load Cloudflare beacon loader during idle or after load to reduce main-thread work */
+          (function() {
+            function loadCF() {
+              try {
+                var s = document.createElement('script');
+                s.type = 'module';
+                s.src = '/scripts/cf-beacon-loader.js';
+                s.defer = true;
+                document.body.appendChild(s);
+              } catch (e) { /* ignore */ }
+            }
+            if (typeof window !== 'undefined') {
+              if ('requestIdleCallback' in window) {
+                requestIdleCallback(loadCF, { timeout: 2000 });
+              } else {
+                window.addEventListener('load', loadCF);
+                setTimeout(loadCF, 2000);
+              }
+            }
+          })();
+        </script>
+      </>
+    )}
+  </body>
+</html>

@@ -1,0 +1,41 @@
+name: Accessibility
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  accessibility:
+    name: axe Accessibility Audit
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: actions/setup-node@v4
+      with:
+        node-version: '22'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Install test dependencies
+      run: npm install -D @playwright/test axe-core
+
+    - name: Install Chromium
+      run: npx playwright install --with-deps chromium
+
+    - name: Build site
+      run: npm run build
+
+    - name: Run accessibility tests
+      run: npx playwright test tests/accessibility/
+      env:
+        CI: true
+
+    - name: Upload axe reports
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: axe-reports
+        path: reports/
+        retention-days: 14

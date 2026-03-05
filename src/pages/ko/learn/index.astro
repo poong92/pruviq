@@ -1,0 +1,140 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+import { useTranslations } from '../../../i18n/index';
+import LearnProgress from '../../../components/LearnProgress.tsx';
+import LearnCard from '../../../components/LearnCard.tsx';
+
+const t = useTranslations('ko');
+
+// Get both Korean and English posts
+const koPosts = await getCollection('blog-ko');
+const enPosts = await getCollection('blog');
+const koIds = new Set(koPosts.map(p => p.id));
+
+// Combine: Korean posts + English posts without Korean version
+const allPosts = [
+  ...koPosts.map(p => ({ ...p, isKorean: true })),
+  ...enPosts.filter(p => !koIds.has(p.id)).map(p => ({ ...p, isKorean: false })),
+].sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
+
+// Group by level
+const beginner = allPosts.filter(p =>
+  p.data.tags?.includes('beginners') ||
+  p.id === 'what-is-bb-squeeze' ||
+  p.id === 'risk-management-101' ||
+  p.id === 'why-pruviq' ||
+  p.id === 'crypto-trading-fees-explained'
+);
+
+const intermediate = allPosts.filter(p =>
+  ['rsi-oversold-overbought-guide', 'ema-crossover-strategy-guide', 'macd-divergence-trading-guide',
+   'volume-analysis-crypto-trading', 'stochastic-adx-trend-strength', 'sl-tp-optimization-guide',
+   'save-on-binance-futures-fees', 'ichimoku-cloud-trading-guide', 'fibonacci-retracement-guide',
+   'vwap-trading-guide', 'support-resistance-guide', 'candlestick-patterns-guide',
+   'atr-volatility-guide'].includes(p.id)
+);
+
+const advanced = allPosts.filter(p =>
+  p.data.category === 'quant' ||
+  p.data.category === 'market' ||
+  ['tp8-decision-process'].includes(p.id)
+);
+
+// Tag translation map (EN → KO)
+const tagMap: Record<string, string> = {
+  'beginners': '입문', 'futures': '선물', 'leverage': '레버리지',
+  'perpetual-contracts': '무기한계약', 'bollinger-bands': '볼린저밴드',
+  'squeeze': '스퀴즈', 'volatility': '변동성', 'risk-management': '리스크관리',
+  'position-sizing': '포지션사이징', 'stop-loss': '손절', 'take-profit': '익절',
+  'backtesting': '백테스트', 'overfitting': '과적합', 'look-ahead-bias': '미래편향',
+  'rsi': 'RSI', 'ema': 'EMA', 'macd': 'MACD', 'atr': 'ATR', 'vwap': 'VWAP',
+  'adx': 'ADX', 'indicators': '지표', 'momentum': '모멘텀',
+  'oversold': '과매도', 'overbought': '과매수', 'mean-reversion': '평균회귀',
+  'crossover': '크로스오버', 'moving-average': '이동평균',
+  'trend-following': '추세추종', 'divergence': '다이버전스',
+  'volume': '거래량', 'confirmation': '확인', 'fakeouts': '페이크아웃',
+  'stochastic': '스토캐스틱', 'trend-strength': '추세강도',
+  'risk-reward': '손익비', 'optimization': '최적화',
+  'fees': '수수료', 'exchanges': '거래소', 'cost-optimization': '비용최적화',
+  'binance': '바이낸스', 'referral': '레퍼럴',
+  'ichimoku': '일목균형표', 'cloud': '구름', 'trend': '추세',
+  'support-resistance': '지지/저항', 'support': '지지', 'resistance': '저항',
+  'fibonacci': '피보나치', 'retracement': '되돌림',
+  'technical-analysis': '기술적분석', 'price-action': '가격행동',
+  'candlestick': '캔들스틱', 'patterns': '패턴', 'doji': '도지', 'engulfing': '장악형',
+  'institutional': '기관', 'intraday': '장중',
+  'kelly-criterion': '켈리기준', 'math': '수학',
+  'market-review': '시장리뷰', 'btc': 'BTC', 'crash': '폭락',
+  'real-data': '실데이터', 'crypto': '크립토', 'algorithmic-trading': '알고리즘매매',
+  'python': 'Python', 'pruviq': 'PRUVIQ', 'origin': '기원', 'philosophy': '철학',
+  'bb-squeeze': 'BB스퀴즈', 'tp': 'TP', 'decision': '의사결정',
+  'v1.7.0': 'v1.7.0', 'expert-panel': '전문가패널',
+  'levels': '레벨', 'feb-2026': '2026년2월',
+};
+
+const levelConfig = [
+  { level: 'beginner', label: t('learn.level_beginner'), title: t('learn.level_beginner_title'), desc: t('learn.level_beginner_desc'), color: 'green', posts: beginner },
+  { level: 'intermediate', label: t('learn.level_intermediate'), title: t('learn.level_intermediate_title'), desc: t('learn.level_intermediate_desc'), color: 'yellow', posts: intermediate },
+  { level: 'advanced', label: t('learn.level_advanced'), title: t('learn.level_advanced_title'), desc: t('learn.level_advanced_desc'), color: 'red', posts: advanced },
+];
+---
+
+<Layout title={t('meta.learn_title')} description={t('meta.learn_desc')}>
+
+  <!-- HERO -->
+  <section class="py-16">
+    <div class="max-w-5xl mx-auto px-4">
+      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('learn.tag')}</p>
+      <h1 class="text-3xl md:text-5xl font-bold mb-4">
+        {t('learn.title')}<br/>{t('learn.title2')}
+      </h1>
+      <p class="text-[--color-text-muted] text-lg mb-4 max-w-2xl">
+        {t('learn.desc').replace('{count}', String(allPosts.length))}
+      </p>
+      <LearnProgress client:visible postIds={allPosts.map(p => p.id)} lang="ko" />
+    </div>
+  </section>
+
+  <!-- LEVELS -->
+  {levelConfig.map(({ level, label, title, desc, color, posts: levelPosts }) => (
+    <section class="pb-12 border-t border-[--color-border] pt-12">
+      <div class="max-w-5xl mx-auto px-4">
+        <div class="flex items-center gap-3 mb-2">
+          <span class={`text-xs font-mono px-2 py-0.5 rounded bg-${color}-500/10 text-${color}-400 border border-${color}-500/20`}>
+            {label}
+          </span>
+          <h2 class="text-2xl font-bold">{title}</h2>
+        </div>
+        <p class="text-[--color-text-muted] text-sm mb-6">{desc}</p>
+
+        <div class="grid md:grid-cols-2 gap-4">
+          {levelPosts.map(post => (
+            <LearnCard
+              client:visible
+              postId={post.id}
+              href={post.isKorean ? `/ko/blog/${post.id}` : `/blog/${post.id}`}
+              title={post.data.title}
+              description={post.data.description}
+              tags={post.data.tags}
+              tagMap={tagMap}
+              isEnglish={!post.isKorean}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+  ))}
+
+  <!-- CTA -->
+  <section class="pb-16 border-t border-[--color-border] pt-12">
+    <div class="max-w-5xl mx-auto px-4 text-center">
+      <h2 class="text-xl font-bold mb-3">{t('learn.cta_title')}</h2>
+      <p class="text-[--color-text-muted] text-sm mb-6">{t('learn.cta_desc')}</p>
+      <a href="/ko/simulate" class="btn-primary inline-block bg-[--color-accent] text-[--color-bg] px-6 py-2.5 rounded font-semibold text-sm hover:bg-[--color-accent-dim]">
+        {t('learn.cta_button')} &rarr;
+      </a>
+    </div>
+  </section>
+
+</Layout>

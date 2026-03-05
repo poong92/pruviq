@@ -1,0 +1,84 @@
+---
+import { getLangFromUrl, useTranslations } from '../i18n/index';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const pathname = Astro.url.pathname;
+// Remove lang prefix and trailing slash
+let cleanPath = pathname.replace(/^\/ko/, '').replace(/\/$/, '') || '/';
+
+// Build breadcrumb items from path segments
+const segments = cleanPath === '/' ? [] : cleanPath.split('/').filter(Boolean);
+
+interface BreadcrumbItem {
+  label: string;
+  href: string;
+}
+
+const labelMap: Record<string, Record<string, string>> = {
+  en: {
+    market: 'Market',
+    strategies: 'Strategies',
+    coins: 'Coins',
+    builder: 'Builder',
+    simulate: 'Simulate',
+    learn: 'Learn',
+    fees: 'Fees',
+    blog: 'Blog',
+    about: 'About',
+    changelog: 'Changelog',
+    performance: 'Performance',
+    compare: 'Compare',
+    privacy: 'Privacy',
+    terms: 'Terms',
+  },
+  ko: {
+    market: '시장',
+    strategies: '전략',
+    coins: '코인',
+    builder: '빌더',
+    simulate: '시뮬레이션',
+    learn: '학습',
+    fees: '수수료',
+    blog: '블로그',
+    about: '소개',
+    changelog: '변경 이력',
+    performance: '성과',
+    compare: '비교',
+    privacy: '개인정보',
+    terms: '이용약관',
+  },
+};
+
+const items: BreadcrumbItem[] = [{ label: 'PRUVIQ', href: lang === 'ko' ? '/ko/' : '/' }];
+let cumulativePath = lang === 'ko' ? '/ko' : '';
+
+for (const seg of segments) {
+  cumulativePath += `/${seg}`;
+  const label = labelMap[lang]?.[seg] || seg.replace(/-/g, ' ').replace(/usdt$/i, '/USDT').toUpperCase();
+  items.push({ label, href: `${cumulativePath}/` });
+}
+---
+
+{segments.length > 0 && (
+  <nav aria-label="Breadcrumb" class="max-w-6xl mx-auto px-4 pt-4 pb-2">
+    <ol class="flex flex-wrap items-center gap-1.5 font-mono text-[0.6875rem] text-[--color-text-muted]"
+        itemscope itemtype="https://schema.org/BreadcrumbList">
+      {items.map((item, i) => (
+        <li class="flex items-center gap-1.5"
+            itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+          {i > 0 && <span class="text-[--color-border]">/</span>}
+          {i < items.length - 1 ? (
+            <a href={item.href} itemprop="item" class="hover:text-[--color-accent] transition-colors">
+              <span itemprop="name">{item.label}</span>
+            </a>
+          ) : (
+            <span itemprop="name" class="text-[--color-text]">{item.label}</span>
+          )}
+          <meta itemprop="position" content={String(i + 1)} />
+        </li>
+      ))}
+    </ol>
+  </nav>
+)}

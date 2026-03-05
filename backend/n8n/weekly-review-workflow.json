@@ -1,0 +1,157 @@
+{
+  "name": "PRUVIQ Weekly Review Generator",
+  "nodes": [
+    {
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 3 * * 1"
+            }
+          ]
+        }
+      },
+      "position": [250, 300],
+      "notes": "Every Monday 03:00 UTC"
+    },
+    {
+      "name": "Fetch BTC Price",
+      "type": "n8n-nodes-base.httpRequest",
+      "parameters": {
+        "url": "https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT",
+        "method": "GET",
+        "responseFormat": "json"
+      },
+      "position": [450, 200]
+    },
+    {
+      "name": "Fetch PRUVIQ Stats",
+      "type": "n8n-nodes-base.httpRequest",
+      "parameters": {
+        "url": "http://localhost:8080/simulate",
+        "method": "POST",
+        "body": {
+          "strategy": "bb-squeeze",
+          "direction": "short",
+          "sl_pct": 10,
+          "tp_pct": 8,
+          "top_n": 50
+        },
+        "responseFormat": "json"
+      },
+      "position": [450, 400],
+      "notes": "From local PRUVIQ API"
+    },
+    {
+      "name": "Generate Draft",
+      "type": "n8n-nodes-base.httpRequest",
+      "parameters": {
+        "url": "http://localhost:11434/api/generate",
+        "method": "POST",
+        "body": {
+          "model": "qwen2.5:32b",
+          "prompt": "You are writing a weekly market review blog post for PRUVIQ, a crypto strategy simulation platform.\n\nData:\n- BTC Price: {{$node['Fetch BTC Price'].json.lastPrice}}\n- BTC 24h Change: {{$node['Fetch BTC Price'].json.priceChangePercent}}%\n- BB Squeeze Simulation: {{$node['Fetch PRUVIQ Stats'].json.total_trades}} trades, WR={{$node['Fetch PRUVIQ Stats'].json.win_rate}}%, PF={{$node['Fetch PRUVIQ Stats'].json.profit_factor}}\n\nWrite a concise blog post (300-500 words) in markdown format.\nTitle format: 'Week of [DATE]: [KEY THEME]'\n\nInclude:\n1. Market Overview (BTC trend, key events)\n2. Strategy Performance (BB Squeeze SHORT stats)\n3. Key Takeaway (one actionable insight)\n\nTone: analytical, data-driven. No financial advice.",
+          "stream": false
+        },
+        "responseFormat": "json"
+      },
+      "position": [650, 300],
+      "notes": "Ollama qwen2.5:32b on Mac Mini"
+    },
+    {
+      "name": "Fact Check",
+      "type": "n8n-nodes-base.httpRequest",
+      "parameters": {
+        "url": "http://localhost:11434/api/generate",
+        "method": "POST",
+        "body": {
+          "model": "qwen2.5:32b",
+          "prompt": "You are a fact-checker for a crypto blog. Check the following draft for:\n1. Price claims match the data provided\n2. No future predictions or guarantees\n3. Includes proper disclaimers\n4. Stats are accurately cited\n\nDraft:\n{{$node['Generate Draft'].json.response}}\n\nOriginal data:\n- BTC: {{$node['Fetch BTC Price'].json.lastPrice}}\n- Sim stats: WR={{$node['Fetch PRUVIQ Stats'].json.win_rate}}%\n\nRespond with PASS or FAIL and list any issues.",
+          "stream": false
+        },
+        "responseFormat": "json"
+      },
+      "position": [850, 300]
+    },
+    {
+      "name": "Check Result",
+      "type": "n8n-nodes-base.if",
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$node['Fact Check'].json.response}}",
+              "operation": "contains",
+              "value2": "PASS"
+            }
+          ]
+        }
+      },
+      "position": [1050, 300]
+    },
+    {
+      "name": "Save Draft",
+      "type": "n8n-nodes-base.writeFile",
+      "parameters": {
+        "fileName": "/tmp/pruviq-weekly-{{$now.format('YYYY-MM-DD')}}.md",
+        "fileContent": "={{$node['Generate Draft'].json.response}}"
+      },
+      "position": [1250, 200],
+      "notes": "Passed fact check — save for human review"
+    },
+    {
+      "name": "Send Notification",
+      "type": "n8n-nodes-base.telegram",
+      "parameters": {
+        "chatId": "YOUR_CHAT_ID",
+        "text": "Weekly review draft ready for review:\n/tmp/pruviq-weekly-{{$now.format('YYYY-MM-DD')}}.md\n\nFact check: PASSED",
+        "additionalFields": {}
+      },
+      "position": [1250, 400],
+      "notes": "Notify for human review"
+    },
+    {
+      "name": "Flag for Review",
+      "type": "n8n-nodes-base.telegram",
+      "parameters": {
+        "chatId": "YOUR_CHAT_ID",
+        "text": "Weekly review FAILED fact check:\n{{$node['Fact Check'].json.response}}\n\nManual review required.",
+        "additionalFields": {}
+      },
+      "position": [1250, 500],
+      "notes": "Failed fact check — needs manual edit"
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [[
+        {"node": "Fetch BTC Price", "type": "main", "index": 0},
+        {"node": "Fetch PRUVIQ Stats", "type": "main", "index": 0}
+      ]]
+    },
+    "Fetch BTC Price": {
+      "main": [[{"node": "Generate Draft", "type": "main", "index": 0}]]
+    },
+    "Fetch PRUVIQ Stats": {
+      "main": [[{"node": "Generate Draft", "type": "main", "index": 0}]]
+    },
+    "Generate Draft": {
+      "main": [[{"node": "Fact Check", "type": "main", "index": 0}]]
+    },
+    "Fact Check": {
+      "main": [[{"node": "Check Result", "type": "main", "index": 0}]]
+    },
+    "Check Result": {
+      "main": [
+        [{"node": "Save Draft", "type": "main", "index": 0}, {"node": "Send Notification", "type": "main", "index": 0}],
+        [{"node": "Flag for Review", "type": "main", "index": 0}]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

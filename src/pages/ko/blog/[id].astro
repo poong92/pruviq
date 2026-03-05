@@ -1,0 +1,110 @@
+---
+import { getCollection, render } from 'astro:content';
+import Layout from '../../../layouts/Layout.astro';
+import { useTranslations } from '../../../i18n/index';
+
+const t = useTranslations('ko');
+
+export async function getStaticPaths() {
+  const koPosts = await getCollection('blog-ko');
+  const enPosts = await getCollection('blog');
+
+  const koIds = new Set(koPosts.map(p => p.id));
+
+  const paths = [
+    ...koPosts.map((post) => ({
+      params: { id: post.id },
+      props: { post, isKorean: true },
+    })),
+    ...enPosts.filter(p => !koIds.has(p.id)).map((post) => ({
+      params: { id: post.id },
+      props: { post, isKorean: false },
+    })),
+  ];
+
+  return paths;
+}
+
+const { post, isKorean } = Astro.props;
+const { Content } = await render(post);
+
+const categoryLabels: Record<string, string> = {
+  market: t('blog.category.market'),
+  quant: t('blog.category.quant'),
+  strategy: t('blog.category.strategy'),
+  weekly: t('blog.category.weekly'),
+  education: t('blog.category.education'),
+};
+---
+
+<Layout title={`${post.data.title} - PRUVIQ`} description={post.data.description} type="article" date={post.data.date} category={post.data.category}>
+  <article class="py-12">
+    <div class="max-w-3xl mx-auto px-4">
+      <a href="/ko/learn" class="text-[--color-text-muted] text-sm hover:text-[--color-accent] transition-colors mb-8 inline-block">
+        &larr; {t('blog.back')}
+      </a>
+
+      {!isKorean && (
+        <div class="mb-4 px-3 py-2 border border-[--color-border] rounded bg-[--color-bg-card] text-sm text-[--color-text-muted]">
+          This content is available in English only.
+        </div>
+      )}
+
+      <div class="mb-8">
+        <span class="font-mono text-[--color-accent] text-xs tracking-wider">
+          {categoryLabels[post.data.category] || post.data.category.toUpperCase()}
+        </span>
+        <h1 class="text-3xl md:text-4xl font-bold mt-2 mb-4">{post.data.title}</h1>
+        <div class="flex items-center gap-3 text-sm text-[--color-text-muted]">
+          <span class="font-mono">{post.data.date}</span>
+          <span class="text-[--color-border]">|</span>
+          <span>{post.data.author || 'PRUVIQ Research'}</span>
+        </div>
+      </div>
+
+      <div class="prose">
+        <Content />
+      </div>
+
+      <!-- Newsletter CTA -->
+      <div class="mt-10 border border-[--color-accent]/30 rounded-lg p-5 bg-[--color-accent]/5 text-center">
+        <p class="font-bold text-sm mb-1">전략 업데이트 받기</p>
+        <p class="text-[--color-text-muted] text-xs mb-3">시장 분석, 새 전략, 백테스트 결과를 텔레그램으로 받아보세요.</p>
+        <a href="https://t.me/PRUVIQ" target="_blank" rel="noopener noreferrer"
+           class="inline-flex items-center gap-2 bg-[--color-accent] text-[--color-bg] px-5 py-2 rounded font-semibold text-sm hover:bg-[--color-accent-dim]">
+          PRUVIQ 채널 참여 &rarr;
+        </a>
+      </div>
+
+      <!-- Article end CTA -->
+      <div class="mt-12 border-t border-[--color-border] pt-8">
+        <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] text-center">
+          <h3 class="font-bold text-lg mb-2">{t('blog.cta_title')}</h3>
+          <p class="text-[--color-text-muted] text-sm mb-4">{t('blog.cta_desc')}</p>
+          <div class="flex flex-col sm:flex-row gap-3 justify-center">
+            <a href="/ko/simulate"
+               class="btn-primary inline-block bg-[--color-accent] text-[--color-bg] px-6 py-2 rounded font-semibold text-sm hover:bg-[--color-accent-dim]">
+              {t('blog.cta_button')} &rarr;
+            </a>
+            <a href="/ko/fees"
+               class="inline-block border border-[--color-border] text-[--color-text] px-6 py-2 rounded font-semibold text-sm hover:border-[--color-accent] transition-colors">
+              {t('blog.cta_fees')}
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <script define:vars={{ postId: post.id }}>
+    try {
+      const KEY = 'pruviq_learn_read';
+      const raw = localStorage.getItem(KEY);
+      const read = raw ? JSON.parse(raw) : [];
+      if (!read.includes(postId)) {
+        read.push(postId);
+        localStorage.setItem(KEY, JSON.stringify(read));
+      }
+    } catch {}
+  </script>
+</Layout>

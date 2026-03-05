@@ -1,0 +1,42 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import { useTranslations } from '../../../i18n/index';
+
+const t = useTranslations('ko');
+---
+
+<Layout title={t('meta.coins_title')} description={t('meta.coins_desc')}>
+  <section class="py-12">
+    <div class="max-w-6xl mx-auto px-4">
+      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('coins.tag')}</p>
+      <h1 class="text-3xl md:text-4xl font-bold mb-4">{t('coins.title')}</h1>
+      <p class="text-[--color-text-muted] text-lg mb-8 max-w-2xl">
+        {t('coins.desc')}
+      </p>
+      <div id="coins-mount">
+        <div class="animate-pulse space-y-4">
+          <div class="h-10 bg-[--color-bg-hover] rounded w-1/3"></div>
+          <div class="h-8 bg-[--color-bg-hover] rounded"></div>
+          <div class="space-y-2">
+            <div class="h-12 bg-[--color-bg-hover] rounded"></div>
+            <div class="h-12 bg-[--color-bg-hover] rounded"></div>
+            <div class="h-12 bg-[--color-bg-hover] rounded"></div>
+            <div class="h-12 bg-[--color-bg-hover] rounded"></div>
+            <div class="h-12 bg-[--color-bg-hover] rounded"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    import { h, render } from 'preact';
+    import CoinListTable from '../../../components/CoinListTable';
+    import ErrorBoundary from '../../../components/ErrorBoundary';
+
+    const mount = document.getElementById('coins-mount');
+    if (mount) {
+      render(h(ErrorBoundary, { name: 'Coin List' }, h(CoinListTable, { lang: 'ko' })), mount);
+    }
+  </script>
+</Layout>

@@ -1,0 +1,72 @@
+{
+  "name": "PRUVIQ Monitoring",
+  "nodes": [
+    {
+      "name": "Every 5 Minutes",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "parameters": {
+        "rule": {"interval": [{"field": "minutes", "minutesInterval": 5}]}
+      },
+      "position": [250, 300]
+    },
+    {
+      "name": "Check API",
+      "type": "n8n-nodes-base.httpRequest",
+      "parameters": {
+        "url": "http://localhost:8080/health",
+        "method": "GET",
+        "responseFormat": "json",
+        "options": {"timeout": 10000}
+      },
+      "position": [450, 300],
+      "continueOnFail": true
+    },
+    {
+      "name": "API OK?",
+      "type": "n8n-nodes-base.if",
+      "parameters": {
+        "conditions": {
+          "string": [{
+            "value1": "={{ $json.status }}",
+            "operation": "equal",
+            "value2": "ok"
+          }]
+        }
+      },
+      "position": [650, 300]
+    },
+    {
+      "name": "All Good",
+      "type": "n8n-nodes-base.noOp",
+      "parameters": {},
+      "position": [850, 200]
+    },
+    {
+      "name": "Alert API Down",
+      "type": "n8n-nodes-base.httpRequest",
+      "parameters": {
+        "url": "=https://api.telegram.org/bot{{ $env.TELEGRAM_BOT_TOKEN }}/sendMessage",
+        "method": "POST",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {"name": "chat_id", "value": "={{ $env.TELEGRAM_CHAT_ID }}"},
+            {"name": "text", "value": "🚨 PRUVIQ API DOWN - Health check failed"},
+            {"name": "parse_mode", "value": "Markdown"}
+          ]
+        }
+      },
+      "position": [850, 400]
+    }
+  ],
+  "connections": {
+    "Every 5 Minutes": {"main": [[{"node": "Check API", "type": "main", "index": 0}]]},
+    "Check API": {"main": [[{"node": "API OK?", "type": "main", "index": 0}]]},
+    "API OK?": {
+      "main": [
+        [{"node": "All Good", "type": "main", "index": 0}],
+        [{"node": "Alert API Down", "type": "main", "index": 0}]
+      ]
+    }
+  }
+}
