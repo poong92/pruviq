@@ -177,6 +177,8 @@ export default function PerformanceDashboard({ lang = 'en' }: { lang?: 'en' | 'k
       .filter(d => d.trades > 0 || d.cum_pnl !== 0)
       .map(d => ({ time: d.date, value: parseFloat(d.cum_pnl.toFixed(2)) }));
 
+    let ro: ResizeObserver | null = null;
+
     import('lightweight-charts').then(({ createChart, AreaSeries }) => {
       if (disposed || !chartContainerRef.current) return;
 
@@ -233,15 +235,17 @@ export default function PerformanceDashboard({ lang = 'en' }: { lang?: 'en' | 'k
       chart.timeScale().fitContent();
       chartRef.current = chart;
 
-      const ro = new ResizeObserver(entries => {
-        for (const entry of entries) chart.applyOptions({ width: entry.contentRect.width });
-      });
-      ro.observe(chartContainerRef.current);
-      return () => ro.disconnect();
+      if (chartContainerRef.current) {
+        ro = new ResizeObserver(entries => {
+          for (const entry of entries) chart.applyOptions({ width: entry.contentRect.width });
+        });
+        ro.observe(chartContainerRef.current);
+      }
     });
 
     return () => {
       disposed = true;
+      if (ro) ro.disconnect();
       if (chartRef.current) { chartRef.current.remove(); chartRef.current = null; }
     };
   }, [data]);
