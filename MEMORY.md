@@ -3,15 +3,20 @@
   - Actions performed (autonomous):
     1. git pull origin main (confirmed: branch main, already up to date) (confirmed via `git pull origin main`).
     2. Measured page load times via curl (summary):
-       - https://pruviq.com/   
+       - https://pruviq.com/  
+
 Time: 0.472s Size: 54,828 bytes HTTP: 200 TTFB: 0.440s
-       - https://pruviq.com/simulate/   
+       - https://pruviq.com/simulate/  
+
 Time: 0.457s Size: 16,936 bytes HTTP: 200 TTFB: 0.450s
-       - https://pruviq.com/coins/   
+       - https://pruviq.com/coins/  
+
 Time: 0.463s Size: 14,472 bytes HTTP: 200 TTFB: 0.457s
-       - https://pruviq.com/market/   
+       - https://pruviq.com/market/  
+
 Time: 0.462s Size: 14,611 bytes HTTP: 200 TTFB: 0.457s
-       - https://pruviq.com/ko/   
+       - https://pruviq.com/ko/  
+
 Time: 0.484s Size: 57,218 bytes HTTP: 200 TTFB: 0.450s
        (Output confirmed via curl commands executed locally.)
     3. Scanned public/ and src/ for large images (>200KB): none found. Largest public images (examples):
@@ -19,7 +24,8 @@ Time: 0.484s Size: 57,218 bytes HTTP: 200 TTFB: 0.450s
        - public/x-banner.jpg 120,490 bytes
        - public/social-profile.jpg 102,196 bytes
        (Confirmed via `ls -l public`.)
-    4. Ran a local site build: `npm run build` completed successfully (2446 pages built, build complete). Vite reported largest client chunk: lightweight-charts.production   
+    4. Ran a local site build: `npm run build` completed successfully (2446 pages built, build complete). Vite reported largest client chunk: lightweight-charts.production  
+
 ≈ 167.03 kB (gzip ~53.42 kB). (From `npm run build` output.)
     5. Dist/bundle sizes: client assets checked during build — no single asset > 500KB; overall page HTML sizes (as fetched above) are < 500KB and TTFB < 500ms.
     6. Issues found: None requiring immediate code changes.
@@ -63,3 +69,43 @@ Time: 0.484s Size: 57,218 bytes HTTP: 200 TTFB: 0.450s
     6. Updated MEMORY.md with this run summary.
   - Result: No code changes were required or possible without external access/secrets. Blockers: Cloudflare dashboard access (for issue #137) and repository secret BRAVE_API_KEY (for issue #21) — both require maintainer/ops action.
 
+- cron: gh-issues-autofix (autonomous run)
+  - Time: 2026-03-06 10:24 KST
+  - Actions performed:
+    1. git checkout main && git pull origin main (confirmed up-to-date).
+    2. Listed open PRs (gh pr list) — none open at the time of the run.
+    3. Listed open issues and prioritized them: processed issues #21 (P1-high), #184 (P2), #185 (P2).
+    4. Diagnostics & actions taken:
+       - Issue #184 (P2) — "Unauthenticated admin endpoint":
+         - Diagnosis: backend exposes an unauthenticated admin endpoint POST /admin/refresh which directly calls _refresh_data() with no auth checks. Confirmed in repository file backend/api/main.py (lines ~1067-1072).
+         - Action: Posted a diagnostic comment on the issue with evidence and remediation suggestions (comment: https://github.com/pruviq/pruviq/issues/184#issuecomment-4008875965).
+       - Issue #185 (P2) — "Rate-limiter memory leak":
+         - Diagnosis: in-memory `rate_limits` dict (backend/api/main.py) can grow unbounded because keys for inactive clients are never removed after trimming timestamps; confirmed in repository file backend/api/main.py (definitions and check_rate_limit implementation at ~lines 74 and 224-240).
+         - Action: Posted a diagnostic comment with suggested fixes (use TTL/bounded cache, prune empty client keys, or move to Redis). (comment: https://github.com/pruviq/pruviq/issues/185#issuecomment-4008878630)
+       - Issue #21 (P1-high) — "Enable BRAVE_API_KEY for research PoC":
+         - Diagnosis: research workflow is gated on a repository secret BRAVE_API_KEY (see .github/workflows/research-poc.yml lines using `secrets.BRAVE_API_KEY`). docs/BRAVE_API_KEY.md explains provisioning.
+         - Action: Posted a blocker comment explaining that I cannot provision secrets from this session and instructions for the maintainer to add the secret (comment: https://github.com/pruviq/pruviq/issues/21#issuecomment-4008885502).
+    5. Local verification: ran `npm run build` to ensure site builds locally — build completed successfully ("2450 page(s) built", from build output).
+    6. No code changes were committed because each issue required backend changes or external secrets/access.
+    7. Updated MEMORY.md with this run summary (this entry).
+  - Result: Diagnostics posted to issues #21, #184, #185. Blockers remain: backend modifications require backend access & deployment; BRAVE_API_KEY requires repository secret provisioning. I will re-run the research PoC and attempt fixes again once the maintainer provides the secret or access as appropriate.
+
+- cron: gh-issues-autofix (autonomous run)
+  - Time: 2026-03-06 14:19 KST
+  - Actions performed:
+    1. git checkout main && git pull origin main (confirmed up-to-date) (command run from repository root).
+    2. Listed open PRs: `gh pr list --state open` → none open.
+    3. Listed open issues and inspected top priorities: #21 (P1-high), #184 (P2), #185 (P2), #195 (P1).
+    4. Issue #195 (general P1: HTTP 404):
+       - Reproduced the finding from this runner:
+         - `curl -s -o /dev/null -w "%{http_code}" https://pruviq.com/api/market` → 404 (confirmed).
+         - `curl -s -o /dev/null -w "%{http_code}" https://api.pruviq.com/market` → 200 (confirmed).
+       - Diagnosis: the API is served from the dedicated host api.pruviq.com. The main site pruviq.com does not proxy /api/* to the API host, so /api/* on the main domain returns 404. This is an infrastructure/hosting configuration behavior, not a bug in the static site code.
+       - Action taken: Posted a detailed comment on issue #195 explaining the diagnosis and remediation options (proxy/Cloudflare Pages rewrites) and then closed the issue as informational. (Comment & close performed via `gh issue comment` and `gh issue close`.)
+    5. Issues #21, #184, #185: each previously had diagnostic comments posted in earlier runs. No code changes possible from this session because:
+       - #21 requires adding a repository secret (BRAVE_API_KEY) — maintainer action.
+       - #184 and #185 require backend code/config changes — backend is marked read-only for this session.
+    6. Confirmed local site builds successfully: `npm run build` → "2450 page(s) built" (build output; no changes required).
+    7. No commits/PRs created because fixes required external access or backend changes. Returned to main branch (git checkout main).
+  - Result: Closed issue #195 (informational). Posted/confirmed diagnostics on #21, #184, #185. Blockers remain: Cloudflare/hosting config and repository secret provisioning for BRAVE_API_KEY; backend code modifications require backend access & deployment.
+  - Next: Re-run autofiX after maintainers provide secrets or grant access for backend/Cloudflare tasks.
