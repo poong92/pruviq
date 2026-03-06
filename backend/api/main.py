@@ -13,6 +13,7 @@ import os
 import sys
 import time
 import hashlib
+import hmac
 import json
 import asyncio
 import logging
@@ -21,9 +22,11 @@ from typing import Optional, Dict, List
 from collections import OrderedDict
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Request, Header
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+
+ADMIN_TOKEN = os.environ.get("PRUVIQ_ADMIN_TOKEN", "")
 
 import numpy as np
 import pandas as pd
@@ -1069,8 +1072,13 @@ async def simulate_validate(req: ValidateRequest):
 
 
 @app.post("/admin/refresh")
-async def refresh_data():
-    """Manually trigger data refresh from Binance."""
+async def refresh_data(authorization: str = Header(None)):
+    """Manually trigger data refresh from Binance. Requires PRUVIQ_ADMIN_TOKEN."""
+    if not ADMIN_TOKEN:
+        raise HTTPException(status_code=403, detail="Admin endpoint disabled (no token configured)")
+    expected = f"Bearer {ADMIN_TOKEN}"
+    if not authorization or not hmac.compare_digest(authorization, expected):
+        raise HTTPException(status_code=401, detail="Unauthorized")
     await asyncio.to_thread(_refresh_data)
     return {"status": "ok", "coins": indicator_cache.count, "generated": coin_stats_cache["generated"] if coin_stats_cache else None}
 

@@ -77,7 +77,7 @@ fi
 
 # Step 3: Signal API to reload
 log "Step 3: Reloading API data..."
-RELOAD_RESULT=$(curl -s -X POST http://localhost:8080/admin/refresh 2>/dev/null || echo '{"error": "API not responding"}')
+RELOAD_RESULT=$(curl -s -X POST http://localhost:8080/admin/refresh -H "Authorization: Bearer ${PRUVIQ_ADMIN_TOKEN}" 2>/dev/null || echo '{"error": "API not responding"}')
 log "Reload result: $RELOAD_RESULT"
 
 # Step 4: Git commit + push (auto-deploy)
