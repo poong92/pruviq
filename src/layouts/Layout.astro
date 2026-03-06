@@ -17,8 +17,7 @@ const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 const altPath = getAlternatePath(Astro.url.pathname, lang);
 const basePath = getBasePath(Astro.url.pathname);
-const cfToken = import.meta.env.PUBLIC_CF_ANALYTICS_TOKEN;
-
+const { title, description = t('meta.home_desc'), type = 'website', date, category, canonicalOverride } = Astro.props;
 
 const buildTime = new Date().toISOString();
 const ogImage = new URL(Astro.props.ogImage || '/og-image.jpg', Astro.site || 'https://pruviq.com').href;
