@@ -6,8 +6,13 @@ set -euo pipefail
 
 # Detect running user and set HOME accordingly
 RUNNING_USER=$(whoami)
-export HOME="/Users/${RUNNING_USER}"
-REPO_DIR="/Users/${RUNNING_USER}/pruviq"
+if [[ "$RUNNING_USER" == "openclaw" ]]; then
+    export HOME="/Users/openclaw"
+    REPO_DIR="/Users/openclaw/pruviq"
+else
+    export HOME="/Users/jepo"
+    REPO_DIR="/Users/jepo/pruviq"
+fi
 export PATH="/opt/homebrew/bin:$HOME/.npm-global/bin:$PATH"
 
 VENV_DIR="$REPO_DIR/backend/.venv"
@@ -15,8 +20,7 @@ LOCK_FILE="/tmp/pruviq-refresh.lock"
 LOG_FILE="/tmp/pruviq-refresh.log"
 
 # Telegram alerting
-source "$HOME/.config/telegram.env" 2>/dev/null || \
-source /Users/jepo/.config/telegram.env 2>/dev/null || true
+[[ -f "$HOME/.config/telegram.env" ]] && source "$HOME/.config/telegram.env" || true
 TG_TOKEN="${TELEGRAM_TOKEN:-}"
 TG_CHAT="${TELEGRAM_CHAT_ID:-}"
 

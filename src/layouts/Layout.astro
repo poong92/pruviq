@@ -21,7 +21,7 @@ const cfToken = import.meta.env.PUBLIC_CF_ANALYTICS_TOKEN;
 const buildTime = new Date().toISOString();
 
 const { title, description = t('meta.home_desc'), type = 'website', date, category, canonicalOverride } = Astro.props;
-const ogImage = new URL(Astro.props.ogImage || '/og-image.jpg', Astro.site || 'https://pruviq.com').href;
+const ogImage = new URL(Astro.props.ogImage || '/og-image.avif', Astro.site || 'https://pruviq.com').href;
 // derive AVIF/WebP variants safely for jpg/png sources
 const ogImageAvif = ogImage.replace(/\.(png|jpe?g)(\?.*)?$/i, '.avif$2');
 const ogImageWebp = ogImage.replace(/\.(png|jpe?g)(\?.*)?$/i, '.webp$2');
