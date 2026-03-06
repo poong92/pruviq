@@ -1,20 +1,27 @@
 #!/bin/bash
-# PRUVIQ — Static Data Refresh (Hardened v3.1)
-# Fetches Binance+CoinGecko data → push generated snapshots to dedicated branch (generated-data)
-# This avoids noisy commits on main and prevents recurring merge conflicts.
-# Cron: 0 */4 * * * (every 4 hours)
+# PRUVIQ — Static Data Refresh
+# Fetches Binance+CoinGecko data → commit to current branch and push.
+# Cron: */20 * * * * (every 20 minutes)
 set -euo pipefail
 
-export HOME="/Users/openclaw"
-export PATH="/opt/homebrew/bin:/Users/openclaw/.npm-global/bin:$PATH"
+# Detect running user and set HOME accordingly
+RUNNING_USER=$(whoami)
+if [[ "$RUNNING_USER" == "openclaw" ]]; then
+    export HOME="/Users/openclaw"
+    REPO_DIR="/Users/openclaw/pruviq"
+else
+    export HOME="/Users/jepo"
+    REPO_DIR="/Users/jepo/pruviq"
+fi
+export PATH="/opt/homebrew/bin:$HOME/.npm-global/bin:$PATH"
 
-REPO_DIR="/Users/openclaw/pruviq"
 VENV_DIR="$REPO_DIR/backend/.venv"
 LOCK_FILE="/tmp/pruviq-refresh.lock"
 LOG_FILE="/tmp/pruviq-refresh.log"
 
-# Telegram alerting (loaded from jepo's env)
-source /Users/openclaw/.config/telegram.env 2>/dev/null || true
+# Telegram alerting
+source "$HOME/.config/telegram.env" 2>/dev/null || \
+source /Users/jepo/.config/telegram.env 2>/dev/null || true
 TG_TOKEN="${TELEGRAM_TOKEN:-}"
 TG_CHAT="${TELEGRAM_CHAT_ID:-}"
 
@@ -75,41 +82,43 @@ if git diff --quiet $DATA_FILES 2>/dev/null; then
     exit 0
 fi
 
-# --- Step 2: Commit to dedicated branch (generated-data) ---
-PREV_BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "main")
-BRANCH="generated-data"
-
-# Ensure we have latest refs
-git fetch origin --prune || true
-
-if git show-ref --verify --quiet refs/heads/$BRANCH; then
-    git checkout $BRANCH
-else
-    # Create orphan branch if missing
-    git checkout --orphan $BRANCH
-    git rm -rf . || true
-fi
+# --- Step 2: Commit data on current branch and push ---
+CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "main")
+log "On branch: $CURRENT_BRANCH"
 
 # Add only generated data files
 git add -f $DATA_FILES
 
 if git diff --cached --quiet; then
     log "No changes to public/data — nothing to commit"
-    # restore previous branch and exit
-    git checkout $PREV_BRANCH 2>/dev/null || true
     exit 0
 fi
 
-git commit -m "chore: update generated static data snapshot [$(date -u '+%Y-%m-%d %H:%M UTC')]" --no-verify
+TS=$(date -u '+%Y-%m-%d %H:%M' 2>/dev/null || date '+%Y-%m-%d %H:%M')
+git commit -m "chore: refresh static data [$TS UTC]" --no-verify
 
-# Push branch (force is acceptable for a dedicated snapshot branch)
-git push --set-upstream origin $BRANCH --force
-log "Pushed generated-data branch"
+# Push to current branch
+if git push origin "$CURRENT_BRANCH" 2>&1; then
+    log "Pushed data to $CURRENT_BRANCH"
+else
+    log "Push failed (branch protection?) — data committed locally"
+    send_alert "WARN" "Static data committed but push failed"
+fi
 
-# Restore previous branch for safety
-git checkout $PREV_BRANCH 2>/dev/null || true
+# --- Step 3: Build + deploy to Cloudflare Workers ---
+log "Building site..."
+if npm run build 2>&1 | tail -3; then
+    log "Deploying to Cloudflare..."
+    if npx wrangler deploy 2>&1 | tail -5; then
+        log "Deployed to Cloudflare Workers"
+        send_alert "OK" "Static data refreshed + deployed"
+    else
+        log "Wrangler deploy failed"
+        send_alert "WARN" "Data pushed but CF deploy failed"
+    fi
+else
+    log "Build failed"
+    send_alert "ERROR" "npm build failed after data push"
+fi
 
-send_alert "OK" "Generated data snapshot pushed to branch '${BRANCH}'"
-
-# Done — do not push generated snapshots to main to avoid merge conflicts
 exit 0
