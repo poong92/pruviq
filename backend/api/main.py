@@ -230,6 +230,19 @@ app.add_middleware(
 
 # --- Rate Limiting ---
 
+def get_client_ip(request: Request) -> str:
+    """Extract real client IP from proxy headers (Cloudflare → X-Forwarded-For fallback)."""
+    cf_ip = request.headers.get("cf-connecting-ip")
+    if cf_ip:
+        return cf_ip.strip()
+
+    forwarded = request.headers.get("x-forwarded-for")
+    if forwarded:
+        return forwarded.split(",")[0].strip()
+
+    return request.client.host if request.client else "unknown"
+
+
 def check_rate_limit(client_ip: str) -> bool:
     """Simple in-memory rate limiter."""
     now = time.time()
@@ -248,7 +261,7 @@ def check_rate_limit(client_ip: str) -> bool:
 @app.middleware("http")
 async def rate_limit_middleware(request: Request, call_next):
     if request.url.path in ("/simulate", "/simulate/coin", "/simulate/compare", "/backtest"):
-        client_ip = request.client.host if request.client else "unknown"
+        client_ip = get_client_ip(request)
         if not check_rate_limit(client_ip):
             return JSONResponse(
                 status_code=429,
