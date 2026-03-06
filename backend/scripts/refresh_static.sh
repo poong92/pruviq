@@ -5,16 +5,16 @@
 # Cron: 0 */4 * * * (every 4 hours)
 set -euo pipefail
 
-export HOME="/Users/openclaw"
-export PATH="/opt/homebrew/bin:/Users/openclaw/.npm-global/bin:$PATH"
+export HOME="/Users/jepo"
+export PATH="/opt/homebrew/bin:/Users/jepo/.npm-global/bin:$PATH"
 
-REPO_DIR="/Users/openclaw/pruviq"
+REPO_DIR="/Users/jepo/pruviq"
 VENV_DIR="$REPO_DIR/backend/.venv"
 LOCK_FILE="/tmp/pruviq-refresh.lock"
 LOG_FILE="/tmp/pruviq-refresh.log"
 
 # Telegram alerting (loaded from jepo's env)
-source /Users/openclaw/.config/telegram.env 2>/dev/null || true
+source /Users/jepo/.config/telegram.env 2>/dev/null || true
 TG_TOKEN="${TELEGRAM_TOKEN:-}"
 TG_CHAT="${TELEGRAM_CHAT_ID:-}"
 

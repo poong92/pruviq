@@ -60,7 +60,7 @@ from src.strategies.registry import STRATEGY_REGISTRY, get_strategy, get_all_str
 VERSION = "0.3.0"
 DATA_DIR = Path(os.getenv(
     "PRUVIQ_DATA_DIR",
-    str(Path(__file__).parent.parent.parent.parent / "autotrader" / "data" / "futures")
+    str(Path(__file__).resolve().parent.parent.parent.parent / "autotrader" / "data" / "futures")
 ))
 MAX_CACHE_SIZE = 500
 RATE_LIMIT_PER_MIN = 30

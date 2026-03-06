@@ -123,7 +123,7 @@ def main():
     parser = argparse.ArgumentParser(description="Update OHLCV data from Binance")
     parser.add_argument("--data-dir", type=str, default=os.getenv(
         "PRUVIQ_DATA_DIR",
-        str(Path(__file__).parent.parent.parent.parent / "autotrader" / "data" / "futures")
+        str(Path(__file__).resolve().parent.parent.parent.parent / "autotrader" / "data" / "futures")
     ))
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--symbols", nargs="*", help="Only update these symbols")
