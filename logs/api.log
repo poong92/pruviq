@@ -897,3 +897,1758 @@ INFO:     127.0.0.1:54386 - "GET /health HTTP/1.1" 200 OK
 INFO:     127.0.0.1:54388 - "GET /health HTTP/1.1" 200 OK
 INFO:     14.52.126.36:0 - "GET /market/live HTTP/1.1" 200 OK
 INFO:     14.52.126.36:0 - "GET /market HTTP/1.1" 200 OK
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 2.8s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.1s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+INFO:     14.52.126.36:0 - "GET /market/live HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /market/live HTTP/1.1" 200 OK
+INFO:     149.154.161.244:0 - "GET /market/live HTTP/1.1" 200 OK
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 2.8s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.1s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+INFO:     127.0.0.1:57300 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57303 - "GET /coins HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57306 - "GET /health HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /market/live HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /market HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /health HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /market/coins HTTP/1.1" 404 Not Found
+INFO:     14.52.126.36:0 - "GET /market HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57457 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57459 - "GET /health HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /market/live HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /market HTTP/1.1" 200 OK
+INFO:     2600:1900:0:2d02::1301:0 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     107.178.194.65:0 - "HEAD / HTTP/1.1" 404 Not Found
+INFO:     107.178.194.66:0 - "GET / HTTP/1.1" 404 Not Found
+INFO:     107.178.194.68:0 - "HEAD /market HTTP/1.1" 405 Method Not Allowed
+INFO:     66.249.77.33:0 - "GET /robots.txt HTTP/1.1" 404 Not Found
+INFO:     107.178.194.68:0 - "GET /market HTTP/1.1" 200 OK
+INFO:     66.249.77.34:0 - "GET / HTTP/1.1" 404 Not Found
+INFO:     66.249.77.34:0 - "GET /market HTTP/1.1" 200 OK
+INFO:     66.249.77.33:0 - "GET / HTTP/1.1" 404 Not Found
+INFO:     66.249.77.34:0 - "GET /market HTTP/1.1" 200 OK
+INFO:     34.125.230.24:0 - "GET /market HTTP/1.1" 200 OK
+INFO:     3.14.129.62:0 - "GET / HTTP/1.1" 404 Not Found
+INFO:     3.12.35.152:0 - "GET / HTTP/1.1" 404 Not Found
+INFO:     18.221.7.255:0 - "GET / HTTP/1.1" 404 Not Found
+INFO:     34.125.230.24:0 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     3.144.99.80:0 - "GET /market HTTP/1.1" 200 OK
+INFO:     3.12.35.152:0 - "GET /market HTTP/1.1" 200 OK
+INFO:     18.116.66.12:0 - "GET /market HTTP/1.1" 200 OK
+INFO:     35.221.36.63:0 - "GET / HTTP/1.1" 404 Not Found
+INFO:     35.221.36.63:0 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     2001:41d0:801:2000::6587:0 - "GET / HTTP/1.1" 404 Not Found
+INFO:     54.71.187.124:0 - "GET / HTTP/1.1" 404 Not Found
+INFO:     54.71.187.124:0 - "GET /market HTTP/1.1" 200 OK
+INFO:     172.121.129.0:0 - "GET / HTTP/1.1" 404 Not Found
+INFO:     185.152.39.11:0 - "GET / HTTP/1.1" 404 Not Found
+INFO:     168.205.75.56:0 - "GET / HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:57625 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57627 - "GET /health HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /health HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /market/live HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /health HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /market/coins HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:57769 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57772 - "GET /coins HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57774 - "GET /health HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /health HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /market/live HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /health HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /builder/indicators HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /builder/presets HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /coins HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /strategies HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /builder/presets/bb-squeeze-short HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "POST /backtest HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "POST /simulate HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /ohlcv/BTCUSDT HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "POST /backtest HTTP/1.1" 422 Unprocessable Content
+INFO:     14.52.126.36:0 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57948 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57950 - "GET /health HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /health HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /market/coins HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:58099 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58101 - "GET /health HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /market/live HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58267 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58270 - "GET /coins HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58272 - "GET /health HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /market HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /health HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /market/coins HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:58406 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58408 - "GET /health HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /market/live HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58525 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58527 - "GET /health HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /health HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /market/coins HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:58767 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58768 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58771 - "GET /coins HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58773 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58775 - "GET /health HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /health HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /market/live HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /health HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /health HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /builder/indicators HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /builder/presets HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /coins HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /strategies HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /builder/presets/bb-squeeze-short HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "POST /backtest HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "POST /simulate HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "GET /ohlcv/BTCUSDT HTTP/1.1" 200 OK
+INFO:     14.52.126.36:0 - "POST /backtest HTTP/1.1" 422 Unprocessable Content
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 2.8s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.2s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+INFO:     14.52.126.36:0 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59167 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59282 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59284 - "GET /health HTTP/1.1" 200 OK
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 2.8s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.2s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 2.9s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.2s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 2.9s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.3s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 2.9s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 11.1s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.5s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 2.9s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.5s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 2.9s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.5s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 2.9s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.5s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 2.9s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.5s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 2.9s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.5s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 2.9s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 11.2s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 2.9s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.6s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 2.9s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.6s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 2.9s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.6s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 2.9s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.5s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 2.9s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.6s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 2.9s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.8s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 2.9s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.6s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.1s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.6s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 2.9s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.6s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 2.9s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.6s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.6s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.6s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 2.9s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.6s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 2.9s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.6s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.7s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.6s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.7s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 2.9s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.7s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.9s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.8s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.7s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.7s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.7s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.8s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.7s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.7s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.8s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.7s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.7s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.8s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.8s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.7s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.8s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.8s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.8s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.1s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.9s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.8s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.7s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.8s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.7s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 11.1s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.7s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.8s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.8s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.8s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.7s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.1s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.8s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.8s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.7s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.7s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.8s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.7s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.7s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.8s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.8s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.8s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.8s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.8s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.8s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.8s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.8s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.8s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.8s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.8s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.8s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.8s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.7s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.8s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.8s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.8s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.8s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.8s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.8s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 11.1s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.8s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.8s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.8s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.8s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.9s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.8s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.8s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.8s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.2s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 11.1s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.8s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.8s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.8s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.8s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.8s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.8s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.8s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.8s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.8s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.8s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 11.1s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.8s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
+Loading data from /Users/openclaw/pruviq/data/futures...
+Loaded 549 coins in 3.0s
+Pre-computing indicators for all strategies...
+  bb-squeeze-short: 549 coins cached
+  bb-squeeze-long: 549 coins cached
+  momentum-long: 549 coins cached
+  atr-breakout: 549 coins cached
+  hv-squeeze: 549 coins cached
+Total build time: 10.8s
+Pre-computing coin stats...
+Coin stats cached for 549 coins
+Pre-fetching market data...
+Market cache initialized
+Background data refresh scheduled every 3600s
+Background market refresh scheduled every 900s
