@@ -43,6 +43,9 @@ class DataManager:
         skip = {"intcusdt", "tslausdt", "hoodusdt", "paxgusdt", "gunusdt"}
 
         files = sorted(data_dir.glob("*_1h.csv"), key=lambda f: f.stat().st_size, reverse=True)
+        # Auto-detect futures/ subdirectory if no CSVs found at top level
+        if not files and (data_dir / "futures").is_dir():
+            files = sorted((data_dir / "futures").glob("*_1h.csv"), key=lambda f: f.stat().st_size, reverse=True)
 
         for f in files:
             stem = f.stem.replace("_1h", "")

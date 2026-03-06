@@ -60,7 +60,7 @@ from src.strategies.registry import STRATEGY_REGISTRY, get_strategy, get_all_str
 VERSION = "0.3.0"
 DATA_DIR = Path(os.getenv(
     "PRUVIQ_DATA_DIR",
-    str(Path(__file__).parent.parent.parent.parent / "autotrader" / "data" / "futures")
+    str(Path(__file__).resolve().parent.parent.parent.parent / "autotrader" / "data" / "futures")
 ))
 MAX_CACHE_SIZE = 500
 RATE_LIMIT_PER_MIN = 30
@@ -84,6 +84,8 @@ def _refresh_data():
     try:
         from scripts.update_ohlcv import update_symbol, SKIP
         files = sorted(DATA_DIR.glob("*_1h.csv"))
+        if not files and (DATA_DIR / "futures").is_dir():
+            files = sorted((DATA_DIR / "futures").glob("*_1h.csv"))
         updated = 0
         for f in files:
             stem = f.stem.replace("_1h", "")
@@ -154,9 +156,11 @@ async def _background_market_refresh():
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Load data and pre-compute indicators on startup."""
-    print(f"Loading data from {DATA_DIR}...")
+    print(f"Loading data from {DATA_DIR} (resolved: {DATA_DIR.resolve()})...")
     data_manager.load(DATA_DIR)
     print(f"Loaded {data_manager.coin_count} coins in {data_manager._load_time:.1f}s")
+    if data_manager.coin_count == 0:
+        print(f"WARNING: 0 coins loaded! Check PRUVIQ_DATA_DIR={DATA_DIR}, files: {list(DATA_DIR.glob('*_1h.csv'))[:3]}")
 
     if data_manager.coin_count > 0:
         # Build multi-strategy indicator cache
