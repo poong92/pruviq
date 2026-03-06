@@ -1419,7 +1419,7 @@ def _build_live_coins(spot_tickers: list, futures_tickers: list) -> list:
             "volume_24h": round(float(t.get("quoteVolume", 0)), 2),
         })
         seen_symbols.add(sym)
-    return coins
+    return [c for c in coins if c["price"] > 0]
 
 
 @app.get("/market/live")
