@@ -1,3 +1,43 @@
+- cron: daily-seo-audit (autonomous run)
+  - Time: 2026-03-07 00:00 KST
+  - Actions performed (autonomous):
+    1. Read project metadata and memory (SOUL.md, MEMORY.md) to establish context (confirmed via file reads: /Users/openclaw/pruviq/SOUL.md, /Users/openclaw/pruviq/MEMORY.md).
+    2. Built the site locally to inspect generated HTML: `npm run build` → (build output) "[build] 2450 page(s) built in 3.09s" (confirmed in build output).
+    3. Scanned generated HTML files in dist/ for titles, meta descriptions, hreflang, and JSON-LD (local scan of /Users/openclaw/pruviq/dist):
+       - Total .html files on disk: 2453 (confirmed via `find dist -name '*.html' | wc -l`).
+       - Build reported: 2450 page(s) built (from `npm run build` output). Both values recorded.
+       - Pages missing a non-empty <title>: 3 (these are site verification files)
+         - dist/google14acb3eb72070db4.html
+         - dist/yandex_a20aa9b1eacf8e51.html
+         - dist/naverb5b9f3561c928476207af54eb8c525c6.html
+         (confirmed via local HTML scan script)
+       - Pages missing a meta description: 57 total; 54 are redirect pages (meta refresh/302 style), 3 are the verification files listed above. Non-redirect pages missing description: 3 (the verification files) (confirmed via local HTML scan script).
+       - JSON-LD presence: 2396 pages include application/ld+json script blocks; all JSON-LD snippets parsed successfully (no JSON parse errors found during scan).
+       - Hreflang / EN-KO alternates: site layout emits rel="alternate" hreflang tags for en/ko/x-default. For canonical content pages the alternates exist. Pages flagged as "missing hreflang" by a naive check were redirect/verification pages (redirect pages intentionally omit hreflang because they redirect to the canonical URL).
+       - Sitemap (generated): dist/sitemap-0.xml contains 2390 <loc> entries (confirmed via counting <loc> tags in dist/sitemap-0.xml). sitemap-index.xml present at dist/sitemap-index.xml.
+       - robots.txt: dist/robots.txt exists and contains "Sitemap: https://pruviq.com/sitemap-index.xml" and explicit Allow rules for major crawlers (GPTBot, ClaudeBot, etc.) (confirmed by reading dist/robots.txt).
+    4. Verified live endpoints (HTTP checks):
+       - https://pruviq.com/sitemap-index.xml → 200 OK (confirmed via curl)
+       - https://pruviq.com/robots.txt → 200 OK (confirmed via curl)
+       - https://pruviq.com/ → 200 OK (confirmed via curl)
+    5. Analysis & classification of findings:
+       - No content pages lack title or meta description in a way that affects SEO. The only pages missing titles/descriptions are verification files (google/yandex/naver) and redirect pages (learn/* redirecting to /blog/* or builder -> simulate). Redirect pages are intentionally noindex and do not require meta descriptions.
+       - JSON-LD structured data exists site-wide (2396 pages) and parsed correctly.
+       - Hreflang tags are present for canonical pages; missing alternates were limited to redirect/verification pages (expected behavior).
+       - Sitemap and robots.txt are present, accessible (200 OK), and list/point to the sitemap correctly.
+    6. Fixes applied: none required. I did not change site content because issues found were either non-actionable (redirect pages, verification files) or intentionally configured.
+  - Result: Site SEO checks passed for the items requested (titles, meta descriptions, sitemap, robots.txt, hreflang, JSON-LD). Local build succeeded and dist/ was inspected for issues.
+  - Evidence & commands used (select outputs):
+    - `npm run build` → build output includes: "[@astrojs/sitemap] `sitemap-index.xml` created at `dist`" and "[build] 2450 page(s) built in 3.09s" (from build logs).
+    - `find dist -name '*.html' | wc -l` → 2453 (confirmed local file count in dist/).
+    - Counted sitemap entries: `grep -o "<loc>" dist/sitemap-0.xml | wc -l` → 2390 (confirmed in dist/sitemap-0.xml).
+    - Local HTML scan results (titles/meta/json-ld/hreflang) produced the lists above (scripts run against /Users/openclaw/pruviq/dist/).
+    - `curl -s -o /dev/null -w "%{http_code}" https://pruviq.com/sitemap-index.xml` → 200
+    - `curl -s -o /dev/null -w "%{http_code}" https://pruviq.com/robots.txt` → 200
+    - `curl -s -o /dev/null -w "%{http_code}" https://pruviq.com/` → 200
+  - Next: no immediate code changes required. I will re-run this cron check tomorrow and raise an issue if future runs show increases in pages missing titles/descriptions or invalid JSON-LD.
+
+
 - cron: performance-lighthouse (autonomous run)
   - Time: 2026-03-06 05:03 KST
   - Actions performed (autonomous):
