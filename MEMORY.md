@@ -108,4 +108,34 @@ Time: 0.484s Size: 57,218 bytes HTTP: 200 TTFB: 0.450s
     6. Confirmed local site builds successfully: `npm run build` → "2450 page(s) built" (build output; no changes required).
     7. No commits/PRs created because fixes required external access or backend changes. Returned to main branch (git checkout main).
   - Result: Closed issue #195 (informational). Posted/confirmed diagnostics on #21, #184, #185. Blockers remain: Cloudflare/hosting config and repository secret provisioning for BRAVE_API_KEY; backend code modifications require backend access & deployment.
-  - Next: Re-run autofiX after maintainers provide secrets or grant access for backend/Cloudflare tasks.
+
+- cron: gh-issues-autofix (autonomous run)
+  - Time: 2026-03-06 18:21 KST
+  - Actions performed:
+    1. git checkout main && git pull origin main (confirmed up-to-date: local main matches origin).
+    2. Listed open PRs: `gh pr list --state open` → none.
+    3. Listed open issues (gh issue list) and processed in priority order (P1-high, P1, P2): found open issues #21, #184, #185, #196, #197.
+    4. For each issue:
+       - Issue #21 (P1-high) — "chore(research): enable BRAVE_API_KEY":
+         - Diagnosis: The Research PoC workflow is gated by the repository secret `BRAVE_API_KEY` (confirmed in `.github/workflows/research-poc.yml`). I verified `scripts/research_agent.py` exists but the workflow will not run until the secret is added.
+         - Action: Posted diagnostic/blocker comment asking the maintainer to add `BRAVE_API_KEY` to repository secrets and how to re-run the workflow. (Comment created: https://github.com/pruviq/pruviq/issues/21#issuecomment-4010570485)
+       - Issue #184 (P2) — "Unauthenticated admin endpoint":
+         - Diagnosis: `@app.post("/admin/refresh")` in `backend/api/main.py` registers an unauthenticated admin endpoint that calls `_refresh_data()` (confirmed in backend/api/main.py around the handler). This is a security/DoS risk.
+         - Action: Posted diagnostic comment with remediation options (require API key, restrict to internal IPs, or gate behind env var). (Comment created: https://github.com/pruviq/pruviq/issues/184#issuecomment-4010572245)
+       - Issue #185 (P2) — "Rate-limiter memory leak":
+         - Diagnosis: In-memory `rate_limits` dictionary grows because client keys are not removed after trimming timestamps (confirmed in backend/api/main.py: `rate_limits` definition and `check_rate_limit`).
+         - Action: Posted diagnostic comment suggesting short-term fix (delete empty client keys) and long-term options (TTLCache or Redis). (Comment created: https://github.com/pruviq/pruviq/issues/185#issuecomment-4010572646)
+       - Issue #197 (uptime alert):
+         - Diagnosis: Uptime monitor reported `https://api.pruviq.com/coins/stats` returned 503. I cannot access Cloudflare/origin logs from this environment.
+         - Action: Posted a triage comment requesting Cloudflare/origin logs, deploy ID and reproduction check (`curl -s -o /dev/null -w "%{http_code} %{time_total}\n" https://api.pruviq.com/coins/stats`). (Comment created: https://github.com/pruviq/pruviq/issues/197#issuecomment-4010573407)
+       - Issue #196 (uptime alert):
+         - Diagnosis: Same as #197 — 503 from API reported by uptime monitor.
+         - Action: Posted the same triage/ops request for logs and deploy metadata. (Comment created: https://github.com/pruviq/pruviq/issues/196#issuecomment-4010573661)
+    5. Local verification: ran `npm run build` to ensure the static site builds — build completed successfully ("2450 page(s) built", build output: successful).
+    6. Code changes: none committed. All actionable fixes are blocked by one of:
+       - repository secret `BRAVE_API_KEY` (requires maintainer to add),
+       - backend code changes (backend is read-only in this environment and requires backend maintainer to implement and deploy),
+       - Cloudflare/hosting logs & deploy metadata (requires ops access).
+    7. Updated MEMORY.md with this run summary and evidence (this entry).
+  - Result: Diagnostic comments posted to issues #21, #184, #185, #196, #197. Build verification passed locally. Blockers recorded above.
+
