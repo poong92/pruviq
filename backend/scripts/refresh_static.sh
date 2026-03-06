@@ -6,13 +6,8 @@ set -euo pipefail
 
 # Detect running user and set HOME accordingly
 RUNNING_USER=$(whoami)
-if [[ "$RUNNING_USER" == "openclaw" ]]; then
-    export HOME="/Users/openclaw"
-    REPO_DIR="/Users/openclaw/pruviq"
-else
-    export HOME="/Users/jepo"
-    REPO_DIR="/Users/jepo/pruviq"
-fi
+export HOME="/Users/${RUNNING_USER}"
+REPO_DIR="/Users/${RUNNING_USER}/pruviq"
 export PATH="/opt/homebrew/bin:$HOME/.npm-global/bin:$PATH"
 
 VENV_DIR="$REPO_DIR/backend/.venv"

@@ -1,12 +1,12 @@
 #!/bin/bash
 # Skill: pipeline
 # Description: 데이터 파이프라인 상태 확인 및 수동 실행
-# Note: Runs locally on Mac Mini as openclaw user
+# Note: Runs locally on Mac Mini as jepo user
 
 set -e
 
 ACTION="${1:-status}"
-PRUVIQ_DIR="/Users/openclaw/pruviq"
+PRUVIQ_DIR="/Users/jepo/pruviq"
 PIPELINE_LOG="${PRUVIQ_DIR}/backend/logs/pipeline.log"
 
 echo "🔄 **PRUVIQ Data Pipeline**"
