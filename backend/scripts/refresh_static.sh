@@ -75,41 +75,28 @@ if git diff --quiet $DATA_FILES 2>/dev/null; then
     exit 0
 fi
 
-# --- Step 2: Commit to dedicated branch (generated-data) ---
-PREV_BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "main")
-BRANCH="generated-data"
-
-# Ensure we have latest refs
-git fetch origin --prune || true
-
-if git show-ref --verify --quiet refs/heads/$BRANCH; then
-    git checkout $BRANCH
-else
-    # Create orphan branch if missing
-    git checkout --orphan $BRANCH
-    git rm -rf . || true
-fi
+# --- Step 2: Commit data on current branch and push ---
+CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "main")
+log "On branch: $CURRENT_BRANCH"
 
 # Add only generated data files
 git add -f $DATA_FILES
 
 if git diff --cached --quiet; then
     log "No changes to public/data — nothing to commit"
-    # restore previous branch and exit
-    git checkout $PREV_BRANCH 2>/dev/null || true
     exit 0
 fi
 
-git commit -m "chore: update generated static data snapshot [$(date -u '+%Y-%m-%d %H:%M UTC')]" --no-verify
+TS=$(date -u '+%Y-%m-%d %H:%M' 2>/dev/null || date '+%Y-%m-%d %H:%M')
+git commit -m "chore: refresh static data [$TS UTC]" --no-verify
 
-# Push branch (force is acceptable for a dedicated snapshot branch)
-git push --set-upstream origin $BRANCH --force
-log "Pushed generated-data branch"
+# Push to current branch
+if git push origin "$CURRENT_BRANCH" 2>&1; then
+    log "Pushed data to $CURRENT_BRANCH"
+    send_alert "OK" "Static data refreshed on branch '$CURRENT_BRANCH'"
+else
+    log "Push failed (branch protection?) — data committed locally"
+    send_alert "WARN" "Static data committed but push failed"
+fi
 
-# Restore previous branch for safety
-git checkout $PREV_BRANCH 2>/dev/null || true
-
-send_alert "OK" "Generated data snapshot pushed to branch '${BRANCH}'"
-
-# Done — do not push generated snapshots to main to avoid merge conflicts
 exit 0
