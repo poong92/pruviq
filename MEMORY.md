@@ -139,3 +139,26 @@ Time: 0.484s Size: 57,218 bytes HTTP: 200 TTFB: 0.450s
     7. Updated MEMORY.md with this run summary and evidence (this entry).
   - Result: Diagnostic comments posted to issues #21, #184, #185, #196, #197. Build verification passed locally. Blockers recorded above.
 
+
+- cron: gh-issues-autofix (autonomous run)
+  - Time: 2026-03-06 22:19 KST
+  - Actions performed:
+    1. git checkout main && git pull origin main (confirmed up-to-date: output from git pull).
+    2. Listed open PRs: found PRs #202 and #203. PR #203 required reviewer changes.
+    3. Checked out branch fix/api-proxy-worker-2026-03-06 and implemented fixes:
+       - public/_worker.js: limited the proxy rule to only match /api/* when there is a path after /api (regex /^\/api\/.+/), strip the /api prefix when forwarding, use fetch redirect:'manual', and added try/catch to return 502 JSON on upstream failures.
+       - Restored MEMORY.md to origin/main to remove accidental changes.
+       - Commit on branch: 987fe6d ("fix(proxy): only proxy /api/* with path and return redirects to client; remove accidental MEMORY.md edits (fixes PR #203 review)"). (confirmed via `git log origin/fix/api-proxy-worker-2026-03-06`)
+       - Pushed branch to origin (git push completed).
+       - Posted a comment on PR #203 describing the fix and requesting CI re-run.
+    4. Ran npm run build locally after the change — build completed successfully (confirmed via `npm run build` output).
+    5. Reviewed open issues and posted diagnostic/blocker comments where backend access or secrets are required:
+       - Issue #204 (P0): added triage comment and reproduction check (curl); requested Cloudflare/origin logs and deploy IDs (blocked for ops access).
+       - Issue #21 (P1): requested BRAVE_API_KEY secret be provisioned (blocked until secret added).
+       - Issue #184 (P2): commented that /admin/refresh is unauthenticated and suggested adding ADMIN_KEY auth middleware.
+       - Issue #185 (P2): pointed out rate_limits memory growth and proposed a patch (prune empty client keys or use TTLCache/Redis).
+       - Issue #201 (P2) & #200 (P2): posted remediation suggestions for CORS and proxy-aware client IP handling.
+    6. No other frontend-only issues identified that could be fixed from this environment. Many remaining issues require backend or ops changes.
+  - Result:
+    - Fixed PR #203 per reviewer feedback and pushed changes (commit 987fe6d). (CI for the branch has historical success runs; re-run requested.)
+    - Posted diagnostic comments on high-priority issues requiring ops/backend action. Blockers: Cloudflare/origin logs, backend code changes (backend is read-only for this agent), and repository secret BRAVE_API_KEY.
