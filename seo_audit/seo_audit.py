@@ -4,7 +4,7 @@ import urllib.request
 import re
 from urllib.error import URLError, HTTPError
 
-OUT_DIR = '/Users/openclaw/pruviq/seo_audit'
+OUT_DIR = '/Users/jepo/pruviq/seo_audit'
 SITEMAP_INDEX = 'https://pruviq.com/sitemap-index.xml'
 
 def fetch(url, timeout=20):
