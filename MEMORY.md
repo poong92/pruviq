@@ -202,3 +202,20 @@ Time: 0.484s Size: 57,218 bytes HTTP: 200 TTFB: 0.450s
   - Result:
     - Fixed PR #203 per reviewer feedback and pushed changes (commit 987fe6d). (CI for the branch has historical success runs; re-run requested.)
     - Posted diagnostic comments on high-priority issues requiring ops/backend action. Blockers: Cloudflare/origin logs, backend code changes (backend is read-only for this agent), and repository secret BRAVE_API_KEY.
+
+- cron: gh-issues-autofix (autonomous run)
+  - Time: 2026-03-07 02:19 KST
+  - Actions performed (autonomous):
+    1. git checkout main && git pull origin main (confirmed up-to-date).
+    2. Listed open PRs: none requiring autofix (no open PRs with failing checks found).
+    3. Listed open issues (gh issue list) and processed in priority order (P0 > P1 > P2):
+       - #204 (P0-critical): added triage comment with reproduction checks and requested Cloudflare/origin logs (cannot access logs from this environment). (comment posted)
+       - #206 (P1): attempted reproduction of reported 404 → could not reproduce (curl returned 200). Commented and requested edge/origin logs if it recurs. (comment posted)
+       - #199, #198, #197, #196 (uptime alert duplicates): commented linking to #204 and closed each duplicate to reduce noise. (closed)
+       - #207 (P2/general): implemented fix in frontend to emit a machine-readable last-modified meta tag and fallback Article JSON-LD dateModified (branch: fix/issue-207-add-last-modified-meta). Committed, built locally, pushed branch and opened PR #208. Local build evidence: "[build] 2450 page(s) built in 3.03s" (from `npm run build`).
+       - #185, #184, #200, #201 (backend/security): inspected backend (backend/api/main.py) and posted diagnostic comments (rate limiter memory leak, unauthenticated admin endpoint, CORS allow_headers too-permissive, proxy-aware client IP handling). All require backend changes or ops access; cannot modify backend from this environment.
+       - #21 (P1-high): research PoC requires BRAVE_API_KEY repo secret; posted blocker comment explaining how to provision the secret (cannot add secrets from here).
+    4. Local verification: ran `npm run build` to validate frontend changes — build succeeded: "[build] 2450 page(s) built in 3.03s" (confirmed in build output).
+    5. Pushed branch fix/issue-207-add-last-modified-meta and created PR #208 (fixes #207).
+    6. Updated MEMORY.md with this run summary (this entry).
+  - Result: One frontend fix implemented & PR opened (#208). Several issues triaged and commented. Blockers (require maintainer/ops): Cloudflare/origin logs (for 5xx uptime), backend code changes (rate limiter/admin endpoint/CORS), and repository secret BRAVE_API_KEY.
