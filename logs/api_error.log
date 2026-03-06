@@ -5561,3 +5561,887 @@ CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: htt
 CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
 INFO:     Started server process [25960]
 INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [26042]
+INFO:     Waiting for application startup.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [26188]
+INFO:     Waiting for application startup.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [26250]
+INFO:     Waiting for application startup.
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+INFO:     Started server process [26323]
+INFO:     Waiting for application startup.
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [26388]
+INFO:     Waiting for application startup.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [26452]
+INFO:     Waiting for application startup.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [26540]
+INFO:     Waiting for application startup.
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+INFO:     Started server process [26625]
+INFO:     Waiting for application startup.
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [26696]
+INFO:     Waiting for application startup.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [26805]
+INFO:     Waiting for application startup.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [26890]
+INFO:     Waiting for application startup.
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+INFO:     Started server process [26963]
+INFO:     Waiting for application startup.
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [27033]
+INFO:     Waiting for application startup.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [27096]
+INFO:     Waiting for application startup.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [27230]
+INFO:     Waiting for application startup.
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+INFO:     Started server process [27314]
+INFO:     Waiting for application startup.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [27383]
+INFO:     Waiting for application startup.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [27458]
+INFO:     Waiting for application startup.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [27536]
+INFO:     Waiting for application startup.
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+INFO:     Started server process [27596]
+INFO:     Waiting for application startup.
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [27658]
+INFO:     Waiting for application startup.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [27719]
+INFO:     Waiting for application startup.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [27794]
+INFO:     Waiting for application startup.
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+INFO:     Started server process [27895]
+INFO:     Waiting for application startup.
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [27957]
+INFO:     Waiting for application startup.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [28021]
+INFO:     Waiting for application startup.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [28079]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [28149]
+INFO:     Waiting for application startup.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [28214]
+INFO:     Waiting for application startup.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [28312]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [28436]
+INFO:     Waiting for application startup.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [28500]
+INFO:     Waiting for application startup.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [28573]
+INFO:     Waiting for application startup.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+INFO:     Started server process [28733]
+INFO:     Waiting for application startup.
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [28848]
+INFO:     Waiting for application startup.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [28910]
+INFO:     Waiting for application startup.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [28968]
+INFO:     Waiting for application startup.
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [29253]
+INFO:     Waiting for application startup.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [29320]
+INFO:     Waiting for application startup.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [29381]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [29443]
+INFO:     Waiting for application startup.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [29569]
+INFO:     Waiting for application startup.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [29628]
+INFO:     Waiting for application startup.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+INFO:     Started server process [29734]
+INFO:     Waiting for application startup.
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [29809]
+INFO:     Waiting for application startup.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [29869]
+INFO:     Waiting for application startup.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [29929]
+INFO:     Waiting for application startup.
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+INFO:     Started server process [29993]
+INFO:     Waiting for application startup.
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [30056]
+INFO:     Waiting for application startup.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [30114]
+INFO:     Waiting for application startup.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [30201]
+INFO:     Waiting for application startup.
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+INFO:     Started server process [30281]
+INFO:     Waiting for application startup.
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [30339]
+INFO:     Waiting for application startup.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [30402]
+INFO:     Waiting for application startup.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [30464]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+INFO:     Started server process [30543]
+INFO:     Waiting for application startup.
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [30601]
+INFO:     Waiting for application startup.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [30684]
+INFO:     Waiting for application startup.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [30766]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [30847]
+INFO:     Waiting for application startup.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [30910]
+INFO:     Waiting for application startup.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [31047]
+INFO:     Waiting for application startup.
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [31222]
+INFO:     Waiting for application startup.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [31282]
+INFO:     Waiting for application startup.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [31390]
+INFO:     Waiting for application startup.
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+INFO:     Started server process [31468]
+INFO:     Waiting for application startup.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [31531]
+INFO:     Waiting for application startup.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [31593]
+INFO:     Waiting for application startup.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [31669]
+INFO:     Waiting for application startup.
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+INFO:     Started server process [31728]
+INFO:     Waiting for application startup.
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [31940]
+INFO:     Waiting for application startup.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [32023]
+INFO:     Waiting for application startup.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [32091]
+INFO:     Waiting for application startup.
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+INFO:     Started server process [32164]
+INFO:     Waiting for application startup.
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [32234]
+INFO:     Waiting for application startup.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [32294]
+INFO:     Waiting for application startup.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [32355]
+INFO:     Waiting for application startup.
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+INFO:     Started server process [32434]
+INFO:     Waiting for application startup.
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [32557]
+INFO:     Waiting for application startup.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [32633]
+INFO:     Waiting for application startup.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [32697]
+INFO:     Waiting for application startup.
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+INFO:     Started server process [32759]
+INFO:     Waiting for application startup.
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8080): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+CoinGecko fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/global
+CoinGecko tickers fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=24h
+CoinGecko funding fetch failed: 429 Client Error: Too Many Requests for url: https://api.coingecko.com/api/v3/derivatives?include_tickers=unexpired
+INFO:     Started server process [32822]
+INFO:     Waiting for application startup.
