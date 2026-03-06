@@ -19,7 +19,8 @@ const altPath = getAlternatePath(Astro.url.pathname, lang);
 const basePath = getBasePath(Astro.url.pathname);
 const cfToken = import.meta.env.PUBLIC_CF_ANALYTICS_TOKEN;
 
-const { title, description = t('meta.home_desc'), type = 'website', date, category, canonicalOverride } = Astro.props;
+
+const buildTime = new Date().toISOString();
 const ogImage = new URL(Astro.props.ogImage || '/og-image.jpg', Astro.site || 'https://pruviq.com').href;
 // derive AVIF/WebP variants safely for jpg/png sources
 const ogImageAvif = ogImage.replace(/\.(png|jpe?g)(\?.*)?$/i, '.avif$2');
@@ -83,7 +84,8 @@ const isActive = (match: string) => basePath.startsWith(match);
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/manifest.json" />
-    <meta name="theme-color" content="#0C1829" />
+    
+    <meta name="last-modified" content={buildTime} />
     {basePath.startsWith('/404') && <meta name="robots" content="noindex" />}
     <link rel="preconnect" href="https://api.pruviq.com" crossorigin />
     <link rel="preconnect" href="https://coin-images.coingecko.com" crossorigin />
@@ -244,7 +246,7 @@ const isActive = (match: string) => basePath.startsWith(match);
         "headline": title,
         "description": description,
         "datePublished": date,
-        "dateModified": date,
+        "dateModified": date || buildTime,
         "author": { "@type": "Organization", "name": "PRUVIQ" },
         "publisher": {
           "@type": "Organization",
