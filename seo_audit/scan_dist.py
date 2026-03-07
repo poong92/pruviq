@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import os,re
-OUT='/Users/openclaw/pruviq/seo_audit/dist_pages_meta.csv'
-ROOT='/Users/openclaw/pruviq/dist'
+OUT='/Users/jepo/pruviq/seo_audit/dist_pages_meta.csv'
+ROOT='/Users/jepo/pruviq/dist'
 rows=["url|title|title_len|meta|meta_len|has_jsonld|has_hreflang"]
 for dirpath,dirnames,filenames in os.walk(ROOT):
     for fn in filenames:

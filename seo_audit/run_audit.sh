@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-WORKDIR=/Users/openclaw/pruviq
+WORKDIR=/Users/jepo/pruviq
 OUT="$WORKDIR/seo_audit"
 mkdir -p "$OUT"
 SITEMAP_INDEX="https://pruviq.com/sitemap-index.xml"
