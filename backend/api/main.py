@@ -270,6 +270,10 @@ def check_rate_limit(client_ip: str) -> bool:
 
     rate_limits[client_ip] = [t for t in rate_limits[client_ip] if now - t < 60]
 
+    if not rate_limits[client_ip]:
+        del rate_limits[client_ip]
+        return True
+
     if len(rate_limits[client_ip]) >= RATE_LIMIT_PER_MIN:
         return False
 
@@ -1128,12 +1132,26 @@ async def refresh_data(x_admin_key: str = Header(default="", alias="X-Admin-Key"
 
 # --- Market Dashboard ---
 
-import xml.etree.ElementTree as ET
+import defusedxml.ElementTree as ET
 import requests as http_requests
 from email.utils import parsedate_to_datetime
 
 MARKET_REFRESH_INTERVAL = 900  # seconds — background fetch every 15min (matches static CDN refresh)
 _market_cache: Optional[dict] = None
+
+
+def _cg_get(url: str, timeout: int = 10, max_retries: int = 2):
+    """CoinGecko GET with 429 backoff."""
+    for attempt in range(max_retries):
+        resp = http_requests.get(url, headers=CG_HEADERS, timeout=timeout)
+        if resp.status_code == 429:
+            wait = int(resp.headers.get("Retry-After", 30)) * (2 ** attempt)
+            logger.warning(f"CoinGecko 429 on {url}, waiting {wait}s")
+            time.sleep(wait)
+            continue
+        resp.raise_for_status()
+        return resp
+    raise Exception(f"CoinGecko rate limited after {max_retries} retries")
 _news_cache: Optional[dict] = None
 
 # --- Binance Spot live ticker (30s TTL) + Futures fallback ---
@@ -1176,8 +1194,7 @@ def _fetch_fear_greed() -> dict:
 def _fetch_coingecko_global() -> dict:
     """Fetch global market data from CoinGecko."""
     try:
-        resp = http_requests.get("https://api.coingecko.com/api/v3/global", headers=CG_HEADERS, timeout=5)
-        resp.raise_for_status()
+        resp = _cg_get("https://api.coingecko.com/api/v3/global", timeout=5)
         data = resp.json()["data"]
         return {
             "total_market_cap_b": round(data["total_market_cap"].get("usd", 0) / 1e9, 1),
@@ -1194,14 +1211,11 @@ def _fetch_coingecko_tickers() -> tuple:
     Returns (top_gainers, top_losers, btc_price, btc_change, eth_price, eth_change).
     """
     try:
-        resp = http_requests.get(
+        resp = _cg_get(
             "https://api.coingecko.com/api/v3/coins/markets"
             "?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false"
             "&price_change_percentage=24h",
-            headers=CG_HEADERS,
-            timeout=10,
         )
-        resp.raise_for_status()
         coins = resp.json()
 
         # BTC / ETH
@@ -1242,13 +1256,10 @@ def _fetch_coingecko_funding() -> list:
     """
     MAJOR_EXCHANGES = {"binance", "bybit", "okx", "bitget", "dydx", "htx", "gate", "kucoin", "mexc"}
     try:
-        resp = http_requests.get(
+        resp = _cg_get(
             "https://api.coingecko.com/api/v3/derivatives"
             "?include_tickers=unexpired",
-            headers=CG_HEADERS,
-            timeout=10,
         )
-        resp.raise_for_status()
         data = resp.json()
 
         # Filter perpetual USDT pairs from major exchanges
