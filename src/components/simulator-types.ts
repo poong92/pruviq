@@ -22,7 +22,7 @@ export interface Condition {
 export interface TradeItem {
   symbol: string; direction: string; entry_time: string; exit_time: string;
   entry_price: number; exit_price: number; pnl_pct: number;
-  exit_reason: string; bars_held: number;
+  pnl_usd: number; exit_reason: string; bars_held: number;
 }
 
 export interface YearlyStat {
@@ -41,6 +41,7 @@ export interface BacktestResult {
   win_rate: number; profit_factor: number; total_return_pct: number;
   max_drawdown_pct: number; avg_win_pct: number; avg_loss_pct: number;
   max_consecutive_losses: number; tp_count: number; sl_count: number; timeout_count: number;
+  sl_pct: number; tp_pct: number; max_bars: number;
   equity_curve: { time: string; value: number }[];
   yearly_stats?: YearlyStat[];
   indicators_used: string[]; conditions_count: number; coins_used: number;
@@ -51,6 +52,12 @@ export interface BacktestResult {
   compute_time_ms: number; _isDemo?: boolean;
   export_hash?: string;
   trades?: TradeItem[];
+  per_coin_usd?: number;
+  leverage?: number;
+  initial_capital_usd?: number;
+  total_return_usd?: number;
+  total_return_pct_portfolio?: number;
+  max_drawdown_usd?: number;
 }
 
 export interface PresetItem {

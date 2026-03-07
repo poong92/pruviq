@@ -21,9 +21,11 @@ from typing import Optional, Dict, List
 from collections import OrderedDict
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Request, Header
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+
+ADMIN_API_KEY = os.environ.get("ADMIN_API_KEY", "")
 
 import numpy as np
 import pandas as pd
@@ -46,6 +48,7 @@ from api.schemas import (
     MacroIndicator, DerivativesData, EconomicEvent, MacroResponse,
     ValidateRequest, ValidateResponse, OOSResult, OOSPeriodMetrics,
     MonteCarloResult, MCEquityBand,
+    TradeItem,
     VALID_TIMEFRAMES,
 )
 from api.data_manager import DataManager
@@ -108,7 +111,8 @@ def _refresh_data():
             global coin_stats_cache
             _load_coingecko_metadata()
             coin_stats_cache = _build_coin_stats(strategy)
-            logger.info(f"Reload complete: {indicator_cache.count} coins")
+            sim_cache.clear()
+            logger.info(f"Reload complete: {indicator_cache.count} coins, cache cleared")
         else:
             logger.info("No new data from Binance")
     except Exception as e:
@@ -224,14 +228,22 @@ app.add_middleware(
         "http://localhost:3000",
     ],
     allow_methods=["GET", "POST"],
-    allow_headers=["*"],
+    allow_headers=["Content-Type", "Accept", "Origin"],
 )
 
 
 # --- Rate Limiting ---
 
+TRUSTED_PROXIES = {"127.0.0.1", "::1"}
+
+
 def get_client_ip(request: Request) -> str:
-    """Extract real client IP from proxy headers (Cloudflare → X-Forwarded-For fallback)."""
+    """Extract real client IP, only trusting proxy headers from trusted sources."""
+    direct_ip = request.client.host if request.client else "unknown"
+
+    if direct_ip not in TRUSTED_PROXIES:
+        return direct_ip
+
     cf_ip = request.headers.get("cf-connecting-ip")
     if cf_ip:
         return cf_ip.strip()
@@ -240,7 +252,11 @@ def get_client_ip(request: Request) -> str:
     if forwarded:
         return forwarded.split(",")[0].strip()
 
-    return request.client.host if request.client else "unknown"
+    real_ip = request.headers.get("x-real-ip")
+    if real_ip:
+        return real_ip.strip()
+
+    return direct_ip
 
 
 def check_rate_limit(client_ip: str) -> bool:
@@ -292,6 +308,14 @@ def set_cached(key: str, value: dict):
     sim_cache.move_to_end(key)
     while len(sim_cache) > MAX_CACHE_SIZE:
         sim_cache.popitem(last=False)
+
+
+def backtest_cache_key(req: "BacktestRequest") -> str:
+    """Deterministic cache key for /backtest requests."""
+    d = req.model_dump()
+    d["symbols"] = sorted(d["symbols"]) if d.get("symbols") else None
+    raw = json.dumps(d, sort_keys=True, default=str)
+    return "bt_" + hashlib.md5(raw.encode()).hexdigest()
 
 
 # --- Helpers ---
@@ -1082,8 +1106,10 @@ async def simulate_validate(req: ValidateRequest):
 
 
 @app.post("/admin/refresh")
-async def refresh_data():
+async def refresh_data(x_admin_key: str = Header(alias="X-Admin-Key")):
     """Manually trigger data refresh from Binance."""
+    if not ADMIN_API_KEY or x_admin_key != ADMIN_API_KEY:
+        raise HTTPException(status_code=403, detail="Forbidden")
     await asyncio.to_thread(_refresh_data)
     return {"status": "ok", "coins": indicator_cache.count, "generated": coin_stats_cache["generated"] if coin_stats_cache else None}
 
@@ -1706,6 +1732,12 @@ async def run_backtest(req: BacktestRequest):
     if data_manager.coin_count == 0:
         raise HTTPException(503, "Data not loaded yet. Try again shortly.")
 
+    # Cache lookup
+    bt_key = backtest_cache_key(req)
+    cached = get_cached(bt_key)
+    if cached is not None:
+        return cached
+
     timeframe = _validate_timeframe(getattr(req, 'timeframe', '1H') or '1H')
     resampled = _is_resampled(timeframe)
 
@@ -1809,12 +1841,23 @@ async def run_backtest(req: BacktestRequest):
                 timeout_count=sum(1 for t in trades if t.exit_reason == "timeout"),
             ))
 
+        # Calculate USD PnL per trade
+        position_size = getattr(req, 'per_coin_usd', 60.0) * getattr(req, 'leverage', 5)
         for trade in trades:
+            trade.pnl_usd = round(position_size * (trade.pnl_pct / 100), 4)
             all_trades.append({
                 "time": trade.entry_time,
                 "pnl_pct": trade.pnl_pct,
+                "pnl_usd": trade.pnl_usd,
                 "exit_reason": trade.exit_reason,
                 "funding_pct": getattr(trade, 'funding_pct', 0),
+                "symbol": trade.symbol,
+                "direction": trade.direction,
+                "entry_time": trade.entry_time,
+                "exit_time": trade.exit_time,
+                "entry_price": trade.entry_price,
+                "exit_price": trade.exit_price,
+                "bars_held": trade.bars_held,
             })
 
     # Sort coin_results by total_return descending
@@ -1849,10 +1892,20 @@ async def run_backtest(req: BacktestRequest):
     avg_win = (sum(t["pnl_pct"] for t in wins) / len(wins)) if wins else 0
     avg_loss = (sum(t["pnl_pct"] for t in losses) / len(losses)) if losses else 0
 
-    # Equity + MDD
+    # Portfolio USD calculations
+    per_coin_usd = getattr(req, 'per_coin_usd', 60.0)
+    leverage_val = getattr(req, 'leverage', 5)
+    initial_capital = per_coin_usd * len(coin_list)
+    total_pnl_usd = sum(t["pnl_usd"] for t in all_trades)
+    portfolio_return_pct = round((total_pnl_usd / initial_capital * 100), 2) if initial_capital > 0 else 0
+
+    # Equity + MDD (in both % and USD)
     equity = 0.0
+    equity_usd = 0.0
     peak = 0.0
+    peak_usd = 0.0
     max_dd = 0.0
+    max_dd_usd = 0.0
     eq_times = []
     eq_values = []
     max_consec = 0
@@ -1860,9 +1913,13 @@ async def run_backtest(req: BacktestRequest):
 
     for t in all_trades:
         equity += t["pnl_pct"]
+        equity_usd += t.get("pnl_usd", 0)
         peak = max(peak, equity)
+        peak_usd = max(peak_usd, equity_usd)
         dd = peak - equity
+        dd_usd = peak_usd - equity_usd
         max_dd = max(max_dd, dd)
+        max_dd_usd = max(max_dd_usd, dd_usd)
         eq_times.append(t["time"][:10])
         eq_values.append(equity)
         if t["pnl_pct"] <= 0:
@@ -1918,7 +1975,24 @@ async def run_backtest(req: BacktestRequest):
     total_funding = sum(t.get('funding_pct', 0) for t in all_trades)
     compute_ms = int((time.time() - t_start) * 1000)
 
-    return BacktestResponse(
+    # Build trade items for response (cap at 500)
+    trade_items = [
+        TradeItem(
+            symbol=t["symbol"],
+            direction=t["direction"],
+            entry_time=t["entry_time"],
+            exit_time=t["exit_time"],
+            entry_price=round(t["entry_price"], 6),
+            exit_price=round(t["exit_price"], 6),
+            pnl_pct=round(t["pnl_pct"], 4),
+            pnl_usd=round(t.get("pnl_usd", 0), 4),
+            exit_reason=t["exit_reason"],
+            bars_held=t["bars_held"],
+        )
+        for t in all_trades[:500]
+    ]
+
+    response = BacktestResponse(
         name=req.name,
         direction=req.direction,
         sl_pct=req.sl_pct,
@@ -1949,9 +2023,21 @@ async def run_backtest(req: BacktestRequest):
         is_valid=True,
         validation_errors=[],
         coin_results=[cr.model_dump() for cr in coin_results],
+        trades=trade_items,
+        per_coin_usd=per_coin_usd,
+        leverage=leverage_val,
+        initial_capital_usd=round(initial_capital, 2),
+        total_return_usd=round(total_pnl_usd, 2),
+        total_return_pct_portfolio=portfolio_return_pct,
+        max_drawdown_usd=round(max_dd_usd, 2),
         yearly_stats=yearly_stats,
         compute_time_ms=compute_ms,
     )
+
+    # Cache the result
+    set_cached(bt_key, response)
+
+    return response
 
 
 

@@ -81,6 +81,7 @@ const L = {
     clearHistory: 'Clear',
     compareWith: 'Compare',
     run1: 'Run 1', run2: 'Run 2', run3: 'Run 3',
+    validate: 'Validate',
   },
   ko: {
     title: '전략 시뮬레이터',
@@ -147,6 +148,7 @@ const L = {
     clearHistory: '초기화',
     compareWith: '비교',
     run1: '실행 1', run2: '실행 2', run3: '실행 3',
+    validate: '검증',
   },
 };
 
@@ -223,7 +225,7 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
   const [error, setError] = useState<string | null>(null);
 
   // Results tab
-  const [resultTab, setResultTab] = useState<'summary' | 'equity' | 'trades' | 'coins'>('summary');
+  const [resultTab, setResultTab] = useState<'summary' | 'equity' | 'trades' | 'coins' | 'validate'>('summary');
 
   // Mobile tab
   const [mobileTab, setMobileTab] = useState<'chart' | 'config' | 'results'>('config');
@@ -449,7 +451,7 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
       sl_pct: slPct,
       tp_pct: tpPct,
       max_bars: adjustedMaxBars,
-      per_coin_usdt: perCoinUsdt,
+      per_coin_usd: perCoinUsdt,
       leverage,
     };
 
