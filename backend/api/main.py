@@ -26,6 +26,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 ADMIN_API_KEY = os.environ.get("ADMIN_API_KEY", "")
+COINGECKO_API_KEY = os.environ.get("COINGECKO_API_KEY", "")
+CG_HEADERS = {"x-cg-demo-api-key": COINGECKO_API_KEY} if COINGECKO_API_KEY else {}
 
 import numpy as np
 import pandas as pd
@@ -1106,7 +1108,7 @@ async def simulate_validate(req: ValidateRequest):
 
 
 @app.post("/admin/refresh")
-async def refresh_data(x_admin_key: str = Header(alias="X-Admin-Key")):
+async def refresh_data(x_admin_key: str = Header(default="", alias="X-Admin-Key")):
     """Manually trigger data refresh from Binance."""
     if not ADMIN_API_KEY or x_admin_key != ADMIN_API_KEY:
         raise HTTPException(status_code=403, detail="Forbidden")
@@ -1164,7 +1166,7 @@ def _fetch_fear_greed() -> dict:
 def _fetch_coingecko_global() -> dict:
     """Fetch global market data from CoinGecko."""
     try:
-        resp = http_requests.get("https://api.coingecko.com/api/v3/global", timeout=5)
+        resp = http_requests.get("https://api.coingecko.com/api/v3/global", headers=CG_HEADERS, timeout=5)
         resp.raise_for_status()
         data = resp.json()["data"]
         return {
@@ -1186,6 +1188,7 @@ def _fetch_coingecko_tickers() -> tuple:
             "https://api.coingecko.com/api/v3/coins/markets"
             "?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false"
             "&price_change_percentage=24h",
+            headers=CG_HEADERS,
             timeout=10,
         )
         resp.raise_for_status()
@@ -1232,6 +1235,7 @@ def _fetch_coingecko_funding() -> list:
         resp = http_requests.get(
             "https://api.coingecko.com/api/v3/derivatives"
             "?include_tickers=unexpired",
+            headers=CG_HEADERS,
             timeout=10,
         )
         resp.raise_for_status()
@@ -1582,6 +1586,7 @@ def _fetch_derivatives_data() -> Optional[DerivativesData]:
     try:
         resp = http_requests.get(
             "https://api.coingecko.com/api/v3/derivatives",
+            headers=CG_HEADERS,
             timeout=8,
         )
         resp.raise_for_status()
