@@ -1140,13 +1140,14 @@ MARKET_REFRESH_INTERVAL = 900  # seconds — background fetch every 15min (match
 _market_cache: Optional[dict] = None
 
 
-def _cg_get(url: str, timeout: int = 10, max_retries: int = 2):
+def _cg_get(url: str, timeout: int = 10, max_retries: int = 3):
     """CoinGecko GET with 429 backoff."""
     for attempt in range(max_retries):
         resp = http_requests.get(url, headers=CG_HEADERS, timeout=timeout)
         if resp.status_code == 429:
-            wait = int(resp.headers.get("Retry-After", 30)) * (2 ** attempt)
-            logger.warning(f"CoinGecko 429 on {url}, waiting {wait}s")
+            retry_after = int(resp.headers.get("Retry-After", 30))
+            wait = max(retry_after, 15) * (2 ** attempt)
+            logger.warning(f"CoinGecko 429 on {url.split('?')[0]}, waiting {wait}s (attempt {attempt+1})")
             time.sleep(wait)
             continue
         resp.raise_for_status()

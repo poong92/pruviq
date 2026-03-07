@@ -1,0 +1,104 @@
+PRUVIQ API RATE LIMIT AUDIT — QUICK SUMMARY
+===========================================
+Audit Date: 2026-02-22
+File: backend/scripts/refresh_static.py
+
+OVERALL VERDICT: ⚠️ WARN (Safe but Critical Gap)
+
+┌─────────────────────────────────────────────────────────────┐
+│  API USAGE vs LIMITS                                        │
+├─────────────────────────────────────────────────────────────┤
+│  CoinGecko Free:      0.2/min avg (limit: 10/min)  ✅ PASS │
+│  FRED CSV:            0.4/min (limit: 120/min)     ✅ PASS │
+│  Fear & Greed:        2,880/mo (no limit)          ⚠️ WARN │
+│  RSS Feeds:           20,160/mo (no limit)         ✅ PASS │
+└─────────────────────────────────────────────────────────────┘
+
+CRITICAL ISSUES
+===============
+
+🔴 P0: CoinGecko NO FALLBACK on 429
+   - Location: L509 (sys.exit(1) if empty)
+   - Impact: Entire refresh fails → website shows nothing
+   - Fix: Add retry + stale data fallback
+
+⚠️ P1: FRED 15-min Fetch (wasteful)
+   - Data updates: DAILY (business days)
+   - Current: 17,280 calls/month
+   - Optimal: 2,160-4,320 calls/month (1-2 hour interval)
+   - Fix: Cache with timestamp check
+
+⚠️ P2: Fear & Greed (unofficial API)
+   - No SLA, could break anytime
+   - Impact: LOW (fallback to 0/"Unknown")
+   - Action: Monitor only
+
+ACTION ITEMS (7 total)
+======================
+
+Priority 1 (Critical) — Must Fix
+  □ Add exponential backoff retry to fetch_json()
+  □ Implement stale data fallback for CoinGecko  
+  □ Add Telegram alerts on API failures
+
+Priority 2 (High) — Performance
+  □ Reduce FRED fetch frequency to 1-2 hours
+  □ Cache FRED data with timestamp check
+
+Priority 3 (Medium) — Monitoring
+  □ Add per-API metrics logging
+  □ Monitor Fear & Greed API reliability
+
+CURRENT SAFETY MARGINS
+=======================
+
+CoinGecko:
+  - Average: 0.2 calls/min (50× under limit)
+  - Burst: 7.5 calls/min in 24s (75% of 10/min, safe with delays)
+  - 12s delays between calls = conservative ✅
+
+FRED:
+  - 0.4 calls/min (300× under limit)
+  - No API key needed (public CSV)
+  - Trivial usage ✅
+
+RSS:
+  - Public feeds, no limits
+  - Graceful degradation on failure ✅
+
+FAILURE SCENARIOS
+=================
+
+Scenario 1: CoinGecko 429
+  → 🔴 CRITICAL: sys.exit(1), no fallback
+  → Mitigation: Add retry + stale data
+
+Scenario 2: CoinGecko /global fails
+  → 🟢 LOW: Fallback exists (calculate from coins)
+
+Scenario 3: FRED series unavailable
+  → 🟡 MEDIUM: Skip failed series, continue
+
+Scenario 4: RSS feed down
+  → 🟡 MEDIUM: Skip failed feed, continue
+
+Scenario 5: Fear & Greed fails
+  → 🟢 LOW: Return (0, "Unknown")
+
+OPTIMIZATION OPPORTUNITIES
+==========================
+
+1. FRED Caching (High ROI)
+   - Savings: 75-87.5% reduction (13K calls/mo)
+   - Effort: LOW (30 lines of code)
+
+2. RSS Interval (Low Priority)
+   - Savings: 50-75% reduction (10-15K calls/mo)
+   - Effort: LOW (change cron)
+   - Impact: Minimal (no limits anyway)
+
+REFERENCES
+==========
+Full Report: docs/PRUVIQ_API_RATE_LIMIT_AUDIT.md
+Code: backend/scripts/refresh_static.py
+Cron: every 15 min (refresh_static.sh)

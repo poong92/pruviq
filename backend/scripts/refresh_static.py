@@ -88,7 +88,7 @@ def fetch_json(url: str, max_retries: int = 3) -> Optional[dict]:
             return json.loads(resp.read())
         except urllib.error.HTTPError as e:
             if e.code == 429:
-                wait = int(e.headers.get("Retry-After", 30)) * (2 ** attempt)
+                wait = max(int(e.headers.get("Retry-After", 30)), 15) * (2 ** attempt)
                 print(f"  WARN: 429 rate limit on {url}, waiting {wait}s (attempt {attempt+1}/{max_retries})")
                 time.sleep(wait)
                 continue

@@ -1,0 +1,2 @@
+COINGECKO_API_KEY=코인게코
+https://api.coingecko.com/api/v3/simple/price?vs_currencies=usd&ids=bitcoin&x_cg_demo_api_key=CG-7Y89os2KHLuTRnBFj4LtaKne
