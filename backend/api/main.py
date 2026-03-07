@@ -232,8 +232,16 @@ app.add_middleware(
 
 # --- Rate Limiting ---
 
+TRUSTED_PROXIES = {"127.0.0.1", "::1"}
+
+
 def get_client_ip(request: Request) -> str:
-    """Extract real client IP from proxy headers (Cloudflare → X-Forwarded-For fallback)."""
+    """Extract real client IP, only trusting proxy headers from trusted sources."""
+    direct_ip = request.client.host if request.client else "unknown"
+
+    if direct_ip not in TRUSTED_PROXIES:
+        return direct_ip
+
     cf_ip = request.headers.get("cf-connecting-ip")
     if cf_ip:
         return cf_ip.strip()
@@ -242,7 +250,11 @@ def get_client_ip(request: Request) -> str:
     if forwarded:
         return forwarded.split(",")[0].strip()
 
-    return request.client.host if request.client else "unknown"
+    real_ip = request.headers.get("x-real-ip")
+    if real_ip:
+        return real_ip.strip()
+
+    return direct_ip
 
 
 def check_rate_limit(client_ip: str) -> bool:
