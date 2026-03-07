@@ -1090,7 +1090,7 @@ async def refresh_data():
 
 # --- Market Dashboard ---
 
-import xml.etree.ElementTree as ET
+import defusedxml.ElementTree as ET
 import requests as http_requests
 from email.utils import parsedate_to_datetime
 
