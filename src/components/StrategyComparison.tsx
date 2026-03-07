@@ -38,7 +38,7 @@ const labels = {
     sl: 'Stop Loss %',
     tp: 'Take Profit %',
     run: 'Compare',
-    running: 'Running 5 backtests...',
+    running: 'Running backtests...',
     loading: 'Loading strategies...',
     strategy: 'Strategy',
     direction: 'Dir',
@@ -64,7 +64,7 @@ const labels = {
     sl: '손절 %',
     tp: '익절 %',
     run: '비교 실행',
-    running: '5개 백테스트 실행 중...',
+    running: '백테스트 실행 중...',
     loading: '전략 로딩 중...',
     strategy: '전략',
     direction: '방향',
@@ -86,11 +86,7 @@ const labels = {
 };
 
 const STATUS_MAP: Record<string, { en: string; ko: string; color: string }> = {
-  'bb-squeeze-short': { en: 'VERIFIED', ko: '검증됨', color: 'var(--color-accent)' },
-  'bb-squeeze-long': { en: 'KILLED', ko: '중단됨', color: 'var(--color-red)' },
-  'momentum-long': { en: 'KILLED', ko: '중단됨', color: 'var(--color-red)' },
-  'atr-breakout': { en: 'SHELVED', ko: '보류', color: 'var(--color-text-muted)' },
-  'hv-squeeze': { en: 'SHELVED', ko: '보류', color: 'var(--color-text-muted)' },
+  'bb-squeeze-short': { en: 'LIVE', ko: '실거래 중', color: 'var(--color-accent)' },
 };
 
 interface Props {
@@ -155,7 +151,7 @@ export default function StrategyComparison({ lang = 'en' }: Props) {
     const newResults: Record<string, BacktestResult> = {};
     let totalMs = 0;
 
-    // Run all 5 backtests in parallel
+    // Run all backtests in parallel
     const promises = presets.map(async (preset) => {
       try {
         const body = {
