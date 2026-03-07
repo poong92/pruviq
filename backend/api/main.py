@@ -13,6 +13,7 @@ import os
 import sys
 import time
 import hashlib
+import hmac
 import json
 import asyncio
 import logging
@@ -274,6 +275,15 @@ def check_rate_limit(client_ip: str) -> bool:
 
     rate_limits[client_ip].append(now)
     return True
+
+
+@app.middleware("http")
+async def security_headers_middleware(request: Request, call_next):
+    response = await call_next(request)
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    return response
 
 
 @app.middleware("http")
@@ -1110,7 +1120,7 @@ async def simulate_validate(req: ValidateRequest):
 @app.post("/admin/refresh")
 async def refresh_data(x_admin_key: str = Header(default="", alias="X-Admin-Key")):
     """Manually trigger data refresh from Binance."""
-    if not ADMIN_API_KEY or x_admin_key != ADMIN_API_KEY:
+    if not ADMIN_API_KEY or not hmac.compare_digest(x_admin_key, ADMIN_API_KEY):
         raise HTTPException(status_code=403, detail="Forbidden")
     await asyncio.to_thread(_refresh_data)
     return {"status": "ok", "coins": indicator_cache.count, "generated": coin_stats_cache["generated"] if coin_stats_cache else None}
