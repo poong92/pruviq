@@ -98,12 +98,14 @@ const verifiedCount = allStrategies.filter(s => s.data.status === 'verified').le
     </div>
   </section>
 
-  <!-- PROBLEM (PAS Framework - Agitate) -->
-  <section class="py-20 border-t border-[--color-border] bg-[--color-bg-subtle]" aria-labelledby="problem-heading-ko">
+  <!-- WHY PRUVIQ (Merged Problem + Evidence) -->
+  <section class="py-20 border-t border-[--color-border] bg-[--color-bg-subtle]" aria-labelledby="why-heading-ko">
     <div class="max-w-6xl mx-auto px-4">
       <p class="font-mono text-[--color-down] text-sm mb-2 tracking-wider">{t('problem.tag')}</p>
-      <h2 id="problem-heading-ko" class="text-3xl md:text-4xl font-bold mb-12">{t('problem.title')}</h2>
+      <h2 id="why-heading-ko" class="text-3xl md:text-4xl font-bold mb-4">{t('problem.title')}</h2>
+      <p class="text-[--color-text-muted] text-lg mb-12 max-w-3xl">{t('evidence.desc')}</p>
 
+      <!-- Case Studies -->
       <div class="grid md:grid-cols-3 gap-8 mb-12">
         <div class="border border-[--color-down]/30 rounded-lg p-6 bg-[--color-bg-card]">
           <div class="text-[--color-down] font-mono text-xs font-bold mb-3 flex items-center gap-2">
@@ -134,51 +136,12 @@ const verifiedCount = allStrategies.filter(s => s.data.status === 'verified').le
         </div>
       </div>
 
-      <div class="text-center">
-        <p class="text-xl md:text-2xl font-bold">
-          {t('problem.hook')} <span class="text-[--color-accent]">{t('problem.hook_accent')}</span>
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <!-- EVIDENCE (PAS Framework - Solution Proof) -->
-  <section class="py-20 border-t border-[--color-border]" aria-labelledby="evidence-heading-ko">
-    <div class="max-w-6xl mx-auto px-4">
-      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('evidence.tag')}</p>
-      <h2 id="evidence-heading-ko" class="text-3xl md:text-4xl font-bold mb-4">{t('evidence.title')}</h2>
-      <p class="text-[--color-text-muted] text-lg mb-12 max-w-3xl">{t('evidence.desc')}</p>
-
-      <div class="grid md:grid-cols-2 gap-8 mb-16">
-        <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card]">
-          <div class="font-mono text-[--color-accent] text-xs font-bold mb-3">STEP 01</div>
-          <h3 class="font-bold text-lg mb-2">{t('evidence.step1_title')}</h3>
-          <p class="text-[--color-text-muted] text-sm leading-relaxed">{t('evidence.step1_desc')}</p>
-        </div>
-        <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card]">
-          <div class="font-mono text-[--color-accent] text-xs font-bold mb-3">STEP 02</div>
-          <h3 class="font-bold text-lg mb-2">{t('evidence.step2_title')}</h3>
-          <p class="text-[--color-text-muted] text-sm leading-relaxed">{t('evidence.step2_desc')}</p>
-        </div>
-        <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card]">
-          <div class="font-mono text-[--color-accent] text-xs font-bold mb-3">STEP 03</div>
-          <h3 class="font-bold text-lg mb-2">{t('evidence.step3_title')}</h3>
-          <p class="text-[--color-text-muted] text-sm leading-relaxed">{t('evidence.step3_desc')}</p>
-        </div>
-        <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card]">
-          <div class="font-mono text-[--color-accent] text-xs font-bold mb-3">STEP 04</div>
-          <h3 class="font-bold text-lg mb-2">{t('evidence.step4_title')}</h3>
-          <p class="text-[--color-text-muted] text-sm leading-relaxed">{t('evidence.step4_desc')}</p>
-        </div>
-      </div>
-
       <!-- The Elimination Process -->
       <div class="border border-[--color-accent]/30 rounded-lg p-8 bg-[--color-bg-card] max-w-3xl mx-auto mb-12">
         <p class="font-mono text-[--color-accent] text-xs font-bold mb-4">{t('evidence.lesson_tag')}</p>
         <p class="text-[--color-text-muted] leading-relaxed mb-3">
           {t('evidence.lesson1')} <span class="text-[--color-accent] font-bold text-lg">{t('evidence.lesson_loss')}</span> <span class="text-[--color-up] font-bold text-lg">{t('evidence.lesson1_end')}</span>
         </p>
-        <p class="text-[--color-text-muted] leading-relaxed mb-3">{t('evidence.lesson2')}</p>
         <p class="text-[--color-text-muted] leading-relaxed mb-4">{t('evidence.lesson3')}</p>
         <p class="text-[--color-accent] font-bold text-lg italic">{t('evidence.lesson_rule')}</p>
       </div>
@@ -192,7 +155,6 @@ const verifiedCount = allStrategies.filter(s => s.data.status === 'verified').le
             <li class="flex items-start gap-2"><span class="text-[--color-up] shrink-0 mt-0.5">&#10003;</span> {t('evidence.publish2')}</li>
             <li class="flex items-start gap-2"><span class="text-[--color-up] shrink-0 mt-0.5">&#10003;</span> {t('evidence.publish3')}</li>
             <li class="flex items-start gap-2"><span class="text-[--color-up] shrink-0 mt-0.5">&#10003;</span> {t('evidence.publish4')}</li>
-            <li class="flex items-start gap-2"><span class="text-[--color-up] shrink-0 mt-0.5">&#10003;</span> {t('evidence.publish5')}</li>
           </ul>
         </div>
         <div class="border border-[--color-down]/30 rounded-lg p-6 bg-[--color-bg-card]">
@@ -202,14 +164,16 @@ const verifiedCount = allStrategies.filter(s => s.data.status === 'verified').le
             <li class="flex items-start gap-2"><span class="text-[--color-down] shrink-0 mt-0.5">&#10007;</span> {t('evidence.nopromise2')}</li>
             <li class="flex items-start gap-2"><span class="text-[--color-down] shrink-0 mt-0.5">&#10007;</span> {t('evidence.nopromise3')}</li>
             <li class="flex items-start gap-2"><span class="text-[--color-down] shrink-0 mt-0.5">&#10007;</span> {t('evidence.nopromise4')}</li>
-            <li class="flex items-start gap-2"><span class="text-[--color-down] shrink-0 mt-0.5">&#10007;</span> {t('evidence.nopromise5')}</li>
           </ul>
         </div>
       </div>
 
       <div class="text-center">
-        <a href="/ko/demo" class="inline-block bg-[--color-accent] text-[--color-bg] px-8 py-3 rounded font-semibold text-lg hover:bg-[--color-accent-dim]">
-          {t('evidence.try_cta')} &rarr;
+        <p class="text-xl md:text-2xl font-bold mb-6">
+          {t('problem.hook')} <span class="text-[--color-accent]">{t('problem.hook_accent')}</span>
+        </p>
+        <a href="/ko/simulate" class="inline-block bg-[--color-accent] text-[--color-bg] px-8 py-3 rounded font-semibold text-lg hover:bg-[--color-accent-dim]">
+          {t('hero.cta_primary')} &rarr;
         </a>
       </div>
     </div>
@@ -275,7 +239,7 @@ const verifiedCount = allStrategies.filter(s => s.data.status === 'verified').le
               <td class="py-3 px-4 text-center text-[--color-down]">&#10007; Python/C#</td>
             </tr>
             <tr class="border-b border-[--color-border]/50">
-              <td class="py-3 px-4">549+ 코인 동시 테스트</td>
+              <td class="py-3 px-4">500+ 코인 동시 테스트</td>
               <td class="py-3 px-4 text-center text-[--color-up] bg-[--color-accent]/5">&#10003;</td>
               <td class="py-3 px-4 text-center text-[--color-down]">&#10007; 1개씩</td>
               <td class="py-3 px-4 text-center text-yellow-400">제한적</td>
@@ -320,13 +284,14 @@ const verifiedCount = allStrategies.filter(s => s.data.status === 'verified').le
     </div>
   </section>
 
-  <!-- FEATURES -->
+  <!-- FEATURES & TRUST (Merged) -->
   <section class="py-20 border-t border-[--color-border] bg-[--color-bg-subtle]" aria-labelledby="features-heading-ko">
     <div class="max-w-6xl mx-auto px-4">
       <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('features.tag')}</p>
       <h2 id="features-heading-ko" class="text-3xl md:text-4xl font-bold mb-12">{t('features.title')}</h2>
 
-      <div class="grid md:grid-cols-3 gap-8">
+      <!-- Feature cards -->
+      <div class="grid md:grid-cols-3 gap-8 mb-16">
         <a href="/ko/simulate" class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] card-hover block group">
           <p class="font-mono text-[--color-accent] text-xs font-bold mb-3">{t('features.card1_tag')}</p>
           <h3 class="font-bold text-lg mb-2 group-hover:text-[--color-accent] transition-colors">{t('features.card1_title')}</h3>
@@ -343,72 +308,43 @@ const verifiedCount = allStrategies.filter(s => s.data.status === 'verified').le
           <p class="text-[--color-text-muted] text-sm leading-relaxed">{t('features.card3_desc')}</p>
         </a>
       </div>
-    </div>
-  </section>
 
-  <!-- TRUST / SOCIAL PROOF -->
-  <section class="py-20 border-t border-[--color-border] bg-[--color-bg-subtle]" aria-labelledby="trust-heading-ko">
-    <div class="max-w-6xl mx-auto px-4">
+      <!-- Trust: Live stats + verification badges -->
       <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('trust.section_tag')}</p>
-      <h2 id="trust-heading-ko" class="text-3xl md:text-4xl font-bold mb-12">{t('trust.section_title')}</h2>
+      <h3 class="text-2xl md:text-3xl font-bold mb-8">{t('trust.section_title')}</h3>
 
-      <!-- Stats row (live data from performance.json) -->
-      <div class="mb-12">
+      <div class="mb-10">
         <LiveStats client:visible lang="ko" />
       </div>
 
-      <!-- Verification badges -->
       <div class="grid md:grid-cols-2 gap-6">
         <a href="/ko/methodology" class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card] card-hover block group">
           <div class="flex items-center gap-3 mb-2">
             <span class="inline-flex items-center justify-center w-8 h-8 rounded bg-[--color-accent]/10 text-[--color-accent] font-mono text-sm font-bold shrink-0">MC</span>
-            <h3 class="font-bold group-hover:text-[--color-accent] transition-colors">{t('trust.badge_mc')}</h3>
+            <h4 class="font-bold group-hover:text-[--color-accent] transition-colors">{t('trust.badge_mc')}</h4>
           </div>
           <p class="text-[--color-text-muted] text-sm">{t('trust.badge_mc_desc')}</p>
         </a>
         <a href="/ko/methodology" class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card] card-hover block group">
           <div class="flex items-center gap-3 mb-2">
             <span class="inline-flex items-center justify-center w-8 h-8 rounded bg-[--color-accent]/10 text-[--color-accent] font-mono text-sm font-bold shrink-0">OOS</span>
-            <h3 class="font-bold group-hover:text-[--color-accent] transition-colors">{t('trust.badge_oos')}</h3>
+            <h4 class="font-bold group-hover:text-[--color-accent] transition-colors">{t('trust.badge_oos')}</h4>
           </div>
           <p class="text-[--color-text-muted] text-sm">{t('trust.badge_oos_desc')}</p>
         </a>
         <a href="/ko/strategies/bb-squeeze-short" class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card] card-hover block group">
           <div class="flex items-center gap-3 mb-2">
             <span class="inline-flex items-center justify-center w-8 h-8 rounded bg-[--color-green]/10 text-[--color-green] font-mono text-xs font-bold shrink-0">LIVE</span>
-            <h3 class="font-bold group-hover:text-[--color-accent] transition-colors">{t('trust.badge_live')}</h3>
+            <h4 class="font-bold group-hover:text-[--color-accent] transition-colors">{t('trust.badge_live')}</h4>
           </div>
           <p class="text-[--color-text-muted] text-sm">{t('trust.badge_live_desc')}</p>
         </a>
         <a href="/ko/api" class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card] card-hover block group">
           <div class="flex items-center gap-3 mb-2">
             <span class="inline-flex items-center justify-center w-8 h-8 rounded bg-[--color-accent]/10 text-[--color-accent] font-mono text-xs font-bold shrink-0">&lt;/&gt;</span>
-            <h3 class="font-bold group-hover:text-[--color-accent] transition-colors">{t('trust.badge_open')}</h3>
+            <h4 class="font-bold group-hover:text-[--color-accent] transition-colors">{t('trust.badge_open')}</h4>
           </div>
           <p class="text-[--color-text-muted] text-sm">{t('trust.badge_open_desc')}</p>
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- BLOG / LEARN -->
-  <section class="py-20 border-t border-[--color-border]" aria-labelledby="blog-heading-ko">
-    <div class="max-w-6xl mx-auto px-4">
-      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('blog.coming_soon')}</p>
-      <h2 id="blog-heading-ko" class="text-3xl md:text-4xl font-bold mb-4">{t('blog.title')}</h2>
-      <p class="text-[--color-text-muted] text-sm mb-8 max-w-2xl">{t('blog.desc')}</p>
-      <div class="flex flex-col sm:flex-row gap-4">
-        <a href="/ko/blog"
-           class="inline-flex items-center gap-2 bg-[--color-accent] text-[--color-bg] px-6 py-2.5 rounded font-semibold text-sm hover:bg-[--color-accent-dim]">
-          {t('blog.coming_cta')} &rarr;
-        </a>
-        <a href="/ko/learn"
-           class="inline-flex items-center gap-2 border border-[--color-border] text-[--color-text-muted] px-6 py-2.5 rounded text-sm hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
-          {t('nav.learn')}
-        </a>
-        <a href="https://t.me/PRUVIQ" target="_blank" rel="noopener noreferrer"
-           class="inline-flex items-center gap-2 border border-[--color-border] text-[--color-text-muted] px-6 py-2.5 rounded text-sm hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
-          텔레그램 커뮤니티 &rarr;
         </a>
       </div>
     </div>
@@ -420,7 +356,7 @@ const verifiedCount = allStrategies.filter(s => s.data.status === 'verified').le
       <h2 id="quotes-heading-ko" class="sr-only">트레이더들의 PRUVIQ 사용 후기</h2>
       <div class="grid md:grid-cols-3 gap-6">
         <blockquote class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card]">
-          <p class="text-[--color-text-muted] text-sm leading-relaxed mb-4">"TradingView에서 8개 전략을 테스트하다가 PRUVIQ를 발견했습니다. 549개 코인을 한 번에 테스트할 수 있어서 몇 주가 절약됐어요. 킬된 전략까지 공개하는 게 신뢰가 갔습니다."</p>
+          <p class="text-[--color-text-muted] text-sm leading-relaxed mb-4">"TradingView에서 8개 전략을 테스트하다가 PRUVIQ를 발견했습니다. 수백 개 코인을 한 번에 테스트할 수 있어서 몇 주가 절약됐어요. 중단된 전략까지 공개하는 게 신뢰가 갔습니다."</p>
           <footer class="flex items-center gap-3">
             <div class="w-8 h-8 rounded-full bg-[--color-accent]/20 flex items-center justify-center text-[--color-accent] font-mono text-xs font-bold">DK</div>
             <div>
@@ -430,7 +366,7 @@ const verifiedCount = allStrategies.filter(s => s.data.status === 'verified').le
           </footer>
         </blockquote>
         <blockquote class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card]">
-          <p class="text-[--color-text-muted] text-sm leading-relaxed mb-4">"수익뿐 아니라 손실까지 공개하는 플랫폼은 처음입니다. 킬된 전략을 공개한다는 건 뭐가 효과 있고 없는지 정직하게 보여준다는 뜻이죠."</p>
+          <p class="text-[--color-text-muted] text-sm leading-relaxed mb-4">"수익뿐 아니라 손실까지 공개하는 플랫폼은 처음입니다. 중단된 전략을 공개한다는 건 뭐가 효과 있고 없는지 정직하게 보여준다는 뜻이죠."</p>
           <footer class="flex items-center gap-3">
             <div class="w-8 h-8 rounded-full bg-[--color-up]/20 flex items-center justify-center text-[--color-up] font-mono text-xs font-bold">JM</div>
             <div>

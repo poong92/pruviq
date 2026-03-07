@@ -67,17 +67,51 @@ const t = useTranslations('en');
 
       <div class="prose max-w-3xl">
         <ul>
-          <li><strong>Win Rate</strong> — {t('methodology.metric_wr').replace('Win Rate — ', '')}</li>
-          <li><strong>Profit Factor</strong> — {t('methodology.metric_pf').replace('Profit Factor — ', '')}</li>
-          <li><strong>Total Return %</strong> — {t('methodology.metric_return').replace('Total Return % — ', '')}</li>
-          <li><strong>Max Drawdown</strong> — {t('methodology.metric_mdd').replace('Max Drawdown — ', '')}</li>
-          <li><strong>Trade Count</strong> — {t('methodology.metric_trades').replace('Trade Count — ', '')}</li>
+          <li><strong>Win Rate</strong> — {t('methodology.metric_wr').replace('Win Rate — ', '').replace('승률 — ', '')}</li>
+          <li><strong>Profit Factor</strong> — {t('methodology.metric_pf').replace('Profit Factor — ', '').replace('수익 팩터 — ', '')}</li>
+          <li><strong>Total Return %</strong> — {t('methodology.metric_return').replace('Total Return % — ', '').replace('총 수익률 % — ', '')}</li>
+          <li><strong>Max Drawdown</strong> — {t('methodology.metric_mdd').replace('Max Drawdown — ', '').replace('최대 드로다운 — ', '')}</li>
+          <li><strong>Trade Count</strong> — {t('methodology.metric_trades').replace('Trade Count — ', '').replace('거래 수 — ', '')}</li>
         </ul>
       </div>
 
-      <p class="text-[--color-text-muted] text-xs mt-4 font-mono">
+      <h3 class="text-lg font-bold mt-8 mb-3">{t('methodology.advanced_title')}</h3>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-3xl">
+        <div class="border border-[--color-accent]/30 rounded-lg p-4 bg-[--color-accent]/5">
+          <div class="font-mono text-[--color-accent] text-xs font-bold mb-1">Sharpe Ratio</div>
+          <p class="text-[--color-text-muted] text-xs">{t('methodology.metric_sharpe').replace('Sharpe Ratio — ', '').replace('샤프 비율 — ', '')}</p>
+        </div>
+        <div class="border border-[--color-accent]/30 rounded-lg p-4 bg-[--color-accent]/5">
+          <div class="font-mono text-[--color-accent] text-xs font-bold mb-1">Sortino Ratio</div>
+          <p class="text-[--color-text-muted] text-xs">{t('methodology.metric_sortino').replace('Sortino Ratio — ', '').replace('소르티노 비율 — ', '')}</p>
+        </div>
+        <div class="border border-[--color-accent]/30 rounded-lg p-4 bg-[--color-accent]/5">
+          <div class="font-mono text-[--color-accent] text-xs font-bold mb-1">Calmar Ratio</div>
+          <p class="text-[--color-text-muted] text-xs">{t('methodology.metric_calmar').replace('Calmar Ratio — ', '').replace('칼마 비율 — ', '')}</p>
+        </div>
+      </div>
+      <p class="text-[--color-text-muted] text-xs mt-3 font-mono">
         {t('methodology.metrics_coming')}
       </p>
+    </div>
+  </section>
+
+  <!-- ROBUSTNESS VALIDATION -->
+  <section class="pb-12 border-t border-[--color-border] pt-12">
+    <div class="max-w-5xl mx-auto px-4">
+      <h2 class="text-2xl font-bold mb-2">{t('methodology.validation_title')}</h2>
+      <p class="text-[--color-text-muted] text-sm mb-6">{t('methodology.validation_desc')}</p>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl">
+        <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card]">
+          <div class="font-mono text-[--color-accent] text-xs font-bold mb-2">{t('methodology.oos_label')}</div>
+          <p class="text-[--color-text-muted] text-sm">{t('methodology.oos_desc')}</p>
+        </div>
+        <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card]">
+          <div class="font-mono text-[--color-accent] text-xs font-bold mb-2">{t('methodology.mc_label')}</div>
+          <p class="text-[--color-text-muted] text-sm">{t('methodology.mc_desc')}</p>
+        </div>
+      </div>
     </div>
   </section>
 

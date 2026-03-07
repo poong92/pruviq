@@ -68,7 +68,7 @@ const L = {
     simNotesTitle: 'How it works',
     mobile: { chart: 'Chart', config: 'Settings', results: 'Results' },
     quickStart: 'New to backtesting?',
-    quickStartDesc: 'Try our proven BB Squeeze SHORT strategy — pre-loaded and ready to run.',
+    quickStartDesc: "Click 'BB Squeeze (Verified)' preset above, then hit 'Run Backtest'. Takes ~2 seconds. No signup needed.",
     quickStartCta: 'Run BB Squeeze SHORT',
     quickStartDismiss: 'I\'ll build my own',
     lookAheadWarn: 'C = current candle (incomplete in live). P = previous candle (confirmed). Using C may cause look-ahead bias.',
@@ -82,6 +82,17 @@ const L = {
     compareWith: 'Compare',
     run1: 'Run 1', run2: 'Run 2', run3: 'Run 3',
     validate: 'Validate',
+    // Parameter tooltips
+    slTip: 'Max loss per trade before auto-exit. e.g., 10% = closes if price moves 10% against you',
+    tpTip: 'Target profit per trade. e.g., 8% = auto-closes when 8% profit reached',
+    maxBarsTip: 'Max holding period in candles. 48 = 48 hours for 1H candles',
+    leverageTip: 'Position size multiplier. 5x means $60 acts like $300. Higher = higher risk',
+    perCoinUsdtTip: 'Investment amount per coin position',
+    // Results guide
+    resultsGuide: 'How to read results:',
+    resultsGuideWr: 'Win Rate > 50%: Good',
+    resultsGuidePf: 'Profit Factor > 1.5: Strong',
+    resultsGuideMdd: 'Max Drawdown < 20%: Low risk',
   },
   ko: {
     title: '전략 시뮬레이터',
@@ -134,8 +145,8 @@ const L = {
     ],
     simNotesTitle: '시뮬레이션 안내',
     mobile: { chart: '차트', config: '설정', results: '결과' },
-    quickStart: '백테스팅이 처음이신가요?',
-    quickStartDesc: '검증된 BB Squeeze SHORT 전략을 바로 실행해보세요.',
+    quickStart: '백테스트가 처음이라면?',
+    quickStartDesc: "위의 'BB Squeeze (검증됨)' 프리셋을 선택하고 'Run Backtest'를 누르세요. 약 2초면 됩니다. 회원가입 불필요.",
     quickStartCta: 'BB Squeeze SHORT 실행',
     quickStartDismiss: '직접 만들기',
     lookAheadWarn: 'C = 현재 캔들(실거래에서 미완성). P = 이전 캔들(확정됨). C 사용 시 look-ahead bias 위험이 있습니다.',
@@ -149,6 +160,17 @@ const L = {
     compareWith: '비교',
     run1: '실행 1', run2: '실행 2', run3: '실행 3',
     validate: '검증',
+    // Parameter tooltips
+    slTip: '거래당 최대 손실 한도. 예: 10%면 불리하게 10% 움직이면 자동 청산',
+    tpTip: '거래당 목표 수익률. 예: 8%면 8% 수익 시 자동 익절',
+    maxBarsTip: '최대 보유 기간(캔들 수). 1시간봉 기준 48 = 48시간',
+    leverageTip: '포지션 배율. 5배면 $60이 $300 효과. 높을수록 위험',
+    perCoinUsdtTip: '코인당 투자 금액',
+    // Results guide
+    resultsGuide: '결과 해석 가이드:',
+    resultsGuideWr: '승률 > 50%: 양호',
+    resultsGuidePf: 'Profit Factor > 1.5: 우수',
+    resultsGuideMdd: '최대 낙폭 < 20%: 안전',
   },
 };
 
