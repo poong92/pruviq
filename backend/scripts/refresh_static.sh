@@ -15,9 +15,14 @@ VENV_DIR="$REPO_DIR/backend/.venv"
 LOCK_FILE="/tmp/pruviq-refresh.lock"
 DATA_BRANCH="generated-data"
 
-# Telegram alerting
-source "$HOME/.config/telegram.env" 2>/dev/null || \
-source /Users/jepo/.config/telegram.env 2>/dev/null || true
+# Telegram alerting (safe: check file exists before source to avoid set -e exit)
+TELEGRAM_TOKEN=""
+TELEGRAM_CHAT_ID=""
+if [[ -f "$HOME/.config/telegram.env" ]]; then
+    source "$HOME/.config/telegram.env"
+elif [[ -f /Users/jepo/.config/telegram.env ]]; then
+    source /Users/jepo/.config/telegram.env
+fi
 TG_TOKEN="${TELEGRAM_TOKEN:-}"
 TG_CHAT="${TELEGRAM_CHAT_ID:-}"
 
