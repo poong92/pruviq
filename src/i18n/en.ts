@@ -155,6 +155,7 @@ export const en = {
   'strategies.title': 'Every Strategy. Every Result.',
   'strategies.desc': "We don't hide failures. Every strategy we've tested is documented here with full backtest data, real results, and honest analysis of what worked and what didn't.",
   'strategies.count': '{total} strategies documented — {verified} active, {killed} retired, {shelved} under review.',
+  'strategies.funnel': '88 parameter combinations tested → {total} strategies fully documented → {verified} survived validation. This is the filter, not the failure.',
   'strategies.more_tag': 'MORE STRATEGIES COMING',
   'strategies.more_desc': 'We continuously test new approaches. Documented strategies will appear here as they complete backtesting validation.',
   'strategies.join': 'Join Community',
