@@ -7,14 +7,8 @@ set -uo pipefail
 
 # --- Environment ---
 RUNNING_USER=$(whoami)
-if [[ "$RUNNING_USER" == "openclaw" ]]; then
-    export HOME="/Users/openclaw"
-    REPO_DIR="/Users/openclaw/pruviq"
-else
-    export HOME="/Users/${RUNNING_USER}"
-    REPO_DIR="/Users/${RUNNING_USER}/pruviq"
-    [[ ! -d "$REPO_DIR" ]] && REPO_DIR="/Users/openclaw/pruviq"
-fi
+export HOME="/Users/${RUNNING_USER}"
+REPO_DIR="/Users/${RUNNING_USER}/pruviq"
 export PATH="/opt/homebrew/bin:/opt/homebrew/opt/node@22/bin:$HOME/.npm-global/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
 
 SITE_URL="https://pruviq.com"
@@ -358,21 +352,11 @@ if [[ -z "${PLAYWRIGHT_SKIP:-}" ]]; then
     PW_CONFIG="playwright.production.config.ts"
     [[ ! -f "$PW_CONFIG" ]] && PW_CONFIG="playwright.config.ts"
 
-    # Run Playwright as openclaw to avoid EACCES on node_modules
-    # (repo is owned by openclaw; jepo user gets permission denied)
-    # Resolve the actual repo path for openclaw (avoid jepo symlink permission issues)
-    PW_REPO="/Users/openclaw/pruviq"
-    [[ "$RUNNING_USER" == "openclaw" ]] && PW_REPO="$REPO_DIR"
+    # Run Playwright directly (repo owned by jepo)
+    pw_cmd="cd  && BASE_URL= API_URL= node node_modules/.bin/playwright test tests/e2e/ --config= --reporter=json"
 
-    pw_cmd="cd '$PW_REPO' && BASE_URL='${SITE_URL}' API_URL='${API_URL}' node node_modules/.bin/playwright test tests/e2e/ --config='$PW_CONFIG' --reporter=json"
-
-    if [[ "$RUNNING_USER" != "openclaw" ]] && sudo -u openclaw true 2>/dev/null; then
-        sudo -u openclaw bash -c "export HOME=/Users/openclaw && export PATH='/opt/homebrew/bin:/opt/homebrew/opt/node@22/bin:/usr/local/bin:/usr/bin:/bin:\$PATH' && $pw_cmd" \
-            > /tmp/pruviq-e2e/playwright-results.json 2>> "$LOG_FILE" || true
-    else
-        eval "$pw_cmd" \
-            > /tmp/pruviq-e2e/playwright-results.json 2>> "$LOG_FILE" || true
-    fi
+    eval "$pw_cmd" \
+        > /tmp/pruviq-e2e/playwright-results.json 2>> "$LOG_FILE" || true
 
     PW_JSON=$(cat /tmp/pruviq-e2e/playwright-results.json 2>/dev/null)
 

@@ -743,6 +743,8 @@ def main():
 
     # 7. Build coins list (Binance + CoinGecko + metadata fallback)
     coins = build_coins_list(our_symbols, binance_tickers, cg_lookup, metadata)
+    # Sort by market_cap descending (시총순) — coins without mcap go to the end
+    coins.sort(key=lambda c: (c.get("market_cap") or 0), reverse=True)
 
     # Update metadata cache if CoinGecko succeeded
     if cg_coins:
