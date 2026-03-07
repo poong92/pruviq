@@ -363,7 +363,7 @@ export const en = {
   'about.stack_desc': 'Source-available Python backtesting engine, Astro static site, Cloudflare edge delivery, Binance Futures API. No proprietary black boxes.',
   'about.contact_tag': 'GET IN TOUCH',
   'about.contact_desc': 'Questions, feedback, or partnership inquiries:',
-  'about.contact_email': 'pruviq@gmail.com',
+  'about.contact_email': 'contact@pruviq.com',
   'about.contact_telegram': 'Telegram Community',
 
   // Performance page static fallback
