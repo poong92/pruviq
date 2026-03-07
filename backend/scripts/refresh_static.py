@@ -33,7 +33,7 @@ import sys
 import time
 import urllib.request
 import urllib.error
-import xml.etree.ElementTree as ET
+import defusedxml.ElementTree as ET
 from datetime import datetime, timedelta, timezone
 from email.utils import parsedate_to_datetime
 from pathlib import Path
@@ -79,15 +79,26 @@ HEADERS = {"User-Agent": "PRUVIQ/1.0 (https://pruviq.com)"}
 TIMEOUT = 15
 
 
-def fetch_json(url: str) -> Optional[dict]:
-    """Fetch JSON from URL with error handling."""
-    try:
-        req = urllib.request.Request(url, headers=HEADERS)
-        resp = urllib.request.urlopen(req, timeout=TIMEOUT)
-        return json.loads(resp.read())
-    except (urllib.error.URLError, json.JSONDecodeError, TimeoutError) as e:
-        print(f"  WARN: Failed to fetch {url}: {e}")
-        return None
+def fetch_json(url: str, max_retries: int = 3) -> Optional[dict]:
+    """Fetch JSON from URL with 429 backoff and error handling."""
+    for attempt in range(max_retries):
+        try:
+            req = urllib.request.Request(url, headers=HEADERS)
+            resp = urllib.request.urlopen(req, timeout=TIMEOUT)
+            return json.loads(resp.read())
+        except urllib.error.HTTPError as e:
+            if e.code == 429:
+                wait = int(e.headers.get("Retry-After", 30)) * (2 ** attempt)
+                print(f"  WARN: 429 rate limit on {url}, waiting {wait}s (attempt {attempt+1}/{max_retries})")
+                time.sleep(wait)
+                continue
+            print(f"  WARN: HTTP {e.code} fetching {url}: {e}")
+            return None
+        except (urllib.error.URLError, json.JSONDecodeError, TimeoutError) as e:
+            print(f"  WARN: Failed to fetch {url}: {e}")
+            return None
+    print(f"  ERROR: Exhausted {max_retries} retries on {url}")
+    return None
 
 
 def load_coin_metadata() -> dict[str, dict]:
