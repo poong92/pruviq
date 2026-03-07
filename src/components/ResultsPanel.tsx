@@ -49,6 +49,9 @@ export default function ResultsPanel({
   const ddChartRef = useRef<HTMLDivElement>(null);
   const ddInstanceRef = useRef<any>(null);
 
+  // Results guide banner
+  const [showResultsGuide, setShowResultsGuide] = useState(true);
+
   // Quick Adjust local state
   const [qaSl, setQaSl] = useState(slPct);
   const [qaTp, setQaTp] = useState(tpPct);
@@ -365,6 +368,26 @@ export default function ResultsPanel({
           {/* Summary tab */}
           {resultTab === 'summary' && (
             <div class="p-3 md:p-4">
+              {/* Results interpretation guide banner */}
+              {showResultsGuide && (
+                <div class="mb-3 px-3 py-2.5 rounded-lg border border-[--color-accent]/30 bg-[--color-accent]/5 flex items-start justify-between gap-2">
+                  <div class="font-mono text-xs">
+                    <span class="text-[--color-accent] font-bold">{t.resultsGuide || 'How to read results:'}</span>
+                    <span class="text-[--color-text-muted] ml-2">
+                      {'\u2022'} {t.resultsGuideWr || 'Win Rate > 50%: Good'}
+                      {'  \u2022 '}{t.resultsGuidePf || 'Profit Factor > 1.5: Strong'}
+                      {'  \u2022 '}{t.resultsGuideMdd || 'Max Drawdown < 20%: Low risk'}
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => setShowResultsGuide(false)}
+                    class="text-[--color-text-muted] hover:text-[--color-text] transition-colors text-xs font-mono shrink-0 leading-none mt-0.5"
+                    aria-label="Close guide"
+                  >
+                    x
+                  </button>
+                </div>
+              )}
               <ResultsCard data={result} isDefault={activePreset === 'bb-squeeze-short'} lang={lang} isDemo={result._isDemo} />
               {result.yearly_stats && result.yearly_stats.length > 0 && (
                 <div class="mt-4">

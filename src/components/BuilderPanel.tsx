@@ -217,7 +217,7 @@ export default function BuilderPanel(props: Props) {
             </div>
             {/* SL */}
             <div>
-              <label class="text-[10px] text-[--color-text-muted]">{t.sl}</label>
+              <label class="text-[10px] text-[--color-text-muted]">{t.sl} <span class="cursor-help opacity-60 hover:opacity-100" title={t.slTip || ''}>&#9432;</span></label>
               <input type="number" value={localSl} min={1} max={50} step={0.5}
                 onChange={(e: any) => setLocalSl(e.target.value)}
                 onBlur={() => props.setSlPct(parseFloat(localSl) || 10)}
@@ -226,7 +226,7 @@ export default function BuilderPanel(props: Props) {
             </div>
             {/* TP */}
             <div>
-              <label class="text-[10px] text-[--color-text-muted]">{t.tp}</label>
+              <label class="text-[10px] text-[--color-text-muted]">{t.tp} <span class="cursor-help opacity-60 hover:opacity-100" title={t.tpTip || ''}>&#9432;</span></label>
               <input type="number" value={localTp} min={1} max={50} step={0.5}
                 onChange={(e: any) => setLocalTp(e.target.value)}
                 onBlur={() => props.setTpPct(parseFloat(localTp) || 8)}
@@ -235,7 +235,7 @@ export default function BuilderPanel(props: Props) {
             </div>
             {/* Max bars */}
             <div>
-              <label class="text-[10px] text-[--color-text-muted]">{t.maxBars}</label>
+              <label class="text-[10px] text-[--color-text-muted]">{t.maxBars} <span class="cursor-help opacity-60 hover:opacity-100" title={t.maxBarsTip || ''}>&#9432;</span></label>
               <input type="number" value={localMaxBars} min={1} max={168}
                 onChange={(e: any) => setLocalMaxBars(e.target.value)}
                 onBlur={() => props.setMaxBars(parseInt(localMaxBars) || 48)}
@@ -244,7 +244,7 @@ export default function BuilderPanel(props: Props) {
             </div>
             {/* Per-coin USDT */}
             <div>
-              <label class="text-[10px] text-[--color-text-muted]">{t.perCoinUsdt || 'Per Coin $'}</label>
+              <label class="text-[10px] text-[--color-text-muted]">{t.perCoinUsdt || 'Per Coin $'} <span class="cursor-help opacity-60 hover:opacity-100" title={t.perCoinUsdtTip || ''}>&#9432;</span></label>
               <input type="number" value={localPerCoin} min={1} max={10000} step={10}
                 onChange={(e: any) => setLocalPerCoin(e.target.value)}
                 onBlur={() => props.setPerCoinUsdt(parseFloat(localPerCoin) || 60)}
@@ -253,7 +253,7 @@ export default function BuilderPanel(props: Props) {
             </div>
             {/* Leverage */}
             <div>
-              <label class="text-[10px] text-[--color-text-muted]">{t.leverage || 'Leverage'}</label>
+              <label class="text-[10px] text-[--color-text-muted]">{t.leverage || 'Leverage'} <span class="cursor-help opacity-60 hover:opacity-100" title={t.leverageTip || ''}>&#9432;</span></label>
               <input type="number" value={localLeverage} min={1} max={125} step={1}
                 onChange={(e: any) => setLocalLeverage(e.target.value)}
                 onBlur={() => props.setLeverage(parseInt(localLeverage) || 5)}
