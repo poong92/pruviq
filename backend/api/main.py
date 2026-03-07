@@ -270,6 +270,10 @@ def check_rate_limit(client_ip: str) -> bool:
 
     rate_limits[client_ip] = [t for t in rate_limits[client_ip] if now - t < 60]
 
+    if not rate_limits[client_ip] and client_ip in rate_limits:
+        del rate_limits[client_ip]
+        return True
+
     if len(rate_limits[client_ip]) >= RATE_LIMIT_PER_MIN:
         return False
 
@@ -283,12 +287,14 @@ async def security_headers_middleware(request: Request, call_next):
     response.headers["X-Content-Type-Options"] = "nosniff"
     response.headers["X-Frame-Options"] = "DENY"
     response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    response.headers["Cache-Control"] = "no-store"
+    response.headers["X-Permitted-Cross-Domain-Policies"] = "none"
     return response
 
 
 @app.middleware("http")
 async def rate_limit_middleware(request: Request, call_next):
-    if request.url.path in ("/simulate", "/simulate/coin", "/simulate/compare", "/backtest"):
+    if request.url.path in ("/simulate", "/simulate/coin", "/simulate/compare", "/simulate/validate", "/backtest", "/export/csv"):
         client_ip = get_client_ip(request)
         if not check_rate_limit(client_ip):
             return JSONResponse(
