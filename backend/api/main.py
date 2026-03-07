@@ -21,9 +21,11 @@ from typing import Optional, Dict, List
 from collections import OrderedDict
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Request, Header
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+
+ADMIN_API_KEY = os.environ.get("ADMIN_API_KEY", "")
 
 import numpy as np
 import pandas as pd
@@ -1104,8 +1106,10 @@ async def simulate_validate(req: ValidateRequest):
 
 
 @app.post("/admin/refresh")
-async def refresh_data():
+async def refresh_data(x_admin_key: str = Header(alias="X-Admin-Key")):
     """Manually trigger data refresh from Binance."""
+    if not ADMIN_API_KEY or x_admin_key != ADMIN_API_KEY:
+        raise HTTPException(status_code=403, detail="Forbidden")
     await asyncio.to_thread(_refresh_data)
     return {"status": "ok", "coins": indicator_cache.count, "generated": coin_stats_cache["generated"] if coin_stats_cache else None}
 
