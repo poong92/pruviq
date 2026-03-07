@@ -14,6 +14,7 @@ const posts = (await getCollection('blog')).sort(
 // Group by level based on tags and category
 const beginner = posts.filter(p =>
   p.data.tags?.includes('beginners') ||
+  p.id === 'how-to-backtest-crypto-strategy' ||
   p.id === 'what-is-bb-squeeze' ||
   p.id === 'risk-management-101' ||
   p.id === 'why-pruviq' ||

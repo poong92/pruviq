@@ -263,7 +263,7 @@ const isActive = (match: string) => basePath.startsWith(match);
         "@context": "https://schema.org",
         "@type": "BreadcrumbList",
         "itemListElement": [
-          { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://pruviq.com/" },
+          { "@type": "ListItem", "position": 1, "name": lang === 'ko' ? '홈' : 'Home', "item": "https://pruviq.com/" },
           { "@type": "ListItem", "position": 2, "name": title, "item": canonicalURL.href }
         ]
       })} />
@@ -378,6 +378,7 @@ const isActive = (match: string) => basePath.startsWith(match);
                 <a href={privacyPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('footer.privacy')}</a>
                 <a href={termsPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('footer.terms')}</a>
                 <a href="mailto:pruviq@gmail.com" class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">pruviq@gmail.com</a>
+                <span class="text-[--color-text-muted] text-xs">PRUVIQ Project (Seoul, Korea) · {lang === 'ko' ? '오픈소스 퀀트 리서치 플랫폼' : 'Open-source quant research platform'}</span>
               </div>
             </div>
           </div>
@@ -386,6 +387,7 @@ const isActive = (match: string) => basePath.startsWith(match);
         <div class="border-t border-[--color-border] pt-6 flex flex-col md:flex-row justify-between items-center gap-3 text-xs text-[--color-text-muted]">
           <p>{t('footer.disclaimer')}</p>
           <div class="flex items-center gap-4 flex-wrap">
+            {lang === 'ko' && <span>운영: PRUVIQ Project</span>}
             <p>{t('footer.affiliate')} <a href={feesPath} class="text-[--color-accent] hover:underline">{t('footer.details')}</a></p>
             <span>&copy; 2026 PRUVIQ</span>
           </div>
