@@ -353,7 +353,7 @@ if [[ -z "${PLAYWRIGHT_SKIP:-}" ]]; then
     [[ ! -f "$PW_CONFIG" ]] && PW_CONFIG="playwright.config.ts"
 
     # Run Playwright directly (repo owned by jepo)
-    pw_cmd="cd  && BASE_URL= API_URL= node node_modules/.bin/playwright test tests/e2e/ --config= --reporter=json"
+    pw_cmd="cd '$REPO_DIR' && BASE_URL='${SITE_URL}' API_URL='${API_URL}' node node_modules/.bin/playwright test tests/e2e/ --config='$PW_CONFIG' --reporter=json"
 
     eval "$pw_cmd" \
         > /tmp/pruviq-e2e/playwright-results.json 2>> "$LOG_FILE" || true
