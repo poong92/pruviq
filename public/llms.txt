@@ -50,5 +50,5 @@ PRUVIQ (pruviq.com) is a free, no-code crypto strategy backtesting platform. Use
 - Charts: lightweight-charts (TradingView)
 
 ## Contact
-- Email: pruviq@gmail.com
+- Email: contact@pruviq.com
 - Telegram: https://t.me/PRUVIQ

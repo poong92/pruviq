@@ -33,7 +33,10 @@ import sys
 import time
 import urllib.request
 import urllib.error
-import xml.etree.ElementTree as ET
+try:
+    import defusedxml.ElementTree as ET
+except ImportError:
+    import xml.etree.ElementTree as ET
 from datetime import datetime, timedelta, timezone
 from email.utils import parsedate_to_datetime
 from pathlib import Path
@@ -79,15 +82,27 @@ HEADERS = {"User-Agent": "PRUVIQ/1.0 (https://pruviq.com)"}
 TIMEOUT = 15
 
 
-def fetch_json(url: str) -> Optional[dict]:
-    """Fetch JSON from URL with error handling."""
-    try:
-        req = urllib.request.Request(url, headers=HEADERS)
-        resp = urllib.request.urlopen(req, timeout=TIMEOUT)
-        return json.loads(resp.read())
-    except (urllib.error.URLError, json.JSONDecodeError, TimeoutError) as e:
-        print(f"  WARN: Failed to fetch {url}: {e}")
-        return None
+def fetch_json(url: str, max_retries: int = 1) -> Optional[dict]:
+    """Fetch JSON from URL with error handling and 429 backoff."""
+    for attempt in range(max_retries + 1):
+        try:
+            req = urllib.request.Request(url, headers=HEADERS)
+            resp = urllib.request.urlopen(req, timeout=TIMEOUT)
+            return json.loads(resp.read())
+        except urllib.error.HTTPError as e:
+            if e.code == 429 and attempt < max_retries:
+                retry_after = int(e.headers.get("Retry-After", 30))
+                wait = max(retry_after, 15) * (2 ** attempt)
+                short_url = url.split("?")[0]
+                print(f"  WARN: 429 on {short_url}, waiting {wait}s ({attempt+1}/{max_retries+1})")
+                time.sleep(wait)
+                continue
+            print(f"  WARN: Failed to fetch {url}: {e}")
+            return None
+        except (urllib.error.URLError, json.JSONDecodeError, TimeoutError) as e:
+            print(f"  WARN: Failed to fetch {url}: {e}")
+            return None
+    return None
 
 
 def load_coin_metadata() -> dict[str, dict]:
@@ -182,13 +197,12 @@ def fetch_coingecko_markets(max_retries: int = 2) -> list[dict]:
                 f"&price_change_percentage=1h,24h,7d"
             )
             print(f"  Fetching CoinGecko markets page {page} (attempt {attempt+1})...")
-            data = fetch_json(url)
+            data = fetch_json(url, max_retries=2)
             if data:
                 all_coins.extend(data)
             else:
                 print(f"  WARN: Page {page} failed")
-            if page == 1:
-                time.sleep(12)
+            time.sleep(15)  # CoinGecko free tier: ~10 calls/min
         if all_coins:
             print(f"  Got {len(all_coins)} coins from CoinGecko (supplementary)")
             return all_coins
@@ -248,7 +262,7 @@ def build_coingecko_lookup(cg_coins: list[dict]) -> dict[str, dict]:
 def fetch_global_data() -> Optional[dict]:
     """Fetch global market data from CoinGecko."""
     print("  Fetching CoinGecko global data...")
-    data = fetch_json(CG_GLOBAL)
+    data = fetch_json(CG_GLOBAL, max_retries=2)
     if data and "data" in data:
         return data["data"]
     return None
@@ -721,14 +735,14 @@ def main():
                             f"{CG_MARKETS}?vs_currency=usd&order=market_cap_desc&ids={ids_param}"
                             f"&per_page=250&page=1&sparkline=true&price_change_percentage=1h,24h,7d"
                         )
-                        data = fetch_json(url)
+                        data = fetch_json(url, max_retries=2)
                         if data:
                             by_sym = {cg.get("symbol", "").upper(): cg for cg in data if cg.get("symbol")}
                             for sym_upper, cg in by_sym.items():
                                 cg_usdt = f"{sym_upper}USDT"
                                 if cg_usdt not in cg_lookup:
                                     cg_lookup[cg_usdt] = cg
-                        time.sleep(1)
+                        time.sleep(15)  # CoinGecko free tier rate limit
                     matched_after = sum(1 for s in our_symbols if cg_lookup.get(s))
                     print(f"  After expansion, CoinGecko matched {matched_after}/{len(our_symbols)} ({matched_after/len(our_symbols):.2%})")
 
