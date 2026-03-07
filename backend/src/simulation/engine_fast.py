@@ -24,6 +24,7 @@ class Trade:
     funding_pct: float
     exit_reason: str
     bars_held: int
+    pnl_usd: float = 0.0
 
 
 @dataclass

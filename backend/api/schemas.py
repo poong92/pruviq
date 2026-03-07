@@ -29,7 +29,10 @@ class TradeItem(BaseModel):
     direction: str
     entry_time: str
     exit_time: str
+    entry_price: float = 0.0
+    exit_price: float = 0.0
     pnl_pct: float
+    pnl_usd: float = 0.0
     exit_reason: str
     bars_held: int
 
@@ -313,7 +316,8 @@ class BacktestRequest(BaseModel):
     start_date: Optional[str] = Field(default=None, description="Backtest start date (YYYY-MM-DD)")
     end_date: Optional[str] = Field(default=None, description="Backtest end date (YYYY-MM-DD)")
     timeframe: str = Field(default="1H", description="Candle timeframe: 1H, 2H, 4H, 6H, 12H, 1D, 1W")
-
+    per_coin_usd: float = Field(default=60.0, ge=1.0, le=10000.0, description="USD per coin position")
+    leverage: int = Field(default=5, ge=1, le=125, description="Leverage multiplier")
 
 
 class YearlyStat(BaseModel):
@@ -361,6 +365,15 @@ class BacktestResponse(BaseModel):
     data_range: str
     equity_curve: List[EquityPoint]
     coin_results: List["CoinResult"] = []
+    trades: List[TradeItem] = []
+
+    # Portfolio metrics
+    per_coin_usd: float = 60.0
+    leverage: int = 5
+    initial_capital_usd: float = 0.0
+    total_return_usd: float = 0.0
+    total_return_pct_portfolio: float = 0.0
+    max_drawdown_usd: float = 0.0
 
     # Validation info
     is_valid: bool

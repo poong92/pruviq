@@ -17,6 +17,12 @@ interface ResultsData {
   calmar_ratio?: number;
   total_fees_pct?: number;
   total_funding_pct?: number;
+  per_coin_usd?: number;
+  leverage?: number;
+  initial_capital_usd?: number;
+  total_return_usd?: number;
+  total_return_pct_portfolio?: number;
+  max_drawdown_usd?: number;
 }
 
 interface ResultsCardProps {
@@ -49,6 +55,11 @@ const labels = {
     fundingFee: 'Funding Fee',
     totalCost: 'Total Cost',
     feeSaveTip: 'Save up to 20% on fees',
+    portfolio: 'Portfolio',
+    initialCapital: 'Initial Capital',
+    totalPnlUsd: 'Total PnL',
+    portfolioReturn: 'Portfolio Return',
+    maxDdUsd: 'Max DD',
   },
   ko: {
     live: '현재 라이브 설정',
@@ -72,6 +83,11 @@ const labels = {
     fundingFee: '펀딩 수수료',
     totalCost: '총 비용',
     feeSaveTip: '수수료 최대 20% 절감',
+    portfolio: '포트폴리오',
+    initialCapital: '초기 자본',
+    totalPnlUsd: '총 손익',
+    portfolioReturn: '포트폴리오 수익률',
+    maxDdUsd: '최대 낙폭',
   },
 };
 
@@ -160,6 +176,39 @@ export default function ResultsCard({ data, isDefault, lang = 'en', isDemo = fal
         <MetricBox label={t.totalReturn} value={`${data.total_return_pct > 0 ? '+' : ''}${data.total_return_pct}%`} color={retColor} description={desc.totalReturn} />
         <MetricBox label={t.maxDD} value={`${data.max_drawdown_pct}%`} color="var(--color-red)" description={desc.maxDD} />
       </div>
+
+      {/* Portfolio metrics (USD) */}
+      {data.initial_capital_usd != null && data.initial_capital_usd > 0 && (
+        <div class="mb-3 px-3 py-2.5 rounded-lg bg-[--color-bg-tooltip] border border-[--color-border]">
+          <div class="font-mono text-[0.625rem] text-[--color-text-muted] uppercase tracking-wider mb-1.5">
+            {t.portfolio} — ${data.per_coin_usd ?? 60} x {data.leverage ?? 5}x
+          </div>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-2 font-mono text-xs">
+            <div>
+              <div class="text-[10px] text-[--color-text-muted]">{t.initialCapital}</div>
+              <div class="font-bold">${(data.initial_capital_usd ?? 0).toLocaleString()}</div>
+            </div>
+            <div>
+              <div class="text-[10px] text-[--color-text-muted]">{t.totalPnlUsd}</div>
+              <div class="font-bold" style={{ color: signColor(data.total_return_usd ?? 0) }}>
+                {(data.total_return_usd ?? 0) > 0 ? '+' : ''}${(data.total_return_usd ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              </div>
+            </div>
+            <div>
+              <div class="text-[10px] text-[--color-text-muted]">{t.portfolioReturn}</div>
+              <div class="font-bold" style={{ color: signColor(data.total_return_pct_portfolio ?? 0) }}>
+                {(data.total_return_pct_portfolio ?? 0) > 0 ? '+' : ''}{(data.total_return_pct_portfolio ?? 0).toFixed(1)}%
+              </div>
+            </div>
+            <div>
+              <div class="text-[10px] text-[--color-text-muted]">{t.maxDdUsd}</div>
+              <div class="font-bold" style={{ color: 'var(--color-red)' }}>
+                ${(data.max_drawdown_usd ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Break-even win rate */}
       {hasBreakeven && (

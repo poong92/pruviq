@@ -3,6 +3,7 @@
  */
 import { useEffect, useRef, useState } from 'preact/hooks';
 import ResultsCard from './ResultsCard';
+import OOSValidation from './OOSValidation';
 import { winRateColor, profitFactorColor, signColor } from '../utils/format';
 import type { BacktestResult, CoinResult } from './simulator-types';
 import { getCssVar, COLORS } from './simulator-types';
@@ -14,8 +15,8 @@ interface Props {
   t: Record<string, any>;
   result: BacktestResult | null;
   error: string | null;
-  resultTab: 'summary' | 'equity' | 'trades' | 'coins';
-  setResultTab: (tab: 'summary' | 'equity' | 'trades' | 'coins') => void;
+  resultTab: 'summary' | 'equity' | 'trades' | 'coins' | 'validate';
+  setResultTab: (tab: 'summary' | 'equity' | 'trades' | 'coins' | 'validate') => void;
   activePreset: string | null;
   lang: 'en' | 'ko';
   // New QA props
@@ -209,7 +210,7 @@ export default function ResultsPanel({
           {/* Result tabs + CSV button */}
           <div class="flex flex-col sm:flex-row border-b border-[--color-border]">
             <div class="flex flex-1">
-              {(['summary', 'equity', 'trades', 'coins'] as const).map((tab) => (
+              {(['summary', 'equity', 'trades', 'coins', 'validate'] as const).map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setResultTab(tab)}
@@ -217,7 +218,7 @@ export default function ResultsPanel({
                     ${resultTab === tab ? 'font-bold border-b-2' : 'text-[--color-text-muted] hover:text-[--color-text] hover:bg-[--color-bg-hover]/20'}`}
                   style={resultTab === tab ? tabActiveStyle : undefined}
                 >
-                  {tab === "coins" ? (t.coinsTab || t.coins || "Coins") : (t[tab] || tab)}
+                  {tab === "coins" ? (t.coinsTab || t.coins || "Coins") : tab === "validate" ? (t.validate || "Validate") : (t[tab] || tab)}
                 </button>
               ))}
             </div>
@@ -428,6 +429,7 @@ export default function ResultsPanel({
                       <th class="py-2 px-2 text-left hidden sm:table-cell">{t.entryTime}</th>
                       <th class="py-2 px-2 text-left">{t.exitTime}</th>
                       <th class="py-2 px-2 text-right">{t.pnl}</th>
+                      <th class="py-2 px-2 text-right">PnL $</th>
                       <th class="py-2 px-2 text-center">{t.reason}</th>
                       <th class="py-2 px-2 text-right">{t.held}</th>
                     </tr>
@@ -440,6 +442,9 @@ export default function ResultsPanel({
                         <td class="py-1.5 px-2 text-[--color-text-muted]">{tr.exit_time?.slice(0, 16)}</td>
                         <td class="py-1.5 px-2 text-right" style={{ color: signColor(tr.pnl_pct) }}>
                           {tr.pnl_pct > 0 ? '+' : ''}{tr.pnl_pct.toFixed(2)}%
+                        </td>
+                        <td class="py-1.5 px-2 text-right" style={{ color: signColor(tr.pnl_usd || 0) }}>
+                          {(tr.pnl_usd || 0) > 0 ? '+' : ''}${(tr.pnl_usd || 0).toFixed(2)}
                         </td>
                         <td class="py-1.5 px-2 text-center">
                           <span class={`px-1.5 py-0.5 rounded text-[10px] ${
@@ -458,6 +463,21 @@ export default function ResultsPanel({
                   Trade details not available for this backtest type.
                 </div>
               )}
+            </div>
+          )}
+
+          {/* Validate tab */}
+          {resultTab === 'validate' && (
+            <div class="p-3 md:p-4">
+              <OOSValidation
+                lang={lang}
+                strategy={activePreset || 'custom'}
+                direction={result.direction}
+                sl_pct={result.sl_pct}
+                tp_pct={result.tp_pct}
+                max_bars={result.max_bars}
+                top_n={result.coins_used}
+              />
             </div>
           )}
 

@@ -482,6 +482,109 @@ PRESET_STRATEGIES = {
         "tp_pct": 8.0,
         "max_bars": 48,
     },
+    "grid-mean-reversion-long": {
+        "name": "Grid Mean Reversion LONG",
+        "direction": "long",
+        "indicators": {
+            "bb": {"period": 20, "std": 2.0},
+            "rsi": {"period": 14, "oversold": 35},
+            "volume": {"ma_period": 10},
+        },
+        "entry": {
+            "type": "AND",
+            "conditions": [
+                {"field": "close", "op": "<=", "field2": "bb_lower", "shift": 1},
+                {"field": "rsi", "op": "<=", "value": 35, "shift": 1},
+                {"field": "vol_ratio", "op": ">=", "value": 1.2, "shift": 1},
+            ],
+        },
+        "avoid_hours": [],
+        "sl_pct": 5.0,
+        "tp_pct": 4.0,
+        "max_bars": 36,
+    },
+    "dca-oversold-long": {
+        "name": "DCA Oversold LONG",
+        "direction": "long",
+        "indicators": {
+            "rsi": {"period": 14, "oversold": 25},
+            "bb": {"period": 20, "std": 2.5},
+        },
+        "entry": {
+            "type": "AND",
+            "conditions": [
+                {"field": "rsi", "op": "<", "value": 25, "shift": 1},
+                {"field": "close", "op": "<", "field2": "bb_lower", "shift": 1},
+            ],
+        },
+        "avoid_hours": [],
+        "sl_pct": 8.0,
+        "tp_pct": 6.0,
+        "max_bars": 72,
+    },
+    "bb-band-bounce-long": {
+        "name": "BB Band Bounce LONG",
+        "direction": "long",
+        "indicators": {
+            "bb": {"period": 20, "std": 2.0},
+            "volume": {"ma_period": 10},
+            "candle": {},
+        },
+        "entry": {
+            "type": "AND",
+            "conditions": [
+                {"field": "close", "op": "<=", "field2": "bb_lower", "shift": 1},
+                {"field": "bullish", "op": "==", "value": True, "shift": 1},
+                {"field": "vol_ratio", "op": ">=", "value": 1.5, "shift": 1},
+            ],
+        },
+        "avoid_hours": [],
+        "sl_pct": 6.0,
+        "tp_pct": 8.0,
+        "max_bars": 48,
+    },
+    "ema-crossover-long": {
+        "name": "EMA Crossover LONG",
+        "direction": "long",
+        "indicators": {
+            "ema": {"fast": 9, "slow": 21},
+            "adx": {"period": 14, "threshold": 25},
+            "volume": {"ma_period": 10},
+        },
+        "entry": {
+            "type": "AND",
+            "conditions": [
+                {"field": "ema_fast", "op": "cross_above", "field2": "ema_slow", "shift": 1},
+                {"field": "strong_trend", "op": "==", "value": True, "shift": 1},
+                {"field": "vol_ratio", "op": ">=", "value": 1.3, "shift": 1},
+            ],
+        },
+        "avoid_hours": [],
+        "sl_pct": 7.0,
+        "tp_pct": 10.0,
+        "max_bars": 48,
+    },
+    "stoch-rsi-overbought-short": {
+        "name": "Stoch RSI Overbought SHORT",
+        "direction": "short",
+        "indicators": {
+            "stochastic": {"k_period": 14, "d_period": 3, "overbought": 80},
+            "rsi": {"period": 14, "overbought": 70},
+            "ema": {"fast": 20, "slow": 50},
+        },
+        "entry": {
+            "type": "AND",
+            "conditions": [
+                {"field": "stoch_overbought", "op": "==", "value": True, "shift": 1},
+                {"field": "rsi_overbought", "op": "==", "value": True, "shift": 1},
+                {"field": "downtrend", "op": "==", "value": True, "shift": 1},
+            ],
+        },
+        "avoid_hours": [],
+        "sl_pct": 7.0,
+        "tp_pct": 8.0,
+        "max_bars": 48,
+    },
 }
 
 
