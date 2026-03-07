@@ -365,7 +365,7 @@ export const ko: Record<TranslationKey, string> = {
   'about.stack_desc': '소스 공개 Python 백테스팅 엔진, Astro 정적 사이트, Cloudflare 엣지 배포, Binance Futures API. 독점 블랙박스 없음.',
   'about.contact_tag': '연락하기',
   'about.contact_desc': '질문, 피드백, 파트너십 문의:',
-  'about.contact_email': 'pruviq@gmail.com',
+  'about.contact_email': 'contact@pruviq.com',
   'about.contact_telegram': '텔레그램 커뮤니티',
 
   // Performance page static fallback
