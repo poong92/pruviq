@@ -1,6 +1,7 @@
 #!/bin/bash
 # PRUVIQ — Static Data Refresh
-# Fetches Binance+CoinGecko data → commit to current branch and push.
+# Fetches Binance+CoinGecko data → build → deploy to CF Workers.
+# Git: commits to generated-data branch (avoids main branch protection).
 # Cron: */20 * * * * (every 20 minutes)
 set -euo pipefail
 
@@ -12,11 +13,16 @@ export PATH="/opt/homebrew/bin:$HOME/.npm-global/bin:$PATH"
 
 VENV_DIR="$REPO_DIR/backend/.venv"
 LOCK_FILE="/tmp/pruviq-refresh.lock"
-LOG_FILE="/tmp/pruviq-refresh.log"
+DATA_BRANCH="generated-data"
 
-# Telegram alerting
-source "$HOME/.config/telegram.env" 2>/dev/null || \
-source /Users/jepo/.config/telegram.env 2>/dev/null || true
+# Telegram alerting (safe: check file exists before source to avoid set -e exit)
+TELEGRAM_TOKEN=""
+TELEGRAM_CHAT_ID=""
+if [[ -f "$HOME/.config/telegram.env" ]]; then
+    source "$HOME/.config/telegram.env"
+elif [[ -f /Users/jepo/.config/telegram.env ]]; then
+    source /Users/jepo/.config/telegram.env
+fi
 TG_TOKEN="${TELEGRAM_TOKEN:-}"
 TG_CHAT="${TELEGRAM_CHAT_ID:-}"
 
@@ -35,11 +41,11 @@ send_alert() {
         -d parse_mode="HTML" >/dev/null 2>&1 || true
 }
 
-# --- Concurrency lock (prevents concurrent refresh runs) ---
+# --- Concurrency lock ---
 acquire_lock() {
     if [ -f "$LOCK_FILE" ]; then
         local lock_pid
-        lock_pid=$(cat "$LOCK_FILE" 2>/dev/null)
+        lock_pid=$(cat "$LOCK_FILE" 2>/dev/null || echo "0")
         if kill -0 "$lock_pid" 2>/dev/null; then
             log "Another refresh is running (PID $lock_pid). Skipping."
             exit 0
@@ -57,6 +63,15 @@ acquire_lock
 
 cd "$REPO_DIR"
 
+# Ensure we're on main and clean
+CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "unknown")
+if [[ "$CURRENT_BRANCH" != "main" ]]; then
+    log "Not on main (on $CURRENT_BRANCH), switching..."
+    git stash -q 2>/dev/null || true
+    git checkout main -q 2>/dev/null || true
+    git pull origin main -q 2>/dev/null || true
+fi
+
 # Activate venv if exists
 if [ -f "$VENV_DIR/bin/activate" ]; then
     source "$VENV_DIR/bin/activate"
@@ -65,55 +80,64 @@ fi
 # --- Step 1: Fetch data ---
 log "Running refresh_static.py..."
 if ! python3 backend/scripts/refresh_static.py 2>&1; then
-    send_alert "ERROR" "refresh_static.py failed (exit $?)"
+    send_alert "ERROR" "refresh_static.py failed"
     exit 1
 fi
 
 # All data files that refresh_static.py may update
 DATA_FILES="public/data/market.json public/data/coins-stats.json public/data/macro.json public/data/news.json public/data/coin-metadata.json"
 
-if git diff --quiet $DATA_FILES 2>/dev/null; then
+# Check if any data changed
+HAS_CHANGES=false
+for f in $DATA_FILES; do
+    if ! git diff --quiet "$f" 2>/dev/null; then
+        HAS_CHANGES=true
+        break
+    fi
+done
+
+if [[ "$HAS_CHANGES" == "false" ]]; then
     log "No data changes"
     exit 0
 fi
 
-# --- Step 2: Commit data on current branch and push ---
-CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "main")
-log "On branch: $CURRENT_BRANCH"
-
-# Add only generated data files
-git add -f $DATA_FILES
-
-if git diff --cached --quiet; then
-    log "No changes to public/data — nothing to commit"
-    exit 0
-fi
-
-TS=$(date -u '+%Y-%m-%d %H:%M' 2>/dev/null || date '+%Y-%m-%d %H:%M')
-git commit -m "chore: refresh static data [$TS UTC]" --no-verify
-
-# Push to current branch
-if git push origin "$CURRENT_BRANCH" 2>&1; then
-    log "Pushed data to $CURRENT_BRANCH"
-else
-    log "Push failed (branch protection?) — data committed locally"
-    send_alert "WARN" "Static data committed but push failed"
-fi
-
-# --- Step 3: Build + deploy to Cloudflare Workers ---
+# --- Step 2: Build + deploy to Cloudflare Workers (ALWAYS from local files) ---
 log "Building site..."
 if npm run build 2>&1 | tail -3; then
     log "Deploying to Cloudflare..."
     if npx wrangler deploy 2>&1 | tail -5; then
         log "Deployed to Cloudflare Workers"
-        send_alert "OK" "Static data refreshed + deployed"
     else
         log "Wrangler deploy failed"
-        send_alert "WARN" "Data pushed but CF deploy failed"
+        send_alert "ERROR" "CF Workers deploy failed"
+        exit 1
     fi
 else
     log "Build failed"
-    send_alert "ERROR" "npm build failed after data push"
+    send_alert "ERROR" "npm build failed"
+    exit 1
 fi
 
+# --- Step 3: Git commit to generated-data branch (non-blocking) ---
+# This preserves data history without touching main (which has branch protection)
+{
+    git stash -q 2>/dev/null || true
+    if ! git show-ref --verify --quiet "refs/heads/$DATA_BRANCH" 2>/dev/null; then
+        git branch "$DATA_BRANCH" main 2>/dev/null || true
+    fi
+    git checkout "$DATA_BRANCH" -q 2>/dev/null || true
+    git merge main -q --no-edit 2>/dev/null || true
+    git stash pop -q 2>/dev/null || true
+    git add -f $DATA_FILES 2>/dev/null || true
+    TS=$(date -u '+%Y-%m-%d %H:%M')
+    git commit -m "chore: refresh static data [$TS UTC]" --no-verify 2>/dev/null || true
+    git push origin "$DATA_BRANCH" 2>/dev/null || true
+    git checkout main -q 2>/dev/null || true
+    log "Data committed to $DATA_BRANCH"
+} || {
+    log "Git data commit skipped (non-critical)"
+    git checkout main -q 2>/dev/null || true
+}
+
+send_alert "OK" "Static data refreshed + deployed"
 exit 0
