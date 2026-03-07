@@ -12,13 +12,13 @@ const L = {
     trades: 'Backtested Trades',
     coins: 'Coins Tested',
     strategies: 'Variations Tested',
-    verified: 'Verified Strategy',
+    history: 'Historical Data',
   },
   ko: {
     trades: '백테스트 거래',
     coins: '테스트 코인',
     strategies: '테스트 조합',
-    verified: '검증된 전략',
+    history: '과거 데이터',
   },
 };
 
@@ -72,8 +72,11 @@ export default function LiveStats({ lang = 'en' }: Props) {
         <p class="text-[--color-text-muted] text-sm mt-1">{t.strategies}</p>
       </div>
       <div class="text-center p-4">
-        <p class="font-mono text-[--color-accent] text-3xl md:text-4xl font-bold">1</p>
-        <p class="text-[--color-text-muted] text-sm mt-1">{t.verified}</p>
+        <p class="font-mono text-[--color-accent] text-3xl md:text-4xl font-bold">
+          <AnimatedNumber value={2} suffix="+" />
+          <span class="text-xl ml-1">{lang === 'ko' ? '년' : 'yrs'}</span>
+        </p>
+        <p class="text-[--color-text-muted] text-sm mt-1">{t.history}</p>
       </div>
     </div>
   );
