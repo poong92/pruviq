@@ -318,6 +318,7 @@ class BacktestRequest(BaseModel):
     timeframe: str = Field(default="1H", description="Candle timeframe: 1H, 2H, 4H, 6H, 12H, 1D, 1W")
     per_coin_usd: float = Field(default=60.0, ge=1.0, le=10000.0, description="USD per coin position")
     leverage: int = Field(default=5, ge=1, le=125, description="Leverage multiplier")
+    max_concurrent_positions: int = Field(default=100, ge=1, le=1000, description="Max simultaneous open positions")
 
 
 class MonthlyStat(BaseModel):
@@ -410,6 +411,7 @@ class BacktestResponse(BaseModel):
     # Trade duration stats
     avg_bars_held: float = 0.0
     median_bars_held: float = 0.0
+    positions_skipped: int = 0  # trades skipped due to concurrent position limit
 
     # Validation info
     is_valid: bool

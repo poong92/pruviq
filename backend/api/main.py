@@ -1942,6 +1942,47 @@ async def run_backtest(req: BacktestRequest):
 
     all_trades.sort(key=lambda t: t["time"])
 
+    # --- Concurrent position limit (matches live: max 100) ---
+    skipped = 0
+    max_concurrent = getattr(req, 'max_concurrent_positions', 100) or 100
+    if max_concurrent > 0 and len(all_trades) > 0:
+        active_exits = []  # sorted list of exit_times
+        filtered = []
+        for trade in all_trades:
+            # Remove positions that have exited before this entry
+            active_exits = [et for et in active_exits if et > trade["entry_time"]]
+            if len(active_exits) < max_concurrent:
+                filtered.append(trade)
+                active_exits.append(trade["exit_time"])
+                active_exits.sort()
+        skipped = len(all_trades) - len(filtered)
+        all_trades = filtered
+        # Recalculate coin_results from filtered trades
+        if skipped > 0:
+            from collections import Counter
+            coin_trade_map = {}
+            for t in all_trades:
+                coin_trade_map.setdefault(t["symbol"], []).append(t)
+            coin_results = []
+            for sym, trades_list in sorted(coin_trade_map.items()):
+                c_wins = [t for t in trades_list if t["pnl_pct"] > 0]
+                c_losses = [t for t in trades_list if t["pnl_pct"] <= 0]
+                c_gp = sum(t["pnl_pct"] for t in c_wins) if c_wins else 0
+                c_gl = abs(sum(t["pnl_pct"] for t in c_losses)) if c_losses else 0.001
+                c_total = sum(t["pnl_pct"] for t in trades_list)
+                coin_results.append(CoinResult(
+                    symbol=sym, trades=len(trades_list),
+                    wins=len(c_wins), losses=len(c_losses),
+                    win_rate=round(len(c_wins) / len(trades_list) * 100, 2),
+                    profit_factor=round(c_gp / c_gl, 2),
+                    total_return_pct=round(c_total, 2),
+                    avg_pnl_pct=round(c_total / len(trades_list), 4),
+                    tp_count=sum(1 for t in trades_list if t["exit_reason"] == "tp"),
+                    sl_count=sum(1 for t in trades_list if t["exit_reason"] == "sl"),
+                    timeout_count=sum(1 for t in trades_list if t["exit_reason"] == "timeout"),
+                ))
+            coin_results.sort(key=lambda x: x.total_return_pct, reverse=True)
+
     # Aggregate results
     if not all_trades:
         return BacktestResponse(
@@ -2277,6 +2318,7 @@ async def run_backtest(req: BacktestRequest):
         avg_bars_held=avg_bars_held,
         median_bars_held=median_bars_held,
         monthly_stats=monthly_stats,
+        positions_skipped=skipped,
     )
 
     # Cache the result
