@@ -204,7 +204,7 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
   ]);
 
   // Params
-  const [direction, setDirection] = useState<'short' | 'long'>('short');
+  const [direction, setDirection] = useState<'short' | 'long' | 'both'>('short');
   const [slPct, setSlPct] = useState(10);
   const [tpPct, setTpPct] = useState(8);
   const [maxBars, setMaxBars] = useState(48);
@@ -356,7 +356,7 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
       if (params.has('bars')) setMaxBars(parseInt(params.get('bars')!) || 48);
       if (params.has('dir')) {
         const d = params.get('dir');
-        if (d === 'short' || d === 'long') setDirection(d);
+        if (d === 'short' || d === 'long' || d === 'both') setDirection(d);
       }
       if (params.has('coins')) setTopN(parseInt(params.get('coins')!) || 50);
     } catch {}
@@ -786,6 +786,7 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
           <div ref={builderRef} class={`md:w-[45%] flex-shrink-0 ${mobileTab !== 'config' ? 'hidden md:block' : ''}`}>
             <BuilderPanel
               t={t}
+              lang={lang}
               coinsLoaded={currentCoinCount}
               totalCoins={coinsLoaded}
               demoMode={demoMode}

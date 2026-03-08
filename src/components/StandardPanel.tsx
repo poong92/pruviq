@@ -25,8 +25,8 @@ interface Props {
   onSelectPreset: (id: string | null) => void;
   presetLoading: boolean;
   // Params
-  direction: 'short' | 'long';
-  setDirection: (d: 'short' | 'long') => void;
+  direction: 'short' | 'long' | 'both';
+  setDirection: (d: 'short' | 'long' | 'both') => void;
   slPct: number;
   setSlPct: (v: number) => void;
   tpPct: number;
@@ -157,19 +157,18 @@ export default function StandardPanel({
         <div>
           <label class="text-[11px] text-[--color-text-muted] font-mono mb-1 block">{t.direction}</label>
           <div class="flex gap-1.5">
-            {(['short', 'long'] as const).map((d) => (
+            {(['short', 'long', 'both'] as const).map((d) => (
               <button
                 key={d}
                 onClick={() => setDirection(d)}
                 class={`flex-1 py-2 rounded-md text-xs font-mono font-bold transition-all border
                   ${direction === d ? '' : 'text-[--color-text-muted] border-[--color-border] hover:text-[--color-text]'}`}
-                style={direction === d ? {
-                  background: d === 'short' ? COLORS.redBg : COLORS.greenBg,
-                  color: d === 'short' ? COLORS.red : COLORS.green,
-                  borderColor: d === 'short' ? COLORS.red : COLORS.green,
-                } : undefined}
+                style={direction === d ? (
+                  d === 'both' ? { background: 'linear-gradient(90deg, rgba(239,68,68,0.15), rgba(0,255,136,0.15))', borderColor: '#888', color: '#fff' } :
+                  { background: d === 'short' ? COLORS.redBg : COLORS.greenBg, color: d === 'short' ? COLORS.red : COLORS.green, borderColor: d === 'short' ? COLORS.red : COLORS.green }
+                ) : undefined}
               >
-                {d === 'short' ? t.short : t.long}
+                {d === 'short' ? t.short : d === 'long' ? t.long : 'BOTH'}
               </button>
             ))}
           </div>
