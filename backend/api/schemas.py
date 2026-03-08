@@ -387,6 +387,9 @@ class BacktestResponse(BaseModel):
     strategy_grade: str = ""
     grade_details: str = ""
 
+    # Statistical significance
+    edge_p_value: float = 1.0           # Binomial test p-value (WR vs break-even WR)
+
     # Warnings
     warnings: List[str] = []
 

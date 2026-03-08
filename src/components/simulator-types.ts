@@ -66,6 +66,7 @@ export interface BacktestResult {
   strategy_grade?: string;
   grade_details?: string;
   warnings?: string[];
+  edge_p_value?: number;
 }
 
 export interface PresetItem {

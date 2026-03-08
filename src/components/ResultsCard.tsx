@@ -33,6 +33,7 @@ interface ResultsData {
   strategy_grade?: string;
   grade_details?: string;
   warnings?: string[];
+  edge_p_value?: number;
 }
 
 interface ResultsCardProps {
@@ -225,9 +226,18 @@ export default function ResultsCard({ data, isDefault, lang = 'en', isDemo = fal
           }`}>
             {data.strategy_grade}
           </span>
-          {data.grade_details && (
-            <span class="font-mono text-[10px] text-[--color-text-muted]">{data.grade_details}</span>
-          )}
+          <div class="flex flex-col">
+            {data.grade_details && (
+              <span class="font-mono text-[10px] text-[--color-text-muted]">{data.grade_details}</span>
+            )}
+            {data.edge_p_value !== undefined && data.edge_p_value < 1 && (
+              <span class="font-mono text-[10px]" style={{ color: data.edge_p_value <= 0.05 ? 'var(--color-green)' : data.edge_p_value <= 0.1 ? 'var(--color-yellow)' : 'var(--color-red)' }}>
+                {data.edge_p_value <= 0.01 ? (lang === 'ko' ? '통계적 유의: p<0.01' : 'Statistically significant: p<0.01') :
+                 data.edge_p_value <= 0.05 ? (lang === 'ko' ? `통계적 유의: p=${data.edge_p_value.toFixed(3)}` : `Statistically significant: p=${data.edge_p_value.toFixed(3)}`) :
+                 (lang === 'ko' ? `유의하지 않음: p=${data.edge_p_value.toFixed(3)}` : `Not significant: p=${data.edge_p_value.toFixed(3)}`)}
+              </span>
+            )}
+          </div>
         </div>
       )}
 
