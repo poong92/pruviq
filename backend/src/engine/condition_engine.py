@@ -848,6 +848,145 @@ PRESET_STRATEGIES = {
         "tp_pct": 10.0,
         "max_bars": 48,
     },
+    # ========== Ichimoku Cloud Strategies ==========
+    "ichimoku-cloud-long": {
+        "name": "Ichimoku Cloud Bullish",
+        "description": "TK cross bullish above cloud with green cloud — classic Ichimoku buy signal",
+        "direction": "long",
+        "indicators": {
+            "ichimoku": {"tenkan_period": 9, "kijun_period": 26, "senkou_b_period": 52},
+            "volume": {"ma_period": 10},
+        },
+        "entry": {
+            "type": "AND",
+            "conditions": [
+                {"field": "tk_cross_bull", "op": "==", "value": True, "shift": 1},
+                {"field": "above_cloud", "op": "==", "value": True, "shift": 1},
+                {"field": "cloud_green", "op": "==", "value": True, "shift": 1},
+                {"field": "vol_ratio", "op": ">=", "value": 1.2, "shift": 1},
+            ],
+        },
+        "avoid_hours": [],
+        "sl_pct": 8.0,
+        "tp_pct": 10.0,
+        "max_bars": 72,
+    },
+    "ichimoku-cloud-short": {
+        "name": "Ichimoku Cloud Bearish",
+        "description": "TK cross bearish below cloud with red cloud — classic Ichimoku sell signal",
+        "direction": "short",
+        "indicators": {
+            "ichimoku": {"tenkan_period": 9, "kijun_period": 26, "senkou_b_period": 52},
+            "volume": {"ma_period": 10},
+        },
+        "entry": {
+            "type": "AND",
+            "conditions": [
+                {"field": "tk_cross_bear", "op": "==", "value": True, "shift": 1},
+                {"field": "below_cloud", "op": "==", "value": True, "shift": 1},
+                {"field": "cloud_red", "op": "==", "value": True, "shift": 1},
+                {"field": "vol_ratio", "op": ">=", "value": 1.2, "shift": 1},
+            ],
+        },
+        "avoid_hours": [],
+        "sl_pct": 8.0,
+        "tp_pct": 10.0,
+        "max_bars": 72,
+    },
+    # ========== Parabolic SAR Strategies ==========
+    "psar-reversal-long": {
+        "name": "Parabolic SAR Reversal LONG",
+        "description": "SAR flips bullish + uptrend confirmation — Wilder trend reversal",
+        "direction": "long",
+        "indicators": {
+            "psar": {"af_start": 0.02, "af_step": 0.02, "af_max": 0.2},
+            "ema": {"fast": 20, "slow": 50},
+            "volume": {"ma_period": 10},
+        },
+        "entry": {
+            "type": "AND",
+            "conditions": [
+                {"field": "psar_reversal_bull", "op": "==", "value": True, "shift": 1},
+                {"field": "uptrend", "op": "==", "value": True, "shift": 1},
+                {"field": "vol_ratio", "op": ">=", "value": 1.3, "shift": 1},
+            ],
+        },
+        "avoid_hours": [],
+        "sl_pct": 7.0,
+        "tp_pct": 10.0,
+        "max_bars": 48,
+    },
+    "psar-reversal-short": {
+        "name": "Parabolic SAR Reversal SHORT",
+        "description": "SAR flips bearish + downtrend confirmation — Wilder trend reversal",
+        "direction": "short",
+        "indicators": {
+            "psar": {"af_start": 0.02, "af_step": 0.02, "af_max": 0.2},
+            "ema": {"fast": 20, "slow": 50},
+            "volume": {"ma_period": 10},
+        },
+        "entry": {
+            "type": "AND",
+            "conditions": [
+                {"field": "psar_reversal_bear", "op": "==", "value": True, "shift": 1},
+                {"field": "downtrend", "op": "==", "value": True, "shift": 1},
+                {"field": "vol_ratio", "op": ">=", "value": 1.3, "shift": 1},
+            ],
+        },
+        "avoid_hours": [],
+        "sl_pct": 7.0,
+        "tp_pct": 10.0,
+        "max_bars": 48,
+    },
+    # ========== Williams %R Strategies ==========
+    "williams-r-oversold-long": {
+        "name": "Williams %R Oversold LONG",
+        "description": "Williams %R exits oversold zone + uptrend — momentum reversal",
+        "direction": "long",
+        "indicators": {
+            "williams_r": {"period": 14, "oversold": -80, "overbought": -20},
+            "ema": {"fast": 20, "slow": 50},
+            "volume": {"ma_period": 10},
+            "candle": {"doji_threshold": 0.1},
+        },
+        "entry": {
+            "type": "AND",
+            "conditions": [
+                {"field": "wr_exit_oversold", "op": "==", "value": True, "shift": 1},
+                {"field": "uptrend", "op": "==", "value": True, "shift": 1},
+                {"field": "bullish", "op": "==", "value": True, "shift": 1},
+                {"field": "vol_ratio", "op": ">=", "value": 1.2, "shift": 1},
+            ],
+        },
+        "avoid_hours": [],
+        "sl_pct": 6.0,
+        "tp_pct": 8.0,
+        "max_bars": 48,
+    },
+    "williams-r-overbought-short": {
+        "name": "Williams %R Overbought SHORT",
+        "description": "Williams %R exits overbought zone + downtrend — momentum reversal",
+        "direction": "short",
+        "indicators": {
+            "williams_r": {"period": 14, "oversold": -80, "overbought": -20},
+            "ema": {"fast": 20, "slow": 50},
+            "volume": {"ma_period": 10},
+            "candle": {"doji_threshold": 0.1},
+        },
+        "entry": {
+            "type": "AND",
+            "conditions": [
+                {"field": "wr_exit_overbought", "op": "==", "value": True, "shift": 1},
+                {"field": "downtrend", "op": "==", "value": True, "shift": 1},
+                {"field": "bearish", "op": "==", "value": True, "shift": 1},
+                {"field": "vol_ratio", "op": ">=", "value": 1.2, "shift": 1},
+            ],
+        },
+        "avoid_hours": [],
+        "sl_pct": 6.0,
+        "tp_pct": 8.0,
+        "max_bars": 48,
+    },
 }
 
 
