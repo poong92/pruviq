@@ -9,36 +9,47 @@ export default {
     const url = new URL(request.url);
 
     // /sitemap.xml → /sitemap-index.xml (Astro generates sitemap-index.xml)
-    if (url.pathname === '/sitemap.xml') {
-      url.pathname = '/sitemap-index.xml';
+    if (url.pathname === "/sitemap.xml") {
+      url.pathname = "/sitemap-index.xml";
       return Response.redirect(url.toString(), 301);
+    }
+
+    // Block admin endpoints — never proxy /api/admin/* to the backend
+    if (/^\/api\/admin(\/|$)/.test(url.pathname)) {
+      return new Response(JSON.stringify({ error: "Not found" }), {
+        status: 404,
+        headers: { "Content-Type": "application/json" },
+      });
     }
 
     // Proxy /api/* (but do not proxy the docs page at /api or /api/)
     if (/^\/api\/.+/.test(url.pathname)) {
       // Strip the leading /api prefix so https://api.pruviq.com/coins/stats is targeted
-      const pathAfterApi = url.pathname.replace(/^\/api/, '');
-      const targetUrl = new URL(pathAfterApi + url.search, 'https://api.pruviq.com');
+      const pathAfterApi = url.pathname.replace(/^\/api/, "");
+      const targetUrl = new URL(
+        pathAfterApi + url.search,
+        "https://api.pruviq.com",
+      );
 
       const headers = new Headers(request.headers);
       // Remove host header so fetch sets the correct host for the API origin
-      headers.delete('host');
+      headers.delete("host");
 
       const apiReqInit = {
         method: request.method,
         headers,
         body: request.body,
         // Do not follow redirects server-side — return redirects to the client
-        redirect: 'manual'
+        redirect: "manual",
       };
 
       try {
         const resp = await fetch(targetUrl.toString(), apiReqInit);
         return resp;
       } catch (err) {
-        return new Response(JSON.stringify({ error: 'API unavailable' }), {
+        return new Response(JSON.stringify({ error: "API unavailable" }), {
           status: 502,
-          headers: { 'Content-Type': 'application/json' }
+          headers: { "Content-Type": "application/json" },
         });
       }
     }
