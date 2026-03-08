@@ -2009,15 +2009,22 @@ async def run_backtest(req: BacktestRequest):
     sl_count = sum(1 for t in all_trades if t["exit_reason"] == "sl")
     timeout_count = sum(1 for t in all_trades if t["exit_reason"] == "timeout")
 
-    # Risk-adjusted metrics (backtest aggregate)
-    bt_pnls = np.array([t["pnl_pct"] for t in all_trades])
-    if len(bt_pnls) >= 2:
-        bt_avg = float(np.mean(bt_pnls))
-        bt_std = float(np.std(bt_pnls, ddof=1))
-        bt_sharpe = round(bt_avg / bt_std * np.sqrt(len(bt_pnls)), 2) if bt_std > 0 else 0.0
-        bt_down = bt_pnls[bt_pnls < 0]
-        bt_down_std = float(np.std(bt_down, ddof=1)) if len(bt_down) >= 2 else 0.0
-        bt_sortino = round(bt_avg / bt_down_std * np.sqrt(len(bt_pnls)), 2) if bt_down_std > 0 else 0.0
+    # Risk-adjusted metrics — annualized from daily returns
+    # Group trades by exit date → daily PnL series
+    from collections import defaultdict as dd_import
+    daily_pnl = dd_import(float)
+    for t in all_trades:
+        day_key = t["exit_time"][:10]  # YYYY-MM-DD
+        daily_pnl[day_key] += t["pnl_pct"]
+    daily_returns = np.array(list(daily_pnl.values())) if daily_pnl else np.array([])
+
+    if len(daily_returns) >= 5:
+        dr_avg = float(np.mean(daily_returns))
+        dr_std = float(np.std(daily_returns, ddof=1))
+        bt_sharpe = round(dr_avg / dr_std * np.sqrt(365), 2) if dr_std > 0 else 0.0
+        dr_down = daily_returns[daily_returns < 0]
+        dr_down_std = float(np.std(dr_down, ddof=1)) if len(dr_down) >= 2 else 0.0
+        bt_sortino = round(dr_avg / dr_down_std * np.sqrt(365), 2) if dr_down_std > 0 else 0.0
         bt_calmar = round(total_return / max_dd, 2) if max_dd > 0 else 0.0
     else:
         bt_sharpe, bt_sortino, bt_calmar = 0.0, 0.0, 0.0
@@ -2107,6 +2114,30 @@ async def run_backtest(req: BacktestRequest):
     if btc_hold_return_pct > 0 and total_return < btc_hold_return_pct:
         warnings.append(f"Strategy underperforms BTC buy-and-hold ({btc_hold_return_pct:.1f}%) over the same period.")
 
+    # --- Statistical significance (binomial test) ---
+    hasBreakeven = abs(avg_win) > 0 and abs(avg_loss) > 0
+    edge_p_value = 1.0
+    if len(all_trades) >= 10 and hasBreakeven:
+        try:
+            from scipy.stats import binomtest
+            be_wr = abs(avg_loss) / (abs(avg_win) + abs(avg_loss)) if (abs(avg_win) + abs(avg_loss)) > 0 else 0.5
+            result_binom = binomtest(len(wins), len(all_trades), be_wr, alternative='greater')
+            edge_p_value = round(result_binom.pvalue, 4)
+        except ImportError:
+            # scipy not available — calculate approximate z-test
+            n = len(all_trades)
+            be_wr_val = abs(avg_loss) / (abs(avg_win) + abs(avg_loss)) if (abs(avg_win) + abs(avg_loss)) > 0 else 0.5
+            observed_wr = len(wins) / n
+            z = (observed_wr - be_wr_val) / max((be_wr_val * (1 - be_wr_val) / n) ** 0.5, 1e-9)
+            # Approximate p-value from z-score
+            edge_p_value = round(max(0, min(1, 0.5 * (1 - min(abs(z), 6) / 6))), 4) if z > 0 else 1.0
+        except Exception:
+            pass
+
+    # Add significance warning
+    if edge_p_value > 0.05 and len(all_trades) >= 30:
+        warnings.append(f"Strategy edge not statistically significant (p={edge_p_value:.3f}). Win rate may not be reliably above break-even.")
+
     compute_ms = int((time.time() - t_start) * 1000)
 
     # Build trade items for response (cap at 500)
@@ -2172,6 +2203,7 @@ async def run_backtest(req: BacktestRequest):
         btc_hold_return_pct=btc_hold_return_pct,
         strategy_grade=strategy_grade,
         grade_details=grade_details,
+        edge_p_value=edge_p_value,
         warnings=warnings,
     )
 
