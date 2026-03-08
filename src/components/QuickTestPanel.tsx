@@ -30,11 +30,12 @@ interface Props {
 }
 
 const CATEGORIES: QuickCategory[] = [
-  { id: 'breakout',  icon: '💥', presets: ['bb-squeeze-short', 'bb-squeeze-long'],        defaultPreset: 'bb-squeeze-short' },
-  { id: 'bounce',    icon: '📈', presets: ['rsi-reversal-long', 'dca-oversold-long'],      defaultPreset: 'rsi-reversal-long' },
-  { id: 'sideways',  icon: '↔️',  presets: ['grid-mean-reversion-long', 'bb-band-bounce-long'], defaultPreset: 'grid-mean-reversion-long' },
-  { id: 'trend',     icon: '🚀', presets: ['macd-momentum-long', 'ema-crossover-long'],    defaultPreset: 'macd-momentum-long' },
-  { id: 'allweather', icon: '🛡️', presets: ['stochastic-oversold-short', 'stoch-rsi-overbought-short'], defaultPreset: 'stochastic-oversold-short' },
+  { id: 'breakout',    icon: '💥', presets: ['bb-squeeze-short', 'bb-squeeze-long', 'hv-squeeze-breakout-short', 'hv-squeeze-breakout-long'], defaultPreset: 'bb-squeeze-short' },
+  { id: 'bounce',      icon: '📈', presets: ['rsi-reversal-long', 'dca-oversold-long', 'rsi-bb-oversold-long'],  defaultPreset: 'rsi-reversal-long' },
+  { id: 'sideways',    icon: '↔️',  presets: ['grid-mean-reversion-long', 'bb-band-bounce-long', 'rsi-bb-overbought-short'], defaultPreset: 'grid-mean-reversion-long' },
+  { id: 'trend',       icon: '🚀', presets: ['macd-momentum-long', 'ema-crossover-long', 'adx-trend-long', 'adx-trend-short'], defaultPreset: 'adx-trend-long' },
+  { id: 'allweather',  icon: '🛡️', presets: ['stochastic-oversold-short', 'stoch-rsi-overbought-short', 'macd-crossover-short', 'ema-crossover-short'], defaultPreset: 'stochastic-oversold-short' },
+  { id: 'turtle',      icon: '🐢', presets: ['turtle-breakout-long', 'turtle-breakout-short'], defaultPreset: 'turtle-breakout-long' },
 ];
 
 const L = {
@@ -48,9 +49,11 @@ const L = {
     sideways: 'Sideways Profit',
     sidewaysDesc: 'Range-bound mean reversion',
     trend: 'Ride the Trend',
-    trendDesc: 'Momentum & trend following',
+    trendDesc: 'ADX + MACD + EMA trend',
     allweather: 'All Weather',
     allweatherDesc: 'Hedging & short strategies',
+    turtle: 'Turtle Trading',
+    turtleDesc: '20-bar breakout system',
     run: 'Test Now',
     running: 'Running...',
     aiPick: 'AI Recommended',
@@ -67,9 +70,11 @@ const L = {
     sideways: '횡보 수익',
     sidewaysDesc: '박스권 평균회귀',
     trend: '추세 탑승',
-    trendDesc: '모멘텀 & 추세추종',
+    trendDesc: 'ADX + MACD + EMA 추세',
     allweather: '전천후',
     allweatherDesc: '헤징 & 숏 전략',
+    turtle: '거북이 트레이딩',
+    turtleDesc: '20봉 돌파 시스템',
     run: '지금 테스트',
     running: '실행 중...',
     aiPick: 'AI 추천',
@@ -90,6 +95,16 @@ const PRESET_LABELS: Record<string, { en: string; ko: string }> = {
   'ema-crossover-long':          { en: 'EMA Crossover',    ko: 'EMA 교차' },
   'stochastic-oversold-short':   { en: 'Stoch Overbought', ko: '스토캐스틱 과매수' },
   'stoch-rsi-overbought-short':  { en: 'Stoch RSI Short',  ko: '스톡RSI 숏' },
+  'adx-trend-short':             { en: 'ADX Trend SHORT',  ko: 'ADX 추세 숏' },
+  'adx-trend-long':              { en: 'ADX Trend LONG',   ko: 'ADX 추세 롱' },
+  'rsi-bb-overbought-short':     { en: 'RSI+BB SHORT',     ko: 'RSI+BB 과매수 숏' },
+  'rsi-bb-oversold-long':        { en: 'RSI+BB LONG',      ko: 'RSI+BB 과매도 롱' },
+  'turtle-breakout-short':       { en: 'Turtle SHORT',     ko: '거북이 숏' },
+  'turtle-breakout-long':        { en: 'Turtle LONG',      ko: '거북이 롱' },
+  'macd-crossover-short':        { en: 'MACD Cross SHORT', ko: 'MACD 크로스 숏' },
+  'ema-crossover-short':         { en: 'EMA Cross SHORT',  ko: 'EMA 크로스 숏' },
+  'hv-squeeze-breakout-short':   { en: 'HV Squeeze SHORT', ko: 'HV 스퀴즈 숏' },
+  'hv-squeeze-breakout-long':    { en: 'HV Squeeze LONG',  ko: 'HV 스퀴즈 롱' },
 };
 
 export default function QuickTestPanel({ lang, onRunPreset, isRunning, hasResult }: Props) {
@@ -127,7 +142,7 @@ export default function QuickTestPanel({ lang, onRunPreset, isRunning, hasResult
       </div>
 
       {/* Category Cards Grid */}
-      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
         {CATEGORIES.map((cat) => {
           const isSelected = selectedCat === cat.id;
           const isCatRunning = runningPreset && cat.presets.includes(runningPreset);
