@@ -318,6 +318,17 @@ class BacktestRequest(BaseModel):
     timeframe: str = Field(default="1H", description="Candle timeframe: 1H, 2H, 4H, 6H, 12H, 1D, 1W")
     per_coin_usd: float = Field(default=60.0, ge=1.0, le=10000.0, description="USD per coin position")
     leverage: int = Field(default=5, ge=1, le=125, description="Leverage multiplier")
+    max_concurrent_positions: int = Field(default=100, ge=1, le=1000, description="Max simultaneous open positions")
+
+
+class MonthlyStat(BaseModel):
+    """Per-month performance breakdown."""
+    month: str  # "YYYY-MM"
+    trades: int
+    wins: int
+    win_rate: float
+    total_return_pct: float
+    profit_factor: float
 
 
 class YearlyStat(BaseModel):
@@ -382,6 +393,11 @@ class BacktestResponse(BaseModel):
 
     # Benchmark comparison
     btc_hold_return_pct: float = 0.0   # BTC buy-and-hold return over same period
+    eth_hold_return_pct: float = 0.0   # ETH buy-and-hold return over same period
+
+    # Risk metrics (daily)
+    var_95: float = 0.0     # Value at Risk (95% confidence, daily %)
+    cvar_95: float = 0.0    # Conditional VaR / Expected Shortfall (daily %)
 
     # Strategy grade (A/B/C/D/F)
     strategy_grade: str = ""
@@ -393,10 +409,31 @@ class BacktestResponse(BaseModel):
     # Warnings
     warnings: List[str] = []
 
+    # Walk-forward consistency (rolling 5-window, ideal=1.0)
+    walk_forward_consistency: float = 0.0
+    walk_forward_details: str = ""
+
+    # Overfitting detection
+    deflated_sharpe: float = 0.0       # DSR (Deflated Sharpe Ratio)
+    dsr_haircut_pct: float = 0.0       # How much Sharpe is inflated (%)
+    mc_p_value: float = 1.0            # Monte Carlo permutation p-value
+    mc_percentile: float = 50.0        # Strategy percentile vs random shuffle
+
+    # Risk-adjusted alpha
+    jensens_alpha: float = 0.0         # Excess return vs benchmark (risk-adjusted)
+
+    # Trade duration stats
+    avg_bars_held: float = 0.0
+    median_bars_held: float = 0.0
+    positions_skipped: int = 0  # trades skipped due to concurrent position limit
+    pnl_distribution: List[int] = []  # histogram: count of trades in each 1% PnL bucket [-10..+10]
+    pnl_buckets: List[str] = []       # bucket labels
+
     # Validation info
     is_valid: bool
     validation_errors: List[str] = []
     yearly_stats: List["YearlyStat"] = []
+    monthly_stats: List["MonthlyStat"] = []
     compute_time_ms: int = 0
 
 

@@ -30,10 +30,22 @@ interface ResultsData {
   recovery_factor?: number;
   payoff_ratio?: number;
   btc_hold_return_pct?: number;
+  eth_hold_return_pct?: number;
+  var_95?: number;
+  cvar_95?: number;
   strategy_grade?: string;
   grade_details?: string;
   warnings?: string[];
   edge_p_value?: number;
+  walk_forward_consistency?: number;
+  walk_forward_details?: string;
+  avg_bars_held?: number;
+  median_bars_held?: number;
+  deflated_sharpe?: number;
+  dsr_haircut_pct?: number;
+  mc_p_value?: number;
+  mc_percentile?: number;
+  jensens_alpha?: number;
 }
 
 interface ResultsCardProps {
@@ -76,6 +88,11 @@ const labels = {
     payoffRatio: 'Payoff Ratio',
     btcBenchmark: 'vs BTC Hold',
     advancedMetrics: 'Advanced Metrics',
+    walkForward: 'Walk-Forward',
+    avgHold: 'Avg Hold',
+    medHold: 'Med Hold',
+    bars: 'bars',
+    tradeDuration: 'Trade Duration',
   },
   ko: {
     live: '현재 라이브 설정',
@@ -109,6 +126,11 @@ const labels = {
     payoffRatio: '보상 비율',
     btcBenchmark: 'BTC 보유 대비',
     advancedMetrics: '고급 지표',
+    walkForward: '워크포워드',
+    avgHold: '평균 보유',
+    medHold: '중간값 보유',
+    bars: '봉',
+    tradeDuration: '보유 기간',
   },
 };
 
@@ -241,6 +263,30 @@ export default function ResultsCard({ data, isDefault, lang = 'en', isDemo = fal
         </div>
       )}
 
+      {/* Walk-Forward Consistency */}
+      {data.walk_forward_consistency != null && data.walk_forward_consistency > 0 && (
+        <div class="mb-3 px-3 py-2 rounded-lg bg-[--color-bg-tooltip] border border-[--color-border] flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="font-mono text-[10px] text-[--color-text-muted] uppercase">{t.walkForward}</span>
+            <span class={`inline-block px-1.5 py-0.5 rounded text-[10px] font-mono font-bold ${
+              data.walk_forward_consistency >= 0.85 ? 'text-[--color-green] bg-[--color-green]/10' :
+              data.walk_forward_consistency >= 0.7 ? 'text-[--color-accent] bg-[--color-accent]/10' :
+              'text-[--color-red] bg-[--color-red]/10'
+            }`}>
+              {data.walk_forward_consistency.toFixed(2)}
+            </span>
+            <span class="font-mono text-[10px]" style={{ color: data.walk_forward_consistency >= 0.85 ? 'var(--color-green)' : data.walk_forward_consistency >= 0.7 ? 'var(--color-accent)' : 'var(--color-red)' }}>
+              {data.walk_forward_consistency >= 0.85 ? (lang === 'ko' ? '안정적' : 'Stable') :
+               data.walk_forward_consistency >= 0.7 ? (lang === 'ko' ? '보통' : 'Moderate') :
+               (lang === 'ko' ? '과적합 위험' : 'Overfit risk')}
+            </span>
+          </div>
+          {data.walk_forward_details && (
+            <span class="font-mono text-[9px] text-[--color-text-muted] hidden md:inline">{data.walk_forward_details}</span>
+          )}
+        </div>
+      )}
+
       {/* Warnings */}
       {data.warnings && data.warnings.length > 0 && (
         <div class="mb-3 space-y-1">
@@ -259,12 +305,15 @@ export default function ResultsCard({ data, isDefault, lang = 'en', isDemo = fal
         <MetricBox label={t.maxDD} value={`${data.max_drawdown_pct}%`} color="var(--color-red)" description={desc.maxDD} />
       </div>
 
-      {/* BTC Benchmark */}
+      {/* Benchmarks (BTC + ETH) */}
       {data.btc_hold_return_pct !== undefined && data.btc_hold_return_pct !== 0 && (
-        <div class="mb-3 px-3 py-2 rounded-lg bg-[--color-bg-tooltip] border border-[--color-border] flex items-center justify-between">
-          <span class="font-mono text-[10px] text-[--color-text-muted] uppercase">{t.btcBenchmark}</span>
-          <div class="flex items-center gap-3 font-mono text-xs">
+        <div class="mb-3 px-3 py-2 rounded-lg bg-[--color-bg-tooltip] border border-[--color-border]">
+          <div class="font-mono text-[10px] text-[--color-text-muted] uppercase mb-1">{t.btcBenchmark}</div>
+          <div class="flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-xs">
             <span class="text-[--color-text-muted]">BTC: <span style={{ color: signColor(data.btc_hold_return_pct) }}>{data.btc_hold_return_pct > 0 ? '+' : ''}{data.btc_hold_return_pct.toFixed(1)}%</span></span>
+            {data.eth_hold_return_pct !== undefined && data.eth_hold_return_pct !== 0 && (
+              <span class="text-[--color-text-muted]">ETH: <span style={{ color: signColor(data.eth_hold_return_pct) }}>{data.eth_hold_return_pct > 0 ? '+' : ''}{data.eth_hold_return_pct.toFixed(1)}%</span></span>
+            )}
             <span style={{ color: (data.total_return_pct - data.btc_hold_return_pct) >= 0 ? 'var(--color-green)' : 'var(--color-red)' }} class="font-bold">
               {(data.total_return_pct - data.btc_hold_return_pct) >= 0 ? '+' : ''}{(data.total_return_pct - data.btc_hold_return_pct).toFixed(1)}%p {(data.total_return_pct - data.btc_hold_return_pct) >= 0 ? (lang === 'ko' ? '초과' : 'alpha') : (lang === 'ko' ? '부족' : 'underperform')}
             </span>
@@ -367,6 +416,58 @@ export default function ResultsCard({ data, isDefault, lang = 'en', isDemo = fal
         </div>
       )}
 
+      {/* VaR / CVaR */}
+      {data.var_95 !== undefined && data.var_95 !== 0 && (
+        <div class="grid grid-cols-2 gap-2 mb-3">
+          <MetricBox
+            label="VaR 95%"
+            value={`${data.var_95.toFixed(2)}%`}
+            color="var(--color-red)"
+            description={lang === 'ko' ? '일별 최대 예상 손실 (95% 신뢰도)' : 'Daily max expected loss (95% confidence)'}
+          />
+          <MetricBox
+            label="CVaR 95%"
+            value={`${(data.cvar_95 ?? 0).toFixed(2)}%`}
+            color="var(--color-red)"
+            description={lang === 'ko' ? '꼬리 리스크 평균 (VaR 초과 시 평균 손실)' : 'Expected Shortfall (avg loss beyond VaR)'}
+          />
+        </div>
+      )}
+
+      {/* Overfitting Detection: DSR, Monte Carlo, Jensen's Alpha */}
+      {(data.deflated_sharpe !== undefined && data.deflated_sharpe !== 0) && (
+        <div class="mb-3 px-3 py-2.5 rounded-lg bg-[--color-bg-tooltip] border border-[--color-border]">
+          <div class="font-mono text-[10px] text-[--color-text-muted] uppercase mb-2">
+            {lang === 'ko' ? '과적합 탐지' : 'Overfitting Detection'}
+          </div>
+          <div class="grid grid-cols-2 gap-2 mb-2">
+            <MetricBox
+              label={lang === 'ko' ? '보정 샤프' : 'Deflated Sharpe'}
+              value={`${data.deflated_sharpe.toFixed(2)}`}
+              color={data.deflated_sharpe > 1 ? 'var(--color-green)' : data.deflated_sharpe > 0 ? 'var(--color-accent)' : 'var(--color-red)'}
+              description={lang === 'ko' ? `다중 테스트 보정 후 Sharpe (Haircut ${(data.dsr_haircut_pct ?? 0).toFixed(0)}%)` : `Sharpe after multi-test correction (Haircut ${(data.dsr_haircut_pct ?? 0).toFixed(0)}%)`}
+            />
+            <MetricBox
+              label={lang === 'ko' ? 'MC 검증' : 'Monte Carlo'}
+              value={`p=${(data.mc_p_value ?? 1).toFixed(3)}`}
+              color={(data.mc_p_value ?? 1) < 0.05 ? 'var(--color-green)' : (data.mc_p_value ?? 1) < 0.10 ? 'var(--color-accent)' : 'var(--color-red)'}
+              description={lang === 'ko' ? `상위 ${(100 - (data.mc_percentile ?? 50)).toFixed(0)}% (랜덤 셔플 대비)` : `Top ${(100 - (data.mc_percentile ?? 50)).toFixed(0)}% vs random shuffle`}
+            />
+          </div>
+          {data.jensens_alpha !== undefined && data.jensens_alpha !== 0 && (
+            <div class="flex items-center gap-2 font-mono text-xs">
+              <span class="text-[--color-text-muted]">{lang === 'ko' ? '젠센 알파' : "Jensen's α"}:</span>
+              <span style={{ color: data.jensens_alpha > 0 ? 'var(--color-green)' : 'var(--color-red)' }} class="font-bold">
+                {data.jensens_alpha > 0 ? '+' : ''}{data.jensens_alpha.toFixed(2)}%
+              </span>
+              <span class="text-[9px] text-[--color-text-muted]">
+                {lang === 'ko' ? '(BTC 대비 리스크 조정 초과수익)' : '(risk-adjusted excess vs BTC)'}
+              </span>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Advanced metrics: Expectancy, Recovery Factor, Payoff Ratio */}
       {(data.expectancy !== undefined && data.expectancy !== 0) && (
         <div class="grid grid-cols-3 gap-2 mb-3">
@@ -418,8 +519,13 @@ export default function ResultsCard({ data, isDefault, lang = 'en', isDemo = fal
         </div>
       )}
 
-      <div class="font-mono text-xs text-[--color-text-muted] mb-3">
-        {data.total_trades.toLocaleString()} {t.trades}
+      <div class="flex items-center justify-between font-mono text-xs text-[--color-text-muted] mb-3">
+        <span>{data.total_trades.toLocaleString()} {t.trades}</span>
+        {data.avg_bars_held != null && data.avg_bars_held > 0 && (
+          <span class="text-[10px]">
+            {t.avgHold}: {data.avg_bars_held}h · {t.medHold}: {data.median_bars_held ?? 0}h
+          </span>
+        )}
       </div>
 
       {/* Exit reason bar */}

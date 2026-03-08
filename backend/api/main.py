@@ -1755,7 +1755,7 @@ from src.engine.condition_engine import (
 )
 from src.engine.indicator_pipeline import get_available_indicators, INDICATOR_REGISTRY
 from api.schemas import (
-    BacktestRequest, BacktestResponse, PresetListItem, IndicatorInfo, YearlyStat,
+    BacktestRequest, BacktestResponse, PresetListItem, IndicatorInfo, YearlyStat, MonthlyStat,
 )
 
 
@@ -1942,6 +1942,47 @@ async def run_backtest(req: BacktestRequest):
 
     all_trades.sort(key=lambda t: t["time"])
 
+    # --- Concurrent position limit (matches live: max 100) ---
+    skipped = 0
+    max_concurrent = getattr(req, 'max_concurrent_positions', 100) or 100
+    if max_concurrent > 0 and len(all_trades) > 0:
+        active_exits = []  # sorted list of exit_times
+        filtered = []
+        for trade in all_trades:
+            # Remove positions that have exited before this entry
+            active_exits = [et for et in active_exits if et > trade["entry_time"]]
+            if len(active_exits) < max_concurrent:
+                filtered.append(trade)
+                active_exits.append(trade["exit_time"])
+                active_exits.sort()
+        skipped = len(all_trades) - len(filtered)
+        all_trades = filtered
+        # Recalculate coin_results from filtered trades
+        if skipped > 0:
+            from collections import Counter
+            coin_trade_map = {}
+            for t in all_trades:
+                coin_trade_map.setdefault(t["symbol"], []).append(t)
+            coin_results = []
+            for sym, trades_list in sorted(coin_trade_map.items()):
+                c_wins = [t for t in trades_list if t["pnl_pct"] > 0]
+                c_losses = [t for t in trades_list if t["pnl_pct"] <= 0]
+                c_gp = sum(t["pnl_pct"] for t in c_wins) if c_wins else 0
+                c_gl = abs(sum(t["pnl_pct"] for t in c_losses)) if c_losses else 0.001
+                c_total = sum(t["pnl_pct"] for t in trades_list)
+                coin_results.append(CoinResult(
+                    symbol=sym, trades=len(trades_list),
+                    wins=len(c_wins), losses=len(c_losses),
+                    win_rate=round(len(c_wins) / len(trades_list) * 100, 2),
+                    profit_factor=round(c_gp / c_gl, 2),
+                    total_return_pct=round(c_total, 2),
+                    avg_pnl_pct=round(c_total / len(trades_list), 4),
+                    tp_count=sum(1 for t in trades_list if t["exit_reason"] == "tp"),
+                    sl_count=sum(1 for t in trades_list if t["exit_reason"] == "sl"),
+                    timeout_count=sum(1 for t in trades_list if t["exit_reason"] == "timeout"),
+                ))
+            coin_results.sort(key=lambda x: x.total_return_pct, reverse=True)
+
     # Aggregate results
     if not all_trades:
         return BacktestResponse(
@@ -2025,9 +2066,58 @@ async def run_backtest(req: BacktestRequest):
         dr_down = daily_returns[daily_returns < 0]
         dr_down_std = float(np.std(dr_down, ddof=1)) if len(dr_down) >= 2 else 0.0
         bt_sortino = round(dr_avg / dr_down_std * np.sqrt(365), 2) if dr_down_std > 0 else 0.0
-        bt_calmar = round(total_return / max_dd, 2) if max_dd > 0 else 0.0
+        # Calmar = annualized return / MDD
+        n_days = len(daily_pnl)
+        ann_return = total_return * (365 / max(n_days, 1)) if n_days > 0 else total_return
+        bt_calmar = round(ann_return / max_dd, 2) if max_dd > 0 else 0.0
+        # VaR and CVaR (95% confidence, daily)
+        var_95 = round(float(np.percentile(daily_returns, 5)), 4)
+        tail = daily_returns[daily_returns <= var_95]
+        cvar_95 = round(float(np.mean(tail)), 4) if len(tail) > 0 else var_95
     else:
         bt_sharpe, bt_sortino, bt_calmar = 0.0, 0.0, 0.0
+        var_95, cvar_95 = 0.0, 0.0
+
+    # --- DSR (Deflated Sharpe Ratio) ---
+    # Corrects Sharpe for multiple testing bias (Lopez de Prado, 2014)
+    deflated_sharpe = 0.0
+    dsr_haircut_pct = 0.0
+    if len(daily_returns) >= 10 and bt_sharpe > 0:
+        from scipy.stats import skew as sp_skew, kurtosis as sp_kurt
+        n_dr = len(daily_returns)
+        skw = float(sp_skew(daily_returns))
+        krt = float(sp_kurt(daily_returns))
+        # Sharpe standard error with non-normality correction
+        sr_se = np.sqrt((1 + 0.5 * bt_sharpe**2 - skw * bt_sharpe + (krt / 4) * bt_sharpe**2) / max(n_dr - 1, 1))
+        # Expected max Sharpe from n_trials random strategies
+        # Use conditions_count as proxy for strategy space
+        n_trials_est = max(params.get("conditions_count", 1) * 10, 10)
+        gamma_em = 0.5772156649  # Euler-Mascheroni
+        expected_max_sr = np.sqrt(2 * np.log(n_trials_est)) * (1 - gamma_em / max(2 * np.log(n_trials_est), 0.01)) if n_trials_est > 1 else 0
+        deflated_sharpe = round((bt_sharpe - expected_max_sr) / max(sr_se, 0.001), 2)
+        dsr_haircut_pct = round((1 - deflated_sharpe / bt_sharpe) * 100, 1) if bt_sharpe > 0 else 100.0
+        dsr_haircut_pct = max(0, min(100, dsr_haircut_pct))
+
+    # --- Monte Carlo Sign-Flip Test ---
+    mc_p_value = 1.0
+    mc_percentile = 50.0
+    trade_pnls = [t["pnl_pct"] for t in all_trades]
+    if len(trade_pnls) >= 10:
+        rng = np.random.RandomState(42)
+        pnl_arr = np.array(trade_pnls)
+        original_return = float(np.sum(pnl_arr))
+        n_sims = min(1000, max(200, len(trade_pnls) * 5))
+        # Sign-flip: randomly negate each trade's PnL to test if direction matters
+        signs = rng.choice([-1, 1], size=(n_sims, len(pnl_arr)))
+        mc_returns = np.sum(signs * pnl_arr, axis=1)
+        mc_percentile = round(float(np.mean(mc_returns <= original_return) * 100), 1)
+        # One-sided p-value: how likely to see this return or better by chance
+        mc_p_value = round(float(np.mean(mc_returns >= original_return)), 4)
+        if mc_p_value > 0.10 and len(all_trades) >= 30:
+            warnings.append(f"Monte Carlo test: strategy return not significantly better than random order (p={mc_p_value:.3f}).")
+
+    # --- Jensen's Alpha (risk-adjusted excess return vs BTC) ---
+    jensens_alpha = 0.0
 
     # Yearly breakdown
     from collections import defaultdict
@@ -2058,50 +2148,167 @@ async def run_backtest(req: BacktestRequest):
 
     total_funding = sum(t.get('funding_pct', 0) for t in all_trades)
 
+    # --- Monthly stats ---
+    from collections import defaultdict as _dd
+    monthly = _dd(lambda: {"wins": 0, "losses": 0, "gross_profit": 0.0, "gross_loss": 0.0, "total_pnl": 0.0})
+    for tr in all_trades:
+        month_key = tr["time"][:7]  # "YYYY-MM"
+        m = monthly[month_key]
+        m["total_pnl"] += tr["pnl_pct"]
+        if tr["pnl_pct"] > 0:
+            m["wins"] += 1
+            m["gross_profit"] += tr["pnl_pct"]
+        else:
+            m["losses"] += 1
+            m["gross_loss"] += abs(tr["pnl_pct"])
+
+    monthly_stats = []
+    for month_key in sorted(monthly.keys()):
+        m = monthly[month_key]
+        mtotal = m["wins"] + m["losses"]
+        monthly_stats.append(MonthlyStat(
+            month=month_key,
+            trades=mtotal,
+            wins=m["wins"],
+            win_rate=round(m["wins"] / mtotal * 100, 1) if mtotal > 0 else 0,
+            total_return_pct=round(m["total_pnl"], 2),
+            profit_factor=round(m["gross_profit"] / max(m["gross_loss"], 0.001), 2),
+        ))
+
+    # --- Trade duration stats ---
+    bars_list = [t["bars_held"] for t in all_trades]
+    avg_bars_held = round(sum(bars_list) / len(bars_list), 1) if bars_list else 0.0
+    sorted_bars = sorted(bars_list)
+    median_bars_held = float(sorted_bars[len(sorted_bars) // 2]) if sorted_bars else 0.0
+
+    # --- PnL distribution histogram (1% buckets from -10% to +10%) ---
+    pnl_buckets = [f"{i}%" for i in range(-10, 11)]
+    pnl_distribution = [0] * 21  # 21 buckets: -10 to +10
+    for t in all_trades:
+        bucket = int(round(t["pnl_pct"]))
+        bucket = max(-10, min(10, bucket))  # clamp
+        pnl_distribution[bucket + 10] += 1
+
     # --- Additional risk metrics ---
     win_rate_dec = len(wins) / len(all_trades) if all_trades else 0
     expectancy = round(win_rate_dec * avg_win + (1 - win_rate_dec) * avg_loss, 4)
     recovery_factor = round(total_return / max_dd, 2) if max_dd > 0 else 0.0
     payoff_ratio = round(abs(avg_win / avg_loss), 2) if avg_loss != 0 else 0.0
 
-    # --- BTC Hold benchmark ---
+    # --- Benchmark returns (BTC + ETH buy-and-hold) ---
     btc_hold_return_pct = 0.0
-    try:
-        btc_data = data_manager.get_symbols(["BTCUSDT"])
-        if btc_data:
-            btc_sym, btc_df = btc_data[0]
-            btc_df = filter_df_by_date(btc_df, getattr(req, 'start_date', None), getattr(req, 'end_date', None))
-            if len(btc_df) >= 2:
-                btc_start = float(btc_df.iloc[0]["close"])
-                btc_end = float(btc_df.iloc[-1]["close"])
-                if btc_start > 0:
-                    btc_hold_return_pct = round((btc_end - btc_start) / btc_start * 100, 2)
-    except Exception:
-        pass
+    eth_hold_return_pct = 0.0
+    def _calc_hold_return(symbol):
+        try:
+            sym_data = data_manager.get_symbols([symbol])
+            if sym_data:
+                _, sym_df = sym_data[0]
+                sym_df = filter_df_by_date(sym_df, getattr(req, 'start_date', None), getattr(req, 'end_date', None))
+                if len(sym_df) >= 2:
+                    s = float(sym_df.iloc[0]["close"])
+                    e = float(sym_df.iloc[-1]["close"])
+                    if s > 0:
+                        return round((e - s) / s * 100, 2)
+        except Exception:
+            pass
+        return 0.0
+    btc_hold_return_pct = _calc_hold_return("BTCUSDT")
+    eth_hold_return_pct = _calc_hold_return("ETHUSDT")
 
-    # --- Strategy grade ---
+    # Jensen's Alpha: strategy excess return vs benchmark (BTC), risk-adjusted
+    # Alpha = R_strategy - [Rf + Beta * (R_market - Rf)]
+    if btc_hold_return_pct != 0 and len(all_trades) >= 10:
+        if len(daily_returns) >= 10:
+            try:
+                btc_data = data_manager.get_symbols(["BTCUSDT"])
+                if btc_data:
+                    _, btc_df = btc_data[0]
+                    btc_df = filter_df_by_date(btc_df, getattr(req, 'start_date', None), getattr(req, 'end_date', None))
+                    # Build BTC daily return dict: "YYYY-MM-DD" → pct_change
+                    btc_closes = {}
+                    for _, row in btc_df.iterrows():
+                        ts = str(row.get('timestamp', ''))[:10] if 'timestamp' in row.index else str(row.name)[:10]
+                        btc_closes[ts] = float(row['close'])
+                    btc_dates = sorted(btc_closes.keys())
+                    btc_daily_dict = {}
+                    for i in range(1, len(btc_dates)):
+                        prev_c = btc_closes[btc_dates[i-1]]
+                        curr_c = btc_closes[btc_dates[i]]
+                        if prev_c > 0:
+                            btc_daily_dict[btc_dates[i]] = (curr_c - prev_c) / prev_c * 100
+                    # Align strategy + BTC daily returns
+                    strat_daily_dict = dict(daily_pnl)
+                    common = sorted(set(strat_daily_dict.keys()) & set(btc_daily_dict.keys()))
+                    if len(common) >= 10:
+                        s_ret = np.array([strat_daily_dict[d] for d in common])
+                        b_ret = np.array([btc_daily_dict[d] for d in common])
+                        if np.std(b_ret) > 0:
+                            beta = float(np.cov(s_ret, b_ret)[0, 1] / np.var(b_ret))
+                            jensens_alpha = round(float(np.mean(s_ret) - beta * np.mean(b_ret)), 4)
+                        else:
+                            jensens_alpha = round(total_return - btc_hold_return_pct, 2)
+                    else:
+                        jensens_alpha = round(total_return - btc_hold_return_pct, 2)
+            except Exception:
+                jensens_alpha = round(total_return - btc_hold_return_pct, 2)
+        else:
+            jensens_alpha = round(total_return - btc_hold_return_pct, 2)
+
+    # --- Statistical significance (binomial test) — must run before grade ---
+    hasBreakeven = abs(avg_win) > 0 and abs(avg_loss) > 0
+    edge_p_value = 1.0
+    if len(all_trades) >= 10 and hasBreakeven:
+        try:
+            from scipy.stats import binomtest
+            be_wr = abs(avg_loss) / (abs(avg_win) + abs(avg_loss)) if (abs(avg_win) + abs(avg_loss)) > 0 else 0.5
+            result_binom = binomtest(len(wins), len(all_trades), be_wr, alternative='greater')
+            edge_p_value = round(result_binom.pvalue, 4)
+        except ImportError:
+            n = len(all_trades)
+            be_wr_val = abs(avg_loss) / (abs(avg_win) + abs(avg_loss)) if (abs(avg_win) + abs(avg_loss)) > 0 else 0.5
+            observed_wr = len(wins) / n
+            z = (observed_wr - be_wr_val) / max((be_wr_val * (1 - be_wr_val) / n) ** 0.5, 1e-9)
+            edge_p_value = round(max(0, min(1, 0.5 * (1 - min(abs(z), 6) / 6))), 4) if z > 0 else 1.0
+        except Exception:
+            pass
+
+    # --- Strategy grade (7 dimensions, max 16 points) ---
     pf = round(gross_profit / gross_loss, 2) if gross_loss > 0 else 0
     wr = round(len(wins) / len(all_trades) * 100, 2) if all_trades else 0
     mdd = round(max_dd, 2)
     grade_score = 0
+    # PF (0-3)
     if pf >= 2.0: grade_score += 3
     elif pf >= 1.5: grade_score += 2
     elif pf >= 1.0: grade_score += 1
+    # WR (0-3)
     if wr >= 60: grade_score += 3
     elif wr >= 50: grade_score += 2
     elif wr >= 40: grade_score += 1
+    # MDD (0-2)
     if mdd < 20: grade_score += 2
     elif mdd < 40: grade_score += 1
+    # RF (0-2)
     if recovery_factor >= 3: grade_score += 2
     elif recovery_factor >= 1.5: grade_score += 1
+    # Sharpe (0-2)
+    if bt_sharpe >= 2.0: grade_score += 2
+    elif bt_sharpe >= 1.0: grade_score += 1
+    # Expectancy (0-2)
+    if expectancy >= 0.5: grade_score += 2
+    elif expectancy > 0: grade_score += 1
+    # Statistical Edge (0-2) — combines p-value + MC
+    if edge_p_value < 0.01 and mc_p_value < 0.05: grade_score += 2
+    elif edge_p_value < 0.05 or mc_p_value < 0.10: grade_score += 1
 
-    if grade_score >= 9: strategy_grade = "A"
-    elif grade_score >= 7: strategy_grade = "B"
-    elif grade_score >= 5: strategy_grade = "C"
+    if grade_score >= 14: strategy_grade = "A+"
+    elif grade_score >= 12: strategy_grade = "A"
+    elif grade_score >= 9: strategy_grade = "B"
+    elif grade_score >= 6: strategy_grade = "C"
     elif grade_score >= 3: strategy_grade = "D"
     else: strategy_grade = "F"
 
-    grade_details = f"PF={pf}, WR={wr}%, MDD={mdd}%, RF={recovery_factor}"
+    grade_details = f"PF={pf} WR={wr}% MDD={mdd}% RF={recovery_factor} Sharpe={bt_sharpe} E={expectancy} Edge={grade_score}/16"
 
     # --- Warnings ---
     warnings = []
@@ -2113,30 +2320,52 @@ async def run_backtest(req: BacktestRequest):
         warnings.append("Very high Profit Factor may indicate overfitting. Run OOS validation to verify.")
     if btc_hold_return_pct > 0 and total_return < btc_hold_return_pct:
         warnings.append(f"Strategy underperforms BTC buy-and-hold ({btc_hold_return_pct:.1f}%) over the same period.")
-
-    # --- Statistical significance (binomial test) ---
-    hasBreakeven = abs(avg_win) > 0 and abs(avg_loss) > 0
-    edge_p_value = 1.0
-    if len(all_trades) >= 10 and hasBreakeven:
-        try:
-            from scipy.stats import binomtest
-            be_wr = abs(avg_loss) / (abs(avg_win) + abs(avg_loss)) if (abs(avg_win) + abs(avg_loss)) > 0 else 0.5
-            result_binom = binomtest(len(wins), len(all_trades), be_wr, alternative='greater')
-            edge_p_value = round(result_binom.pvalue, 4)
-        except ImportError:
-            # scipy not available — calculate approximate z-test
-            n = len(all_trades)
-            be_wr_val = abs(avg_loss) / (abs(avg_win) + abs(avg_loss)) if (abs(avg_win) + abs(avg_loss)) > 0 else 0.5
-            observed_wr = len(wins) / n
-            z = (observed_wr - be_wr_val) / max((be_wr_val * (1 - be_wr_val) / n) ** 0.5, 1e-9)
-            # Approximate p-value from z-score
-            edge_p_value = round(max(0, min(1, 0.5 * (1 - min(abs(z), 6) / 6))), 4) if z > 0 else 1.0
-        except Exception:
-            pass
-
-    # Add significance warning
     if edge_p_value > 0.05 and len(all_trades) >= 30:
         warnings.append(f"Strategy edge not statistically significant (p={edge_p_value:.3f}). Win rate may not be reliably above break-even.")
+    if deflated_sharpe < 0 and bt_sharpe > 0.5:
+        warnings.append(f"Deflated Sharpe Ratio is negative ({deflated_sharpe:.2f}). Reported Sharpe ({bt_sharpe:.2f}) may be inflated by data mining.")
+    if jensens_alpha < 0 and len(all_trades) >= 30:
+        warnings.append(f"Negative Jensen's Alpha ({jensens_alpha:.2f}%). Strategy underperforms benchmark on risk-adjusted basis.")
+
+    # --- Rolling 5-Window Walk-Forward Consistency ---
+    walk_forward_consistency = 0.0
+    walk_forward_details = ""
+    if len(all_trades) >= 50:
+        def _wf_metrics(tlist):
+            w = [t for t in tlist if t["pnl_pct"] > 0]
+            l = [t for t in tlist if t["pnl_pct"] <= 0]
+            _wr = len(w) / len(tlist) * 100 if tlist else 0
+            gp = sum(t["pnl_pct"] for t in w) if w else 0
+            gl = abs(sum(t["pnl_pct"] for t in l)) if l else 0.001
+            _pf = gp / gl if gl > 0 else 0
+            return _wr, _pf
+        # 5 rolling windows: each uses 60% IS, 40% OOS
+        n = len(all_trades)
+        n_windows = 5
+        window_size = n // n_windows
+        wf_ratios = []
+        wf_window_details = []
+        for i in range(n_windows - 1):
+            # IS = windows 0..i, OOS = window i+1
+            is_end = (i + 1) * window_size
+            oos_start = is_end
+            oos_end = min(oos_start + window_size, n)
+            is_trades = all_trades[:is_end]
+            oos_trades = all_trades[oos_start:oos_end]
+            if len(oos_trades) < 5:
+                continue
+            is_wr, is_pf = _wf_metrics(is_trades)
+            oos_wr, oos_pf = _wf_metrics(oos_trades)
+            wr_r = min(oos_wr / max(is_wr, 0.01), 2.0)
+            pf_r = min(oos_pf / max(is_pf, 0.01), 2.0)
+            ratio = (wr_r + pf_r) / 2
+            wf_ratios.append(ratio)
+            wf_window_details.append(f"W{i+1}: IS WR={is_wr:.0f}% PF={is_pf:.1f} → OOS WR={oos_wr:.0f}% PF={oos_pf:.1f} ({ratio:.2f})")
+        if wf_ratios:
+            walk_forward_consistency = round(sum(wf_ratios) / len(wf_ratios), 2)
+            walk_forward_details = " | ".join(wf_window_details)
+            if walk_forward_consistency < 0.7:
+                warnings.append(f"Walk-forward degradation detected ({walk_forward_consistency:.2f}). OOS performance significantly worse than IS.")
 
     compute_ms = int((time.time() - t_start) * 1000)
 
@@ -2201,10 +2430,26 @@ async def run_backtest(req: BacktestRequest):
         recovery_factor=recovery_factor,
         payoff_ratio=payoff_ratio,
         btc_hold_return_pct=btc_hold_return_pct,
+        eth_hold_return_pct=eth_hold_return_pct,
+        var_95=var_95,
+        cvar_95=cvar_95,
         strategy_grade=strategy_grade,
         grade_details=grade_details,
         edge_p_value=edge_p_value,
         warnings=warnings,
+        walk_forward_consistency=walk_forward_consistency,
+        walk_forward_details=walk_forward_details,
+        deflated_sharpe=deflated_sharpe,
+        dsr_haircut_pct=dsr_haircut_pct,
+        mc_p_value=mc_p_value,
+        mc_percentile=mc_percentile,
+        jensens_alpha=jensens_alpha,
+        avg_bars_held=avg_bars_held,
+        median_bars_held=median_bars_held,
+        monthly_stats=monthly_stats,
+        positions_skipped=skipped,
+        pnl_distribution=pnl_distribution,
+        pnl_buckets=pnl_buckets,
     )
 
     # Cache the result

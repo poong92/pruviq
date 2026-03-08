@@ -25,6 +25,11 @@ export interface TradeItem {
   pnl_usd: number; exit_reason: string; bars_held: number;
 }
 
+export interface MonthlyStat {
+  month: string; trades: number; wins: number; win_rate: number;
+  total_return_pct: number; profit_factor: number;
+}
+
 export interface YearlyStat {
   year: number; trades: number; wins: number; win_rate: number;
   total_return_pct: number; profit_factor: number;
@@ -63,10 +68,28 @@ export interface BacktestResult {
   recovery_factor?: number;
   payoff_ratio?: number;
   btc_hold_return_pct?: number;
+  eth_hold_return_pct?: number;
+  var_95?: number;
+  cvar_95?: number;
   strategy_grade?: string;
   grade_details?: string;
   warnings?: string[];
   edge_p_value?: number;
+  // 9.5 phase 3
+  walk_forward_consistency?: number;
+  walk_forward_details?: string;
+  avg_bars_held?: number;
+  median_bars_held?: number;
+  monthly_stats?: MonthlyStat[];
+  positions_skipped?: number;
+  pnl_distribution?: number[];
+  pnl_buckets?: string[];
+  // 9.5 phase 4 — overfitting detection + alpha
+  deflated_sharpe?: number;
+  dsr_haircut_pct?: number;
+  mc_p_value?: number;
+  mc_percentile?: number;
+  jensens_alpha?: number;
 }
 
 export interface PresetItem {
