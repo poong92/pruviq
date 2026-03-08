@@ -502,14 +502,22 @@ async def simulate(req: SimulationRequest):
     # Resolve strategy from registry
     # Support both "bb-squeeze" (legacy) and "bb-squeeze-short" (new) formats
     strategy_id = req.strategy
+    is_both = req.direction == "both"
+
     if strategy_id == "bb-squeeze":
-        strategy_id = f"bb-squeeze-{req.direction or 'short'}"
+        strategy_id = f"bb-squeeze-{req.direction or 'short'}" if not is_both else "bb-squeeze-short"
 
     if strategy_id not in STRATEGY_REGISTRY:
         raise HTTPException(400, f"Unknown strategy: {req.strategy}")
 
     strategy, default_direction, defaults = get_strategy(strategy_id)
-    direction = req.direction if req.direction is not None else default_direction
+
+    if is_both:
+        directions_to_run = ["short", "long"]
+        direction = "both"
+    else:
+        direction = req.direction if req.direction is not None else default_direction
+        directions_to_run = [direction]
 
     # Check cache
     ckey = cache_key(req)
@@ -535,62 +543,97 @@ async def simulate(req: SimulationRequest):
 
     cost_model = CostModel.futures() if req.market_type == "futures" else CostModel.spot()
 
-    # Run simulation across all coins
+    # Run simulation across all coins (supports "both" direction)
     all_trades = []
     coin_results = []
+    coin_agg = {}  # For "both": aggregate per-coin across directions
     actual_date_min = None
     actual_date_max = None
-    for sym, df in coins:
-        if not has_cache:
-            df = strategy.calculate_indicators(df.copy())
 
-        df = filter_df_by_date(df, getattr(req, 'start_date', None), getattr(req, 'end_date', None))
+    for run_dir in directions_to_run:
+        for sym, df in coins:
+            if not has_cache:
+                df = strategy.calculate_indicators(df.copy())
 
-        # Track actual date range
-        if "timestamp" in df.columns and len(df) > 0:
-            df_min = str(df["timestamp"].iloc[0])[:10]
-            df_max = str(df["timestamp"].iloc[-1])[:10]
-            if actual_date_min is None or df_min < actual_date_min:
-                actual_date_min = df_min
-            if actual_date_max is None or df_max > actual_date_max:
-                actual_date_max = df_max
+            df = filter_df_by_date(df, getattr(req, 'start_date', None), getattr(req, 'end_date', None))
 
-        result = run_fast(
-            df, strategy, sym,
-            sl_pct=req.sl_pct / 100,
-            tp_pct=req.tp_pct / 100,
-            max_bars=req.max_bars,
-            fee_pct=cost_model.fee_pct,
-            slippage_pct=cost_model.slippage_pct,
-            direction=direction,
-            market_type=req.market_type,
-            strategy_id=strategy_id,
-            funding_rate_8h=getattr(cost_model, 'funding_rate_8h', 0.0001),
-        )
+            # Track actual date range
+            if "timestamp" in df.columns and len(df) > 0:
+                df_min = str(df["timestamp"].iloc[0])[:10]
+                df_max = str(df["timestamp"].iloc[-1])[:10]
+                if actual_date_min is None or df_min < actual_date_min:
+                    actual_date_min = df_min
+                if actual_date_max is None or df_max > actual_date_max:
+                    actual_date_max = df_max
 
-        # Collect per-coin stats
-        if result.total_trades > 0:
+            result = run_fast(
+                df, strategy, sym,
+                sl_pct=req.sl_pct / 100,
+                tp_pct=req.tp_pct / 100,
+                max_bars=req.max_bars,
+                fee_pct=cost_model.fee_pct,
+                slippage_pct=cost_model.slippage_pct,
+                direction=run_dir,
+                market_type=req.market_type,
+                strategy_id=strategy_id,
+                funding_rate_8h=getattr(cost_model, 'funding_rate_8h', 0.0001),
+            )
+
+            # Collect per-coin stats
+            if result.total_trades > 0:
+                if is_both:
+                    # Aggregate same coin across short/long
+                    if sym not in coin_agg:
+                        coin_agg[sym] = {"trades": 0, "wins": 0, "losses": 0,
+                                         "total_return_pct": 0, "tp": 0, "sl": 0, "timeout": 0}
+                    c = coin_agg[sym]
+                    c["trades"] += result.total_trades
+                    c["wins"] += result.wins
+                    c["losses"] += result.losses
+                    c["total_return_pct"] += _safe_float(result.total_return_pct)
+                    c["tp"] += result.tp_count
+                    c["sl"] += result.sl_count
+                    c["timeout"] += result.timeout_count
+                else:
+                    coin_results.append(CoinResult(
+                        symbol=sym,
+                        trades=result.total_trades,
+                        wins=result.wins,
+                        losses=result.losses,
+                        win_rate=_safe_float(result.win_rate),
+                        profit_factor=_safe_float(result.profit_factor),
+                        total_return_pct=_safe_float(result.total_return_pct),
+                        avg_pnl_pct=round(_safe_float(result.total_return_pct) / result.total_trades, 4) if result.total_trades > 0 else 0,
+                        tp_count=result.tp_count,
+                        sl_count=result.sl_count,
+                        timeout_count=result.timeout_count,
+                    ))
+
+            for trade in result.trades:
+                all_trades.append({
+                    "time": trade.entry_time,
+                    "pnl_pct": trade.pnl_pct,
+                    "exit_reason": trade.exit_reason,
+                    "funding_pct": getattr(trade, 'funding_pct', 0),
+                })
+
+    # Build coin_results from aggregated data for "both" mode
+    if is_both:
+        for sym, c in coin_agg.items():
+            wr = round(c["wins"] / c["trades"] * 100, 2) if c["trades"] > 0 else 0
             coin_results.append(CoinResult(
                 symbol=sym,
-                trades=result.total_trades,
-                wins=result.wins,
-                losses=result.losses,
-                win_rate=_safe_float(result.win_rate),
-                profit_factor=_safe_float(result.profit_factor),
-                total_return_pct=_safe_float(result.total_return_pct),
-                avg_pnl_pct=round(_safe_float(result.total_return_pct) / result.total_trades, 4) if result.total_trades > 0 else 0,
-                tp_count=result.tp_count,
-                sl_count=result.sl_count,
-                timeout_count=result.timeout_count,
+                trades=c["trades"],
+                wins=c["wins"],
+                losses=c["losses"],
+                win_rate=wr,
+                profit_factor=0,  # Recalculated at portfolio level
+                total_return_pct=_safe_float(round(c["total_return_pct"], 4)),
+                avg_pnl_pct=round(c["total_return_pct"] / c["trades"], 4) if c["trades"] > 0 else 0,
+                tp_count=c["tp"],
+                sl_count=c["sl"],
+                timeout_count=c["timeout"],
             ))
-
-        for trade in result.trades:
-            all_trades.append({
-                "time": trade.entry_time,
-                "pnl_pct": trade.pnl_pct,
-                "exit_reason": trade.exit_reason,
-                "funding_pct": getattr(trade, 'funding_pct', 0),
-            })
 
     # Sort coin_results by total_return descending
     coin_results.sort(key=lambda x: x.total_return_pct, reverse=True)

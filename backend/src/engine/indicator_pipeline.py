@@ -2,7 +2,8 @@
 PRUVIQ IndicatorPipeline - Dynamic indicator computation.
 
 Computes only the indicators requested by user strategy JSON.
-Supports: BB, EMA, ATR, HV, Volume, Candle, RSI, MACD, Stochastic, ADX, Price Action.
+Supports: BB, EMA, ATR, HV, Volume, Candle, RSI, MACD, Stochastic, ADX, Price Action,
+Ichimoku, Parabolic SAR, Williams %R.
 """
 
 import numpy as np
@@ -69,6 +70,25 @@ INDICATOR_REGISTRY = {
         "name": "Price Action",
         "fields": ["close_vs_high_20", "close_vs_low_20", "breakout_up", "breakout_down"],
         "default_params": {"lookback": 20},
+    },
+    "ichimoku": {
+        "name": "Ichimoku Cloud",
+        "fields": ["tenkan", "kijun", "senkou_a", "senkou_b",
+                    "above_cloud", "below_cloud", "in_cloud",
+                    "tk_cross_bull", "tk_cross_bear",
+                    "cloud_green", "cloud_red"],
+        "default_params": {"tenkan_period": 9, "kijun_period": 26, "senkou_b_period": 52},
+    },
+    "psar": {
+        "name": "Parabolic SAR",
+        "fields": ["psar", "psar_bull", "psar_bear", "psar_reversal_bull", "psar_reversal_bear"],
+        "default_params": {"af_start": 0.02, "af_step": 0.02, "af_max": 0.2},
+    },
+    "williams_r": {
+        "name": "Williams %R",
+        "fields": ["williams_r", "wr_oversold", "wr_overbought",
+                    "wr_exit_oversold", "wr_exit_overbought"],
+        "default_params": {"period": 14, "oversold": -80, "overbought": -20},
     },
 }
 
@@ -260,6 +280,152 @@ def _compute_price_action(df: pd.DataFrame, p: dict):
     df["breakout_down"] = df["close"] < low_min.shift(1)
 
 
+def _compute_ichimoku(df: pd.DataFrame, p: dict):
+    tenkan_period = p["tenkan_period"]
+    kijun_period = p["kijun_period"]
+    senkou_b_period = p["senkou_b_period"]
+
+    # Tenkan-sen (Conversion Line): (highest high + lowest low) / 2 over tenkan_period
+    tenkan_high = df["high"].rolling(tenkan_period).max()
+    tenkan_low = df["low"].rolling(tenkan_period).min()
+    df["tenkan"] = (tenkan_high + tenkan_low) / 2
+
+    # Kijun-sen (Base Line): (highest high + lowest low) / 2 over kijun_period
+    kijun_high = df["high"].rolling(kijun_period).max()
+    kijun_low = df["low"].rolling(kijun_period).min()
+    df["kijun"] = (kijun_high + kijun_low) / 2
+
+    # Senkou Span A (Leading Span A): (Tenkan + Kijun) / 2, shifted forward by kijun_period
+    # For backtesting we use current values (no forward shift) to avoid look-ahead bias
+    df["senkou_a"] = (df["tenkan"] + df["kijun"]) / 2
+
+    # Senkou Span B (Leading Span B): (highest high + lowest low) / 2 over senkou_b_period
+    senkou_b_high = df["high"].rolling(senkou_b_period).max()
+    senkou_b_low = df["low"].rolling(senkou_b_period).min()
+    df["senkou_b"] = (senkou_b_high + senkou_b_low) / 2
+
+    # Cloud boundaries
+    cloud_top = df[["senkou_a", "senkou_b"]].max(axis=1)
+    cloud_bottom = df[["senkou_a", "senkou_b"]].min(axis=1)
+
+    # Price vs Cloud
+    df["above_cloud"] = df["close"] > cloud_top
+    df["below_cloud"] = df["close"] < cloud_bottom
+    df["in_cloud"] = ~df["above_cloud"] & ~df["below_cloud"]
+
+    # TK Cross (Tenkan crosses Kijun)
+    df["tk_cross_bull"] = (df["tenkan"] > df["kijun"]) & (df["tenkan"].shift(1) <= df["kijun"].shift(1))
+    df["tk_cross_bear"] = (df["tenkan"] < df["kijun"]) & (df["tenkan"].shift(1) >= df["kijun"].shift(1))
+
+    # Cloud color
+    df["cloud_green"] = df["senkou_a"] > df["senkou_b"]
+    df["cloud_red"] = df["senkou_a"] < df["senkou_b"]
+
+
+def _compute_psar(df: pd.DataFrame, p: dict):
+    af_start = p["af_start"]
+    af_step = p["af_step"]
+    af_max = p["af_max"]
+
+    high = df["high"].values
+    low = df["low"].values
+    close = df["close"].values
+    n = len(high)
+
+    psar = np.zeros(n)
+    bull = np.ones(n, dtype=bool)  # True = bullish (SAR below price)
+    af = np.full(n, af_start)
+    ep = np.zeros(n)  # Extreme Point
+
+    # Initialize
+    psar[0] = low[0]
+    ep[0] = high[0]
+    bull[0] = True
+
+    for i in range(1, n):
+        prev_psar = psar[i - 1]
+        prev_af = af[i - 1]
+        prev_ep = ep[i - 1]
+        prev_bull = bull[i - 1]
+
+        if prev_bull:
+            # Bullish SAR
+            psar[i] = prev_psar + prev_af * (prev_ep - prev_psar)
+            # SAR cannot be above previous two lows
+            if i >= 2:
+                psar[i] = min(psar[i], low[i - 1], low[i - 2])
+            else:
+                psar[i] = min(psar[i], low[i - 1])
+
+            if low[i] < psar[i]:
+                # Reversal to bearish
+                bull[i] = False
+                psar[i] = prev_ep
+                ep[i] = low[i]
+                af[i] = af_start
+            else:
+                bull[i] = True
+                if high[i] > prev_ep:
+                    ep[i] = high[i]
+                    af[i] = min(prev_af + af_step, af_max)
+                else:
+                    ep[i] = prev_ep
+                    af[i] = prev_af
+        else:
+            # Bearish SAR
+            psar[i] = prev_psar + prev_af * (prev_ep - prev_psar)
+            # SAR cannot be below previous two highs
+            if i >= 2:
+                psar[i] = max(psar[i], high[i - 1], high[i - 2])
+            else:
+                psar[i] = max(psar[i], high[i - 1])
+
+            if high[i] > psar[i]:
+                # Reversal to bullish
+                bull[i] = True
+                psar[i] = prev_ep
+                ep[i] = high[i]
+                af[i] = af_start
+            else:
+                bull[i] = False
+                if low[i] < prev_ep:
+                    ep[i] = low[i]
+                    af[i] = min(prev_af + af_step, af_max)
+                else:
+                    ep[i] = prev_ep
+                    af[i] = prev_af
+
+    df["psar"] = psar
+    df["psar_bull"] = bull  # SAR below price (bullish)
+    df["psar_bear"] = ~pd.Series(bull, index=df.index)
+
+    # Reversal signals
+    psar_bull_s = pd.Series(bull, index=df.index)
+    prev_bull = psar_bull_s.shift(1)
+    prev_bull.iloc[0] = True
+    df["psar_reversal_bull"] = psar_bull_s & ~prev_bull
+    prev_bull2 = psar_bull_s.shift(1)
+    prev_bull2.iloc[0] = False
+    df["psar_reversal_bear"] = ~psar_bull_s & prev_bull2
+
+
+def _compute_williams_r(df: pd.DataFrame, p: dict):
+    period = p["period"]
+    high_max = df["high"].rolling(period).max()
+    low_min = df["low"].rolling(period).min()
+    denom = high_max - low_min
+
+    # Williams %R: (Highest High - Close) / (Highest High - Lowest Low) * -100
+    df["williams_r"] = np.where(denom > 0, (high_max - df["close"]) / denom * -100, -50)
+    df["wr_oversold"] = df["williams_r"] < p["oversold"]      # e.g., < -80
+    df["wr_overbought"] = df["williams_r"] > p["overbought"]  # e.g., > -20
+
+    # Exit signals (crossing back from extreme zones)
+    wr = pd.Series(df["williams_r"], index=df.index)
+    df["wr_exit_oversold"] = (wr > p["oversold"]) & (wr.shift(1) <= p["oversold"])
+    df["wr_exit_overbought"] = (wr < p["overbought"]) & (wr.shift(1) >= p["overbought"])
+
+
 # Function dispatch table
 _COMPUTE_FUNCS = {
     "bb": _compute_bb,
@@ -273,4 +439,7 @@ _COMPUTE_FUNCS = {
     "stochastic": _compute_stochastic,
     "adx": _compute_adx,
     "price_action": _compute_price_action,
+    "ichimoku": _compute_ichimoku,
+    "psar": _compute_psar,
+    "williams_r": _compute_williams_r,
 }

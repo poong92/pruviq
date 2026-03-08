@@ -10,6 +10,9 @@
  *  3. Sideways Profit (횡보 수익) — Grid Mean Rev LONG + BB Band Bounce LONG
  *  4. Ride the Trend (추세 탑승) — MACD Momentum LONG + EMA Crossover LONG
  *  5. All Weather (전천후) — Stochastic Overbought SHORT + Stoch RSI Overbought SHORT
+ *  6. Turtle Trading (거북이) — Turtle Breakout SHORT + LONG
+ *  7. Ichimoku (일목균형표) — Ichimoku Cloud SHORT + LONG
+ *  8. SAR Reversal (SAR 반전) — Parabolic SAR SHORT + LONG + Williams %R
  */
 
 import { useState } from 'preact/hooks';
@@ -36,6 +39,8 @@ const CATEGORIES: QuickCategory[] = [
   { id: 'trend',       icon: '🚀', presets: ['macd-momentum-long', 'ema-crossover-long', 'adx-trend-long', 'adx-trend-short'], defaultPreset: 'adx-trend-long' },
   { id: 'allweather',  icon: '🛡️', presets: ['stochastic-oversold-short', 'stoch-rsi-overbought-short', 'macd-crossover-short', 'ema-crossover-short'], defaultPreset: 'stochastic-oversold-short' },
   { id: 'turtle',      icon: '🐢', presets: ['turtle-breakout-long', 'turtle-breakout-short'], defaultPreset: 'turtle-breakout-long' },
+  { id: 'ichimoku',    icon: '☁️', presets: ['ichimoku-cloud-long', 'ichimoku-cloud-short'], defaultPreset: 'ichimoku-cloud-long' },
+  { id: 'reversal',    icon: '🔄', presets: ['psar-reversal-long', 'psar-reversal-short', 'williams-r-oversold-long', 'williams-r-overbought-short'], defaultPreset: 'psar-reversal-long' },
 ];
 
 const L = {
@@ -54,6 +59,10 @@ const L = {
     allweatherDesc: 'Hedging & short strategies',
     turtle: 'Turtle Trading',
     turtleDesc: '20-bar breakout system',
+    ichimoku: 'Ichimoku Cloud',
+    ichimokuDesc: 'TK cross + cloud filter',
+    reversal: 'SAR Reversal',
+    reversalDesc: 'Parabolic SAR + Williams %R',
     run: 'Test Now',
     running: 'Running...',
     aiPick: 'AI Recommended',
@@ -75,6 +84,10 @@ const L = {
     allweatherDesc: '헤징 & 숏 전략',
     turtle: '거북이 트레이딩',
     turtleDesc: '20봉 돌파 시스템',
+    ichimoku: '일목균형표',
+    ichimokuDesc: 'TK 크로스 + 구름 필터',
+    reversal: 'SAR 반전',
+    reversalDesc: '파라볼릭 SAR + 윌리엄스 %R',
     run: '지금 테스트',
     running: '실행 중...',
     aiPick: 'AI 추천',
@@ -105,6 +118,12 @@ const PRESET_LABELS: Record<string, { en: string; ko: string }> = {
   'ema-crossover-short':         { en: 'EMA Cross SHORT',  ko: 'EMA 크로스 숏' },
   'hv-squeeze-breakout-short':   { en: 'HV Squeeze SHORT', ko: 'HV 스퀴즈 숏' },
   'hv-squeeze-breakout-long':    { en: 'HV Squeeze LONG',  ko: 'HV 스퀴즈 롱' },
+  'ichimoku-cloud-long':         { en: 'Ichimoku LONG',    ko: '일목 롱' },
+  'ichimoku-cloud-short':        { en: 'Ichimoku SHORT',   ko: '일목 숏' },
+  'psar-reversal-long':          { en: 'SAR Reversal LONG', ko: 'SAR 반전 롱' },
+  'psar-reversal-short':         { en: 'SAR Reversal SHORT', ko: 'SAR 반전 숏' },
+  'williams-r-oversold-long':    { en: 'Williams %R LONG', ko: '윌리엄스 롱' },
+  'williams-r-overbought-short': { en: 'Williams %R SHORT', ko: '윌리엄스 숏' },
 };
 
 export default function QuickTestPanel({ lang, onRunPreset, isRunning, hasResult }: Props) {
@@ -142,7 +161,7 @@ export default function QuickTestPanel({ lang, onRunPreset, isRunning, hasResult
       </div>
 
       {/* Category Cards Grid */}
-      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
+      <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2">
         {CATEGORIES.map((cat) => {
           const isSelected = selectedCat === cat.id;
           const isCatRunning = runningPreset && cat.presets.includes(runningPreset);
