@@ -442,10 +442,10 @@ export default function ResultsCard({ data, isDefault, lang = 'en', isDemo = fal
           </div>
           <div class="grid grid-cols-2 gap-2 mb-2">
             <MetricBox
-              label={lang === 'ko' ? '보정 샤프' : 'Deflated Sharpe'}
-              value={`${data.deflated_sharpe.toFixed(2)}`}
-              color={data.deflated_sharpe > 1 ? 'var(--color-green)' : data.deflated_sharpe > 0 ? 'var(--color-accent)' : 'var(--color-red)'}
-              description={lang === 'ko' ? `다중 테스트 보정 후 Sharpe (Haircut ${(data.dsr_haircut_pct ?? 0).toFixed(0)}%)` : `Sharpe after multi-test correction (Haircut ${(data.dsr_haircut_pct ?? 0).toFixed(0)}%)`}
+              label={lang === 'ko' ? 'DSR 신뢰도' : 'DSR Confidence'}
+              value={`${(data.deflated_sharpe * 100).toFixed(0)}%`}
+              color={data.deflated_sharpe > 0.8 ? 'var(--color-green)' : data.deflated_sharpe > 0.5 ? 'var(--color-accent)' : 'var(--color-red)'}
+              description={lang === 'ko' ? `Sharpe가 데이터마이닝 아닐 확률` : `Prob. Sharpe survives multi-test correction`}
             />
             <MetricBox
               label={lang === 'ko' ? 'MC 검증' : 'Monte Carlo'}
