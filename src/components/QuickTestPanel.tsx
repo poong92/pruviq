@@ -1,18 +1,15 @@
 /**
  * QuickTestPanel.tsx — Quick Test (AI optimized) mode
  *
- * 5 situation-based categories, each mapped to 2 backend presets.
+ * 5 situation-based categories, each mapped to backend presets.
  * One tap → auto-load preset → run backtest → show results.
  *
- * Categories (6-expert consensus):
- *  1. Breakout (폭발 직전) — BB Squeeze SHORT + LONG
- *  2. Catch the Bounce (반등 기회) — RSI Reversal LONG + DCA Oversold LONG
- *  3. Sideways Profit (횡보 수익) — Grid Mean Rev LONG + BB Band Bounce LONG
- *  4. Ride the Trend (추세 탑승) — MACD Momentum LONG + EMA Crossover LONG
- *  5. All Weather (전천후) — Stochastic Overbought SHORT + Stoch RSI Overbought SHORT
- *  6. Turtle Trading (거북이) — Turtle Breakout SHORT + LONG
- *  7. Ichimoku (일목균형표) — Ichimoku Cloud SHORT + LONG
- *  8. SAR Reversal (SAR 반전) — Parabolic SAR SHORT + LONG + Williams %R
+ * Categories:
+ *  1. Breakout (폭발) — BB/HV Squeeze
+ *  2. Reversals (반전) — RSI/Williams/PSAR reversal signals
+ *  3. Range Trading (횡보) — Grid mean reversion, BB bounce
+ *  4. Trend Following (추세) — ADX/MACD/EMA/Ichimoku trend
+ *  5. Hedged Portfolio (헤징) — SHORT + LONG combined strategies
  */
 
 import { useState } from 'preact/hooks';
@@ -33,14 +30,11 @@ interface Props {
 }
 
 const CATEGORIES: QuickCategory[] = [
-  { id: 'breakout',    icon: '💥', presets: ['bb-squeeze-short', 'bb-squeeze-long', 'hv-squeeze-breakout-short', 'hv-squeeze-breakout-long'], defaultPreset: 'bb-squeeze-short' },
-  { id: 'bounce',      icon: '📈', presets: ['rsi-reversal-long', 'dca-oversold-long', 'rsi-bb-oversold-long'],  defaultPreset: 'rsi-reversal-long' },
-  { id: 'sideways',    icon: '↔️',  presets: ['grid-mean-reversion-long', 'bb-band-bounce-long', 'rsi-bb-overbought-short'], defaultPreset: 'grid-mean-reversion-long' },
-  { id: 'trend',       icon: '🚀', presets: ['macd-momentum-long', 'ema-crossover-long', 'adx-trend-long', 'adx-trend-short'], defaultPreset: 'adx-trend-long' },
-  { id: 'allweather',  icon: '🛡️', presets: ['stochastic-oversold-short', 'stoch-rsi-overbought-short', 'macd-crossover-short', 'ema-crossover-short'], defaultPreset: 'stochastic-oversold-short' },
-  { id: 'turtle',      icon: '🐢', presets: ['turtle-breakout-long', 'turtle-breakout-short'], defaultPreset: 'turtle-breakout-long' },
-  { id: 'ichimoku',    icon: '☁️', presets: ['ichimoku-cloud-long', 'ichimoku-cloud-short'], defaultPreset: 'ichimoku-cloud-long' },
-  { id: 'reversal',    icon: '🔄', presets: ['psar-reversal-long', 'psar-reversal-short', 'williams-r-oversold-long', 'williams-r-overbought-short'], defaultPreset: 'psar-reversal-long' },
+  { id: 'breakout',  icon: '💥', presets: ['bb-squeeze-short', 'bb-squeeze-long', 'hv-squeeze-breakout-short', 'hv-squeeze-breakout-long'], defaultPreset: 'bb-squeeze-short' },
+  { id: 'reversal',  icon: '🔄', presets: ['rsi-reversal-long', 'psar-reversal-long', 'psar-reversal-short', 'williams-r-oversold-long', 'williams-r-overbought-short', 'rsi-bb-oversold-long'], defaultPreset: 'rsi-reversal-long' },
+  { id: 'range',     icon: '↔️',  presets: ['grid-mean-reversion-long', 'bb-band-bounce-long', 'dca-oversold-long', 'rsi-bb-overbought-short'], defaultPreset: 'grid-mean-reversion-long' },
+  { id: 'trend',     icon: '🚀', presets: ['adx-trend-long', 'adx-trend-short', 'ichimoku-cloud-long', 'ichimoku-cloud-short', 'macd-momentum-long', 'ema-crossover-long', 'turtle-breakout-long', 'turtle-breakout-short'], defaultPreset: 'adx-trend-long' },
+  { id: 'hedged',    icon: '🛡️', presets: ['stochastic-oversold-short', 'stoch-rsi-overbought-short', 'macd-crossover-short', 'ema-crossover-short'], defaultPreset: 'stochastic-oversold-short' },
 ];
 
 const L = {
@@ -48,21 +42,15 @@ const L = {
     title: 'Choose a Market Scenario',
     subtitle: 'AI picks the best strategy for each situation',
     breakout: 'Breakout',
-    breakoutDesc: 'Volatility squeeze → explosion',
-    bounce: 'Catch the Bounce',
-    bounceDesc: 'Oversold reversal signals',
-    sideways: 'Sideways Profit',
-    sidewaysDesc: 'Range-bound mean reversion',
-    trend: 'Ride the Trend',
-    trendDesc: 'ADX + MACD + EMA trend',
-    allweather: 'All Weather',
-    allweatherDesc: 'Hedging & short strategies',
-    turtle: 'Turtle Trading',
-    turtleDesc: '20-bar breakout system',
-    ichimoku: 'Ichimoku Cloud',
-    ichimokuDesc: 'TK cross + cloud filter',
-    reversal: 'SAR Reversal',
-    reversalDesc: 'Parabolic SAR + Williams %R',
+    breakoutDesc: 'Squeeze → explosion',
+    reversal: 'Reversals',
+    reversalDesc: 'RSI / SAR / Williams %R',
+    range: 'Range Trading',
+    rangeDesc: 'Mean reversion in sideways',
+    trend: 'Trend Following',
+    trendDesc: 'ADX / Ichimoku / MACD',
+    hedged: 'Hedging',
+    hedgedDesc: 'Short-side strategies',
     run: 'Test Now',
     running: 'Running...',
     aiPick: 'AI Recommended',
@@ -72,22 +60,16 @@ const L = {
   ko: {
     title: '시장 상황을 선택하세요',
     subtitle: 'AI가 각 상황에 최적 전략을 선택합니다',
-    breakout: '폭발 직전',
+    breakout: '돌파',
     breakoutDesc: '변동성 압축 → 폭발',
-    bounce: '반등 기회',
-    bounceDesc: '과매도 반전 신호',
-    sideways: '횡보 수익',
-    sidewaysDesc: '박스권 평균회귀',
-    trend: '추세 탑승',
-    trendDesc: 'ADX + MACD + EMA 추세',
-    allweather: '전천후',
-    allweatherDesc: '헤징 & 숏 전략',
-    turtle: '거북이 트레이딩',
-    turtleDesc: '20봉 돌파 시스템',
-    ichimoku: '일목균형표',
-    ichimokuDesc: 'TK 크로스 + 구름 필터',
-    reversal: 'SAR 반전',
-    reversalDesc: '파라볼릭 SAR + 윌리엄스 %R',
+    reversal: '반전',
+    reversalDesc: 'RSI / SAR / 윌리엄스',
+    range: '박스권',
+    rangeDesc: '횡보장 평균회귀',
+    trend: '추세',
+    trendDesc: 'ADX / 일목 / MACD',
+    hedged: '헤징',
+    hedgedDesc: '숏 전략 (하락방어)',
     run: '지금 테스트',
     running: '실행 중...',
     aiPick: 'AI 추천',
@@ -110,8 +92,8 @@ const PRESET_LABELS: Record<string, { en: string; ko: string }> = {
   'stoch-rsi-overbought-short':  { en: 'Stoch RSI Short',  ko: '스톡RSI 숏' },
   'adx-trend-short':             { en: 'ADX Trend SHORT',  ko: 'ADX 추세 숏' },
   'adx-trend-long':              { en: 'ADX Trend LONG',   ko: 'ADX 추세 롱' },
-  'rsi-bb-overbought-short':     { en: 'RSI+BB SHORT',     ko: 'RSI+BB 과매수 숏' },
-  'rsi-bb-oversold-long':        { en: 'RSI+BB LONG',      ko: 'RSI+BB 과매도 롱' },
+  'rsi-bb-overbought-short':     { en: 'RSI+BB SHORT',     ko: 'RSI+BB 숏' },
+  'rsi-bb-oversold-long':        { en: 'RSI+BB LONG',      ko: 'RSI+BB 롱' },
   'turtle-breakout-short':       { en: 'Turtle SHORT',     ko: '거북이 숏' },
   'turtle-breakout-long':        { en: 'Turtle LONG',      ko: '거북이 롱' },
   'macd-crossover-short':        { en: 'MACD Cross SHORT', ko: 'MACD 크로스 숏' },
@@ -120,8 +102,8 @@ const PRESET_LABELS: Record<string, { en: string; ko: string }> = {
   'hv-squeeze-breakout-long':    { en: 'HV Squeeze LONG',  ko: 'HV 스퀴즈 롱' },
   'ichimoku-cloud-long':         { en: 'Ichimoku LONG',    ko: '일목 롱' },
   'ichimoku-cloud-short':        { en: 'Ichimoku SHORT',   ko: '일목 숏' },
-  'psar-reversal-long':          { en: 'SAR Reversal LONG', ko: 'SAR 반전 롱' },
-  'psar-reversal-short':         { en: 'SAR Reversal SHORT', ko: 'SAR 반전 숏' },
+  'psar-reversal-long':          { en: 'SAR LONG',         ko: 'SAR 반전 롱' },
+  'psar-reversal-short':         { en: 'SAR SHORT',        ko: 'SAR 반전 숏' },
   'williams-r-oversold-long':    { en: 'Williams %R LONG', ko: '윌리엄스 롱' },
   'williams-r-overbought-short': { en: 'Williams %R SHORT', ko: '윌리엄스 숏' },
 };
@@ -160,8 +142,8 @@ export default function QuickTestPanel({ lang, onRunPreset, isRunning, hasResult
         <p class="text-[11px] text-[--color-text-muted] mt-1">{t.subtitle}</p>
       </div>
 
-      {/* Category Cards Grid */}
-      <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2">
+      {/* Category Cards Grid — 5 categories, clean layout */}
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
         {CATEGORIES.map((cat) => {
           const isSelected = selectedCat === cat.id;
           const isCatRunning = runningPreset && cat.presets.includes(runningPreset);
@@ -206,13 +188,15 @@ export default function QuickTestPanel({ lang, onRunPreset, isRunning, hasResult
         })}
       </div>
 
-      {/* Selected Category: Alt preset button */}
-      {selectedCat && !isRunning && (
-        <div class="mt-3 flex items-center justify-center gap-2 text-[11px] text-[--color-text-muted]">
-          <span>{t.alsoTry}</span>
-          {CATEGORIES.find(c => c.id === selectedCat)?.presets
-            .filter(p => p !== CATEGORIES.find(c => c.id === selectedCat)?.defaultPreset)
-            .map(presetId => (
+      {/* Selected Category: Alt preset buttons */}
+      {selectedCat && !isRunning && (() => {
+        const cat = CATEGORIES.find(c => c.id === selectedCat);
+        const alts = cat?.presets.filter(p => p !== cat?.defaultPreset) || [];
+        if (alts.length === 0) return null;
+        return (
+          <div class="mt-3 flex flex-wrap items-center justify-center gap-1.5 text-[11px] text-[--color-text-muted]">
+            <span>{t.alsoTry}</span>
+            {alts.map(presetId => (
               <button
                 key={presetId}
                 onClick={() => handleAltPreset(presetId)}
@@ -221,8 +205,9 @@ export default function QuickTestPanel({ lang, onRunPreset, isRunning, hasResult
                 {PRESET_LABELS[presetId]?.[lang] || presetId}
               </button>
             ))}
-        </div>
-      )}
+          </div>
+        );
+      })()}
 
       {/* Result hint */}
       {hasResult && selectedCat && (

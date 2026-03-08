@@ -1,4 +1,5 @@
 import { winRateColor, profitFactorColor, signColor } from '../utils/format';
+import { COLORS } from './simulator-types';
 
 interface ResultsData {
   win_rate: number;
@@ -23,6 +24,7 @@ interface ResultsData {
   total_return_usd?: number;
   total_return_pct_portfolio?: number;
   max_drawdown_usd?: number;
+  direction?: string;
 }
 
 interface ResultsCardProps {
@@ -167,6 +169,24 @@ export default function ResultsCard({ data, isDefault, lang = 'en', isDemo = fal
       {isDemo && (
         <div class="mb-3 px-3 py-2 rounded-lg bg-[--color-yellow]/10 border border-[--color-yellow]/20">
           <span class="font-mono text-xs text-[--color-yellow]">{t.demoNote}</span>
+        </div>
+      )}
+
+      {/* Direction badge */}
+      {data.direction && (
+        <div class="mb-2 flex items-center gap-2">
+          <span class={`inline-block px-2 py-0.5 rounded text-[10px] font-mono font-bold border ${
+            data.direction === 'short' ? 'text-[--color-red] border-[--color-red]/30 bg-[--color-red]/10' :
+            data.direction === 'long' ? 'text-[--color-green] border-[--color-green]/30 bg-[--color-green]/10' :
+            'border-[--color-accent]/30 bg-[--color-accent]/10'
+          }`} style={data.direction === 'both' ? { color: COLORS.accent } : undefined}>
+            {data.direction === 'both' ? 'SHORT + LONG' : data.direction.toUpperCase()}
+          </span>
+          <span class="text-[9px] text-[--color-text-muted] font-mono">
+            {data.direction === 'short' ? (lang === 'ko' ? '하락 시 수익' : 'Profit from falling prices') :
+             data.direction === 'long' ? (lang === 'ko' ? '상승 시 수익' : 'Profit from rising prices') :
+             (lang === 'ko' ? '두 방향 동시 테스트' : 'Both directions tested')}
+          </span>
         </div>
       )}
 

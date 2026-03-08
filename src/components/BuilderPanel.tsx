@@ -10,6 +10,7 @@ import ConditionRow from './ConditionRow';
 interface Props {
   // i18n
   t: Record<string, any>;
+  lang: 'en' | 'ko';
   // API state
   coinsLoaded: number;
   totalCoins: number;  // total available coins from /health API
@@ -25,8 +26,8 @@ interface Props {
   updateCondition: (id: string, key: string, val: any) => void;
   removeCondition: (id: string) => void;
   // Params
-  direction: 'short' | 'long';
-  setDirection: (d: 'short' | 'long') => void;
+  direction: 'short' | 'long' | 'both';
+  setDirection: (d: 'short' | 'long' | 'both') => void;
   slPct: number; setSlPct: (n: number) => void;
   tpPct: number; setTpPct: (n: number) => void;
   maxBars: number; setMaxBars: (n: number) => void;
@@ -213,7 +214,17 @@ export default function BuilderPanel(props: Props) {
                   class={`flex-1 py-1 text-xs font-mono rounded transition-colors border ${props.direction === 'long' ? 'font-bold' : 'bg-[--color-bg-tooltip] text-[--color-text-muted] border-[--color-border] hover:border-[--color-accent]/30'}`}
                   style={props.direction === 'long' ? longActiveStyle : undefined}
                 >{t.long}</button>
+                <button
+                  onClick={() => props.setDirection('both')}
+                  class={`flex-1 py-1 text-xs font-mono rounded transition-colors border ${props.direction === 'both' ? 'font-bold' : 'bg-[--color-bg-tooltip] text-[--color-text-muted] border-[--color-border] hover:border-[--color-accent]/30'}`}
+                  style={props.direction === 'both' ? { background: 'linear-gradient(90deg, rgba(239,68,68,0.15), rgba(0,255,136,0.15))', borderColor: '#888', color: '#fff' } : undefined}
+                >BOTH</button>
               </div>
+              <p class="text-[9px] text-[--color-text-muted] mt-0.5 font-mono">
+                {props.direction === 'short' ? (props.lang === 'ko' ? '하락 시 수익' : 'Profit when price falls') :
+                 props.direction === 'long' ? (props.lang === 'ko' ? '상승 시 수익' : 'Profit when price rises') :
+                 (props.lang === 'ko' ? 'SHORT + LONG 동시 테스트' : 'Test SHORT + LONG simultaneously')}
+              </p>
             </div>
             {/* SL */}
             <div>
