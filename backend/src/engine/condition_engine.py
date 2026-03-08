@@ -585,6 +585,269 @@ PRESET_STRATEGIES = {
         "tp_pct": 8.0,
         "max_bars": 48,
     },
+
+    # ═══════════════════════════════════════════════════════════════
+    # Phase 2 Presets — Famous Trading Techniques (2026-03-08)
+    # ═══════════════════════════════════════════════════════════════
+
+    # ─── ADX Trend Strength (Wilder 1978) ─────────────────────────
+    # ADX > 25 = strong trend + DI direction + EMA confirmation
+    "adx-trend-short": {
+        "name": "ADX Trend SHORT",
+        "name_ko": "ADX 추세 숏",
+        "description": "Strong downtrend confirmed by ADX + DMI directional index",
+        "direction": "short",
+        "indicators": {
+            "adx": {"period": 14, "threshold": 25},
+            "ema": {"fast": 20, "slow": 50},
+            "volume": {"ma_period": 10},
+            "candle": {},
+        },
+        "entry": {
+            "type": "AND",
+            "conditions": [
+                {"field": "strong_trend", "op": "==", "value": True, "shift": 1},
+                {"field": "minus_di", "op": ">", "field2": "plus_di", "shift": 1},
+                {"field": "downtrend", "op": "==", "value": True, "shift": 1},
+                {"field": "bearish", "op": "==", "value": True, "shift": 1},
+                {"field": "vol_ratio", "op": ">=", "value": 1.3, "shift": 1},
+            ],
+        },
+        "avoid_hours": [],
+        "sl_pct": 8.0,
+        "tp_pct": 10.0,
+        "max_bars": 48,
+    },
+    "adx-trend-long": {
+        "name": "ADX Trend LONG",
+        "name_ko": "ADX 추세 롱",
+        "description": "Strong uptrend confirmed by ADX + DMI directional index",
+        "direction": "long",
+        "indicators": {
+            "adx": {"period": 14, "threshold": 25},
+            "ema": {"fast": 20, "slow": 50},
+            "volume": {"ma_period": 10},
+            "candle": {},
+        },
+        "entry": {
+            "type": "AND",
+            "conditions": [
+                {"field": "strong_trend", "op": "==", "value": True, "shift": 1},
+                {"field": "plus_di", "op": ">", "field2": "minus_di", "shift": 1},
+                {"field": "uptrend", "op": "==", "value": True, "shift": 1},
+                {"field": "bullish", "op": "==", "value": True, "shift": 1},
+                {"field": "vol_ratio", "op": ">=", "value": 1.3, "shift": 1},
+            ],
+        },
+        "avoid_hours": [],
+        "sl_pct": 8.0,
+        "tp_pct": 10.0,
+        "max_bars": 48,
+    },
+
+    # ─── RSI + BB Combo (Classic overbought/oversold at band extremes) ──
+    "rsi-bb-overbought-short": {
+        "name": "RSI+BB Overbought SHORT",
+        "name_ko": "RSI+BB 과매수 숏",
+        "description": "RSI overbought + price at BB upper band = mean reversion short",
+        "direction": "short",
+        "indicators": {
+            "rsi": {"period": 14, "overbought": 70},
+            "bb": {"period": 20, "std": 2.0},
+            "volume": {"ma_period": 10},
+            "candle": {},
+        },
+        "entry": {
+            "type": "AND",
+            "conditions": [
+                {"field": "rsi_overbought", "op": "==", "value": True, "shift": 1},
+                {"field": "close", "op": ">=", "field2": "bb_upper", "shift": 1},
+                {"field": "bearish", "op": "==", "value": True, "shift": 1},
+                {"field": "vol_ratio", "op": ">=", "value": 1.2, "shift": 1},
+            ],
+        },
+        "avoid_hours": [],
+        "sl_pct": 8.0,
+        "tp_pct": 6.0,
+        "max_bars": 36,
+    },
+    "rsi-bb-oversold-long": {
+        "name": "RSI+BB Oversold LONG",
+        "name_ko": "RSI+BB 과매도 롱",
+        "description": "RSI oversold + price at BB lower band = mean reversion long",
+        "direction": "long",
+        "indicators": {
+            "rsi": {"period": 14, "oversold": 30},
+            "bb": {"period": 20, "std": 2.0},
+            "volume": {"ma_period": 10},
+            "candle": {},
+        },
+        "entry": {
+            "type": "AND",
+            "conditions": [
+                {"field": "rsi_oversold", "op": "==", "value": True, "shift": 1},
+                {"field": "close", "op": "<=", "field2": "bb_lower", "shift": 1},
+                {"field": "bullish", "op": "==", "value": True, "shift": 1},
+                {"field": "vol_ratio", "op": ">=", "value": 1.2, "shift": 1},
+            ],
+        },
+        "avoid_hours": [],
+        "sl_pct": 8.0,
+        "tp_pct": 6.0,
+        "max_bars": 36,
+    },
+
+    # ─── Turtle Breakout (Donchian Channel / Richard Dennis 1983) ──
+    # 20-bar high/low breakout + volume + trend confirmation
+    "turtle-breakout-short": {
+        "name": "Turtle Breakout SHORT",
+        "name_ko": "거북이 돌파 숏",
+        "description": "20-bar low breakout (Donchian) + downtrend + volume spike",
+        "direction": "short",
+        "indicators": {
+            "price_action": {"lookback": 20},
+            "ema": {"fast": 20, "slow": 50},
+            "volume": {"ma_period": 10},
+        },
+        "entry": {
+            "type": "AND",
+            "conditions": [
+                {"field": "breakout_down", "op": "==", "value": True, "shift": 1},
+                {"field": "downtrend", "op": "==", "value": True, "shift": 1},
+                {"field": "vol_ratio", "op": ">=", "value": 1.5, "shift": 1},
+            ],
+        },
+        "avoid_hours": [],
+        "sl_pct": 10.0,
+        "tp_pct": 12.0,
+        "max_bars": 72,
+    },
+    "turtle-breakout-long": {
+        "name": "Turtle Breakout LONG",
+        "name_ko": "거북이 돌파 롱",
+        "description": "20-bar high breakout (Donchian) + uptrend + volume spike",
+        "direction": "long",
+        "indicators": {
+            "price_action": {"lookback": 20},
+            "ema": {"fast": 20, "slow": 50},
+            "volume": {"ma_period": 10},
+        },
+        "entry": {
+            "type": "AND",
+            "conditions": [
+                {"field": "breakout_up", "op": "==", "value": True, "shift": 1},
+                {"field": "uptrend", "op": "==", "value": True, "shift": 1},
+                {"field": "vol_ratio", "op": ">=", "value": 1.5, "shift": 1},
+            ],
+        },
+        "avoid_hours": [],
+        "sl_pct": 10.0,
+        "tp_pct": 12.0,
+        "max_bars": 72,
+    },
+
+    # ─── MACD Crossover SHORT (mirror of existing MACD Momentum LONG) ──
+    "macd-crossover-short": {
+        "name": "MACD Crossover SHORT",
+        "name_ko": "MACD 크로스 숏",
+        "description": "MACD death cross + strong trend + volume confirmation",
+        "direction": "short",
+        "indicators": {
+            "macd": {"fast": 12, "slow": 26, "signal": 9},
+            "adx": {"period": 14, "threshold": 25},
+            "volume": {"ma_period": 10},
+        },
+        "entry": {
+            "type": "AND",
+            "conditions": [
+                {"field": "macd", "op": "cross_below", "field2": "macd_signal", "shift": 1},
+                {"field": "strong_trend", "op": "==", "value": True, "shift": 1},
+                {"field": "vol_ratio", "op": ">=", "value": 1.5, "shift": 1},
+            ],
+        },
+        "avoid_hours": [],
+        "sl_pct": 7.0,
+        "tp_pct": 10.0,
+        "max_bars": 48,
+    },
+
+    # ─── EMA Crossover SHORT (mirror of existing EMA Crossover LONG) ──
+    "ema-crossover-short": {
+        "name": "EMA Crossover SHORT",
+        "name_ko": "EMA 크로스 숏",
+        "description": "EMA 9/21 death cross + ADX strong trend + volume",
+        "direction": "short",
+        "indicators": {
+            "ema": {"fast": 9, "slow": 21},
+            "adx": {"period": 14, "threshold": 25},
+            "volume": {"ma_period": 10},
+        },
+        "entry": {
+            "type": "AND",
+            "conditions": [
+                {"field": "ema_fast", "op": "cross_below", "field2": "ema_slow", "shift": 1},
+                {"field": "strong_trend", "op": "==", "value": True, "shift": 1},
+                {"field": "vol_ratio", "op": ">=", "value": 1.3, "shift": 1},
+            ],
+        },
+        "avoid_hours": [],
+        "sl_pct": 7.0,
+        "tp_pct": 10.0,
+        "max_bars": 48,
+    },
+
+    # ─── HV Squeeze Breakout (Volatility compression → explosion) ──
+    # Like BB Squeeze but using Historical Volatility — different signal
+    "hv-squeeze-breakout-short": {
+        "name": "HV Squeeze Breakout SHORT",
+        "name_ko": "변동성압축 돌파 숏",
+        "description": "Historical volatility squeeze + price breakdown + volume",
+        "direction": "short",
+        "indicators": {
+            "hv": {"period": 20, "ma_period": 50},
+            "price_action": {"lookback": 20},
+            "ema": {"fast": 20, "slow": 50},
+            "volume": {"ma_period": 10},
+        },
+        "entry": {
+            "type": "AND",
+            "conditions": [
+                {"field": "hv_squeeze", "op": "==", "value": True, "shift": 1},
+                {"field": "breakout_down", "op": "==", "value": True, "shift": 0},
+                {"field": "downtrend", "op": "==", "value": True, "shift": 1},
+                {"field": "vol_ratio", "op": ">=", "value": 1.5, "shift": 1},
+            ],
+        },
+        "avoid_hours": [],
+        "sl_pct": 8.0,
+        "tp_pct": 10.0,
+        "max_bars": 48,
+    },
+    "hv-squeeze-breakout-long": {
+        "name": "HV Squeeze Breakout LONG",
+        "name_ko": "변동성압축 돌파 롱",
+        "description": "Historical volatility squeeze + price breakout + volume",
+        "direction": "long",
+        "indicators": {
+            "hv": {"period": 20, "ma_period": 50},
+            "price_action": {"lookback": 20},
+            "ema": {"fast": 20, "slow": 50},
+            "volume": {"ma_period": 10},
+        },
+        "entry": {
+            "type": "AND",
+            "conditions": [
+                {"field": "hv_squeeze", "op": "==", "value": True, "shift": 1},
+                {"field": "breakout_up", "op": "==", "value": True, "shift": 0},
+                {"field": "uptrend", "op": "==", "value": True, "shift": 1},
+                {"field": "vol_ratio", "op": ">=", "value": 1.5, "shift": 1},
+            ],
+        },
+        "avoid_hours": [],
+        "sl_pct": 8.0,
+        "tp_pct": 10.0,
+        "max_bars": 48,
+    },
 }
 
 
