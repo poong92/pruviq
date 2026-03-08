@@ -35,6 +35,38 @@ const advanced = posts.filter(p =>
   ['tp8-decision-process'].includes(p.id)
 );
 
+// Tag translation map from i18n (EN → EN, for consistency with KO page)
+const tagMap: Record<string, string> = {
+  'beginners': t('learn.tag_beginners'), 'futures': t('learn.tag_futures'), 'leverage': t('learn.tag_leverage'),
+  'perpetual-contracts': t('learn.tag_perpetual_contracts'), 'bollinger-bands': t('learn.tag_bollinger_bands'),
+  'squeeze': t('learn.tag_squeeze'), 'volatility': t('learn.tag_volatility'), 'risk-management': t('learn.tag_risk_management'),
+  'position-sizing': t('learn.tag_position_sizing'), 'stop-loss': t('learn.tag_stop_loss'), 'take-profit': t('learn.tag_take_profit'),
+  'backtesting': t('learn.tag_backtesting'), 'overfitting': t('learn.tag_overfitting'), 'look-ahead-bias': t('learn.tag_look_ahead_bias'),
+  'rsi': t('learn.tag_rsi'), 'ema': t('learn.tag_ema'), 'macd': t('learn.tag_macd'), 'atr': t('learn.tag_atr'), 'vwap': t('learn.tag_vwap'),
+  'adx': t('learn.tag_adx'), 'indicators': t('learn.tag_indicators'), 'momentum': t('learn.tag_momentum'),
+  'oversold': t('learn.tag_oversold'), 'overbought': t('learn.tag_overbought'), 'mean-reversion': t('learn.tag_mean_reversion'),
+  'crossover': t('learn.tag_crossover'), 'moving-average': t('learn.tag_moving_average'),
+  'trend-following': t('learn.tag_trend_following'), 'divergence': t('learn.tag_divergence'),
+  'volume': t('learn.tag_volume'), 'confirmation': t('learn.tag_confirmation'), 'fakeouts': t('learn.tag_fakeouts'),
+  'stochastic': t('learn.tag_stochastic'), 'trend-strength': t('learn.tag_trend_strength'),
+  'risk-reward': t('learn.tag_risk_reward'), 'optimization': t('learn.tag_optimization'),
+  'fees': t('learn.tag_fees'), 'exchanges': t('learn.tag_exchanges'), 'cost-optimization': t('learn.tag_cost_optimization'),
+  'binance': t('learn.tag_binance'), 'referral': t('learn.tag_referral'),
+  'ichimoku': t('learn.tag_ichimoku'), 'cloud': t('learn.tag_cloud'), 'trend': t('learn.tag_trend'),
+  'support-resistance': t('learn.tag_support_resistance'), 'support': t('learn.tag_support'), 'resistance': t('learn.tag_resistance'),
+  'fibonacci': t('learn.tag_fibonacci'), 'retracement': t('learn.tag_retracement'),
+  'technical-analysis': t('learn.tag_technical_analysis'), 'price-action': t('learn.tag_price_action'),
+  'candlestick': t('learn.tag_candlestick'), 'patterns': t('learn.tag_patterns'), 'doji': t('learn.tag_doji'), 'engulfing': t('learn.tag_engulfing'),
+  'institutional': t('learn.tag_institutional'), 'intraday': t('learn.tag_intraday'),
+  'kelly-criterion': t('learn.tag_kelly_criterion'), 'math': t('learn.tag_math'),
+  'market-review': t('learn.tag_market_review'), 'btc': t('learn.tag_btc'), 'crash': t('learn.tag_crash'),
+  'real-data': t('learn.tag_real_data'), 'crypto': t('learn.tag_crypto'), 'algorithmic-trading': t('learn.tag_algorithmic_trading'),
+  'python': t('learn.tag_python'), 'pruviq': t('learn.tag_pruviq'), 'origin': t('learn.tag_origin'), 'philosophy': t('learn.tag_philosophy'),
+  'bb-squeeze': t('learn.tag_bb_squeeze'), 'tp': t('learn.tag_tp'), 'decision': t('learn.tag_decision'),
+  'v1.7.0': t('learn.tag_v170'), 'expert-panel': t('learn.tag_expert_panel'),
+  'levels': t('learn.tag_levels'), 'feb-2026': t('learn.tag_feb_2026'),
+};
+
 const levelConfig = [
   { level: 'beginner', label: t('learn.level_beginner'), title: t('learn.level_beginner_title'), desc: t('learn.level_beginner_desc'), color: 'green', posts: beginner },
   { level: 'intermediate', label: t('learn.level_intermediate'), title: t('learn.level_intermediate_title'), desc: t('learn.level_intermediate_desc'), color: 'yellow', posts: intermediate },
@@ -79,6 +111,7 @@ const levelConfig = [
               title={post.data.title}
               description={post.data.description}
               tags={post.data.tags}
+              tagMap={tagMap}
             />
           ))}
         </div>
@@ -94,6 +127,14 @@ const levelConfig = [
       <a href="/simulate" class="btn-primary inline-block bg-[--color-accent] text-[--color-bg] px-6 py-2.5 rounded font-semibold text-sm hover:bg-[--color-accent-dim]">
         {t('learn.cta_button')} &rarr;
       </a>
+      <div class="flex flex-wrap gap-3 justify-center mt-4">
+        <a href="/demo" class="inline-block border border-[--color-border] px-5 py-2 rounded font-semibold text-sm hover:border-[--color-accent] transition-colors no-underline">
+          {t('cross.demo_cta')} &rarr;
+        </a>
+        <a href="/strategies" class="inline-block border border-[--color-border] px-5 py-2 rounded font-semibold text-sm hover:border-[--color-accent] transition-colors no-underline">
+          {t('cross.strategies_cta')} &rarr;
+        </a>
+      </div>
     </div>
   </section>
 

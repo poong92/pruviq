@@ -49,6 +49,7 @@ const labels = {
     chart: 'CUMULATIVE RETURN (%)',
     loading: 'Loading simulation data...',
     error: 'Failed to load demo data.',
+    retry: 'Retry',
     noData: 'No data for this combination.',
     disclaimer: '* Simulation includes 0.04% futures fees + 0.02% slippage per trade. Past performance does not guarantee future results.',
     ctaTitle: 'Run this strategy live?',
@@ -66,6 +67,7 @@ const labels = {
     chart: '누적 수익률 (%)',
     loading: '시뮬레이션 데이터 로딩 중...',
     error: '데모 데이터 로딩 실패.',
+    retry: '다시 시도',
     noData: '이 조합에 대한 데이터가 없습니다.',
     disclaimer: '* 시뮬레이션은 0.04% 선물 수수료 + 0.02% 슬리피지를 포함합니다. 과거 성과는 미래 결과를 보장하지 않습니다.',
     ctaTitle: '이 전략을 실제로 실행하려면?',
@@ -282,7 +284,7 @@ export default function StrategyDemo({
           onClick={() => { setError(null); setLoading(true); fetch(demoUrl).then(res => { if (!res.ok) throw new Error('Failed'); return res.json(); }).then((json: DemoData) => { setData(json); setLoading(false); }).catch(err => { setError(err.message); setLoading(false); }); }}
           class="px-4 py-2 rounded-lg border border-[--color-border] bg-[--color-bg-card] text-[--color-text] font-mono text-sm cursor-pointer hover:border-[--color-accent] transition-colors min-h-[44px]"
         >
-          {lang === 'ko' ? '다시 시도' : 'Retry'}
+          {t.retry}
         </button>
       </div>
     );

@@ -1,17 +1,38 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import DemoRunner from '../../components/DemoRunner';
+import StrategyDemo from '../../components/StrategyDemo';
 import { useTranslations } from '../../i18n/index';
 
 const t = useTranslations('ko');
 ---
 
-<Layout title={t('demo.title')} description={t('demo.desc')}>
+<Layout title={t('meta.demo_title')} description={t('meta.demo_desc')}>
   <section class="max-w-6xl mx-auto px-4 py-12">
-    <h1 class="text-3xl font-bold mb-4">{t('demo.title')}</h1>
-    <p class="text-[--color-text-muted] mb-6">{t('demo.desc')}</p>
+    <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('demo.interactive_tag')}</p>
+    <h1 class="text-3xl font-bold mb-4">{t('demo.hero_title')}</h1>
+    <p class="text-[--color-text-muted] mb-8 max-w-2xl">
+      {t('demo.hero_desc')}
+    </p>
 
-    <DemoRunner client:idle />
+    <StrategyDemo client:visible lang="ko" />
 
+    <!-- CTA to full simulator -->
+    <div class="mt-12 border-t border-[--color-border] pt-10 text-center">
+      <h2 class="text-xl font-bold mb-3">{t('demo.want_more')}</h2>
+      <p class="text-[--color-text-muted] text-sm mb-6 max-w-lg mx-auto">
+        {t('demo.want_more_desc')}
+      </p>
+      <div class="flex flex-wrap gap-3 justify-center">
+        <a href="/ko/simulate" class="inline-block bg-[--color-accent] text-white px-6 py-2.5 rounded font-semibold text-sm hover:opacity-90 transition-opacity no-underline">
+          {t('demo.open_simulator')} &rarr;
+        </a>
+        <a href="/ko/strategies" class="inline-block border border-[--color-border] px-6 py-2.5 rounded font-semibold text-sm hover:border-[--color-accent] transition-colors no-underline">
+          {t('demo.view_strategies')}
+        </a>
+        <a href="/ko/fees" class="inline-block border border-[--color-border] px-6 py-2.5 rounded font-semibold text-sm hover:border-[--color-accent] transition-colors no-underline">
+          {t('demo.fees_cta')} &rarr;
+        </a>
+      </div>
+    </div>
   </section>
 </Layout>

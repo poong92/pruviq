@@ -42,36 +42,36 @@ const advanced = allPosts.filter(p =>
   ['tp8-decision-process'].includes(p.id)
 );
 
-// Tag translation map (EN → KO)
+// Tag translation map (EN → KO) from i18n
 const tagMap: Record<string, string> = {
-  'beginners': '입문', 'futures': '선물', 'leverage': '레버리지',
-  'perpetual-contracts': '무기한계약', 'bollinger-bands': '볼린저밴드',
-  'squeeze': '스퀴즈', 'volatility': '변동성', 'risk-management': '리스크관리',
-  'position-sizing': '포지션사이징', 'stop-loss': '손절', 'take-profit': '익절',
-  'backtesting': '백테스트', 'overfitting': '과적합', 'look-ahead-bias': '미래편향',
-  'rsi': 'RSI', 'ema': 'EMA', 'macd': 'MACD', 'atr': 'ATR', 'vwap': 'VWAP',
-  'adx': 'ADX', 'indicators': '지표', 'momentum': '모멘텀',
-  'oversold': '과매도', 'overbought': '과매수', 'mean-reversion': '평균회귀',
-  'crossover': '크로스오버', 'moving-average': '이동평균',
-  'trend-following': '추세추종', 'divergence': '다이버전스',
-  'volume': '거래량', 'confirmation': '확인', 'fakeouts': '페이크아웃',
-  'stochastic': '스토캐스틱', 'trend-strength': '추세강도',
-  'risk-reward': '손익비', 'optimization': '최적화',
-  'fees': '수수료', 'exchanges': '거래소', 'cost-optimization': '비용최적화',
-  'binance': '바이낸스', 'referral': '레퍼럴',
-  'ichimoku': '일목균형표', 'cloud': '구름', 'trend': '추세',
-  'support-resistance': '지지/저항', 'support': '지지', 'resistance': '저항',
-  'fibonacci': '피보나치', 'retracement': '되돌림',
-  'technical-analysis': '기술적분석', 'price-action': '가격행동',
-  'candlestick': '캔들스틱', 'patterns': '패턴', 'doji': '도지', 'engulfing': '장악형',
-  'institutional': '기관', 'intraday': '장중',
-  'kelly-criterion': '켈리기준', 'math': '수학',
-  'market-review': '시장리뷰', 'btc': 'BTC', 'crash': '폭락',
-  'real-data': '실데이터', 'crypto': '크립토', 'algorithmic-trading': '알고리즘매매',
-  'python': 'Python', 'pruviq': 'PRUVIQ', 'origin': '기원', 'philosophy': '철학',
-  'bb-squeeze': 'BB스퀴즈', 'tp': 'TP', 'decision': '의사결정',
-  'v1.7.0': 'v1.7.0', 'expert-panel': '전문가패널',
-  'levels': '레벨', 'feb-2026': '2026년2월',
+  'beginners': t('learn.tag_beginners'), 'futures': t('learn.tag_futures'), 'leverage': t('learn.tag_leverage'),
+  'perpetual-contracts': t('learn.tag_perpetual_contracts'), 'bollinger-bands': t('learn.tag_bollinger_bands'),
+  'squeeze': t('learn.tag_squeeze'), 'volatility': t('learn.tag_volatility'), 'risk-management': t('learn.tag_risk_management'),
+  'position-sizing': t('learn.tag_position_sizing'), 'stop-loss': t('learn.tag_stop_loss'), 'take-profit': t('learn.tag_take_profit'),
+  'backtesting': t('learn.tag_backtesting'), 'overfitting': t('learn.tag_overfitting'), 'look-ahead-bias': t('learn.tag_look_ahead_bias'),
+  'rsi': t('learn.tag_rsi'), 'ema': t('learn.tag_ema'), 'macd': t('learn.tag_macd'), 'atr': t('learn.tag_atr'), 'vwap': t('learn.tag_vwap'),
+  'adx': t('learn.tag_adx'), 'indicators': t('learn.tag_indicators'), 'momentum': t('learn.tag_momentum'),
+  'oversold': t('learn.tag_oversold'), 'overbought': t('learn.tag_overbought'), 'mean-reversion': t('learn.tag_mean_reversion'),
+  'crossover': t('learn.tag_crossover'), 'moving-average': t('learn.tag_moving_average'),
+  'trend-following': t('learn.tag_trend_following'), 'divergence': t('learn.tag_divergence'),
+  'volume': t('learn.tag_volume'), 'confirmation': t('learn.tag_confirmation'), 'fakeouts': t('learn.tag_fakeouts'),
+  'stochastic': t('learn.tag_stochastic'), 'trend-strength': t('learn.tag_trend_strength'),
+  'risk-reward': t('learn.tag_risk_reward'), 'optimization': t('learn.tag_optimization'),
+  'fees': t('learn.tag_fees'), 'exchanges': t('learn.tag_exchanges'), 'cost-optimization': t('learn.tag_cost_optimization'),
+  'binance': t('learn.tag_binance'), 'referral': t('learn.tag_referral'),
+  'ichimoku': t('learn.tag_ichimoku'), 'cloud': t('learn.tag_cloud'), 'trend': t('learn.tag_trend'),
+  'support-resistance': t('learn.tag_support_resistance'), 'support': t('learn.tag_support'), 'resistance': t('learn.tag_resistance'),
+  'fibonacci': t('learn.tag_fibonacci'), 'retracement': t('learn.tag_retracement'),
+  'technical-analysis': t('learn.tag_technical_analysis'), 'price-action': t('learn.tag_price_action'),
+  'candlestick': t('learn.tag_candlestick'), 'patterns': t('learn.tag_patterns'), 'doji': t('learn.tag_doji'), 'engulfing': t('learn.tag_engulfing'),
+  'institutional': t('learn.tag_institutional'), 'intraday': t('learn.tag_intraday'),
+  'kelly-criterion': t('learn.tag_kelly_criterion'), 'math': t('learn.tag_math'),
+  'market-review': t('learn.tag_market_review'), 'btc': t('learn.tag_btc'), 'crash': t('learn.tag_crash'),
+  'real-data': t('learn.tag_real_data'), 'crypto': t('learn.tag_crypto'), 'algorithmic-trading': t('learn.tag_algorithmic_trading'),
+  'python': t('learn.tag_python'), 'pruviq': t('learn.tag_pruviq'), 'origin': t('learn.tag_origin'), 'philosophy': t('learn.tag_philosophy'),
+  'bb-squeeze': t('learn.tag_bb_squeeze'), 'tp': t('learn.tag_tp'), 'decision': t('learn.tag_decision'),
+  'v1.7.0': t('learn.tag_v170'), 'expert-panel': t('learn.tag_expert_panel'),
+  'levels': t('learn.tag_levels'), 'feb-2026': t('learn.tag_feb_2026'),
 };
 
 const levelConfig = [
@@ -135,6 +135,14 @@ const levelConfig = [
       <a href="/ko/simulate" class="btn-primary inline-block bg-[--color-accent] text-[--color-bg] px-6 py-2.5 rounded font-semibold text-sm hover:bg-[--color-accent-dim]">
         {t('learn.cta_button')} &rarr;
       </a>
+      <div class="flex flex-wrap gap-3 justify-center mt-4">
+        <a href="/ko/demo" class="inline-block border border-[--color-border] px-5 py-2 rounded font-semibold text-sm hover:border-[--color-accent] transition-colors no-underline">
+          {t('cross.demo_cta')} &rarr;
+        </a>
+        <a href="/ko/strategies" class="inline-block border border-[--color-border] px-5 py-2 rounded font-semibold text-sm hover:border-[--color-accent] transition-colors no-underline">
+          {t('cross.strategies_cta')} &rarr;
+        </a>
+      </div>
     </div>
   </section>
 

@@ -21,7 +21,7 @@ const t = useTranslations('en');
           <a href="/simulate?preset=bb-squeeze-short"
              class="inline-flex items-center gap-2 bg-[--color-accent] text-[--color-bg] px-4 py-2 rounded font-semibold text-sm hover:bg-[--color-accent-dim]"
              title="Verified = backtested on 549+ coins with 2+ years of real market data">
-            Start with BB Squeeze (Verified) &rarr;
+            {t('simulate.cta_preset')} &rarr;
           </a>
           <a href="/strategies"
              class="inline-flex items-center gap-2 border border-[--color-border] text-[--color-text-muted] px-4 py-2 rounded text-sm hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
@@ -35,22 +35,22 @@ const t = useTranslations('en');
         <div class="flex items-center gap-3 border border-[--color-border] rounded-lg px-4 py-3 bg-[--color-bg-card]">
           <span class="font-mono text-[--color-accent] text-lg font-bold shrink-0">1</span>
           <div>
-            <p class="text-sm font-semibold">Choose a preset or pick indicators</p>
-            <p class="text-xs text-[--color-text-muted]">11+ indicators, AND/OR logic</p>
+            <p class="text-sm font-semibold">{t('simulate.step1_title')}</p>
+            <p class="text-xs text-[--color-text-muted]">{t('simulate.step1_desc')}</p>
           </div>
         </div>
         <div class="flex items-center gap-3 border border-[--color-border] rounded-lg px-4 py-3 bg-[--color-bg-card]">
           <span class="font-mono text-[--color-accent] text-lg font-bold shrink-0">2</span>
           <div>
-            <p class="text-sm font-semibold">Set entry conditions and risk</p>
-            <p class="text-xs text-[--color-text-muted]">SL, TP, time filters, position size</p>
+            <p class="text-sm font-semibold">{t('simulate.step2_title')}</p>
+            <p class="text-xs text-[--color-text-muted]">{t('simulate.step2_desc')}</p>
           </div>
         </div>
         <div class="flex items-center gap-3 border border-[--color-border] rounded-lg px-4 py-3 bg-[--color-bg-card]">
           <span class="font-mono text-[--color-accent] text-lg font-bold shrink-0">3</span>
           <div>
-            <p class="text-sm font-semibold">Run backtest on 549+ coins</p>
-            <p class="text-xs text-[--color-text-muted]">Results in seconds, fees included</p>
+            <p class="text-sm font-semibold">{t('simulate.step3_title')}</p>
+            <p class="text-xs text-[--color-text-muted]">{t('simulate.step3_desc')}</p>
           </div>
         </div>
       </div>
@@ -62,8 +62,11 @@ const t = useTranslations('en');
   <!-- Risk Disclaimer -->
   <div class="max-w-[1400px] mx-auto px-4 mb-4">
     <p class="text-xs text-gray-500 leading-relaxed">
-      Simulation only &mdash; not real trading. Past performance does not guarantee future results. Futures trading involves risk of loss.
+      {t('simulate.risk_disclaimer')}
     </p>
+    <a href="/fees" class="inline-block border border-[--color-border] px-4 py-1.5 rounded text-xs hover:border-[--color-accent] transition-colors no-underline ml-2">
+      {t('simulate.fees_cta')} &rarr;
+    </a>
   </div>
 
   <section class="pb-4 md:pb-6">

@@ -124,6 +124,11 @@ export default function FeeCalculator({ lang = 'en' }: Props) {
             value={volumeSteps.indexOf(volume) >= 0 ? volumeSteps.indexOf(volume) : 3}
             onInput={(e: Event) => setVolume(volumeSteps[Number((e.target as HTMLInputElement).value)])}
             class="w-full accent-[--color-accent]"
+            aria-label={t.volume}
+            aria-valuemin={volumeSteps[0]}
+            aria-valuemax={volumeSteps[volumeSteps.length - 1]}
+            aria-valuenow={volume}
+            aria-valuetext={fmtFull(volume)}
           />
           <div class="font-mono text-lg font-bold mt-1">
             {fmtFull(volume)}
