@@ -346,9 +346,6 @@ export default function StrategyDemo({
              class="inline-block border border-[--color-border] text-[--color-text] px-5 py-2.5 rounded-lg font-semibold text-sm no-underline hover:border-[--color-accent] transition-colors">
             {t.ctaFees}
           </a>
-          <a href="https://t.me/PRUVIQ" target="_blank" rel="noopener noreferrer" class="inline-block border border-[--color-border] text-[--color-text] px-5 py-2.5 rounded-lg font-semibold text-sm no-underline hover:border-[--color-accent] transition-colors">
-            {t.ctaCommunity}
-          </a>
         </div>
       </div>
     </div>
