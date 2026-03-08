@@ -857,8 +857,8 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
         />
       </div>
 
-      {/* Mobile sticky Run button — Expert mode only */}
-      {simMode === 'expert' && mobileTab === 'config' && conditions.length > 0 && (
+      {/* Mobile sticky Run button — Standard & Expert modes */}
+      {simMode !== 'quick' && mobileTab === 'config' && (simMode === 'standard' || conditions.length > 0) && (
         <div class="md:hidden fixed bottom-0 left-0 right-0 z-50 px-4 py-3 border-t border-[--color-border]"
           style={{ background: 'var(--color-bg)', boxShadow: '0 -4px 12px rgba(0,0,0,0.3)' }}>
           <button
