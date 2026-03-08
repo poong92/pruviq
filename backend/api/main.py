@@ -2067,8 +2067,13 @@ async def run_backtest(req: BacktestRequest):
         dr_down_std = float(np.std(dr_down, ddof=1)) if len(dr_down) >= 2 else 0.0
         bt_sortino = round(dr_avg / dr_down_std * np.sqrt(365), 2) if dr_down_std > 0 else 0.0
         bt_calmar = round(total_return / max_dd, 2) if max_dd > 0 else 0.0
+        # VaR and CVaR (95% confidence, daily)
+        var_95 = round(float(np.percentile(daily_returns, 5)), 4)
+        tail = daily_returns[daily_returns <= var_95]
+        cvar_95 = round(float(np.mean(tail)), 4) if len(tail) > 0 else var_95
     else:
         bt_sharpe, bt_sortino, bt_calmar = 0.0, 0.0, 0.0
+        var_95, cvar_95 = 0.0, 0.0
 
     # Yearly breakdown
     from collections import defaultdict
@@ -2146,20 +2151,25 @@ async def run_backtest(req: BacktestRequest):
     recovery_factor = round(total_return / max_dd, 2) if max_dd > 0 else 0.0
     payoff_ratio = round(abs(avg_win / avg_loss), 2) if avg_loss != 0 else 0.0
 
-    # --- BTC Hold benchmark ---
+    # --- Benchmark returns (BTC + ETH buy-and-hold) ---
     btc_hold_return_pct = 0.0
-    try:
-        btc_data = data_manager.get_symbols(["BTCUSDT"])
-        if btc_data:
-            btc_sym, btc_df = btc_data[0]
-            btc_df = filter_df_by_date(btc_df, getattr(req, 'start_date', None), getattr(req, 'end_date', None))
-            if len(btc_df) >= 2:
-                btc_start = float(btc_df.iloc[0]["close"])
-                btc_end = float(btc_df.iloc[-1]["close"])
-                if btc_start > 0:
-                    btc_hold_return_pct = round((btc_end - btc_start) / btc_start * 100, 2)
-    except Exception:
-        pass
+    eth_hold_return_pct = 0.0
+    def _calc_hold_return(symbol):
+        try:
+            sym_data = data_manager.get_symbols([symbol])
+            if sym_data:
+                _, sym_df = sym_data[0]
+                sym_df = filter_df_by_date(sym_df, getattr(req, 'start_date', None), getattr(req, 'end_date', None))
+                if len(sym_df) >= 2:
+                    s = float(sym_df.iloc[0]["close"])
+                    e = float(sym_df.iloc[-1]["close"])
+                    if s > 0:
+                        return round((e - s) / s * 100, 2)
+        except Exception:
+            pass
+        return 0.0
+    btc_hold_return_pct = _calc_hold_return("BTCUSDT")
+    eth_hold_return_pct = _calc_hold_return("ETHUSDT")
 
     # --- Strategy grade (6 dimensions, max 14 points) ---
     pf = round(gross_profit / gross_loss, 2) if gross_loss > 0 else 0
@@ -2317,6 +2327,9 @@ async def run_backtest(req: BacktestRequest):
         recovery_factor=recovery_factor,
         payoff_ratio=payoff_ratio,
         btc_hold_return_pct=btc_hold_return_pct,
+        eth_hold_return_pct=eth_hold_return_pct,
+        var_95=var_95,
+        cvar_95=cvar_95,
         strategy_grade=strategy_grade,
         grade_details=grade_details,
         edge_p_value=edge_p_value,

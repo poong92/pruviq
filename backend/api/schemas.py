@@ -393,6 +393,11 @@ class BacktestResponse(BaseModel):
 
     # Benchmark comparison
     btc_hold_return_pct: float = 0.0   # BTC buy-and-hold return over same period
+    eth_hold_return_pct: float = 0.0   # ETH buy-and-hold return over same period
+
+    # Risk metrics (daily)
+    var_95: float = 0.0     # Value at Risk (95% confidence, daily %)
+    cvar_95: float = 0.0    # Conditional VaR / Expected Shortfall (daily %)
 
     # Strategy grade (A/B/C/D/F)
     strategy_grade: str = ""

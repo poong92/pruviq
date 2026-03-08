@@ -30,6 +30,9 @@ interface ResultsData {
   recovery_factor?: number;
   payoff_ratio?: number;
   btc_hold_return_pct?: number;
+  eth_hold_return_pct?: number;
+  var_95?: number;
+  cvar_95?: number;
   strategy_grade?: string;
   grade_details?: string;
   warnings?: string[];
@@ -297,12 +300,15 @@ export default function ResultsCard({ data, isDefault, lang = 'en', isDemo = fal
         <MetricBox label={t.maxDD} value={`${data.max_drawdown_pct}%`} color="var(--color-red)" description={desc.maxDD} />
       </div>
 
-      {/* BTC Benchmark */}
+      {/* Benchmarks (BTC + ETH) */}
       {data.btc_hold_return_pct !== undefined && data.btc_hold_return_pct !== 0 && (
-        <div class="mb-3 px-3 py-2 rounded-lg bg-[--color-bg-tooltip] border border-[--color-border] flex items-center justify-between">
-          <span class="font-mono text-[10px] text-[--color-text-muted] uppercase">{t.btcBenchmark}</span>
-          <div class="flex items-center gap-3 font-mono text-xs">
+        <div class="mb-3 px-3 py-2 rounded-lg bg-[--color-bg-tooltip] border border-[--color-border]">
+          <div class="font-mono text-[10px] text-[--color-text-muted] uppercase mb-1">{t.btcBenchmark}</div>
+          <div class="flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-xs">
             <span class="text-[--color-text-muted]">BTC: <span style={{ color: signColor(data.btc_hold_return_pct) }}>{data.btc_hold_return_pct > 0 ? '+' : ''}{data.btc_hold_return_pct.toFixed(1)}%</span></span>
+            {data.eth_hold_return_pct !== undefined && data.eth_hold_return_pct !== 0 && (
+              <span class="text-[--color-text-muted]">ETH: <span style={{ color: signColor(data.eth_hold_return_pct) }}>{data.eth_hold_return_pct > 0 ? '+' : ''}{data.eth_hold_return_pct.toFixed(1)}%</span></span>
+            )}
             <span style={{ color: (data.total_return_pct - data.btc_hold_return_pct) >= 0 ? 'var(--color-green)' : 'var(--color-red)' }} class="font-bold">
               {(data.total_return_pct - data.btc_hold_return_pct) >= 0 ? '+' : ''}{(data.total_return_pct - data.btc_hold_return_pct).toFixed(1)}%p {(data.total_return_pct - data.btc_hold_return_pct) >= 0 ? (lang === 'ko' ? '초과' : 'alpha') : (lang === 'ko' ? '부족' : 'underperform')}
             </span>
@@ -401,6 +407,24 @@ export default function ResultsCard({ data, isDefault, lang = 'en', isDemo = fal
             value={`${(data.calmar_ratio ?? 0).toFixed(2)}`}
             color={(data.calmar_ratio ?? 0) > 1 ? 'var(--color-accent)' : 'var(--color-text-muted)'}
             description={desc.calmar}
+          />
+        </div>
+      )}
+
+      {/* VaR / CVaR */}
+      {data.var_95 !== undefined && data.var_95 !== 0 && (
+        <div class="grid grid-cols-2 gap-2 mb-3">
+          <MetricBox
+            label="VaR 95%"
+            value={`${data.var_95.toFixed(2)}%`}
+            color="var(--color-red)"
+            description={lang === 'ko' ? '일별 최대 예상 손실 (95% 신뢰도)' : 'Daily max expected loss (95% confidence)'}
+          />
+          <MetricBox
+            label="CVaR 95%"
+            value={`${(data.cvar_95 ?? 0).toFixed(2)}%`}
+            color="var(--color-red)"
+            description={lang === 'ko' ? '꼬리 리스크 평균 (VaR 초과 시 평균 손실)' : 'Expected Shortfall (avg loss beyond VaR)'}
           />
         </div>
       )}

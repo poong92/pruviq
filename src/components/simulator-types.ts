@@ -68,6 +68,9 @@ export interface BacktestResult {
   recovery_factor?: number;
   payoff_ratio?: number;
   btc_hold_return_pct?: number;
+  eth_hold_return_pct?: number;
+  var_95?: number;
+  cvar_95?: number;
   strategy_grade?: string;
   grade_details?: string;
   warnings?: string[];
