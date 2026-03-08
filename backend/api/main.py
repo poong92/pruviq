@@ -2285,7 +2285,8 @@ async def run_backtest(req: BacktestRequest):
                         b_ret = np.array([btc_daily_dict[d] for d in common])
                         if np.std(b_ret) > 0:
                             beta = float(np.cov(s_ret, b_ret)[0, 1] / np.var(b_ret))
-                            jensens_alpha = round(float(np.mean(s_ret) - beta * np.mean(b_ret)), 4)
+                            rf_daily = 5.0 / 365  # ~5% annual risk-free rate (T-bill proxy)
+                            jensens_alpha = round(float(np.mean(s_ret) - rf_daily - beta * (np.mean(b_ret) - rf_daily)), 4)
                         else:
                             jensens_alpha = round(total_return - btc_hold_return_pct, 2)
                     else:
@@ -2322,13 +2323,16 @@ async def run_backtest(req: BacktestRequest):
     if pf >= 2.0: grade_score += 3
     elif pf >= 1.5: grade_score += 2
     elif pf >= 1.0: grade_score += 1
-    # WR (0-3)
-    if wr >= 60: grade_score += 3
-    elif wr >= 50: grade_score += 2
-    elif wr >= 40: grade_score += 1
-    # MDD (0-2)
-    if mdd < 20: grade_score += 2
-    elif mdd < 40: grade_score += 1
+    # WR (0-3) — relative to break-even WR
+    be_wr_grade = abs(avg_loss) / (abs(avg_win) + abs(avg_loss)) * 100 if (abs(avg_win) + abs(avg_loss)) > 0 else 50.0
+    wr_margin = wr - be_wr_grade  # how much WR exceeds break-even
+    if wr_margin >= 15: grade_score += 3
+    elif wr_margin >= 8: grade_score += 2
+    elif wr_margin >= 2: grade_score += 1
+    # MDD (0-2) — capital-relative (leverage-adjusted)
+    capital_mdd = max_dd_usd / initial_capital * 100 if initial_capital > 0 else mdd
+    if capital_mdd < 20: grade_score += 2
+    elif capital_mdd < 40: grade_score += 1
     # RF (0-2)
     if recovery_factor >= 3: grade_score += 2
     elif recovery_factor >= 1.5: grade_score += 1
@@ -2349,7 +2353,7 @@ async def run_backtest(req: BacktestRequest):
     elif grade_score >= 3: strategy_grade = "D"
     else: strategy_grade = "F"
 
-    grade_details = f"PF={pf} WR={wr}% MDD={mdd}% RF={recovery_factor} Sharpe={bt_sharpe} E={expectancy} Edge={grade_score}/16"
+    grade_details = f"PF={pf} WR={wr}%(BE:{be_wr_grade:.0f}%) MDD={capital_mdd:.1f}% RF={recovery_factor} Sharpe={bt_sharpe} E={expectancy} Edge={grade_score}/16"
 
     # --- Warnings ---
     warnings = []
@@ -2369,6 +2373,8 @@ async def run_backtest(req: BacktestRequest):
         warnings.append(f"Negative Jensen's Alpha ({jensens_alpha:.2f}%). Strategy underperforms benchmark on risk-adjusted basis.")
     if mc_p_value > 0.10 and len(all_trades) >= 30:
         warnings.append(f"Monte Carlo test: strategy return not significantly better than random (p={mc_p_value:.3f}).")
+    if len(all_trades) >= 10:
+        warnings.append("Survivorship bias: only currently listed assets are tested. Delisted coins are excluded, which may affect results.")
 
     # --- Rolling 5-Window Walk-Forward Consistency ---
     walk_forward_consistency = 0.0
