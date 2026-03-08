@@ -45,6 +45,18 @@ const labels = {
     prevPage: 'Previous page',
     nextPage: 'Next page',
     downloadCsv: 'Download CSV',
+    simulateCta: 'Simulate a Strategy',
+    retry: 'Retry',
+    csvRank: 'Rank',
+    csvSymbol: 'Symbol',
+    csvName: 'Name',
+    csvPrice: 'Price',
+    csvH1: '1h %',
+    csvH24: '24h %',
+    csvD7: '7d %',
+    csvMcap: 'Market Cap',
+    csvVolume: 'Volume 24h',
+    dataAsOf: 'Data as of: ',
   },
   ko: {
     search: '코인 검색...',
@@ -64,6 +76,18 @@ const labels = {
     prevPage: '이전 페이지',
     nextPage: '다음 페이지',
     downloadCsv: 'CSV 다운로드',
+    simulateCta: '전략 시뮬레이션',
+    retry: '다시 시도',
+    csvRank: '순위',
+    csvSymbol: '심볼',
+    csvName: '이름',
+    csvPrice: '가격',
+    csvH1: '1h %',
+    csvH24: '24h %',
+    csvD7: '7d %',
+    csvMcap: '시가총액',
+    csvVolume: '거래량 24h',
+    dataAsOf: '데이터 시점: ',
   },
 };
 
@@ -233,7 +257,7 @@ export default function CoinListTable({ lang = 'en' }: { lang?: 'en' | 'ko' }) {
           }}
           class="px-4 py-2 rounded-lg border border-[--color-border] bg-[--color-bg-card] text-[--color-text] font-mono text-sm cursor-pointer hover:border-[--color-accent] transition-colors min-h-[44px]"
         >
-          {lang === 'ko' ? '다시 시도' : 'Retry'}
+          {t.retry}
         </button>
       </div>
     );
@@ -267,7 +291,7 @@ export default function CoinListTable({ lang = 'en' }: { lang?: 'en' | 'ko' }) {
   const basePath = lang === 'ko' ? '/ko/coins' : '/coins';
 
   const handleDownloadCsv = () => {
-    const headers = ['Rank', 'Symbol', 'Name', 'Price', '1h %', '24h %', '7d %', 'Market Cap', 'Volume 24h'];
+    const headers = [t.csvRank, t.csvSymbol, t.csvName, t.csvPrice, t.csvH1, t.csvH24, t.csvD7, t.csvMcap, t.csvVolume];
     const rows = sorted.map((coin, i) => [
       i + 1,
       coin.symbol.endsWith('USDT') ? coin.symbol.slice(0, -4) : coin.symbol,
@@ -298,6 +322,13 @@ export default function CoinListTable({ lang = 'en' }: { lang?: 'en' | 'ko' }) {
           onInput={(e: Event) => { setSearch((e.target as HTMLInputElement).value); setPage(0); }}
           class="w-full max-w-xs px-4 py-2.5 bg-[--color-bg-card] border border-[--color-border] rounded-lg text-[--color-text] font-mono text-sm outline-none focus:border-[--color-accent] transition-colors"
         />
+        <a
+          href={lang === 'ko' ? '/ko/simulate' : '/simulate'}
+          class="px-4 py-2.5 rounded-lg font-semibold text-sm no-underline hover:opacity-90 transition-opacity whitespace-nowrap min-h-[44px] inline-flex items-center"
+          style="background:var(--color-accent);color:#fff"
+        >
+          {t.simulateCta} &rarr;
+        </a>
         {sorted.length > 0 && (
           <button
             type="button"
@@ -312,7 +343,7 @@ export default function CoinListTable({ lang = 'en' }: { lang?: 'en' | 'ko' }) {
 
       {generatedAt && (
         <div class="text-[--color-text-muted] text-xs mb-2">
-          {lang === 'ko' ? '데이터 시점: ' : 'Data as of: '} {new Date(generatedAt).toLocaleString()}
+          {t.dataAsOf} {new Date(generatedAt).toLocaleString()}
         </div>
       )}
 

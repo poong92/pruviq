@@ -167,10 +167,10 @@ const isKorean = (id: string) => koIds.has(id);
             </a>
             {strategy.data.status === 'verified' && (
               <div class="mt-4 pt-4 border-t border-[--color-border]/50 flex items-center justify-between">
-                <span class="text-xs text-[--color-up] font-mono">검증됨 = 모든 검증 통과, 549개+ 코인, 2년+ 데이터 백테스트</span>
+                <span class="text-xs text-[--color-up] font-mono">{t('strategies.verified_explanation')}</span>
                 <a href={`/ko/simulate?preset=${strategy.id}`}
                    class="inline-flex items-center gap-1 bg-[--color-accent] text-[--color-bg] px-4 py-1.5 rounded font-semibold text-xs hover:bg-[--color-accent-dim]">
-                  시뮬레이션 &rarr;
+                  {t('strategies.simulate_button')} &rarr;
                 </a>
               </div>
             )}
@@ -187,6 +187,14 @@ const isKorean = (id: string) => koIds.has(id);
            class="btn-primary inline-block bg-[--color-accent] text-[--color-bg] px-6 py-2 rounded font-semibold text-sm hover:bg-[--color-accent-dim]">
           {t('strategies.join')} &rarr;
         </a>
+        <div class="flex flex-wrap gap-3 justify-center mt-4">
+          <a href="/ko/performance" class="inline-block border border-[--color-border] px-5 py-2 rounded font-semibold text-sm hover:border-[--color-accent] transition-colors no-underline">
+            {t('strategies.performance_cta')} &rarr;
+          </a>
+          <a href="/ko/fees" class="inline-block border border-[--color-border] px-5 py-2 rounded font-semibold text-sm hover:border-[--color-accent] transition-colors no-underline">
+            {t('strategies.fees_cta')} &rarr;
+          </a>
+        </div>
       </div>
     </div>
   </section>

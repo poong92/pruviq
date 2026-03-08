@@ -7,6 +7,7 @@ import LiveStats from '../../components/LiveStats';
 const t = useTranslations('ko');
 const allStrategies = await getCollection('strategies');
 const verifiedCount = allStrategies.filter(s => s.data.status === 'verified').length;
+const lastUpdated = new Date().toLocaleDateString('ko-KR');
 ---
 
 <Layout title={t('meta.home_title')} description={t('meta.index_desc')}>
@@ -49,10 +50,10 @@ const verifiedCount = allStrategies.filter(s => s.data.status === 'verified').le
         </div>
         <!-- 신뢰 신호 -->
         <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs text-[--color-text-muted] font-mono mb-4">
-          <span>바이낸스 API 읽기 전용</span>
-          <span>소스 공개</span>
-          <span>개인정보 불필요</span>
-          <span>몬테카를로 검증</span>
+          <span>{t('trust.badge_api')}</span>
+          <span>{t('trust.badge_source')}</span>
+          <span>{t('trust.badge_privacy')}</span>
+          <span>{t('trust.badge_validated')}</span>
         </div>
         <a href="/ko/compare/tradingview" class="text-xs text-[--color-accent] hover:underline font-mono mb-8 inline-block">TradingView에서 전환하는 이유 &rarr;</a>
 
@@ -87,8 +88,9 @@ const verifiedCount = allStrategies.filter(s => s.data.status === 'verified').le
         <!-- TRUST BLOCK -->
         <div class="mt-6 border border-[--color-border] rounded p-4 bg-[--color-bg-card] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <p class="text-sm font-mono text-[--color-text-muted]">{t('simulate.strategies_title')}</p>
-            <p class="text-xl font-bold text-[--color-accent]">{verifiedCount}개 {t('strategy.verified')}</p>
+            <p class="text-sm font-mono text-[--color-text-muted]">{t('trust.verified_label')}</p>
+            <p class="text-xl font-bold text-[--color-accent]">{t('trust.verified_count').replace('{count}', String(verifiedCount))}</p>
+            <p class="text-xs text-[--color-text-muted]">{t('trust.last_updated').replace('{date}', lastUpdated)}</p>
           </div>
           <div class="sm:text-right">
             <a href="/ko/simulate" class="inline-block bg-[--color-accent] text-[--color-bg] px-4 py-2 rounded font-semibold text-sm hover:bg-[--color-accent-dim]">{t('cta.button1')}</a>
@@ -110,7 +112,7 @@ const verifiedCount = allStrategies.filter(s => s.data.status === 'verified').le
         <div class="border border-[--color-down]/30 rounded-lg p-6 bg-[--color-bg-card]">
           <div class="text-[--color-down] font-mono text-xs font-bold mb-3 flex items-center gap-2">
             <span class="inline-block w-2 h-2 rounded-full bg-[--color-down]"></span>
-            CASE STUDY #1
+            {t('problem.case1_label')}
           </div>
           <h3 class="font-bold text-lg mb-2">{t('problem.card1_title')}</h3>
           <p class="text-[--color-text-muted] text-sm leading-relaxed mb-3">{t('problem.card1_desc')}</p>
@@ -119,7 +121,7 @@ const verifiedCount = allStrategies.filter(s => s.data.status === 'verified').le
         <div class="border border-[--color-down]/30 rounded-lg p-6 bg-[--color-bg-card]">
           <div class="text-[--color-down] font-mono text-xs font-bold mb-3 flex items-center gap-2">
             <span class="inline-block w-2 h-2 rounded-full bg-[--color-down]"></span>
-            CASE STUDY #2
+            {t('problem.case2_label')}
           </div>
           <h3 class="font-bold text-lg mb-2">{t('problem.card2_title')}</h3>
           <p class="text-[--color-text-muted] text-sm leading-relaxed mb-3">{t('problem.card2_desc')}</p>
@@ -128,7 +130,7 @@ const verifiedCount = allStrategies.filter(s => s.data.status === 'verified').le
         <div class="border border-[--color-down]/30 rounded-lg p-6 bg-[--color-bg-card]">
           <div class="text-[--color-down] font-mono text-xs font-bold mb-3 flex items-center gap-2">
             <span class="inline-block w-2 h-2 rounded-full bg-[--color-down]"></span>
-            CASE STUDY #3
+            {t('problem.case3_label')}
           </div>
           <h3 class="font-bold text-lg mb-2">{t('problem.card3_title')}</h3>
           <p class="text-[--color-text-muted] text-sm leading-relaxed mb-3">{t('problem.card3_desc')}</p>
@@ -217,15 +219,15 @@ const verifiedCount = allStrategies.filter(s => s.data.status === 'verified').le
   <!-- COMPARISON TABLE (vs Competitors) -->
   <section class="py-20 border-t border-[--color-border]" aria-labelledby="compare-heading-ko">
     <div class="max-w-6xl mx-auto px-4">
-      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">WHY PRUVIQ</p>
-      <h2 id="compare-heading-ko" class="text-3xl md:text-4xl font-bold mb-12">경쟁사 비교</h2>
+      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('compare_table.tag')}</p>
+      <h2 id="compare-heading-ko" class="text-3xl md:text-4xl font-bold mb-12">{t('compare_table.title')}</h2>
 
       <div class="overflow-x-auto" role="region" aria-label="플랫폼 비교 테이블" tabindex="0">
         <table class="w-full text-sm border-collapse" role="table" aria-label="PRUVIQ vs TradingView vs QuantConnect 기능 비교">
           <caption class="sr-only">PRUVIQ, TradingView, QuantConnect 백테스팅 플랫폼 기능 비교표</caption>
           <thead>
             <tr class="border-b border-[--color-border]">
-              <th scope="col" class="text-left py-3 px-4 font-mono text-[--color-text-muted] text-xs">기능</th>
+              <th scope="col" class="text-left py-3 px-4 font-mono text-[--color-text-muted] text-xs">{t('compare_table.feature')}</th>
               <th scope="col" class="text-center py-3 px-4 font-mono text-[--color-accent] text-xs bg-[--color-accent]/5">PRUVIQ</th>
               <th scope="col" class="text-center py-3 px-4 font-mono text-[--color-text-muted] text-xs">TradingView</th>
               <th scope="col" class="text-center py-3 px-4 font-mono text-[--color-text-muted] text-xs">QuantConnect</th>
@@ -233,43 +235,43 @@ const verifiedCount = allStrategies.filter(s => s.data.status === 'verified').le
           </thead>
           <tbody>
             <tr class="border-b border-[--color-border]/50">
-              <td class="py-3 px-4">노코드 전략 빌더</td>
+              <td class="py-3 px-4">{t('compare_table.feat_nocode')}</td>
               <td class="py-3 px-4 text-center text-[--color-up] bg-[--color-accent]/5">&#10003;</td>
-              <td class="py-3 px-4 text-center text-[--color-down]">&#10007; Pine Script</td>
-              <td class="py-3 px-4 text-center text-[--color-down]">&#10007; Python/C#</td>
+              <td class="py-3 px-4 text-center text-[--color-down]">&#10007; {t('compare_table.tv_nocode')}</td>
+              <td class="py-3 px-4 text-center text-[--color-down]">&#10007; {t('compare_table.qc_nocode')}</td>
             </tr>
             <tr class="border-b border-[--color-border]/50">
-              <td class="py-3 px-4">500+ 코인 동시 테스트</td>
+              <td class="py-3 px-4">{t('compare_table.feat_coins')}</td>
               <td class="py-3 px-4 text-center text-[--color-up] bg-[--color-accent]/5">&#10003;</td>
-              <td class="py-3 px-4 text-center text-[--color-down]">&#10007; 1개씩</td>
-              <td class="py-3 px-4 text-center text-yellow-400">제한적</td>
+              <td class="py-3 px-4 text-center text-[--color-down]">&#10007; {t('compare_table.tv_coins')}</td>
+              <td class="py-3 px-4 text-center text-yellow-400">{t('compare_table.qc_coins')}</td>
             </tr>
             <tr class="border-b border-[--color-border]/50">
-              <td class="py-3 px-4">실패 사례 공개</td>
+              <td class="py-3 px-4">{t('compare_table.feat_failures')}</td>
               <td class="py-3 px-4 text-center text-[--color-up] bg-[--color-accent]/5">&#10003;</td>
               <td class="py-3 px-4 text-center text-[--color-down]">&#10007;</td>
               <td class="py-3 px-4 text-center text-[--color-down]">&#10007;</td>
             </tr>
             <tr class="border-b border-[--color-border]/50">
-              <td class="py-3 px-4">백테스트 투명성</td>
-              <td class="py-3 px-4 text-center text-[--color-up] bg-[--color-accent]/5">&#10003; 전체 공개</td>
+              <td class="py-3 px-4">{t('compare_table.feat_verification')}</td>
+              <td class="py-3 px-4 text-center text-[--color-up] bg-[--color-accent]/5">&#10003; {t('compare_table.pruviq_verification')}</td>
               <td class="py-3 px-4 text-center text-[--color-down]">&#10007;</td>
-              <td class="py-3 px-4 text-center text-yellow-400">모의만</td>
+              <td class="py-3 px-4 text-center text-yellow-400">{t('compare_table.qc_verification')}</td>
             </tr>
             <tr class="border-b border-[--color-border]/50">
-              <td class="py-3 px-4">현실적 수수료 & 슬리피지</td>
+              <td class="py-3 px-4">{t('compare_table.feat_fees')}</td>
               <td class="py-3 px-4 text-center text-[--color-up] bg-[--color-accent]/5">&#10003;</td>
-              <td class="py-3 px-4 text-center text-yellow-400">기본</td>
+              <td class="py-3 px-4 text-center text-yellow-400">{t('compare_table.tv_fees')}</td>
               <td class="py-3 px-4 text-center text-[--color-up]">&#10003;</td>
             </tr>
             <tr class="border-b border-[--color-border]/50">
-              <td class="py-3 px-4">무료 플랜</td>
-              <td class="py-3 px-4 text-center text-[--color-up] bg-[--color-accent]/5">100% 무료</td>
-              <td class="py-3 px-4 text-center text-yellow-400">$14.95/월~</td>
-              <td class="py-3 px-4 text-center text-yellow-400">제한적</td>
+              <td class="py-3 px-4">{t('compare_table.feat_free')}</td>
+              <td class="py-3 px-4 text-center text-[--color-up] bg-[--color-accent]/5">{t('compare_table.pruviq_free')}</td>
+              <td class="py-3 px-4 text-center text-yellow-400">{t('compare_table.tv_free')}</td>
+              <td class="py-3 px-4 text-center text-yellow-400">{t('compare_table.qc_coins')}</td>
             </tr>
             <tr>
-              <td class="py-3 px-4">계정 불필요</td>
+              <td class="py-3 px-4">{t('compare_table.feat_no_account')}</td>
               <td class="py-3 px-4 text-center text-[--color-up] bg-[--color-accent]/5">&#10003;</td>
               <td class="py-3 px-4 text-center text-[--color-down]">&#10007;</td>
               <td class="py-3 px-4 text-center text-[--color-down]">&#10007;</td>
@@ -279,7 +281,7 @@ const verifiedCount = allStrategies.filter(s => s.data.status === 'verified').le
       </div>
 
       <div class="mt-8 text-center">
-        <a href="/ko/compare/tradingview" class="text-sm text-[--color-accent] hover:underline">상세 비교 보기 &rarr;</a>
+        <a href="/ko/compare/tradingview" class="text-sm text-[--color-accent] hover:underline">{t('compare_table.detail_link')} &rarr;</a>
       </div>
     </div>
   </section>

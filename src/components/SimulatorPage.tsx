@@ -127,6 +127,19 @@ const L = {
     monthlyReturns: "Monthly Returns",
     pnlDistribution: "PnL Distribution",
     bars: "bars",
+    yearlyBreakdown: "Yearly Breakdown",
+    equityCurve: "Equity Curve",
+    drawdown: "Drawdown",
+    maxDrawdown: "Max Drawdown",
+    noTradeDetails: "Trade details not available for this backtest type.",
+    noCoinData: "No per-coin data available.",
+    progressLabels: [
+      "Preparing data...",
+      "Computing indicators...",
+      "Finding signals...",
+      "Simulating trades...",
+      "Building results...",
+    ],
   },
   ko: {
     title: "전략 시뮬레이터",
@@ -218,6 +231,19 @@ const L = {
     resultsGuideWr: "승률 > 50%: 양호",
     resultsGuidePf: "Profit Factor > 1.5: 우수",
     resultsGuideMdd: "최대 낙폭 < 20%: 안전",
+    yearlyBreakdown: "연도별 분석",
+    equityCurve: "수익 곡선",
+    drawdown: "낙폭",
+    maxDrawdown: "최대 낙폭",
+    noTradeDetails: "이 백테스트 유형에서는 개별 거래 내역을 제공하지 않습니다.",
+    noCoinData: "코인별 데이터가 없습니다.",
+    progressLabels: [
+      "데이터 준비 중...",
+      "지표 계산 중...",
+      "신호 탐색 중...",
+      "거래 시뮬레이션 중...",
+      "결과 생성 중...",
+    ],
   },
 };
 
@@ -850,7 +876,7 @@ export default function SimulatorPage({ lang = "en" }: Props) {
         .slice(0, 20)
     : allCoins.slice(0, 20);
 
-  const progressLabels = [
+  const progressLabels = t.progressLabels || [
     "Preparing data...",
     "Computing indicators...",
     "Finding signals...",

@@ -41,6 +41,7 @@ const labels = {
     showLess: 'Show less',
     showMoreNews: 'Show more news',
     showLessNews: 'Show less',
+    retry: 'Retry',
   },
   ko: {
     tag: '시장 현황',
@@ -77,6 +78,7 @@ const labels = {
     showLess: '접기',
     showMoreNews: '더 보기',
     showLessNews: '접기',
+    retry: '다시 시도',
   },
 };
 
@@ -153,12 +155,12 @@ function ExpandButton({ expanded, onClick, expandLabel, collapseLabel }: { expan
 const CRYPTO_SOURCES = ['CoinDesk', 'CoinTelegraph', 'Decrypt', 'Bitcoin Magazine'];
 const MACRO_SOURCES = ['Bloomberg', 'CNBC Economy', 'MarketWatch'];
 
-// Fear & Greed gauge scale labels
+// Fear & Greed gauge scale labels (i18n)
 const FG_SCALE = [
-  { min: 0, max: 25, label: 'Extreme Fear', color: 'rgb(234,57,67)' },
-  { min: 25, max: 50, label: 'Fear', color: 'rgb(255,140,0)' },
-  { min: 50, max: 75, label: 'Greed', color: 'rgb(144,238,144)' },
-  { min: 75, max: 100, label: 'Extreme Greed', color: 'rgb(22,163,74)' },
+  { min: 0, max: 25, label: 'Extreme Fear', labelKo: '극단적 공포', color: 'rgb(234,57,67)' },
+  { min: 25, max: 50, label: 'Fear', labelKo: '공포', color: 'rgb(255,140,0)' },
+  { min: 50, max: 75, label: 'Greed', labelKo: '탐욕', color: 'rgb(144,238,144)' },
+  { min: 75, max: 100, label: 'Extreme Greed', labelKo: '극단적 탐욕', color: 'rgb(22,163,74)' },
 ];
 
 function getFGSegment(value: number) {
@@ -245,7 +247,7 @@ export default function MarketDashboard({ lang = 'en' }: { lang?: 'en' | 'ko' })
             onClick={() => { retryLive(); retryMarket(); }}
             class="px-4 py-2 rounded-lg border border-[--color-border] bg-[--color-bg-card] text-[--color-text] font-mono text-sm cursor-pointer hover:border-[--color-accent] transition-colors min-h-[44px]"
           >
-            {lang === 'ko' ? '다시 시도' : 'Retry'}
+            {l.retry}
           </button>
         </div>
       )}
@@ -307,7 +309,7 @@ export default function MarketDashboard({ lang = 'en' }: { lang?: 'en' | 'ko' })
                   </div>
                 </div>
 
-                <div class="text-xs font-semibold" style={{ color: fgSegment.color }}>{market.fear_greed_label}</div>
+                <div class="text-xs font-semibold" style={{ color: fgSegment.color }}>{lang === 'ko' ? fgSegment.labelKo : market.fear_greed_label}</div>
               </div>
             ) : (
               <SkeletonCard />
@@ -457,7 +459,7 @@ export default function MarketDashboard({ lang = 'en' }: { lang?: 'en' | 'ko' })
                   onClick={retryNews}
                   class="px-4 py-2 rounded-lg border border-[--color-border] bg-[--color-bg-card] text-[--color-text] font-mono text-sm cursor-pointer hover:border-[--color-accent] transition-colors min-h-[44px]"
                 >
-                  {lang === 'ko' ? '다시 시도' : 'Retry'}
+                  {l.retry}
                 </button>
               </div>
             )}

@@ -50,10 +50,10 @@ const lastUpdated = new Date().toLocaleDateString('en-US');
         </div>
         <!-- Trust signals -->
         <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs text-[--color-text-muted] font-mono mb-4">
-          <span>Binance API Read-Only</span>
-          <span>Source Available</span>
-          <span>No Personal Data</span>
-          <span>Monte Carlo Validated</span>
+          <span>{t('trust.badge_api')}</span>
+          <span>{t('trust.badge_source')}</span>
+          <span>{t('trust.badge_privacy')}</span>
+          <span>{t('trust.badge_validated')}</span>
         </div>
         <a href="/compare/tradingview" class="text-xs text-[--color-accent] hover:underline font-mono mb-8 inline-block">Why traders switch from TradingView &rarr;</a>
 
@@ -88,9 +88,9 @@ const lastUpdated = new Date().toLocaleDateString('en-US');
         <!-- TRUST BLOCK -->
         <div class="mt-6 border border-[--color-border] rounded p-4 bg-[--color-bg-card] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <p class="text-sm font-mono text-[--color-text-muted]">Verified strategies</p>
-            <p class="text-xl font-bold text-[--color-accent]">{verifiedCount} verified</p>
-            <p class="text-xs text-[--color-text-muted]">Last updated: {lastUpdated}</p>
+            <p class="text-sm font-mono text-[--color-text-muted]">{t('trust.verified_label')}</p>
+            <p class="text-xl font-bold text-[--color-accent]">{t('trust.verified_count').replace('{count}', String(verifiedCount))}</p>
+            <p class="text-xs text-[--color-text-muted]">{t('trust.last_updated').replace('{date}', lastUpdated)}</p>
           </div>
           <div class="sm:text-right">
             <a href="/simulate" class="inline-block bg-[--color-accent] text-[--color-bg] px-4 py-2 rounded font-semibold text-sm hover:bg-[--color-accent-dim]">{t('cta.button1')}</a>
@@ -113,7 +113,7 @@ const lastUpdated = new Date().toLocaleDateString('en-US');
         <div class="border border-[--color-down]/30 rounded-lg p-6 bg-[--color-bg-card]">
           <div class="text-[--color-down] font-mono text-xs font-bold mb-3 flex items-center gap-2">
             <span class="inline-block w-2 h-2 rounded-full bg-[--color-down]"></span>
-            CASE STUDY #1
+            {t('problem.case1_label')}
           </div>
           <h3 class="font-bold text-lg mb-2">{t('problem.card1_title')}</h3>
           <p class="text-[--color-text-muted] text-sm leading-relaxed mb-3">{t('problem.card1_desc')}</p>
@@ -122,7 +122,7 @@ const lastUpdated = new Date().toLocaleDateString('en-US');
         <div class="border border-[--color-down]/30 rounded-lg p-6 bg-[--color-bg-card]">
           <div class="text-[--color-down] font-mono text-xs font-bold mb-3 flex items-center gap-2">
             <span class="inline-block w-2 h-2 rounded-full bg-[--color-down]"></span>
-            CASE STUDY #2
+            {t('problem.case2_label')}
           </div>
           <h3 class="font-bold text-lg mb-2">{t('problem.card2_title')}</h3>
           <p class="text-[--color-text-muted] text-sm leading-relaxed mb-3">{t('problem.card2_desc')}</p>
@@ -131,7 +131,7 @@ const lastUpdated = new Date().toLocaleDateString('en-US');
         <div class="border border-[--color-down]/30 rounded-lg p-6 bg-[--color-bg-card]">
           <div class="text-[--color-down] font-mono text-xs font-bold mb-3 flex items-center gap-2">
             <span class="inline-block w-2 h-2 rounded-full bg-[--color-down]"></span>
-            CASE STUDY #3
+            {t('problem.case3_label')}
           </div>
           <h3 class="font-bold text-lg mb-2">{t('problem.card3_title')}</h3>
           <p class="text-[--color-text-muted] text-sm leading-relaxed mb-3">{t('problem.card3_desc')}</p>
@@ -236,43 +236,43 @@ const lastUpdated = new Date().toLocaleDateString('en-US');
           </thead>
           <tbody>
             <tr class="border-b border-[--color-border]/50">
-              <td class="py-3 px-4">No-code strategy builder</td>
+              <td class="py-3 px-4">{t('compare_table.feat_nocode')}</td>
               <td class="py-3 px-4 text-center text-[--color-up] bg-[--color-accent]/5">&#10003;</td>
-              <td class="py-3 px-4 text-center text-[--color-down]">&#10007; Pine Script</td>
-              <td class="py-3 px-4 text-center text-[--color-down]">&#10007; Python/C#</td>
+              <td class="py-3 px-4 text-center text-[--color-down]">&#10007; {t('compare_table.tv_nocode')}</td>
+              <td class="py-3 px-4 text-center text-[--color-down]">&#10007; {t('compare_table.qc_nocode')}</td>
             </tr>
             <tr class="border-b border-[--color-border]/50">
-              <td class="py-3 px-4">500+ coins simultaneously</td>
+              <td class="py-3 px-4">{t('compare_table.feat_coins')}</td>
               <td class="py-3 px-4 text-center text-[--color-up] bg-[--color-accent]/5">&#10003;</td>
-              <td class="py-3 px-4 text-center text-[--color-down]">&#10007; 1 at a time</td>
-              <td class="py-3 px-4 text-center text-yellow-400">Limited</td>
+              <td class="py-3 px-4 text-center text-[--color-down]">&#10007; {t('compare_table.tv_coins')}</td>
+              <td class="py-3 px-4 text-center text-yellow-400">{t('compare_table.qc_coins')}</td>
             </tr>
             <tr class="border-b border-[--color-border]/50">
-              <td class="py-3 px-4">Publishes failures</td>
+              <td class="py-3 px-4">{t('compare_table.feat_failures')}</td>
               <td class="py-3 px-4 text-center text-[--color-up] bg-[--color-accent]/5">&#10003;</td>
               <td class="py-3 px-4 text-center text-[--color-down]">&#10007;</td>
               <td class="py-3 px-4 text-center text-[--color-down]">&#10007;</td>
             </tr>
             <tr class="border-b border-[--color-border]/50">
-              <td class="py-3 px-4">Real trading verification</td>
-              <td class="py-3 px-4 text-center text-[--color-up] bg-[--color-accent]/5">&#10003; Live</td>
+              <td class="py-3 px-4">{t('compare_table.feat_verification')}</td>
+              <td class="py-3 px-4 text-center text-[--color-up] bg-[--color-accent]/5">&#10003; {t('compare_table.pruviq_verification')}</td>
               <td class="py-3 px-4 text-center text-[--color-down]">&#10007;</td>
-              <td class="py-3 px-4 text-center text-yellow-400">Paper only</td>
+              <td class="py-3 px-4 text-center text-yellow-400">{t('compare_table.qc_verification')}</td>
             </tr>
             <tr class="border-b border-[--color-border]/50">
-              <td class="py-3 px-4">Realistic fees & slippage</td>
+              <td class="py-3 px-4">{t('compare_table.feat_fees')}</td>
               <td class="py-3 px-4 text-center text-[--color-up] bg-[--color-accent]/5">&#10003;</td>
-              <td class="py-3 px-4 text-center text-yellow-400">Basic</td>
+              <td class="py-3 px-4 text-center text-yellow-400">{t('compare_table.tv_fees')}</td>
               <td class="py-3 px-4 text-center text-[--color-up]">&#10003;</td>
             </tr>
             <tr class="border-b border-[--color-border]/50">
-              <td class="py-3 px-4">Free tier</td>
-              <td class="py-3 px-4 text-center text-[--color-up] bg-[--color-accent]/5">100% Free</td>
-              <td class="py-3 px-4 text-center text-yellow-400">$14.95/mo+</td>
-              <td class="py-3 px-4 text-center text-yellow-400">Limited</td>
+              <td class="py-3 px-4">{t('compare_table.feat_free')}</td>
+              <td class="py-3 px-4 text-center text-[--color-up] bg-[--color-accent]/5">{t('compare_table.pruviq_free')}</td>
+              <td class="py-3 px-4 text-center text-yellow-400">{t('compare_table.tv_free')}</td>
+              <td class="py-3 px-4 text-center text-yellow-400">{t('compare_table.qc_coins')}</td>
             </tr>
             <tr>
-              <td class="py-3 px-4">No account required</td>
+              <td class="py-3 px-4">{t('compare_table.feat_no_account')}</td>
               <td class="py-3 px-4 text-center text-[--color-up] bg-[--color-accent]/5">&#10003;</td>
               <td class="py-3 px-4 text-center text-[--color-down]">&#10007;</td>
               <td class="py-3 px-4 text-center text-[--color-down]">&#10007;</td>

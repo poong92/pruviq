@@ -44,19 +44,19 @@ const t = useTranslations('ko');
   <!-- BACKTEST RESULTS -->
   <section class="pb-12 border-t border-[--color-border] pt-8">
     <div class="max-w-5xl mx-auto px-4">
-      <h2 class="text-2xl font-bold mb-2">백테스트 결과</h2>
+      <h2 class="text-2xl font-bold mb-2">{t('perf.results_title')}</h2>
       <p class="text-[--color-text-muted] text-sm mb-6">
-        2년+, 549개 코인, 2,898건 거래. 0.08%/side 수수료 포함.
+        {t('perf.results_desc')}
       </p>
 
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card] text-center">
           <p class="font-mono text-3xl font-bold text-[--color-accent]">68.6%</p>
-          <p class="text-sm text-[--color-text-muted] mt-1">{t('strategy.win_rate')}</p>
+          <p class="text-sm text-[--color-text-muted] mt-1">{t('strategy.win_rate')}<span class="text-xs text-[--color-text-muted] ml-2">({t('perf.metric_excellent')})</span></p>
         </div>
         <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card] text-center">
           <p class="font-mono text-3xl font-bold text-[--color-accent]">2.22</p>
-          <p class="text-sm text-[--color-text-muted] mt-1">{t('strategy.profit_factor')}</p>
+          <p class="text-sm text-[--color-text-muted] mt-1">{t('strategy.profit_factor')}<span class="text-xs text-[--color-text-muted] ml-2">({t('perf.metric_excellent')})</span></p>
         </div>
         <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card] text-center">
           <p class="font-mono text-3xl font-bold text-[--color-green]">+$794</p>
@@ -124,9 +124,9 @@ const t = useTranslations('ko');
   <!-- KILLED STRATEGIES -->
   <section class="pb-12 border-t border-[--color-border] pt-8">
     <div class="max-w-5xl mx-auto px-4">
-      <h2 class="text-2xl font-bold mb-2">기각된 전략</h2>
+      <h2 class="text-2xl font-bold mb-2">{t('perf.killed_title')}</h2>
       <p class="text-[--color-text-muted] text-sm mb-6">
-        테스트 후 기각한 전략들. 실패도 성공만큼 중요하기에 공개합니다.
+        {t('perf.killed_desc')}
       </p>
 
       <div class="grid md:grid-cols-2 gap-4">
@@ -135,7 +135,7 @@ const t = useTranslations('ko');
             <span class="text-xs font-mono px-2 py-0.5 rounded bg-[--color-red]/10 text-[--color-text] border border-[--color-red]/20">{t('strategy.killed')}</span>
           </div>
           <h3 class="font-bold mb-2">BB Squeeze LONG</h3>
-          <p class="text-[--color-text-muted] text-xs mb-3">SHORT 전략의 미러. 크립토 시장의 구조적 비대칭성으로 실패.</p>
+          <p class="text-[--color-text-muted] text-xs mb-3">{t('perf.killed_bb_long')}</p>
           <div class="grid grid-cols-3 gap-2 text-sm">
             <div>
               <span class="text-[--color-text-muted] text-xs block">{t('strategy.win_rate')}</span>
@@ -157,7 +157,7 @@ const t = useTranslations('ko');
             <span class="text-xs font-mono px-2 py-0.5 rounded bg-[--color-red]/10 text-[--color-text] border border-[--color-red]/20">{t('strategy.killed')}</span>
           </div>
           <h3 class="font-bold mb-2">Momentum Breakout LONG</h3>
-          <p class="text-[--color-text-muted] text-xs mb-3">20봉 최고가 돌파 + 거래량 확인. 모든 시장 조건에서 치명적 손실.</p>
+          <p class="text-[--color-text-muted] text-xs mb-3">{t('perf.killed_momentum')}</p>
           <div class="grid grid-cols-3 gap-2 text-sm">
             <div>
               <span class="text-[--color-text-muted] text-xs block">{t('strategy.win_rate')}</span>
@@ -179,7 +179,7 @@ const t = useTranslations('ko');
             <span class="text-xs font-mono px-2 py-0.5 rounded bg-[--color-yellow]/10 text-[--color-yellow] border border-[--color-yellow]/20">88+ 변형</span>
           </div>
           <h3 class="font-bold mb-2">모든 LONG 전략</h3>
-          <p class="text-[--color-text-muted] text-xs mb-3">BB Squeeze LONG 18변형, PVD Mean Reversion 88조합, DUAL 모드. 전부 실패.</p>
+          <p class="text-[--color-text-muted] text-xs mb-3">{t('perf.killed_all_long')}</p>
           <div class="grid grid-cols-3 gap-2 text-sm">
             <div>
               <span class="text-[--color-text-muted] text-xs block">최고 PF</span>
@@ -201,7 +201,7 @@ const t = useTranslations('ko');
             <span class="text-xs font-mono px-2 py-0.5 rounded bg-[--color-yellow]/10 text-[--color-yellow] border border-[--color-yellow]/20">기각된 필터</span>
           </div>
           <h3 class="font-bold mb-2">BTC Regime 필터</h3>
-          <p class="text-[--color-text-muted] text-xs mb-3">6/6 전문가가 권장. 4가지 변형 백테스트 결과 전부 성과 악화. 데이터 > 직관.</p>
+          <p class="text-[--color-text-muted] text-xs mb-3">{t('perf.killed_btc_regime')}</p>
           <div class="grid grid-cols-3 gap-2 text-sm">
             <div>
               <span class="text-[--color-text-muted] text-xs block">전문가</span>
@@ -224,16 +224,24 @@ const t = useTranslations('ko');
   <!-- TRY IT YOURSELF -->
   <section class="pb-12 border-t border-[--color-border] pt-8">
     <div class="max-w-5xl mx-auto px-4 text-center">
-      <h2 class="text-2xl font-bold mb-3">직접 검증해보세요</h2>
+      <h2 class="text-2xl font-bold mb-3">{t('perf.verify_title')}</h2>
       <p class="text-[--color-text-muted] text-sm mb-6 max-w-lg mx-auto">
-        저희 말을 믿지 마세요. 전략 시뮬레이터로 SL/TP를 조절하며 결과를 실시간으로 확인하세요.
+        {t('perf.verify_desc')}
       </p>
       <div class="flex flex-col sm:flex-row gap-4 justify-center">
         <a href="/ko/simulate" class="inline-block bg-[--color-accent] text-[--color-bg] px-6 py-2.5 rounded font-semibold text-sm hover:bg-[--color-accent-dim]">
-          전략 시뮬레이터 열기 &rarr;
+          {t('perf.verify_cta')} &rarr;
         </a>
         <a href="/ko/methodology" class="inline-block border border-[--color-border] text-[--color-text] px-6 py-2.5 rounded font-semibold text-sm hover:border-[--color-accent] transition-colors">
-          검증 방법론
+          {t('perf.methodology_cta')}
+        </a>
+      </div>
+      <div class="flex flex-wrap gap-3 mt-6">
+        <a href="/ko/strategies" class="inline-block border border-[--color-border] px-5 py-2 rounded font-semibold text-sm hover:border-[--color-accent] transition-colors no-underline">
+          {t('perf.strategies_cta')} &rarr;
+        </a>
+        <a href="/ko/fees" class="inline-block border border-[--color-border] px-5 py-2 rounded font-semibold text-sm hover:border-[--color-accent] transition-colors no-underline">
+          {t('perf.fees_cta')} &rarr;
         </a>
       </div>
     </div>
