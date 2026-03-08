@@ -2112,29 +2112,39 @@ async def run_backtest(req: BacktestRequest):
     except Exception:
         pass
 
-    # --- Strategy grade ---
+    # --- Strategy grade (6 dimensions, max 14 points) ---
     pf = round(gross_profit / gross_loss, 2) if gross_loss > 0 else 0
     wr = round(len(wins) / len(all_trades) * 100, 2) if all_trades else 0
     mdd = round(max_dd, 2)
     grade_score = 0
+    # PF (0-3)
     if pf >= 2.0: grade_score += 3
     elif pf >= 1.5: grade_score += 2
     elif pf >= 1.0: grade_score += 1
+    # WR (0-3)
     if wr >= 60: grade_score += 3
     elif wr >= 50: grade_score += 2
     elif wr >= 40: grade_score += 1
+    # MDD (0-2)
     if mdd < 20: grade_score += 2
     elif mdd < 40: grade_score += 1
+    # RF (0-2)
     if recovery_factor >= 3: grade_score += 2
     elif recovery_factor >= 1.5: grade_score += 1
+    # Sharpe (0-2)
+    if bt_sharpe >= 2.0: grade_score += 2
+    elif bt_sharpe >= 1.0: grade_score += 1
+    # Expectancy (0-2)
+    if expectancy >= 0.5: grade_score += 2
+    elif expectancy > 0: grade_score += 1
 
-    if grade_score >= 9: strategy_grade = "A"
-    elif grade_score >= 7: strategy_grade = "B"
-    elif grade_score >= 5: strategy_grade = "C"
+    if grade_score >= 12: strategy_grade = "A"
+    elif grade_score >= 9: strategy_grade = "B"
+    elif grade_score >= 6: strategy_grade = "C"
     elif grade_score >= 3: strategy_grade = "D"
     else: strategy_grade = "F"
 
-    grade_details = f"PF={pf}, WR={wr}%, MDD={mdd}%, RF={recovery_factor}"
+    grade_details = f"PF={pf} WR={wr}% MDD={mdd}% RF={recovery_factor} Sharpe={bt_sharpe} E={expectancy}"
 
     # --- Warnings ---
     warnings = []
