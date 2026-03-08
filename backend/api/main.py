@@ -266,13 +266,10 @@ def check_rate_limit(client_ip: str) -> bool:
     """Simple in-memory rate limiter."""
     now = time.time()
     if client_ip not in rate_limits:
-        rate_limits[client_ip] = []
+        rate_limits[client_ip] = [now]
+        return True
 
     rate_limits[client_ip] = [t for t in rate_limits[client_ip] if now - t < 60]
-
-    if not rate_limits[client_ip]:
-        del rate_limits[client_ip]
-        return True
 
     if len(rate_limits[client_ip]) >= RATE_LIMIT_PER_MIN:
         return False
