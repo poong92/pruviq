@@ -84,6 +84,12 @@ export interface BacktestResult {
   positions_skipped?: number;
   pnl_distribution?: number[];
   pnl_buckets?: string[];
+  // 9.5 phase 4 — overfitting detection + alpha
+  deflated_sharpe?: number;
+  dsr_haircut_pct?: number;
+  mc_p_value?: number;
+  mc_percentile?: number;
+  jensens_alpha?: number;
 }
 
 export interface PresetItem {

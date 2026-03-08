@@ -409,9 +409,18 @@ class BacktestResponse(BaseModel):
     # Warnings
     warnings: List[str] = []
 
-    # Walk-forward consistency (OOS/IS metric ratio, ideal=1.0)
+    # Walk-forward consistency (rolling 5-window, ideal=1.0)
     walk_forward_consistency: float = 0.0
     walk_forward_details: str = ""
+
+    # Overfitting detection
+    deflated_sharpe: float = 0.0       # DSR (Deflated Sharpe Ratio)
+    dsr_haircut_pct: float = 0.0       # How much Sharpe is inflated (%)
+    mc_p_value: float = 1.0            # Monte Carlo permutation p-value
+    mc_percentile: float = 50.0        # Strategy percentile vs random shuffle
+
+    # Risk-adjusted alpha
+    jensens_alpha: float = 0.0         # Excess return vs benchmark (risk-adjusted)
 
     # Trade duration stats
     avg_bars_held: float = 0.0

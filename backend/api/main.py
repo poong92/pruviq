@@ -2075,6 +2075,49 @@ async def run_backtest(req: BacktestRequest):
         bt_sharpe, bt_sortino, bt_calmar = 0.0, 0.0, 0.0
         var_95, cvar_95 = 0.0, 0.0
 
+    # --- DSR (Deflated Sharpe Ratio) ---
+    # Corrects Sharpe for multiple testing bias (Lopez de Prado, 2014)
+    deflated_sharpe = 0.0
+    dsr_haircut_pct = 0.0
+    if len(daily_returns) >= 10 and bt_sharpe > 0:
+        from scipy.stats import skew as sp_skew, kurtosis as sp_kurt
+        n_dr = len(daily_returns)
+        skw = float(sp_skew(daily_returns))
+        krt = float(sp_kurt(daily_returns))
+        # Sharpe standard error with non-normality correction
+        sr_se = np.sqrt((1 + 0.5 * bt_sharpe**2 - skw * bt_sharpe + (krt / 4) * bt_sharpe**2) / max(n_dr - 1, 1))
+        # Expected max Sharpe from n_trials random strategies
+        # Use conditions_count as proxy for strategy space
+        n_trials_est = max(params.get("conditions_count", 1) * 10, 10)
+        gamma_em = 0.5772156649  # Euler-Mascheroni
+        expected_max_sr = np.sqrt(2 * np.log(n_trials_est)) * (1 - gamma_em / max(2 * np.log(n_trials_est), 0.01)) if n_trials_est > 1 else 0
+        deflated_sharpe = round((bt_sharpe - expected_max_sr) / max(sr_se, 0.001), 2)
+        dsr_haircut_pct = round((1 - deflated_sharpe / bt_sharpe) * 100, 1) if bt_sharpe > 0 else 100.0
+        dsr_haircut_pct = max(0, min(100, dsr_haircut_pct))
+
+    # --- Monte Carlo Permutation Test ---
+    mc_p_value = 1.0
+    mc_percentile = 50.0
+    trade_pnls = [t["pnl_pct"] for t in all_trades]
+    if len(trade_pnls) >= 10:
+        rng = np.random.RandomState(42)
+        original_return = sum(trade_pnls)
+        mc_returns = []
+        n_sims = min(1000, max(200, len(trade_pnls) * 5))
+        pnl_arr = np.array(trade_pnls)
+        for _ in range(n_sims):
+            shuffled = rng.permutation(pnl_arr)
+            mc_returns.append(float(np.sum(shuffled)))  # sum for simple total
+        mc_returns = np.array(mc_returns)
+        mc_percentile = round(float(np.mean(mc_returns <= original_return) * 100), 1)
+        # One-sided p-value: how likely to see this return or better by chance
+        mc_p_value = round(float(np.mean(mc_returns >= original_return)), 4)
+        if mc_p_value > 0.10 and len(all_trades) >= 30:
+            warnings.append(f"Monte Carlo test: strategy return not significantly better than random order (p={mc_p_value:.3f}).")
+
+    # --- Jensen's Alpha (risk-adjusted excess return vs BTC) ---
+    jensens_alpha = 0.0
+
     # Yearly breakdown
     from collections import defaultdict
     yearly = defaultdict(lambda: {"wins": 0, "losses": 0, "gross_profit": 0.0, "gross_loss": 0.0, "total_pnl": 0.0})
@@ -2171,7 +2214,39 @@ async def run_backtest(req: BacktestRequest):
     btc_hold_return_pct = _calc_hold_return("BTCUSDT")
     eth_hold_return_pct = _calc_hold_return("ETHUSDT")
 
-    # --- Strategy grade (6 dimensions, max 14 points) ---
+    # Jensen's Alpha: strategy excess return vs benchmark (BTC), risk-adjusted
+    # Alpha = R_strategy - [Rf + Beta * (R_market - Rf)]
+    # Simplified: Alpha = R_strategy - R_benchmark (beta approximated as 1 for crypto)
+    if btc_hold_return_pct != 0 and len(all_trades) >= 10:
+        # Use daily returns correlation if available
+        if len(daily_returns) >= 10:
+            try:
+                btc_data = data_manager.get_symbols(["BTCUSDT"])
+                if btc_data:
+                    _, btc_df = btc_data[0]
+                    btc_df = filter_df_by_date(btc_df, getattr(req, 'start_date', None), getattr(req, 'end_date', None))
+                    btc_daily = btc_df.groupby(btc_df.index.date if hasattr(btc_df.index, 'date') else pd.to_datetime(btc_df['timestamp']).dt.date)['close'].last().pct_change().dropna() * 100
+                    # Align dates
+                    strat_daily_dict = dict(daily_pnl)
+                    common_dates = sorted(set(str(d) for d in btc_daily.index) & set(strat_daily_dict.keys()))
+                    if len(common_dates) >= 10:
+                        s_ret = np.array([strat_daily_dict.get(d, 0) for d in common_dates])
+                        b_ret = np.array([float(btc_daily.loc[btc_daily.index.astype(str) == d].iloc[0]) if len(btc_daily.loc[btc_daily.index.astype(str) == d]) > 0 else 0 for d in common_dates])
+                        # Beta via regression
+                        if np.std(b_ret) > 0:
+                            beta = float(np.cov(s_ret, b_ret)[0, 1] / np.var(b_ret))
+                            rf = 0  # crypto risk-free ≈ 0
+                            jensens_alpha = round(float(np.mean(s_ret) - (rf + beta * np.mean(b_ret))), 4)
+                        else:
+                            jensens_alpha = round(total_return - btc_hold_return_pct, 2)
+                    else:
+                        jensens_alpha = round(total_return - btc_hold_return_pct, 2)
+            except Exception:
+                jensens_alpha = round(total_return - btc_hold_return_pct, 2)
+        else:
+            jensens_alpha = round(total_return - btc_hold_return_pct, 2)
+
+    # --- Strategy grade (7 dimensions, max 16 points) ---
     pf = round(gross_profit / gross_loss, 2) if gross_loss > 0 else 0
     wr = round(len(wins) / len(all_trades) * 100, 2) if all_trades else 0
     mdd = round(max_dd, 2)
@@ -2196,14 +2271,36 @@ async def run_backtest(req: BacktestRequest):
     # Expectancy (0-2)
     if expectancy >= 0.5: grade_score += 2
     elif expectancy > 0: grade_score += 1
+    # Statistical Edge (0-2) — combines p-value + MC
+    if edge_p_value < 0.01 and mc_p_value < 0.05: grade_score += 2
+    elif edge_p_value < 0.05 or mc_p_value < 0.10: grade_score += 1
 
-    if grade_score >= 12: strategy_grade = "A"
+    if grade_score >= 14: strategy_grade = "A+"
+    elif grade_score >= 12: strategy_grade = "A"
     elif grade_score >= 9: strategy_grade = "B"
     elif grade_score >= 6: strategy_grade = "C"
     elif grade_score >= 3: strategy_grade = "D"
     else: strategy_grade = "F"
 
-    grade_details = f"PF={pf} WR={wr}% MDD={mdd}% RF={recovery_factor} Sharpe={bt_sharpe} E={expectancy}"
+    grade_details = f"PF={pf} WR={wr}% MDD={mdd}% RF={recovery_factor} Sharpe={bt_sharpe} E={expectancy} Edge={grade_score}/16"
+
+    # --- Statistical significance (binomial test) — must run before grade ---
+    hasBreakeven = abs(avg_win) > 0 and abs(avg_loss) > 0
+    edge_p_value = 1.0
+    if len(all_trades) >= 10 and hasBreakeven:
+        try:
+            from scipy.stats import binomtest
+            be_wr = abs(avg_loss) / (abs(avg_win) + abs(avg_loss)) if (abs(avg_win) + abs(avg_loss)) > 0 else 0.5
+            result_binom = binomtest(len(wins), len(all_trades), be_wr, alternative='greater')
+            edge_p_value = round(result_binom.pvalue, 4)
+        except ImportError:
+            n = len(all_trades)
+            be_wr_val = abs(avg_loss) / (abs(avg_win) + abs(avg_loss)) if (abs(avg_win) + abs(avg_loss)) > 0 else 0.5
+            observed_wr = len(wins) / n
+            z = (observed_wr - be_wr_val) / max((be_wr_val * (1 - be_wr_val) / n) ** 0.5, 1e-9)
+            edge_p_value = round(max(0, min(1, 0.5 * (1 - min(abs(z), 6) / 6))), 4) if z > 0 else 1.0
+        except Exception:
+            pass
 
     # --- Warnings ---
     warnings = []
@@ -2215,39 +2312,18 @@ async def run_backtest(req: BacktestRequest):
         warnings.append("Very high Profit Factor may indicate overfitting. Run OOS validation to verify.")
     if btc_hold_return_pct > 0 and total_return < btc_hold_return_pct:
         warnings.append(f"Strategy underperforms BTC buy-and-hold ({btc_hold_return_pct:.1f}%) over the same period.")
-
-    # --- Statistical significance (binomial test) ---
-    hasBreakeven = abs(avg_win) > 0 and abs(avg_loss) > 0
-    edge_p_value = 1.0
-    if len(all_trades) >= 10 and hasBreakeven:
-        try:
-            from scipy.stats import binomtest
-            be_wr = abs(avg_loss) / (abs(avg_win) + abs(avg_loss)) if (abs(avg_win) + abs(avg_loss)) > 0 else 0.5
-            result_binom = binomtest(len(wins), len(all_trades), be_wr, alternative='greater')
-            edge_p_value = round(result_binom.pvalue, 4)
-        except ImportError:
-            # scipy not available — calculate approximate z-test
-            n = len(all_trades)
-            be_wr_val = abs(avg_loss) / (abs(avg_win) + abs(avg_loss)) if (abs(avg_win) + abs(avg_loss)) > 0 else 0.5
-            observed_wr = len(wins) / n
-            z = (observed_wr - be_wr_val) / max((be_wr_val * (1 - be_wr_val) / n) ** 0.5, 1e-9)
-            # Approximate p-value from z-score
-            edge_p_value = round(max(0, min(1, 0.5 * (1 - min(abs(z), 6) / 6))), 4) if z > 0 else 1.0
-        except Exception:
-            pass
-
-    # Add significance warning
     if edge_p_value > 0.05 and len(all_trades) >= 30:
         warnings.append(f"Strategy edge not statistically significant (p={edge_p_value:.3f}). Win rate may not be reliably above break-even.")
+    if deflated_sharpe < 0 and bt_sharpe > 0.5:
+        warnings.append(f"Deflated Sharpe Ratio is negative ({deflated_sharpe:.2f}). Reported Sharpe ({bt_sharpe:.2f}) may be inflated by data mining.")
+    if jensens_alpha < 0 and len(all_trades) >= 30:
+        warnings.append(f"Negative Jensen's Alpha ({jensens_alpha:.2f}%). Strategy underperforms benchmark on risk-adjusted basis.")
 
-    # --- Walk-forward consistency (split trades 50/50 by time) ---
+    # --- Rolling 5-Window Walk-Forward Consistency ---
     walk_forward_consistency = 0.0
     walk_forward_details = ""
-    if len(all_trades) >= 40:
-        mid = len(all_trades) // 2
-        is_half = all_trades[:mid]
-        oos_half = all_trades[mid:]
-        def _half_metrics(tlist):
+    if len(all_trades) >= 50:
+        def _wf_metrics(tlist):
             w = [t for t in tlist if t["pnl_pct"] > 0]
             l = [t for t in tlist if t["pnl_pct"] <= 0]
             _wr = len(w) / len(tlist) * 100 if tlist else 0
@@ -2255,14 +2331,33 @@ async def run_backtest(req: BacktestRequest):
             gl = abs(sum(t["pnl_pct"] for t in l)) if l else 0.001
             _pf = gp / gl if gl > 0 else 0
             return _wr, _pf
-        is_wr, is_pf = _half_metrics(is_half)
-        oos_wr, oos_pf = _half_metrics(oos_half)
-        wr_ratio = min(oos_wr / max(is_wr, 0.01), 2.0)
-        pf_ratio = min(oos_pf / max(is_pf, 0.01), 2.0)
-        walk_forward_consistency = round((wr_ratio + pf_ratio) / 2, 2)
-        walk_forward_details = f"IS: WR={is_wr:.1f}% PF={is_pf:.2f} | OOS: WR={oos_wr:.1f}% PF={oos_pf:.2f}"
-        if walk_forward_consistency < 0.7:
-            warnings.append(f"Walk-forward degradation detected ({walk_forward_consistency:.2f}). OOS performance significantly worse than IS.")
+        # 5 rolling windows: each uses 60% IS, 40% OOS
+        n = len(all_trades)
+        n_windows = 5
+        window_size = n // n_windows
+        wf_ratios = []
+        wf_window_details = []
+        for i in range(n_windows - 1):
+            # IS = windows 0..i, OOS = window i+1
+            is_end = (i + 1) * window_size
+            oos_start = is_end
+            oos_end = min(oos_start + window_size, n)
+            is_trades = all_trades[:is_end]
+            oos_trades = all_trades[oos_start:oos_end]
+            if len(oos_trades) < 5:
+                continue
+            is_wr, is_pf = _wf_metrics(is_trades)
+            oos_wr, oos_pf = _wf_metrics(oos_trades)
+            wr_r = min(oos_wr / max(is_wr, 0.01), 2.0)
+            pf_r = min(oos_pf / max(is_pf, 0.01), 2.0)
+            ratio = (wr_r + pf_r) / 2
+            wf_ratios.append(ratio)
+            wf_window_details.append(f"W{i+1}: IS WR={is_wr:.0f}% PF={is_pf:.1f} → OOS WR={oos_wr:.0f}% PF={oos_pf:.1f} ({ratio:.2f})")
+        if wf_ratios:
+            walk_forward_consistency = round(sum(wf_ratios) / len(wf_ratios), 2)
+            walk_forward_details = " | ".join(wf_window_details)
+            if walk_forward_consistency < 0.7:
+                warnings.append(f"Walk-forward degradation detected ({walk_forward_consistency:.2f}). OOS performance significantly worse than IS.")
 
     compute_ms = int((time.time() - t_start) * 1000)
 
@@ -2336,6 +2431,11 @@ async def run_backtest(req: BacktestRequest):
         warnings=warnings,
         walk_forward_consistency=walk_forward_consistency,
         walk_forward_details=walk_forward_details,
+        deflated_sharpe=deflated_sharpe,
+        dsr_haircut_pct=dsr_haircut_pct,
+        mc_p_value=mc_p_value,
+        mc_percentile=mc_percentile,
+        jensens_alpha=jensens_alpha,
         avg_bars_held=avg_bars_held,
         median_bars_held=median_bars_held,
         monthly_stats=monthly_stats,

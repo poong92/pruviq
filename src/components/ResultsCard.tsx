@@ -41,6 +41,11 @@ interface ResultsData {
   walk_forward_details?: string;
   avg_bars_held?: number;
   median_bars_held?: number;
+  deflated_sharpe?: number;
+  dsr_haircut_pct?: number;
+  mc_p_value?: number;
+  mc_percentile?: number;
+  jensens_alpha?: number;
 }
 
 interface ResultsCardProps {
@@ -426,6 +431,40 @@ export default function ResultsCard({ data, isDefault, lang = 'en', isDemo = fal
             color="var(--color-red)"
             description={lang === 'ko' ? '꼬리 리스크 평균 (VaR 초과 시 평균 손실)' : 'Expected Shortfall (avg loss beyond VaR)'}
           />
+        </div>
+      )}
+
+      {/* Overfitting Detection: DSR, Monte Carlo, Jensen's Alpha */}
+      {(data.deflated_sharpe !== undefined && data.deflated_sharpe !== 0) && (
+        <div class="mb-3 px-3 py-2.5 rounded-lg bg-[--color-bg-tooltip] border border-[--color-border]">
+          <div class="font-mono text-[10px] text-[--color-text-muted] uppercase mb-2">
+            {lang === 'ko' ? '과적합 탐지' : 'Overfitting Detection'}
+          </div>
+          <div class="grid grid-cols-2 gap-2 mb-2">
+            <MetricBox
+              label={lang === 'ko' ? '보정 샤프' : 'Deflated Sharpe'}
+              value={`${data.deflated_sharpe.toFixed(2)}`}
+              color={data.deflated_sharpe > 1 ? 'var(--color-green)' : data.deflated_sharpe > 0 ? 'var(--color-accent)' : 'var(--color-red)'}
+              description={lang === 'ko' ? `다중 테스트 보정 후 Sharpe (Haircut ${(data.dsr_haircut_pct ?? 0).toFixed(0)}%)` : `Sharpe after multi-test correction (Haircut ${(data.dsr_haircut_pct ?? 0).toFixed(0)}%)`}
+            />
+            <MetricBox
+              label={lang === 'ko' ? 'MC 검증' : 'Monte Carlo'}
+              value={`p=${(data.mc_p_value ?? 1).toFixed(3)}`}
+              color={(data.mc_p_value ?? 1) < 0.05 ? 'var(--color-green)' : (data.mc_p_value ?? 1) < 0.10 ? 'var(--color-accent)' : 'var(--color-red)'}
+              description={lang === 'ko' ? `상위 ${(100 - (data.mc_percentile ?? 50)).toFixed(0)}% (랜덤 셔플 대비)` : `Top ${(100 - (data.mc_percentile ?? 50)).toFixed(0)}% vs random shuffle`}
+            />
+          </div>
+          {data.jensens_alpha !== undefined && data.jensens_alpha !== 0 && (
+            <div class="flex items-center gap-2 font-mono text-xs">
+              <span class="text-[--color-text-muted]">{lang === 'ko' ? '젠센 알파' : "Jensen's α"}:</span>
+              <span style={{ color: data.jensens_alpha > 0 ? 'var(--color-green)' : 'var(--color-red)' }} class="font-bold">
+                {data.jensens_alpha > 0 ? '+' : ''}{data.jensens_alpha.toFixed(2)}%
+              </span>
+              <span class="text-[9px] text-[--color-text-muted]">
+                {lang === 'ko' ? '(BTC 대비 리스크 조정 초과수익)' : '(risk-adjusted excess vs BTC)'}
+              </span>
+            </div>
+          )}
         </div>
       )}
 
