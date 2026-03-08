@@ -283,7 +283,7 @@ def run_fast(
     tp_pct: float = 0.08,
     max_bars: int = 48,
     fee_pct: float = 0.0008,
-    slippage_pct: float = 0.0,
+    slippage_pct: float = 0.0002,
     direction: str = "short",
     market_type: str = "futures",
     strategy_id: str = None,

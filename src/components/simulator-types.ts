@@ -58,6 +58,14 @@ export interface BacktestResult {
   total_return_usd?: number;
   total_return_pct_portfolio?: number;
   max_drawdown_usd?: number;
+  // 9.5 upgrade fields
+  expectancy?: number;
+  recovery_factor?: number;
+  payoff_ratio?: number;
+  btc_hold_return_pct?: number;
+  strategy_grade?: string;
+  grade_details?: string;
+  warnings?: string[];
 }
 
 export interface PresetItem {

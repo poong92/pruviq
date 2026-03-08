@@ -2050,6 +2050,63 @@ async def run_backtest(req: BacktestRequest):
         ))
 
     total_funding = sum(t.get('funding_pct', 0) for t in all_trades)
+
+    # --- Additional risk metrics ---
+    win_rate_dec = len(wins) / len(all_trades) if all_trades else 0
+    expectancy = round(win_rate_dec * avg_win + (1 - win_rate_dec) * avg_loss, 4)
+    recovery_factor = round(total_return / max_dd, 2) if max_dd > 0 else 0.0
+    payoff_ratio = round(abs(avg_win / avg_loss), 2) if avg_loss != 0 else 0.0
+
+    # --- BTC Hold benchmark ---
+    btc_hold_return_pct = 0.0
+    try:
+        btc_data = data_manager.get_symbols(["BTCUSDT"])
+        if btc_data:
+            btc_sym, btc_df = btc_data[0]
+            btc_df = filter_df_by_date(btc_df, getattr(req, 'start_date', None), getattr(req, 'end_date', None))
+            if len(btc_df) >= 2:
+                btc_start = float(btc_df.iloc[0]["close"])
+                btc_end = float(btc_df.iloc[-1]["close"])
+                if btc_start > 0:
+                    btc_hold_return_pct = round((btc_end - btc_start) / btc_start * 100, 2)
+    except Exception:
+        pass
+
+    # --- Strategy grade ---
+    pf = round(gross_profit / gross_loss, 2) if gross_loss > 0 else 0
+    wr = round(len(wins) / len(all_trades) * 100, 2) if all_trades else 0
+    mdd = round(max_dd, 2)
+    grade_score = 0
+    if pf >= 2.0: grade_score += 3
+    elif pf >= 1.5: grade_score += 2
+    elif pf >= 1.0: grade_score += 1
+    if wr >= 60: grade_score += 3
+    elif wr >= 50: grade_score += 2
+    elif wr >= 40: grade_score += 1
+    if mdd < 20: grade_score += 2
+    elif mdd < 40: grade_score += 1
+    if recovery_factor >= 3: grade_score += 2
+    elif recovery_factor >= 1.5: grade_score += 1
+
+    if grade_score >= 9: strategy_grade = "A"
+    elif grade_score >= 7: strategy_grade = "B"
+    elif grade_score >= 5: strategy_grade = "C"
+    elif grade_score >= 3: strategy_grade = "D"
+    else: strategy_grade = "F"
+
+    grade_details = f"PF={pf}, WR={wr}%, MDD={mdd}%, RF={recovery_factor}"
+
+    # --- Warnings ---
+    warnings = []
+    if mdd > 20:
+        warnings.append(f"High drawdown: {mdd:.1f}%. With {leverage_val}x leverage, real capital loss could reach {mdd * leverage_val / 100 * 100:.0f}%.")
+    if len(all_trades) < 30:
+        warnings.append(f"Low sample size: {len(all_trades)} trades. Results may not be statistically reliable.")
+    if pf > 3.0 and len(all_trades) > 50:
+        warnings.append("Very high Profit Factor may indicate overfitting. Run OOS validation to verify.")
+    if btc_hold_return_pct > 0 and total_return < btc_hold_return_pct:
+        warnings.append(f"Strategy underperforms BTC buy-and-hold ({btc_hold_return_pct:.1f}%) over the same period.")
+
     compute_ms = int((time.time() - t_start) * 1000)
 
     # Build trade items for response (cap at 500)
@@ -2109,6 +2166,13 @@ async def run_backtest(req: BacktestRequest):
         max_drawdown_usd=round(max_dd_usd, 2),
         yearly_stats=yearly_stats,
         compute_time_ms=compute_ms,
+        expectancy=expectancy,
+        recovery_factor=recovery_factor,
+        payoff_ratio=payoff_ratio,
+        btc_hold_return_pct=btc_hold_return_pct,
+        strategy_grade=strategy_grade,
+        grade_details=grade_details,
+        warnings=warnings,
     )
 
     # Cache the result

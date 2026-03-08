@@ -375,6 +375,21 @@ class BacktestResponse(BaseModel):
     total_return_pct_portfolio: float = 0.0
     max_drawdown_usd: float = 0.0
 
+    # Additional risk metrics
+    expectancy: float = 0.0            # WR * avg_win + (1-WR) * avg_loss
+    recovery_factor: float = 0.0       # total_return / max_drawdown
+    payoff_ratio: float = 0.0          # avg_win / abs(avg_loss)
+
+    # Benchmark comparison
+    btc_hold_return_pct: float = 0.0   # BTC buy-and-hold return over same period
+
+    # Strategy grade (A/B/C/D/F)
+    strategy_grade: str = ""
+    grade_details: str = ""
+
+    # Warnings
+    warnings: List[str] = []
+
     # Validation info
     is_valid: bool
     validation_errors: List[str] = []

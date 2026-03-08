@@ -25,6 +25,14 @@ interface ResultsData {
   total_return_pct_portfolio?: number;
   max_drawdown_usd?: number;
   direction?: string;
+  // 9.5 upgrade fields
+  expectancy?: number;
+  recovery_factor?: number;
+  payoff_ratio?: number;
+  btc_hold_return_pct?: number;
+  strategy_grade?: string;
+  grade_details?: string;
+  warnings?: string[];
 }
 
 interface ResultsCardProps {
@@ -62,6 +70,11 @@ const labels = {
     totalPnlUsd: 'Total PnL',
     portfolioReturn: 'Portfolio Return',
     maxDdUsd: 'Max DD',
+    expectancy: 'Expectancy',
+    recoveryFactor: 'Recovery Factor',
+    payoffRatio: 'Payoff Ratio',
+    btcBenchmark: 'vs BTC Hold',
+    advancedMetrics: 'Advanced Metrics',
   },
   ko: {
     live: '현재 라이브 설정',
@@ -90,6 +103,11 @@ const labels = {
     totalPnlUsd: '총 손익',
     portfolioReturn: '포트폴리오 수익률',
     maxDdUsd: '최대 낙폭',
+    expectancy: '기대값',
+    recoveryFactor: '회복 팩터',
+    payoffRatio: '보상 비율',
+    btcBenchmark: 'BTC 보유 대비',
+    advancedMetrics: '고급 지표',
   },
 };
 
@@ -117,6 +135,9 @@ const metricDescriptions = {
     calmar: 'Annual return divided by max drawdown. > 1.0 is good, > 3.0 is excellent',
     breakeven: 'Minimum win rate needed to break even, given the average win/loss sizes',
     margin: 'How far above the break-even win rate the actual win rate is',
+    expectancy: 'Expected profit per trade (WR × AvgWin + (1-WR) × AvgLoss). Positive = edge exists',
+    recoveryFactor: 'Total return / max drawdown. > 3.0 is excellent, > 1.5 is acceptable',
+    payoffRatio: 'Average win / average loss. > 1.0 means wins are bigger than losses',
   },
   ko: {
     winRate: '수익을 낸 거래의 비율',
@@ -132,6 +153,9 @@ const metricDescriptions = {
     calmar: '연간 수익률 / 최대 드로다운. > 1.0 양호, > 3.0 우수',
     breakeven: '평균 손익 규모 기준 손익분기에 필요한 최소 승률',
     margin: '실제 승률이 손익분기 승률보다 얼마나 높은지',
+    expectancy: '거래당 기대 수익 (승률 × 평균수익 + (1-승률) × 평균손실). 양수 = 우위 존재',
+    recoveryFactor: '총 수익 / 최대 드로다운. > 3.0 우수, > 1.5 양호',
+    payoffRatio: '평균 수익 / 평균 손실. > 1.0이면 수익이 손실보다 큼',
   },
 } as const;
 
@@ -190,12 +214,53 @@ export default function ResultsCard({ data, isDefault, lang = 'en', isDemo = fal
         </div>
       )}
 
+      {/* Strategy Grade */}
+      {data.strategy_grade && (
+        <div class="mb-3 flex items-center gap-2">
+          <span class={`inline-flex items-center justify-center w-8 h-8 rounded-lg font-mono text-lg font-black border-2 ${
+            data.strategy_grade === 'A' ? 'text-[--color-green] border-[--color-green]/40 bg-[--color-green]/10' :
+            data.strategy_grade === 'B' ? 'text-[--color-accent] border-[--color-accent]/40 bg-[--color-accent]/10' :
+            data.strategy_grade === 'C' ? 'text-[--color-yellow] border-[--color-yellow]/40 bg-[--color-yellow]/10' :
+            'text-[--color-red] border-[--color-red]/40 bg-[--color-red]/10'
+          }`}>
+            {data.strategy_grade}
+          </span>
+          {data.grade_details && (
+            <span class="font-mono text-[10px] text-[--color-text-muted]">{data.grade_details}</span>
+          )}
+        </div>
+      )}
+
+      {/* Warnings */}
+      {data.warnings && data.warnings.length > 0 && (
+        <div class="mb-3 space-y-1">
+          {data.warnings.map((w, i) => (
+            <div key={i} class="px-3 py-2 rounded-lg bg-[--color-yellow]/8 border border-[--color-yellow]/20 font-mono text-[11px] text-[--color-yellow]">
+              {w}
+            </div>
+          ))}
+        </div>
+      )}
+
       <div class="grid grid-cols-2 gap-2 mb-3">
         <MetricBox label={t.winRate} value={`${data.win_rate}%`} color={wrColor} description={desc.winRate} />
         <MetricBox label={t.pf} value={`${data.profit_factor}`} color={pfColor} description={desc.pf} />
         <MetricBox label={t.totalReturn} value={`${data.total_return_pct > 0 ? '+' : ''}${data.total_return_pct}%`} color={retColor} description={desc.totalReturn} />
         <MetricBox label={t.maxDD} value={`${data.max_drawdown_pct}%`} color="var(--color-red)" description={desc.maxDD} />
       </div>
+
+      {/* BTC Benchmark */}
+      {data.btc_hold_return_pct !== undefined && data.btc_hold_return_pct !== 0 && (
+        <div class="mb-3 px-3 py-2 rounded-lg bg-[--color-bg-tooltip] border border-[--color-border] flex items-center justify-between">
+          <span class="font-mono text-[10px] text-[--color-text-muted] uppercase">{t.btcBenchmark}</span>
+          <div class="flex items-center gap-3 font-mono text-xs">
+            <span class="text-[--color-text-muted]">BTC: <span style={{ color: signColor(data.btc_hold_return_pct) }}>{data.btc_hold_return_pct > 0 ? '+' : ''}{data.btc_hold_return_pct.toFixed(1)}%</span></span>
+            <span style={{ color: (data.total_return_pct - data.btc_hold_return_pct) >= 0 ? 'var(--color-green)' : 'var(--color-red)' }} class="font-bold">
+              {(data.total_return_pct - data.btc_hold_return_pct) >= 0 ? '+' : ''}{(data.total_return_pct - data.btc_hold_return_pct).toFixed(1)}%p {(data.total_return_pct - data.btc_hold_return_pct) >= 0 ? (lang === 'ko' ? '초과' : 'alpha') : (lang === 'ko' ? '부족' : 'underperform')}
+            </span>
+          </div>
+        </div>
+      )}
 
       {/* Portfolio metrics (USD) */}
       {data.initial_capital_usd != null && data.initial_capital_usd > 0 && (
@@ -288,6 +353,30 @@ export default function ResultsCard({ data, isDefault, lang = 'en', isDemo = fal
             value={`${(data.calmar_ratio ?? 0).toFixed(2)}`}
             color={(data.calmar_ratio ?? 0) > 1 ? 'var(--color-accent)' : 'var(--color-text-muted)'}
             description={desc.calmar}
+          />
+        </div>
+      )}
+
+      {/* Advanced metrics: Expectancy, Recovery Factor, Payoff Ratio */}
+      {(data.expectancy !== undefined && data.expectancy !== 0) && (
+        <div class="grid grid-cols-3 gap-2 mb-3">
+          <MetricBox
+            label={t.expectancy}
+            value={`${data.expectancy > 0 ? '+' : ''}${data.expectancy.toFixed(3)}%`}
+            color={data.expectancy > 0 ? 'var(--color-accent)' : 'var(--color-red)'}
+            description={desc.expectancy}
+          />
+          <MetricBox
+            label={t.recoveryFactor}
+            value={`${(data.recovery_factor ?? 0).toFixed(2)}`}
+            color={(data.recovery_factor ?? 0) >= 3 ? 'var(--color-accent)' : (data.recovery_factor ?? 0) >= 1.5 ? 'var(--color-text)' : 'var(--color-red)'}
+            description={desc.recoveryFactor}
+          />
+          <MetricBox
+            label={t.payoffRatio}
+            value={`${(data.payoff_ratio ?? 0).toFixed(2)}`}
+            color={(data.payoff_ratio ?? 0) >= 1 ? 'var(--color-accent)' : 'var(--color-text-muted)'}
+            description={desc.payoffRatio}
           />
         </div>
       )}

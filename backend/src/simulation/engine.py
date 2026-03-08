@@ -94,7 +94,7 @@ class CostModel:
     @staticmethod
     def futures():
         """Futures taker fee (0.08%/side) — AutoTrader parity."""
-        return CostModel(fee_pct=0.0008, slippage_pct=0.0, funding_rate_8h=0.0001)
+        return CostModel(fee_pct=0.0008, slippage_pct=0.0002, funding_rate_8h=0.0001)
 
 
 class Strategy(Protocol):
