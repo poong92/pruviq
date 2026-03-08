@@ -1921,9 +1921,12 @@ async def run_backtest(req: BacktestRequest):
         # Calculate USD PnL per trade
         position_size = getattr(req, 'per_coin_usd', 60.0) * getattr(req, 'leverage', 5)
         for trade in trades:
+            # Skip trades with invalid timestamps
+            if not trade.entry_time or str(trade.entry_time).startswith("NaT"):
+                continue
             trade.pnl_usd = round(position_size * (trade.pnl_pct / 100), 4)
             all_trades.append({
-                "time": trade.entry_time,
+                "time": str(trade.entry_time),
                 "pnl_pct": trade.pnl_pct,
                 "pnl_usd": trade.pnl_usd,
                 "exit_reason": trade.exit_reason,
@@ -1940,6 +1943,8 @@ async def run_backtest(req: BacktestRequest):
     # Sort coin_results by total_return descending
     coin_results.sort(key=lambda x: x.total_return_pct, reverse=True)
 
+    # Filter out trades with invalid timestamps (NaT from pandas)
+    all_trades = [t for t in all_trades if t.get("time") and not str(t["time"]).startswith("NaT")]
     all_trades.sort(key=lambda t: t["time"])
 
     # --- Concurrent position limit (matches live: max 100) ---
@@ -2083,10 +2088,16 @@ async def run_backtest(req: BacktestRequest):
     deflated_sharpe = 0.0
     dsr_haircut_pct = 0.0
     if len(daily_returns) >= 10 and bt_sharpe > 0:
-        from scipy.stats import skew as sp_skew, kurtosis as sp_kurt
         n_dr = len(daily_returns)
-        skw = float(sp_skew(daily_returns))
-        krt = float(sp_kurt(daily_returns))
+        # Skewness and excess kurtosis (numpy-only, no scipy needed)
+        dr_mean = float(np.mean(daily_returns))
+        dr_s = float(np.std(daily_returns, ddof=1))
+        if dr_s > 0:
+            z = (daily_returns - dr_mean) / dr_s
+            skw = float(np.mean(z**3) * n_dr / max((n_dr-1)*(n_dr-2), 1))  # adjusted skewness
+            krt = float(np.mean(z**4) - 3)  # excess kurtosis
+        else:
+            skw, krt = 0.0, 0.0
         # Sharpe standard error with non-normality correction
         sr_se = np.sqrt((1 + 0.5 * bt_sharpe**2 - skw * bt_sharpe + (krt / 4) * bt_sharpe**2) / max(n_dr - 1, 1))
         # Expected max Sharpe from n_trials random strategies
@@ -2113,8 +2124,6 @@ async def run_backtest(req: BacktestRequest):
         mc_percentile = round(float(np.mean(mc_returns <= original_return) * 100), 1)
         # One-sided p-value: how likely to see this return or better by chance
         mc_p_value = round(float(np.mean(mc_returns >= original_return)), 4)
-        if mc_p_value > 0.10 and len(all_trades) >= 30:
-            warnings.append(f"Monte Carlo test: strategy return not significantly better than random order (p={mc_p_value:.3f}).")
 
     # --- Jensen's Alpha (risk-adjusted excess return vs BTC) ---
     jensens_alpha = 0.0
@@ -2326,6 +2335,8 @@ async def run_backtest(req: BacktestRequest):
         warnings.append(f"Deflated Sharpe Ratio is negative ({deflated_sharpe:.2f}). Reported Sharpe ({bt_sharpe:.2f}) may be inflated by data mining.")
     if jensens_alpha < 0 and len(all_trades) >= 30:
         warnings.append(f"Negative Jensen's Alpha ({jensens_alpha:.2f}%). Strategy underperforms benchmark on risk-adjusted basis.")
+    if mc_p_value > 0.10 and len(all_trades) >= 30:
+        warnings.append(f"Monte Carlo test: strategy return not significantly better than random (p={mc_p_value:.3f}).")
 
     # --- Rolling 5-Window Walk-Forward Consistency ---
     walk_forward_consistency = 0.0
