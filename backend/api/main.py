@@ -1112,16 +1112,29 @@ async def simulate_validate(req: ValidateRequest):
     is_trades_all = []
     oos_trades_all = []
 
+    # Determine global split date across ALL coins (same calendar period for IS/OOS)
+    _all_timestamps = []
+    for _, df_tmp in coins:
+        if 'timestamp' in df_tmp.columns and len(df_tmp) > 0:
+            _all_timestamps.extend(df_tmp['timestamp'].dropna().astype(str).tolist())
+    _all_timestamps = sorted(set(t[:10] for t in _all_timestamps if t and not t.startswith('NaT')))
+    global_split_date = _all_timestamps[int(len(_all_timestamps) * (1.0 - oos_frac))] if _all_timestamps else None
+
     for sym, df in coins:
         if not has_cache:
             df = strategy.calculate_indicators(df.copy())
 
         df = filter_df_by_date(df, getattr(req, 'start_date', None), getattr(req, 'end_date', None))
 
-        # Split data into IS and OOS by row count
-        split_idx = int(len(df) * (1.0 - oos_frac))
-        df_is = df.iloc[:split_idx]
-        df_oos = df.iloc[split_idx:]
+        # Split by global calendar date (all coins share the same IS/OOS boundary)
+        if global_split_date and 'timestamp' in df.columns:
+            ts_str = df['timestamp'].astype(str).str[:10]
+            df_is = df[ts_str < global_split_date]
+            df_oos = df[ts_str >= global_split_date]
+        else:
+            split_idx = int(len(df) * (1.0 - oos_frac))
+            df_is = df.iloc[:split_idx]
+            df_oos = df.iloc[split_idx:]
 
         for period_df, trade_list in [(df_is, is_trades_all), (df_oos, oos_trades_all)]:
             if len(period_df) < 100:
@@ -2018,7 +2031,10 @@ async def run_backtest(req: BacktestRequest):
     # Portfolio USD calculations
     per_coin_usd = getattr(req, 'per_coin_usd', 60.0)
     leverage_val = getattr(req, 'leverage', 5)
-    initial_capital = per_coin_usd * len(coin_list)
+    # Capital = min(max_concurrent, coins_used) × per_coin_usd
+    # This reflects the actual capital needed at peak utilization, not total coins
+    effective_positions = min(max_concurrent, len(coin_list))
+    initial_capital = per_coin_usd * effective_positions
     total_pnl_usd = sum(t["pnl_usd"] for t in all_trades)
     portfolio_return_pct = round((total_pnl_usd / initial_capital * 100), 2) if initial_capital > 0 else 0
 
@@ -2084,7 +2100,8 @@ async def run_backtest(req: BacktestRequest):
         var_95, cvar_95 = 0.0, 0.0
 
     # --- DSR (Deflated Sharpe Ratio) ---
-    # Corrects Sharpe for multiple testing bias (Lopez de Prado, 2014)
+    # Returns probability [0,1] that true Sharpe > 0 after multiple-testing correction
+    # (Lopez de Prado, 2014: "The Deflated Sharpe Ratio")
     deflated_sharpe = 0.0
     dsr_haircut_pct = 0.0
     if len(daily_returns) >= 10 and bt_sharpe > 0:
@@ -2100,14 +2117,29 @@ async def run_backtest(req: BacktestRequest):
             skw, krt = 0.0, 0.0
         # Sharpe standard error with non-normality correction
         sr_se = np.sqrt((1 + 0.5 * bt_sharpe**2 - skw * bt_sharpe + (krt / 4) * bt_sharpe**2) / max(n_dr - 1, 1))
-        # Expected max Sharpe from n_trials random strategies
-        # Use conditions_count as proxy for strategy space
-        n_trials_est = max(params.get("conditions_count", 1) * 10, 10)
+        # Expected max Sharpe from n_trials strategies
+        # Realistic: conditions^2 * 50 (combinatorial parameter search)
+        n_cond = max(params.get("conditions_count", 1), 1)
+        n_trials_est = max(n_cond ** 2 * 50, 100)
         gamma_em = 0.5772156649  # Euler-Mascheroni
         expected_max_sr = np.sqrt(2 * np.log(n_trials_est)) * (1 - gamma_em / max(2 * np.log(n_trials_est), 0.01)) if n_trials_est > 1 else 0
-        deflated_sharpe = round((bt_sharpe - expected_max_sr) / max(sr_se, 0.001), 2)
-        dsr_haircut_pct = round((1 - deflated_sharpe / bt_sharpe) * 100, 1) if bt_sharpe > 0 else 100.0
-        dsr_haircut_pct = max(0, min(100, dsr_haircut_pct))
+        z_dsr = (bt_sharpe - expected_max_sr) / max(sr_se, 0.001)
+        # Convert to probability via normal CDF (proper DSR output)
+        # Approximation: Phi(z) using Abramowitz & Stegun (no scipy needed)
+        def _norm_cdf(x):
+            """Standard normal CDF approximation (|error| < 7.5e-8)."""
+            if x < -8:
+                return 0.0
+            if x > 8:
+                return 1.0
+            a = abs(x)
+            t = 1.0 / (1.0 + 0.2316419 * a)
+            d = 0.3989422804014327  # 1/sqrt(2*pi)
+            p = d * np.exp(-0.5 * a * a) * t * (0.319381530 + t * (-0.356563782 + t * (1.781477937 + t * (-1.821255978 + t * 1.330274429))))
+            return 1.0 - p if x >= 0 else p
+        deflated_sharpe = round(_norm_cdf(z_dsr), 4)  # Probability [0,1]
+        # Haircut: % of reported Sharpe that may be data-mined
+        dsr_haircut_pct = round((1 - deflated_sharpe) * 100, 1)
 
     # --- Monte Carlo Sign-Flip Test ---
     mc_p_value = 1.0
@@ -2253,7 +2285,8 @@ async def run_backtest(req: BacktestRequest):
                         b_ret = np.array([btc_daily_dict[d] for d in common])
                         if np.std(b_ret) > 0:
                             beta = float(np.cov(s_ret, b_ret)[0, 1] / np.var(b_ret))
-                            jensens_alpha = round(float(np.mean(s_ret) - beta * np.mean(b_ret)), 4)
+                            rf_daily = 5.0 / 365  # ~5% annual risk-free rate (T-bill proxy)
+                            jensens_alpha = round(float(np.mean(s_ret) - rf_daily - beta * (np.mean(b_ret) - rf_daily)), 4)
                         else:
                             jensens_alpha = round(total_return - btc_hold_return_pct, 2)
                     else:
@@ -2290,13 +2323,16 @@ async def run_backtest(req: BacktestRequest):
     if pf >= 2.0: grade_score += 3
     elif pf >= 1.5: grade_score += 2
     elif pf >= 1.0: grade_score += 1
-    # WR (0-3)
-    if wr >= 60: grade_score += 3
-    elif wr >= 50: grade_score += 2
-    elif wr >= 40: grade_score += 1
-    # MDD (0-2)
-    if mdd < 20: grade_score += 2
-    elif mdd < 40: grade_score += 1
+    # WR (0-3) — relative to break-even WR
+    be_wr_grade = abs(avg_loss) / (abs(avg_win) + abs(avg_loss)) * 100 if (abs(avg_win) + abs(avg_loss)) > 0 else 50.0
+    wr_margin = wr - be_wr_grade  # how much WR exceeds break-even
+    if wr_margin >= 15: grade_score += 3
+    elif wr_margin >= 8: grade_score += 2
+    elif wr_margin >= 2: grade_score += 1
+    # MDD (0-2) — capital-relative (leverage-adjusted)
+    capital_mdd = max_dd_usd / initial_capital * 100 if initial_capital > 0 else mdd
+    if capital_mdd < 20: grade_score += 2
+    elif capital_mdd < 40: grade_score += 1
     # RF (0-2)
     if recovery_factor >= 3: grade_score += 2
     elif recovery_factor >= 1.5: grade_score += 1
@@ -2317,7 +2353,7 @@ async def run_backtest(req: BacktestRequest):
     elif grade_score >= 3: strategy_grade = "D"
     else: strategy_grade = "F"
 
-    grade_details = f"PF={pf} WR={wr}% MDD={mdd}% RF={recovery_factor} Sharpe={bt_sharpe} E={expectancy} Edge={grade_score}/16"
+    grade_details = f"PF={pf} WR={wr}%(BE:{be_wr_grade:.0f}%) MDD={capital_mdd:.1f}% RF={recovery_factor} Sharpe={bt_sharpe} E={expectancy} Edge={grade_score}/16"
 
     # --- Warnings ---
     warnings = []
@@ -2331,12 +2367,14 @@ async def run_backtest(req: BacktestRequest):
         warnings.append(f"Strategy underperforms BTC buy-and-hold ({btc_hold_return_pct:.1f}%) over the same period.")
     if edge_p_value > 0.05 and len(all_trades) >= 30:
         warnings.append(f"Strategy edge not statistically significant (p={edge_p_value:.3f}). Win rate may not be reliably above break-even.")
-    if deflated_sharpe < 0 and bt_sharpe > 0.5:
-        warnings.append(f"Deflated Sharpe Ratio is negative ({deflated_sharpe:.2f}). Reported Sharpe ({bt_sharpe:.2f}) may be inflated by data mining.")
+    if deflated_sharpe < 0.5 and bt_sharpe > 0.5 and deflated_sharpe > 0:
+        warnings.append(f"Deflated Sharpe Ratio is low ({deflated_sharpe:.1%}). Only {deflated_sharpe:.0%} probability the Sharpe ({bt_sharpe:.2f}) survives multiple-testing correction.")
     if jensens_alpha < 0 and len(all_trades) >= 30:
         warnings.append(f"Negative Jensen's Alpha ({jensens_alpha:.2f}%). Strategy underperforms benchmark on risk-adjusted basis.")
     if mc_p_value > 0.10 and len(all_trades) >= 30:
         warnings.append(f"Monte Carlo test: strategy return not significantly better than random (p={mc_p_value:.3f}).")
+    if len(all_trades) >= 10:
+        warnings.append("Survivorship bias: only currently listed assets are tested. Delisted coins are excluded, which may affect results.")
 
     # --- Rolling 5-Window Walk-Forward Consistency ---
     walk_forward_consistency = 0.0
