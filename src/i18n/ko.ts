@@ -714,7 +714,7 @@ export const ko: Record<TranslationKey, string> = {
   'api.example_curl': 'cURL',
   'api.example_js': 'JavaScript',
   'api.sdk_title': '출시 예정',
-  'api.sdk_desc': 'Python SDK와 WebSocket 피드가 개발 중입니다. 업데이트는 텔레그램에서 확인하세요.',
+  'api.sdk_desc': 'Python SDK와 WebSocket 피드가 개발 중입니다. X에서 최신 소식을 확인하세요.',
   'footer.api': 'API',
   'footer.compare': 'vs 트레이딩뷰',
 
@@ -803,7 +803,7 @@ export const ko: Record<TranslationKey, string> = {
   'vs.row_api_p': '무료 REST API (분당 30회)',
   'vs.row_api_tv': '유료 플랜만',
   'vs.row_community': '커뮤니티',
-  'vs.row_community_p': '성장 중 (텔레그램)',
+  'vs.row_community_p': '성장 중 (X, GitHub)',
   'vs.row_community_tv': '5000만+ 사용자, 소셜 기능',
   'vs.when_pruviq': 'PRUVIQ를 선택할 때...',
   'vs.when_pruviq_1': '코딩 없이 무료 크립토 백테스팅',

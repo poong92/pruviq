@@ -117,4 +117,4 @@ tags: ["futures", "leverage", "beginners", "perpetual-contracts"]
 
 ---
 
-*PRUVIQ는 535개 코인에서 5배 레버리지로 무기한 선물을 거래합니다. 모든 거래는 [텔레그램](https://t.me/PRUVIQ)에서 실시간 공개됩니다. [전략](/ko/strategies)과 [버전 이력](/ko/changelog)을 확인하세요.*
+*PRUVIQ는 535개 코인에서 5배 레버리지로 무기한 선물을 거래합니다. 모든 거래는 [성과 페이지](/ko/performance)에서 실시간 공개됩니다. [전략](/ko/strategies)과 [버전 이력](/ko/changelog)을 확인하세요.*

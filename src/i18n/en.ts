@@ -712,7 +712,7 @@ export const en = {
   'api.example_curl': 'cURL',
   'api.example_js': 'JavaScript',
   'api.sdk_title': 'Coming Soon',
-  'api.sdk_desc': 'Python SDK and WebSocket feed are in development. Join our Telegram for updates.',
+  'api.sdk_desc': 'Python SDK and WebSocket feed are in development. Follow us on X for updates.',
   'footer.api': 'API',
   'footer.compare': 'vs TradingView',
 
@@ -801,7 +801,7 @@ export const en = {
   'vs.row_api_p': 'Free REST API (30 req/min)',
   'vs.row_api_tv': 'Paid plans only',
   'vs.row_community': 'Community',
-  'vs.row_community_p': 'Growing (Telegram)',
+  'vs.row_community_p': 'Growing (X, GitHub)',
   'vs.row_community_tv': '50M+ users, social features',
   'vs.when_pruviq': 'Choose PRUVIQ when you want...',
   'vs.when_pruviq_1': 'Free crypto backtesting with zero coding',
