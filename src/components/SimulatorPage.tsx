@@ -13,6 +13,10 @@ import { nextCondId, COLORS } from './simulator-types';
 import ChartPanel from './ChartPanel';
 import BuilderPanel from './BuilderPanel';
 import ResultsPanel from './ResultsPanel';
+import ModeSwitcher, { SIM_MODE_KEY, isValidSimMode } from './ModeSwitcher';
+import type { SimMode } from './ModeSwitcher';
+import QuickTestPanel from './QuickTestPanel';
+import StandardPanel from './StandardPanel';
 
 // ─── i18n ───
 const L = {
@@ -253,8 +257,25 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
   const [mobileTab, setMobileTab] = useState<'chart' | 'config' | 'results'>('config');
   const scrollPositions = useRef<Record<string, number>>({});
 
-  // Quick Start banner
-  const [showQuickStart, setShowQuickStart] = useState(true);
+  // 3-Tier Mode
+  const [simMode, setSimMode] = useState<SimMode>(() => {
+    try {
+      const stored = localStorage.getItem(SIM_MODE_KEY);
+      return isValidSimMode(stored) ? stored : 'quick';
+    } catch { return 'quick'; }
+  });
+  const [isFirstVisit] = useState(() => {
+    try { return !localStorage.getItem(SIM_MODE_KEY); } catch { return true; }
+  });
+
+  // Quick Start banner (persists dismissal)
+  const [showQuickStart, setShowQuickStart] = useState(() => {
+    try { return localStorage.getItem('pruviq-quick-start-dismissed') !== '1'; } catch { return true; }
+  });
+  const dismissQuickStart = useCallback(() => {
+    setShowQuickStart(false);
+    try { localStorage.setItem('pruviq-quick-start-dismissed', '1'); } catch {}
+  }, []);
 
   // History comparison (max 3 results)
   const [history, setHistory] = useState<{ label: string; result: BacktestResult }[]>([]);
@@ -275,6 +296,11 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
   const currentCoinCount = coinMode === 'all' ? coinsLoaded :
                            coinMode === 'top' ? topN :
                            selectedCoins.length;
+
+  // Persist simMode to localStorage
+  useEffect(() => {
+    try { localStorage.setItem(SIM_MODE_KEY, simMode); } catch {}
+  }, [simMode]);
 
   // ─── Init: healthcheck + load indicators + coins ───
   useEffect(() => {
@@ -619,26 +645,40 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
 
   const progressLabels = ['Preparing data...', 'Computing indicators...', 'Finding signals...', 'Simulating trades...', 'Building results...'];
 
+  // Quick Test: load preset + run backtest in one click
+  const runPresetQuick = useCallback(async (presetId: string) => {
+    const p = await loadPreset(presetId);
+    if (!p) return;
+    // Small delay to let state flush before running
+    await new Promise((r) => setTimeout(r, 50));
+    await runBacktest();
+  }, [loadPreset, runBacktest]);
+
   // ────── RENDER ──────
   return (
     <div class="max-w-[1400px] mx-auto px-3 md:px-4">
-      {/* Mobile tabs */}
-      <div class="md:hidden flex border-b border-[--color-border] mb-3 gap-0">
-        {(['chart', 'config', 'results'] as const).map((tab) => (
-          <button
-            key={tab}
-            onClick={() => handleMobileTabChange(tab)}
-            class={`flex-1 py-2.5 text-xs font-mono uppercase tracking-wider transition-colors
-              ${mobileTab === tab ? 'font-bold border-b-2' : 'text-[--color-text-muted] hover:text-[--color-text]'}`}
-            style={mobileTab === tab ? { color: COLORS.accent, borderColor: COLORS.accent, background: COLORS.accentBg } : undefined}
-          >
-            {t.mobile[tab]}
-          </button>
-        ))}
-      </div>
+      {/* Mobile tabs — only for Standard/Expert (Quick has no chart/config split) */}
+      {simMode !== 'quick' && (
+        <div class="md:hidden flex border-b border-[--color-border] mb-3 gap-0">
+          {(['chart', 'config', 'results'] as const).map((tab) => (
+            <button
+              key={tab}
+              onClick={() => handleMobileTabChange(tab)}
+              class={`flex-1 py-2.5 text-xs font-mono uppercase tracking-wider transition-colors
+                ${mobileTab === tab ? 'font-bold border-b-2' : 'text-[--color-text-muted] hover:text-[--color-text]'}`}
+              style={mobileTab === tab ? { color: COLORS.accent, borderColor: COLORS.accent, background: COLORS.accentBg } : undefined}
+            >
+              {t.mobile[tab]}
+            </button>
+          ))}
+        </div>
+      )}
 
-      {/* Quick Start Banner */}
-      {showQuickStart && !result && (
+      {/* 3-Tier Mode Switcher */}
+      <ModeSwitcher mode={simMode} setMode={setSimMode} lang={lang} isFirstVisit={isFirstVisit} />
+
+      {/* Quick Start Banner — Expert mode only */}
+      {simMode === 'expert' && showQuickStart && !result && (
         <div class="mb-3 border rounded-lg p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3"
           style={{ borderColor: COLORS.accent, background: `linear-gradient(135deg, ${COLORS.accentBg}, transparent)` }}>
           <div>
@@ -650,8 +690,7 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
               onClick={async () => {
                 const p = await loadPreset('bb-squeeze-short');
                 if (!p) return;
-                setShowQuickStart(false);
-                // wait briefly to allow React state updates to flush before running backtest
+                dismissQuickStart();
                 await new Promise((r) => setTimeout(r, 50));
                 try { await runBacktest(); } catch {}
               }}
@@ -661,7 +700,7 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
               {t.quickStartCta} &rarr;
             </button>
             <button
-              onClick={() => setShowQuickStart(false)}
+              onClick={dismissQuickStart}
               class="px-3 py-2 rounded font-mono text-[10px] text-[--color-text-muted] border border-[--color-border] hover:text-[--color-text] transition-colors"
             >
               {t.quickStartDismiss}
@@ -670,68 +709,125 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
         </div>
       )}
 
-      {/* Main split layout */}
-      <div class="flex flex-col md:flex-row gap-3">
-        {/* Left: Chart (70%) */}
-        <div class={`md:w-[55%] flex-shrink-0 ${mobileTab !== 'chart' ? 'hidden md:block' : ''}`}>
-          <ChartPanel
-            chartSymbol={chartSymbol}
-            setChartSymbol={setChartSymbol}
-            chartData={chartData}
-            chartLoading={chartLoading}
-            loadingText={t.loading}
-            trades={result?.trades}
-            error={chartError}
-            onRetry={loadChart}
-            timeframe={timeframe}
-          />
-        </div>
-
-        {/* Right: Conditions Panel (30%) */}
-        <div ref={builderRef} class={`md:w-[45%] flex-shrink-0 ${mobileTab !== 'config' ? 'hidden md:block' : ''}`}>
-          <BuilderPanel
-            t={t}
-            coinsLoaded={currentCoinCount}
-            totalCoins={coinsLoaded}
-            demoMode={demoMode}
-            availableIndicators={availableIndicators}
-            selectedIndicators={selectedIndicators}
-            setSelectedIndicators={setSelectedIndicators}
-            availableFields={availableFields}
-            conditions={conditions}
-            addCondition={addCondition}
-            updateCondition={updateCondition}
-            removeCondition={removeCondition}
-            direction={direction}
-            setDirection={setDirection}
-            slPct={slPct} setSlPct={setSlPct}
-            tpPct={tpPct} setTpPct={setTpPct}
-            maxBars={maxBars} setMaxBars={setMaxBars}
-            perCoinUsdt={perCoinUsdt} setPerCoinUsdt={setPerCoinUsdt}
-            leverage={leverage} setLeverage={setLeverage}
-            startDate={startDate} setStartDate={setStartDate}
-            endDate={endDate} setEndDate={setEndDate}
-            coinMode={coinMode} setCoinMode={setCoinMode}
-            topN={topN} setTopN={setTopN}
-            selectedCoins={selectedCoins} setSelectedCoins={setSelectedCoins}
-            coinSearch={coinSearch} setCoinSearch={setCoinSearch}
-            filteredCoins={filteredCoins}
-            allCoinsCount={allCoins.length}
-            avoidHours={avoidHours} setAvoidHours={setAvoidHours}
-            presets={presets}
-            activePreset={activePreset}
-            onSelectPreset={onSelectPreset}
-            presetLoading={presetLoading}
-            presetError={presetError}
-            timeframe={timeframe}
-            setTimeframe={setTimeframe}
+      {/* ─── Quick Test Mode ─── */}
+      {simMode === 'quick' && (
+        <div role="tabpanel" id="panel-quick" aria-labelledby="tab-quick">
+          <QuickTestPanel
+            lang={lang}
+            onRunPreset={runPresetQuick}
             isRunning={isRunning}
-            progressStep={progressStep}
-            progressLabels={progressLabels}
-            onRun={runBacktest}
+            hasResult={!!result}
           />
         </div>
-      </div>
+      )}
+
+      {/* ─── Standard Mode ─── */}
+      {simMode === 'standard' && (
+        <div role="tabpanel" id="panel-standard" aria-labelledby="tab-standard" class="flex flex-col md:flex-row gap-3">
+          {/* Left: Chart */}
+          <div class={`md:w-[55%] flex-shrink-0 ${mobileTab !== 'chart' ? 'hidden md:block' : ''}`}>
+            <ChartPanel
+              chartSymbol={chartSymbol}
+              setChartSymbol={setChartSymbol}
+              chartData={chartData}
+              chartLoading={chartLoading}
+              loadingText={t.loading}
+              trades={result?.trades}
+              error={chartError}
+              onRetry={loadChart}
+              timeframe={timeframe}
+            />
+          </div>
+
+          {/* Right: StandardPanel */}
+          <div class={`md:w-[45%] flex-shrink-0 ${mobileTab !== 'config' ? 'hidden md:block' : ''}`}>
+            <StandardPanel
+              lang={lang}
+              presets={presets}
+              activePreset={activePreset}
+              onSelectPreset={onSelectPreset}
+              presetLoading={presetLoading}
+              direction={direction}
+              setDirection={setDirection}
+              slPct={slPct} setSlPct={setSlPct}
+              tpPct={tpPct} setTpPct={setTpPct}
+              leverage={leverage} setLeverage={setLeverage}
+              coinMode={coinMode} setCoinMode={setCoinMode}
+              topN={topN} setTopN={setTopN}
+              startDate={startDate} setStartDate={setStartDate}
+              endDate={endDate} setEndDate={setEndDate}
+              isRunning={isRunning}
+              onRun={runBacktest}
+              coinsLoaded={coinsLoaded}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* ─── Expert Mode: Full Builder ─── */}
+      {simMode === 'expert' && (
+        <div role="tabpanel" id="panel-expert" aria-labelledby="tab-expert" class="flex flex-col md:flex-row gap-3">
+          {/* Left: Chart (55%) */}
+          <div class={`md:w-[55%] flex-shrink-0 ${mobileTab !== 'chart' ? 'hidden md:block' : ''}`}>
+            <ChartPanel
+              chartSymbol={chartSymbol}
+              setChartSymbol={setChartSymbol}
+              chartData={chartData}
+              chartLoading={chartLoading}
+              loadingText={t.loading}
+              trades={result?.trades}
+              error={chartError}
+              onRetry={loadChart}
+              timeframe={timeframe}
+            />
+          </div>
+
+          {/* Right: Conditions Panel (45%) */}
+          <div ref={builderRef} class={`md:w-[45%] flex-shrink-0 ${mobileTab !== 'config' ? 'hidden md:block' : ''}`}>
+            <BuilderPanel
+              t={t}
+              coinsLoaded={currentCoinCount}
+              totalCoins={coinsLoaded}
+              demoMode={demoMode}
+              availableIndicators={availableIndicators}
+              selectedIndicators={selectedIndicators}
+              setSelectedIndicators={setSelectedIndicators}
+              availableFields={availableFields}
+              conditions={conditions}
+              addCondition={addCondition}
+              updateCondition={updateCondition}
+              removeCondition={removeCondition}
+              direction={direction}
+              setDirection={setDirection}
+              slPct={slPct} setSlPct={setSlPct}
+              tpPct={tpPct} setTpPct={setTpPct}
+              maxBars={maxBars} setMaxBars={setMaxBars}
+              perCoinUsdt={perCoinUsdt} setPerCoinUsdt={setPerCoinUsdt}
+              leverage={leverage} setLeverage={setLeverage}
+              startDate={startDate} setStartDate={setStartDate}
+              endDate={endDate} setEndDate={setEndDate}
+              coinMode={coinMode} setCoinMode={setCoinMode}
+              topN={topN} setTopN={setTopN}
+              selectedCoins={selectedCoins} setSelectedCoins={setSelectedCoins}
+              coinSearch={coinSearch} setCoinSearch={setCoinSearch}
+              filteredCoins={filteredCoins}
+              allCoinsCount={allCoins.length}
+              avoidHours={avoidHours} setAvoidHours={setAvoidHours}
+              presets={presets}
+              activePreset={activePreset}
+              onSelectPreset={onSelectPreset}
+              presetLoading={presetLoading}
+              presetError={presetError}
+              timeframe={timeframe}
+              setTimeframe={setTimeframe}
+              isRunning={isRunning}
+              progressStep={progressStep}
+              progressLabels={progressLabels}
+              onRun={runBacktest}
+            />
+          </div>
+        </div>
+      )}
 
       {/* Results section */}
       <div ref={resultsRef} class={`mt-3 ${mobileTab !== 'results' && !result ? 'hidden md:block' : ''}`}>
@@ -739,6 +835,7 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
           t={t}
           result={result}
           error={error}
+          simMode={simMode}
           resultTab={resultTab}
           setResultTab={setResultTab}
           activePreset={activePreset}
@@ -759,8 +856,8 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
         />
       </div>
 
-      {/* Mobile sticky Run button */}
-      {mobileTab === 'config' && conditions.length > 0 && (
+      {/* Mobile sticky Run button — Expert mode only */}
+      {simMode === 'expert' && mobileTab === 'config' && conditions.length > 0 && (
         <div class="md:hidden fixed bottom-0 left-0 right-0 z-50 px-4 py-3 border-t border-[--color-border]"
           style={{ background: 'var(--color-bg)', boxShadow: '0 -4px 12px rgba(0,0,0,0.3)' }}>
           <button
@@ -768,7 +865,7 @@ export default function SimulatorPage({ lang = 'en' }: Props) {
             disabled={isRunning || conditions.length === 0}
             class={`w-full py-3 rounded-lg font-mono text-sm font-bold transition-colors
               ${isRunning ? 'cursor-not-allowed opacity-60' : 'hover:opacity-90'}`}
-            style={isRunning ? { background: COLORS.border, color: COLORS.textMuted } : { background: COLORS.accent, color: '#fff', boxShadow: `0 0 12px ${COLORS.accentGlow}` }}
+            style={isRunning ? { background: COLORS.disabled, color: COLORS.disabledText } : { background: COLORS.accent, color: '#fff', boxShadow: `0 0 12px ${COLORS.accentGlow}` }}
           >
             {isRunning ? (
               <span class="flex items-center justify-center gap-2">
