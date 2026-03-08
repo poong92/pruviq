@@ -270,10 +270,6 @@ def check_rate_limit(client_ip: str) -> bool:
 
     rate_limits[client_ip] = [t for t in rate_limits[client_ip] if now - t < 60]
 
-    if not rate_limits[client_ip]:
-        del rate_limits[client_ip]
-        return True
-
     if len(rate_limits[client_ip]) >= RATE_LIMIT_PER_MIN:
         return False
 
