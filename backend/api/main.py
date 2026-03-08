@@ -2088,10 +2088,16 @@ async def run_backtest(req: BacktestRequest):
     deflated_sharpe = 0.0
     dsr_haircut_pct = 0.0
     if len(daily_returns) >= 10 and bt_sharpe > 0:
-        from scipy.stats import skew as sp_skew, kurtosis as sp_kurt
         n_dr = len(daily_returns)
-        skw = float(sp_skew(daily_returns))
-        krt = float(sp_kurt(daily_returns))
+        # Skewness and excess kurtosis (numpy-only, no scipy needed)
+        dr_mean = float(np.mean(daily_returns))
+        dr_s = float(np.std(daily_returns, ddof=1))
+        if dr_s > 0:
+            z = (daily_returns - dr_mean) / dr_s
+            skw = float(np.mean(z**3) * n_dr / max((n_dr-1)*(n_dr-2), 1))  # adjusted skewness
+            krt = float(np.mean(z**4) - 3)  # excess kurtosis
+        else:
+            skw, krt = 0.0, 0.0
         # Sharpe standard error with non-normality correction
         sr_se = np.sqrt((1 + 0.5 * bt_sharpe**2 - skw * bt_sharpe + (krt / 4) * bt_sharpe**2) / max(n_dr - 1, 1))
         # Expected max Sharpe from n_trials random strategies
