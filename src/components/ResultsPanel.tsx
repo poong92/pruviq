@@ -11,14 +11,17 @@ import { API_BASE_URL as API_URL } from '../config/api';
 
 interface HistoryEntry { label: string; result: BacktestResult; }
 
+type ResultTab = 'summary' | 'equity' | 'trades' | 'coins' | 'validate';
+
 interface Props {
   t: Record<string, any>;
   result: BacktestResult | null;
   error: string | null;
-  resultTab: 'summary' | 'equity' | 'trades' | 'coins' | 'validate';
-  setResultTab: (tab: 'summary' | 'equity' | 'trades' | 'coins' | 'validate') => void;
+  resultTab: ResultTab;
+  setResultTab: (tab: ResultTab) => void;
   activePreset: string | null;
   lang: 'en' | 'ko';
+  simMode?: 'quick' | 'standard' | 'expert';
   // New QA props
   onModifyRerun?: () => void;
   onQuickAdjustRerun?: (sl: number, tp: number, coins: number) => void;
@@ -39,10 +42,17 @@ const tabActiveStyle = { color: COLORS.accent, borderColor: COLORS.accent, backg
 
 export default function ResultsPanel({
   t, result, error, resultTab, setResultTab, activePreset, lang,
+  simMode = 'expert',
   onModifyRerun, onQuickAdjustRerun, onCopyLink, linkCopied,
   slPct = 10, tpPct = 8, topN = 50, isRunning = false,
   history = [], showHistory = false, setShowHistory, onSelectHistory, onClearHistory,
 }: Props) {
+  // Mode-dependent visible tabs
+  const visibleTabs: ResultTab[] = simMode === 'quick'
+    ? ['summary']
+    : simMode === 'standard'
+      ? ['summary', 'equity', 'trades', 'coins']
+      : ['summary', 'equity', 'trades', 'coins', 'validate'];
   const [coinSort, setCoinSort] = useState<{ key: string; asc: boolean }>({ key: 'total_return_pct', asc: false });
   const equityChartRef = useRef<HTMLDivElement>(null);
   const equityInstanceRef = useRef<any>(null);
@@ -213,7 +223,7 @@ export default function ResultsPanel({
           {/* Result tabs + CSV button */}
           <div class="flex flex-col sm:flex-row border-b border-[--color-border]">
             <div class="flex flex-1">
-              {(['summary', 'equity', 'trades', 'coins', 'validate'] as const).map((tab) => (
+              {visibleTabs.map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setResultTab(tab)}
@@ -225,6 +235,7 @@ export default function ResultsPanel({
                 </button>
               ))}
             </div>
+            {simMode !== 'quick' && (
             <div class="flex items-center justify-center gap-1 px-3 py-1.5 sm:py-0 border-t sm:border-t-0 border-[--color-border] flex-wrap">
               <button onClick={downloadCsv} class="px-3 py-1.5 text-xs font-mono bg-[--color-bg-tooltip] border border-[--color-border] rounded hover:border-[--color-accent] transition-colors hover:bg-[--color-bg-hover]">
                 {t.exportCsv}
@@ -254,7 +265,7 @@ export default function ResultsPanel({
                   {t.history || 'History'} ({history.length})
                 </button>
               )}
-            </div>
+            </div>)}
           </div>
 
           {/* Quick Adjust Panel */}
