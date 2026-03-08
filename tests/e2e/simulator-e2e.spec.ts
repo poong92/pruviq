@@ -17,8 +17,22 @@ const API_BASE = process.env.API_URL || 'https://api.pruviq.com';
 
 // ─── Helpers ──────────────────────────────────────────────────
 
+/** Opens simulator and waits for Preact hydration (lands on Quick Test by default) */
 async function openSimulator(page: Page) {
   await page.goto('/simulate/', { waitUntil: 'networkidle' });
+
+  // Wait for Preact hydration — ModeSwitcher tabs appear in all modes
+  await page.waitForSelector('[role="tablist"]', { timeout: 20000 });
+  await page.waitForTimeout(1500);
+}
+
+/** Switches to Expert mode (STRATEGY BUILDER) — call after openSimulator */
+async function switchToExpert(page: Page) {
+  const expertTab = page.locator('[role="tab"]').filter({ hasText: /Expert|엑스퍼트/i });
+  if (await expertTab.count() > 0) {
+    await expertTab.first().click();
+    await page.waitForTimeout(500);
+  }
 
   // On mobile, the config panel may be behind a tab
   const mobileConfigTab = page.locator('button').filter({ hasText: /Config|config|설정|Strategy/i });
@@ -27,9 +41,9 @@ async function openSimulator(page: Page) {
     await page.waitForTimeout(500);
   }
 
-  // Wait for Preact hydration — STRATEGY BUILDER header appears
-  await page.waitForSelector('text=/STRATEGY BUILDER|전략 빌더/i', { timeout: 20000 });
-  await page.waitForTimeout(1500);
+  // Wait for STRATEGY BUILDER header (Expert mode only)
+  await page.waitForSelector('text=/STRATEGY BUILDER|전략 빌더/i', { timeout: 10000 });
+  await page.waitForTimeout(500);
 }
 
 /** Run backtest and wait for results. Returns true if results appeared. */
@@ -58,15 +72,58 @@ async function runBacktestAndWait(page: Page): Promise<boolean> {
 // 1. SIMULATOR LOAD & DEFAULT STATE
 // ═══════════════════════════════════════════════════════════════
 
-test.describe('Simulator — Load & Defaults', () => {
-  test('Page loads with STRATEGY BUILDER header', async ({ page }) => {
+test.describe('Simulator — 3-Tier Mode Switcher', () => {
+  test('Page loads with mode tabs (Quick/Standard/Expert)', async ({ page }) => {
     await openSimulator(page);
+    const tablist = page.locator('[role="tablist"]');
+    await expect(tablist).toBeVisible();
+
+    const tabs = page.locator('[role="tab"]');
+    expect(await tabs.count(), 'Should have 3 mode tabs').toBe(3);
+
+    // Verify tab labels
+    const tabTexts = await tabs.allTextContents();
+    const combined = tabTexts.join(' ');
+    expect(combined, 'Has Quick tab').toMatch(/Quick|빠른/i);
+    expect(combined, 'Has Standard tab').toMatch(/Standard|스탠다드/i);
+    expect(combined, 'Has Expert tab').toMatch(/Expert|엑스퍼트/i);
+  });
+
+  test('Quick Test is default mode', async ({ page }) => {
+    await openSimulator(page);
+    // Quick Test panel shows market scenario chooser
+    const quickContent = page.locator('text=/Market Scenario|시장 상황/i');
+    expect(await quickContent.count(), 'Quick Test content visible').toBeGreaterThan(0);
+  });
+
+  test('Mode switching: Quick → Standard → Expert', async ({ page }) => {
+    await openSimulator(page);
+
+    // Switch to Standard
+    const stdTab = page.locator('[role="tab"]').filter({ hasText: /Standard|스탠다드/i });
+    await stdTab.click();
+    await page.waitForTimeout(500);
+    const stdPanel = page.locator('[role="tabpanel"][id="panel-standard"]');
+    await expect(stdPanel).toBeVisible();
+
+    // Switch to Expert
+    await switchToExpert(page);
+    const header = page.locator('text=/STRATEGY BUILDER/i');
+    await expect(header).toBeVisible();
+  });
+});
+
+test.describe('Simulator — Expert Load & Defaults', () => {
+  test('Expert mode shows STRATEGY BUILDER header', async ({ page }) => {
+    await openSimulator(page);
+    await switchToExpert(page);
     const header = page.locator('text=/STRATEGY BUILDER/i');
     await expect(header).toBeVisible();
   });
 
   test('Shows coin count from API', async ({ page }) => {
     await openSimulator(page);
+    await switchToExpert(page);
     // Header shows "N coins" text
     const coinText = page.locator('text=/\\d+ coins/i');
     if (await coinText.count() > 0) {
@@ -79,6 +136,7 @@ test.describe('Simulator — Load & Defaults', () => {
 
   test('Default direction is SHORT', async ({ page }) => {
     await openSimulator(page);
+    await switchToExpert(page);
     // SHORT button should be visually active (has accent/highlighted styling)
     const shortBtn = page.locator('button').filter({ hasText: /^SHORT$/ });
     expect(await shortBtn.count(), 'SHORT button exists').toBeGreaterThan(0);
@@ -86,6 +144,7 @@ test.describe('Simulator — Load & Defaults', () => {
 
   test('Default indicators section exists', async ({ page }) => {
     await openSimulator(page);
+    await switchToExpert(page);
     // Indicators are shown as toggleable buttons/badges in the builder
     const body = (await page.textContent('body')) || '';
     // Check that at least some indicator names appear in the page
@@ -97,6 +156,7 @@ test.describe('Simulator — Load & Defaults', () => {
 
   test('Default conditions: entry conditions exist', async ({ page }) => {
     await openSimulator(page);
+    await switchToExpert(page);
     // Entry conditions use <select> dropdowns
     const selects = page.locator('select');
     const selectCount = await selects.count();
@@ -113,12 +173,14 @@ test.describe('Simulator — Load & Defaults', () => {
 
   test('24 Avoid Hours buttons with correct defaults', async ({ page }) => {
     await openSimulator(page);
+    await switchToExpert(page);
     const hourBtns = page.locator('button').filter({ hasText: /^[0-9]{1,2}$/ });
     expect(await hourBtns.count(), 'Should have 24 hour buttons').toBe(24);
   });
 
   test('Default parameters: SL=10, TP=8, MaxBars=48, PerCoin=60, Leverage=5', async ({ page }) => {
     await openSimulator(page);
+    await switchToExpert(page);
     const numberInputs = page.locator('input[type="number"]');
     const count = await numberInputs.count();
     expect(count, 'Should have 5+ number inputs').toBeGreaterThanOrEqual(5);
@@ -136,12 +198,14 @@ test.describe('Simulator — Load & Defaults', () => {
 
   test('Timeframe default is 1H', async ({ page }) => {
     await openSimulator(page);
+    await switchToExpert(page);
     const tf1H = page.locator('button').filter({ hasText: /^1H$/ });
     expect(await tf1H.count(), '1H button exists').toBeGreaterThan(0);
   });
 
   test('Preview chart renders canvas', async ({ page }) => {
     await openSimulator(page);
+    await switchToExpert(page);
     const canvases = await page.locator('canvas').count();
     expect(canvases, 'Chart canvas should render').toBeGreaterThan(0);
   });
@@ -151,9 +215,10 @@ test.describe('Simulator — Load & Defaults', () => {
 // 2. PARAMETER INTERACTION (every field)
 // ═══════════════════════════════════════════════════════════════
 
-test.describe('Simulator — Parameter Controls', () => {
+test.describe('Simulator — Expert Parameter Controls', () => {
   test('Direction toggle: SHORT → LONG → SHORT', async ({ page }) => {
     await openSimulator(page);
+    await switchToExpert(page);
 
     const longBtn = page.locator('button').filter({ hasText: /^LONG$/ });
     const shortBtn = page.locator('button').filter({ hasText: /^SHORT$/ });
@@ -172,6 +237,7 @@ test.describe('Simulator — Parameter Controls', () => {
 
   test('SL/TP/MaxBars/PerCoin/Leverage inputs accept valid values', async ({ page }) => {
     await openSimulator(page);
+    await switchToExpert(page);
 
     const inputs = page.locator('input[type="number"]');
     const count = await inputs.count();
@@ -189,6 +255,7 @@ test.describe('Simulator — Parameter Controls', () => {
 
   test('Timeframe switching: 1H → 4H → 1D → 1H', async ({ page }) => {
     await openSimulator(page);
+    await switchToExpert(page);
 
     for (const tf of ['4H', '1D', '1H']) {
       const btn = page.locator('button').filter({ hasText: new RegExp(`^${tf}$`) });
@@ -203,6 +270,7 @@ test.describe('Simulator — Parameter Controls', () => {
 
   test('Avoid Hours toggle works', async ({ page }) => {
     await openSimulator(page);
+    await switchToExpert(page);
 
     const hourBtns = page.locator('button').filter({ hasText: /^[0-9]{1,2}$/ });
     // Toggle hour 0 and verify class changes
@@ -219,6 +287,7 @@ test.describe('Simulator — Parameter Controls', () => {
     page.on('pageerror', (e) => errors.push(e.message));
 
     await openSimulator(page);
+    await switchToExpert(page);
 
     const topBtn = page.locator('button').filter({ hasText: /Top N|Top/i });
     const allBtn = page.locator('button').filter({ hasText: /All Coins|All|전체/i });
@@ -246,6 +315,7 @@ test.describe('Simulator — Parameter Controls', () => {
 
   test('Add Condition button adds a new row', async ({ page }) => {
     await openSimulator(page);
+    await switchToExpert(page);
 
     const addBtn = page.locator('button').filter({ hasText: /Add Condition|\+ Add/i });
     if (await addBtn.count() > 0) {
@@ -266,6 +336,7 @@ test.describe('Simulator — Backtest & Results', () => {
   test('Run backtest → verify ALL result metrics', async ({ page }) => {
     test.setTimeout(120000);
     await openSimulator(page);
+    await switchToExpert(page);
 
     const ok = await runBacktestAndWait(page);
     if (!ok) {
@@ -342,6 +413,7 @@ test.describe('Simulator — Backtest & Results', () => {
   test('Equity tab → canvas chart rendered', async ({ page }) => {
     test.setTimeout(120000);
     await openSimulator(page);
+    await switchToExpert(page);
 
     const ok = await runBacktestAndWait(page);
     if (!ok) { test.skip(); return; }
@@ -368,6 +440,7 @@ test.describe('Simulator — Backtest & Results', () => {
   test('Trades tab → shows trade table or "not available" message', async ({ page }) => {
     test.setTimeout(120000);
     await openSimulator(page);
+    await switchToExpert(page);
 
     const ok = await runBacktestAndWait(page);
     if (!ok) { test.skip(); return; }
@@ -413,6 +486,7 @@ test.describe('Simulator — Backtest & Results', () => {
   test('Coins tab → per-coin breakdown with sortable columns', async ({ page }) => {
     test.setTimeout(120000);
     await openSimulator(page);
+    await switchToExpert(page);
 
     const ok = await runBacktestAndWait(page);
     if (!ok) { test.skip(); return; }
@@ -465,6 +539,7 @@ test.describe('Simulator — Backtest & Results', () => {
   test('Quick Adjust → modify SL/TP and re-run', async ({ page }) => {
     test.setTimeout(180000);
     await openSimulator(page);
+    await switchToExpert(page);
 
     const ok = await runBacktestAndWait(page);
     if (!ok) { test.skip(); return; }
@@ -506,6 +581,7 @@ test.describe('Simulator — Backtest & Results', () => {
   test('Download CSV button exists after backtest', async ({ page }) => {
     test.setTimeout(120000);
     await openSimulator(page);
+    await switchToExpert(page);
 
     const ok = await runBacktestAndWait(page);
     if (!ok) { test.skip(); return; }
