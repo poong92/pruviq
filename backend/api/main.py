@@ -24,6 +24,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException, Request, Header
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import JSONResponse
 
 ADMIN_API_KEY = os.environ.get("ADMIN_API_KEY", "")
@@ -221,6 +222,8 @@ app = FastAPI(
     description="Run crypto strategy simulations with realistic costs.",
     lifespan=lifespan,
 )
+
+app.add_middleware(GZipMiddleware, minimum_size=1000)
 
 app.add_middleware(
     CORSMiddleware,
