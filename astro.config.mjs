@@ -16,22 +16,24 @@ export default defineConfig({
   },
   integrations: [
     sitemap({
-      // Exclude legacy redirect routes and builder redirects from the generated sitemap.
-      // Those pages redirect to other pages and should not be indexed as separate URLs.
+      i18n: {
+        defaultLocale: 'en',
+        locales: {
+          en: 'en',
+          ko: 'ko'
+        }
+      },
       filter(page) {
         return !page.includes('/learn/') && !page.includes('/demo/') && !page.includes('/builder/');
       },
-      // Add `lastmod` and filter out unwanted paths (double-check /learn/ and /ko/404/)
       serialize(item) {
         if (!item || !item.url) return item;
         if (item.url.includes('/learn/')) return undefined;
         if (item.url.includes('/demo/')) return undefined;
         if (item.url.includes('/builder/')) return undefined;
         if (item.url.includes('/ko/404/')) return undefined;
-        return {
-          url: item.url,
-          lastmod: new Date().toISOString()
-        };
+        item.lastmod = new Date().toISOString();
+        return item;
       }
     }),
     preact()
