@@ -2113,8 +2113,6 @@ async def run_backtest(req: BacktestRequest):
         mc_percentile = round(float(np.mean(mc_returns <= original_return) * 100), 1)
         # One-sided p-value: how likely to see this return or better by chance
         mc_p_value = round(float(np.mean(mc_returns >= original_return)), 4)
-        if mc_p_value > 0.10 and len(all_trades) >= 30:
-            warnings.append(f"Monte Carlo test: strategy return not significantly better than random order (p={mc_p_value:.3f}).")
 
     # --- Jensen's Alpha (risk-adjusted excess return vs BTC) ---
     jensens_alpha = 0.0
@@ -2326,6 +2324,8 @@ async def run_backtest(req: BacktestRequest):
         warnings.append(f"Deflated Sharpe Ratio is negative ({deflated_sharpe:.2f}). Reported Sharpe ({bt_sharpe:.2f}) may be inflated by data mining.")
     if jensens_alpha < 0 and len(all_trades) >= 30:
         warnings.append(f"Negative Jensen's Alpha ({jensens_alpha:.2f}%). Strategy underperforms benchmark on risk-adjusted basis.")
+    if mc_p_value > 0.10 and len(all_trades) >= 30:
+        warnings.append(f"Monte Carlo test: strategy return not significantly better than random (p={mc_p_value:.3f}).")
 
     # --- Rolling 5-Window Walk-Forward Consistency ---
     walk_forward_consistency = 0.0
