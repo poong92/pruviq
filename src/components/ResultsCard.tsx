@@ -93,6 +93,29 @@ const labels = {
     medHold: 'Med Hold',
     bars: 'bars',
     tradeDuration: 'Trade Duration',
+    dirShort: 'Profit from falling prices',
+    dirLong: 'Profit from rising prices',
+    dirBoth: 'Both directions tested',
+    sigP001: 'Statistically significant: p<0.01',
+    sigP005: 'Statistically significant',
+    sigNot: 'Not significant',
+    wfStable: 'Stable',
+    wfModerate: 'Moderate',
+    wfOverfit: 'Overfit risk',
+    alpha: 'alpha',
+    underperform: 'underperform',
+    varDesc: 'Daily max expected loss (95% confidence)',
+    cvarDesc: 'Expected Shortfall (avg loss beyond VaR)',
+    overfitDetect: 'Overfitting Detection',
+    dsrConfidence: 'DSR Confidence',
+    dsrDesc: 'Prob. Sharpe survives multi-test correction',
+    mcLabel: 'Monte Carlo',
+    mcDescPrefix: 'Top',
+    mcDescSuffix: 'vs random shuffle',
+    jensensAlpha: "Jensen's \u03B1",
+    jensensAlphaDesc: '(risk-adjusted excess vs BTC)',
+    feeConsume: 'Fees consume',
+    feeConsumeOf: '% of returns',
   },
   ko: {
     live: '현재 라이브 설정',
@@ -131,13 +154,43 @@ const labels = {
     medHold: '중간값 보유',
     bars: '봉',
     tradeDuration: '보유 기간',
+    dirShort: '하락 시 수익',
+    dirLong: '상승 시 수익',
+    dirBoth: '두 방향 동시 테스트',
+    sigP001: '통계적 유의: p<0.01',
+    sigP005: '통계적 유의',
+    sigNot: '유의하지 않음',
+    wfStable: '안정적',
+    wfModerate: '보통',
+    wfOverfit: '과적합 위험',
+    alpha: '초과',
+    underperform: '부족',
+    varDesc: '일별 최대 예상 손실 (95% 신뢰도)',
+    cvarDesc: '꼬리 리스크 평균 (VaR 초과 시 평균 손실)',
+    overfitDetect: '과적합 탐지',
+    dsrConfidence: 'DSR 신뢰도',
+    dsrDesc: 'Sharpe가 데이터마이닝 아닐 확률',
+    mcLabel: 'MC 검증',
+    mcDescPrefix: '상위',
+    mcDescSuffix: '(랜덤 셔플 대비)',
+    jensensAlpha: '젠센 알파',
+    jensensAlphaDesc: '(BTC 대비 리스크 조정 초과수익)',
+    feeConsume: '수수료가 수익의',
+    feeConsumeOf: '%를 차지합니다',
   },
 };
 
 function MetricBox({ label, value, color, description }: { label: string; value: string; color: string; description?: string }) {
   return (
-    <div class="p-3 rounded-lg bg-[--color-bg-tooltip] border border-[--color-border]" title={description}>
-      <div class="font-mono text-[0.625rem] text-[--color-text-muted] uppercase tracking-wider mb-1">{label}</div>
+    <div class="p-3 rounded-lg bg-[--color-bg-tooltip] border border-[--color-border] relative group">
+      <div class="font-mono text-[0.625rem] text-[--color-text-muted] uppercase tracking-wider mb-1 flex items-center gap-1">
+        {label}
+        {description && (
+          <span class="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full border border-[--color-text-muted]/30 text-[8px] text-[--color-text-muted] cursor-help shrink-0 hover:border-[--color-accent] hover:text-[--color-accent] transition-colors" title={description}>
+            ?
+          </span>
+        )}
+      </div>
       <div class="font-mono text-lg md:text-xl font-bold" style={{ color }}>{value}</div>
     </div>
   );
@@ -230,9 +283,9 @@ export default function ResultsCard({ data, isDefault, lang = 'en', isDemo = fal
             {data.direction === 'both' ? 'SHORT + LONG' : data.direction.toUpperCase()}
           </span>
           <span class="text-[9px] text-[--color-text-muted] font-mono">
-            {data.direction === 'short' ? (lang === 'ko' ? '하락 시 수익' : 'Profit from falling prices') :
-             data.direction === 'long' ? (lang === 'ko' ? '상승 시 수익' : 'Profit from rising prices') :
-             (lang === 'ko' ? '두 방향 동시 테스트' : 'Both directions tested')}
+            {data.direction === 'short' ? t.dirShort :
+             data.direction === 'long' ? t.dirLong :
+             t.dirBoth}
           </span>
         </div>
       )}
@@ -254,9 +307,9 @@ export default function ResultsCard({ data, isDefault, lang = 'en', isDemo = fal
             )}
             {data.edge_p_value !== undefined && data.edge_p_value < 1 && (
               <span class="font-mono text-[10px]" style={{ color: data.edge_p_value <= 0.05 ? 'var(--color-green)' : data.edge_p_value <= 0.1 ? 'var(--color-yellow)' : 'var(--color-red)' }}>
-                {data.edge_p_value <= 0.01 ? (lang === 'ko' ? '통계적 유의: p<0.01' : 'Statistically significant: p<0.01') :
-                 data.edge_p_value <= 0.05 ? (lang === 'ko' ? `통계적 유의: p=${data.edge_p_value.toFixed(3)}` : `Statistically significant: p=${data.edge_p_value.toFixed(3)}`) :
-                 (lang === 'ko' ? `유의하지 않음: p=${data.edge_p_value.toFixed(3)}` : `Not significant: p=${data.edge_p_value.toFixed(3)}`)}
+                {data.edge_p_value <= 0.01 ? t.sigP001 :
+                 data.edge_p_value <= 0.05 ? `${t.sigP005}: p=${data.edge_p_value.toFixed(3)}` :
+                 `${t.sigNot}: p=${data.edge_p_value.toFixed(3)}`}
               </span>
             )}
           </div>
@@ -276,9 +329,9 @@ export default function ResultsCard({ data, isDefault, lang = 'en', isDemo = fal
               {data.walk_forward_consistency.toFixed(2)}
             </span>
             <span class="font-mono text-[10px]" style={{ color: data.walk_forward_consistency >= 0.85 ? 'var(--color-green)' : data.walk_forward_consistency >= 0.7 ? 'var(--color-accent)' : 'var(--color-red)' }}>
-              {data.walk_forward_consistency >= 0.85 ? (lang === 'ko' ? '안정적' : 'Stable') :
-               data.walk_forward_consistency >= 0.7 ? (lang === 'ko' ? '보통' : 'Moderate') :
-               (lang === 'ko' ? '과적합 위험' : 'Overfit risk')}
+              {data.walk_forward_consistency >= 0.85 ? t.wfStable :
+               data.walk_forward_consistency >= 0.7 ? t.wfModerate :
+               t.wfOverfit}
             </span>
           </div>
           {data.walk_forward_details && (
@@ -315,7 +368,7 @@ export default function ResultsCard({ data, isDefault, lang = 'en', isDemo = fal
               <span class="text-[--color-text-muted]">ETH: <span style={{ color: signColor(data.eth_hold_return_pct) }}>{data.eth_hold_return_pct > 0 ? '+' : ''}{data.eth_hold_return_pct.toFixed(1)}%</span></span>
             )}
             <span style={{ color: (data.total_return_pct - data.btc_hold_return_pct) >= 0 ? 'var(--color-green)' : 'var(--color-red)' }} class="font-bold">
-              {(data.total_return_pct - data.btc_hold_return_pct) >= 0 ? '+' : ''}{(data.total_return_pct - data.btc_hold_return_pct).toFixed(1)}%p {(data.total_return_pct - data.btc_hold_return_pct) >= 0 ? (lang === 'ko' ? '초과' : 'alpha') : (lang === 'ko' ? '부족' : 'underperform')}
+              {(data.total_return_pct - data.btc_hold_return_pct) >= 0 ? '+' : ''}{(data.total_return_pct - data.btc_hold_return_pct).toFixed(1)}%p {(data.total_return_pct - data.btc_hold_return_pct) >= 0 ? t.alpha : t.underperform}
             </span>
           </div>
         </div>
@@ -423,13 +476,13 @@ export default function ResultsCard({ data, isDefault, lang = 'en', isDemo = fal
             label="VaR 95%"
             value={`${data.var_95.toFixed(2)}%`}
             color="var(--color-red)"
-            description={lang === 'ko' ? '일별 최대 예상 손실 (95% 신뢰도)' : 'Daily max expected loss (95% confidence)'}
+            description={t.varDesc}
           />
           <MetricBox
             label="CVaR 95%"
             value={`${(data.cvar_95 ?? 0).toFixed(2)}%`}
             color="var(--color-red)"
-            description={lang === 'ko' ? '꼬리 리스크 평균 (VaR 초과 시 평균 손실)' : 'Expected Shortfall (avg loss beyond VaR)'}
+            description={t.cvarDesc}
           />
         </div>
       )}
@@ -438,30 +491,30 @@ export default function ResultsCard({ data, isDefault, lang = 'en', isDemo = fal
       {(data.deflated_sharpe !== undefined && data.deflated_sharpe !== 0) && (
         <div class="mb-3 px-3 py-2.5 rounded-lg bg-[--color-bg-tooltip] border border-[--color-border]">
           <div class="font-mono text-[10px] text-[--color-text-muted] uppercase mb-2">
-            {lang === 'ko' ? '과적합 탐지' : 'Overfitting Detection'}
+            {t.overfitDetect}
           </div>
           <div class="grid grid-cols-2 gap-2 mb-2">
             <MetricBox
-              label={lang === 'ko' ? 'DSR 신뢰도' : 'DSR Confidence'}
+              label={t.dsrConfidence}
               value={`${(data.deflated_sharpe * 100).toFixed(0)}%`}
               color={data.deflated_sharpe > 0.8 ? 'var(--color-green)' : data.deflated_sharpe > 0.5 ? 'var(--color-accent)' : 'var(--color-red)'}
-              description={lang === 'ko' ? `Sharpe가 데이터마이닝 아닐 확률` : `Prob. Sharpe survives multi-test correction`}
+              description={t.dsrDesc}
             />
             <MetricBox
-              label={lang === 'ko' ? 'MC 검증' : 'Monte Carlo'}
+              label={t.mcLabel}
               value={`p=${(data.mc_p_value ?? 1).toFixed(3)}`}
               color={(data.mc_p_value ?? 1) < 0.05 ? 'var(--color-green)' : (data.mc_p_value ?? 1) < 0.10 ? 'var(--color-accent)' : 'var(--color-red)'}
-              description={lang === 'ko' ? `상위 ${(100 - (data.mc_percentile ?? 50)).toFixed(0)}% (랜덤 셔플 대비)` : `Top ${(100 - (data.mc_percentile ?? 50)).toFixed(0)}% vs random shuffle`}
+              description={`${t.mcDescPrefix} ${(100 - (data.mc_percentile ?? 50)).toFixed(0)}% ${t.mcDescSuffix}`}
             />
           </div>
           {data.jensens_alpha !== undefined && data.jensens_alpha !== 0 && (
             <div class="flex items-center gap-2 font-mono text-xs">
-              <span class="text-[--color-text-muted]">{lang === 'ko' ? '젠센 알파' : "Jensen's α"}:</span>
+              <span class="text-[--color-text-muted]">{t.jensensAlpha}:</span>
               <span style={{ color: data.jensens_alpha > 0 ? 'var(--color-green)' : 'var(--color-red)' }} class="font-bold">
                 {data.jensens_alpha > 0 ? '+' : ''}{data.jensens_alpha.toFixed(2)}%
               </span>
               <span class="text-[9px] text-[--color-text-muted]">
-                {lang === 'ko' ? '(BTC 대비 리스크 조정 초과수익)' : '(risk-adjusted excess vs BTC)'}
+                {t.jensensAlphaDesc}
               </span>
             </div>
           )}
@@ -512,9 +565,7 @@ export default function ResultsCard({ data, isDefault, lang = 'en', isDemo = fal
             <div class="h-full bg-[--color-red]/60 transition-[width] duration-300" style={{ width: `${Math.min(totalCost / Math.abs(data.total_return_pct || 1) * 100, 100)}%` }} />
           </div>
           <div class="mt-1 text-[10px] font-mono text-[--color-text-muted] opacity-60">
-            {lang === 'ko'
-              ? `수수료가 수익의 ${data.total_return_pct !== 0 ? Math.abs(totalCost / data.total_return_pct * 100).toFixed(0) : '—'}%를 차지합니다`
-              : `Fees consume ${data.total_return_pct !== 0 ? Math.abs(totalCost / data.total_return_pct * 100).toFixed(0) : '—'}% of returns`}
+            {`${t.feeConsume} ${data.total_return_pct !== 0 ? Math.abs(totalCost / data.total_return_pct * 100).toFixed(0) : '—'}${t.feeConsumeOf}`}
           </div>
         </div>
       )}

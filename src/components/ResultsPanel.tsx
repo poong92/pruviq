@@ -449,7 +449,7 @@ export default function ResultsPanel({
               </div>
               <div class="overflow-x-auto">
                 <table class="w-full text-[10px] font-mono">
-                  <caption class="sr-only">Backtest run history</caption>
+                  <caption class="sr-only">{t.history || "History"}</caption>
                   <thead>
                     <tr class="text-[--color-text-muted] border-b border-[--color-border]">
                       <th class="py-1 px-2 text-left">#</th>
@@ -560,7 +560,7 @@ export default function ResultsPanel({
               {result.yearly_stats && result.yearly_stats.length > 0 && (
                 <div class="mt-4">
                   <div class="text-[10px] font-mono text-[--color-text-muted] uppercase mb-2">
-                    Yearly Breakdown
+                    {t.yearlyBreakdown || "Yearly Breakdown"}
                   </div>
                   <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
                     {result.yearly_stats.map((y) => (
@@ -656,7 +656,7 @@ export default function ResultsPanel({
                 result.pnl_buckets && (
                   <div class="mt-4">
                     <div class="text-[10px] font-mono text-[--color-text-muted] uppercase mb-2">
-                      PnL Distribution
+                      {t.pnlDistribution || "PnL Distribution"}
                     </div>
                     <div class="flex items-end gap-px h-16">
                       {result.pnl_distribution.map((count, i) => {
@@ -694,7 +694,7 @@ export default function ResultsPanel({
                   </div>
                 )}
               <div class="mt-3 flex flex-wrap gap-3 text-[10px] text-[--color-text-muted] font-mono">
-                <span>{result.coins_used} coins</span>
+                <span>{result.coins_used} {lang === 'ko' ? '코인' : 'coins'}</span>
                 <span>{result.data_range}</span>
                 <span>{result.compute_time_ms}ms</span>
                 {result._isDemo && (
@@ -714,16 +714,16 @@ export default function ResultsPanel({
           {resultTab === "equity" && (
             <div class="p-3 md:p-4">
               <div class="font-mono text-[0.625rem] text-[--color-text-muted] uppercase tracking-wider mb-1">
-                Equity Curve
+                {t.equityCurve || "Equity Curve"}
               </div>
               <div ref={equityChartRef} style={{ height: "300px" }} />
               <div class="font-mono text-[0.625rem] text-[--color-text-muted] uppercase tracking-wider mt-3 mb-1">
-                Drawdown
+                {t.drawdown || "Drawdown"}
               </div>
               <div ref={ddChartRef} style={{ height: "120px" }} />
               {result && result.max_drawdown_pct !== undefined && (
                 <div class="mt-2 font-mono text-xs text-[--color-text-muted]">
-                  Max Drawdown:{" "}
+                  {t.maxDrawdown || "Max Drawdown"}:{" "}
                   <span style={{ color: COLORS.red }}>
                     {result.max_drawdown_pct.toFixed(1)}%
                   </span>
@@ -811,7 +811,7 @@ export default function ResultsPanel({
                 </table>
               ) : (
                 <div class="text-center py-8 text-[--color-text-muted] text-sm">
-                  Trade details not available for this backtest type.
+                  {t.noTradeDetails || "Trade details not available for this backtest type."}
                 </div>
               )}
             </div>
@@ -839,9 +839,7 @@ export default function ResultsPanel({
               if (coins.length === 0) {
                 return (
                   <div class="text-center py-8 text-[--color-text-muted] text-sm font-mono">
-                    {lang === "ko"
-                      ? "코인별 데이터가 없습니다."
-                      : "No per-coin data available."}
+                    {t.noCoinData || "No per-coin data available."}
                   </div>
                 );
               }
