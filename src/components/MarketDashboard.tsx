@@ -39,6 +39,7 @@ const labels = {
     ctaDesc: "Use our free strategy builder to backtest on 549+ coins.",
     ctaButton: "Try Simulator",
     staleWarning: "Data may be delayed",
+    staleWarningSevere: "Market data is outdated — live API fallback active",
     showMore: "Show all",
     showLess: "Show less",
     showMoreNews: "Show more news",
@@ -78,6 +79,7 @@ const labels = {
     macroPrevious: "이전",
     ctaButton: "시뮬레이터 시작",
     staleWarning: "데이터가 지연될 수 있습니다",
+    staleWarningSevere: "시장 데이터가 오래됨 — 라이브 API 대체 중",
     showMore: "전체 보기",
     showLess: "접기",
     showMoreNews: "더 보기",
@@ -267,12 +269,14 @@ export default function MarketDashboard({
   // Live "updated X ago" counter (based on live price generated timestamp)
   const [refreshAgo, setRefreshAgo] = useState("");
   const [isDataStale, setIsDataStale] = useState(false);
+  const [isDataVerySale, setIsDataVerySale] = useState(false);
   useEffect(() => {
     if (!generated) return;
     const genTime = new Date(generated).getTime();
     const tick = () => {
       const sec = Math.max(0, Math.floor((Date.now() - genTime) / 1000));
       setIsDataStale(sec > 1800); // stale if >30 min old
+      setIsDataVerySale(sec > 3600); // very stale if >1 hour old
       if (sec < 60) setRefreshAgo(`${sec}s`);
       else if (sec < 3600) setRefreshAgo(`${Math.floor(sec / 60)}m`);
       else {
@@ -369,9 +373,14 @@ export default function MarketDashboard({
         <div class="fade-in">
           {/* Staleness warning */}
           {isDataStale && (
-            <div class="mb-4 px-4 py-2.5 rounded-lg border border-yellow-500/30 bg-yellow-500/10 text-center">
-              <span class="text-xs font-mono text-yellow-400">
-                ⚠ {l.staleWarning} ({refreshAgo})
+            <div
+              class={`mb-4 px-4 py-2.5 rounded-lg border text-center ${isDataVerySale ? "border-red-500/30 bg-red-500/10" : "border-yellow-500/30 bg-yellow-500/10"}`}
+            >
+              <span
+                class={`text-xs font-mono ${isDataVerySale ? "text-red-400" : "text-yellow-400"}`}
+              >
+                ⚠ {isDataVerySale ? l.staleWarningSevere : l.staleWarning} (
+                {refreshAgo})
               </span>
             </div>
           )}
