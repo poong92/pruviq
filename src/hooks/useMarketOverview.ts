@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'preact/hooks';
-import { STATIC_DATA, fetchWithFallback } from '../config/api';
+import { useState, useEffect, useRef } from "preact/hooks";
+import { STATIC_DATA, fetchWithFallback, dataAgeMs } from "../config/api";
 
 type MarketData = {
   btc_price: number;
@@ -17,21 +17,37 @@ type MarketData = {
 };
 
 const POLL_MS = 300_000; // 5 minutes
+const STALE_POLL_MS = 60_000; // 1 minute when data is stale
 
 export function useMarketOverview() {
   const [market, setMarket] = useState<MarketData | null>(null);
   const [error, setError] = useState(false);
+  const intervalRef = useRef<number | null>(null);
 
   const fetchMarket = () => {
-    fetchWithFallback('/market', STATIC_DATA.market)
-      .then((d: MarketData) => { setMarket(d); setError(false); })
-      .catch(() => setError(true));
+    fetchWithFallback("/market", STATIC_DATA.market)
+      .then((d: MarketData) => {
+        setMarket(d);
+        setError(false);
+        // Poll faster when data is stale (>30 min old)
+        const age = dataAgeMs(d);
+        const nextInterval = age > 30 * 60 * 1000 ? STALE_POLL_MS : POLL_MS;
+        if (intervalRef.current !== null) clearInterval(intervalRef.current);
+        intervalRef.current = window.setInterval(fetchMarket, nextInterval);
+      })
+      .catch(() => {
+        setError(true);
+        // Also poll faster on error
+        if (intervalRef.current !== null) clearInterval(intervalRef.current);
+        intervalRef.current = window.setInterval(fetchMarket, STALE_POLL_MS);
+      });
   };
 
   useEffect(() => {
     fetchMarket();
-    const id = setInterval(fetchMarket, POLL_MS);
-    return () => clearInterval(id);
+    return () => {
+      if (intervalRef.current !== null) clearInterval(intervalRef.current);
+    };
   }, []);
 
   return { market, error, retry: fetchMarket };
