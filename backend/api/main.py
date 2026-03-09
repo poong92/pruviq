@@ -2501,7 +2501,7 @@ async def run_backtest(req: BacktestRequest):
     )
 
     # Cache the result
-    set_cached(bt_key, response)
+    set_cached(bt_key, response.model_dump())
 
     return response
 
