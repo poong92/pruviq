@@ -77,6 +77,15 @@ if [ -f "$VENV_DIR/bin/activate" ]; then
     source "$VENV_DIR/bin/activate"
 fi
 
+# --- Pre-check: detect stale data files and alert ---
+MARKET_JSON="$REPO_DIR/public/data/market.json"
+if [ -f "$MARKET_JSON" ]; then
+    FILE_AGE_SEC=$(( $(date +%s) - $(stat -f %m "$MARKET_JSON") ))
+    if [ "$FILE_AGE_SEC" -gt 3600 ]; then
+        send_alert "WARN" "market.json is $(( FILE_AGE_SEC / 60 ))min old — possible cron gap"
+    fi
+fi
+
 # --- Step 1: Fetch data ---
 log "Running refresh_static.py..."
 if ! python3 backend/scripts/refresh_static.py 2>&1; then

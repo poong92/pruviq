@@ -29,6 +29,13 @@ export function isStale(data: any): boolean {
   return age > STALE_THRESHOLD_MS;
 }
 
+export function isVeryStale(data: any): boolean {
+  if (!data?.generated) return false;
+  return (
+    Date.now() - new Date(data.generated).getTime() > VERY_STALE_THRESHOLD_MS
+  );
+}
+
 export function dataAgeMs(data: any): number {
   if (!data?.generated) return 0;
   return Math.max(0, Date.now() - new Date(data.generated).getTime());
