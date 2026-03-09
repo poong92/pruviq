@@ -136,21 +136,23 @@ async def _background_refresh():
 
 
 async def _background_market_refresh():
-    """Fetch CoinGecko + news every 60s. Runs independently of user requests."""
-    global _market_cache, _news_cache
+    """Fetch market data (Binance primary) + news every 5min. Runs independently of user requests."""
+    global _market_cache, _news_cache, _market_cache_ts
     consecutive_failures = 0
     while True:
         try:
             data = await asyncio.to_thread(_build_market_overview)
             _market_cache = data
+            _market_cache_ts = time.time()
             consecutive_failures = 0
-            logger.info("Market data refreshed from CoinGecko")
+            logger.info("Market data refreshed (Binance primary)")
         except asyncio.CancelledError:
             raise
         except Exception as e:
             consecutive_failures += 1
-            level = logging.ERROR if consecutive_failures >= 5 else logging.WARNING
-            logger.log(level, f"Market background refresh failed ({consecutive_failures}x): {e}")
+            cache_age_min = (time.time() - _market_cache_ts) / 60 if _market_cache_ts > 0 else -1
+            level = logging.ERROR if consecutive_failures >= 3 else logging.WARNING
+            logger.log(level, f"Market refresh failed ({consecutive_failures}x, cache age={cache_age_min:.0f}min): {e}")
         try:
             data = await asyncio.to_thread(_build_news)
             _news_cache = data
@@ -190,9 +192,10 @@ async def lifespan(app: FastAPI):
 
     # Pre-fetch market data before accepting requests (avoid startup race)
     print("Pre-fetching market data...")
-    global _market_cache, _news_cache
+    global _market_cache, _news_cache, _market_cache_ts
     try:
         _market_cache = await asyncio.to_thread(_build_market_overview)
+        _market_cache_ts = time.time()
         _news_cache = await asyncio.to_thread(_build_news)
         print("Market cache initialized")
     except Exception as e:
@@ -1196,23 +1199,34 @@ except ImportError:
 import requests as http_requests
 from email.utils import parsedate_to_datetime
 
-MARKET_REFRESH_INTERVAL = 900  # seconds — background fetch every 15min (matches static CDN refresh)
+MARKET_REFRESH_INTERVAL = 300  # seconds — background fetch every 5min (Binance primary, no rate limit concern)
 _market_cache: Optional[dict] = None
+_market_cache_ts: float = 0.0  # timestamp of last successful cache update
 
 
-def _cg_get(url: str, timeout: int = 10, max_retries: int = 3):
+def _cg_get(url: str, timeout: int = 10, max_retries: int = 3, raise_on_fail: bool = True):
     """CoinGecko GET with 429 backoff."""
     for attempt in range(max_retries):
-        resp = http_requests.get(url, headers=CG_HEADERS, timeout=timeout)
-        if resp.status_code == 429:
-            retry_after = int(resp.headers.get("Retry-After", 30))
-            wait = max(retry_after, 15) * (2 ** attempt)
-            logger.warning(f"CoinGecko 429 on {url.split('?')[0]}, waiting {wait}s (attempt {attempt+1})")
-            time.sleep(wait)
+        try:
+            resp = http_requests.get(url, headers=CG_HEADERS, timeout=timeout)
+            if resp.status_code == 429:
+                retry_after = int(resp.headers.get("Retry-After", 30))
+                wait = max(retry_after, 15) * (2 ** attempt)
+                logger.warning(f"CoinGecko 429 on {url.split('?')[0]}, waiting {wait}s (attempt {attempt+1})")
+                time.sleep(wait)
+                continue
+            resp.raise_for_status()
+            return resp
+        except http_requests.exceptions.Timeout:
+            logger.warning(f"CoinGecko timeout on {url.split('?')[0]} (attempt {attempt+1})")
             continue
-        resp.raise_for_status()
-        return resp
-    raise Exception(f"CoinGecko rate limited after {max_retries} retries")
+        except http_requests.exceptions.ConnectionError:
+            logger.warning(f"CoinGecko connection error on {url.split('?')[0]} (attempt {attempt+1})")
+            time.sleep(5 * (attempt + 1))
+            continue
+    if raise_on_fail:
+        raise Exception(f"CoinGecko rate limited after {max_retries} retries")
+    return None
 
 
 _news_cache: Optional[dict] = None
@@ -1255,9 +1269,11 @@ def _fetch_fear_greed() -> dict:
 
 
 def _fetch_coingecko_global() -> dict:
-    """Fetch global market data from CoinGecko."""
+    """Fetch global market data from CoinGecko (supplementary — not critical)."""
     try:
-        resp = _cg_get("https://api.coingecko.com/api/v3/global", timeout=5)
+        resp = _cg_get("https://api.coingecko.com/api/v3/global", timeout=5, raise_on_fail=False)
+        if resp is None:
+            return {"total_market_cap_b": 0, "btc_dominance": 0, "total_volume_24h_b": 0}
         data = resp.json()["data"]
         return {
             "total_market_cap_b": round(data["total_market_cap"].get("usd", 0) / 1e9, 1),
@@ -1265,23 +1281,66 @@ def _fetch_coingecko_global() -> dict:
             "total_volume_24h_b": round(data["total_volume"].get("usd", 0) / 1e9, 1),
         }
     except Exception as e:
-        logger.warning(f"CoinGecko fetch failed: {e}")
+        logger.warning(f"CoinGecko global fetch failed: {e}")
         return {"total_market_cap_b": 0, "btc_dominance": 0, "total_volume_24h_b": 0}
 
 
-def _fetch_coingecko_tickers() -> tuple:
-    """Fetch market tickers from CoinGecko (NO Binance API).
+def _fetch_binance_tickers() -> tuple:
+    """Fetch market tickers from Binance Futures API (PRIMARY — free, unlimited, no API key).
     Returns (top_gainers, top_losers, btc_price, btc_change, eth_price, eth_change).
+    Falls back to CoinGecko if Binance fails.
     """
+    try:
+        resp = http_requests.get(BINANCE_FUTURES_URL, timeout=10)
+        resp.raise_for_status()
+        tickers = resp.json()
+
+        # Filter USDT pairs with valid data
+        usdt_tickers = [t for t in tickers if t["symbol"].endswith("USDT")
+                        and float(t.get("priceChangePercent", 0)) != 0
+                        and float(t.get("quoteVolume", 0)) > 0]
+
+        # BTC / ETH
+        btc = next((t for t in usdt_tickers if t["symbol"] == "BTCUSDT"), None)
+        eth = next((t for t in usdt_tickers if t["symbol"] == "ETHUSDT"), None)
+        btc_price = round(float(btc["lastPrice"]), 2) if btc else 0
+        btc_change = round(float(btc["priceChangePercent"]), 2) if btc else 0
+        eth_price = round(float(eth["lastPrice"]), 2) if eth else 0
+        eth_change = round(float(eth["priceChangePercent"]), 2) if eth else 0
+
+        # Sort by price change
+        usdt_tickers.sort(key=lambda t: float(t["priceChangePercent"]), reverse=True)
+
+        def _to_mover(t):
+            return MarketMover(
+                symbol=t["symbol"],
+                price=round(float(t["lastPrice"]), 4),
+                change_24h=round(float(t["priceChangePercent"]), 2),
+                volume_24h=round(float(t.get("quoteVolume", 0)), 0),
+            )
+
+        top_gainers = [_to_mover(t) for t in usdt_tickers[:10]]
+        top_losers = [_to_mover(t) for t in usdt_tickers[-10:][::-1]]
+
+        return top_gainers, top_losers, btc_price, btc_change, eth_price, eth_change
+    except Exception as e:
+        logger.warning(f"Binance tickers fetch failed, trying CoinGecko fallback: {e}")
+        return _fetch_coingecko_tickers_fallback()
+
+
+def _fetch_coingecko_tickers_fallback() -> tuple:
+    """CoinGecko fallback for tickers (only used when Binance fails)."""
     try:
         resp = _cg_get(
             "https://api.coingecko.com/api/v3/coins/markets"
             "?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false"
             "&price_change_percentage=24h",
+            raise_on_fail=False,
         )
+        if resp is None:
+            return [], [], 0, 0, 0, 0
         coins = resp.json()
 
-        # BTC / ETH
         btc = next((c for c in coins if c["symbol"] == "btc"), None)
         eth = next((c for c in coins if c["symbol"] == "eth"), None)
         btc_price = round(btc["current_price"], 2) if btc else 0
@@ -1289,7 +1348,6 @@ def _fetch_coingecko_tickers() -> tuple:
         eth_price = round(eth["current_price"], 2) if eth else 0
         eth_change = round(eth.get("price_change_percentage_24h") or 0, 2) if eth else 0
 
-        # Filter coins with valid change data, convert symbol to USDT format
         valid = [c for c in coins if c.get("price_change_percentage_24h") is not None
                  and c.get("total_volume", 0) > 0]
         valid.sort(key=lambda c: c["price_change_percentage_24h"], reverse=True)
@@ -1308,7 +1366,7 @@ def _fetch_coingecko_tickers() -> tuple:
 
         return top_gainers, top_losers, btc_price, btc_change, eth_price, eth_change
     except Exception as e:
-        logger.warning(f"CoinGecko tickers fetch failed: {e}")
+        logger.warning(f"CoinGecko tickers fallback also failed: {e}")
         return [], [], 0, 0, 0, 0
 
 
@@ -1322,7 +1380,10 @@ def _fetch_coingecko_funding() -> list:
         resp = _cg_get(
             "https://api.coingecko.com/api/v3/derivatives"
             "?include_tickers=unexpired",
+            raise_on_fail=False,
         )
+        if resp is None:
+            return []
         data = resp.json()
 
         # Filter perpetual USDT pairs from major exchanges
@@ -1375,10 +1436,10 @@ def _fetch_coingecko_funding() -> list:
 
 
 def _build_market_overview() -> dict:
-    """Build complete market overview. All data from CoinGecko + Alternative.me (NO Binance)."""
+    """Build complete market overview. Binance (primary) + CoinGecko (supplementary) + Alternative.me."""
     fg = _fetch_fear_greed()
     cg = _fetch_coingecko_global()
-    gainers, losers, btc_price, btc_change, eth_price, eth_change = _fetch_coingecko_tickers()
+    gainers, losers, btc_price, btc_change, eth_price, eth_change = _fetch_binance_tickers()
     funding = _fetch_coingecko_funding()
 
     return MarketOverview(
@@ -1487,14 +1548,28 @@ def _build_news() -> dict:
 @app.get("/market", response_model=MarketOverview)
 async def get_market():
     """Get market overview with BTC/ETH prices, Fear & Greed, top movers, funding rates.
-    Data is refreshed every 60s by background task — no on-demand CoinGecko calls.
+    Data is refreshed every 5min by background task (Binance primary).
+    If cache is stale (>30min), forces a fresh fetch.
     """
-    global _market_cache
+    global _market_cache, _market_cache_ts
+    cache_age = time.time() - _market_cache_ts if _market_cache_ts > 0 else float("inf")
+
+    # If cache is stale (>30min), force a fresh fetch
+    if _market_cache is not None and cache_age > 1800:
+        logger.warning(f"Market cache stale ({cache_age/60:.0f}min), forcing refresh")
+        try:
+            data = await asyncio.to_thread(_build_market_overview)
+            _market_cache = data
+            _market_cache_ts = time.time()
+        except Exception as e:
+            logger.error(f"Forced market refresh failed, serving stale cache: {e}")
+
     if _market_cache is not None:
         return MarketOverview(**_market_cache)
     # First request before background task has run — fetch once
     data = await asyncio.to_thread(_build_market_overview)
     _market_cache = data
+    _market_cache_ts = time.time()
     return MarketOverview(**data)
 
 
