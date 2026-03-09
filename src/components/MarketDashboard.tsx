@@ -272,10 +272,14 @@ export default function MarketDashboard({
     const genTime = new Date(generated).getTime();
     const tick = () => {
       const sec = Math.max(0, Math.floor((Date.now() - genTime) / 1000));
-      setIsDataStale(sec > 3600); // stale if >1 hour old
+      setIsDataStale(sec > 1800); // stale if >30 min old
       if (sec < 60) setRefreshAgo(`${sec}s`);
       else if (sec < 3600) setRefreshAgo(`${Math.floor(sec / 60)}m`);
-      else setRefreshAgo(`${Math.floor(sec / 3600)}h`);
+      else {
+        const h = Math.floor(sec / 3600);
+        const m = Math.floor((sec % 3600) / 60);
+        setRefreshAgo(m > 0 ? `${h}h ${m}m` : `${h}h`);
+      }
     };
     tick();
     const id = setInterval(tick, 10_000);
