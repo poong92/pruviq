@@ -20,11 +20,18 @@ export const STATIC_DATA = {
 
 // Max age (ms) before static data is considered stale and API is preferred
 const STALE_THRESHOLD_MS = 30 * 60 * 1000; // 30 minutes
+// Very stale: try API first with longer timeout
+const VERY_STALE_THRESHOLD_MS = 60 * 60 * 1000; // 1 hour
 
-function isStale(data: any): boolean {
+export function isStale(data: any): boolean {
   if (!data?.generated) return false;
   const age = Date.now() - new Date(data.generated).getTime();
   return age > STALE_THRESHOLD_MS;
+}
+
+export function dataAgeMs(data: any): number {
+  if (!data?.generated) return 0;
+  return Math.max(0, Date.now() - new Date(data.generated).getTime());
 }
 
 // Static-first fetch: try CDN/static first (fast, no API limits),
@@ -42,10 +49,23 @@ export async function fetchWithFallback(
     /* ignore */
   }
 
-  // 2. If static is fresh, use it
+  // 2. If static is very stale (>1h), try API first with longer timeout
+  if (staticData && dataAgeMs(staticData) > VERY_STALE_THRESHOLD_MS) {
+    try {
+      const res = await fetch(`${API_BASE_URL}${apiPath}`, {
+        signal: AbortSignal.timeout(10000),
+      });
+      if (!res.ok) throw new Error(`API ${res.status}`);
+      return await res.json();
+    } catch {
+      return staticData; // still better than nothing
+    }
+  }
+
+  // 3. If static is fresh, use it
   if (staticData && !isStale(staticData)) return staticData;
 
-  // 3. Static is missing or stale — try API for fresh data
+  // 4. Static is missing or mildly stale — try API
   try {
     const res = await fetch(`${API_BASE_URL}${apiPath}`, {
       signal: AbortSignal.timeout(5000),
@@ -53,7 +73,7 @@ export async function fetchWithFallback(
     if (!res.ok) throw new Error(`API ${res.status}`);
     return await res.json();
   } catch {
-    // 4. API failed — return stale static data if we have it (better than nothing)
+    // 5. API failed — return stale static data if we have it (better than nothing)
     if (staticData) return staticData;
     throw new Error(`Data unavailable: ${staticPath}`);
   }
