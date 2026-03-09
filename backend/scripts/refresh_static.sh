@@ -119,25 +119,44 @@ else
 fi
 
 # --- Step 3: Git commit to generated-data branch (non-blocking) ---
-# This preserves data history without touching main (which has branch protection)
+# SAFETY: Always ensure we return to main branch, even on failure
 {
     git stash -q 2>/dev/null || true
     if ! git show-ref --verify --quiet "refs/heads/$DATA_BRANCH" 2>/dev/null; then
         git branch "$DATA_BRANCH" main 2>/dev/null || true
     fi
-    git checkout "$DATA_BRANCH" -q 2>/dev/null || true
-    git merge main -q --no-edit 2>/dev/null || true
-    git stash pop -q 2>/dev/null || true
-    git add -f $DATA_FILES 2>/dev/null || true
-    TS=$(date -u '+%Y-%m-%d %H:%M')
-    git commit -m "chore: refresh static data [$TS UTC]" --no-verify 2>/dev/null || true
-    git push origin "$DATA_BRANCH" 2>/dev/null || true
-    git checkout main -q 2>/dev/null || true
-    log "Data committed to $DATA_BRANCH"
+    git checkout "$DATA_BRANCH" -q 2>/dev/null || {
+        log "Failed to checkout $DATA_BRANCH, staying on main"
+        git checkout main -f -q 2>/dev/null || true
+        git stash pop -q 2>/dev/null || true
+    }
+    # Merge main — if conflict, abort and reset
+    if ! git merge main -q --no-edit 2>/dev/null; then
+        log "Merge conflict on $DATA_BRANCH, aborting merge"
+        git merge --abort 2>/dev/null || true
+        git checkout main -f -q 2>/dev/null || true
+        git stash pop -q 2>/dev/null || true
+        log "Returned to main after merge conflict"
+    else
+        git stash pop -q 2>/dev/null || true
+        git add -f $DATA_FILES 2>/dev/null || true
+        TS=$(date -u '+%Y-%m-%d %H:%M')
+        git commit -m "chore: refresh static data [$TS UTC]" --no-verify 2>/dev/null || true
+        git push origin "$DATA_BRANCH" 2>/dev/null || true
+        git checkout main -f -q 2>/dev/null || true
+        log "Data committed to $DATA_BRANCH"
+    fi
 } || {
     log "Git data commit skipped (non-critical)"
-    git checkout main -q 2>/dev/null || true
 }
+# CRITICAL: Always ensure we are on main branch at exit
+current_branch=$(git branch --show-current 2>/dev/null)
+if [[ "$current_branch" != "main" ]]; then
+    log "WARNING: Still on $current_branch, force switching to main"
+    git merge --abort 2>/dev/null || true
+    git checkout main -f -q 2>/dev/null || true
+    git reset --hard origin/main 2>/dev/null || true
+fi
 
 send_alert "OK" "Static data refreshed + deployed"
 exit 0
