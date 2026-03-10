@@ -330,10 +330,19 @@ export default function SimulatorPage({ lang = "en" }: Props) {
   const [presetLoading, setPresetLoading] = useState(false);
   const [presetError, setPresetError] = useState<string | null>(null);
 
-  // Per-coin USDT + Leverage
+  // Per-coin USDT + Leverage (compound mode uses total capital)
   const [perCoinUsdt, setPerCoinUsdt] = useState(60);
   const [leverage, setLeverage] = useState(5);
   const [compounding, setCompounding] = useState(false);
+  const handleCompoundToggle = (v: boolean) => {
+    setCompounding(v);
+    setPerCoinUsdt(v ? 1000 : 60);  // swap default: total capital vs per-coin
+    if (v) {
+      // Compound = 1 coin only → force select mode, keep max 1
+      setCoinMode('select');
+      setSelectedCoins((prev) => prev.length > 0 ? [prev[0]] : ['BTCUSDT']);
+    }
+  };
 
   // Timeframe
   const [timeframe, setTimeframe] = useState<string>("1H");
@@ -681,6 +690,8 @@ export default function SimulatorPage({ lang = "en" }: Props) {
       sl_pct: slPct,
       tp_pct: tpPct,
       max_bars: adjustedMaxBars,
+      // Compound: 1 coin, user enters total capital = per_coin_usd
+      // Simple: user enters per-coin amount directly
       per_coin_usd: perCoinUsdt,
       leverage,
       compounding,
@@ -1116,7 +1127,7 @@ export default function SimulatorPage({ lang = "en" }: Props) {
               leverage={leverage}
               setLeverage={setLeverage}
               compounding={compounding}
-              setCompounding={setCompounding}
+              setCompounding={handleCompoundToggle}
               startDate={startDate}
               setStartDate={setStartDate}
               endDate={endDate}
