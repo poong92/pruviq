@@ -143,7 +143,7 @@ export default function QuickTestPanel({ lang, onRunPreset, isRunning, hasResult
       </div>
 
       {/* Category Cards Grid — 5 categories, clean layout */}
-      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
+      <div class="grid grid-cols-3 sm:grid-cols-5 gap-2">
         {CATEGORIES.map((cat) => {
           const isSelected = selectedCat === cat.id;
           const isCatRunning = runningPreset && cat.presets.includes(runningPreset);

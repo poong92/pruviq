@@ -280,7 +280,7 @@ export default function BuilderPanel(props: Props) {
                 style={{
                   background: props.compounding ? '#3182f6' : '#3a3a42',
                 }}
-                title={props.compounding ? 'Compound: Reinvest profits into larger positions' : 'Simple: Fixed position size every trade'}
+                aria-label={props.compounding ? 'Switch to Simple mode' : 'Switch to Compound mode'}
               >
                 <span
                   class="absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white transition-transform duration-200"
@@ -289,10 +289,12 @@ export default function BuilderPanel(props: Props) {
               </button>
               <label class="text-[10px] text-[--color-text-muted] cursor-pointer select-none" onClick={() => props.setCompounding(!props.compounding)}>
                 {props.compounding ? (t.compounding || 'Compound') : (t.simple || 'Simple')}
-                <span class="cursor-help opacity-60 hover:opacity-100 ml-0.5" title={props.compounding
-                  ? 'Profits are reinvested — position size grows/shrinks with equity'
-                  : 'Fixed $amount per trade regardless of P&L'}>&#9432;</span>
               </label>
+              <span class="text-[9px] text-[--color-text-muted] opacity-70">
+                {props.compounding
+                  ? (props.lang === 'ko' ? '수익 재투자 — 포지션 크기 변동' : 'Reinvest profits — position size scales with equity')
+                  : (props.lang === 'ko' ? '고정 금액 거래' : 'Fixed $ per trade')}
+              </span>
             </div>
             {/* Start Date */}
             <div>
