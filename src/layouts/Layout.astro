@@ -28,8 +28,9 @@ const ogImageAvif = ogImage.replace(/\.(png|jpe?g)(\?.*)?$/i, '.avif$2');
 const ogImageWebp = ogImage.replace(/\.(png|jpe?g)(\?.*)?$/i, '.webp$2');
 const canonicalPath = canonicalOverride || Astro.url.pathname;
 const canonicalURL = new URL(canonicalPath, Astro.site || 'https://pruviq.com');
-const enURL = new URL(basePath, Astro.site || 'https://pruviq.com');
-const koURL = new URL(`/ko${basePath === '/' ? '/' : basePath}`, Astro.site || 'https://pruviq.com');
+const hreflangBase = canonicalPath.replace(/^\/ko(\/|$)/, '/');
+const enURL = new URL(hreflangBase, Astro.site || 'https://pruviq.com');
+const koURL = new URL(`/ko${hreflangBase === '/' ? '/' : hreflangBase}`, Astro.site || 'https://pruviq.com');
 
 const marketPath = lang === 'ko' ? '/ko/market' : '/market';
 const simulatePath = lang === 'ko' ? '/ko/simulate' : '/simulate';
