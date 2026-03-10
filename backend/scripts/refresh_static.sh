@@ -13,7 +13,9 @@ export PATH="/opt/homebrew/bin:$HOME/.npm-global/bin:$PATH"
 
 VENV_DIR="$REPO_DIR/backend/.venv"
 LOCK_FILE="/tmp/pruviq-refresh.lock"
+LOCK_MAX_AGE_SEC=1200  # 20 minutes — auto-expire stuck locks
 DATA_BRANCH="generated-data"
+SCRIPT_PATH="$(cd "$(dirname "$0")" && pwd)/$(basename "$0")"
 
 # Telegram alerting (safe: check file exists before source to avoid set -e exit)
 TELEGRAM_TOKEN=""
@@ -41,12 +43,16 @@ send_alert() {
         -d parse_mode="HTML" >/dev/null 2>&1 || true
 }
 
-# --- Concurrency lock ---
+# --- Concurrency lock (with time-based expiry) ---
 acquire_lock() {
     if [ -f "$LOCK_FILE" ]; then
-        local lock_pid
+        local lock_pid lock_age_sec
         lock_pid=$(cat "$LOCK_FILE" 2>/dev/null || echo "0")
-        if kill -0 "$lock_pid" 2>/dev/null; then
+        lock_age_sec=$(( $(date +%s) - $(stat -f %m "$LOCK_FILE" 2>/dev/null || echo "0") ))
+        if [ "$lock_age_sec" -gt "$LOCK_MAX_AGE_SEC" ]; then
+            log "Lock expired (${lock_age_sec}s old, PID $lock_pid). Removing."
+            rm -f "$LOCK_FILE"
+        elif kill -0 "$lock_pid" 2>/dev/null; then
             log "Another refresh is running (PID $lock_pid). Skipping."
             exit 0
         else
@@ -165,6 +171,14 @@ if [[ "$current_branch" != "main" ]]; then
     git merge --abort 2>/dev/null || true
     git checkout main -f -q 2>/dev/null || true
     git reset --hard origin/main 2>/dev/null || true
+fi
+
+# --- Step 4: Ensure cron entry exists (self-healing) ---
+CRON_ENTRY="*/20 * * * * bash $SCRIPT_PATH >> /tmp/pruviq-refresh.log 2>&1"
+if ! crontab -l 2>/dev/null | grep -qF "refresh_static.sh"; then
+    log "Cron entry missing — auto-installing..."
+    ( crontab -l 2>/dev/null; echo "$CRON_ENTRY" ) | crontab -
+    send_alert "WARN" "Cron entry was missing — auto-installed"
 fi
 
 send_alert "OK" "Static data refreshed + deployed"
