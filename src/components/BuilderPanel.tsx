@@ -254,11 +254,11 @@ export default function BuilderPanel(props: Props) {
                 class="w-full mt-0.5 px-2 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
               />
             </div>
-            {/* Capital input — changes label based on compound mode */}
+            {/* Capital input — compound: total capital for 1 coin; simple: per-coin */}
             <div>
               <label class="text-[10px] text-[--color-text-muted]">
                 {props.compounding
-                  ? (props.lang === 'ko' ? '총 투자금 $' : 'Total Capital $')
+                  ? (props.lang === 'ko' ? '투자 원금 $' : 'Capital $')
                   : (t.perCoinUsdt || 'Per Coin $')}
               </label>
               <input type="number" value={localPerCoin}
@@ -266,7 +266,7 @@ export default function BuilderPanel(props: Props) {
                 max={props.compounding ? 1000000 : 10000}
                 step={props.compounding ? 100 : 10}
                 onChange={(e: any) => setLocalPerCoin(e.target.value)}
-                onBlur={() => props.setPerCoinUsdt(parseFloat(localPerCoin) || (props.compounding ? 5000 : 60))}
+                onBlur={() => props.setPerCoinUsdt(parseFloat(localPerCoin) || (props.compounding ? 1000 : 60))}
                 class="w-full mt-0.5 px-2 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
               />
             </div>
@@ -302,17 +302,17 @@ export default function BuilderPanel(props: Props) {
                 </label>
               </div>
             </div>
-            {/* Compound summary — only when compound is ON */}
+            {/* Compound info — 1 coin only */}
             {props.compounding && (
-              <div class="col-span-3 text-[9px] font-mono text-[--color-text-muted] bg-[--color-accent]/5 border border-[--color-accent]/20 rounded px-2 py-1 -mt-0.5">
+              <div class="col-span-3 text-[9px] font-mono text-[--color-accent] bg-[--color-accent]/5 border border-[--color-accent]/20 rounded px-2 py-1.5 -mt-0.5">
                 {(() => {
-                  const capital = parseFloat(localPerCoin) || 5000;
-                  const maxPos = Math.min(100, props.totalCoins || 100);
-                  const perCoin = Math.round(capital / maxPos);
-                  const exposure = perCoin * (parseInt(localLeverage) || 5);
+                  const capital = parseFloat(localPerCoin) || 1000;
+                  const lev = parseInt(localLeverage) || 5;
+                  const exposure = capital * lev;
+                  const coin = props.selectedCoins.length > 0 ? props.selectedCoins[0] : '?';
                   return props.lang === 'ko'
-                    ? `$${capital.toLocaleString()} → 코인당 ~$${perCoin} × ${localLeverage}x = $${exposure} 노출 (손익에 따라 자동 조정)`
-                    : `$${capital.toLocaleString()} → ~$${perCoin}/coin × ${localLeverage}x = $${exposure} exposure (auto-scales with P&L)`;
+                    ? `${coin} — $${capital.toLocaleString()} × ${lev}x = $${exposure.toLocaleString()} 포지션, 수익이 다음 거래 원금에 누적`
+                    : `${coin} — $${capital.toLocaleString()} × ${lev}x = $${exposure.toLocaleString()} position, profits compound into next trade`;
                 })()}
               </div>
             )}
@@ -338,6 +338,12 @@ export default function BuilderPanel(props: Props) {
         {/* Coin Selection */}
         <div class="px-4 py-2 border-b border-[--color-border]">
           <div class="text-xs font-mono text-[--color-text-muted] uppercase mb-1">{t.coins}</div>
+          {/* Compound mode: locked to 1 coin select */}
+          {props.compounding && (
+            <div class="text-[10px] font-mono text-[--color-accent] mb-1">
+              {props.lang === 'ko' ? '복리 모드: 코인 1개만 선택' : 'Compound mode: select 1 coin'}
+            </div>
+          )}
           <div class="flex gap-1 mb-1.5">
             {[
               { mode: 'all' as const, label: t.allCoins },
@@ -346,8 +352,10 @@ export default function BuilderPanel(props: Props) {
             ].map(({ mode, label }) => (
               <button
                 key={mode}
-                onClick={() => props.setCoinMode(mode)}
+                onClick={() => !props.compounding && props.setCoinMode(mode)}
+                disabled={props.compounding && mode !== 'select'}
                 class={`px-2.5 py-0.5 text-xs font-mono rounded transition-colors border
+                  ${props.compounding && mode !== 'select' ? 'opacity-30 cursor-not-allowed' : ''}
                   ${props.coinMode === mode
                     ? 'font-bold'
                     : 'bg-[--color-bg-tooltip] text-[--color-text-muted] border-[--color-border] hover:border-[--color-accent]/20'}`}
@@ -378,18 +386,20 @@ export default function BuilderPanel(props: Props) {
                   placeholder="Search coins..."
                   class="flex-1 px-2 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs outline-none"
                 />
-                <button
-                  onClick={() => {
-                    const allSymbols = props.filteredCoins.map((c) => c.symbol);
-                    props.setSelectedCoins((prev) => {
-                      const combined = new Set([...prev, ...allSymbols]);
-                      return Array.from(combined);
-                    });
-                  }}
-                  class="px-2 py-1 text-[10px] font-mono text-[--color-accent] border border-[--color-border] rounded hover:bg-[--color-bg-hover] transition-colors whitespace-nowrap"
-                >
-                  All
-                </button>
+                {!props.compounding && (
+                  <button
+                    onClick={() => {
+                      const allSymbols = props.filteredCoins.map((c) => c.symbol);
+                      props.setSelectedCoins((prev) => {
+                        const combined = new Set([...prev, ...allSymbols]);
+                        return Array.from(combined);
+                      });
+                    }}
+                    class="px-2 py-1 text-[10px] font-mono text-[--color-accent] border border-[--color-border] rounded hover:bg-[--color-bg-hover] transition-colors whitespace-nowrap"
+                  >
+                    All
+                  </button>
+                )}
                 <button
                   onClick={() => props.setSelectedCoins(() => [])}
                   class="px-2 py-1 text-[10px] font-mono text-[--color-text-muted] border border-[--color-border] rounded hover:bg-[--color-bg-hover] transition-colors whitespace-nowrap"
@@ -415,9 +425,16 @@ export default function BuilderPanel(props: Props) {
                   <button
                     key={c.symbol}
                     onClick={() => {
-                      props.setSelectedCoins((prev) =>
-                        prev.includes(c.symbol) ? prev.filter((x) => x !== c.symbol) : [...prev, c.symbol]
-                      );
+                      if (props.compounding) {
+                        // Compound: 1 coin only — replace selection
+                        props.setSelectedCoins(() =>
+                          props.selectedCoins.includes(c.symbol) ? [] : [c.symbol]
+                        );
+                      } else {
+                        props.setSelectedCoins((prev) =>
+                          prev.includes(c.symbol) ? prev.filter((x) => x !== c.symbol) : [...prev, c.symbol]
+                        );
+                      }
                     }}
                     class={`block w-full text-left px-2 py-0.5 text-xs font-mono rounded hover:bg-[--color-bg-hover]
                       ${props.selectedCoins.includes(c.symbol) ? 'text-[--color-accent]' : 'text-[--color-text-muted]'}`}
