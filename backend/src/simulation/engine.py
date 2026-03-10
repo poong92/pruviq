@@ -271,7 +271,7 @@ class SimulationEngine:
 
         # 손익 계산
         if direction == "long":
-            pnl_gross = (exit_price - entry_price) / entry_price
+            pnl_gross = (exit_price_adj - entry_price) / entry_price
         else:
             pnl_gross = (entry_price - exit_price_adj) / entry_price
 
@@ -313,7 +313,7 @@ class SimulationEngine:
 
         total_return = sum(t.pnl_pct for t in trades)
         gross_profit = sum(t.pnl_pct for t in wins) if wins else 0
-        gross_loss = abs(sum(t.pnl_pct for t in losses)) if losses else 0.001
+        gross_loss = abs(sum(t.pnl_pct for t in losses)) if losses else 0.0
         total_fees = sum(t.fee_pct for t in trades)
 
         # Max drawdown (equity curve)
@@ -350,8 +350,9 @@ class SimulationEngine:
             dr_avg = float(np.mean(daily_returns_eng))
             dr_std = float(np.std(daily_returns_eng, ddof=1))
             sharpe = round(dr_avg / dr_std * np.sqrt(365), 2) if dr_std > 0 else 0.0
-            dr_down = daily_returns_eng[daily_returns_eng < 0]
-            tdd = float(np.sqrt(np.mean(daily_returns_eng[daily_returns_eng < 0] ** 2))) if len(dr_down) >= 2 else 0.0
+            # TDD Sortino (Sortino & van der Meer 1991): sqrt(mean(min(r,0)^2)) over ALL observations
+            downside = np.minimum(daily_returns_eng, 0)
+            tdd = float(np.sqrt(np.mean(downside ** 2)))
             sortino = round(dr_avg / tdd * np.sqrt(365), 2) if tdd > 0 else 0.0
             n_days_eng = len(daily_pnl_eng)
             ann_return_eng = total_return * (365 / max(n_days_eng, 1))
@@ -369,7 +370,7 @@ class SimulationEngine:
             losses=len(losses),
             win_rate=round(len(wins) / len(trades) * 100, 2),
             total_return_pct=round(total_return, 2),
-            profit_factor=round(gross_profit / gross_loss, 2),
+            profit_factor=round(gross_profit / gross_loss, 2) if gross_loss > 0 else (999.99 if gross_profit > 0 else 0.0),
             avg_win_pct=round(sum(t.pnl_pct for t in wins) / len(wins), 4) if wins else 0,
             avg_loss_pct=round(sum(t.pnl_pct for t in losses) / len(losses), 4) if losses else 0,
             max_drawdown_pct=round(max_dd, 2),

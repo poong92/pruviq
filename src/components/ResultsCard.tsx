@@ -58,7 +58,7 @@ interface ResultsCardProps {
 
 const labels = {
   en: {
-    live: 'CURRENT LIVE SETTINGS',
+    live: 'DEFAULT SETTINGS',
     winRate: 'Win Rate',
     pf: 'Profit Factor',
     totalReturn: 'Total Return',
@@ -119,7 +119,7 @@ const labels = {
     feeConsumeOf: '% of returns',
   },
   ko: {
-    live: '현재 라이브 설정',
+    live: '기본 설정',
     winRate: '승률',
     pf: '수익 팩터',
     totalReturn: '총 수익률',
