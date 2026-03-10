@@ -317,9 +317,12 @@ async def rate_limit_middleware(request: Request, call_next):
     if request.url.path in ("/simulate", "/simulate/coin", "/simulate/compare", "/simulate/validate", "/backtest", "/export/csv"):
         client_ip = get_client_ip(request)
         if not check_rate_limit(client_ip):
+            oldest = rate_limits.get(client_ip, [0])[0]
+            retry_after = max(1, int(60 - (time.time() - oldest)))
             return JSONResponse(
                 status_code=429,
-                content={"detail": "Rate limit exceeded. Max 30 requests per minute."},
+                content={"detail": f"Rate limit exceeded. Retry after {retry_after}s."},
+                headers={"Retry-After": str(retry_after)},
             )
     return await call_next(request)
 
@@ -1259,10 +1262,7 @@ async def refresh_data(x_admin_key: str = Header(default="", alias="X-Admin-Key"
 
 # --- Market Dashboard ---
 
-try:
-    import defusedxml.ElementTree as ET
-except ImportError:
-    import xml.etree.ElementTree as ET
+import defusedxml.ElementTree as ET
 import requests as http_requests
 from email.utils import parsedate_to_datetime
 
