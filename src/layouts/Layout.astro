@@ -11,6 +11,7 @@ interface Props {
   category?: string;
   ogImage?: string;
   canonicalOverride?: string;
+  noAlternate?: boolean;
 }
 
 const lang = getLangFromUrl(Astro.url);
@@ -20,7 +21,7 @@ const basePath = getBasePath(Astro.url.pathname);
 const cfToken = import.meta.env.PUBLIC_CF_ANALYTICS_TOKEN;
 const buildTime = new Date().toISOString();
 
-const { title, description = t('meta.home_desc'), type = 'website', date, category, canonicalOverride } = Astro.props;
+const { title, description = t('meta.home_desc'), type = 'website', date, category, canonicalOverride, noAlternate = false } = Astro.props;
 const ogImage = new URL(Astro.props.ogImage || '/og-image.jpg', Astro.site || 'https://pruviq.com').href;
 // derive AVIF/WebP variants safely for jpg/png sources
 const ogImageAvif = ogImage.replace(/\.(png|jpe?g)(\?.*)?$/i, '.avif$2');
@@ -88,9 +89,9 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
     <link rel="canonical" href={canonicalURL.href} />
-    <link rel="alternate" hreflang="en" href={enURL.href} />
-    <link rel="alternate" hreflang="ko" href={koURL.href} />
-    <link rel="alternate" hreflang="x-default" href={enURL.href} />
+    {!noAlternate && <link rel="alternate" hreflang="en" href={enURL.href} />}
+    {!noAlternate && <link rel="alternate" hreflang="ko" href={koURL.href} />}
+    {!noAlternate && <link rel="alternate" hreflang="x-default" href={enURL.href} />}
     <meta name="naver-site-verification" content="ece19c45b3e33ec86f4fc79060c3283cea1493ee" />
     <meta name="yandex-verification" content="a20aa9b1eacf8e51" />
     <meta name="keywords" content={lang === 'ko'
