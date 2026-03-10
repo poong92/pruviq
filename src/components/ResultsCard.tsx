@@ -46,6 +46,7 @@ interface ResultsData {
   mc_p_value?: number;
   mc_percentile?: number;
   jensens_alpha?: number;
+  compounding?: boolean;
 }
 
 interface ResultsCardProps {
@@ -379,6 +380,7 @@ export default function ResultsCard({ data, isDefault, lang = 'en', isDemo = fal
         <div class="mb-3 px-3 py-2.5 rounded-lg bg-[--color-bg-tooltip] border border-[--color-border]">
           <div class="font-mono text-[0.625rem] text-[--color-text-muted] uppercase tracking-wider mb-1.5">
             {t.portfolio} — ${data.per_coin_usd ?? 60} x {data.leverage ?? 5}x
+            {data.compounding && <span class="ml-1.5 text-[--color-accent] font-bold normal-case">COMPOUND</span>}
           </div>
           <div class="grid grid-cols-2 md:grid-cols-4 gap-2 font-mono text-xs">
             <div>
