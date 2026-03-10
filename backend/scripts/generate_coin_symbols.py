@@ -12,7 +12,7 @@ from pathlib import Path
 # Paths
 DATA_DIR = Path(os.getenv(
     "PRUVIQ_DATA_DIR",
-    str(Path(__file__).parent.parent.parent.parent / "autotrader" / "data" / "futures")
+    str(Path(__file__).parent.parent / "data" / "futures")
 ))
 OUTPUT = Path(__file__).parent.parent.parent / "src" / "data" / "coin-symbols.ts"
 
