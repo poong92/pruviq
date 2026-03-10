@@ -720,6 +720,7 @@ async def simulate(req: SimulationRequest):
             equity += t["pnl_pct"]  # 100-based: starts at 100, adds pnl_pct
         peak = max(peak, equity)
         dd = (peak - equity) / peak * 100 if peak > 0 else 0.0  # % of peak (not absolute points)
+        dd = min(dd, 100.0)  # Cap at 100%
         max_dd = max(max_dd, dd)
         eq_times.append(t.get("exit_time", t["time"])[:10])
         eq_values.append(equity - 100.0)  # Convert to return % for frontend
@@ -837,6 +838,26 @@ def _load_coingecko_metadata():
         logger.info(f"CoinGecko metadata loaded: {len(meta)} coins")
     except Exception as e:
         logger.warning(f"CoinGecko metadata load failed: {e}")
+
+
+def _get_dynamic_slippage(symbol: str) -> float:
+    """3-tier slippage based on market cap rank from CoinGecko metadata.
+    Tier 1 (Top 50):  0.02% — high liquidity
+    Tier 2 (Top 200): 0.05% — moderate liquidity
+    Tier 3 (Others):  0.10% — low liquidity
+    Falls back to 0.05% if metadata unavailable.
+    """
+    _load_coingecko_metadata()
+    sym_key = symbol.replace("USDT", "").upper()
+    meta = _cg_metadata.get(sym_key, {})
+    rank = meta.get("market_cap_rank")
+    if rank is None:
+        return 0.0005  # Tier 2 default
+    if rank <= 50:
+        return 0.0002  # Tier 1
+    if rank <= 200:
+        return 0.0005  # Tier 2
+    return 0.001  # Tier 3
 
 
 def _build_coin_stats(strategy) -> dict:
@@ -1096,6 +1117,7 @@ def _run_one_compare_strategy(
         equity += t["pnl_pct"]
         peak = max(peak, equity)
         dd_pct = (peak - equity) / peak * 100 if peak > 0 else 0.0  # % of peak (industry standard)
+        dd_pct = min(dd_pct, 100.0)  # Cap at 100%
         max_dd = max(max_dd, dd_pct)
         eq_times.append(t["time"][:10])
         eq_values.append(equity - 100.0)  # return % for frontend
@@ -2017,6 +2039,12 @@ async def run_backtest(req: BacktestRequest):
         else:
             coin_list = data_manager.get_top_n(_resolve_top_n(req.top_n))
 
+    # Track missing symbols for warning
+    _missing_symbols = []
+    if req.symbols:
+        found_syms = {sym for sym, _ in coin_list}
+        _missing_symbols = [s for s in req.symbols if s.upper() not in found_syms]
+
     if not coin_list:
         raise HTTPException(404, "No coins found.")
 
@@ -2038,6 +2066,7 @@ async def run_backtest(req: BacktestRequest):
 
         # Simulate trades from signals
         from src.simulation.engine_fast import simulate_vectorized
+        # TODO: integrate per-coin slippage via _get_dynamic_slippage(sym)
         trades = simulate_vectorized(
             df=df,
             signal_indices=signal_indices,
@@ -2228,6 +2257,7 @@ async def run_backtest(req: BacktestRequest):
         peak = max(peak, equity)
         peak_usd = max(peak_usd, equity_usd)
         dd = (peak - equity) / peak * 100 if peak > 0 else 0.0  # % of peak
+        dd = min(dd, 100.0)  # Cap at 100%
         dd_usd = peak_usd - equity_usd
         max_dd = max(max_dd, dd)
         max_dd_usd = max(max_dd_usd, dd_usd)
@@ -2557,8 +2587,12 @@ async def run_backtest(req: BacktestRequest):
         warnings.append(f"High drawdown: {mdd:.1f}%. With {leverage_val}x leverage, real capital loss could reach {mdd * leverage_val / 100 * 100:.0f}%.")
     if len(all_trades) < 30:
         warnings.append(f"Low sample size: {len(all_trades)} trades. Results may not be statistically reliable.")
+    if len(all_trades) < 100 and len(all_trades) >= 30:
+        warnings.append(f"Moderate sample size: {len(all_trades)} trades. Consider expanding the test period or adding more coins for robust statistics (recommended: 100+).")
     if pf > 3.0 and len(all_trades) > 50:
         warnings.append("Very high Profit Factor may indicate overfitting. Run OOS validation to verify.")
+    if bt_sharpe > 3.0 and len(all_trades) >= 30:
+        warnings.append(f"Sharpe Ratio {bt_sharpe:.2f} is unusually high (>3.0). This often indicates overfitting or look-ahead bias. Verify with out-of-sample testing.")
     if btc_hold_return_pct > 0 and total_return < btc_hold_return_pct:
         warnings.append(f"Strategy underperforms BTC buy-and-hold ({btc_hold_return_pct:.1f}%) over the same period.")
     if edge_p_value > 0.05 and len(all_trades) >= 30:
@@ -2572,7 +2606,18 @@ async def run_backtest(req: BacktestRequest):
     if len(all_trades) >= 10:
         warnings.append("Survivorship bias: only currently listed assets are tested. Delisted coins are excluded, which may affect results.")
 
-    # --- Rolling 5-Window Walk-Forward Consistency ---
+    # Holding period warning: timeframe × max_bars
+    tf_hours = {"1H": 1, "2H": 2, "4H": 4, "6H": 6, "12H": 12, "1D": 24, "1W": 168}
+    tf_str = getattr(req, 'timeframe', '1H') or '1H'
+    tf_h = tf_hours.get(tf_str.upper(), 1)
+    max_bars_val = int(getattr(req, 'max_bars', 48))
+    hold_hours = tf_h * max_bars_val
+    if hold_hours > 168:  # > 1 week
+        warnings.append(f"Max holding period: {tf_str} x {max_bars_val} bars = {hold_hours}h ({hold_hours/24:.0f} days). Long holding periods increase exposure to market risk and funding costs.")
+    if _missing_symbols:
+        warnings.append(f"Symbols not found (skipped): {', '.join(_missing_symbols[:10])}{'...' if len(_missing_symbols) > 10 else ''}. These coins may be delisted or unavailable.")
+
+    # --- Anchored Walk-Forward Consistency (IS grows, OOS slides) ---
     walk_forward_consistency = 0.0
     walk_forward_details = ""
     if len(all_trades) >= 50:
@@ -2611,6 +2656,58 @@ async def run_backtest(req: BacktestRequest):
             walk_forward_details = " | ".join(wf_window_details)
             if walk_forward_consistency < 0.7:
                 warnings.append(f"Walk-forward degradation detected ({walk_forward_consistency:.2f}). OOS performance significantly worse than IS.")
+
+    # --- Market Regime Performance Split ---
+    regime_performance = None
+    try:
+        btc_data = None
+        btc_list = data_manager.get_symbols(["BTCUSDT"])
+        btc_data = btc_list[0][1] if btc_list else None
+        if btc_data is not None and len(btc_data) > 50:
+            btc_close = btc_data["close"].values.astype(float)
+            btc_dates = btc_data["timestamp"].astype(str).values
+            # SMA20 and SMA50
+            sma20 = pd.Series(btc_close).rolling(20).mean().values
+            sma50 = pd.Series(btc_close).rolling(50).mean().values
+            # Build date->regime map
+            regime_map = {}
+            for i in range(50, len(btc_data)):
+                d = btc_dates[i][:10]
+                if sma20[i] > sma50[i] and btc_close[i] > sma20[i]:
+                    regime_map[d] = "bull"
+                elif sma20[i] < sma50[i] and btc_close[i] < sma20[i]:
+                    regime_map[d] = "bear"
+                else:
+                    regime_map[d] = "sideways"
+            # Classify trades
+            regime_trades = {"bull": [], "bear": [], "sideways": []}
+            for t in all_trades:
+                trade_date = t["time"][:10]
+                regime = regime_map.get(trade_date, "sideways")
+                regime_trades[regime].append(t)
+            # Build metrics per regime
+            def _regime_metrics(trades_list):
+                if not trades_list:
+                    return {"trades": 0, "win_rate": 0.0, "total_return": 0.0, "profit_factor": 0.0, "avg_pnl": 0.0}
+                w = [t for t in trades_list if t["pnl_pct"] > 0]
+                l = [t for t in trades_list if t["pnl_pct"] <= 0]
+                gp = sum(t["pnl_pct"] for t in w) if w else 0.0
+                gl = abs(sum(t["pnl_pct"] for t in l)) if l else 0.001
+                return {
+                    "trades": len(trades_list),
+                    "win_rate": round(len(w) / len(trades_list) * 100, 2),
+                    "total_return": round(sum(t["pnl_pct"] for t in trades_list), 2),
+                    "profit_factor": round(gp / gl, 2) if gl > 0 else (999.99 if gp > 0 else 0.0),
+                    "avg_pnl": round(sum(t["pnl_pct"] for t in trades_list) / len(trades_list), 4),
+                }
+            regime_performance = {
+                "bull": _regime_metrics(regime_trades["bull"]),
+                "bear": _regime_metrics(regime_trades["bear"]),
+                "sideways": _regime_metrics(regime_trades["sideways"]),
+            }
+    except Exception as e:
+        logger.warning(f"Regime performance calculation failed: {e}")
+        regime_performance = None
 
     compute_ms = int((time.time() - t_start) * 1000)
 
@@ -2696,6 +2793,7 @@ async def run_backtest(req: BacktestRequest):
         positions_skipped=skipped,
         pnl_distribution=pnl_distribution,
         pnl_buckets=pnl_buckets,
+        regime_performance=regime_performance,
     )
 
     # Cache the result
