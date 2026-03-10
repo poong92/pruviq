@@ -293,7 +293,7 @@ export default function ResultsCard({ data, isDefault, lang = 'en', isDemo = fal
       {/* Strategy Grade */}
       {data.strategy_grade && (
         <div class="mb-3 flex items-center gap-2">
-          <span class={`inline-flex items-center justify-center w-8 h-8 rounded-lg font-mono text-lg font-black border-2 ${
+          <span class={`inline-flex items-center justify-center w-10 h-10 rounded-xl font-mono text-xl font-black border-2 shadow-sm ${
             data.strategy_grade === 'A' ? 'text-[--color-green] border-[--color-green]/40 bg-[--color-green]/10' :
             data.strategy_grade === 'B' ? 'text-[--color-accent] border-[--color-accent]/40 bg-[--color-accent]/10' :
             data.strategy_grade === 'C' ? 'text-[--color-yellow] border-[--color-yellow]/40 bg-[--color-yellow]/10' :
