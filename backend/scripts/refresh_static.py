@@ -650,7 +650,7 @@ def main():
     # 2. Fetch Binance tickers (PRIMARY — unlimited, real-time)
     binance_tickers = fetch_binance_tickers()
     if not binance_tickers:
-        print("WARN: Binance unavailable. Keeping existing stale files.")
+        print("ERROR: Binance unavailable. market.json NOT updated.")
         # Still refresh macro + news
         macro_json = build_macro_json()
         if macro_json:
@@ -658,7 +658,7 @@ def main():
         news_json = build_news_json()
         if news_json:
             (OUTPUT_DIR / "news.json").write_text(json.dumps(news_json, ensure_ascii=False))
-        sys.exit(0)
+        sys.exit(1)
 
     # If no coin-symbols.ts, use all Binance USDT symbols
     if not our_symbols:

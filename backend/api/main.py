@@ -160,7 +160,10 @@ async def _background_market_refresh():
             raise
         except Exception as e:
             logger.warning(f"News background refresh failed: {e}")
-        await asyncio.sleep(MARKET_REFRESH_INTERVAL)
+        # Exponential backoff on consecutive failures (cap at 10min)
+        backoff = min(MARKET_REFRESH_INTERVAL * (2 ** min(consecutive_failures, 3)), 600)
+        sleep_time = backoff if consecutive_failures > 0 else MARKET_REFRESH_INTERVAL
+        await asyncio.sleep(sleep_time)
 
 
 @asynccontextmanager
