@@ -83,8 +83,10 @@ if [[ "$CURRENT_BRANCH" != "main" ]]; then
     log "Not on main (on $CURRENT_BRANCH), switching..."
     git stash -q 2>/dev/null || true
     git checkout main -q 2>/dev/null || true
-    git pull origin main -q 2>/dev/null || true
 fi
+
+# Always pull latest code so pipeline fixes propagate automatically
+git pull --autostash -q origin main 2>/dev/null || true
 
 # Activate venv if exists
 if [ -f "$VENV_DIR/bin/activate" ]; then
