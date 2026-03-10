@@ -632,6 +632,7 @@ async def simulate(req: SimulationRequest):
             for trade in result.trades:
                 all_trades.append({
                     "time": trade.entry_time,
+                    "exit_time": trade.exit_time,
                     "pnl_pct": trade.pnl_pct,
                     "exit_reason": trade.exit_reason,
                     "funding_pct": getattr(trade, 'funding_pct', 0),
@@ -679,7 +680,7 @@ async def simulate(req: SimulationRequest):
     wins = [t for t in all_trades if t["pnl_pct"] > 0]
     losses = [t for t in all_trades if t["pnl_pct"] <= 0]
     gross_profit = sum(t["pnl_pct"] for t in wins) if wins else 0
-    gross_loss = abs(sum(t["pnl_pct"] for t in losses)) if losses else 0.001
+    gross_loss = abs(sum(t["pnl_pct"] for t in losses)) if losses else 0.0
     is_compounding = getattr(req, 'compounding', False)
 
     # total_return: compound vs simple
@@ -712,9 +713,9 @@ async def simulate(req: SimulationRequest):
         else:
             equity += t["pnl_pct"]  # 100-based: starts at 100, adds pnl_pct
         peak = max(peak, equity)
-        dd = peak - equity
+        dd = (peak - equity) / peak * 100 if peak > 0 else 0.0  # % of peak (not absolute points)
         max_dd = max(max_dd, dd)
-        eq_times.append(t["time"][:10])
+        eq_times.append(t.get("exit_time", t["time"])[:10])
         eq_values.append(equity - 100.0)  # Convert to return % for frontend
 
         if t["pnl_pct"] <= 0:
@@ -731,7 +732,7 @@ async def simulate(req: SimulationRequest):
     from collections import defaultdict as _dd_sim
     daily_pnl_sim = _dd_sim(float)
     for t in all_trades:
-        day_key = t["time"][:10]  # YYYY-MM-DD (exit time)
+        day_key = t.get("exit_time", t["time"])[:10]  # YYYY-MM-DD (exit time)
         daily_pnl_sim[day_key] += t["pnl_pct"]
     daily_returns_sim = np.array(list(daily_pnl_sim.values())) if daily_pnl_sim else np.array([])
 
@@ -739,9 +740,9 @@ async def simulate(req: SimulationRequest):
         dr_avg = float(np.mean(daily_returns_sim))
         dr_std = float(np.std(daily_returns_sim, ddof=1))
         sharpe = round(dr_avg / dr_std * np.sqrt(365), 2) if dr_std > 0 else 0.0
-        dr_down = daily_returns_sim[daily_returns_sim < 0]
-        # TDD Sortino: sqrt(mean(min(r,0)^2))
-        tdd = float(np.sqrt(np.mean(daily_returns_sim[daily_returns_sim < 0] ** 2))) if len(dr_down) >= 2 else 0.0
+        # TDD Sortino (Sortino & van der Meer 1991): sqrt(mean(min(r,0)^2)) over ALL N
+        downside_sim = np.minimum(daily_returns_sim, 0)
+        tdd = float(np.sqrt(np.mean(downside_sim ** 2)))
         sortino = round(dr_avg / tdd * np.sqrt(365), 2) if tdd > 0 else 0.0
         # Calmar: annualized return / MDD
         n_days_sim = len(daily_pnl_sim)
@@ -765,7 +766,7 @@ async def simulate(req: SimulationRequest):
         "losses": len(losses),
         "win_rate": _safe_float(round(len(wins) / len(all_trades) * 100, 2)),
         "total_return_pct": _safe_float(round(total_return, 2)),
-        "profit_factor": _safe_float(round(gross_profit / gross_loss, 2)),
+        "profit_factor": _safe_float(round(gross_profit / gross_loss, 2) if gross_loss > 0 else (999.99 if gross_profit > 0 else 0.0)),
         "avg_win_pct": _safe_float(round(avg_win, 4)),
         "avg_loss_pct": _safe_float(round(avg_loss, 4)),
         "max_drawdown_pct": _safe_float(round(max_dd, 2)),
@@ -1076,7 +1077,7 @@ def _run_one_compare_strategy(
     wins = [t for t in all_trades if t["pnl_pct"] > 0]
     losses = [t for t in all_trades if t["pnl_pct"] <= 0]
     gross_profit = sum(t["pnl_pct"] for t in wins) if wins else 0
-    gross_loss = abs(sum(t["pnl_pct"] for t in losses)) if losses else 0.001
+    gross_loss = abs(sum(t["pnl_pct"] for t in losses)) if losses else 0.0
 
     equity = 100.0
     peak = 100.0
@@ -1096,7 +1097,7 @@ def _run_one_compare_strategy(
         total_trades=len(all_trades), wins=len(wins), losses=len(losses),
         win_rate=round(len(wins) / len(all_trades) * 100, 2),
         total_return_pct=round(sum(t["pnl_pct"] for t in all_trades), 2),
-        profit_factor=round(gross_profit / gross_loss, 2),
+        profit_factor=round(gross_profit / gross_loss, 2) if gross_loss > 0 else (999.99 if gross_profit > 0 else 0.0),
         max_drawdown_pct=round(max_dd, 2),
         tp_count=sum(1 for t in all_trades if t["exit_reason"] == "tp"),
         sl_count=sum(1 for t in all_trades if t["exit_reason"] == "sl"),
@@ -2156,7 +2157,7 @@ async def run_backtest(req: BacktestRequest):
     wins = [t for t in all_trades if t["pnl_pct"] > 0]
     losses = [t for t in all_trades if t["pnl_pct"] <= 0]
     gross_profit = sum(t["pnl_pct"] for t in wins) if wins else 0
-    gross_loss = abs(sum(t["pnl_pct"] for t in losses)) if losses else 0.001
+    gross_loss = abs(sum(t["pnl_pct"] for t in losses)) if losses else 0.0
     is_compounding = getattr(req, 'compounding', False)
 
     avg_win = (sum(t["pnl_pct"] for t in wins) / len(wins)) if wins else 0
@@ -2220,7 +2221,7 @@ async def run_backtest(req: BacktestRequest):
         equity_usd += t.get("pnl_usd", 0)
         peak = max(peak, equity)
         peak_usd = max(peak_usd, equity_usd)
-        dd = peak - equity
+        dd = (peak - equity) / peak * 100 if peak > 0 else 0.0  # % of peak
         dd_usd = peak_usd - equity_usd
         max_dd = max(max_dd, dd)
         max_dd_usd = max(max_dd_usd, dd_usd)
@@ -2236,22 +2237,23 @@ async def run_backtest(req: BacktestRequest):
     sl_count = sum(1 for t in all_trades if t["exit_reason"] == "sl")
     timeout_count = sum(1 for t in all_trades if t["exit_reason"] == "timeout")
 
-    # Risk-adjusted metrics — annualized from daily returns
-    # Group trades by exit date → daily PnL series
+    # Risk-adjusted metrics — annualized from daily PORTFOLIO returns
+    # Use pnl_usd / initial_capital for proper capital-weighted daily returns
     from collections import defaultdict as dd_import
     daily_pnl = dd_import(float)
     for t in all_trades:
         day_key = t["exit_time"][:10]  # YYYY-MM-DD
-        daily_pnl[day_key] += t["pnl_pct"]
-    daily_returns = np.array(list(daily_pnl.values())) if daily_pnl else np.array([])
+        daily_pnl[day_key] += t.get("pnl_usd", 0)
+    # Convert USD daily PnL to portfolio return %
+    daily_returns = np.array(list(daily_pnl.values())) / initial_capital * 100 if (daily_pnl and initial_capital > 0) else np.array([])
 
     if len(daily_returns) >= 5:
         dr_avg = float(np.mean(daily_returns))
         dr_std = float(np.std(daily_returns, ddof=1))
         bt_sharpe = round(dr_avg / dr_std * np.sqrt(365), 2) if dr_std > 0 else 0.0
-        dr_down = daily_returns[daily_returns < 0]
-        # TDD Sortino: sqrt(mean(min(r,0)^2)) — academic standard
-        tdd_bt = float(np.sqrt(np.mean(daily_returns[daily_returns < 0] ** 2))) if len(dr_down) >= 2 else 0.0
+        # TDD Sortino (Sortino & van der Meer 1991): sqrt(mean(min(r,0)^2)) over ALL N
+        downside_bt = np.minimum(daily_returns, 0)
+        tdd_bt = float(np.sqrt(np.mean(downside_bt ** 2)))
         bt_sortino = round(dr_avg / tdd_bt * np.sqrt(365), 2) if tdd_bt > 0 else 0.0
         # Calmar = annualized return / MDD
         n_days = len(daily_pnl)
@@ -2350,7 +2352,7 @@ async def run_backtest(req: BacktestRequest):
             wins=y["wins"],
             win_rate=round(y["wins"] / ytotal * 100, 1) if ytotal > 0 else 0,
             total_return_pct=round(y["total_pnl"], 2),
-            profit_factor=round(y["gross_profit"] / max(y["gross_loss"], 0.001), 2),
+            profit_factor=round(y["gross_profit"] / y["gross_loss"], 2) if y["gross_loss"] > 0 else (999.99 if y["gross_profit"] > 0 else 0.0),
         ))
 
     total_funding = sum(t.get('funding_pct', 0) for t in all_trades)
@@ -2379,7 +2381,7 @@ async def run_backtest(req: BacktestRequest):
             wins=m["wins"],
             win_rate=round(m["wins"] / mtotal * 100, 1) if mtotal > 0 else 0,
             total_return_pct=round(m["total_pnl"], 2),
-            profit_factor=round(m["gross_profit"] / max(m["gross_loss"], 0.001), 2),
+            profit_factor=round(m["gross_profit"] / m["gross_loss"], 2) if m["gross_loss"] > 0 else (999.99 if m["gross_profit"] > 0 else 0.0),
         ))
 
     # --- Trade duration stats ---
@@ -2481,7 +2483,7 @@ async def run_backtest(req: BacktestRequest):
             pass
 
     # --- Strategy grade (7 dimensions, max 16 points) ---
-    pf = round(gross_profit / gross_loss, 2) if gross_loss > 0 else 0
+    pf = round(gross_profit / gross_loss, 2) if gross_loss > 0 else (999.99 if gross_profit > 0 else 0.0)
     wr = round(len(wins) / len(all_trades) * 100, 2) if all_trades else 0
     mdd = round(max_dd, 2)
     grade_score = 0
@@ -2614,7 +2616,7 @@ async def run_backtest(req: BacktestRequest):
         losses=len(losses),
         win_rate=round(len(wins) / len(all_trades) * 100, 2),
         total_return_pct=round(total_return, 2),
-        profit_factor=round(gross_profit / gross_loss, 2),
+        profit_factor=round(gross_profit / gross_loss, 2) if gross_loss > 0 else (999.99 if gross_profit > 0 else 0.0),
         avg_win_pct=round(avg_win, 4),
         avg_loss_pct=round(avg_loss, 4),
         max_drawdown_pct=round(max_dd, 2),
