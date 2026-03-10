@@ -53,6 +53,12 @@ export function winRateColor(wr: number): string {
   return 'var(--color-red)';
 }
 
+/** Format profit factor: 999.99 sentinel → ∞ */
+export function formatPF(pf: number): string {
+  if (pf >= 999) return '\u221E';
+  return pf.toFixed(2);
+}
+
 /** Profit factor color: >=1.5 accent, >=1.0 yellow, else red */
 export function profitFactorColor(pf: number): string {
   if (pf >= 1.5) return 'var(--color-accent)';

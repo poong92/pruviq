@@ -343,6 +343,20 @@ class YearlyStat(BaseModel):
     profit_factor: float
 
 
+class RegimeMetrics(BaseModel):
+    trades: int
+    win_rate: float
+    total_return: float
+    profit_factor: float
+    avg_pnl: float
+
+
+class RegimePerformance(BaseModel):
+    bull: RegimeMetrics
+    bear: RegimeMetrics
+    sideways: RegimeMetrics
+
+
 class BacktestResponse(BaseModel):
     """Custom strategy backtest result."""
     name: str
@@ -431,6 +445,9 @@ class BacktestResponse(BaseModel):
     positions_skipped: int = 0  # trades skipped due to concurrent position limit
     pnl_distribution: List[int] = []  # histogram: count of trades in each 1% PnL bucket [-10..+10]
     pnl_buckets: List[str] = []       # bucket labels
+
+    # Market regime performance
+    regime_performance: Optional["RegimePerformance"] = None
 
     # Validation info
     is_valid: bool
