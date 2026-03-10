@@ -415,7 +415,7 @@ def filter_df_by_date(df: pd.DataFrame, start_date=None, end_date=None) -> pd.Da
     if len(filtered) < 100:
         logger.warning(
             f"Date filter {start_date}~{end_date} yielded only {len(filtered)} rows "
-            f"(minimum 100). Returning unfiltered data ({len(df)} rows)."
+            f"(minimum 100). Returning filtered data despite low row count."
         )
     return filtered
 
