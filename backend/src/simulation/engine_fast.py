@@ -252,7 +252,9 @@ def simulate_vectorized(
         fee = fee_pct * 2
         bars_held = exit_idx - entry_idx
         funding_payments = bars_held // 8
-        funding_cost = funding_payments * funding_rate_8h
+        # 펀딩비 방향 반영: SHORT은 양수 펀딩 시 수취 (비용 감소)
+        raw_funding = funding_payments * funding_rate_8h
+        funding_cost = -raw_funding if direction == "short" else raw_funding
         pnl_net = pnl_gross - fee - funding_cost
 
         trades.append(Trade(
@@ -322,23 +324,28 @@ def run_fast(
     losses = [t for t in trades if t.pnl_pct <= 0]
     gross_profit = sum(t.pnl_pct for t in wins) if wins else 0
     gross_loss = abs(sum(t.pnl_pct for t in losses)) if losses else 0.001
-    total_return = sum(t.pnl_pct for t in trades)
+    # 복리 기반 총 수익률
+    _eq_calc = 100.0
+    for _t in trades:
+        _eq_calc *= (1 + _t.pnl_pct / 100)
+    total_return = round((_eq_calc / 100.0 - 1) * 100, 4)
     total_fees = sum(t.fee_pct for t in trades)
     total_funding = sum(t.funding_pct for t in trades)
 
-    # MDD + consecutive
-    equity = 0.0
-    peak = 0.0
+    # MDD + consecutive (복리 기반)
+    equity = 100.0
+    peak = 100.0
     max_dd = 0.0
     eq = []
     max_consec = 0
     cur_consec = 0
 
     for t in trades:
-        equity += t.pnl_pct
+        equity = equity * (1 + t.pnl_pct / 100)
         peak = max(peak, equity)
-        max_dd = max(max_dd, peak - equity)
-        eq.append(round(equity, 2))
+        dd = (peak - equity) / peak * 100 if peak > 0 else 0
+        max_dd = max(max_dd, dd)
+        eq.append(round(equity, 4))
 
         if t.pnl_pct <= 0:
             cur_consec += 1
@@ -346,15 +353,23 @@ def run_fast(
         else:
             cur_consec = 0
 
-    # Risk-adjusted metrics
+    # Risk-adjusted metrics (거래 빈도 기반 연환산)
     trade_returns = np.array([t.pnl_pct for t in trades])
     if len(trade_returns) >= 2:
         avg_ret = float(np.mean(trade_returns))
         std_ret = float(np.std(trade_returns, ddof=1))
-        sharpe = round(avg_ret / std_ret * np.sqrt(len(trade_returns)), 2) if std_ret > 0 else 0.0
-        downside = trade_returns[trade_returns < 0]
-        down_std = float(np.std(downside, ddof=1)) if len(downside) >= 2 else 0.0
-        sortino = round(avg_ret / down_std * np.sqrt(len(trade_returns)), 2) if down_std > 0 else 0.0
+        try:
+            from datetime import datetime as _dt
+            t0 = _dt.fromisoformat(str(trades[0].entry_time)[:10])
+            t1 = _dt.fromisoformat(str(trades[-1].exit_time)[:10])
+            _days = max((t1 - t0).days, 1)
+            _ann = float(np.sqrt(len(trade_returns) / _days * 365))
+        except Exception:
+            _ann = 1.0
+        sharpe = round(avg_ret / std_ret * _ann, 2) if std_ret > 0 else 0.0
+        _excess = np.minimum(trade_returns, 0)
+        _dd = float(np.sqrt(np.mean(_excess ** 2)))
+        sortino = round(avg_ret / _dd * _ann, 2) if _dd > 0 else (float('inf') if avg_ret > 0 else 0.0)
         calmar = round(total_return / max_dd, 2) if max_dd > 0 else 0.0
     else:
         sharpe, sortino, calmar = 0.0, 0.0, 0.0

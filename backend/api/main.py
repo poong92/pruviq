@@ -354,12 +354,25 @@ def _safe_float(v, default: float = 0.0) -> float:
 
 
 def downsample_equity(times: list, values: list, n_points: int = 100) -> List[EquityPoint]:
-    """Downsample equity curve to n_points."""
+    """
+    Downsample equity curve to n_points.
+
+    내부적으로 equity는 100 기반 (시작=100, 101=+1%, 99=-1%)이지만,
+    프론트엔드는 0 기반 (0=시작, +1=+1%, -1=-1%)을 기대하므로 변환.
+    """
     if not values:
         return []
 
+    # 100 기반 → 0 기반 변환 (프론트엔드 호환)
+    # 100 기반이 아닌 경우 (이전 코드 호환) 그대로 사용
+    base = values[0] if values else 0
+    if base > 50:  # 100 기반
+        converted = [round(v - base, 4) for v in values]
+    else:
+        converted = values
+
     date_values = {}
-    for t, v in zip(times, values):
+    for t, v in zip(times, converted):
         date_values[t] = v
 
     unique_dates = sorted(date_values.keys())
@@ -662,16 +675,20 @@ async def simulate(req: SimulationRequest):
     losses = [t for t in all_trades if t["pnl_pct"] <= 0]
     gross_profit = sum(t["pnl_pct"] for t in wins) if wins else 0
     gross_loss = abs(sum(t["pnl_pct"] for t in losses)) if losses else 0.001
-    total_return = sum(t["pnl_pct"] for t in all_trades)
+    # 복리 기반 총 수익률
+    _compound_eq = 100.0
+    for _t in all_trades:
+        _compound_eq *= (1 + _t["pnl_pct"] / 100)
+    total_return = round((_compound_eq / 100.0 - 1) * 100, 4)
     total_fees = len(all_trades) * (cost_model.fee_pct * 2 * 100)
     total_funding = sum(t.get('funding_pct', 0) for t in all_trades)
 
     avg_win = (sum(t["pnl_pct"] for t in wins) / len(wins)) if wins else 0
     avg_loss = (sum(t["pnl_pct"] for t in losses) / len(losses)) if losses else 0
 
-    # Equity curve + MDD
-    equity = 0.0
-    peak = 0.0
+    # Equity curve + MDD (복리 기반, 시작 = 100)
+    equity = 100.0
+    peak = 100.0
     max_dd = 0.0
     eq_times = []
     eq_values = []
@@ -679,12 +696,13 @@ async def simulate(req: SimulationRequest):
     cur_consec = 0
 
     for t in all_trades:
-        equity += t["pnl_pct"]
+        # 복리 기반 equity curve (capital-weighted compounding)
+        equity = equity * (1 + t["pnl_pct"] / 100)
         peak = max(peak, equity)
-        dd = peak - equity
+        dd = (peak - equity) / peak * 100 if peak > 0 else 0
         max_dd = max(max_dd, dd)
         eq_times.append(t["time"][:10])
-        eq_values.append(equity)
+        eq_values.append(round(equity, 4))
 
         if t["pnl_pct"] <= 0:
             cur_consec += 1
@@ -696,15 +714,36 @@ async def simulate(req: SimulationRequest):
     sl_count = sum(1 for t in all_trades if t["exit_reason"] == "sl")
     timeout_count = sum(1 for t in all_trades if t["exit_reason"] == "timeout")
 
-    # Risk-adjusted metrics (aggregate)
+    # Risk-adjusted metrics (거래 빈도 기반 연환산)
     trade_pnls = np.array([t["pnl_pct"] for t in all_trades])
     if len(trade_pnls) >= 2:
         avg_ret = float(np.mean(trade_pnls))
         std_ret = float(np.std(trade_pnls, ddof=1))
-        sharpe = round(avg_ret / std_ret * np.sqrt(len(trade_pnls)), 2) if std_ret > 0 else 0.0
-        downside = trade_pnls[trade_pnls < 0]
-        down_std = float(np.std(downside, ddof=1)) if len(downside) >= 2 else 0.0
-        sortino = round(avg_ret / down_std * np.sqrt(len(trade_pnls)), 2) if down_std > 0 else 0.0
+
+        # 실제 거래 기간에서 연간 거래수 산출
+        try:
+            first_time = all_trades[0]["time"][:10]
+            last_time = all_trades[-1]["time"][:10]
+            from datetime import datetime as _dt
+            total_days = (_dt.strptime(last_time, "%Y-%m-%d") - _dt.strptime(first_time, "%Y-%m-%d")).days
+            if total_days > 0:
+                trades_per_year = len(trade_pnls) / total_days * 365
+                annualization = float(np.sqrt(trades_per_year))
+            else:
+                annualization = 1.0
+        except Exception:
+            annualization = 1.0
+
+        sharpe = round(avg_ret / std_ret * annualization, 2) if std_ret > 0 else 0.0
+
+        # Sortino: Target Downside Deviation (학술 표준)
+        excess = np.minimum(trade_pnls, 0)
+        if np.any(excess < 0):
+            downside_dev = float(np.sqrt(np.mean(excess ** 2)))
+            sortino = round(avg_ret / downside_dev * annualization, 2) if downside_dev > 0 else 0.0
+        else:
+            sortino = float('inf') if avg_ret > 0 else 0.0
+
         calmar = round(total_return / max_dd, 2) if max_dd > 0 else 0.0
     else:
         sharpe, sortino, calmar = 0.0, 0.0, 0.0
@@ -1018,24 +1057,25 @@ def _run_one_compare_strategy(
     gross_profit = sum(t["pnl_pct"] for t in wins) if wins else 0
     gross_loss = abs(sum(t["pnl_pct"] for t in losses)) if losses else 0.001
 
-    equity = 0.0
-    peak = 0.0
+    equity = 100.0
+    peak = 100.0
     max_dd = 0.0
     eq_times = []
     eq_values = []
     for t in all_trades:
-        equity += t["pnl_pct"]
+        equity = equity * (1 + t["pnl_pct"] / 100)
         peak = max(peak, equity)
-        max_dd = max(max_dd, peak - equity)
+        dd = (peak - equity) / peak * 100 if peak > 0 else 0
+        max_dd = max(max_dd, dd)
         eq_times.append(t["time"][:10])
-        eq_values.append(equity)
+        eq_values.append(round(equity, 4))
 
     return StrategyResult(
         strategy_id=strategy_id, name=entry["name"],
         direction=direction, status=entry["status"],
         total_trades=len(all_trades), wins=len(wins), losses=len(losses),
         win_rate=round(len(wins) / len(all_trades) * 100, 2),
-        total_return_pct=round(sum(t["pnl_pct"] for t in all_trades), 2),
+        total_return_pct=round((equity / 100.0 - 1) * 100, 2),  # 복리 기반
         profit_factor=round(gross_profit / gross_loss, 2),
         max_drawdown_pct=round(max_dd, 2),
         tp_count=sum(1 for t in all_trades if t["exit_reason"] == "tp"),
@@ -1990,7 +2030,11 @@ async def run_backtest(req: BacktestRequest):
             c_losses = [t for t in trades if t.pnl_pct <= 0]
             c_gp = sum(t.pnl_pct for t in c_wins) if c_wins else 0
             c_gl = abs(sum(t.pnl_pct for t in c_losses)) if c_losses else 0.001
-            c_total_ret = sum(t.pnl_pct for t in trades)
+            # 복리 기반 코인별 총 수익률
+            _c_eq = 100.0
+            for _ct in trades:
+                _c_eq *= (1 + _ct.pnl_pct / 100)
+            c_total_ret = round((_c_eq / 100.0 - 1) * 100, 4)
             coin_results.append(CoinResult(
                 symbol=sym,
                 trades=len(trades),
@@ -1999,7 +2043,7 @@ async def run_backtest(req: BacktestRequest):
                 win_rate=round(len(c_wins) / len(trades) * 100, 2),
                 profit_factor=round(c_gp / c_gl, 2),
                 total_return_pct=round(c_total_ret, 2),
-                avg_pnl_pct=round(c_total_ret / len(trades), 4),
+                avg_pnl_pct=round(sum(t.pnl_pct for t in trades) / len(trades), 4),
                 tp_count=sum(1 for t in trades if t.exit_reason == "tp"),
                 sl_count=sum(1 for t in trades if t.exit_reason == "sl"),
                 timeout_count=sum(1 for t in trades if t.exit_reason == "timeout"),
@@ -2061,14 +2105,18 @@ async def run_backtest(req: BacktestRequest):
                 c_losses = [t for t in trades_list if t["pnl_pct"] <= 0]
                 c_gp = sum(t["pnl_pct"] for t in c_wins) if c_wins else 0
                 c_gl = abs(sum(t["pnl_pct"] for t in c_losses)) if c_losses else 0.001
-                c_total = sum(t["pnl_pct"] for t in trades_list)
+                # 복리 기반 코인별 총 수익률
+                _c_eq2 = 100.0
+                for _ct2 in trades_list:
+                    _c_eq2 *= (1 + _ct2["pnl_pct"] / 100)
+                c_total = round((_c_eq2 / 100.0 - 1) * 100, 4)
                 coin_results.append(CoinResult(
                     symbol=sym, trades=len(trades_list),
                     wins=len(c_wins), losses=len(c_losses),
                     win_rate=round(len(c_wins) / len(trades_list) * 100, 2),
                     profit_factor=round(c_gp / c_gl, 2),
                     total_return_pct=round(c_total, 2),
-                    avg_pnl_pct=round(c_total / len(trades_list), 4),
+                    avg_pnl_pct=round(sum(t["pnl_pct"] for t in trades_list) / len(trades_list), 4),
                     tp_count=sum(1 for t in trades_list if t["exit_reason"] == "tp"),
                     sl_count=sum(1 for t in trades_list if t["exit_reason"] == "sl"),
                     timeout_count=sum(1 for t in trades_list if t["exit_reason"] == "timeout"),
@@ -2097,7 +2145,11 @@ async def run_backtest(req: BacktestRequest):
     losses = [t for t in all_trades if t["pnl_pct"] <= 0]
     gross_profit = sum(t["pnl_pct"] for t in wins) if wins else 0
     gross_loss = abs(sum(t["pnl_pct"] for t in losses)) if losses else 0.001
-    total_return = sum(t["pnl_pct"] for t in all_trades)
+    # 복리 기반 총 수익률
+    _compound_eq = 100.0
+    for _t in all_trades:
+        _compound_eq *= (1 + _t["pnl_pct"] / 100)
+    total_return = round((_compound_eq / 100.0 - 1) * 100, 4)
 
     avg_win = (sum(t["pnl_pct"] for t in wins) / len(wins)) if wins else 0
     avg_loss = (sum(t["pnl_pct"] for t in losses) / len(losses)) if losses else 0
@@ -2112,10 +2164,10 @@ async def run_backtest(req: BacktestRequest):
     total_pnl_usd = sum(t["pnl_usd"] for t in all_trades)
     portfolio_return_pct = round((total_pnl_usd / initial_capital * 100), 2) if initial_capital > 0 else 0
 
-    # Equity + MDD (in both % and USD)
-    equity = 0.0
+    # Equity + MDD (복리 기반, in both % and USD)
+    equity = 100.0  # 시작 = 100
     equity_usd = 0.0
-    peak = 0.0
+    peak = 100.0
     peak_usd = 0.0
     max_dd = 0.0
     max_dd_usd = 0.0
@@ -2125,16 +2177,16 @@ async def run_backtest(req: BacktestRequest):
     cur_consec = 0
 
     for t in all_trades:
-        equity += t["pnl_pct"]
+        equity = equity * (1 + t["pnl_pct"] / 100)
         equity_usd += t.get("pnl_usd", 0)
         peak = max(peak, equity)
         peak_usd = max(peak_usd, equity_usd)
-        dd = peak - equity
+        dd = (peak - equity) / peak * 100 if peak > 0 else 0
         dd_usd = peak_usd - equity_usd
         max_dd = max(max_dd, dd)
         max_dd_usd = max(max_dd_usd, dd_usd)
         eq_times.append(t["time"][:10])
-        eq_values.append(equity)
+        eq_values.append(round(equity, 4))
         if t["pnl_pct"] <= 0:
             cur_consec += 1
             max_consec = max(max_consec, cur_consec)
@@ -2158,9 +2210,10 @@ async def run_backtest(req: BacktestRequest):
         dr_avg = float(np.mean(daily_returns))
         dr_std = float(np.std(daily_returns, ddof=1))
         bt_sharpe = round(dr_avg / dr_std * np.sqrt(365), 2) if dr_std > 0 else 0.0
-        dr_down = daily_returns[daily_returns < 0]
-        dr_down_std = float(np.std(dr_down, ddof=1)) if len(dr_down) >= 2 else 0.0
-        bt_sortino = round(dr_avg / dr_down_std * np.sqrt(365), 2) if dr_down_std > 0 else 0.0
+        # Sortino: Target Downside Deviation (학술 표준)
+        dr_excess = np.minimum(daily_returns, 0)
+        dr_downside_dev = float(np.sqrt(np.mean(dr_excess ** 2)))
+        bt_sortino = round(dr_avg / dr_downside_dev * np.sqrt(365), 2) if dr_downside_dev > 0 else (float('inf') if dr_avg > 0 else 0.0)
         # Calmar = annualized return / MDD
         n_days = len(daily_pnl)
         ann_return = total_return * (365 / max(n_days, 1)) if n_days > 0 else total_return
