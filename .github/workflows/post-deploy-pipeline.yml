@@ -61,6 +61,23 @@ jobs:
           check_url "https://api.pruviq.com/builder/presets" "API /presets" || API_OK=false
           echo "api_ok=$API_OK" >> "$GITHUB_OUTPUT"
 
+      - name: Run Simulator QA (sim_audit quick)
+        if: steps.smoke.outputs.api_ok == 'true'
+        run: |
+          echo "Running sim_audit.py quick mode against production API..."
+          python3 tests/sim_audit.py quick 2>&1 | tee /tmp/sim_audit_output.txt
+          # Extract summary line
+          SUMMARY=$(grep "SUMMARY:" /tmp/sim_audit_output.txt || echo "No summary")
+          echo "$SUMMARY"
+          # Fail if any FAIL found
+          FAILS=$(grep -c "FAIL" /tmp/sim_audit_output.txt || true)
+          if [ "$FAILS" -gt 0 ]; then
+            echo "sim_audit_ok=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::Simulator QA found $FAILS failures"
+          else
+            echo "sim_audit_ok=true" >> "$GITHUB_OUTPUT"
+          fi
+
   trigger-improvement:
     name: Trigger Next Improvement
     needs: verify
