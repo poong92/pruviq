@@ -95,8 +95,16 @@ fi
 # --- Step 1: Fetch data ---
 log "Running refresh_static.py..."
 if ! python3 backend/scripts/refresh_static.py 2>&1; then
-    send_alert "ERROR" "refresh_static.py failed"
-    exit 1
+    send_alert "WARN" "refresh_static.py failed, trying API fallback for market.json..."
+    # Fallback: fetch market data from the live API endpoint
+    if curl -sf --max-time 15 "http://localhost:8080/market" -o /tmp/pruviq-market-fallback.json 2>/dev/null; then
+        cp /tmp/pruviq-market-fallback.json "$REPO_DIR/public/data/market.json"
+        log "Wrote market.json from API fallback"
+        rm -f /tmp/pruviq-market-fallback.json
+    else
+        send_alert "ERROR" "Both refresh_static.py and API fallback failed"
+        exit 1
+    fi
 fi
 
 # All data files that refresh_static.py may update

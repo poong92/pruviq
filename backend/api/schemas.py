@@ -96,6 +96,7 @@ class HealthResponse(BaseModel):
     version: str
     coins_loaded: int
     uptime_seconds: float
+    market_cache_age_s: Optional[float] = None
 
 
 # --- Coin Explorer Schemas ---

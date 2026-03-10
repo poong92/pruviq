@@ -141,26 +141,36 @@ async def _background_market_refresh():
     consecutive_failures = 0
     while True:
         try:
-            data = await asyncio.to_thread(_build_market_overview)
-            _market_cache = data
-            _market_cache_ts = time.time()
-            consecutive_failures = 0
-            logger.info("Market data refreshed (Binance primary)")
+            try:
+                data = await asyncio.to_thread(_build_market_overview)
+                _market_cache = data
+                _market_cache_ts = time.time()
+                if consecutive_failures >= 3:
+                    logger.info(f"Market refresh recovered after {consecutive_failures} consecutive failures")
+                consecutive_failures = 0
+                logger.info("Market data refreshed (Binance primary)")
+            except asyncio.CancelledError:
+                raise
+            except Exception as e:
+                consecutive_failures += 1
+                cache_age_min = (time.time() - _market_cache_ts) / 60 if _market_cache_ts > 0 else -1
+                level = logging.ERROR if consecutive_failures >= 3 else logging.WARNING
+                logger.log(level, f"Market refresh failed ({consecutive_failures}x, cache age={cache_age_min:.0f}min): {e}")
+                if consecutive_failures == 3:
+                    logger.error("Circuit breaker TRIPPED after 3 consecutive failures")
+            try:
+                data = await asyncio.to_thread(_build_news)
+                _news_cache = data
+            except asyncio.CancelledError:
+                raise
+            except Exception as e:
+                logger.warning(f"News background refresh failed: {e}")
+            await asyncio.sleep(MARKET_REFRESH_INTERVAL)
         except asyncio.CancelledError:
             raise
         except Exception as e:
-            consecutive_failures += 1
-            cache_age_min = (time.time() - _market_cache_ts) / 60 if _market_cache_ts > 0 else -1
-            level = logging.ERROR if consecutive_failures >= 3 else logging.WARNING
-            logger.log(level, f"Market refresh failed ({consecutive_failures}x, cache age={cache_age_min:.0f}min): {e}")
-        try:
-            data = await asyncio.to_thread(_build_news)
-            _news_cache = data
-        except asyncio.CancelledError:
-            raise
-        except Exception as e:
-            logger.warning(f"News background refresh failed: {e}")
-        await asyncio.sleep(MARKET_REFRESH_INTERVAL)
+            logger.error(f"Background market refresh loop crashed, restarting in 60s: {e}")
+            await asyncio.sleep(60)
 
 
 @asynccontextmanager
@@ -469,11 +479,13 @@ def _get_resampled_coins(
 
 @app.get("/health", response_model=HealthResponse)
 async def health():
+    cache_age = round(time.time() - _market_cache_ts, 1) if _market_cache_ts > 0 else None
     return HealthResponse(
         status="ok",
         version=VERSION,
         coins_loaded=data_manager.coin_count,
         uptime_seconds=round(time.time() - start_time, 1),
+        market_cache_age_s=cache_age,
     )
 
 
@@ -1496,11 +1508,30 @@ def _fetch_coingecko_funding() -> list:
 
 
 def _build_market_overview() -> dict:
-    """Build complete market overview. Binance (primary) + CoinGecko (supplementary) + Alternative.me."""
-    fg = _fetch_fear_greed()
-    cg = _fetch_coingecko_global()
-    gainers, losers, btc_price, btc_change, eth_price, eth_change = _fetch_binance_tickers()
-    funding = _fetch_coingecko_funding()
+    """Build complete market overview. Binance (primary) + CoinGecko (supplementary) + Alternative.me.
+    Each data source is fetched independently — partial failures produce partial data, never a crash.
+    """
+    fg = {"index": 0, "label": "N/A"}
+    cg = {"total_market_cap_b": 0, "btc_dominance": 0, "total_volume_24h_b": 0}
+    gainers, losers, btc_price, btc_change, eth_price, eth_change = [], [], 0, 0, 0, 0
+    funding = []
+
+    try:
+        fg = _fetch_fear_greed()
+    except Exception as e:
+        logger.warning(f"Fear & Greed fetch failed in overview: {e}")
+    try:
+        cg = _fetch_coingecko_global()
+    except Exception as e:
+        logger.warning(f"CoinGecko global fetch failed in overview: {e}")
+    try:
+        gainers, losers, btc_price, btc_change, eth_price, eth_change = _fetch_binance_tickers()
+    except Exception as e:
+        logger.warning(f"Binance tickers fetch failed in overview: {e}")
+    try:
+        funding = _fetch_coingecko_funding()
+    except Exception as e:
+        logger.warning(f"CoinGecko funding fetch failed in overview: {e}")
 
     return MarketOverview(
         btc_price=btc_price,
