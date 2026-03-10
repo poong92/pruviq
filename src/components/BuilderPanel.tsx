@@ -254,48 +254,68 @@ export default function BuilderPanel(props: Props) {
                 class="w-full mt-0.5 px-2 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
               />
             </div>
-            {/* Per-coin USDT */}
+            {/* Capital input — changes label based on compound mode */}
             <div>
-              <label class="text-[10px] text-[--color-text-muted]">{t.perCoinUsdt || 'Per Coin $'} <span class="cursor-help opacity-60 hover:opacity-100" title={t.perCoinUsdtTip || ''}>&#9432;</span></label>
-              <input type="number" value={localPerCoin} min={1} max={10000} step={10}
+              <label class="text-[10px] text-[--color-text-muted]">
+                {props.compounding
+                  ? (props.lang === 'ko' ? '총 투자금 $' : 'Total Capital $')
+                  : (t.perCoinUsdt || 'Per Coin $')}
+              </label>
+              <input type="number" value={localPerCoin}
+                min={props.compounding ? 100 : 1}
+                max={props.compounding ? 1000000 : 10000}
+                step={props.compounding ? 100 : 10}
                 onChange={(e: any) => setLocalPerCoin(e.target.value)}
-                onBlur={() => props.setPerCoinUsdt(parseFloat(localPerCoin) || 60)}
+                onBlur={() => props.setPerCoinUsdt(parseFloat(localPerCoin) || (props.compounding ? 5000 : 60))}
                 class="w-full mt-0.5 px-2 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
               />
             </div>
             {/* Leverage */}
             <div>
-              <label class="text-[10px] text-[--color-text-muted]">{t.leverage || 'Leverage'} <span class="cursor-help opacity-60 hover:opacity-100" title={t.leverageTip || ''}>&#9432;</span></label>
+              <label class="text-[10px] text-[--color-text-muted]">{t.leverage || 'Leverage'}</label>
               <input type="number" value={localLeverage} min={1} max={125} step={1}
                 onChange={(e: any) => setLocalLeverage(e.target.value)}
                 onBlur={() => props.setLeverage(parseInt(localLeverage) || 5)}
                 class="w-full mt-0.5 px-2 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
               />
             </div>
-            {/* Compounding Toggle */}
-            <div class="flex items-center gap-2 pt-3">
-              <button
-                onClick={() => props.setCompounding(!props.compounding)}
-                class="relative w-9 h-5 rounded-full transition-colors duration-200"
-                style={{
-                  background: props.compounding ? '#3182f6' : '#3a3a42',
-                }}
-                aria-label={props.compounding ? 'Switch to Simple mode' : 'Switch to Compound mode'}
-              >
-                <span
-                  class="absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white transition-transform duration-200"
-                  style={{ transform: props.compounding ? 'translateX(16px)' : 'translateX(0)' }}
-                />
-              </button>
-              <label class="text-[10px] text-[--color-text-muted] cursor-pointer select-none" onClick={() => props.setCompounding(!props.compounding)}>
-                {props.compounding ? (t.compounding || 'Compound') : (t.simple || 'Simple')}
-              </label>
-              <span class="text-[9px] text-[--color-text-muted] opacity-70">
-                {props.compounding
-                  ? (props.lang === 'ko' ? '수익 재투자 — 포지션 크기 변동' : 'Reinvest profits — position size scales with equity')
-                  : (props.lang === 'ko' ? '고정 금액 거래' : 'Fixed $ per trade')}
-              </span>
+            {/* Compounding Toggle — fits in 3rd grid column */}
+            <div class="flex flex-col justify-end">
+              <div class="flex items-center gap-1.5 h-[26px]">
+                <button
+                  onClick={() => props.setCompounding(!props.compounding)}
+                  class="relative w-8 h-[18px] rounded-full transition-colors duration-200 shrink-0"
+                  style={{ background: props.compounding ? '#3182f6' : '#3a3a42' }}
+                  aria-label={props.compounding ? 'Switch to Simple mode' : 'Switch to Compound mode'}
+                >
+                  <span
+                    class="absolute top-[2px] left-[2px] w-[14px] h-[14px] rounded-full bg-white transition-transform duration-200"
+                    style={{ transform: props.compounding ? 'translateX(14px)' : 'translateX(0)' }}
+                  />
+                </button>
+                <label class="text-[10px] font-bold cursor-pointer select-none whitespace-nowrap"
+                  onClick={() => props.setCompounding(!props.compounding)}
+                  style={{ color: props.compounding ? '#3182f6' : 'var(--color-text-muted)' }}>
+                  {props.compounding
+                    ? (props.lang === 'ko' ? '복리' : 'Compound')
+                    : (props.lang === 'ko' ? '단리' : 'Simple')}
+                </label>
+              </div>
             </div>
+            {/* Compound summary — only when compound is ON */}
+            {props.compounding && (
+              <div class="col-span-3 text-[9px] font-mono text-[--color-text-muted] bg-[--color-accent]/5 border border-[--color-accent]/20 rounded px-2 py-1 -mt-0.5">
+                {(() => {
+                  const capital = parseFloat(localPerCoin) || 5000;
+                  const maxPos = Math.min(100, props.totalCoins || 100);
+                  const perCoin = Math.round(capital / maxPos);
+                  const exposure = perCoin * (parseInt(localLeverage) || 5);
+                  return props.lang === 'ko'
+                    ? `$${capital.toLocaleString()} → 코인당 ~$${perCoin} × ${localLeverage}x = $${exposure} 노출 (손익에 따라 자동 조정)`
+                    : `$${capital.toLocaleString()} → ~$${perCoin}/coin × ${localLeverage}x = $${exposure} exposure (auto-scales with P&L)`;
+                })()}
+              </div>
+            )}
             {/* Start Date */}
             <div>
               <label class="text-[10px] text-[--color-text-muted]">{t.startDate}</label>
