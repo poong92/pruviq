@@ -2167,10 +2167,9 @@ async def run_backtest(req: BacktestRequest):
 
     # total_return_pct: compound vs simple
     if is_compounding:
-        _compound_eq = 100.0
-        for _t in all_trades:
-            _compound_eq *= (1 + _t["pnl_pct"] / 100)
-        total_return = round((_compound_eq / 100.0 - 1) * 100, 4)
+        # Portfolio compound: use USD-based equity tracking (already computed above)
+        # pnl_usd was scaled by equity/capital, so total_pnl_usd reflects compound growth
+        total_return = round(total_pnl_usd / initial_capital * 100, 4) if initial_capital > 0 else 0
     else:
         total_return = round(total_pnl_usd / initial_capital * 100, 4) if initial_capital > 0 else 0
 
@@ -2189,8 +2188,9 @@ async def run_backtest(req: BacktestRequest):
 
     for t in all_trades:
         if is_compounding:
-            equity = max(equity * (1 + t["pnl_pct"] / 100), 0.0)
+            # Portfolio compound: use USD equity → convert to %
             equity_usd_track = max(equity_usd_track + t["pnl_usd"], 0.0)
+            equity = (equity_usd_track / initial_capital * 100) if initial_capital > 0 else 0.0
         else:
             pnl_on_capital = t["pnl_usd"] / initial_capital * 100 if initial_capital > 0 else 0
             equity += pnl_on_capital
