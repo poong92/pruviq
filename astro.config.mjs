@@ -32,7 +32,6 @@ export default defineConfig({
         if (item.url.includes('/demo/')) return undefined;
         if (item.url.includes('/builder/')) return undefined;
         if (item.url.includes('/ko/404/')) return undefined;
-        item.lastmod = new Date().toISOString();
         return item;
       }
     }),
