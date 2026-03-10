@@ -1,8 +1,10 @@
 ---
 name: backend-engineer
-description: "백엔드 엔지니어. FastAPI, 시뮬레이션 엔진, 데이터 파이프라인, 캐싱, API 엔드포인트 요청 시 사용."
+description: "백엔드 엔지니어. FastAPI, 시뮬레이션 엔진, 데이터 파이프라인, 캐싱, API 엔드포인트 요청 시 사용. Use for FastAPI, Python, uvicorn, API endpoint, simulation engine, data pipeline, caching, Pydantic, backend."
 tools: ["Bash", "Read", "Write", "Edit", "Grep", "Glob"]
 model: sonnet
+memory: project
+maxTurns: 30
 ---
 
 # Backend Engineer Agent

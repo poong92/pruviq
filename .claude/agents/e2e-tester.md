@@ -1,8 +1,10 @@
 ---
 name: e2e-tester
-description: "E2E 테스터. Playwright 브라우저 테스트, 스크린샷, 회귀 테스트, 기능 테스트, 모바일 검증 요청 시 사용."
+description: "E2E 테스터. Playwright 브라우저 테스트, 스크린샷, 회귀 테스트, 기능 테스트, 모바일 검증 요청 시 사용. Use for Playwright, browser testing, end-to-end, screenshot, regression test, mobile verification, visual testing."
 tools: ["Bash", "Read", "Write", "Edit", "Grep", "Glob", "WebFetch"]
 model: sonnet
+memory: project
+maxTurns: 30
 ---
 
 # E2E Tester Agent

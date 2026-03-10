@@ -69,6 +69,14 @@ acquire_lock
 
 cd "$REPO_DIR"
 
+# --- Cron self-healing (run EARLY so it works even if later steps fail) ---
+CRON_ENTRY="*/20 * * * * bash $SCRIPT_PATH >> /tmp/pruviq-refresh.log 2>&1"
+if ! crontab -l 2>/dev/null | grep -qF "refresh_static.sh"; then
+    log "Cron entry missing — auto-installing..."
+    ( crontab -l 2>/dev/null; echo "$CRON_ENTRY" ) | crontab -
+    send_alert "WARN" "Cron entry was missing — auto-installed"
+fi
+
 # Ensure we're on main and clean
 CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "unknown")
 if [[ "$CURRENT_BRANCH" != "main" ]]; then
@@ -97,6 +105,14 @@ log "Running refresh_static.py..."
 if ! python3 backend/scripts/refresh_static.py 2>&1; then
     send_alert "ERROR" "refresh_static.py failed"
     exit 1
+fi
+
+# Post-run staleness check: if market.json is STILL old after a successful run, alert
+if [ -f "$MARKET_JSON" ]; then
+    POST_AGE_SEC=$(( $(date +%s) - $(stat -f %m "$MARKET_JSON") ))
+    if [ "$POST_AGE_SEC" -gt 3600 ]; then
+        send_alert "ERROR" "market.json still stale after refresh (${POST_AGE_SEC}s old). Pipeline may be broken."
+    fi
 fi
 
 # All data files that refresh_static.py may update
@@ -153,14 +169,6 @@ fi
     log "Git data commit skipped (non-critical)"
     git checkout main -q 2>/dev/null || true
 }
-
-# --- Step 4: Ensure cron entry exists (self-healing) ---
-CRON_ENTRY="*/20 * * * * bash $SCRIPT_PATH >> /tmp/pruviq-refresh.log 2>&1"
-if ! crontab -l 2>/dev/null | grep -qF "refresh_static.sh"; then
-    log "Cron entry missing — auto-installing..."
-    ( crontab -l 2>/dev/null; echo "$CRON_ENTRY" ) | crontab -
-    send_alert "WARN" "Cron entry was missing — auto-installed"
-fi
 
 send_alert "OK" "Static data refreshed + deployed"
 exit 0
