@@ -677,7 +677,17 @@ async def simulate(req: SimulationRequest):
     losses = [t for t in all_trades if t["pnl_pct"] <= 0]
     gross_profit = sum(t["pnl_pct"] for t in wins) if wins else 0
     gross_loss = abs(sum(t["pnl_pct"] for t in losses)) if losses else 0.001
-    total_return = sum(t["pnl_pct"] for t in all_trades)
+    is_compounding = getattr(req, 'compounding', False)
+
+    # total_return: compound vs simple
+    if is_compounding:
+        _compound_eq = 100.0
+        for _t in all_trades:
+            _compound_eq *= (1 + _t["pnl_pct"] / 100)
+        total_return = round((_compound_eq / 100.0 - 1) * 100, 4)
+    else:
+        total_return = round(sum(t["pnl_pct"] for t in all_trades), 4)
+
     total_fees = len(all_trades) * (cost_model.fee_pct * 2 * 100)
     total_funding = sum(t.get('funding_pct', 0) for t in all_trades)
 
@@ -685,8 +695,8 @@ async def simulate(req: SimulationRequest):
     avg_loss = (sum(t["pnl_pct"] for t in losses) / len(losses)) if losses else 0
 
     # Equity curve + MDD
-    equity = 0.0
-    peak = 0.0
+    equity = 100.0 if is_compounding else 0.0
+    peak = equity
     max_dd = 0.0
     eq_times = []
     eq_values = []
@@ -694,7 +704,10 @@ async def simulate(req: SimulationRequest):
     cur_consec = 0
 
     for t in all_trades:
-        equity += t["pnl_pct"]
+        if is_compounding:
+            equity = max(equity * (1 + t["pnl_pct"] / 100), 0.0)
+        else:
+            equity += t["pnl_pct"]
         peak = max(peak, equity)
         dd = peak - equity
         max_dd = max(max_dd, dd)
@@ -2112,7 +2125,7 @@ async def run_backtest(req: BacktestRequest):
     losses = [t for t in all_trades if t["pnl_pct"] <= 0]
     gross_profit = sum(t["pnl_pct"] for t in wins) if wins else 0
     gross_loss = abs(sum(t["pnl_pct"] for t in losses)) if losses else 0.001
-    total_return = sum(t["pnl_pct"] for t in all_trades)
+    is_compounding = getattr(req, 'compounding', False)
 
     avg_win = (sum(t["pnl_pct"] for t in wins) / len(wins)) if wins else 0
     avg_loss = (sum(t["pnl_pct"] for t in losses) / len(losses)) if losses else 0
@@ -2124,13 +2137,37 @@ async def run_backtest(req: BacktestRequest):
     # This reflects the actual capital needed at peak utilization, not total coins
     effective_positions = min(max_concurrent, len(coin_list))
     initial_capital = per_coin_usd * effective_positions
+    base_position_size = per_coin_usd * leverage_val
+
+    # Compounding vs Simple: Recalculate pnl_usd
+    if is_compounding:
+        equity_usd_compound = initial_capital
+        peak_usd_compound = initial_capital
+        for t in all_trades:
+            scale = max(equity_usd_compound, 0.0) / initial_capital if initial_capital > 0 else 1.0
+            t["pnl_usd"] = round(base_position_size * scale * (t["pnl_pct"] / 100), 4)
+            equity_usd_compound = max(equity_usd_compound + t["pnl_usd"], 0.0)
+            peak_usd_compound = max(peak_usd_compound, equity_usd_compound)
+    else:
+        for t in all_trades:
+            t["pnl_usd"] = round(base_position_size * (t["pnl_pct"] / 100), 4)
+
     total_pnl_usd = sum(t["pnl_usd"] for t in all_trades)
     portfolio_return_pct = round((total_pnl_usd / initial_capital * 100), 2) if initial_capital > 0 else 0
 
+    # total_return_pct: compound vs simple
+    if is_compounding:
+        _compound_eq = 100.0
+        for _t in all_trades:
+            _compound_eq *= (1 + _t["pnl_pct"] / 100)
+        total_return = round((_compound_eq / 100.0 - 1) * 100, 4)
+    else:
+        total_return = round(total_pnl_usd / initial_capital * 100, 4) if initial_capital > 0 else 0
+
     # Equity + MDD (in both % and USD)
-    equity = 0.0
+    equity = 100.0 if is_compounding else 0.0
     equity_usd = 0.0
-    peak = 0.0
+    peak = equity
     peak_usd = 0.0
     max_dd = 0.0
     max_dd_usd = 0.0
@@ -2138,9 +2175,16 @@ async def run_backtest(req: BacktestRequest):
     eq_values = []
     max_consec = 0
     cur_consec = 0
+    equity_usd_track = initial_capital
 
     for t in all_trades:
-        equity += t["pnl_pct"]
+        if is_compounding:
+            equity = max(equity * (1 + t["pnl_pct"] / 100), 0.0)
+            equity_usd_track = max(equity_usd_track + t["pnl_usd"], 0.0)
+        else:
+            pnl_on_capital = t["pnl_usd"] / initial_capital * 100 if initial_capital > 0 else 0
+            equity += pnl_on_capital
+            equity_usd_track += t["pnl_usd"]
         equity_usd += t.get("pnl_usd", 0)
         peak = max(peak, equity)
         peak_usd = max(peak_usd, equity_usd)
@@ -2556,6 +2600,7 @@ async def run_backtest(req: BacktestRequest):
         validation_errors=[],
         coin_results=[cr.model_dump() for cr in coin_results],
         trades=trade_items,
+        compounding=is_compounding,
         per_coin_usd=per_coin_usd,
         leverage=leverage_val,
         initial_capital_usd=round(initial_capital, 2),

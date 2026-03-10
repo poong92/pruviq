@@ -33,6 +33,7 @@ interface Props {
   maxBars: number; setMaxBars: (n: number) => void;
   perCoinUsdt: number; setPerCoinUsdt: (n: number) => void;
   leverage: number; setLeverage: (n: number) => void;
+  compounding: boolean; setCompounding: (b: boolean) => void;
   // Date range
   startDate: string; setStartDate: (s: string) => void;
   endDate: string; setEndDate: (s: string) => void;
@@ -270,6 +271,28 @@ export default function BuilderPanel(props: Props) {
                 onBlur={() => props.setLeverage(parseInt(localLeverage) || 5)}
                 class="w-full mt-0.5 px-2 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
               />
+            </div>
+            {/* Compounding Toggle */}
+            <div class="flex items-center gap-2 pt-3">
+              <button
+                onClick={() => props.setCompounding(!props.compounding)}
+                class="relative w-9 h-5 rounded-full transition-colors duration-200"
+                style={{
+                  background: props.compounding ? '#3182f6' : '#3a3a42',
+                }}
+                title={props.compounding ? 'Compound: Reinvest profits into larger positions' : 'Simple: Fixed position size every trade'}
+              >
+                <span
+                  class="absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white transition-transform duration-200"
+                  style={{ transform: props.compounding ? 'translateX(16px)' : 'translateX(0)' }}
+                />
+              </button>
+              <label class="text-[10px] text-[--color-text-muted] cursor-pointer select-none" onClick={() => props.setCompounding(!props.compounding)}>
+                {props.compounding ? (t.compounding || 'Compound') : (t.simple || 'Simple')}
+                <span class="cursor-help opacity-60 hover:opacity-100 ml-0.5" title={props.compounding
+                  ? 'Profits are reinvested — position size grows/shrinks with equity'
+                  : 'Fixed $amount per trade regardless of P&L'}>&#9432;</span>
+              </label>
             </div>
             {/* Start Date */}
             <div>
