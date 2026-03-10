@@ -1,8 +1,10 @@
 ---
 name: frontend-engineer
-description: "Astro/Preact/Tailwind 프론트엔드 엔지니어. 컴포넌트 리팩토링, TypeScript 타입, 성능 최적화, 코드 품질 요청 시 사용."
+description: "Astro/Preact/Tailwind 프론트엔드 엔지니어. 컴포넌트 리팩토링, TypeScript 타입, 성능 최적화, 코드 품질 요청 시 사용. Use for Astro, Preact, TypeScript, Tailwind CSS, component, islands architecture, SSG, frontend, refactoring."
 tools: ["Bash", "Read", "Write", "Edit", "Grep", "Glob"]
 model: sonnet
+memory: project
+maxTurns: 30
 ---
 
 # Frontend Engineer Agent

@@ -461,7 +461,7 @@ PRESET_STRATEGIES = {
         "tp_pct": 10.0,
         "max_bars": 48,
     },
-    "stochastic-oversold-short": {
+    "stochastic-overbought-short": {
         "name": "Stochastic Overbought SHORT",
         "direction": "short",
         "indicators": {

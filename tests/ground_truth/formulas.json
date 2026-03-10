@@ -1,0 +1,151 @@
+{
+  "_description": "금융 공식 Ground Truth — 수기 계산 검증용",
+  "_warning": "이 파일의 값은 수작업으로 계산됨. 자동 수정 금지.",
+
+  "sharpe_ratio": {
+    "definition": "Sharpe = (mean(daily_returns) / std(daily_returns)) * sqrt(annualization_factor)",
+    "standard": "annualization_factor = periods_per_year (365 for daily crypto, 8760 for hourly crypto)",
+    "reference": "William F. Sharpe (1966), CFA Institute",
+    "test_case": {
+      "daily_returns": [0.5, -0.3, 0.8, -0.1, 0.4, 0.2, -0.6, 0.3, 0.1, -0.2],
+      "mean": 0.11,
+      "std_ddof1": 0.4175,
+      "sharpe_daily": 0.2634,
+      "sharpe_annualized_365": 5.033,
+      "sharpe_annualized_252": 4.182,
+      "note": "mean=0.11, std(ddof=1)=0.4175, sharpe=0.11/0.4175=0.2634, *sqrt(365)=5.033"
+    }
+  },
+
+  "sortino_ratio": {
+    "definition": "Sortino = (mean(returns) - MAR) / TDD, where TDD = sqrt(mean(min(returns-MAR, 0)^2))",
+    "standard": "분모 N = 전체 관측 수 (N_down이 아님)",
+    "reference": "Sortino & van der Meer (1991), CFA Institute",
+    "test_case": {
+      "daily_returns": [0.5, -0.3, 0.8, -0.1, 0.4, 0.2, -0.6, 0.3, 0.1, -0.2],
+      "MAR": 0,
+      "downside_squared": [0, 0.09, 0, 0.01, 0, 0, 0.36, 0, 0, 0.04],
+      "mean_downside_sq": 0.05,
+      "TDD": 0.2236,
+      "sortino_daily": 0.4919,
+      "sortino_annualized_365": 9.397,
+      "note": "mean=0.11, TDD=sqrt(sum([0,0.09,0,0.01,0,0,0.36,0,0,0.04])/10)=sqrt(0.05)=0.2236"
+    }
+  },
+
+  "mdd": {
+    "definition": "MDD = max((peak - equity) / peak * 100) — % of peak",
+    "standard": "peak 대비 백분율, 금액 아님",
+    "reference": "Magdon-Ismail et al. (2004)",
+    "test_case": {
+      "equity_curve": [100, 105, 103, 110, 95, 108, 90, 100],
+      "peaks":        [100, 105, 105, 110, 110, 110, 110, 110],
+      "drawdowns_pct": [0, 0, 1.905, 0, 13.636, 1.818, 18.182, 9.091],
+      "max_drawdown_pct": 18.182,
+      "note": "peak=110, trough=90, MDD=(110-90)/110*100=18.182%"
+    }
+  },
+
+  "profit_factor": {
+    "definition": "PF = gross_profit / gross_loss",
+    "standard": "0 손실 시 무한대 (cap 999.99 또는 N/A 표시)",
+    "test_case": {
+      "trade_pnls": [5.0, -3.0, 8.0, -2.0, 4.0, -1.0],
+      "gross_profit": 17.0,
+      "gross_loss": 6.0,
+      "profit_factor": 2.833,
+      "note": "17/6=2.8333"
+    },
+    "edge_cases": {
+      "zero_loss": {
+        "trade_pnls": [5.0, 3.0, 8.0],
+        "expected": "999.99 or Infinity",
+        "note": "모든 거래 수익 → 분모 0"
+      },
+      "zero_profit": {
+        "trade_pnls": [-5.0, -3.0, -8.0],
+        "expected": 0.0,
+        "note": "모든 거래 손실 → 분자 0"
+      },
+      "zero_trades": {
+        "trade_pnls": [],
+        "expected": 0.0,
+        "note": "거래 없음"
+      }
+    }
+  },
+
+  "calmar_ratio": {
+    "definition": "Calmar = CAGR / |MDD|",
+    "standard": "CAGR = (end_value/start_value)^(1/years) - 1 (복리)",
+    "reference": "Young (1991), 3-year lookback 관행",
+    "test_case": {
+      "start_equity": 10000,
+      "end_equity": 15000,
+      "period_days": 365,
+      "years": 1.0,
+      "CAGR_pct": 50.0,
+      "MDD_pct": 18.182,
+      "calmar": 2.75,
+      "note": "CAGR=(15000/10000)^(1/1)-1=50%, Calmar=50/18.182=2.75"
+    },
+    "wrong_approach": {
+      "description": "단리 연환산 = return * (365/days) — 이는 Calmar 표준이 아님",
+      "example": "수익 50% in 365일 → 단리=50%, 복리=50% (1년이면 동일하나, 2년이면 달라짐)"
+    }
+  },
+
+  "var_cvar": {
+    "definition": "VaR(95%) = percentile(returns, 5). CVaR = mean(returns <= VaR)",
+    "standard": "Historical simulation (비모수) — 크립토에 권장",
+    "test_case": {
+      "daily_returns": [-2.5, -1.8, -1.2, -0.8, -0.5, -0.3, 0.1, 0.4, 0.8, 1.2, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 5.5, 6.0],
+      "var_95_pct": -2.325,
+      "cvar_95": -2.5,
+      "note": "20개 데이터, 5th percentile = 하위 1번째, VaR=np.percentile(returns, 5)"
+    }
+  },
+
+  "compounding": {
+    "simple": {
+      "definition": "total_return = sum(trade_pct)",
+      "test_case": {
+        "trades_pct": [5.0, -3.0, 8.0, -2.0],
+        "total_return": 8.0,
+        "equity_at_each": [105.0, 102.0, 110.0, 108.0],
+        "note": "100 + 5 - 3 + 8 - 2 = 108 → 8%"
+      }
+    },
+    "compound": {
+      "definition": "equity = 100 * prod(1 + t/100 for t in trades)",
+      "test_case": {
+        "trades_pct": [5.0, -3.0, 8.0, -2.0],
+        "equity_steps": [105.0, 101.85, 109.998, 107.798],
+        "total_return": 7.798,
+        "note": "100*1.05*0.97*1.08*0.98 = 107.798 → 7.798%"
+      }
+    }
+  },
+
+  "cost_model": {
+    "futures": {
+      "fee_pct": 0.0008,
+      "slippage_pct": 0.0002,
+      "funding_rate_8h": 0.0001,
+      "test_case": {
+        "direction": "SHORT",
+        "entry_open": 100.0,
+        "entry_price": 99.98,
+        "exit_price_raw": 92.0,
+        "exit_price_adj": 92.0184,
+        "bars_held": 24,
+        "funding_periods": 3,
+        "pnl_gross_pct": 7.962,
+        "fee_pct": 0.16,
+        "funding_cost_pct": -0.03,
+        "pnl_net_pct": 7.832,
+        "note": "entry=100*(1-0.0002)=99.98, exit_adj=92*(1+0.0002)=92.0184, pnl=(99.98-92.0184)/99.98=7.962%, fee=0.16%, funding=-3*0.01%=-0.03%(수입), net=7.962-0.16-(-0.03)=7.832%"
+      }
+    }
+  }
+}
