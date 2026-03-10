@@ -1,8 +1,10 @@
 ---
 name: ui-ux-designer
-description: "UI/UX 디자인 전문가. 인터랙션, 접근성, 반응형, 디자인 시스템, 시각적 일관성 요청 시 사용."
+description: "UI/UX 디자인 전문가. 인터랙션, 접근성, 반응형, 디자인 시스템, 시각적 일관성 요청 시 사용. Use for responsive design, mobile, accessibility, WCAG, interaction design, design system, dark theme, Tailwind."
 tools: ["Read", "Write", "Edit", "Grep", "Glob", "WebSearch", "WebFetch"]
 model: sonnet
+memory: project
+maxTurns: 30
 ---
 
 # UI/UX Designer Agent

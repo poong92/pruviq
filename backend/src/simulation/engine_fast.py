@@ -341,7 +341,8 @@ def run_fast(
     for t in trades:
         equity += t.pnl_pct
         peak = max(peak, equity)
-        max_dd = max(max_dd, peak - equity)
+        dd_pct = (peak - equity) / peak * 100 if peak > 0 else 0.0  # % of peak (industry standard)
+        max_dd = max(max_dd, dd_pct)
         eq.append(round(equity, 2))
 
         if t.pnl_pct <= 0:
@@ -366,10 +367,13 @@ def run_fast(
         downside = np.minimum(daily_returns, 0)
         tdd = float(np.sqrt(np.mean(downside ** 2)))
         sortino = round(dr_avg / tdd * np.sqrt(365), 2) if tdd > 0 else 0.0
-        # Calmar: annualized return / MDD
+        # Calmar: CAGR / MDD (CAGR = compound annualized growth rate)
         n_days = len(daily_pnl)
-        ann_return = total_return * (365 / max(n_days, 1))
-        calmar = round(ann_return / max_dd, 2) if max_dd > 0 else 0.0
+        # equity starts at 0, so final = total_return (pct points). Convert to growth ratio.
+        growth_ratio = (equity + 100) / 100 if equity > -100 else 0.001  # avoid <=0
+        years = max(n_days, 1) / 365
+        cagr_pct = (growth_ratio ** (1 / years) - 1) * 100 if years > 0 else 0.0
+        calmar = round(cagr_pct / max_dd, 2) if max_dd > 0 else 0.0
     else:
         sharpe, sortino, calmar = 0.0, 0.0, 0.0
 
