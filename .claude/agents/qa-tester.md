@@ -1,8 +1,10 @@
 ---
 name: qa-tester
-description: "QA 테스터. i18n 완성도, 기능 테스트, 하드코딩 검출, 크로스 브라우저, 데이터 정합성 요청 시 사용."
+description: "QA 테스터. i18n 완성도, 기능 테스트, 하드코딩 검출, 크로스 브라우저, 데이터 정합성 요청 시 사용. Use for i18n, hardcoding check, cross-browser, data consistency, quality assurance, functional testing, build verification."
 tools: ["Bash", "Read", "Grep", "Glob", "WebFetch"]
 model: sonnet
+memory: project
+maxTurns: 30
 ---
 
 # QA Tester Agent

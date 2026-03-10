@@ -34,7 +34,7 @@ const CATEGORIES: QuickCategory[] = [
   { id: 'reversal',  icon: '🔄', presets: ['rsi-reversal-long', 'psar-reversal-long', 'psar-reversal-short', 'williams-r-oversold-long', 'williams-r-overbought-short', 'rsi-bb-oversold-long'], defaultPreset: 'rsi-reversal-long' },
   { id: 'range',     icon: '↔️',  presets: ['grid-mean-reversion-long', 'bb-band-bounce-long', 'dca-oversold-long', 'rsi-bb-overbought-short'], defaultPreset: 'grid-mean-reversion-long' },
   { id: 'trend',     icon: '🚀', presets: ['adx-trend-long', 'adx-trend-short', 'ichimoku-cloud-long', 'ichimoku-cloud-short', 'macd-momentum-long', 'ema-crossover-long', 'turtle-breakout-long', 'turtle-breakout-short'], defaultPreset: 'adx-trend-long' },
-  { id: 'hedged',    icon: '🛡️', presets: ['stochastic-oversold-short', 'stoch-rsi-overbought-short', 'macd-crossover-short', 'ema-crossover-short'], defaultPreset: 'stochastic-oversold-short' },
+  { id: 'hedged',    icon: '🛡️', presets: ['stochastic-overbought-short', 'stoch-rsi-overbought-short', 'macd-crossover-short', 'ema-crossover-short'], defaultPreset: 'stochastic-overbought-short' },
 ];
 
 const L = {
@@ -88,7 +88,7 @@ const PRESET_LABELS: Record<string, { en: string; ko: string }> = {
   'bb-band-bounce-long':         { en: 'BB Bounce',        ko: 'BB 바운스' },
   'macd-momentum-long':          { en: 'MACD Momentum',    ko: 'MACD 모멘텀' },
   'ema-crossover-long':          { en: 'EMA Crossover',    ko: 'EMA 교차' },
-  'stochastic-oversold-short':   { en: 'Stoch Overbought', ko: '스토캐스틱 과매수' },
+  'stochastic-overbought-short':   { en: 'Stoch Overbought', ko: '스토캐스틱 과매수' },
   'stoch-rsi-overbought-short':  { en: 'Stoch RSI Short',  ko: '스톡RSI 숏' },
   'adx-trend-short':             { en: 'ADX Trend SHORT',  ko: 'ADX 추세 숏' },
   'adx-trend-long':              { en: 'ADX Trend LONG',   ko: 'ADX 추세 롱' },

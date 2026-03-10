@@ -324,8 +324,8 @@ class SimulationEngine:
         for t in trades:
             equity += t.pnl_pct
             peak = max(peak, equity)
-            dd = peak - equity
-            max_dd = max(max_dd, dd)
+            dd_pct = (peak - equity) / peak * 100 if peak > 0 else 0.0  # % of peak
+            max_dd = max(max_dd, dd_pct)
             equity_curve.append(round(equity, 2))
 
         # Max consecutive losses
@@ -354,9 +354,12 @@ class SimulationEngine:
             downside = np.minimum(daily_returns_eng, 0)
             tdd = float(np.sqrt(np.mean(downside ** 2)))
             sortino = round(dr_avg / tdd * np.sqrt(365), 2) if tdd > 0 else 0.0
+            # Calmar: CAGR / MDD (compound annualized growth rate)
             n_days_eng = len(daily_pnl_eng)
-            ann_return_eng = total_return * (365 / max(n_days_eng, 1))
-            calmar = round(ann_return_eng / max_dd, 2) if max_dd > 0 else 0.0
+            growth_ratio_eng = (equity + 100) / 100 if equity > -100 else 0.001
+            years_eng = max(n_days_eng, 1) / 365
+            cagr_pct_eng = (growth_ratio_eng ** (1 / years_eng) - 1) * 100 if years_eng > 0 else 0.0
+            calmar = round(cagr_pct_eng / max_dd, 2) if max_dd > 0 else 0.0
         else:
             sharpe, sortino, calmar = 0.0, 0.0, 0.0
 

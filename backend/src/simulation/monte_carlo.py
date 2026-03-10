@@ -63,10 +63,10 @@ def bootstrap_trades(
 
         final_returns[i] = cum[-1]
 
-        # Max drawdown
+        # Max drawdown (% of peak — industry standard)
         peak = np.maximum.accumulate(cum)
-        dd = peak - cum
-        max_drawdowns[i] = np.max(dd) if len(dd) > 0 else 0.0
+        dd_pct = np.where(peak > 0, (peak - cum) / peak * 100, 0.0)
+        max_drawdowns[i] = np.max(dd_pct) if len(dd_pct) > 0 else 0.0
 
         # Sample equity at band points
         equity_samples[i] = cum[band_indices]
@@ -128,11 +128,12 @@ def compute_oos_metrics(
         gross_profit = float(np.sum(wins)) if len(wins) > 0 else 0.0
         gross_loss = abs(float(np.sum(losses))) if len(losses) > 0 else 0.001
 
-        # MDD
+        # MDD (% of peak — industry standard)
         cum = np.cumsum(arr)
         peak = np.maximum.accumulate(cum)
-        dd = peak - cum
-        max_dd = float(np.max(dd)) if len(dd) > 0 else 0.0
+        # Avoid division by zero: only compute % where peak > 0
+        dd_pct = np.where(peak > 0, (peak - cum) / peak * 100, 0.0)
+        max_dd = float(np.max(dd_pct)) if len(dd_pct) > 0 else 0.0
 
         return {
             "trades": len(pnls),
@@ -147,10 +148,12 @@ def compute_oos_metrics(
     is_m = _metrics(is_trades)
     oos_m = _metrics(oos_trades)
 
-    # Degradation assessment
-    if is_m["total_return"] > 0 and oos_m["total_return"] > 0:
-        ratio = oos_m["total_return"] / is_m["total_return"]
-    elif is_m["total_return"] > 0:
+    # Degradation assessment — per-trade normalization to handle unequal IS/OOS sizes
+    is_avg = is_m["total_return"] / max(is_m["trades"], 1)
+    oos_avg = oos_m["total_return"] / max(oos_m["trades"], 1)
+    if is_avg > 0 and oos_avg > 0:
+        ratio = oos_avg / is_avg
+    elif is_avg > 0:
         ratio = 0.0
     else:
         ratio = 1.0  # Both negative or IS zero — can't measure degradation

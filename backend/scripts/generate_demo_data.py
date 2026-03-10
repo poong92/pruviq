@@ -145,7 +145,8 @@ def simulate_grid(coins: list[tuple[str, pd.DataFrame]], strategy, direction: st
         for t in all_trades:
             equity += t["pnl_pct"]
             peak = max(peak, equity)
-            max_dd = max(max_dd, peak - equity)
+            dd_pct = (peak - equity) / peak * 100 if peak > 0 else 0.0  # % of peak
+            max_dd = max(max_dd, dd_pct)
             eq_times.append(t["time"][:10])
             eq_values.append(equity)
 
