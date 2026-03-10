@@ -268,9 +268,19 @@ def get_client_ip(request: Request) -> str:
     return direct_ip
 
 
+_last_rate_limit_cleanup = 0.0
+
 def check_rate_limit(client_ip: str) -> bool:
-    """Simple in-memory rate limiter."""
+    """Simple in-memory rate limiter with periodic cleanup."""
+    global _last_rate_limit_cleanup
     now = time.time()
+
+    if now - _last_rate_limit_cleanup > 300 and len(rate_limits) > 200:
+        _last_rate_limit_cleanup = now
+        stale = [ip for ip, ts in rate_limits.items() if not ts or now - ts[-1] > 120]
+        for ip in stale:
+            del rate_limits[ip]
+
     if client_ip not in rate_limits:
         rate_limits[client_ip] = []
 
@@ -283,14 +293,19 @@ def check_rate_limit(client_ip: str) -> bool:
     return True
 
 
+_CACHEABLE_PREFIXES = ("/health", "/coins", "/strategies", "/ohlcv/", "/market", "/stats")
+
 @app.middleware("http")
 async def security_headers_middleware(request: Request, call_next):
     response = await call_next(request)
     response.headers["X-Content-Type-Options"] = "nosniff"
     response.headers["X-Frame-Options"] = "DENY"
     response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
-    response.headers["Cache-Control"] = "no-store"
     response.headers["X-Permitted-Cross-Domain-Policies"] = "none"
+    if request.method == "GET" and any(request.url.path.startswith(p) for p in _CACHEABLE_PREFIXES):
+        response.headers["Cache-Control"] = "public, max-age=60, s-maxage=60"
+    else:
+        response.headers["Cache-Control"] = "no-store"
     return response
 
 
