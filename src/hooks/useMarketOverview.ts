@@ -31,9 +31,9 @@ export function useMarketOverview() {
   const intervalRef = useRef<number | null>(null);
 
   const fetchMarket = () => {
-    // When current data is very stale (>1h), use API-first to recover faster
+    // On initial load (no data yet) or when data is very stale (>1h), use API-first
     const fetcher =
-      market && isVeryStale(market)
+      !market || isVeryStale(market)
         ? fetchLiveFirst("/market", STATIC_DATA.market)
         : fetchWithFallback("/market", STATIC_DATA.market);
     fetcher
