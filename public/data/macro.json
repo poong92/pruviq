@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
@@ -795,3 +796,6 @@
 =======
 {"indicators":[{"id":"SPX","name":"S&P 500","value":6800.0,"change":4.01,"unit":"Index","updated":"2:42 PM EDT","source":"CNBC"},{"id":"IXIC","name":"Nasdaq","value":22746.552,"change":50.605,"unit":"Index","updated":"2:42 PM EDT","source":"CNBC"},{"id":"DXY","name":"DXY (US Dollar)","value":98.813,"change":-0.362,"unit":"Index","updated":"2:42 PM EDT","source":"CNBC"},{"id":"US10Y","name":"US 10Y Treasury","value":4.14,"change":0.006,"unit":"%","updated":"2:41 PM EDT","source":"CNBC"},{"id":"US2Y","name":"US 2Y Treasury","value":3.573,"change":-0.019,"unit":"%","updated":"2:42 PM EDT","source":"CNBC"},{"id":"VIX","name":"VIX","value":24.13,"change":-1.37,"unit":"Index","updated":"2:42 PM EDT","source":"CNBC"},{"id":"GOLD","name":"Gold","value":5211.9,"change":108.2,"unit":"USD","updated":"2:32 PM EDT","source":"CNBC"},{"id":"DFF","name":"Fed Funds Rate","value":3.64,"change":0.0,"unit":"%","updated":"2026-03-06","source":"FRED"}],"generated":"2026-03-10T18:42:37.964330+00:00"}
 >>>>>>> Stashed changes
+=======
+{"indicators":[{"id":"SPX","name":"S&P 500","value":6797.57,"change":1.58,"unit":"Index","updated":"3:02 PM EDT","source":"CNBC"},{"id":"IXIC","name":"Nasdaq","value":22727.949,"change":32.003,"unit":"Index","updated":"3:02 PM EDT","source":"CNBC"},{"id":"DXY","name":"DXY (US Dollar)","value":98.842,"change":-0.333,"unit":"Index","updated":"3:02 PM EDT","source":"CNBC"},{"id":"US10Y","name":"US 10Y Treasury","value":4.14,"change":0.006,"unit":"%","updated":"3:02 PM EDT","source":"CNBC"},{"id":"US2Y","name":"US 2Y Treasury","value":3.573,"change":-0.019,"unit":"%","updated":"3:00 PM EDT","source":"CNBC"},{"id":"VIX","name":"VIX","value":24.25,"change":-1.25,"unit":"Index","updated":"3:02 PM EDT","source":"CNBC"},{"id":"GOLD","name":"Gold","value":5211.8,"change":108.1,"unit":"USD","updated":"2:52 PM EDT","source":"CNBC"},{"id":"DFF","name":"Fed Funds Rate","value":3.64,"change":0.0,"unit":"%","updated":"2026-03-06","source":"FRED"}],"generated":"2026-03-10T19:02:37.290134+00:00"}
+>>>>>>> main
