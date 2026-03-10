@@ -1,8 +1,10 @@
 ---
 name: seo-specialist
-description: "SEO/검색엔진 최적화 전문가. 메타 태그, 인덱싱, 구조화 데이터, 키워드, sitemap, hreflang 요청 시 사용."
+description: "SEO/검색엔진 최적화 전문가. 메타 태그, 인덱싱, 구조화 데이터, 키워드, sitemap, hreflang 요청 시 사용. Use for meta tags, sitemap, structured data, JSON-LD, hreflang, keywords, Google Search Console, indexing, SEO audit."
 tools: ["Read", "Grep", "Glob", "WebSearch", "WebFetch"]
 model: sonnet
+memory: project
+maxTurns: 30
 ---
 
 # SEO Specialist Agent

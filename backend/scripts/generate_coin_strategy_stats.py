@@ -73,7 +73,7 @@ STRATEGY_CONFIGS = [
         "source": "preset",
     },
     {
-        "id": "stochastic-oversold-short",
+        "id": "stochastic-overbought-short",
         "source": "preset",
     },
 ]

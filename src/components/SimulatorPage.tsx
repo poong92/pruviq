@@ -337,15 +337,10 @@ export default function SimulatorPage({ lang = "en" }: Props) {
   const handleCompoundToggle = (v: boolean) => {
     setCompounding(v);
     setPerCoinUsdt(v ? 1000 : 60);  // swap default: total capital vs per-coin
-    if (v) {
-      // Compound = 1 coin only → force select mode, keep max 1
-      setCoinMode('select');
-      setSelectedCoins((prev) => prev.length > 0 ? [prev[0]] : ['BTCUSDT']);
-    } else {
-      // Reset to default multi-coin mode
-      setCoinMode('all');
-      setSelectedCoins([]);
-    }
+    // Keep current coinMode and selection — compound works with all modes:
+    // - all/top: portfolio-level compounding (each coin independent)
+    // - select 1: single-coin compounding
+    // - select N: portfolio-level compounding across selected coins
   };
 
   // Timeframe

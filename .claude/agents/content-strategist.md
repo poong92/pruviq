@@ -1,8 +1,10 @@
 ---
 name: content-strategist
-description: "콘텐츠 전략가. 카피라이팅, 포지셔닝, 경쟁사 비교, 신뢰 신호, 블로그 전략, 한국어 품질 요청 시 사용."
+description: "콘텐츠 전략가. 카피라이팅, 포지셔닝, 경쟁사 비교, 신뢰 신호, 블로그 전략, 한국어 품질 요청 시 사용. Use for copywriting, brand voice, content marketing, blog strategy, i18n quality, Korean localization, competitive positioning."
 tools: ["Read", "Grep", "Glob", "WebSearch", "WebFetch"]
 model: sonnet
+memory: project
+maxTurns: 30
 ---
 
 # Content Strategist Agent
