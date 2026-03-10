@@ -341,6 +341,10 @@ export default function SimulatorPage({ lang = "en" }: Props) {
       // Compound = 1 coin only → force select mode, keep max 1
       setCoinMode('select');
       setSelectedCoins((prev) => prev.length > 0 ? [prev[0]] : ['BTCUSDT']);
+    } else {
+      // Reset to default multi-coin mode
+      setCoinMode('all');
+      setSelectedCoins([]);
     }
   };
 
