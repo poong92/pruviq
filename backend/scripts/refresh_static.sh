@@ -69,6 +69,14 @@ acquire_lock
 
 cd "$REPO_DIR"
 
+# --- Cron self-healing (run EARLY so it works even if later steps fail) ---
+CRON_ENTRY="*/20 * * * * bash $SCRIPT_PATH >> /tmp/pruviq-refresh.log 2>&1"
+if ! crontab -l 2>/dev/null | grep -qF "refresh_static.sh"; then
+    log "Cron entry missing — auto-installing..."
+    ( crontab -l 2>/dev/null; echo "$CRON_ENTRY" ) | crontab -
+    send_alert "WARN" "Cron entry was missing — auto-installed"
+fi
+
 # Ensure we're on main and clean
 CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "unknown")
 if [[ "$CURRENT_BRANCH" != "main" ]]; then
@@ -179,14 +187,6 @@ if [[ "$current_branch" != "main" ]]; then
     git merge --abort 2>/dev/null || true
     git checkout main -f -q 2>/dev/null || true
     git reset --hard origin/main 2>/dev/null || true
-fi
-
-# --- Step 4: Ensure cron entry exists (self-healing) ---
-CRON_ENTRY="*/20 * * * * bash $SCRIPT_PATH >> /tmp/pruviq-refresh.log 2>&1"
-if ! crontab -l 2>/dev/null | grep -qF "refresh_static.sh"; then
-    log "Cron entry missing — auto-installing..."
-    ( crontab -l 2>/dev/null; echo "$CRON_ENTRY" ) | crontab -
-    send_alert "WARN" "Cron entry was missing — auto-installed"
 fi
 
 send_alert "OK" "Static data refreshed + deployed"
