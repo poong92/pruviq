@@ -67,7 +67,7 @@ from src.strategies.registry import STRATEGY_REGISTRY, get_strategy, get_all_str
 VERSION = "0.3.0"
 DATA_DIR = Path(os.getenv(
     "PRUVIQ_DATA_DIR",
-    str(Path(__file__).resolve().parent.parent.parent.parent / "autotrader" / "data" / "futures")
+    str(Path(__file__).resolve().parent.parent / "data" / "futures")
 ))
 MAX_CACHE_SIZE = 500
 RATE_LIMIT_PER_MIN = 30
@@ -413,7 +413,10 @@ def filter_df_by_date(df: pd.DataFrame, start_date=None, end_date=None) -> pd.Da
             pass
     filtered = df[mask].copy()
     if len(filtered) < 100:
-        return df
+        logger.warning(
+            f"Date filter {start_date}~{end_date} yielded only {len(filtered)} rows "
+            f"(minimum 100). Returning unfiltered data ({len(df)} rows)."
+        )
     return filtered
 
 
@@ -887,21 +890,40 @@ async def get_ohlcv(symbol: str, limit: int = 3000, timeframe: str = "1H"):
     if limit > 0:
         df = df.tail(limit)
 
+    ts_arr = df["timestamp"].apply(_ts_to_unix).values
+    o_arr = np.round(df["open"].values.astype(float), 6)
+    h_arr = np.round(df["high"].values.astype(float), 6)
+    l_arr = np.round(df["low"].values.astype(float), 6)
+    c_arr = np.round(df["close"].values.astype(float), 6)
+    v_arr = np.round(df["volume"].values.astype(float), 2)
+
+    has_bb = "bb_upper" in df.columns
+    has_ema = "ema_fast" in df.columns
+    has_vol = "vol_ratio" in df.columns
+
+    bb_u = df["bb_upper"].values.astype(float) if has_bb else None
+    bb_l = df["bb_lower"].values.astype(float) if has_bb else None
+    ema_f = df["ema_fast"].values.astype(float) if has_ema else None
+    ema_s = df["ema_slow"].values.astype(float) if has_ema else None
+    vr = df["vol_ratio"].values.astype(float) if has_vol else None
+
     bars = []
-    for _, row in df.iterrows():
+    for i in range(len(df)):
+        bb_upper_v = round(float(bb_u[i]), 6) if has_bb and not np.isnan(bb_u[i]) else None
+        bb_lower_v = round(float(bb_l[i]), 6) if has_bb and not np.isnan(bb_l[i]) else None
         bars.append(OhlcvBar(
-            t=_ts_to_unix(row["timestamp"]),
-            o=round(float(row["open"]), 6),
-            h=round(float(row["high"]), 6),
-            l=round(float(row["low"]), 6),
-            c=round(float(row["close"]), 6),
-            v=round(float(row["volume"]), 2),
-            bb_upper=round(float(row["bb_upper"]), 6) if "bb_upper" in df.columns and pd.notna(row.get("bb_upper")) else None,
-            bb_lower=round(float(row["bb_lower"]), 6) if "bb_lower" in df.columns and pd.notna(row.get("bb_lower")) else None,
-            bb_mid=round((float(row["bb_upper"]) + float(row["bb_lower"])) / 2, 6) if "bb_upper" in df.columns and pd.notna(row.get("bb_upper")) and pd.notna(row.get("bb_lower")) else None,
-            ema20=round(float(row["ema_fast"]), 6) if "ema_fast" in df.columns and pd.notna(row.get("ema_fast")) else None,
-            ema50=round(float(row["ema_slow"]), 6) if "ema_slow" in df.columns and pd.notna(row.get("ema_slow")) else None,
-            vol_ratio=round(float(row["vol_ratio"]), 2) if "vol_ratio" in df.columns and pd.notna(row.get("vol_ratio")) else None,
+            t=int(ts_arr[i]),
+            o=float(o_arr[i]),
+            h=float(h_arr[i]),
+            l=float(l_arr[i]),
+            c=float(c_arr[i]),
+            v=float(v_arr[i]),
+            bb_upper=bb_upper_v,
+            bb_lower=bb_lower_v,
+            bb_mid=round((bb_upper_v + bb_lower_v) / 2, 6) if bb_upper_v is not None and bb_lower_v is not None else None,
+            ema20=round(float(ema_f[i]), 6) if has_ema and not np.isnan(ema_f[i]) else None,
+            ema50=round(float(ema_s[i]), 6) if has_ema and not np.isnan(ema_s[i]) else None,
+            vol_ratio=round(float(vr[i]), 2) if has_vol and not np.isnan(vr[i]) else None,
         ))
 
     return OhlcvResponse(symbol=symbol, timeframe=timeframe, total_bars=len(bars), data=bars)
