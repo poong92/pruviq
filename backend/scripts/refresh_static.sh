@@ -99,6 +99,14 @@ if ! python3 backend/scripts/refresh_static.py 2>&1; then
     exit 1
 fi
 
+# Post-run staleness check: if market.json is STILL old after a successful run, alert
+if [ -f "$MARKET_JSON" ]; then
+    POST_AGE_SEC=$(( $(date +%s) - $(stat -f %m "$MARKET_JSON") ))
+    if [ "$POST_AGE_SEC" -gt 3600 ]; then
+        send_alert "ERROR" "market.json still stale after refresh (${POST_AGE_SEC}s old). Pipeline may be broken."
+    fi
+fi
+
 # All data files that refresh_static.py may update
 DATA_FILES="public/data/market.json public/data/coins-stats.json public/data/macro.json public/data/news.json public/data/coin-metadata.json"
 
