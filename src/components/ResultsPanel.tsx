@@ -4,7 +4,7 @@
 import { useEffect, useRef, useState } from "preact/hooks";
 import ResultsCard from "./ResultsCard";
 import OOSValidation from "./OOSValidation";
-import { winRateColor, profitFactorColor, signColor } from "../utils/format";
+import { winRateColor, profitFactorColor, signColor, formatPF } from "../utils/format";
 import type { BacktestResult, CoinResult } from "./simulator-types";
 import { getCssVar, COLORS } from "./simulator-types";
 import { API_BASE_URL as API_URL } from "../config/api";
@@ -492,7 +492,7 @@ export default function ResultsPanel({
                               color: profitFactorColor(r.profit_factor),
                             }}
                           >
-                            {r.profit_factor.toFixed(2)}
+                            {formatPF(r.profit_factor)}
                           </td>
                           <td
                             class="py-1 px-2 text-right"
@@ -586,7 +586,7 @@ export default function ResultsPanel({
                               color: profitFactorColor(y.profit_factor),
                             }}
                           >
-                            {y.profit_factor.toFixed(2)}
+                            {formatPF(y.profit_factor)}
                           </span>
                           <span class="text-[--color-text-muted]">Trades</span>
                           <span class="font-mono">{y.trades}</span>
@@ -962,7 +962,7 @@ export default function ResultsPanel({
                                 color: profitFactorColor(coin.profit_factor),
                               }}
                             >
-                              {coin.profit_factor.toFixed(2)}
+                              {formatPF(coin.profit_factor)}
                             </td>
                             <td
                               class="py-1.5 px-2 text-right"
