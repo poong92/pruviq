@@ -57,17 +57,7 @@ const statusLabels: Record<string, string> = {
 };
 ---
 
-<Layout title={`${strategy.data.name} - PRUVIQ`} description={strategy.data.description} type="article" date={strategy.data.dateAdded}>
-  <!-- 3-level BreadcrumbList -->
-  <script type="application/ld+json" set:html={JSON.stringify({
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-      { "@type": "ListItem", "position": 1, "name": "PRUVIQ", "item": "https://pruviq.com/" },
-      { "@type": "ListItem", "position": 2, "name": "전략", "item": "https://pruviq.com/ko/strategies/" },
-      { "@type": "ListItem", "position": 3, "name": strategy.data.name, "item": `https://pruviq.com/ko/strategies/${strategy.id}/` }
-    ]
-  })} />
+<Layout title={`${strategy.data.name} - PRUVIQ`} description={strategy.data.description} type="article" date={strategy.data.dateAdded} noAlternate={!isKorean}>
   <script type="application/ld+json" set:html={JSON.stringify({
     "@context": "https://schema.org",
     "@type": "TechArticle",

@@ -37,7 +37,7 @@ const categoryLabels: Record<string, string> = {
 };
 ---
 
-<Layout title={`${post.data.title} - PRUVIQ`} description={post.data.description} type="article" date={post.data.date} category={post.data.category}>
+<Layout title={`${post.data.title} - PRUVIQ`} description={post.data.description} type="article" date={post.data.date} category={post.data.category} noAlternate={!isKorean}>
   <article class="py-12">
     <div class="max-w-3xl mx-auto px-4">
       <a href="/ko/learn" class="text-[--color-text-muted] text-sm hover:text-[--color-accent] transition-colors mb-8 inline-block">
