@@ -256,7 +256,16 @@ export default function BuilderPanel(props: Props) {
             </div>
             {/* Per-coin USDT */}
             <div>
-              <label class="text-[10px] text-[--color-text-muted]">{t.perCoinUsdt || 'Per Coin $'} <span class="cursor-help opacity-60 hover:opacity-100" title={t.perCoinUsdtTip || ''}>&#9432;</span></label>
+              <label class="text-[10px] text-[--color-text-muted]">
+                {props.compounding
+                  ? (props.lang === 'ko' ? '초기 코인당 $' : 'Initial $/coin')
+                  : (t.perCoinUsdt || 'Per Coin $')}
+                {' '}<span class="cursor-help opacity-60 hover:opacity-100" title={
+                  props.compounding
+                    ? (props.lang === 'ko' ? '첫 거래 기준 금액. 이후 수익/손실에 따라 자동 조정' : 'Starting amount per coin. Auto-adjusts based on P&L')
+                    : (t.perCoinUsdtTip || '')
+                }>&#9432;</span>
+              </label>
               <input type="number" value={localPerCoin} min={1} max={10000} step={10}
                 onChange={(e: any) => setLocalPerCoin(e.target.value)}
                 onBlur={() => props.setPerCoinUsdt(parseFloat(localPerCoin) || 60)}
@@ -273,10 +282,10 @@ export default function BuilderPanel(props: Props) {
               />
             </div>
             {/* Compounding Toggle */}
-            <div class="flex items-center gap-2 pt-3">
+            <div class="col-span-3 flex flex-wrap items-center gap-x-2 gap-y-1 pt-2 pb-1 border-t border-[--color-border]/30 mt-1">
               <button
                 onClick={() => props.setCompounding(!props.compounding)}
-                class="relative w-9 h-5 rounded-full transition-colors duration-200"
+                class="relative w-9 h-5 rounded-full transition-colors duration-200 shrink-0"
                 style={{
                   background: props.compounding ? '#3182f6' : '#3a3a42',
                 }}
@@ -287,13 +296,14 @@ export default function BuilderPanel(props: Props) {
                   style={{ transform: props.compounding ? 'translateX(16px)' : 'translateX(0)' }}
                 />
               </button>
-              <label class="text-[10px] text-[--color-text-muted] cursor-pointer select-none" onClick={() => props.setCompounding(!props.compounding)}>
+              <label class="text-[10px] font-bold cursor-pointer select-none" onClick={() => props.setCompounding(!props.compounding)}
+                style={{ color: props.compounding ? '#3182f6' : 'var(--color-text-muted)' }}>
                 {props.compounding ? (t.compounding || 'Compound') : (t.simple || 'Simple')}
               </label>
-              <span class="text-[9px] text-[--color-text-muted] opacity-70">
+              <span class="text-[9px] text-[--color-text-muted] opacity-70 leading-tight">
                 {props.compounding
-                  ? (props.lang === 'ko' ? '수익 재투자 — 포지션 크기 변동' : 'Reinvest profits — position size scales with equity')
-                  : (props.lang === 'ko' ? '고정 금액 거래' : 'Fixed $ per trade')}
+                  ? (props.lang === 'ko' ? '수익/손실이 다음 포지션 크기에 반영' : 'P&L scales next position size')
+                  : (props.lang === 'ko' ? '매 거래 고정 금액' : 'Fixed $ every trade')}
               </span>
             </div>
             {/* Start Date */}
