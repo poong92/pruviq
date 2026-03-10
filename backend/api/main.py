@@ -744,10 +744,12 @@ async def simulate(req: SimulationRequest):
         downside_sim = np.minimum(daily_returns_sim, 0)
         tdd = float(np.sqrt(np.mean(downside_sim ** 2)))
         sortino = round(dr_avg / tdd * np.sqrt(365), 2) if tdd > 0 else 0.0
-        # Calmar: annualized return / MDD
+        # Calmar: CAGR / MDD (compound annualized growth rate — industry standard)
         n_days_sim = len(daily_pnl_sim)
-        ann_return_sim = total_return * (365 / max(n_days_sim, 1))
-        calmar = round(ann_return_sim / max_dd, 2) if max_dd > 0 else 0.0
+        growth_ratio_sim = (equity + 100) / 100 if equity > -100 else 0.001
+        years_sim = max(n_days_sim, 1) / 365
+        cagr_pct_sim = (growth_ratio_sim ** (1 / years_sim) - 1) * 100 if years_sim > 0 else 0.0
+        calmar = round(cagr_pct_sim / max_dd, 2) if max_dd > 0 else 0.0
     else:
         sharpe, sortino, calmar = 0.0, 0.0, 0.0
 
@@ -1087,7 +1089,8 @@ def _run_one_compare_strategy(
     for t in all_trades:
         equity += t["pnl_pct"]
         peak = max(peak, equity)
-        max_dd = max(max_dd, peak - equity)
+        dd_pct = (peak - equity) / peak * 100 if peak > 0 else 0.0  # % of peak (industry standard)
+        max_dd = max(max_dd, dd_pct)
         eq_times.append(t["time"][:10])
         eq_values.append(equity - 100.0)  # return % for frontend
 
@@ -2255,10 +2258,12 @@ async def run_backtest(req: BacktestRequest):
         downside_bt = np.minimum(daily_returns, 0)
         tdd_bt = float(np.sqrt(np.mean(downside_bt ** 2)))
         bt_sortino = round(dr_avg / tdd_bt * np.sqrt(365), 2) if tdd_bt > 0 else 0.0
-        # Calmar = annualized return / MDD
+        # Calmar = CAGR / MDD (compound annualized growth rate — industry standard)
         n_days = len(daily_pnl)
-        ann_return = total_return * (365 / max(n_days, 1)) if n_days > 0 else total_return
-        bt_calmar = round(ann_return / max_dd, 2) if max_dd > 0 else 0.0
+        growth_ratio_bt = (equity + 100) / 100 if equity > -100 else 0.001
+        years_bt = max(n_days, 1) / 365
+        cagr_pct_bt = (growth_ratio_bt ** (1 / years_bt) - 1) * 100 if years_bt > 0 else 0.0
+        bt_calmar = round(cagr_pct_bt / max_dd, 2) if max_dd > 0 else 0.0
         # VaR and CVaR (95% confidence, daily)
         var_95 = round(float(np.percentile(daily_returns, 5)), 4)
         tail = daily_returns[daily_returns <= var_95]
@@ -2283,15 +2288,21 @@ async def run_backtest(req: BacktestRequest):
             krt = float(np.mean(z**4) - 3)  # excess kurtosis
         else:
             skw, krt = 0.0, 0.0
-        # Sharpe standard error with non-normality correction
-        sr_se = np.sqrt((1 + 0.5 * bt_sharpe**2 - skw * bt_sharpe + (krt / 4) * bt_sharpe**2) / max(n_dr - 1, 1))
-        # Expected max Sharpe from n_trials strategies
+        # Sharpe standard error with non-normality correction (Lo 2002)
+        # Use DAILY Sharpe (not annualized) in SE formula
+        daily_sharpe = dr_avg / dr_s if dr_s > 0 else 0.0
+        # krt = excess kurtosis (k-3); SE formula needs (kurtosis-1)/4 = (krt+2)/4
+        sr_se = np.sqrt((1 + 0.5 * daily_sharpe**2 - skw * daily_sharpe + ((krt + 2) / 4) * daily_sharpe**2) / max(n_dr - 1, 1))
+        # Expected max Sharpe from n_trials strategies (daily scale)
         # Realistic: conditions^2 * 50 (combinatorial parameter search)
         n_cond = max(params.get("conditions_count", 1), 1)
         n_trials_est = max(n_cond ** 2 * 50, 100)
         gamma_em = 0.5772156649  # Euler-Mascheroni
-        expected_max_sr = np.sqrt(2 * np.log(n_trials_est)) * (1 - gamma_em / max(2 * np.log(n_trials_est), 0.01)) if n_trials_est > 1 else 0
-        z_dsr = (bt_sharpe - expected_max_sr) / max(sr_se, 0.001)
+        # Lopez de Prado (2014): E[max] ≈ sqrt(2*ln(N)) * (1 - γ/(ln(N))) + γ/sqrt(2*ln(N))
+        # Denominator is ln(N), not 2*ln(N)
+        ln_n = max(np.log(n_trials_est), 0.01)
+        expected_max_sr = np.sqrt(2 * ln_n) * (1 - gamma_em / ln_n) + gamma_em / np.sqrt(2 * ln_n) if n_trials_est > 1 else 0
+        z_dsr = (daily_sharpe - expected_max_sr) / max(sr_se, 0.001)
         # Convert to probability via normal CDF (proper DSR output)
         # Approximation: Phi(z) using Abramowitz & Stegun (no scipy needed)
         def _norm_cdf(x):
@@ -2478,7 +2489,16 @@ async def run_backtest(req: BacktestRequest):
             be_wr_val = abs(avg_loss) / (abs(avg_win) + abs(avg_loss)) if (abs(avg_win) + abs(avg_loss)) > 0 else 0.5
             observed_wr = len(wins) / n
             z = (observed_wr - be_wr_val) / max((be_wr_val * (1 - be_wr_val) / n) ** 0.5, 1e-9)
-            edge_p_value = round(max(0, min(1, 0.5 * (1 - min(abs(z), 6) / 6))), 4) if z > 0 else 1.0
+            # Standard normal CDF approximation (Abramowitz & Stegun, |error| < 7.5e-8)
+            def _norm_cdf_fallback(x):
+                if x < -8: return 0.0
+                if x > 8: return 1.0
+                a = abs(x)
+                t = 1.0 / (1.0 + 0.2316419 * a)
+                d = 0.3989422804014327
+                p = d * np.exp(-0.5 * a * a) * t * (0.319381530 + t * (-0.356563782 + t * (1.781477937 + t * (-1.821255978 + t * 1.330274429))))
+                return 1.0 - p if x >= 0 else p
+            edge_p_value = round(1.0 - _norm_cdf_fallback(z), 4) if z > 0 else 1.0
         except Exception:
             pass
 
@@ -2521,10 +2541,15 @@ async def run_backtest(req: BacktestRequest):
     elif grade_score >= 3: strategy_grade = "D"
     else: strategy_grade = "F"
 
-    grade_details = f"PF={pf} WR={wr}%(BE:{be_wr_grade:.0f}%) MDD={capital_mdd:.1f}% RF={recovery_factor} Sharpe={bt_sharpe} E={expectancy} Edge={grade_score}/16"
+    grade_details = f"PF={pf} WR={wr}%(BE:{be_wr_grade:.0f}%) MDD={capital_mdd:.1f}% RF={recovery_factor} Sharpe={bt_sharpe} E={expectancy} Score={grade_score}/16"
 
     # --- Warnings ---
     warnings = []
+    # Liquidation risk: leverage × SL > 100% means potential total loss
+    sl_pct_val = float(params.get("sl_pct", params.get("sl", 0.10)))
+    liq_risk = leverage_val * sl_pct_val * 100
+    if liq_risk > 100:
+        warnings.append(f"⚠ Liquidation risk: {leverage_val}x leverage × {sl_pct_val*100:.0f}% SL = {liq_risk:.0f}% capital at risk (>100%). Consider reducing leverage or SL.")
     if mdd > 20:
         warnings.append(f"High drawdown: {mdd:.1f}%. With {leverage_val}x leverage, real capital loss could reach {mdd * leverage_val / 100 * 100:.0f}%.")
     if len(all_trades) < 30:
