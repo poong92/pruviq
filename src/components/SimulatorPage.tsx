@@ -330,10 +330,14 @@ export default function SimulatorPage({ lang = "en" }: Props) {
   const [presetLoading, setPresetLoading] = useState(false);
   const [presetError, setPresetError] = useState<string | null>(null);
 
-  // Per-coin USDT + Leverage
+  // Per-coin USDT + Leverage (compound mode uses total capital)
   const [perCoinUsdt, setPerCoinUsdt] = useState(60);
   const [leverage, setLeverage] = useState(5);
   const [compounding, setCompounding] = useState(false);
+  const handleCompoundToggle = (v: boolean) => {
+    setCompounding(v);
+    setPerCoinUsdt(v ? 5000 : 60);  // swap default: total capital vs per-coin
+  };
 
   // Timeframe
   const [timeframe, setTimeframe] = useState<string>("1H");
@@ -681,7 +685,10 @@ export default function SimulatorPage({ lang = "en" }: Props) {
       sl_pct: slPct,
       tp_pct: tpPct,
       max_bars: adjustedMaxBars,
-      per_coin_usd: perCoinUsdt,
+      // Compound mode: user enters total capital → divide by position count for API
+      per_coin_usd: compounding
+        ? Math.round(perCoinUsdt / Math.min(100, coinsLoaded || 100))
+        : perCoinUsdt,
       leverage,
       compounding,
     };
@@ -1116,7 +1123,7 @@ export default function SimulatorPage({ lang = "en" }: Props) {
               leverage={leverage}
               setLeverage={setLeverage}
               compounding={compounding}
-              setCompounding={setCompounding}
+              setCompounding={handleCompoundToggle}
               startDate={startDate}
               setStartDate={setStartDate}
               endDate={endDate}
