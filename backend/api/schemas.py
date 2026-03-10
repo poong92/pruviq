@@ -22,6 +22,7 @@ class SimulationRequest(BaseModel):
     start_date: Optional[str] = Field(default=None, description="Backtest start date (YYYY-MM-DD)")
     end_date: Optional[str] = Field(default=None, description="Backtest end date (YYYY-MM-DD)")
     timeframe: str = Field(default="1H", description="Candle timeframe: 1H, 2H, 4H, 6H, 12H, 1D, 1W")
+    compounding: bool = Field(default=False, description="True = reinvest profits (compound), False = fixed position size (simple)")
 
 
 class TradeItem(BaseModel):
@@ -319,6 +320,7 @@ class BacktestRequest(BaseModel):
     per_coin_usd: float = Field(default=60.0, ge=1.0, le=10000.0, description="USD per coin position")
     leverage: int = Field(default=5, ge=1, le=125, description="Leverage multiplier")
     max_concurrent_positions: int = Field(default=100, ge=1, le=1000, description="Max simultaneous open positions")
+    compounding: bool = Field(default=False, description="True = reinvest profits (compound), False = fixed position size (simple)")
 
 
 class MonthlyStat(BaseModel):
@@ -379,6 +381,7 @@ class BacktestResponse(BaseModel):
     trades: List[TradeItem] = []
 
     # Portfolio metrics
+    compounding: bool = False
     per_coin_usd: float = 60.0
     leverage: int = 5
     initial_capital_usd: float = 0.0

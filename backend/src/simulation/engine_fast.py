@@ -252,7 +252,11 @@ def simulate_vectorized(
         fee = fee_pct * 2
         bars_held = exit_idx - entry_idx
         funding_payments = bars_held // 8
-        funding_cost = funding_payments * funding_rate_8h
+        # SHORT receives positive funding; LONG pays
+        if direction == "short":
+            funding_cost = -(funding_payments * funding_rate_8h)  # income
+        else:
+            funding_cost = funding_payments * funding_rate_8h      # expense
         pnl_net = pnl_gross - fee - funding_cost
 
         trades.append(Trade(
@@ -346,16 +350,26 @@ def run_fast(
         else:
             cur_consec = 0
 
-    # Risk-adjusted metrics
-    trade_returns = np.array([t.pnl_pct for t in trades])
-    if len(trade_returns) >= 2:
-        avg_ret = float(np.mean(trade_returns))
-        std_ret = float(np.std(trade_returns, ddof=1))
-        sharpe = round(avg_ret / std_ret * np.sqrt(len(trade_returns)), 2) if std_ret > 0 else 0.0
-        downside = trade_returns[trade_returns < 0]
-        down_std = float(np.std(downside, ddof=1)) if len(downside) >= 2 else 0.0
-        sortino = round(avg_ret / down_std * np.sqrt(len(trade_returns)), 2) if down_std > 0 else 0.0
-        calmar = round(total_return / max_dd, 2) if max_dd > 0 else 0.0
+    # Risk-adjusted metrics — daily-return based (annualized with sqrt(365))
+    from collections import defaultdict as _dd
+    daily_pnl = _dd(float)
+    for t in trades:
+        day_key = t.exit_time[:10]  # YYYY-MM-DD
+        daily_pnl[day_key] += t.pnl_pct
+    daily_returns = np.array(list(daily_pnl.values())) if daily_pnl else np.array([])
+
+    if len(daily_returns) >= 5:
+        dr_avg = float(np.mean(daily_returns))
+        dr_std = float(np.std(daily_returns, ddof=1))
+        sharpe = round(dr_avg / dr_std * np.sqrt(365), 2) if dr_std > 0 else 0.0
+        dr_down = daily_returns[daily_returns < 0]
+        # TDD Sortino: sqrt(mean(min(r,0)^2))
+        tdd = float(np.sqrt(np.mean(daily_returns[daily_returns < 0] ** 2))) if len(dr_down) >= 2 else 0.0
+        sortino = round(dr_avg / tdd * np.sqrt(365), 2) if tdd > 0 else 0.0
+        # Calmar: annualized return / MDD
+        n_days = len(daily_pnl)
+        ann_return = total_return * (365 / max(n_days, 1))
+        calmar = round(ann_return / max_dd, 2) if max_dd > 0 else 0.0
     else:
         sharpe, sortino, calmar = 0.0, 0.0, 0.0
 

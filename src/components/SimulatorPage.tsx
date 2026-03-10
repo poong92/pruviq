@@ -43,6 +43,8 @@ const L = {
     maxBars: "Max Hold (h)",
     perCoinUsdt: "Per Coin $",
     leverage: "Leverage",
+    compounding: "Compound",
+    simple: "Simple",
     dateRange: "Test Period",
     startDate: "Start",
     endDate: "End",
@@ -153,6 +155,8 @@ const L = {
     maxBars: "최대 보유 (h)",
     perCoinUsdt: "코인당 $",
     leverage: "레버리지",
+    compounding: "복리",
+    simple: "단리",
     dateRange: "테스트 기간",
     startDate: "시작",
     endDate: "종료",
@@ -329,6 +333,7 @@ export default function SimulatorPage({ lang = "en" }: Props) {
   // Per-coin USDT + Leverage
   const [perCoinUsdt, setPerCoinUsdt] = useState(60);
   const [leverage, setLeverage] = useState(5);
+  const [compounding, setCompounding] = useState(false);
 
   // Timeframe
   const [timeframe, setTimeframe] = useState<string>("1H");
@@ -678,6 +683,7 @@ export default function SimulatorPage({ lang = "en" }: Props) {
       max_bars: adjustedMaxBars,
       per_coin_usd: perCoinUsdt,
       leverage,
+      compounding,
     };
 
     if (coinMode === "top") body.top_n = topN;
@@ -1109,6 +1115,8 @@ export default function SimulatorPage({ lang = "en" }: Props) {
               setPerCoinUsdt={setPerCoinUsdt}
               leverage={leverage}
               setLeverage={setLeverage}
+              compounding={compounding}
+              setCompounding={setCompounding}
               startDate={startDate}
               setStartDate={setStartDate}
               endDate={endDate}

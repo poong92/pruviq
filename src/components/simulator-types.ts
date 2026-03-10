@@ -47,6 +47,7 @@ export interface BacktestResult {
   max_drawdown_pct: number; avg_win_pct: number; avg_loss_pct: number;
   max_consecutive_losses: number; tp_count: number; sl_count: number; timeout_count: number;
   sl_pct: number; tp_pct: number; max_bars: number;
+  compounding?: boolean;
   equity_curve: { time: string; value: number }[];
   yearly_stats?: YearlyStat[];
   indicators_used: string[]; conditions_count: number; coins_used: number;
