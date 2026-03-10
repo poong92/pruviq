@@ -61,6 +61,8 @@ jobs:
           check_url "https://api.pruviq.com/builder/presets" "API /presets" || API_OK=false
           echo "api_ok=$API_OK" >> "$GITHUB_OUTPUT"
 
+      - uses: actions/checkout@v4
+
       - name: Run Simulator QA (sim_audit quick)
         if: steps.smoke.outputs.api_ok == 'true'
         run: |
@@ -69,8 +71,8 @@ jobs:
           # Extract summary line
           SUMMARY=$(grep "SUMMARY:" /tmp/sim_audit_output.txt || echo "No summary")
           echo "$SUMMARY"
-          # Fail if any FAIL found
-          FAILS=$(grep -c "FAIL" /tmp/sim_audit_output.txt || true)
+          # Count actual test failures (lines with FAIL not in the SUMMARY line)
+          FAILS=$(grep -v "SUMMARY:" /tmp/sim_audit_output.txt | grep -c "FAIL" || true)
           if [ "$FAILS" -gt 0 ]; then
             echo "sim_audit_ok=false" >> "$GITHUB_OUTPUT"
             echo "::warning::Simulator QA found $FAILS failures"
