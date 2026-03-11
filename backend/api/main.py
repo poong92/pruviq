@@ -592,13 +592,14 @@ async def simulate(req: SimulationRequest):
                 if actual_date_max is None or df_max > actual_date_max:
                     actual_date_max = df_max
 
+            dyn_slip = _get_dynamic_slippage(sym)
             result = run_fast(
                 df, strategy, sym,
                 sl_pct=req.sl_pct / 100,
                 tp_pct=req.tp_pct / 100,
                 max_bars=req.max_bars,
                 fee_pct=cost_model.fee_pct,
-                slippage_pct=cost_model.slippage_pct,
+                slippage_pct=dyn_slip,
                 direction=run_dir,
                 market_type=req.market_type,
                 strategy_id=strategy_id,
@@ -871,11 +872,12 @@ def _build_coin_stats(strategy) -> dict:
         if df is None or len(df) < 500:
             continue
 
+        dyn_slip = _get_dynamic_slippage(symbol)
         result = run_fast(
             df, strategy, symbol,
             sl_pct=0.10, tp_pct=0.08, max_bars=48,
             fee_pct=cost_model.fee_pct,
-            slippage_pct=cost_model.slippage_pct,
+            slippage_pct=dyn_slip,
             direction="short", market_type="futures",
             funding_rate_8h=getattr(cost_model, 'funding_rate_8h', 0.0001),
         )
@@ -1012,13 +1014,14 @@ async def simulate_coin(req: CoinSimRequest):
             raise HTTPException(404, f"Symbol not found: {symbol}")
 
     df = filter_df_by_date(df, getattr(req, 'start_date', None), getattr(req, 'end_date', None))
+    dyn_slip = _get_dynamic_slippage(symbol)
     result = run_fast(
         df, strategy, symbol,
         sl_pct=req.sl_pct / 100,
         tp_pct=req.tp_pct / 100,
         max_bars=req.max_bars,
         fee_pct=cost_model.fee_pct,
-        slippage_pct=cost_model.slippage_pct,
+        slippage_pct=dyn_slip,
         direction=req.direction,
         market_type=req.market_type,
         strategy_id=strategy_id,
@@ -1080,11 +1083,12 @@ def _run_one_compare_strategy(
         if not has_cache:
             df = strategy.calculate_indicators(df.copy())
         df = filter_df_by_date(df, getattr(req, 'start_date', None), getattr(req, 'end_date', None))
+        dyn_slip = _get_dynamic_slippage(sym)
         result = run_fast(
             df, strategy, sym,
             sl_pct=req.sl_pct / 100, tp_pct=req.tp_pct / 100,
             max_bars=req.max_bars,
-            fee_pct=cost_model.fee_pct, slippage_pct=cost_model.slippage_pct,
+            fee_pct=cost_model.fee_pct, slippage_pct=dyn_slip,
             direction=direction, market_type="futures",
             strategy_id=strategy_id,
             funding_rate_8h=getattr(cost_model, 'funding_rate_8h', 0.0001),
@@ -1230,6 +1234,7 @@ async def simulate_validate(req: ValidateRequest):
             df_is = df.iloc[:split_idx]
             df_oos = df.iloc[split_idx:]
 
+        dyn_slip = _get_dynamic_slippage(sym)
         for period_df, trade_list in [(df_is, is_trades_all), (df_oos, oos_trades_all)]:
             if len(period_df) < 100:
                 continue
@@ -1239,7 +1244,7 @@ async def simulate_validate(req: ValidateRequest):
                 tp_pct=req.tp_pct / 100,
                 max_bars=req.max_bars,
                 fee_pct=cost_model.fee_pct,
-                slippage_pct=cost_model.slippage_pct,
+                slippage_pct=dyn_slip,
                 direction=direction,
                 market_type=req.market_type,
                 strategy_id=strategy_id,
@@ -2066,7 +2071,7 @@ async def run_backtest(req: BacktestRequest):
 
         # Simulate trades from signals
         from src.simulation.engine_fast import simulate_vectorized
-        # TODO: integrate per-coin slippage via _get_dynamic_slippage(sym)
+        dyn_slip = _get_dynamic_slippage(sym)
         trades = simulate_vectorized(
             df=df,
             signal_indices=signal_indices,
@@ -2074,7 +2079,7 @@ async def run_backtest(req: BacktestRequest):
             tp_pct=req.tp_pct / 100,
             max_bars=req.max_bars,
             fee_pct=cost_model.fee_pct,
-            slippage_pct=cost_model.slippage_pct,
+            slippage_pct=dyn_slip,
             direction=req.direction,
             symbol=sym,
             funding_rate_8h=getattr(cost_model, 'funding_rate_8h', 0.0001),
