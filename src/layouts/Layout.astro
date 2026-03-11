@@ -43,6 +43,7 @@ const apiPath = lang === 'ko' ? '/ko/api' : '/api';
 const compareTvPath = lang === 'ko' ? '/ko/compare/tradingview' : '/compare/tradingview';
 const privacyPath = lang === 'ko' ? '/ko/privacy' : '/privacy';
 const termsPath = lang === 'ko' ? '/ko/terms' : '/terms';
+const leaderboardPath = lang === 'ko' ? '/ko/leaderboard' : '/leaderboard';
 
 // Legacy paths (for footer/redirects)
 const strategiesPath = lang === 'ko' ? '/ko/strategies' : '/strategies';
@@ -64,8 +65,8 @@ const isActive = (match: string) => basePath.startsWith(match);
 
 // Build multi-level breadcrumb items (matching Breadcrumbs.astro logic)
 const breadcrumbLabelMap: Record<string, Record<string, string>> = {
-  en: { market: 'Market', strategies: 'Strategies', coins: 'Coins', builder: 'Builder', simulate: 'Simulate', learn: 'Learn', fees: 'Fees', blog: 'Blog', about: 'About', changelog: 'Changelog', performance: 'Performance', compare: 'Compare', privacy: 'Privacy', terms: 'Terms', methodology: 'Methodology', api: 'API' },
-  ko: { market: '시장', strategies: '전략', coins: '코인', builder: '빌더', simulate: '시뮬레이션', learn: '학습', fees: '수수료', blog: '블로그', about: '소개', changelog: '변경 이력', performance: '성과', compare: '비교', privacy: '개인정보', terms: '이용약관', methodology: '방법론', api: 'API' },
+  en: { market: 'Market', strategies: 'Strategies', coins: 'Coins', builder: 'Builder', simulate: 'Simulate', learn: 'Learn', fees: 'Fees', blog: 'Blog', about: 'About', changelog: 'Changelog', performance: 'Performance', compare: 'Compare', privacy: 'Privacy', terms: 'Terms', methodology: 'Methodology', api: 'API', leaderboard: 'Leaderboard' },
+  ko: { market: '시장', strategies: '전략', coins: '코인', builder: '빌더', simulate: '시뮬레이션', learn: '학습', fees: '수수료', blog: '블로그', about: '소개', changelog: '변경 이력', performance: '성과', compare: '비교', privacy: '개인정보', terms: '이용약관', methodology: '방법론', api: 'API', leaderboard: '리더보드' },
 };
 const breadcrumbSegments = basePath === '/' ? [] : basePath.split('/').filter(Boolean);
 const breadcrumbItems = [{ name: lang === 'ko' ? '홈' : 'Home', item: 'https://pruviq.com/' }];
@@ -347,6 +348,7 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
           {navItems.map(item => (
             <a href={item.href} aria-current={isActive(item.match) ? "page" : undefined} class="min-h-[44px] flex items-center" style={isActive(item.match) ? 'color:var(--color-accent);font-weight:500' : 'color:var(--color-text-muted)'}>{item.label}</a>
           ))}
+          <a href={leaderboardPath} class="min-h-[44px] flex items-center text-[--color-text-muted]">{t('nav.leaderboard')}</a>
           <a href={methodologyPath} class="min-h-[44px] flex items-center text-[--color-text-muted]">{t('footer.methodology')}</a>
           <a href={performancePath} class="min-h-[44px] flex items-center text-[--color-text-muted]">{t('nav.performance')}</a>
           <div class="border-t border-[--color-border] mt-2 pt-2">
@@ -382,6 +384,7 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
                 <a href={strategiesPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('nav.strategies')}</a>
                 <a href={coinsPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('nav.coins')}</a>
                 <a href={feesPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('footer.fees')}</a>
+                <a href={leaderboardPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('nav.leaderboard')}</a>
               </div>
             </div>
             <div>
