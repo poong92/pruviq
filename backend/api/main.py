@@ -936,7 +936,7 @@ def _build_coin_stats(strategy) -> dict:
             profit_factor=result.profit_factor,
             total_return_pct=result.total_return_pct,
             name=resolved_name,
-            image=cg.get("image"),
+            image=cg.get("image") or f"https://ui-avatars.com/api/?name={_derive_coin_name(symbol)}&background=random&size=64",
             change_1h=cg.get("change_1h"),
             change_7d=cg.get("change_7d"),
             market_cap=cg.get("market_cap"),
@@ -2040,7 +2040,16 @@ async def list_presets():
 async def get_preset(preset_id: str):
     """Get full preset strategy JSON for editing."""
     if preset_id not in PRESET_STRATEGIES:
-        raise HTTPException(404, f"Preset not found: {preset_id}")
+        # Try integer index lookup (e.g. /builder/presets/0)
+        try:
+            idx = int(preset_id)
+            keys = list(PRESET_STRATEGIES.keys())
+            if 0 <= idx < len(keys):
+                preset_id = keys[idx]
+            else:
+                raise HTTPException(404, f"Preset not found: {preset_id}")
+        except ValueError:
+            raise HTTPException(404, f"Preset not found: {preset_id}")
     return PRESET_STRATEGIES[preset_id]
 
 

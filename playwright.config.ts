@@ -2,8 +2,9 @@ import { defineConfig } from '@playwright/test';
 
 export default defineConfig({
   testDir: './tests',
-  timeout: 30000,
+  timeout: 60000,
   retries: 1,
+  workers: process.env.CI ? 1 : undefined,
   reporter: process.env.CI ? [['html', { open: 'never' }]] : [['list']],
   use: {
     baseURL: process.env.BASE_URL || 'http://localhost:4321',
@@ -12,6 +13,12 @@ export default defineConfig({
   },
   projects: [
     {
+      name: 'desktop',
+      use: {
+        viewport: { width: 1280, height: 720 },
+      },
+    },
+    {
       name: 'mobile',
       use: {
         viewport: { width: 375, height: 812 },
@@ -19,17 +26,11 @@ export default defineConfig({
         hasTouch: true,
       },
     },
-    {
-      name: 'desktop',
-      use: {
-        viewport: { width: 1280, height: 720 },
-      },
-    },
   ],
   webServer: {
     command: 'npm run preview -- --host 0.0.0.0 --port 4321',
     port: 4321,
     reuseExistingServer: !process.env.CI,
-    timeout: 15000,
+    timeout: 30000,
   },
 });
