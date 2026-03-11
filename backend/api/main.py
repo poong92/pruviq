@@ -742,7 +742,9 @@ async def simulate(req: SimulationRequest):
     for t in all_trades:
         day_key = t.get("exit_time", t["time"])[:10]  # YYYY-MM-DD (exit time)
         daily_pnl_sim[day_key] += t["pnl_pct"]
-    daily_returns_sim = np.array(list(daily_pnl_sim.values())) if daily_pnl_sim else np.array([])
+    # Normalize by number of concurrent positions for capital-weighted daily returns
+    n_coins = len(coins_used) if coins_used else 1
+    daily_returns_sim = np.array(list(daily_pnl_sim.values())) / max(n_coins, 1) if daily_pnl_sim else np.array([])
 
     if len(daily_returns_sim) >= 5:
         dr_avg = float(np.mean(daily_returns_sim))
@@ -754,7 +756,7 @@ async def simulate(req: SimulationRequest):
         sortino = round(dr_avg / tdd * np.sqrt(365), 2) if tdd > 0 else 0.0
         # Calmar: CAGR / MDD (compound annualized growth rate — industry standard)
         n_days_sim = len(daily_pnl_sim)
-        growth_ratio_sim = (equity + 100) / 100 if equity > -100 else 0.001
+        growth_ratio_sim = equity / 100.0 if equity > 0 else 0.001
         years_sim = max(n_days_sim, 1) / 365
         cagr_pct_sim = (growth_ratio_sim ** (1 / years_sim) - 1) * 100 if years_sim > 0 else 0.0
         calmar = round(cagr_pct_sim / max_dd, 2) if max_dd > 0 else 0.0
@@ -2298,7 +2300,7 @@ async def run_backtest(req: BacktestRequest):
         bt_sortino = round(dr_avg / tdd_bt * np.sqrt(365), 2) if tdd_bt > 0 else 0.0
         # Calmar = CAGR / MDD (compound annualized growth rate — industry standard)
         n_days = len(daily_pnl)
-        growth_ratio_bt = (equity + 100) / 100 if equity > -100 else 0.001
+        growth_ratio_bt = equity / 100.0 if equity > 0 else 0.001
         years_bt = max(n_days, 1) / 365
         cagr_pct_bt = (growth_ratio_bt ** (1 / years_bt) - 1) * 100 if years_bt > 0 else 0.0
         bt_calmar = round(cagr_pct_bt / max_dd, 2) if max_dd > 0 else 0.0
