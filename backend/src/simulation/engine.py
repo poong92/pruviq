@@ -138,7 +138,7 @@ class SimulationEngine:
         self.tp_pct = tp_pct
         self.max_bars = max_bars
         self.cost_model = cost_model or CostModel.spot()
-        self.direction = direction
+        self.direction = direction.lower() if direction else "both"
 
     def run(
         self,
