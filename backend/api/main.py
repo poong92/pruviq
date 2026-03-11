@@ -450,9 +450,9 @@ def _is_resampled(timeframe: str) -> bool:
     return timeframe != "1H"
 
 
-def _resolve_top_n(top_n: Optional[int]) -> int:
-    """Resolve top_n: None means all coins."""
-    return top_n if top_n is not None else data_manager.coin_count
+def _resolve_top_n(top_n: Optional[int], default: int = 50) -> int:
+    """Resolve top_n: None defaults to 50 coins to prevent timeout."""
+    return top_n if top_n is not None else default
 
 
 def _get_resampled_coins(
@@ -1198,7 +1198,7 @@ def _run_one_compare_strategy(
     )
 
 
-COMPARE_MAX_COINS = 50  # Cap to prevent CF tunnel timeout
+COMPARE_MAX_COINS = 20  # Cap to prevent CF tunnel timeout (5 strategies × coins)
 
 
 @app.post("/simulate/compare", response_model=CompareResponse)
@@ -2089,6 +2089,13 @@ async def run_backtest(req: BacktestRequest):
     if req.direction:
         req.direction = req.direction.lower()
 
+    # Handle "both" direction: run short and long separately
+    is_both = req.direction == "both"
+    if is_both:
+        directions_to_run = ["short", "long"]
+    else:
+        directions_to_run = [req.direction or "short"]
+
     # Cache lookup
     bt_key = backtest_cache_key(req)
     cached = get_cached(bt_key)
@@ -2156,76 +2163,114 @@ async def run_backtest(req: BacktestRequest):
     cost_model = CostModel.futures()
     all_trades = []
     coin_results = []
+    coin_agg = {}  # For "both": aggregate per-coin across directions
 
-    for sym, df_raw in coin_list:
-        # Compute indicators via ConditionEngine
-        df = engine.prepare_dataframe(df_raw.copy())
-        df = filter_df_by_date(df, getattr(req, 'start_date', None), getattr(req, 'end_date', None))
+    for run_dir in directions_to_run:
+        # Update strategy_json direction for each run
+        strategy_json["direction"] = run_dir
+        engine = ConditionEngine(strategy_json)
 
-        # Find signals using vectorized evaluation
-        signal_indices = engine.find_signals_vectorized(df)
+        for sym, df_raw in coin_list:
+            # Compute indicators via ConditionEngine
+            df = engine.prepare_dataframe(df_raw.copy())
+            df = filter_df_by_date(df, getattr(req, 'start_date', None), getattr(req, 'end_date', None))
 
-        if len(signal_indices) == 0:
-            continue
+            # Find signals using vectorized evaluation
+            signal_indices = engine.find_signals_vectorized(df)
 
-        # Simulate trades from signals
-        from src.simulation.engine_fast import simulate_vectorized
-        dyn_slip = _get_dynamic_slippage(sym)
-        trades = simulate_vectorized(
-            df=df,
-            signal_indices=signal_indices,
-            sl_pct=req.sl_pct / 100,
-            tp_pct=req.tp_pct / 100,
-            max_bars=req.max_bars,
-            fee_pct=cost_model.fee_pct,
-            slippage_pct=dyn_slip,
-            direction=req.direction,
-            symbol=sym,
-            funding_rate_8h=getattr(cost_model, 'funding_rate_8h', 0.0001),
-        )
-
-        # Collect per-coin stats
-        if trades:
-            c_wins = [t for t in trades if t.pnl_pct > 0]
-            c_losses = [t for t in trades if t.pnl_pct <= 0]
-            c_gp = sum(t.pnl_pct for t in c_wins) if c_wins else 0
-            c_gl = abs(sum(t.pnl_pct for t in c_losses)) if c_losses else 0.001
-            c_total_ret = sum(t.pnl_pct for t in trades)
-            coin_results.append(CoinResult(
-                symbol=sym,
-                trades=len(trades),
-                wins=len(c_wins),
-                losses=len(c_losses),
-                win_rate=round(len(c_wins) / len(trades) * 100, 2),
-                profit_factor=round(c_gp / c_gl, 2),
-                total_return_pct=round(c_total_ret, 2),
-                avg_pnl_pct=round(c_total_ret / len(trades), 4),
-                tp_count=sum(1 for t in trades if t.exit_reason == "tp"),
-                sl_count=sum(1 for t in trades if t.exit_reason == "sl"),
-                timeout_count=sum(1 for t in trades if t.exit_reason == "timeout"),
-            ))
-
-        # Calculate USD PnL per trade
-        position_size = getattr(req, 'per_coin_usd', 60.0) * getattr(req, 'leverage', 5)
-        for trade in trades:
-            # Skip trades with invalid timestamps
-            if not trade.entry_time or str(trade.entry_time).startswith("NaT"):
+            if len(signal_indices) == 0:
                 continue
-            trade.pnl_usd = round(position_size * (trade.pnl_pct / 100), 4)
-            all_trades.append({
-                "time": str(trade.entry_time),
-                "pnl_pct": trade.pnl_pct,
-                "pnl_usd": trade.pnl_usd,
-                "exit_reason": trade.exit_reason,
-                "funding_pct": getattr(trade, 'funding_pct', 0),
-                "symbol": trade.symbol,
-                "direction": trade.direction,
-                "entry_time": trade.entry_time,
-                "exit_time": trade.exit_time,
-                "entry_price": trade.entry_price,
-                "exit_price": trade.exit_price,
-                "bars_held": trade.bars_held,
-            })
+
+            # Simulate trades from signals
+            from src.simulation.engine_fast import simulate_vectorized
+            dyn_slip = _get_dynamic_slippage(sym)
+            trades = simulate_vectorized(
+                df=df,
+                signal_indices=signal_indices,
+                sl_pct=req.sl_pct / 100,
+                tp_pct=req.tp_pct / 100,
+                max_bars=req.max_bars,
+                fee_pct=cost_model.fee_pct,
+                slippage_pct=dyn_slip,
+                direction=run_dir,
+                symbol=sym,
+                funding_rate_8h=getattr(cost_model, 'funding_rate_8h', 0.0001),
+            )
+
+            # Collect per-coin stats
+            if trades:
+                c_wins = [t for t in trades if t.pnl_pct > 0]
+                c_losses = [t for t in trades if t.pnl_pct <= 0]
+                c_gp = sum(t.pnl_pct for t in c_wins) if c_wins else 0
+                c_gl = abs(sum(t.pnl_pct for t in c_losses)) if c_losses else 0.001
+                c_total_ret = sum(t.pnl_pct for t in trades)
+
+                if is_both:
+                    # Aggregate same coin across short/long
+                    if sym not in coin_agg:
+                        coin_agg[sym] = {"trades": 0, "wins": 0, "losses": 0,
+                                         "gp": 0, "gl": 0, "total_ret": 0,
+                                         "tp": 0, "sl": 0, "timeout": 0}
+                    coin_agg[sym]["trades"] += len(trades)
+                    coin_agg[sym]["wins"] += len(c_wins)
+                    coin_agg[sym]["losses"] += len(c_losses)
+                    coin_agg[sym]["gp"] += c_gp
+                    coin_agg[sym]["gl"] += c_gl
+                    coin_agg[sym]["total_ret"] += c_total_ret
+                    coin_agg[sym]["tp"] += sum(1 for t in trades if t.exit_reason == "tp")
+                    coin_agg[sym]["sl"] += sum(1 for t in trades if t.exit_reason == "sl")
+                    coin_agg[sym]["timeout"] += sum(1 for t in trades if t.exit_reason == "timeout")
+                else:
+                    coin_results.append(CoinResult(
+                        symbol=sym,
+                        trades=len(trades),
+                        wins=len(c_wins),
+                        losses=len(c_losses),
+                        win_rate=round(len(c_wins) / len(trades) * 100, 2),
+                        profit_factor=round(c_gp / c_gl, 2),
+                        total_return_pct=round(c_total_ret, 2),
+                        avg_pnl_pct=round(c_total_ret / len(trades), 4),
+                        tp_count=sum(1 for t in trades if t.exit_reason == "tp"),
+                        sl_count=sum(1 for t in trades if t.exit_reason == "sl"),
+                        timeout_count=sum(1 for t in trades if t.exit_reason == "timeout"),
+                    ))
+
+            # Calculate USD PnL per trade
+            position_size = getattr(req, 'per_coin_usd', 60.0) * getattr(req, 'leverage', 5)
+            for trade in trades:
+                # Skip trades with invalid timestamps
+                if not trade.entry_time or str(trade.entry_time).startswith("NaT"):
+                    continue
+                trade.pnl_usd = round(position_size * (trade.pnl_pct / 100), 4)
+                all_trades.append({
+                    "time": str(trade.entry_time),
+                    "pnl_pct": trade.pnl_pct,
+                    "pnl_usd": trade.pnl_usd,
+                    "exit_reason": trade.exit_reason,
+                    "funding_pct": getattr(trade, 'funding_pct', 0),
+                    "symbol": trade.symbol,
+                    "direction": trade.direction,
+                    "entry_time": trade.entry_time,
+                    "exit_time": trade.exit_time,
+                    "entry_price": trade.entry_price,
+                    "exit_price": trade.exit_price,
+                    "bars_held": trade.bars_held,
+                })
+
+    # Build coin_results from aggregated data for "both" mode
+    if is_both:
+        for sym, c in coin_agg.items():
+            wr = round(c["wins"] / c["trades"] * 100, 2) if c["trades"] > 0 else 0
+            gl = c["gl"] if c["gl"] > 0 else 0.001
+            coin_results.append(CoinResult(
+                symbol=sym, trades=c["trades"],
+                wins=c["wins"], losses=c["losses"],
+                win_rate=wr,
+                profit_factor=round(c["gp"] / gl, 2),
+                total_return_pct=round(c["total_ret"], 2),
+                avg_pnl_pct=round(c["total_ret"] / c["trades"], 4),
+                tp_count=c["tp"], sl_count=c["sl"], timeout_count=c["timeout"],
+            ))
 
     # Sort coin_results by total_return descending
     coin_results.sort(key=lambda x: x.total_return_pct, reverse=True)
