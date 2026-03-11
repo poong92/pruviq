@@ -767,7 +767,7 @@ async def simulate(req: SimulationRequest):
         day_key = t.get("exit_time", t["time"])[:10]  # YYYY-MM-DD (exit time)
         daily_pnl_sim[day_key] += t["pnl_pct"]
     # Normalize by number of concurrent positions for capital-weighted daily returns
-    n_coins = len(coins_used) if coins_used else 1
+    n_coins = len(coins) if coins else 1
     # Fill zero-return days so Sharpe isn't inflated by excluding non-trading days
     if daily_pnl_sim and len(daily_pnl_sim) >= 2:
         from datetime import datetime as _dt_sim, timedelta as _td_sim
