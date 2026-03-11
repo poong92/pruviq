@@ -45,13 +45,36 @@
 | E13 | sim_audit.py: 6 hardcoded WARNs replaced with 1 dynamic slippage verification note | DONE |
 | E14 | sim_audit.py: MDD check updated to verify 0-100 cap | DONE |
 
+## Phase 4: Full Coverage + CI + Deploy (COMPLETE — PR#336)
+
+| # | Enhancement | Status |
+|---|-------------|--------|
+| F1 | Dynamic slippage integrated in 6 call sites (/simulate, /backtest, /validate, /compare, /coin, _build_coin_stats) | DONE |
+| F2 | sim_audit.py expanded: 607→1060+ lines, 146 tests | DONE |
+| F3 | All 26 presets validated via /backtest × BTCUSDT | DONE |
+| F4 | 6 boundary value tests (SL 0.5-50%, TP 0.5-100%, leverage 125x, max_bars 1-168) | DONE |
+| F5 | Cross-engine deep comparison: 12 fields (/simulate vs /backtest) | DONE |
+| F6 | Simple/Compound full metric comparison (7 fields) | DONE |
+| F7 | Frontend label ↔ backend mapping (7 new fields verified) | DONE |
+| F8 | api_call error normalization (HTTPError "detail" → "error") | DONE |
+| F9 | 429 rate-limit retry with exponential backoff | DONE |
+| F10 | Auto-detect localhost on Mac Mini | DONE |
+| F11 | CI integration: post-deploy-pipeline.yml sim_audit quick mode | DONE |
+| F12 | Production deploy + verification: 146 PASS / 0 FAIL / 2 WARN | DONE |
+
+## Final Score: 146 PASS / 0 FAIL / 2 WARN / 0 SKIP (2026-03-11)
+
+## Phase 5: Final Metric Fixes (COMPLETE — PR#337)
+
+| # | Fix | Status |
+|---|-----|--------|
+| G1 | /simulate Sharpe: raw pnl_pct → capital-weighted (÷ n_coins) | DONE |
+| G2 | /simulate Calmar CAGR: `(equity+100)/100` → `equity/100` (100-based) | DONE |
+| G3 | /backtest Calmar CAGR: same fix (100-based equity) | DONE |
+
 ## Remaining TODO
 
-- [ ] Integrate `_get_dynamic_slippage(sym)` per-coin in /backtest simulation loop
-- [ ] /simulate Sharpe capital-weighting (currently raw pnl_pct)
-- [ ] Calmar CAGR for compound mode
-- [ ] sim_audit.py CI integration
-- [ ] Production deployment + re-verification
+(none)
 
 ## Files
 
