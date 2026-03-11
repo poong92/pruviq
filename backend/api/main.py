@@ -536,6 +536,10 @@ async def simulate(req: SimulationRequest):
     timeframe = _validate_timeframe(getattr(req, 'timeframe', '1H') or '1H')
     resampled = _is_resampled(timeframe)
 
+    # Normalize direction to lowercase (API accepts SHORT/short/Short)
+    if req.direction:
+        req.direction = req.direction.lower()
+
     # Resolve strategy from registry
     # Support both "bb-squeeze" (legacy) and "bb-squeeze-short" (new) formats
     strategy_id = req.strategy
@@ -1025,6 +1029,8 @@ async def get_ohlcv(symbol: str, limit: int = 3000, timeframe: str = "1H"):
 async def simulate_coin(req: CoinSimRequest):
     """Simulate a single coin and return individual trade details."""
     symbol = req.symbol.upper()
+    if req.direction:
+        req.direction = req.direction.lower()
     timeframe = _validate_timeframe(getattr(req, 'timeframe', '1H') or '1H')
     resampled = _is_resampled(timeframe)
 
@@ -1213,6 +1219,9 @@ async def simulate_validate(req: ValidateRequest):
     """Run OOS validation + Monte Carlo on a strategy."""
     if data_manager.coin_count == 0:
         raise HTTPException(503, "Data not loaded yet. Try again shortly.")
+
+    if req.direction:
+        req.direction = req.direction.lower()
 
     timeframe = _validate_timeframe(getattr(req, 'timeframe', '1H') or '1H')
     resampled = _is_resampled(timeframe)
@@ -2061,6 +2070,10 @@ async def run_backtest(req: BacktestRequest):
     """
     if data_manager.coin_count == 0:
         raise HTTPException(503, "Data not loaded yet. Try again shortly.")
+
+    # Normalize direction to lowercase
+    if req.direction:
+        req.direction = req.direction.lower()
 
     # Cache lookup
     bt_key = backtest_cache_key(req)

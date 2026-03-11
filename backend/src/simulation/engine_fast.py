@@ -174,6 +174,8 @@ def simulate_vectorized(
     Vectorized simulation — given signal indices, process trades.
     Still sequential (no overlapping positions) but inner exit search is optimized.
     """
+    direction = direction.lower() if direction else "short"
+
     if len(signal_indices) == 0 or len(df) < 10:
         return []
 
