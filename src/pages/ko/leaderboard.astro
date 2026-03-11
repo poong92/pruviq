@@ -1,0 +1,24 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { useTranslations } from '../../i18n/index';
+import WeeklyLeaderboard from '../../components/WeeklyLeaderboard';
+
+const t = useTranslations('ko');
+---
+
+<Layout title={t('meta.leaderboard_title')} description={t('meta.leaderboard_desc')}>
+  <section class="py-12">
+    <div class="max-w-4xl mx-auto px-4">
+
+      <!-- Header -->
+      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('leaderboard.tag')}</p>
+      <h1 class="text-3xl md:text-4xl font-bold mb-4">{t('leaderboard.title')}</h1>
+      <p class="text-[--color-text-muted] text-lg mb-10 max-w-2xl leading-relaxed">
+        {t('leaderboard.desc')}
+      </p>
+
+      <WeeklyLeaderboard lang="ko" client:load />
+
+    </div>
+  </section>
+</Layout>

@@ -183,12 +183,17 @@ const labels = {
 
 function MetricBox({ label, value, color, description }: { label: string; value: string; color: string; description?: string }) {
   return (
-    <div class="p-3 rounded-lg bg-[--color-bg-tooltip] border border-[--color-border] relative group">
+    <div class="p-3 rounded-lg bg-[--color-bg-tooltip] border border-[--color-border] relative">
       <div class="font-mono text-[0.625rem] text-[--color-text-muted] uppercase tracking-wider mb-1 flex items-center gap-1">
         {label}
         {description && (
-          <span class="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full border border-[--color-text-muted]/30 text-[8px] text-[--color-text-muted] cursor-help shrink-0 hover:border-[--color-accent] hover:text-[--color-accent] transition-colors" title={description}>
-            ?
+          <span class="relative group/tip inline-flex">
+            <span class="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full border border-[--color-text-muted]/30 text-[8px] text-[--color-text-muted] cursor-help shrink-0 group-hover/tip:border-[--color-accent] group-hover/tip:text-[--color-accent] transition-colors">
+              ?
+            </span>
+            <span class="pointer-events-none absolute left-1/2 -translate-x-1/2 bottom-full mb-1.5 w-48 px-2.5 py-1.5 rounded bg-[--color-bg-card] border border-[--color-border] text-[9px] text-[--color-text-muted] normal-case tracking-normal leading-snug opacity-0 group-hover/tip:opacity-100 transition-opacity duration-150 z-50 shadow-lg">
+              {description}
+            </span>
           </span>
         )}
       </div>
@@ -199,17 +204,17 @@ function MetricBox({ label, value, color, description }: { label: string; value:
 
 const metricDescriptions = {
   en: {
-    winRate: 'Percentage of trades that were profitable',
-    pf: 'Ratio of gross profit to gross loss. PF > 1.5 is good, > 2.0 is excellent',
+    winRate: 'Percentage of profitable trades. Context matters — high WR with low R:R can still lose.',
+    pf: 'Gross profit / gross loss. >1.5 is good, >2.0 is excellent.',
     totalReturn: 'Cumulative percentage return over the test period',
-    maxDD: 'Largest peak-to-trough decline during the test period',
+    maxDD: 'Largest peak-to-trough decline. Lower is better. Shows worst-case scenario.',
     avgWin: 'Average percentage gain on winning trades',
     avgLoss: 'Average percentage loss on losing trades',
     rr: 'Risk-Reward ratio — average win divided by average loss',
     maxConsec: 'Longest streak of consecutive losing trades',
-    sharpe: 'Risk-adjusted return (excess return / volatility). Annualized with \u221A365 (daily returns). > 1.0 is good, > 2.0 is excellent',
-    sortino: 'Like Sharpe but only penalizes downside volatility. Annualized with \u221A365 (daily returns). > 1.5 is good, > 3.0 is excellent',
-    calmar: 'Annual return divided by max drawdown. > 1.0 is good, > 3.0 is excellent',
+    sharpe: 'Risk-adjusted return. Higher is better. >1 is good, >2 is excellent.',
+    sortino: 'Like Sharpe but only penalizes downside volatility. Higher is better.',
+    calmar: 'Annual return / max drawdown. Higher means better risk-adjusted performance.',
     breakeven: 'Minimum win rate needed to break even, given the average win/loss sizes',
     margin: 'How far above the break-even win rate the actual win rate is',
     expectancy: 'Expected profit per trade (WR × AvgWin + (1-WR) × AvgLoss). Positive = edge exists',
@@ -217,17 +222,17 @@ const metricDescriptions = {
     payoffRatio: 'Average win / average loss. > 1.0 means wins are bigger than losses',
   },
   ko: {
-    winRate: '수익을 낸 거래의 비율',
-    pf: '총 수익 / 총 손실 비율. PF > 1.5 양호, > 2.0 우수',
+    winRate: '수익 거래 비율. 맥락이 중요 — 높은 승률이라도 R:R이 낮으면 손실 가능.',
+    pf: '총 이익 / 총 손실. 1.5 이상 양호, 2.0 이상 우수.',
     totalReturn: '테스트 기간 동안의 누적 수익률',
-    maxDD: '테스트 기간 중 최대 고점 대비 하락 폭',
+    maxDD: '최고점 대비 최대 하락폭. 낮을수록 좋음. 최악의 시나리오.',
     avgWin: '수익 거래의 평균 수익률',
     avgLoss: '손실 거래의 평균 손실률',
     rr: '리스크-보상 비율 — 평균 수익 / 평균 손실',
     maxConsec: '가장 긴 연속 손실 거래 수',
-    sharpe: '위험 조정 수익률 (초과수익 / 변동성). \u221A365로 연환산 (일별 수익 기준). > 1.0 양호, > 2.0 우수',
-    sortino: '샤프와 유사하나 하방 변동성만 반영. \u221A365로 연환산 (일별 수익 기준). > 1.5 양호, > 3.0 우수',
-    calmar: '연간 수익률 / 최대 드로다운. > 1.0 양호, > 3.0 우수',
+    sharpe: '위험 조정 수익률. 높을수록 좋음. 1 이상 양호, 2 이상 우수.',
+    sortino: '하방 변동성만 반영한 샤프 비율. 높을수록 좋음.',
+    calmar: '연간 수익률 / 최대 낙폭. 높을수록 위험 대비 수익이 좋음.',
     breakeven: '평균 손익 규모 기준 손익분기에 필요한 최소 승률',
     margin: '실제 승률이 손익분기 승률보다 얼마나 높은지',
     expectancy: '거래당 기대 수익 (승률 × 평균수익 + (1-승률) × 평균손실). 양수 = 우위 존재',

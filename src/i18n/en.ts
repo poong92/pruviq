@@ -33,6 +33,12 @@ export const en = {
   'hero.tool_strategies': '88+ Variations Backtested',
   'hero.tool_data': '2+ Years Historical Data',
   'hero.tool_free': '100% Free, No Signup',
+  'hero.subcopy': 'No signup required. Free forever. Get results in 3 seconds.',
+  'hero.cta_secondary': 'See Backtest Results',
+  'hero.stat1_sub': 'Including BTC, ETH, and altcoins',
+  'hero.stat4_sub': 'Across all verified strategies',
+  'hero.stat5_sub': '1-hour candles since Jan 2024',
+  'hero.stat6_sub': 'No hidden fees or premium tiers',
 
   // Problem
   'problem.tag': 'THE PROBLEM',
@@ -336,8 +342,10 @@ export const en = {
   'meta.market_desc': 'Real-time crypto market overview. Fear & Greed Index, BTC dominance, top gainers/losers, economic calendar, and aggregated crypto news.',
   'meta.coins_title': 'Coin Explorer - PRUVIQ',
   'meta.coins_desc': 'Real-time cryptocurrency market data. Browse 549+ coins with prices, market cap, trading volume, and 7-day price charts. Updated every 15 minutes.',
-  'meta.home_title': 'PRUVIQ - Free Crypto Backtesting Tool',
-  'meta.home_desc': 'Free crypto strategy backtesting on 549+ coins with 2+ years of historical data. Realistic fees, slippage, and published verification — see wins and failures before you trade.',
+  'meta.home_title': 'PRUVIQ \u2014 Free Crypto Strategy Backtester | 549+ Coins, No Signup',
+  'meta.home_desc': 'Backtest crypto trading strategies for free on 549+ coins with 2+ years of data. Realistic fees, slippage modeling, and full transparency \u2014 including published failures. No signup required.',
+  'meta.simulate_title': 'Strategy Simulator \u2014 Build & Backtest Custom Strategies | PRUVIQ',
+  'meta.simulate_desc': 'Build custom trading strategies with 11+ indicators and backtest on 549+ coins. No coding required. Free, instant results with realistic fee modeling.',
   'meta.index_desc': 'Free crypto strategy backtesting — test strategies on 549+ coins with 2+ years of real market data, realistic fees, and published results, including failures.',
   'meta.strategies_title': 'Strategy Library - PRUVIQ',
   'meta.strategies_desc': "Every strategy we've tested with full simulation results — verified, killed, and everything in between. No cherry-picking.",
@@ -851,6 +859,38 @@ export const en = {
   'cross.demo_cta': 'Try Interactive Demo',
   'cross.coins_cta': 'Explore All Coins',
   'cross.market_cta': 'Market Dashboard',
+
+  // Leaderboard
+  'leaderboard.tag': 'WEEKLY RANKINGS',
+  'leaderboard.title': 'This Week\'s Top Strategies',
+  'leaderboard.desc': 'See which strategy configurations performed best this week across 549+ coins. Updated every Monday.',
+  'leaderboard.best': 'Top Performers',
+  'leaderboard.worst': 'Underperformers',
+  'leaderboard.coming_soon': 'Live leaderboard coming soon. For now, try the simulator to run your own backtests.',
+  'leaderboard.cta': 'Try Simulator',
+  'leaderboard.rank': '#',
+  'leaderboard.strategy': 'Strategy',
+  'leaderboard.direction': 'Direction',
+  'leaderboard.win_rate': 'Win Rate',
+  'leaderboard.profit_factor': 'PF',
+  'leaderboard.total_return': 'Return',
+  'leaderboard.weekly_note': 'Data updates weekly',
+  'meta.leaderboard_title': 'Weekly Strategy Leaderboard - PRUVIQ',
+  'meta.leaderboard_desc': 'See this week\'s best and worst performing crypto trading strategies. Updated weekly with real backtest data.',
+  'nav.leaderboard': 'Leaderboard',
+
+  // Metric explanation tooltips
+  'metric.sharpe_desc': 'Risk-adjusted return. Higher is better. >1 is good, >2 is excellent.',
+  'metric.sortino_desc': 'Like Sharpe but only penalizes downside volatility. Higher is better.',
+  'metric.mdd_desc': 'Largest peak-to-trough decline. Lower is better. Shows worst-case scenario.',
+  'metric.pf_desc': 'Gross profit / gross loss. >1.5 is good, >2.0 is excellent.',
+  'metric.wr_desc': 'Percentage of profitable trades. Context matters \u2014 high WR with low R:R can still lose.',
+  'metric.calmar_desc': 'Annual return / max drawdown. Higher means better risk-adjusted performance.',
+
+  // Learn feature card
+  'features.learn_tag': 'EDUCATION',
+  'features.learn_title': 'Learn Before You Trade',
+  'features.learn_desc': 'Free guides from beginner to advanced. Understand indicators, risk management, and backtesting \u2014 all backed by real data.',
 } as const;
 
 export type TranslationKey = keyof typeof en;
