@@ -720,6 +720,7 @@ test.describe('Simulator — API Validation', () => {
   });
 
   test('POST /backtest with invalid SL → 422', async ({ request }) => {
+    test.skip(skipInCI, 'Skipped in CI — production API unreachable from GitHub runners');
     const res = await request.post(`${API_BASE}/backtest`, {
       data: {
         name: 'Invalid SL',
@@ -776,6 +777,7 @@ test.describe('Simulator — API Validation', () => {
   });
 
   test('GET /health → coins > 400', async ({ request }) => {
+    test.skip(skipInCI, 'Skipped in CI — production API unreachable from GitHub runners');
     const res = await request.get(`${API_BASE}/health`);
     expect(res.ok()).toBeTruthy();
     const d = await res.json();
