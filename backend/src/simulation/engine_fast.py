@@ -174,6 +174,8 @@ def simulate_vectorized(
     Vectorized simulation — given signal indices, process trades.
     Still sequential (no overlapping positions) but inner exit search is optimized.
     """
+    direction = direction.lower() if direction else "short"
+
     if len(signal_indices) == 0 or len(df) < 10:
         return []
 
@@ -342,6 +344,7 @@ def run_fast(
         equity += t.pnl_pct
         peak = max(peak, equity)
         dd_pct = (peak - equity) / peak * 100 if peak > 0 else 0.0  # % of peak (industry standard)
+        dd_pct = min(dd_pct, 100.0)  # Cap at 100%
         max_dd = max(max_dd, dd_pct)
         eq.append(round(equity, 2))
 

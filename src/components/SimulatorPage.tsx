@@ -121,6 +121,7 @@ const L = {
     leverageTip:
       "Position size multiplier. 5x means $60 acts like $300. Higher = higher risk",
     perCoinUsdtTip: "Investment amount per coin position",
+    topNCoinsHint: "Top coins by data availability (most candle history)",
     // Results guide
     resultsGuide: "How to read results:",
     resultsGuideWr: "Win Rate > 50%: Good",
@@ -230,6 +231,7 @@ const L = {
     maxBarsTip: "최대 보유 기간(캔들 수). 1시간봉 기준 48 = 48시간",
     leverageTip: "포지션 배율. 5배면 $60이 $300 효과. 높을수록 위험",
     perCoinUsdtTip: "코인당 투자 금액",
+    topNCoinsHint: "데이터 보유량 기준 상위 코인 (캔들 이력 순)",
     // Results guide
     resultsGuide: "결과 해석 가이드:",
     resultsGuideWr: "승률 > 50%: 양호",
@@ -337,10 +339,6 @@ export default function SimulatorPage({ lang = "en" }: Props) {
   const handleCompoundToggle = (v: boolean) => {
     setCompounding(v);
     setPerCoinUsdt(v ? 1000 : 60);  // swap default: total capital vs per-coin
-    // Keep current coinMode and selection — compound works with all modes:
-    // - all/top: portfolio-level compounding (each coin independent)
-    // - select 1: single-coin compounding
-    // - select N: portfolio-level compounding across selected coins
   };
 
   // Timeframe

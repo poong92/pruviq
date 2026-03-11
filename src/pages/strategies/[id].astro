@@ -50,7 +50,7 @@ const statusLabels: Record<string, string> = {
     "headline": strategy.data.name,
     "description": strategy.data.description,
     "datePublished": strategy.data.dateAdded,
-    "dateModified": new Date().toISOString().split('T')[0],
+    "dateModified": strategy.data.dateAdded,
     "author": { "@type": "Organization", "name": "PRUVIQ" },
     "publisher": { "@type": "Organization", "name": "PRUVIQ", "url": "https://pruviq.com" },
     "mainEntityOfPage": `https://pruviq.com/strategies/${strategy.id}/`,
