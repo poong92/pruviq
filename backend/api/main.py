@@ -536,6 +536,10 @@ async def simulate(req: SimulationRequest):
     timeframe = _validate_timeframe(getattr(req, 'timeframe', '1H') or '1H')
     resampled = _is_resampled(timeframe)
 
+    # Normalize direction to lowercase (API accepts SHORT/short/Short)
+    if req.direction:
+        req.direction = req.direction.lower()
+
     # Resolve strategy from registry
     # Support both "bb-squeeze" (legacy) and "bb-squeeze-short" (new) formats
     strategy_id = req.strategy
@@ -764,7 +768,18 @@ async def simulate(req: SimulationRequest):
         daily_pnl_sim[day_key] += t["pnl_pct"]
     # Normalize by number of concurrent positions for capital-weighted daily returns
     n_coins = len(coins_used) if coins_used else 1
-    daily_returns_sim = np.array(list(daily_pnl_sim.values())) / max(n_coins, 1) if daily_pnl_sim else np.array([])
+    # Fill zero-return days so Sharpe isn't inflated by excluding non-trading days
+    if daily_pnl_sim and len(daily_pnl_sim) >= 2:
+        from datetime import datetime as _dt_sim, timedelta as _td_sim
+        sorted_days = sorted(daily_pnl_sim.keys())
+        d_start = _dt_sim.strptime(sorted_days[0], "%Y-%m-%d")
+        d_end = _dt_sim.strptime(sorted_days[-1], "%Y-%m-%d")
+        all_days = [(d_start + _td_sim(days=i)).strftime("%Y-%m-%d") for i in range((d_end - d_start).days + 1)]
+        daily_returns_sim = np.array([daily_pnl_sim.get(d, 0.0) for d in all_days]) / max(n_coins, 1)
+    elif daily_pnl_sim:
+        daily_returns_sim = np.array(list(daily_pnl_sim.values())) / max(n_coins, 1)
+    else:
+        daily_returns_sim = np.array([])
 
     if len(daily_returns_sim) >= 5:
         dr_avg = float(np.mean(daily_returns_sim))
@@ -1025,6 +1040,8 @@ async def get_ohlcv(symbol: str, limit: int = 3000, timeframe: str = "1H"):
 async def simulate_coin(req: CoinSimRequest):
     """Simulate a single coin and return individual trade details."""
     symbol = req.symbol.upper()
+    if req.direction:
+        req.direction = req.direction.lower()
     timeframe = _validate_timeframe(getattr(req, 'timeframe', '1H') or '1H')
     resampled = _is_resampled(timeframe)
 
@@ -1213,6 +1230,9 @@ async def simulate_validate(req: ValidateRequest):
     """Run OOS validation + Monte Carlo on a strategy."""
     if data_manager.coin_count == 0:
         raise HTTPException(503, "Data not loaded yet. Try again shortly.")
+
+    if req.direction:
+        req.direction = req.direction.lower()
 
     timeframe = _validate_timeframe(getattr(req, 'timeframe', '1H') or '1H')
     resampled = _is_resampled(timeframe)
@@ -2062,6 +2082,10 @@ async def run_backtest(req: BacktestRequest):
     if data_manager.coin_count == 0:
         raise HTTPException(503, "Data not loaded yet. Try again shortly.")
 
+    # Normalize direction to lowercase
+    if req.direction:
+        req.direction = req.direction.lower()
+
     # Cache lookup
     bt_key = backtest_cache_key(req)
     cached = get_cached(bt_key)
@@ -2362,8 +2386,18 @@ async def run_backtest(req: BacktestRequest):
     for t in all_trades:
         day_key = t["exit_time"][:10]  # YYYY-MM-DD
         daily_pnl[day_key] += t.get("pnl_usd", 0)
-    # Convert USD daily PnL to portfolio return %
-    daily_returns = np.array(list(daily_pnl.values())) / initial_capital * 100 if (daily_pnl and initial_capital > 0) else np.array([])
+    # Fill zero-return days so Sharpe isn't inflated by excluding non-trading days
+    if daily_pnl and len(daily_pnl) >= 2 and initial_capital > 0:
+        from datetime import datetime as _dt_bt, timedelta as _td_bt
+        sorted_days_bt = sorted(daily_pnl.keys())
+        d_start_bt = _dt_bt.strptime(sorted_days_bt[0], "%Y-%m-%d")
+        d_end_bt = _dt_bt.strptime(sorted_days_bt[-1], "%Y-%m-%d")
+        all_days_bt = [(d_start_bt + _td_bt(days=i)).strftime("%Y-%m-%d") for i in range((d_end_bt - d_start_bt).days + 1)]
+        daily_returns = np.array([daily_pnl.get(d, 0.0) for d in all_days_bt]) / initial_capital * 100
+    elif daily_pnl and initial_capital > 0:
+        daily_returns = np.array(list(daily_pnl.values())) / initial_capital * 100
+    else:
+        daily_returns = np.array([])
 
     if len(daily_returns) >= 5:
         dr_avg = float(np.mean(daily_returns))
