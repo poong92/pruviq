@@ -293,7 +293,7 @@ const lastUpdated = new Date().toLocaleDateString('ko-KR');
       <h2 id="features-heading-ko" class="text-3xl md:text-4xl font-bold mb-12">{t('features.title')}</h2>
 
       <!-- Feature cards -->
-      <div class="grid md:grid-cols-3 gap-8 mb-16">
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
         <a href="/ko/simulate" class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] card-hover block group">
           <p class="font-mono text-[--color-accent] text-xs font-bold mb-3">{t('features.card1_tag')}</p>
           <h3 class="font-bold text-lg mb-2 group-hover:text-[--color-accent] transition-colors">{t('features.card1_title')}</h3>
@@ -308,6 +308,11 @@ const lastUpdated = new Date().toLocaleDateString('ko-KR');
           <p class="font-mono text-[--color-accent] text-xs font-bold mb-3">{t('features.card3_tag')}</p>
           <h3 class="font-bold text-lg mb-2 group-hover:text-[--color-accent] transition-colors">{t('features.card3_title')}</h3>
           <p class="text-[--color-text-muted] text-sm leading-relaxed">{t('features.card3_desc')}</p>
+        </a>
+        <a href="/ko/learn" class="border border-[--color-accent]/30 rounded-lg p-6 bg-[--color-accent]/5 card-hover block group">
+          <p class="font-mono text-[--color-accent] text-xs font-bold mb-3">{t('features.learn_tag')}</p>
+          <h3 class="font-bold text-lg mb-2 group-hover:text-[--color-accent] transition-colors">{t('features.learn_title')}</h3>
+          <p class="text-[--color-text-muted] text-sm leading-relaxed">{t('features.learn_desc')}</p>
         </a>
       </div>
 
