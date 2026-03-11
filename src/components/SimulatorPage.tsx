@@ -334,13 +334,23 @@ export default function SimulatorPage({ lang = "en" }: Props) {
   const [perCoinUsdt, setPerCoinUsdt] = useState(60);
   const [leverage, setLeverage] = useState(5);
   const [compounding, setCompounding] = useState(false);
+  const prevCoinModeRef = useRef<"all" | "top" | "select">("all");
   const handleCompoundToggle = (v: boolean) => {
     setCompounding(v);
     setPerCoinUsdt(v ? 1000 : 60);  // swap default: total capital vs per-coin
-    // Keep current coinMode and selection — compound works with all modes:
-    // - all/top: portfolio-level compounding (each coin independent)
-    // - select 1: single-coin compounding
-    // - select N: portfolio-level compounding across selected coins
+    if (v) {
+      // Compound ON: if "all" coins, auto-switch to "top" with reasonable default
+      if (coinMode === "all") {
+        prevCoinModeRef.current = "all";
+        setCoinMode("top");
+        setTopN(10);
+      }
+    } else {
+      // Compound OFF: restore to "all" if we auto-switched it
+      if (prevCoinModeRef.current === "all" && coinMode === "top") {
+        setCoinMode("all");
+      }
+    }
   };
 
   // Timeframe
