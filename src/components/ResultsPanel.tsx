@@ -273,7 +273,7 @@ export default function ResultsPanel({
   return (
     <div>
       {error && (
-        <div class="border border-[--color-red]/30 rounded-lg p-4 bg-[--color-red]/5 mb-3">
+        <div class="border border-[--color-red]/30 rounded-lg p-4 bg-[--color-red]/5 mb-3" role="alert" aria-live="assertive">
           <span class="font-mono text-sm text-[--color-red]">
             {t.error}: {error}
           </span>
@@ -284,10 +284,12 @@ export default function ResultsPanel({
         <div class="border border-[--color-border] rounded-lg bg-[--color-bg-card] overflow-hidden">
           {/* Result tabs + CSV button */}
           <div class="flex flex-col sm:flex-row border-b border-[--color-border]">
-            <div class="flex flex-1">
+            <div class="flex flex-1" role="tablist">
               {visibleTabs.map((tab) => (
                 <button
                   key={tab}
+                  role="tab"
+                  aria-selected={resultTab === tab}
                   onClick={() => setResultTab(tab)}
                   class={`flex-1 py-2.5 text-xs font-mono uppercase tracking-wider transition-colors
                     ${resultTab === tab ? "font-bold border-b-2" : "text-[--color-text-muted] hover:text-[--color-text] hover:bg-[--color-bg-hover]/20"}`}
@@ -362,13 +364,13 @@ export default function ResultsPanel({
                   <input
                     type="range"
                     min="1"
-                    max="30"
+                    max="50"
                     step="0.5"
                     value={qaSl}
                     onInput={(e: any) => setQaSl(parseFloat(e.target.value))}
                     class="slider-range mt-1"
                     style={{
-                      background: `linear-gradient(to right, ${COLORS.red} 0%, ${COLORS.red} ${((qaSl - 1) / 29) * 100}%, var(--color-border) ${((qaSl - 1) / 29) * 100}%, var(--color-border) 100%)`,
+                      background: `linear-gradient(to right, ${COLORS.red} 0%, ${COLORS.red} ${((qaSl - 1) / 49) * 100}%, var(--color-border) ${((qaSl - 1) / 49) * 100}%, var(--color-border) 100%)`,
                     }}
                   />
                 </div>
@@ -380,19 +382,19 @@ export default function ResultsPanel({
                   <input
                     type="range"
                     min="1"
-                    max="30"
+                    max="50"
                     step="0.5"
                     value={qaTp}
                     onInput={(e: any) => setQaTp(parseFloat(e.target.value))}
                     class="slider-range mt-1"
                     style={{
-                      background: `linear-gradient(to right, ${COLORS.green} 0%, ${COLORS.green} ${((qaTp - 1) / 29) * 100}%, var(--color-border) ${((qaTp - 1) / 29) * 100}%, var(--color-border) 100%)`,
+                      background: `linear-gradient(to right, ${COLORS.green} 0%, ${COLORS.green} ${((qaTp - 1) / 49) * 100}%, var(--color-border) ${((qaTp - 1) / 49) * 100}%, var(--color-border) 100%)`,
                     }}
                   />
                 </div>
                 <div>
                   <label class="text-[10px] font-mono text-[--color-text-muted] uppercase flex justify-between">
-                    <span>Coins</span>
+                    <span>{t.coins || "Coins"}</span>
                     <span class="text-[--color-text]">{qaCoins}</span>
                   </label>
                   <input
@@ -428,7 +430,7 @@ export default function ResultsPanel({
               >
                 {isRunning
                   ? "..."
-                  : `${t.rerun || "Re-run"} (SL ${qaSl}% / TP ${qaTp}% / ${qaCoins} coins)`}
+                  : `${t.rerun || "Re-run"} (SL ${qaSl}% / TP ${qaTp}% / ${qaCoins} ${t.coins || "coins"})`}
               </button>
             </div>
           )}
@@ -453,11 +455,11 @@ export default function ResultsPanel({
                   <thead>
                     <tr class="text-[--color-text-muted] border-b border-[--color-border]">
                       <th class="py-1 px-2 text-left">#</th>
-                      <th class="py-1 px-2 text-left">Config</th>
-                      <th class="py-1 px-2 text-right">Trades</th>
-                      <th class="py-1 px-2 text-right">WR%</th>
+                      <th class="py-1 px-2 text-left">{t.config || "Config"}</th>
+                      <th class="py-1 px-2 text-right">{t.trades || "Trades"}</th>
+                      <th class="py-1 px-2 text-right">{t.winRate || "WR%"}</th>
                       <th class="py-1 px-2 text-right">PF</th>
-                      <th class="py-1 px-2 text-right">Return</th>
+                      <th class="py-1 px-2 text-right">{t.totalReturn || "Return"}</th>
                       <th class="py-1 px-2 text-right">MDD</th>
                       <th class="py-1 px-2"></th>
                     </tr>
@@ -544,10 +546,10 @@ export default function ResultsPanel({
                   </div>
                   <button
                     onClick={() => setShowResultsGuide(false)}
-                    class="text-[--color-text-muted] hover:text-[--color-text] transition-colors text-xs font-mono shrink-0 leading-none mt-0.5"
+                    class="text-[--color-text-muted] hover:text-[--color-text] transition-colors text-sm font-mono shrink-0 p-2 -m-1 min-w-[44px] min-h-[44px] flex items-center justify-center"
                     aria-label="Close guide"
                   >
-                    x
+                    &times;
                   </button>
                 </div>
               )}
@@ -1024,7 +1026,7 @@ export default function ResultsPanel({
         </div>
       ) : (
         !error && (
-          <div class="hidden md:block border border-[--color-border] rounded-lg bg-[--color-bg-card] p-8 text-center">
+          <div class="border border-[--color-border] rounded-lg bg-[--color-bg-card] p-8 text-center">
             <div class="text-[--color-text-muted] text-sm font-mono">
               {t.noResults}
             </div>
