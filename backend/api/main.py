@@ -2278,11 +2278,17 @@ async def run_backtest(req: BacktestRequest):
     # Portfolio USD calculations
     per_coin_usd = getattr(req, 'per_coin_usd', 60.0)
     leverage_val = getattr(req, 'leverage', 5)
-    # Capital = min(max_concurrent, coins_used) × per_coin_usd
-    # This reflects the actual capital needed at peak utilization, not total coins
     effective_positions = min(max_concurrent, len(coin_list))
-    initial_capital = per_coin_usd * effective_positions
-    base_position_size = per_coin_usd * leverage_val
+
+    if is_compounding:
+        # Compound mode: per_coin_usd = total capital, divide by coins for per-position
+        initial_capital = per_coin_usd
+        per_position_usd = per_coin_usd / max(effective_positions, 1)
+        base_position_size = per_position_usd * leverage_val
+    else:
+        # Simple mode: per_coin_usd = per-position capital
+        initial_capital = per_coin_usd * effective_positions
+        base_position_size = per_coin_usd * leverage_val
 
     # Compounding vs Simple: Recalculate pnl_usd
     if is_compounding:
@@ -2302,9 +2308,8 @@ async def run_backtest(req: BacktestRequest):
 
     # total_return_pct: compound vs simple
     if is_compounding:
-        # Portfolio compound: use USD-based equity tracking (already computed above)
-        # pnl_usd was scaled by equity/capital, so total_pnl_usd reflects compound growth
-        total_return = round(total_pnl_usd / initial_capital * 100, 4) if initial_capital > 0 else 0
+        # Compound: use final equity from equity tracking (includes reinvestment effects)
+        total_return = round((equity_usd_compound - initial_capital) / initial_capital * 100, 4) if initial_capital > 0 else 0
     else:
         total_return = round(total_pnl_usd / initial_capital * 100, 4) if initial_capital > 0 else 0
 
