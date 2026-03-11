@@ -32,6 +32,19 @@ export default defineConfig({
         if (item.url.includes('/demo/')) return undefined;
         if (item.url.includes('/builder/')) return undefined;
         if (item.url.includes('/ko/404/')) return undefined;
+
+        const url = new URL(item.url);
+        const isKo = url.pathname.startsWith('/ko/') || url.pathname === '/ko';
+        const basePath = isKo ? url.pathname.replace(/^\/ko/, '') || '/' : url.pathname;
+        const enUrl = `https://pruviq.com${basePath}`;
+        const koUrl = `https://pruviq.com/ko${basePath === '/' ? '/' : basePath}`;
+
+        item.links = [
+          { url: enUrl, lang: 'en' },
+          { url: koUrl, lang: 'ko' },
+          { url: enUrl, lang: 'x-default' },
+        ];
+
         return item;
       }
     }),

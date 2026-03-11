@@ -138,7 +138,7 @@ class SimulationEngine:
         self.tp_pct = tp_pct
         self.max_bars = max_bars
         self.cost_model = cost_model or CostModel.spot()
-        self.direction = direction
+        self.direction = direction.lower() if direction else "both"
 
     def run(
         self,
@@ -325,6 +325,7 @@ class SimulationEngine:
             equity += t.pnl_pct
             peak = max(peak, equity)
             dd_pct = (peak - equity) / peak * 100 if peak > 0 else 0.0  # % of peak
+            dd_pct = min(dd_pct, 100.0)  # Cap at 100%
             max_dd = max(max_dd, dd_pct)
             equity_curve.append(round(equity, 2))
 

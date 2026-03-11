@@ -1,6 +1,7 @@
 import { h } from 'preact';
 import { useState } from 'preact/hooks';
 import { generateCSV, downloadCSV } from '../utils/csv';
+import { formatPF } from '../utils/format';
 
 type DemoData = {
   total_return: number;
@@ -120,7 +121,7 @@ export default function DemoRunner() {
             </div>
             <div class="border rounded p-3 bg-[--color-bg-card]">
               <div class="text-sm text-[--color-text-muted]">Profit Factor</div>
-              <div class="text-xl font-bold">{data.profit_factor}</div>
+              <div class="text-xl font-bold">{formatPF(data.profit_factor)}</div>
             </div>
             <div class="border rounded p-3 bg-[--color-bg-card]">
               <div class="text-sm text-[--color-text-muted]">Max Drawdown</div>

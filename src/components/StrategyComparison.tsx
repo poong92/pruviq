@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'preact/hooks';
-import { winRateColor, profitFactorColor, signColor } from '../utils/format';
+import { winRateColor, profitFactorColor, signColor, formatPF } from '../utils/format';
 import { API_BASE_URL as API_URL, STATIC_DATA, fetchWithFallback } from '../config/api';
 
 interface PresetFull {
@@ -349,7 +349,7 @@ export default function StrategyComparison({ lang = 'en' }: Props) {
                         {r.win_rate}%
                       </td>
                       <td class="px-3 py-3 text-right font-bold" style={{ color: profitFactorColor(r.profit_factor) }}>
-                        {r.profit_factor}
+                        {formatPF(r.profit_factor)}
                       </td>
                       <td class="px-3 py-3 text-right font-bold" style={{ color: signColor(r.total_return_pct) }}>
                         {r.total_return_pct > 0 ? '+' : ''}{r.total_return_pct}%
@@ -410,7 +410,7 @@ export default function StrategyComparison({ lang = 'en' }: Props) {
                     </div>
                     <div class="p-1.5 sm:p-2 rounded bg-[--color-bg-tooltip] border border-[--color-border]">
                       <div class="text-[0.625rem] sm:text-[0.6875rem] text-[--color-text-muted] uppercase">{t.pf}</div>
-                      <div class="font-bold" style={{ color: profitFactorColor(r.profit_factor) }}>{r.profit_factor}</div>
+                      <div class="font-bold" style={{ color: profitFactorColor(r.profit_factor) }}>{formatPF(r.profit_factor)}</div>
                     </div>
                     <div class="p-1.5 sm:p-2 rounded bg-[--color-bg-tooltip] border border-[--color-border]">
                       <div class="text-[0.625rem] sm:text-[0.6875rem] text-[--color-text-muted] uppercase">{t.totalReturn}</div>

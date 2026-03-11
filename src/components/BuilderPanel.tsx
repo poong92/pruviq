@@ -254,7 +254,7 @@ export default function BuilderPanel(props: Props) {
                 class="w-full mt-0.5 px-2 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
               />
             </div>
-            {/* Capital input — compound: total capital for 1 coin; simple: per-coin */}
+            {/* Capital input — compound: total portfolio capital; simple: per-coin amount */}
             <div>
               <label class="text-[10px] text-[--color-text-muted]">
                 {props.compounding
@@ -370,7 +370,7 @@ export default function BuilderPanel(props: Props) {
                 class="w-full px-2 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
                 placeholder="Number of top coins"
               />
-              <p class="text-[10px] text-[--color-text-muted] mt-0.5 font-mono">Top {localTopN} coins by data size (most candles available)</p>
+              <p class="text-[10px] text-[--color-text-muted] mt-0.5 font-mono">{props.t.topNCoinsHint || `Top ${localTopN} coins by data availability`}</p>
             </div>
           )}
           {props.coinMode === 'select' && (
