@@ -385,7 +385,7 @@ def _safe_float(v, default: float = 0.0) -> float:
         return default
 
 
-def downsample_equity(times: list, values: list, n_points: int = 100) -> List[EquityPoint]:
+def downsample_equity(times: list, values: list, n_points: int = 500) -> List[EquityPoint]:
     """Downsample equity curve to n_points."""
     if not values:
         return []
@@ -714,22 +714,24 @@ async def simulate(req: SimulationRequest):
     gross_loss = abs(sum(t["pnl_pct"] for t in losses)) if losses else 0.0
     is_compounding = getattr(req, 'compounding', False)
 
-    # total_return: compound vs simple
+    # total_return: compound vs simple (normalized by coin count)
+    n_coins = len(coins) if coins else 1
     if is_compounding:
         _compound_eq = 100.0
         for _t in all_trades:
-            _compound_eq *= (1 + _t["pnl_pct"] / 100)
+            _compound_eq *= (1 + _t["pnl_pct"] / (100 * n_coins))
         total_return = round((_compound_eq / 100.0 - 1) * 100, 4)
     else:
-        total_return = round(sum(t["pnl_pct"] for t in all_trades), 4)
+        total_return = round(sum(t["pnl_pct"] for t in all_trades) / n_coins, 4)
 
-    total_fees = len(all_trades) * (cost_model.fee_pct * 2 * 100)
-    total_funding = sum(t.get('funding_pct', 0) for t in all_trades)
+    total_fees = len(all_trades) * (cost_model.fee_pct * 2 * 100) / n_coins
+    total_funding = sum(t.get('funding_pct', 0) for t in all_trades) / n_coins
 
     avg_win = (sum(t["pnl_pct"] for t in wins) / len(wins)) if wins else 0
     avg_loss = (sum(t["pnl_pct"] for t in losses) / len(losses)) if losses else 0
 
     # Equity curve + MDD (100-based for both modes)
+    # n_coins defined above — each coin uses 1/N of capital
     equity = 100.0
     peak = equity
     max_dd = 0.0
@@ -740,9 +742,9 @@ async def simulate(req: SimulationRequest):
 
     for t in all_trades:
         if is_compounding:
-            equity = max(equity * (1 + t["pnl_pct"] / 100), 0.0)
+            equity = max(equity * (1 + t["pnl_pct"] / (100 * n_coins)), 0.0)
         else:
-            equity += t["pnl_pct"]  # 100-based: starts at 100, adds pnl_pct
+            equity += t["pnl_pct"] / n_coins  # Normalize: each trade uses 1/N of capital
         peak = max(peak, equity)
         dd = (peak - equity) / peak * 100 if peak > 0 else 0.0  # % of peak (not absolute points)
         dd = min(dd, 100.0)  # Cap at 100%
@@ -767,7 +769,7 @@ async def simulate(req: SimulationRequest):
         day_key = t.get("exit_time", t["time"])[:10]  # YYYY-MM-DD (exit time)
         daily_pnl_sim[day_key] += t["pnl_pct"]
     # Normalize by number of concurrent positions for capital-weighted daily returns
-    n_coins = len(coins) if coins else 1
+    # n_coins already defined above (equity curve section)
     # Fill zero-return days so Sharpe isn't inflated by excluding non-trading days
     if daily_pnl_sim and len(daily_pnl_sim) >= 2:
         from datetime import datetime as _dt_sim, timedelta as _td_sim
@@ -1166,13 +1168,14 @@ def _run_one_compare_strategy(
     gross_profit = sum(t["pnl_pct"] for t in wins) if wins else 0
     gross_loss = abs(sum(t["pnl_pct"] for t in losses)) if losses else 0.0
 
+    n_coins = len(coins) if coins else 1
     equity = 100.0
     peak = 100.0
     max_dd = 0.0
     eq_times = []
     eq_values = []
     for t in all_trades:
-        equity += t["pnl_pct"]
+        equity += t["pnl_pct"] / n_coins
         peak = max(peak, equity)
         dd_pct = (peak - equity) / peak * 100 if peak > 0 else 0.0  # % of peak (industry standard)
         dd_pct = min(dd_pct, 100.0)  # Cap at 100%
@@ -1185,7 +1188,7 @@ def _run_one_compare_strategy(
         direction=direction, status=entry["status"],
         total_trades=len(all_trades), wins=len(wins), losses=len(losses),
         win_rate=round(len(wins) / len(all_trades) * 100, 2),
-        total_return_pct=round(sum(t["pnl_pct"] for t in all_trades), 2),
+        total_return_pct=round(sum(t["pnl_pct"] for t in all_trades) / n_coins, 2),
         profit_factor=round(gross_profit / gross_loss, 2) if gross_loss > 0 else (999.99 if gross_profit > 0 else 0.0),
         max_drawdown_pct=round(max_dd, 2),
         tp_count=sum(1 for t in all_trades if t["exit_reason"] == "tp"),
@@ -2695,10 +2698,11 @@ async def run_backtest(req: BacktestRequest):
     # --- Warnings ---
     warnings = []
     # Liquidation risk: leverage × SL > 100% means potential total loss
-    sl_pct_val = float(params.get("sl_pct", params.get("sl", 0.10)))
-    liq_risk = leverage_val * sl_pct_val * 100
+    # sl_pct in params is already percentage (e.g. 10.0 = 10%), not decimal
+    sl_pct_val = float(params.get("sl_pct", params.get("sl", 10.0)))
+    liq_risk = leverage_val * sl_pct_val
     if liq_risk > 100:
-        warnings.append(f"⚠ Liquidation risk: {leverage_val}x leverage × {sl_pct_val*100:.0f}% SL = {liq_risk:.0f}% capital at risk (>100%). Consider reducing leverage or SL.")
+        warnings.append(f"⚠ Liquidation risk: {leverage_val}x leverage × {sl_pct_val:.0f}% SL = {liq_risk:.0f}% capital at risk (>100%). Consider reducing leverage or SL.")
     if mdd > 20:
         warnings.append(f"High drawdown: {mdd:.1f}%. With {leverage_val}x leverage, real capital loss could reach {mdd * leverage_val / 100 * 100:.0f}%.")
     if len(all_trades) < 30:
