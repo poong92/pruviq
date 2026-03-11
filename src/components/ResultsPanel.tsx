@@ -707,6 +707,35 @@ export default function ResultsPanel({
                     </span>
                   )}
               </div>
+              {/* Share & Fees CTA */}
+              <div class="mt-4 pt-3 border-t border-[--color-border] flex flex-wrap items-center gap-3">
+                {onCopyLink && (
+                  <button
+                    onClick={onCopyLink}
+                    class="flex items-center gap-1.5 px-4 py-2 text-xs font-mono rounded border transition-colors"
+                    style={
+                      linkCopied
+                        ? { borderColor: COLORS.green, color: COLORS.green, background: `${COLORS.green}10` }
+                        : { borderColor: COLORS.accent, color: COLORS.accent, background: `${COLORS.accent}10` }
+                    }
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+                      <polyline points="16 6 12 2 8 6" />
+                      <line x1="12" y1="2" x2="12" y2="15" />
+                    </svg>
+                    {linkCopied
+                      ? (t.linkCopied || (lang === 'ko' ? '복사됨!' : 'Copied!'))
+                      : (t.shareResults || (lang === 'ko' ? '결과 공유하기' : 'Share Results'))}
+                  </button>
+                )}
+                <a
+                  href="/fees"
+                  class="flex items-center gap-1.5 px-4 py-2 text-xs font-mono rounded border border-[--color-border] text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors"
+                >
+                  {t.saveOnFees || (lang === 'ko' ? '거래소 수수료 절약하기' : 'Save on exchange fees')} &rarr;
+                </a>
+              </div>
             </div>
           )}
 

@@ -35,6 +35,12 @@ export const ko: Record<TranslationKey, string> = {
   'hero.tool_strategies': '88+ 조합 백테스트',
   'hero.tool_data': '2년+ 과거 데이터',
   'hero.tool_free': '100% 무료, 가입 불필요',
+  'hero.subcopy': '가입 불필요. 영원히 무료. 3초 만에 결과 확인.',
+  'hero.cta_secondary': '백테스트 결과 보기',
+  'hero.stat1_sub': 'BTC, ETH 포함 알트코인',
+  'hero.stat4_sub': '검증된 전략 전체',
+  'hero.stat5_sub': '2024년 1월부터 1시간봉',
+  'hero.stat6_sub': '숨겨진 비용이나 프리미엄 없음',
 
   // Problem
   'problem.tag': '문제점',
@@ -338,8 +344,10 @@ export const ko: Record<TranslationKey, string> = {
   'meta.market_desc': '실시간 암호화폐 시장 현황. 공포/탐욕 지수, BTC 도미넌스, 상승/하락 순위, 경제 캘린더, 주요 뉴스.',
   'meta.coins_title': '코인 탐색기 - 프루빅(PRUVIQ)',
   'meta.coins_desc': '프루빅(PRUVIQ)의 실시간 암호화폐 시장 데이터. 549개 이상 코인의 가격, 시가총액, 거래량, 7일 차트를 확인하세요. 15분마다 갱신됩니다.',
-  'meta.home_title': '프루빅(PRUVIQ) - 무료 크립토 백테스팅 도구',
-  'meta.home_desc': '549개 이상의 코인과 2년 이상의 실제 데이터를 기반으로 하는 무료 전략 백테스팅. 현실적인 수수료와 슬리피지를 반영하며, 검증된 결과(승패)를 공개하여 거래 전에 확인할 수 있습니다.',
+  'meta.home_title': 'PRUVIQ \u2014 무료 암호화폐 전략 백테스터 | 549+ 코인, 가입 불필요',
+  'meta.home_desc': '549개 이상의 코인에서 2년+ 데이터로 무료 백테스트. 수수료, 슬리피지 모델링, 실패 포함 전체 결과 공개. 가입 불필요.',
+  'meta.simulate_title': '전략 시뮬레이터 \u2014 커스텀 전략 빌드 & 백테스트 | PRUVIQ',
+  'meta.simulate_desc': '11개+ 지표로 커스텀 전략을 만들고 549+ 코인에서 백테스트. 코딩 불필요. 무료, 즉시 결과.',
   'meta.index_desc': '프루빅(PRUVIQ) — 무료 크립토 전략 백테스팅. 549개 이상 코인과 2년 이상의 실제 데이터로 전략을 검증하고, 실패 사례까지 투명하게 공개합니다.',
   'meta.strategies_title': '전략 라이브러리 - 프루빅(PRUVIQ)',
   'meta.strategies_desc': '테스트한 모든 전략의 전체 시뮬레이션 결과 — 검증된 것, 중단된 것, 그 사이의 모든 것. 체리피킹 없음.',
@@ -853,4 +861,36 @@ export const ko: Record<TranslationKey, string> = {
   'cross.demo_cta': '인터랙티브 데모 체험',
   'cross.coins_cta': '전체 코인 탐색',
   'cross.market_cta': '시장 대시보드',
+
+  // Leaderboard
+  'leaderboard.tag': '주간 순위',
+  'leaderboard.title': '이번 주 최고의 전략',
+  'leaderboard.desc': '549개 이상의 코인에서 이번 주 가장 좋은 성과를 보인 전략 설정을 확인하세요. 매주 월요일 업데이트.',
+  'leaderboard.best': '최고 성과',
+  'leaderboard.worst': '저조한 성과',
+  'leaderboard.coming_soon': '실시간 리더보드 준비 중. 지금은 시뮬레이터에서 직접 백테스트를 해보세요.',
+  'leaderboard.cta': '시뮬레이터 체험',
+  'leaderboard.rank': '#',
+  'leaderboard.strategy': '전략',
+  'leaderboard.direction': '방향',
+  'leaderboard.win_rate': '승률',
+  'leaderboard.profit_factor': 'PF',
+  'leaderboard.total_return': '수익률',
+  'leaderboard.weekly_note': '매주 업데이트',
+  'meta.leaderboard_title': '주간 전략 순위 - PRUVIQ',
+  'meta.leaderboard_desc': '이번 주 최고 및 최악의 암호화폐 전략을 확인하세요. 실제 백테스트 데이터로 매주 업데이트.',
+  'nav.leaderboard': '리더보드',
+
+  // Metric explanation tooltips
+  'metric.sharpe_desc': '위험 조정 수익률. 높을수록 좋음. 1 이상 양호, 2 이상 우수.',
+  'metric.sortino_desc': '하방 변동성만 반영한 샤프 비율. 높을수록 좋음.',
+  'metric.mdd_desc': '최고점 대비 최대 하락폭. 낮을수록 좋음. 최악의 시나리오.',
+  'metric.pf_desc': '총 이익 / 총 손실. 1.5 이상 양호, 2.0 이상 우수.',
+  'metric.wr_desc': '수익 거래 비율. 맥락이 중요 \u2014 높은 승률이라도 R:R이 낮으면 손실 가능.',
+  'metric.calmar_desc': '연간 수익률 / 최대 낙폭. 높을수록 위험 대비 수익이 좋음.',
+
+  // Learn feature card
+  'features.learn_tag': '교육',
+  'features.learn_title': '트레이딩 전에 학습하기',
+  'features.learn_desc': '초급부터 고급까지 무료 가이드. 실제 데이터로 지표, 리스크 관리, 백테스팅을 이해하세요.',
 };
