@@ -356,9 +356,12 @@ class SimulationEngine:
             tdd = float(np.sqrt(np.mean(downside ** 2)))
             sortino = round(dr_avg / tdd * np.sqrt(365), 2) if tdd > 0 else 0.0
             # Calmar: CAGR / MDD (compound annualized growth rate)
-            n_days_eng = len(daily_pnl_eng)
+            # Use calendar days (not trade days) for accurate annualization
+            sorted_days_eng = sorted(daily_pnl_eng.keys())
+            from datetime import datetime as _dt_calmar_eng
+            n_calendar_days_eng = (_dt_calmar_eng.strptime(sorted_days_eng[-1], "%Y-%m-%d") - _dt_calmar_eng.strptime(sorted_days_eng[0], "%Y-%m-%d")).days + 1
             growth_ratio_eng = (equity + 100) / 100 if equity > -100 else 0.001
-            years_eng = max(n_days_eng, 1) / 365
+            years_eng = max(n_calendar_days_eng, 1) / 365
             cagr_pct_eng = (growth_ratio_eng ** (1 / years_eng) - 1) * 100 if years_eng > 0 else 0.0
             calmar = round(cagr_pct_eng / max_dd, 2) if max_dd > 0 else 0.0
         else:

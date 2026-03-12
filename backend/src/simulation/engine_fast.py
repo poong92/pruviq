@@ -371,10 +371,13 @@ def run_fast(
         tdd = float(np.sqrt(np.mean(downside ** 2)))
         sortino = round(dr_avg / tdd * np.sqrt(365), 2) if tdd > 0 else 0.0
         # Calmar: CAGR / MDD (CAGR = compound annualized growth rate)
-        n_days = len(daily_pnl)
+        # Use calendar days (not trade days) for accurate annualization
+        sorted_days_fast = sorted(daily_pnl.keys())
+        from datetime import datetime as _dt_calmar_fast
+        n_calendar_days = (_dt_calmar_fast.strptime(sorted_days_fast[-1], "%Y-%m-%d") - _dt_calmar_fast.strptime(sorted_days_fast[0], "%Y-%m-%d")).days + 1
         # equity starts at 0, so final = total_return (pct points). Convert to growth ratio.
         growth_ratio = (equity + 100) / 100 if equity > -100 else 0.001  # avoid <=0
-        years = max(n_days, 1) / 365
+        years = max(n_calendar_days, 1) / 365
         cagr_pct = (growth_ratio ** (1 / years) - 1) * 100 if years > 0 else 0.0
         calmar = round(cagr_pct / max_dd, 2) if max_dd > 0 else 0.0
     else:

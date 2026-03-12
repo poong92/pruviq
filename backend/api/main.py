@@ -792,7 +792,8 @@ async def simulate(req: SimulationRequest):
         tdd = float(np.sqrt(np.mean(downside_sim ** 2)))
         sortino = round(dr_avg / tdd * np.sqrt(365), 2) if tdd > 0 else 0.0
         # Calmar: CAGR / MDD (compound annualized growth rate — industry standard)
-        n_days_sim = len(daily_pnl_sim)
+        # Use calendar days from daily_returns_sim (already zero-filled) for accurate annualization
+        n_days_sim = len(daily_returns_sim)
         growth_ratio_sim = equity / 100.0 if equity > 0 else 0.001
         years_sim = max(n_days_sim, 1) / 365
         cagr_pct_sim = (growth_ratio_sim ** (1 / years_sim) - 1) * 100 if years_sim > 0 else 0.0
@@ -2456,7 +2457,8 @@ async def run_backtest(req: BacktestRequest):
         tdd_bt = float(np.sqrt(np.mean(downside_bt ** 2)))
         bt_sortino = round(dr_avg / tdd_bt * np.sqrt(365), 2) if tdd_bt > 0 else 0.0
         # Calmar = CAGR / MDD (compound annualized growth rate — industry standard)
-        n_days = len(daily_pnl)
+        # Use calendar days from daily_returns (already zero-filled) for accurate annualization
+        n_days = len(daily_returns)
         growth_ratio_bt = equity / 100.0 if equity > 0 else 0.001
         years_bt = max(n_days, 1) / 365
         cagr_pct_bt = (growth_ratio_bt ** (1 / years_bt) - 1) * 100 if years_bt > 0 else 0.0
