@@ -38,6 +38,7 @@
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 <<<<<<< HEAD
 <<<<<<< Updated upstream
 <<<<<<< HEAD
@@ -974,4 +975,7 @@
 >>>>>>> Stashed changes
 =======
 {"indicators":[{"id":"SPX","name":"S&P 500","value":6775.8,"change":-5.68,"unit":"Index","updated":"03/11/26 EDT","source":"CNBC"},{"id":"IXIC","name":"Nasdaq","value":22716.135,"change":19.031,"unit":"Index","updated":"03/11/26 EDT","source":"CNBC"},{"id":"DXY","name":"DXY (US Dollar)","value":99.353,"change":0.122,"unit":"Index","updated":"8:02 AM EDT","source":"CNBC"},{"id":"US10Y","name":"US 10Y Treasury","value":4.222,"change":0.016,"unit":"%","updated":"8:02 AM EDT","source":"CNBC"},{"id":"US2Y","name":"US 2Y Treasury","value":3.649,"change":0.013,"unit":"%","updated":"8:02 AM EDT","source":"CNBC"},{"id":"VIX","name":"VIX","value":25.65,"change":1.42,"unit":"Index","updated":"8:02 AM EDT","source":"CNBC"},{"id":"GOLD","name":"Gold","value":5184.0,"change":4.9,"unit":"USD","updated":"7:52 AM EDT","source":"CNBC"}],"generated":"2026-03-12T12:02:58.873552+00:00"}
+>>>>>>> Stashed changes
+=======
+{"indicators":[{"id":"SPX","name":"S&P 500","value":6775.8,"change":-5.68,"unit":"Index","updated":"03/11/26 EDT","source":"CNBC"},{"id":"IXIC","name":"Nasdaq","value":22716.135,"change":19.031,"unit":"Index","updated":"03/11/26 EDT","source":"CNBC"},{"id":"DXY","name":"DXY (US Dollar)","value":99.472,"change":0.241,"unit":"Index","updated":"8:22 AM EDT","source":"CNBC"},{"id":"US10Y","name":"US 10Y Treasury","value":4.226,"change":0.02,"unit":"%","updated":"8:22 AM EDT","source":"CNBC"},{"id":"US2Y","name":"US 2Y Treasury","value":3.651,"change":0.015,"unit":"%","updated":"8:22 AM EDT","source":"CNBC"},{"id":"VIX","name":"VIX","value":25.73,"change":1.5,"unit":"Index","updated":"8:22 AM EDT","source":"CNBC"},{"id":"GOLD","name":"Gold","value":5176.8,"change":-2.3,"unit":"USD","updated":"8:12 AM EDT","source":"CNBC"}],"generated":"2026-03-12T12:22:55.417270+00:00"}
 >>>>>>> Stashed changes
