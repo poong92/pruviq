@@ -148,6 +148,11 @@ const L = {
       "Simulating trades...",
       "Building results...",
     ],
+    timeoutMsg: "Backtest timed out. Large coin sets (100+) can take longer. Try reducing the number of coins or narrowing the date range.",
+    rateLimitMsg: "Too many requests. Retrying automatically...",
+    retryingIn: "Retrying in {n}s...",
+    elapsed: "{n}s",
+    estimatedTime: "~{n}s for {c} coins",
   },
   ko: {
     title: "전략 시뮬레이터",
@@ -260,6 +265,11 @@ const L = {
       "거래 시뮬레이션 중...",
       "결과 생성 중...",
     ],
+    timeoutMsg: "백테스트가 시간 초과되었습니다. 코인 수가 많으면(100+) 더 오래 걸릴 수 있습니다. 코인 수를 줄이거나 기간을 좁혀보세요.",
+    rateLimitMsg: "요청이 많습니다. 자동 재시도 중...",
+    retryingIn: "{n}초 후 재시도...",
+    elapsed: "{n}초",
+    estimatedTime: "~{n}초 ({c}개 코인)",
   },
 };
 
@@ -363,6 +373,8 @@ export default function SimulatorPage({ lang = "en" }: Props) {
   // Backtest
   const [isRunning, setIsRunning] = useState(false);
   const [progressStep, setProgressStep] = useState(0);
+  const [elapsedSec, setElapsedSec] = useState(0);
+  const elapsedRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const [result, setResult] = useState<BacktestResult | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -528,6 +540,13 @@ export default function SimulatorPage({ lang = "en" }: Props) {
         if (d === "short" || d === "long" || d === "both") setDirection(d);
       }
       if (params.has("coins")) setTopN(parseInt(params.get("coins")!) || 50);
+      // Auto-select coin from URL (e.g., from /coins/[symbol] CTA)
+      if (params.has("symbol")) {
+        const sym = params.get("symbol")!.toUpperCase();
+        setCoinMode("select");
+        setSelectedCoins([sym]);
+        setChartSymbol(sym);
+      }
     } catch {}
   }, []);
 
@@ -716,19 +735,38 @@ export default function SimulatorPage({ lang = "en" }: Props) {
       setProgressStep((prev) => (prev < 4 ? prev + 1 : prev));
     }, 2500);
 
+    // Elapsed time counter
+    setElapsedSec(0);
+    elapsedRef.current = setInterval(() => setElapsedSec((s) => s + 1), 1000);
+
     try {
-      // Abortable fetch with timeout to avoid hanging 'Running...' state
+      // Abortable fetch with timeout — scale with coin count
       const controller = new AbortController();
-      const timeoutMs = 120000; // 2 minutes
+      const coinCount = coinMode === "top" ? topN : coinMode === "select" ? selectedCoins.length : 549;
+      const timeoutMs = Math.max(120000, coinCount > 100 ? 180000 : 120000);
       const abortTimeout = setTimeout(() => controller.abort(), timeoutMs);
 
-      const res = await fetch(`${API_URL}/backtest`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-        signal: controller.signal,
-      });
+      const doFetch = async (retryCount = 0): Promise<Response> => {
+        const res = await fetch(`${API_URL}/backtest`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+          signal: controller.signal,
+        });
 
+        // Rate limit: auto-retry with backoff (max 2 retries)
+        if (res.status === 429 && retryCount < 2) {
+          const waitSec = (retryCount + 1) * 5;
+          setError(t.rateLimitMsg || "Too many requests. Retrying...");
+          await new Promise((r) => setTimeout(r, waitSec * 1000));
+          setError(null);
+          return doFetch(retryCount + 1);
+        }
+
+        return res;
+      };
+
+      const res = await doFetch();
       clearTimeout(abortTimeout);
 
       if (!res.ok) {
@@ -780,12 +818,13 @@ export default function SimulatorPage({ lang = "en" }: Props) {
           : typeof e === "string"
             ? e
             : "Backtest failed";
-      // If the request was aborted, provide a clearer message
+      // If the request was aborted, provide a clearer timeout message
       if (err?.name === "AbortError")
-        setError("Backtest request timed out or was cancelled");
+        setError(t.timeoutMsg || "Backtest timed out. Try fewer coins or a shorter date range.");
       else setError(errMsg);
     } finally {
       clearInterval(progressInterval);
+      if (elapsedRef.current) clearInterval(elapsedRef.current);
       setIsRunning(false);
     }
   }, [
@@ -1162,6 +1201,7 @@ export default function SimulatorPage({ lang = "en" }: Props) {
               isRunning={isRunning}
               progressStep={progressStep}
               progressLabels={progressLabels}
+              elapsedSec={elapsedSec}
               onRun={runBacktest}
             />
           </div>
@@ -1235,6 +1275,11 @@ export default function SimulatorPage({ lang = "en" }: Props) {
                 <span class="flex items-center justify-center gap-2">
                   <span class="spinner" />
                   {progressLabels[progressStep] || t.running}
+                  {elapsedSec > 0 && (
+                    <span class="text-[10px] opacity-70 font-normal">
+                      {(t.elapsed || "{n}s").replace("{n}", String(elapsedSec))}
+                    </span>
+                  )}
                 </span>
               ) : currentCoinCount > 0 ? (
                 t.runWithCoins?.replace("{n}", String(currentCoinCount)) ||
