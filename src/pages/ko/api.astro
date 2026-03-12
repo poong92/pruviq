@@ -127,7 +127,7 @@ const API_BASE = 'https://api.pruviq.com';
           </div>
           <p class="text-[--color-text-muted] text-sm">{t('api.endpoint_ohlcv')}</p>
           <div class="mt-3 font-mono text-xs text-[--color-text-muted]">
-            <span class="text-[--color-accent]">Params:</span> symbol (path), limit (query, default: 3000)
+            <span class="text-[--color-accent]">{t('api.params_label')}</span> symbol (path), limit (query, default: 3000)
           </div>
         </div>
 
@@ -156,7 +156,7 @@ const API_BASE = 'https://api.pruviq.com';
           </div>
           <p class="text-[--color-text-muted] text-sm mb-3">{t('api.endpoint_simulate')}</p>
           <details class="text-sm">
-            <summary class="cursor-pointer text-[--color-accent] font-mono text-xs hover:underline">Request Body</summary>
+            <summary class="min-h-[44px] flex items-center cursor-pointer text-[--color-accent] font-mono text-xs hover:underline">{t('api.request_body')}</summary>
             <pre class="mt-2 p-3 rounded bg-[--color-bg] border border-[--color-border] overflow-x-auto text-xs"><code>{`{
   "strategy": "bb-squeeze-short",
   "sl_pct": 10.0,
@@ -175,7 +175,7 @@ const API_BASE = 'https://api.pruviq.com';
           </div>
           <p class="text-[--color-text-muted] text-sm mb-3">{t('api.endpoint_simulate_coin')}</p>
           <details class="text-sm">
-            <summary class="cursor-pointer text-[--color-accent] font-mono text-xs hover:underline">Request Body</summary>
+            <summary class="min-h-[44px] flex items-center cursor-pointer text-[--color-accent] font-mono text-xs hover:underline">{t('api.request_body')}</summary>
             <pre class="mt-2 p-3 rounded bg-[--color-bg] border border-[--color-border] overflow-x-auto text-xs"><code>{`{
   "symbol": "BTCUSDT",
   "sl_pct": 10.0,
@@ -194,7 +194,7 @@ const API_BASE = 'https://api.pruviq.com';
           </div>
           <p class="text-[--color-text-muted] text-sm mb-3">{t('api.endpoint_compare')}</p>
           <details class="text-sm">
-            <summary class="cursor-pointer text-[--color-accent] font-mono text-xs hover:underline">Request Body</summary>
+            <summary class="min-h-[44px] flex items-center cursor-pointer text-[--color-accent] font-mono text-xs hover:underline">{t('api.request_body')}</summary>
             <pre class="mt-2 p-3 rounded bg-[--color-bg] border border-[--color-border] overflow-x-auto text-xs"><code>{`{
   "sl_pct": 10.0,
   "tp_pct": 8.0,
@@ -225,7 +225,7 @@ const API_BASE = 'https://api.pruviq.com';
           </div>
           <p class="text-[--color-text-muted] text-sm mb-3">{t('api.endpoint_backtest')}</p>
           <details class="text-sm">
-            <summary class="cursor-pointer text-[--color-accent] font-mono text-xs hover:underline">Request Body</summary>
+            <summary class="min-h-[44px] flex items-center cursor-pointer text-[--color-accent] font-mono text-xs hover:underline">{t('api.request_body')}</summary>
             <pre class="mt-2 p-3 rounded bg-[--color-bg] border border-[--color-border] overflow-x-auto text-xs"><code>{`{
   "name": "My Strategy",
   "direction": "short",

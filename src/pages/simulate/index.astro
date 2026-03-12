@@ -20,12 +20,12 @@ const t = useTranslations('en');
         <div class="flex items-center gap-3 shrink-0">
           <a href="/simulate?preset=bb-squeeze-short"
              class="inline-flex items-center gap-2 bg-[--color-accent] text-[--color-bg] px-4 py-2 rounded font-semibold text-sm hover:bg-[--color-accent-dim]"
-             title="Verified = backtested on 549+ coins with 2+ years of real market data">
+             title={t('simulate.preset_verified_tooltip')}>
             {t('simulate.cta_preset')} &rarr;
           </a>
           <a href="/strategies"
              class="inline-flex items-center gap-2 border border-[--color-border] text-[--color-text-muted] px-4 py-2 rounded text-sm hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
-            All Strategies
+            {t('simulate.all_strategies')}
           </a>
         </div>
       </div>

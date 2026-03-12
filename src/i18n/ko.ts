@@ -392,6 +392,7 @@ export const ko: Record<TranslationKey, string> = {
   'about.contact_desc': '질문, 피드백, 파트너십 문의:',
   'about.contact_email': 'contact@pruviq.com',
   'about.contact_telegram': '텔레그램 커뮤니티',
+  'about.explore_desc': '전략을 테스트할 준비가 되셨나요? 시뮬레이터를 사용하거나 검증된 전략을 둘러보세요.',
 
   // Performance page static fallback
   'perf.tag': '백테스트 결과',
@@ -723,6 +724,8 @@ export const ko: Record<TranslationKey, string> = {
   'api.example_js': 'JavaScript',
   'api.sdk_title': '출시 예정',
   'api.sdk_desc': 'Python SDK와 WebSocket 피드가 개발 중입니다. X에서 최신 소식을 확인하세요.',
+  'api.request_body': '요청 본문',
+  'api.params_label': '파라미터:',
   'footer.api': 'API',
   'footer.compare': 'vs 트레이딩뷰',
 
@@ -909,4 +912,62 @@ export const ko: Record<TranslationKey, string> = {
 
   // Learn Card
   'learn.read': '읽음',
+
+  // Coin Detail Page
+  'coin_detail.header_desc': '{name} BB Squeeze SHORT 전략 시뮬레이션. 2년 이상 과거 데이터로 진입/청산 신호, 에퀴티 커브, 개별 거래 분석을 확인하세요.',
+  'coin_detail.simulate_coin': '{coin} 시뮬레이션',
+  'coin_detail.all_strategies': '전체 전략',
+  'coin_detail.all_coins': '전체 코인',
+  'coin_detail.strategy_overview': '전략 개요',
+  'coin_detail.direction': '방향',
+  'coin_detail.short_only': '숏 전용',
+  'coin_detail.sl_tp': '손절 / 익절',
+  'coin_detail.max_hold': '최대 보유',
+  'coin_detail.max_hold_val': '48시간',
+  'coin_detail.data_period': '데이터 기간',
+  'coin_detail.data_period_val': '2년 이상 (1H)',
+  'coin_detail.strategy_desc': 'BB Squeeze 전략은 {name}에서 저변동성 구간(볼린저밴드 압축)을 식별합니다. 밴드가 확장되고 가격이 하향 돌파하면 숏 포지션에 진입합니다. 549개 코인에서 Out-of-Sample 테스트와 몬테카를로 시뮬레이션으로 검증되었습니다.',
+  'coin_detail.faq_title': '자주 묻는 질문',
+  'coin_detail.faq_q1': '{name}의 BB Squeeze SHORT 전략이란?',
+  'coin_detail.faq_a1': 'BB Squeeze SHORT 전략은 {display}에서 볼린저밴드 압축을 감지하고, 하향 돌파 시 숏 포지션에 진입합니다. 손절 10%, 익절 8%, 최대 48시간 보유합니다.',
+  'coin_detail.faq_q2': '{name} 백테스트는 신뢰할 수 있나요?',
+  'coin_detail.faq_a2': 'PRUVIQ 백테스트는 바이낸스 선물 2년 이상의 1시간 OHLCV 데이터를 사용합니다. 모든 결과는 Out-of-Sample 테스트와 몬테카를로 시뮬레이션(10,000회)으로 검증됩니다. Look-ahead bias 없이 완성된 캔들만 신호에 사용합니다.',
+  'coin_detail.faq_q3': '{name} 시뮬레이션은 무료인가요?',
+  'coin_detail.faq_a3': '네. PRUVIQ는 100% 무료입니다. 모든 지원 코인에서 BB Squeeze 전략을 시뮬레이션하고, 파라미터를 조정하고, 상세 에퀴티 커브와 거래 로그를 확인할 수 있습니다. 가입 불필요.',
+
+  // Strategy Detail Page
+  'strategy_detail.simulate_this': '이 전략 시뮬레이션',
+  'strategy_detail.english_only': '이 콘텐츠는 영어로만 제공됩니다.',
+
+  // Simulate Page
+  'simulate.all_strategies': '전체 전략',
+  'simulate.preset_verified_tooltip': '검증됨 = 549개+ 코인, 2년+ 실제 시장 데이터 백테스트',
+
+  // CTA badges
+  'cta.badge1': '신용카드 불필요',
+  'cta.badge2': '계정 생성 불필요',
+  'cta.badge3': '영구 무료',
+  'cta.badge4': '3초 만에 결과',
+
+  // Compare table alt link
+  'compare_table.detail_link_alt': 'TradingView에서 전환하는 이유',
+
+  // Coins page
+  'coins.explore_next': '관심 있는 코인을 찾으셨나요? 전략에서 테스트해 보세요.',
+
+  // Changelog context callout
+  'changelog.context_title': '여기서 추적하는 버전은?',
+  'changelog.context_desc': '이 변경 기록은 바이낸스 선물에서 실시간 운영 중인 <strong class="text-[--color-text]">BB Squeeze SHORT 매매 전략</strong>을 추적합니다. 플랫폼 버전(웹사이트, 시뮬레이터, API)은 별도로 관리됩니다.',
+
+  // Meta: Privacy & Terms
+  'meta.privacy_title': '개인정보처리방침 - PRUVIQ',
+  'meta.privacy_desc': 'PRUVIQ 개인정보처리방침. 데이터 수집, 쿠키, 분석 도구 사용에 대한 안내. GDPR 및 개인정보보호법 준수.',
+  'meta.privacy_tag': '개인정보처리방침',
+  'meta.privacy_heading': '개인정보처리방침',
+  'meta.privacy_updated': '최종 수정일: 2026년 3월 1일',
+  'meta.terms_title': '이용약관 - PRUVIQ',
+  'meta.terms_desc': 'PRUVIQ 이용약관. 서비스 이용 조건, 금융 면책조항, 책임 제한, 제휴 링크 고지.',
+  'meta.terms_tag': '이용약관',
+  'meta.terms_heading': '이용약관',
+  'meta.terms_updated': '최종 수정일: 2026년 3월 1일',
 };
