@@ -36,7 +36,7 @@ export default function LearnCard({ postId, href, title, description, tags, tagM
       {read && (
         <span
           class="absolute top-3 right-3 w-5 h-5 rounded-full bg-[--color-accent]/20 flex items-center justify-center"
-          title="Read"
+          title={isEnglish !== false ? 'Read' : '읽음'}
         >
           <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
             <path d="M2.5 6L5 8.5L9.5 3.5" stroke="var(--color-accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />

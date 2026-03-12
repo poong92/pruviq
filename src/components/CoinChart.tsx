@@ -45,6 +45,7 @@ const labels = {
     ctaDesc: "Customize conditions and test across all coins.",
     ctaSimulate: "Strategy Builder",
     ctaFees: "Save on Fees",
+    resetChartZoomAria: "Reset chart zoom",
   },
   ko: {
     bbBands: "BB 밴드",
@@ -67,6 +68,7 @@ const labels = {
     ctaDesc: "조건을 커스텀하고 모든 코인에서 테스트하세요.",
     ctaSimulate: "전략 빌더",
     ctaFees: "수수료 절약",
+    resetChartZoomAria: "차트 줌 초기화",
   },
 };
 
@@ -175,6 +177,7 @@ export default function CoinChart({
   const [crosshairData, setCrosshairData] = useState<OhlcvBar | null>(null);
 
   const chartContainerRef = useRef<HTMLDivElement>(null);
+  // TODO: lightweight-charts does not export IChartApi/ISeriesApi for direct typing
   const chartRef = useRef<any>(null);
   const candleSeriesRef = useRef<any>(null);
   const bbUpperRef = useRef<any>(null);
@@ -598,7 +601,7 @@ export default function CoinChart({
           />
           <button
             onClick={() => chartRef.current?.timeScale().fitContent()}
-            aria-label="Reset chart zoom"
+            aria-label={t.resetChartZoomAria}
             class="px-2 py-1 rounded border border-[--color-border] bg-[--color-bg-tooltip] text-[--color-text-muted] font-mono text-[0.5625rem] md:text-[0.6875rem] cursor-pointer hover:border-[--color-accent] transition-colors min-h-[44px]"
           >
             {t.resetZoom}

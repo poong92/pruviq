@@ -17,7 +17,7 @@ interface HistoryEntry {
 type ResultTab = "summary" | "equity" | "trades" | "coins" | "validate";
 
 interface Props {
-  t: Record<string, any>;
+  t: Record<string, any>; // eslint-disable-line -- mixed i18n types (string, string[], Record)
   result: BacktestResult | null;
   error: string | null;
   resultTab: ResultTab;
@@ -82,9 +82,9 @@ export default function ResultsPanel({
     asc: false,
   });
   const equityChartRef = useRef<HTMLDivElement>(null);
-  const equityInstanceRef = useRef<any>(null);
+  const equityInstanceRef = useRef<any>(null); // TODO: lightweight-charts IChartApi not directly exported
   const ddChartRef = useRef<HTMLDivElement>(null);
-  const ddInstanceRef = useRef<any>(null);
+  const ddInstanceRef = useRef<any>(null); // TODO: lightweight-charts IChartApi not directly exported
 
   // Results guide banner
   const [showResultsGuide, setShowResultsGuide] = useState(true);
@@ -367,7 +367,7 @@ export default function ResultsPanel({
                     max="50"
                     step="0.5"
                     value={qaSl}
-                    onInput={(e: any) => setQaSl(parseFloat(e.target.value))}
+                    onInput={(e: Event) => setQaSl(parseFloat((e.target as HTMLInputElement).value))}
                     class="slider-range mt-1"
                     style={{
                       background: `linear-gradient(to right, ${COLORS.red} 0%, ${COLORS.red} ${((qaSl - 1) / 49) * 100}%, var(--color-border) ${((qaSl - 1) / 49) * 100}%, var(--color-border) 100%)`,
@@ -385,7 +385,7 @@ export default function ResultsPanel({
                     max="50"
                     step="0.5"
                     value={qaTp}
-                    onInput={(e: any) => setQaTp(parseFloat(e.target.value))}
+                    onInput={(e: Event) => setQaTp(parseFloat((e.target as HTMLInputElement).value))}
                     class="slider-range mt-1"
                     style={{
                       background: `linear-gradient(to right, ${COLORS.green} 0%, ${COLORS.green} ${((qaTp - 1) / 49) * 100}%, var(--color-border) ${((qaTp - 1) / 49) * 100}%, var(--color-border) 100%)`,
@@ -403,7 +403,7 @@ export default function ResultsPanel({
                     max="549"
                     step="1"
                     value={qaCoins}
-                    onInput={(e: any) => setQaCoins(parseInt(e.target.value))}
+                    onInput={(e: Event) => setQaCoins(parseInt((e.target as HTMLInputElement).value))}
                     class="slider-range mt-1"
                     style={{
                       background: `linear-gradient(to right, ${COLORS.accent} 0%, ${COLORS.accent} ${((qaCoins - 1) / 534) * 100}%, var(--color-border) ${((qaCoins - 1) / 534) * 100}%, var(--color-border) 100%)`,
@@ -547,7 +547,7 @@ export default function ResultsPanel({
                   <button
                     onClick={() => setShowResultsGuide(false)}
                     class="text-[--color-text-muted] hover:text-[--color-text] transition-colors text-sm font-mono shrink-0 p-2 -m-1 min-w-[44px] min-h-[44px] flex items-center justify-center"
-                    aria-label="Close guide"
+                    aria-label={t.closeGuideAria || "Close guide"}
                   >
                     &times;
                   </button>
@@ -874,19 +874,22 @@ export default function ResultsPanel({
                   </div>
                 );
               }
-              const sorted = [...coins].sort((a: any, b: any) => {
-                const av = a[coinSort.key] ?? 0;
-                const bv = b[coinSort.key] ?? 0;
-                return coinSort.asc ? av - bv : bv - av;
+              const sorted = [...coins].sort((a: CoinResult, b: CoinResult) => {
+                const av = (a as unknown as Record<string, string | number>)[coinSort.key] ?? 0;
+                const bv = (b as unknown as Record<string, string | number>)[coinSort.key] ?? 0;
+                if (typeof av === 'string' || typeof bv === 'string') {
+                  return coinSort.asc ? String(av).localeCompare(String(bv)) : String(bv).localeCompare(String(av));
+                }
+                return coinSort.asc ? (av as number) - (bv as number) : (bv as number) - (av as number);
               });
               const profitable = coins.filter(
-                (c: any) => c.total_return_pct > 0,
+                (c: CoinResult) => c.total_return_pct > 0,
               ).length;
               const losing = coins.filter(
-                (c: any) => c.total_return_pct < 0,
+                (c: CoinResult) => c.total_return_pct < 0,
               ).length;
               const neutral = coins.filter(
-                (c: any) => c.total_return_pct === 0,
+                (c: CoinResult) => c.total_return_pct === 0,
               ).length;
               const profitPct =
                 coins.length > 0 ? (profitable / coins.length) * 100 : 0;
@@ -970,7 +973,7 @@ export default function ResultsPanel({
                         </tr>
                       </thead>
                       <tbody>
-                        {sorted.map((coin: any) => (
+                        {sorted.map((coin: CoinResult) => (
                           <tr
                             key={coin.symbol}
                             class="border-b border-[--color-border]/30 hover:bg-[--color-bg-hover]/30"

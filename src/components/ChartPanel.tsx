@@ -19,7 +19,7 @@ interface Props {
 
 export default function ChartPanel({ chartSymbol, setChartSymbol, chartData, chartLoading, loadingText, trades, error, onRetry, timeframe = '1H' }: Props) {
   const chartContainerRef = useRef<HTMLDivElement>(null);
-  const chartInstanceRef = useRef<any>(null);
+  const chartInstanceRef = useRef<any>(null); // TODO: lightweight-charts IChartApi not directly exported
 
   // ─── Render chart ───
   useEffect(() => {
@@ -180,12 +180,14 @@ export default function ChartPanel({ chartSymbol, setChartSymbol, chartData, cha
           <input
             type="text"
             placeholder="Symbol..."
+            aria-label="Enter chart symbol"
             class="w-20 px-2 py-1 text-xs font-mono bg-[--color-bg-tooltip] border border-[--color-border] rounded outline-none focus:border-[--color-accent] hidden sm:block"
-            onKeyDown={(e: any) => {
+            onKeyDown={(e: KeyboardEvent) => {
               if (e.key === 'Enter') {
-                const val = e.target.value.toUpperCase().trim();
+                const target = e.target as HTMLInputElement;
+                const val = target.value.toUpperCase().trim();
                 if (val) setChartSymbol(val.endsWith('USDT') ? val : val + 'USDT');
-                e.target.value = '';
+                target.value = '';
               }
             }}
           />
