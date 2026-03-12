@@ -891,6 +891,22 @@ export const en = {
   'features.learn_tag': 'EDUCATION',
   'features.learn_title': 'Learn Before You Trade',
   'features.learn_desc': 'Free guides from beginner to advanced. Understand indicators, risk management, and backtesting \u2014 all backed by real data.',
+
+  // Simulator placeholders & labels
+  'simulator.placeholder.topCoins': 'Number of top coins',
+  'simulator.placeholder.searchCoins': 'Search coins...',
+  'simulator.placeholder.symbol': 'Symbol...',
+  'simulator.lookAheadWarning': 'Using current (incomplete) candle data may cause look-ahead bias in live trading',
+  'simulator.label.inSample': 'In-Sample',
+  'simulator.label.outOfSample': 'Out-of-Sample',
+  'simulator.aria.resetChartZoom': 'Reset chart zoom',
+  'simulator.aria.closeGuide': 'Close guide',
+
+  // Market Dashboard
+  'market.economicCalendar': 'Economic Calendar',
+
+  // Learn Card
+  'learn.read': 'Read',
 } as const;
 
 export type TranslationKey = keyof typeof en;

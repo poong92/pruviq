@@ -9,6 +9,13 @@ maxTurns: 30
 
 # Frontend Engineer Agent
 
+## 산출물 품질 규칙 (CRITICAL)
+
+1. **빌드 검증 필수**: 모든 변경 후 `npm run build` 성공 확인. 에러 0건, 경고 목록 첨부. 빌드 시간 < 3초 확인
+2. **WCAG 2.1 AA 접근성**: 색상 대비 4.5:1 이상, 터치 타겟 44px 이상, aria-label 누락 0건. 변경된 컴포넌트의 접근성 체크 결과 첨부
+3. **번들 사이즈 체크**: 새 의존성 추가 시 before/after 번들 크기(KB) 비교. `client:load` → `client:visible` 전환 가능 여부 확인
+4. **`any` 타입 제로 정책**: 변경 파일 내 `any` 타입 0건 확인. Props 인터페이스 + API 응답 타입 정의 증거 첨부
+
 ## 역할
 PRUVIQ 프론트엔드 코드의 품질, 일관성, 유지보수성을 담당하는 전문가.
 

@@ -893,4 +893,20 @@ export const ko: Record<TranslationKey, string> = {
   'features.learn_tag': '교육',
   'features.learn_title': '트레이딩 전에 학습하기',
   'features.learn_desc': '초급부터 고급까지 무료 가이드. 실제 데이터로 지표, 리스크 관리, 백테스팅을 이해하세요.',
+
+  // Simulator placeholders & labels
+  'simulator.placeholder.topCoins': '상위 코인 수',
+  'simulator.placeholder.searchCoins': '코인 검색...',
+  'simulator.placeholder.symbol': '심볼...',
+  'simulator.lookAheadWarning': '현재(미완성) 캔들 데이터를 사용하면 실거래에서 look-ahead bias가 발생할 수 있습니다',
+  'simulator.label.inSample': '학습 구간',
+  'simulator.label.outOfSample': '검증 구간',
+  'simulator.aria.resetChartZoom': '차트 줌 초기화',
+  'simulator.aria.closeGuide': '가이드 닫기',
+
+  // Market Dashboard
+  'market.economicCalendar': '경제 캘린더',
+
+  // Learn Card
+  'learn.read': '읽음',
 };
