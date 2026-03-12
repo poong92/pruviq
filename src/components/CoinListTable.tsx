@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'preact/hooks';
+import type { ComponentChildren } from 'preact';
 import { formatPrice, formatVolume } from '../utils/format';
 import { generateCSV, downloadCSV } from '../utils/csv';
 import { STATIC_DATA, fetchWithFallback, fetchLiveFirst } from '../config/api';
@@ -155,7 +156,7 @@ function SkeletonRow() {
 
 function SortableHeader({ sortKey, currentSort, sortDesc, onClick, children, className = '', title }: {
   sortKey: SortKey; currentSort: SortKey; sortDesc: boolean;
-  onClick: (key: SortKey) => void; children: any; className?: string; title?: string;
+  onClick: (key: SortKey) => void; children: ComponentChildren; className?: string; title?: string;
 }) {
   const isActive = currentSort === sortKey;
   const ariaSortValue = isActive ? (sortDesc ? 'descending' : 'ascending') : 'none';

@@ -8,7 +8,7 @@ import { OPS, booleanFields } from './simulator-types';
 interface Props {
   condition: Condition;
   availableFields: string[];
-  onUpdate: (id: string, key: string, val: any) => void;
+  onUpdate: (id: string, key: string, val: string | number | boolean) => void;
   onRemove: (id: string) => void;
   removeLabel: string;
 }
@@ -84,8 +84,8 @@ export default function ConditionRow({ condition: c, availableFields, onUpdate, 
         {/* Field */}
         <select
           value={c.field}
-          onChange={(e: any) => {
-            const newField = e.target.value;
+          onChange={(e: Event) => {
+            const newField = (e.target as HTMLSelectElement).value;
             onUpdate(c.id, 'field', newField);
             if (booleanFields.has(newField)) {
               onUpdate(c.id, 'op', '==');
@@ -111,7 +111,7 @@ export default function ConditionRow({ condition: c, availableFields, onUpdate, 
       {/* Op */}
       <select
         value={c.op}
-        onChange={(e: any) => onUpdate(c.id, 'op', e.target.value)}
+        onChange={(e: Event) => onUpdate(c.id, 'op', (e.target as HTMLSelectElement).value)}
         class="w-12 px-1 py-1.5 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
       >
         {OPS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
@@ -120,7 +120,7 @@ export default function ConditionRow({ condition: c, availableFields, onUpdate, 
       {booleanFields.has(c.field) ? (
         <select
           value={String(c.value)}
-          onChange={(e: any) => onUpdate(c.id, 'value', e.target.value === 'true')}
+          onChange={(e: Event) => onUpdate(c.id, 'value', (e.target as HTMLSelectElement).value === 'true')}
           class="w-14 px-1 py-1.5 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
         >
           <option value="true">true</option>
@@ -131,14 +131,14 @@ export default function ConditionRow({ condition: c, availableFields, onUpdate, 
           type="number"
           step="any"
           value={c.value as number}
-          onChange={(e: any) => onUpdate(c.id, 'value', parseFloat(e.target.value))}
+          onChange={(e: Event) => onUpdate(c.id, 'value', parseFloat((e.target as HTMLInputElement).value))}
           class="w-16 px-1.5 py-1.5 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
         />
       )}
       {/* Shift */}
       <select
         value={c.shift}
-        onChange={(e: any) => onUpdate(c.id, 'shift', parseInt(e.target.value))}
+        onChange={(e: Event) => onUpdate(c.id, 'shift', parseInt((e.target as HTMLSelectElement).value))}
         class={`w-12 px-1 py-1.5 bg-[--color-bg-tooltip] border rounded font-mono text-xs outline-none focus:border-[--color-accent] ${
           c.shift === 0
             ? 'border-[--color-yellow] text-[--color-yellow] font-bold'
@@ -150,13 +150,14 @@ export default function ConditionRow({ condition: c, availableFields, onUpdate, 
         <option value="0">Curr</option>
       </select>
       {c.shift === 0 && (
-        <span class="text-[--color-yellow] text-[9px] font-mono shrink-0" title="Using current (incomplete) candle data may cause look-ahead bias in live trading">!</span>
+        <span class="text-[--color-yellow] text-[9px] font-mono shrink-0" title="Using current (incomplete) candle data may cause look-ahead bias in live trading" role="img" aria-label="Look-ahead bias warning">!</span>
       )}
       {/* Remove */}
       <button
         onClick={() => onRemove(c.id)}
         class="text-[--color-text-muted] hover:text-[--color-red] px-1"
         title={removeLabel}
+        aria-label={removeLabel}
       >
         x
       </button>

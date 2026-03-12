@@ -93,6 +93,8 @@ const t = (lang: string, key: string, fallback: string) => {
       'mc.p50': '중앙값 (50th)',
       'mc.p95': '낙관적 (95th)',
       'mc.disclaimer': 'Monte Carlo는 과거 거래 분포가 반복된다고 가정합니다. 실제 결과는 다를 수 있습니다.',
+      'simulator.label.inSample': '학습 구간',
+      'simulator.label.outOfSample': '검증 구간',
     },
   };
   return translations[lang]?.[key] ?? fallback;
@@ -127,8 +129,8 @@ export default function OOSValidation({ lang = 'en', strategy = 'bb-squeeze', di
       if (!res.ok) throw new Error(`API error: ${res.status}`);
       const data = await res.json();
       setResult(data);
-    } catch (e: any) {
-      setError(e.message || 'Failed to run validation');
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : 'Failed to run validation');
     } finally {
       setLoading(false);
     }
@@ -162,7 +164,7 @@ export default function OOSValidation({ lang = 'en', strategy = 'bb-squeeze', di
             </label>
             <input
               type="range" min={10} max={50} step={5} value={oosPct}
-              onInput={(e: any) => setOosPct(parseInt(e.target.value))}
+              onInput={(e: Event) => setOosPct(parseInt((e.target as HTMLInputElement).value))}
               class="w-full accent-[var(--color-accent)]"
             />
             <div class="flex justify-between text-xs text-[var(--color-text-muted)] mt-0.5">
@@ -177,7 +179,7 @@ export default function OOSValidation({ lang = 'en', strategy = 'bb-squeeze', di
             </label>
             <select
               value={mcRuns}
-              onChange={(e: any) => setMcRuns(parseInt(e.target.value))}
+              onChange={(e: Event) => setMcRuns(parseInt((e.target as HTMLSelectElement).value))}
               class="w-full bg-[var(--color-bg)] border border-[var(--color-border)] rounded px-3 py-2 text-sm"
             >
               <option value={100}>100</option>
@@ -201,8 +203,8 @@ export default function OOSValidation({ lang = 'en', strategy = 'bb-squeeze', di
 
         {/* IS/OOS visual bar */}
         <div class="h-2 rounded-full overflow-hidden bg-[var(--color-border)] flex">
-          <div class="bg-[var(--color-accent)]" style={{ width: `${100 - oosPct}%` }} title="In-Sample" />
-          <div class="bg-[var(--color-accent)]/30" style={{ width: `${oosPct}%` }} title="Out-of-Sample" />
+          <div class="bg-[var(--color-accent)]" style={{ width: `${100 - oosPct}%` }} title={t(lang, 'simulator.label.inSample', 'In-Sample')} />
+          <div class="bg-[var(--color-accent)]/30" style={{ width: `${oosPct}%` }} title={t(lang, 'simulator.label.outOfSample', 'Out-of-Sample')} />
         </div>
         <div class="flex justify-between text-xs text-[var(--color-text-muted)] mt-1">
           <span>{t(lang, 'oos.is_period', 'Training (IS)')}</span>
@@ -211,7 +213,7 @@ export default function OOSValidation({ lang = 'en', strategy = 'bb-squeeze', di
       </div>
 
       {error && (
-        <div class="border border-[var(--color-red)]/30 rounded-lg p-4 bg-[var(--color-red)]/5 text-[var(--color-red)] text-sm">
+        <div class="border border-[var(--color-red)]/30 rounded-lg p-4 bg-[var(--color-red)]/5 text-[var(--color-red)] text-sm" role="alert">
           {error}
         </div>
       )}
