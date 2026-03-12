@@ -124,11 +124,14 @@ const L = {
       "Position size multiplier. 5x means $60 acts like $300. Higher = higher risk",
     perCoinUsdtTip: "Investment amount per coin position",
     topNCoinsHint: "Top coins by data availability (most candle history)",
+    topCoinsPlaceholder: "Number of top coins",
+    searchCoinsPlaceholder: "Search coins...",
     // Results guide
     resultsGuide: "How to read results:",
     resultsGuideWr: "Win Rate > 50%: Good",
     resultsGuidePf: "Profit Factor > 1.5: Strong",
     resultsGuideMdd: "Max Drawdown < 20%: Low risk",
+    closeGuideAria: "Close guide",
     monthlyReturns: "Monthly Returns",
     pnlDistribution: "PnL Distribution",
     bars: "bars",
@@ -236,11 +239,14 @@ const L = {
     leverageTip: "포지션 배율. 5배면 $60이 $300 효과. 높을수록 위험",
     perCoinUsdtTip: "코인당 투자 금액",
     topNCoinsHint: "데이터 보유량 기준 상위 코인 (캔들 이력 순)",
+    topCoinsPlaceholder: "상위 코인 수",
+    searchCoinsPlaceholder: "코인 검색...",
     // Results guide
     resultsGuide: "결과 해석 가이드:",
     resultsGuideWr: "승률 > 50%: 양호",
     resultsGuidePf: "Profit Factor > 1.5: 우수",
     resultsGuideMdd: "최대 낙폭 < 20%: 안전",
+    closeGuideAria: "가이드 닫기",
     yearlyBreakdown: "연도별 분석",
     equityCurve: "수익 곡선",
     drawdown: "낙폭",
@@ -485,7 +491,7 @@ export default function SimulatorPage({ lang = "en" }: Props) {
           const data = await coinRes.json();
           if (!cancelled) {
             const arr = Array.isArray(data) ? data : data.coins || [];
-            setAllCoins(arr.map((c: any) => ({ symbol: c.symbol || c })));
+            setAllCoins(arr.map((c: { symbol?: string } | string) => ({ symbol: (typeof c === 'string' ? c : c.symbol) || '' })));
           }
         } else {
           // Fallback: try static coins-stats for a basic symbol list
@@ -496,7 +502,7 @@ export default function SimulatorPage({ lang = "en" }: Props) {
             );
             if (!cancelled && Array.isArray(stats.coins)) {
               setAllCoins(
-                stats.coins.map((c: any) => ({ symbol: c.symbol || c })),
+                stats.coins.map((c: { symbol?: string } | string) => ({ symbol: (typeof c === 'string' ? c : c.symbol) || '' })),
               );
             }
           } catch {}
@@ -661,7 +667,7 @@ export default function SimulatorPage({ lang = "en" }: Props) {
     }
 
     const entryConditions = conditions.map((c) => {
-      const cond: any = { field: c.field, op: c.op, shift: c.shift };
+      const cond: Record<string, string | number | boolean | undefined> = { field: c.field, op: c.op, shift: c.shift };
       if (c.field2) cond.field2 = c.field2;
       else cond.value = c.value;
       return cond;
@@ -730,7 +736,7 @@ export default function SimulatorPage({ lang = "en" }: Props) {
         const detail = err.detail;
         const msg = Array.isArray(detail)
           ? detail
-              .map((d: any) => d.msg || d.message || JSON.stringify(d))
+              .map((d: { msg?: string; message?: string }) => d.msg || d.message || JSON.stringify(d))
               .join("; ")
           : typeof detail === "string"
             ? detail
@@ -766,15 +772,16 @@ export default function SimulatorPage({ lang = "en" }: Props) {
           }),
         200,
       );
-    } catch (e: any) {
+    } catch (e: unknown) {
+      const err = e as { message?: string; name?: string };
       const errMsg =
-        typeof e?.message === "string"
-          ? e.message
+        typeof err?.message === "string"
+          ? err.message
           : typeof e === "string"
             ? e
             : "Backtest failed";
       // If the request was aborted, provide a clearer message
-      if (e?.name === "AbortError")
+      if (err?.name === "AbortError")
         setError("Backtest request timed out or was cancelled");
       else setError(errMsg);
     } finally {
@@ -824,7 +831,7 @@ export default function SimulatorPage({ lang = "en" }: Props) {
       }
       if (p.entry?.conditions) {
         setConditions(
-          p.entry.conditions.map((c: any) => ({ ...c, id: nextCondId() })),
+          p.entry.conditions.map((c: Omit<Condition, 'id'>) => ({ ...c, id: nextCondId() })),
         );
       }
       if (p.direction) setDirection(p.direction);
@@ -876,7 +883,7 @@ export default function SimulatorPage({ lang = "en" }: Props) {
     ]);
   };
 
-  const updateCondition = (id: string, key: string, val: any) => {
+  const updateCondition = (id: string, key: string, val: string | number | boolean) => {
     setConditions((prev) =>
       prev.map((c) => (c.id === id ? { ...c, [key]: val } : c)),
     );

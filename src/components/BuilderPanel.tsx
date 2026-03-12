@@ -9,7 +9,7 @@ import ConditionRow from './ConditionRow';
 
 interface Props {
   // i18n
-  t: Record<string, any>;
+  t: Record<string, any>; // eslint-disable-line -- mixed i18n types (string, string[], Record)
   lang: 'en' | 'ko';
   // API state
   coinsLoaded: number;
@@ -23,7 +23,7 @@ interface Props {
   // Conditions
   conditions: Condition[];
   addCondition: () => void;
-  updateCondition: (id: string, key: string, val: any) => void;
+  updateCondition: (id: string, key: string, val: string | number | boolean) => void;
   removeCondition: (id: string) => void;
   // Params
   direction: 'short' | 'long' | 'both';
@@ -117,7 +117,7 @@ export default function BuilderPanel(props: Props) {
           loading={props.presetLoading}
         />
         {props.presetError && (
-          <div class="mx-4 mt-1 mb-0 px-2.5 py-1 rounded bg-[--color-red]/10 border border-[--color-red]/20">
+          <div class="mx-4 mt-1 mb-0 px-2.5 py-1 rounded bg-[--color-red]/10 border border-[--color-red]/20" role="alert">
             <span class="text-[10px] font-mono text-[--color-red]">{props.presetError}</span>
           </div>
         )}
@@ -231,7 +231,7 @@ export default function BuilderPanel(props: Props) {
             <div>
               <label class="text-[10px] text-[--color-text-muted]">{t.sl} <span class="cursor-help opacity-60 hover:opacity-100" title={t.slTip || ''}>&#9432;</span></label>
               <input type="number" value={localSl} min={1} max={50} step={0.5}
-                onChange={(e: any) => setLocalSl(e.target.value)}
+                onChange={(e: Event) => setLocalSl((e.target as HTMLInputElement).value)}
                 onBlur={() => props.setSlPct(parseFloat(localSl) || 10)}
                 class="w-full mt-0.5 px-2 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
               />
@@ -240,7 +240,7 @@ export default function BuilderPanel(props: Props) {
             <div>
               <label class="text-[10px] text-[--color-text-muted]">{t.tp} <span class="cursor-help opacity-60 hover:opacity-100" title={t.tpTip || ''}>&#9432;</span></label>
               <input type="number" value={localTp} min={1} max={50} step={0.5}
-                onChange={(e: any) => setLocalTp(e.target.value)}
+                onChange={(e: Event) => setLocalTp((e.target as HTMLInputElement).value)}
                 onBlur={() => props.setTpPct(parseFloat(localTp) || 8)}
                 class="w-full mt-0.5 px-2 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
               />
@@ -249,7 +249,7 @@ export default function BuilderPanel(props: Props) {
             <div>
               <label class="text-[10px] text-[--color-text-muted]">{t.maxBars} <span class="cursor-help opacity-60 hover:opacity-100" title={t.maxBarsTip || ''}>&#9432;</span></label>
               <input type="number" value={localMaxBars} min={1} max={168}
-                onChange={(e: any) => setLocalMaxBars(e.target.value)}
+                onChange={(e: Event) => setLocalMaxBars((e.target as HTMLInputElement).value)}
                 onBlur={() => props.setMaxBars(parseInt(localMaxBars) || 48)}
                 class="w-full mt-0.5 px-2 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
               />
@@ -265,7 +265,7 @@ export default function BuilderPanel(props: Props) {
                 min={props.compounding ? 100 : 1}
                 max={props.compounding ? 1000000 : 10000}
                 step={props.compounding ? 100 : 10}
-                onChange={(e: any) => setLocalPerCoin(e.target.value)}
+                onChange={(e: Event) => setLocalPerCoin((e.target as HTMLInputElement).value)}
                 onBlur={() => props.setPerCoinUsdt(parseFloat(localPerCoin) || (props.compounding ? 1000 : 60))}
                 class="w-full mt-0.5 px-2 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
               />
@@ -274,7 +274,7 @@ export default function BuilderPanel(props: Props) {
             <div>
               <label class="text-[10px] text-[--color-text-muted]">{t.leverage || 'Leverage'}</label>
               <input type="number" value={localLeverage} min={1} max={125} step={1}
-                onChange={(e: any) => setLocalLeverage(e.target.value)}
+                onChange={(e: Event) => setLocalLeverage((e.target as HTMLInputElement).value)}
                 onBlur={() => props.setLeverage(parseInt(localLeverage) || 5)}
                 class="w-full mt-0.5 px-2 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
               />
@@ -325,7 +325,7 @@ export default function BuilderPanel(props: Props) {
             <div>
               <label class="text-[10px] text-[--color-text-muted]">{t.startDate}</label>
               <input type="date" value={props.startDate}
-                onChange={(e: any) => props.setStartDate(e.target.value)}
+                onChange={(e: Event) => props.setStartDate((e.target as HTMLInputElement).value)}
                 class="w-full mt-0.5 px-2 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
               />
             </div>
@@ -333,7 +333,7 @@ export default function BuilderPanel(props: Props) {
             <div>
               <label class="text-[10px] text-[--color-text-muted]">{t.endDate}</label>
               <input type="date" value={props.endDate}
-                onChange={(e: any) => props.setEndDate(e.target.value)}
+                onChange={(e: Event) => props.setEndDate((e.target as HTMLInputElement).value)}
                 class="w-full mt-0.5 px-2 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
               />
             </div>
@@ -365,10 +365,10 @@ export default function BuilderPanel(props: Props) {
           {props.coinMode === 'top' && (
             <div>
               <input type="number" value={localTopN} min={1} max={props.totalCoins || 999}
-                onChange={(e: any) => setLocalTopN(e.target.value)}
+                onChange={(e: Event) => setLocalTopN((e.target as HTMLInputElement).value)}
                 onBlur={() => props.setTopN(parseInt(localTopN) || 50)}
                 class="w-full px-2 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
-                placeholder="Number of top coins"
+                placeholder={t.topCoinsPlaceholder || "Number of top coins"}
               />
               <p class="text-[10px] text-[--color-text-muted] mt-0.5 font-mono">{props.t.topNCoinsHint || `Top ${localTopN} coins by data availability`}</p>
             </div>
@@ -379,8 +379,8 @@ export default function BuilderPanel(props: Props) {
                 <input
                   type="text"
                   value={props.coinSearch}
-                  onInput={(e: any) => props.setCoinSearch(e.target.value)}
-                  placeholder="Search coins..."
+                  onInput={(e: Event) => props.setCoinSearch((e.target as HTMLInputElement).value)}
+                  placeholder={t.searchCoinsPlaceholder || "Search coins..."}
                   class="flex-1 px-2 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs outline-none"
                 />
                 <button
@@ -410,7 +410,7 @@ export default function BuilderPanel(props: Props) {
                   {props.selectedCoins.map((s) => (
                     <span key={s} class="px-2 py-0.5 text-[10px] font-mono bg-[--color-accent]/10 text-[--color-accent] rounded flex items-center gap-1">
                       {s.replace('USDT', '')}
-                      <button onClick={() => props.setSelectedCoins((p) => p.filter((x) => x !== s))} class="hover:text-[--color-red]">x</button>
+                      <button onClick={() => props.setSelectedCoins((p) => p.filter((x) => x !== s))} class="hover:text-[--color-red]" aria-label={`Remove ${s}`}>x</button>
                     </span>
                   ))}
                 </div>
