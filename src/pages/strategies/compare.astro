@@ -20,6 +20,27 @@ const t = useTranslations('en');
           <div class="h-64 bg-[--color-bg-hover] rounded"></div>
         </div>
       </div>
+
+      <noscript>
+        <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] text-center mt-6">
+          <p class="text-[--color-text-muted] text-sm">JavaScript is required to use the strategy comparison tool.</p>
+          <a href="/strategies" class="text-[--color-accent] text-sm hover:underline mt-2 inline-block">&larr; {t('compare.back')}</a>
+        </div>
+      </noscript>
+    </div>
+  </section>
+
+  <!-- Footer CTAs -->
+  <section class="pb-12 border-t border-[--color-border] pt-8">
+    <div class="max-w-5xl mx-auto px-4 text-center">
+      <div class="flex flex-wrap gap-3 justify-center">
+        <a href="/simulate" class="inline-block bg-[--color-accent] text-[--color-bg] px-6 py-2.5 rounded font-semibold text-sm hover:bg-[--color-accent-dim] transition-colors no-underline">
+          {t('cross.simulate_cta')} &rarr;
+        </a>
+        <a href="/strategies" class="inline-block border border-[--color-border] px-5 py-2 rounded font-semibold text-sm hover:border-[--color-accent] transition-colors no-underline">
+          {t('cross.strategies_cta')} &rarr;
+        </a>
+      </div>
     </div>
   </section>
 

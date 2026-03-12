@@ -1,14 +1,17 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { useTranslations } from '../i18n/index';
+
+const t = useTranslations('en');
 ---
 
-<Layout title="Privacy Policy - PRUVIQ" description="PRUVIQ Privacy Policy. How we handle your data, cookies, and analytics. GDPR and CCPA compliant.">
+<Layout title={t('meta.privacy_title')} description={t('meta.privacy_desc')}>
 
   <section class="py-20">
     <div class="max-w-3xl mx-auto px-4">
-      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">PRIVACY POLICY</p>
-      <h1 class="text-3xl md:text-4xl font-bold mb-2">Privacy Policy</h1>
-      <p class="text-[--color-text-muted] text-sm mb-12">Last updated: March 1, 2026</p>
+      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('meta.privacy_tag')}</p>
+      <h1 class="text-3xl md:text-4xl font-bold mb-2">{t('meta.privacy_heading')}</h1>
+      <p class="text-[--color-text-muted] text-sm mb-12">{t('meta.privacy_updated')}</p>
 
       <div class="space-y-10 text-[--color-text-muted] text-sm leading-relaxed">
 

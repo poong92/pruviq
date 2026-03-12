@@ -74,6 +74,12 @@ const tagMap: Record<string, string> = {
   'levels': t('learn.tag_levels'), 'feb-2026': t('learn.tag_feb_2026'),
 };
 
+const levelColorMap: Record<string, string> = {
+  green: 'bg-green-500/10 text-green-400 border-green-500/20',
+  yellow: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20',
+  red: 'bg-red-500/10 text-red-400 border-red-500/20',
+};
+
 const levelConfig = [
   { level: 'beginner', label: t('learn.level_beginner'), title: t('learn.level_beginner_title'), desc: t('learn.level_beginner_desc'), color: 'green', posts: beginner },
   { level: 'intermediate', label: t('learn.level_intermediate'), title: t('learn.level_intermediate_title'), desc: t('learn.level_intermediate_desc'), color: 'yellow', posts: intermediate },
@@ -102,7 +108,7 @@ const levelConfig = [
     <section class="pb-12 border-t border-[--color-border] pt-12">
       <div class="max-w-5xl mx-auto px-4">
         <div class="flex items-center gap-3 mb-2">
-          <span class={`text-xs font-mono px-2 py-0.5 rounded bg-${color}-500/10 text-${color}-400 border border-${color}-500/20`}>
+          <span class={`text-xs font-mono px-2 py-0.5 rounded border ${levelColorMap[color]}`}>
             {label}
           </span>
           <h2 class="text-2xl font-bold">{title}</h2>

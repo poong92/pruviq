@@ -78,7 +78,7 @@ const statusLabels: Record<string, string> = {
 
       {!isKorean && (
         <div class="mb-4 px-3 py-2 border border-[--color-border] rounded bg-[--color-bg-card] text-sm text-[--color-text-muted]">
-          This content is available in English only.
+          {t('strategy_detail.english_only')}
         </div>
       )}
 
@@ -174,7 +174,7 @@ const statusLabels: Record<string, string> = {
           {strategy.data.status === 'verified' && (
             <a href={`/ko/simulate?preset=${strategy.id}`}
                class="btn-primary inline-block bg-[--color-accent] text-[--color-bg] px-6 py-2 rounded font-semibold text-sm hover:bg-[--color-accent-dim]">
-              이 전략 시뮬레이션 &rarr;
+              {t('strategy_detail.simulate_this')} &rarr;
             </a>
           )}
           <a href="/ko/strategies"

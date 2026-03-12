@@ -23,9 +23,8 @@ const t = useTranslations('en');
     <div class="max-w-4xl mx-auto px-4">
       <div class="bg-[--color-bg-card] border-l-4 border-[--color-accent] p-4 rounded-r">
         <p class="text-sm text-[--color-text-muted]">
-          <strong class="text-[--color-text] font-semibold">What&rsquo;s versioned here?</strong><br/>
-          This changelog tracks the <strong class="text-[--color-text]">BB Squeeze SHORT trading strategy</strong> running live on Binance Futures.
-          Platform version (website, simulator, API) is managed separately.
+          <strong class="text-[--color-text] font-semibold">{t('changelog.context_title')}</strong><br/>
+          <Fragment set:html={t('changelog.context_desc')} />
         </p>
       </div>
     </div>
