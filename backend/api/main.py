@@ -28,7 +28,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import JSONResponse
 
-ADMIN_API_KEY = os.environ.get("ADMIN_API_KEY", "")
+_admin_key_raw = os.environ.get("ADMIN_API_KEY", "")
+ADMIN_API_KEY: Optional[str] = _admin_key_raw if len(_admin_key_raw) >= 32 else None
 COINGECKO_API_KEY = os.environ.get("COINGECKO_API_KEY", "")
 CG_HEADERS = {"x-cg-demo-api-key": COINGECKO_API_KEY} if COINGECKO_API_KEY else {}
 
@@ -37,6 +38,9 @@ import pandas as pd
 from datetime import datetime, timedelta, timezone
 
 logger = logging.getLogger("pruviq")
+
+if ADMIN_API_KEY is None:
+    logger.warning("ADMIN_API_KEY too short or missing — /admin/refresh disabled")
 
 # Add backend to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -1349,7 +1353,7 @@ async def simulate_validate(req: ValidateRequest):
 @app.post("/admin/refresh")
 async def refresh_data(x_admin_key: str = Header(default="", alias="X-Admin-Key")):
     """Manually trigger data refresh from Binance."""
-    if not ADMIN_API_KEY or not hmac.compare_digest(x_admin_key, ADMIN_API_KEY):
+    if ADMIN_API_KEY is None or not hmac.compare_digest(x_admin_key, ADMIN_API_KEY):
         raise HTTPException(status_code=403, detail="Forbidden")
     await asyncio.to_thread(_refresh_data)
     return {"status": "ok", "coins": indicator_cache.count, "generated": coin_stats_cache["generated"] if coin_stats_cache else None}

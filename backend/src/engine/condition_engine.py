@@ -35,6 +35,8 @@ from .indicator_pipeline import compute_indicators, get_required_indicators
 
 
 # Supported comparison operators
+MAX_NESTING_DEPTH = 5
+
 _OPS = {
     ">": lambda a, b: a > b,
     ">=": lambda a, b: a >= b,
@@ -181,11 +183,14 @@ class ConditionEngine:
 
     # --- Vectorized evaluation ---
 
-    def _eval_group_vectorized(self, df: pd.DataFrame, group: dict) -> np.ndarray:
+    def _eval_group_vectorized(self, df: pd.DataFrame, group: dict, _depth: int = 0) -> np.ndarray:
         """
         Recursively evaluate AND/OR group of conditions.
         Returns boolean numpy array (length = len(df)).
         """
+        if _depth > MAX_NESTING_DEPTH:
+            raise ValueError(f"Condition nesting exceeds max depth ({MAX_NESTING_DEPTH})")
+
         group_type = group.get("type", "AND").upper()
         conditions = group.get("conditions", [])
 
@@ -196,7 +201,7 @@ class ConditionEngine:
         for cond in conditions:
             if "conditions" in cond:
                 # Nested group
-                results.append(self._eval_group_vectorized(df, cond))
+                results.append(self._eval_group_vectorized(df, cond, _depth=_depth + 1))
             else:
                 # Leaf condition
                 results.append(self._eval_condition_vectorized(df, cond))
@@ -290,8 +295,11 @@ class ConditionEngine:
 
     # --- Per-bar evaluation ---
 
-    def _eval_group_at_bar(self, df: pd.DataFrame, group: dict, idx: int) -> bool:
+    def _eval_group_at_bar(self, df: pd.DataFrame, group: dict, idx: int, _depth: int = 0) -> bool:
         """Evaluate AND/OR group at a specific bar index."""
+        if _depth > MAX_NESTING_DEPTH:
+            raise ValueError(f"Condition nesting exceeds max depth ({MAX_NESTING_DEPTH})")
+
         group_type = group.get("type", "AND").upper()
         conditions = group.get("conditions", [])
 
@@ -300,7 +308,7 @@ class ConditionEngine:
 
         for cond in conditions:
             if "conditions" in cond:
-                result = self._eval_group_at_bar(df, cond, idx)
+                result = self._eval_group_at_bar(df, cond, idx, _depth=_depth + 1)
             else:
                 result = self._eval_condition_at_bar(df, cond, idx)
 
