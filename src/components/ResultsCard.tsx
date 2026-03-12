@@ -1,3 +1,4 @@
+import { useState } from 'preact/hooks';
 import { winRateColor, profitFactorColor, signColor } from '../utils/format';
 import { COLORS } from './simulator-types';
 
@@ -54,6 +55,7 @@ interface ResultsCardProps {
   isDefault: boolean;
   lang?: 'en' | 'ko';
   isDemo?: boolean;
+  simMode?: 'quick' | 'standard' | 'expert';
 }
 
 const labels = {
@@ -117,6 +119,8 @@ const labels = {
     jensensAlphaDesc: '(risk-adjusted excess vs BTC)',
     feeConsume: 'Fees consume',
     feeConsumeOf: '% of returns',
+    showDetails: 'Show details',
+    hideDetails: 'Hide details',
   },
   ko: {
     live: '기본 설정',
@@ -178,6 +182,8 @@ const labels = {
     jensensAlphaDesc: '(BTC 대비 리스크 조정 초과수익)',
     feeConsume: '수수료가 수익의',
     feeConsumeOf: '%를 차지합니다',
+    showDetails: '상세 보기',
+    hideDetails: '접기',
   },
 };
 
@@ -241,7 +247,9 @@ const metricDescriptions = {
   },
 } as const;
 
-export default function ResultsCard({ data, isDefault, lang = 'en', isDemo = false }: ResultsCardProps) {
+export default function ResultsCard({ data, isDefault, lang = 'en', isDemo = false, simMode = 'expert' }: ResultsCardProps) {
+  const [showAllMetrics, setShowAllMetrics] = useState(false);
+  const isQuick = simMode === 'quick' && !showAllMetrics;
   const t = labels[lang] || labels.en;
   const desc = metricDescriptions[lang] || metricDescriptions.en;
   const total = data.tp_count + data.sl_count + data.timeout_count;
@@ -364,8 +372,18 @@ export default function ResultsCard({ data, isDefault, lang = 'en', isDemo = fal
         <MetricBox label={t.maxDD} value={`${data.max_drawdown_pct}%`} color="var(--color-red)" description={desc.maxDD} />
       </div>
 
-      {/* Benchmarks (BTC + ETH) */}
-      {data.btc_hold_return_pct !== undefined && data.btc_hold_return_pct !== 0 && (
+      {/* Quick mode: Show details toggle */}
+      {simMode === 'quick' && !showAllMetrics && (
+        <button
+          onClick={() => setShowAllMetrics(true)}
+          class="w-full py-2 mb-3 rounded-lg border border-[--color-border] font-mono text-xs text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors"
+        >
+          {t.showDetails} ▼
+        </button>
+      )}
+
+      {/* Detailed metrics — hidden in Quick mode until toggled */}
+      {!isQuick && data.btc_hold_return_pct !== undefined && data.btc_hold_return_pct !== 0 && (
         <div class="mb-3 px-3 py-2 rounded-lg bg-[--color-bg-tooltip] border border-[--color-border]">
           <div class="font-mono text-[10px] text-[--color-text-muted] uppercase mb-1">{t.btcBenchmark}</div>
           <div class="flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-xs">
@@ -381,7 +399,7 @@ export default function ResultsCard({ data, isDefault, lang = 'en', isDemo = fal
       )}
 
       {/* Portfolio metrics (USD) */}
-      {data.initial_capital_usd != null && data.initial_capital_usd > 0 && (
+      {!isQuick && data.initial_capital_usd != null && data.initial_capital_usd > 0 && (
         <div class="mb-3 px-3 py-2.5 rounded-lg bg-[--color-bg-tooltip] border border-[--color-border]">
           <div class="font-mono text-[0.625rem] text-[--color-text-muted] uppercase tracking-wider mb-1.5">
             {t.portfolio} — ${data.per_coin_usd ?? 60} x {data.leverage ?? 5}x
@@ -415,7 +433,7 @@ export default function ResultsCard({ data, isDefault, lang = 'en', isDemo = fal
       )}
 
       {/* Break-even win rate */}
-      {hasBreakeven && (
+      {!isQuick && hasBreakeven && (
         <div class="flex gap-3 text-[10px] font-mono text-[--color-text-muted] mb-3 px-1">
           <span title={desc.breakeven}>{t.breakeven}: {breakevenWR.toFixed(1)}%</span>
           <span style={{ color: wrMargin > 0 ? 'var(--color-accent)' : 'var(--color-red)' }} title={desc.margin}>
@@ -424,7 +442,7 @@ export default function ResultsCard({ data, isDefault, lang = 'en', isDemo = fal
         </div>
       )}
 
-      {(data.avg_win_pct !== undefined || data.avg_loss_pct !== undefined) && (
+      {!isQuick && (data.avg_win_pct !== undefined || data.avg_loss_pct !== undefined) && (
         <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-3">
           <MetricBox
             label={t.avgWin}
@@ -453,7 +471,7 @@ export default function ResultsCard({ data, isDefault, lang = 'en', isDemo = fal
         </div>
       )}
 
-      {(data.sharpe_ratio !== undefined && data.sharpe_ratio !== 0) && (
+      {!isQuick && (data.sharpe_ratio !== undefined && data.sharpe_ratio !== 0) && (
         <div class="grid grid-cols-3 gap-2 mb-3">
           <MetricBox
             label={t.sharpe}
@@ -477,7 +495,7 @@ export default function ResultsCard({ data, isDefault, lang = 'en', isDemo = fal
       )}
 
       {/* VaR / CVaR */}
-      {data.var_95 !== undefined && data.var_95 !== 0 && (
+      {!isQuick && data.var_95 !== undefined && data.var_95 !== 0 && (
         <div class="grid grid-cols-2 gap-2 mb-3">
           <MetricBox
             label="VaR 95%"
@@ -495,7 +513,7 @@ export default function ResultsCard({ data, isDefault, lang = 'en', isDemo = fal
       )}
 
       {/* Overfitting Detection: DSR, Monte Carlo, Jensen's Alpha */}
-      {(data.deflated_sharpe !== undefined && data.deflated_sharpe !== 0) && (
+      {!isQuick && (data.deflated_sharpe !== undefined && data.deflated_sharpe !== 0) && (
         <div class="mb-3 px-3 py-2.5 rounded-lg bg-[--color-bg-tooltip] border border-[--color-border]">
           <div class="font-mono text-[10px] text-[--color-text-muted] uppercase mb-2">
             {t.overfitDetect}
@@ -529,7 +547,7 @@ export default function ResultsCard({ data, isDefault, lang = 'en', isDemo = fal
       )}
 
       {/* Advanced metrics: Expectancy, Recovery Factor, Payoff Ratio */}
-      {(data.expectancy !== undefined && data.expectancy !== 0) && (
+      {!isQuick && (data.expectancy !== undefined && data.expectancy !== 0) && (
         <div class="grid grid-cols-3 gap-2 mb-3">
           <MetricBox
             label={t.expectancy}
@@ -553,7 +571,7 @@ export default function ResultsCard({ data, isDefault, lang = 'en', isDemo = fal
       )}
 
       {/* Fee breakdown */}
-      {hasFees && (
+      {!isQuick && hasFees && (
         <div class="mb-3 px-3 py-2.5 rounded-lg bg-[--color-bg-tooltip] border border-[--color-border]">
           <div class="flex items-center justify-between mb-1.5">
             <span class="font-mono text-[0.625rem] text-[--color-text-muted] uppercase tracking-wider">{t.totalCost}</span>
@@ -575,6 +593,16 @@ export default function ResultsCard({ data, isDefault, lang = 'en', isDemo = fal
             {`${t.feeConsume} ${data.total_return_pct !== 0 ? Math.abs(totalCost / data.total_return_pct * 100).toFixed(0) : '—'}${t.feeConsumeOf}`}
           </div>
         </div>
+      )}
+
+      {/* Quick mode: collapse toggle when expanded */}
+      {simMode === 'quick' && showAllMetrics && (
+        <button
+          onClick={() => setShowAllMetrics(false)}
+          class="w-full py-2 mb-3 rounded-lg border border-[--color-border] font-mono text-xs text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors"
+        >
+          {t.hideDetails} ▲
+        </button>
       )}
 
       <div class="flex items-center justify-between font-mono text-xs text-[--color-text-muted] mb-3">

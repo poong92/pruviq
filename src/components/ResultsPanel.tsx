@@ -558,6 +558,7 @@ export default function ResultsPanel({
                 isDefault={activePreset === "bb-squeeze-short"}
                 lang={lang}
                 isDemo={result._isDemo}
+                simMode={simMode}
               />
               {result.yearly_stats && result.yearly_stats.length > 0 && (
                 <div class="mt-4">

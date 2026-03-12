@@ -62,6 +62,7 @@ interface Props {
   isRunning: boolean;
   progressStep: number;
   progressLabels: string[];
+  elapsedSec?: number;
   onRun: () => void;
 }
 
@@ -485,6 +486,9 @@ export default function BuilderPanel(props: Props) {
               <span class="flex items-center justify-center gap-2">
                 <span class="spinner" />
                 {props.progressLabels[props.progressStep] || t.running}
+                {(props.elapsedSec ?? 0) > 0 && (
+                  <span class="text-[10px] opacity-70 font-normal">{props.elapsedSec}s</span>
+                )}
               </span>
             ) : props.conditions.length === 0 ? (
               <span class="text-xs">{t.addCondition}</span>

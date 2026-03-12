@@ -632,7 +632,7 @@ export default function CoinChart({
           </div>
           <div class="flex gap-2 shrink-0">
             <a
-              href={lang === "ko" ? "/ko/simulate" : "/simulate"}
+              href={`${lang === "ko" ? "/ko/simulate" : "/simulate"}?symbol=${symbol}`}
               class="px-4 py-2 rounded-lg font-semibold text-xs no-underline hover:opacity-90 transition-opacity whitespace-nowrap"
               style="background:var(--color-accent);color:#fff"
             >
