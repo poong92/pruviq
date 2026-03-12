@@ -46,6 +46,7 @@
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 <<<<<<< HEAD
 <<<<<<< Updated upstream
 <<<<<<< HEAD
@@ -1006,4 +1007,7 @@
 >>>>>>> Stashed changes
 =======
 {"indicators":[{"id":"SPX","name":"S&P 500","value":6687.62,"change":-88.18,"unit":"Index","updated":"10:42 AM EDT","source":"CNBC"},{"id":"IXIC","name":"Nasdaq","value":22329.873,"change":-386.261,"unit":"Index","updated":"10:42 AM EDT","source":"CNBC"},{"id":"DXY","name":"DXY (US Dollar)","value":99.654,"change":0.423,"unit":"Index","updated":"10:42 AM EDT","source":"CNBC"},{"id":"US10Y","name":"US 10Y Treasury","value":4.237,"change":0.031,"unit":"%","updated":"10:42 AM EDT","source":"CNBC"},{"id":"US2Y","name":"US 2Y Treasury","value":3.686,"change":0.05,"unit":"%","updated":"10:42 AM EDT","source":"CNBC"},{"id":"VIX","name":"VIX","value":26.74,"change":2.51,"unit":"Index","updated":"10:42 AM EDT","source":"CNBC"},{"id":"GOLD","name":"Gold","value":5156.2,"change":-22.9,"unit":"USD","updated":"10:32 AM EDT","source":"CNBC"},{"id":"DFF","name":"Fed Funds Rate","value":3.64,"change":0.0,"unit":"%","updated":"2026-03-10","source":"FRED"}],"generated":"2026-03-12T14:42:40.709139+00:00"}
+>>>>>>> Stashed changes
+=======
+{"indicators":[{"id":"SPX","name":"S&P 500","value":6690.54,"change":-85.26,"unit":"Index","updated":"11:02 AM EDT","source":"CNBC"},{"id":"IXIC","name":"Nasdaq","value":22331.62,"change":-384.515,"unit":"Index","updated":"11:02 AM EDT","source":"CNBC"},{"id":"DXY","name":"DXY (US Dollar)","value":99.671,"change":0.44,"unit":"Index","updated":"11:02 AM EDT","source":"CNBC"},{"id":"US10Y","name":"US 10Y Treasury","value":4.241,"change":0.035,"unit":"%","updated":"11:02 AM EDT","source":"CNBC"},{"id":"US2Y","name":"US 2Y Treasury","value":3.699,"change":0.063,"unit":"%","updated":"11:02 AM EDT","source":"CNBC"},{"id":"VIX","name":"VIX","value":26.66,"change":2.43,"unit":"Index","updated":"11:02 AM EDT","source":"CNBC"},{"id":"GOLD","name":"Gold","value":5147.5,"change":-31.6,"unit":"USD","updated":"10:52 AM EDT","source":"CNBC"}],"generated":"2026-03-12T15:02:56.068608+00:00"}
 >>>>>>> Stashed changes
