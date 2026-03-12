@@ -939,6 +939,35 @@ export const en = {
 
   // Simulate Page
   'simulate.all_strategies': 'All Strategies',
+  'simulate.preset_verified_tooltip': 'Verified = backtested on 549+ coins with 2+ years of real market data',
+
+  // CTA badges
+  'cta.badge1': 'No credit card',
+  'cta.badge2': 'No account needed',
+  'cta.badge3': '100% free forever',
+  'cta.badge4': 'Results in 3 seconds',
+
+  // Compare table alt link
+  'compare_table.detail_link_alt': 'Why traders switch from TradingView',
+
+  // Coins page
+  'coins.explore_next': 'Found interesting coins? Test them in a strategy.',
+
+  // Changelog context callout
+  'changelog.context_title': 'What\u2019s versioned here?',
+  'changelog.context_desc': 'This changelog tracks the <strong class="text-[--color-text]">BB Squeeze SHORT trading strategy</strong> running live on Binance Futures. Platform version (website, simulator, API) is managed separately.',
+
+  // Meta: Privacy & Terms
+  'meta.privacy_title': 'Privacy Policy - PRUVIQ',
+  'meta.privacy_desc': 'PRUVIQ Privacy Policy. How we handle your data, cookies, and analytics. GDPR and CCPA compliant.',
+  'meta.privacy_tag': 'PRIVACY POLICY',
+  'meta.privacy_heading': 'Privacy Policy',
+  'meta.privacy_updated': 'Last updated: March 1, 2026',
+  'meta.terms_title': 'Terms of Service - PRUVIQ',
+  'meta.terms_desc': 'PRUVIQ Terms of Service. Usage conditions, financial disclaimers, liability limitations, and affiliate disclosure.',
+  'meta.terms_tag': 'TERMS OF SERVICE',
+  'meta.terms_heading': 'Terms of Service',
+  'meta.terms_updated': 'Last updated: March 1, 2026',
 } as const;
 
 export type TranslationKey = keyof typeof en;

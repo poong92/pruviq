@@ -1,14 +1,17 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import { useTranslations } from '../../i18n/index';
+
+const t = useTranslations('ko');
 ---
 
-<Layout title="이용약관 - PRUVIQ" description="PRUVIQ 이용약관. 서비스 이용 조건, 금융 면책조항, 책임 제한, 제휴 링크 고지.">
+<Layout title={t('meta.terms_title')} description={t('meta.terms_desc')}>
 
   <section class="py-20">
     <div class="max-w-3xl mx-auto px-4">
-      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">이용약관</p>
-      <h1 class="text-3xl md:text-4xl font-bold mb-2">이용약관</h1>
-      <p class="text-[--color-text-muted] text-sm mb-12">최종 수정일: 2026년 3월 1일</p>
+      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('meta.terms_tag')}</p>
+      <h1 class="text-3xl md:text-4xl font-bold mb-2">{t('meta.terms_heading')}</h1>
+      <p class="text-[--color-text-muted] text-sm mb-12">{t('meta.terms_updated')}</p>
 
       <div class="space-y-10 text-[--color-text-muted] text-sm leading-relaxed">
 

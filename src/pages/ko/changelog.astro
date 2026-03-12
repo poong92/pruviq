@@ -23,9 +23,8 @@ const t = useTranslations('ko');
     <div class="max-w-4xl mx-auto px-4">
       <div class="bg-[--color-bg-card] border-l-4 border-[--color-accent] p-4 rounded-r">
         <p class="text-sm text-[--color-text-muted]">
-          <strong class="text-[--color-text] font-semibold">여기서 추적하는 버전은?</strong><br/>
-          이 변경 기록은 바이낸스 선물에서 실시간 운영 중인 <strong class="text-[--color-text]">BB Squeeze SHORT 매매 전략</strong>을 추적합니다.
-          플랫폼 버전(웹사이트, 시뮬레이터, API)은 별도로 관리됩니다.
+          <strong class="text-[--color-text] font-semibold">{t('changelog.context_title')}</strong><br/>
+          <Fragment set:html={t('changelog.context_desc')} />
         </p>
       </div>
     </div>

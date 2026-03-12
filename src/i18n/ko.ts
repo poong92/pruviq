@@ -941,4 +941,33 @@ export const ko: Record<TranslationKey, string> = {
 
   // Simulate Page
   'simulate.all_strategies': '전체 전략',
+  'simulate.preset_verified_tooltip': '검증됨 = 549개+ 코인, 2년+ 실제 시장 데이터 백테스트',
+
+  // CTA badges
+  'cta.badge1': '신용카드 불필요',
+  'cta.badge2': '계정 생성 불필요',
+  'cta.badge3': '영구 무료',
+  'cta.badge4': '3초 만에 결과',
+
+  // Compare table alt link
+  'compare_table.detail_link_alt': 'TradingView에서 전환하는 이유',
+
+  // Coins page
+  'coins.explore_next': '관심 있는 코인을 찾으셨나요? 전략에서 테스트해 보세요.',
+
+  // Changelog context callout
+  'changelog.context_title': '여기서 추적하는 버전은?',
+  'changelog.context_desc': '이 변경 기록은 바이낸스 선물에서 실시간 운영 중인 <strong class="text-[--color-text]">BB Squeeze SHORT 매매 전략</strong>을 추적합니다. 플랫폼 버전(웹사이트, 시뮬레이터, API)은 별도로 관리됩니다.',
+
+  // Meta: Privacy & Terms
+  'meta.privacy_title': '개인정보처리방침 - PRUVIQ',
+  'meta.privacy_desc': 'PRUVIQ 개인정보처리방침. 데이터 수집, 쿠키, 분석 도구 사용에 대한 안내. GDPR 및 개인정보보호법 준수.',
+  'meta.privacy_tag': '개인정보처리방침',
+  'meta.privacy_heading': '개인정보처리방침',
+  'meta.privacy_updated': '최종 수정일: 2026년 3월 1일',
+  'meta.terms_title': '이용약관 - PRUVIQ',
+  'meta.terms_desc': 'PRUVIQ 이용약관. 서비스 이용 조건, 금융 면책조항, 책임 제한, 제휴 링크 고지.',
+  'meta.terms_tag': '이용약관',
+  'meta.terms_heading': '이용약관',
+  'meta.terms_updated': '최종 수정일: 2026년 3월 1일',
 };
