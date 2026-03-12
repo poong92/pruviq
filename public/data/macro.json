@@ -47,6 +47,7 @@
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 <<<<<<< HEAD
 <<<<<<< Updated upstream
 <<<<<<< HEAD
@@ -1010,4 +1011,7 @@
 >>>>>>> Stashed changes
 =======
 {"indicators":[{"id":"SPX","name":"S&P 500","value":6690.54,"change":-85.26,"unit":"Index","updated":"11:02 AM EDT","source":"CNBC"},{"id":"IXIC","name":"Nasdaq","value":22331.62,"change":-384.515,"unit":"Index","updated":"11:02 AM EDT","source":"CNBC"},{"id":"DXY","name":"DXY (US Dollar)","value":99.671,"change":0.44,"unit":"Index","updated":"11:02 AM EDT","source":"CNBC"},{"id":"US10Y","name":"US 10Y Treasury","value":4.241,"change":0.035,"unit":"%","updated":"11:02 AM EDT","source":"CNBC"},{"id":"US2Y","name":"US 2Y Treasury","value":3.699,"change":0.063,"unit":"%","updated":"11:02 AM EDT","source":"CNBC"},{"id":"VIX","name":"VIX","value":26.66,"change":2.43,"unit":"Index","updated":"11:02 AM EDT","source":"CNBC"},{"id":"GOLD","name":"Gold","value":5147.5,"change":-31.6,"unit":"USD","updated":"10:52 AM EDT","source":"CNBC"}],"generated":"2026-03-12T15:02:56.068608+00:00"}
+>>>>>>> Stashed changes
+=======
+{"indicators":[{"id":"SPX","name":"S&P 500","value":6682.61,"change":-93.19,"unit":"Index","updated":"11:22 AM EDT","source":"CNBC"},{"id":"IXIC","name":"Nasdaq","value":22305.037,"change":-411.098,"unit":"Index","updated":"11:22 AM EDT","source":"CNBC"},{"id":"DXY","name":"DXY (US Dollar)","value":99.7,"change":0.469,"unit":"Index","updated":"11:22 AM EDT","source":"CNBC"},{"id":"US10Y","name":"US 10Y Treasury","value":4.251,"change":0.045,"unit":"%","updated":"11:22 AM EDT","source":"CNBC"},{"id":"US2Y","name":"US 2Y Treasury","value":3.709,"change":0.073,"unit":"%","updated":"11:22 AM EDT","source":"CNBC"},{"id":"VIX","name":"VIX","value":27.2,"change":2.97,"unit":"Index","updated":"11:22 AM EDT","source":"CNBC"},{"id":"GOLD","name":"Gold","value":5124.0,"change":-55.1,"unit":"USD","updated":"11:12 AM EDT","source":"CNBC"}],"generated":"2026-03-12T15:22:51.174602+00:00"}
 >>>>>>> Stashed changes
