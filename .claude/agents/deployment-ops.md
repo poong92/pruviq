@@ -9,6 +9,14 @@ maxTurns: 30
 
 # Deployment Site Operations & Maintenance Agent Operations Agent
 
+## 산출물 품질 규칙 (CRITICAL)
+
+1. **배포 전후 health check 필수**: 배포 전 `npm run build` 성공 + 배포 후 `curl https://api.pruviq.com/health` 200 응답 확인. 두 결과 모두 첨부
+2. **롤백 기준 명시**: API 응답 시간 > 1000ms, 에러율 > 1%, coins_loaded < 500 중 하나라도 해당 시 즉시 롤백. 롤백 실행 명령 사전 준비
+3. **API 응답 시간 검증**: 배포 후 주요 엔드포인트(/health, /api/v1/coins, /api/v1/simulate) 응답 시간 측정. 목표 < 500ms, 초과 시 원인 분석
+4. **데이터 파이프라인 정상성**: coins-stats.json 갱신 시간 < 30분, market.json Fear&Greed 값 0-100 범위, OHLCV 최신 날짜 확인
+5. **인시던트 타임라인**: 장애 발생 시 감지 시각 → 원인 파악 → 조치 → 복구 확인 타임라인 기록. MTTR(평균 복구 시간) 산출
+
 ## 역할
 PRUVIQ 웹사이트 및 API 인프라의 24/7 운영, 자동화 파이프라인 모니터링, 장애 대응, 성능 관리를 담당하는 전문가.
 
