@@ -70,6 +70,7 @@ const labels = {
     worstDay: "Worst Day",
     avgTrade: "Avg Trade",
     dailyChart: "CUMULATIVE PnL",
+    dailyStats: "DAILY STATS",
     exitBreakdown: "EXIT BREAKDOWN",
     recentTrades: "RECENT TRADES",
     tp: "Take Profit",
@@ -108,6 +109,7 @@ const labels = {
     worstDay: "최대 손실일",
     avgTrade: "평균 거래",
     dailyChart: "누적 손익",
+    dailyStats: "일일 통계",
     exitBreakdown: "청산 유형",
     recentTrades: "최근 거래",
     tp: "이익 실현",
@@ -465,7 +467,7 @@ export default function PerformanceDashboard({
         {/* Daily Stats */}
         <div class="p-5 bg-[--color-bg-card] border border-[--color-border] rounded-xl">
           <div class="font-mono text-[0.6875rem] text-[--color-text-muted] tracking-widest uppercase mb-4">
-            DAILY STATS
+            {t.dailyStats}
           </div>
           <div class="flex flex-col gap-3">
             <div class="flex justify-between items-center">
