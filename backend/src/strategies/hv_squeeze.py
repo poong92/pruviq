@@ -38,6 +38,7 @@ class HVSqueezeStrategy:
         volume_ratio: float = 1.5,
         volume_ma_period: int = 20,
         avoid_hours: list = None,
+        avoid_months: list = None,
     ):
         self.bb_period = bb_period
         self.bb_std = bb_std
@@ -46,6 +47,7 @@ class HVSqueezeStrategy:
         self.volume_ratio = volume_ratio
         self.volume_ma_period = volume_ma_period
         self.avoid_hours = avoid_hours or []
+        self.avoid_months = avoid_months or []
 
     def get_params(self) -> dict:
         return {
@@ -55,6 +57,7 @@ class HVSqueezeStrategy:
             "squeeze_threshold": self.squeeze_threshold,
             "volume_ratio": self.volume_ratio,
             "avoid_hours": self.avoid_hours,
+            "avoid_months": self.avoid_months,
         }
 
     def calculate_indicators(self, df: pd.DataFrame) -> pd.DataFrame:
