@@ -3,6 +3,7 @@ import { getCssVar } from '../utils/format';
 import DiscreteSlider from './DiscreteSlider';
 import ResultsCard from './ResultsCard';
 import { API_BASE_URL as API_URL, STATIC_DATA, fetchWithFallback } from '../config/api';
+import type { IChartApi, ISeriesApi, SeriesType } from 'lightweight-charts';
 
 
 interface EquityPoint {
@@ -128,8 +129,8 @@ export default function StrategyDemo({
   const [error, setError] = useState<string | null>(null);
 
   const chartContainerRef = useRef<HTMLDivElement>(null);
-  const chartRef = useRef<any>(null);
-  const seriesRef = useRef<any>(null);
+  const chartRef = useRef<IChartApi | null>(null);
+  const seriesRef = useRef<ISeriesApi<SeriesType> | null>(null);
   const roRef = useRef<ResizeObserver | null>(null);
 
   // Load strategy-specific demo JSON

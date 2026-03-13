@@ -8,6 +8,7 @@ import { winRateColor, profitFactorColor, signColor, formatPF } from "../utils/f
 import type { BacktestResult, CoinResult } from "./simulator-types";
 import { getCssVar, COLORS } from "./simulator-types";
 import { API_BASE_URL as API_URL } from "../config/api";
+import type { IChartApi } from "lightweight-charts";
 
 interface HistoryEntry {
   label: string;
@@ -17,7 +18,8 @@ interface HistoryEntry {
 type ResultTab = "summary" | "equity" | "trades" | "coins" | "validate";
 
 interface Props {
-  t: Record<string, any>; // eslint-disable-line -- mixed i18n types (string, string[], Record)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- i18n dict has mixed value types (string, string[], Record<string,string>)
+  t: Record<string, any>;
   result: BacktestResult | null;
   error: string | null;
   resultTab: ResultTab;
@@ -82,9 +84,9 @@ export default function ResultsPanel({
     asc: false,
   });
   const equityChartRef = useRef<HTMLDivElement>(null);
-  const equityInstanceRef = useRef<any>(null); // TODO: lightweight-charts IChartApi not directly exported
+  const equityInstanceRef = useRef<IChartApi | null>(null);
   const ddChartRef = useRef<HTMLDivElement>(null);
-  const ddInstanceRef = useRef<any>(null); // TODO: lightweight-charts IChartApi not directly exported
+  const ddInstanceRef = useRef<IChartApi | null>(null);
 
   // Results guide banner
   const [showResultsGuide, setShowResultsGuide] = useState(true);
@@ -778,7 +780,7 @@ export default function ResultsPanel({
             <div class="p-2 overflow-x-auto -webkit-overflow-scrolling-touch">
               {result.trades && result.trades.length > 0 ? (
                 <table class="w-full text-xs font-mono min-w-[500px] md:min-w-0">
-                  <caption class="sr-only">Simulated trade details</caption>
+                  <caption class="sr-only">{t.tradeTableCaption || 'Simulated trade details'}</caption>
                   <thead>
                     <tr class="text-[--color-text-muted] border-b border-[--color-border]">
                       <th class="py-2 px-2 text-left">{t.symbol}</th>

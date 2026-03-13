@@ -9,7 +9,8 @@ import ConditionRow from './ConditionRow';
 
 interface Props {
   // i18n
-  t: Record<string, any>; // eslint-disable-line -- mixed i18n types (string, string[], Record)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- i18n dict has mixed value types (string, string[], Record<string,string>)
+  t: Record<string, any>;
   lang: 'en' | 'ko';
   // API state
   coinsLoaded: number;
@@ -167,6 +168,9 @@ export default function BuilderPanel(props: Props) {
                 onUpdate={props.updateCondition}
                 onRemove={props.removeCondition}
                 removeLabel={t.remove}
+                prevLabel={t.prev}
+                currLabel={t.curr}
+                lookAheadWarning={t.lookAheadWarn}
               />
             ))}
           </div>

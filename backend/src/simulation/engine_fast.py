@@ -140,6 +140,66 @@ def find_signals_vectorized(df: pd.DataFrame, strategy, direction: str = "short"
     return np.where(signal)[0]
 
 
+def find_signals_momentum(df: pd.DataFrame, strategy, direction: str = "long") -> np.ndarray:
+    """
+    Vectorized signal detection for Momentum Breakout strategy.
+
+    Conditions at signal bar (idx), entry at idx+1:
+    - close[idx] > highest_20[idx]: breakout (highest_20 already shifted by 1 in calculate_indicators)
+    - vol_ratio[idx] >= volume_ratio: volume confirmation
+    - uptrend[idx]: EMA20 > EMA50
+    - hour[idx+1] not in avoid_hours: time filter on entry bar
+    """
+    n = len(df)
+    if n < 100:
+        return np.array([], dtype=int)
+
+    def col(name, default=None):
+        if name in df.columns:
+            return df[name].values
+        if default is not None:
+            return default
+        return np.zeros(n)
+
+    close = col("close")
+    highest_20 = col("highest_20")
+    vol_ratio = col("vol_ratio")
+    uptrend = col("uptrend", np.zeros(n, dtype=bool))
+    hour = col("hour", np.zeros(n, dtype=int))
+
+    min_idx = strategy.ema_slow + strategy.breakout_lookback
+    valid_range = np.arange(n) >= min_idx
+
+    # Breakout: close > highest_20 (highest_20 is already shifted by 1 in calculate_indicators)
+    highest_valid = ~np.isnan(highest_20) & (highest_20 > 0)
+    has_breakout = highest_valid & (close > highest_20)
+
+    # Volume filter
+    has_volume = vol_ratio >= strategy.volume_ratio
+
+    # Uptrend filter
+    has_uptrend = uptrend.astype(bool)
+
+    # Time filter (check entry bar = idx+1 hour)
+    avoid_set = set(strategy.avoid_hours)
+    next_hour_ok = np.ones(n, dtype=bool)
+    if avoid_set:
+        next_hour = np.roll(hour, -1)
+        next_hour[-1] = 0
+        for h in avoid_set:
+            next_hour_ok &= (next_hour != h)
+    next_hour_ok[-1] = False  # Can't enter on last bar
+
+    # Combine all conditions
+    signal = valid_range & has_breakout & has_volume & has_uptrend & next_hour_ok
+
+    # For "short" direction (unlikely but for completeness), no signals
+    if direction != "long":
+        return np.array([], dtype=int)
+
+    return np.where(signal)[0]
+
+
 def find_signals_generic(df: pd.DataFrame, strategy, direction: str) -> np.ndarray:
     """
     Generic signal detection fallback — calls strategy.check_signal() per bar.
@@ -297,9 +357,11 @@ def run_fast(
 ) -> SimResult:
     """Complete fast simulation pipeline."""
 
-    # Find signals: use vectorized for BB Squeeze, generic for others
+    # Find signals: use vectorized implementations where available
     if strategy_id in ("bb-squeeze-short", "bb-squeeze-long", None):
         signal_indices = find_signals_vectorized(df, strategy, direction)
+    elif strategy_id == "momentum-long":
+        signal_indices = find_signals_momentum(df, strategy, direction)
     else:
         signal_indices = find_signals_generic(df, strategy, direction)
 

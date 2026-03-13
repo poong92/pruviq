@@ -11,6 +11,7 @@ import {
   getCssVar,
   formatPF,
 } from "../utils/format";
+import type { IChartApi, AreaData, Time } from "lightweight-charts";
 
 interface DailyEntry {
   date: string;
@@ -92,6 +93,7 @@ const labels = {
     balance: "Balance",
     startBal: "Starting",
     curBal: "Current",
+    tableCaption: "Recent backtest trades",
   },
   ko: {
     tag: "백테스트 결과",
@@ -129,6 +131,7 @@ const labels = {
     balance: "잔고",
     startBal: "시작",
     curBal: "현재",
+    tableCaption: "최근 백테스트 거래",
   },
 };
 
@@ -185,7 +188,7 @@ export default function PerformanceDashboard({
   const [showTrades, setShowTrades] = useState(false);
 
   const chartContainerRef = useRef<HTMLDivElement>(null);
-  const chartRef = useRef<any>(null);
+  const chartRef = useRef<IChartApi | null>(null);
 
   useEffect(() => {
     fetch("/data/performance.json")
@@ -287,7 +290,7 @@ export default function PerformanceDashboard({
         crosshairMarkerBorderWidth: 2,
       });
 
-      areaSeries.setData(cumulativeData as any);
+      areaSeries.setData(cumulativeData as AreaData<Time>[]);
       areaSeries.createPriceLine({
         price: 0,
         color: getCssVar("--color-text-muted"),
@@ -631,7 +634,7 @@ export default function PerformanceDashboard({
           {showTrades && (
             <div class="overflow-x-auto">
               <table class="w-full border-collapse font-mono text-xs">
-                <caption class="sr-only">Recent backtest trades</caption>
+                <caption class="sr-only">{t.tableCaption}</caption>
                 <thead>
                   <tr class="border-b border-[--color-border]">
                     <th class="px-3 py-2 text-left text-[--color-text-muted] text-[0.6875rem] font-semibold">

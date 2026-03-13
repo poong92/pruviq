@@ -15,6 +15,7 @@ const labels = {
     heading: 'Start trading with reduced fees',
     subtext: 'Sign up through PRUVIQ and save on every trade',
     discount: 'fee discount',
+    off: 'off',
     signup: 'Sign Up',
     disclosure: 'Affiliate link — we may earn a commission at no extra cost to you.',
   },
@@ -22,6 +23,7 @@ const labels = {
     heading: '수수료 할인으로 트레이딩 시작',
     subtext: 'PRUVIQ를 통해 가입하면 매 거래마다 절약',
     discount: '수수료 할인',
+    off: '할인',
     signup: '가입하기',
     disclosure: '제휴 링크 — 추가 비용 없이 저희에게 수수료가 지급됩니다.',
   },
@@ -57,7 +59,7 @@ export default function ExchangeCTA({ mode = 'card', lang = 'en', coin, strategy
               class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md border border-[--color-border] hover:border-[--color-accent] text-[0.6875rem] font-mono transition-colors"
             >
               <span class="font-semibold text-[--color-text]">{ex.name}</span>
-              <span class="text-[--color-accent] text-[0.625rem]">{ex.discountLabel} off</span>
+              <span class="text-[--color-accent] text-[0.625rem]">{ex.discountLabel} {t.off}</span>
             </a>
           ))}
         </div>

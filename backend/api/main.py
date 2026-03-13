@@ -977,14 +977,22 @@ def _build_coin_stats(strategy) -> dict:
 # --- Coin Explorer Endpoints ---
 
 @app.get("/ohlcv/{symbol}", response_model=OhlcvResponse)
-async def get_ohlcv(symbol: str, limit: int = 3000, timeframe: str = "1H"):
+async def get_ohlcv(symbol: str, limit: int = 1000, offset: int = 0, timeframe: str = "1H"):
     """Get OHLCV + indicator data for a single coin.
 
     Supports multi-timeframe via the `timeframe` query parameter.
     For non-1H timeframes, data is resampled from 1H and indicators are recomputed.
+
+    Pagination:
+    - limit: number of bars to return (default 1000, max 5000, 0 = all)
+    - offset: number of bars to skip from the end (0 = most recent)
     """
     symbol = symbol.upper()
     timeframe = _validate_timeframe(timeframe)
+
+    # Cap limit at 5000 to prevent excessive response sizes
+    if limit > 5000:
+        limit = 5000
 
     if _is_resampled(timeframe):
         # Resample raw data and compute indicators fresh
@@ -1001,6 +1009,9 @@ async def get_ohlcv(symbol: str, limit: int = 3000, timeframe: str = "1H"):
             if df is None:
                 raise HTTPException(404, f"Symbol not found: {symbol}")
 
+    # Apply pagination: offset from end, then limit
+    if offset > 0:
+        df = df.iloc[:-offset] if offset < len(df) else df.iloc[:0]
     if limit > 0:
         df = df.tail(limit)
 
@@ -1400,6 +1411,9 @@ _news_cache: Optional[dict] = None
 # --- Binance Spot live ticker (30s TTL) + Futures fallback ---
 BINANCE_SPOT_URL = "https://api.binance.com/api/v3/ticker/24hr"
 BINANCE_FUTURES_URL = "https://fapi.binance.com/fapi/v1/ticker/24hr"
+# DO server proxy via Tailscale for Korean IP bypass (fapi v1 geo-blocked from KR)
+BINANCE_PROXY_URL = "http://100.122.203.78:9090/fapi/v1/ticker/24hr"
+BINANCE_PROXY_HEADERS = {"X-Proxy-Key": "pruviq-binance-2026"}
 _live_spot_cache: Optional[dict] = None
 _live_spot_ts: float = 0.0
 _live_spot_lock = asyncio.Lock()
@@ -1457,9 +1471,15 @@ def _fetch_binance_tickers() -> tuple:
     Falls back to CoinGecko if Binance fails.
     """
     try:
-        resp = http_requests.get(BINANCE_FUTURES_URL, timeout=10)
-        resp.raise_for_status()
-        tickers = resp.json()
+        # Try direct first, fallback to DO proxy (Korean IP workaround)
+        try:
+            resp = http_requests.get(BINANCE_FUTURES_URL, timeout=5)
+            resp.raise_for_status()
+            tickers = resp.json()
+        except Exception:
+            resp = http_requests.get(BINANCE_PROXY_URL, timeout=15, headers=BINANCE_PROXY_HEADERS)
+            resp.raise_for_status()
+            tickers = resp.json()
 
         # Filter USDT pairs with valid data
         usdt_tickers = [t for t in tickers if t["symbol"].endswith("USDT")
@@ -1753,9 +1773,14 @@ def _fetch_spot_tickers() -> list:
 def _fetch_futures_tickers() -> list:
     """Fetch Futures tickers for Spot-missing coins. Weight 40 per call."""
     try:
-        resp = http_requests.get(BINANCE_FUTURES_URL, timeout=10)
-        resp.raise_for_status()
-        return resp.json()
+        try:
+            resp = http_requests.get(BINANCE_FUTURES_URL, timeout=5)
+            resp.raise_for_status()
+            return resp.json()
+        except Exception:
+            resp = http_requests.get(BINANCE_PROXY_URL, timeout=15, headers=BINANCE_PROXY_HEADERS)
+            resp.raise_for_status()
+            return resp.json()
     except Exception as e:
         logger.warning(f"Binance Futures fallback fetch: {e}")
         return []
