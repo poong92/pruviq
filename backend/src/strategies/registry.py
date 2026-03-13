@@ -16,6 +16,11 @@ from src.strategies.donchian_breakout import DonchianBreakoutStrategy
 from src.strategies.mean_reversion import MeanReversionStrategy
 from src.strategies.supertrend import SuperTrendStrategy
 from src.strategies.keltner_squeeze import KeltnerSqueezeStrategy
+from src.strategies.stochastic_rsi import StochasticRSIStrategy
+from src.strategies.ma_cross import MACrossStrategy
+from src.strategies.adx_trend import ADXTrendStrategy
+from src.strategies.ichimoku import IchimokuStrategy
+from src.strategies.heikin_ashi import HeikinAshiStrategy
 
 
 AVOID_HOURS_BB = [2, 3, 10, 20, 21, 22, 23]
@@ -119,6 +124,51 @@ STRATEGY_REGISTRY = {
         "defaults": {"sl": 7, "tp": 6},
         "name": "Keltner Squeeze",
         "description": "Enters when BB exits Keltner Channel (squeeze release) with directional breakout.",
+        "status": "research",
+    },
+    "stochastic-rsi": {
+        "class": StochasticRSIStrategy,
+        "init_kwargs": {"avoid_hours": []},
+        "direction": "both",
+        "defaults": {"sl": 7, "tp": 5},
+        "name": "Stochastic RSI",
+        "description": "Stochastic oscillator applied to RSI. Enters on golden/death cross in oversold/overbought zones.",
+        "status": "research",
+    },
+    "ma-cross": {
+        "class": MACrossStrategy,
+        "init_kwargs": {"avoid_hours": []},
+        "direction": "both",
+        "defaults": {"sl": 8, "tp": 10},
+        "name": "MA Cross",
+        "description": "EMA golden/death cross (50/200). Classic trend-following entry on moving average crossover.",
+        "status": "research",
+    },
+    "adx-trend": {
+        "class": ADXTrendStrategy,
+        "init_kwargs": {"avoid_hours": []},
+        "direction": "both",
+        "defaults": {"sl": 8, "tp": 10},
+        "name": "ADX Trend",
+        "description": "ADX + DMI directional crossover. Enters only when trend strength (ADX > 25) is confirmed.",
+        "status": "research",
+    },
+    "ichimoku": {
+        "class": IchimokuStrategy,
+        "init_kwargs": {"avoid_hours": []},
+        "direction": "both",
+        "defaults": {"sl": 8, "tp": 10},
+        "name": "Ichimoku Cloud",
+        "description": "Ichimoku Kinko Hyo. Enters when price is above/below cloud and Tenkan crosses Kijun.",
+        "status": "research",
+    },
+    "heikin-ashi": {
+        "class": HeikinAshiStrategy,
+        "init_kwargs": {"avoid_hours": []},
+        "direction": "both",
+        "defaults": {"sl": 7, "tp": 8},
+        "name": "Heikin Ashi Trend",
+        "description": "Heikin Ashi candle trend detection. Enters on N consecutive HA candles with no opposing wick.",
         "status": "research",
     },
 }

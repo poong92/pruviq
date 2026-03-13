@@ -883,6 +883,370 @@ def find_signals_keltner_squeeze(df: pd.DataFrame, strategy, direction: str = "b
     return np.where(signal)[0]
 
 
+def find_signals_stochastic_rsi(df: pd.DataFrame, strategy, direction: str = "both") -> np.ndarray:
+    """
+    Vectorized signal detection for Stochastic RSI strategy.
+
+    LONG: stochrsi_k < oversold + golden cross (%K crosses above %D)
+    SHORT: stochrsi_k > overbought + death cross (%K crosses below %D)
+
+    교차 감지: shift(1)로 prev bar 비교 → look-ahead 없음.
+    """
+    n = len(df)
+    if n < 100:
+        return np.array([], dtype=int)
+
+    def col(name, default=None):
+        if name in df.columns:
+            return df[name].values
+        if default is not None:
+            return default
+        return np.zeros(n)
+
+    k = col("stochrsi_k")
+    d = col("stochrsi_d")
+    hour = col("hour", np.zeros(n, dtype=int))
+
+    min_idx = strategy.rsi_period + strategy.stoch_period + strategy.k_smooth + strategy.d_smooth
+    valid_range = np.arange(n) >= min_idx
+
+    # prev bar (shift 1)
+    prev_k = np.roll(k, 1)
+    prev_k[0] = np.nan
+    prev_d = np.roll(d, 1)
+    prev_d[0] = np.nan
+
+    valid_vals = ~np.isnan(k) & ~np.isnan(d) & ~np.isnan(prev_k) & ~np.isnan(prev_d)
+
+    # Golden Cross: prev_k < prev_d AND curr_k > curr_d
+    golden_cross = (prev_k < prev_d) & (k > d)
+    # Death Cross: prev_k > prev_d AND curr_k < curr_d
+    death_cross = (prev_k > prev_d) & (k < d)
+
+    long_cond = valid_range & valid_vals & (k < strategy.oversold) & golden_cross
+    short_cond = valid_range & valid_vals & (k > strategy.overbought) & death_cross
+
+    # Time filter (entry bar = idx+1)
+    avoid_set = set(strategy.avoid_hours)
+    next_hour_ok = np.ones(n, dtype=bool)
+    if avoid_set:
+        for i in range(n - 1):
+            if int(hour[i + 1]) in avoid_set:
+                next_hour_ok[i] = False
+    next_hour_ok[n - 1] = False
+
+    # avoid_months filter
+    avoid_months_set = set(getattr(strategy, 'avoid_months', None) or [])
+    next_month_ok = np.ones(n, dtype=bool)
+    if avoid_months_set and "timestamp" in df.columns:
+        months = pd.to_datetime(df["timestamp"]).dt.month.values
+        next_months = np.empty(n, dtype=int)
+        next_months[:-1] = months[1:]
+        next_months[-1] = 0
+        for m in avoid_months_set:
+            next_month_ok &= (next_months != m)
+    next_month_ok[n - 1] = False
+
+    min_vol_regime = getattr(strategy, 'min_vol_regime', None)
+    vol_regime_ok = _compute_vol_regime_filter(df, n, min_vol_regime)
+
+    filters = next_hour_ok & next_month_ok & vol_regime_ok
+
+    if direction == "long":
+        signal = long_cond & filters
+    elif direction == "short":
+        signal = short_cond & filters
+    else:
+        signal = (long_cond | short_cond) & filters
+
+    return np.where(signal)[0]
+
+
+def find_signals_ma_cross(df: pd.DataFrame, strategy, direction: str = "both") -> np.ndarray:
+    """
+    Vectorized signal detection for MA Cross strategy.
+
+    LONG: ma_cross_up (Golden Cross — fast EMA crosses above slow EMA)
+    SHORT: ma_cross_down (Death Cross — fast EMA crosses below slow EMA)
+
+    교차 열은 calculate_indicators에서 shift(1) 기반으로 이미 계산됨.
+    """
+    n = len(df)
+    if n < 100:
+        return np.array([], dtype=int)
+
+    def col(name, default=None):
+        if name in df.columns:
+            return df[name].values
+        if default is not None:
+            return default
+        return np.zeros(n)
+
+    ma_fast = col("ma_fast")
+    ma_slow = col("ma_slow")
+    cross_up = col("ma_cross_up", np.zeros(n, dtype=bool)).astype(bool)
+    cross_down = col("ma_cross_down", np.zeros(n, dtype=bool)).astype(bool)
+    hour = col("hour", np.zeros(n, dtype=int))
+
+    min_idx = strategy.slow_period + 1
+    valid_range = np.arange(n) >= min_idx
+
+    valid_ma = ~np.isnan(ma_fast) & ~np.isnan(ma_slow)
+
+    long_cond = valid_range & valid_ma & cross_up
+    short_cond = valid_range & valid_ma & cross_down
+
+    # Time filter (entry bar = idx+1)
+    avoid_set = set(strategy.avoid_hours)
+    next_hour_ok = np.ones(n, dtype=bool)
+    if avoid_set:
+        for i in range(n - 1):
+            if int(hour[i + 1]) in avoid_set:
+                next_hour_ok[i] = False
+    next_hour_ok[n - 1] = False
+
+    # avoid_months filter
+    avoid_months_set = set(getattr(strategy, 'avoid_months', None) or [])
+    next_month_ok = np.ones(n, dtype=bool)
+    if avoid_months_set and "timestamp" in df.columns:
+        months = pd.to_datetime(df["timestamp"]).dt.month.values
+        next_months = np.empty(n, dtype=int)
+        next_months[:-1] = months[1:]
+        next_months[-1] = 0
+        for m in avoid_months_set:
+            next_month_ok &= (next_months != m)
+    next_month_ok[n - 1] = False
+
+    min_vol_regime = getattr(strategy, 'min_vol_regime', None)
+    vol_regime_ok = _compute_vol_regime_filter(df, n, min_vol_regime)
+
+    filters = next_hour_ok & next_month_ok & vol_regime_ok
+
+    if direction == "long":
+        signal = long_cond & filters
+    elif direction == "short":
+        signal = short_cond & filters
+    else:
+        signal = (long_cond | short_cond) & filters
+
+    return np.where(signal)[0]
+
+
+def find_signals_adx_trend(df: pd.DataFrame, strategy, direction: str = "both") -> np.ndarray:
+    """
+    Vectorized signal detection for ADX Trend strategy.
+
+    LONG: ADX > threshold + di_plus > di_minus + di_cross_up
+    SHORT: ADX > threshold + di_minus > di_plus + di_cross_down
+
+    교차 열은 calculate_indicators에서 shift(1) 기반으로 이미 계산됨.
+    """
+    n = len(df)
+    if n < 100:
+        return np.array([], dtype=int)
+
+    def col(name, default=None):
+        if name in df.columns:
+            return df[name].values
+        if default is not None:
+            return default
+        return np.zeros(n)
+
+    adx = col("adx")
+    di_plus = col("di_plus")
+    di_minus = col("di_minus")
+    cross_up = col("di_cross_up", np.zeros(n, dtype=bool)).astype(bool)
+    cross_down = col("di_cross_down", np.zeros(n, dtype=bool)).astype(bool)
+    hour = col("hour", np.zeros(n, dtype=int))
+
+    min_idx = strategy.adx_period * 3
+    valid_range = np.arange(n) >= min_idx
+
+    valid_adx = ~np.isnan(adx) & ~np.isnan(di_plus) & ~np.isnan(di_minus)
+    strong_trend = adx > strategy.adx_threshold
+
+    long_cond = valid_range & valid_adx & strong_trend & (di_plus > di_minus) & cross_up
+    short_cond = valid_range & valid_adx & strong_trend & (di_minus > di_plus) & cross_down
+
+    # Time filter (entry bar = idx+1)
+    avoid_set = set(strategy.avoid_hours)
+    next_hour_ok = np.ones(n, dtype=bool)
+    if avoid_set:
+        for i in range(n - 1):
+            if int(hour[i + 1]) in avoid_set:
+                next_hour_ok[i] = False
+    next_hour_ok[n - 1] = False
+
+    # avoid_months filter
+    avoid_months_set = set(getattr(strategy, 'avoid_months', None) or [])
+    next_month_ok = np.ones(n, dtype=bool)
+    if avoid_months_set and "timestamp" in df.columns:
+        months = pd.to_datetime(df["timestamp"]).dt.month.values
+        next_months = np.empty(n, dtype=int)
+        next_months[:-1] = months[1:]
+        next_months[-1] = 0
+        for m in avoid_months_set:
+            next_month_ok &= (next_months != m)
+    next_month_ok[n - 1] = False
+
+    min_vol_regime = getattr(strategy, 'min_vol_regime', None)
+    vol_regime_ok = _compute_vol_regime_filter(df, n, min_vol_regime)
+
+    filters = next_hour_ok & next_month_ok & vol_regime_ok
+
+    if direction == "long":
+        signal = long_cond & filters
+    elif direction == "short":
+        signal = short_cond & filters
+    else:
+        signal = (long_cond | short_cond) & filters
+
+    return np.where(signal)[0]
+
+
+def find_signals_ichimoku(df: pd.DataFrame, strategy, direction: str = "both") -> np.ndarray:
+    """
+    Vectorized signal detection for Ichimoku Cloud strategy.
+
+    LONG: close > cloud_top + tk_cross_up (Tenkan crosses above Kijun)
+    SHORT: close < cloud_bottom + tk_cross_down (Tenkan crosses below Kijun)
+
+    cloud_top/bottom은 calculate_indicators에서 shift(kijun) 적용으로 look-ahead 없음.
+    tk_cross 열은 shift(1) 기반으로 계산됨.
+    """
+    n = len(df)
+    if n < 100:
+        return np.array([], dtype=int)
+
+    def col(name, default=None):
+        if name in df.columns:
+            return df[name].values
+        if default is not None:
+            return default
+        return np.zeros(n)
+
+    close = col("close")
+    cloud_top = col("cloud_top")
+    cloud_bottom = col("cloud_bottom")
+    cross_up = col("tk_cross_up", np.zeros(n, dtype=bool)).astype(bool)
+    cross_down = col("tk_cross_down", np.zeros(n, dtype=bool)).astype(bool)
+    hour = col("hour", np.zeros(n, dtype=int))
+
+    min_idx = strategy.senkou_b + strategy.kijun + 1
+    valid_range = np.arange(n) >= min_idx
+
+    valid_cloud = ~np.isnan(cloud_top) & ~np.isnan(cloud_bottom) & ~np.isnan(close)
+
+    long_cond = valid_range & valid_cloud & (close > cloud_top) & cross_up
+    short_cond = valid_range & valid_cloud & (close < cloud_bottom) & cross_down
+
+    # Time filter (entry bar = idx+1)
+    avoid_set = set(strategy.avoid_hours)
+    next_hour_ok = np.ones(n, dtype=bool)
+    if avoid_set:
+        for i in range(n - 1):
+            if int(hour[i + 1]) in avoid_set:
+                next_hour_ok[i] = False
+    next_hour_ok[n - 1] = False
+
+    # avoid_months filter
+    avoid_months_set = set(getattr(strategy, 'avoid_months', None) or [])
+    next_month_ok = np.ones(n, dtype=bool)
+    if avoid_months_set and "timestamp" in df.columns:
+        months = pd.to_datetime(df["timestamp"]).dt.month.values
+        next_months = np.empty(n, dtype=int)
+        next_months[:-1] = months[1:]
+        next_months[-1] = 0
+        for m in avoid_months_set:
+            next_month_ok &= (next_months != m)
+    next_month_ok[n - 1] = False
+
+    min_vol_regime = getattr(strategy, 'min_vol_regime', None)
+    vol_regime_ok = _compute_vol_regime_filter(df, n, min_vol_regime)
+
+    filters = next_hour_ok & next_month_ok & vol_regime_ok
+
+    if direction == "long":
+        signal = long_cond & filters
+    elif direction == "short":
+        signal = short_cond & filters
+    else:
+        signal = (long_cond | short_cond) & filters
+
+    return np.where(signal)[0]
+
+
+def find_signals_heikin_ashi(df: pd.DataFrame, strategy, direction: str = "both") -> np.ndarray:
+    """
+    Vectorized signal detection for Heikin Ashi Trend strategy.
+
+    LONG: ha_consec_bull >= 1 (N연속 양봉) + lower wick 없음
+    SHORT: ha_consec_bear >= 1 (N연속 음봉) + upper wick 없음
+
+    ha_consec_bull/bear은 rolling min으로 모든 캔들이 bull/bear인지 확인.
+    wick 판정은 현재 캔들 기준 (완성 캔들이므로 look-ahead 아님).
+    """
+    n = len(df)
+    if n < 100:
+        return np.array([], dtype=int)
+
+    def col(name, default=None):
+        if name in df.columns:
+            return df[name].values
+        if default is not None:
+            return default
+        return np.zeros(n)
+
+    consec_bull = col("ha_consec_bull")
+    consec_bear = col("ha_consec_bear")
+    has_lower_wick = col("ha_has_lower_wick", np.ones(n, dtype=bool)).astype(bool)
+    has_upper_wick = col("ha_has_upper_wick", np.ones(n, dtype=bool)).astype(bool)
+    hour = col("hour", np.zeros(n, dtype=int))
+
+    min_idx = strategy.consecutive + 1
+    valid_range = np.arange(n) >= min_idx
+
+    valid_ha = ~np.isnan(consec_bull) & ~np.isnan(consec_bear)
+
+    long_cond = valid_range & valid_ha & (consec_bull >= 1) & ~has_lower_wick
+    short_cond = valid_range & valid_ha & (consec_bear >= 1) & ~has_upper_wick
+
+    # Time filter (entry bar = idx+1)
+    avoid_set = set(strategy.avoid_hours)
+    next_hour_ok = np.ones(n, dtype=bool)
+    if avoid_set:
+        for i in range(n - 1):
+            if int(hour[i + 1]) in avoid_set:
+                next_hour_ok[i] = False
+    next_hour_ok[n - 1] = False
+
+    # avoid_months filter
+    avoid_months_set = set(getattr(strategy, 'avoid_months', None) or [])
+    next_month_ok = np.ones(n, dtype=bool)
+    if avoid_months_set and "timestamp" in df.columns:
+        months = pd.to_datetime(df["timestamp"]).dt.month.values
+        next_months = np.empty(n, dtype=int)
+        next_months[:-1] = months[1:]
+        next_months[-1] = 0
+        for m in avoid_months_set:
+            next_month_ok &= (next_months != m)
+    next_month_ok[n - 1] = False
+
+    min_vol_regime = getattr(strategy, 'min_vol_regime', None)
+    vol_regime_ok = _compute_vol_regime_filter(df, n, min_vol_regime)
+
+    filters = next_hour_ok & next_month_ok & vol_regime_ok
+
+    if direction == "long":
+        signal = long_cond & filters
+    elif direction == "short":
+        signal = short_cond & filters
+    else:
+        signal = (long_cond | short_cond) & filters
+
+    return np.where(signal)[0]
+
+
 def find_signals_generic(df: pd.DataFrame, strategy, direction: str) -> np.ndarray:
     """
     Generic signal detection fallback — calls strategy.check_signal() per bar.
@@ -1061,6 +1425,16 @@ def run_fast(
         signal_indices = find_signals_supertrend(df, strategy, direction)
     elif strategy_id == "keltner-squeeze":
         signal_indices = find_signals_keltner_squeeze(df, strategy, direction)
+    elif strategy_id == "stochastic-rsi":
+        signal_indices = find_signals_stochastic_rsi(df, strategy, direction)
+    elif strategy_id == "ma-cross":
+        signal_indices = find_signals_ma_cross(df, strategy, direction)
+    elif strategy_id == "adx-trend":
+        signal_indices = find_signals_adx_trend(df, strategy, direction)
+    elif strategy_id == "ichimoku":
+        signal_indices = find_signals_ichimoku(df, strategy, direction)
+    elif strategy_id == "heikin-ashi":
+        signal_indices = find_signals_heikin_ashi(df, strategy, direction)
     else:
         signal_indices = find_signals_generic(df, strategy, direction)
 
