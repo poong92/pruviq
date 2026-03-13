@@ -7,6 +7,13 @@ const t = useTranslations('en');
 
 const allStrategies = await getCollection('strategies');
 
+// Load all simulator presets for the "Try in Simulator" section
+let simulatorPresets: Array<{id: string; name_ko?: string; name?: string; direction?: string; timeframe?: string; description_ko?: string}> = [];
+try {
+  const presetsRes = await fetch('http://localhost:8080/builder/presets');
+  if (presetsRes.ok) simulatorPresets = await presetsRes.json();
+} catch { /* ignore — section hidden if unavailable */ }
+
 const statusOrder = { verified: 0, testing: 1, killed: 2, shelved: 3 };
 const strategies = allStrategies.sort((a, b) => statusOrder[a.data.status] - statusOrder[b.data.status]);
 
@@ -176,6 +183,38 @@ const difficultyColors: Record<string, string> = {
           </div>
         ))}
       </div>
+
+      {simulatorPresets.length > 0 && (
+        <div class="mt-12">
+          <h2 class="text-xl font-bold mb-2">시뮬레이터 프리셋 전체 ({simulatorPresets.length}종)</h2>
+          <p class="text-[--color-text-muted] text-sm mb-6">
+            아래 전략을 클릭하면 시뮬레이터에서 바로 파라미터가 적용됩니다. 549개 코인 동시 테스트.
+          </p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {simulatorPresets.map((preset) => (
+              <a
+                href={`/simulate?preset=${preset.id}`}
+                class="flex items-center justify-between border border-[--color-border] rounded-lg px-4 py-3 bg-[--color-bg-card] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors group"
+              >
+                <div>
+                  <p class="font-semibold text-sm">{preset.name_ko ?? preset.name}</p>
+                  {preset.description_ko && (
+                    <p class="text-[--color-text-muted] text-xs mt-0.5 line-clamp-1">{preset.description_ko}</p>
+                  )}
+                </div>
+                <div class="flex items-center gap-2 shrink-0 ml-3">
+                  {preset.direction && (
+                    <span class={`font-mono text-xs px-1.5 py-0.5 rounded border ${preset.direction === 'long' ? 'text-[--color-accent] border-[--color-accent]/30' : preset.direction === 'short' ? 'text-[--color-red] border-[--color-red]/30' : 'text-[--color-yellow] border-[--color-yellow]/30'}`}>
+                      {preset.direction.toUpperCase()}
+                    </span>
+                  )}
+                  <span class="text-[--color-text-muted] text-xs group-hover:text-[--color-accent]">&rarr;</span>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div class="mt-12 border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] text-center">
         <p class="font-mono text-[--color-accent] text-sm mb-2">{t('strategies.more_tag')}</p>
