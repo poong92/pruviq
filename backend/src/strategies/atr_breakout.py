@@ -57,6 +57,7 @@ class ATRBreakoutStrategy:
             "use_trend_filter": self.use_trend_filter,
             "avoid_hours": self.avoid_hours,
             "avoid_months": self.avoid_months,
+            "min_vol_regime": self.min_vol_regime,
         }
 
     def calculate_indicators(self, df: pd.DataFrame) -> pd.DataFrame:
