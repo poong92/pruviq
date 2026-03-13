@@ -3141,6 +3141,9 @@ async def get_daily_rankings(date: Optional[str] = None):
             seen.add(key)
             unique_entries.append(e)
 
+    # Filter out 0-trade entries (no data = not meaningful for ranking)
+    unique_entries = [e for e in unique_entries if e.get("total_trades", 0) > 0]
+
     # Rank by profit_factor desc (then win_rate as tiebreaker)
     ranked = sorted(
         unique_entries,
