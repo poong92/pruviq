@@ -566,7 +566,8 @@ def run_fast(
     daily_pnl = _dd(float)
     for t in trades:
         day_key = t.exit_time[:10]  # YYYY-MM-DD
-        daily_pnl[day_key] += t.pnl_pct
+        if day_key and day_key != "NaT" and len(day_key) == 10:
+            daily_pnl[day_key] += t.pnl_pct
     daily_returns = np.array(list(daily_pnl.values())) if daily_pnl else np.array([])
 
     if len(daily_returns) >= 5:

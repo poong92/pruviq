@@ -753,7 +753,8 @@ async def simulate(req: SimulationRequest):
         dd = (peak - equity) / peak * 100 if peak > 0 else 0.0  # % of peak (not absolute points)
         dd = min(dd, 100.0)  # Cap at 100%
         max_dd = max(max_dd, dd)
-        eq_times.append(t.get("exit_time", t["time"])[:10])
+        _eq_t = t.get("exit_time", t["time"])[:10]
+        eq_times.append(_eq_t if _eq_t and _eq_t != "NaT" else "1970-01-01")
         eq_values.append(equity - 100.0)  # Convert to return % for frontend
 
         if t["pnl_pct"] <= 0:
@@ -771,7 +772,8 @@ async def simulate(req: SimulationRequest):
     daily_pnl_sim = _dd_sim(float)
     for t in all_trades:
         day_key = t.get("exit_time", t["time"])[:10]  # YYYY-MM-DD (exit time)
-        daily_pnl_sim[day_key] += t["pnl_pct"]
+        if day_key and day_key != "NaT" and len(day_key) == 10:
+            daily_pnl_sim[day_key] += t["pnl_pct"]
     # Normalize by number of concurrent positions for capital-weighted daily returns
     # n_coins already defined above (equity curve section)
     # Fill zero-return days so Sharpe isn't inflated by excluding non-trading days
@@ -2463,7 +2465,8 @@ async def run_backtest(req: BacktestRequest):
     daily_pnl = dd_import(float)
     for t in all_trades:
         day_key = t["exit_time"][:10]  # YYYY-MM-DD
-        daily_pnl[day_key] += t.get("pnl_usd", 0)
+        if day_key and day_key != "NaT" and len(day_key) == 10:
+            daily_pnl[day_key] += t.get("pnl_usd", 0)
     # Fill zero-return days so Sharpe isn't inflated by excluding non-trading days
     if daily_pnl and len(daily_pnl) >= 2 and initial_capital > 0:
         from datetime import datetime as _dt_bt, timedelta as _td_bt
