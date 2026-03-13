@@ -1,0 +1,101 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { StrategyRanking } from '../../components/StrategyRanking';
+import ErrorBoundary from '../../components/ErrorBoundary';
+
+const today = new Date().toLocaleDateString('ko-KR', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+  timeZone: 'Asia/Seoul',
+});
+---
+
+<Layout
+  title="오늘의 전략 랭킹 | PRUVIQ"
+  description="PRUVIQ 시뮬레이터 기반 오늘의 암호화폐 전략 랭킹. 수익팩터·승률 기준 Best/Worst 전략과 이번 주 최강 전략을 확인하세요."
+>
+  <section class="py-12">
+    <div class="max-w-5xl mx-auto px-4">
+
+      <!-- Page header -->
+      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">DAILY RANKING</p>
+      <h1 class="text-3xl md:text-4xl font-bold mb-3">
+        📊 오늘의 전략 랭킹
+      </h1>
+      <p class="text-[--color-text-muted] text-sm mb-1">
+        {today} 기준 · PRUVIQ 시뮬레이터 백테스트 결과
+      </p>
+      <p class="text-[--color-text-muted] text-sm mb-8 max-w-2xl">
+        수익팩터(PF) 기준으로 오늘 가장 성과가 좋은 전략과 나쁜 전략을 확인하세요.
+        샘플 수가 100건 미만인 전략은 통계적 신뢰도가 낮습니다.
+      </p>
+
+      <!-- Navigation links -->
+      <div class="mb-8 flex flex-wrap gap-3">
+        <a
+          href="/simulate"
+          class="inline-flex items-center gap-2 bg-[--color-accent] text-[--color-bg] px-5 py-2.5 rounded-lg font-semibold text-sm hover:bg-[--color-accent-dim] transition-colors"
+        >
+          시뮬레이터 열기 &rarr;
+        </a>
+        <a
+          href="/strategies"
+          class="inline-flex items-center gap-2 border border-[--color-border] text-[--color-text-muted] px-5 py-2.5 rounded-lg font-semibold text-sm hover:border-[--color-accent] hover:text-[--color-accent] transition-colors"
+        >
+          전략 라이브러리
+        </a>
+        <a
+          href="/leaderboard"
+          class="inline-flex items-center gap-2 border border-[--color-border] text-[--color-text-muted] px-5 py-2.5 rounded-lg font-semibold text-sm hover:border-[--color-accent] hover:text-[--color-accent] transition-colors"
+        >
+          리더보드
+        </a>
+      </div>
+
+      <!-- Disclaimer notice -->
+      <div class="mb-8 border border-[--color-border] rounded-lg px-4 py-3 bg-[--color-bg-card]">
+        <p class="text-[--color-text-muted] text-xs font-mono leading-relaxed">
+          <span class="text-[--color-yellow] font-bold">참고:</span>
+          이 랭킹은 과거 데이터 백테스트 기반입니다. 미래 수익을 보장하지 않으며,
+          샘플 수 부족(< 100건) 전략은 과적합 가능성이 높습니다.
+        </p>
+      </div>
+
+      <!-- Ranking component (client-side fetch) -->
+      <ErrorBoundary name="Strategy Ranking" client:load>
+        <StrategyRanking client:load />
+      </ErrorBoundary>
+
+    </div>
+  </section>
+
+  <!-- Footer CTAs -->
+  <section class="pb-12 border-t border-[--color-border] pt-8">
+    <div class="max-w-5xl mx-auto px-4 text-center">
+      <p class="text-[--color-text-muted] text-sm mb-4">
+        마음에 드는 전략을 시뮬레이터에서 직접 파라미터 조정해보세요.
+      </p>
+      <div class="flex flex-wrap gap-3 justify-center">
+        <a
+          href="/simulate"
+          class="inline-block bg-[--color-accent] text-[--color-bg] px-6 py-2.5 rounded font-semibold text-sm hover:bg-[--color-accent-dim] transition-colors no-underline"
+        >
+          시뮬레이터에서 직접 확인 &rarr;
+        </a>
+        <a
+          href="/strategies"
+          class="inline-block border border-[--color-border] px-5 py-2 rounded font-semibold text-sm hover:border-[--color-accent] transition-colors no-underline"
+        >
+          전략 라이브러리 &rarr;
+        </a>
+        <a
+          href="/performance"
+          class="inline-block border border-[--color-border] px-5 py-2 rounded font-semibold text-sm hover:border-[--color-accent] transition-colors no-underline"
+        >
+          실거래 성과 &rarr;
+        </a>
+      </div>
+    </div>
+  </section>
+</Layout>
