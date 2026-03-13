@@ -38,6 +38,7 @@ class BBSqueezeStrategy:
         ema_fast: int = 20,
         ema_slow: int = 50,
         avoid_hours: list = None,
+        avoid_months: list = None,
     ):
         self.bb_period = bb_period
         self.bb_std = bb_std
@@ -50,6 +51,7 @@ class BBSqueezeStrategy:
         self.ema_fast = ema_fast
         self.ema_slow = ema_slow
         self.avoid_hours = avoid_hours or []
+        self.avoid_months = avoid_months or []
 
     def get_params(self) -> dict:
         return {
@@ -62,6 +64,7 @@ class BBSqueezeStrategy:
             "ema_fast": self.ema_fast,
             "ema_slow": self.ema_slow,
             "avoid_hours": self.avoid_hours,
+            "avoid_months": self.avoid_months,
         }
 
     def calculate_indicators(self, df: pd.DataFrame) -> pd.DataFrame:

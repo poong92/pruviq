@@ -36,6 +36,7 @@ class ATRBreakoutStrategy:
         ema_slow: int = 50,
         use_trend_filter: bool = True,
         avoid_hours: list = None,
+        avoid_months: list = None,
     ):
         self.atr_period = atr_period
         self.atr_multiplier = atr_multiplier
@@ -43,6 +44,7 @@ class ATRBreakoutStrategy:
         self.ema_slow = ema_slow
         self.use_trend_filter = use_trend_filter
         self.avoid_hours = avoid_hours or []
+        self.avoid_months = avoid_months or []
 
     def get_params(self) -> dict:
         return {
@@ -52,6 +54,7 @@ class ATRBreakoutStrategy:
             "ema_slow": self.ema_slow,
             "use_trend_filter": self.use_trend_filter,
             "avoid_hours": self.avoid_hours,
+            "avoid_months": self.avoid_months,
         }
 
     def calculate_indicators(self, df: pd.DataFrame) -> pd.DataFrame:

@@ -23,6 +23,8 @@ class SimulationRequest(BaseModel):
     end_date: Optional[str] = Field(default=None, description="Backtest end date (YYYY-MM-DD)")
     timeframe: str = Field(default="1H", description="Candle timeframe: 1H, 2H, 4H, 6H, 12H, 1D, 1W")
     compounding: bool = Field(default=False, description="True = reinvest profits (compound), False = fixed position size (simple)")
+    avoid_hours: Optional[List[int]] = Field(default=None, description="UTC hours to avoid entering trades (0-23). null = use strategy default")
+    avoid_months: Optional[List[int]] = Field(default=None, description="Months to avoid entering trades (1-12). null = no month filter")
 
 
 class TradeItem(BaseModel):
@@ -309,6 +311,7 @@ class BacktestRequest(BaseModel):
         description="Entry conditions tree: {'type': 'AND', 'conditions': [...]}"
     )
     avoid_hours: List[int] = Field(default=[], description="UTC hours to avoid (0-23)")
+    avoid_months: Optional[List[int]] = Field(default=None, description="Months to avoid entering trades (1-12). null = no month filter")
     sl_pct: float = Field(default=10.0, ge=0.5, le=50.0, description="Stop Loss %")
     tp_pct: float = Field(default=8.0, ge=0.5, le=100.0, description="Take Profit %")
     max_bars: int = Field(default=48, ge=1, le=168, description="Max holding period (bars)")
@@ -542,6 +545,8 @@ class ValidateRequest(BaseModel):
     start_date: Optional[str] = Field(default=None, description="Backtest start date (YYYY-MM-DD)")
     end_date: Optional[str] = Field(default=None, description="Backtest end date (YYYY-MM-DD)")
     timeframe: str = Field(default="1H", description="Candle timeframe: 1H, 2H, 4H, 6H, 12H, 1D, 1W")
+    avoid_hours: Optional[List[int]] = Field(default=None, description="UTC hours to avoid entering trades (0-23). null = use strategy default")
+    avoid_months: Optional[List[int]] = Field(default=None, description="Months to avoid entering trades (1-12). null = no month filter")
 
 
 class ValidateResponse(BaseModel):
