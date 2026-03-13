@@ -640,6 +640,7 @@ async def simulate(req: SimulationRequest):
                 market_type=req.market_type,
                 strategy_id=strategy_id,
                 funding_rate_8h=getattr(cost_model, 'funding_rate_8h', 0.0001),
+                timeframe=timeframe,
             )
 
             # Collect per-coin stats
@@ -1108,6 +1109,7 @@ async def simulate_coin(req: CoinSimRequest):
         market_type=req.market_type,
         strategy_id=strategy_id,
         funding_rate_8h=getattr(cost_model, 'funding_rate_8h', 0.0001),
+        timeframe=timeframe,
     )
 
     trades = [
@@ -1351,6 +1353,7 @@ async def simulate_validate(req: ValidateRequest):
                 market_type=req.market_type,
                 strategy_id=strategy_id,
                 funding_rate_8h=getattr(cost_model, 'funding_rate_8h', 0.0001),
+                timeframe=timeframe,
             )
             for trade in result.trades:
                 trade_list.append(trade.pnl_pct)
@@ -2244,6 +2247,7 @@ async def run_backtest(req: BacktestRequest):
                 direction=run_dir,
                 symbol=sym,
                 funding_rate_8h=getattr(cost_model, 'funding_rate_8h', 0.0001),
+                timeframe=timeframe,
             )
 
             # Collect per-coin stats

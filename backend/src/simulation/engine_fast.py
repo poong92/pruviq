@@ -1276,6 +1276,7 @@ def simulate_vectorized(
     direction: str,
     symbol: str,
     funding_rate_8h: float = 0.0001,
+    timeframe: str = "1H",
 ) -> List[Trade]:
     """
     Vectorized simulation — given signal indices, process trades.
@@ -1360,7 +1361,8 @@ def simulate_vectorized(
 
         fee = fee_pct * 2
         bars_held = exit_idx - entry_idx
-        funding_payments = bars_held // 8
+        tf_hours = {"1H": 1, "2H": 2, "4H": 4, "6H": 6, "8H": 8, "12H": 12, "1D": 24}.get(timeframe.upper(), 1)
+        funding_payments = (bars_held * tf_hours) // 8
         # SHORT receives positive funding; LONG pays
         if direction == "short":
             funding_cost = -(funding_payments * funding_rate_8h)  # income
@@ -1401,6 +1403,7 @@ def run_fast(
     market_type: str = "futures",
     strategy_id: str = None,
     funding_rate_8h: float = 0.0001,
+    timeframe: str = "1H",
 ) -> SimResult:
     """Complete fast simulation pipeline."""
 
@@ -1445,6 +1448,7 @@ def run_fast(
         fee_pct, slippage_pct,
         direction, symbol,
         funding_rate_8h=funding_rate_8h,
+        timeframe=timeframe,
     )
 
     # Build result
