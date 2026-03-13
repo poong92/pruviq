@@ -32,8 +32,8 @@ export function useMarketLive() {
   const fetchLive = () => {
     // NOTE: coins-stats.json has a superset schema (name, image, sparkline_7d, etc.)
     // but shares the fields we use: symbol, price, change_24h, generated.
-    fetchLiveFirst('/market/live', '/data/coins-stats.json')
-      .then((data: LiveData) => {
+    fetchLiveFirst<LiveData>('/market/live', '/data/coins-stats.json')
+      .then((data) => {
         const coins = data.coins || [];
         const btc = coins.find(c => c.symbol === 'BTCUSDT');
         const eth = coins.find(c => c.symbol === 'ETHUSDT');

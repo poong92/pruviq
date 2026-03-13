@@ -24,8 +24,8 @@ export function useMacro() {
   const [error, setError] = useState(false);
 
   const fetchMacro = () => {
-    fetchWithFallback('/macro', STATIC_DATA.macro)
-      .then((d: MacroData) => { setMacro(d); setError(false); })
+    fetchWithFallback<MacroData>('/macro', STATIC_DATA.macro)
+      .then((d) => { setMacro(d); setError(false); })
       .catch(() => setError(true));
   };
 

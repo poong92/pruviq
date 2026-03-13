@@ -109,14 +109,14 @@ export default function StrategyComparison({ lang = 'en' }: Props) {
   useEffect(() => {
     const loadPresets = async () => {
       try {
-        const listData = await fetchWithFallback('/builder/presets', STATIC_DATA.builderPresets);
+        const listData = await fetchWithFallback<{ id: string }[]>('/builder/presets', STATIC_DATA.builderPresets);
         const list = Array.isArray(listData) ? listData : [];
         // Fetch preset details with bounded concurrency to avoid API rate limits
         const concurrency = 5;
         const resultsArr: Array<PresetFull | null> = [];
         for (let i = 0; i < list.length; i += concurrency) {
           const batch = list.slice(i, i + concurrency);
-          const batchResults = await Promise.all(batch.map(async (item: any) => {
+          const batchResults = await Promise.all(batch.map(async (item: { id: string }) => {
             try {
               const res = await fetch(`${API_URL}/builder/presets/${encodeURIComponent(item.id)}`);
               if (!res.ok) return null;
@@ -305,7 +305,7 @@ export default function StrategyComparison({ lang = 'en' }: Props) {
           {/* Desktop table */}
           <div class="hidden md:block overflow-x-auto border border-[--color-border] rounded-xl bg-[--color-bg-card]">
             <table class="w-full font-mono text-sm">
-              <caption class="sr-only">Strategy comparison results</caption>
+              <caption class="sr-only">{t.title}</caption>
               <thead>
                 <tr class="border-b border-[--color-border] text-[--color-text-muted] text-xs uppercase tracking-wider">
                   <th class="px-4 py-3 text-left">{t.strategy}</th>

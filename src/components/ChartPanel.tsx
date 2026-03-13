@@ -4,6 +4,7 @@
 import { useEffect, useRef } from 'preact/hooks';
 import type { OhlcvBar, TradeItem } from './simulator-types';
 import { getCssVar, COLORS } from './simulator-types';
+import type { IChartApi, UTCTimestamp } from 'lightweight-charts';
 
 interface Props {
   chartSymbol: string;
@@ -15,11 +16,14 @@ interface Props {
   error?: string | null;
   onRetry?: () => void;
   timeframe?: string;
+  retryLabel?: string;
+  noDataError?: string;
+  symbolPlaceholder?: string;
 }
 
-export default function ChartPanel({ chartSymbol, setChartSymbol, chartData, chartLoading, loadingText, trades, error, onRetry, timeframe = '1H' }: Props) {
+export default function ChartPanel({ chartSymbol, setChartSymbol, chartData, chartLoading, loadingText, trades, error, onRetry, timeframe = '1H', retryLabel = 'Retry', noDataError = 'Unable to load chart data. Check API connection.', symbolPlaceholder = 'Symbol...' }: Props) {
   const chartContainerRef = useRef<HTMLDivElement>(null);
-  const chartInstanceRef = useRef<any>(null); // TODO: lightweight-charts IChartApi not directly exported
+  const chartInstanceRef = useRef<IChartApi | null>(null);
 
   // ─── Render chart ───
   useEffect(() => {
@@ -61,7 +65,7 @@ export default function ChartPanel({ chartSymbol, setChartSymbol, chartData, cha
         borderVisible: false,
       });
       candleSeries.setData(chartData.map((b) => ({
-        time: b.t as any, open: b.o, high: b.h, low: b.l, close: b.c,
+        time: b.t as UTCTimestamp, open: b.o, high: b.h, low: b.l, close: b.c,
       })));
 
       // BB bands
@@ -72,7 +76,7 @@ export default function ChartPanel({ chartSymbol, setChartSymbol, chartData, cha
           lastValueVisible: false,
         });
         bbUpper.setData(chartData.filter((b) => b.bb_upper != null).map((b) => ({
-          time: b.t as any, value: b.bb_upper!,
+          time: b.t as UTCTimestamp, value: b.bb_upper!,
         })));
 
         const bbLower = chart.addSeries(LineSeries, {
@@ -80,7 +84,7 @@ export default function ChartPanel({ chartSymbol, setChartSymbol, chartData, cha
           lastValueVisible: false,
         });
         bbLower.setData(chartData.filter((b) => b.bb_lower != null).map((b) => ({
-          time: b.t as any, value: b.bb_lower!,
+          time: b.t as UTCTimestamp, value: b.bb_lower!,
         })));
 
         const bbMid = chart.addSeries(LineSeries, {
@@ -88,7 +92,7 @@ export default function ChartPanel({ chartSymbol, setChartSymbol, chartData, cha
           priceLineVisible: false, lastValueVisible: false,
         });
         bbMid.setData(chartData.filter((b) => b.bb_mid != null).map((b) => ({
-          time: b.t as any, value: b.bb_mid!,
+          time: b.t as UTCTimestamp, value: b.bb_mid!,
         })));
       }
 
@@ -101,7 +105,7 @@ export default function ChartPanel({ chartSymbol, setChartSymbol, chartData, cha
         scaleMargins: { top: 0.85, bottom: 0 },
       });
       volSeries.setData(chartData.map((b) => ({
-        time: b.t as any,
+        time: b.t as UTCTimestamp,
         value: b.v,
         color: b.c >= b.o ? COLORS.greenFill : COLORS.redFill,
       })));
@@ -117,14 +121,14 @@ export default function ChartPanel({ chartSymbol, setChartSymbol, chartData, cha
             const isWin = t.pnl_pct > 0;
             return [
               {
-                time: entryTs as any,
+                time: entryTs as UTCTimestamp,
                 position: isShort ? 'aboveBar' as const : 'belowBar' as const,
                 color: COLORS.accent,
                 shape: isShort ? 'arrowDown' as const : 'arrowUp' as const,
                 text: isShort ? 'S' : 'L',
               },
               {
-                time: exitTs as any,
+                time: exitTs as UTCTimestamp,
                 position: isShort ? 'belowBar' as const : 'aboveBar' as const,
                 color: isWin ? COLORS.green : COLORS.red,
                 shape: 'circle' as const,
@@ -179,8 +183,8 @@ export default function ChartPanel({ chartSymbol, setChartSymbol, chartData, cha
           ))}
           <input
             type="text"
-            placeholder="Symbol..."
-            aria-label="Enter chart symbol"
+            placeholder={symbolPlaceholder}
+            aria-label={symbolPlaceholder}
             class="w-20 px-2 py-1 text-xs font-mono bg-[--color-bg-tooltip] border border-[--color-border] rounded outline-none focus:border-[--color-accent] hidden sm:block"
             onKeyDown={(e: KeyboardEvent) => {
               if (e.key === 'Enter') {
@@ -203,14 +207,14 @@ export default function ChartPanel({ chartSymbol, setChartSymbol, chartData, cha
         {!chartLoading && chartData.length === 0 && (
           <div class="flex flex-col items-center justify-center h-full gap-3">
             <div class="text-[--color-text-muted] text-sm font-mono text-center px-4">
-              {error || 'Unable to load chart data. Check API connection.'}
+              {error || noDataError}
             </div>
             {onRetry && (
               <button
                 onClick={onRetry}
                 class="px-4 py-2 text-xs font-mono rounded border border-[--color-border] text-[--color-accent] hover:bg-[--color-bg-hover] transition-colors"
               >
-                Retry
+                {retryLabel}
               </button>
             )}
           </div>
