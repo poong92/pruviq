@@ -10,6 +10,12 @@ from src.strategies.bb_squeeze import BBSqueezeStrategy
 from src.strategies.momentum_long import MomentumLongStrategy
 from src.strategies.atr_breakout import ATRBreakoutStrategy
 from src.strategies.hv_squeeze import HVSqueezeStrategy
+from src.strategies.rsi_divergence import RSIDivergenceStrategy
+from src.strategies.macd_cross import MACDCrossStrategy
+from src.strategies.donchian_breakout import DonchianBreakoutStrategy
+from src.strategies.mean_reversion import MeanReversionStrategy
+from src.strategies.supertrend import SuperTrendStrategy
+from src.strategies.keltner_squeeze import KeltnerSqueezeStrategy
 
 
 AVOID_HOURS_BB = [2, 3, 10, 20, 21, 22, 23]
@@ -60,6 +66,60 @@ STRATEGY_REGISTRY = {
         "name": "HV Squeeze",
         "description": "Historical volatility squeeze with candle color direction filter.",
         "status": "shelved",
+    },
+    "rsi-divergence": {
+        "class": RSIDivergenceStrategy,
+        "init_kwargs": {"avoid_hours": []},
+        "direction": "both",
+        "defaults": {"sl": 7, "tp": 5},
+        "name": "RSI Divergence",
+        "description": "Bullish/bearish RSI divergence. Enters when price makes new extreme but RSI disagrees.",
+        "status": "research",
+    },
+    "macd-cross": {
+        "class": MACDCrossStrategy,
+        "init_kwargs": {"avoid_hours": []},
+        "direction": "both",
+        "defaults": {"sl": 8, "tp": 6},
+        "name": "MACD Cross",
+        "description": "MACD line crosses signal line with zero-line filter (cross below zero = long, above = short).",
+        "status": "research",
+    },
+    "donchian-breakout": {
+        "class": DonchianBreakoutStrategy,
+        "init_kwargs": {"avoid_hours": []},
+        "direction": "both",
+        "defaults": {"sl": 8, "tp": 10},
+        "name": "Donchian Breakout",
+        "description": "Turtle Trading channel breakout. Enters on 20-period high/low breakout.",
+        "status": "research",
+    },
+    "mean-reversion": {
+        "class": MeanReversionStrategy,
+        "init_kwargs": {"avoid_hours": []},
+        "direction": "both",
+        "defaults": {"sl": 5, "tp": 4},
+        "name": "Mean Reversion",
+        "description": "Price reverts to 20-period SMA after extreme deviation (2σ) confirmed by RSI.",
+        "status": "research",
+    },
+    "supertrend": {
+        "class": SuperTrendStrategy,
+        "init_kwargs": {"avoid_hours": []},
+        "direction": "both",
+        "defaults": {"sl": 8, "tp": 8},
+        "name": "SuperTrend",
+        "description": "ATR-based dynamic support/resistance. Enters on SuperTrend direction flip.",
+        "status": "research",
+    },
+    "keltner-squeeze": {
+        "class": KeltnerSqueezeStrategy,
+        "init_kwargs": {"avoid_hours": []},
+        "direction": "both",
+        "defaults": {"sl": 7, "tp": 6},
+        "name": "Keltner Squeeze",
+        "description": "Enters when BB exits Keltner Channel (squeeze release) with directional breakout.",
+        "status": "research",
     },
 }
 

@@ -450,6 +450,439 @@ def find_signals_atr_breakout(df: pd.DataFrame, strategy, direction: str = "long
     return np.where(signal)[0]
 
 
+def find_signals_rsi_divergence(df: pd.DataFrame, strategy, direction: str = "both") -> np.ndarray:
+    """
+    Vectorized signal detection for RSI Divergence strategy.
+
+    LONG: RSI < oversold + 가격 신저점 + RSI는 lookback 내 RSI min보다 높음
+    SHORT: RSI > overbought + 가격 신고점 + RSI는 lookback 내 RSI max보다 낮음
+
+    lookback 롤링 통계를 shift(1)로 계산해 look-ahead 방지.
+    """
+    n = len(df)
+    if n < 100:
+        return np.array([], dtype=int)
+
+    def col(name, default=None):
+        if name in df.columns:
+            return df[name].values
+        if default is not None:
+            return default
+        return np.zeros(n)
+
+    close = col("close")
+    rsi = col("rsi")
+    hour = col("hour", np.zeros(n, dtype=int))
+
+    lookback = strategy.lookback
+    min_idx = strategy.rsi_period + lookback
+    valid_range = np.arange(n) >= min_idx
+
+    # Rolling min/max over lookback window (shift=1: 현재 캔들 제외)
+    rsi_series = pd.Series(rsi)
+    close_series = pd.Series(close)
+
+    # shift(1)한 뒤 rolling: 현재 idx 제외하고 이전 lookback 캔들의 통계
+    rsi_min_prev = rsi_series.shift(1).rolling(lookback, min_periods=1).min().values
+    rsi_max_prev = rsi_series.shift(1).rolling(lookback, min_periods=1).max().values
+    close_min_prev = close_series.shift(1).rolling(lookback, min_periods=1).min().values
+    close_max_prev = close_series.shift(1).rolling(lookback, min_periods=1).max().values
+
+    valid_rsi = ~np.isnan(rsi) & ~np.isnan(rsi_min_prev) & ~np.isnan(rsi_max_prev)
+
+    # LONG conditions
+    is_oversold = rsi < strategy.oversold
+    price_new_low = close < close_min_prev
+    rsi_diverge_up = rsi > rsi_min_prev  # RSI는 이전 최저보다 높음
+    long_cond = valid_range & valid_rsi & is_oversold & price_new_low & rsi_diverge_up
+
+    # SHORT conditions
+    is_overbought = rsi > strategy.overbought
+    price_new_high = close > close_max_prev
+    rsi_diverge_down = rsi < rsi_max_prev  # RSI는 이전 최고보다 낮음
+    short_cond = valid_range & valid_rsi & is_overbought & price_new_high & rsi_diverge_down
+
+    # Time filter (entry bar = idx+1)
+    avoid_set = set(strategy.avoid_hours)
+    next_hour_ok = np.ones(n, dtype=bool)
+    if avoid_set:
+        for i in range(n - 1):
+            if int(hour[i + 1]) in avoid_set:
+                next_hour_ok[i] = False
+    next_hour_ok[n - 1] = False
+
+    # avoid_months filter
+    avoid_months_set = set(getattr(strategy, 'avoid_months', None) or [])
+    next_month_ok = np.ones(n, dtype=bool)
+    if avoid_months_set and "timestamp" in df.columns:
+        months = pd.to_datetime(df["timestamp"]).dt.month.values
+        next_months = np.empty(n, dtype=int)
+        next_months[:-1] = months[1:]
+        next_months[-1] = 0
+        for m in avoid_months_set:
+            next_month_ok &= (next_months != m)
+    next_month_ok[n - 1] = False
+
+    min_vol_regime = getattr(strategy, 'min_vol_regime', None)
+    vol_regime_ok = _compute_vol_regime_filter(df, n, min_vol_regime)
+
+    filters = next_hour_ok & next_month_ok & vol_regime_ok
+
+    if direction == "long":
+        signal = long_cond & filters
+    elif direction == "short":
+        signal = short_cond & filters
+    else:
+        signal = (long_cond | short_cond) & filters
+
+    return np.where(signal)[0]
+
+
+def find_signals_macd_cross(df: pd.DataFrame, strategy, direction: str = "both") -> np.ndarray:
+    """
+    Vectorized signal detection for MACD Cross strategy.
+
+    LONG: macd_cross_up (골든크로스) + macd_line < 0
+    SHORT: macd_cross_down (데드크로스) + macd_line > 0
+    """
+    n = len(df)
+    if n < 100:
+        return np.array([], dtype=int)
+
+    def col(name, default=None):
+        if name in df.columns:
+            return df[name].values
+        if default is not None:
+            return default
+        return np.zeros(n)
+
+    macd_line = col("macd_line")
+    macd_hist = col("macd_hist")
+    hour = col("hour", np.zeros(n, dtype=int))
+
+    min_idx = strategy.slow + strategy.signal + 1
+    valid_range = np.arange(n) >= min_idx
+
+    # 교차 감지: hist 부호 전환 (shift=1로 prev hist)
+    prev_hist = np.roll(macd_hist, 1)
+    prev_hist[0] = 0.0
+    cross_up = (prev_hist < 0) & (macd_hist > 0)    # 골든크로스
+    cross_down = (prev_hist > 0) & (macd_hist < 0)  # 데드크로스
+
+    valid_macd = ~np.isnan(macd_line) & ~np.isnan(macd_hist)
+
+    long_cond = valid_range & valid_macd & cross_up & (macd_line < 0)
+    short_cond = valid_range & valid_macd & cross_down & (macd_line > 0)
+
+    # Time filter (entry bar = idx+1)
+    avoid_set = set(strategy.avoid_hours)
+    next_hour_ok = np.ones(n, dtype=bool)
+    if avoid_set:
+        for i in range(n - 1):
+            if int(hour[i + 1]) in avoid_set:
+                next_hour_ok[i] = False
+    next_hour_ok[n - 1] = False
+
+    # avoid_months filter
+    avoid_months_set = set(getattr(strategy, 'avoid_months', None) or [])
+    next_month_ok = np.ones(n, dtype=bool)
+    if avoid_months_set and "timestamp" in df.columns:
+        months = pd.to_datetime(df["timestamp"]).dt.month.values
+        next_months = np.empty(n, dtype=int)
+        next_months[:-1] = months[1:]
+        next_months[-1] = 0
+        for m in avoid_months_set:
+            next_month_ok &= (next_months != m)
+    next_month_ok[n - 1] = False
+
+    min_vol_regime = getattr(strategy, 'min_vol_regime', None)
+    vol_regime_ok = _compute_vol_regime_filter(df, n, min_vol_regime)
+
+    filters = next_hour_ok & next_month_ok & vol_regime_ok
+
+    if direction == "long":
+        signal = long_cond & filters
+    elif direction == "short":
+        signal = short_cond & filters
+    else:
+        signal = (long_cond | short_cond) & filters
+
+    return np.where(signal)[0]
+
+
+def find_signals_donchian_breakout(df: pd.DataFrame, strategy, direction: str = "both") -> np.ndarray:
+    """
+    Vectorized signal detection for Donchian Breakout strategy.
+
+    LONG: close > dc_upper (채널 상단 돌파)
+    SHORT: close < dc_lower (채널 하단 이탈)
+
+    dc_upper/dc_lower는 calculate_indicators에서 shift(1) 적용됨.
+    """
+    n = len(df)
+    if n < 100:
+        return np.array([], dtype=int)
+
+    def col(name, default=None):
+        if name in df.columns:
+            return df[name].values
+        if default is not None:
+            return default
+        return np.zeros(n)
+
+    close = col("close")
+    dc_upper = col("dc_upper")
+    dc_lower = col("dc_lower")
+    hour = col("hour", np.zeros(n, dtype=int))
+
+    min_idx = strategy.channel_period + 1
+    valid_range = np.arange(n) >= min_idx
+
+    valid_dc = ~np.isnan(dc_upper) & ~np.isnan(dc_lower) & (dc_upper > 0) & (dc_lower > 0)
+
+    long_cond = valid_range & valid_dc & (close > dc_upper)
+    short_cond = valid_range & valid_dc & (close < dc_lower)
+
+    # Time filter (entry bar = idx+1)
+    avoid_set = set(strategy.avoid_hours)
+    next_hour_ok = np.ones(n, dtype=bool)
+    if avoid_set:
+        for i in range(n - 1):
+            if int(hour[i + 1]) in avoid_set:
+                next_hour_ok[i] = False
+    next_hour_ok[n - 1] = False
+
+    # avoid_months filter
+    avoid_months_set = set(getattr(strategy, 'avoid_months', None) or [])
+    next_month_ok = np.ones(n, dtype=bool)
+    if avoid_months_set and "timestamp" in df.columns:
+        months = pd.to_datetime(df["timestamp"]).dt.month.values
+        next_months = np.empty(n, dtype=int)
+        next_months[:-1] = months[1:]
+        next_months[-1] = 0
+        for m in avoid_months_set:
+            next_month_ok &= (next_months != m)
+    next_month_ok[n - 1] = False
+
+    min_vol_regime = getattr(strategy, 'min_vol_regime', None)
+    vol_regime_ok = _compute_vol_regime_filter(df, n, min_vol_regime)
+
+    filters = next_hour_ok & next_month_ok & vol_regime_ok
+
+    if direction == "long":
+        signal = long_cond & filters
+    elif direction == "short":
+        signal = short_cond & filters
+    else:
+        signal = (long_cond | short_cond) & filters
+
+    return np.where(signal)[0]
+
+
+def find_signals_mean_reversion(df: pd.DataFrame, strategy, direction: str = "both") -> np.ndarray:
+    """
+    Vectorized signal detection for Mean Reversion strategy.
+
+    LONG: close < band_lower + rsi < rsi_oversold
+    SHORT: close > band_upper + rsi > rsi_overbought
+    """
+    n = len(df)
+    if n < 100:
+        return np.array([], dtype=int)
+
+    def col(name, default=None):
+        if name in df.columns:
+            return df[name].values
+        if default is not None:
+            return default
+        return np.zeros(n)
+
+    close = col("close")
+    band_upper = col("band_upper")
+    band_lower = col("band_lower")
+    rsi = col("rsi")
+    hour = col("hour", np.zeros(n, dtype=int))
+
+    min_idx = max(strategy.sma_period, strategy.rsi_period) + 1
+    valid_range = np.arange(n) >= min_idx
+
+    valid_bands = ~np.isnan(band_upper) & ~np.isnan(band_lower) & ~np.isnan(rsi)
+
+    long_cond = valid_range & valid_bands & (close < band_lower) & (rsi < strategy.rsi_oversold)
+    short_cond = valid_range & valid_bands & (close > band_upper) & (rsi > strategy.rsi_overbought)
+
+    # Time filter (entry bar = idx+1)
+    avoid_set = set(strategy.avoid_hours)
+    next_hour_ok = np.ones(n, dtype=bool)
+    if avoid_set:
+        for i in range(n - 1):
+            if int(hour[i + 1]) in avoid_set:
+                next_hour_ok[i] = False
+    next_hour_ok[n - 1] = False
+
+    # avoid_months filter
+    avoid_months_set = set(getattr(strategy, 'avoid_months', None) or [])
+    next_month_ok = np.ones(n, dtype=bool)
+    if avoid_months_set and "timestamp" in df.columns:
+        months = pd.to_datetime(df["timestamp"]).dt.month.values
+        next_months = np.empty(n, dtype=int)
+        next_months[:-1] = months[1:]
+        next_months[-1] = 0
+        for m in avoid_months_set:
+            next_month_ok &= (next_months != m)
+    next_month_ok[n - 1] = False
+
+    min_vol_regime = getattr(strategy, 'min_vol_regime', None)
+    vol_regime_ok = _compute_vol_regime_filter(df, n, min_vol_regime)
+
+    filters = next_hour_ok & next_month_ok & vol_regime_ok
+
+    if direction == "long":
+        signal = long_cond & filters
+    elif direction == "short":
+        signal = short_cond & filters
+    else:
+        signal = (long_cond | short_cond) & filters
+
+    return np.where(signal)[0]
+
+
+def find_signals_supertrend(df: pd.DataFrame, strategy, direction: str = "both") -> np.ndarray:
+    """
+    Vectorized signal detection for SuperTrend strategy.
+
+    LONG: st_cross_up (SuperTrend 상향 전환)
+    SHORT: st_cross_down (SuperTrend 하향 전환)
+    """
+    n = len(df)
+    if n < 100:
+        return np.array([], dtype=int)
+
+    def col(name, default=None):
+        if name in df.columns:
+            return df[name].values
+        if default is not None:
+            return default
+        return np.zeros(n)
+
+    supertrend = col("supertrend")
+    cross_up = col("st_cross_up", np.zeros(n, dtype=bool)).astype(bool)
+    cross_down = col("st_cross_down", np.zeros(n, dtype=bool)).astype(bool)
+    hour = col("hour", np.zeros(n, dtype=int))
+
+    min_idx = strategy.atr_period * 2
+    valid_range = np.arange(n) >= min_idx
+
+    valid_st = ~np.isnan(supertrend)
+
+    long_cond = valid_range & valid_st & cross_up
+    short_cond = valid_range & valid_st & cross_down
+
+    # Time filter (entry bar = idx+1)
+    avoid_set = set(strategy.avoid_hours)
+    next_hour_ok = np.ones(n, dtype=bool)
+    if avoid_set:
+        for i in range(n - 1):
+            if int(hour[i + 1]) in avoid_set:
+                next_hour_ok[i] = False
+    next_hour_ok[n - 1] = False
+
+    # avoid_months filter
+    avoid_months_set = set(getattr(strategy, 'avoid_months', None) or [])
+    next_month_ok = np.ones(n, dtype=bool)
+    if avoid_months_set and "timestamp" in df.columns:
+        months = pd.to_datetime(df["timestamp"]).dt.month.values
+        next_months = np.empty(n, dtype=int)
+        next_months[:-1] = months[1:]
+        next_months[-1] = 0
+        for m in avoid_months_set:
+            next_month_ok &= (next_months != m)
+    next_month_ok[n - 1] = False
+
+    min_vol_regime = getattr(strategy, 'min_vol_regime', None)
+    vol_regime_ok = _compute_vol_regime_filter(df, n, min_vol_regime)
+
+    filters = next_hour_ok & next_month_ok & vol_regime_ok
+
+    if direction == "long":
+        signal = long_cond & filters
+    elif direction == "short":
+        signal = short_cond & filters
+    else:
+        signal = (long_cond | short_cond) & filters
+
+    return np.where(signal)[0]
+
+
+def find_signals_keltner_squeeze(df: pd.DataFrame, strategy, direction: str = "both") -> np.ndarray:
+    """
+    Vectorized signal detection for Keltner Squeeze strategy.
+
+    스퀴즈 해소 + 방향성 돌파:
+    LONG: squeeze_release + close > kc_upper
+    SHORT: squeeze_release + close < kc_lower
+    """
+    n = len(df)
+    if n < 100:
+        return np.array([], dtype=int)
+
+    def col(name, default=None):
+        if name in df.columns:
+            return df[name].values
+        if default is not None:
+            return default
+        return np.zeros(n)
+
+    close = col("close")
+    kc_upper = col("kc_upper")
+    kc_lower = col("kc_lower")
+    squeeze_release = col("squeeze_release", np.zeros(n, dtype=bool)).astype(bool)
+    hour = col("hour", np.zeros(n, dtype=int))
+
+    min_idx = max(strategy.kc_period, strategy.bb_period, strategy.atr_period) + 2
+    valid_range = np.arange(n) >= min_idx
+
+    valid_kc = ~np.isnan(kc_upper) & ~np.isnan(kc_lower) & ~np.isnan(close)
+
+    long_cond = valid_range & valid_kc & squeeze_release & (close > kc_upper)
+    short_cond = valid_range & valid_kc & squeeze_release & (close < kc_lower)
+
+    # Time filter (entry bar = idx+1)
+    avoid_set = set(strategy.avoid_hours)
+    next_hour_ok = np.ones(n, dtype=bool)
+    if avoid_set:
+        for i in range(n - 1):
+            if int(hour[i + 1]) in avoid_set:
+                next_hour_ok[i] = False
+    next_hour_ok[n - 1] = False
+
+    # avoid_months filter
+    avoid_months_set = set(getattr(strategy, 'avoid_months', None) or [])
+    next_month_ok = np.ones(n, dtype=bool)
+    if avoid_months_set and "timestamp" in df.columns:
+        months = pd.to_datetime(df["timestamp"]).dt.month.values
+        next_months = np.empty(n, dtype=int)
+        next_months[:-1] = months[1:]
+        next_months[-1] = 0
+        for m in avoid_months_set:
+            next_month_ok &= (next_months != m)
+    next_month_ok[n - 1] = False
+
+    min_vol_regime = getattr(strategy, 'min_vol_regime', None)
+    vol_regime_ok = _compute_vol_regime_filter(df, n, min_vol_regime)
+
+    filters = next_hour_ok & next_month_ok & vol_regime_ok
+
+    if direction == "long":
+        signal = long_cond & filters
+    elif direction == "short":
+        signal = short_cond & filters
+    else:
+        signal = (long_cond | short_cond) & filters
+
+    return np.where(signal)[0]
+
+
 def find_signals_generic(df: pd.DataFrame, strategy, direction: str) -> np.ndarray:
     """
     Generic signal detection fallback — calls strategy.check_signal() per bar.
@@ -616,6 +1049,18 @@ def run_fast(
         signal_indices = find_signals_hv_squeeze(df, strategy, direction)
     elif strategy_id == "atr-breakout":
         signal_indices = find_signals_atr_breakout(df, strategy, direction)
+    elif strategy_id == "rsi-divergence":
+        signal_indices = find_signals_rsi_divergence(df, strategy, direction)
+    elif strategy_id == "macd-cross":
+        signal_indices = find_signals_macd_cross(df, strategy, direction)
+    elif strategy_id == "donchian-breakout":
+        signal_indices = find_signals_donchian_breakout(df, strategy, direction)
+    elif strategy_id == "mean-reversion":
+        signal_indices = find_signals_mean_reversion(df, strategy, direction)
+    elif strategy_id == "supertrend":
+        signal_indices = find_signals_supertrend(df, strategy, direction)
+    elif strategy_id == "keltner-squeeze":
+        signal_indices = find_signals_keltner_squeeze(df, strategy, direction)
     else:
         signal_indices = find_signals_generic(df, strategy, direction)
 
