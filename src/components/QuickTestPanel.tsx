@@ -147,7 +147,7 @@ export default function QuickTestPanel({ lang, onRunPreset, isRunning, hasResult
         {CATEGORIES.map((cat) => {
           const isSelected = selectedCat === cat.id;
           const isCatRunning = runningPreset && cat.presets.includes(runningPreset);
-          const catT = t as any;
+          const catT = t as Record<string, string>;
 
           return (
             <button

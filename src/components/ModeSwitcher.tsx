@@ -92,7 +92,7 @@ export default function ModeSwitcher({ mode, setMode, lang, isFirstVisit }: Prop
             id={`tab-${tab.key}`}
             tabIndex={active ? 0 : -1}
             onClick={() => setMode(tab.key)}
-            onKeyDown={(e: any) => handleKeyDown(e, idx)}
+            onKeyDown={(e: KeyboardEvent) => handleKeyDown(e, idx)}
             class={`relative flex-1 min-h-[44px] py-2.5 px-2 rounded-lg border transition-all text-center
               ${active
                 ? 'border-[--color-accent]'

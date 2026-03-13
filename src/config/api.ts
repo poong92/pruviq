@@ -23,32 +23,36 @@ const STALE_THRESHOLD_MS = 30 * 60 * 1000; // 30 minutes
 // Very stale: try API first with longer timeout
 const VERY_STALE_THRESHOLD_MS = 60 * 60 * 1000; // 1 hour
 
-export function isStale(data: any): boolean {
+interface TimestampedData {
+  generated?: string;
+}
+
+export function isStale(data: TimestampedData): boolean {
   if (!data?.generated) return false;
   const age = Date.now() - new Date(data.generated).getTime();
   return age > STALE_THRESHOLD_MS;
 }
 
-export function isVeryStale(data: any): boolean {
+export function isVeryStale(data: TimestampedData): boolean {
   if (!data?.generated) return false;
   return (
     Date.now() - new Date(data.generated).getTime() > VERY_STALE_THRESHOLD_MS
   );
 }
 
-export function dataAgeMs(data: any): number {
+export function dataAgeMs(data: TimestampedData): number {
   if (!data?.generated) return 0;
   return Math.max(0, Date.now() - new Date(data.generated).getTime());
 }
 
 // Static-first fetch: try CDN/static first (fast, no API limits),
 // fall back to API if static is unavailable or stale
-export async function fetchWithFallback(
+export async function fetchWithFallback<T = unknown>(
   apiPath: string,
   staticPath: string,
-): Promise<any> {
+): Promise<T> {
   // 1. Try static data first (CDN, always available, updated every 15 min)
-  let staticData: any = null;
+  let staticData: T | null = null;
   try {
     const res = await fetch(staticPath);
     if (res.ok) staticData = await res.json();
@@ -57,7 +61,7 @@ export async function fetchWithFallback(
   }
 
   // 2. If static is very stale (>1h), try API first with longer timeout
-  if (staticData && dataAgeMs(staticData) > VERY_STALE_THRESHOLD_MS) {
+  if (staticData && dataAgeMs(staticData as TimestampedData) > VERY_STALE_THRESHOLD_MS) {
     try {
       const res = await fetch(`${API_BASE_URL}${apiPath}`, {
         signal: AbortSignal.timeout(10000),
@@ -70,7 +74,7 @@ export async function fetchWithFallback(
   }
 
   // 3. If static is fresh, use it
-  if (staticData && !isStale(staticData)) return staticData;
+  if (staticData && !isStale(staticData as TimestampedData)) return staticData;
 
   // 4. Static is missing or mildly stale — try API
   try {
@@ -87,10 +91,10 @@ export async function fetchWithFallback(
 }
 
 // API-first fetch: try live API first (real-time), fall back to static
-export async function fetchLiveFirst(
+export async function fetchLiveFirst<T = unknown>(
   apiPath: string,
   staticPath: string,
-): Promise<any> {
+): Promise<T> {
   try {
     const res = await fetch(`${API_BASE_URL}${apiPath}`, {
       signal: AbortSignal.timeout(3000),

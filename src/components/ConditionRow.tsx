@@ -11,9 +11,12 @@ interface Props {
   onUpdate: (id: string, key: string, val: string | number | boolean) => void;
   onRemove: (id: string) => void;
   removeLabel: string;
+  lookAheadWarning?: string;
+  prevLabel?: string;
+  currLabel?: string;
 }
 
-export default function ConditionRow({ condition: c, availableFields, onUpdate, onRemove, removeLabel }: Props) {
+export default function ConditionRow({ condition: c, availableFields, onUpdate, onRemove, removeLabel, lookAheadWarning = 'Using current (incomplete) candle data may cause look-ahead bias in live trading', prevLabel = 'Prev', currLabel = 'Curr' }: Props) {
   const fieldDescriptions: Record<string, string> = {
     'is_squeeze': 'Bollinger Band Squeeze detected',
     'bb_width_change': 'BB width expansion rate (%)',
@@ -146,11 +149,11 @@ export default function ConditionRow({ condition: c, availableFields, onUpdate, 
         }`}
         title={c.shift === 1 ? 'Previous candle (confirmed/safe for live trading)' : 'Current candle (incomplete in live) — look-ahead bias risk!'}
       >
-        <option value="1">Prev</option>
-        <option value="0">Curr</option>
+        <option value="1">{prevLabel}</option>
+        <option value="0">{currLabel}</option>
       </select>
       {c.shift === 0 && (
-        <span class="text-[--color-yellow] text-[9px] font-mono shrink-0" title="Using current (incomplete) candle data may cause look-ahead bias in live trading" role="img" aria-label="Look-ahead bias warning">!</span>
+        <span class="text-[--color-yellow] text-[9px] font-mono shrink-0" title={lookAheadWarning} role="img" aria-label={lookAheadWarning}>!</span>
       )}
       {/* Remove */}
       <button

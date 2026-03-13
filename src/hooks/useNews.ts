@@ -22,8 +22,8 @@ export function useNews() {
   const [error, setError] = useState(false);
 
   const fetchNews = () => {
-    fetchWithFallback('/news', STATIC_DATA.news)
-      .then((d: NewsData) => { setNews(d); setError(false); })
+    fetchWithFallback<NewsData>('/news', STATIC_DATA.news)
+      .then((d) => { setNews(d); setError(false); })
       .catch(() => setError(true));
   };
 
