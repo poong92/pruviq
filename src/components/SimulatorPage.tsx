@@ -83,6 +83,9 @@ const L = {
     held: "Bars",
     loading: "Loading...",
     error: "Error",
+    retry: "Retry",
+    noDataError: "Unable to load chart data. Check API connection.",
+    symbolPlaceholder: "Symbol...",
     apiDown: "API unavailable. Using demo mode.",
     disclaimer:
       "Past performance does not guarantee future results. This is not financial advice.",
@@ -141,6 +144,7 @@ const L = {
     maxDrawdown: "Max Drawdown",
     noTradeDetails: "Trade details not available for this backtest type.",
     noCoinData: "No per-coin data available.",
+    tradeTableCaption: "Simulated trade details",
     progressLabels: [
       "Preparing data...",
       "Computing indicators...",
@@ -206,6 +210,9 @@ const L = {
     held: "보유",
     loading: "로딩 중...",
     error: "에러",
+    retry: "다시 시도",
+    noDataError: "차트 데이터를 불러올 수 없습니다. API 연결을 확인하세요.",
+    symbolPlaceholder: "심볼...",
     apiDown: "API 연결 불가. 데모 모드로 전환합니다.",
     disclaimer:
       "과거 성과가 미래 수익을 보장하지 않습니다. 이것은 투자 조언이 아닙니다.",
@@ -258,6 +265,7 @@ const L = {
     maxDrawdown: "최대 낙폭",
     noTradeDetails: "이 백테스트 유형에서는 개별 거래 내역을 제공하지 않습니다.",
     noCoinData: "코인별 데이터가 없습니다.",
+    tradeTableCaption: "시뮬레이션 거래 내역",
     progressLabels: [
       "데이터 준비 중...",
       "지표 계산 중...",
@@ -474,7 +482,7 @@ export default function SimulatorPage({ lang = "en" }: Props) {
       }
 
       try {
-        const data = await fetchWithFallback(
+        const data = await fetchWithFallback<IndicatorInfo[] | { indicators: IndicatorInfo[] }>(
           "/builder/indicators",
           STATIC_DATA.builderIndicators,
         );
@@ -485,7 +493,7 @@ export default function SimulatorPage({ lang = "en" }: Props) {
       } catch {}
 
       try {
-        const presetsData = await fetchWithFallback(
+        const presetsData = await fetchWithFallback<PresetItem[] | { presets: PresetItem[] }>(
           "/builder/presets",
           STATIC_DATA.builderPresets,
         );
@@ -500,7 +508,7 @@ export default function SimulatorPage({ lang = "en" }: Props) {
       try {
         const coinRes = await fetch(`${API_URL}/coins`);
         if (coinRes.ok) {
-          const data = await coinRes.json();
+          const data: CoinOption[] | { coins: CoinOption[] } = await coinRes.json();
           if (!cancelled) {
             const arr = Array.isArray(data) ? data : data.coins || [];
             setAllCoins(arr.map((c: { symbol?: string } | string) => ({ symbol: (typeof c === 'string' ? c : c.symbol) || '' })));
@@ -508,7 +516,7 @@ export default function SimulatorPage({ lang = "en" }: Props) {
         } else {
           // Fallback: try static coins-stats for a basic symbol list
           try {
-            const stats = await fetchWithFallback(
+            const stats = await fetchWithFallback<{ coins: Array<{ symbol?: string } | string> }>(
               "/coins/stats",
               STATIC_DATA.coinsStats,
             );
@@ -705,7 +713,7 @@ export default function SimulatorPage({ lang = "en" }: Props) {
     const hoursPerBar = tfHours[timeframe] || 1;
     const adjustedMaxBars = Math.max(6, Math.round(maxBars / hoursPerBar));
 
-    const body: Record<string, any> = {
+    const body: Record<string, string | number | boolean | number[] | string[] | Record<string, Record<string, number>> | { type: string; conditions: typeof entryConditions }> = {
       name: "Custom Strategy",
       direction,
       timeframe,
@@ -1080,6 +1088,9 @@ export default function SimulatorPage({ lang = "en" }: Props) {
               error={chartError}
               onRetry={loadChart}
               timeframe={timeframe}
+              retryLabel={t.retry}
+              noDataError={t.noDataError}
+              symbolPlaceholder={t.symbolPlaceholder}
             />
           </div>
 
@@ -1139,6 +1150,9 @@ export default function SimulatorPage({ lang = "en" }: Props) {
               error={chartError}
               onRetry={loadChart}
               timeframe={timeframe}
+              retryLabel={t.retry}
+              noDataError={t.noDataError}
+              symbolPlaceholder={t.symbolPlaceholder}
             />
           </div>
 

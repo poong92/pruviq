@@ -1,7 +1,7 @@
 /** CSV generation and download utilities */
 
 export function generateCSV(headers: string[], rows: (string | number | null)[][]): string {
-  const escape = (val: any) => {
+  const escape = (val: string | number | null | undefined) => {
     if (val == null) return '';
     const str = String(val);
     if (str.includes(',') || str.includes('"') || str.includes('\n')) {

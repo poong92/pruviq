@@ -193,14 +193,14 @@ export default function CoinListTable({ lang = 'en' }: { lang?: 'en' | 'ko' }) {
 
   useEffect(() => {
     // Hybrid: load static first (metadata: name, image, sparkline), then overlay live prices
-    fetchWithFallback('/coins/stats', STATIC_DATA.coinsStats)
-      .then((json: StatsData) => {
+    fetchWithFallback<StatsData>('/coins/stats', STATIC_DATA.coinsStats)
+      .then((json) => {
         setData(json.coins || []);
         setGeneratedAt(json.generated || null);
         setLoading(false);
         // Overlay live prices from API
-        fetchLiveFirst('/market/live', STATIC_DATA.coinsStats)
-          .then((live: any) => {
+        fetchLiveFirst<StatsData>('/market/live', STATIC_DATA.coinsStats)
+          .then((live) => {
             const priceMap = new Map<string, { price: number; change_24h: number; volume_24h: number }>();
             for (const c of (live.coins || [])) {
               priceMap.set(c.symbol, { price: c.price, change_24h: c.change_24h, volume_24h: c.volume_24h });
@@ -252,8 +252,8 @@ export default function CoinListTable({ lang = 'en' }: { lang?: 'en' | 'ko' }) {
           onClick={() => {
             setError(null);
             setLoading(true);
-            fetchWithFallback('/coins/stats', STATIC_DATA.coinsStats)
-              .then((json: StatsData) => { setData(json.coins || []); setLoading(false); })
+            fetchWithFallback<StatsData>('/coins/stats', STATIC_DATA.coinsStats)
+              .then((json) => { setData(json.coins || []); setLoading(false); })
               .catch(err => { setError(err.message); setLoading(false); });
           }}
           class="px-4 py-2 rounded-lg border border-[--color-border] bg-[--color-bg-card] text-[--color-text] font-mono text-sm cursor-pointer hover:border-[--color-accent] transition-colors min-h-[44px]"

@@ -7,6 +7,15 @@ import {
   isVeryStale,
 } from "../config/api";
 
+interface MarketMover {
+  symbol: string;
+  name: string;
+  image: string;
+  price: number;
+  change_24h: number;
+  volume_24h: number;
+}
+
 type MarketData = {
   btc_price: number;
   btc_change_24h: number;
@@ -17,8 +26,8 @@ type MarketData = {
   total_market_cap_b: number;
   btc_dominance: number;
   total_volume_24h_b: number;
-  top_gainers?: any[];
-  top_losers?: any[];
+  top_gainers?: MarketMover[];
+  top_losers?: MarketMover[];
   generated: string;
 };
 
@@ -34,10 +43,10 @@ export function useMarketOverview() {
     // On initial load (no data yet) or when data is very stale (>1h), use API-first
     const fetcher =
       !market || isVeryStale(market)
-        ? fetchLiveFirst("/market", STATIC_DATA.market)
-        : fetchWithFallback("/market", STATIC_DATA.market);
+        ? fetchLiveFirst<MarketData>("/market", STATIC_DATA.market)
+        : fetchWithFallback<MarketData>("/market", STATIC_DATA.market);
     fetcher
-      .then((d: MarketData) => {
+      .then((d) => {
         setMarket(d);
         setError(false);
         // Poll faster when data is stale (>30 min old)

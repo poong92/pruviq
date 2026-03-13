@@ -6,7 +6,7 @@ import {
   getCssVar,
 } from "../utils/format";
 import { API_BASE_URL as API_URL } from "../config/api";
-import type { MouseEventParams, Time } from "lightweight-charts";
+import type { MouseEventParams, Time, IChartApi, ISeriesApi, SeriesType, UTCTimestamp } from "lightweight-charts";
 
 interface OhlcvBar {
   t: number;
@@ -178,14 +178,14 @@ export default function CoinChart({
 
   const chartContainerRef = useRef<HTMLDivElement>(null);
   // TODO: lightweight-charts does not export IChartApi/ISeriesApi for direct typing
-  const chartRef = useRef<any>(null);
-  const candleSeriesRef = useRef<any>(null);
-  const bbUpperRef = useRef<any>(null);
-  const bbMidRef = useRef<any>(null);
-  const bbLowerRef = useRef<any>(null);
-  const ema20Ref = useRef<any>(null);
-  const ema50Ref = useRef<any>(null);
-  const volumeSeriesRef = useRef<any>(null);
+  const chartRef = useRef<IChartApi | null>(null);
+  const candleSeriesRef = useRef<ISeriesApi<SeriesType> | null>(null);
+  const bbUpperRef = useRef<ISeriesApi<SeriesType> | null>(null);
+  const bbMidRef = useRef<ISeriesApi<SeriesType> | null>(null);
+  const bbLowerRef = useRef<ISeriesApi<SeriesType> | null>(null);
+  const ema20Ref = useRef<ISeriesApi<SeriesType> | null>(null);
+  const ema50Ref = useRef<ISeriesApi<SeriesType> | null>(null);
+  const volumeSeriesRef = useRef<ISeriesApi<SeriesType> | null>(null);
   const ohlcvMapRef = useRef<Map<number, OhlcvBar>>(new Map());
 
   // Load OHLCV data
@@ -275,7 +275,7 @@ export default function CoinChart({
         });
         candleSeries.setData(
           ohlcv.map((b) => ({
-            time: b.t as any,
+            time: b.t as UTCTimestamp,
             open: b.o,
             high: b.h,
             low: b.l,
@@ -310,17 +310,17 @@ export default function CoinChart({
         bbUpper.setData(
           ohlcv
             .filter((b) => b.bb_upper != null)
-            .map((b) => ({ time: b.t as any, value: b.bb_upper! })),
+            .map((b) => ({ time: b.t as UTCTimestamp, value: b.bb_upper! })),
         );
         bbMid.setData(
           ohlcv
             .filter((b) => b.bb_mid != null)
-            .map((b) => ({ time: b.t as any, value: b.bb_mid! })),
+            .map((b) => ({ time: b.t as UTCTimestamp, value: b.bb_mid! })),
         );
         bbLower.setData(
           ohlcv
             .filter((b) => b.bb_lower != null)
-            .map((b) => ({ time: b.t as any, value: b.bb_lower! })),
+            .map((b) => ({ time: b.t as UTCTimestamp, value: b.bb_lower! })),
         );
         bbUpperRef.current = bbUpper;
         bbMidRef.current = bbMid;
@@ -345,12 +345,12 @@ export default function CoinChart({
         ema20.setData(
           ohlcv
             .filter((b) => b.ema20 != null)
-            .map((b) => ({ time: b.t as any, value: b.ema20! })),
+            .map((b) => ({ time: b.t as UTCTimestamp, value: b.ema20! })),
         );
         ema50.setData(
           ohlcv
             .filter((b) => b.ema50 != null)
-            .map((b) => ({ time: b.t as any, value: b.ema50! })),
+            .map((b) => ({ time: b.t as UTCTimestamp, value: b.ema50! })),
         );
         ema20Ref.current = ema20;
         ema50Ref.current = ema50;
@@ -364,7 +364,7 @@ export default function CoinChart({
           .applyOptions({ scaleMargins: { top: 0.82, bottom: 0 } });
         volumeSeries.setData(
           ohlcv.map((b) => ({
-            time: b.t as any,
+            time: b.t as UTCTimestamp,
             value: b.v,
             color:
               b.c >= b.o
