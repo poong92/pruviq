@@ -39,6 +39,7 @@ class BBSqueezeStrategy:
         ema_slow: int = 50,
         avoid_hours: list = None,
         avoid_months: list = None,
+        min_vol_regime: float = None,
     ):
         self.bb_period = bb_period
         self.bb_std = bb_std
@@ -52,6 +53,7 @@ class BBSqueezeStrategy:
         self.ema_slow = ema_slow
         self.avoid_hours = avoid_hours or []
         self.avoid_months = avoid_months or []
+        self.min_vol_regime = min_vol_regime
 
     def get_params(self) -> dict:
         return {

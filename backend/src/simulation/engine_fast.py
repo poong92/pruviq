@@ -55,6 +55,50 @@ class SimResult:
     equity_curve: list = field(default_factory=list)
 
 
+def _compute_vol_regime_filter(df: pd.DataFrame, n: int, min_vol_regime: float) -> np.ndarray:
+    """
+    Compute ATR-based volatility regime filter.
+
+    Returns a boolean array of length n where True = volatility is sufficient for entry.
+    ATR ratio = current ATR(14) / 14-period MA of ATR. Entries allowed when ratio >= min_vol_regime.
+    """
+    vol_regime_ok = np.ones(n, dtype=bool)
+    if min_vol_regime is None:
+        return vol_regime_ok
+    if "high" not in df.columns or "low" not in df.columns or "close" not in df.columns:
+        return vol_regime_ok
+
+    high = df["high"].values.astype(float)
+    low = df["low"].values.astype(float)
+    close = df["close"].values.astype(float)
+
+    # True Range calculation
+    tr = np.empty(n)
+    tr[0] = high[0] - low[0]
+    for i in range(1, n):
+        tr[i] = max(high[i] - low[i], abs(high[i] - close[i - 1]), abs(low[i] - close[i - 1]))
+
+    # 14-period ATR (EMA-style, matching standard ATR)
+    atr_period = 14
+    atr = np.full(n, np.nan)
+    if n >= atr_period:
+        atr[atr_period - 1] = np.mean(tr[:atr_period])
+        for i in range(atr_period, n):
+            atr[i] = (atr[i - 1] * (atr_period - 1) + tr[i]) / atr_period
+
+    # ATR moving average (14-period SMA of ATR)
+    atr_ma = np.full(n, np.nan)
+    if n >= 2 * atr_period:
+        for i in range(2 * atr_period - 2, n):
+            atr_ma[i] = np.mean(atr[i - atr_period + 1:i + 1])
+
+    # ATR ratio
+    atr_ratio = np.where((atr_ma > 0) & ~np.isnan(atr_ma), atr / atr_ma, np.nan)
+    vol_regime_ok = np.where(np.isnan(atr_ratio), False, atr_ratio >= min_vol_regime)
+
+    return vol_regime_ok
+
+
 def find_signals_vectorized(df: pd.DataFrame, strategy, direction: str = "short") -> np.ndarray:
     """
     Vectorized signal detection for BB Squeeze — AutoTrader v1.7.0 parity.
@@ -137,10 +181,15 @@ def find_signals_vectorized(df: pd.DataFrame, strategy, direction: str = "short"
             next_month_ok &= (next_months != m)
     next_month_ok[n - 1] = False
 
+    # ATR volatility regime filter
+    min_vol_regime = getattr(strategy, 'min_vol_regime', None)
+    vol_regime_ok = _compute_vol_regime_filter(df, n, min_vol_regime)
+
     # Combine base conditions
     base_ok = (
         valid_range & has_recent_squeeze & has_bb_expanding
         & has_bb_above_ma & has_volume & has_expansion_speed & next_hour_ok & next_month_ok
+        & vol_regime_ok
     )
 
     # Direction-specific conditions
@@ -214,8 +263,12 @@ def find_signals_momentum(df: pd.DataFrame, strategy, direction: str = "long") -
             next_month_ok &= (next_months != m)
     next_month_ok[-1] = False
 
+    # ATR volatility regime filter
+    min_vol_regime = getattr(strategy, 'min_vol_regime', None)
+    vol_regime_ok = _compute_vol_regime_filter(df, n, min_vol_regime)
+
     # Combine all conditions
-    signal = valid_range & has_breakout & has_volume & has_uptrend & next_hour_ok & next_month_ok
+    signal = valid_range & has_breakout & has_volume & has_uptrend & next_hour_ok & next_month_ok & vol_regime_ok
 
     # For "short" direction (unlikely but for completeness), no signals
     if direction != "long":
@@ -304,8 +357,12 @@ def find_signals_hv_squeeze(df: pd.DataFrame, strategy, direction: str = "short"
             next_month_ok &= (next_months != m)
     next_month_ok[-1] = False
 
+    # ATR volatility regime filter
+    min_vol_regime = getattr(strategy, 'min_vol_regime', None)
+    vol_regime_ok = _compute_vol_regime_filter(df, n, min_vol_regime)
+
     # Base conditions
-    base_ok = valid_range & has_recent_squeeze & has_expanding & has_volume & valid_bb & next_hour_ok & next_month_ok
+    base_ok = valid_range & has_recent_squeeze & has_expanding & has_volume & valid_bb & next_hour_ok & next_month_ok & vol_regime_ok
 
     # Direction
     if direction == "long":
@@ -370,7 +427,11 @@ def find_signals_atr_breakout(df: pd.DataFrame, strategy, direction: str = "long
             next_month_ok &= (next_months != m)
     next_month_ok[-1] = False
 
-    base = valid_range & next_hour_ok & next_month_ok
+    # ATR volatility regime filter
+    min_vol_regime = getattr(strategy, 'min_vol_regime', None)
+    vol_regime_ok = _compute_vol_regime_filter(df, n, min_vol_regime)
+
+    base = valid_range & next_hour_ok & next_month_ok & vol_regime_ok
 
     if strategy.use_trend_filter:
         signal_long = base & breakout_up & uptrend

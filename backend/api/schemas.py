@@ -25,6 +25,7 @@ class SimulationRequest(BaseModel):
     compounding: bool = Field(default=False, description="True = reinvest profits (compound), False = fixed position size (simple)")
     avoid_hours: Optional[List[int]] = Field(default=None, description="UTC hours to avoid entering trades (0-23). null = use strategy default")
     avoid_months: Optional[List[int]] = Field(default=None, description="Months to avoid entering trades (1-12). null = no month filter")
+    min_vol_regime: Optional[float] = Field(default=None, description="Minimum ATR ratio (current ATR / 14-period ATR MA) to allow entry. e.g., 0.7 = skip low-volatility periods. null = no filter")
 
 
 class TradeItem(BaseModel):
@@ -312,6 +313,7 @@ class BacktestRequest(BaseModel):
     )
     avoid_hours: List[int] = Field(default=[], description="UTC hours to avoid (0-23)")
     avoid_months: Optional[List[int]] = Field(default=None, description="Months to avoid entering trades (1-12). null = no month filter")
+    min_vol_regime: Optional[float] = Field(default=None, description="Minimum ATR ratio (current ATR / 14-period ATR MA) to allow entry. e.g., 0.7 = skip low-volatility periods. null = no filter")
     sl_pct: float = Field(default=10.0, ge=0.5, le=50.0, description="Stop Loss %")
     tp_pct: float = Field(default=8.0, ge=0.5, le=100.0, description="Take Profit %")
     max_bars: int = Field(default=48, ge=1, le=168, description="Max holding period (bars)")
@@ -547,6 +549,7 @@ class ValidateRequest(BaseModel):
     timeframe: str = Field(default="1H", description="Candle timeframe: 1H, 2H, 4H, 6H, 12H, 1D, 1W")
     avoid_hours: Optional[List[int]] = Field(default=None, description="UTC hours to avoid entering trades (0-23). null = use strategy default")
     avoid_months: Optional[List[int]] = Field(default=None, description="Months to avoid entering trades (1-12). null = no month filter")
+    min_vol_regime: Optional[float] = Field(default=None, description="Minimum ATR ratio (current ATR / 14-period ATR MA) to allow entry. e.g., 0.7 = skip low-volatility periods. null = no filter")
 
 
 class ValidateResponse(BaseModel):
