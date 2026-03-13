@@ -9,6 +9,7 @@ interface Props {
   type?: 'website' | 'article';
   date?: string;
   category?: string;
+  keywords?: string;
   ogImage?: string;
   canonicalOverride?: string;
   noAlternate?: boolean;
@@ -21,7 +22,8 @@ const basePath = getBasePath(Astro.url.pathname);
 const cfToken = import.meta.env.PUBLIC_CF_ANALYTICS_TOKEN;
 const buildTime = new Date().toISOString();
 
-const { title, description = t('meta.home_desc'), type = 'website', date, category, canonicalOverride, noAlternate = false } = Astro.props;
+const { title, description = t('meta.home_desc'), type = 'website', date, category, keywords: customKeywords, canonicalOverride, noAlternate = false } = Astro.props;
+const lastModified = date || buildTime;
 const ogImage = new URL(Astro.props.ogImage || '/og-image.jpg', Astro.site || 'https://pruviq.com').href;
 // derive AVIF/WebP variants safely for jpg/png sources
 const ogImageAvif = ogImage.replace(/\.(png|jpe?g)(\?.*)?$/i, '.avif$2');
@@ -96,10 +98,43 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
     {!noAlternate && <link rel="alternate" hreflang="x-default" href={enURL.href} />}
     <meta name="naver-site-verification" content="ece19c45b3e33ec86f4fc79060c3283cea1493ee" />
     <meta name="yandex-verification" content="a20aa9b1eacf8e51" />
-    <meta name="keywords" content={lang === 'ko'
-      ? '크립토 백테스팅, 트레이딩 전략 빌더, 노코드 백테스터, 암호화폐 전략 시뮬레이터, 무료 백테스팅 도구, 볼린저 밴드 전략, RSI 전략, 크립토 선물 백테스트, 가상화폐 자동매매, 퀀트 트레이딩'
-      : 'crypto backtesting, trading strategy builder, no-code backtester, cryptocurrency strategy simulator, free backtesting tool, Bollinger Bands strategy, RSI strategy, crypto futures backtest'
-    } />
+    <meta name="keywords" content={customKeywords || (() => {
+      const base = lang === 'ko'
+        ? ['크립토 백테스팅', '무료 백테스팅 도구', 'PRUVIQ']
+        : ['crypto backtesting', 'free backtesting tool', 'PRUVIQ'];
+      const section = basePath.split('/').filter(Boolean)[0] || '';
+      const pageSpecific: Record<string, Record<string, string[]>> = {
+        en: {
+          market: ['crypto market data', 'BTC dominance', 'fear and greed index', 'funding rate'],
+          simulate: ['trading strategy builder', 'no-code backtester', 'strategy simulator', 'crypto futures backtest'],
+          strategies: ['trading strategies', 'Bollinger Bands strategy', 'RSI strategy', 'MACD strategy'],
+          coins: ['cryptocurrency data', 'coin analysis', 'crypto futures'],
+          learn: ['crypto trading education', 'backtesting guide', 'trading tutorial'],
+          fees: ['crypto exchange fees', 'trading fee comparison', 'exchange referral discount'],
+          blog: ['crypto trading blog', 'backtesting insights', 'quantitative trading'],
+          leaderboard: ['strategy leaderboard', 'top trading strategies', 'strategy ranking'],
+          about: ['PRUVIQ platform', 'crypto strategy verification'],
+          '': ['trading strategy builder', 'no-code backtester', 'cryptocurrency strategy simulator', 'crypto futures backtest'],
+        },
+        ko: {
+          market: ['암호화폐 시장 데이터', 'BTC 도미넌스', '공포탐욕지수', '펀딩률'],
+          simulate: ['트레이딩 전략 빌더', '노코드 백테스터', '전략 시뮬레이터', '크립토 선물 백테스트'],
+          strategies: ['트레이딩 전략', '볼린저 밴드 전략', 'RSI 전략', 'MACD 전략'],
+          coins: ['암호화폐 데이터', '코인 분석', '크립토 선물'],
+          learn: ['크립토 트레이딩 교육', '백테스팅 가이드', '트레이딩 튜토리얼'],
+          fees: ['거래소 수수료 비교', '트레이딩 수수료', '거래소 레퍼럴 할인'],
+          blog: ['크립토 트레이딩 블로그', '백테스팅 인사이트', '퀀트 트레이딩'],
+          leaderboard: ['전략 리더보드', '최고 트레이딩 전략', '전략 랭킹'],
+          about: ['PRUVIQ 플랫폼', '크립토 전략 검증'],
+          '': ['트레이딩 전략 빌더', '노코드 백테스터', '암호화폐 전략 시뮬레이터', '크립토 선물 백테스트'],
+        },
+      };
+      const sectionKw = pageSpecific[lang]?.[section] || pageSpecific[lang]?.[''] || [];
+      const segments = basePath.split('/').filter(Boolean);
+      const titleKw = title.replace(/ [-|] PRUVIQ$/, '').trim();
+      const extra = segments.length > 1 && titleKw && !base.includes(titleKw) ? [titleKw] : [];
+      return [...base, ...sectionKw, ...extra].join(', ');
+    })()} />
     <meta name="application-name" content="PRUVIQ" />
     <link rel="preload" href="/fonts/inter.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/jetbrains-mono.woff2" as="font" type="font/woff2" crossorigin />
@@ -111,7 +146,7 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/manifest.json" />
     <meta name="theme-color" content="#0C1829" />
-    <meta name="last-modified" content={buildTime} />
+    <meta name="last-modified" content={lastModified} />
     {basePath.startsWith('/404') && <meta name="robots" content="noindex" />}
     <link rel="preconnect" href="https://api.pruviq.com" crossorigin />
     <link rel="preconnect" href="https://coin-images.coingecko.com" crossorigin />
@@ -272,7 +307,7 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
         "headline": title,
         "description": description,
         "datePublished": date,
-        "dateModified": date || buildTime,
+        "dateModified": lastModified,
         "author": { "@type": "Organization", "name": "PRUVIQ" },
         "publisher": {
           "@type": "Organization",
