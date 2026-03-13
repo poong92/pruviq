@@ -200,6 +200,147 @@ def find_signals_momentum(df: pd.DataFrame, strategy, direction: str = "long") -
     return np.where(signal)[0]
 
 
+def find_signals_hv_squeeze(df: pd.DataFrame, strategy, direction: str = "short") -> np.ndarray:
+    """
+    Vectorized signal detection for HV Squeeze strategy.
+
+    Conditions at signal bar (idx), entry at idx+1:
+    - Recent squeeze in past squeeze_lookback candles
+    - BB width expanding (curr > prev)
+    - Volume >= volume_ratio (prev candle)
+    - Price vs BB mid + prev candle color matches direction
+    """
+    n = len(df)
+    if n < 100:
+        return np.array([], dtype=int)
+
+    def col(name, default=None):
+        if name in df.columns:
+            return df[name].values
+        if default is not None:
+            return default
+        return np.zeros(n)
+
+    is_squeeze = col("is_squeeze", np.zeros(n, dtype=bool))
+    bb_width = col("bb_width")
+    bb_mid = col("bb_mid")
+    vol_ratio = col("vol_ratio")
+    is_bullish = col("is_bullish", np.zeros(n, dtype=bool))
+    is_bearish = col("is_bearish", np.zeros(n, dtype=bool))
+    close = col("close")
+    hour = col("hour", np.zeros(n, dtype=int))
+
+    min_idx = strategy.bb_period + strategy.squeeze_lookback + 1
+
+    # Recent squeeze: rolling any() over squeeze_lookback window
+    squeeze_bool = is_squeeze.astype(float)
+    squeeze_rolling = pd.Series(squeeze_bool).rolling(strategy.squeeze_lookback, min_periods=1).sum().values
+    has_recent_squeeze = np.roll(squeeze_rolling > 0, 1)
+    has_recent_squeeze[0] = False
+
+    # BB width expanding
+    prev_bb_width = np.roll(bb_width, 1)
+    prev_bb_width[0] = np.nan
+    has_expanding = bb_width > prev_bb_width
+
+    # Volume filter (prev candle)
+    prev_vol = np.roll(vol_ratio, 1)
+    prev_vol[0] = 0
+    has_volume = prev_vol >= strategy.volume_ratio
+
+    # Prev candle color
+    prev_bullish = np.roll(is_bullish, 1)
+    prev_bullish[0] = False
+    prev_bearish = np.roll(is_bearish, 1)
+    prev_bearish[0] = False
+
+    # NaN guards
+    valid_bb = ~np.isnan(bb_width) & ~np.isnan(bb_mid) & (bb_mid > 0)
+    valid_range = np.arange(n) >= min_idx
+
+    # Time filter (check entry bar = idx+1 hour)
+    avoid_set = set(strategy.avoid_hours)
+    next_hour_ok = np.ones(n, dtype=bool)
+    if avoid_set:
+        next_hour = np.roll(hour, -1)
+        next_hour[-1] = 0
+        for h in avoid_set:
+            next_hour_ok &= (next_hour != h)
+    next_hour_ok[-1] = False
+
+    # Base conditions
+    base_ok = valid_range & has_recent_squeeze & has_expanding & has_volume & valid_bb & next_hour_ok
+
+    # Direction
+    if direction == "long":
+        signal = base_ok & (close > bb_mid) & prev_bullish
+    elif direction == "short":
+        signal = base_ok & (close < bb_mid) & prev_bearish
+    else:
+        # both: combine
+        signal_long = base_ok & (close > bb_mid) & prev_bullish
+        signal_short = base_ok & (close < bb_mid) & prev_bearish
+        signal = signal_long | signal_short
+
+    return np.where(signal)[0]
+
+
+def find_signals_atr_breakout(df: pd.DataFrame, strategy, direction: str = "long") -> np.ndarray:
+    """
+    Vectorized signal detection for ATR Breakout strategy.
+
+    Uses pre-computed breakout_up/breakout_down columns (already shifted).
+    Optional EMA trend filter via uptrend/downtrend.
+    """
+    n = len(df)
+    if n < 100:
+        return np.array([], dtype=int)
+
+    def col(name, default=None):
+        if name in df.columns:
+            return df[name].values
+        if default is not None:
+            return default
+        return np.zeros(n)
+
+    breakout_up = col("breakout_up", np.zeros(n, dtype=bool)).astype(bool)
+    breakout_down = col("breakout_down", np.zeros(n, dtype=bool)).astype(bool)
+    uptrend = col("uptrend", np.zeros(n, dtype=bool)).astype(bool)
+    downtrend = col("downtrend", np.zeros(n, dtype=bool)).astype(bool)
+    hour = col("hour", np.zeros(n, dtype=int))
+
+    min_idx = strategy.ema_slow + strategy.atr_period + 2
+    valid_range = np.arange(n) >= min_idx
+
+    # Time filter
+    avoid_set = set(strategy.avoid_hours)
+    next_hour_ok = np.ones(n, dtype=bool)
+    if avoid_set:
+        next_hour = np.roll(hour, -1)
+        next_hour[-1] = 0
+        for h in avoid_set:
+            next_hour_ok &= (next_hour != h)
+    next_hour_ok[-1] = False
+
+    base = valid_range & next_hour_ok
+
+    if strategy.use_trend_filter:
+        signal_long = base & breakout_up & uptrend
+        signal_short = base & breakout_down & downtrend
+    else:
+        signal_long = base & breakout_up
+        signal_short = base & breakout_down
+
+    if direction == "long":
+        signal = signal_long
+    elif direction == "short":
+        signal = signal_short
+    else:
+        signal = signal_long | signal_short
+
+    return np.where(signal)[0]
+
+
 def find_signals_generic(df: pd.DataFrame, strategy, direction: str) -> np.ndarray:
     """
     Generic signal detection fallback — calls strategy.check_signal() per bar.
@@ -362,6 +503,10 @@ def run_fast(
         signal_indices = find_signals_vectorized(df, strategy, direction)
     elif strategy_id == "momentum-long":
         signal_indices = find_signals_momentum(df, strategy, direction)
+    elif strategy_id == "hv-squeeze":
+        signal_indices = find_signals_hv_squeeze(df, strategy, direction)
+    elif strategy_id == "atr-breakout":
+        signal_indices = find_signals_atr_breakout(df, strategy, direction)
     else:
         signal_indices = find_signals_generic(df, strategy, direction)
 

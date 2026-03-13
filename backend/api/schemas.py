@@ -18,7 +18,7 @@ class SimulationRequest(BaseModel):
     max_bars: int = Field(default=48, ge=6, le=168, description="Max holding period (bars)")
     market_type: str = Field(default="futures", description="spot | futures")
     symbols: Optional[List[str]] = Field(default=None, description="Specific symbols (null = use top_n)")
-    top_n: Optional[int] = Field(default=None, ge=1, description="Number of coins (null = all coins)")
+    top_n: Optional[int] = Field(default=None, ge=1, description="Number of coins (null = top 50)")
     start_date: Optional[str] = Field(default=None, description="Backtest start date (YYYY-MM-DD)")
     end_date: Optional[str] = Field(default=None, description="Backtest end date (YYYY-MM-DD)")
     timeframe: str = Field(default="1H", description="Candle timeframe: 1H, 2H, 4H, 6H, 12H, 1D, 1W")
@@ -252,7 +252,7 @@ class CompareRequest(BaseModel):
     sl_pct: float = Field(default=10.0, ge=1.0, le=30.0, description="Stop Loss %")
     tp_pct: float = Field(default=8.0, ge=1.0, le=30.0, description="Take Profit %")
     max_bars: int = Field(default=48, ge=6, le=168, description="Max holding period (bars)")
-    top_n: Optional[int] = Field(default=None, ge=1, description="Number of coins (null = all)")
+    top_n: Optional[int] = Field(default=None, ge=1, description="Number of coins (null = top 50)")
 
 
 class StrategyResult(BaseModel):
@@ -312,7 +312,7 @@ class BacktestRequest(BaseModel):
     sl_pct: float = Field(default=10.0, ge=0.5, le=50.0, description="Stop Loss %")
     tp_pct: float = Field(default=8.0, ge=0.5, le=100.0, description="Take Profit %")
     max_bars: int = Field(default=48, ge=1, le=168, description="Max holding period (bars)")
-    top_n: Optional[int] = Field(default=None, ge=1, description="Number of coins (null = all)")
+    top_n: Optional[int] = Field(default=None, ge=1, description="Number of coins (null = top 50)")
     symbols: Optional[List[str]] = Field(default=None, description="Specific symbols")
     start_date: Optional[str] = Field(default=None, description="Backtest start date (YYYY-MM-DD)")
     end_date: Optional[str] = Field(default=None, description="Backtest end date (YYYY-MM-DD)")
@@ -535,7 +535,7 @@ class ValidateRequest(BaseModel):
     tp_pct: float = Field(default=8.0, ge=1.0, le=30.0)
     max_bars: int = Field(default=48, ge=6, le=168)
     market_type: str = Field(default="futures")
-    top_n: Optional[int] = Field(default=None, ge=1, description="Number of coins (null = all)")
+    top_n: Optional[int] = Field(default=None, ge=1, description="Number of coins (null = top 50)")
     symbols: Optional[List[str]] = Field(default=None)
     oos_pct: float = Field(default=30.0, ge=10.0, le=50.0, description="OOS split %")
     mc_runs: int = Field(default=1000, ge=100, le=5000, description="Monte Carlo runs")
