@@ -2,8 +2,11 @@
 import Layout from '../../../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
 import { useTranslations } from '../../../i18n/index';
+import presetsJson from '../../../../public/data/builder-presets.json';
 
 const t = useTranslations('ko');
+
+const simulatorPresets: Array<{id: string; name_ko?: string; name?: string; direction?: string}> = presetsJson as Array<{id: string; name_ko?: string; name?: string; direction?: string}>;
 
 // Try Korean strategies first, fall back to English
 const koStrategies = await getCollection('strategies-ko');
@@ -177,6 +180,33 @@ const isKorean = (id: string) => koIds.has(id);
           </div>
         ))}
       </div>
+
+      {simulatorPresets.length > 0 && (
+        <div class="mt-12">
+          <h2 class="text-xl font-bold mb-2">시뮬레이터 프리셋 전체 ({simulatorPresets.length}종)</h2>
+          <p class="text-[--color-text-muted] text-sm mb-6">
+            아래 전략을 클릭하면 시뮬레이터에서 바로 파라미터가 적용됩니다. 549개 코인 동시 테스트.
+          </p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {simulatorPresets.map((preset) => (
+              <a
+                href={`/ko/simulate?preset=${preset.id}`}
+                class="flex items-center justify-between border border-[--color-border] rounded-lg px-4 py-3 bg-[--color-bg-card] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors group"
+              >
+                <p class="font-semibold text-sm">{preset.name_ko ?? preset.name}</p>
+                <div class="flex items-center gap-2 shrink-0 ml-3">
+                  {preset.direction && (
+                    <span class={`font-mono text-xs px-1.5 py-0.5 rounded border ${preset.direction === 'long' ? 'text-[--color-accent] border-[--color-accent]/30' : preset.direction === 'short' ? 'text-[--color-red] border-[--color-red]/30' : 'text-[--color-yellow] border-[--color-yellow]/30'}`}>
+                      {preset.direction.toUpperCase()}
+                    </span>
+                  )}
+                  <span class="text-[--color-text-muted] text-xs group-hover:text-[--color-accent]">&rarr;</span>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div class="mt-12 border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] text-center">
         <p class="font-mono text-[--color-accent] text-sm mb-2">{t('strategies.more_tag')}</p>
