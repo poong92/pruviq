@@ -122,6 +122,7 @@
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 <<<<<<< HEAD
 <<<<<<< Updated upstream
 <<<<<<< HEAD
@@ -1310,4 +1311,7 @@
 >>>>>>> Stashed changes
 =======
 {"indicators":[{"id":"SPX","name":"S&P 500","value":6651.73,"change":-20.89,"unit":"Index","updated":"1:23 PM EDT","source":"CNBC"},{"id":"IXIC","name":"Nasdaq","value":22151.787,"change":-160.193,"unit":"Index","updated":"1:23 PM EDT","source":"CNBC"},{"id":"DXY","name":"DXY (US Dollar)","value":100.316,"change":0.577,"unit":"Index","updated":"1:23 PM EDT","source":"CNBC"},{"id":"US10Y","name":"US 10Y Treasury","value":4.285,"change":0.012,"unit":"%","updated":"1:23 PM EDT","source":"CNBC"},{"id":"US2Y","name":"US 2Y Treasury","value":3.734,"change":-0.028,"unit":"%","updated":"1:23 PM EDT","source":"CNBC"},{"id":"VIX","name":"VIX","value":27.12,"change":-0.17,"unit":"Index","updated":"1:23 PM EDT","source":"CNBC"},{"id":"GOLD","name":"Gold","value":5056.1,"change":-69.7,"unit":"USD","updated":"1:13 PM EDT","source":"CNBC"},{"id":"DFF","name":"Fed Funds Rate","value":3.64,"change":0.0,"unit":"%","updated":"2026-03-11","source":"FRED"}],"generated":"2026-03-13T17:23:39.252752+00:00"}
+>>>>>>> Stashed changes
+=======
+{"indicators":[{"id":"SPX","name":"S&P 500","value":6647.21,"change":-25.41,"unit":"Index","updated":"1:43 PM EDT","source":"CNBC"},{"id":"IXIC","name":"Nasdaq","value":22131.937,"change":-180.042,"unit":"Index","updated":"1:43 PM EDT","source":"CNBC"},{"id":"DXY","name":"DXY (US Dollar)","value":100.322,"change":0.583,"unit":"Index","updated":"1:43 PM EDT","source":"CNBC"},{"id":"US10Y","name":"US 10Y Treasury","value":4.283,"change":0.01,"unit":"%","updated":"1:41 PM EDT","source":"CNBC"},{"id":"US2Y","name":"US 2Y Treasury","value":3.732,"change":-0.03,"unit":"%","updated":"1:42 PM EDT","source":"CNBC"},{"id":"VIX","name":"VIX","value":27.21,"change":-0.08,"unit":"Index","updated":"1:43 PM EDT","source":"CNBC"},{"id":"GOLD","name":"Gold","value":5061.6,"change":-64.2,"unit":"USD","updated":"1:33 PM EDT","source":"CNBC"},{"id":"DFF","name":"Fed Funds Rate","value":3.64,"change":0.0,"unit":"%","updated":"2026-03-11","source":"FRED"}],"generated":"2026-03-13T17:43:13.325952+00:00"}
 >>>>>>> Stashed changes
