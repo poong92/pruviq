@@ -1414,7 +1414,7 @@ _news_cache: Optional[dict] = None
 BINANCE_SPOT_URL = "https://api.binance.com/api/v3/ticker/24hr"
 BINANCE_FUTURES_URL = "https://fapi.binance.com/fapi/v1/ticker/24hr"
 # DO server proxy via Tailscale for Korean IP bypass (fapi v1 geo-blocked from KR)
-BINANCE_PROXY_URL = "http://100.122.203.78:9090/fapi/v1/ticker/24hr"
+BINANCE_PROXY_URL = "http://167.172.81.145:9090/fapi/v1/ticker/24hr"
 BINANCE_PROXY_HEADERS = {"X-Proxy-Key": "***REDACTED***"}
 _live_spot_cache: Optional[dict] = None
 _live_spot_ts: float = 0.0
