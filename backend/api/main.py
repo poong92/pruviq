@@ -3123,11 +3123,20 @@ async def get_daily_rankings(date: Optional[str] = None):
         if isinstance(section_entries, list):
             all_entries.extend(section_entries)
 
-    # De-duplicate by (strategy, direction, timeframe)
+    # Walk-Forward 검증 실패 전략 제외 (구조적 손실 확인 2026-03-14)
+    WF_FAILED_KEYS = {
+        ("mean-reversion", "short", "4H"),
+        ("mean-reversion", "short", "6H"),
+        ("rsi-divergence", "long",  "4H"),
+    }
+
+    # De-duplicate by (strategy, direction, timeframe) and filter WF failures
     seen: set = set()
     unique_entries: list = []
     for e in all_entries:
-        key = (e.get("strategy"), e.get("direction"), e.get("timeframe"))
+        key = (e.get("strategy"), e.get("direction"), e.get("timeframe", "1H"))
+        if key in WF_FAILED_KEYS:
+            continue
         if key not in seen:
             seen.add(key)
             unique_entries.append(e)
@@ -3180,7 +3189,9 @@ async def get_daily_rankings(date: Optional[str] = None):
             for section_entries in day_results.values():
                 if isinstance(section_entries, list):
                     for e in section_entries:
-                        key = (e.get("strategy"), e.get("direction"), e.get("timeframe"))
+                        key = (e.get("strategy"), e.get("direction"), e.get("timeframe", "1H"))
+                        if key in WF_FAILED_KEYS:
+                            continue
                         if key not in weekly_map:
                             weekly_map[key] = {"entries": [], "meta": e}
                         weekly_map[key]["entries"].append(e)
