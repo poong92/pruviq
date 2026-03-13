@@ -3070,3 +3070,178 @@ async def export_csv(hash: str):
         media_type="text/csv",
         headers={"Content-Disposition": f"attachment; filename={filename}"}
     )
+
+
+# ---------------------------------------------------------------------------
+# Daily Rankings
+# ---------------------------------------------------------------------------
+
+RANKING_DIR = "/Users/jepo/Desktop/autotrader/data/daily_rankings"
+
+
+@app.get("/rankings/daily")
+async def get_daily_rankings(date: Optional[str] = None):
+    """Return daily strategy rankings from pre-computed JSON files.
+
+    Query params:
+        date: YYYYMMDD (default: today). Falls back to most recent file.
+    """
+    ranking_dir = Path(RANKING_DIR)
+
+    # Resolve target filename
+    if date is None:
+        date = datetime.now(timezone.utc).strftime("%Y%m%d")
+
+    target_file = ranking_dir / f"ranking_{date}.json"
+
+    # Fallback to most-recent file if requested date not found
+    if not target_file.exists():
+        candidates = sorted(ranking_dir.glob("ranking_*.json"), reverse=True)
+        if not candidates:
+            raise HTTPException(404, f"No ranking files found in {RANKING_DIR}")
+        target_file = candidates[0]
+        # Extract actual date from filename
+        date = target_file.stem.replace("ranking_", "")
+
+    try:
+        with open(target_file, "r", encoding="utf-8") as f:
+            raw = json.load(f)
+    except Exception as e:
+        raise HTTPException(500, f"Failed to read ranking file: {e}")
+
+    generated_at = raw.get("date", "")
+    # Normalise date to YYYY-MM-DD display format
+    try:
+        display_date = datetime.strptime(date, "%Y%m%d").strftime("%Y-%m-%d")
+    except ValueError:
+        display_date = date
+
+    # Flatten all strategy entries across sections (Top 50 / Worst 50 / etc.)
+    all_entries: list = []
+    results = raw.get("results", {})
+    for section_entries in results.values():
+        if isinstance(section_entries, list):
+            all_entries.extend(section_entries)
+
+    # Walk-Forward 검증 실패 전략 제외 (구조적 손실 확인 2026-03-14)
+    WF_FAILED_KEYS = {
+        ("mean-reversion", "short", "4H"),
+        ("mean-reversion", "short", "6H"),
+        ("rsi-divergence", "long",  "4H"),
+    }
+
+    # De-duplicate by (strategy, direction, timeframe) and filter WF failures
+    seen: set = set()
+    unique_entries: list = []
+    for e in all_entries:
+        key = (e.get("strategy"), e.get("direction"), e.get("timeframe", "1H"))
+        if key in WF_FAILED_KEYS:
+            continue
+        if key not in seen:
+            seen.add(key)
+            unique_entries.append(e)
+
+    # Rank by profit_factor desc (then win_rate as tiebreaker)
+    ranked = sorted(
+        unique_entries,
+        key=lambda x: (x.get("profit_factor", 0), x.get("win_rate", 0)),
+        reverse=True,
+    )
+
+    def _make_entry(e: dict, rank: int) -> dict:
+        trades = e.get("total_trades", 0)
+        return {
+            "rank": rank,
+            "name_ko": e.get("category_ko", e.get("strategy", "")),
+            "name_en": e.get("category_en", e.get("strategy", "")),
+            "strategy": e.get("strategy", ""),
+            "direction": e.get("direction", ""),
+            "win_rate": round(e.get("win_rate", 0), 2),
+            "profit_factor": round(e.get("profit_factor", 0), 2),
+            "total_return": round(e.get("total_return", 0), 2),
+            "total_trades": trades,
+            "sharpe": round(e.get("sharpe", 0), 2),
+            "max_drawdown": round(e.get("max_drawdown", 0), 2),
+            "timeframe": e.get("timeframe", "1H"),
+            "sl_pct": e.get("sl_pct"),
+            "tp_pct": e.get("tp_pct"),
+            "low_sample": trades < 100,
+        }
+
+    top3 = [_make_entry(e, i + 1) for i, e in enumerate(ranked[:3])]
+    worst3 = [_make_entry(e, i + 1) for i, e in enumerate(reversed(ranked[-3:]))]
+
+    # Summary stats
+    wr_50plus = sum(1 for e in unique_entries if e.get("win_rate", 0) >= 50)
+    total = len(unique_entries)
+
+    # Collect weekly best: scan last 7 days of ranking files
+    weekly_map: dict = {}
+    for i in range(7):
+        day = (datetime.strptime(date, "%Y%m%d") - timedelta(days=i)).strftime("%Y%m%d")
+        day_file = ranking_dir / f"ranking_{day}.json"
+        if not day_file.exists():
+            continue
+        try:
+            with open(day_file, "r", encoding="utf-8") as f:
+                day_raw = json.load(f)
+            day_results = day_raw.get("results", {})
+            for section_entries in day_results.values():
+                if isinstance(section_entries, list):
+                    for e in section_entries:
+                        key = (e.get("strategy"), e.get("direction"), e.get("timeframe", "1H"))
+                        if key in WF_FAILED_KEYS:
+                            continue
+                        if key not in weekly_map:
+                            weekly_map[key] = {"entries": [], "meta": e}
+                        weekly_map[key]["entries"].append(e)
+        except Exception:
+            continue
+
+    weekly_best3: list = []
+    if weekly_map:
+        weekly_agg = []
+        for key, data in weekly_map.items():
+            entries = data["entries"]
+            meta = data["meta"]
+            avg_pf = sum(e.get("profit_factor", 0) for e in entries) / len(entries)
+            avg_wr = sum(e.get("win_rate", 0) for e in entries) / len(entries)
+            weekly_agg.append({
+                "key": key,
+                "avg_pf": avg_pf,
+                "avg_wr": avg_wr,
+                "days": len(entries),
+                "meta": meta,
+            })
+        weekly_agg.sort(key=lambda x: (x["avg_pf"], x["avg_wr"]), reverse=True)
+        for i, item in enumerate(weekly_agg[:3]):
+            meta = item["meta"]
+            trades = meta.get("total_trades", 0)
+            weekly_best3.append({
+                "rank": i + 1,
+                "name_ko": meta.get("category_ko", meta.get("strategy", "")),
+                "name_en": meta.get("category_en", meta.get("strategy", "")),
+                "strategy": meta.get("strategy", ""),
+                "direction": meta.get("direction", ""),
+                "win_rate": round(item["avg_wr"], 2),
+                "profit_factor": round(item["avg_pf"], 2),
+                "total_trades": trades,
+                "timeframe": meta.get("timeframe", "1H"),
+                "days_in_top": item["days"],
+                "low_sample": trades < 100,
+            })
+
+    warning = None
+    low_sample_count = sum(1 for e in unique_entries if e.get("total_trades", 0) < 100)
+    if low_sample_count > 0:
+        warning = f"일부 전략은 샘플 수가 부족합니다 (< 100건): {low_sample_count}개"
+
+    return {
+        "date": display_date,
+        "generated_at": generated_at,
+        "top3": top3,
+        "worst3": worst3,
+        "weekly_best3": weekly_best3,
+        "summary": {"wr_50plus": wr_50plus, "total": total},
+        "warning": warning,
+    }
