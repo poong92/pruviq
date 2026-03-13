@@ -83,6 +83,18 @@ const isKorean = (id: string) => koIds.has(id);
         }
       </p>
 
+      <!-- 오늘의 전략 랭킹 배너 -->
+      <a href="/ko/strategies/ranking" class="flex items-center justify-between gap-3 mb-6 border border-[--color-accent]/30 rounded-lg px-4 py-3 bg-[--color-accent]/5 hover:bg-[--color-accent]/10 transition-colors group">
+        <div class="flex items-center gap-3">
+          <span class="inline-block w-2 h-2 rounded-full bg-[--color-accent] animate-pulse shrink-0"></span>
+          <div>
+            <p class="font-semibold text-sm text-[--color-text]">📊 오늘의 전략 랭킹</p>
+            <p class="text-xs text-[--color-text-muted]">수익팩터 기준 오늘의 Best/Worst 전략 — 매일 업데이트</p>
+          </div>
+        </div>
+        <span class="text-[--color-accent] text-sm font-semibold shrink-0 group-hover:translate-x-1 transition-transform">&rarr;</span>
+      </a>
+
       <div class="mb-4 flex flex-col sm:flex-row gap-3">
         <a href="/ko/simulate"
            class="btn-primary inline-flex items-center gap-2 bg-[--color-accent] text-[--color-bg] px-5 py-2.5 rounded-lg font-semibold text-sm hover:bg-[--color-accent-dim]">
