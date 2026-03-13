@@ -7,12 +7,9 @@ const t = useTranslations('en');
 
 const allStrategies = await getCollection('strategies');
 
-// Load all simulator presets for the "Try in Simulator" section
-let simulatorPresets: Array<{id: string; name_ko?: string; name?: string; direction?: string; timeframe?: string; description_ko?: string}> = [];
-try {
-  const presetsRes = await fetch('http://localhost:8080/builder/presets');
-  if (presetsRes.ok) simulatorPresets = await presetsRes.json();
-} catch { /* ignore — section hidden if unavailable */ }
+// Load all simulator presets for the "Try in Simulator" section (from static JSON)
+import presetsJson from '../../../public/data/builder-presets.json';
+const simulatorPresets: Array<{id: string; name_ko?: string; name?: string; direction?: string; timeframe?: string; description_ko?: string}> = presetsJson as Array<{id: string; name_ko?: string; name?: string; direction?: string; timeframe?: string; description_ko?: string}>;
 
 const statusOrder = { verified: 0, testing: 1, killed: 2, shelved: 3 };
 const strategies = allStrategies.sort((a, b) => statusOrder[a.data.status] - statusOrder[b.data.status]);
