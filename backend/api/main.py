@@ -557,6 +557,12 @@ async def simulate(req: SimulationRequest):
 
     strategy, default_direction, defaults = get_strategy(strategy_id)
 
+    # Override avoid_hours/avoid_months from request if provided
+    if req.avoid_hours is not None:
+        strategy.avoid_hours = req.avoid_hours
+    if getattr(req, 'avoid_months', None) is not None:
+        strategy.avoid_months = req.avoid_months
+
     if is_both:
         directions_to_run = ["short", "long"]
         direction = "both"
@@ -1267,6 +1273,13 @@ async def simulate_validate(req: ValidateRequest):
 
     strategy, default_direction, defaults = get_strategy(strategy_id)
     direction = req.direction if req.direction is not None else default_direction
+
+    # Override avoid_hours/avoid_months from request if provided
+    if getattr(req, 'avoid_hours', None) is not None:
+        strategy.avoid_hours = req.avoid_hours
+    if getattr(req, 'avoid_months', None) is not None:
+        strategy.avoid_months = req.avoid_months
+
     cost_model = CostModel.futures() if req.market_type == "futures" else CostModel.spot()
 
     if resampled:

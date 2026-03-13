@@ -32,6 +32,7 @@ class MomentumLongStrategy:
         ema_fast: int = 20,
         ema_slow: int = 50,
         avoid_hours: list = None,
+        avoid_months: list = None,
     ):
         self.breakout_lookback = breakout_lookback
         self.volume_ratio = volume_ratio
@@ -39,6 +40,7 @@ class MomentumLongStrategy:
         self.ema_fast = ema_fast
         self.ema_slow = ema_slow
         self.avoid_hours = avoid_hours or [1, 2, 3, 8, 9, 13, 15, 16, 17, 18, 19, 20, 21, 22, 23]
+        self.avoid_months = avoid_months or []
 
     def get_params(self) -> dict:
         return {
@@ -47,6 +49,7 @@ class MomentumLongStrategy:
             "ema_fast": self.ema_fast,
             "ema_slow": self.ema_slow,
             "avoid_hours": self.avoid_hours,
+            "avoid_months": self.avoid_months,
         }
 
     def calculate_indicators(self, df: pd.DataFrame) -> pd.DataFrame:
