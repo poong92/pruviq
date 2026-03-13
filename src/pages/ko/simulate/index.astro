@@ -99,7 +99,7 @@ const t = useTranslations('ko');
 
     const mount = document.getElementById('simulator-mount');
     if (mount) {
-      render(h(ErrorBoundary, { name: 'Simulator' }, h(SimulatorPage, { lang: 'ko' })), mount);
+      render(h(ErrorBoundary, { name: 'Simulator', lang: 'ko' }, h(SimulatorPage, { lang: 'ko' })), mount);
     }
   </script>
 </Layout>

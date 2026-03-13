@@ -51,7 +51,7 @@ const t = useTranslations('ko');
 
     const mount = document.getElementById('compare-mount');
     if (mount) {
-      render(h(ErrorBoundary, { name: 'Strategy Comparison' }, h(StrategyComparison, { lang: 'ko' })), mount);
+      render(h(ErrorBoundary, { name: 'Strategy Comparison', lang: 'ko' }, h(StrategyComparison, { lang: 'ko' })), mount);
     }
   </script>
 </Layout>

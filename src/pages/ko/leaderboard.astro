@@ -18,7 +18,7 @@ const t = useTranslations('ko');
         {t('leaderboard.desc')}
       </p>
 
-      <ErrorBoundary name="Weekly Leaderboard" client:load>
+      <ErrorBoundary name="Weekly Leaderboard" lang="ko" client:load>
         <WeeklyLeaderboard lang="ko" client:load />
       </ErrorBoundary>
 

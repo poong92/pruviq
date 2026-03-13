@@ -160,7 +160,7 @@ const canonicalOverride = symbol.endsWith('usdt') ? undefined : `/ko/coins/${sym
     const mount = document.getElementById('coin-mount');
     if (mount) {
       const symbol = mount.dataset.symbol;
-      render(h(ErrorBoundary, { name: 'Coin Chart' }, h(CoinChart, { symbol, lang: 'ko' })), mount);
+      render(h(ErrorBoundary, { name: 'Coin Chart', lang: 'ko' }, h(CoinChart, { symbol, lang: 'ko' })), mount);
     }
 
     const ctaMount = document.getElementById('exchange-cta-mount');

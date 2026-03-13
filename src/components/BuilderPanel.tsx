@@ -101,7 +101,7 @@ export default function BuilderPanel(props: Props) {
       {/* Panel header */}
       <div class="px-4 py-2 border-b border-[--color-border] flex-shrink-0">
         <div class="flex items-center justify-between">
-          <span class="font-mono text-sm text-[--color-accent] tracking-wider font-bold">STRATEGY BUILDER</span>
+          <span class="font-mono text-sm text-[--color-accent] tracking-wider font-bold">{t.strategyBuilder}</span>
           {props.coinsLoaded > 0 && (
             <span class="text-[--color-text-muted] text-xs font-mono">{props.coinsLoaded} coins</span>
           )}
