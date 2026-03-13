@@ -125,10 +125,22 @@ def find_signals_vectorized(df: pd.DataFrame, strategy, direction: str = "short"
                 next_hour_ok[i] = False
     next_hour_ok[n - 1] = False  # Can't enter on last bar
 
+    # avoid_months filter (entry bar = idx+1 month)
+    avoid_months_set = set(getattr(strategy, 'avoid_months', None) or [])
+    next_month_ok = np.ones(n, dtype=bool)
+    if avoid_months_set and "timestamp" in df.columns:
+        months = pd.to_datetime(df["timestamp"]).dt.month.values
+        next_months = np.empty(n, dtype=int)
+        next_months[:-1] = months[1:]
+        next_months[-1] = 0
+        for m in avoid_months_set:
+            next_month_ok &= (next_months != m)
+    next_month_ok[n - 1] = False
+
     # Combine base conditions
     base_ok = (
         valid_range & has_recent_squeeze & has_bb_expanding
-        & has_bb_above_ma & has_volume & has_expansion_speed & next_hour_ok
+        & has_bb_above_ma & has_volume & has_expansion_speed & next_hour_ok & next_month_ok
     )
 
     # Direction-specific conditions
@@ -190,8 +202,20 @@ def find_signals_momentum(df: pd.DataFrame, strategy, direction: str = "long") -
             next_hour_ok &= (next_hour != h)
     next_hour_ok[-1] = False  # Can't enter on last bar
 
+    # avoid_months filter (entry bar = idx+1 month)
+    avoid_months_set = set(getattr(strategy, 'avoid_months', None) or [])
+    next_month_ok = np.ones(n, dtype=bool)
+    if avoid_months_set and "timestamp" in df.columns:
+        months = pd.to_datetime(df["timestamp"]).dt.month.values
+        next_months = np.empty(n, dtype=int)
+        next_months[:-1] = months[1:]
+        next_months[-1] = 0
+        for m in avoid_months_set:
+            next_month_ok &= (next_months != m)
+    next_month_ok[-1] = False
+
     # Combine all conditions
-    signal = valid_range & has_breakout & has_volume & has_uptrend & next_hour_ok
+    signal = valid_range & has_breakout & has_volume & has_uptrend & next_hour_ok & next_month_ok
 
     # For "short" direction (unlikely but for completeness), no signals
     if direction != "long":
@@ -268,8 +292,20 @@ def find_signals_hv_squeeze(df: pd.DataFrame, strategy, direction: str = "short"
             next_hour_ok &= (next_hour != h)
     next_hour_ok[-1] = False
 
+    # avoid_months filter (entry bar = idx+1 month)
+    avoid_months_set = set(getattr(strategy, 'avoid_months', None) or [])
+    next_month_ok = np.ones(n, dtype=bool)
+    if avoid_months_set and "timestamp" in df.columns:
+        months = pd.to_datetime(df["timestamp"]).dt.month.values
+        next_months = np.empty(n, dtype=int)
+        next_months[:-1] = months[1:]
+        next_months[-1] = 0
+        for m in avoid_months_set:
+            next_month_ok &= (next_months != m)
+    next_month_ok[-1] = False
+
     # Base conditions
-    base_ok = valid_range & has_recent_squeeze & has_expanding & has_volume & valid_bb & next_hour_ok
+    base_ok = valid_range & has_recent_squeeze & has_expanding & has_volume & valid_bb & next_hour_ok & next_month_ok
 
     # Direction
     if direction == "long":
@@ -322,7 +358,19 @@ def find_signals_atr_breakout(df: pd.DataFrame, strategy, direction: str = "long
             next_hour_ok &= (next_hour != h)
     next_hour_ok[-1] = False
 
-    base = valid_range & next_hour_ok
+    # avoid_months filter (entry bar = idx+1 month)
+    avoid_months_set = set(getattr(strategy, 'avoid_months', None) or [])
+    next_month_ok = np.ones(n, dtype=bool)
+    if avoid_months_set and "timestamp" in df.columns:
+        months = pd.to_datetime(df["timestamp"]).dt.month.values
+        next_months = np.empty(n, dtype=int)
+        next_months[:-1] = months[1:]
+        next_months[-1] = 0
+        for m in avoid_months_set:
+            next_month_ok &= (next_months != m)
+    next_month_ok[-1] = False
+
+    base = valid_range & next_hour_ok & next_month_ok
 
     if strategy.use_trend_filter:
         signal_long = base & breakout_up & uptrend

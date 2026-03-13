@@ -33,6 +33,7 @@ import StandardPanel from "./StandardPanel";
 const L = {
   en: {
     title: "Strategy Simulator",
+    strategyBuilder: "STRATEGY BUILDER",
     previewChart: "Preview Chart",
     conditions: "Entry Conditions",
     addCondition: "+ Add Condition",
@@ -160,6 +161,7 @@ const L = {
   },
   ko: {
     title: "전략 시뮬레이터",
+    strategyBuilder: "전략 빌더",
     previewChart: "미리보기 차트",
     conditions: "진입 조건",
     addCondition: "+ 조건 추가",
