@@ -1259,7 +1259,7 @@ def find_signals_generic(df: pd.DataFrame, strategy, direction: str) -> np.ndarr
     signals = []
     for idx in range(n - 1):
         result = strategy.check_signal(df, idx)
-        if result == direction:
+        if result == direction or (direction == "both" and result in ("long", "short")):
             signals.append(idx)
 
     return np.array(signals, dtype=int) if signals else np.array([], dtype=int)
