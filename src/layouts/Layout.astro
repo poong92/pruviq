@@ -46,6 +46,7 @@ const compareTvPath = lang === 'ko' ? '/ko/compare/tradingview' : '/compare/trad
 const privacyPath = lang === 'ko' ? '/ko/privacy' : '/privacy';
 const termsPath = lang === 'ko' ? '/ko/terms' : '/terms';
 const leaderboardPath = lang === 'ko' ? '/ko/leaderboard' : '/leaderboard';
+const rankingPath = lang === 'ko' ? '/ko/strategies/ranking' : '/strategies/ranking';
 
 // Legacy paths (for footer/redirects)
 const strategiesPath = lang === 'ko' ? '/ko/strategies' : '/strategies';
@@ -383,6 +384,10 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
           {navItems.map(item => (
             <a href={item.href} aria-current={isActive(item.match) ? "page" : undefined} class="min-h-[44px] flex items-center" style={isActive(item.match) ? 'color:var(--color-accent);font-weight:500' : 'color:var(--color-text-muted)'}>{item.label}</a>
           ))}
+          <a href={rankingPath} class="min-h-[44px] flex items-center gap-2 text-[--color-text-muted]">
+            <span class="inline-block w-1.5 h-1.5 rounded-full bg-[--color-accent] animate-pulse shrink-0"></span>
+            {lang === 'ko' ? '오늘의 전략 랭킹' : 'Daily Strategy Ranking'}
+          </a>
           <a href={leaderboardPath} class="min-h-[44px] flex items-center text-[--color-text-muted]">{t('nav.leaderboard')}</a>
           <a href={methodologyPath} class="min-h-[44px] flex items-center text-[--color-text-muted]">{t('footer.methodology')}</a>
           <a href={performancePath} class="min-h-[44px] flex items-center text-[--color-text-muted]">{t('nav.performance')}</a>
