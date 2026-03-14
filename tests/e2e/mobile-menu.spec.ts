@@ -39,16 +39,17 @@ async function openMobileMenu(
 ) {
   const btn = page.locator("#mobile-menu-btn");
   await btn.click();
-  await page.waitForSelector("#mobile-menu:not(.hidden)", { timeout: 3000 });
+  await page.waitForSelector("#mobile-menu[aria-hidden='false']", { timeout: 3000 });
 }
 
 // ─── Menu Open / Close ─────────────────────────────────────────
 
+// aria-hidden is the canonical state indicator (toggled by layout-client.js)
+// Avoid toHaveClass(/hidden/) — matches both JS "hidden" AND Tailwind "md:hidden"
 test.describe("Mobile menu: open and close", () => {
   test("menu is hidden on page load", async ({ page }) => {
     await page.goto("/", { waitUntil: "domcontentloaded" });
     const menu = page.locator("#mobile-menu");
-    await expect(menu).toHaveClass(/hidden/);
     await expect(menu).toHaveAttribute("aria-hidden", "true");
 
     const btn = page.locator("#mobile-menu-btn");
@@ -61,7 +62,6 @@ test.describe("Mobile menu: open and close", () => {
     const menu = page.locator("#mobile-menu");
 
     await btn.click();
-    await expect(menu).not.toHaveClass(/hidden/);
     await expect(menu).toHaveAttribute("aria-hidden", "false");
     await expect(btn).toHaveAttribute("aria-expanded", "true");
   });
@@ -72,19 +72,25 @@ test.describe("Mobile menu: open and close", () => {
     const menu = page.locator("#mobile-menu");
 
     await btn.click(); // open
-    await page.waitForSelector("#mobile-menu:not(.hidden)");
+    await expect(menu).toHaveAttribute("aria-hidden", "false");
     await btn.click(); // close
-    await expect(menu).toHaveClass(/hidden/);
+    await expect(menu).toHaveAttribute("aria-hidden", "true");
     await expect(btn).toHaveAttribute("aria-expanded", "false");
   });
 
   test("Escape key closes menu", async ({ page }) => {
     await page.goto("/", { waitUntil: "domcontentloaded" });
     await page.locator("#mobile-menu-btn").click();
-    await page.waitForSelector("#mobile-menu:not(.hidden)");
+    await expect(page.locator("#mobile-menu")).toHaveAttribute(
+      "aria-hidden",
+      "false",
+    );
 
     await page.keyboard.press("Escape");
-    await expect(page.locator("#mobile-menu")).toHaveClass(/hidden/);
+    await expect(page.locator("#mobile-menu")).toHaveAttribute(
+      "aria-hidden",
+      "true",
+    );
   });
 });
 
@@ -94,7 +100,7 @@ test.describe("Mobile menu: all expected items present", () => {
   test("EN menu contains all required nav items", async ({ page }) => {
     await page.goto("/", { waitUntil: "domcontentloaded" });
     await page.locator("#mobile-menu-btn").click();
-    await page.waitForSelector("#mobile-menu:not(.hidden)");
+    await page.waitForSelector("#mobile-menu[aria-hidden='false']");
 
     const menu = page.locator("#mobile-menu");
     for (const label of EN_MENU_ITEMS) {
@@ -110,7 +116,7 @@ test.describe("Mobile menu: all expected items present", () => {
   }) => {
     await page.goto("/", { waitUntil: "domcontentloaded" });
     await page.locator("#mobile-menu-btn").click();
-    await page.waitForSelector("#mobile-menu:not(.hidden)");
+    await page.waitForSelector("#mobile-menu[aria-hidden='false']");
 
     // Should use translation, NOT a Korean fallback
     const rankingLink = page
@@ -130,7 +136,7 @@ test.describe("Mobile menu: all expected items present", () => {
   test("KO menu: 오늘의 전략 랭킹 item is present", async ({ page }) => {
     await page.goto("/ko/", { waitUntil: "domcontentloaded" });
     await page.locator("#mobile-menu-btn").click();
-    await page.waitForSelector("#mobile-menu:not(.hidden)");
+    await page.waitForSelector("#mobile-menu[aria-hidden='false']");
 
     const rankingLink = page.locator(
       "#mobile-menu a[href='/ko/strategies/ranking']",
@@ -155,7 +161,7 @@ test.describe("Mobile menu: touch target sizes", () => {
     test(`"${href}" link has min-height 44px`, async ({ page }) => {
       await page.goto("/", { waitUntil: "domcontentloaded" });
       await page.locator("#mobile-menu-btn").click();
-      await page.waitForSelector("#mobile-menu:not(.hidden)");
+      await page.waitForSelector("#mobile-menu[aria-hidden='false']");
 
       const link = page.locator(`#mobile-menu a[href="${href}"]`).first();
       await expect(link).toBeVisible();
@@ -179,7 +185,7 @@ test.describe("Mobile menu: ranking item pulse dot", () => {
   }) => {
     await page.goto("/", { waitUntil: "domcontentloaded" });
     await page.locator("#mobile-menu-btn").click();
-    await page.waitForSelector("#mobile-menu:not(.hidden)");
+    await page.waitForSelector("#mobile-menu[aria-hidden='false']");
 
     const rankingLink = page
       .locator("#mobile-menu a[href='/strategies/ranking']")
@@ -198,7 +204,7 @@ test.describe("Mobile menu: alignment consistency", () => {
   }) => {
     await page.goto("/", { waitUntil: "domcontentloaded" });
     await page.locator("#mobile-menu-btn").click();
-    await page.waitForSelector("#mobile-menu:not(.hidden)");
+    await page.waitForSelector("#mobile-menu[aria-hidden='false']");
 
     const alignedHrefs = ["/leaderboard", "/methodology", "/performance"];
     for (const href of alignedHrefs) {
@@ -217,7 +223,7 @@ test.describe("Mobile menu: alignment consistency", () => {
   }) => {
     await page.goto("/", { waitUntil: "domcontentloaded" });
     await page.locator("#mobile-menu-btn").click();
-    await page.waitForSelector("#mobile-menu:not(.hidden)");
+    await page.waitForSelector("#mobile-menu[aria-hidden='false']");
 
     const rankingLink = page
       .locator("#mobile-menu a[href='/strategies/ranking']")
@@ -237,7 +243,7 @@ test.describe("Mobile menu: language toggle", () => {
   test("EN page: language link exists in menu", async ({ page }) => {
     await page.goto("/simulate", { waitUntil: "domcontentloaded" });
     await page.locator("#mobile-menu-btn").click();
-    await page.waitForSelector("#mobile-menu:not(.hidden)");
+    await page.waitForSelector("#mobile-menu[aria-hidden='false']");
 
     const langLink = page.locator("#mobile-menu a[href='/ko/simulate']");
     await expect(langLink.first()).toBeVisible();
@@ -246,7 +252,7 @@ test.describe("Mobile menu: language toggle", () => {
   test("KO page: language link points to EN counterpart", async ({ page }) => {
     await page.goto("/ko/simulate", { waitUntil: "domcontentloaded" });
     await page.locator("#mobile-menu-btn").click();
-    await page.waitForSelector("#mobile-menu:not(.hidden)");
+    await page.waitForSelector("#mobile-menu[aria-hidden='false']");
 
     const langLink = page.locator("#mobile-menu a[href='/simulate']");
     await expect(langLink.first()).toBeVisible();
