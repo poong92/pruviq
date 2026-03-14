@@ -43,6 +43,11 @@ const changelogPath = lang === 'ko' ? '/ko/changelog' : '/changelog';
 const methodologyPath = lang === 'ko' ? '/ko/methodology' : '/methodology';
 const apiPath = lang === 'ko' ? '/ko/api' : '/api';
 const compareTvPath = lang === 'ko' ? '/ko/compare/tradingview' : '/compare/tradingview';
+const compareCoinrulePath = '/compare/coinrule';
+const compareCryptohopperPath = '/compare/cryptohopper';
+const compare3commasPath = '/compare/3commas';
+const compareGainiumPath = '/compare/gainium';
+const compareStreakPath = '/compare/streak';
 const privacyPath = lang === 'ko' ? '/ko/privacy' : '/privacy';
 const termsPath = lang === 'ko' ? '/ko/terms' : '/terms';
 const leaderboardPath = lang === 'ko' ? '/ko/leaderboard' : '/leaderboard';
@@ -436,7 +441,12 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
                 <a href={changelogPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('footer.changelog')}</a>
                 <a href={methodologyPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('footer.methodology')}</a>
                 <a href={apiPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('footer.api')}</a>
-                <a href={compareTvPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('footer.compare')}</a>
+                <a href={compareTvPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">vs TradingView</a>
+                <a href={compareCoinrulePath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">vs Coinrule</a>
+                <a href={compareCryptohopperPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">vs Cryptohopper</a>
+                <a href={compare3commasPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">vs 3Commas</a>
+                <a href={compareGainiumPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">vs Gainium</a>
+                <a href={compareStreakPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">vs Streak</a>
                 <a href="https://x.com/pruviq" target="_blank" rel="noopener noreferrer" class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">X / Twitter</a>
                 <a href="https://github.com/pruviq/pruviq" target="_blank" rel="noopener noreferrer" class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">GitHub</a>
               </div>
