@@ -3254,10 +3254,7 @@ async def get_daily_rankings(date: Optional[str] = None):
                 "low_sample": trades < 100,
             })
 
-    warning = None
     low_sample_count = sum(1 for e in unique_entries if e.get("total_trades", 0) < 100)
-    if low_sample_count > 0:
-        warning = f"일부 전략은 샘플 수가 부족합니다 (< 100건): {low_sample_count}개"
 
     return {
         "date": display_date,
@@ -3266,5 +3263,5 @@ async def get_daily_rankings(date: Optional[str] = None):
         "worst3": worst3,
         "weekly_best3": weekly_best3,
         "summary": {"wr_50plus": wr_50plus, "total": total},
-        "warning": warning,
+        "low_sample_count": low_sample_count if low_sample_count > 0 else None,
     }

@@ -12,7 +12,7 @@ interface RankingData {
   worst3: RankingEntry[];
   weekly_best3: RankingEntry[];
   summary: { wr_50plus: number; total: number };
-  warning: string | null;
+  low_sample_count: number | null;
 }
 
 function SectionHeader({
@@ -124,12 +124,12 @@ export function StrategyRanking({ lang = "en" }: { lang?: "en" | "ko" }) {
   return (
     <div class="space-y-10">
       {/* Warning banner */}
-      {data?.warning && (
+      {data?.low_sample_count != null && data.low_sample_count > 0 && (
         <div class="border border-[--color-yellow]/30 rounded-lg px-4 py-3 bg-[--color-yellow]/5 text-[--color-yellow] text-xs font-mono flex items-start gap-2">
           <span aria-hidden="true" class="shrink-0">
             ⚠
           </span>
-          <span>{data.warning}</span>
+          <span>{s.lowSampleWarning(data.low_sample_count)}</span>
         </div>
       )}
 
