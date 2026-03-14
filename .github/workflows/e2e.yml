@@ -29,6 +29,9 @@ jobs:
     - name: Install Chromium
       run: npx playwright install --with-deps chromium
 
+    - name: Check i18n key completeness
+      run: npx tsx scripts/check-i18n-keys.ts
+
     - name: Build site
       run: npm run build
 
