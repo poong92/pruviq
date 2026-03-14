@@ -74,45 +74,45 @@ const t = useTranslations('ko');
           <caption class="sr-only">BB Squeeze SHORT 전략 성과 지표</caption>
           <thead>
             <tr class="border-b border-[--color-border] bg-[--color-bg-subtle]">
-              <th class="text-left p-3 font-mono text-xs text-[--color-text-muted]">지표</th>
-              <th class="text-right p-3 font-mono text-xs text-[--color-text-muted]">값</th>
+              <th class="text-left p-3 font-mono text-xs text-[--color-text-muted]">{t('perf.tbl_header_metric')}</th>
+              <th class="text-right p-3 font-mono text-xs text-[--color-text-muted]">{t('perf.tbl_header_value')}</th>
             </tr>
           </thead>
           <tbody>
             <tr class="border-b border-[--color-border]">
-              <td class="p-3">손절 (SL)</td>
+              <td class="p-3">{t('perf.tbl_sl')}</td>
               <td class="p-3 text-right font-mono">10%</td>
             </tr>
             <tr class="border-b border-[--color-border]">
-              <td class="p-3">익절 (TP)</td>
+              <td class="p-3">{t('perf.tbl_tp')}</td>
               <td class="p-3 text-right font-mono">8%</td>
             </tr>
             <tr class="border-b border-[--color-border]">
-              <td class="p-3">최대 보유 시간</td>
-              <td class="p-3 text-right font-mono">48시간</td>
+              <td class="p-3">{t('perf.tbl_hold')}</td>
+              <td class="p-3 text-right font-mono">{t('perf.tbl_hold_val')}</td>
             </tr>
             <tr class="border-b border-[--color-border]">
-              <td class="p-3">SL 비율</td>
+              <td class="p-3">{t('perf.tbl_sl_rate')}</td>
               <td class="p-3 text-right font-mono">8.0%</td>
             </tr>
             <tr class="border-b border-[--color-border]">
-              <td class="p-3">TP 비율</td>
+              <td class="p-3">{t('perf.tbl_tp_rate')}</td>
               <td class="p-3 text-right font-mono">42.0%</td>
             </tr>
             <tr class="border-b border-[--color-border]">
-              <td class="p-3">타임아웃 비율</td>
+              <td class="p-3">{t('perf.tbl_timeout')}</td>
               <td class="p-3 text-right font-mono">50.0%</td>
             </tr>
             <tr class="border-b border-[--color-border]">
-              <td class="p-3">최대 손실폭 (MDD)</td>
+              <td class="p-3">{t('perf.tbl_mdd')}</td>
               <td class="p-3 text-right font-mono text-[--color-red]">33%</td>
             </tr>
             <tr class="border-b border-[--color-border]">
-              <td class="p-3">손익분기 승률</td>
+              <td class="p-3">{t('perf.tbl_breakeven')}</td>
               <td class="p-3 text-right font-mono">55.6%</td>
             </tr>
             <tr>
-              <td class="p-3">안전 마진</td>
+              <td class="p-3">{t('perf.tbl_safety')}</td>
               <td class="p-3 text-right font-mono text-[--color-green]">+13.0%p</td>
             </tr>
           </tbody>
