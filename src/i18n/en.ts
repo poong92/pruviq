@@ -1225,7 +1225,6 @@ export const en = {
   "perf.tbl_hold_val": "48 hours",
   "perf.tbl_sl_rate": "SL Hit Rate",
   "perf.tbl_tp_rate": "TP Hit Rate",
-  "perf.tbl_timeout": "Timeout Rate",
   "perf.tbl_mdd": "Max Drawdown",
   "perf.tbl_breakeven": "Break-Even Win Rate",
   "perf.tbl_safety": "Safety Margin",
@@ -1251,6 +1250,23 @@ export const en = {
   "strategies.presets_title": "All Simulator Presets ({count})",
   "strategies.presets_desc":
     "Click any preset to load it directly in the simulator. Tests on 549+ coins simultaneously.",
+
+  // Ranking component inline strings (QW6)
+  "ranking.card_wr": "Win Rate",
+  "ranking.card_trades": "Trades",
+  "ranking.card_days": "Days in Top",
+  "ranking.card_days_unit": "days",
+  "ranking.card_low_sample": "Low sample ({n} trades < 100)",
+  "ranking.card_load_fail": "Failed to load data",
+  "ranking.section_best3_title": "Best 3 Strategies",
+  "ranking.section_best3_sub": "Top 3 by Profit Factor (PF)",
+  "ranking.section_worst3_title": "Worst 3 Strategies",
+  "ranking.section_worst3_sub": "Bottom 3 by PF — combinations to avoid",
+  "ranking.section_weekly_title": "This Week's Best 3",
+  "ranking.section_weekly_sub": "7-day average PF ranking",
+  "ranking.summary_wr50": "Strategies with WR 50%+:",
+  "ranking.summary_total_unit": "total",
+  "ranking.summary_cta": "Test in Simulator",
 } as const;
 
 export type TranslationKey = keyof typeof en;

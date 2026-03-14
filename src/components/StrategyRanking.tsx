@@ -56,10 +56,38 @@ function SkeletonCard() {
   );
 }
 
-export function StrategyRanking() {
+const rankingLabels = {
+  en: {
+    loadFail: "Failed to load data",
+    best3Title: "Best 3 Strategies",
+    best3Sub: "Top 3 by Profit Factor (PF)",
+    worst3Title: "Worst 3 Strategies",
+    worst3Sub: "Bottom 3 by PF — combinations to avoid",
+    weeklyTitle: "This Week's Best 3",
+    weeklySub: "7-day average PF ranking",
+    wr50Label: "Strategies with WR 50%+:",
+    totalUnit: "total",
+    simCta: "Test in Simulator",
+  },
+  ko: {
+    loadFail: "데이터 로드 실패",
+    best3Title: "Best 3 전략",
+    best3Sub: "PF(수익팩터) 기준 상위 3개",
+    worst3Title: "Worst 3 전략",
+    worst3Sub: "PF 기준 하위 3개 — 피해야 할 조합",
+    weeklyTitle: "이번 주 Best 3",
+    weeklySub: "최근 7일 평균 PF 기준",
+    wr50Label: "WR 50%+ 전략:",
+    totalUnit: "개",
+    simCta: "시뮬레이터에서 직접 확인",
+  },
+};
+
+export function StrategyRanking({ lang = "en" }: { lang?: "en" | "ko" }) {
   const [data, setData] = useState<RankingData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const lbl = rankingLabels[lang] ?? rankingLabels.en;
 
   useEffect(() => {
     const controller = new AbortController();
@@ -77,7 +105,7 @@ export function StrategyRanking() {
       })
       .catch((err) => {
         if (err.name === "AbortError") return;
-        setError(err.message ?? "랭킹 데이터를 불러오지 못했습니다.");
+        setError(err.message ?? lbl.loadFail);
         setLoading(false);
       });
 
@@ -87,7 +115,7 @@ export function StrategyRanking() {
   if (error) {
     return (
       <div class="border border-[--color-red]/30 rounded-lg p-5 bg-[--color-down-fill] text-[--color-red] text-sm font-mono">
-        <p class="font-bold mb-1">데이터 로드 실패</p>
+        <p class="font-bold mb-1">{lbl.loadFail}</p>
         <p class="text-xs opacity-80">{error}</p>
       </div>
     );
@@ -107,10 +135,7 @@ export function StrategyRanking() {
 
       {/* Top 3 */}
       <section>
-        <SectionHeader
-          title="Best 3 전략"
-          subtitle="PF(수익팩터) 기준 상위 3개"
-        />
+        <SectionHeader title={lbl.best3Title} subtitle={lbl.best3Sub} />
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {loading
             ? [0, 1, 2].map((i) => <SkeletonCard key={i} />)
@@ -118,6 +143,7 @@ export function StrategyRanking() {
                 <RankingCard
                   key={`top-${entry.rank}`}
                   entry={entry}
+                  lang={lang}
                   variant="best"
                 />
               ))}
@@ -126,10 +152,7 @@ export function StrategyRanking() {
 
       {/* Worst 3 */}
       <section>
-        <SectionHeader
-          title="Worst 3 전략"
-          subtitle="PF 기준 하위 3개 — 피해야 할 조합"
-        />
+        <SectionHeader title={lbl.worst3Title} subtitle={lbl.worst3Sub} />
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {loading
             ? [0, 1, 2].map((i) => <SkeletonCard key={i} />)
@@ -138,6 +161,7 @@ export function StrategyRanking() {
                   key={`worst-${entry.rank}`}
                   entry={entry}
                   variant="worst"
+                  lang={lang}
                 />
               ))}
         </div>
@@ -146,10 +170,7 @@ export function StrategyRanking() {
       {/* Weekly Best 3 */}
       {(loading || (data?.weekly_best3 && data.weekly_best3.length > 0)) && (
         <section>
-          <SectionHeader
-            title="이번 주 Best 3"
-            subtitle="최근 7일 평균 PF 기준"
-          />
+          <SectionHeader title={lbl.weeklyTitle} subtitle={lbl.weeklySub} />
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {loading
               ? [0, 1, 2].map((i) => <SkeletonCard key={i} />)
@@ -158,6 +179,7 @@ export function StrategyRanking() {
                     key={`weekly-${entry.rank}`}
                     entry={entry}
                     variant="weekly"
+                    lang={lang}
                   />
                 ))}
           </div>
@@ -168,20 +190,20 @@ export function StrategyRanking() {
       {!loading && data && (
         <div class="border border-[--color-border] rounded-lg px-5 py-4 bg-[--color-bg-card] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <p class="font-mono text-sm text-[--color-text]">
-            WR 50%+ 전략:{" "}
+            {lbl.wr50Label}{" "}
             <span class="text-[--color-accent] font-bold">
               {data.summary.wr_50plus}
             </span>
             <span class="text-[--color-text-muted]">
               {" "}
-              / {data.summary.total}개
+              / {data.summary.total} {lbl.totalUnit}
             </span>
           </p>
           <a
             href="/simulate"
             class="shrink-0 inline-flex items-center gap-2 bg-[--color-accent] text-[--color-bg] px-5 py-2 rounded font-semibold text-sm hover:bg-[--color-accent-dim] transition-colors"
           >
-            시뮬레이터에서 직접 확인 &rarr;
+            {lbl.simCta} &rarr;
           </a>
         </div>
       )}
