@@ -779,22 +779,31 @@ async def simulate(req: SimulationRequest):
     # Risk-adjusted metrics — daily-return based (annualized sqrt(365))
     from collections import defaultdict as _dd_sim
     daily_pnl_sim = _dd_sim(float)
+    daily_concurrent_sim = _dd_sim(int)  # concurrent open positions per day
     for t in all_trades:
         day_key = t.get("exit_time", t["time"])[:10]  # YYYY-MM-DD (exit time)
         if day_key and day_key != "NaT" and len(day_key) == 10:
             daily_pnl_sim[day_key] += t["pnl_pct"]
-    # Normalize by number of concurrent positions for capital-weighted daily returns
-    # n_coins already defined above (equity curve section)
-    # Fill zero-return days so Sharpe isn't inflated by excluding non-trading days
+            daily_concurrent_sim[day_key] += 1
+    # Capital-weighted daily returns: divide each day's PnL by the number of
+    # concurrent positions that day (not total n_coins selected), so the Sharpe
+    # reflects return-per-deployed-capital rather than return-per-universe-size.
+    # Fill zero-return days so Sharpe isn't inflated by excluding non-trading days.
     if daily_pnl_sim and len(daily_pnl_sim) >= 2:
         from datetime import datetime as _dt_sim, timedelta as _td_sim
         sorted_days = sorted(daily_pnl_sim.keys())
         d_start = _dt_sim.strptime(sorted_days[0], "%Y-%m-%d")
         d_end = _dt_sim.strptime(sorted_days[-1], "%Y-%m-%d")
         all_days = [(d_start + _td_sim(days=i)).strftime("%Y-%m-%d") for i in range((d_end - d_start).days + 1)]
-        daily_returns_sim = np.array([daily_pnl_sim.get(d, 0.0) for d in all_days]) / max(n_coins, 1)
+        daily_returns_sim = np.array([
+            daily_pnl_sim[d] / max(daily_concurrent_sim[d], 1) if d in daily_pnl_sim else 0.0
+            for d in all_days
+        ])
     elif daily_pnl_sim:
-        daily_returns_sim = np.array(list(daily_pnl_sim.values())) / max(n_coins, 1)
+        daily_returns_sim = np.array([
+            pnl / max(daily_concurrent_sim[d], 1)
+            for d, pnl in daily_pnl_sim.items()
+        ])
     else:
         daily_returns_sim = np.array([])
 
