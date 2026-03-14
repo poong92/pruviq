@@ -74,45 +74,45 @@ const t = useTranslations('en');
           <caption class="sr-only">BB Squeeze SHORT strategy performance metrics</caption>
           <thead>
             <tr class="border-b border-[--color-border] bg-[--color-bg-subtle]">
-              <th class="text-left p-3 font-mono text-xs text-[--color-text-muted]">Metric</th>
-              <th class="text-right p-3 font-mono text-xs text-[--color-text-muted]">Value</th>
+              <th class="text-left p-3 font-mono text-xs text-[--color-text-muted]">{t('perf.tbl_header_metric')}</th>
+              <th class="text-right p-3 font-mono text-xs text-[--color-text-muted]">{t('perf.tbl_header_value')}</th>
             </tr>
           </thead>
           <tbody>
             <tr class="border-b border-[--color-border]">
-              <td class="p-3">Stop Loss</td>
+              <td class="p-3">{t('perf.tbl_sl')}</td>
               <td class="p-3 text-right font-mono">10%</td>
             </tr>
             <tr class="border-b border-[--color-border]">
-              <td class="p-3">Take Profit</td>
+              <td class="p-3">{t('perf.tbl_tp')}</td>
               <td class="p-3 text-right font-mono">8%</td>
             </tr>
             <tr class="border-b border-[--color-border]">
-              <td class="p-3">Max Hold Time</td>
-              <td class="p-3 text-right font-mono">48 hours</td>
+              <td class="p-3">{t('perf.tbl_hold')}</td>
+              <td class="p-3 text-right font-mono">{t('perf.tbl_hold_val')}</td>
             </tr>
             <tr class="border-b border-[--color-border]">
-              <td class="p-3">SL Hit Rate</td>
+              <td class="p-3">{t('perf.tbl_sl_rate')}</td>
               <td class="p-3 text-right font-mono">8.0%</td>
             </tr>
             <tr class="border-b border-[--color-border]">
-              <td class="p-3">TP Hit Rate</td>
+              <td class="p-3">{t('perf.tbl_tp_rate')}</td>
               <td class="p-3 text-right font-mono">42.0%</td>
             </tr>
             <tr class="border-b border-[--color-border]">
-              <td class="p-3">Timeout Rate</td>
+              <td class="p-3">{t('perf.tbl_timeout')}</td>
               <td class="p-3 text-right font-mono">50.0%</td>
             </tr>
             <tr class="border-b border-[--color-border]">
-              <td class="p-3">Max Drawdown</td>
+              <td class="p-3">{t('perf.tbl_mdd')}</td>
               <td class="p-3 text-right font-mono text-[--color-red]">33%</td>
             </tr>
             <tr class="border-b border-[--color-border]">
-              <td class="p-3">Break-Even Win Rate</td>
+              <td class="p-3">{t('perf.tbl_breakeven')}</td>
               <td class="p-3 text-right font-mono">55.6%</td>
             </tr>
             <tr>
-              <td class="p-3">Safety Margin</td>
+              <td class="p-3">{t('perf.tbl_safety')}</td>
               <td class="p-3 text-right font-mono text-[--color-green]">+13.0%p</td>
             </tr>
           </tbody>

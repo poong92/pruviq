@@ -2,8 +2,10 @@
 import Layout from '../../layouts/Layout.astro';
 import { StrategyRanking } from '../../components/StrategyRanking';
 import ErrorBoundary from '../../components/ErrorBoundary';
+import { useTranslations } from '../../i18n/index';
 
-const today = new Date().toLocaleDateString('ko-KR', {
+const t = useTranslations('en');
+const today = new Date().toLocaleDateString('en-US', {
   year: 'numeric',
   month: 'long',
   day: 'numeric',
@@ -19,16 +21,15 @@ const today = new Date().toLocaleDateString('ko-KR', {
     <div class="max-w-5xl mx-auto px-4">
 
       <!-- Page header -->
-      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">DAILY RANKING</p>
+      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('ranking.tag')}</p>
       <h1 class="text-3xl md:text-4xl font-bold mb-3">
-        📊 Daily Strategy Ranking
+        {t('ranking.title')}
       </h1>
       <p class="text-[--color-text-muted] text-sm mb-1">
-        {today} · PRUVIQ Simulator Backtest Results
+        {t('ranking.date_label').replace('{date}', today)}
       </p>
       <p class="text-[--color-text-muted] text-sm mb-8 max-w-2xl">
-        Best and worst strategies today ranked by Profit Factor (PF).
-        Strategies with fewer than 100 trades have low statistical reliability.
+        {t('ranking.desc')}
       </p>
 
       <!-- Navigation links -->
@@ -37,28 +38,27 @@ const today = new Date().toLocaleDateString('ko-KR', {
           href="/simulate"
           class="inline-flex items-center gap-2 bg-[--color-accent] text-[--color-bg] px-5 py-2.5 rounded-lg font-semibold text-sm hover:bg-[--color-accent-dim] transition-colors"
         >
-          Open Simulator &rarr;
+          {t('ranking.open_sim')} &rarr;
         </a>
         <a
           href="/strategies"
           class="inline-flex items-center gap-2 border border-[--color-border] text-[--color-text-muted] px-5 py-2.5 rounded-lg font-semibold text-sm hover:border-[--color-accent] hover:text-[--color-accent] transition-colors"
         >
-          Strategy Library
+          {t('ranking.strategy_lib')}
         </a>
         <a
           href="/leaderboard"
           class="inline-flex items-center gap-2 border border-[--color-border] text-[--color-text-muted] px-5 py-2.5 rounded-lg font-semibold text-sm hover:border-[--color-accent] hover:text-[--color-accent] transition-colors"
         >
-          Leaderboard
+          {t('ranking.leaderboard')}
         </a>
       </div>
 
       <!-- Disclaimer notice -->
       <div class="mb-8 border border-[--color-border] rounded-lg px-4 py-3 bg-[--color-bg-card]">
         <p class="text-[--color-text-muted] text-xs font-mono leading-relaxed">
-          <span class="text-[--color-yellow] font-bold">Note:</span>
-          This ranking is based on historical backtests. Past performance does not guarantee future returns.
-          Strategies with fewer than 100 trades (&lt; 100) may be overfitted.
+          <span class="text-[--color-yellow] font-bold">{t('ranking.disclaimer_note')}</span>
+          {t('ranking.disclaimer_text')}
         </p>
       </div>
 
@@ -74,26 +74,26 @@ const today = new Date().toLocaleDateString('ko-KR', {
   <section class="pb-12 border-t border-[--color-border] pt-8">
     <div class="max-w-5xl mx-auto px-4 text-center">
       <p class="text-[--color-text-muted] text-sm mb-4">
-        Adjust parameters for any strategy directly in the simulator.
+        {t('ranking.footer_text')}
       </p>
       <div class="flex flex-wrap gap-3 justify-center">
         <a
           href="/simulate"
           class="inline-block bg-[--color-accent] text-[--color-bg] px-6 py-2.5 rounded font-semibold text-sm hover:bg-[--color-accent-dim] transition-colors no-underline"
         >
-          Try in Simulator &rarr;
+          {t('ranking.try_sim')} &rarr;
         </a>
         <a
           href="/strategies"
           class="inline-block border border-[--color-border] px-5 py-2 rounded font-semibold text-sm hover:border-[--color-accent] transition-colors no-underline"
         >
-          Strategy Library &rarr;
+          {t('ranking.strategy_lib')} &rarr;
         </a>
         <a
           href="/performance"
           class="inline-block border border-[--color-border] px-5 py-2 rounded font-semibold text-sm hover:border-[--color-accent] transition-colors no-underline"
         >
-          Live Performance &rarr;
+          {t('ranking.live_perf')} &rarr;
         </a>
       </div>
     </div>
