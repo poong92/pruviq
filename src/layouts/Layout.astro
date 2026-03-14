@@ -474,6 +474,15 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
             </div>
           </div>
         </div>
+        <!-- Legal entity info -->
+        <div class="mb-6">
+          <p class="text-[--color-text-muted] text-xs mt-2 font-mono">
+            {t('footer.legal_entity')}
+          </p>
+          <p class="text-[--color-text-muted] text-xs opacity-60">
+            {t('footer.legal_entity_notice')}
+          </p>
+        </div>
         <!-- Divider -->
         <div class="border-t border-[--color-border] pt-6 flex flex-col md:flex-row justify-between items-center gap-3 text-xs text-[--color-text-muted]">
           <p>{t('footer.disclaimer')}</p>
@@ -511,6 +520,27 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
           }
         }
         window.addEventListener('scroll', check, { passive: true });
+      })();
+    </script>
+    <!-- Cookie Notice (GDPR essential notice) -->
+    <div id="cookie-notice" class="fixed bottom-0 left-0 right-0 z-50 bg-[--color-bg-card] border-t border-[--color-border] px-4 py-3 flex items-center justify-between gap-4 text-sm" style="display:none" aria-live="polite">
+      <p class="text-[--color-text-muted] text-xs max-w-xl">{t('cookie.notice')}</p>
+      <button id="cookie-ok" class="shrink-0 font-mono text-xs px-3 py-1.5 rounded border border-[--color-border] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
+        {t('cookie.ok')}
+      </button>
+    </div>
+    <script>
+      (function() {
+        var notice = document.getElementById('cookie-notice');
+        if (!notice) return;
+        if (!localStorage.getItem('cookie-ok')) {
+          notice.style.display = 'flex';
+        }
+        var btn = document.getElementById('cookie-ok');
+        if (btn) btn.addEventListener('click', function() {
+          localStorage.setItem('cookie-ok', '1');
+          notice.style.display = 'none';
+        });
       })();
     </script>
     {cfToken && (
