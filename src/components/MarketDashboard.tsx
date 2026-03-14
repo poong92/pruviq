@@ -269,14 +269,14 @@ export default function MarketDashboard({
   // Live "updated X ago" counter (based on live price generated timestamp)
   const [refreshAgo, setRefreshAgo] = useState("");
   const [isDataStale, setIsDataStale] = useState(false);
-  const [isDataVeryStale, setIsDataVerySale] = useState(false);
+  const [isDataVeryStale, setIsDataVeryStale] = useState(false);
   useEffect(() => {
     if (!generated) return;
     const genTime = new Date(generated).getTime();
     const tick = () => {
       const sec = Math.max(0, Math.floor((Date.now() - genTime) / 1000));
       setIsDataStale(sec > 1800); // stale if >30 min old
-      setIsDataVerySale(sec > 3600); // very stale if >1 hour old
+      setIsDataVeryStale(sec > 3600); // very stale if >1 hour old
       if (sec < 60) setRefreshAgo(`${sec}s`);
       else if (sec < 3600) setRefreshAgo(`${Math.floor(sec / 60)}m`);
       else {
@@ -616,7 +616,7 @@ export default function MarketDashboard({
                     setNewsTab("crypto");
                     setSourceFilter("");
                   }}
-                  class={`px-3 py-1 text-[0.6875rem] font-semibold cursor-pointer border-none transition-colors min-h-[36px] ${
+                  class={`px-3 py-1 text-[0.6875rem] font-semibold cursor-pointer border-none transition-colors min-h-[44px] ${
                     newsTab === "crypto"
                       ? ""
                       : "bg-[--color-bg-hover] text-[--color-text-muted] hover:text-[--color-text]"
@@ -634,7 +634,7 @@ export default function MarketDashboard({
                     setNewsTab("macro");
                     setSourceFilter("");
                   }}
-                  class={`px-3 py-1 text-[0.6875rem] font-semibold cursor-pointer border-none transition-colors min-h-[36px] ${
+                  class={`px-3 py-1 text-[0.6875rem] font-semibold cursor-pointer border-none transition-colors min-h-[44px] ${
                     newsTab === "macro"
                       ? ""
                       : "bg-[--color-bg-hover] text-[--color-text-muted] hover:text-[--color-text]"
