@@ -1435,7 +1435,8 @@ BINANCE_SPOT_URL = "https://api.binance.com/api/v3/ticker/24hr"
 BINANCE_FUTURES_URL = "https://fapi.binance.com/fapi/v1/ticker/24hr"
 # DO server proxy via Tailscale for Korean IP bypass (fapi v1 geo-blocked from KR)
 BINANCE_PROXY_URL = "http://100.122.203.78:9090/fapi/v1/ticker/24hr"
-BINANCE_PROXY_HEADERS = {"X-Proxy-Key": "pruviq-binance-2026"}
+_binance_proxy_key = os.environ.get("BINANCE_PROXY_KEY", "")
+BINANCE_PROXY_HEADERS = {"X-Proxy-Key": _binance_proxy_key} if _binance_proxy_key else {}
 _live_spot_cache: Optional[dict] = None
 _live_spot_ts: float = 0.0
 _live_spot_lock = asyncio.Lock()
@@ -3092,13 +3093,17 @@ async def get_daily_rankings(date: Optional[str] = None):
     if date is None:
         date = datetime.now(timezone.utc).strftime("%Y%m%d")
 
+    # Validate date format (YYYYMMDD digits only — prevent path traversal)
+    if date and (not date.isdigit() or len(date) != 8):
+        raise HTTPException(400, "Invalid date format. Use YYYYMMDD.")
+
     target_file = ranking_dir / f"ranking_{date}.json"
 
     # Fallback to most-recent file if requested date not found
     if not target_file.exists():
         candidates = sorted(ranking_dir.glob("ranking_*.json"), reverse=True)
         if not candidates:
-            raise HTTPException(404, f"No ranking files found in {RANKING_DIR}")
+            raise HTTPException(404, "No ranking data available.")
         target_file = candidates[0]
         # Extract actual date from filename
         date = target_file.stem.replace("ranking_", "")
@@ -3107,7 +3112,8 @@ async def get_daily_rankings(date: Optional[str] = None):
         with open(target_file, "r", encoding="utf-8") as f:
             raw = json.load(f)
     except Exception as e:
-        raise HTTPException(500, f"Failed to read ranking file: {e}")
+        logger.error(f"Failed to read ranking file {date}: {e}")
+        raise HTTPException(500, "Failed to read ranking data.")
 
     generated_at = raw.get("date", "")
     # Normalise date to YYYY-MM-DD display format

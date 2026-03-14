@@ -2,7 +2,7 @@
 PRUVIQ API — Pydantic Models
 """
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 from typing import Optional, List, Literal
 
 # Valid candle timeframes (1H is the base; others are resampled on-demand)
@@ -26,6 +26,26 @@ class SimulationRequest(BaseModel):
     avoid_hours: Optional[List[int]] = Field(default=None, description="UTC hours to avoid entering trades (0-23). null = use strategy default")
     avoid_months: Optional[List[int]] = Field(default=None, description="Months to avoid entering trades (1-12). null = no month filter")
     min_vol_regime: Optional[float] = Field(default=None, description="Minimum ATR ratio (current ATR / 14-period ATR MA) to allow entry. e.g., 0.7 = skip low-volatility periods. null = no filter")
+
+    @field_validator("avoid_hours")
+    @classmethod
+    def _check_avoid_hours(cls, v):  # noqa: N805
+        if v is not None:
+            if any(h < 0 or h > 23 for h in v):
+                raise ValueError("avoid_hours values must be 0-23")
+            if len(v) >= 24:
+                raise ValueError("Cannot avoid all 24 hours — no trades would ever execute")
+        return v
+
+    @field_validator("avoid_months")
+    @classmethod
+    def _check_avoid_months(cls, v):  # noqa: N805
+        if v is not None:
+            if any(m < 1 or m > 12 for m in v):
+                raise ValueError("avoid_months values must be 1-12")
+            if len(v) >= 12:
+                raise ValueError("Cannot avoid all 12 months — no trades would ever execute")
+        return v
 
 
 class TradeItem(BaseModel):
@@ -327,6 +347,26 @@ class BacktestRequest(BaseModel):
     max_concurrent_positions: int = Field(default=100, ge=1, le=1000, description="Max simultaneous open positions")
     compounding: bool = Field(default=False, description="True = reinvest profits (compound), False = fixed position size (simple)")
 
+    @field_validator("avoid_hours")
+    @classmethod
+    def _check_avoid_hours(cls, v):  # noqa: N805
+        if v:
+            if any(h < 0 or h > 23 for h in v):
+                raise ValueError("avoid_hours values must be 0-23")
+            if len(v) >= 24:
+                raise ValueError("Cannot avoid all 24 hours — no trades would ever execute")
+        return v
+
+    @field_validator("avoid_months")
+    @classmethod
+    def _check_avoid_months(cls, v):  # noqa: N805
+        if v is not None:
+            if any(m < 1 or m > 12 for m in v):
+                raise ValueError("avoid_months values must be 1-12")
+            if len(v) >= 12:
+                raise ValueError("Cannot avoid all 12 months — no trades would ever execute")
+        return v
+
 
 class MonthlyStat(BaseModel):
     """Per-month performance breakdown."""
@@ -550,6 +590,26 @@ class ValidateRequest(BaseModel):
     avoid_hours: Optional[List[int]] = Field(default=None, description="UTC hours to avoid entering trades (0-23). null = use strategy default")
     avoid_months: Optional[List[int]] = Field(default=None, description="Months to avoid entering trades (1-12). null = no month filter")
     min_vol_regime: Optional[float] = Field(default=None, description="Minimum ATR ratio (current ATR / 14-period ATR MA) to allow entry. e.g., 0.7 = skip low-volatility periods. null = no filter")
+
+    @field_validator("avoid_hours")
+    @classmethod
+    def _check_avoid_hours(cls, v):  # noqa: N805
+        if v is not None:
+            if any(h < 0 or h > 23 for h in v):
+                raise ValueError("avoid_hours values must be 0-23")
+            if len(v) >= 24:
+                raise ValueError("Cannot avoid all 24 hours — no trades would ever execute")
+        return v
+
+    @field_validator("avoid_months")
+    @classmethod
+    def _check_avoid_months(cls, v):  # noqa: N805
+        if v is not None:
+            if any(m < 1 or m > 12 for m in v):
+                raise ValueError("avoid_months values must be 1-12")
+            if len(v) >= 12:
+                raise ValueError("Cannot avoid all 12 months — no trades would ever execute")
+        return v
 
 
 class ValidateResponse(BaseModel):
