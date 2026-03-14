@@ -40,11 +40,11 @@ async function desktopActiveHrefs(page: Page): Promise<string[]> {
  */
 async function mobileActiveHrefs(page: Page): Promise<string[]> {
   // Open mobile menu
-  // force:true bypasses visibility check — button is md:hidden (CSS) but still clickable
+
   const btn = page.locator("#mobile-menu-btn");
   const isExpanded = (await btn.getAttribute("aria-expanded")) === "true";
   if (!isExpanded) {
-    await btn.click({ force: true });
+    await btn.click();
     await page.waitForSelector("#mobile-menu[aria-hidden='false']", {
       timeout: 3000,
     });
@@ -114,6 +114,9 @@ test.describe("Desktop nav: aria-current reflects current route", () => {
 // ─── Mobile Menu Active State ──────────────────────────────────
 
 test.describe("Mobile menu: aria-current reflects current route", () => {
+  // Must run at mobile width — #mobile-menu-btn is md:hidden (display:none at ≥768px)
+  test.use({ viewport: { width: 375, height: 812 } });
+
   const cases: Array<{
     path: string;
     expectedActive: string;
@@ -191,8 +194,9 @@ test.describe("Active nav items have accent color style", () => {
   test("mobile: active simulate link has font-weight:500 in menu", async ({
     page,
   }) => {
+    await page.setViewportSize({ width: 375, height: 812 });
     await page.goto("/simulate", { waitUntil: "domcontentloaded" });
-    await page.locator("#mobile-menu-btn").click({ force: true });
+    await page.locator("#mobile-menu-btn").click();
     await page.waitForSelector("#mobile-menu[aria-hidden='false']");
 
     const activeLink = page
@@ -208,6 +212,8 @@ test.describe("Active nav items have accent color style", () => {
 // ─── KO language nav active state ──────────────────────────────
 
 test.describe("KO pages: nav active state still works", () => {
+  // Must run at mobile width — uses mobileActiveHrefs which needs #mobile-menu-btn visible
+  test.use({ viewport: { width: 375, height: 812 } });
   test("/ko/market activates market link in mobile menu", async ({ page }) => {
     await page.goto("/ko/market", { waitUntil: "domcontentloaded" });
     const active = await mobileActiveHrefs(page);
