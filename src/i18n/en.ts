@@ -485,6 +485,12 @@ export const en = {
   "about.explore_desc":
     "Ready to test strategies? Try our simulator or browse verified strategies.",
 
+  "about.proof_tag": "BUILT IN PUBLIC",
+  "about.proof_desc": "PRUVIQ is actively developed. The simulation engine, API, and all strategy logic are continuously updated based on real backtesting data.",
+  "about.proof_github": "View on GitHub",
+  "about.proof_commits": "Active development",
+  "about.proof_since": "In development since 2025",
+
   // Performance page static fallback
   "perf.tag": "BACKTEST RESULTS",
   "perf.title": "Every Trade Published. Including Losses.",
