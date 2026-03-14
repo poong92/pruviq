@@ -1,5 +1,9 @@
 import { test, expect } from "@playwright/test";
 
+// Force mobile viewport for all tests in this file.
+// #mobile-menu-btn has md:hidden (display:none on ≥768px) — must test at mobile width.
+test.use({ viewport: { width: 375, height: 812 } });
+
 /**
  * Mobile Menu E2E Tests
  *
@@ -12,10 +16,6 @@ import { test, expect } from "@playwright/test";
  * - Escape key closes menu
  * - Menu closes when navigating
  * - KO language mobile menu has Korean labels
- *
- * Run with --project=mobile to test on 375×812 viewport (see playwright.config.ts).
- * These tests also pass on desktop (menu is hidden behind md: breakpoint but
- * still in the DOM and testable when forced open).
  */
 
 // Expected EN menu item labels in order

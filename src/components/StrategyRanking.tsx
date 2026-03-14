@@ -129,7 +129,7 @@ export function StrategyRanking({ lang = "en" }: { lang?: "en" | "ko" }) {
           <span aria-hidden="true" class="shrink-0">
             ⚠
           </span>
-          <span>{s.lowSampleWarning(data.low_sample_count)}</span>
+          <span>{lbl.lowSampleWarning(data.low_sample_count)}</span>
         </div>
       )}
 
