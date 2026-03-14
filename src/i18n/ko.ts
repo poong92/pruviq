@@ -186,7 +186,7 @@ export const ko: Record<TranslationKey, string> = {
   "footer.privacy": "개인정보처리방침",
   "footer.terms": "이용약관",
   "footer.disclaimer":
-    "투자 조언이 아닙니다. 과거 성과는 미래 결과를 보장하지 않습니다.",
+    "투자 조언이 아닙니다. 레버리지 사용 시 원금 전액 손실 가능성을 포함한 상당한 손실 위험이 있습니다. 과거 성과는 미래 결과를 보장하지 않습니다. 거래 제한 국가 거주자에게는 제공되지 않습니다.",
   "footer.affiliate": "이 사이트에는 제휴 링크가 포함되어 있습니다.",
   "footer.details": "수수료 자세히 보기",
 
@@ -323,6 +323,8 @@ export const ko: Record<TranslationKey, string> = {
   "fees.discount_off": "할인",
   "fees.signup": "가입하기",
   "fees.coming_soon": "준비 중",
+  "fees.visit_okx": "OKX 방문",
+  "fees.okx_discount_pending": "20% 할인 코드 준비 중 — 제휴 승인 대기",
   "fees.footnote":
     "메이커 / 테이커 수수료 기준. 거래량이 높으면 자동으로 낮은 등급이 적용됩니다. 최종 업데이트: 2026년 2월.",
   "fees.korean_title": "국내 거래소 (참고용)",

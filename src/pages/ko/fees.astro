@@ -80,6 +80,14 @@ const exchangeCards: Record<string, { tagLabel: string; description: string }> =
                    class="block text-center bg-[--color-accent] text-[--color-bg] px-4 py-2 min-h-[44px] flex items-center justify-center rounded text-sm font-semibold hover:opacity-90 transition-opacity">
                   {t('fees.signup')} &rarr;
                 </a>
+              ) : ex.directUrl ? (
+                <div class="flex flex-col gap-2">
+                  <a href={ex.directUrl} target="_blank" rel="noopener noreferrer"
+                     class="block text-center border border-[--color-accent] text-[--color-accent] px-4 py-2 min-h-[44px] flex items-center justify-center rounded text-sm font-semibold hover:bg-[--color-accent]/10 transition-colors">
+                    {t('fees.visit_okx')} &rarr;
+                  </a>
+                  <p class="text-[10px] text-center text-[--color-text-muted] font-mono">{t('fees.okx_discount_pending')}</p>
+                </div>
               ) : (
                 <span class="block text-center bg-[--color-border] text-[--color-text-muted] px-4 py-2 min-h-[44px] flex items-center justify-center rounded text-sm font-semibold cursor-default">
                   {t('fees.coming_soon')}

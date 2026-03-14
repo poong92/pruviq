@@ -185,7 +185,7 @@ export const en = {
   "footer.privacy": "Privacy",
   "footer.terms": "Terms",
   "footer.disclaimer":
-    "Not financial advice. Past performance does not guarantee future results.",
+    "Not financial advice. Crypto trading involves substantial risk of loss, including total loss of capital when using leverage. Past performance does not guarantee future results. Not available to residents of restricted jurisdictions.",
   "footer.affiliate": "This site contains affiliate links.",
   "footer.details": "Details",
 
@@ -322,6 +322,8 @@ export const en = {
   "fees.discount_off": "off",
   "fees.signup": "Sign Up",
   "fees.coming_soon": "Coming Soon",
+  "fees.visit_okx": "Visit OKX",
+  "fees.okx_discount_pending": "20% discount code coming — affiliate pending",
   "fees.footnote":
     "Maker / Taker rates shown. Higher-volume traders unlock lower tiers automatically. Last updated: Feb 2026.",
   "fees.korean_title": "Korean Exchanges (Reference)",
