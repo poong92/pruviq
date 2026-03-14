@@ -18,6 +18,7 @@ export interface RankingEntry {
 interface RankingCardProps {
   entry: RankingEntry;
   variant?: "best" | "worst" | "weekly";
+  lang?: "en" | "ko";
 }
 
 const RANK_MEDALS = ["🥇", "🥈", "🥉"];
@@ -54,9 +55,33 @@ function pfColor(pf: number): string {
   return "text-[--color-red]";
 }
 
-export function RankingCard({ entry, variant = "best" }: RankingCardProps) {
+const STRINGS = {
+  en: {
+    winRate: "Win Rate",
+    pf: "PF",
+    trades: "Trades",
+    daysInTop: "Days in Top",
+    daysSuffix: "",
+    lowSample: (n: number) => `Low sample (${n} trades < 100)`,
+  },
+  ko: {
+    winRate: "승률",
+    pf: "PF",
+    trades: "거래 수",
+    daysInTop: "집계 일수",
+    daysSuffix: "일",
+    lowSample: (n: number) => `샘플 부족 (${n}건 < 100건)`,
+  },
+};
+
+export function RankingCard({
+  entry,
+  variant = "best",
+  lang = "ko",
+}: RankingCardProps) {
   const medal = rankBadge(entry.rank);
   const isWeekly = variant === "weekly";
+  const s = STRINGS[lang];
 
   return (
     <div class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card] hover:border-[--color-accent]/40 transition-colors">
@@ -68,10 +93,10 @@ export function RankingCard({ entry, variant = "best" }: RankingCardProps) {
           </span>
           <div class="min-w-0">
             <p class="font-semibold text-[--color-text] text-sm leading-tight truncate">
-              {entry.name_ko}
+              {lang === "ko" ? entry.name_ko : entry.name_en}
             </p>
             <p class="text-[--color-text-muted] text-xs font-mono truncate">
-              {entry.name_en}
+              {lang === "ko" ? entry.name_en : entry.strategy}
             </p>
           </div>
         </div>
@@ -86,24 +111,24 @@ export function RankingCard({ entry, variant = "best" }: RankingCardProps) {
       {/* Stats row */}
       <div class="grid grid-cols-3 gap-2 font-mono text-sm">
         <div>
-          <p class="text-[--color-text-muted] text-xs mb-0.5">승률</p>
+          <p class="text-[--color-text-muted] text-xs mb-0.5">{s.winRate}</p>
           <p class={`font-bold text-base ${winRateColor(entry.win_rate)}`}>
             {entry.win_rate.toFixed(1)}%
           </p>
         </div>
         <div>
-          <p class="text-[--color-text-muted] text-xs mb-0.5">PF</p>
+          <p class="text-[--color-text-muted] text-xs mb-0.5">{s.pf}</p>
           <p class={`font-bold text-base ${pfColor(entry.profit_factor)}`}>
             {entry.profit_factor.toFixed(2)}
           </p>
         </div>
         <div>
           <p class="text-[--color-text-muted] text-xs mb-0.5">
-            {isWeekly ? "집계 일수" : "거래 수"}
+            {isWeekly ? s.daysInTop : s.trades}
           </p>
           <p class="font-bold text-base text-[--color-text]">
             {isWeekly && entry.days_in_top != null
-              ? `${entry.days_in_top}일`
+              ? `${entry.days_in_top}${s.daysSuffix}`
               : entry.total_trades}
           </p>
         </div>
@@ -113,7 +138,7 @@ export function RankingCard({ entry, variant = "best" }: RankingCardProps) {
       {entry.low_sample && (
         <p class="mt-2 text-[--color-yellow] text-xs font-mono flex items-center gap-1">
           <span aria-hidden="true">⚠</span>
-          샘플 부족 ({entry.total_trades}건 &lt; 100건)
+          {s.lowSample(entry.total_trades)}
         </p>
       )}
     </div>
