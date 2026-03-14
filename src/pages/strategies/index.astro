@@ -68,24 +68,13 @@ const difficultyColors: Record<string, string> = {
 
       <!-- QW4: Tab navigation -->
       <nav class="flex gap-1 mb-8 border-b border-[--color-border]" aria-label="Strategy navigation">
-        <a
-          href="/strategies"
-          aria-current="page"
-          class="px-4 py-2.5 font-mono text-sm font-semibold border-b-2 -mb-px transition-colors"
-          style="color: var(--color-accent); border-color: var(--color-accent); background: var(--color-accent-bg);"
-        >
+        <a href="/strategies" aria-current="page" class="px-4 py-2.5 font-mono text-sm font-semibold text-[--color-accent] border-b-2 border-[--color-accent] -mb-px bg-[--color-accent-bg] transition-colors">
           {t('nav.strategies')}
         </a>
-        <a
-          href="/strategies/ranking"
-          class="px-4 py-2.5 font-mono text-sm text-[--color-text-muted] border-b-2 border-transparent -mb-px hover:text-[--color-text] hover:border-[--color-border] transition-colors"
-        >
+        <a href="/strategies/ranking" class="px-4 py-2.5 font-mono text-sm text-[--color-text-muted] border-b-2 border-transparent -mb-px hover:text-[--color-text] hover:border-[--color-border] transition-colors">
           {t('ranking.tag')}
         </a>
-        <a
-          href="/leaderboard"
-          class="px-4 py-2.5 font-mono text-sm text-[--color-text-muted] border-b-2 border-transparent -mb-px hover:text-[--color-text] hover:border-[--color-border] transition-colors"
-        >
+        <a href="/leaderboard" class="px-4 py-2.5 font-mono text-sm text-[--color-text-muted] border-b-2 border-transparent -mb-px hover:text-[--color-text] hover:border-[--color-border] transition-colors">
           {t('leaderboard.tag')}
         </a>
       </nav>

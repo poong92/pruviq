@@ -1205,7 +1205,6 @@ export const ko: Record<TranslationKey, string> = {
   "perf.tbl_hold_val": "48시간",
   "perf.tbl_sl_rate": "SL 비율",
   "perf.tbl_tp_rate": "TP 비율",
-  "perf.tbl_timeout": "타임아웃 비율",
   "perf.tbl_mdd": "최대 손실폭 (MDD)",
   "perf.tbl_breakeven": "손익분기 승률",
   "perf.tbl_safety": "안전 마진",
@@ -1231,4 +1230,21 @@ export const ko: Record<TranslationKey, string> = {
   "strategies.presets_title": "시뮬레이터 프리셋 전체 ({count}종)",
   "strategies.presets_desc":
     "아래 전략을 클릭하면 시뮬레이터에서 바로 파라미터가 적용됩니다. 549개 코인 동시 테스트.",
+
+  // Ranking component inline strings (QW6)
+  "ranking.card_wr": "승률",
+  "ranking.card_trades": "거래 수",
+  "ranking.card_days": "집계 일수",
+  "ranking.card_days_unit": "일",
+  "ranking.card_low_sample": "샘플 부족 ({n}건 < 100건)",
+  "ranking.card_load_fail": "데이터 로드 실패",
+  "ranking.section_best3_title": "Best 3 전략",
+  "ranking.section_best3_sub": "PF(수익팩터) 기준 상위 3개",
+  "ranking.section_worst3_title": "Worst 3 전략",
+  "ranking.section_worst3_sub": "PF 기준 하위 3개 — 피해야 할 조합",
+  "ranking.section_weekly_title": "이번 주 Best 3",
+  "ranking.section_weekly_sub": "최근 7일 평균 PF 기준",
+  "ranking.summary_wr50": "WR 50%+ 전략:",
+  "ranking.summary_total_unit": "개",
+  "ranking.summary_cta": "시뮬레이터에서 직접 확인",
 };
