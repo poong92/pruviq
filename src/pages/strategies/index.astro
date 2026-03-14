@@ -65,6 +65,20 @@ const difficultyColors: Record<string, string> = {
   })} />
   <section class="py-12">
     <div class="max-w-5xl mx-auto px-4">
+
+      <!-- QW4: Tab navigation -->
+      <nav class="flex gap-1 mb-8 border-b border-[--color-border]" aria-label="Strategy navigation">
+        <a href="/strategies" aria-current="page" class="px-4 py-2.5 font-mono text-sm font-semibold text-[--color-accent] border-b-2 border-[--color-accent] -mb-px bg-[--color-accent-bg] transition-colors">
+          {t('nav.strategies')}
+        </a>
+        <a href="/strategies/ranking" class="px-4 py-2.5 font-mono text-sm text-[--color-text-muted] border-b-2 border-transparent -mb-px hover:text-[--color-text] hover:border-[--color-border] transition-colors">
+          {t('ranking.tag')}
+        </a>
+        <a href="/leaderboard" class="px-4 py-2.5 font-mono text-sm text-[--color-text-muted] border-b-2 border-transparent -mb-px hover:text-[--color-text] hover:border-[--color-border] transition-colors">
+          {t('leaderboard.tag')}
+        </a>
+      </nav>
+
       <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('strategies.tag')}</p>
       <h1 class="text-3xl md:text-4xl font-bold mb-4">{t('strategies.title')}</h1>
       <p class="text-[--color-text-muted] text-lg mb-4 max-w-2xl">
