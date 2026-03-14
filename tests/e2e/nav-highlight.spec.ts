@@ -40,11 +40,12 @@ async function desktopActiveHrefs(page: Page): Promise<string[]> {
  */
 async function mobileActiveHrefs(page: Page): Promise<string[]> {
   // Open mobile menu
+  // force:true bypasses visibility check — button is md:hidden (CSS) but still clickable
   const btn = page.locator("#mobile-menu-btn");
   const isExpanded = (await btn.getAttribute("aria-expanded")) === "true";
   if (!isExpanded) {
-    await btn.click();
-    await page.waitForSelector("#mobile-menu:not(.hidden)", {
+    await btn.click({ force: true });
+    await page.waitForSelector("#mobile-menu[aria-hidden='false']", {
       timeout: 3000,
     });
   }
@@ -191,8 +192,8 @@ test.describe("Active nav items have accent color style", () => {
     page,
   }) => {
     await page.goto("/simulate", { waitUntil: "domcontentloaded" });
-    await page.locator("#mobile-menu-btn").click();
-    await page.waitForSelector("#mobile-menu:not(.hidden)");
+    await page.locator("#mobile-menu-btn").click({ force: true });
+    await page.waitForSelector("#mobile-menu[aria-hidden='false']");
 
     const activeLink = page
       .locator("#mobile-menu a[aria-current='page']")
