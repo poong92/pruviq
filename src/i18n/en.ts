@@ -9,6 +9,7 @@ export const en = {
   "nav.builder": "Builder",
   "nav.blog": "Blog",
   "nav.performance": "Performance",
+  "nav.ranking": "Daily Strategy Ranking",
   "nav.lang": "KO",
 
   // Hero

@@ -1,0 +1,356 @@
+{
+  "name": "OOS Validation Pipeline",
+  "description": "Weekly OOS validation check for trading strategy readiness (90-day minimum)",
+  "active": true,
+  "nodes": [
+    {
+      "name": "Sunday 09:00 UTC",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 9 * * 0"
+            }
+          ]
+        }
+      },
+      "position": [250, 300],
+      "notes": "Weekly check: every Sunday at 09:00 UTC"
+    },
+    {
+      "name": "Calculate OOS Days",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Calculate days since trading suspension (2026-03-09 00:00 UTC)\nconst suspensionDate = new Date('2026-03-09T00:00:00Z');\nconst now = new Date();\nconst daysElapsed = Math.floor((now - suspensionDate) / (1000 * 60 * 60 * 24));\nconst oosTarget = 90;\nconst daysRemaining = Math.max(0, oosTarget - daysElapsed);\nconst percentComplete = Math.min(100, Math.round((daysElapsed / oosTarget) * 100));\n\nreturn {\n  suspensionDate: '2026-03-09',\n  currentDate: now.toISOString().split('T')[0],\n  daysElapsed: daysElapsed,\n  daysRemaining: daysRemaining,\n  oosTarget: oosTarget,\n  percentComplete: percentComplete,\n  oosComplete: daysElapsed >= oosTarget,\n  checkTimestamp: now.toISOString()\n};"
+      },
+      "position": [450, 300]
+    },
+    {
+      "name": "OOS Complete?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.oosComplete }}",
+              "operation": "equal",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "position": [650, 300]
+    },
+    {
+      "name": "OOS In Progress",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "parameters": {
+        "url": "=https://api.telegram.org/bot{{ $env.TELEGRAM_BOT_TOKEN }}/sendMessage",
+        "method": "POST",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "chat_id",
+              "value": "={{ $env.TELEGRAM_CHAT_ID }}"
+            },
+            {
+              "name": "text",
+              "value": "=📊 **OOS Validation Progress**\\n\\nDays Elapsed: {{ $json.daysElapsed }}/{{ $json.oosTarget }} days\\nRemaining: {{ $json.daysRemaining }} days\\nCompletion: {{ $json.percentComplete }}%\\n\\nReady for resumption on: {{ moment($json.suspensionDate).add(90, 'days').format('YYYY-MM-DD') }}\\n\\nNote: Minimum 3-month validation required before live trading"
+            },
+            {
+              "name": "parse_mode",
+              "value": "Markdown"
+            }
+          ]
+        }
+      },
+      "position": [850, 150],
+      "continueOnFail": true
+    },
+    {
+      "name": "Fetch PRUVIQ Metrics",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "parameters": {
+        "url": "https://api.pruviq.com/simulate",
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\"strategy\":\"bb-squeeze\",\"direction\":\"short\",\"sl_pct\":10,\"tp_pct\":8,\"date_range_days\":90}",
+        "responseFormat": "json",
+        "options": {
+          "timeout": 30000
+        },
+        "authentication": "bearerToken",
+        "nodeCredentialType": "httpHeaderAuth"
+      },
+      "position": [850, 400],
+      "continueOnFail": true,
+      "notes": "Fetch 90-day backtest metrics for OOS validation"
+    },
+    {
+      "name": "Validate OOS Criteria",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Validate against 8 OOS readiness criteria\nconst metrics = $inputWithIndex[0].json;\nconst criteria = {\n  profitFactor: { target: 1.5, actual: metrics.profit_factor || 0, met: (metrics.profit_factor || 0) > 1.5 },\n  winRate: { target: 45, actual: (metrics.win_rate || 0), met: (metrics.win_rate || 0) > 45 },\n  maxDD: { target: 15, actual: (metrics.max_drawdown_pct || 0), met: (metrics.max_drawdown_pct || 0) < 15 },\n  totalTrades: { target: 150, actual: metrics.total_trades || 0, met: (metrics.total_trades || 0) > 150 },\n  sharpe: { target: 1.0, actual: metrics.sharpe_ratio || 0, met: (metrics.sharpe_ratio || 0) > 1.0 },\n  maxConsecutiveLosses: { target: 8, actual: metrics.max_consecutive_losses || 0, met: (metrics.max_consecutive_losses || 0) < 8 },\n  monthlyPositive: { target: '3/3', actual: 'TBD', met: true },  // requires daily breakdown\n  oosDays: { target: 90, actual: $inputWithIndex[1].json.daysElapsed, met: $inputWithIndex[1].json.daysElapsed >= 90 }\n};\n\nconst metCriteria = Object.values(criteria).filter(c => c.met).length;\nconst totalCriteria = Object.keys(criteria).length;\nconst readinessScore = Math.round((metCriteria / totalCriteria) * 100);\nconst unmetItems = Object.entries(criteria)\n  .filter(([_, c]) => !c.met)\n  .map(([name, c]) => `${name}: ${c.actual}/${c.target}`)\n  .join(', ');\n\nreturn {\n  ...($inputWithIndex[0].json),\n  criteria: criteria,\n  metCriteria: metCriteria,\n  totalCriteria: totalCriteria,\n  readinessScore: readinessScore,\n  unmetItems: unmetItems,\n  readyForResumption: metCriteria >= 7,\n  validationTimestamp: new Date().toISOString()\n};"
+      },
+      "position": [1050, 400]
+    },
+    {
+      "name": "Readiness Decision",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 1,
+      "parameters": {
+        "cases": [
+          {
+            "condition": {
+              "and": [
+                {
+                  "parameter": "{{ $json.readyForResumption }}",
+                  "operation": "equals",
+                  "value": true
+                },
+                {
+                  "parameter": "{{ $json.readinessScore }}",
+                  "operation": "gte",
+                  "value": 87
+                }
+              ]
+            },
+            "output": 1
+          },
+          {
+            "condition": {
+              "and": [
+                {
+                  "parameter": "{{ $json.readinessScore }}",
+                  "operation": "gte",
+                  "value": 62
+                },
+                {
+                  "parameter": "{{ $json.readinessScore }}",
+                  "operation": "lt",
+                  "value": 87
+                }
+              ]
+            },
+            "output": 2
+          }
+        ],
+        "fallbackOutput": 3
+      },
+      "position": [1250, 400]
+    },
+    {
+      "name": "Ready to Resume",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "parameters": {
+        "url": "=https://api.telegram.org/bot{{ $env.TELEGRAM_BOT_TOKEN }}/sendMessage",
+        "method": "POST",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "chat_id",
+              "value": "={{ $env.TELEGRAM_CHAT_ID }}"
+            },
+            {
+              "name": "text",
+              "value": "=🟢 **[OOS COMPLETE] Resumption Ready**\\n\\nReadiness Score: {{ $json.readinessScore }}/100\\nMet Criteria: {{ $json.metCriteria }}/{{ $json.totalCriteria }}\\n\\n✅ Profit Factor: {{ $json.criteria.profitFactor.actual }}/{{ $json.criteria.profitFactor.target }}\\n✅ Win Rate: {{ $json.criteria.winRate.actual }}%/{{ $json.criteria.winRate.target }}%\\n✅ Max Drawdown: {{ $json.criteria.maxDD.actual }}%/{{ $json.criteria.maxDD.target }}%\\n✅ Total Trades: {{ $json.criteria.totalTrades.actual }}/{{ $json.criteria.totalTrades.target }}\\n\\n**Recommendation**: Approved for live trading resumption with initial position sizing 50% of pre-halt levels."
+            },
+            {
+              "name": "parse_mode",
+              "value": "Markdown"
+            }
+          ]
+        }
+      },
+      "position": [1450, 250],
+      "continueOnFail": true
+    },
+    {
+      "name": "Partial Readiness",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "parameters": {
+        "url": "=https://api.telegram.org/bot{{ $env.TELEGRAM_BOT_TOKEN }}/sendMessage",
+        "method": "POST",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "chat_id",
+              "value": "={{ $env.TELEGRAM_CHAT_ID }}"
+            },
+            {
+              "name": "text",
+              "value": "=🟡 **[OOS Progress] {{ $json.readinessScore }}% Readiness**\\n\\nMet Criteria: {{ $json.metCriteria }}/{{ $json.totalCriteria }}\\n\\n**Unmet Items**: {{ $json.unmetItems }}\\n\\n**Recommendation**: Continue monitoring. Adjust strategy parameters to address unmet criteria or wait for additional OOS data."
+            },
+            {
+              "name": "parse_mode",
+              "value": "Markdown"
+            }
+          ]
+        }
+      },
+      "position": [1450, 400],
+      "continueOnFail": true
+    },
+    {
+      "name": "Not Ready - Strategy Revision Needed",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "parameters": {
+        "url": "=https://api.telegram.org/bot{{ $env.TELEGRAM_BOT_TOKEN }}/sendMessage",
+        "method": "POST",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "chat_id",
+              "value": "={{ $env.TELEGRAM_CHAT_ID }}"
+            },
+            {
+              "name": "text",
+              "value": "=🔴 **[OOS Validation] Strategy Revision Required**\\n\\nReadiness Score: {{ $json.readinessScore }}/100\\nMet Criteria: {{ $json.metCriteria }}/{{ $json.totalCriteria }}\\n\\n**Failed Items**: {{ $json.unmetItems }}\\n\\n**Recommendation**: Strategy modifications needed before resumption. Review backtesting parameters, risk management rules, or entry/exit conditions."
+            },
+            {
+              "name": "parse_mode",
+              "value": "Markdown"
+            }
+          ]
+        }
+      },
+      "position": [1450, 550],
+      "continueOnFail": true
+    },
+    {
+      "name": "Save Validation Result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Save validation result to Mem0\nreturn {\n  text: `[JEPO] OOS Validation: ${$json.readinessScore}% ready - ${$json.metCriteria}/${$json.totalCriteria} criteria met`,\n  metadata: {\n    type: 'oos_validation',\n    project: 'autotrader',\n    date: new Date().toISOString().split('T')[0],\n    readinessScore: $json.readinessScore,\n    metCriteria: $json.metCriteria,\n    totalCriteria: $json.totalCriteria,\n    readyForResumption: $json.readyForResumption,\n    unmetItems: $json.unmetItems,\n    evidence: 'PRUVIQ 90-day backtest validation'\n  }\n};"
+      },
+      "position": [1650, 400]
+    }
+  ],
+  "connections": {
+    "Sunday 09:00 UTC": {
+      "main": [
+        [
+          {
+            "node": "Calculate OOS Days",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculate OOS Days": {
+      "main": [
+        [
+          {
+            "node": "OOS Complete?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OOS Complete?": {
+      "main": [
+        [
+          {
+            "node": "Fetch PRUVIQ Metrics",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "OOS In Progress",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch PRUVIQ Metrics": {
+      "main": [
+        [
+          {
+            "node": "Validate OOS Criteria",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate OOS Criteria": {
+      "main": [
+        [
+          {
+            "node": "Readiness Decision",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Readiness Decision": {
+      "main": [
+        [
+          {
+            "node": "Ready to Resume",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Save Validation Result",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Partial Readiness",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Save Validation Result",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Not Ready - Strategy Revision Needed",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Save Validation Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

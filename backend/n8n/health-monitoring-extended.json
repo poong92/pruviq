@@ -1,0 +1,307 @@
+{
+  "name": "Extended Health Monitoring",
+  "description": "30-minute interval comprehensive health check for PRUVIQ infrastructure",
+  "active": true,
+  "nodes": [
+    {
+      "name": "Every 30 Minutes",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 30
+            }
+          ]
+        }
+      },
+      "position": [250, 300]
+    },
+    {
+      "name": "Check Rankings API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "parameters": {
+        "url": "https://api.pruviq.com/rankings/daily",
+        "method": "GET",
+        "responseFormat": "json",
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "position": [450, 200],
+      "continueOnFail": true
+    },
+    {
+      "name": "Check Health Endpoint",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "parameters": {
+        "url": "https://api.pruviq.com/health",
+        "method": "GET",
+        "responseFormat": "json",
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "position": [450, 400],
+      "continueOnFail": true
+    },
+    {
+      "name": "Check Simulate Endpoint",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "parameters": {
+        "url": "https://api.pruviq.com/simulate",
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\"strategy\":\"bb-squeeze\",\"direction\":\"short\",\"sl_pct\":10,\"tp_pct\":8,\"date_range_days\":7}",
+        "responseFormat": "json",
+        "options": {
+          "timeout": 20000
+        }
+      },
+      "position": [450, 600],
+      "continueOnFail": true,
+      "notes": "Quick 7-day backtest to verify simulation engine"
+    },
+    {
+      "name": "Validate Rankings Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const response = $json;\n\nreturn {\n  endpoint: 'rankings/daily',\n  status: response.status === 'error' ? 'FAILED' : 'OK',\n  hasData: Array.isArray(response.data) && response.data.length > 0,\n  dataCount: Array.isArray(response.data) ? response.data.length : 0,\n  expectedMinimum: 500,\n  dataValid: (Array.isArray(response.data) && response.data.length >= 500),\n  lastUpdate: response.timestamp || new Date().toISOString(),\n  errorMessage: response.error || null\n};"
+      },
+      "position": [650, 200]
+    },
+    {
+      "name": "Validate Health Status",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const response = $json;\nconst uptime = response.uptime || 0;\nconst uptimeHours = Math.floor(uptime / 3600);\nconst status = response.status || 'unknown';\nconst healthy = status === 'ok' || status === 'healthy';\n\nreturn {\n  endpoint: 'health',\n  status: healthy ? 'OK' : 'DEGRADED',\n  healthStatus: status,\n  uptime: uptimeHours + 'h',\n  timestamp: response.timestamp || new Date().toISOString(),\n  checks: response.checks || {},\n  databaseConnected: response.database?.connected || false,\n  cacheWorking: response.cache?.working || false,\n  errorMessage: response.error || null\n};"
+      },
+      "position": [650, 400]
+    },
+    {
+      "name": "Validate Simulator",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const response = $json;\nconst hasMetrics = response.profit_factor && response.win_rate && response.total_trades;\nconst metricsValid = \n  response.profit_factor > 0 && \n  response.win_rate >= 0 && response.win_rate <= 100 &&\n  response.total_trades > 0;\n\nreturn {\n  endpoint: 'simulate',\n  status: metricsValid ? 'OK' : 'FAILED',\n  hasMetrics: hasMetrics,\n  metricsValid: metricsValid,\n  profitFactor: response.profit_factor || 0,\n  winRate: response.win_rate || 0,\n  totalTrades: response.total_trades || 0,\n  sharpeRatio: response.sharpe_ratio || 0,\n  timestamp: new Date().toISOString(),\n  errorMessage: response.error || null\n};"
+      },
+      "position": [650, 600]
+    },
+    {
+      "name": "Aggregate Results",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Aggregate all health check results\nconst rankings = $inputWithIndex[0].json;\nconst health = $inputWithIndex[1].json;\nconst simulator = $inputWithIndex[2].json;\n\nconst allOK = rankings.dataValid && health.status === 'OK' && simulator.status === 'OK';\nconst failedChecks = [];\n\nif (!rankings.dataValid) failedChecks.push('Rankings API: ' + (rankings.hasData ? 'insufficient data' : 'no data'));\nif (health.status !== 'OK') failedChecks.push('Health: ' + health.healthStatus);\nif (simulator.status !== 'OK') failedChecks.push('Simulator: invalid metrics');\n\nconst severity = allOK ? 'green' : (failedChecks.length === 1 ? 'yellow' : 'red');\n\nreturn {\n  timestamp: new Date().toISOString(),\n  overallStatus: allOK ? 'HEALTHY' : 'UNHEALTHY',\n  severity: severity,\n  passedChecks: 3 - failedChecks.length,\n  totalChecks: 3,\n  failedChecks: failedChecks,\n  failureCount: failedChecks.length,\n  details: {\n    rankings: rankings,\n    health: health,\n    simulator: simulator\n  }\n};"
+      },
+      "position": [850, 400]
+    },
+    {
+      "name": "Is Healthy?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.overallStatus }}",
+              "operation": "equal",
+              "value2": "HEALTHY"
+            }
+          ]
+        }
+      },
+      "position": [1050, 400]
+    },
+    {
+      "name": "All Good",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "parameters": {},
+      "position": [1250, 250]
+    },
+    {
+      "name": "Alert Unhealthy",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "parameters": {
+        "url": "=https://api.telegram.org/bot{{ $env.TELEGRAM_BOT_TOKEN }}/sendMessage",
+        "method": "POST",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "chat_id",
+              "value": "={{ $env.TELEGRAM_CHAT_ID }}"
+            },
+            {
+              "name": "text",
+              "value": "=⚠️ **Health Check Alert**\\n\\nStatus: {{ $json.overallStatus }}\\nSeverity: {{ $json.severity | upper }}\\n\\nFailed Checks ({{ $json.failureCount }}/{{ $json.totalChecks }}): {{ $json.failedChecks | join(', ') }}\\n\\nTime: {{ $json.timestamp }}\\n\\nDetails:\\n- Rankings: {{ $json.details.rankings.status }}\\n- Health: {{ $json.details.health.status }}\\n- Simulator: {{ $json.details.simulator.status }}"
+            },
+            {
+              "name": "parse_mode",
+              "value": "Markdown"
+            }
+          ]
+        }
+      },
+      "position": [1250, 550],
+      "continueOnFail": true
+    },
+    {
+      "name": "Save Health Pattern",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Save health check result to Mem0 for pattern analysis\nreturn {\n  text: '[JEPO] Health Check: ' + $json.overallStatus + ' - ' + $json.passedChecks + '/' + $json.totalChecks + ' checks passed',\n  metadata: {\n    type: 'health_check',\n    project: 'pruviq',\n    timestamp: $json.timestamp,\n    status: $json.overallStatus,\n    severity: $json.severity,\n    passedChecks: $json.passedChecks,\n    totalChecks: $json.totalChecks,\n    failedItems: $json.failedChecks,\n    evidence: 'Rankings: ' + $json.details.rankings.status + ', Health: ' + $json.details.health.status + ', Simulator: ' + $json.details.simulator.status\n  }\n};"
+      },
+      "position": [1450, 400]
+    }
+  ],
+  "connections": {
+    "Every 30 Minutes": {
+      "main": [
+        [
+          {
+            "node": "Check Rankings API",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Check Health Endpoint",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Check Simulate Endpoint",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Rankings API": {
+      "main": [
+        [
+          {
+            "node": "Validate Rankings Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Health Endpoint": {
+      "main": [
+        [
+          {
+            "node": "Validate Health Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Simulate Endpoint": {
+      "main": [
+        [
+          {
+            "node": "Validate Simulator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Rankings Data": {
+      "main": [
+        [
+          {
+            "node": "Aggregate Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Health Status": {
+      "main": [
+        [
+          {
+            "node": "Aggregate Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Simulator": {
+      "main": [
+        [
+          {
+            "node": "Aggregate Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate Results": {
+      "main": [
+        [
+          {
+            "node": "Is Healthy?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Healthy?": {
+      "main": [
+        [
+          {
+            "node": "All Good",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Save Health Pattern",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Alert Unhealthy",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Save Health Pattern",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

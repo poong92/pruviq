@@ -94,7 +94,9 @@ export function RankingCard({
               {lang === "ko" ? entry.name_ko : entry.name_en}
             </p>
             <p class="text-[--color-text-muted] text-xs font-mono truncate">
-              {lang === "ko" ? entry.name_en : entry.name_ko}
+              {lang === "ko"
+                ? entry.name_en
+                : entry.timeframe + " · " + entry.direction}
             </p>
           </div>
         </div>
