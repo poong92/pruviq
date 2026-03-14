@@ -27,9 +27,9 @@ class SimulationRequest(BaseModel):
     avoid_months: Optional[List[int]] = Field(default=None, description="Months to avoid entering trades (1-12). null = no month filter")
     min_vol_regime: Optional[float] = Field(default=None, description="Minimum ATR ratio (current ATR / 14-period ATR MA) to allow entry. e.g., 0.7 = skip low-volatility periods. null = no filter")
 
-    @field_validator('avoid_hours')
+    @field_validator("avoid_hours")
     @classmethod
-    def validate_avoid_hours(cls, v):
+    def _check_avoid_hours(cls, v):  # noqa: N805
         if v is not None:
             if any(h < 0 or h > 23 for h in v):
                 raise ValueError("avoid_hours values must be 0-23")
@@ -37,9 +37,9 @@ class SimulationRequest(BaseModel):
                 raise ValueError("Cannot avoid all 24 hours — no trades would ever execute")
         return v
 
-    @field_validator('avoid_months')
+    @field_validator("avoid_months")
     @classmethod
-    def validate_avoid_months(cls, v):
+    def _check_avoid_months(cls, v):  # noqa: N805
         if v is not None:
             if any(m < 1 or m > 12 for m in v):
                 raise ValueError("avoid_months values must be 1-12")
@@ -347,19 +347,19 @@ class BacktestRequest(BaseModel):
     max_concurrent_positions: int = Field(default=100, ge=1, le=1000, description="Max simultaneous open positions")
     compounding: bool = Field(default=False, description="True = reinvest profits (compound), False = fixed position size (simple)")
 
-    @field_validator('avoid_hours')
+    @field_validator("avoid_hours")
     @classmethod
-    def validate_avoid_hours(cls, v):
-        if v is not None:
+    def _check_avoid_hours(cls, v):  # noqa: N805
+        if v:
             if any(h < 0 or h > 23 for h in v):
                 raise ValueError("avoid_hours values must be 0-23")
             if len(v) >= 24:
                 raise ValueError("Cannot avoid all 24 hours — no trades would ever execute")
         return v
 
-    @field_validator('avoid_months')
+    @field_validator("avoid_months")
     @classmethod
-    def validate_avoid_months(cls, v):
+    def _check_avoid_months(cls, v):  # noqa: N805
         if v is not None:
             if any(m < 1 or m > 12 for m in v):
                 raise ValueError("avoid_months values must be 1-12")
@@ -591,9 +591,9 @@ class ValidateRequest(BaseModel):
     avoid_months: Optional[List[int]] = Field(default=None, description="Months to avoid entering trades (1-12). null = no month filter")
     min_vol_regime: Optional[float] = Field(default=None, description="Minimum ATR ratio (current ATR / 14-period ATR MA) to allow entry. e.g., 0.7 = skip low-volatility periods. null = no filter")
 
-    @field_validator('avoid_hours')
+    @field_validator("avoid_hours")
     @classmethod
-    def validate_avoid_hours(cls, v):
+    def _check_avoid_hours(cls, v):  # noqa: N805
         if v is not None:
             if any(h < 0 or h > 23 for h in v):
                 raise ValueError("avoid_hours values must be 0-23")
@@ -601,9 +601,9 @@ class ValidateRequest(BaseModel):
                 raise ValueError("Cannot avoid all 24 hours — no trades would ever execute")
         return v
 
-    @field_validator('avoid_months')
+    @field_validator("avoid_months")
     @classmethod
-    def validate_avoid_months(cls, v):
+    def _check_avoid_months(cls, v):  # noqa: N805
         if v is not None:
             if any(m < 1 or m > 12 for m in v):
                 raise ValueError("avoid_months values must be 1-12")
