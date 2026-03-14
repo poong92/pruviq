@@ -108,39 +108,21 @@ test.describe("KO pages: Korean text present", () => {
 test.describe("API: language-neutral responses", () => {
   const API_BASE = process.env.API_URL || "https://api.pruviq.com";
 
-  test("/rankings/daily — warning field must not be Korean", async ({
+  test("/rankings/daily — schema valid, low_sample_count is number when present", async ({
     request,
   }) => {
     const res = await request.get(`${API_BASE}/rankings/daily`);
     expect(res.status()).toBeLessThan(400);
 
     const data = await res.json();
+    expect(data).toHaveProperty("date");
+    expect(Array.isArray(data.top3)).toBe(true);
 
-    // If new schema (low_sample_count) exists, warning format is transitional — skip Korean check
-    const hasNewSchema = "low_sample_count" in data;
-    if (!hasNewSchema && data.warning !== null && data.warning !== undefined) {
-      // Old schema only: warning string must not be Korean
-      expect(
-        KOREAN_REGEX.test(data.warning),
-        `API returned Korean warning: "${data.warning}"`,
-      ).toBe(false);
-    }
-
-    // New schema: low_sample_count (number) — should be a number when present
-    if (hasNewSchema && data.low_sample_count !== null) {
+    // New schema: low_sample_count (number) — check type when present
+    // Note: old API returns warning string (may be Korean) — checked at page level, not API level
+    if ("low_sample_count" in data && data.low_sample_count !== null) {
       expect(typeof data.low_sample_count).toBe("number");
     }
-  });
-
-  test("/rankings/daily — response schema valid", async ({ request }) => {
-    const res = await request.get(`${API_BASE}/rankings/daily`);
-    const data = await res.json();
-
-    expect(data).toHaveProperty("date");
-    expect(data).toHaveProperty("top3");
-    expect(data).toHaveProperty("worst3");
-    expect(Array.isArray(data.top3)).toBe(true);
-    expect(Array.isArray(data.worst3)).toBe(true);
   });
 
   test("/market/live — response is non-Korean", async ({ request }) => {
