@@ -204,7 +204,7 @@ export function StrategyRanking({ lang = "en" }: { lang?: "en" | "ko" }) {
             </span>
           </p>
           <a
-            href="/simulate"
+            href={lang === "ko" ? "/ko/simulate" : "/simulate"}
             class="shrink-0 inline-flex items-center gap-2 bg-[--color-accent] text-[--color-bg] px-5 py-2 rounded font-semibold text-sm hover:bg-[--color-accent-dim] transition-colors"
           >
             {lbl.simCta} &rarr;
