@@ -968,6 +968,38 @@ export const en = {
   'meta.terms_tag': 'TERMS OF SERVICE',
   'meta.terms_heading': 'Terms of Service',
   'meta.terms_updated': 'Last updated: March 1, 2026',
+
+  // Performance: Metrics table labels
+  'perf.tbl_header_metric': 'Metric',
+  'perf.tbl_header_value': 'Value',
+  'perf.tbl_sl': 'Stop Loss',
+  'perf.tbl_tp': 'Take Profit',
+  'perf.tbl_hold': 'Max Hold Time',
+  'perf.tbl_hold_val': '48 hours',
+  'perf.tbl_sl_rate': 'SL Hit Rate',
+  'perf.tbl_tp_rate': 'TP Hit Rate',
+  'perf.tbl_timeout': 'Timeout Rate',
+  'perf.tbl_mdd': 'Max Drawdown',
+  'perf.tbl_breakeven': 'Break-Even Win Rate',
+  'perf.tbl_safety': 'Safety Margin',
+
+  // Daily Ranking page
+  'ranking.tag': 'DAILY RANKING',
+  'ranking.title': '📊 Daily Strategy Ranking',
+  'ranking.date_label': '{date} · PRUVIQ Simulator Backtest Results',
+  'ranking.desc': 'Best and worst strategies today ranked by Profit Factor (PF). Strategies with fewer than 100 trades have low statistical reliability.',
+  'ranking.open_sim': 'Open Simulator',
+  'ranking.strategy_lib': 'Strategy Library',
+  'ranking.leaderboard': 'Leaderboard',
+  'ranking.disclaimer_note': 'Note:',
+  'ranking.disclaimer_text': 'This ranking is based on historical backtests. Past performance does not guarantee future returns. Strategies with fewer than 100 trades (< 100) may be overfitted.',
+  'ranking.footer_text': 'Adjust parameters for any strategy directly in the simulator.',
+  'ranking.try_sim': 'Try in Simulator',
+  'ranking.live_perf': 'Live Performance',
+
+  // Strategies: Simulator Presets section
+  'strategies.presets_title': 'All Simulator Presets ({count})',
+  'strategies.presets_desc': 'Click any preset to load it directly in the simulator. Tests on 549+ coins simultaneously.',
 } as const;
 
 export type TranslationKey = keyof typeof en;

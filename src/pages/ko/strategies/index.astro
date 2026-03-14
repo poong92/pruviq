@@ -98,7 +98,7 @@ const isKorean = (id: string) => koIds.has(id);
       <div class="mb-4 flex flex-col sm:flex-row gap-3">
         <a href="/ko/simulate"
            class="btn-primary inline-flex items-center gap-2 bg-[--color-accent] text-[--color-bg] px-5 py-2.5 rounded-lg font-semibold text-sm hover:bg-[--color-accent-dim]">
-          나만의 전략 만들기 &rarr;
+          {t('hero.cta_builder')} &rarr;
         </a>
         <a href="/ko/strategies/compare"
            class="inline-flex items-center gap-2 border border-[--color-border] text-[--color-text] px-5 py-2.5 rounded-lg font-semibold text-sm hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
@@ -195,9 +195,9 @@ const isKorean = (id: string) => koIds.has(id);
 
       {simulatorPresets.length > 0 && (
         <div class="mt-12">
-          <h2 class="text-xl font-bold mb-2">시뮬레이터 프리셋 전체 ({simulatorPresets.length}종)</h2>
+          <h2 class="text-xl font-bold mb-2">{t('strategies.presets_title').replace('{count}', String(simulatorPresets.length))}</h2>
           <p class="text-[--color-text-muted] text-sm mb-6">
-            아래 전략을 클릭하면 시뮬레이터에서 바로 파라미터가 적용됩니다. 549개 코인 동시 테스트.
+            {t('strategies.presets_desc')}
           </p>
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {simulatorPresets.map((preset) => (

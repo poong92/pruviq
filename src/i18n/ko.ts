@@ -970,4 +970,36 @@ export const ko: Record<TranslationKey, string> = {
   'meta.terms_tag': '이용약관',
   'meta.terms_heading': '이용약관',
   'meta.terms_updated': '최종 수정일: 2026년 3월 1일',
+
+  // Performance: Metrics table labels
+  'perf.tbl_header_metric': '지표',
+  'perf.tbl_header_value': '값',
+  'perf.tbl_sl': '손절 (SL)',
+  'perf.tbl_tp': '익절 (TP)',
+  'perf.tbl_hold': '최대 보유 시간',
+  'perf.tbl_hold_val': '48시간',
+  'perf.tbl_sl_rate': 'SL 비율',
+  'perf.tbl_tp_rate': 'TP 비율',
+  'perf.tbl_timeout': '타임아웃 비율',
+  'perf.tbl_mdd': '최대 손실폭 (MDD)',
+  'perf.tbl_breakeven': '손익분기 승률',
+  'perf.tbl_safety': '안전 마진',
+
+  // Daily Ranking page
+  'ranking.tag': 'DAILY RANKING',
+  'ranking.title': '📊 오늘의 전략 랭킹',
+  'ranking.date_label': '{date} 기준 · PRUVIQ 시뮬레이터 백테스트 결과',
+  'ranking.desc': '수익팩터(PF) 기준으로 오늘 가장 성과가 좋은 전략과 나쁜 전략을 확인하세요. 샘플 수가 100건 미만인 전략은 통계적 신뢰도가 낮습니다.',
+  'ranking.open_sim': '시뮬레이터 열기',
+  'ranking.strategy_lib': '전략 라이브러리',
+  'ranking.leaderboard': '리더보드',
+  'ranking.disclaimer_note': '참고:',
+  'ranking.disclaimer_text': '이 랭킹은 과거 데이터 백테스트 기반입니다. 미래 수익을 보장하지 않으며, 샘플 수 부족(< 100건) 전략은 과적합 가능성이 높습니다.',
+  'ranking.footer_text': '마음에 드는 전략을 시뮬레이터에서 직접 파라미터 조정해보세요.',
+  'ranking.try_sim': '시뮬레이터에서 직접 확인',
+  'ranking.live_perf': '실거래 성과',
+
+  // Strategies: Simulator Presets section
+  'strategies.presets_title': '시뮬레이터 프리셋 전체 ({count}종)',
+  'strategies.presets_desc': '아래 전략을 클릭하면 시뮬레이터에서 바로 파라미터가 적용됩니다. 549개 코인 동시 테스트.',
 };
