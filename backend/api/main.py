@@ -2129,31 +2129,14 @@ async def get_preset(preset_id: str):
     return PRESET_STRATEGIES[preset_id]
 
 
-@app.post("/backtest", response_model=BacktestResponse)
-async def run_backtest(req: BacktestRequest):
-    """
-    Run a custom strategy backtest using the ConditionEngine.
-    This is the core Strategy Builder endpoint.
-    """
-    if data_manager.coin_count == 0:
-        raise HTTPException(503, "Data not loaded yet. Try again shortly.")
-
-    # Normalize direction to lowercase
-    if req.direction:
-        req.direction = req.direction.lower()
-
+def _run_backtest_sync(req: BacktestRequest, bt_key: str) -> BacktestResponse:
+    """CPU-bound backtest logic — runs in a thread via asyncio.to_thread."""
     # Handle "both" direction: run short and long separately
     is_both = req.direction == "both"
     if is_both:
         directions_to_run = ["short", "long"]
     else:
         directions_to_run = [req.direction or "short"]
-
-    # Cache lookup
-    bt_key = backtest_cache_key(req)
-    cached = get_cached(bt_key)
-    if cached is not None:
-        return cached
 
     timeframe = _validate_timeframe(getattr(req, 'timeframe', '1H') or '1H')
     resampled = _is_resampled(timeframe)
@@ -3022,6 +3005,28 @@ async def run_backtest(req: BacktestRequest):
 
     return response
 
+
+@app.post("/backtest", response_model=BacktestResponse)
+async def run_backtest(req: BacktestRequest):
+    """
+    Run a custom strategy backtest using the ConditionEngine.
+    This is the core Strategy Builder endpoint.
+    """
+    if data_manager.coin_count == 0:
+        raise HTTPException(503, "Data not loaded yet. Try again shortly.")
+
+    # Normalize direction to lowercase
+    if req.direction:
+        req.direction = req.direction.lower()
+
+    # Cache lookup (fast path — keep in event loop)
+    bt_key = backtest_cache_key(req)
+    cached = get_cached(bt_key)
+    if cached is not None:
+        return cached
+
+    # CPU-bound work → thread (prevents event loop blocking)
+    return await asyncio.to_thread(_run_backtest_sync, req, bt_key)
 
 
 # --- Export Endpoints ---
