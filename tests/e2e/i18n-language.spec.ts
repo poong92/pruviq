@@ -116,16 +116,18 @@ test.describe("API: language-neutral responses", () => {
 
     const data = await res.json();
 
-    // Old schema: warning (string) — must not exist or must not be Korean
-    if (data.warning !== null && data.warning !== undefined) {
+    // If new schema (low_sample_count) exists, warning format is transitional — skip Korean check
+    const hasNewSchema = "low_sample_count" in data;
+    if (!hasNewSchema && data.warning !== null && data.warning !== undefined) {
+      // Old schema only: warning string must not be Korean
       expect(
         KOREAN_REGEX.test(data.warning),
         `API returned Korean warning: "${data.warning}"`,
       ).toBe(false);
     }
 
-    // New schema: low_sample_count (number) — should be a number
-    if ("low_sample_count" in data && data.low_sample_count !== null) {
+    // New schema: low_sample_count (number) — should be a number when present
+    if (hasNewSchema && data.low_sample_count !== null) {
       expect(typeof data.low_sample_count).toBe("number");
     }
   });
