@@ -68,18 +68,8 @@ jobs:
           );
           const retryCount = botFailComments.length + 1;
 
-          let body;
-          if (retryCount > 3) {
-            body = `[E2E-AUTOFIX] Retry #${retryCount} — **closing PR** (exceeded 3 retries).\n\nBranch: \`${branch}\`\nRun: ${runUrl}\n\nThis PR has failed E2E tests ${retryCount} times. Closing to prevent infinite loops. A new issue may be opened for manual investigation.`;
-            await github.rest.pulls.update({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: prNumber,
-              state: 'closed',
-            });
-          } else {
-            body = `[E2E-AUTOFIX] Retry #${retryCount}/3 — E2E tests failed.\n\nBranch: \`${branch}\`\nRun: ${runUrl}\n\nOpenClaw autofix will pick this up on the next scheduled run. Check the [workflow log](${runUrl}) for details.`;
-          }
+          // Note: auto-close disabled — retryCount tracked for info only
+          const body = `[E2E-AUTOFIX] Attempt #${retryCount} — E2E tests failed.\n\nBranch: \`${branch}\`\nRun: ${runUrl}\n\nCheck the [workflow log](${runUrl}) for details.`;
 
           await github.rest.issues.createComment({
             owner: context.repo.owner,
