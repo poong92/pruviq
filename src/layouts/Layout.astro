@@ -177,6 +177,12 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
         "@context": "https://schema.org",
         "@type": "Organization",
         "name": "PRUVIQ",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://pruviq.com/favicon-96.png",
+          "width": 96,
+          "height": 96
+        },
         "alternateName": lang === 'ko' ? '크립토 전략 검증 플랫폼' : 'Crypto Strategy Lab',
         "url": "https://pruviq.com",
         "description": lang === 'ko'
@@ -313,7 +319,13 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
         "publisher": {
           "@type": "Organization",
           "name": "PRUVIQ",
-          "url": "https://pruviq.com"
+          "url": "https://pruviq.com",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://pruviq.com/favicon-96.png",
+            "width": 96,
+            "height": 96
+          }
         },
         "mainEntityOfPage": canonicalURL.href,
         "articleSection": category || "education"
