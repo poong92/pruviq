@@ -18,7 +18,7 @@ export const ko: Record<TranslationKey, string> = {
   "hero.tag": "무료 백테스팅 도구",
   "hero.title1": "실전 전에",
   "hero.title2": "전략을 검증하세요.",
-  "hero.subtitle": "실패도 공개하는 유일한 백테스팅 도구.",
+  "hero.subtitle": "실패도 공개하는 몇 안 되는 백테스팅 도구.",
   "hero.desc":
     "549개 이상의 코인에서 5개의 전략을 테스트했습니다. 4개는 손실을 기록했습니다. 모든 결과를 공개합니다. 실제 자금을 투입하기 전에 무엇이 실제로 작동하는지 확인하세요.",
   "hero.cta_primary": "무료 시뮬레이터 체험",
@@ -190,6 +190,10 @@ export const ko: Record<TranslationKey, string> = {
     "투자 조언이 아닙니다. 레버리지 사용 시 원금 전액 손실 가능성을 포함한 상당한 손실 위험이 있습니다. 과거 성과는 미래 결과를 보장하지 않습니다. 거래 제한 국가 거주자에게는 제공되지 않습니다.",
   "footer.affiliate": "이 사이트에는 제휴 링크가 포함되어 있습니다.",
   "footer.details": "수수료 자세히 보기",
+  "footer.legal_entity": "PRUVIQ 프로젝트 · contact@pruviq.com",
+  "footer.legal_entity_notice": "독립 리서치 프로젝트. 금융 투자 자문업 등록 사업자가 아닙니다.",
+  "cookie.notice": "이 사이트는 보안 목적의 필수 쿠키만 사용합니다. 추적 또는 광고 쿠키 없음.",
+  "cookie.ok": "확인",
 
   // Strategies page
   "strategies.tag": "전략 라이브러리",
@@ -453,15 +457,15 @@ export const ko: Record<TranslationKey, string> = {
   "about.title": "트레이더가 만든, 트레이더를 위한.",
   "about.mission":
     "PRUVIQ는 거짓말하는 백테스트, 체리피킹하는 전략, 손실을 보여주지 않는 인플루언서에 질렸기 때문에 탄생했습니다. 실패를 포함한 모든 결과를 공개하는 플랫폼을 만들었습니다. 실제 자금을 투입하기 전에 검증할 수 있도록.",
-  "about.team_tag": "PRUVIQ 프로젝트 (서울, 한국)",
+  "about.team_tag": "PRUVIQ 프로젝트",
   "about.team_desc":
-    "PRUVIQ는 검증되지 않은 전략에 돈을 잃는 것에 질린 엔지니어와 트레이더로 구성된 소규모 팀이 만들었습니다. 직감이 아닌 코드로 트레이딩합니다. 모든 전략은 출시 전 549개 이상 코인에서 2년 이상 데이터로 철저히 백테스트됩니다.",
-  "about.team_stat1_label": "테스트한 전략",
-  "about.team_stat1_val": "5개+",
-  "about.team_stat2_label": "시뮬레이션 코인",
-  "about.team_stat2_val": "549개",
-  "about.team_stat3_label": "분석한 거래",
-  "about.team_stat3_val": "2,898건+",
+    "PRUVIQ는 독립적인 트레이딩 리서치 프로젝트입니다. 과장 없이, 신호 없이, 약속 없이. 이 사이트에 공개되는 모든 전략은 실제 수수료와 슬리피지를 반영한 역사적 데이터로 먼저 검증됩니다.",
+  "about.team_stat1_label": "백테스트 전략",
+  "about.team_stat1_val": "88+",
+  "about.team_stat2_label": "커버 코인",
+  "about.team_stat2_val": "549",
+  "about.team_stat3_label": "시뮬레이션 거래",
+  "about.team_stat3_val": "100만+",
   "about.philosophy_tag": "우리의 철학",
   "about.philosophy_title": "증명하거나, 제거하거나.",
   "about.philosophy1_title": "모든 것을 공개",

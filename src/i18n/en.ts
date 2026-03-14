@@ -16,7 +16,7 @@ export const en = {
   "hero.tag": "FREE BACKTESTING TOOL",
   "hero.title1": "Test Your Strategy",
   "hero.title2": "Before You Trade.",
-  "hero.subtitle": "The only backtesting tool that publishes its failures.",
+  "hero.subtitle": "One of the few backtesting tools that publishes its failures.",
   "hero.desc":
     "We tested 5 strategies on 549+ coins. 4 lost money. We published them all. Because you deserve to know what actually works before risking real money.",
   "hero.cta_primary": "Try Simulator Free",
@@ -189,6 +189,10 @@ export const en = {
     "Not financial advice. Crypto trading involves substantial risk of loss, including total loss of capital when using leverage. Past performance does not guarantee future results. Not available to residents of restricted jurisdictions.",
   "footer.affiliate": "This site contains affiliate links.",
   "footer.details": "Details",
+  "footer.legal_entity": "PRUVIQ Project · contact@pruviq.com",
+  "footer.legal_entity_notice": "Independent research project. Not a licensed financial advisor.",
+  "cookie.notice": "This site uses essential security cookies only. No tracking or advertising cookies.",
+  "cookie.ok": "Got it",
 
   // Strategies page
   "strategies.tag": "STRATEGY LIBRARY",
@@ -452,15 +456,15 @@ export const en = {
   "about.title": "Built by a Trader. For Traders.",
   "about.mission":
     "PRUVIQ exists because we got tired of backtests that lie, strategies that cherry-pick, and influencers who never show losses. We built a platform where every result is published — including failures — so you can verify before you risk real money.",
-  "about.team_tag": "PRUVIQ PROJECT (SEOUL, KOREA)",
+  "about.team_tag": "THE PRUVIQ PROJECT",
   "about.team_desc":
-    "PRUVIQ is built by a small team of engineers and traders who got tired of losing money to unverified strategies. We trade with code, not gut feeling. Every strategy is rigorously backtested before publication — we verify with data before suggesting you risk real money.",
-  "about.team_stat1_label": "Strategies Tested",
-  "about.team_stat1_val": "5+",
-  "about.team_stat2_label": "Coins Simulated",
+    "PRUVIQ is an independent trading research project. We build tools for systematic backtesting — no hype, no signals, no promises. Every strategy published on this platform is tested against real historical data with realistic fees and slippage before it appears anywhere on this site.",
+  "about.team_stat1_label": "Strategies Backtested",
+  "about.team_stat1_val": "88+",
+  "about.team_stat2_label": "Coins Covered",
   "about.team_stat2_val": "549",
-  "about.team_stat3_label": "Trades Analyzed",
-  "about.team_stat3_val": "2,898+",
+  "about.team_stat3_label": "Simulated Trades",
+  "about.team_stat3_val": "1M+",
   "about.philosophy_tag": "OUR PHILOSOPHY",
   "about.philosophy_title": "Prove It or Kill It.",
   "about.philosophy1_title": "Publish Everything",
