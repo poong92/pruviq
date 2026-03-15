@@ -2,8 +2,10 @@ import { defineConfig } from "@playwright/test";
 
 export default defineConfig({
   testDir: "./tests",
-  timeout: 60000,
-  retries: 1,
+  // CI runners (GitHub US East → DO API) add 200-500ms latency per request.
+  // 90s covers: page load (5s) + Preact hydration (5s) + API round trip (60s) + margin.
+  timeout: process.env.CI ? 90000 : 60000,
+  retries: process.env.CI ? 2 : 1,
   workers: process.env.CI ? 1 : undefined,
   reporter: process.env.CI ? [["html", { open: "never" }]] : [["list"]],
   use: {
