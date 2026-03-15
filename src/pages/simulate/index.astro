@@ -92,14 +92,22 @@ const t = useTranslations('en');
     </div>
   </section>
 
+  <div id="onboarding-tour-mount"></div>
+
   <script>
     import { h, render } from 'preact';
     import SimulatorPage from '../../components/SimulatorPage';
     import ErrorBoundary from '../../components/ErrorBoundary';
+    import OnboardingTour from '../../components/OnboardingTour';
 
     const mount = document.getElementById('simulator-mount');
     if (mount) {
       render(h(ErrorBoundary, { name: 'Simulator' }, h(SimulatorPage, { lang: 'en' })), mount);
+    }
+
+    const tourMount = document.getElementById('onboarding-tour-mount');
+    if (tourMount) {
+      render(h(OnboardingTour, { lang: 'en' }), tourMount);
     }
   </script>
 </Layout>

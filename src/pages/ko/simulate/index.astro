@@ -92,14 +92,22 @@ const t = useTranslations('ko');
     </div>
   </section>
 
+  <div id="onboarding-tour-mount"></div>
+
   <script>
     import { h, render } from 'preact';
     import SimulatorPage from '../../../components/SimulatorPage';
     import ErrorBoundary from '../../../components/ErrorBoundary';
+    import OnboardingTour from '../../../components/OnboardingTour';
 
     const mount = document.getElementById('simulator-mount');
     if (mount) {
       render(h(ErrorBoundary, { name: 'Simulator', lang: 'ko' }, h(SimulatorPage, { lang: 'ko' })), mount);
+    }
+
+    const tourMount = document.getElementById('onboarding-tour-mount');
+    if (tourMount) {
+      render(h(OnboardingTour, { lang: 'ko' }), tourMount);
     }
   </script>
 </Layout>
