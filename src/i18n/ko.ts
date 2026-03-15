@@ -191,8 +191,10 @@ export const ko: Record<TranslationKey, string> = {
   "footer.affiliate": "이 사이트에는 제휴 링크가 포함되어 있습니다.",
   "footer.details": "수수료 자세히 보기",
   "footer.legal_entity": "PRUVIQ 프로젝트 · contact@pruviq.com",
-  "footer.legal_entity_notice": "독립 리서치 프로젝트. 금융 투자 자문업 등록 사업자가 아닙니다.",
-  "cookie.notice": "이 사이트는 보안 목적의 필수 쿠키만 사용합니다. 추적 또는 광고 쿠키 없음.",
+  "footer.legal_entity_notice":
+    "독립 리서치 프로젝트. 금융 투자 자문업 등록 사업자가 아닙니다.",
+  "cookie.notice":
+    "이 사이트는 보안 목적의 필수 쿠키만 사용합니다. 추적 또는 광고 쿠키 없음.",
   "cookie.ok": "확인",
 
   // Strategies page
@@ -491,7 +493,8 @@ export const ko: Record<TranslationKey, string> = {
     "전략을 테스트할 준비가 되셨나요? 시뮬레이터를 사용하거나 검증된 전략을 둘러보세요.",
 
   "about.proof_tag": "공개 개발",
-  "about.proof_desc": "PRUVIQ는 지속적으로 개발 중입니다. 시뮬레이션 엔진, API, 전략 로직은 실제 백테스트 데이터를 바탕으로 꾸준히 업데이트됩니다.",
+  "about.proof_desc":
+    "PRUVIQ는 지속적으로 개발 중입니다. 시뮬레이션 엔진, API, 전략 로직은 실제 백테스트 데이터를 바탕으로 꾸준히 업데이트됩니다.",
   "about.proof_github": "GitHub에서 보기",
   "about.proof_commits": "활발한 개발 진행 중",
   "about.proof_since": "2025년부터 개발 중",
@@ -929,6 +932,25 @@ export const ko: Record<TranslationKey, string> = {
   "api.params_label": "파라미터:",
   "footer.api": "API",
   "footer.compare": "vs 트레이딩뷰",
+
+  // Compare index page (/ko/compare)
+  "compare_index.tag": "비교",
+  "compare_index.title": "PRUVIQ vs 대안 플랫폼",
+  "compare_index.subtitle":
+    "무료 백테스트. 가입 불필요. 549개 코인. 직접 비교해 보세요.",
+  "compare_index.meta_title":
+    "PRUVIQ vs 대안 플랫폼 — 무료 크립토 백테스트 비교",
+  "compare_index.meta_desc":
+    "PRUVIQ를 TradingView, Coinrule, 3Commas, Cryptohopper, Gainium, Streak와 비교하세요. 무료, 가입 불필요, 549개 코인.",
+  "compare_index.most_popular": "가장 인기",
+  "compare_index.tradingview_desc": "코딩 없는 백테스트 vs 유료 Pine Script",
+  "compare_index.coinrule_desc": "무료 무제한 백테스트 vs $29+/월 규칙 빌더",
+  "compare_index.cryptohopper_desc": "549개 코인 무료 vs 제한된 봇 구독",
+  "compare_index.3commas_desc": "투명한 결과 vs 폐쇄형 전략 마켓",
+  "compare_index.gainium_desc": "가입 불필요 vs 필수 계정 생성",
+  "compare_index.streak_desc": "크립토 네이티브 549개 코인 vs 주식 중심 플랫폼",
+  "compare_index.footer": "모든 비교는 실제 백테스트 데이터를 사용합니다.",
+  "compare_index.try_cta": "직접 체험하기 →",
 
   // Comparison table (index page)
   "compare_table.tag": "WHY PRUVIQ",

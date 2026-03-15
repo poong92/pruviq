@@ -1,0 +1,50 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { useTranslations } from '../../i18n/index';
+
+const t = useTranslations('en');
+
+const comparisons = [
+  { slug: 'tradingview', name: 'TradingView', desc: t('compare_index.tradingview_desc'), badge: t('compare_index.most_popular') },
+  { slug: 'coinrule', name: 'Coinrule', desc: t('compare_index.coinrule_desc'), badge: null },
+  { slug: 'cryptohopper', name: 'Cryptohopper', desc: t('compare_index.cryptohopper_desc'), badge: null },
+  { slug: '3commas', name: '3Commas', desc: t('compare_index.3commas_desc'), badge: null },
+  { slug: 'gainium', name: 'Gainium', desc: t('compare_index.gainium_desc'), badge: null },
+  { slug: 'streak', name: 'Streak', desc: t('compare_index.streak_desc'), badge: null },
+];
+---
+
+<Layout title={t('compare_index.meta_title')} description={t('compare_index.meta_desc')}>
+  <section class="py-16">
+    <div class="max-w-4xl mx-auto px-4">
+      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('compare_index.tag')}</p>
+      <h1 class="text-3xl md:text-5xl font-bold mb-4">
+        {t('compare_index.title')}
+        <span class="block text-lg md:text-2xl font-normal text-[--color-text-muted] mt-2">
+          {t('compare_index.subtitle')}
+        </span>
+      </h1>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-10">
+        {comparisons.map((c) => (
+          <a
+            href={`/compare/${c.slug}`}
+            class="group relative border border-[--color-border] rounded-lg p-6 hover:border-[--color-accent] transition-colors"
+          >
+            {c.badge && (
+              <span class="absolute top-4 right-4 text-xs font-mono bg-[--color-accent] text-black px-2 py-0.5 rounded">
+                {c.badge}
+              </span>
+            )}
+            <h2 class="text-lg font-bold mb-1 group-hover:text-[--color-accent] transition-colors">
+              PRUVIQ vs {c.name}
+            </h2>
+            <p class="text-sm text-[--color-text-muted]">{c.desc}</p>
+          </a>
+        ))}
+      </div>
+      <p class="mt-10 text-sm text-[--color-text-muted] font-mono">
+        {t('compare_index.footer')} <a href="/simulate" class="text-[--color-accent] hover:underline">{t('compare_index.try_cta')}</a>
+      </p>
+    </div>
+  </section>
+</Layout>

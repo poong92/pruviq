@@ -102,6 +102,65 @@ GitHub: pruviq/pruviq
 5. **투명성** — 비용 모델링 명시, 실패 전략도 공개
 6. **무료 우선** — 유료 벽 없음, 레퍼럴만
 
+## 원론적 해결 원칙 (CRITICAL — 반복 방지 룰)
+
+> 현상 파악 → 시스템 분석 → 근본 원인 제거. 증상 패치 금지.
+> 이슈가 발생하면 "왜 이 구조가 이런 이슈를 만드는가?"를 먼저 분석하고, 같은 이슈가 다시 발생하지 않도록 구조를 고친다.
+
+### 룰 1: 디렉토리 라우팅 — index.astro 필수
+```
+src/pages/[dirname]/ 를 만들면 반드시 index.astro 포함 (content 또는 Astro.redirect())
+없으면 /[dirname] 접속 시 404.
+```
+**근거**: /compare 404 사건 (2026-03-15). compare/ 하위 페이지 6개가 있어도 index 없으면 404.
+**체크**: 새 디렉토리 추가 시 `ls src/pages/[dir]/` → index.astro 있는지 확인
+
+### 룰 2: API 데이터 페이지 — noscript 의미 있는 콘텐츠 필수
+```
+client:load / client:visible 로 API 데이터 fetch하는 페이지:
+  ❌ <noscript>JavaScript를 활성화하세요</noscript>  ← 의미없음
+  ✅ <noscript>[실제 SSR 데이터 또는 정적 샘플 데이터]</noscript>
+```
+**근거**: /coins, /market, /strategies/ranking JS 의존 빈 페이지 (2026-03-15 감사).
+**체크**: 신규 data-fetch 페이지에 noscript 블록 반드시 포함
+
+### 룰 3: 파트너 수수료율 — 단일 소스 of Truth
+```
+모든 거래소 레퍼럴 수수료율 → src/config/partners.ts 에서만 정의
+콘텐츠/컴포넌트에서 하드코딩 절대 금지 (10%, 20%, 40% 혼용 방지)
+```
+**근거**: Binance 할인율 10% vs 40% 불일치 (fees.astro vs CLAUDE.md, 2026-03-15 감사).
+**체크**: 수수료율 변경 시 partners.ts 1곳만 수정
+
+### 룰 4: 성과 지표 — 스코프 명시 필수
+```
+MDD, WR, PF 등 모든 성과 지표 표시 시:
+  ❌ "MDD 33%"
+  ✅ "MDD 33% (포트폴리오 전체 기준)" 또는 "MDD 33% (개별 전략 기준)"
+```
+**근거**: /performance MDD 33% vs config 한도 20% 혼란 (2026-03-15 감사).
+
+### 룰 5: Exception 처리 — bare pass 절대 금지
+```
+백엔드 사용자-facing 데이터 경로:
+  ❌ except ValueError: pass  ← 조용한 오류, 잘못된 데이터 반환
+  ✅ except ValueError: raise HTTPException(400, detail="...")
+```
+**근거**: filter_df_by_date() silent failure → 잘못된 날짜 무시 후 전체 데이터 반환 (2026-03-15 감사).
+
+### 룰 6: 새 전략/프리셋 추가 시 체크리스트
+```
+백엔드에 새 전략 추가 → 반드시:
+  1. 프리셋 동작 확인 (POST /simulate with strategy)
+  2. 0 trades 결과 아닌지 확인 (데이터 존재 여부)
+  3. /strategies/ranking 에서 노출 확인
+  4. i18n 키 추가 (en.ts + ko.ts 동시)
+  5. /strategies 인덱스 페이지에 카드 반영
+```
+**근거**: 신규 전략 추가 후 일부 프리셋 0 trades 결과 (2026-03-15 감사).
+
+---
+
 ## 커밋 전 필수 QA (CRITICAL)
 
 ```

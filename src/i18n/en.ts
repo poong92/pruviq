@@ -16,7 +16,8 @@ export const en = {
   "hero.tag": "FREE BACKTESTING TOOL",
   "hero.title1": "Test Your Strategy",
   "hero.title2": "Before You Trade.",
-  "hero.subtitle": "One of the few backtesting tools that publishes its failures.",
+  "hero.subtitle":
+    "One of the few backtesting tools that publishes its failures.",
   "hero.desc":
     "We tested 5 strategies on 549+ coins. 4 lost money. We published them all. Because you deserve to know what actually works before risking real money.",
   "hero.cta_primary": "Try Simulator Free",
@@ -190,8 +191,10 @@ export const en = {
   "footer.affiliate": "This site contains affiliate links.",
   "footer.details": "Details",
   "footer.legal_entity": "PRUVIQ Project · contact@pruviq.com",
-  "footer.legal_entity_notice": "Independent research project. Not a licensed financial advisor.",
-  "cookie.notice": "This site uses essential security cookies only. No tracking or advertising cookies.",
+  "footer.legal_entity_notice":
+    "Independent research project. Not a licensed financial advisor.",
+  "cookie.notice":
+    "This site uses essential security cookies only. No tracking or advertising cookies.",
   "cookie.ok": "Got it",
 
   // Strategies page
@@ -490,7 +493,8 @@ export const en = {
     "Ready to test strategies? Try our simulator or browse verified strategies.",
 
   "about.proof_tag": "BUILT IN PUBLIC",
-  "about.proof_desc": "PRUVIQ is actively developed. The simulation engine, API, and all strategy logic are continuously updated based on real backtesting data.",
+  "about.proof_desc":
+    "PRUVIQ is actively developed. The simulation engine, API, and all strategy logic are continuously updated based on real backtesting data.",
   "about.proof_github": "View on GitHub",
   "about.proof_commits": "Active development",
   "about.proof_since": "In development since 2025",
@@ -941,6 +945,31 @@ export const en = {
   "api.params_label": "Params:",
   "footer.api": "API",
   "footer.compare": "vs TradingView",
+
+  // Compare index page (/compare)
+  "compare_index.tag": "COMPARISON",
+  "compare_index.title": "PRUVIQ vs Alternatives",
+  "compare_index.subtitle":
+    "Free backtesting. No signup. 549 coins. See how we compare.",
+  "compare_index.meta_title":
+    "PRUVIQ vs Alternatives — Free Crypto Backtesting Comparison",
+  "compare_index.meta_desc":
+    "Compare PRUVIQ with TradingView, Coinrule, 3Commas, Cryptohopper, Gainium, and Streak. Free, no signup, 549 coins.",
+  "compare_index.most_popular": "Most Popular",
+  "compare_index.tradingview_desc":
+    "Script-free backtesting vs paid Pine Script",
+  "compare_index.coinrule_desc":
+    "Free unlimited backtest vs $29+/mo rule builder",
+  "compare_index.cryptohopper_desc":
+    "549 coins free vs limited bot subscription",
+  "compare_index.3commas_desc":
+    "Transparent results vs closed strategy marketplace",
+  "compare_index.gainium_desc":
+    "No signup required vs mandatory account creation",
+  "compare_index.streak_desc":
+    "Crypto-native 549 coins vs stock-focused platform",
+  "compare_index.footer": "All comparisons use real backtest data.",
+  "compare_index.try_cta": "Try it yourself →",
 
   // Comparison table (index page)
   "compare_table.tag": "WHY PRUVIQ",
