@@ -779,15 +779,12 @@ async def simulate(req: SimulationRequest):
     # Risk-adjusted metrics — daily-return based (annualized sqrt(365))
     from collections import defaultdict as _dd_sim
     daily_pnl_sim = _dd_sim(float)
-    daily_concurrent_sim = _dd_sim(int)  # concurrent open positions per day
     for t in all_trades:
         day_key = t.get("exit_time", t["time"])[:10]  # YYYY-MM-DD (exit time)
         if day_key and day_key != "NaT" and len(day_key) == 10:
             daily_pnl_sim[day_key] += t["pnl_pct"]
-            daily_concurrent_sim[day_key] += 1
-    # Capital-weighted daily returns: divide each day's PnL by the number of
-    # concurrent positions that day (not total n_coins selected), so the Sharpe
-    # reflects return-per-deployed-capital rather than return-per-universe-size.
+    # Portfolio daily returns: divide by n_coins (same denominator as total_return).
+    # This keeps Sharpe sign consistent with total_return direction.
     # Fill zero-return days so Sharpe isn't inflated by excluding non-trading days.
     if daily_pnl_sim and len(daily_pnl_sim) >= 2:
         from datetime import datetime as _dt_sim, timedelta as _td_sim
@@ -796,13 +793,13 @@ async def simulate(req: SimulationRequest):
         d_end = _dt_sim.strptime(sorted_days[-1], "%Y-%m-%d")
         all_days = [(d_start + _td_sim(days=i)).strftime("%Y-%m-%d") for i in range((d_end - d_start).days + 1)]
         daily_returns_sim = np.array([
-            daily_pnl_sim[d] / max(daily_concurrent_sim[d], 1) if d in daily_pnl_sim else 0.0
+            daily_pnl_sim[d] / n_coins if d in daily_pnl_sim else 0.0
             for d in all_days
         ])
     elif daily_pnl_sim:
         daily_returns_sim = np.array([
-            pnl / max(daily_concurrent_sim[d], 1)
-            for d, pnl in daily_pnl_sim.items()
+            pnl / n_coins
+            for pnl in daily_pnl_sim.values()
         ])
     else:
         daily_returns_sim = np.array([])
@@ -3243,7 +3240,7 @@ async def get_daily_rankings(date: Optional[str] = None):
             "strategy": e.get("strategy", ""),
             "direction": e.get("direction", ""),
             "win_rate": round(e.get("win_rate", 0), 2),
-            "profit_factor": round(e.get("profit_factor", 0), 2),
+            "profit_factor": min(round(e.get("profit_factor", 0), 2), 99.99),  # cap sentinel 999.99
             "total_return": round(e.get("total_return", 0), 2),
             "total_trades": trades,
             "sharpe": round(e.get("sharpe", 0), 2),
