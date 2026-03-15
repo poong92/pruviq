@@ -3171,8 +3171,71 @@ async def get_daily_rankings(date: Optional[str] = None):
         reverse=True,
     )
 
+    # ── rank_change: compare today's ranks to yesterday ──────────
+    yesterday_date = (datetime.strptime(date, "%Y%m%d") - timedelta(days=1)).strftime("%Y%m%d")
+    yesterday_file = ranking_dir / f"ranking_{yesterday_date}.json"
+    yesterday_rank_map: dict = {}
+    if yesterday_file.exists():
+        try:
+            with open(yesterday_file, "r", encoding="utf-8") as f:
+                yraw = json.load(f)
+            yentries: list = []
+            for section_entries in yraw.get("results", {}).values():
+                if isinstance(section_entries, list):
+                    yentries.extend(section_entries)
+            seen_y: set = set()
+            yuniq: list = []
+            for e in yentries:
+                k = (e.get("strategy"), e.get("direction"), e.get("timeframe", "1H"))
+                if k not in WF_FAILED_KEYS and k not in seen_y and e.get("total_trades", 0) > 0:
+                    seen_y.add(k)
+                    yuniq.append(e)
+            yranked = sorted(yuniq, key=lambda x: (x.get("profit_factor", 0), x.get("win_rate", 0)), reverse=True)
+            for i, e in enumerate(yranked):
+                k = (e.get("strategy"), e.get("direction"), e.get("timeframe", "1H"))
+                yesterday_rank_map[k] = i + 1
+        except Exception:
+            pass
+
+    # ── streak: consecutive days in Top N ────────────────────────
+    top_n_keys = {(e.get("strategy"), e.get("direction"), e.get("timeframe", "1H")) for e in ranked[:10]}
+    streak_map: dict = {}
+    for strat_key in top_n_keys:
+        count = 0
+        for i in range(7):
+            day = (datetime.strptime(date, "%Y%m%d") - timedelta(days=i)).strftime("%Y%m%d")
+            day_file = ranking_dir / f"ranking_{day}.json"
+            if not day_file.exists():
+                break
+            try:
+                with open(day_file, "r", encoding="utf-8") as f:
+                    draw = json.load(f)
+                dentries: list = []
+                for section_entries in draw.get("results", {}).values():
+                    if isinstance(section_entries, list):
+                        dentries.extend(section_entries)
+                dseen: set = set()
+                duniq: list = []
+                for e in dentries:
+                    k = (e.get("strategy"), e.get("direction"), e.get("timeframe", "1H"))
+                    if k not in WF_FAILED_KEYS and k not in dseen and e.get("total_trades", 0) > 0:
+                        dseen.add(k)
+                        duniq.append(e)
+                dranked = sorted(duniq, key=lambda x: (x.get("profit_factor", 0), x.get("win_rate", 0)), reverse=True)
+                top10_keys = {(e.get("strategy"), e.get("direction"), e.get("timeframe", "1H")) for e in dranked[:10]}
+                if strat_key in top10_keys:
+                    count += 1
+                else:
+                    break
+            except Exception:
+                break
+        streak_map[strat_key] = count
+
     def _make_entry(e: dict, rank: int) -> dict:
         trades = e.get("total_trades", 0)
+        strat_key = (e.get("strategy"), e.get("direction"), e.get("timeframe", "1H"))
+        yrank = yesterday_rank_map.get(strat_key)
+        rank_change = (yrank - rank) if yrank is not None else None  # positive = improved
         return {
             "rank": rank,
             "name_ko": e.get("category_ko", e.get("strategy", "")),
@@ -3189,6 +3252,8 @@ async def get_daily_rankings(date: Optional[str] = None):
             "sl_pct": e.get("sl_pct"),
             "tp_pct": e.get("tp_pct"),
             "low_sample": trades < 100,
+            "rank_change": rank_change,
+            "streak": streak_map.get(strat_key, 1),
         }
 
     top3 = [_make_entry(e, i + 1) for i, e in enumerate(ranked[:3])]
