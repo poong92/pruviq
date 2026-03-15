@@ -340,17 +340,17 @@ export default function ResultsCard({
   simMode = "expert",
 }: ResultsCardProps) {
   const [showAllMetrics, setShowAllMetrics] = useState(false);
+  // 3-tier metric visibility: quick → standard → expert
+  // quick mode hides all but top-4 until toggled; standard hides expert-only
   const isQuick = simMode === "quick" && !showAllMetrics;
+  const isStandard = simMode === "standard" && !showAllMetrics;
+  const hideExpert = isStandard;
   const t = labels[lang] || labels.en;
   const desc = metricDescriptions[lang] || metricDescriptions.en;
   const total = data.tp_count + data.sl_count + data.timeout_count;
   const tpPct = total > 0 ? (data.tp_count / total) * 100 : 0;
   const slPct = total > 0 ? (data.sl_count / total) * 100 : 0;
   const toPct = total > 0 ? (data.timeout_count / total) * 100 : 0;
-
-  const wrColor = winRateColor(data.win_rate);
-  const pfColor = profitFactorColor(data.profit_factor);
-  const retColor = signColor(data.total_return_pct);
 
   // Break-even win rate: |avgLoss| / (|avgWin| + |avgLoss|)
   const avgWin = Math.abs(data.avg_win_pct ?? 0);
@@ -362,6 +362,14 @@ export default function ResultsCard({
     avgWin > 0;
   const breakevenWR = hasBreakeven ? (avgLoss / (avgWin + avgLoss)) * 100 : 0;
   const wrMargin = data.win_rate - breakevenWR;
+
+  // BEP-relative win rate color when breakeven is known
+  const wrColor = winRateColor(
+    data.win_rate,
+    hasBreakeven ? breakevenWR : undefined,
+  );
+  const pfColor = profitFactorColor(data.profit_factor);
+  const retColor = signColor(data.total_return_pct);
 
   // Fee breakdown
   const tradingFee = data.total_fees_pct ?? 0;
@@ -570,13 +578,13 @@ export default function ResultsCard({
         />
       </div>
 
-      {/* Quick mode: Show details toggle */}
-      {simMode === "quick" && !showAllMetrics && (
+      {/* Quick / Standard mode: "Show advanced metrics" toggle */}
+      {(simMode === "quick" || simMode === "standard") && !showAllMetrics && (
         <button
           onClick={() => setShowAllMetrics(true)}
           class="w-full py-2 mb-3 rounded-lg border border-[--color-border] font-mono text-xs text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors"
         >
-          {t.showDetails} ▼
+          {lang === "ko" ? "고급 지표 보기 ▾" : "Show advanced metrics ▾"}
         </button>
       )}
 
@@ -808,8 +816,9 @@ export default function ResultsCard({
         </div>
       )}
 
-      {/* Overfitting Detection: DSR, Monte Carlo, Jensen's Alpha */}
+      {/* Overfitting Detection: DSR, Monte Carlo, Jensen's Alpha — expert tier only */}
       {!isQuick &&
+        !hideExpert &&
         data.deflated_sharpe !== undefined &&
         data.deflated_sharpe !== 0 && (
           <div class="mb-3 px-3 py-2.5 rounded-lg bg-[--color-bg-tooltip] border border-[--color-border]">
@@ -842,6 +851,48 @@ export default function ResultsCard({
                 description={`${t.mcDescPrefix} ${(100 - (data.mc_percentile ?? 50)).toFixed(0)}% ${t.mcDescSuffix}`}
               />
             </div>
+            {/* Monte Carlo percentile gauge */}
+            {data.mc_percentile != null && (
+              <div class="mt-2 mb-1">
+                <div class="flex items-center justify-between font-mono text-[10px] text-[--color-text-muted] mb-1">
+                  <span>
+                    {lang === "ko"
+                      ? `랜덤 전략 중 상위 ${(100 - data.mc_percentile).toFixed(0)}%`
+                      : `Beats ${data.mc_percentile}% of random strategies`}
+                  </span>
+                  <span
+                    style={{
+                      color:
+                        data.mc_percentile >= 90
+                          ? "var(--color-green)"
+                          : data.mc_percentile >= 75
+                            ? "var(--color-accent)"
+                            : "var(--color-text-muted)",
+                    }}
+                    class="font-bold"
+                  >
+                    {data.mc_percentile}%
+                  </span>
+                </div>
+                <div
+                  class="h-1 rounded-full overflow-hidden"
+                  style={{ background: "var(--color-border)" }}
+                >
+                  <div
+                    class="h-full rounded-full transition-[width] duration-500"
+                    style={{
+                      width: `${data.mc_percentile}%`,
+                      background:
+                        data.mc_percentile >= 90
+                          ? "var(--color-green)"
+                          : data.mc_percentile >= 75
+                            ? "var(--color-accent)"
+                            : "var(--color-text-muted)",
+                    }}
+                  />
+                </div>
+              </div>
+            )}
             {data.jensens_alpha !== undefined && data.jensens_alpha !== 0 && (
               <div class="flex items-center gap-2 font-mono text-xs">
                 <span class="text-[--color-text-muted]">{t.jensensAlpha}:</span>
@@ -947,13 +998,13 @@ export default function ResultsCard({
         </div>
       )}
 
-      {/* Quick mode: collapse toggle when expanded */}
-      {simMode === "quick" && showAllMetrics && (
+      {/* Quick / Standard mode: collapse toggle when expanded */}
+      {(simMode === "quick" || simMode === "standard") && showAllMetrics && (
         <button
           onClick={() => setShowAllMetrics(false)}
           class="w-full py-2 mb-3 rounded-lg border border-[--color-border] font-mono text-xs text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors"
         >
-          {t.hideDetails} ▲
+          {lang === "ko" ? "접기 ▲" : "Hide advanced metrics ▲"}
         </button>
       )}
 

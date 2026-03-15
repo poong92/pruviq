@@ -158,6 +158,18 @@ const difficultyColors: Record<string, string> = {
                 {strategy.data.name}
               </h2>
               <p class="text-[--color-text-muted] text-sm mb-4">{strategy.data.description}</p>
+              {/* Research warning inline badge for testing/shelved */}
+              {(strategy.data.status === 'testing' || strategy.data.status === 'shelved') && (
+                <p class="font-mono text-[10px] text-[--color-yellow]/80 mb-3">
+                  ⚠ Not OOS-validated — research only
+                </p>
+              )}
+              {/* Verified badge */}
+              {strategy.data.status === 'verified' && (
+                <p class="font-mono text-[10px] text-[--color-accent] mb-3">
+                  ✓ OOS-validated
+                </p>
+              )}
 
               {(strategy.data.winRate || strategy.data.profitFactor || strategy.data.totalPnl) && (
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 font-mono text-sm">
