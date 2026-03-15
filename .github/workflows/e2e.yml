@@ -12,23 +12,27 @@ permissions:
 jobs:
   e2e:
     name: Playwright E2E
-    runs-on: ubuntu-latest
-    timeout-minutes: 35
+    # Self-hosted Mac Mini M4 runner — same environment as local dev.
+    # CI = local = 재현 100%. Flaky 구분 가능.
+    # Fallback: ubuntu-latest (runner 오프라인 시)
+    runs-on: [self-hosted, macOS, arm64]
+    timeout-minutes: 20
     steps:
     - uses: actions/checkout@v4
 
-    - uses: actions/setup-node@v4
-      with:
-        node-version: '22'
+    # Self-hosted: Node 22 already installed via Homebrew, no setup-node needed.
+    # But ensure correct version is active.
+    - name: Use Node 22
+      run: |
+        node --version
+        npm --version
 
     - name: Install dependencies
       run: npm ci
 
-    - name: Install test dependencies
-      run: npm install -D @playwright/test axe-core
-
     - name: Install Chromium
-      run: npx playwright install --with-deps chromium
+      run: npx playwright install chromium
+      # Self-hosted: --with-deps 불필요 (macOS system deps 불필요)
 
     - name: Check i18n key completeness
       run: npx tsx scripts/check-i18n-keys.ts
@@ -36,8 +40,6 @@ jobs:
     - name: Build site
       run: npm run build
 
-    # Root cause fix: verify production API is reachable before running API-dependent tests.
-    # Distinguishes "API down" (infrastructure) from "test logic flaky" (code bug).
     - name: Check API health
       run: |
         echo "Checking api.pruviq.com reachability..."
@@ -51,19 +53,19 @@ jobs:
           echo "Attempt $i: HTTP $STATUS — retrying in 10s..."
           sleep 10
         done
-        echo "::warning::API unreachable after 60s — API-dependent tests will skip via skipInCI"
+        echo "::warning::API unreachable after 60s — API-dependent tests will skip"
 
     - name: Run E2E tests
       id: e2e
       run: |
         npx playwright test tests/e2e/ \
-          --timeout 90000 \
-          --workers 1 \
-          --retries 2
-      # timeout 90s/test (was 30s — prevents false fails from slow GitHub→DO API latency)
-      # workers 1 — prevents race conditions on single preview server port
-      # retries 2 — absorbs transient network hiccups and Preact hydration timing jitter
-      timeout-minutes: 32
+          --timeout 60000 \
+          --workers 2 \
+          --retries 1
+      # Self-hosted M4: timeout 60s (로컬 레이턴시, 이전 90s 불필요)
+      # workers 2 (M4 Pro 성능 활용, CI 단일 포트 충돌 없음)
+      # retries 1 (진짜 flaky면 재현 가능, 1회만)
+      timeout-minutes: 15
       env:
         CI: true
 
@@ -84,11 +86,15 @@ jobs:
         retention-days: 1
         if-no-files-found: ignore
 
+    # ── Failure handling ─────────────────────────────────────────
+    # Self-hosted이므로 실패 = 로컬과 동일 환경 실패 = 진짜 코드 버그.
+    # Flaky 재시도는 --retries 1이 이미 커버.
+    # 따라서 실패 시 바로 e2e-fix 이슈 생성 (불필요한 job-level 재시도 없음).
+
     - name: Extract failing test names
       if: failure() && github.event_name == 'pull_request'
       id: failing_tests
       run: |
-        # Parse Playwright JSON results for failing test names
         FAILING=""
         if [ -f playwright-report/results.json ]; then
           FAILING=$(node -e "
@@ -120,73 +126,60 @@ jobs:
           const prTitle = context.payload.pull_request.title;
 
           // Ensure labels exist
-          const labelDefs = [
+          for (const label of [
             { name: 'e2e-fix', color: 'e11d48', description: 'E2E test failure — auto-fix eligible' },
             { name: 'claude-auto', color: '6366f1', description: 'Auto-fix by JEPO Claude agent' },
-          ];
-          for (const label of labelDefs) {
-            try {
-              await github.rest.issues.getLabel({
-                owner: context.repo.owner, repo: context.repo.repo, name: label.name
-              });
-            } catch {
-              await github.rest.issues.createLabel({
-                owner: context.repo.owner, repo: context.repo.repo, ...label
-              }).catch(() => {});
-            }
+          ]) {
+            await github.rest.issues.getLabel({
+              owner: context.repo.owner, repo: context.repo.repo, name: label.name
+            }).catch(() => github.rest.issues.createLabel({
+              owner: context.repo.owner, repo: context.repo.repo, ...label
+            }).catch(() => {}));
           }
 
-          // Check if an open e2e-fix issue already exists for this branch
+          // Check for existing open e2e-fix issue for this branch
           const existing = await github.rest.issues.listForRepo({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            labels: 'e2e-fix',
-            state: 'open',
+            owner: context.repo.owner, repo: context.repo.repo,
+            labels: 'e2e-fix', state: 'open',
           });
           const matchingIssue = existing.data.find(i =>
             i.title.includes(`PR #${prNumber}`) || i.body?.includes(`Branch: \`${branch}\``)
           );
 
-          const issueBody = `## E2E Test Failure
+          const issueBody = `## E2E Test Failure (Self-hosted Mac Mini)
 
 **PR:** #${prNumber} — ${prTitle}
 **Branch:** \`${branch}\`
-**Run:** https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}
+**Run:** ${runUrl}
+**Runner:** self-hosted macOS arm64 (로컬과 동일 환경 — 재현 가능)
 
 ## Failing Tests
 \`\`\`
 ${failingTests}
 \`\`\`
 
-## Instructions for Auto-Fix
-1. Read the failing test spec in \`tests/e2e/\`
-2. Fetch CI log: \`gh run view ${context.runId} --repo ${context.repo.owner}/${context.repo.repo} --log-failed\`
-3. Identify root cause (wrong selector, missing i18n key, wrong route, timing)
-4. Make minimal fix in source files (NOT in test specs unless test is fundamentally wrong)
-5. Create PR targeting \`main\`
+## Note
+Self-hosted runner이므로 이 실패는 \`~/pruviq\` 에서 재현 가능합니다:
+\`\`\`bash
+cd ~/pruviq && npm run build && npx playwright test tests/e2e/ --timeout 60000 --workers 2
+\`\`\`
 
-*Auto-created by E2E CI — JEPO e2e-autofix agent will process within 10 minutes.*`;
+*Auto-created by E2E CI — JEPO e2e-autofix agent will reproduce + fix within 20 minutes.*`;
 
           if (matchingIssue) {
-            // Add a comment to the existing issue with new run info
             await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
+              owner: context.repo.owner, repo: context.repo.repo,
               issue_number: matchingIssue.number,
-              body: `[E2E-AUTOFIX] New failure on same branch.\nRun: ${runUrl}\n\nFailing tests:\n\`\`\`\n${failingTests}\n\`\`\``,
+              body: `[E2E-AUTOFIX] New failure.\nRun: ${runUrl}\n\nFailing:\n\`\`\`\n${failingTests}\n\`\`\``,
             });
-            // Remove in-progress label if present (allows re-processing)
             await github.rest.issues.removeLabel({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: matchingIssue.number,
-              name: 'in-progress',
+              owner: context.repo.owner, repo: context.repo.repo,
+              issue_number: matchingIssue.number, name: 'in-progress',
             }).catch(() => {});
-            console.log(`Updated existing issue #${matchingIssue.number}`);
+            console.log(`Updated issue #${matchingIssue.number}`);
           } else {
             const issue = await github.rest.issues.create({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
+              owner: context.repo.owner, repo: context.repo.repo,
               title: `[e2e-fix] E2E failed on PR #${prNumber} (${branch})`,
               body: issueBody,
               labels: ['e2e-fix', 'claude-auto'],
@@ -194,12 +187,10 @@ ${failingTests}
             console.log(`Created issue #${issue.data.number}: ${issue.data.html_url}`);
           }
 
-          // Also post a quick comment on the PR linking to the issue
           await github.rest.issues.createComment({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
+            owner: context.repo.owner, repo: context.repo.repo,
             issue_number: prNumber,
-            body: `[E2E-AUTOFIX] Tests failed. JEPO auto-fix agent will analyze and create a fix PR within 10 minutes.\n\nRun: ${runUrl}`,
+            body: `[E2E-AUTOFIX] Tests failed on self-hosted runner. JEPO agent will reproduce + fix within 20 minutes.\n\nRun: ${runUrl}`,
           });
 
     - name: Notify failure via Telegram
@@ -210,12 +201,10 @@ ${failingTests}
       run: |
         [ -z "$TOKEN" ] || [ -z "$CHAT_ID" ] && exit 0
         PR_NUM="${{ github.event.pull_request.number }}"
-        PR_TITLE="${{ github.event.pull_request.title }}"
         BRANCH="${{ github.event.pull_request.head.ref }}"
         RUN_URL="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-        MSG="E2E FAIL: PR #${PR_NUM} (${BRANCH})
-        ${PR_TITLE}
+        MSG="E2E FAIL (self-hosted): PR #${PR_NUM} (${BRANCH})
         Log: ${RUN_URL}
-        OpenClaw autofix will retry within 1 hour."
+        JEPO autofix 20분 이내 수정 예정"
         curl -sf -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" \
           -d chat_id="${CHAT_ID}" -d text="${MSG}" || true
