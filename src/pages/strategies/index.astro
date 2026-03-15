@@ -104,7 +104,7 @@ const difficultyColors: Record<string, string> = {
         </a>
       </div>
 
-      <!-- Filter Bar -->
+      <!-- Filter + Sort Bar -->
       <div class="mb-6 flex flex-wrap gap-4" id="strategy-filters">
         <div class="flex items-center gap-1.5 flex-wrap">
           <span class="font-mono text-xs text-[--color-text-muted] mr-1">Status:</span>
@@ -114,7 +114,7 @@ const difficultyColors: Record<string, string> = {
           </button>
           <button data-filter-group="status" data-filter-value="verified"
             class="font-mono text-xs border border-[--color-border] rounded px-3 py-1.5 text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
-            Active
+            Verified
           </button>
           <button data-filter-group="status" data-filter-value="killed"
             class="font-mono text-xs border border-[--color-border] rounded px-3 py-1.5 text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
@@ -140,13 +140,30 @@ const difficultyColors: Record<string, string> = {
             BOTH
           </button>
         </div>
+        <div class="flex items-center gap-1.5 flex-wrap">
+          <span class="font-mono text-xs text-[--color-text-muted] mr-1">Sort:</span>
+          <button data-sort-value="default"
+            class="font-mono text-xs border rounded px-3 py-1.5 transition-colors bg-[--color-accent] text-black border-[--color-accent]" id="sort-default">
+            Default
+          </button>
+          <button data-sort-value="winrate"
+            class="font-mono text-xs border border-[--color-border] rounded px-3 py-1.5 text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors" id="sort-winrate">
+            Win Rate ↓
+          </button>
+          <button data-sort-value="pf"
+            class="font-mono text-xs border border-[--color-border] rounded px-3 py-1.5 text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors" id="sort-pf">
+            Profit Factor ↓
+          </button>
+        </div>
       </div>
 
       <div class="space-y-4" id="strategy-list">
         {strategies.map((strategy) => (
           <div class="block border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] hover:border-[--color-accent] transition-colors group"
                data-status={strategy.data.status}
-               data-direction={strategy.data.direction.toLowerCase()}>
+               data-direction={strategy.data.direction.toLowerCase()}
+               data-win-rate={strategy.data.winRate ?? 0}
+               data-profit-factor={strategy.data.profitFactor ?? 0}>
             <a href={`/strategies/${strategy.id}`} class="block">
               <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
                 <div class="flex items-center gap-3">
@@ -310,6 +327,45 @@ const difficultyColors: Record<string, string> = {
         activeStatus[group] = value;
         updateButtons(group, value);
         applyFilters();
+      });
+    });
+
+    // Sort logic
+    let currentSort = 'default';
+    const originalOrder: HTMLElement[] = Array.from(
+      document.querySelectorAll<HTMLElement>('#strategy-list > [data-status]')
+    );
+
+    function applySort() {
+      const list = document.getElementById('strategy-list');
+      if (!list) return;
+      const cards = Array.from(list.querySelectorAll<HTMLElement>('[data-status]'));
+      if (currentSort === 'default') {
+        originalOrder.forEach(c => list.appendChild(c));
+      } else if (currentSort === 'winrate') {
+        cards.sort((a, b) => parseFloat(b.dataset.winRate || '0') - parseFloat(a.dataset.winRate || '0'));
+        cards.forEach(c => list.appendChild(c));
+      } else if (currentSort === 'pf') {
+        cards.sort((a, b) => parseFloat(b.dataset.profitFactor || '0') - parseFloat(a.dataset.profitFactor || '0'));
+        cards.forEach(c => list.appendChild(c));
+      }
+      applyFilters();
+    }
+
+    function updateSortButtons(value: string) {
+      document.querySelectorAll<HTMLButtonElement>('[data-sort-value]').forEach(btn => {
+        const isActive = btn.dataset.sortValue === value;
+        btn.style.backgroundColor = isActive ? accentColor : '';
+        btn.style.color = isActive ? 'black' : mutedText;
+        btn.style.borderColor = isActive ? accentColor : mutedBorder;
+      });
+    }
+
+    document.querySelectorAll<HTMLButtonElement>('[data-sort-value]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        currentSort = btn.dataset.sortValue!;
+        updateSortButtons(currentSort);
+        applySort();
       });
     });
   })();

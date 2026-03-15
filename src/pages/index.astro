@@ -28,10 +28,14 @@ const lastUpdated = new Date().toLocaleDateString('en-US');
           {t('hero.subcopy')}
         </p>
         <!-- Tool Stats Bar -->
-        <div class="flex flex-wrap gap-3 mb-4 font-mono text-sm">
+        <div class="flex flex-wrap gap-3 mb-3 font-mono text-sm">
           <span class="px-3 py-1.5 rounded bg-[--color-up]/10 text-[--color-up] border border-[--color-up]/20">{t('hero.tool_coins')}</span>
+          <span class="px-3 py-1.5 rounded bg-[--color-accent]/10 text-[--color-accent] border border-[--color-accent]/20">{t('hero.tool_strategies')}</span>
+          <span class="px-3 py-1.5 rounded bg-[--color-accent]/10 text-[--color-accent] border border-[--color-accent]/20">{t('hero.tool_data')}</span>
           <span class="px-3 py-1.5 rounded bg-[--color-accent]/10 text-[--color-accent] border border-[--color-accent]/20">{t('hero.tool_free')}</span>
         </div>
+
+        <p class="text-sm text-[--color-text-muted] mb-4 max-w-2xl opacity-70">{t('hero.beginner_note')}</p>
 
         <!-- Social proof counters -->
         <div class="flex flex-wrap gap-x-5 gap-y-1.5 mb-4 font-mono text-sm">
@@ -54,13 +58,17 @@ const lastUpdated = new Date().toLocaleDateString('en-US');
             {t('hero.cta_secondary')}
           </a>
         </div>
-        <!-- Trust signals -->
-        <div class="flex flex-wrap gap-x-4 gap-y-1 text-sm text-[--color-text-muted] font-mono mb-4">
+        <!-- Trust signals + Ranking shortcut -->
+        <div class="flex flex-wrap gap-x-4 gap-y-1 text-sm text-[--color-text-muted] font-mono mb-3">
           <span>{t('trust.badge_api')}</span>
           <span>{t('trust.badge_source')}</span>
           <span>{t('trust.badge_privacy')}</span>
           <span>{t('trust.badge_validated')}</span>
         </div>
+        <a href="/strategies/ranking" class="inline-flex items-center gap-1.5 text-xs font-mono text-[--color-accent] hover:underline mb-4">
+          <span class="inline-block w-1.5 h-1.5 rounded-full bg-[--color-accent] animate-pulse"></span>
+          {t('home.ranking_shortcut')} &rarr;
+        </a>
       </div>
     </div>
   </section>

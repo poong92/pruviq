@@ -81,15 +81,32 @@ const t = useTranslations('en');
       </div>
 
       <!-- Tech Stack -->
-      <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card] mb-12">
-        <p class="font-mono text-[--color-accent] text-xs tracking-wider mb-2">{t('about.stack_tag')}</p>
-        <p class="text-[--color-text-muted] text-sm">{t('about.stack_desc')}</p>
-        <div class="flex flex-wrap gap-2 mt-4">
-          {['Python', 'Astro', 'Preact', 'Tailwind CSS', 'Cloudflare Pages', 'CoinGecko API'].map(tech => (
-            <span class="font-mono text-xs px-2 py-1 rounded border border-[--color-border] text-[--color-text-muted]">{tech}</span>
-          ))}
+      <details class="border border-[--color-border] rounded-lg bg-[--color-bg-card] mb-12 group">
+        <summary class="p-5 cursor-pointer flex items-center justify-between list-none min-h-[44px]">
+          <div>
+            <p class="font-mono text-[--color-accent] text-xs tracking-wider mb-1">{t('about.stack_tag')}</p>
+            <p class="text-[--color-text-muted] text-sm">{t('about.stack_desc')}</p>
+          </div>
+          <span class="text-[--color-text-muted] group-open:rotate-180 transition-transform shrink-0 ml-4">&#9662;</span>
+        </summary>
+        <div class="px-5 pb-5 border-t border-[--color-border]">
+          <div class="flex flex-wrap gap-2 mt-4">
+            {[
+              { label: 'Python', note: 'Data engine & backtester' },
+              { label: 'Astro 5', note: 'Static site framework' },
+              { label: 'Preact', note: 'Interactive simulator UI' },
+              { label: 'Tailwind CSS', note: 'Styling' },
+              { label: 'Cloudflare Pages', note: 'Hosting & CDN' },
+              { label: 'CoinGecko API', note: 'Coin metadata' },
+            ].map(({ label, note }) => (
+              <div class="font-mono text-xs px-3 py-2 rounded border border-[--color-border] text-[--color-text-muted] flex flex-col gap-0.5">
+                <span class="text-[--color-text] font-semibold">{label}</span>
+                <span class="opacity-60">{note}</span>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+      </details>
 
       <!-- Social Proof -->
       <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] mb-8">

@@ -84,9 +84,14 @@ const presetCount = (presetsJson as Array<unknown>).length;
     <p class="text-xs text-gray-500 leading-relaxed">
       {t('simulate.risk_disclaimer')}
     </p>
-    <a href="/fees" class="inline-block border border-[--color-border] px-4 py-1.5 rounded text-xs hover:border-[--color-accent] transition-colors no-underline ml-2">
-      {t('simulate.fees_cta')} &rarr;
-    </a>
+    <div class="flex flex-wrap gap-2 mt-2">
+      <a href="/fees" class="inline-block border border-[--color-border] px-4 py-1.5 rounded text-xs hover:border-[--color-accent] transition-colors no-underline">
+        {t('simulate.fees_cta')} &rarr;
+      </a>
+      <a href="/methodology" class="inline-block border border-[--color-border] px-4 py-1.5 rounded text-xs hover:border-[--color-accent] transition-colors no-underline text-[--color-text-muted]">
+        How we calculate &rarr;
+      </a>
+    </div>
   </div>
 
   <section class="pb-4 md:pb-6">

@@ -1028,6 +1028,7 @@ export const en = {
   "home.cta_survives": "See What Survives",
   "home.cta_test_yourself": "Test It Yourself — Free",
   "home.quotes_heading": "What Traders Say",
+  "home.ranking_shortcut": "Today's top strategies",
 
   // TradingView comparison page
   "meta.vs_tv_title":

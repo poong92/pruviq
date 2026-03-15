@@ -83,43 +83,45 @@ const isKorean = (id: string) => koIds.has(id);
         }
       </p>
 
-      <!-- 오늘의 전략 랭킹 배너 -->
-      <a href="/ko/strategies/ranking" class="flex items-center justify-between gap-3 mb-6 border border-[--color-accent]/30 rounded-lg px-4 py-3 bg-[--color-accent]/5 hover:bg-[--color-accent]/10 transition-colors group">
-        <div class="flex items-center gap-3">
-          <span class="inline-block w-2 h-2 rounded-full bg-[--color-accent] animate-pulse shrink-0"></span>
-          <div>
-            <p class="font-semibold text-sm text-[--color-text]">📊 오늘의 전략 랭킹</p>
-            <p class="text-xs text-[--color-text-muted]">수익팩터 기준 오늘의 Best/Worst 전략 — 매일 업데이트</p>
-          </div>
-        </div>
-        <span class="text-[--color-accent] text-sm font-semibold shrink-0 group-hover:translate-x-1 transition-transform">&rarr;</span>
-      </a>
-
-      <div class="mb-4 flex flex-col sm:flex-row gap-3">
+      <div class="mb-6 flex flex-col sm:flex-row gap-3">
         <a href="/ko/simulate"
            class="btn-primary inline-flex items-center gap-2 bg-[--color-accent] text-[--color-bg] px-5 py-2.5 rounded-lg font-semibold text-sm hover:bg-[--color-accent-dim]">
           {t('hero.cta_builder')} &rarr;
         </a>
-        <a href="/ko/strategies/compare"
+        <a href="/ko/strategies/ranking"
            class="inline-flex items-center gap-2 border border-[--color-border] text-[--color-text] px-5 py-2.5 rounded-lg font-semibold text-sm hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
-          {t('strategies.compare')} &rarr;
+          {t('ranking.tag')} &rarr;
         </a>
       </div>
 
-      <div class="mb-8 border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card] flex flex-col sm:flex-row items-start sm:items-center gap-4">
-        <div class="flex-1">
-          <p class="font-mono text-[--color-accent] text-xs font-bold mb-1">{t('strategies.beginner_tag')}</p>
-          <p class="text-[--color-text-muted] text-sm">{t('strategies.beginner_desc')}</p>
+      <!-- 필터 + 정렬 바 -->
+      <div class="mb-6 flex flex-wrap gap-4" id="strategy-filters-ko">
+        <div class="flex items-center gap-1.5 flex-wrap">
+          <span class="font-mono text-xs text-[--color-text-muted] mr-1">상태:</span>
+          <button data-filter-group="status" data-filter-value="all"
+            class="font-mono text-xs border rounded px-3 py-1.5 transition-colors bg-[--color-accent] text-black border-[--color-accent]">전체</button>
+          <button data-filter-group="status" data-filter-value="verified"
+            class="font-mono text-xs border border-[--color-border] rounded px-3 py-1.5 text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">검증됨</button>
+          <button data-filter-group="status" data-filter-value="killed"
+            class="font-mono text-xs border border-[--color-border] rounded px-3 py-1.5 text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">종료</button>
         </div>
-        <a href="/ko/learn"
-           class="shrink-0 border border-[--color-accent] text-[--color-accent] px-5 py-2 rounded text-sm font-semibold hover:bg-[--color-accent] hover:text-[--color-bg] transition-colors whitespace-nowrap">
-          {t('strategies.beginner_cta')} &rarr;
-        </a>
+        <div class="flex items-center gap-1.5 flex-wrap">
+          <span class="font-mono text-xs text-[--color-text-muted] mr-1">정렬:</span>
+          <button data-sort-value="default"
+            class="font-mono text-xs border rounded px-3 py-1.5 transition-colors bg-[--color-accent] text-black border-[--color-accent]">기본</button>
+          <button data-sort-value="winrate"
+            class="font-mono text-xs border border-[--color-border] rounded px-3 py-1.5 text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">승률 ↓</button>
+          <button data-sort-value="pf"
+            class="font-mono text-xs border border-[--color-border] rounded px-3 py-1.5 text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">수익팩터 ↓</button>
+        </div>
       </div>
 
-      <div class="space-y-4">
+      <div class="space-y-4" id="strategy-list-ko">
         {strategies.map((strategy) => (
-          <div class="block border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] hover:border-[--color-accent] transition-colors group">
+          <div class="block border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] hover:border-[--color-accent] transition-colors group"
+               data-status={strategy.data.status}
+               data-win-rate={strategy.data.winRate ?? 0}
+               data-profit-factor={strategy.data.profitFactor ?? 0}>
             <a href={`/ko/strategies/${strategy.id}`} class="block">
               <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
                 <div class="flex items-center gap-3">
@@ -237,3 +239,73 @@ const isKorean = (id: string) => koIds.has(id);
     </div>
   </section>
 </Layout>
+
+<script>
+  (function () {
+    const accentColor = 'var(--color-accent, #00ff88)';
+    const mutedBorder = 'var(--color-border, #333)';
+    const mutedText = 'var(--color-text-muted, #888)';
+    const activeStatus = { status: 'all' };
+
+    function applyFilters() {
+      const cards = document.querySelectorAll<HTMLElement>('#strategy-list-ko > [data-status]');
+      cards.forEach(card => {
+        card.style.display = activeStatus.status === 'all' || card.dataset.status === activeStatus.status ? '' : 'none';
+      });
+    }
+
+    function updateFilterButtons(value: string) {
+      document.querySelectorAll<HTMLButtonElement>('[data-filter-group]').forEach(btn => {
+        const isActive = btn.dataset.filterValue === value;
+        btn.style.backgroundColor = isActive ? accentColor : '';
+        btn.style.color = isActive ? 'black' : mutedText;
+        btn.style.borderColor = isActive ? accentColor : mutedBorder;
+      });
+    }
+
+    document.querySelectorAll<HTMLButtonElement>('[data-filter-group]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        activeStatus.status = btn.dataset.filterValue!;
+        updateFilterButtons(activeStatus.status);
+        applyFilters();
+      });
+    });
+
+    // Sort
+    let currentSort = 'default';
+    const originalOrder = Array.from(document.querySelectorAll<HTMLElement>('#strategy-list-ko > [data-status]'));
+
+    function applySort() {
+      const list = document.getElementById('strategy-list-ko');
+      if (!list) return;
+      const cards = Array.from(list.querySelectorAll<HTMLElement>('[data-status]'));
+      if (currentSort === 'default') {
+        originalOrder.forEach(c => list.appendChild(c));
+      } else if (currentSort === 'winrate') {
+        cards.sort((a, b) => parseFloat(b.dataset.winRate || '0') - parseFloat(a.dataset.winRate || '0'));
+        cards.forEach(c => list.appendChild(c));
+      } else if (currentSort === 'pf') {
+        cards.sort((a, b) => parseFloat(b.dataset.profitFactor || '0') - parseFloat(a.dataset.profitFactor || '0'));
+        cards.forEach(c => list.appendChild(c));
+      }
+      applyFilters();
+    }
+
+    function updateSortButtons(value: string) {
+      document.querySelectorAll<HTMLButtonElement>('[data-sort-value]').forEach(btn => {
+        const isActive = btn.dataset.sortValue === value;
+        btn.style.backgroundColor = isActive ? accentColor : '';
+        btn.style.color = isActive ? 'black' : mutedText;
+        btn.style.borderColor = isActive ? accentColor : mutedBorder;
+      });
+    }
+
+    document.querySelectorAll<HTMLButtonElement>('[data-sort-value]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        currentSort = btn.dataset.sortValue!;
+        updateSortButtons(currentSort);
+        applySort();
+      });
+    });
+  })();
+</script>
