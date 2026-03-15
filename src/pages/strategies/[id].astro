@@ -62,6 +62,26 @@ const statusLabels: Record<string, string> = {
         &larr; {t('strategies.back')}
       </a>
 
+      {/* Research-status warning banner for testing / shelved strategies */}
+      {(strategy.data.status === 'testing' || strategy.data.status === 'shelved') && (
+        <div class="mb-6 flex items-start gap-3 border border-[--color-yellow]/40 rounded-lg px-4 py-3 bg-[--color-yellow]/5">
+          <span class="text-[--color-yellow] font-bold text-base shrink-0 mt-0.5">&#9888;</span>
+          <div>
+            <p class="font-mono text-xs font-bold text-[--color-yellow] mb-0.5">Research status &mdash; Not yet OOS-validated. Do not use for live trading.</p>
+            <p class="font-mono text-xs text-[--color-yellow]/70">연구 단계 &mdash; OOS 검증 미완료. 실거래 사용 비권장.</p>
+          </div>
+        </div>
+      )}
+
+      {/* Verified badge for strategies that passed OOS validation */}
+      {strategy.data.status === 'verified' && (
+        <div class="mb-6 flex items-center gap-2 border border-[--color-accent]/40 rounded-lg px-4 py-2.5 bg-[--color-accent]/5 w-fit">
+          <span class="text-[--color-accent] font-bold">&#10003;</span>
+          <span class="font-mono text-xs font-bold text-[--color-accent]">Verified Strategy</span>
+          <span class="font-mono text-xs text-[--color-accent]/60">&mdash; OOS-validated</span>
+        </div>
+      )}
+
       <div class="mb-8">
         <div class="flex items-center gap-3 mb-3">
           <span class="font-mono text-xs tracking-wider px-2 py-0.5 rounded border"

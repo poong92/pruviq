@@ -159,6 +159,14 @@ const difficultyColors: Record<string, string> = {
               </h2>
               <p class="text-[--color-text-muted] text-sm mb-4">{strategy.data.description}</p>
 
+              {/* OOS validation status label */}
+              {(strategy.data.status === 'testing' || strategy.data.status === 'shelved') && (
+                <p class="font-mono text-[10px] text-[--color-yellow]/80 mb-3">&#9888; Not OOS-validated &mdash; research only</p>
+              )}
+              {strategy.data.status === 'verified' && (
+                <p class="font-mono text-[10px] text-[--color-accent] mb-3">&#10003; OOS-validated</p>
+              )}
+
               {(strategy.data.winRate || strategy.data.profitFactor || strategy.data.totalPnl) && (
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 font-mono text-sm">
                   {strategy.data.winRate !== undefined && (
