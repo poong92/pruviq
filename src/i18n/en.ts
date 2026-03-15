@@ -16,8 +16,7 @@ export const en = {
   "hero.tag": "FREE BACKTESTING TOOL",
   "hero.title1": "Test Your Strategy",
   "hero.title2": "Before You Trade.",
-  "hero.subtitle":
-    "One of the few backtesting tools that publishes its failures.",
+  "hero.subtitle": "The only backtesting tool that publishes its failures.",
   "hero.desc":
     "We tested 5 strategies on 549+ coins. 4 lost money. We published them all. Because you deserve to know what actually works before risking real money.",
   "hero.cta_primary": "Try Simulator Free",
@@ -565,7 +564,7 @@ export const en = {
 
   // Daily Ranking page
   "ranking.tag": "DAILY RANKING",
-  "ranking.title": "📊 Daily Strategy Ranking",
+  "ranking.title": "Daily Strategy Ranking",
   "ranking.date_label": "{date} · PRUVIQ Simulator Backtest Results",
   "ranking.desc":
     "Best and worst strategies today ranked by Profit Factor (PF). Strategies with fewer than 100 trades have low statistical reliability.",
@@ -1271,7 +1270,7 @@ export const en = {
 
   // Daily Ranking page
   "ranking.tag": "DAILY RANKING",
-  "ranking.title": "📊 Daily Strategy Ranking",
+  "ranking.title": "Daily Strategy Ranking",
   "ranking.date_label": "{date} · PRUVIQ Simulator Backtest Results",
   "ranking.desc":
     "Best and worst strategies today ranked by Profit Factor (PF). Strategies with fewer than 100 trades have low statistical reliability.",

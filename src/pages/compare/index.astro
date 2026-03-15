@@ -24,7 +24,103 @@ const comparisons = [
           {t('compare_index.subtitle')}
         </span>
       </h1>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-10">
+
+      <!-- Why PRUVIQ: 3 strengths -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10 mb-10">
+        <div class="border border-[--color-up]/30 rounded-lg p-6 bg-[--color-bg-card]">
+          <p class="font-mono text-[--color-up] text-xs font-bold mb-2 tracking-wider">FREE FOREVER</p>
+          <p class="font-bold text-lg mb-2">$0 — No Credit Card</p>
+          <p class="text-[--color-text-muted] text-sm leading-relaxed">Competitors charge <span class="text-[--color-down] font-semibold">$19–$60/month</span>. PRUVIQ is free, forever. No account required to run a simulation.</p>
+        </div>
+        <div class="border border-[--color-accent]/30 rounded-lg p-6 bg-[--color-bg-card]">
+          <p class="font-mono text-[--color-accent] text-xs font-bold mb-2 tracking-wider">549 COINS SIMULTANEOUSLY</p>
+          <p class="font-bold text-lg mb-2">Entire Market at Once</p>
+          <p class="text-[--color-text-muted] text-sm leading-relaxed">Other platforms test <span class="text-[--color-down] font-semibold">one coin at a time</span>. PRUVIQ scans all 549 coins in a single run — find what actually works.</p>
+        </div>
+        <div class="border border-[--color-accent]/30 rounded-lg p-6 bg-[--color-bg-card]">
+          <p class="font-mono text-[--color-accent] text-xs font-bold mb-2 tracking-wider">WE PUBLISH FAILURES</p>
+          <p class="font-bold text-lg mb-2">Radical Transparency</p>
+          <p class="text-[--color-text-muted] text-sm leading-relaxed">Competitors publish <span class="text-[--color-down] font-semibold">0 failures</span>. We document every strategy we killed — and why. Honesty over marketing.</p>
+        </div>
+      </div>
+
+      <!-- Summary comparison table: 6 competitors -->
+      <div class="overflow-x-auto mb-10" role="region" aria-label="Platform comparison summary" tabindex="0">
+        <table class="w-full text-sm border-collapse" role="table">
+          <caption class="sr-only">Feature comparison: PRUVIQ vs TradingView, 3Commas, Cryptohopper, Coinrule, Gainium</caption>
+          <thead>
+            <tr class="border-b border-[--color-border]">
+              <th scope="col" class="text-left py-3 px-3 font-mono text-[--color-text-muted] text-xs">Feature</th>
+              <th scope="col" class="text-center py-3 px-3 font-mono text-[--color-accent] text-xs bg-[--color-accent]/5">PRUVIQ</th>
+              <th scope="col" class="text-center py-3 px-3 font-mono text-[--color-text-muted] text-xs">TradingView</th>
+              <th scope="col" class="text-center py-3 px-3 font-mono text-[--color-text-muted] text-xs">3Commas</th>
+              <th scope="col" class="text-center py-3 px-3 font-mono text-[--color-text-muted] text-xs">Cryptohopper</th>
+              <th scope="col" class="text-center py-3 px-3 font-mono text-[--color-text-muted] text-xs">Coinrule</th>
+              <th scope="col" class="text-center py-3 px-3 font-mono text-[--color-text-muted] text-xs">Gainium</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="border-b border-[--color-border]/50">
+              <td class="py-3 px-3 text-[--color-text-muted]">Price</td>
+              <td class="py-3 px-3 text-center text-[--color-up] font-semibold bg-[--color-accent]/5">$0</td>
+              <td class="py-3 px-3 text-center text-[--color-text-muted]">Free / $15+/mo</td>
+              <td class="py-3 px-3 text-center text-[--color-text-muted]">$22+/mo</td>
+              <td class="py-3 px-3 text-center text-[--color-text-muted]">$19+/mo</td>
+              <td class="py-3 px-3 text-center text-[--color-text-muted]">$29+/mo</td>
+              <td class="py-3 px-3 text-center text-[--color-text-muted]">$29+/mo</td>
+            </tr>
+            <tr class="border-b border-[--color-border]/50">
+              <td class="py-3 px-3 text-[--color-text-muted]">No Account Required</td>
+              <td class="py-3 px-3 text-center text-[--color-up] bg-[--color-accent]/5">&#10003;</td>
+              <td class="py-3 px-3 text-center text-[--color-down]">&#10007;</td>
+              <td class="py-3 px-3 text-center text-[--color-down]">&#10007;</td>
+              <td class="py-3 px-3 text-center text-[--color-down]">&#10007;</td>
+              <td class="py-3 px-3 text-center text-[--color-down]">&#10007;</td>
+              <td class="py-3 px-3 text-center text-[--color-down]">&#10007;</td>
+            </tr>
+            <tr class="border-b border-[--color-border]/50">
+              <td class="py-3 px-3 text-[--color-text-muted]">Multi-coin Backtest</td>
+              <td class="py-3 px-3 text-center text-[--color-up] font-semibold bg-[--color-accent]/5">549 coins</td>
+              <td class="py-3 px-3 text-center text-[--color-down]">1 at a time</td>
+              <td class="py-3 px-3 text-center text-[--color-down]">Limited</td>
+              <td class="py-3 px-3 text-center text-[--color-down]">Limited</td>
+              <td class="py-3 px-3 text-center text-[--color-down]">Limited</td>
+              <td class="py-3 px-3 text-center text-[--color-down]">Limited</td>
+            </tr>
+            <tr class="border-b border-[--color-border]/50">
+              <td class="py-3 px-3 text-[--color-text-muted]">Failure Transparency</td>
+              <td class="py-3 px-3 text-center text-[--color-up] bg-[--color-accent]/5">&#10003;</td>
+              <td class="py-3 px-3 text-center text-[--color-down]">&#10007;</td>
+              <td class="py-3 px-3 text-center text-[--color-down]">&#10007;</td>
+              <td class="py-3 px-3 text-center text-[--color-down]">&#10007;</td>
+              <td class="py-3 px-3 text-center text-[--color-down]">&#10007;</td>
+              <td class="py-3 px-3 text-center text-[--color-down]">&#10007;</td>
+            </tr>
+            <tr>
+              <td class="py-3 px-3 text-[--color-text-muted]">No Coding Required</td>
+              <td class="py-3 px-3 text-center text-[--color-up] bg-[--color-accent]/5">&#10003;</td>
+              <td class="py-3 px-3 text-center text-[--color-down]">Pine Script</td>
+              <td class="py-3 px-3 text-center text-[--color-up]">&#10003;</td>
+              <td class="py-3 px-3 text-center text-[--color-up]">&#10003;</td>
+              <td class="py-3 px-3 text-center text-[--color-up]">&#10003;</td>
+              <td class="py-3 px-3 text-center text-[--color-up]">&#10003;</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Primary CTA -->
+      <div class="text-center mb-12">
+        <a href="/simulate" class="inline-block bg-[--color-accent] text-white px-8 py-3 rounded font-semibold text-lg hover:bg-[--color-accent-dim] transition-colors">
+          Try Free — No Account Needed &rarr;
+        </a>
+        <p class="text-xs text-[--color-text-muted] mt-3 font-mono">No sign-up. No credit card. Instant results.</p>
+      </div>
+
+      <hr class="border-[--color-border] mb-10" />
+
+      <p class="font-mono text-[--color-accent] text-sm mb-6 tracking-wider">DETAILED COMPARISONS</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         {comparisons.map((c) => (
           <a
             href={`/compare/${c.slug}`}

@@ -564,7 +564,7 @@ export const ko: Record<TranslationKey, string> = {
 
   // Daily Ranking page
   "ranking.tag": "DAILY RANKING",
-  "ranking.title": "📊 오늘의 전략 랭킹",
+  "ranking.title": "오늘의 전략 랭킹",
   "ranking.date_label": "{date} 기준 · PRUVIQ 시뮬레이터 백테스트 결과",
   "ranking.desc":
     "수익팩터(PF) 기준으로 오늘 가장 성과가 좋은 전략과 나쁜 전략을 확인하세요. 샘플 수가 100건 미만인 전략은 통계적 신뢰도가 낮습니다.",
@@ -1244,7 +1244,7 @@ export const ko: Record<TranslationKey, string> = {
 
   // Daily Ranking page
   "ranking.tag": "DAILY RANKING",
-  "ranking.title": "📊 오늘의 전략 랭킹",
+  "ranking.title": "오늘의 전략 랭킹",
   "ranking.date_label": "{date} 기준 · PRUVIQ 시뮬레이터 백테스트 결과",
   "ranking.desc":
     "수익팩터(PF) 기준으로 오늘 가장 성과가 좋은 전략과 나쁜 전략을 확인하세요. 샘플 수가 100건 미만인 전략은 통계적 신뢰도가 낮습니다.",

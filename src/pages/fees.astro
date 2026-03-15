@@ -38,9 +38,14 @@ const exchangeCards: Record<string, { tagLabel: string; description: string }> =
       <p class="text-[--color-text-muted] text-lg mb-4 max-w-2xl">
         {t('fees.desc')}
       </p>
-      <p class="text-[--color-text-muted] text-xs">
+      <p class="text-[--color-text-muted] text-xs mb-4">
         {t('fees.disclosure')}
       </p>
+      <!-- Savings example callout -->
+      <div class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-[--color-up]/30 bg-[--color-up]/5 text-[--color-up] font-mono text-sm">
+        <span class="font-bold">&#9650;</span>
+        <span>Trade $10,000/month? Save ~$144/year with Binance VIP discount via PRUVIQ.</span>
+      </div>
     </div>
   </section>
 

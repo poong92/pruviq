@@ -134,9 +134,49 @@ const difficultyColors: Record<string, string> = {
         </a>
       </div>
 
-      <div class="space-y-4">
+      <!-- Filter Bar -->
+      <div class="mb-6 flex flex-wrap gap-4" id="strategy-filters">
+        <div class="flex items-center gap-1.5 flex-wrap">
+          <span class="font-mono text-xs text-[--color-text-muted] mr-1">Status:</span>
+          <button data-filter-group="status" data-filter-value="all"
+            class="font-mono text-xs border rounded px-3 py-1.5 transition-colors bg-[--color-accent] text-black border-[--color-accent]">
+            All
+          </button>
+          <button data-filter-group="status" data-filter-value="verified"
+            class="font-mono text-xs border border-[--color-border] rounded px-3 py-1.5 text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
+            Active
+          </button>
+          <button data-filter-group="status" data-filter-value="killed"
+            class="font-mono text-xs border border-[--color-border] rounded px-3 py-1.5 text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
+            Retired
+          </button>
+        </div>
+        <div class="flex items-center gap-1.5 flex-wrap">
+          <span class="font-mono text-xs text-[--color-text-muted] mr-1">Direction:</span>
+          <button data-filter-group="direction" data-filter-value="all"
+            class="font-mono text-xs border rounded px-3 py-1.5 transition-colors bg-[--color-accent] text-black border-[--color-accent]">
+            All
+          </button>
+          <button data-filter-group="direction" data-filter-value="long"
+            class="font-mono text-xs border border-[--color-border] rounded px-3 py-1.5 text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
+            LONG
+          </button>
+          <button data-filter-group="direction" data-filter-value="short"
+            class="font-mono text-xs border border-[--color-border] rounded px-3 py-1.5 text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
+            SHORT
+          </button>
+          <button data-filter-group="direction" data-filter-value="both"
+            class="font-mono text-xs border border-[--color-border] rounded px-3 py-1.5 text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
+            BOTH
+          </button>
+        </div>
+      </div>
+
+      <div class="space-y-4" id="strategy-list">
         {strategies.map((strategy) => (
-          <div class="block border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] hover:border-[--color-accent] transition-colors group">
+          <div class="block border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] hover:border-[--color-accent] transition-colors group"
+               data-status={strategy.data.status}
+               data-direction={strategy.data.direction.toLowerCase()}>
             <a href={`/strategies/${strategy.id}`} class="block">
               <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
                 <div class="flex items-center gap-3">
@@ -264,3 +304,46 @@ const difficultyColors: Record<string, string> = {
     </div>
   </section>
 </Layout>
+
+<script>
+  (function () {
+    const activeStatus = { status: 'all', direction: 'all' };
+
+    const accentColor = 'var(--color-accent, #00ff88)';
+    const mutedBorder = 'var(--color-border, #333)';
+    const mutedText = 'var(--color-text-muted, #888)';
+
+    function applyFilters() {
+      const cards = document.querySelectorAll<HTMLElement>('#strategy-list > [data-status]');
+      cards.forEach((card) => {
+        const statusMatch =
+          activeStatus.status === 'all' || card.dataset.status === activeStatus.status;
+        const directionMatch =
+          activeStatus.direction === 'all' || card.dataset.direction === activeStatus.direction;
+        card.style.display = statusMatch && directionMatch ? '' : 'none';
+      });
+    }
+
+    function updateButtons(group: string, value: string) {
+      const buttons = document.querySelectorAll<HTMLButtonElement>(
+        `[data-filter-group="${group}"]`
+      );
+      buttons.forEach((btn) => {
+        const isActive = btn.dataset.filterValue === value;
+        btn.style.backgroundColor = isActive ? accentColor : '';
+        btn.style.color = isActive ? 'black' : mutedText;
+        btn.style.borderColor = isActive ? accentColor : mutedBorder;
+      });
+    }
+
+    document.querySelectorAll<HTMLButtonElement>('[data-filter-group]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const group = btn.dataset.filterGroup as 'status' | 'direction';
+        const value = btn.dataset.filterValue!;
+        activeStatus[group] = value;
+        updateButtons(group, value);
+        applyFilters();
+      });
+    });
+  })();
+</script>

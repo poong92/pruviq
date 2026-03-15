@@ -1,40 +1,48 @@
 /**
  * LiveStats.tsx - Backtesting tool stats with animated numbers
  */
-import { useState, useEffect } from 'preact/hooks';
+import { useState, useEffect } from "preact/hooks";
 
 interface Props {
-  lang?: 'en' | 'ko';
+  lang?: "en" | "ko";
 }
 
 const L = {
   en: {
-    trades: 'Backtested Trades',
-    coins: 'Coins Tested',
-    strategies: 'Variations Tested',
-    history: 'Historical Data',
+    trades: "Backtested Trades",
+    coins: "Coins Tested",
+    strategies: "Variations Tested",
+    history: "Historical Data",
   },
   ko: {
-    trades: '백테스트 거래',
-    coins: '테스트 코인',
-    strategies: '테스트 조합',
-    history: '과거 데이터',
+    trades: "백테스트 거래",
+    coins: "테스트 코인",
+    strategies: "테스트 조합",
+    history: "과거 데이터",
   },
 };
 
-function AnimatedNumber({ value, suffix = '', prefix = '' }: { value: number; suffix?: string; prefix?: string }) {
+function AnimatedNumber({
+  value,
+  suffix = "",
+  prefix = "",
+}: {
+  value: number;
+  suffix?: string;
+  prefix?: string;
+}) {
   const [display, setDisplay] = useState(0);
 
   useEffect(() => {
     if (value === 0) return;
     const duration = 1200;
     const steps = 30;
-    const increment = value / steps;
     let step = 0;
 
     const timer = setInterval(() => {
       step++;
-      const current = Math.min(value, Math.round(increment * step));
+      const progress = 1 - Math.pow(1 - step / steps, 3);
+      const current = Math.round(value * progress);
       setDisplay(current);
       if (step >= steps) {
         setDisplay(value);
@@ -45,10 +53,16 @@ function AnimatedNumber({ value, suffix = '', prefix = '' }: { value: number; su
     return () => clearInterval(timer);
   }, [value]);
 
-  return <span>{prefix}{display.toLocaleString()}{suffix}</span>;
+  return (
+    <span>
+      {prefix}
+      {display.toLocaleString()}
+      {suffix}
+    </span>
+  );
 }
 
-export default function LiveStats({ lang = 'en' }: Props) {
+export default function LiveStats({ lang = "en" }: Props) {
   const t = L[lang] || L.en;
 
   return (
@@ -74,7 +88,7 @@ export default function LiveStats({ lang = 'en' }: Props) {
       <div class="text-center p-4">
         <p class="font-mono text-[--color-accent] text-3xl md:text-4xl font-bold">
           <AnimatedNumber value={2} suffix="+" />
-          <span class="text-xl ml-1">{lang === 'ko' ? '년' : 'yrs'}</span>
+          <span class="text-xl ml-1">{lang === "ko" ? "년" : "yrs"}</span>
         </p>
         <p class="text-[--color-text-muted] text-sm mt-1">{t.history}</p>
       </div>

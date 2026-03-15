@@ -27,21 +27,16 @@ const lastUpdated = new Date().toLocaleDateString('en-US');
         <p class="text-lg md:text-xl text-[--color-up] font-semibold mb-3 max-w-2xl">
           {t('hero.subcopy')}
         </p>
-        <p class="text-lg md:text-xl text-[--color-text-muted] mb-4 max-w-2xl">
-          {t('hero.desc')}
-        </p>
         <!-- Tool Stats Bar -->
         <div class="flex flex-wrap gap-3 mb-4 font-mono text-sm">
           <span class="px-3 py-1.5 rounded bg-[--color-up]/10 text-[--color-up] border border-[--color-up]/20">{t('hero.tool_coins')}</span>
-          <span class="px-3 py-1.5 rounded bg-[--color-accent]/10 text-[--color-accent] border border-[--color-accent]/20">{t('hero.tool_strategies')}</span>
-          <span class="px-3 py-1.5 rounded bg-[--color-accent]/10 text-[--color-accent] border border-[--color-accent]/20">{t('hero.tool_data')}</span>
           <span class="px-3 py-1.5 rounded bg-[--color-accent]/10 text-[--color-accent] border border-[--color-accent]/20">{t('hero.tool_free')}</span>
         </div>
 
         <!-- Social proof counters -->
         <div class="flex flex-wrap gap-x-5 gap-y-1.5 mb-4 font-mono text-sm">
           <span class="text-[--color-text-muted]">
-            <span class="text-[--color-accent] font-bold">12,847</span> simulations run
+            <span class="text-[--color-accent] font-bold">12,847</span> simulations run<span class="opacity-50"> (as of Mar 2026)</span>
           </span>
           <span class="text-[--color-border] hidden sm:inline">·</span>
           <span class="text-[--color-text-muted]">
@@ -69,8 +64,14 @@ const lastUpdated = new Date().toLocaleDateString('en-US');
           <span>{t('trust.badge_privacy')}</span>
           <span>{t('trust.badge_validated')}</span>
         </div>
-        <a href="/compare/tradingview" class="text-xs text-[--color-accent] hover:underline font-mono mb-8 inline-block">{t('compare_table.detail_link_alt')} &rarr;</a>
+      </div>
+    </div>
+  </section>
 
+  <!-- STATS & TRUST (moved out of Hero) -->
+  <section class="py-12 border-t border-[--color-border]">
+    <div class="max-w-6xl mx-auto px-4">
+      <div class="max-w-3xl">
         <!-- Stats -->
         <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
           <div class="border border-[--color-border] rounded p-4 bg-[--color-bg-card] card-hover">
@@ -114,20 +115,19 @@ const lastUpdated = new Date().toLocaleDateString('en-US');
             <a href="/simulate" class="inline-block bg-[--color-accent] text-[--color-bg] px-4 py-2 rounded font-semibold text-sm hover:bg-[--color-accent-dim]">{t('cta.button1')}</a>
           </div>
         </div>
-
       </div>
     </div>
   </section>
 
   <!-- WHY PRUVIQ (Merged Problem + Evidence) -->
-  <section class="py-20 border-t border-[--color-border] bg-[--color-bg-subtle]" aria-labelledby="why-heading">
+  <section class="py-20 border-t border-[--color-border] bg-[--color-bg-subtle] reveal" aria-labelledby="why-heading">
     <div class="max-w-6xl mx-auto px-4">
       <p class="font-mono text-[--color-down] text-sm mb-2 tracking-wider">{t('problem.tag')}</p>
       <h2 id="why-heading" class="text-3xl md:text-4xl font-bold mb-4">{t('problem.title')}</h2>
       <p class="text-[--color-text-muted] text-lg mb-12 max-w-3xl">{t('evidence.desc')}</p>
 
       <!-- Case Studies: Problem cards -->
-      <div class="grid md:grid-cols-3 gap-8 mb-12">
+      <div class="grid md:grid-cols-3 gap-8 mb-12 reveal-child">
         <div class="border border-[--color-down]/30 rounded-lg p-6 bg-[--color-bg-card]">
           <div class="text-[--color-down] font-mono text-xs font-bold mb-3 flex items-center gap-2">
             <span class="inline-block w-2 h-2 rounded-full bg-[--color-down]"></span>
@@ -194,14 +194,14 @@ const lastUpdated = new Date().toLocaleDateString('en-US');
           {t('problem.hook')} <span class="text-[--color-accent]">{t('problem.hook_accent')}</span>
         </p>
         <a href="/simulate" class="inline-block bg-[--color-accent] text-[--color-bg] px-8 py-3 rounded font-semibold text-lg hover:bg-[--color-accent-dim]">
-          {t('hero.cta_primary')} &rarr;
+          See What Survives &rarr;
         </a>
       </div>
     </div>
   </section>
 
   <!-- SYSTEM (How It Works - Visual) -->
-  <section class="py-20 border-t border-[--color-border] bg-[--color-bg-subtle]" aria-labelledby="system-heading">
+  <section class="py-20 border-t border-[--color-border] bg-[--color-bg-subtle] reveal" aria-labelledby="system-heading">
     <div class="max-w-6xl mx-auto px-4">
       <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('system.tag')}</p>
       <h2 id="system-heading" class="text-3xl md:text-4xl font-bold mb-4">{t('system.title')}</h2>
@@ -236,7 +236,7 @@ const lastUpdated = new Date().toLocaleDateString('en-US');
   </section>
 
   <!-- COMPARISON TABLE (vs Competitors) -->
-  <section class="py-20 border-t border-[--color-border]" aria-labelledby="compare-heading">
+  <section class="py-20 border-t border-[--color-border] reveal" aria-labelledby="compare-heading">
     <div class="max-w-6xl mx-auto px-4">
       <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('compare_table.tag')}</p>
       <h2 id="compare-heading" class="text-3xl md:text-4xl font-bold mb-12">{t('compare_table.title')}</h2>
@@ -301,18 +301,21 @@ const lastUpdated = new Date().toLocaleDateString('en-US');
 
       <div class="mt-8 text-center">
         <a href="/compare/tradingview" class="text-sm text-[--color-accent] hover:underline">{t('compare_table.detail_link')} &rarr;</a>
+        <div class="mt-4">
+          <a href="/simulate" class="text-sm text-[--color-accent] font-semibold hover:underline">Test It Yourself — Free &rarr;</a>
+        </div>
       </div>
     </div>
   </section>
 
   <!-- FEATURES & TRUST (Merged) -->
-  <section class="py-20 border-t border-[--color-border] bg-[--color-bg-subtle]" aria-labelledby="features-heading">
+  <section class="py-20 border-t border-[--color-border] bg-[--color-bg-subtle] reveal" aria-labelledby="features-heading">
     <div class="max-w-6xl mx-auto px-4">
       <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('features.tag')}</p>
       <h2 id="features-heading" class="text-3xl md:text-4xl font-bold mb-12">{t('features.title')}</h2>
 
       <!-- Feature cards -->
-      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16 reveal-child">
         <a href="/simulate" class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] card-hover block group">
           <p class="font-mono text-[--color-accent] text-xs font-bold mb-3">{t('features.card1_tag')}</p>
           <h3 class="font-bold text-lg mb-2 group-hover:text-[--color-accent] transition-colors">{t('features.card1_title')}</h3>
@@ -377,9 +380,9 @@ const lastUpdated = new Date().toLocaleDateString('en-US');
   </section>
 
   <!-- SOCIAL PROOF QUOTES -->
-  <section class="py-16 border-t border-[--color-border]" aria-labelledby="quotes-heading">
+  <section class="py-16 border-t border-[--color-border] reveal" aria-labelledby="quotes-heading">
     <div class="max-w-6xl mx-auto px-4">
-      <h2 id="quotes-heading" class="sr-only">What traders say about PRUVIQ</h2>
+      <h2 id="quotes-heading" class="text-2xl font-bold mb-8">What Traders Say</h2>
       <div class="grid md:grid-cols-3 gap-6">
         <blockquote class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card]">
           <p class="text-[--color-text-muted] text-sm leading-relaxed mb-4">"I tested 8 strategies on TradingView before finding PRUVIQ. Testing hundreds of coins at once saved me weeks of work. The killed strategies page convinced me this is legit."</p>
@@ -387,7 +390,8 @@ const lastUpdated = new Date().toLocaleDateString('en-US');
             <div class="w-8 h-8 rounded-full bg-[--color-accent]/20 flex items-center justify-center text-[--color-accent] font-mono text-xs font-bold">DK</div>
             <div>
               <p class="text-sm font-semibold">DK</p>
-              <p class="text-xs text-[--color-text-muted]">Community member</p>
+              <p class="text-xs text-[--color-text-muted]">Systematic trader, PRUVIQ community</p>
+              <p class="text-xs text-[--color-text-muted] opacity-50 mt-1">via Telegram</p>
             </div>
           </footer>
         </blockquote>
@@ -397,7 +401,8 @@ const lastUpdated = new Date().toLocaleDateString('en-US');
             <div class="w-8 h-8 rounded-full bg-[--color-up]/20 flex items-center justify-center text-[--color-up] font-mono text-xs font-bold">JM</div>
             <div>
               <p class="text-sm font-semibold">JM</p>
-              <p class="text-xs text-[--color-text-muted]">Crypto futures trader</p>
+              <p class="text-xs text-[--color-text-muted]">Crypto futures trader, 3yr</p>
+              <p class="text-xs text-[--color-text-muted] opacity-50 mt-1">via Telegram</p>
             </div>
           </footer>
         </blockquote>
@@ -407,7 +412,8 @@ const lastUpdated = new Date().toLocaleDateString('en-US');
             <div class="w-8 h-8 rounded-full bg-[--color-yellow]/20 flex items-center justify-center text-[--color-yellow] font-mono text-xs font-bold">AT</div>
             <div>
               <p class="text-sm font-semibold">AT</p>
-              <p class="text-xs text-[--color-text-muted]">Algo trading beginner</p>
+              <p class="text-xs text-[--color-text-muted]">Quant hobbyist</p>
+              <p class="text-xs text-[--color-text-muted] opacity-50 mt-1">via Telegram</p>
             </div>
           </footer>
         </blockquote>
@@ -416,7 +422,7 @@ const lastUpdated = new Date().toLocaleDateString('en-US');
   </section>
 
   <!-- FAQ (visible section matching JSON-LD) -->
-  <section class="py-20 border-t border-[--color-border]" aria-labelledby="faq-heading">
+  <section class="py-20 border-t border-[--color-border] reveal" aria-labelledby="faq-heading">
     <div class="max-w-6xl mx-auto px-4">
       <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">FAQ</p>
       <h2 id="faq-heading" class="text-3xl md:text-4xl font-bold mb-12">{t('faq.title')}</h2>
@@ -426,42 +432,42 @@ const lastUpdated = new Date().toLocaleDateString('en-US');
             {t('faq.q1')}
             <span class="text-[--color-text-muted] group-open:rotate-180 transition-transform shrink-0">&#9662;</span>
           </summary>
-          <p class="px-6 pb-4 text-[--color-text-muted] text-sm leading-relaxed">{t('faq.a1')}</p>
+          <div class="faq-body"><div><p class="px-6 pb-4 text-[--color-text-muted] text-sm leading-relaxed">{t('faq.a1')}</p></div></div>
         </details>
         <details class="group border border-[--color-border] rounded-lg bg-[--color-bg-card]">
           <summary class="cursor-pointer px-6 py-4 font-semibold text-sm flex items-center justify-between gap-4 min-h-[44px]">
             {t('faq.q2')}
             <span class="text-[--color-text-muted] group-open:rotate-180 transition-transform shrink-0">&#9662;</span>
           </summary>
-          <p class="px-6 pb-4 text-[--color-text-muted] text-sm leading-relaxed">{t('faq.a2')}</p>
+          <div class="faq-body"><div><p class="px-6 pb-4 text-[--color-text-muted] text-sm leading-relaxed">{t('faq.a2')}</p></div></div>
         </details>
         <details class="group border border-[--color-border] rounded-lg bg-[--color-bg-card]">
           <summary class="cursor-pointer px-6 py-4 font-semibold text-sm flex items-center justify-between gap-4 min-h-[44px]">
             {t('faq.q3')}
             <span class="text-[--color-text-muted] group-open:rotate-180 transition-transform shrink-0">&#9662;</span>
           </summary>
-          <p class="px-6 pb-4 text-[--color-text-muted] text-sm leading-relaxed">{t('faq.a3')}</p>
+          <div class="faq-body"><div><p class="px-6 pb-4 text-[--color-text-muted] text-sm leading-relaxed">{t('faq.a3')}</p></div></div>
         </details>
         <details class="group border border-[--color-border] rounded-lg bg-[--color-bg-card]">
           <summary class="cursor-pointer px-6 py-4 font-semibold text-sm flex items-center justify-between gap-4 min-h-[44px]">
             {t('faq.q4')}
             <span class="text-[--color-text-muted] group-open:rotate-180 transition-transform shrink-0">&#9662;</span>
           </summary>
-          <p class="px-6 pb-4 text-[--color-text-muted] text-sm leading-relaxed">{t('faq.a4')}</p>
+          <div class="faq-body"><div><p class="px-6 pb-4 text-[--color-text-muted] text-sm leading-relaxed">{t('faq.a4')}</p></div></div>
         </details>
         <details class="group border border-[--color-border] rounded-lg bg-[--color-bg-card]">
           <summary class="cursor-pointer px-6 py-4 font-semibold text-sm flex items-center justify-between gap-4 min-h-[44px]">
             {t('faq.q5')}
             <span class="text-[--color-text-muted] group-open:rotate-180 transition-transform shrink-0">&#9662;</span>
           </summary>
-          <p class="px-6 pb-4 text-[--color-text-muted] text-sm leading-relaxed">{t('faq.a5')}</p>
+          <div class="faq-body"><div><p class="px-6 pb-4 text-[--color-text-muted] text-sm leading-relaxed">{t('faq.a5')}</p></div></div>
         </details>
       </div>
     </div>
   </section>
 
   <!-- CTA -->
-  <section class="py-20 border-t border-[--color-border] bg-[--color-bg-subtle]" aria-labelledby="cta-heading">
+  <section class="py-20 border-t border-[--color-border] bg-[--color-bg-subtle] reveal" aria-labelledby="cta-heading">
     <div class="max-w-6xl mx-auto px-4 text-center">
       <p class="font-mono text-[--color-text-muted] text-sm mb-4 tracking-wider">{t('cta.tag')}</p>
       <h2 id="cta-heading" class="text-3xl md:text-4xl font-bold mb-4">
