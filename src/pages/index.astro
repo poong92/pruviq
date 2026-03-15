@@ -36,7 +36,7 @@ const lastUpdated = new Date().toLocaleDateString('en-US');
         <!-- Social proof counters -->
         <div class="flex flex-wrap gap-x-5 gap-y-1.5 mb-4 font-mono text-sm">
           <span class="text-[--color-text-muted]">
-            <span class="text-[--color-accent] font-bold">12,847</span> simulations run<span class="opacity-50"> (as of Mar 2026)</span>
+            <span class="text-[--color-accent] font-bold">12,847</span> simulations run<span class="opacity-50"> {t('home.social_simulations_note')}</span>
           </span>
           <span class="text-[--color-border] hidden sm:inline">·</span>
           <span class="text-[--color-text-muted]">
@@ -55,7 +55,7 @@ const lastUpdated = new Date().toLocaleDateString('en-US');
           </a>
         </div>
         <!-- Trust signals -->
-        <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs text-[--color-text-muted] font-mono mb-4">
+        <div class="flex flex-wrap gap-x-4 gap-y-1 text-sm text-[--color-text-muted] font-mono mb-4">
           <span>{t('trust.badge_api')}</span>
           <span>{t('trust.badge_source')}</span>
           <span>{t('trust.badge_privacy')}</span>
@@ -104,14 +104,14 @@ const lastUpdated = new Date().toLocaleDateString('en-US');
         <!-- TRUST BLOCK -->
         <div class="mt-6 border border-[--color-border] rounded p-4 bg-[--color-bg-card] flex flex-wrap gap-6 items-center">
           <div>
-            <p class="text-sm font-mono text-[--color-text-muted]">Strategies documented</p>
+            <p class="text-sm font-mono text-[--color-text-muted]">{t('home.trust_documented')}</p>
             <p class="text-xl font-bold text-[--color-accent]">{allStrategies.length} strategies</p>
             <p class="text-xs text-[--color-text-muted]">{t('trust.last_updated').replace('{date}', lastUpdated)}</p>
           </div>
           <div class="border-l border-[--color-border] pl-6">
-            <p class="text-sm font-mono text-[--color-text-muted]">Verified &amp; active</p>
+            <p class="text-sm font-mono text-[--color-text-muted]">{t('home.trust_verified_active')}</p>
             <p class="text-xl font-bold text-[--color-up]">{verifiedCount}</p>
-            <p class="text-xs text-[--color-text-muted]">OOS-validated strategies</p>
+            <p class="text-xs text-[--color-text-muted]">{t('home.trust_oos_label')}</p>
           </div>
         </div>
       </div>
@@ -193,7 +193,7 @@ const lastUpdated = new Date().toLocaleDateString('en-US');
           {t('problem.hook')} <span class="text-[--color-accent]">{t('problem.hook_accent')}</span>
         </p>
         <a href="/simulate" class="inline-block bg-[--color-accent] text-[--color-bg] px-8 py-3 rounded font-semibold text-lg hover:bg-[--color-accent-dim]">
-          See What Survives &rarr;
+          {t('home.cta_survives')} &rarr;
         </a>
       </div>
     </div>
@@ -286,7 +286,7 @@ const lastUpdated = new Date().toLocaleDateString('en-US');
               <td class="py-3 px-4">{t('compare_table.feat_free')}</td>
               <td class="py-3 px-4 text-center text-[--color-up] bg-[--color-accent]/5">{t('compare_table.pruviq_free')}</td>
               <td class="py-3 px-4 text-center text-yellow-400">{t('compare_table.tv_free')}</td>
-              <td class="py-3 px-4 text-center text-yellow-400">{t('compare_table.qc_coins')}</td>
+              <td class="py-3 px-4 text-center text-yellow-400">{t('compare_table.qc_free')}</td>
             </tr>
             <tr>
               <td class="py-3 px-4">{t('compare_table.feat_no_account')}</td>
@@ -301,7 +301,7 @@ const lastUpdated = new Date().toLocaleDateString('en-US');
       <div class="mt-8 text-center">
         <a href="/compare/tradingview" class="text-sm text-[--color-accent] hover:underline">{t('compare_table.detail_link')} &rarr;</a>
         <div class="mt-4">
-          <a href="/simulate" class="text-sm text-[--color-accent] font-semibold hover:underline">Test It Yourself — Free &rarr;</a>
+          <a href="/simulate" class="text-sm text-[--color-accent] font-semibold hover:underline">{t('home.cta_test_yourself')} &rarr;</a>
         </div>
       </div>
     </div>
@@ -381,7 +381,7 @@ const lastUpdated = new Date().toLocaleDateString('en-US');
   <!-- SOCIAL PROOF QUOTES -->
   <section class="py-16 border-t border-[--color-border] reveal" aria-labelledby="quotes-heading">
     <div class="max-w-6xl mx-auto px-4">
-      <h2 id="quotes-heading" class="text-2xl font-bold mb-8">What Traders Say</h2>
+      <h2 id="quotes-heading" class="text-2xl font-bold mb-8">{t('home.quotes_heading')}</h2>
       <div class="grid md:grid-cols-3 gap-6">
         <blockquote class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card]">
           <p class="text-[--color-text-muted] text-sm leading-relaxed mb-4">"I tested 8 strategies on TradingView before finding PRUVIQ. Testing hundreds of coins at once saved me weeks of work. The killed strategies page convinced me this is legit."</p>

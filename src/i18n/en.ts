@@ -988,6 +988,7 @@ export const en = {
   "compare_table.tv_free": "$14.95/mo+",
   "compare_table.qc_nocode": "Python/C#",
   "compare_table.qc_coins": "Limited",
+  "compare_table.qc_free": "Free tier (limited)",
   "compare_table.qc_verification": "Paper only",
   "compare_table.pruviq_free": "100% Free",
   "compare_table.pruviq_verification": "Live",
@@ -1017,6 +1018,16 @@ export const en = {
   "trust.stat_datapoints": "Data Points Processed",
   "trust.stat_live_days": "Coins Backtested",
   "trust.stat_strategies": "Strategies Tested (4 Failed)",
+
+  // Homepage misc (hardcoded strings that need i18n)
+  "home.social_simulations": "12,847 simulations run",
+  "home.social_simulations_note": "(as of Mar 2026)",
+  "home.trust_documented": "Strategies documented",
+  "home.trust_verified_active": "Verified & active",
+  "home.trust_oos_label": "OOS-validated strategies",
+  "home.cta_survives": "See What Survives",
+  "home.cta_test_yourself": "Test It Yourself — Free",
+  "home.quotes_heading": "What Traders Say",
 
   // TradingView comparison page
   "meta.vs_tv_title":

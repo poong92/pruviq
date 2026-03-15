@@ -1,8 +1,10 @@
 ---
 import Layout from '../../../layouts/Layout.astro';
 import { useTranslations } from '../../../i18n/index';
+import presetsJson from '../../../../public/data/builder-presets.json';
 
 const t = useTranslations('ko');
+const presetCount = (presetsJson as Array<unknown>).length;
 ---
 
 <Layout title={t('meta.simulate_title')} description={t('meta.simulate_desc')}>
@@ -43,8 +45,8 @@ const t = useTranslations('ko');
         </span>
         <span class="text-[--color-border]">·</span>
         <span class="flex items-center gap-1.5 text-[--color-text-muted]">
-          <span class="text-[--color-accent] font-bold">16</span>
-          개 전략 검증
+          <span class="text-[--color-accent] font-bold">{presetCount}</span>
+          개 전략 이용 가능
         </span>
       </div>
 
