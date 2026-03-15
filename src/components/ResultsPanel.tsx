@@ -4,7 +4,13 @@
 import { useEffect, useRef, useState } from "preact/hooks";
 import ResultsCard from "./ResultsCard";
 import OOSValidation from "./OOSValidation";
-import { winRateColor, profitFactorColor, signColor, formatPF } from "../utils/format";
+import ExchangeCTA from "./ExchangeCTA";
+import {
+  winRateColor,
+  profitFactorColor,
+  signColor,
+  formatPF,
+} from "../utils/format";
 import type { BacktestResult, CoinResult } from "./simulator-types";
 import { getCssVar, COLORS } from "./simulator-types";
 import { API_BASE_URL as API_URL } from "../config/api";
@@ -96,6 +102,29 @@ export default function ResultsPanel({
   const [qaTp, setQaTp] = useState(tpPct);
   const [qaCoins, setQaCoins] = useState(topN);
   const [showQuickAdjust, setShowQuickAdjust] = useState(false);
+
+  // Copy Strategy Settings state
+  const [settingsCopied, setSettingsCopied] = useState(false);
+
+  const copyStrategySettings = () => {
+    if (!result) return;
+    const dir = result.direction?.toUpperCase() ?? "SHORT";
+    const presetName = activePreset
+      ? activePreset.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())
+      : `Custom ${dir}`;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- timeframe not in type but may be present in API response
+    const tf = (result as any).timeframe ?? "1H";
+    const lines = [
+      `Strategy: ${presetName}`,
+      `Direction: ${dir} | SL: ${result.sl_pct ?? slPct}% | TP: ${result.tp_pct ?? tpPct}%`,
+      `Coins: Top ${result.coins_used ?? topN} | Timeframe: ${tf}`,
+      `Backtest via pruviq.com/simulate`,
+    ];
+    navigator.clipboard.writeText(lines.join("\n")).then(() => {
+      setSettingsCopied(true);
+      setTimeout(() => setSettingsCopied(false), 2000);
+    });
+  };
 
   // Sync with parent state changes
   useEffect(() => {
@@ -275,7 +304,11 @@ export default function ResultsPanel({
   return (
     <div>
       {error && (
-        <div class="border border-[--color-red]/30 rounded-lg p-4 bg-[--color-red]/5 mb-3" role="alert" aria-live="assertive">
+        <div
+          class="border border-[--color-red]/30 rounded-lg p-4 bg-[--color-red]/5 mb-3"
+          role="alert"
+          aria-live="assertive"
+        >
           <span class="font-mono text-sm text-[--color-red]">
             {t.error}: {error}
           </span>
@@ -369,7 +402,9 @@ export default function ResultsPanel({
                     max="50"
                     step="0.5"
                     value={qaSl}
-                    onInput={(e: Event) => setQaSl(parseFloat((e.target as HTMLInputElement).value))}
+                    onInput={(e: Event) =>
+                      setQaSl(parseFloat((e.target as HTMLInputElement).value))
+                    }
                     class="slider-range mt-1"
                     style={{
                       background: `linear-gradient(to right, ${COLORS.red} 0%, ${COLORS.red} ${((qaSl - 1) / 49) * 100}%, var(--color-border) ${((qaSl - 1) / 49) * 100}%, var(--color-border) 100%)`,
@@ -387,7 +422,9 @@ export default function ResultsPanel({
                     max="50"
                     step="0.5"
                     value={qaTp}
-                    onInput={(e: Event) => setQaTp(parseFloat((e.target as HTMLInputElement).value))}
+                    onInput={(e: Event) =>
+                      setQaTp(parseFloat((e.target as HTMLInputElement).value))
+                    }
                     class="slider-range mt-1"
                     style={{
                       background: `linear-gradient(to right, ${COLORS.green} 0%, ${COLORS.green} ${((qaTp - 1) / 49) * 100}%, var(--color-border) ${((qaTp - 1) / 49) * 100}%, var(--color-border) 100%)`,
@@ -405,7 +442,9 @@ export default function ResultsPanel({
                     max="549"
                     step="1"
                     value={qaCoins}
-                    onInput={(e: Event) => setQaCoins(parseInt((e.target as HTMLInputElement).value))}
+                    onInput={(e: Event) =>
+                      setQaCoins(parseInt((e.target as HTMLInputElement).value))
+                    }
                     class="slider-range mt-1"
                     style={{
                       background: `linear-gradient(to right, ${COLORS.accent} 0%, ${COLORS.accent} ${((qaCoins - 1) / 534) * 100}%, var(--color-border) ${((qaCoins - 1) / 534) * 100}%, var(--color-border) 100%)`,
@@ -457,11 +496,17 @@ export default function ResultsPanel({
                   <thead>
                     <tr class="text-[--color-text-muted] border-b border-[--color-border]">
                       <th class="py-1 px-2 text-left">#</th>
-                      <th class="py-1 px-2 text-left">{t.config || "Config"}</th>
-                      <th class="py-1 px-2 text-right">{t.trades || "Trades"}</th>
+                      <th class="py-1 px-2 text-left">
+                        {t.config || "Config"}
+                      </th>
+                      <th class="py-1 px-2 text-right">
+                        {t.trades || "Trades"}
+                      </th>
                       <th class="py-1 px-2 text-right">{t.winRate || "WR%"}</th>
                       <th class="py-1 px-2 text-right">PF</th>
-                      <th class="py-1 px-2 text-right">{t.totalReturn || "Return"}</th>
+                      <th class="py-1 px-2 text-right">
+                        {t.totalReturn || "Return"}
+                      </th>
                       <th class="py-1 px-2 text-right">MDD</th>
                       <th class="py-1 px-2"></th>
                     </tr>
@@ -699,7 +744,9 @@ export default function ResultsPanel({
                   </div>
                 )}
               <div class="mt-3 flex flex-wrap gap-3 text-[10px] text-[--color-text-muted] font-mono">
-                <span>{result.coins_used} {lang === 'ko' ? '코인' : 'coins'}</span>
+                <span>
+                  {result.coins_used} {lang === "ko" ? "코인" : "coins"}
+                </span>
                 <span>{result.data_range}</span>
                 <span>{result.compute_time_ms}ms</span>
                 {result._isDemo && (
@@ -720,27 +767,94 @@ export default function ResultsPanel({
                     class="flex items-center gap-1.5 px-4 py-2 text-xs font-mono rounded border transition-colors"
                     style={
                       linkCopied
-                        ? { borderColor: COLORS.green, color: COLORS.green, background: `${COLORS.green}10` }
-                        : { borderColor: COLORS.accent, color: COLORS.accent, background: `${COLORS.accent}10` }
+                        ? {
+                            borderColor: COLORS.green,
+                            color: COLORS.green,
+                            background: `${COLORS.green}10`,
+                          }
+                        : {
+                            borderColor: COLORS.accent,
+                            color: COLORS.accent,
+                            background: `${COLORS.accent}10`,
+                          }
                     }
                   >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
                       <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
                       <polyline points="16 6 12 2 8 6" />
                       <line x1="12" y1="2" x2="12" y2="15" />
                     </svg>
                     {linkCopied
-                      ? (t.linkCopied || (lang === 'ko' ? '복사됨!' : 'Copied!'))
-                      : (t.shareResults || (lang === 'ko' ? '결과 공유하기' : 'Share Results'))}
+                      ? t.linkCopied || (lang === "ko" ? "복사됨!" : "Copied!")
+                      : t.shareResults ||
+                        (lang === "ko" ? "결과 공유하기" : "Share Results")}
                   </button>
                 )}
+                {/* Fix 2: Copy Strategy Settings button */}
+                <button
+                  onClick={copyStrategySettings}
+                  class="flex items-center gap-1.5 px-4 py-2 text-xs font-mono rounded border transition-colors"
+                  style={
+                    settingsCopied
+                      ? {
+                          borderColor: COLORS.green,
+                          color: COLORS.green,
+                          background: `${COLORS.green}10`,
+                        }
+                      : {
+                          borderColor: "var(--color-border)",
+                          color: "var(--color-text-muted)",
+                        }
+                  }
+                >
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                  </svg>
+                  {settingsCopied
+                    ? lang === "ko"
+                      ? "복사됨!"
+                      : "Copied!"
+                    : t.copySettings ||
+                      (lang === "ko" ? "설정 복사" : "Copy Strategy Settings")}
+                </button>
                 <a
                   href="/fees"
                   class="flex items-center gap-1.5 px-4 py-2 text-xs font-mono rounded border border-[--color-border] text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors"
                 >
-                  {t.saveOnFees || (lang === 'ko' ? '거래소 수수료 절약하기' : 'Save on exchange fees')} &rarr;
+                  {t.saveOnFees ||
+                    (lang === "ko"
+                      ? "거래소 수수료 절약하기"
+                      : "Save on exchange fees")}{" "}
+                  &rarr;
                 </a>
               </div>
+              {/* Fix 1: ExchangeCTA — shown when result is profitable */}
+              {result.total_return_pct > 0 && (
+                <ExchangeCTA
+                  mode="inline"
+                  lang={lang}
+                  strategy={activePreset ?? undefined}
+                />
+              )}
             </div>
           )}
 
@@ -780,7 +894,9 @@ export default function ResultsPanel({
             <div class="p-2 overflow-x-auto -webkit-overflow-scrolling-touch">
               {result.trades && result.trades.length > 0 ? (
                 <table class="w-full text-xs font-mono min-w-[500px] md:min-w-0">
-                  <caption class="sr-only">{t.tradeTableCaption || 'Simulated trade details'}</caption>
+                  <caption class="sr-only">
+                    {t.tradeTableCaption || "Simulated trade details"}
+                  </caption>
                   <thead>
                     <tr class="text-[--color-text-muted] border-b border-[--color-border]">
                       <th class="py-2 px-2 text-left">{t.symbol}</th>
@@ -845,7 +961,8 @@ export default function ResultsPanel({
                 </table>
               ) : (
                 <div class="text-center py-8 text-[--color-text-muted] text-sm">
-                  {t.noTradeDetails || "Trade details not available for this backtest type."}
+                  {t.noTradeDetails ||
+                    "Trade details not available for this backtest type."}
                 </div>
               )}
             </div>
@@ -878,12 +995,22 @@ export default function ResultsPanel({
                 );
               }
               const sorted = [...coins].sort((a: CoinResult, b: CoinResult) => {
-                const av = (a as unknown as Record<string, string | number>)[coinSort.key] ?? 0;
-                const bv = (b as unknown as Record<string, string | number>)[coinSort.key] ?? 0;
-                if (typeof av === 'string' || typeof bv === 'string') {
-                  return coinSort.asc ? String(av).localeCompare(String(bv)) : String(bv).localeCompare(String(av));
+                const av =
+                  (a as unknown as Record<string, string | number>)[
+                    coinSort.key
+                  ] ?? 0;
+                const bv =
+                  (b as unknown as Record<string, string | number>)[
+                    coinSort.key
+                  ] ?? 0;
+                if (typeof av === "string" || typeof bv === "string") {
+                  return coinSort.asc
+                    ? String(av).localeCompare(String(bv))
+                    : String(bv).localeCompare(String(av));
                 }
-                return coinSort.asc ? (av as number) - (bv as number) : (bv as number) - (av as number);
+                return coinSort.asc
+                  ? (av as number) - (bv as number)
+                  : (bv as number) - (av as number);
               });
               const profitable = coins.filter(
                 (c: CoinResult) => c.total_return_pct > 0,
