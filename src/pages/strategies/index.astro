@@ -93,44 +93,14 @@ const difficultyColors: Record<string, string> = {
         }
       </p>
 
-      <p class="text-sm text-[--color-accent] font-mono mb-6 max-w-2xl border border-[--color-accent]/20 rounded-lg px-4 py-3 bg-[--color-accent]/5">
-        {t('strategies.funnel')
-          .replace('{total}', String(strategies.length))
-          .replace('{verified}', String(strategies.filter(s => s.data.status === 'verified').length))
-        }
-      </p>
-
-      <!-- Daily Ranking Banner -->
-      <a href="/strategies/ranking" class="flex items-center justify-between gap-3 mb-6 border border-[--color-accent]/30 rounded-lg px-4 py-3 bg-[--color-accent]/5 hover:bg-[--color-accent]/10 transition-colors group">
-        <div class="flex items-center gap-3">
-          <span class="inline-block w-2 h-2 rounded-full bg-[--color-accent] animate-pulse shrink-0"></span>
-          <div>
-            <p class="font-semibold text-sm text-[--color-text]">📊 Daily Strategy Ranking</p>
-            <p class="text-xs text-[--color-text-muted]">Today's best and worst strategies ranked by Profit Factor — updated daily</p>
-          </div>
-        </div>
-        <span class="text-[--color-accent] text-sm font-semibold shrink-0 group-hover:translate-x-1 transition-transform">&rarr;</span>
-      </a>
-
-      <div class="mb-4 flex flex-col sm:flex-row gap-3">
+      <div class="mb-6 flex flex-col sm:flex-row gap-3">
         <a href="/simulate"
            class="btn-primary inline-flex items-center gap-2 bg-[--color-accent] text-[--color-bg] px-5 py-2.5 rounded-lg font-semibold text-sm hover:bg-[--color-accent-dim]">
           {t('hero.cta_builder')} &rarr;
         </a>
-        <a href="/strategies/compare"
+        <a href="/strategies/ranking"
            class="inline-flex items-center gap-2 border border-[--color-border] text-[--color-text] px-5 py-2.5 rounded-lg font-semibold text-sm hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
-          {t('strategies.compare')} &rarr;
-        </a>
-      </div>
-
-      <div class="mb-8 border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card] flex flex-col sm:flex-row items-start sm:items-center gap-4">
-        <div class="flex-1">
-          <p class="font-mono text-[--color-accent] text-xs font-bold mb-1">{t('strategies.beginner_tag')}</p>
-          <p class="text-[--color-text-muted] text-sm">{t('strategies.beginner_desc')}</p>
-        </div>
-        <a href="/learn"
-           class="shrink-0 border border-[--color-accent] text-[--color-accent] px-5 py-2 rounded text-sm font-semibold hover:bg-[--color-accent] hover:text-[--color-bg] transition-colors whitespace-nowrap">
-          {t('strategies.beginner_cta')} &rarr;
+          {t('ranking.tag')} &rarr;
         </a>
       </div>
 
@@ -268,10 +238,7 @@ const difficultyColors: Record<string, string> = {
                 class="flex items-center justify-between border border-[--color-border] rounded-lg px-4 py-3 bg-[--color-bg-card] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors group"
               >
                 <div>
-                  <p class="font-semibold text-sm">{preset.name_ko ?? preset.name}</p>
-                  {preset.description_ko && (
-                    <p class="text-[--color-text-muted] text-xs mt-0.5 line-clamp-1">{preset.description_ko}</p>
-                  )}
+                  <p class="font-semibold text-sm">{preset.name}</p>
                 </div>
                 <div class="flex items-center gap-2 shrink-0 ml-3">
                   {preset.direction && (

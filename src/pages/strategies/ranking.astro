@@ -34,14 +34,13 @@ const today = new Date().toLocaleDateString('en-US', {
       </nav>
 
       <!-- Page header -->
-      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('ranking.tag')}</p>
       <h1 class="text-3xl md:text-4xl font-bold mb-3">
         {t('ranking.title')}
       </h1>
       <p class="text-[--color-text-muted] text-sm mb-1">
         {t('ranking.date_label').replace('{date}', today)}
       </p>
-      <p class="text-[--color-text-muted] text-sm mb-8 max-w-2xl">
+      <p class="text-[--color-text-muted] text-sm mb-6 max-w-2xl">
         {t('ranking.desc')}
       </p>
 
@@ -58,12 +57,6 @@ const today = new Date().toLocaleDateString('en-US', {
           class="inline-flex items-center gap-2 border border-[--color-border] text-[--color-text-muted] px-5 py-2.5 rounded-lg font-semibold text-sm hover:border-[--color-accent] hover:text-[--color-accent] transition-colors"
         >
           {t('ranking.strategy_lib')}
-        </a>
-        <a
-          href="/leaderboard"
-          class="inline-flex items-center gap-2 border border-[--color-border] text-[--color-text-muted] px-5 py-2.5 rounded-lg font-semibold text-sm hover:border-[--color-accent] hover:text-[--color-accent] transition-colors"
-        >
-          {t('ranking.leaderboard')}
         </a>
       </div>
 
@@ -108,12 +101,6 @@ const today = new Date().toLocaleDateString('en-US', {
           class="inline-block border border-[--color-border] px-5 py-2 rounded font-semibold text-sm hover:border-[--color-accent] transition-colors no-underline"
         >
           {t('ranking.strategy_lib')} &rarr;
-        </a>
-        <a
-          href="/performance"
-          class="inline-block border border-[--color-border] px-5 py-2 rounded font-semibold text-sm hover:border-[--color-accent] transition-colors no-underline"
-        >
-          {t('ranking.live_perf')} &rarr;
         </a>
       </div>
     </div>

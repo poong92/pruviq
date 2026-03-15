@@ -102,14 +102,16 @@ const lastUpdated = new Date().toLocaleDateString('en-US');
         </div>
 
         <!-- TRUST BLOCK -->
-        <div class="mt-6 border border-[--color-border] rounded p-4 bg-[--color-bg-card] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div class="mt-6 border border-[--color-border] rounded p-4 bg-[--color-bg-card] flex flex-wrap gap-6 items-center">
           <div>
             <p class="text-sm font-mono text-[--color-text-muted]">Strategies documented</p>
             <p class="text-xl font-bold text-[--color-accent]">{allStrategies.length} strategies</p>
             <p class="text-xs text-[--color-text-muted]">{t('trust.last_updated').replace('{date}', lastUpdated)}</p>
           </div>
-          <div class="sm:text-right">
-            <a href="/simulate" class="inline-block bg-[--color-accent] text-[--color-bg] px-4 py-2 rounded font-semibold text-sm hover:bg-[--color-accent-dim]">{t('cta.button1')}</a>
+          <div class="border-l border-[--color-border] pl-6">
+            <p class="text-sm font-mono text-[--color-text-muted]">Verified &amp; active</p>
+            <p class="text-xl font-bold text-[--color-up]">{verifiedCount}</p>
+            <p class="text-xs text-[--color-text-muted]">OOS-validated strategies</p>
           </div>
         </div>
       </div>

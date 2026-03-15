@@ -426,24 +426,13 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
           {navItems.map(item => (
             <a href={item.href} aria-current={isActive(item.match) ? "page" : undefined} class="min-h-[44px] flex items-center" style={isActive(item.match) ? 'color:var(--color-accent);font-weight:500' : 'color:var(--color-text-muted)'}>{item.label}</a>
           ))}
-          {/* --- Strategies section --- */}
+          {/* --- Sub-navigation --- */}
           <div class="border-t border-[--color-border] mt-1 pt-2">
-            <p class="font-mono text-[--color-text-muted] text-[10px] uppercase tracking-widest px-1 mb-1 select-none">
-              Strategies
-            </p>
-            <a href={rankingPath} aria-current={isActive('/strategies/ranking') ? "page" : undefined} class="min-h-[44px] flex items-center gap-2 pl-2 rounded hover:bg-[--color-bg-subtle]" style={isActive('/strategies/ranking') ? 'color:var(--color-accent);font-weight:500' : 'color:var(--color-text-muted)'}>
+            <a href={rankingPath} aria-current={isActive('/strategies/ranking') ? "page" : undefined} class="min-h-[44px] flex items-center gap-2 pl-3 rounded hover:bg-[--color-bg-subtle]" style={isActive('/strategies/ranking') ? 'color:var(--color-accent);font-weight:500' : 'color:var(--color-text-muted)'}>
               <span class="inline-block w-1.5 h-1.5 rounded-full bg-[--color-accent] animate-pulse shrink-0"></span>
               {t('nav.ranking')}
             </a>
-            <a href={leaderboardPath} aria-current={isActive('/leaderboard') ? "page" : undefined} class="min-h-[44px] flex items-center pl-[14px] rounded hover:bg-[--color-bg-subtle]" style={isActive('/leaderboard') ? 'color:var(--color-accent);font-weight:500' : 'color:var(--color-text-muted)'}>{t('nav.leaderboard')}</a>
-          </div>
-          {/* --- Resources section --- */}
-          <div class="border-t border-[--color-border] mt-1 pt-2">
-            <p class="font-mono text-[--color-text-muted] text-[10px] uppercase tracking-widest px-1 mb-1 select-none">
-              Resources
-            </p>
-            <a href={methodologyPath} aria-current={isActive('/methodology') ? "page" : undefined} class="min-h-[44px] flex items-center pl-[14px] rounded hover:bg-[--color-bg-subtle]" style={isActive('/methodology') ? 'color:var(--color-accent);font-weight:500' : 'color:var(--color-text-muted)'}>{t('footer.methodology')}</a>
-            <a href={performancePath} aria-current={isActive('/performance') ? "page" : undefined} class="min-h-[44px] flex items-center pl-[14px] rounded hover:bg-[--color-bg-subtle]" style={isActive('/performance') ? 'color:var(--color-accent);font-weight:500' : 'color:var(--color-text-muted)'}>{t('nav.performance')}</a>
+            <a href={leaderboardPath} aria-current={isActive('/leaderboard') ? "page" : undefined} class="min-h-[44px] flex items-center pl-[22px] rounded hover:bg-[--color-bg-subtle]" style={isActive('/leaderboard') ? 'color:var(--color-accent);font-weight:500' : 'color:var(--color-text-muted)'}>{t('nav.leaderboard')}</a>
           </div>
           <div class="border-t border-[--color-border] mt-2 pt-2">
             <a href={altPath} class="font-mono text-xs px-2 py-1 border border-[--color-border] rounded text-[--color-text-muted] w-fit min-h-[44px] flex items-center hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">{t('nav.lang')}</a>
