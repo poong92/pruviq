@@ -3,6 +3,39 @@ import Layout from '../../layouts/Layout.astro';
 import { useTranslations } from '../../i18n/index';
 
 const t = useTranslations('en');
+
+const TOP_COINS = [
+  { symbol: 'BTC', name: 'Bitcoin' },
+  { symbol: 'ETH', name: 'Ethereum' },
+  { symbol: 'BNB', name: 'BNB' },
+  { symbol: 'SOL', name: 'Solana' },
+  { symbol: 'XRP', name: 'XRP' },
+  { symbol: 'DOGE', name: 'Dogecoin' },
+  { symbol: 'ADA', name: 'Cardano' },
+  { symbol: 'AVAX', name: 'Avalanche' },
+  { symbol: 'DOT', name: 'Polkadot' },
+  { symbol: 'LINK', name: 'Chainlink' },
+  { symbol: 'MATIC', name: 'Polygon' },
+  { symbol: 'UNI', name: 'Uniswap' },
+  { symbol: 'ATOM', name: 'Cosmos' },
+  { symbol: 'LTC', name: 'Litecoin' },
+  { symbol: 'FIL', name: 'Filecoin' },
+  { symbol: 'APT', name: 'Aptos' },
+  { symbol: 'ARB', name: 'Arbitrum' },
+  { symbol: 'OP', name: 'Optimism' },
+  { symbol: 'NEAR', name: 'NEAR Protocol' },
+  { symbol: 'SUI', name: 'Sui' },
+  { symbol: 'AAVE', name: 'Aave' },
+  { symbol: 'INJ', name: 'Injective' },
+  { symbol: 'TIA', name: 'Celestia' },
+  { symbol: 'SEI', name: 'Sei' },
+  { symbol: 'PEPE', name: 'Pepe' },
+  { symbol: 'WIF', name: 'dogwifhat' },
+  { symbol: 'RENDER', name: 'Render' },
+  { symbol: 'FET', name: 'Fetch.ai' },
+  { symbol: 'RUNE', name: 'THORChain' },
+  { symbol: 'IMX', name: 'Immutable X' },
+];
 ---
 
 <Layout title={t('meta.coins_title')} description={t('meta.coins_desc')}>
@@ -25,6 +58,20 @@ const t = useTranslations('en');
             <div class="h-12 bg-[--color-bg-hover] rounded"></div>
           </div>
         </div>
+        <noscript>
+          <p class="text-sm text-[--color-text-muted] py-4">
+            Real-time data requires JavaScript. Browse individual coins:
+          </p>
+          <ul class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            {TOP_COINS.map(c => (
+              <li>
+                <a href={`/coins/${c.symbol.toLowerCase()}usdt`} class="text-[--color-accent] hover:underline text-sm">
+                  {c.name} ({c.symbol})
+                </a>
+              </li>
+            ))}
+          </ul>
+        </noscript>
       </div>
       <div class="mt-10 pt-8 border-t border-[--color-border] text-center">
         <p class="text-[--color-text-muted] text-sm mb-4">{t('coins.explore_next')}</p>

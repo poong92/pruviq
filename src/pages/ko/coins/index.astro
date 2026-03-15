@@ -3,6 +3,39 @@ import Layout from '../../../layouts/Layout.astro';
 import { useTranslations } from '../../../i18n/index';
 
 const t = useTranslations('ko');
+
+const TOP_COINS = [
+  { symbol: 'BTC', name: '비트코인' },
+  { symbol: 'ETH', name: '이더리움' },
+  { symbol: 'BNB', name: 'BNB' },
+  { symbol: 'SOL', name: '솔라나' },
+  { symbol: 'XRP', name: 'XRP' },
+  { symbol: 'DOGE', name: '도지코인' },
+  { symbol: 'ADA', name: '카르다노' },
+  { symbol: 'AVAX', name: '아발란체' },
+  { symbol: 'DOT', name: '폴카닷' },
+  { symbol: 'LINK', name: '체인링크' },
+  { symbol: 'MATIC', name: '폴리곤' },
+  { symbol: 'UNI', name: '유니스왑' },
+  { symbol: 'ATOM', name: '코스모스' },
+  { symbol: 'LTC', name: '라이트코인' },
+  { symbol: 'FIL', name: '파일코인' },
+  { symbol: 'APT', name: '앱토스' },
+  { symbol: 'ARB', name: '아비트럼' },
+  { symbol: 'OP', name: '옵티미즘' },
+  { symbol: 'NEAR', name: '니어 프로토콜' },
+  { symbol: 'SUI', name: '수이' },
+  { symbol: 'AAVE', name: '에이브' },
+  { symbol: 'INJ', name: '인젝티브' },
+  { symbol: 'TIA', name: '셀레스티아' },
+  { symbol: 'SEI', name: '세이' },
+  { symbol: 'PEPE', name: '페페' },
+  { symbol: 'WIF', name: 'dogwifhat' },
+  { symbol: 'RENDER', name: '렌더' },
+  { symbol: 'FET', name: 'Fetch.ai' },
+  { symbol: 'RUNE', name: '토르체인' },
+  { symbol: 'IMX', name: '이뮤터블 X' },
+];
 ---
 
 <Layout title={t('meta.coins_title')} description={t('meta.coins_desc')}>
@@ -25,6 +58,20 @@ const t = useTranslations('ko');
             <div class="h-12 bg-[--color-bg-hover] rounded"></div>
           </div>
         </div>
+        <noscript>
+          <p class="text-sm text-[--color-text-muted] py-4">
+            실시간 데이터는 JavaScript가 필요합니다. 개별 코인을 확인하세요:
+          </p>
+          <ul class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            {TOP_COINS.map(c => (
+              <li>
+                <a href={`/ko/coins/${c.symbol.toLowerCase()}usdt`} class="text-[--color-accent] hover:underline text-sm">
+                  {c.name} ({c.symbol})
+                </a>
+              </li>
+            ))}
+          </ul>
+        </noscript>
       </div>
       <div class="mt-10 pt-8 border-t border-[--color-border] text-center">
         <p class="text-[--color-text-muted] text-sm mb-4">{t('coins.explore_next')}</p>
