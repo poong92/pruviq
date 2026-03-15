@@ -4,7 +4,7 @@ import { test, expect, type Page } from "@playwright/test";
  * Nav Highlight / Active State Tests
  *
  * Regression coverage for:
- * - New menu items (ranking, leaderboard, methodology, performance) missing
+ * - New menu items (ranking, leaderboard) missing
  *   aria-current="page" and accent-color highlight on desktop + mobile
  * - /strategies/ranking: strategies item must be active on desktop nav;
  *   ranking item must be active in mobile menu
@@ -146,16 +146,6 @@ test.describe("Mobile menu: aria-current reflects current route", () => {
       path: "/leaderboard",
       expectedActive: "/leaderboard",
       label: "leaderboard (mobile-only extra item)",
-    },
-    {
-      path: "/methodology",
-      expectedActive: "/methodology",
-      label: "methodology (mobile-only extra item)",
-    },
-    {
-      path: "/performance",
-      expectedActive: "/performance",
-      label: "performance (mobile-only extra item)",
     },
     { path: "/fees", expectedActive: "/fees", label: "fees" },
   ];
