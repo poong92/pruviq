@@ -7,6 +7,7 @@ on:
 permissions:
   contents: read
   pull-requests: write
+  issues: write
 
 jobs:
   e2e:
@@ -83,35 +84,122 @@ jobs:
         retention-days: 1
         if-no-files-found: ignore
 
-    - name: Post failure feedback to PR
+    - name: Extract failing test names
+      if: failure() && github.event_name == 'pull_request'
+      id: failing_tests
+      run: |
+        # Parse Playwright JSON results for failing test names
+        FAILING=""
+        if [ -f playwright-report/results.json ]; then
+          FAILING=$(node -e "
+            const r = require('./playwright-report/results.json');
+            const fails = [];
+            (r.suites || []).forEach(s => {
+              (s.specs || []).forEach(sp => {
+                if (sp.tests && sp.tests.some(t => t.status !== 'expected')) {
+                  fails.push((s.title ? s.title + ' > ' : '') + sp.title);
+                }
+              });
+            });
+            console.log(fails.slice(0, 20).join('\n'));
+          " 2>/dev/null || echo "(could not parse results)")
+        fi
+        echo "FAILING_TESTS<<EOF" >> "$GITHUB_OUTPUT"
+        echo "$FAILING" >> "$GITHUB_OUTPUT"
+        echo "EOF" >> "$GITHUB_OUTPUT"
+
+    - name: Create or update e2e-fix issue
       if: failure() && github.event_name == 'pull_request'
       uses: actions/github-script@v7
       with:
         script: |
-          const fs = require('fs');
           const prNumber = context.payload.pull_request.number;
           const branch = context.payload.pull_request.head.ref;
           const runUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+          const failingTests = `${{ steps.failing_tests.outputs.FAILING_TESTS }}` || '(see CI log)';
+          const prTitle = context.payload.pull_request.title;
 
-          // Check retry count from existing comments
-          const comments = await github.rest.issues.listComments({
+          // Ensure labels exist
+          const labelDefs = [
+            { name: 'e2e-fix', color: 'e11d48', description: 'E2E test failure — auto-fix eligible' },
+            { name: 'claude-auto', color: '6366f1', description: 'Auto-fix by JEPO Claude agent' },
+          ];
+          for (const label of labelDefs) {
+            try {
+              await github.rest.issues.getLabel({
+                owner: context.repo.owner, repo: context.repo.repo, name: label.name
+              });
+            } catch {
+              await github.rest.issues.createLabel({
+                owner: context.repo.owner, repo: context.repo.repo, ...label
+              }).catch(() => {});
+            }
+          }
+
+          // Check if an open e2e-fix issue already exists for this branch
+          const existing = await github.rest.issues.listForRepo({
             owner: context.repo.owner,
             repo: context.repo.repo,
-            issue_number: prNumber,
+            labels: 'e2e-fix',
+            state: 'open',
           });
-          const botFailComments = comments.data.filter(c =>
-            c.body && c.body.includes('[E2E-AUTOFIX]')
+          const matchingIssue = existing.data.find(i =>
+            i.title.includes(`PR #${prNumber}`) || i.body?.includes(`Branch: \`${branch}\``)
           );
-          const retryCount = botFailComments.length + 1;
 
-          // Note: auto-close disabled — retryCount tracked for info only
-          const body = `[E2E-AUTOFIX] Attempt #${retryCount} — E2E tests failed.\n\nBranch: \`${branch}\`\nRun: ${runUrl}\n\nCheck the [workflow log](${runUrl}) for details.`;
+          const issueBody = `## E2E Test Failure
 
+**PR:** #${prNumber} — ${prTitle}
+**Branch:** \`${branch}\`
+**Run:** https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}
+
+## Failing Tests
+\`\`\`
+${failingTests}
+\`\`\`
+
+## Instructions for Auto-Fix
+1. Read the failing test spec in \`tests/e2e/\`
+2. Fetch CI log: \`gh run view ${context.runId} --repo ${context.repo.owner}/${context.repo.repo} --log-failed\`
+3. Identify root cause (wrong selector, missing i18n key, wrong route, timing)
+4. Make minimal fix in source files (NOT in test specs unless test is fundamentally wrong)
+5. Create PR targeting \`main\`
+
+*Auto-created by E2E CI — JEPO e2e-autofix agent will process within 10 minutes.*`;
+
+          if (matchingIssue) {
+            // Add a comment to the existing issue with new run info
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: matchingIssue.number,
+              body: `[E2E-AUTOFIX] New failure on same branch.\nRun: ${runUrl}\n\nFailing tests:\n\`\`\`\n${failingTests}\n\`\`\``,
+            });
+            // Remove in-progress label if present (allows re-processing)
+            await github.rest.issues.removeLabel({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: matchingIssue.number,
+              name: 'in-progress',
+            }).catch(() => {});
+            console.log(`Updated existing issue #${matchingIssue.number}`);
+          } else {
+            const issue = await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `[e2e-fix] E2E failed on PR #${prNumber} (${branch})`,
+              body: issueBody,
+              labels: ['e2e-fix', 'claude-auto'],
+            });
+            console.log(`Created issue #${issue.data.number}: ${issue.data.html_url}`);
+          }
+
+          // Also post a quick comment on the PR linking to the issue
           await github.rest.issues.createComment({
             owner: context.repo.owner,
             repo: context.repo.repo,
             issue_number: prNumber,
-            body: body,
+            body: `[E2E-AUTOFIX] Tests failed. JEPO auto-fix agent will analyze and create a fix PR within 10 minutes.\n\nRun: ${runUrl}`,
           });
 
     - name: Notify failure via Telegram
