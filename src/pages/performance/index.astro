@@ -104,7 +104,13 @@ const t = useTranslations('en');
               <td class="p-3 text-right font-mono">50.0%</td>
             </tr>
             <tr class="border-b border-[--color-border]">
-              <td class="p-3">{t('perf.tbl_mdd')}</td>
+              <td class="p-3">
+                {t('perf.tbl_mdd')}
+                <span
+                  class="ml-1 text-[0.65rem] text-[--color-text-muted] cursor-help"
+                  title="portfolio-level backtest; live trading stopped at 20% MDD per risk rules"
+                >&#9432;</span>
+              </td>
               <td class="p-3 text-right font-mono text-[--color-red]">33%</td>
             </tr>
             <tr class="border-b border-[--color-border]">

@@ -3,6 +3,10 @@ import Layout from '../layouts/Layout.astro';
 import FeeCalculator from '../components/FeeCalculator';
 import { useTranslations } from '../i18n/index';
 import { exchanges, formatFeeRange } from '../data/exchanges';
+import { EXCHANGES, discountTooltip } from '../config/exchanges';
+
+// Build a lookup map for tooltip data keyed by exchange id
+const exchangeTooltips = Object.fromEntries(EXCHANGES.map((ex) => [ex.id, discountTooltip(ex)]));
 
 const t = useTranslations('en');
 
@@ -71,7 +75,10 @@ const exchangeCards: Record<string, { tagLabel: string; description: string }> =
                 </div>
                 <div class="flex justify-between border-t border-[--color-border] pt-2 mt-2">
                   <span class="text-[--color-accent] font-medium">{t('fees.pruviq_discount')}</span>
-                  <span class="font-mono font-bold text-[--color-accent]">{ex.discountLabel} {t('fees.discount_off')}</span>
+                  <span
+                    class="font-mono font-bold text-[--color-accent] cursor-help underline decoration-dotted"
+                    title={exchangeTooltips[ex.id]}
+                  >{ex.discountLabel} {t('fees.discount_off')}</span>
                 </div>
               </div>
               <p class="text-[--color-text-muted] text-xs mb-4">{card.description}</p>
