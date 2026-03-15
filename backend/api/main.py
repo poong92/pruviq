@@ -3309,8 +3309,11 @@ async def get_daily_rankings(date: Optional[str] = None):
                 "strategy": meta.get("strategy", ""),
                 "direction": meta.get("direction", ""),
                 "win_rate": round(item["avg_wr"], 2),
-                "profit_factor": round(item["avg_pf"], 2),
+                "profit_factor": min(round(item["avg_pf"], 2), 99.99),  # cap sentinel/low-sample extremes
+                "total_return": round(meta.get("total_return", 0), 2),
                 "total_trades": trades,
+                "sharpe": round(meta.get("sharpe", 0), 2),
+                "max_drawdown": round(meta.get("max_drawdown", 0), 2),
                 "timeframe": meta.get("timeframe", "1H"),
                 "days_in_top": item["days"],
                 "low_sample": trades < 100,
