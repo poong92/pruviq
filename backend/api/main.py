@@ -426,12 +426,12 @@ def filter_df_by_date(df: pd.DataFrame, start_date=None, end_date=None) -> pd.Da
         try:
             mask &= ts >= pd.Timestamp(start_date)
         except ValueError:
-            pass
+            raise HTTPException(400, f"Invalid start_date '{start_date}'. Use YYYY-MM-DD format.")
     if end_date:
         try:
             mask &= ts <= pd.Timestamp(end_date) + pd.Timedelta(days=1)
         except ValueError:
-            pass
+            raise HTTPException(400, f"Invalid end_date '{end_date}'. Use YYYY-MM-DD format.")
     filtered = df[mask].copy()
     if len(filtered) < 100:
         logger.warning(
