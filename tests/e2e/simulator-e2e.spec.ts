@@ -19,13 +19,20 @@ const skipInCI = !!process.env.CI;
 
 // ─── Helpers ──────────────────────────────────────────────────
 
-/** Opens simulator and waits for Preact hydration (lands on Quick Test by default) */
+/** Opens simulator and waits for Preact hydration (lands on Quick Test by default).
+ *  Uses event-based waits instead of hardcoded timeouts — reliable on slow CI runners. */
 async function openSimulator(page: Page) {
   await page.goto("/simulate/", { waitUntil: "networkidle" });
 
-  // Wait for Preact hydration — ModeSwitcher tabs appear in all modes
-  await page.waitForSelector('[role="tablist"]', { timeout: 20000 });
-  await page.waitForTimeout(1500);
+  // Wait for ModeSwitcher to fully hydrate: tablist exists AND all 3 tabs are visible.
+  // waitForTimeout(1500) was too short on slow GitHub runners (hydration takes 3-5s).
+  await page.waitForFunction(
+    () => {
+      const tabs = document.querySelectorAll('[role="tab"]');
+      return tabs.length >= 3;
+    },
+    { timeout: 20000 },
+  );
 }
 
 /** Switches to Expert mode (STRATEGY BUILDER) — call after openSimulator */
@@ -34,8 +41,8 @@ async function switchToExpert(page: Page) {
     .locator('[role="tab"]')
     .filter({ hasText: /Expert|엑스퍼트/i });
   if ((await expertTab.count()) > 0) {
+    await expertTab.first().waitFor({ state: "visible", timeout: 5000 });
     await expertTab.first().click();
-    await page.waitForTimeout(500);
   }
 
   // On mobile, the config panel may be behind a tab
@@ -43,15 +50,14 @@ async function switchToExpert(page: Page) {
     .locator("button")
     .filter({ hasText: /Config|config|설정|Strategy/i });
   if ((await mobileConfigTab.count()) > 0) {
+    await mobileConfigTab.first().waitFor({ state: "visible", timeout: 3000 });
     await mobileConfigTab.first().click();
-    await page.waitForTimeout(500);
   }
 
-  // Wait for STRATEGY BUILDER header (Expert mode only)
+  // Wait for STRATEGY BUILDER header — confirms Expert panel is mounted
   await page.waitForSelector("text=/STRATEGY BUILDER|전략 빌더/i", {
-    timeout: 10000,
+    timeout: 15000,
   });
-  await page.waitForTimeout(500);
 }
 
 /** Run backtest and wait for results. Returns true if results appeared. */
@@ -68,11 +74,20 @@ async function runBacktestAndWait(page: Page): Promise<boolean> {
   try {
     await page.waitForSelector(
       'button:has-text("SUMMARY"), button:has-text("요약")',
-      {
-        timeout: 100000,
-      },
+      { timeout: 100000 },
     );
-    await page.waitForTimeout(1000); // settle
+    // Wait for result metrics to actually render (not just tab label)
+    await page
+      .waitForFunction(
+        () => {
+          const els = document.querySelectorAll(
+            '[data-result], .result-value, [class*="metric"]',
+          );
+          return els.length > 0 || document.body.innerText.includes("%");
+        },
+        { timeout: 10000 },
+      )
+      .catch(() => null); // non-fatal — SUMMARY tab appearing is sufficient signal
     return true;
   } catch {
     return false;
