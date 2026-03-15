@@ -137,26 +137,29 @@ jobs:
             i.title.includes(`PR #${prNumber}`) || i.body?.includes(`Branch: \`${branch}\``)
           );
 
-          const issueBody = `## E2E Test Failure (Self-hosted Mac Mini)
-
-**PR:** #${prNumber} — ${prTitle}
-**Branch:** \`${branch}\`
-**Run:** ${runUrl}
-**Runner:** self-hosted macOS arm64 — 로컬과 동일 환경, 재현 가능
-
-## Failing Tests
-\`\`\`
-${failingTests}
-\`\`\`
-
-## 재현 방법
-\`\`\`bash
-cd ~/pruviq && git fetch origin && git checkout ${branch}
-npm ci && npm run build
-npx playwright test tests/e2e/ --timeout 60000 --workers 2
-\`\`\`
-
-*JEPO e2e-autofix agent가 20분 이내 재현 → 수정 → 검증 → PR 생성합니다.*`;
+          const bold = (s) => `**${s}**`;
+          const issueBody = [
+            '## E2E Test Failure (Self-hosted Mac Mini)',
+            '',
+            `${bold('PR:')} #${prNumber} — ${prTitle}`,
+            `${bold('Branch:')} \`${branch}\``,
+            `${bold('Run:')} ${runUrl}`,
+            `${bold('Runner:')} self-hosted macOS arm64 — 로컬과 동일 환경, 재현 가능`,
+            '',
+            '## Failing Tests',
+            '```',
+            failingTests,
+            '```',
+            '',
+            '## 재현 방법',
+            '```bash',
+            `cd ~/pruviq && git fetch origin && git checkout ${branch}`,
+            'npm ci && npm run build',
+            'npx playwright test tests/e2e/ --timeout 60000 --workers 2',
+            '```',
+            '',
+            '*JEPO e2e-autofix agent가 20분 이내 재현 → 수정 → 검증 → PR 생성합니다.*',
+          ].join('\n');
 
           if (matchingIssue) {
             await github.rest.issues.createComment({
