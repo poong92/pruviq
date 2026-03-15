@@ -239,6 +239,10 @@ export const en = {
   "strategy.leverage_warning_title": "Leverage Risk",
   "strategy.leverage_warning":
     "All results are simulated with 5x leverage. A 26.7% max drawdown at 5x means your actual capital drawdown could reach ~5.3% per position. Higher leverage amplifies both gains and losses. Never use leverage you cannot afford to lose.",
+  "strategy.research_warning":
+    "Research status — Not yet OOS-validated. Do not use for live trading.",
+  "strategy.verified_badge": "Verified Strategy",
+  "strategy.oos_label": "OOS-validated",
   "strategy.wr_desc": "Percentage of trades that were profitable",
   "strategy.pf_desc": "Gross profit / gross loss ratio",
   "strategy.pnl_desc": "Net profit after all fees and losses",

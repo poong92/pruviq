@@ -67,8 +67,7 @@ const statusLabels: Record<string, string> = {
         <div class="mb-6 flex items-start gap-3 border border-[--color-yellow]/40 rounded-lg px-4 py-3 bg-[--color-yellow]/5">
           <span class="text-[--color-yellow] font-bold text-base shrink-0 mt-0.5">&#9888;</span>
           <div>
-            <p class="font-mono text-xs font-bold text-[--color-yellow] mb-0.5">Research status &mdash; Not yet OOS-validated. Do not use for live trading.</p>
-            <p class="font-mono text-xs text-[--color-yellow]/70">연구 단계 &mdash; OOS 검증 미완료. 실거래 사용 비권장.</p>
+            <p class="font-mono text-xs font-bold text-[--color-yellow] mb-0.5">{t('strategy.research_warning')}</p>
           </div>
         </div>
       )}
@@ -77,8 +76,8 @@ const statusLabels: Record<string, string> = {
       {strategy.data.status === 'verified' && (
         <div class="mb-6 flex items-center gap-2 border border-[--color-accent]/40 rounded-lg px-4 py-2.5 bg-[--color-accent]/5 w-fit">
           <span class="text-[--color-accent] font-bold">&#10003;</span>
-          <span class="font-mono text-xs font-bold text-[--color-accent]">Verified Strategy</span>
-          <span class="font-mono text-xs text-[--color-accent]/60">&mdash; OOS-validated</span>
+          <span class="font-mono text-xs font-bold text-[--color-accent]">{t('strategy.verified_badge')}</span>
+          <span class="font-mono text-xs text-[--color-accent]/60">&mdash; {t('strategy.oos_label')}</span>
         </div>
       )}
 

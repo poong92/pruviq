@@ -240,6 +240,10 @@ export const ko: Record<TranslationKey, string> = {
   "strategy.leverage_warning_title": "레버리지 위험",
   "strategy.leverage_warning":
     "모든 결과는 5배 레버리지로 시뮬레이션되었습니다. 최대 드로다운 26.7%는 5배 기준으로 실제 자본 손실은 포지션당 ~5.3%입니다. 높은 레버리지는 수익과 손실 모두를 증폭시킵니다. 감당할 수 없는 레버리지를 사용하지 마세요.",
+  "strategy.research_warning":
+    "연구 단계 — OOS 검증 미완료. 실거래 사용 비권장.",
+  "strategy.verified_badge": "검증된 전략",
+  "strategy.oos_label": "OOS 검증 완료",
   "strategy.wr_desc": "수익이 난 거래의 비율",
   "strategy.pf_desc": "총 수익 / 총 손실 비율",
   "strategy.pnl_desc": "모든 수수료와 손실 차감 후 순수익",
