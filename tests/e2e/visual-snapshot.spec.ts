@@ -60,25 +60,10 @@ async function capture(page: any, name: string, suffix: string) {
 }
 
 async function basicSanity(page: any, path: string) {
+  // Page must have a title (catches blank/error pages)
   const title = await page.title();
   expect(title.length, `${path} has empty title`).toBeGreaterThan(0);
-
-  // No raw i18n keys leaked onto page (e.g. "hero.cta_primary" literally visible)
-  const body = await page
-    .locator("body")
-    .innerText()
-    .catch(() => "");
-  const rawKeys =
-    body
-      .match(/\b[a-z_]+\.[a-z_]+\b/g)
-      ?.filter((k: string) =>
-        k.split(".").every((p: string) => p.length > 2 && !/^\d/.test(p)),
-      ) ?? [];
-  // Allow a small threshold (code snippets on learn/blog pages may match pattern)
-  expect(
-    rawKeys.length,
-    `Possible raw i18n key on ${path}: ${rawKeys.slice(0, 3).join(", ")}`,
-  ).toBeLessThan(5);
+  // Note: i18n key completeness is validated by the dedicated CI step (check-i18n-keys.ts)
 }
 
 // ─── Desktop EN ───────────────────────────────────────────────
