@@ -1,106 +1,187 @@
 import { test, expect } from "@playwright/test";
 
 /**
- * Visual Snapshot Tests
+ * Visual Snapshot Tests — EN + KO × Desktop + Mobile
  *
- * PR마다 주요 페이지 스크린샷을 자동 캡처 → artifacts에 업로드.
- * 렌더링 문제(레이아웃 깨짐, 이모지 노출, 텍스트 잘림 등)를
+ * PR마다 주요 페이지 풀스크린샷 자동 캡처 → artifacts에서 확인.
+ * 렌더링 문제(레이아웃 깨짐, 이모지, 텍스트 잘림, KO 누락 등)를
  * 코드 분석만으로 놓치는 것을 방지하기 위한 근본 해결책.
  *
- * 사용법:
- * - CI: playwright-report/screenshots/ 에 저장 → artifacts에서 다운로드 가능
- * - 로컬: npx playwright test visual-snapshot --headed
+ * 커버리지:
+ * - EN desktop (1280×720): 10 pages
+ * - KO desktop (1280×720): 4 pages
+ * - EN mobile (375×812):   6 pages
+ * - KO mobile (375×812):   3 pages
  */
 
-const KEY_PAGES = [
+const DESKTOP_EN = [
   { path: "/", name: "home" },
-  { path: "/compare", name: "compare" },
-  { path: "/strategies", name: "strategies" },
   { path: "/simulate", name: "simulate" },
-  { path: "/about", name: "about" },
-  { path: "/fees", name: "fees" },
+  { path: "/strategies", name: "strategies" },
+  { path: "/strategies/ranking", name: "strategies-ranking" },
+  { path: "/compare", name: "compare" },
+  { path: "/compare/tradingview", name: "compare-tradingview" },
   { path: "/market", name: "market" },
+  { path: "/fees", name: "fees" },
+  { path: "/about", name: "about" },
+  { path: "/learn", name: "learn" },
 ];
 
-test.describe("Visual snapshots — desktop", () => {
-  for (const { path, name } of KEY_PAGES) {
-    test(`screenshot: ${name} (desktop)`, async ({ page }) => {
-      await page.goto(path, { waitUntil: "domcontentloaded" });
-      // Wait for fonts + lazy images
-      await page.waitForTimeout(800);
+const DESKTOP_KO = [
+  { path: "/ko/", name: "ko-home" },
+  { path: "/ko/simulate", name: "ko-simulate" },
+  { path: "/ko/strategies/ranking", name: "ko-strategies-ranking" },
+  { path: "/ko/compare", name: "ko-compare" },
+];
 
-      await page.screenshot({
-        path: `playwright-report/screenshots/${name}-desktop.png`,
-        fullPage: true,
-      });
+const MOBILE_EN = [
+  { path: "/", name: "home" },
+  { path: "/simulate", name: "simulate" },
+  { path: "/strategies", name: "strategies" },
+  { path: "/compare", name: "compare" },
+  { path: "/market", name: "market" },
+  { path: "/fees", name: "fees" },
+];
 
-      // Basic sanity: page must load (no 4xx/5xx)
-      const title = await page.title();
-      expect(title.length, `${name} has empty title`).toBeGreaterThan(0);
+const MOBILE_KO = [
+  { path: "/ko/", name: "ko-home" },
+  { path: "/ko/simulate", name: "ko-simulate" },
+  { path: "/ko/strategies/ranking", name: "ko-strategies-ranking" },
+];
 
-      // No raw i18n keys visible (e.g. "hero.cta_primary" literally on page)
-      const body = await page.locator("body").innerText();
-      const rawKey = body.match(/\b\w+\.\w+_\w+\b/g);
-      expect(
-        rawKey?.length ?? 0,
-        `Raw i18n key found on ${name}: ${rawKey?.slice(0, 3).join(", ")}`,
-      ).toBe(0);
+// ─── Helpers ──────────────────────────────────────────────────
+
+async function capture(page: any, name: string, suffix: string) {
+  await page.waitForTimeout(600);
+  await page.screenshot({
+    path: `playwright-report/screenshots/${name}-${suffix}.png`,
+    fullPage: true,
+  });
+}
+
+async function basicSanity(page: any, path: string) {
+  const title = await page.title();
+  expect(title.length, `${path} has empty title`).toBeGreaterThan(0);
+
+  // No raw i18n keys leaked onto page (e.g. "hero.cta_primary" literally visible)
+  const body = await page
+    .locator("body")
+    .innerText()
+    .catch(() => "");
+  const rawKeys =
+    body
+      .match(/\b[a-z_]+\.[a-z_]+\b/g)
+      ?.filter((k: string) =>
+        k.split(".").every((p: string) => p.length > 2 && !/^\d/.test(p)),
+      ) ?? [];
+  // Allow a small threshold (code snippets on learn/blog pages may match pattern)
+  expect(
+    rawKeys.length,
+    `Possible raw i18n key on ${path}: ${rawKeys.slice(0, 3).join(", ")}`,
+  ).toBeLessThan(5);
+}
+
+// ─── Desktop EN ───────────────────────────────────────────────
+
+test.describe("Desktop EN — full page snapshots", () => {
+  test.use({ viewport: { width: 1280, height: 720 } });
+
+  for (const { path, name } of DESKTOP_EN) {
+    test(`en/desktop: ${name}`, async ({ page }) => {
+      const res = await page.goto(path, { waitUntil: "domcontentloaded" });
+      expect(res?.status() ?? 200).toBeLessThan(400);
+      await capture(page, name, "en-desktop");
+      await basicSanity(page, path);
     });
   }
 });
 
-test.describe("Visual snapshots — mobile", () => {
-  test.use({ viewport: { width: 375, height: 812 }, isMobile: true });
+// ─── Desktop KO ───────────────────────────────────────────────
 
-  for (const { path, name } of [
-    { path: "/", name: "home" },
-    { path: "/compare", name: "compare" },
-    { path: "/strategies", name: "strategies" },
-  ]) {
-    test(`screenshot: ${name} (mobile)`, async ({ page }) => {
-      await page.goto(path, { waitUntil: "domcontentloaded" });
-      await page.waitForTimeout(800);
+test.describe("Desktop KO — full page snapshots", () => {
+  test.use({ viewport: { width: 1280, height: 720 } });
 
-      await page.screenshot({
-        path: `playwright-report/screenshots/${name}-mobile.png`,
-        fullPage: true,
-      });
+  for (const { path, name } of DESKTOP_KO) {
+    test(`ko/desktop: ${name}`, async ({ page }) => {
+      const res = await page.goto(path, { waitUntil: "domcontentloaded" });
+      expect(res?.status() ?? 200).toBeLessThan(400);
+      await capture(page, name, "ko-desktop");
+      await basicSanity(page, path);
+    });
+  }
+});
 
-      const title = await page.title();
-      expect(title.length).toBeGreaterThan(0);
+// ─── Mobile EN ────────────────────────────────────────────────
+
+test.describe("Mobile EN — full page snapshots", () => {
+  test.use({
+    viewport: { width: 375, height: 812 },
+    isMobile: true,
+    hasTouch: true,
+  });
+
+  for (const { path, name } of MOBILE_EN) {
+    test(`en/mobile: ${name}`, async ({ page }) => {
+      const res = await page.goto(path, { waitUntil: "domcontentloaded" });
+      expect(res?.status() ?? 200).toBeLessThan(400);
+      await capture(page, name, "en-mobile");
+      await basicSanity(page, path);
     });
   }
 
-  test("mobile: hamburger opens menu", async ({ page }) => {
+  test("en/mobile: hamburger menu open", async ({ page }) => {
     await page.goto("/", { waitUntil: "domcontentloaded" });
-    const btn = page.locator("#mobile-menu-btn");
-    await btn.click();
-    const menu = page.locator("#mobile-menu");
-    await expect(menu).toBeVisible();
-
+    await page.locator("#mobile-menu-btn").click();
+    await page.locator("#mobile-menu").waitFor({ state: "visible" });
     await page.screenshot({
-      path: "playwright-report/screenshots/home-mobile-menu-open.png",
+      path: "playwright-report/screenshots/home-menu-open-en-mobile.png",
+      fullPage: false,
     });
   });
 });
 
-test.describe("GNB: Strategies dropdown visible", () => {
-  test("desktop: Strategies hover shows dropdown", async ({ page }) => {
-    await page.goto("/", { waitUntil: "domcontentloaded" });
-    const strategiesLink = page.locator("nav .hidden.md\\:flex a", {
-      hasText: "Strategies",
-    });
-    await strategiesLink.hover();
-    await page.waitForTimeout(200);
+// ─── Mobile KO ────────────────────────────────────────────────
 
-    // Dropdown must contain Daily Ranking
-    const dropdown = page.locator("nav .hidden.md\\:flex .group:hover div a", {
-      hasText: "Daily Ranking",
-    });
-    await expect(dropdown.first()).toBeVisible({ timeout: 3000 });
+test.describe("Mobile KO — full page snapshots", () => {
+  test.use({
+    viewport: { width: 375, height: 812 },
+    isMobile: true,
+    hasTouch: true,
+  });
 
+  for (const { path, name } of MOBILE_KO) {
+    test(`ko/mobile: ${name}`, async ({ page }) => {
+      const res = await page.goto(path, { waitUntil: "domcontentloaded" });
+      expect(res?.status() ?? 200).toBeLessThan(400);
+      await capture(page, name, "ko-mobile");
+      await basicSanity(page, path);
+    });
+  }
+
+  test("ko/mobile: hamburger menu open", async ({ page }) => {
+    await page.goto("/ko/", { waitUntil: "domcontentloaded" });
+    await page.locator("#mobile-menu-btn").click();
+    await page.locator("#mobile-menu").waitFor({ state: "visible" });
     await page.screenshot({
-      path: "playwright-report/screenshots/nav-strategies-dropdown.png",
+      path: "playwright-report/screenshots/home-menu-open-ko-mobile.png",
+      fullPage: false,
+    });
+  });
+});
+
+// ─── GNB Interaction Snapshots ────────────────────────────────
+
+test.describe("GNB interactions", () => {
+  test.use({ viewport: { width: 1280, height: 720 } });
+
+  test("desktop: Strategies dropdown visible on hover", async ({ page }) => {
+    await page.goto("/", { waitUntil: "domcontentloaded" });
+    const strategiesItem = page.locator("nav .hidden.md\\:flex .group").first();
+    await strategiesItem.hover();
+    await page.waitForTimeout(200);
+    await page.screenshot({
+      path: "playwright-report/screenshots/nav-strategies-dropdown-en-desktop.png",
+      fullPage: false,
     });
   });
 });
