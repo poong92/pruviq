@@ -2,9 +2,12 @@
 import Layout from '../../../layouts/Layout.astro';
 import { useTranslations } from '../../../i18n/index';
 import presetsJson from '../../../../public/data/builder-presets.json';
+import siteStats from '../../../../public/data/site-stats.json';
 
 const t = useTranslations('ko');
 const presetCount = (presetsJson as Array<unknown>).length;
+const simulationsRun = (siteStats as { simulations_run: number }).simulations_run.toLocaleString('ko-KR');
+const coinsAnalyzed = (siteStats as { coins_analyzed: number }).coins_analyzed;
 ---
 
 <Layout title={t('meta.simulate_title')} description={t('meta.simulate_desc')}>
@@ -35,12 +38,12 @@ const presetCount = (presetsJson as Array<unknown>).length;
       <!-- Social proof counters -->
       <div class="flex flex-wrap gap-4 mb-4 font-mono text-sm">
         <span class="flex items-center gap-1.5 text-[--color-text-muted]">
-          <span class="text-[--color-accent] font-bold">12,847</span>
+          <span class="text-[--color-accent] font-bold">{simulationsRun}</span>
           회 시뮬레이션 실행
         </span>
         <span class="text-[--color-border]">·</span>
         <span class="flex items-center gap-1.5 text-[--color-text-muted]">
-          <span class="text-[--color-accent] font-bold">549</span>
+          <span class="text-[--color-accent] font-bold">{coinsAnalyzed}</span>
           코인 분석
         </span>
         <span class="text-[--color-border]">·</span>
