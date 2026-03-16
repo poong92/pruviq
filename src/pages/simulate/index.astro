@@ -117,6 +117,19 @@ const presetCount = (presetsJson as Array<unknown>).length;
     </div>
   </section>
 
+  <noscript>
+    <section class="max-w-2xl mx-auto px-4 py-12 text-center">
+      <h2 class="text-xl font-semibold mb-4">Strategy Backtesting Simulator</h2>
+      <p class="text-[--color-text-muted] mb-6">
+        The interactive simulator requires JavaScript. Try a verified preset strategy:
+      </p>
+      <ul class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-left">
+        <li><a href="/simulate?preset=bb-squeeze-short" class="text-[--color-accent] hover:underline">BB Squeeze SHORT</a></li>
+        <li><a href="/strategies/" class="text-[--color-accent] hover:underline">Browse all strategies</a></li>
+      </ul>
+    </section>
+  </noscript>
+
   <div id="onboarding-tour-mount"></div>
 
   <script>

@@ -24,11 +24,11 @@ export default defineConfig({
         }
       },
       filter(page) {
-        return !page.includes('/learn/') && !page.includes('/demo/') && !page.includes('/builder/');
+        return !(/\/learn\/.+/.test(page)) && !page.includes('/demo/') && !page.includes('/builder/');
       },
       serialize(item) {
         if (!item || !item.url) return item;
-        if (item.url.includes('/learn/')) return undefined;
+        if (/\/learn\/.+/.test(item.url)) return undefined;
         if (item.url.includes('/demo/')) return undefined;
         if (item.url.includes('/builder/')) return undefined;
         if (item.url.includes('/ko/404/')) return undefined;
