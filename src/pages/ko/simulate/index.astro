@@ -119,13 +119,14 @@ const presetCount = (presetsJson as Array<unknown>).length;
 
   <noscript>
     <section class="max-w-2xl mx-auto px-4 py-12 text-center">
-      <h2 class="text-xl font-semibold mb-4">전략 백테스팅 시뮬레이터</h2>
+      <h2 class="text-xl font-semibold mb-4">전략 백테스트 시뮬레이터</h2>
       <p class="text-[--color-text-muted] mb-6">
-        인터랙티브 시뮬레이터를 사용하려면 JavaScript가 필요합니다. 검증된 프리셋 전략을 확인하세요:
+        시뮬레이터는 JavaScript가 필요합니다. 검증된 프리셋 전략을 먼저 시도해보세요:
       </p>
-      <ul class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-left">
+      <ul class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-left list-none">
         <li><a href="/ko/simulate?preset=bb-squeeze-short" class="text-[--color-accent] hover:underline">BB Squeeze SHORT</a></li>
-        <li><a href="/ko/strategies/" class="text-[--color-accent] hover:underline">전체 전략 보기</a></li>
+        <li><a href="/ko/simulate?preset=rsi-divergence" class="text-[--color-accent] hover:underline">RSI 다이버전스</a></li>
+        <li><a href="/ko/strategies/" class="text-[--color-accent] hover:underline">검증된 전략 전체 보기 →</a></li>
       </ul>
     </section>
   </noscript>
