@@ -3,11 +3,16 @@ import Layout from '../layouts/Layout.astro';
 import { useTranslations } from '../i18n/index';
 import { getCollection } from 'astro:content';
 import LiveStats from '../components/LiveStats';
+import siteStats from '../../public/data/site-stats.json';
 
 const t = useTranslations('en');
 const allStrategies = await getCollection('strategies');
 const verifiedCount = allStrategies.filter(s => s.data.status === 'verified').length;
 const lastUpdated = new Date().toLocaleDateString('en-US');
+const simulationsRun = (siteStats as { simulations_run: number }).simulations_run.toLocaleString('en-US');
+const coinsAnalyzed = (siteStats as { coins_analyzed: number }).coins_analyzed;
+const tradingDays = (siteStats as { trading_days: number }).trading_days.toLocaleString('en-US');
+const candlesProcessed = ((siteStats as { candles_processed: number }).candles_processed / 1_000_000).toFixed(1) + 'M';
 ---
 
 <Layout title={t('meta.home_title')} description={t('meta.index_desc')}>
@@ -40,11 +45,11 @@ const lastUpdated = new Date().toLocaleDateString('en-US');
         <!-- Social proof counters -->
         <div class="flex flex-wrap gap-x-5 gap-y-1.5 mb-4 font-mono text-sm">
           <span class="text-[--color-text-muted]">
-            <span class="text-[--color-accent] font-bold">12,847</span> simulations run<span class="opacity-50"> {t('home.social_simulations_note')}</span>
+            <span class="text-[--color-accent] font-bold">{simulationsRun}</span> simulations run<span class="opacity-50"> {t('home.social_simulations_note')}</span>
           </span>
           <span class="text-[--color-border] hidden sm:inline">·</span>
           <span class="text-[--color-text-muted]">
-            <span class="text-[--color-accent] font-bold">549</span> coins analyzed
+            <span class="text-[--color-accent] font-bold">{coinsAnalyzed}</span> coins analyzed
           </span>
         </div>
 
@@ -80,17 +85,17 @@ const lastUpdated = new Date().toLocaleDateString('en-US');
         <!-- Stats -->
         <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
           <div class="border border-[--color-border] rounded p-4 bg-[--color-bg-card] card-hover">
-            <p class="font-mono text-[--color-accent] text-2xl font-bold">549</p>
+            <p class="font-mono text-[--color-accent] text-2xl font-bold">{coinsAnalyzed}</p>
             <p class="text-[--color-text-muted] text-sm">{t('hero.stat1')}</p>
             <p class="text-[--color-text-muted] text-xs mt-1 opacity-60">{t('hero.stat1_sub')}</p>
           </div>
           <div class="border border-[--color-border] rounded p-4 bg-[--color-bg-card] card-hover">
-            <p class="font-mono text-[--color-accent] text-2xl font-bold">2,898+</p>
+            <p class="font-mono text-[--color-accent] text-2xl font-bold">{tradingDays}+</p>
             <p class="text-[--color-text-muted] text-sm">{t('hero.stat4')}</p>
             <p class="text-[--color-text-muted] text-xs mt-1 opacity-60">{t('hero.stat4_sub')}</p>
           </div>
           <div class="border border-[--color-border] rounded p-4 bg-[--color-bg-card] card-hover">
-            <p class="font-mono text-[--color-accent] text-2xl font-bold">9.4M+</p>
+            <p class="font-mono text-[--color-accent] text-2xl font-bold">{candlesProcessed}+</p>
             <p class="text-[--color-text-muted] text-sm">{t('hero.stat5')}</p>
             <p class="text-[--color-text-muted] text-xs mt-1 opacity-60">{t('hero.stat5_sub')}</p>
           </div>
