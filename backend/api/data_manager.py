@@ -41,7 +41,8 @@ class DataManager:
 
         # Skip problematic symbols
         skip = {"intcusdt", "tslausdt", "hoodusdt", "paxgusdt", "gunusdt",
-                "usdcusdt",    # stablecoin — no volatility, strategy signals meaningless
+                "usdcusdt",    # stablecoin (USDC) — no volatility
+                "stableusdt",  # stablecoin project — no volatility
                 "btcdomusdt",  # BTC dominance index — not a tradable asset
                 }
 
