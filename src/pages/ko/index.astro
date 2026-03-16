@@ -3,11 +3,13 @@ import Layout from '../../layouts/Layout.astro';
 import { useTranslations } from '../../i18n/index';
 import { getCollection } from 'astro:content';
 import LiveStats from '../../components/LiveStats';
+import siteStats from '../../../public/data/site-stats.json';
 
 const t = useTranslations('ko');
 const allStrategies = await getCollection('strategies');
 const verifiedCount = allStrategies.filter(s => s.data.status === 'verified').length;
 const lastUpdated = new Date().toLocaleDateString('ko-KR');
+const coinsAnalyzed = (siteStats as { coins_analyzed: number }).coins_analyzed;
 ---
 
 <Layout title={t('meta.home_title')} description={t('meta.index_desc')}>
@@ -63,7 +65,7 @@ const lastUpdated = new Date().toLocaleDateString('ko-KR');
         <!-- Stats -->
         <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
           <div class="border border-[--color-border] rounded p-4 bg-[--color-bg-card] card-hover">
-            <p class="font-mono text-[--color-accent] text-2xl font-bold">549</p>
+            <p class="font-mono text-[--color-accent] text-2xl font-bold">{coinsAnalyzed}</p>
             <p class="text-[--color-text-muted] text-sm">{t('hero.stat1')}</p>
             <p class="text-[--color-text-muted] text-xs mt-1 opacity-60">{t('hero.stat1_sub')}</p>
           </div>
