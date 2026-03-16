@@ -574,7 +574,7 @@ export const en = {
   "ranking.title": "Daily Strategy Ranking",
   "ranking.date_label": "{date} · PRUVIQ Simulator Backtest Results",
   "ranking.desc":
-    "Best and worst strategies today ranked by Profit Factor (PF), tested on the top 50 coins by market cap. Strategies with fewer than 100 trades have low statistical reliability.",
+    "Best and worst strategies today ranked by Profit Factor (PF), tested on the top 50 coins by market cap (stablecoins excluded). Strategies with fewer than 100 trades have low statistical reliability.",
   "ranking.open_sim": "Open Simulator",
   "ranking.strategy_lib": "Strategy Library",
   "ranking.leaderboard": "Leaderboard",
@@ -793,7 +793,7 @@ export const en = {
     "2+ years of 1-hour OHLCV candles sourced from Binance Futures. All candles are complete (closed) — no partial or in-progress data is used to avoid look-ahead bias.",
   "methodology.universe_label": "Universe",
   "methodology.universe_desc":
-    "549+ USDT perpetual futures pairs listed on Binance. Delisted and illiquid pairs are excluded. The exact count varies by strategy version.",
+    "549+ USDT perpetual futures pairs listed on Binance. Stablecoins, delisted, and illiquid pairs are excluded. Daily rankings use the top 50 coins by market cap. The exact count varies by strategy version.",
   "methodology.execution_label": "Execution",
   "methodology.execution_desc":
     "Entry is assumed at the candle close price. This is conservative — real fills may differ by a small amount due to timing and order book depth.",
