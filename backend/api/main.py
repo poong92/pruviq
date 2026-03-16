@@ -147,8 +147,9 @@ async def _background_market_refresh():
     while True:
         try:
             data = await asyncio.to_thread(_build_market_overview)
-            _market_cache = data
-            _market_cache_ts = time.time()
+            async with _market_cache_lock:
+                _market_cache = data
+                _market_cache_ts = time.time()
             consecutive_failures = 0
             logger.info("Market data refreshed (Binance primary)")
         except asyncio.CancelledError:
@@ -160,7 +161,8 @@ async def _background_market_refresh():
             logger.log(level, f"Market refresh failed ({consecutive_failures}x, cache age={cache_age_min:.0f}min): {e}")
         try:
             data = await asyncio.to_thread(_build_news)
-            _news_cache = data
+            async with _news_cache_lock:
+                _news_cache = data
         except asyncio.CancelledError:
             raise
         except Exception as e:
@@ -293,7 +295,7 @@ def check_rate_limit(client_ip: str) -> bool:
     global _last_rate_limit_cleanup
     now = time.time()
 
-    if now - _last_rate_limit_cleanup > 300 and len(rate_limits) > 200:
+    if now - _last_rate_limit_cleanup > 60:
         _last_rate_limit_cleanup = now
         stale = [ip for ip, ts in rate_limits.items() if not ts or now - ts[-1] > 120]
         for ip in stale:
@@ -1454,6 +1456,8 @@ BINANCE_PROXY_HEADERS = {"X-Proxy-Key": _binance_proxy_key} if _binance_proxy_ke
 _live_spot_cache: Optional[dict] = None
 _live_spot_ts: float = 0.0
 _live_spot_lock = asyncio.Lock()
+_market_cache_lock = asyncio.Lock()
+_news_cache_lock = asyncio.Lock()
 
 # Spot symbol → internal (futures-style) symbol mapping for 1000x coins
 SPOT_TO_INTERNAL = {
@@ -1775,25 +1779,26 @@ async def get_market():
     If cache is stale (>30min), forces a fresh fetch.
     """
     global _market_cache, _market_cache_ts
-    cache_age = time.time() - _market_cache_ts if _market_cache_ts > 0 else float("inf")
+    async with _market_cache_lock:
+        cache_age = time.time() - _market_cache_ts if _market_cache_ts > 0 else float("inf")
 
-    # If cache is stale (>30min), force a fresh fetch
-    if _market_cache is not None and cache_age > 1800:
-        logger.warning(f"Market cache stale ({cache_age/60:.0f}min), forcing refresh")
-        try:
-            data = await asyncio.to_thread(_build_market_overview)
-            _market_cache = data
-            _market_cache_ts = time.time()
-        except Exception as e:
-            logger.error(f"Forced market refresh failed, serving stale cache: {e}")
+        # If cache is stale (>30min), force a fresh fetch
+        if _market_cache is not None and cache_age > 1800:
+            logger.warning(f"Market cache stale ({cache_age/60:.0f}min), forcing refresh")
+            try:
+                data = await asyncio.to_thread(_build_market_overview)
+                _market_cache = data
+                _market_cache_ts = time.time()
+            except Exception as e:
+                logger.error(f"Forced market refresh failed, serving stale cache: {e}")
 
-    if _market_cache is not None:
-        return MarketOverview(**_market_cache)
-    # First request before background task has run — fetch once
-    data = await asyncio.to_thread(_build_market_overview)
-    _market_cache = data
-    _market_cache_ts = time.time()
-    return MarketOverview(**data)
+        if _market_cache is not None:
+            return MarketOverview(**_market_cache)
+        # First request before background task has run — fetch once
+        data = await asyncio.to_thread(_build_market_overview)
+        _market_cache = data
+        _market_cache_ts = time.time()
+        return MarketOverview(**data)
 
 
 def _fetch_spot_tickers() -> list:
@@ -1893,11 +1898,12 @@ async def get_news():
     Data is refreshed every 60s by background task.
     """
     global _news_cache
-    if _news_cache is not None:
-        return NewsResponse(**_news_cache)
-    data = await asyncio.to_thread(_build_news)
-    _news_cache = data
-    return NewsResponse(**data)
+    async with _news_cache_lock:
+        if _news_cache is not None:
+            return NewsResponse(**_news_cache)
+        data = await asyncio.to_thread(_build_news)
+        _news_cache = data
+        return NewsResponse(**data)
 
 
 # --- Macro Economic Endpoints ---
