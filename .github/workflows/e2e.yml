@@ -55,14 +55,13 @@ jobs:
       id: e2e
       run: |
         npx playwright test tests/e2e/ \
-          --ignore-glob '**/visual-regression.spec.ts' \
           --timeout 60000 \
           --workers 2 \
           --retries 1
       # Self-hosted M4: timeout 60s (이전 90s는 GitHub→DO 레이턴시 보정용, 불필요)
       # workers 2 (M4 Pro 성능 활용)
       # retries 1 (진짜 flaky는 self-hosted에서도 재현됨, 1회로 충분)
-      # visual-regression.spec.ts: 별도 visual-regression.yml에서 ubuntu에서 실행 (darwin 스냅샷 불필요)
+      # visual regression: tests/visual/ (ubuntu-only, separate workflow)
       timeout-minutes: 15
       env:
         CI: true
