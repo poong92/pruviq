@@ -22,7 +22,8 @@ const skipInCI = !!process.env.CI;
 /** Opens simulator and waits for Preact hydration (lands on Quick Test by default).
  *  Uses event-based waits instead of hardcoded timeouts — reliable on slow CI runners. */
 async function openSimulator(page: Page) {
-  await page.goto("/simulate/", { waitUntil: "networkidle" });
+  // domcontentloaded + waitForFunction: production pages poll APIs → networkidle never resolves → 60s timeout
+  await page.goto("/simulate/", { waitUntil: "domcontentloaded" });
 
   // Wait for ModeSwitcher to fully hydrate: tablist exists AND all 3 tabs are visible.
   // waitForTimeout(1500) was too short on slow GitHub runners (hydration takes 3-5s).
