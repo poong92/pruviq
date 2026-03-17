@@ -1299,6 +1299,16 @@ export const ko: Record<TranslationKey, string> = {
   "ranking.summary_wr50": "WR 50%+ 전략:",
   "ranking.summary_total_unit": "개",
   "ranking.summary_cta": "시뮬레이터에서 직접 확인",
+  "ranking.period_7d": "7일",
+  "ranking.period_30d": "30일",
+  "ranking.period_365d": "365일",
+  "ranking.group_top30": "Top 30",
+  "ranking.group_top50": "Top 50",
+  "ranking.group_top100": "Top 100",
+  "ranking.group_btc": "BTC 전용",
+  "ranking.confidence_high": "검증됨",
+  "ranking.confidence_mid": "참고",
+  "ranking.confidence_low": "신호",
 
   // 비교 페이지: 3Commas
   "meta.vs_3commas_title": "PRUVIQ vs 3Commas — 무료 암호화폐 백테스트 대안",

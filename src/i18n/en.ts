@@ -1324,6 +1324,16 @@ export const en = {
   "ranking.summary_wr50": "Strategies with WR 50%+:",
   "ranking.summary_total_unit": "total",
   "ranking.summary_cta": "Test in Simulator",
+  "ranking.period_7d": "7 Days",
+  "ranking.period_30d": "30 Days",
+  "ranking.period_365d": "365 Days",
+  "ranking.group_top30": "Top 30",
+  "ranking.group_top50": "Top 50",
+  "ranking.group_top100": "Top 100",
+  "ranking.group_btc": "BTC Only",
+  "ranking.confidence_high": "Confirmed",
+  "ranking.confidence_mid": "Watch",
+  "ranking.confidence_low": "Signal",
 
   // Comparison pages: 3Commas
   "meta.vs_3commas_title":
