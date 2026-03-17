@@ -18,7 +18,9 @@ permissions:
   checks: read
 
 concurrency:
-  group: automerge
+  # PR별 독립 큐 — 다른 PR 이벤트끼리 서로 CANCEL 안 함
+  # workflow_dispatch는 run_id로 독립 실행
+  group: automerge-${{ github.event.pull_request.number || github.event.workflow_run.head_sha || github.run_id }}
   cancel-in-progress: true
 
 jobs:
