@@ -36,7 +36,7 @@ const labels = {
     macroError: "Macro data unavailable",
     macroPrevious: "prev",
     ctaTitle: "Test a Strategy",
-    ctaDesc: "Use our free strategy builder to backtest on 549+ coins.",
+    ctaDesc: "Use our free strategy builder to backtest on {coins}+ coins.",
     ctaButton: "Try Simulator",
     staleWarning: "Data may be delayed",
     staleWarningSevere: "Market data is outdated — live API fallback active",
@@ -71,7 +71,7 @@ const labels = {
     economicCalendar: "경제 캘린더",
     calendarNote: "TradingView 제공",
     ctaTitle: "전략 테스트",
-    ctaDesc: "549개 이상의 코인에서 무료 전략 빌더로 백테스트하세요.",
+    ctaDesc: "{coins}개 이상의 코인에서 무료 전략 빌더로 백테스트하세요.",
     macroTitle: "거시경제 지표",
     macroNote: "미국 연방준비제도 (FRED)",
     macroLoading: "매크로 데이터 로딩 중...",
@@ -245,6 +245,18 @@ export default function MarketDashboard({
   lang?: "en" | "ko";
 }) {
   const l = labels[lang] || labels.en;
+  const [coinsCount, setCoinsCount] = useState("569");
+
+  useEffect(() => {
+    fetch("/data/site-stats.json")
+      .then((r) => r.json())
+      .then((d: { coins_analyzed?: number }) => {
+        if (d.coins_analyzed) setCoinsCount(String(d.coins_analyzed));
+      })
+      .catch(() => {
+        /* keep default */
+      });
+  }, []);
 
   // 4 independent hooks — each polls at its own interval
   const {
@@ -770,7 +782,9 @@ export default function MarketDashboard({
             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div>
                 <h3 class="font-bold text-sm mb-1">{l.ctaTitle}</h3>
-                <p class="text-[--color-text-muted] text-xs">{l.ctaDesc}</p>
+                <p class="text-[--color-text-muted] text-xs">
+                  {l.ctaDesc.replace("{coins}", coinsCount)}
+                </p>
               </div>
               <a
                 href={lang === "ko" ? "/ko/simulate" : "/simulate"}
