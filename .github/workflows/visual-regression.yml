@@ -40,11 +40,31 @@ jobs:
         env:
           PUBLIC_API_URL: https://api.pruviq.com
 
+      - name: Check if baselines exist
+        id: check_baselines
+        run: |
+          if ls tests/e2e/visual-regression.spec.ts-snapshots/*.png 2>/dev/null | head -1 | grep -q '.'; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: Run visual regression tests (PR — compare)
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && steps.check_baselines.outputs.exists == 'true'
         run: npx playwright test tests/e2e/visual-regression.spec.ts --project=desktop
         continue-on-error: true
         id: visual_test
+
+      - name: Generate baselines (PR — first run, no baselines)
+        if: github.event_name == 'pull_request' && steps.check_baselines.outputs.exists == 'false'
+        run: |
+          echo "No baselines found — generating on first run (will commit to branch)"
+          npx playwright test tests/e2e/visual-regression.spec.ts --project=desktop --update-snapshots || true
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add tests/e2e/visual-regression.spec.ts-snapshots/ || true
+          git diff --staged --quiet || git commit -m "chore: add visual regression baselines [skip ci]"
+          git push || true
 
       - name: Upload diff artifacts (PR)
         if: github.event_name == 'pull_request'
@@ -74,6 +94,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add tests/e2e/__snapshots__/ || true
+          git add tests/e2e/visual-regression.spec.ts-snapshots/ || true
           git diff --staged --quiet || git commit -m "chore: update visual regression baselines [skip ci]"
           git push || true
