@@ -3122,12 +3122,29 @@ RANKING_DIR = "/Users/jepo/Desktop/autotrader/data/daily_rankings"
 
 
 @app.get("/rankings/daily")
-async def get_daily_rankings(date: Optional[str] = None):
+async def get_daily_rankings(
+    date: Optional[str] = None,
+    period: str = "30d",
+    group: str = "top50",
+):
     """Return daily strategy rankings from pre-computed JSON files.
 
     Query params:
-        date: YYYYMMDD (default: today). Falls back to most recent file.
+        date:   YYYYMMDD (default: today). Falls back to most recent file.
+        period: "7d" | "30d" | "365d" (default: "30d")
+        group:  "top30" | "top50" | "top100" | "btc" (default: "top50")
     """
+    VALID_PERIODS = {"7d", "30d", "365d"}
+    VALID_GROUPS = {"top30", "top50", "top100", "btc"}
+
+    # Normalise inputs
+    period = period.lower()
+    group = group.lower()
+    if period not in VALID_PERIODS:
+        period = "30d"
+    if group not in VALID_GROUPS:
+        group = "top50"
+
     ranking_dir = Path(RANKING_DIR)
 
     # Resolve target filename
@@ -3156,19 +3173,12 @@ async def get_daily_rankings(date: Optional[str] = None):
         logger.error(f"Failed to read ranking file {date}: {e}")
         raise HTTPException(500, "Failed to read ranking data.")
 
-    generated_at = raw.get("date", "")
+    generated_at = raw.get("generated_at", raw.get("date", ""))
     # Normalise date to YYYY-MM-DD display format
     try:
         display_date = datetime.strptime(date, "%Y%m%d").strftime("%Y-%m-%d")
     except ValueError:
         display_date = date
-
-    # Flatten all strategy entries across sections (Top 50 / Worst 50 / etc.)
-    all_entries: list = []
-    results = raw.get("results", {})
-    for section_entries in results.values():
-        if isinstance(section_entries, list):
-            all_entries.extend(section_entries)
 
     # Walk-Forward 검증 실패 전략 제외 (구조적 손실 확인 2026-03-14)
     WF_FAILED_KEYS = {
@@ -3176,6 +3186,19 @@ async def get_daily_rankings(date: Optional[str] = None):
         ("mean-reversion", "short", "6H"),
         ("rsi-divergence", "long",  "4H"),
     }
+
+    # ── Resolve entry list: new 'periods' key → fallback 'results' ──
+    all_entries: list = []
+    periods_data = raw.get("periods", {})
+    if periods_data and period in periods_data and group in periods_data[period]:
+        # New format: periods.{period}.{group} → list of entries
+        all_entries = periods_data[period][group]
+    else:
+        # Backward compat: flatten all sections from 'results'
+        results = raw.get("results", {})
+        for section_entries in results.values():
+            if isinstance(section_entries, list):
+                all_entries.extend(section_entries)
 
     # De-duplicate by (strategy, direction, timeframe) and filter WF failures
     seen: set = set()
@@ -3198,7 +3221,7 @@ async def get_daily_rankings(date: Optional[str] = None):
         reverse=True,
     )
 
-    # ── rank_change: compare today's ranks to yesterday ──────────
+    # ── rank_change: compare today's ranks to yesterday (same period/group) ──
     yesterday_date = (datetime.strptime(date, "%Y%m%d") - timedelta(days=1)).strftime("%Y%m%d")
     yesterday_file = ranking_dir / f"ranking_{yesterday_date}.json"
     yesterday_rank_map: dict = {}
@@ -3207,9 +3230,13 @@ async def get_daily_rankings(date: Optional[str] = None):
             with open(yesterday_file, "r", encoding="utf-8") as f:
                 yraw = json.load(f)
             yentries: list = []
-            for section_entries in yraw.get("results", {}).values():
-                if isinstance(section_entries, list):
-                    yentries.extend(section_entries)
+            yperiods = yraw.get("periods", {})
+            if yperiods and period in yperiods and group in yperiods[period]:
+                yentries = yperiods[period][group]
+            else:
+                for section_entries in yraw.get("results", {}).values():
+                    if isinstance(section_entries, list):
+                        yentries.extend(section_entries)
             seen_y: set = set()
             yuniq: list = []
             for e in yentries:
@@ -3238,9 +3265,13 @@ async def get_daily_rankings(date: Optional[str] = None):
                 with open(day_file, "r", encoding="utf-8") as f:
                     draw = json.load(f)
                 dentries: list = []
-                for section_entries in draw.get("results", {}).values():
-                    if isinstance(section_entries, list):
-                        dentries.extend(section_entries)
+                dperiods = draw.get("periods", {})
+                if dperiods and period in dperiods and group in dperiods[period]:
+                    dentries = dperiods[period][group]
+                else:
+                    for section_entries in draw.get("results", {}).values():
+                        if isinstance(section_entries, list):
+                            dentries.extend(section_entries)
                 dseen: set = set()
                 duniq: list = []
                 for e in dentries:
@@ -3290,7 +3321,23 @@ async def get_daily_rankings(date: Optional[str] = None):
     wr_50plus = sum(1 for e in unique_entries if e.get("win_rate", 0) >= 50)
     total = len(unique_entries)
 
-    # Collect weekly best: scan last 7 days of ranking files
+    # ── Detect available periods/groups from file ────────────────
+    available_periods: list = []
+    available_groups: list = []
+    if periods_data:
+        available_periods = sorted(periods_data.keys())
+        all_groups: set = set()
+        for pg in periods_data.values():
+            all_groups.update(pg.keys())
+        # Canonical order
+        order = ["top30", "top50", "top100", "btc"]
+        available_groups = [g for g in order if g in all_groups]
+    if not available_periods:
+        available_periods = ["30d"]
+    if not available_groups:
+        available_groups = ["top50"]
+
+    # Collect weekly best: scan last 7 days of ranking files (same period/group)
     weekly_map: dict = {}
     for i in range(7):
         day = (datetime.strptime(date, "%Y%m%d") - timedelta(days=i)).strftime("%Y%m%d")
@@ -3300,16 +3347,22 @@ async def get_daily_rankings(date: Optional[str] = None):
         try:
             with open(day_file, "r", encoding="utf-8") as f:
                 day_raw = json.load(f)
-            day_results = day_raw.get("results", {})
-            for section_entries in day_results.values():
-                if isinstance(section_entries, list):
-                    for e in section_entries:
-                        key = (e.get("strategy"), e.get("direction"), e.get("timeframe", "1H"))
-                        if key in WF_FAILED_KEYS:
-                            continue
-                        if key not in weekly_map:
-                            weekly_map[key] = {"entries": [], "meta": e}
-                        weekly_map[key]["entries"].append(e)
+            day_entries: list = []
+            dp = day_raw.get("periods", {})
+            if dp and period in dp and group in dp[period]:
+                day_entries = dp[period][group]
+            else:
+                day_results = day_raw.get("results", {})
+                for section_entries in day_results.values():
+                    if isinstance(section_entries, list):
+                        day_entries.extend(section_entries)
+            for e in day_entries:
+                key = (e.get("strategy"), e.get("direction"), e.get("timeframe", "1H"))
+                if key in WF_FAILED_KEYS:
+                    continue
+                if key not in weekly_map:
+                    weekly_map[key] = {"entries": [], "meta": e}
+                weekly_map[key]["entries"].append(e)
         except Exception:
             continue
 
@@ -3354,9 +3407,13 @@ async def get_daily_rankings(date: Optional[str] = None):
     return {
         "date": display_date,
         "generated_at": generated_at,
+        "period": period,
+        "group": group,
         "top3": top3,
         "worst3": worst3,
         "weekly_best3": weekly_best3,
         "summary": {"wr_50plus": wr_50plus, "total": total},
         "low_sample_count": low_sample_count if low_sample_count > 0 else None,
+        "available_periods": available_periods,
+        "available_groups": available_groups,
     }
