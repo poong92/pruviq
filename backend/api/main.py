@@ -1719,10 +1719,16 @@ def _parse_pub_date(raw: str) -> str:
 def _parse_rss(source: str, url: str) -> list:
     """Parse a single RSS feed into NewsItem dicts."""
     items = []
+    MAX_FEED_BYTES = 2 * 1024 * 1024  # 2 MB hard cap
     try:
-        resp = http_requests.get(url, timeout=8, headers={"User-Agent": "PRUVIQ/1.0"})
+        resp = http_requests.get(url, timeout=8, stream=True, headers={"User-Agent": "PRUVIQ/1.0"})
         resp.raise_for_status()
-        root = ET.fromstring(resp.text)
+        raw = resp.raw.read(MAX_FEED_BYTES + 1)
+        resp.close()
+        if len(raw) > MAX_FEED_BYTES:
+            logger.warning(f"RSS feed {source} exceeded 2MB size limit, skipping")
+            return []
+        root = ET.fromstring(raw)
 
         # Handle both RSS 2.0 (<channel><item>) and Atom (<entry>)
         ns = {"atom": "http://www.w3.org/2005/Atom"}
@@ -2259,7 +2265,7 @@ def _run_backtest_sync(req: BacktestRequest, bt_key: str) -> BacktestResponse:
                 c_wins = [t for t in trades if t.pnl_pct > 0]
                 c_losses = [t for t in trades if t.pnl_pct <= 0]
                 c_gp = sum(t.pnl_pct for t in c_wins) if c_wins else 0
-                c_gl = abs(sum(t.pnl_pct for t in c_losses)) if c_losses else 0.001
+                c_gl = abs(sum(t.pnl_pct for t in c_losses)) if c_losses else 0
                 c_total_ret = sum(t.pnl_pct for t in trades)
 
                 if is_both:
@@ -2284,7 +2290,7 @@ def _run_backtest_sync(req: BacktestRequest, bt_key: str) -> BacktestResponse:
                         wins=len(c_wins),
                         losses=len(c_losses),
                         win_rate=round(len(c_wins) / len(trades) * 100, 2),
-                        profit_factor=round(c_gp / c_gl, 2),
+                        profit_factor=round(c_gp / c_gl, 2) if c_gl > 0 else 999.99,
                         total_return_pct=round(c_total_ret, 2),
                         avg_pnl_pct=round(c_total_ret / len(trades), 4),
                         tp_count=sum(1 for t in trades if t.exit_reason == "tp"),
@@ -2318,12 +2324,12 @@ def _run_backtest_sync(req: BacktestRequest, bt_key: str) -> BacktestResponse:
     if is_both:
         for sym, c in coin_agg.items():
             wr = round(c["wins"] / c["trades"] * 100, 2) if c["trades"] > 0 else 0
-            gl = c["gl"] if c["gl"] > 0 else 0.001
+            gl = c["gl"]
             coin_results.append(CoinResult(
                 symbol=sym, trades=c["trades"],
                 wins=c["wins"], losses=c["losses"],
                 win_rate=wr,
-                profit_factor=round(c["gp"] / gl, 2),
+                profit_factor=round(c["gp"] / gl, 2) if gl > 0 else 999.99,
                 total_return_pct=round(c["total_ret"], 2),
                 avg_pnl_pct=round(c["total_ret"] / c["trades"], 4),
                 tp_count=c["tp"], sl_count=c["sl"], timeout_count=c["timeout"],
@@ -2362,13 +2368,13 @@ def _run_backtest_sync(req: BacktestRequest, bt_key: str) -> BacktestResponse:
                 c_wins = [t for t in trades_list if t["pnl_pct"] > 0]
                 c_losses = [t for t in trades_list if t["pnl_pct"] <= 0]
                 c_gp = sum(t["pnl_pct"] for t in c_wins) if c_wins else 0
-                c_gl = abs(sum(t["pnl_pct"] for t in c_losses)) if c_losses else 0.001
+                c_gl = abs(sum(t["pnl_pct"] for t in c_losses)) if c_losses else 0
                 c_total = sum(t["pnl_pct"] for t in trades_list)
                 coin_results.append(CoinResult(
                     symbol=sym, trades=len(trades_list),
                     wins=len(c_wins), losses=len(c_losses),
                     win_rate=round(len(c_wins) / len(trades_list) * 100, 2),
-                    profit_factor=round(c_gp / c_gl, 2),
+                    profit_factor=round(c_gp / c_gl, 2) if c_gl > 0 else 999.99,
                     total_return_pct=round(c_total, 2),
                     avg_pnl_pct=round(c_total / len(trades_list), 4),
                     tp_count=sum(1 for t in trades_list if t["exit_reason"] == "tp"),
@@ -2850,8 +2856,8 @@ def _run_backtest_sync(req: BacktestRequest, bt_key: str) -> BacktestResponse:
             l = [t for t in tlist if t["pnl_pct"] <= 0]
             _wr = len(w) / len(tlist) * 100 if tlist else 0
             gp = sum(t["pnl_pct"] for t in w) if w else 0
-            gl = abs(sum(t["pnl_pct"] for t in l)) if l else 0.001
-            _pf = gp / gl if gl > 0 else 0
+            gl = abs(sum(t["pnl_pct"] for t in l)) if l else 0
+            _pf = gp / gl if gl > 0 else 999.99
             return _wr, _pf
         # 5 rolling windows: each uses 60% IS, 40% OOS
         n = len(all_trades)
@@ -2916,7 +2922,7 @@ def _run_backtest_sync(req: BacktestRequest, bt_key: str) -> BacktestResponse:
                 w = [t for t in trades_list if t["pnl_pct"] > 0]
                 l = [t for t in trades_list if t["pnl_pct"] <= 0]
                 gp = sum(t["pnl_pct"] for t in w) if w else 0.0
-                gl = abs(sum(t["pnl_pct"] for t in l)) if l else 0.001
+                gl = abs(sum(t["pnl_pct"] for t in l)) if l else 0
                 return {
                     "trades": len(trades_list),
                     "win_rate": round(len(w) / len(trades_list) * 100, 2),
