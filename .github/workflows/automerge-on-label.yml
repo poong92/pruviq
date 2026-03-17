@@ -3,23 +3,93 @@ name: Auto-merge labeled PRs
 on:
   pull_request:
     types: [labeled]
+  workflow_run:
+    workflows:
+      - "validate-startup-files"
+      - "E2E Tests"
+      - "Accessibility"
+      - "Lighthouse Audit"
+    types: [completed]
+  workflow_dispatch: {}
 
 permissions:
   contents: write
   pull-requests: write
+  checks: read
+
+concurrency:
+  # PR별 독립 큐 — 다른 PR 이벤트끼리 서로 CANCEL 안 함
+  # workflow_dispatch는 run_id로 독립 실행
+  group: automerge-${{ github.event.pull_request.number || github.event.workflow_run.head_sha || github.run_id }}
+  cancel-in-progress: true
 
 jobs:
-  enable-automerge:
-    if: github.event.label.name == 'automerge'
+  attempt-merge:
     runs-on: ubuntu-latest
     steps:
-      - name: Block backend/ changes
+      - name: Attempt auto-merge if labeled and checks pass
         uses: actions/github-script@v7
         with:
           script: |
+            const labelName = 'automerge';
             const restrictedPrefixes = ['backend/'];
-            const prNumber = context.payload.pull_request.number;
+            const MIN_CHECK_RUNS = 2;
 
+            let pr = null;
+            if (context.eventName === 'pull_request') {
+              pr = context.payload.pull_request;
+            } else if (context.eventName === 'workflow_run') {
+              const headSha = context.payload.workflow_run.head_sha;
+              const prs = await github.rest.repos.listPullRequestsAssociatedWithCommit({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                commit_sha: headSha,
+              });
+              if (!prs.data || prs.data.length === 0) {
+                core.info(`No PRs associated with commit ${headSha}`);
+                return;
+              }
+              // Find an open PR with automerge label
+              const candidate = prs.data.find(p =>
+                p.state === 'open' && p.labels.some(l => l.name === labelName)
+              );
+              if (!candidate) {
+                core.info('No open PRs with automerge label found');
+                return;
+              }
+              pr = candidate;
+            } else if (context.eventName === 'workflow_dispatch') {
+              // Scan all open PRs for automerge label
+              const openPRs = await github.paginate(github.rest.pulls.list, {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                state: 'open',
+                per_page: 50,
+              });
+              const candidate = openPRs.find(p =>
+                p.labels.some(l => l.name === labelName)
+              );
+              if (!candidate) {
+                core.info('No open PRs with automerge label found');
+                return;
+              }
+              pr = candidate;
+            } else {
+              core.info(`Unsupported event: ${context.eventName}`);
+              return;
+            }
+
+            const prNumber = pr.number;
+            core.info(`Found PR #${prNumber}`);
+
+            // Ensure the PR still has the automerge label
+            const labels = pr.labels ? pr.labels.map(l => l.name) : [];
+            if (!labels.includes(labelName)) {
+              core.info(`PR #${prNumber} does not have label ${labelName}; aborting.`);
+              return;
+            }
+
+            // Check changed files for restricted paths
             const files = await github.paginate(github.rest.pulls.listFiles, {
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -29,18 +99,62 @@ jobs:
             for (const f of files) {
               for (const prefix of restrictedPrefixes) {
                 if (f.filename.startsWith(prefix)) {
-                  core.setFailed(`PR touches restricted path: ${f.filename}`);
+                  core.info(`Skipping: PR touches restricted path: ${f.filename}`);
                   return;
                 }
               }
             }
-            core.info(`PR #${prNumber} — no restricted paths. Enabling automerge.`);
 
-      - name: Enable GitHub native automerge
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh pr merge ${{ github.event.pull_request.number }} \
-            --auto \
-            --squash \
-            --repo ${{ github.repository }}
+            // Check Runs (not legacy commit statuses) for head SHA
+            const headSha = pr.head && pr.head.sha ? pr.head.sha : null;
+            if (!headSha) {
+              core.info('No head SHA found for PR; aborting.');
+              return;
+            }
+
+            const checks = await github.rest.checks.listForRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: headSha,
+            });
+
+            const checkRuns = checks.data.check_runs.filter(
+              c => c.name !== 'attempt-merge'  // Exclude self
+            );
+            const total = checkRuns.length;
+            const allCompleted = checkRuns.every(c => c.status === 'completed');
+            const allSuccess = checkRuns.every(c => c.conclusion === 'success');
+
+            core.info(`Check Runs for ${headSha}: ${total} total, allCompleted=${allCompleted}, allSuccess=${allSuccess}`);
+            checkRuns.forEach(c => core.info(`  - ${c.name}: ${c.status} / ${c.conclusion}`));
+
+            if (total < MIN_CHECK_RUNS) {
+              core.info(`Only ${total} check runs found (minimum ${MIN_CHECK_RUNS}). Waiting for more.`);
+              return;
+            }
+
+            if (!allCompleted) {
+              core.info('Some checks still running; will not merge yet.');
+              return;
+            }
+
+            if (!allSuccess) {
+              core.info('Some checks failed; will not merge.');
+              return;
+            }
+
+            // All checks green — attempt to merge
+            try {
+              await github.rest.pulls.merge({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: prNumber,
+                merge_method: 'squash',
+              });
+              core.info(`Successfully merged PR #${prNumber}`);
+            } catch (err) {
+              // Use warning instead of setFailed to prevent failure emails.
+              // Merge can fail when PR is behind main (common with data refresh commits).
+              // The next workflow run will retry automatically.
+              core.warning(`Merge attempt for PR #${prNumber} did not succeed: ${err.message}`);
+            }
