@@ -1,0 +1,195 @@
+name: Data Contract
+
+on:
+  pull_request:
+    paths:
+      - "public/data/**"
+      - "backend/api/main.py"
+      - ".github/workflows/data-contract.yml"
+  push:
+    branches: [main]
+    paths:
+      - "public/data/**"
+
+jobs:
+  site-stats-contract:
+    name: site-stats.json schema
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate site-stats.json schema
+        run: |
+          python3 - <<'EOF'
+          import json, sys, datetime
+
+          path = "public/data/site-stats.json"
+          with open(path) as f:
+              d = json.load(f)
+
+          errors = []
+
+          # Required fields
+          required = ["coins_analyzed", "trading_days", "simulations_run", "strategies_tested", "last_updated"]
+          for field in required:
+              if field not in d:
+                  errors.append(f"Missing required field: {field!r}")
+
+          # Type checks
+          for int_field in ["coins_analyzed", "trading_days", "simulations_run", "strategies_tested"]:
+              if int_field in d and not isinstance(d[int_field], (int, float)):
+                  errors.append(f"{int_field!r} must be a number, got {type(d[int_field]).__name__}")
+
+          # Sanity range checks
+          if "coins_analyzed" in d and not (100 <= d["coins_analyzed"] <= 10000):
+              errors.append(f"coins_analyzed={d['coins_analyzed']} out of sane range [100, 10000]")
+          if "strategies_tested" in d and not (1 <= d["strategies_tested"] <= 10000):
+              errors.append(f"strategies_tested={d['strategies_tested']} out of sane range [1, 10000]")
+
+          # Date format check (YYYY-MM-DD)
+          if "last_updated" in d:
+              try:
+                  dt = datetime.date.fromisoformat(d["last_updated"])
+                  today = datetime.date.today()
+                  age_days = (today - dt).days
+                  if age_days > 7:
+                      errors.append(f"last_updated={d['last_updated']} is {age_days} days old (max 7)")
+              except ValueError:
+                  errors.append(f"last_updated={d['last_updated']!r} is not a valid ISO date")
+
+          if errors:
+              print("❌ site-stats.json contract FAILED:")
+              for e in errors:
+                  print(f"  • {e}")
+              sys.exit(1)
+          else:
+              print(f"✅ site-stats.json valid: {json.dumps(d)}")
+          EOF
+
+  ranking-json-contract:
+    name: Ranking JSON schema (if changed)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Check ranking files schema
+        run: |
+          python3 - <<'EOF'
+          import json, sys, os, glob
+
+          VALID_PERIOD_KEYS = {"7d", "30d", "365d"}
+          VALID_GROUP_KEYS = {"top30", "top50", "top100", "btc"}
+          REQUIRED_ENTRY_FIELDS = {
+              "total_trades", "win_rate", "profit_factor",
+              "total_return", "strategy", "direction", "timeframe",
+          }
+
+          # Only check files that exist in this repo (public/data/rankings if any)
+          ranking_files = glob.glob("public/data/rankings/ranking_*.json")
+          if not ranking_files:
+              print("ℹ No ranking JSON files in public/data/rankings/ — skipping")
+              sys.exit(0)
+
+          all_errors = []
+          for path in sorted(ranking_files)[-3:]:  # check last 3 files only
+              with open(path) as f:
+                  d = json.load(f)
+              periods = d.get("periods", {})
+              if not periods:
+                  continue  # legacy format, skip
+
+              for period_key, groups in periods.items():
+                  if period_key not in VALID_PERIOD_KEYS:
+                      all_errors.append(f"{path}: invalid period key {period_key!r}")
+                      continue
+                  for group_key, entries in groups.items():
+                      if group_key not in VALID_GROUP_KEYS:
+                          all_errors.append(f"{path}: invalid group key {period_key}/{group_key!r}")
+                      if len(entries) < 10:
+                          all_errors.append(f"{path}: {period_key}/{group_key} only {len(entries)} entries")
+                      for i, entry in enumerate(entries[:3]):
+                          for field in REQUIRED_ENTRY_FIELDS:
+                              if field not in entry:
+                                  all_errors.append(f"{path}: {period_key}/{group_key}[{i}] missing {field!r}")
+
+          if all_errors:
+              print("❌ Ranking JSON contract FAILED:")
+              for e in all_errors:
+                  print(f"  • {e}")
+              sys.exit(1)
+          else:
+              print(f"✅ Ranking JSON schema valid ({len(ranking_files)} files checked)")
+          EOF
+
+  api-response-contract:
+    name: API endpoint contract (staging)
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Test API contracts against production
+        env:
+          API_BASE: https://api.pruviq.com
+        run: |
+          python3 - <<'EOF'
+          import urllib.request, json, sys
+
+          API_BASE = "https://api.pruviq.com"
+          errors = []
+
+          # Contract 1: /health returns coins_loaded > 100
+          try:
+              resp = json.loads(urllib.request.urlopen(f"{API_BASE}/health", timeout=10).read())
+              coins = resp.get("coins_loaded", 0)
+              if coins < 100:
+                  errors.append(f"/health: coins_loaded={coins} < 100")
+              else:
+                  print(f"✅ /health: coins_loaded={coins}")
+          except Exception as e:
+              errors.append(f"/health: {e}")
+
+          # Contract 2: /rankings/daily returns top3 with required fields
+          for period in ["7d", "30d"]:
+              try:
+                  url = f"{API_BASE}/rankings/daily?period={period}&group=top50&top_n=3"
+                  resp = json.loads(urllib.request.urlopen(url, timeout=10).read())
+                  top3 = resp.get("top3", [])
+                  if len(top3) == 0:
+                      errors.append(f"/rankings/daily?period={period}: top3 is empty")
+                  else:
+                      required = {"strategy", "direction", "win_rate", "profit_factor"}
+                      for field in required:
+                          if field not in top3[0]:
+                              errors.append(f"/rankings/daily?period={period}: top3[0] missing {field!r}")
+                      print(f"✅ /rankings/daily?period={period}: {len(top3)} entries")
+              except Exception as e:
+                  errors.append(f"/rankings/daily?period={period}: {e}")
+
+          # Contract 3: /ohlcv/BTCUSDT returns candles within 2 hours
+          try:
+              import datetime
+              resp = json.loads(urllib.request.urlopen(f"{API_BASE}/ohlcv/BTCUSDT?limit=1", timeout=10).read())
+              candles = resp.get("candles", resp) if isinstance(resp, dict) else resp
+              if isinstance(candles, list) and candles:
+                  last_ts = candles[-1][0] / 1000  # ms → sec
+                  age_hours = (datetime.datetime.utcnow().timestamp() - last_ts) / 3600
+                  if age_hours > 2:
+                      errors.append(f"/ohlcv/BTCUSDT: last candle is {age_hours:.1f}h old (max 2h)")
+                  else:
+                      print(f"✅ /ohlcv/BTCUSDT: last candle {age_hours:.2f}h ago")
+              else:
+                  errors.append("/ohlcv/BTCUSDT: empty or unexpected response")
+          except Exception as e:
+              errors.append(f"/ohlcv/BTCUSDT: {e}")
+
+          if errors:
+              print("\n❌ API contract FAILED:")
+              for e in errors:
+                  print(f"  • {e}")
+              sys.exit(1)
+          else:
+              print("\n✅ All API contracts passed")
+          EOF
