@@ -1,5 +1,46 @@
 import { h } from "preact";
 
+function ConfidenceBadge({
+  trades,
+  lang,
+}: {
+  trades: number;
+  lang: "en" | "ko";
+}) {
+  if (trades >= 100) {
+    return (
+      <span
+        title={lang === "ko" ? "검증됨 (100건+)" : "Confirmed (100+ trades)"}
+        class="inline-flex items-center gap-0.5 text-[10px] font-mono px-1.5 py-0.5 rounded bg-green-500/15 text-green-400 border border-green-500/20"
+      >
+        ✓ {lang === "ko" ? "검증됨" : "Confirmed"}
+      </span>
+    );
+  }
+  if (trades >= 30) {
+    return (
+      <span
+        title={lang === "ko" ? "참고 (30~99건)" : "Watch (30–99 trades)"}
+        class="inline-flex items-center gap-0.5 text-[10px] font-mono px-1.5 py-0.5 rounded bg-yellow-500/15 text-yellow-400 border border-yellow-500/20"
+      >
+        ~ {lang === "ko" ? "참고" : "Watch"}
+      </span>
+    );
+  }
+  return (
+    <span
+      title={
+        lang === "ko"
+          ? "신호 (<30건, 낮은 신뢰도)"
+          : "Signal (<30 trades, low confidence)"
+      }
+      class="inline-flex items-center gap-0.5 text-[10px] font-mono px-1.5 py-0.5 rounded bg-red-500/15 text-red-400 border border-red-500/20"
+    >
+      ! {lang === "ko" ? "신호" : "Signal"}
+    </span>
+  );
+}
+
 export interface RankingEntry {
   rank: number;
   name_ko: string;
@@ -100,11 +141,14 @@ export function RankingCard({
             </p>
           </div>
         </div>
-        <div class="flex items-center gap-1.5 shrink-0 flex-wrap justify-end">
-          {directionTag(entry.direction)}
-          <span class="font-mono text-xs px-2 py-0.5 rounded border border-[--color-border] text-[--color-text-muted]">
-            {entry.timeframe}
-          </span>
+        <div class="flex flex-col items-end gap-1 shrink-0">
+          <div class="flex items-center gap-1.5">
+            {directionTag(entry.direction)}
+            <span class="font-mono text-xs px-2 py-0.5 rounded border border-[--color-border] text-[--color-text-muted]">
+              {entry.timeframe}
+            </span>
+          </div>
+          <ConfidenceBadge trades={entry.total_trades} lang={lang} />
         </div>
       </div>
 
