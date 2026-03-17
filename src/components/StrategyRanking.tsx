@@ -296,18 +296,6 @@ export function StrategyRanking({ lang = "en" }: { lang?: Lang }) {
         </div>
       )}
 
-      {/* Warning banner */}
-      {!loading &&
-        data?.low_sample_count != null &&
-        data.low_sample_count > 0 && (
-          <div class="border border-[--color-yellow]/30 rounded-lg px-4 py-3 bg-[--color-yellow]/5 text-[--color-yellow] text-xs font-mono flex items-start gap-2">
-            <span aria-hidden="true" class="shrink-0">
-              ⚠
-            </span>
-            <span>{lbl.lowSampleWarning(data.low_sample_count)}</span>
-          </div>
-        )}
-
       {/* Top 3 */}
       <section>
         <SectionHeader title={lbl.best3Title} subtitle={lbl.best3Sub} />
