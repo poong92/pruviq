@@ -3199,12 +3199,22 @@ async def get_daily_rankings(
     if periods_data and period in periods_data and group in periods_data[period]:
         # New format: periods.{period}.{group} → list of entries
         all_entries = periods_data[period][group]
-    else:
-        # Backward compat: flatten all sections from 'results'
+    elif periods_data and period in periods_data:
+        # Period exists but requested group doesn't — try nearest group in same period
+        # Order: top50 > top30 > top100 > btc
+        fallback_order = ["top50", "top30", "top100", "btc"]
+        period_groups = periods_data[period]
+        for fg in fallback_order:
+            if fg in period_groups and period_groups[fg]:
+                all_entries = period_groups[fg]
+                break
+    elif not periods_data:
+        # Legacy file: flatten all sections from 'results'
         results = raw.get("results", {})
         for section_entries in results.values():
             if isinstance(section_entries, list):
                 all_entries.extend(section_entries)
+    # else: period not found at all → all_entries stays empty
 
     # De-duplicate by (strategy, direction, timeframe) and filter WF failures
     seen: set = set()
