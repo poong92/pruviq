@@ -75,42 +75,6 @@ const GROUP_LABELS: Record<string, Record<Lang, string>> = {
   btc: { en: "BTC Only", ko: "BTC 전용" },
 };
 
-/** Confidence badge based on trade count */
-function ConfidenceBadge({ trades, lang }: { trades: number; lang: Lang }) {
-  if (trades >= 100) {
-    return (
-      <span
-        title={lang === "ko" ? "검증됨 (100건+)" : "Confirmed (100+ trades)"}
-        class="inline-flex items-center gap-0.5 text-[10px] font-mono px-1.5 py-0.5 rounded bg-green-500/15 text-green-400 border border-green-500/20"
-      >
-        ✓ {lang === "ko" ? "검증됨" : "Confirmed"}
-      </span>
-    );
-  }
-  if (trades >= 30) {
-    return (
-      <span
-        title={lang === "ko" ? "참고 (30~99건)" : "Watch (30–99 trades)"}
-        class="inline-flex items-center gap-0.5 text-[10px] font-mono px-1.5 py-0.5 rounded bg-yellow-500/15 text-yellow-400 border border-yellow-500/20"
-      >
-        ~ {lang === "ko" ? "참고" : "Watch"}
-      </span>
-    );
-  }
-  return (
-    <span
-      title={
-        lang === "ko"
-          ? "신호 (<30건, 낮은 신뢰도)"
-          : "Signal (<30 trades, low confidence)"
-      }
-      class="inline-flex items-center gap-0.5 text-[10px] font-mono px-1.5 py-0.5 rounded bg-red-500/15 text-red-400 border border-red-500/20"
-    >
-      ! {lang === "ko" ? "신호" : "Signal"}
-    </span>
-  );
-}
-
 const rankingLabels = {
   en: {
     loadFail: "Failed to load data",
@@ -332,18 +296,6 @@ export function StrategyRanking({ lang = "en" }: { lang?: Lang }) {
         </div>
       )}
 
-      {/* Warning banner */}
-      {!loading &&
-        data?.low_sample_count != null &&
-        data.low_sample_count > 0 && (
-          <div class="border border-[--color-yellow]/30 rounded-lg px-4 py-3 bg-[--color-yellow]/5 text-[--color-yellow] text-xs font-mono flex items-start gap-2">
-            <span aria-hidden="true" class="shrink-0">
-              ⚠
-            </span>
-            <span>{lbl.lowSampleWarning(data.low_sample_count)}</span>
-          </div>
-        )}
-
       {/* Top 3 */}
       <section>
         <SectionHeader title={lbl.best3Title} subtitle={lbl.best3Sub} />
@@ -351,12 +303,12 @@ export function StrategyRanking({ lang = "en" }: { lang?: Lang }) {
           {loading
             ? [0, 1, 2].map((i) => <SkeletonCard key={i} />)
             : data?.top3.map((entry) => (
-                <div key={`top-${entry.rank}`} class="relative">
-                  <RankingCard entry={entry} lang={lang} variant="best" />
-                  <div class="absolute top-2 right-2">
-                    <ConfidenceBadge trades={entry.total_trades} lang={lang} />
-                  </div>
-                </div>
+                <RankingCard
+                  key={`top-${entry.rank}`}
+                  entry={entry}
+                  lang={lang}
+                  variant="best"
+                />
               ))}
         </div>
       </section>
@@ -368,12 +320,12 @@ export function StrategyRanking({ lang = "en" }: { lang?: Lang }) {
           {loading
             ? [0, 1, 2].map((i) => <SkeletonCard key={i} />)
             : data?.worst3.map((entry) => (
-                <div key={`worst-${entry.rank}`} class="relative">
-                  <RankingCard entry={entry} variant="worst" lang={lang} />
-                  <div class="absolute top-2 right-2">
-                    <ConfidenceBadge trades={entry.total_trades} lang={lang} />
-                  </div>
-                </div>
+                <RankingCard
+                  key={`worst-${entry.rank}`}
+                  entry={entry}
+                  variant="worst"
+                  lang={lang}
+                />
               ))}
         </div>
       </section>
@@ -383,19 +335,14 @@ export function StrategyRanking({ lang = "en" }: { lang?: Lang }) {
         <section>
           <SectionHeader title={lbl.weeklyTitle} subtitle={lbl.weeklySub} />
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {loading
-              ? [0, 1, 2].map((i) => <SkeletonCard key={i} />)
-              : data?.weekly_best3.map((entry) => (
-                  <div key={`weekly-${entry.rank}`} class="relative">
-                    <RankingCard entry={entry} variant="weekly" lang={lang} />
-                    <div class="absolute top-2 right-2">
-                      <ConfidenceBadge
-                        trades={entry.total_trades}
-                        lang={lang}
-                      />
-                    </div>
-                  </div>
-                ))}
+            {data?.weekly_best3.map((entry) => (
+              <RankingCard
+                key={`weekly-${entry.rank}`}
+                entry={entry}
+                variant="weekly"
+                lang={lang}
+              />
+            ))}
           </div>
         </section>
       )}
