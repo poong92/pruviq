@@ -439,7 +439,7 @@ export default function ResultsPanel({
                   <input
                     type="range"
                     min="1"
-                    max="549"
+                    max="569"
                     step="1"
                     value={qaCoins}
                     onInput={(e: Event) =>
@@ -447,7 +447,7 @@ export default function ResultsPanel({
                     }
                     class="slider-range mt-1"
                     style={{
-                      background: `linear-gradient(to right, ${COLORS.accent} 0%, ${COLORS.accent} ${((qaCoins - 1) / 534) * 100}%, var(--color-border) ${((qaCoins - 1) / 534) * 100}%, var(--color-border) 100%)`,
+                      background: `linear-gradient(to right, ${COLORS.accent} 0%, ${COLORS.accent} ${((qaCoins - 1) / 568) * 100}%, var(--color-border) ${((qaCoins - 1) / 568) * 100}%, var(--color-border) 100%)`,
                     }}
                   />
                 </div>

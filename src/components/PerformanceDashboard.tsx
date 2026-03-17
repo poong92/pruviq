@@ -60,7 +60,7 @@ const labels = {
   en: {
     tag: "BACKTEST RESULTS",
     title: "Strategy Performance.",
-    desc: "BB Squeeze SHORT backtest results across 549+ coins, 2+ years of data. Including the losses.",
+    desc: "BB Squeeze SHORT backtest results across {coins}+ coins, 2+ years of data. Including the losses.",
     trades: "Total Trades",
     winRate: "Win Rate",
     pnl: "Total PnL",
@@ -99,7 +99,7 @@ const labels = {
   ko: {
     tag: "백테스트 결과",
     title: "전략 성과.",
-    desc: "BB Squeeze SHORT 백테스트 결과 — 549개+ 코인, 2년+ 데이터. 손실 포함.",
+    desc: "BB Squeeze SHORT 백테스트 결과 — {coins}개+ 코인, 2년+ 데이터. 손실 포함.",
     trades: "총 거래",
     winRate: "승률",
     pnl: "총 손익",
@@ -184,6 +184,7 @@ export default function PerformanceDashboard({
 }) {
   const t = labels[lang] || labels.en;
 
+  const [coinsCount, setCoinsCount] = useState("569");
   const [data, setData] = useState<RawPerformanceData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -191,6 +192,17 @@ export default function PerformanceDashboard({
 
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
+
+  useEffect(() => {
+    fetch("/data/site-stats.json")
+      .then((r) => r.json())
+      .then((d: { coins_analyzed?: number }) => {
+        if (d.coins_analyzed) setCoinsCount(String(d.coins_analyzed));
+      })
+      .catch(() => {
+        /* keep default */
+      });
+  }, []);
 
   useEffect(() => {
     fetch("/data/performance.json")
@@ -382,7 +394,7 @@ export default function PerformanceDashboard({
           {t.title}
         </h1>
         <p class="text-[--color-text-muted] text-base leading-relaxed max-w-[600px] mb-4">
-          {t.desc}
+          {t.desc.replace("{coins}", coinsCount)}
         </p>
         <div class="font-mono text-xs text-[--color-text-muted] flex gap-6 flex-wrap">
           <span>

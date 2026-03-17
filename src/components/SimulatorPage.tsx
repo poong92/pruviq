@@ -153,7 +153,8 @@ const L = {
       "Simulating trades...",
       "Building results...",
     ],
-    timeoutMsg: "Backtest timed out. Large coin sets (100+) can take longer. Try reducing the number of coins or narrowing the date range.",
+    timeoutMsg:
+      "Backtest timed out. Large coin sets (100+) can take longer. Try reducing the number of coins or narrowing the date range.",
     rateLimitMsg: "Too many requests. Retrying automatically...",
     retryingIn: "Retrying in {n}s...",
     elapsed: "{n}s",
@@ -265,7 +266,8 @@ const L = {
     equityCurve: "수익 곡선",
     drawdown: "낙폭",
     maxDrawdown: "최대 낙폭",
-    noTradeDetails: "이 백테스트 유형에서는 개별 거래 내역을 제공하지 않습니다.",
+    noTradeDetails:
+      "이 백테스트 유형에서는 개별 거래 내역을 제공하지 않습니다.",
     noCoinData: "코인별 데이터가 없습니다.",
     tradeTableCaption: "시뮬레이션 거래 내역",
     progressLabels: [
@@ -275,7 +277,8 @@ const L = {
       "거래 시뮬레이션 중...",
       "결과 생성 중...",
     ],
-    timeoutMsg: "백테스트가 시간 초과되었습니다. 코인 수가 많으면(100+) 더 오래 걸릴 수 있습니다. 코인 수를 줄이거나 기간을 좁혀보세요.",
+    timeoutMsg:
+      "백테스트가 시간 초과되었습니다. 코인 수가 많으면(100+) 더 오래 걸릴 수 있습니다. 코인 수를 줄이거나 기간을 좁혀보세요.",
     rateLimitMsg: "요청이 많습니다. 자동 재시도 중...",
     retryingIn: "{n}초 후 재시도...",
     elapsed: "{n}초",
@@ -368,7 +371,7 @@ export default function SimulatorPage({ lang = "en" }: Props) {
   const [compounding, setCompounding] = useState(false);
   const handleCompoundToggle = (v: boolean) => {
     setCompounding(v);
-    setPerCoinUsdt(v ? 1000 : 60);  // swap default: total capital vs per-coin
+    setPerCoinUsdt(v ? 1000 : 60); // swap default: total capital vs per-coin
   };
 
   // Timeframe
@@ -484,10 +487,9 @@ export default function SimulatorPage({ lang = "en" }: Props) {
       }
 
       try {
-        const data = await fetchWithFallback<IndicatorInfo[] | { indicators: IndicatorInfo[] }>(
-          "/builder/indicators",
-          STATIC_DATA.builderIndicators,
-        );
+        const data = await fetchWithFallback<
+          IndicatorInfo[] | { indicators: IndicatorInfo[] }
+        >("/builder/indicators", STATIC_DATA.builderIndicators);
         if (!cancelled)
           setAvailableIndicators(
             Array.isArray(data) ? data : data.indicators || [],
@@ -495,10 +497,9 @@ export default function SimulatorPage({ lang = "en" }: Props) {
       } catch {}
 
       try {
-        const presetsData = await fetchWithFallback<PresetItem[] | { presets: PresetItem[] }>(
-          "/builder/presets",
-          STATIC_DATA.builderPresets,
-        );
+        const presetsData = await fetchWithFallback<
+          PresetItem[] | { presets: PresetItem[] }
+        >("/builder/presets", STATIC_DATA.builderPresets);
         if (!cancelled)
           setPresets(
             Array.isArray(presetsData)
@@ -510,21 +511,27 @@ export default function SimulatorPage({ lang = "en" }: Props) {
       try {
         const coinRes = await fetch(`${API_URL}/coins`);
         if (coinRes.ok) {
-          const data: CoinOption[] | { coins: CoinOption[] } = await coinRes.json();
+          const data: CoinOption[] | { coins: CoinOption[] } =
+            await coinRes.json();
           if (!cancelled) {
             const arr = Array.isArray(data) ? data : data.coins || [];
-            setAllCoins(arr.map((c: { symbol?: string } | string) => ({ symbol: (typeof c === 'string' ? c : c.symbol) || '' })));
+            setAllCoins(
+              arr.map((c: { symbol?: string } | string) => ({
+                symbol: (typeof c === "string" ? c : c.symbol) || "",
+              })),
+            );
           }
         } else {
           // Fallback: try static coins-stats for a basic symbol list
           try {
-            const stats = await fetchWithFallback<{ coins: Array<{ symbol?: string } | string> }>(
-              "/coins/stats",
-              STATIC_DATA.coinsStats,
-            );
+            const stats = await fetchWithFallback<{
+              coins: Array<{ symbol?: string } | string>;
+            }>("/coins/stats", STATIC_DATA.coinsStats);
             if (!cancelled && Array.isArray(stats.coins)) {
               setAllCoins(
-                stats.coins.map((c: { symbol?: string } | string) => ({ symbol: (typeof c === 'string' ? c : c.symbol) || '' })),
+                stats.coins.map((c: { symbol?: string } | string) => ({
+                  symbol: (typeof c === "string" ? c : c.symbol) || "",
+                })),
               );
             }
           } catch {}
@@ -696,7 +703,11 @@ export default function SimulatorPage({ lang = "en" }: Props) {
     }
 
     const entryConditions = conditions.map((c) => {
-      const cond: Record<string, string | number | boolean | undefined> = { field: c.field, op: c.op, shift: c.shift };
+      const cond: Record<string, string | number | boolean | undefined> = {
+        field: c.field,
+        op: c.op,
+        shift: c.shift,
+      };
       if (c.field2) cond.field2 = c.field2;
       else cond.value = c.value;
       return cond;
@@ -715,7 +726,16 @@ export default function SimulatorPage({ lang = "en" }: Props) {
     const hoursPerBar = tfHours[timeframe] || 1;
     const adjustedMaxBars = Math.max(6, Math.round(maxBars / hoursPerBar));
 
-    const body: Record<string, string | number | boolean | number[] | string[] | Record<string, Record<string, number>> | { type: string; conditions: typeof entryConditions }> = {
+    const body: Record<
+      string,
+      | string
+      | number
+      | boolean
+      | number[]
+      | string[]
+      | Record<string, Record<string, number>>
+      | { type: string; conditions: typeof entryConditions }
+    > = {
       name: "Custom Strategy",
       direction,
       timeframe,
@@ -752,7 +772,12 @@ export default function SimulatorPage({ lang = "en" }: Props) {
     try {
       // Abortable fetch with timeout — scale with coin count
       const controller = new AbortController();
-      const coinCount = coinMode === "top" ? topN : coinMode === "select" ? selectedCoins.length : 549;
+      const coinCount =
+        coinMode === "top"
+          ? topN
+          : coinMode === "select"
+            ? selectedCoins.length
+            : 569;
       const timeoutMs = Math.max(120000, coinCount > 100 ? 180000 : 120000);
       const abortTimeout = setTimeout(() => controller.abort(), timeoutMs);
 
@@ -784,7 +809,10 @@ export default function SimulatorPage({ lang = "en" }: Props) {
         const detail = err.detail;
         const msg = Array.isArray(detail)
           ? detail
-              .map((d: { msg?: string; message?: string }) => d.msg || d.message || JSON.stringify(d))
+              .map(
+                (d: { msg?: string; message?: string }) =>
+                  d.msg || d.message || JSON.stringify(d),
+              )
               .join("; ")
           : typeof detail === "string"
             ? detail
@@ -830,7 +858,10 @@ export default function SimulatorPage({ lang = "en" }: Props) {
             : "Backtest failed";
       // If the request was aborted, provide a clearer timeout message
       if (err?.name === "AbortError")
-        setError(t.timeoutMsg || "Backtest timed out. Try fewer coins or a shorter date range.");
+        setError(
+          t.timeoutMsg ||
+            "Backtest timed out. Try fewer coins or a shorter date range.",
+        );
       else setError(errMsg);
     } finally {
       clearInterval(progressInterval);
@@ -880,7 +911,10 @@ export default function SimulatorPage({ lang = "en" }: Props) {
       }
       if (p.entry?.conditions) {
         setConditions(
-          p.entry.conditions.map((c: Omit<Condition, 'id'>) => ({ ...c, id: nextCondId() })),
+          p.entry.conditions.map((c: Omit<Condition, "id">) => ({
+            ...c,
+            id: nextCondId(),
+          })),
         );
       }
       if (p.direction) setDirection(p.direction);
@@ -932,7 +966,11 @@ export default function SimulatorPage({ lang = "en" }: Props) {
     ]);
   };
 
-  const updateCondition = (id: string, key: string, val: string | number | boolean) => {
+  const updateCondition = (
+    id: string,
+    key: string,
+    val: string | number | boolean,
+  ) => {
     setConditions((prev) =>
       prev.map((c) => (c.id === id ? { ...c, [key]: val } : c)),
     );
