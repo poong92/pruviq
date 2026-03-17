@@ -222,14 +222,31 @@ export function StrategyRanking({ lang = "en" }: { lang?: Lang }) {
     updateUrlParams(period, g);
   };
 
-  // Use available_periods/groups from response if loaded, else fallback defaults
-  const availablePeriods = data?.available_periods ?? ["7d", "30d", "365d"];
-  const availableGroups = data?.available_groups ?? [
-    "top30",
-    "top50",
-    "top100",
-    "btc",
-  ];
+  // Only show periods/groups confirmed by API — no fallback phantom buttons
+  // During loading: empty → skeleton placeholders rendered instead
+  const availablePeriods = data?.available_periods ?? [];
+  const availableGroups = data?.available_groups ?? [];
+
+  // Auto-correct selected period/group if not in available list after load
+  useEffect(() => {
+    if (!data || loading) return;
+    if (
+      data.available_periods.length > 0 &&
+      !data.available_periods.includes(period)
+    ) {
+      const next = data.available_periods[0];
+      setPeriod(next);
+      updateUrlParams(next, group);
+    }
+    if (
+      data.available_groups.length > 0 &&
+      !data.available_groups.includes(group)
+    ) {
+      const next = data.available_groups[0];
+      setGroup(next);
+      updateUrlParams(period, next);
+    }
+  }, [data, loading]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (error) {
     return (
@@ -249,23 +266,30 @@ export function StrategyRanking({ lang = "en" }: { lang?: Lang }) {
           <span class="text-xs font-mono text-[--color-text-muted] mr-1">
             {lbl.periodLabel}:
           </span>
-          {availablePeriods.map((p) => {
-            const label = PERIOD_LABELS[p]?.[lang] ?? p;
-            const active = period === p;
-            return (
-              <button
-                key={p}
-                onClick={() => handlePeriodChange(p)}
-                class={`px-3 py-1 rounded font-mono text-xs border transition-colors ${
-                  active
-                    ? "bg-[--color-accent] text-[--color-bg] border-[--color-accent] font-semibold"
-                    : "border-[--color-border] text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent]"
-                }`}
-              >
-                {label}
-              </button>
-            );
-          })}
+          {loading
+            ? [0, 1, 2].map((i) => (
+                <div
+                  key={i}
+                  class="w-16 h-6 rounded bg-[--color-border] animate-pulse"
+                />
+              ))
+            : availablePeriods.map((p) => {
+                const label = PERIOD_LABELS[p]?.[lang] ?? p;
+                const active = period === p;
+                return (
+                  <button
+                    key={p}
+                    onClick={() => handlePeriodChange(p)}
+                    class={`px-3 py-1 rounded font-mono text-xs border transition-colors ${
+                      active
+                        ? "bg-[--color-accent] text-[--color-bg] border-[--color-accent] font-semibold"
+                        : "border-[--color-border] text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent]"
+                    }`}
+                  >
+                    {label}
+                  </button>
+                );
+              })}
         </div>
 
         {/* Group filter */}
@@ -273,23 +297,30 @@ export function StrategyRanking({ lang = "en" }: { lang?: Lang }) {
           <span class="text-xs font-mono text-[--color-text-muted] mr-1">
             {lbl.groupLabel}:
           </span>
-          {availableGroups.map((g) => {
-            const label = GROUP_LABELS[g]?.[lang] ?? g;
-            const active = group === g;
-            return (
-              <button
-                key={g}
-                onClick={() => handleGroupChange(g)}
-                class={`px-3 py-1 rounded font-mono text-xs border transition-colors ${
-                  active
-                    ? "bg-[--color-accent] text-[--color-bg] border-[--color-accent] font-semibold"
-                    : "border-[--color-border] text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent]"
-                }`}
-              >
-                {label}
-              </button>
-            );
-          })}
+          {loading
+            ? [0, 1, 2, 3].map((i) => (
+                <div
+                  key={i}
+                  class="w-16 h-6 rounded bg-[--color-border] animate-pulse"
+                />
+              ))
+            : availableGroups.map((g) => {
+                const label = GROUP_LABELS[g]?.[lang] ?? g;
+                const active = group === g;
+                return (
+                  <button
+                    key={g}
+                    onClick={() => handleGroupChange(g)}
+                    class={`px-3 py-1 rounded font-mono text-xs border transition-colors ${
+                      active
+                        ? "bg-[--color-accent] text-[--color-bg] border-[--color-accent] font-semibold"
+                        : "border-[--color-border] text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent]"
+                    }`}
+                  >
+                    {label}
+                  </button>
+                );
+              })}
         </div>
       </div>
 
@@ -347,8 +378,8 @@ export function StrategyRanking({ lang = "en" }: { lang?: Lang }) {
         </div>
       </section>
 
-      {/* Weekly Best 3 */}
-      {(loading || (data?.weekly_best3 && data.weekly_best3.length > 0)) && (
+      {/* Weekly Best 3 — only render when data confirmed (no skeleton flash) */}
+      {!loading && data?.weekly_best3 && data.weekly_best3.length > 0 && (
         <section>
           <SectionHeader title={lbl.weeklyTitle} subtitle={lbl.weeklySub} />
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
