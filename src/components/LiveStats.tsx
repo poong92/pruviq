@@ -1,11 +1,26 @@
 /**
  * LiveStats.tsx - Backtesting tool stats with animated numbers
+ * Numbers fetched from /data/site-stats.json (SSoT).
  */
 import { useState, useEffect } from "preact/hooks";
 
 interface Props {
   lang?: "en" | "ko";
 }
+
+interface SiteStats {
+  coins_analyzed: number;
+  trading_days: number;
+  simulations_run: number;
+  strategies_tested: number;
+}
+
+const DEFAULTS: SiteStats = {
+  coins_analyzed: 549,
+  trading_days: 2898,
+  simulations_run: 12847,
+  strategies_tested: 88,
+};
 
 const L = {
   en: {
@@ -64,24 +79,41 @@ function AnimatedNumber({
 
 export default function LiveStats({ lang = "en" }: Props) {
   const t = L[lang] || L.en;
+  const [stats, setStats] = useState<SiteStats>(DEFAULTS);
+
+  useEffect(() => {
+    fetch("/data/site-stats.json")
+      .then((r) => r.json())
+      .then((d: Partial<SiteStats>) => {
+        setStats({
+          coins_analyzed: d.coins_analyzed ?? DEFAULTS.coins_analyzed,
+          trading_days: d.trading_days ?? DEFAULTS.trading_days,
+          simulations_run: d.simulations_run ?? DEFAULTS.simulations_run,
+          strategies_tested: d.strategies_tested ?? DEFAULTS.strategies_tested,
+        });
+      })
+      .catch(() => {
+        /* keep defaults */
+      });
+  }, []);
 
   return (
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
       <div class="text-center p-4">
         <p class="font-mono text-[--color-accent] text-3xl md:text-4xl font-bold">
-          <AnimatedNumber value={2898} suffix="+" />
+          <AnimatedNumber value={stats.trading_days} suffix="+" />
         </p>
         <p class="text-[--color-text-muted] text-sm mt-1">{t.trades}</p>
       </div>
       <div class="text-center p-4">
         <p class="font-mono text-[--color-accent] text-3xl md:text-4xl font-bold">
-          <AnimatedNumber value={549} suffix="+" />
+          <AnimatedNumber value={stats.coins_analyzed} suffix="+" />
         </p>
         <p class="text-[--color-text-muted] text-sm mt-1">{t.coins}</p>
       </div>
       <div class="text-center p-4">
         <p class="font-mono text-[--color-accent] text-3xl md:text-4xl font-bold">
-          <AnimatedNumber value={88} suffix="+" />
+          <AnimatedNumber value={stats.strategies_tested} suffix="+" />
         </p>
         <p class="text-[--color-text-muted] text-sm mt-1">{t.strategies}</p>
       </div>
