@@ -40,7 +40,11 @@ class DataManager:
         self._coin_info.clear()
 
         # Skip problematic symbols
-        skip = {"intcusdt", "tslausdt", "hoodusdt", "paxgusdt", "gunusdt"}
+        skip = {"intcusdt", "tslausdt", "hoodusdt", "paxgusdt", "gunusdt",
+                "usdcusdt",    # stablecoin (USDC) — no volatility
+                "stableusdt",  # stablecoin project — no volatility
+                "btcdomusdt",  # BTC dominance index — not a tradable asset
+                }
 
         files = sorted(data_dir.glob("*_1h.csv"), key=lambda f: f.stat().st_size, reverse=True)
         # Auto-detect futures/ subdirectory if no CSVs found at top level
@@ -83,8 +87,14 @@ class DataManager:
     def get_df(self, symbol: str) -> Optional[pd.DataFrame]:
         return self._data.get(symbol.upper())
 
+    def sort_by_market_cap(self, market_cap_ranks: Dict[str, int]) -> None:
+        """Re-sort _coin_info by market cap rank (ascending). Coins without rank go last."""
+        self._coin_info.sort(
+            key=lambda c: market_cap_ranks.get(c["symbol"], 9999)
+        )
+
     def get_top_n(self, n: int) -> List[Tuple[str, pd.DataFrame]]:
-        """Get top N coins by data size (already sorted)."""
+        """Get top N coins by market cap rank (call sort_by_market_cap first)."""
         return [(info["symbol"], self._data[info["symbol"]])
                 for info in self._coin_info[:n]
                 if info["symbol"] in self._data]

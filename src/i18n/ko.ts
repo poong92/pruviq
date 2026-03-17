@@ -575,7 +575,7 @@ export const ko: Record<TranslationKey, string> = {
   "ranking.title": "오늘의 전략 랭킹",
   "ranking.date_label": "{date} 기준 · PRUVIQ 시뮬레이터 백테스트 결과",
   "ranking.desc":
-    "수익팩터(PF) 기준으로 오늘 가장 성과가 좋은 전략과 나쁜 전략을 확인하세요. 샘플 수가 100건 미만인 전략은 통계적 신뢰도가 낮습니다.",
+    "시가총액 상위 50개 코인 기준(스테이블코인 제외), 수익팩터(PF) 기준으로 오늘 가장 성과가 좋은 전략과 나쁜 전략을 확인하세요. 샘플 수가 100건 미만인 전략은 통계적 신뢰도가 낮습니다.",
   "ranking.open_sim": "시뮬레이터 열기",
   "ranking.strategy_lib": "전략 라이브러리",
   "ranking.leaderboard": "리더보드",
@@ -790,7 +790,7 @@ export const ko: Record<TranslationKey, string> = {
     "바이낸스 선물에서 수집한 2년 이상의 1시간 OHLCV 캔들 데이터. 모든 캔들은 완성된(종료된) 데이터만 사용하며, 선행 편향(look-ahead bias)을 방지하기 위해 미완성 데이터는 사용하지 않습니다.",
   "methodology.universe_label": "유니버스",
   "methodology.universe_desc":
-    "바이낸스에 상장된 549개 이상의 USDT 무기한 선물 페어. 상장 폐지된 코인과 유동성이 낮은 페어는 제외됩니다. 정확한 수는 전략 버전에 따라 다릅니다.",
+    "바이낸스에 상장된 549개 이상의 USDT 무기한 선물 페어. 스테이블코인, 상장 폐지 코인, 유동성이 낮은 페어는 제외됩니다. 데일리 랭킹은 시가총액 상위 50개 코인 기준으로 산출됩니다. 정확한 수는 전략 버전에 따라 다릅니다.",
   "methodology.execution_label": "체결",
   "methodology.execution_desc":
     "진입은 캔들 종가에서 체결되는 것으로 가정합니다. 이는 보수적인 가정입니다 — 실제 체결가는 타이밍과 호가창 깊이에 따라 소폭 차이가 날 수 있습니다.",

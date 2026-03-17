@@ -114,11 +114,16 @@ def _refresh_data():
         if updated > 0:
             logger.info(f"Updated {updated} symbols from Binance, reloading...")
             data_manager.load(DATA_DIR)
+            _load_coingecko_metadata()
+            if _cg_metadata:
+                mc_ranks = {sym.upper(): info["market_cap_rank"]
+                            for sym, info in _cg_metadata.items()
+                            if info.get("market_cap_rank")}
+                data_manager.sort_by_market_cap(mc_ranks)
             all_strategies = get_all_strategies()
             indicator_cache.build_multi(data_manager, all_strategies)
             strategy = BBSqueezeStrategy(avoid_hours=AVOID_HOURS)
             global coin_stats_cache
-            _load_coingecko_metadata()
             coin_stats_cache = _build_coin_stats(strategy)
             sim_cache.clear()
             logger.info(f"Reload complete: {indicator_cache.count} coins, cache cleared")
@@ -182,6 +187,18 @@ async def lifespan(app: FastAPI):
     if data_manager.coin_count == 0:
         print(f"WARNING: 0 coins loaded! Check PRUVIQ_DATA_DIR={DATA_DIR}, files: {list(DATA_DIR.glob('*_1h.csv'))[:3]}")
 
+    # Sort coins by CoinGecko market cap rank so top_n=50 means market cap Top 50
+    _load_coingecko_metadata()
+    if _cg_metadata:
+        mc_ranks = {sym.upper(): info["market_cap_rank"]
+                    for sym, info in _cg_metadata.items()
+                    if info.get("market_cap_rank")}
+        data_manager.sort_by_market_cap(mc_ranks)
+        top5 = [c["symbol"] for c in data_manager.coins[:5]]
+        print(f"Coins sorted by market cap rank. Top 5: {top5}")
+    else:
+        print("WARNING: CoinGecko metadata unavailable — coin order falls back to data size")
+
     if data_manager.coin_count > 0:
         # Build multi-strategy indicator cache
         print("Pre-computing indicators for all strategies...")
@@ -196,7 +213,6 @@ async def lifespan(app: FastAPI):
         print("Pre-computing coin stats...")
         strategy = BBSqueezeStrategy(avoid_hours=AVOID_HOURS)
         global coin_stats_cache
-        _load_coingecko_metadata()
         coin_stats_cache = _build_coin_stats(strategy)
         print(f"Coin stats cached for {len(coin_stats_cache['coins'])} coins")
 
