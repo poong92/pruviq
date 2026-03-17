@@ -61,6 +61,7 @@ jobs:
       # Self-hosted M4: timeout 60s (이전 90s는 GitHub→DO 레이턴시 보정용, 불필요)
       # workers 2 (M4 Pro 성능 활용)
       # retries 1 (진짜 flaky는 self-hosted에서도 재현됨, 1회로 충분)
+      # visual regression: tests/visual/ (ubuntu-only, separate workflow)
       timeout-minutes: 15
       env:
         CI: true
