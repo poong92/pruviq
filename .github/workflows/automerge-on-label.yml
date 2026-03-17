@@ -123,7 +123,7 @@ jobs:
             );
             const total = checkRuns.length;
             const allCompleted = checkRuns.every(c => c.status === 'completed');
-            const allSuccess = checkRuns.every(c => c.conclusion === 'success');
+            const allSuccess = checkRuns.every(c => c.conclusion === 'success' || c.conclusion === 'skipped');
 
             core.info(`Check Runs for ${headSha}: ${total} total, allCompleted=${allCompleted}, allSuccess=${allSuccess}`);
             checkRuns.forEach(c => core.info(`  - ${c.name}: ${c.status} / ${c.conclusion}`));

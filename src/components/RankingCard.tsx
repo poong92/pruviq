@@ -100,7 +100,7 @@ export function RankingCard({
             </p>
           </div>
         </div>
-        <div class="flex items-center gap-1.5 shrink-0 flex-wrap justify-end">
+        <div class="flex items-center gap-1.5 shrink-0">
           {directionTag(entry.direction)}
           <span class="font-mono text-xs px-2 py-0.5 rounded border border-[--color-border] text-[--color-text-muted]">
             {entry.timeframe}
@@ -133,14 +133,6 @@ export function RankingCard({
           </p>
         </div>
       </div>
-
-      {/* Warnings */}
-      {entry.low_sample && (
-        <p class="mt-2 text-[--color-yellow] text-xs font-mono flex items-center gap-1">
-          <span aria-hidden="true">⚠</span>
-          {lbl.lowSample(entry.total_trades)}
-        </p>
-      )}
     </div>
   );
 }
