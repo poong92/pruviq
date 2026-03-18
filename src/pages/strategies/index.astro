@@ -84,13 +84,16 @@ const difficultyColors: Record<string, string> = {
       <p class="text-[--color-text-muted] text-lg mb-4 max-w-2xl">
         {t('strategies.desc')}
       </p>
-      <p class="text-[--color-text-muted] text-sm mb-12 max-w-2xl">
+      <p class="text-[--color-text-muted] text-sm mb-3 max-w-2xl">
         {t('strategies.count')
           .replace('{total}', String(strategies.length))
           .replace('{verified}', String(strategies.filter(s => s.data.status === 'verified').length))
           .replace('{killed}', String(strategies.filter(s => s.data.status === 'killed').length))
           .replace('{shelved}', String(strategies.filter(s => s.data.status === 'shelved').length))
         }
+      </p>
+      <p class="font-mono text-xs text-[--color-accent]/80 mb-12 max-w-2xl">
+        + {simulatorPresets.length} simulator presets ready to test &rarr; <span class="font-bold">{strategies.length + simulatorPresets.length} total testable configurations</span>
       </p>
 
       <div class="mb-6 flex flex-col sm:flex-row gap-3">
@@ -244,6 +247,7 @@ const difficultyColors: Record<string, string> = {
 
       {simulatorPresets.length > 0 && (
         <div class="mt-12">
+          <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">SIMULATOR PRESETS</p>
           <h2 class="text-xl font-bold mb-2">{t('strategies.presets_title').replace('{count}', String(simulatorPresets.length))}</h2>
           <p class="text-[--color-text-muted] text-sm mb-6">
             {t('strategies.presets_desc')}

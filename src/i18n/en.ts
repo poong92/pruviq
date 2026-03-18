@@ -1204,6 +1204,7 @@ export const en = {
   "fees.savings_callout":
     "Trade $10,000/month? Save ~$144/year with Binance VIP discount via PRUVIQ.",
   "nav.leaderboard": "Leaderboard",
+  "nav.compare_tools": "Compare Tools",
 
   // Metric explanation tooltips
   "metric.sharpe_desc":

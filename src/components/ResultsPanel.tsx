@@ -576,6 +576,84 @@ export default function ResultsPanel({
           {/* Summary tab */}
           {resultTab === "summary" && (
             <div class="p-3 md:p-4">
+              {/* Strategy verdict banner */}
+              {result &&
+                (() => {
+                  const pf = result.profit_factor;
+                  const wr = result.win_rate;
+                  const mdd = result.max_drawdown_pct;
+                  let grade: string;
+                  let gradeColor: string;
+                  let reason: string;
+                  if (pf >= 2.0 && wr >= 55 && mdd <= 20) {
+                    grade = lang === "ko" ? "강력함" : "STRONG";
+                    gradeColor = "#22c55e";
+                    reason =
+                      lang === "ko"
+                        ? `PF ${formatPF(pf)}, 승률 ${wr.toFixed(1)}%, MDD ${mdd.toFixed(1)}% — 세 지표 모두 우수`
+                        : `PF ${formatPF(pf)}, WR ${wr.toFixed(1)}%, MDD ${mdd.toFixed(1)}% — all three metrics strong`;
+                  } else if (pf >= 1.5 && wr >= 50 && mdd <= 30) {
+                    grade = lang === "ko" ? "양호함" : "GOOD";
+                    gradeColor = "#86efac";
+                    reason =
+                      lang === "ko"
+                        ? `PF ${formatPF(pf)}, 승률 ${wr.toFixed(1)}%, MDD ${mdd.toFixed(1)}% — 실사용 가능 수준`
+                        : `PF ${formatPF(pf)}, WR ${wr.toFixed(1)}%, MDD ${mdd.toFixed(1)}% — viable for live use`;
+                  } else if (pf >= 1.2 && mdd <= 40) {
+                    grade = lang === "ko" ? "보통" : "FAIR";
+                    gradeColor = "#facc15";
+                    const weak =
+                      pf < 1.5
+                        ? lang === "ko"
+                          ? `PF ${formatPF(pf)} (목표: 1.5 이상)`
+                          : `PF ${formatPF(pf)} (target: ≥1.5)`
+                        : lang === "ko"
+                          ? `승률 ${wr.toFixed(1)}% (목표: 50% 이상)`
+                          : `WR ${wr.toFixed(1)}% (target: ≥50%)`;
+                    reason =
+                      lang === "ko"
+                        ? `${weak} — 파라미터 조정 권장`
+                        : `${weak} — consider parameter tuning`;
+                  } else {
+                    grade = lang === "ko" ? "위험" : "WEAK";
+                    gradeColor = "#f87171";
+                    const mainIssue =
+                      pf < 1.0
+                        ? lang === "ko"
+                          ? `PF ${formatPF(pf)} (손익 역전)`
+                          : `PF ${formatPF(pf)} (net loss)`
+                        : mdd > 40
+                          ? lang === "ko"
+                            ? `MDD ${mdd.toFixed(1)}% (과도한 낙폭)`
+                            : `MDD ${mdd.toFixed(1)}% (excessive drawdown)`
+                          : lang === "ko"
+                            ? `승률 ${wr.toFixed(1)}% (50% 미만)`
+                            : `WR ${wr.toFixed(1)}% (below 50%)`;
+                    reason =
+                      lang === "ko"
+                        ? `${mainIssue} — 실거래 비권장`
+                        : `${mainIssue} — not recommended for live trading`;
+                  }
+                  return (
+                    <div
+                      class="mb-3 px-3 py-2 rounded-lg border flex items-center gap-2 font-mono text-xs"
+                      style={{
+                        borderColor: gradeColor + "40",
+                        background: gradeColor + "12",
+                      }}
+                    >
+                      <span
+                        class="font-bold shrink-0"
+                        style={{ color: gradeColor }}
+                      >
+                        {lang === "ko" ? "전략 등급:" : "Strategy:"}{" "}
+                        <span style={{ color: gradeColor }}>{grade}</span>
+                      </span>
+                      <span class="text-[--color-text-muted]">—</span>
+                      <span style={{ color: gradeColor + "cc" }}>{reason}</span>
+                    </div>
+                  );
+                })()}
               {/* Results interpretation guide banner */}
               {showResultsGuide && (
                 <div class="mb-3 px-3 py-2.5 rounded-lg border border-[--color-accent]/30 bg-[--color-accent]/5 flex items-start justify-between gap-2">
