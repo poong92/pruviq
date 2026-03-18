@@ -28,6 +28,7 @@ const cardLabels = {
     days: "Days in Top",
     daysUnit: "days",
     lowSample: (n: number) => `Low sample (${n} trades < 100)`,
+    pfCapped: "Profit Factor capped at 99.99 (limited trade data)",
   },
   ko: {
     wr: "승률",
@@ -35,6 +36,7 @@ const cardLabels = {
     days: "집계 일수",
     daysUnit: "일",
     lowSample: (n: number) => `샘플 부족 (${n}건 < 100건)`,
+    pfCapped: "PF 99.99로 제한됨 (거래 샘플 부족)",
   },
 };
 
@@ -127,9 +129,21 @@ export function RankingCard({
         </div>
         <div>
           <p class="text-[--color-text-muted] text-xs mb-0.5">PF</p>
-          <p class={`font-bold text-base ${pfColor(entry.profit_factor)}`}>
-            {entry.profit_factor.toFixed(2)}
-          </p>
+          {entry.profit_factor >= 50 ? (
+            <p
+              class={`font-bold text-base ${pfColor(entry.profit_factor)} cursor-help underline decoration-dotted`}
+              title={lbl.pfCapped}
+            >
+              {entry.profit_factor.toFixed(2)}
+              <span class="ml-0.5 text-[0.6rem] font-normal text-[--color-text-muted]">
+                (cap)
+              </span>
+            </p>
+          ) : (
+            <p class={`font-bold text-base ${pfColor(entry.profit_factor)}`}>
+              {entry.profit_factor.toFixed(2)}
+            </p>
+          )}
         </div>
         <div>
           <p class="text-[--color-text-muted] text-xs mb-0.5">

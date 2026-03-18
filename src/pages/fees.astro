@@ -8,6 +8,16 @@ import { EXCHANGES, discountTooltip } from '../config/exchanges';
 // Build a lookup map for tooltip data keyed by exchange id
 const exchangeTooltips = Object.fromEntries(EXCHANGES.map((ex) => [ex.id, discountTooltip(ex)]));
 
+// Compute annual savings badge per exchange based on $10k/month volume (2 sides)
+// savings = discountPct% × standardTakerFee × $120k/year × 2 sides
+const savingsBadge = Object.fromEntries(
+  EXCHANGES.map((ex) => {
+    const annualVolume = 10_000 * 12; // $120,000/year
+    const saved = (ex.referralDiscountPct / 100) * (ex.standardTakerFee / 100) * annualVolume * 2;
+    return [ex.id, saved >= 1 ? `Save $${Math.round(saved)}/yr` : null];
+  })
+);
+
 const t = useTranslations('en');
 
 const exchangeCards: Record<string, { tagLabel: string; description: string }> = {
@@ -87,9 +97,17 @@ const exchangeCards: Record<string, { tagLabel: string; description: string }> =
                 </div>
               </div>
               <p class="text-[--color-text-muted] text-xs mb-4">{card.description}</p>
+              {savingsBadge[ex.id] && ex.available && (
+                <div class="mb-3">
+                  <span class="inline-flex items-center gap-1 text-xs font-mono px-2 py-1 rounded border border-[--color-up]/40 bg-[--color-up]/5 text-[--color-up] font-semibold">
+                    &#9650; {savingsBadge[ex.id]}
+                    <span class="font-normal text-[--color-text-muted]">at $10k/mo</span>
+                  </span>
+                </div>
+              )}
               {ex.available ? (
                 <a href={ex.referralUrl} target="_blank" rel="noopener noreferrer"
-                   class="block text-center bg-[--color-accent] text-[--color-bg] px-4 py-2 min-h-[44px] flex items-center justify-center rounded text-sm font-semibold hover:opacity-90 transition-opacity">
+                   class="block text-center bg-[--color-accent] text-[--color-bg] px-4 py-3 min-h-[48px] flex items-center justify-center rounded text-sm font-bold hover:opacity-90 transition-opacity shadow-sm">
                   {t('fees.signup')} &rarr;
                 </a>
               ) : (
