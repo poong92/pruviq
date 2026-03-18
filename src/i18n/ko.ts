@@ -1013,7 +1013,7 @@ export const ko: Record<TranslationKey, string> = {
   "compare_table.pruviq_verification": "전체 공개",
 
   // Social proof / trust section
-  "trust.badge_api": "바이낸스 API 읽기 전용",
+  "trust.badge_api": "CoinGecko 데이터",
   "trust.badge_source": "소스 공개",
   "trust.badge_privacy": "개인정보 불필요",
   "trust.badge_validated": "몬테카를로 검증",

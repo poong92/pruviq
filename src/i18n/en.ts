@@ -1031,7 +1031,7 @@ export const en = {
   "compare_table.pruviq_verification": "Live",
 
   // Social proof / trust section
-  "trust.badge_api": "Binance API Read-Only",
+  "trust.badge_api": "CoinGecko Data",
   "trust.badge_source": "Source Available",
   "trust.badge_privacy": "No Personal Data",
   "trust.badge_validated": "Monte Carlo Validated",

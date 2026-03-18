@@ -108,6 +108,15 @@ export function RankingCard({
         </div>
       </div>
 
+      {/* Low sample warning badge */}
+      {entry.low_sample && (
+        <div class="mb-3">
+          <span class="inline-flex items-center gap-1 text-xs font-mono px-2 py-0.5 rounded border border-[--color-yellow]/40 text-[--color-yellow] bg-[--color-yellow]/5">
+            ⚠️ {lbl.lowSample(entry.total_trades)}
+          </span>
+        </div>
+      )}
+
       {/* Stats row */}
       <div class="grid grid-cols-3 gap-2 font-mono text-sm">
         <div>
