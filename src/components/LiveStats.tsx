@@ -46,13 +46,15 @@ function AnimatedNumber({
   suffix?: string;
   prefix?: string;
 }) {
-  const [display, setDisplay] = useState(0);
+  // SSR: start with actual value so HTML shows real numbers, not 0
+  const [display, setDisplay] = useState(value);
 
   useEffect(() => {
     if (value === 0) return;
     const duration = 1200;
     const steps = 30;
     let step = 0;
+    setDisplay(0);
 
     const timer = setInterval(() => {
       step++;
