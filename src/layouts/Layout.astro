@@ -567,13 +567,29 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
       (function() {
         var notice = document.getElementById('cookie-notice');
         if (!notice) return;
+        var stickyCta = document.getElementById('sticky-cta');
+
+        function applyOffset() {
+          if (!stickyCta) return;
+          var h = notice.offsetHeight;
+          stickyCta.style.bottom = h + 'px';
+        }
+
+        function removeOffset() {
+          if (!stickyCta) return;
+          stickyCta.style.bottom = '';
+        }
+
         if (!localStorage.getItem('cookie-ok')) {
           notice.style.display = 'flex';
+          // Defer offset calculation until after layout paint
+          requestAnimationFrame(applyOffset);
         }
         var btn = document.getElementById('cookie-ok');
         if (btn) btn.addEventListener('click', function() {
           localStorage.setItem('cookie-ok', '1');
           notice.style.display = 'none';
+          removeOffset();
         });
       })();
     </script>

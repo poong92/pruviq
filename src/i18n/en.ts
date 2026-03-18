@@ -316,7 +316,7 @@ export const en = {
   "fees.title1": "Compare Fees.",
   "fees.title2": "Save on Every Trade.",
   "fees.desc":
-    "3 exchanges, spot & futures fees side by side. Sign up through PRUVIQ and get up to 20% off.",
+    "3 exchanges, spot & futures fees side by side. Sign up through PRUVIQ and get referral discounts: Binance 10% off, Bitget & OKX up to 20% off.",
   "fees.disclosure":
     "Affiliate disclosure: PRUVIQ earns a commission when you sign up through our referral links. Your fee discount is not affected.",
   "fees.compare_title": "Compare Exchanges",
