@@ -45,10 +45,12 @@ export default defineConfig({
       },
     },
   ],
-  webServer: {
-    command: "npm run preview -- --host 0.0.0.0 --port 4321",
-    port: 4321,
-    reuseExistingServer: !process.env.CI,
-    timeout: 30000,
-  },
+  webServer: process.env.BASE_URL?.includes("pruviq.com")
+    ? undefined
+    : {
+        command: "npm run preview -- --host 0.0.0.0 --port 4321",
+        port: 4321,
+        reuseExistingServer: !process.env.CI,
+        timeout: 30000,
+      },
 });
