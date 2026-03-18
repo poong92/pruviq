@@ -42,9 +42,19 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
           <span class="px-3 py-1.5 rounded bg-[--color-accent]/10 text-[--color-accent] border border-[--color-accent]/20">{t('hero.tool_free')}</span>
         </div>
 
-        <p class="text-sm text-[--color-text-muted] mb-8 max-w-2xl opacity-70">
+        <p class="text-sm text-[--color-text-muted] mb-4 max-w-2xl opacity-70">
           {t('hero.beginner_note')}
         </p>
+
+        <!-- 경쟁사 가격 배너 -->
+        <div class="flex items-center gap-2 mb-4 px-3 py-2 rounded border border-[--color-down]/20 bg-[--color-down]/5 max-w-2xl">
+          <span class="text-[--color-down] font-mono text-xs shrink-0">VS</span>
+          <p class="text-sm text-[--color-text-muted] font-mono">{t('home.competitor_banner')}</p>
+        </div>
+
+        <!-- Social proof line above CTA -->
+        <p class="text-sm text-[--color-up] font-mono mb-3">{t('home.social_proof_cta')}</p>
+
         <div class="flex flex-col sm:flex-row gap-4 mb-4">
           <a href="/ko/simulate"
              class="btn-primary bg-[--color-accent] text-[--color-bg] px-8 py-3 rounded font-semibold text-center hover:bg-[--color-accent-dim]">
