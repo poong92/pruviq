@@ -21,6 +21,12 @@ const t = useTranslations('ko');
       <ErrorBoundary name="Weekly Leaderboard" lang="ko" client:load>
         <WeeklyLeaderboard lang="ko" client:load />
       </ErrorBoundary>
+      <noscript>
+        <div class="border border-[--color-border] rounded-lg p-6 text-center text-[--color-text-muted] text-sm font-mono mt-4">
+          <p class="mb-2 font-bold">{t('leaderboard.noscript_title')}</p>
+          <p>{t('leaderboard.noscript_desc')}</p>
+        </div>
+      </noscript>
 
     </div>
   </section>
