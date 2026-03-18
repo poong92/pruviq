@@ -1,26 +1,22 @@
 #!/usr/bin/env npx tsx
 /**
- * Vision QA: Claude Vision Analyzer
+ * Vision QA: Claude Vision Analyzer (Claude CLI 방식)
  *
- * 실제 사용자 화면 기준으로 Claude Vision이 분석:
- * 1. 각 페이지 스크린샷을 Claude에게 보여줌
- * 2. QA 엔지니어 관점에서 문제점 도출
- * 3. 데이터 정합성 검증 (API 값 vs 화면 표시값)
- * 4. 개선 제안 생성
- * 5. 최종 리포트 저장
+ * ANTHROPIC_API_KEY 불필요 — Claude Code CLI 인증 재사용.
+ * `claude --print --input-format stream-json` 으로 이미지 분석.
  *
  * Usage:
- *   ANTHROPIC_API_KEY=sk-... npx tsx scripts/vision-analyze.ts
- *   VISION_DIR=test-results/vision ANTHROPIC_API_KEY=... npx tsx scripts/vision-analyze.ts
+ *   npx tsx scripts/vision-analyze.ts
+ *   VISION_DIR=test-results/vision npx tsx scripts/vision-analyze.ts
  */
 
-import Anthropic from "@anthropic-ai/sdk";
+import { execSync, spawnSync } from "child_process";
 import fs from "fs";
 import path from "path";
 
 const VISION_DIR = process.env.VISION_DIR ?? "test-results/vision";
 const REPORT_PATH = path.join(VISION_DIR, "vision-report.json");
-const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
+const CLAUDE_MODEL = process.env.CLAUDE_MODEL ?? "claude-sonnet-4-6";
 
 // ── 타입 ──────────────────────────────────────────────────────────────────
 
@@ -74,7 +70,7 @@ const PAGE_CONTEXT: Record<string, string> = {
   "home-mobile":
     "PRUVIQ.com 홈페이지 (모바일 375px). 기대: h1 가독성, 코인 수 표시, CTA 버튼 터치 영역, 가로 스크롤 없음",
   "simulate-desktop":
-    "시뮬레이터 페이지 (데스크탑). 기대: 전략 선택 드롭다운, 파라미터 입력, '백테스트 실행' 버튼, 569+ 코인 수",
+    "시뮬레이터 페이지 (데스크탑). 기대: 전략 선택 드롭다운, 파라미터 입력, 실행 버튼, 569+ 코인 수",
   "simulate-mobile":
     "시뮬레이터 페이지 (모바일). 기대: 입력 요소들이 겹치지 않음, 버튼 터치 가능, 스크롤 동작 정상",
   "ranking-desktop":
@@ -98,13 +94,22 @@ const PAGE_CONTEXT: Record<string, string> = {
     "수수료 비교 (데스크탑). 기대: 거래소 수수료 비교 테이블, 실제 % 수치 (0.0x%)",
 };
 
-// ── Vision 분석 프롬프트 ────────────────────────────────────────────────────
+// ── Claude CLI Vision 분석 ──────────────────────────────────────────────────
 
-function buildPrompt(
+function analyzeWithClaude(
+  screenshotPath: string,
   pageContext: string,
   extractedData: Record<string, unknown>,
-): string {
-  return `당신은 PRUVIQ.com의 QA 엔지니어입니다. 이 스크린샷을 실제 사용자 관점에서 분석해주세요.
+): {
+  issues: Issue[];
+  improvements: Improvement[];
+  overall: string;
+  summary: string;
+} {
+  const imageData = fs.readFileSync(screenshotPath);
+  const base64 = imageData.toString("base64");
+
+  const prompt = `당신은 PRUVIQ.com의 QA 엔지니어입니다. 이 스크린샷을 실제 사용자 관점에서 분석해주세요.
 
 ## 이 페이지 정보
 ${pageContext}
@@ -114,11 +119,7 @@ ${pageContext}
 ${JSON.stringify(extractedData, null, 2)}
 \`\`\`
 
-## 분석 지시사항
-
-다음 항목을 **실제 화면을 보고** 판단하세요:
-
-### 반드시 체크할 항목
+## 반드시 체크할 항목
 1. **BLANK_PAGE**: 본문 영역이 비어있거나 스켈레톤/로딩 상태인가?
 2. **DATA_MISSING**: 숫자/전략이름/차트가 보여야 하는데 없는가?
 3. **LAYOUT_BROKEN**: 텍스트 겹침, 요소가 viewport 밖, 그리드 깨짐
@@ -129,24 +130,20 @@ ${JSON.stringify(extractedData, null, 2)}
 8. **MOBILE_BROKEN**: 모바일에서 텍스트 잘림, 버튼 겹침, 가로 스크롤 (모바일 페이지만)
 9. **UX_ISSUE**: 사용자가 혼란스러울 수 있는 UI 문제
 
-### 개선 제안 항목
-- 화면에서 발견되는 UX/UI 개선점
-- 데이터 표시 방식 개선
-- 모바일 최적화 기회
-- SEO 관련 문제
+## 개선 제안 항목
+- UX/UI 개선점, 데이터 표시 방식, 모바일 최적화, SEO 기회
 
-## 응답 형식 (반드시 JSON)
+## 응답 형식 (JSON만, 다른 텍스트 없이)
 
-\`\`\`json
 {
   "overall": "pass|warning|fail",
-  "summary": "한 문장 요약 (무엇이 좋고/나쁜지)",
+  "summary": "한 문장 요약",
   "issues": [
     {
       "type": "BLANK_PAGE|DATA_MISSING|LAYOUT_BROKEN|LANGUAGE_WRONG|STALE_DATA|COMPONENT_CRASH|CHART_EMPTY|MOBILE_BROKEN|UX_ISSUE",
       "severity": "critical|warning|info",
-      "description": "구체적으로 스크린샷에서 무엇이 보이는지 (위치 포함)",
-      "evidence": "스크린샷에서 실제로 보이는 텍스트나 요소"
+      "description": "구체적으로 스크린샷에서 무엇이 보이는지",
+      "evidence": "실제로 보이는 텍스트나 요소"
     }
   ],
   "improvements": [
@@ -156,63 +153,73 @@ ${JSON.stringify(extractedData, null, 2)}
       "suggestion": "구체적인 개선 제안"
     }
   ]
-}
-\`\`\`
+}`;
 
-issues가 없으면 빈 배열 []로. 스크린샷에서 실제로 보이는 것만 보고하세요. 추측하지 마세요.`;
-}
-
-// ── 메인 분석 함수 ──────────────────────────────────────────────────────────
-
-async function analyzeScreenshot(
-  client: Anthropic,
-  screenshotPath: string,
-  pageContext: string,
-  extractedData: Record<string, unknown>,
-): Promise<{
-  issues: Issue[];
-  improvements: Improvement[];
-  overall: string;
-  summary: string;
-}> {
-  const imageData = fs.readFileSync(screenshotPath);
-  const base64 = imageData.toString("base64");
-
-  const response = await client.messages.create({
-    model: "claude-opus-4-6",
-    max_tokens: 2048,
-    messages: [
-      {
-        role: "user",
-        content: [
-          {
-            type: "image",
-            source: {
-              type: "base64",
-              media_type: "image/png",
-              data: base64,
-            },
-          },
-          {
-            type: "text",
-            text: buildPrompt(pageContext, extractedData),
-          },
-        ],
-      },
-    ],
+  const payload = JSON.stringify({
+    type: "user",
+    message: {
+      role: "user",
+      content: [
+        {
+          type: "image",
+          source: { type: "base64", media_type: "image/png", data: base64 },
+        },
+        { type: "text", text: prompt },
+      ],
+    },
   });
 
-  const text =
-    response.content[0].type === "text" ? response.content[0].text : "";
+  const result = spawnSync(
+    "claude",
+    [
+      "--print",
+      "--model",
+      CLAUDE_MODEL,
+      "--input-format",
+      "stream-json",
+      "--output-format",
+      "stream-json",
+      "--verbose",
+    ],
+    {
+      input: payload,
+      encoding: "utf-8",
+      maxBuffer: 50 * 1024 * 1024,
+      timeout: 60000,
+    },
+  );
 
-  // JSON 파싱
+  if (result.error || result.status !== 0) {
+    throw new Error(
+      `Claude CLI failed: ${result.stderr?.slice(0, 500) ?? result.error}`,
+    );
+  }
+
+  // stream-json 응답에서 assistant 메시지 추출
+  let responseText = "";
+  for (const line of (result.stdout ?? "").split("\n")) {
+    const trimmed = line.trim();
+    if (!trimmed) continue;
+    try {
+      const d = JSON.parse(trimmed);
+      if (d.type === "assistant") {
+        for (const c of d.message?.content ?? []) {
+          if (c.type === "text") responseText += c.text;
+        }
+      }
+    } catch {
+      // skip
+    }
+  }
+
   const jsonMatch =
-    text.match(/```json\s*([\s\S]*?)\s*```/) || text.match(/(\{[\s\S]*\})/);
+    responseText.match(/```json\s*([\s\S]*?)\s*```/) ||
+    responseText.match(/(\{[\s\S]*\})/);
   if (jsonMatch) {
     try {
       return JSON.parse(jsonMatch[1]);
     } catch {
-      // fall through
+      /* fall through */
     }
   }
 
@@ -220,11 +227,11 @@ async function analyzeScreenshot(
     issues: [],
     improvements: [],
     overall: "pass",
-    summary: text.slice(0, 200),
+    summary: responseText.slice(0, 200),
   };
 }
 
-// ── 데이터 정합성 검증 ─────────────────────────────────────────────────────
+// ── 데이터 정합성 검증 ────────────────────────────────────────────────────
 
 function checkDataIntegrity(
   pageData: Record<string, unknown>,
@@ -232,12 +239,11 @@ function checkDataIntegrity(
 ): Issue[] {
   const issues: Issue[] = [];
 
-  // 코인 수 검증
   const apiCount = dataIntegrity.coin_count_api as number | undefined;
   const rendered = dataIntegrity.coin_count_rendered as string | undefined;
   if (apiCount && rendered && rendered !== "not found") {
     const renderedNum = parseInt(rendered.replace(/\D/g, ""));
-    if (Math.abs(renderedNum - apiCount) > 20) {
+    if (!isNaN(renderedNum) && Math.abs(renderedNum - apiCount) > 20) {
       issues.push({
         type: "DATA_INTEGRITY",
         severity: "warning",
@@ -247,7 +253,6 @@ function checkDataIntegrity(
     }
   }
 
-  // Stale 549 감지
   if (pageData.has_stale_549) {
     issues.push({
       type: "STALE_DATA",
@@ -257,17 +262,15 @@ function checkDataIntegrity(
     });
   }
 
-  // 랭킹 API vs 렌더링 불일치
   if (dataIntegrity.rendered_matches_api === false) {
     issues.push({
       type: "DATA_INTEGRITY",
       severity: "warning",
-      description: `랭킹 데이터 불일치: API 1위="${dataIntegrity.api_top1_strategy}", 화면 전략명 불일치`,
+      description: `랭킹 데이터 불일치: API 1위="${dataIntegrity.api_top1_strategy}", 화면 불일치`,
       evidence: `API: ${dataIntegrity.api_top1_strategy}`,
     });
   }
 
-  // SSR 데이터 없음
   if (
     pageData.has_ranking_ssr_fallback === true &&
     pageData.ranking_ssr_has_data === false
@@ -281,7 +284,6 @@ function checkDataIntegrity(
     });
   }
 
-  // JS 에러
   const jsErrors = pageData.js_errors as string[] | undefined;
   if (jsErrors && jsErrors.length > 0) {
     issues.push({
@@ -298,15 +300,18 @@ function checkDataIntegrity(
 // ── 메인 ──────────────────────────────────────────────────────────────────
 
 async function main() {
-  console.log("\n═══ PRUVIQ Vision QA Analyzer ═══\n");
+  console.log("\n═══ PRUVIQ Vision QA Analyzer (Claude CLI) ═══\n");
 
-  // collect-data.json 로드
+  try {
+    execSync("which claude", { stdio: "pipe" });
+  } catch {
+    console.error("claude CLI not found.");
+    process.exit(1);
+  }
+
   const collectPath = path.join(VISION_DIR, "collect-data.json");
   if (!fs.existsSync(collectPath)) {
-    console.error(`collect-data.json not found at ${collectPath}`);
-    console.error(
-      "Run vision-collect first: npx playwright test tests/e2e/vision-collect.spec.ts",
-    );
+    console.error(`collect-data.json not found: ${collectPath}`);
     process.exit(1);
   }
 
@@ -314,80 +319,58 @@ async function main() {
   const pages = collectData.pages as Record<string, unknown>[];
 
   console.log(`Pages to analyze: ${pages.length}`);
-  console.log(`Vision dir: ${VISION_DIR}`);
-
-  // API 키 확인
-  if (!ANTHROPIC_API_KEY) {
-    console.warn(
-      "\n⚠  ANTHROPIC_API_KEY not set — running data-only analysis (no vision)\n",
-    );
-  }
-
-  const client = ANTHROPIC_API_KEY
-    ? new Anthropic({ apiKey: ANTHROPIC_API_KEY })
-    : null;
+  console.log(`Model: ${CLAUDE_MODEL}`);
+  console.log(`Vision dir: ${VISION_DIR}\n`);
 
   const pageResults: PageAnalysis[] = [];
-  let criticalCount = 0;
-  let warningCount = 0;
-  let passCount = 0;
+  let criticalCount = 0,
+    warningCount = 0,
+    passCount = 0;
 
   for (const page of pages) {
     const name = (page.screenshot as string).replace(".png", "");
-    const screenshotPath = path.join(VISION_DIR, page.screenshot as string);
-    // ATF 스크린샷 (폴드 위) 우선 사용 (더 사용자 입장에서의 첫인상)
     const atfPath = path.join(VISION_DIR, `${name}-atf.png`);
+    const screenshotPath = path.join(VISION_DIR, page.screenshot as string);
     const analysisScreenshot = fs.existsSync(atfPath)
       ? atfPath
       : screenshotPath;
-
     const pageCtx = PAGE_CONTEXT[name] ?? `Page: ${page.url}`;
 
-    process.stdout.write(`  Analyzing [${name}]... `);
+    process.stdout.write(`  [${name}] `);
 
-    // 데이터 정합성 체크 (Vision 없이도 실행)
     const integrityIssues = checkDataIntegrity(
       page.page_data as Record<string, unknown>,
       page.data_integrity as Record<string, unknown>,
     );
 
-    let visionIssues: Issue[] = [];
-    let visionImprovements: Improvement[] = [];
-    let overall: string = "pass";
-    let summary = "";
+    let visionIssues: Issue[] = [],
+      visionImprovements: Improvement[] = [];
+    let overall = "pass",
+      summary = "";
 
-    // Vision 분석 (API 키 있을 때만)
-    if (client && fs.existsSync(analysisScreenshot)) {
+    if (fs.existsSync(analysisScreenshot)) {
       try {
-        const result = await analyzeScreenshot(
-          client,
-          analysisScreenshot,
-          pageCtx,
-          {
-            url: page.url,
-            viewport: page.viewport,
-            page_data: page.page_data,
-            data_integrity: page.data_integrity,
-          },
-        );
+        const result = analyzeWithClaude(analysisScreenshot, pageCtx, {
+          url: page.url,
+          viewport: page.viewport,
+          page_data: page.page_data,
+          data_integrity: page.data_integrity,
+        });
         visionIssues = result.issues ?? [];
         visionImprovements = result.improvements ?? [];
         overall = result.overall ?? "pass";
         summary = result.summary ?? "";
       } catch (e) {
-        console.error(`Vision API error for ${name}: ${e}`);
-        summary = `Vision analysis failed: ${e}`;
+        summary = `Vision failed: ${e}`;
       }
-    } else if (!fs.existsSync(analysisScreenshot)) {
+    } else {
       summary = "Screenshot not found";
     }
 
-    // 모든 이슈 합치기
     const allIssues = [...visionIssues, ...integrityIssues];
-
-    // overall 판정 (Vision + 데이터 정합성 합산)
     const hasCritical = allIssues.some((i) => i.severity === "critical");
     const hasWarning = allIssues.some((i) => i.severity === "warning");
+
     if (hasCritical || overall === "fail") {
       overall = "fail";
       criticalCount++;
@@ -404,18 +387,16 @@ async function main() {
     console.log(
       `${icon} ${overall.toUpperCase()} (${allIssues.length} issues)`,
     );
-
-    if (allIssues.length > 0) {
-      for (const issue of allIssues) {
-        const sev =
-          issue.severity === "critical"
-            ? "🔴"
-            : issue.severity === "warning"
-              ? "🟡"
-              : "🔵";
-        console.log(`      ${sev} [${issue.type}] ${issue.description}`);
-      }
+    for (const issue of allIssues) {
+      const sev =
+        issue.severity === "critical"
+          ? "🔴"
+          : issue.severity === "warning"
+            ? "🟡"
+            : "🔵";
+      console.log(`      ${sev} [${issue.type}] ${issue.description}`);
     }
+    if (summary) console.log(`      → ${summary}`);
 
     pageResults.push({
       page: name,
@@ -429,16 +410,10 @@ async function main() {
       summary,
       analyzed_at: new Date().toISOString(),
     });
-
-    // API rate limit 방지
-    if (client) await new Promise((r) => setTimeout(r, 1000));
   }
 
-  // 전체 개선 제안 취합 (P0 우선)
-  const allImprovements: Improvement[] = pageResults.flatMap(
-    (p) => p.improvements,
-  );
-  const topImprovements = allImprovements
+  const topImprovements = pageResults
+    .flatMap((p) => p.improvements)
     .sort((a, b) => a.priority.localeCompare(b.priority))
     .slice(0, 10);
 
@@ -448,7 +423,7 @@ async function main() {
   const report: VisionReport = {
     analyzed_at: new Date().toISOString(),
     base_url: collectData.base_url,
-    model: client ? "claude-opus-4-6" : "data-only (no vision)",
+    model: CLAUDE_MODEL,
     total_pages: pageResults.length,
     critical_count: criticalCount,
     warning_count: warningCount,
@@ -461,7 +436,6 @@ async function main() {
 
   fs.writeFileSync(REPORT_PATH, JSON.stringify(report, null, 2));
 
-  // ── 요약 출력 ──────────────────────────────────────────────────
   console.log("\n═══ SUMMARY ═══");
   console.log(`Overall: ${overallStatus.toUpperCase()}`);
   console.log(
@@ -476,9 +450,7 @@ async function main() {
     }
   }
 
-  if (overallStatus === "fail") {
-    process.exit(1);
-  }
+  if (overallStatus === "fail") process.exit(1);
 }
 
 main().catch((e) => {

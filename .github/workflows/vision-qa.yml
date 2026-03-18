@@ -76,11 +76,10 @@ jobs:
         if: ${{ !inputs.skip_vision }}
         run: npx tsx scripts/vision-analyze.ts
         env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           VISION_DIR: test-results/vision
+          # Claude CLI 인증 사용 (ANTHROPIC_API_KEY 불필요 — Claude Code OAuth)
+          CLAUDE_MODEL: claude-sonnet-4-6
         timeout-minutes: 8
-        # Vision 분석은 경고로 처리 (API 키 없으면 data-only로 폴백)
-        continue-on-error: false
 
       - name: Step 3 — Report + Telegram + GitHub issue
         if: always()
