@@ -1183,6 +1183,7 @@ export const ko: Record<TranslationKey, string> = {
   "fees.savings_callout":
     "월 $10,000 거래 시? PRUVIQ 바이낸스 VIP 할인으로 연간 약 $144 절약.",
   "nav.leaderboard": "리더보드",
+  "nav.compare_tools": "도구 비교",
 
   // Metric explanation tooltips
   "metric.sharpe_desc":

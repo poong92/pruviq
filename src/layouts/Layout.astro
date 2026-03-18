@@ -397,14 +397,14 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
                 <div class="bg-[--color-bg] border border-[--color-border] rounded-lg shadow-xl py-1.5 min-w-[160px]">
                   <a href={rankingPath} class="flex items-center gap-2.5 px-4 py-2.5 text-sm text-[--color-text-muted] hover:text-[--color-accent] hover:bg-[--color-bg-subtle] transition-colors">
                     <span class="w-1.5 h-1.5 rounded-full bg-[--color-accent] animate-pulse shrink-0"></span>
-                    Daily Ranking
+                    {t('nav.ranking')}
                   </a>
                   <a href={leaderboardPath} class="flex items-center gap-2.5 px-4 py-2.5 text-sm text-[--color-text-muted] hover:text-[--color-accent] hover:bg-[--color-bg-subtle] transition-colors pl-[26px]">
-                    Leaderboard
+                    {t('nav.leaderboard')}
                   </a>
                   <div class="border-t border-[--color-border] my-1"></div>
                   <a href={lang === 'ko' ? '/ko/compare' : '/compare'} class="flex items-center gap-2.5 px-4 py-2.5 text-sm text-[--color-text-muted] hover:text-[--color-accent] hover:bg-[--color-bg-subtle] transition-colors pl-[26px]">
-                    Compare Tools
+                    {t('nav.compare_tools')}
                   </a>
                 </div>
               </div>

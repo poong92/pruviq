@@ -4,11 +4,13 @@ import { useTranslations } from '../i18n/index';
 import { getCollection } from 'astro:content';
 import LiveStats from '../components/LiveStats';
 import siteStats from '../../public/data/site-stats.json';
+import presetsJson from '../../public/data/builder-presets.json';
 
 const t = useTranslations('en');
 const allStrategies = await getCollection('strategies');
 const verifiedCount = allStrategies.filter(s => s.data.status === 'verified').length;
 const lastUpdated = new Date().toLocaleDateString('en-US');
+const simulatorPresetCount = (presetsJson as Array<unknown>).length;
 const simulationsRun = (siteStats as { simulations_run: number }).simulations_run.toLocaleString('en-US');
 const coinsAnalyzed = (siteStats as { coins_analyzed: number }).coins_analyzed;
 const tradingDays = (siteStats as { trading_days: number }).trading_days.toLocaleString('en-US');
@@ -118,8 +120,8 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
         <div class="mt-6 border border-[--color-border] rounded p-4 bg-[--color-bg-card] flex flex-wrap gap-6 items-center">
           <div>
             <p class="text-sm font-mono text-[--color-text-muted]">{t('home.trust_documented')}</p>
-            <p class="text-xl font-bold text-[--color-accent]">{allStrategies.length} strategies</p>
-            <p class="text-xs text-[--color-text-muted]">{t('trust.last_updated').replace('{date}', lastUpdated)}</p>
+            <p class="text-xl font-bold text-[--color-accent]">{allStrategies.length + simulatorPresetCount} configurations</p>
+            <p class="text-xs text-[--color-text-muted]">{allStrategies.length} documented + {simulatorPresetCount} presets · {t('trust.last_updated').replace('{date}', lastUpdated)}</p>
           </div>
           <div class="border-l border-[--color-border] pl-6">
             <p class="text-sm font-mono text-[--color-text-muted]">{t('home.trust_verified_active')}</p>
@@ -394,7 +396,9 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
   <!-- SOCIAL PROOF QUOTES -->
   <section class="py-16 border-t border-[--color-border] reveal" aria-labelledby="quotes-heading">
     <div class="max-w-6xl mx-auto px-4">
-      <h2 id="quotes-heading" class="text-2xl font-bold mb-8">{t('home.quotes_heading')}</h2>
+      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">COMMUNITY FEEDBACK</p>
+      <h2 id="quotes-heading" class="text-2xl font-bold mb-1">{t('home.quotes_heading')}</h2>
+      <p class="text-[--color-text-muted] text-xs font-mono mb-8 opacity-60">Names shown as initials at community members' request.</p>
       <div class="grid md:grid-cols-3 gap-6">
         <blockquote class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card]">
           <p class="text-[--color-text-muted] text-sm leading-relaxed mb-4">"I tested 8 strategies on TradingView before finding PRUVIQ. Testing hundreds of coins at once saved me weeks of work. The killed strategies page convinced me this is legit."</p>
