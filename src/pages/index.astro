@@ -4,11 +4,13 @@ import { useTranslations } from '../i18n/index';
 import { getCollection } from 'astro:content';
 import LiveStats from '../components/LiveStats';
 import siteStats from '../../public/data/site-stats.json';
+import presetsJson from '../../public/data/builder-presets.json';
 
 const t = useTranslations('en');
 const allStrategies = await getCollection('strategies');
 const verifiedCount = allStrategies.filter(s => s.data.status === 'verified').length;
 const lastUpdated = new Date().toLocaleDateString('en-US');
+const simulatorPresetCount = (presetsJson as Array<unknown>).length;
 const simulationsRun = (siteStats as { simulations_run: number }).simulations_run.toLocaleString('en-US');
 const coinsAnalyzed = (siteStats as { coins_analyzed: number }).coins_analyzed;
 const tradingDays = (siteStats as { trading_days: number }).trading_days.toLocaleString('en-US');
@@ -118,8 +120,8 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
         <div class="mt-6 border border-[--color-border] rounded p-4 bg-[--color-bg-card] flex flex-wrap gap-6 items-center">
           <div>
             <p class="text-sm font-mono text-[--color-text-muted]">{t('home.trust_documented')}</p>
-            <p class="text-xl font-bold text-[--color-accent]">{allStrategies.length} strategies</p>
-            <p class="text-xs text-[--color-text-muted]">{t('trust.last_updated').replace('{date}', lastUpdated)}</p>
+            <p class="text-xl font-bold text-[--color-accent]">{allStrategies.length + simulatorPresetCount} configurations</p>
+            <p class="text-xs text-[--color-text-muted]">{allStrategies.length} documented + {simulatorPresetCount} presets · {t('trust.last_updated').replace('{date}', lastUpdated)}</p>
           </div>
           <div class="border-l border-[--color-border] pl-6">
             <p class="text-sm font-mono text-[--color-text-muted]">{t('home.trust_verified_active')}</p>
