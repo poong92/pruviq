@@ -1,0 +1,215 @@
+{
+  "_description": "PRUVIQ QA Rule Config — 코드 수정 없이 규칙 변경 가능",
+  "_version": "1.0.0",
+  "_last_updated": "2026-03-18",
+  "_how_to_update": "이 파일만 수정하면 모든 QA 레이어에 자동 반영됨. 코드 변경 불필요.",
+
+  "site": {
+    "base_url": "https://pruviq.com",
+    "api_base_url": "https://api.pruviq.com"
+  },
+
+  "coin_count": {
+    "current": 569,
+    "stale_value": 549,
+    "min_acceptable": 500,
+    "description": "현재 코인 수. 새 코인 추가 시 여기만 수정."
+  },
+
+  "data_sources": {
+    "expected": "CoinGecko",
+    "deprecated": ["Binance API", "Binance API Read-Only"],
+    "description": "2025년 CoinGecko로 전환 완료. Binance 표시 = 오류"
+  },
+
+  "simulator_metrics": {
+    "win_rate": {
+      "min": 5,
+      "max": 95,
+      "normal_min": 30,
+      "normal_max": 80,
+      "bug_sentinel": null,
+      "severity_above_max": "critical",
+      "severity_below_min": "critical"
+    },
+    "profit_factor": {
+      "min": 0.01,
+      "max": 20,
+      "normal_min": 0.1,
+      "normal_max": 10,
+      "bug_sentinel": 999,
+      "severity_sentinel": "critical",
+      "description": "PF=999는 sentinel 버그 (PR#322)"
+    },
+    "max_drawdown_pct": {
+      "min": 0,
+      "max": 80,
+      "bug_threshold": 80,
+      "severity_above_bug": "critical",
+      "description": "MDD>80% = 정규화 버그 (PR#348)"
+    },
+    "sharpe_ratio": {
+      "min": -5,
+      "max": 15,
+      "bug_threshold": 20,
+      "severity_above_bug": "critical"
+    },
+    "sortino_ratio": {
+      "min": -5,
+      "max": 30,
+      "bug_threshold": 50,
+      "severity_above_bug": "critical",
+      "description": "Sortino>50 = TDD 분모 오류 (PR#322)"
+    },
+    "calmar_ratio": {
+      "min": -5,
+      "max": 10,
+      "bug_threshold": 10,
+      "severity_above_bug": "critical",
+      "description": "Calmar>10 = trade days 버그 (PR#350, 27.5배 과대)"
+    },
+    "total_trades": {
+      "min": 10,
+      "normal_min": 50,
+      "max": 10000,
+      "severity_below_min": "critical"
+    }
+  },
+
+  "known_bugs": [
+    {
+      "id": "calmar_27x",
+      "pr": "PR#350",
+      "symptom": "calmar_ratio > 10",
+      "severity": "critical",
+      "status": "fixed",
+      "recheck": true
+    },
+    {
+      "id": "mdd_100pct",
+      "pr": "PR#348",
+      "symptom": "max_drawdown_pct > 80",
+      "severity": "critical",
+      "status": "fixed",
+      "recheck": true
+    },
+    {
+      "id": "pf_sentinel_999",
+      "pr": "PR#322",
+      "symptom": "profit_factor == 999",
+      "severity": "critical",
+      "status": "fixed",
+      "recheck": true
+    },
+    {
+      "id": "sortino_tdd_error",
+      "pr": "PR#322",
+      "symptom": "sortino_ratio > 50",
+      "severity": "critical",
+      "status": "fixed",
+      "recheck": true
+    },
+    {
+      "id": "en_ranking_blank",
+      "pr": "PR#460",
+      "symptom": "EN ranking SSR fallback empty",
+      "severity": "critical",
+      "status": "fixed",
+      "recheck": true
+    },
+    {
+      "id": "ko_ranking_blank",
+      "pr": "PR#464",
+      "symptom": "KO ranking SSR fallback empty",
+      "severity": "critical",
+      "status": "fixed",
+      "recheck": true
+    },
+    {
+      "id": "stale_coin_count_549",
+      "pr": "PR#464",
+      "symptom": "coin count shows 549 instead of 569+",
+      "severity": "critical",
+      "status": "fixed",
+      "recheck": true
+    }
+  ],
+
+  "pages": {
+    "home_en": {
+      "path": "/",
+      "expected_h1": "Test Your Strategy Before You Trade.",
+      "expected_lang": "en",
+      "severity_blank": "critical"
+    },
+    "home_ko": {
+      "path": "/ko/",
+      "expected_h1": "실전 전에 전략을 검증하세요.",
+      "expected_lang": "ko",
+      "severity_blank": "critical"
+    },
+    "simulate_en": {
+      "path": "/simulate/",
+      "expected_h1_contains": "569",
+      "notes": "Run 버튼 없음이 정상 — 시나리오 카드 클릭이 실행 트리거",
+      "severity_blank": "critical"
+    },
+    "ranking_en": {
+      "path": "/strategies/ranking",
+      "ssr_fallback_id": "ranking-ssr-fallback",
+      "expected_lang": "en",
+      "max_data_age_days": 2,
+      "severity_blank": "critical"
+    },
+    "ranking_ko": {
+      "path": "/ko/strategies/ranking",
+      "ssr_fallback_id": "ranking-ssr-fallback",
+      "expected_lang": "ko",
+      "max_data_age_days": 2,
+      "severity_blank": "critical"
+    }
+  },
+
+  "alerts": {
+    "telegram": {
+      "tiers": {
+        "P0": {
+          "trigger": "immediate",
+          "description": "critical 이슈 — 즉시 발송",
+          "examples": ["BLANK_PAGE", "STALE_DATA", "COMPONENT_CRASH"]
+        },
+        "P1": {
+          "trigger": "daily_digest",
+          "description": "warning 이슈 — 일일 요약에 포함",
+          "examples": ["DATA_MISSING", "LANGUAGE_WRONG", "UX_ISSUE"]
+        },
+        "P2": {
+          "trigger": "weekly_digest",
+          "description": "info 이슈 — 주간 요약에 포함",
+          "examples": ["performance", "design_consistency"]
+        }
+      },
+      "rate_limit_note": "Telegram: 30msg/s global, 1msg/s per chat. P0 only for real-time."
+    }
+  },
+
+  "interactive_tests": {
+    "simulate_breakout": {
+      "action": "click scenario card 'Breakout'",
+      "timeout_ms": 30000,
+      "expected_result_within_ms": 15000,
+      "pass_if_result_visible": true
+    },
+    "ranking_filter_365d": {
+      "action": "click '365 Days' button",
+      "timeout_ms": 5000,
+      "pass_if_no_crash": true
+    }
+  },
+
+  "flaky_tests": {
+    "_description": "불안정 테스트를 여기에 추가하면 main pipeline에서 격리됨",
+    "_format": "{ id, reason, quarantined_since, resolution_pr? }",
+    "quarantined": []
+  }
+}

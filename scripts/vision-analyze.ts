@@ -27,6 +27,16 @@ const QA_KNOWLEDGE = fs.existsSync(QA_KNOWLEDGE_PATH)
   ? fs.readFileSync(QA_KNOWLEDGE_PATH, "utf-8")
   : "";
 
+// QA 규칙 config 로드 (tests/harness/qa-rules.json) — 코드 수정 없이 규칙 변경 가능
+const QA_RULES_PATH = path.join(process.cwd(), "tests/harness/qa-rules.json");
+const QA_RULES = fs.existsSync(QA_RULES_PATH)
+  ? JSON.parse(fs.readFileSync(QA_RULES_PATH, "utf-8"))
+  : null;
+
+// qa-rules.json에서 현재 코인 수를 동적으로 읽기
+const CURRENT_COIN_COUNT: number = QA_RULES?.coin_count?.current ?? 569;
+const STALE_COIN_COUNT: number = QA_RULES?.coin_count?.stale_value ?? 549;
+
 // ── 타입 ──────────────────────────────────────────────────────────────────
 
 type Severity = "critical" | "warning" | "info";
@@ -118,9 +128,28 @@ function analyzeWithClaude(
   const imageData = fs.readFileSync(screenshotPath);
   const base64 = imageData.toString("base64");
 
-  const knowledgeSection = QA_KNOWLEDGE
-    ? `## PRUVIQ QA 지식 베이스 (판단 기준)\n\n${QA_KNOWLEDGE}\n\n---\n\n`
+  // QA rules에서 현재 수치 기준을 동적으로 주입 (qa-rules.json 수정 → 프롬프트 자동 반영)
+  const rulesSection = QA_RULES
+    ? `## 현재 유효 기준 (qa-rules.json 자동 주입)
+코인 수: ${CURRENT_COIN_COUNT}+ (${STALE_COIN_COUNT} 표시 = STALE_DATA critical)
+데이터 소스: ${QA_RULES.data_sources?.expected} (${QA_RULES.data_sources?.deprecated?.join(", ")} 표시 = warning)
+알려진 버그 재발 감시:
+${QA_RULES.known_bugs
+  ?.filter((b: { recheck: boolean }) => b.recheck)
+  .map(
+    (b: { id: string; symptom: string; severity: string }) =>
+      `  - ${b.id}: ${b.symptom} → ${b.severity}`,
+  )
+  .join("\n")}
+
+`
     : "";
+
+  const knowledgeSection = QA_KNOWLEDGE
+    ? `## PRUVIQ QA 지식 베이스 (판단 기준)\n\n${rulesSection}${QA_KNOWLEDGE}\n\n---\n\n`
+    : rulesSection
+      ? `## 현재 유효 기준\n\n${rulesSection}\n\n---\n\n`
+      : "";
 
   const prompt = `당신은 PRUVIQ.com의 QA 엔지니어입니다. 이 스크린샷을 실제 사용자 관점에서 분석해주세요.
 
@@ -270,8 +299,8 @@ function checkDataIntegrity(
     issues.push({
       type: "STALE_DATA",
       severity: "critical",
-      description: "화면에 구버전 코인 수 '549'가 표시됨 (현재 569+이어야 함)",
-      evidence: "has_stale_549 = true",
+      description: `화면에 구버전 코인 수 '${STALE_COIN_COUNT}'가 표시됨 (현재 ${CURRENT_COIN_COUNT}+이어야 함)`,
+      evidence: `has_stale_${STALE_COIN_COUNT} = true`,
     });
   }
 
