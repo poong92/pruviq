@@ -193,6 +193,42 @@ async function runCase(c: GoldenCase): Promise<number> {
       pass(`worst3 has ${structural.worst3_count} entries`);
     }
   }
+  if (structural.equity_curve_last_value_matches_total_return === true) {
+    const ec = d["equity_curve"];
+    const totalReturn = d["total_return"] as number | undefined;
+    if (Array.isArray(ec) && ec.length > 0 && typeof totalReturn === "number") {
+      const lastVal = ec[ec.length - 1];
+      const lastNum =
+        typeof lastVal === "number"
+          ? lastVal
+          : (lastVal as Record<string, unknown>)?.["value"];
+      if (typeof lastNum === "number") {
+        const diff = Math.abs(lastNum - totalReturn);
+        if (diff > 0.01 * Math.abs(totalReturn) + 0.01) {
+          failures += fail(
+            `equity_curve last (${lastNum}) != total_return (${totalReturn})`,
+          );
+        } else {
+          pass(`equity_curve last matches total_return (${totalReturn})`);
+        }
+      }
+    }
+  }
+  if (structural.top3_required_fields !== undefined) {
+    const top3 = d["top3"];
+    const reqFields = structural.top3_required_fields as string[];
+    if (Array.isArray(top3) && Array.isArray(reqFields)) {
+      for (const entry of top3) {
+        const e = entry as Record<string, unknown>;
+        for (const field of reqFields) {
+          if (!(field in e)) {
+            failures += fail(`top3 entry missing field: ${field}`);
+          }
+        }
+      }
+      if (top3.length > 0) pass(`top3 entries have required fields`);
+    }
+  }
   if (structural.date_max_age_days !== undefined) {
     const dateStr = d["date"] as string;
     if (dateStr) {
