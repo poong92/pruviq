@@ -1,0 +1,175 @@
+name: "Post-Deploy: Production Smoke"
+
+# Triggers after every push to main.
+# Waits for Cloudflare Pages deployment, then tests the LIVE site directly.
+# This is the only workflow that tests pruviq.com — all other E2E tests hit localhost.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+concurrency:
+  group: post-deploy-smoke
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  smoke:
+    name: Production Smoke — pruviq.com
+    runs-on: [self-hosted, macOS, arm64]
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node 22
+        run: node --version && npm --version
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Chromium
+        run: npx playwright install chromium
+
+      - name: Wait for Cloudflare Pages deployment
+        run: |
+          echo "Waiting 90s for Cloudflare Pages to propagate..."
+          sleep 90
+          # Verify site is up before running tests
+          for i in {1..6}; do
+            STATUS=$(curl -sL -A "Mozilla/5.0" -o /dev/null -w '%{http_code}' \
+              https://pruviq.com --max-time 10 || echo "000")
+            echo "Attempt $i: HTTP $STATUS"
+            if [ "$STATUS" = "200" ]; then
+              echo "Site is up — proceeding with smoke tests"
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "::error::pruviq.com not reachable after 150s"
+          exit 1
+
+      - name: Run simulator golden harness
+        run: npx tsx tests/harness/run-golden.ts
+        env:
+          BASE_URL: https://api.pruviq.com
+        timeout-minutes: 3
+
+      - name: Run production smoke tests (Playwright)
+        id: smoke
+        run: |
+          npx playwright test tests/e2e/prod-smoke.spec.ts \
+            --project prod-smoke \
+            --timeout 30000 \
+            --workers 2 \
+            --retries 1
+        env:
+          BASE_URL: https://pruviq.com
+          CI: true
+        timeout-minutes: 6
+
+      - name: Upload smoke test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: prod-smoke-report-${{ github.run_id }}
+          path: playwright-report/
+          retention-days: 7
+
+      - name: Notify success via Telegram
+        if: success()
+        env:
+          TOKEN: ${{ secrets.PRUVIQ_TELEGRAM_TOKEN }}
+          CHAT_ID: ${{ secrets.PRUVIQ_TELEGRAM_CHAT_ID }}
+          COMMIT: ${{ github.event.head_commit.message }}
+          SHA: ${{ github.sha }}
+        run: |
+          [ -z "$TOKEN" ] || [ -z "$CHAT_ID" ] && exit 0
+          COMMIT_SHORT=$(echo "$COMMIT" | head -1 | cut -c1-60)
+          MSG="✅ PRUVIQ Deploy Smoke PASS
+          Commit: ${COMMIT_SHORT}
+          SHA: ${SHA:0:7}
+          Site: https://pruviq.com
+          All SSR + ranking + coin count checks passed."
+          curl -sf -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" \
+            -d chat_id="${CHAT_ID}" \
+            -d text="${MSG}" || true
+
+      - name: Notify failure via Telegram
+        if: failure()
+        env:
+          TOKEN: ${{ secrets.PRUVIQ_TELEGRAM_TOKEN }}
+          CHAT_ID: ${{ secrets.PRUVIQ_TELEGRAM_CHAT_ID }}
+          COMMIT: ${{ github.event.head_commit.message }}
+          RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          [ -z "$TOKEN" ] || [ -z "$CHAT_ID" ] && exit 0
+          COMMIT_SHORT=$(echo "$COMMIT" | head -1 | cut -c1-60)
+          MSG="🚨 PRUVIQ Deploy Smoke FAIL
+          Commit: ${COMMIT_SHORT}
+          Log: ${RUN_URL}
+
+          Check: SSR blank? Stale coin count? JS crash? KO parity?"
+          curl -sf -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" \
+            -d chat_id="${CHAT_ID}" \
+            -d text="${MSG}" || true
+
+      - name: Create issue on smoke failure
+        if: failure() && github.event_name == 'push'
+        uses: actions/github-script@v7
+        env:
+          COMMIT_MSG: ${{ github.event.head_commit.message }}
+          RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          SHA: ${{ github.sha }}
+        with:
+          script: |
+            const commitMsg = process.env.COMMIT_MSG?.split('\n')[0]?.slice(0, 80) || '(no message)';
+            const runUrl = process.env.RUN_URL;
+            const sha = process.env.SHA?.slice(0, 7);
+
+            // Check if there's already an open smoke-fail issue for this commit
+            const existing = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'smoke-fail',
+              state: 'open',
+            });
+            if (existing.data.length > 0) {
+              // Update existing issue with new failure
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: existing.data[0].number,
+                body: `New smoke failure on \`${sha}\`: ${commitMsg}\nRun: ${runUrl}`,
+              });
+              return;
+            }
+
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `[smoke-fail] Production smoke failed on ${sha}`,
+              body: [
+                '## Production Smoke Test Failure',
+                '',
+                `**Commit:** \`${sha}\` — ${commitMsg}`,
+                `**Run:** ${runUrl}`,
+                '',
+                '## What to check',
+                '- [ ] SSR blank page: `/strategies/ranking` or `/ko/strategies/ranking` has `#ranking-ssr-fallback` with data?',
+                '- [ ] Stale coin count: HTML contains `549+` or `549개` instead of `569+`?',
+                '- [ ] JS crash: component throws on real API data?',
+                '- [ ] KO/EN parity: KO pages have Korean text?',
+                '- [ ] HTTP 200: critical pages returning 4xx/5xx?',
+                '',
+                '## Reproduce locally',
+                '```bash',
+                'BASE_URL=https://pruviq.com npx playwright test tests/e2e/prod-smoke.spec.ts --project prod-smoke',
+                '```',
+              ].join('\n'),
+              labels: ['smoke-fail', 'claude-auto'],
+            });

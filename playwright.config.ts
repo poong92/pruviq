@@ -16,18 +16,32 @@ export default defineConfig({
   projects: [
     {
       name: "desktop",
-      testIgnore: ["**/mobile-menu.spec.ts", "**/visual-regression.spec.ts"],
+      testIgnore: [
+        "**/mobile-menu.spec.ts",
+        "**/visual-regression.spec.ts",
+        "**/prod-smoke.spec.ts",
+      ],
       use: {
         viewport: { width: 1280, height: 720 },
       },
     },
     {
       name: "mobile",
-      testIgnore: ["**/visual-regression.spec.ts"],
+      testIgnore: ["**/visual-regression.spec.ts", "**/prod-smoke.spec.ts"],
       use: {
         viewport: { width: 375, height: 812 },
         isMobile: true,
         hasTouch: true,
+      },
+    },
+    // prod-smoke: only active when BASE_URL=https://pruviq.com
+    // Runs against the LIVE deployed site — not the local build.
+    {
+      name: "prod-smoke",
+      testMatch: "**/prod-smoke.spec.ts",
+      use: {
+        baseURL: process.env.BASE_URL || "http://localhost:4321",
+        viewport: { width: 1280, height: 720 },
       },
     },
   ],
