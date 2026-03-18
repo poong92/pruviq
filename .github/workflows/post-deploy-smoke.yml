@@ -109,11 +109,7 @@ jobs:
           [ -z "$TOKEN" ] && exit 0
           [ -z "$CHAT_ID" ] && exit 0
           COMMIT_SHORT=$(echo "$COMMIT" | head -1 | cut -c1-60)
-          MSG="✅ PRUVIQ Deploy Smoke PASS
-Commit: ${COMMIT_SHORT}
-SHA: ${SHA:0:7}
-Site: https://pruviq.com
-All SSR + ranking + coin count checks passed."
+          MSG=$(printf '✅ PRUVIQ Deploy Smoke PASS\nCommit: %s\nSHA: %s\nSite: https://pruviq.com\nAll SSR + ranking + coin count checks passed.' "${COMMIT_SHORT}" "${SHA:0:7}")
           curl -sf -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" \
             --data-urlencode "chat_id=${CHAT_ID}" \
             --data-urlencode "text=${MSG}" \
@@ -131,11 +127,7 @@ All SSR + ranking + coin count checks passed."
           [ -z "$TOKEN" ] && exit 0
           [ -z "$CHAT_ID" ] && exit 0
           COMMIT_SHORT=$(echo "$COMMIT" | head -1 | cut -c1-60)
-          MSG="🚨 PRUVIQ Deploy Smoke FAIL
-Commit: ${COMMIT_SHORT}
-Log: ${RUN_URL}
-
-Check: SSR blank? Stale coin count? JS crash? KO parity?"
+          MSG=$(printf '🚨 PRUVIQ Deploy Smoke FAIL\nCommit: %s\nLog: %s\n\nCheck: SSR blank? Stale coin count? JS crash? KO parity?' "${COMMIT_SHORT}" "${RUN_URL}")
           curl -sf -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" \
             --data-urlencode "chat_id=${CHAT_ID}" \
             --data-urlencode "text=${MSG}" \

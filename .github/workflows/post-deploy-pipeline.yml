@@ -127,16 +127,8 @@ jobs:
         run: |
           [ -z "$TOKEN" ] && exit 0
           [ -z "$CHAT_ID" ] && exit 0
-          MSG="PRUVIQ Deploy Pipeline
----
-Commit: ${COMMIT_MSG}
-Site: OK | API: $([ "$API_OK" = "true" ] && echo "OK" || echo "WARN")
----
-Next: #${ISSUE_NUM} ${ISSUE_TITLE}
-Remaining: ${REMAINING} issues
----
-Check this issue and create a PR:
-https://github.com/pruviq/pruviq/issues/${ISSUE_NUM}"
+          API_STATUS=$([ "$API_OK" = "true" ] && echo "OK" || echo "WARN")
+          MSG=$(printf 'PRUVIQ Deploy Pipeline\n---\nCommit: %s\nSite: OK | API: %s\n---\nNext: #%s %s\nRemaining: %s issues\n---\nCheck this issue and create a PR:\nhttps://github.com/pruviq/pruviq/issues/%s' "${COMMIT_MSG}" "${API_STATUS}" "${ISSUE_NUM}" "${ISSUE_TITLE}" "${REMAINING}" "${ISSUE_NUM}")
           curl -sf -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" \
             --data-urlencode "chat_id=${CHAT_ID}" \
             --data-urlencode "text=${MSG}" \
