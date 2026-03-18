@@ -1195,6 +1195,9 @@ export const en = {
   "leaderboard.profit_factor": "PF",
   "leaderboard.total_return": "Return",
   "leaderboard.weekly_note": "Data updates weekly",
+  "leaderboard.noscript_title": "Weekly Strategy Rankings",
+  "leaderboard.noscript_desc":
+    "Enable JavaScript to view live weekly strategy performance rankings with win rate, profit factor, and return data.",
   "meta.leaderboard_title": "Weekly Strategy Leaderboard - PRUVIQ",
   "meta.leaderboard_desc":
     "See this week's best and worst performing crypto trading strategies. Updated weekly with real backtest data.",

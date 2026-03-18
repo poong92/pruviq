@@ -75,9 +75,12 @@ test.describe("EN pages: zero Korean text", () => {
       expect(res?.status(), `${path} returned error`).toBeLessThan(400);
 
       // For dynamic pages, wait for hydration to settle
+      // Use 5s timeout (not networkidle) — production pages poll APIs continuously → networkidle never resolves
       if (["/strategies/ranking", "/market", "/simulate"].includes(path)) {
-        await page.waitForLoadState("networkidle").catch(() => {});
-        await page.waitForTimeout(3000); // allow client:load components to render
+        await page
+          .waitForLoadState("networkidle", { timeout: 5000 })
+          .catch(() => {});
+        await page.waitForTimeout(2000); // allow client:load components to render
       }
 
       const text = await getVisibleText(page);

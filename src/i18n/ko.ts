@@ -1171,6 +1171,9 @@ export const ko: Record<TranslationKey, string> = {
   "leaderboard.profit_factor": "PF",
   "leaderboard.total_return": "수익률",
   "leaderboard.weekly_note": "매주 업데이트",
+  "leaderboard.noscript_title": "주간 전략 순위",
+  "leaderboard.noscript_desc":
+    "승률, 수익률 등 실시간 주간 전략 순위를 보려면 JavaScript를 활성화하세요.",
   "meta.leaderboard_title": "주간 전략 순위 - PRUVIQ",
   "meta.leaderboard_desc":
     "이번 주 최고 및 최악의 암호화폐 전략을 확인하세요. 실제 백테스트 데이터로 매주 업데이트.",
