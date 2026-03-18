@@ -51,6 +51,12 @@ jobs:
         done
         echo "::warning::API unreachable after 60s — API-dependent tests will skip"
 
+    - name: Run simulator golden harness
+      run: npx tsx tests/harness/run-golden.ts
+      env:
+        BASE_URL: https://api.pruviq.com
+      timeout-minutes: 3
+
     - name: Run E2E tests
       id: e2e
       run: |
