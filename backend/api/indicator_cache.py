@@ -6,12 +6,15 @@ The primary strategy (bb-squeeze-short) also populates a flat cache for
 backwards compatibility with existing endpoints.
 """
 
+import logging
 import time
 from typing import Dict, List, Tuple, Optional
 
 import pandas as pd
 
 from api.data_manager import DataManager
+
+logger = logging.getLogger("pruviq")
 
 
 class IndicatorCache:
@@ -48,7 +51,8 @@ class IndicatorCache:
                 continue
             try:
                 self._cache[symbol] = strategy.calculate_indicators(df.copy())
-            except Exception:
+            except Exception as e:
+                logger.warning(f"[indicator_cache] Failed to compute {symbol}: {type(e).__name__}: {e}")
                 continue
 
         # Also store in multi-cache
@@ -69,7 +73,8 @@ class IndicatorCache:
                     continue
                 try:
                     cache[symbol] = strategy.calculate_indicators(df.copy())
-                except Exception:
+                except Exception as e:
+                    logger.warning(f"[indicator_cache] Failed to compute {strategy_id}/{symbol}: {type(e).__name__}: {e}")
                     continue
             self._multi_cache[strategy_id] = cache
 
