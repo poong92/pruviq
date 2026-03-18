@@ -4,11 +4,14 @@ PRUVIQ Data Manager — Singleton with in-memory caching.
 Loads OHLCV CSV files once at startup, serves them from RAM.
 """
 
+import logging
 import time
 from pathlib import Path
 from typing import Optional, Dict, List, Tuple
 
 import pandas as pd
+
+logger = logging.getLogger("pruviq")
 
 
 class DataManager:
@@ -36,8 +39,8 @@ class DataManager:
     def load(self, data_dir: Path):
         """Load all 1H OHLCV CSV files into memory."""
         start = time.time()
-        self._data.clear()
-        self._coin_info.clear()
+        new_data: Dict[str, pd.DataFrame] = {}
+        new_coin_info: List[dict] = []
 
         # Skip problematic symbols
         skip = {"intcusdt", "tslausdt", "hoodusdt", "paxgusdt", "gunusdt",
@@ -64,16 +67,20 @@ class DataManager:
                 df["timestamp"] = pd.to_datetime(df["timestamp"])
                 df = df.drop_duplicates(subset=["timestamp"], keep="last").reset_index(drop=True)
                 symbol = stem.upper()
-                self._data[symbol] = df
-                self._coin_info.append({
+                new_data[symbol] = df
+                new_coin_info.append({
                     "symbol": symbol,
                     "rows": len(df),
                     "date_from": str(df["timestamp"].min().date()),
                     "date_to": str(df["timestamp"].max().date()),
                 })
-            except Exception:
+            except Exception as e:
+                logger.warning(f"[data_manager] Failed to load {f.stem}: {type(e).__name__}: {e}")
                 continue
 
+        # Atomic swap — prevents race condition with concurrent readers
+        self._data = new_data
+        self._coin_info = new_coin_info
         self._load_time = time.time() - start
 
     @property
