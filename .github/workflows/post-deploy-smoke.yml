@@ -72,12 +72,30 @@ jobs:
           CI: true
         timeout-minutes: 6
 
-      - name: Upload smoke test report
+      - name: Run interactive QA (버튼 클릭 · 기능 검증)
+        id: interactive
+        run: |
+          mkdir -p test-results/interactive
+          npx playwright test tests/e2e/interactive-qa.spec.ts \
+            --project prod-smoke \
+            --timeout 60000 \
+            --workers 1 \
+            --retries 1
+        env:
+          BASE_URL: https://pruviq.com
+          CI: true
+        timeout-minutes: 6
+        continue-on-error: true
+
+      - name: Upload smoke test report + interactive screenshots
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: prod-smoke-report-${{ github.run_id }}
-          path: playwright-report/
+          path: |
+            playwright-report/
+            test-results/harness/golden-result.json
+            test-results/interactive/*.png
           retention-days: 7
 
       - name: Notify success via Telegram

@@ -73,6 +73,47 @@ async function sendTelegram(msg: string) {
   }
 }
 
+async function findExistingVisionQAIssue(): Promise<number | null> {
+  if (!GITHUB_TOKEN) return null;
+  const [owner, repo] = GITHUB_REPO.split("/");
+  try {
+    const res = await fetch(
+      `https://api.github.com/repos/${owner}/${repo}/issues?labels=vision-qa&state=open&per_page=5`,
+      {
+        headers: {
+          Authorization: `Bearer ${GITHUB_TOKEN}`,
+          "Content-Type": "application/json",
+        },
+      },
+    );
+    if (!res.ok) return null;
+    const issues = (await res.json()) as { number: number; title: string }[];
+    // vision-qa 이슈가 이미 열려있으면 첫 번째 이슈 번호 반환
+    return issues.length > 0 ? issues[0].number : null;
+  } catch {
+    return null;
+  }
+}
+
+async function appendGitHubIssueComment(
+  issueNumber: number,
+  body: string,
+): Promise<void> {
+  if (!GITHUB_TOKEN) return;
+  const [owner, repo] = GITHUB_REPO.split("/");
+  await fetch(
+    `https://api.github.com/repos/${owner}/${repo}/issues/${issueNumber}/comments`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${GITHUB_TOKEN}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ body }),
+    },
+  );
+}
+
 async function createGitHubIssue(title: string, body: string) {
   if (!GITHUB_TOKEN) {
     console.log("GITHUB_TOKEN not set — skipping issue creation");
@@ -210,12 +251,20 @@ async function main() {
       .filter((l) => l !== null)
       .join("\n");
 
-    const issue = await createGitHubIssue(
-      `[vision-qa] ${report.critical_count} critical issues on pruviq.com`,
-      body,
-    );
-    if (issue) {
-      console.log(`GitHub issue created: #${issue.number} ${issue.html_url}`);
+    // 중복 이슈 방지: 열린 vision-qa 이슈가 있으면 코멘트로 추가
+    const existingIssueNum = await findExistingVisionQAIssue();
+    if (existingIssueNum) {
+      const commentBody = `## 재발 감지 — ${new Date(report.analyzed_at).toLocaleString("ko-KR")}\n\n**Result:** 🔴 ${report.critical_count} critical\n${RUN_URL ? `**Run:** ${RUN_URL}` : ""}\n\n${issueRows}`;
+      await appendGitHubIssueComment(existingIssueNum, commentBody);
+      console.log(`Appended to existing GitHub issue #${existingIssueNum}`);
+    } else {
+      const issue = await createGitHubIssue(
+        `[vision-qa] ${report.critical_count} critical issues on pruviq.com`,
+        body,
+      );
+      if (issue) {
+        console.log(`GitHub issue created: #${issue.number} ${issue.html_url}`);
+      }
     }
   }
 

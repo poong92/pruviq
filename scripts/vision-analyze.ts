@@ -83,34 +83,23 @@ type VisionReport = {
 
 // ── 페이지별 분석 컨텍스트 ──────────────────────────────────────────────────
 
+// PAGE_CONTEXT: qa-rules.json의 pages 정의와 동기화 유지 필수
+// 수정 시 qa-rules.json pages 섹션도 함께 확인
 const PAGE_CONTEXT: Record<string, string> = {
-  "home-desktop":
-    "PRUVIQ.com 홈페이지 (데스크탑). 기대: hero h1 텍스트, '569+' 코인 수 표시, CTA 버튼, 전략 미리보기 섹션",
-  "home-mobile":
-    "PRUVIQ.com 홈페이지 (모바일 375px). 기대: h1 가독성, 코인 수 표시, CTA 버튼 터치 영역, 가로 스크롤 없음",
-  "simulate-desktop":
-    "시뮬레이터 페이지 (데스크탑). 기대: 전략 선택 드롭다운, 파라미터 입력, 실행 버튼, 569+ 코인 수",
-  "simulate-mobile":
-    "시뮬레이터 페이지 (모바일). 기대: 입력 요소들이 겹치지 않음, 버튼 터치 가능, 스크롤 동작 정상",
-  "ranking-desktop":
-    "전략 랭킹 페이지 (데스크탑, 영어). 기대: 'Best 3 Strategies' 섹션, 실제 전략 이름, Win Rate/PF 수치. 한국어 텍스트 없어야 함",
-  "ranking-mobile":
-    "전략 랭킹 페이지 (모바일). 기대: 랭킹 데이터 모바일에서 가독성 있게 표시, 테이블 잘림 없음",
-  "ranking-ko-desktop":
-    "전략 랭킹 페이지 (데스크탑, 한국어). 기대: '오늘의 전략 랭킹' 한국어 헤더, 한국어 레이블, 실제 전략 데이터",
-  "ranking-ko-mobile":
-    "전략 랭킹 페이지 (모바일, 한국어). 기대: 한국어 텍스트 모바일 표시, 가로 스크롤 없음",
-  "market-desktop":
-    "마켓 대시보드 (데스크탑). 기대: BTC/ETH 가격 지표, Fear & Greed 또는 시장 데이터, 완전 공백이 아님",
-  "coins-desktop":
-    "코인 목록 (데스크탑). 기대: BTC ETH SOL 등 코인 심볼, 리스트/그리드 레이아웃",
-  "performance-desktop":
-    "성과 페이지 (데스크탑). 기대: 실제 거래 데이터 테이블 (P&L, 코인명, 날짜), 수익/손실 표시",
-  "strategies-desktop":
-    "전략 목록 (데스크탑). 기대: 전략 카드들, 이름/파라미터, 링크",
-  "about-desktop": "소개 페이지 (데스크탑). 기대: 팀 정보 또는 서비스 소개",
-  "fees-desktop":
-    "수수료 비교 (데스크탑). 기대: 거래소 수수료 비교 테이블, 실제 % 수치 (0.0x%)",
+  "home-desktop": `PRUVIQ.com 홈페이지 (데스크탑). 정상 기대: H1 "Test Your Strategy Before You Trade.", '${CURRENT_COIN_COUNT}+' 코인 수 배지, CTA 버튼 2개("Try Simulator Free →", "See Backtest Results"), social proof 섹션. ${STALE_COIN_COUNT} 표시 시 STALE_DATA critical.`,
+  "home-mobile": `PRUVIQ.com 홈페이지 (모바일 375px). 정상 기대: h1 가독성, ${CURRENT_COIN_COUNT}+ 코인 수, CTA 버튼 터치 영역 충분, 가로 스크롤 없음, 쿠키 배너가 CTA를 완전히 가리면 MOBILE_BROKEN.`,
+  "simulate-desktop": `시뮬레이터 페이지 (데스크탑). 정상 기대: H1에 "${CURRENT_COIN_COUNT}+ Coins" 포함, 시나리오 카드 5개(Breakout/Reversals/Range Trading/Trend Following/Hedging), Quick Test/Standard/Expert 탭. 중요: Run 버튼은 초기 화면에 없음이 정상 — 시나리오 카드 클릭 = 실행 트리거. 결과 없는 초기 상태 = PASS. "Run a backtest to see results." = 정상 초기 상태.`,
+  "simulate-mobile": `시뮬레이터 페이지 (모바일 375px). 정상 기대: 시나리오 카드들이 겹치지 않고 터치 가능, 탭 전환 가능, 가로 스크롤 없음. Run 버튼 없음 = 정상(시나리오 카드가 실행 트리거).`,
+  "ranking-desktop": `전략 랭킹 페이지 (데스크탑, EN). 정상 기대: H1 "Daily Strategy Ranking", BEST 3 카드(전략명/Win Rate/PF/Trades), WORST 3 카드, 필터 버튼(30 Days/365 Days/7 Days/Top 30/Top 50/Top 100/BTC Only), 날짜 2일 이내. 한국어 텍스트 메인 섹션에 있으면 LANGUAGE_WRONG.`,
+  "ranking-mobile": `전략 랭킹 페이지 (모바일, EN). 정상 기대: 랭킹 카드 세로 스택, 전략명/수치 가독성, 필터 버튼 터치 가능, 가로 스크롤 없음.`,
+  "ranking-ko-desktop": `전략 랭킹 페이지 (데스크탑, KO). 정상 기대: H1 "오늘의 전략 랭킹", 한국어 레이블(승률 등), 전략명은 영어 유지(MACD Cross 등 — 의도된 설계). SSR div 비어있으면 BLANK_PAGE critical(PR#464 재발).`,
+  "ranking-ko-mobile": `전략 랭킹 페이지 (모바일, KO). 정상 기대: 한국어 텍스트 모바일 표시, 가로 스크롤 없음.`,
+  "market-desktop": `마켓 대시보드 (데스크탑). 정상 기대: H1 "Market Dashboard", 초기 스켈레톤 허용(동적 데이터), BTC/ETH 가격/Fear & Greed Index. 4초 후에도 완전 공백이면 DATA_MISSING warning.`,
+  "coins-desktop": `코인 목록 (데스크탑). 정상 기대: H1 "Browse All Coins", BTC/ETH/SOL 등 코인 카드, 스파크라인 차트(SVG/canvas), 검색창. 코인 목록 없이 완전 공백이면 DATA_MISSING.`,
+  "performance-desktop": `성과 페이지 (데스크탑). 정상 기대: H1 "Every Trade Published. Including Losses.", 실제 거래 테이블(코인명/날짜/P&L/SL/TP), 2,898+ 거래 기록. 거래 테이블 없으면 DATA_MISSING.`,
+  "strategies-desktop": `전략 목록 (데스크탑). 정상 기대: 전략 카드들(BB Squeeze/RSI Divergence 등), 각 카드에 Win Rate/PF/Trades. 필터(Active/Retired/Under Review). 카드 없으면 DATA_MISSING.`,
+  "about-desktop": `소개 페이지 (데스크탑). 정상 기대: H1 존재, 텍스트 렌더링, 내용 완전 표시. 완전 공백이면 BLANK_PAGE critical.`,
+  "fees-desktop": `수수료 비교 (데스크탑). 정상 기대: 거래소 수수료 비교 테이블, 실제 % 수치(0.0x%). 완전 공백이면 BLANK_PAGE critical.`,
 };
 
 // ── Claude CLI Vision 분석 ──────────────────────────────────────────────────

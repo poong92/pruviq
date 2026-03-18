@@ -339,10 +339,14 @@ test.describe("Interactive QA — 기능 클릭 테스트", () => {
 
     if ((await reversalsCard.count()) === 0) {
       test.skip(true, "Reversals 시나리오 카드 없음");
+      return;
     }
 
     await reversalsCard.click();
-    await page.waitForTimeout(20000); // 최대 20초 대기
+
+    // waitForTimeout 안티패턴 금지 — 결과 등장 시 즉시 진행
+    const resultIndicator = page.locator("text=/\\d+\\.?\\d*%/").first();
+    await expect(resultIndicator).toBeVisible({ timeout: 30000 });
 
     const bodyText = (await page.textContent("body")) ?? "";
 

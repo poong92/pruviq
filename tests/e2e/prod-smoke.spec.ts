@@ -1,4 +1,6 @@
 import { test, expect } from "@playwright/test";
+import fs from "fs";
+import path from "path";
 
 /**
  * Production Smoke Tests — hits actual pruviq.com (not localhost)
@@ -16,6 +18,14 @@ import { test, expect } from "@playwright/test";
 
 const BASE_URL = process.env.BASE_URL || "";
 const IS_PROD = BASE_URL.includes("pruviq.com");
+
+// QA Rules SSoT — stale coin count value는 여기서만 관리
+const QA_RULES_PATH = path.join(process.cwd(), "tests/harness/qa-rules.json");
+const QA_RULES = fs.existsSync(QA_RULES_PATH)
+  ? JSON.parse(fs.readFileSync(QA_RULES_PATH, "utf-8"))
+  : null;
+const STALE_COIN_STR = String(QA_RULES?.coin_count?.stale_value ?? 549);
+const CURRENT_COIN = QA_RULES?.coin_count?.current ?? 569;
 
 // Skip all tests if not running against production
 test.beforeEach(async ({}, testInfo) => {
@@ -104,24 +114,26 @@ test.describe("Coin count: deployed HTML reflects current count", () => {
     const hasCoinCount = /\d{3}\+?\s*(coins?|Coins?)/i.test(html);
     expect(hasCoinCount, "Home page must display coin count").toBe(true);
 
-    // Must NOT show old stale count 549 (replaced by 569)
-    expect(html).not.toContain("549+");
-    expect(html).not.toContain("549 coins");
-    expect(html).not.toContain("549개");
+    // Must NOT show stale coin count (qa-rules.json SSoT — 하드코딩 금지)
+    expect(html).not.toContain(`${STALE_COIN_STR}+`);
+    expect(html).not.toContain(`${STALE_COIN_STR} coins`);
+    expect(html).not.toContain(`${STALE_COIN_STR}개`);
+    // Must show current coin count
+    expect(html).toMatch(new RegExp(String(CURRENT_COIN)));
   });
 
   test("Simulate page HTML has correct coin count", async ({ page }) => {
     await page.goto("/simulate/");
     const html = await page.content();
-    expect(html).not.toContain("549+");
-    expect(html).not.toContain("549 coins");
+    expect(html).not.toContain(`${STALE_COIN_STR}+`);
+    expect(html).not.toContain(`${STALE_COIN_STR} coins`);
   });
 
   test("KO simulate page has correct coin count", async ({ page }) => {
     await page.goto("/ko/simulate/");
     const html = await page.content();
-    expect(html).not.toContain("549개");
-    expect(html).not.toContain("549+");
+    expect(html).not.toContain(`${STALE_COIN_STR}개`);
+    expect(html).not.toContain(`${STALE_COIN_STR}+`);
   });
 });
 

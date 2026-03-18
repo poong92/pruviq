@@ -96,6 +96,11 @@ jobs:
           CLAUDE_MODEL: claude-sonnet-4-6
         timeout-minutes: 8
 
+      - name: Step 2b — QA Score 산출
+        if: always()
+        run: npx tsx scripts/qa-score.ts
+        timeout-minutes: 1
+
       - name: Step 3 — Report + Telegram + GitHub issue
         if: always()
         run: npx tsx scripts/vision-report.ts
@@ -118,5 +123,7 @@ jobs:
             test-results/vision/vision-report.json
             test-results/vision/collect-data.json
             test-results/interactive/*.png
+            test-results/qa-score.json
+            test-results/harness/golden-result.json
           retention-days: 14
           if-no-files-found: warn
