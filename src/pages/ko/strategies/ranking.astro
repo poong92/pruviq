@@ -11,6 +11,34 @@ const today = new Date().toLocaleDateString('ko-KR', {
   day: 'numeric',
   timeZone: 'Asia/Seoul',
 });
+
+// Fetch ranking data at build time for SSR fallback
+interface RankingEntry {
+  rank: number;
+  name_en: string;
+  strategy: string;
+  direction: string;
+  win_rate: number;
+  profit_factor: number;
+  total_trades: number;
+  timeframe: string;
+  low_sample: boolean;
+}
+interface RankingData {
+  date: string;
+  top3: RankingEntry[];
+  worst3: RankingEntry[];
+}
+
+let ssrRanking: RankingData | null = null;
+try {
+  const res = await fetch('https://api.pruviq.com/rankings/daily?period=30d&group=Market%20Cap%20Top%2050', {
+    signal: AbortSignal.timeout(5000),
+  });
+  if (res.ok) ssrRanking = await res.json() as RankingData;
+} catch {
+  // SSR fallback unavailable — JS component will handle it
+}
 ---
 
 <Layout title={t('meta.ranking_title')} description={t('meta.ranking_desc')}>
@@ -72,13 +100,91 @@ const today = new Date().toLocaleDateString('ko-KR', {
         </p>
       </div>
 
-      <!-- Ranking component (client-side fetch) -->
-      <noscript>
-        <div class="border border-[--color-border] rounded-lg p-6 text-center text-[--color-text-muted] text-sm font-mono">
-          <p class="mb-2 font-bold">{t('ranking.noscript_title')}</p>
-          <p>{t('ranking.noscript_desc')}</p>
-          <p class="mt-3"><a href="/ko/simulate" class="text-[--color-accent] underline">{t('ranking.open_sim')} →</a></p>
+      <!-- SSR fallback: static top3/worst3 visible before JS loads -->
+      {ssrRanking && (
+        <div id="ranking-ssr-fallback" class="mb-8">
+          <p class="font-mono text-[--color-accent] text-xs mb-3 tracking-wider">BEST 3 — {ssrRanking.date} · 30d · Top 50</p>
+          <div class="grid md:grid-cols-3 gap-4 mb-6">
+            {ssrRanking.top3.map((entry) => {
+              const isLong = entry.direction === 'long';
+              const isBoth = entry.direction === 'both';
+              const medals = ['🥇','🥈','🥉'];
+              const medal = medals[entry.rank - 1] ?? `#${entry.rank}`;
+              const dirLabel = isBoth ? 'BOTH↕' : isLong ? 'LONG↑' : 'SHORT↓';
+              const dirColor = isBoth ? 'text-[--color-yellow] border-[--color-yellow]/40' : isLong ? 'text-[--color-up] border-[--color-up]/40' : 'text-[--color-red] border-[--color-red]/40';
+              const wrColor = entry.win_rate >= 55 ? 'text-[--color-up]' : entry.win_rate >= 50 ? 'text-[--color-yellow]' : 'text-[--color-red]';
+              const pfColor = entry.profit_factor >= 1.5 ? 'text-[--color-up]' : entry.profit_factor >= 1.0 ? 'text-[--color-yellow]' : 'text-[--color-red]';
+              return (
+                <div class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card]">
+                  <div class="flex items-start justify-between gap-2 mb-3">
+                    <div class="flex items-center gap-2 min-w-0">
+                      <span class="text-xl shrink-0">{medal}</span>
+                      <div class="min-w-0">
+                        <p class="font-semibold text-[--color-text] text-sm leading-tight truncate">{entry.name_en}</p>
+                        <p class="text-[--color-text-muted] text-xs font-mono">{entry.timeframe} · {entry.direction}</p>
+                      </div>
+                    </div>
+                    <span class={`font-mono text-xs px-2 py-0.5 rounded border shrink-0 ${dirColor}`}>{dirLabel}</span>
+                  </div>
+                  <div class="grid grid-cols-3 gap-2 font-mono text-sm">
+                    <div>
+                      <p class="text-[--color-text-muted] text-xs mb-0.5">Win Rate</p>
+                      <p class={`font-bold text-base ${wrColor}`}>{entry.win_rate.toFixed(1)}%</p>
+                    </div>
+                    <div>
+                      <p class="text-[--color-text-muted] text-xs mb-0.5">PF</p>
+                      <p class={`font-bold text-base ${pfColor}`}>{entry.profit_factor.toFixed(2)}</p>
+                    </div>
+                    <div>
+                      <p class="text-[--color-text-muted] text-xs mb-0.5">Trades</p>
+                      <p class="font-bold text-base text-[--color-text]">{entry.total_trades}</p>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          <p class="font-mono text-[--color-red] text-xs mb-3 tracking-wider">WORST 3</p>
+          <div class="grid md:grid-cols-3 gap-4 mb-2">
+            {ssrRanking.worst3.map((entry) => {
+              const medals = ['🥇','🥈','🥉'];
+              const medal = medals[entry.rank - 1] ?? `#${entry.rank}`;
+              const wrColor = entry.win_rate >= 55 ? 'text-[--color-up]' : entry.win_rate >= 50 ? 'text-[--color-yellow]' : 'text-[--color-red]';
+              const pfColor = entry.profit_factor >= 1.5 ? 'text-[--color-up]' : entry.profit_factor >= 1.0 ? 'text-[--color-yellow]' : 'text-[--color-red]';
+              return (
+                <div class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card] opacity-70">
+                  <div class="flex items-center gap-2 mb-3">
+                    <span class="text-xl">{medal}</span>
+                    <div>
+                      <p class="font-semibold text-[--color-text] text-sm">{entry.name_en}</p>
+                      <p class="text-[--color-text-muted] text-xs font-mono">{entry.timeframe}</p>
+                    </div>
+                  </div>
+                  <div class="grid grid-cols-3 gap-2 font-mono text-sm">
+                    <div><p class="text-[--color-text-muted] text-xs mb-0.5">Win Rate</p><p class={`font-bold ${wrColor}`}>{entry.win_rate.toFixed(1)}%</p></div>
+                    <div><p class="text-[--color-text-muted] text-xs mb-0.5">PF</p><p class={`font-bold ${pfColor}`}>{entry.profit_factor.toFixed(2)}</p></div>
+                    <div><p class="text-[--color-text-muted] text-xs mb-0.5">Trades</p><p class="font-bold text-[--color-text]">{entry.total_trades}</p></div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          <p class="text-[--color-text-muted] text-xs font-mono mt-3">인터랙티브 필터 로딩 중...</p>
         </div>
+      )}
+      <!-- Script to hide SSR fallback once JS component renders -->
+      <script>
+        document.addEventListener('astro:page-load', () => {
+          const fallback = document.getElementById('ranking-ssr-fallback');
+          if (fallback) {
+            setTimeout(() => { fallback.style.display = 'none'; }, 1500);
+          }
+        });
+      </script>
+
+      <!-- noscript: show SSR data permanently when JS disabled -->
+      <noscript>
+        <style>#ranking-ssr-fallback { display: block !important; }</style>
       </noscript>
       <ErrorBoundary name="Strategy Ranking" client:load>
         <StrategyRanking lang="ko" client:load />
