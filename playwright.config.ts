@@ -16,13 +16,14 @@ export default defineConfig({
   projects: [
     {
       name: "desktop",
-      testIgnore: ["**/mobile-menu.spec.ts"],
+      testIgnore: ["**/mobile-menu.spec.ts", "**/visual-regression.spec.ts"],
       use: {
         viewport: { width: 1280, height: 720 },
       },
     },
     {
       name: "mobile",
+      testIgnore: ["**/visual-regression.spec.ts"],
       use: {
         viewport: { width: 375, height: 812 },
         isMobile: true,
