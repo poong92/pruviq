@@ -1,0 +1,129 @@
+name: "Vision QA: Screenshot + Claude Analysis"
+
+# 실제 사용자와 동일한 환경에서 pruviq.com을 분석
+# 1. Playwright → 스크린샷 + DOM 데이터 수집
+# 2. Claude Vision → 실제 화면 보고 QA 분석
+# 3. 데이터 정합성 검증 (API 값 vs 화면 표시값)
+# 4. 개선 제안 + 이슈 자동 생성
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    # 매일 KST 10:30 (01:30 UTC) — 데일리 랭킹 업데이트 후 검증
+    - cron: "30 1 * * *"
+  workflow_dispatch:
+    inputs:
+      skip_vision:
+        description: "Skip Claude Vision analysis (data-only)"
+        type: boolean
+        default: false
+
+concurrency:
+  group: vision-qa
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: read
+
+jobs:
+  vision-qa:
+    name: Vision QA — pruviq.com
+    runs-on: [self-hosted, macOS, arm64]
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node 22
+        run: node --version && npm --version
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Chromium
+        run: npx playwright install chromium
+
+      - name: Wait for site (push only — Cloudflare propagation)
+        if: github.event_name == 'push'
+        run: |
+          echo "Waiting 120s for Cloudflare Pages deployment..."
+          sleep 120
+          for i in {1..6}; do
+            STATUS=$(curl -sL -A "Mozilla/5.0" -o /dev/null -w '%{http_code}' \
+              https://pruviq.com --max-time 10 || echo "000")
+            [ "$STATUS" = "200" ] && echo "Site up (attempt $i)" && exit 0
+            echo "Attempt $i: $STATUS"
+            sleep 10
+          done
+          echo "::error::pruviq.com not reachable" && exit 1
+
+      - name: Create interactive output dir
+        run: mkdir -p test-results/interactive
+
+      - name: Step 1 — Collect screenshots + data (실제 사용자 환경)
+        run: |
+          npx playwright test tests/e2e/vision-collect.spec.ts \
+            --project prod-smoke \
+            --timeout 45000 \
+            --workers 3 \
+            --retries 1
+        env:
+          BASE_URL: https://pruviq.com
+          CI: true
+        timeout-minutes: 8
+
+      - name: Step 1b — Interactive QA (버튼 클릭·기능 검증)
+        run: |
+          npx playwright test tests/e2e/interactive-qa.spec.ts \
+            --project prod-smoke \
+            --timeout 60000 \
+            --workers 1 \
+            --retries 1
+        env:
+          BASE_URL: https://pruviq.com
+          CI: true
+        timeout-minutes: 8
+
+      - name: Step 2 — Claude Vision analysis (실제 화면 보고 QA 판단)
+        if: ${{ !inputs.skip_vision }}
+        run: npx tsx scripts/vision-analyze.ts
+        env:
+          VISION_DIR: test-results/vision
+          # Claude CLI 인증 사용 (ANTHROPIC_API_KEY 불필요 — Claude Code OAuth)
+          CLAUDE_MODEL: claude-sonnet-4-6
+        timeout-minutes: 8
+
+      - name: Step 2b — QA Score 산출
+        if: always()
+        run: npx tsx scripts/qa-score.ts
+        timeout-minutes: 1
+
+      - name: Step 3 — Report + Telegram + GitHub issue
+        if: always()
+        run: npx tsx scripts/vision-report.ts
+        env:
+          PRUVIQ_GH_TOKEN: ${{ secrets.PRUVIQ_GH_TOKEN }}
+          PRUVIQ_TELEGRAM_TOKEN: ${{ secrets.PRUVIQ_TELEGRAM_TOKEN }}
+          PRUVIQ_TELEGRAM_CHAT_ID: ${{ secrets.PRUVIQ_TELEGRAM_CHAT_ID }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          VISION_DIR: test-results/vision
+        timeout-minutes: 2
+
+      - name: Upload screenshots (항상 — 분석 참조용)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vision-qa-screenshots-${{ github.run_id }}
+          path: |
+            test-results/vision/*.png
+            test-results/vision/vision-report.json
+            test-results/vision/collect-data.json
+            test-results/interactive/*.png
+            test-results/qa-score.json
+            test-results/harness/golden-result.json
+          retention-days: 14
+          if-no-files-found: warn

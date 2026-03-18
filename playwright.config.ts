@@ -16,25 +16,52 @@ export default defineConfig({
   projects: [
     {
       name: "desktop",
-      testIgnore: ["**/mobile-menu.spec.ts", "**/visual-regression.spec.ts"],
+      testIgnore: [
+        "**/mobile-menu.spec.ts",
+        "**/visual-regression.spec.ts",
+        "**/prod-smoke.spec.ts",
+        "**/vision-collect.spec.ts",
+        "**/interactive-qa.spec.ts",
+      ],
       use: {
         viewport: { width: 1280, height: 720 },
       },
     },
     {
       name: "mobile",
-      testIgnore: ["**/visual-regression.spec.ts"],
+      testIgnore: [
+        "**/visual-regression.spec.ts",
+        "**/prod-smoke.spec.ts",
+        "**/vision-collect.spec.ts",
+        "**/interactive-qa.spec.ts",
+      ],
       use: {
         viewport: { width: 375, height: 812 },
         isMobile: true,
         hasTouch: true,
       },
     },
+    // prod-smoke: only active when BASE_URL=https://pruviq.com
+    // Runs prod-smoke.spec.ts AND vision-collect.spec.ts against the LIVE site.
+    {
+      name: "prod-smoke",
+      testMatch: [
+        "**/prod-smoke.spec.ts",
+        "**/vision-collect.spec.ts",
+        "**/interactive-qa.spec.ts",
+      ],
+      use: {
+        baseURL: process.env.BASE_URL || "http://localhost:4321",
+        viewport: { width: 1280, height: 720 },
+      },
+    },
   ],
-  webServer: {
-    command: "npm run preview -- --host 0.0.0.0 --port 4321",
-    port: 4321,
-    reuseExistingServer: !process.env.CI,
-    timeout: 30000,
-  },
+  webServer: process.env.BASE_URL?.includes("pruviq.com")
+    ? undefined
+    : {
+        command: "npm run preview -- --host 0.0.0.0 --port 4321",
+        port: 4321,
+        reuseExistingServer: !process.env.CI,
+        timeout: 30000,
+      },
 });
