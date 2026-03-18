@@ -60,12 +60,27 @@ jobs:
           done
           echo "::error::pruviq.com not reachable" && exit 1
 
+      - name: Create interactive output dir
+        run: mkdir -p test-results/interactive
+
       - name: Step 1 — Collect screenshots + data (실제 사용자 환경)
         run: |
           npx playwright test tests/e2e/vision-collect.spec.ts \
             --project prod-smoke \
             --timeout 45000 \
             --workers 3 \
+            --retries 1
+        env:
+          BASE_URL: https://pruviq.com
+          CI: true
+        timeout-minutes: 8
+
+      - name: Step 1b — Interactive QA (버튼 클릭·기능 검증)
+        run: |
+          npx playwright test tests/e2e/interactive-qa.spec.ts \
+            --project prod-smoke \
+            --timeout 60000 \
+            --workers 1 \
             --retries 1
         env:
           BASE_URL: https://pruviq.com
@@ -102,5 +117,6 @@ jobs:
             test-results/vision/*.png
             test-results/vision/vision-report.json
             test-results/vision/collect-data.json
+            test-results/interactive/*.png
           retention-days: 14
           if-no-files-found: warn

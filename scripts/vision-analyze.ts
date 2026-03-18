@@ -18,6 +18,15 @@ const VISION_DIR = process.env.VISION_DIR ?? "test-results/vision";
 const REPORT_PATH = path.join(VISION_DIR, "vision-report.json");
 const CLAUDE_MODEL = process.env.CLAUDE_MODEL ?? "claude-sonnet-4-6";
 
+// QA 지식 베이스 로드 (tests/harness/qa-knowledge.md)
+const QA_KNOWLEDGE_PATH = path.join(
+  process.cwd(),
+  "tests/harness/qa-knowledge.md",
+);
+const QA_KNOWLEDGE = fs.existsSync(QA_KNOWLEDGE_PATH)
+  ? fs.readFileSync(QA_KNOWLEDGE_PATH, "utf-8")
+  : "";
+
 // ── 타입 ──────────────────────────────────────────────────────────────────
 
 type Severity = "critical" | "warning" | "info";
@@ -109,9 +118,13 @@ function analyzeWithClaude(
   const imageData = fs.readFileSync(screenshotPath);
   const base64 = imageData.toString("base64");
 
+  const knowledgeSection = QA_KNOWLEDGE
+    ? `## PRUVIQ QA 지식 베이스 (판단 기준)\n\n${QA_KNOWLEDGE}\n\n---\n\n`
+    : "";
+
   const prompt = `당신은 PRUVIQ.com의 QA 엔지니어입니다. 이 스크린샷을 실제 사용자 관점에서 분석해주세요.
 
-## 이 페이지 정보
+${knowledgeSection}## 이 페이지 정보
 ${pageContext}
 
 ## 자동 추출된 데이터 (참고용)

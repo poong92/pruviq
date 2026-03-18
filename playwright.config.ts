@@ -21,6 +21,7 @@ export default defineConfig({
         "**/visual-regression.spec.ts",
         "**/prod-smoke.spec.ts",
         "**/vision-collect.spec.ts",
+        "**/interactive-qa.spec.ts",
       ],
       use: {
         viewport: { width: 1280, height: 720 },
@@ -32,6 +33,7 @@ export default defineConfig({
         "**/visual-regression.spec.ts",
         "**/prod-smoke.spec.ts",
         "**/vision-collect.spec.ts",
+        "**/interactive-qa.spec.ts",
       ],
       use: {
         viewport: { width: 375, height: 812 },
@@ -43,7 +45,11 @@ export default defineConfig({
     // Runs prod-smoke.spec.ts AND vision-collect.spec.ts against the LIVE site.
     {
       name: "prod-smoke",
-      testMatch: ["**/prod-smoke.spec.ts", "**/vision-collect.spec.ts"],
+      testMatch: [
+        "**/prod-smoke.spec.ts",
+        "**/vision-collect.spec.ts",
+        "**/interactive-qa.spec.ts",
+      ],
       use: {
         baseURL: process.env.BASE_URL || "http://localhost:4321",
         viewport: { width: 1280, height: 720 },
