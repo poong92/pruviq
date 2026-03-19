@@ -286,12 +286,12 @@ def get_client_ip(request: Request) -> str:
     """Extract real client IP, only trusting proxy headers from trusted sources."""
     direct_ip = request.client.host if request.client else "unknown"
 
-    if direct_ip not in TRUSTED_PROXIES:
-        return direct_ip
-
     cf_ip = request.headers.get("cf-connecting-ip")
     if cf_ip:
         return cf_ip.strip()
+
+    if direct_ip not in TRUSTED_PROXIES:
+        return direct_ip
 
     forwarded = request.headers.get("x-forwarded-for")
     if forwarded:
@@ -1034,7 +1034,9 @@ async def get_ohlcv(symbol: str, limit: int = 1000, offset: int = 0, timeframe: 
     timeframe = _validate_timeframe(timeframe)
 
     # Cap limit at 5000 to prevent excessive response sizes
-    if limit > 5000:
+    if limit < 0:
+        limit = 1000
+    elif limit > 5000:
         limit = 5000
 
     if _is_resampled(timeframe):
