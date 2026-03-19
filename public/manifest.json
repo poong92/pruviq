@@ -1,6 +1,7 @@
 {
   "name": "PRUVIQ",
   "short_name": "PRUVIQ",
+  "id": "/",
   "description": "Crypto strategy verification platform — backtest, simulate, verify",
   "start_url": "/",
   "display": "standalone",
