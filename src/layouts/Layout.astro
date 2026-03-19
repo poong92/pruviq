@@ -170,11 +170,13 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
     <link rel="preload" href={ogImageWebp} as="image" type="image/webp" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={description} />
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image:alt" content={description} />
     <meta name="twitter:site" content="@pruviq" />
     <title>{title}</title>
     <!-- JSON-LD Organization -->
@@ -334,7 +336,13 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
           }
         },
         "mainEntityOfPage": canonicalURL.href,
-        "articleSection": category || "education"
+        "articleSection": category || "education",
+        "image": {
+          "@type": "ImageObject",
+          "url": ogImage,
+          "width": 1200,
+          "height": 630
+        }
       })} />
     )}
     <!-- JSON-LD BreadcrumbList (skip for 404 pages) -->
