@@ -166,6 +166,7 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
     <meta property="og:site_name" content="PRUVIQ" />
     <meta property="og:locale" content={lang === 'ko' ? 'ko_KR' : 'en_US'} />
     <meta property="og:image" content={ogImage} />
+    <meta property="og:image:alt" content={title} />
     <link rel="preload" href={ogImageAvif} as="image" type="image/avif" />
     <link rel="preload" href={ogImageWebp} as="image" type="image/webp" />
     <meta property="og:image:width" content="1200" />
@@ -175,6 +176,7 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image:alt" content={title} />
     <meta name="twitter:site" content="@pruviq" />
     <title>{title}</title>
     <!-- JSON-LD Organization -->
@@ -332,6 +334,12 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
             "width": 96,
             "height": 96
           }
+        },
+        "image": {
+          "@type": "ImageObject",
+          "url": ogImage,
+          "width": 1200,
+          "height": 630
         },
         "mainEntityOfPage": canonicalURL.href,
         "articleSection": category || "education"
