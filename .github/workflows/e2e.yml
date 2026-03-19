@@ -199,6 +199,10 @@ jobs:
               owner: context.repo.owner, repo: context.repo.repo,
               issue_number: matchingIssue.number, name: 'in-progress',
             }).catch(() => {});
+          } else if (isAutoFixPR) {
+            // Auto-fix PR with no matching issue: do NOT create a new issue.
+            // Creating one would re-trigger the auto-fix loop.
+            console.log(`[dedup] Skipping issue creation for auto-fix PR #${prNumber} — no parent issue found`);
           } else {
             const issue = await github.rest.issues.create({
               owner: context.repo.owner, repo: context.repo.repo,
