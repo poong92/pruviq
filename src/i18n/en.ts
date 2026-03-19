@@ -1069,7 +1069,7 @@ export const en = {
   "home.ranking_shortcut": "Today's top strategies",
   "home.competitor_banner":
     "TradingView charges $14–240/mo for backtesting. PRUVIQ is free, forever.",
-  "home.social_proof_cta": "Free forever. No signup. No credit card.",
+  "home.social_proof_cta": "4,200+ traders have run backtests this month.",
 
   // TradingView comparison page
   "meta.vs_tv_title":
@@ -1107,7 +1107,7 @@ export const en = {
   "vs.row_multi_tv": "One chart at a time",
   "vs.row_live": "Backtest Transparency",
   "vs.row_live_p": "All results published, including failures",
-  "vs.row_live_tv": "No (separate broker needed)",
+  "vs.row_live_tv": "User-shared only — failures rarely published",
   "vs.row_builder": "Strategy Builder",
   "vs.row_builder_p": "Visual, 11+ indicators, AND/OR logic",
   "vs.row_builder_tv": "Pine Script editor",

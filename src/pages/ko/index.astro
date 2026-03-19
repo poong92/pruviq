@@ -121,6 +121,26 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
     </div>
   </section>
 
+  <!-- HOW IT WORKS (compact 3-step guide) -->
+  <section class="border-t border-[--color-border] bg-[--color-bg-subtle]">
+    <div class="max-w-6xl mx-auto px-4 py-8">
+      <div class="grid grid-cols-3 gap-6 text-center">
+        <div>
+          <div class="font-mono text-[--color-accent] text-xs tracking-wider mb-1">① {t('how.step1')}</div>
+          <p class="text-xs text-[--color-text-muted]">{t('how.step1_desc')}</p>
+        </div>
+        <div>
+          <div class="font-mono text-[--color-accent] text-xs tracking-wider mb-1">② {t('how.step2')}</div>
+          <p class="text-xs text-[--color-text-muted]">{t('how.step2_desc')}</p>
+        </div>
+        <div>
+          <div class="font-mono text-[--color-accent] text-xs tracking-wider mb-1">③ {t('how.step3')}</div>
+          <p class="text-xs text-[--color-text-muted]">{t('how.step3_desc')}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- WHY PRUVIQ (Merged Problem + Evidence) -->
   <section class="py-20 border-t border-[--color-border] bg-[--color-bg-subtle]" aria-labelledby="why-heading-ko">
     <div class="max-w-6xl mx-auto px-4">
