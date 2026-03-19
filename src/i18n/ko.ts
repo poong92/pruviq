@@ -1182,7 +1182,7 @@ export const ko: Record<TranslationKey, string> = {
     "이번 주 최고 및 최악의 암호화폐 전략을 확인하세요. 실제 백테스트 데이터로 매주 업데이트.",
   "meta.ranking_title": "일별 전략 랭킹 | PRUVIQ",
   "meta.ranking_desc":
-    "PRUVIQ 백테스트 기반 오늘의 최고·최악 암호화폐 전략. 수익 팩터와 승률로 순위를 매겨 매일 업데이트.",
+    "수익 팩터와 승률 기반 일별 전략 랭킹. 569개 코인 · 37개 전략 설정 백테스트 데이터로 매일 업데이트.",
   "fees.savings_callout":
     "월 $10,000 거래 시? PRUVIQ 바이낸스 VIP 할인으로 연간 약 $144 절약.",
   "nav.leaderboard": "리더보드",

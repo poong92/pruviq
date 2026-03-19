@@ -439,12 +439,12 @@ export const en = {
   "meta.simulate_title":
     "Strategy Simulator \u2014 Build & Backtest Custom Strategies | PRUVIQ",
   "meta.simulate_desc":
-    "Build custom trading strategies with 11+ indicators and backtest on 569+ coins. No coding required. Free, instant results with realistic fee modeling.",
+    "Build a custom crypto trading strategy and backtest it across 569+ coins in seconds. No code, no signup, free forever.",
   "meta.index_desc":
     "Free crypto strategy backtesting — test strategies on 569+ coins with 2+ years of real market data, realistic fees, and published results, including failures.",
   "meta.strategies_title": "Strategy Library - PRUVIQ",
   "meta.strategies_desc":
-    "Every strategy we've tested with full simulation results — verified, killed, and everything in between. No cherry-picking.",
+    "Explore 37 backtested crypto strategies — 5 fully documented, 32 presets. See what survived 2+ years of real market data.",
   "meta.blog_title": "Trading IQ - PRUVIQ",
   "meta.blog_desc":
     "Raise your trading IQ. Backtesting, risk management, algorithmic strategies, and lessons from real trades.",
@@ -1206,7 +1206,7 @@ export const en = {
     "See this week's best and worst performing crypto trading strategies. Updated weekly with real backtest data.",
   "meta.ranking_title": "Daily Strategy Ranking | PRUVIQ",
   "meta.ranking_desc":
-    "Today's top and worst crypto trading strategies based on PRUVIQ backtests. Ranked by Profit Factor and Win Rate. Updated daily.",
+    "Daily crypto strategy rankings by profit factor and win rate. Updated every day from 569-coin backtest data across 37 strategy configs.",
   "fees.savings_callout":
     "Trade $10,000/month? Save ~$144/year with Binance VIP discount via PRUVIQ.",
   "nav.leaderboard": "Leaderboard",
