@@ -1,0 +1,73 @@
+{
+  "date": "2026-03-18",
+  "top3": [
+    {
+      "rank": 1,
+      "name_en": "BB Squeeze SHORT",
+      "strategy": "bb-squeeze",
+      "direction": "short",
+      "win_rate": 68.6,
+      "profit_factor": 2.22,
+      "total_trades": 2898,
+      "timeframe": "4H",
+      "low_sample": false
+    },
+    {
+      "rank": 2,
+      "name_en": "MACD Crossover LONG",
+      "strategy": "macd-crossover",
+      "direction": "long",
+      "win_rate": 55.2,
+      "profit_factor": 1.65,
+      "total_trades": 1842,
+      "timeframe": "4H",
+      "low_sample": false
+    },
+    {
+      "rank": 3,
+      "name_en": "RSI Divergence SHORT",
+      "strategy": "rsi-divergence",
+      "direction": "short",
+      "win_rate": 52.8,
+      "profit_factor": 1.41,
+      "total_trades": 1256,
+      "timeframe": "4H",
+      "low_sample": false
+    }
+  ],
+  "worst3": [
+    {
+      "rank": 1,
+      "name_en": "Momentum Breakout LONG",
+      "strategy": "momentum-long",
+      "direction": "long",
+      "win_rate": 37.5,
+      "profit_factor": 0.72,
+      "total_trades": 1534,
+      "timeframe": "4H",
+      "low_sample": false
+    },
+    {
+      "rank": 2,
+      "name_en": "BB Squeeze LONG",
+      "strategy": "bb-squeeze",
+      "direction": "long",
+      "win_rate": 51.0,
+      "profit_factor": 0.95,
+      "total_trades": 2156,
+      "timeframe": "4H",
+      "low_sample": false
+    },
+    {
+      "rank": 3,
+      "name_en": "ATR Breakout LONG",
+      "strategy": "atr-breakout",
+      "direction": "long",
+      "win_rate": 44.2,
+      "profit_factor": 0.88,
+      "total_trades": 987,
+      "timeframe": "4H",
+      "low_sample": false
+    }
+  ]
+}

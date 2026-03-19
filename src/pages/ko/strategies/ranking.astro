@@ -37,7 +37,19 @@ try {
   });
   if (res.ok) ssrRanking = await res.json() as RankingData;
 } catch {
-  // SSR fallback unavailable — JS component will handle it
+  // API unavailable at build time
+}
+
+// Static fallback: ensure SSR div always renders for crawlers
+if (!ssrRanking) {
+  try {
+    const fs = await import('node:fs');
+    const path = await import('node:path');
+    const fallbackPath = path.default.join(process.cwd(), 'public/data/ranking-fallback.json');
+    ssrRanking = JSON.parse(fs.default.readFileSync(fallbackPath, 'utf-8')) as RankingData;
+  } catch {
+    // Both API and static fallback failed
+  }
 }
 ---
 
@@ -103,7 +115,7 @@ try {
       <!-- SSR fallback: static top3/worst3 visible before JS loads -->
       {ssrRanking && (
         <div id="ranking-ssr-fallback" class="mb-8">
-          <p class="font-mono text-[--color-accent] text-xs mb-3 tracking-wider">BEST 3 — {ssrRanking.date} · 30d · Top 50</p>
+          <p class="font-mono text-[--color-accent] text-xs mb-3 tracking-wider">최고 3 — {ssrRanking.date} · 30d · Top 50</p>
           <div class="grid md:grid-cols-3 gap-4 mb-6">
             {ssrRanking.top3.map((entry) => {
               const isLong = entry.direction === 'long';
@@ -148,7 +160,7 @@ try {
               );
             })}
           </div>
-          <p class="font-mono text-[--color-red] text-xs mb-3 tracking-wider">WORST 3</p>
+          <p class="font-mono text-[--color-red] text-xs mb-3 tracking-wider">최악 3</p>
           <div class="grid md:grid-cols-3 gap-4 mb-2">
             {ssrRanking.worst3.map((entry) => {
               const medals = ['🥇','🥈','🥉'];

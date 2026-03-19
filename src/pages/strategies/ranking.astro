@@ -37,7 +37,19 @@ try {
   });
   if (res.ok) ssrRanking = await res.json() as RankingData;
 } catch {
-  // SSR fallback unavailable — JS component will handle it
+  // API unavailable at build time
+}
+
+// Static fallback: ensure SSR div always renders for crawlers
+if (!ssrRanking) {
+  try {
+    const fs = await import('node:fs');
+    const path = await import('node:path');
+    const fallbackPath = path.default.join(process.cwd(), 'public/data/ranking-fallback.json');
+    ssrRanking = JSON.parse(fs.default.readFileSync(fallbackPath, 'utf-8')) as RankingData;
+  } catch {
+    // Both API and static fallback failed
+  }
 }
 ---
 
