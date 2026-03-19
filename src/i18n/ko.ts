@@ -1048,7 +1048,7 @@ export const ko: Record<TranslationKey, string> = {
   "home.ranking_shortcut": "오늘의 상위 전략",
   "home.competitor_banner":
     "TradingView는 백테스팅에 월 $14~240를 청구합니다. PRUVIQ는 영원히 무료입니다.",
-  "home.social_proof_cta": "영원히 무료. 가입 없음. 카드 없음.",
+  "home.social_proof_cta": "이번 달 4,200명 이상이 백테스트를 실행했습니다.",
 
   // TradingView comparison page
   "meta.vs_tv_title": "PRUVIQ vs 트레이딩뷰 - 무료 크립토 백테스팅 비교",
@@ -1085,7 +1085,7 @@ export const ko: Record<TranslationKey, string> = {
   "vs.row_multi_tv": "한 번에 차트 1개",
   "vs.row_live": "백테스트 투명성",
   "vs.row_live_p": "실패 포함 전체 결과 공개",
-  "vs.row_live_tv": "없음 (별도 브로커 필요)",
+  "vs.row_live_tv": "사용자 공유만 — 실패 결과 거의 공개 안 됨",
   "vs.row_builder": "전략 빌더",
   "vs.row_builder_p": "비주얼, 11개+ 지표, AND/OR 로직",
   "vs.row_builder_tv": "Pine Script 에디터",

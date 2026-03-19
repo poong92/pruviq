@@ -578,14 +578,14 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
         var stickyCta = document.getElementById('sticky-cta');
 
         function applyOffset() {
-          if (!stickyCta) return;
           var h = notice.offsetHeight;
-          stickyCta.style.bottom = h + 'px';
+          document.body.style.paddingBottom = h + 'px';
+          if (stickyCta) stickyCta.style.bottom = h + 'px';
         }
 
         function removeOffset() {
-          if (!stickyCta) return;
-          stickyCta.style.bottom = '';
+          document.body.style.paddingBottom = '';
+          if (stickyCta) stickyCta.style.bottom = '';
         }
 
         if (!localStorage.getItem('cookie-ok')) {
