@@ -40,7 +40,8 @@ export const en = {
   "hero.tool_strategies": "88+ Variations Backtested",
   "hero.tool_data": "2+ Years Historical Data",
   "hero.tool_free": "100% Free, No Signup",
-  "hero.subcopy": "No signup required. Free forever. Get results in 3 seconds.",
+  "hero.subcopy":
+    "We tested 88 strategy combinations. 4 failed — and we published every one.",
   "hero.cta_secondary": "See Backtest Results",
   "hero.stat1_sub": "Including BTC, ETH, and altcoins",
   "hero.stat4_sub": "Across all verified strategies",

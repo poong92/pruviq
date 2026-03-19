@@ -128,7 +128,12 @@ export function RankingCard({
           </p>
         </div>
         <div>
-          <p class="text-[--color-text-muted] text-xs mb-0.5">PF</p>
+          <p
+            class="text-[--color-text-muted] text-xs mb-0.5 cursor-help"
+            title="Profit Factor = avg win ÷ avg loss. 1.0 = breakeven, 1.5+ = good, 2.0+ = strong. Capped at 99.99 for low-sample results."
+          >
+            PF <span class="opacity-50 text-[0.6rem]">?</span>
+          </p>
           {entry.profit_factor >= 50 ? (
             <p
               class={`font-bold text-base ${pfColor(entry.profit_factor)} cursor-help underline decoration-dotted`}

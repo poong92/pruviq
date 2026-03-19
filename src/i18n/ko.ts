@@ -41,7 +41,8 @@ export const ko: Record<TranslationKey, string> = {
   "hero.tool_strategies": "88+ 조합 백테스트",
   "hero.tool_data": "2년+ 과거 데이터",
   "hero.tool_free": "100% 무료, 가입 불필요",
-  "hero.subcopy": "가입 불필요. 영원히 무료. 3초 만에 결과 확인.",
+  "hero.subcopy":
+    "88가지 전략 조합을 검증했습니다. 4개가 실패했고 — 전부 공개했습니다.",
   "hero.cta_secondary": "백테스트 결과 보기",
   "hero.stat1_sub": "BTC, ETH 포함 알트코인",
   "hero.stat4_sub": "검증된 전략 전체",
