@@ -148,6 +148,10 @@ jobs:
           const failingTestNames = failingTests.split('\n')
             .map(l => l.trim().slice(0, 80))
             .filter(Boolean);
+          // Auto-fix PRs (created by JEPO agent) should never spawn new issues
+          const isAutoFixPR = (context.payload.pull_request.labels || []).some(
+            l => l.name === 'claude-auto' || l.name === 'e2e-fix'
+          );
           const matchingIssue = existing.data.find(i => {
             if (i.title.includes(`PR #${prNumber}`)) return true;
             if (i.body?.includes(`Branch: \`${branch}\``)) return true;
@@ -156,7 +160,7 @@ jobs:
               if (hits >= Math.ceil(failingTestNames.length * 0.7)) return true;
             }
             return false;
-          });
+          }) || (isAutoFixPR ? existing.data[0] : null);
 
           const bold = (s) => `**${s}**`;
           const issueBody = [
