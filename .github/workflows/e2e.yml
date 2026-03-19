@@ -145,8 +145,9 @@ jobs:
           });
           // Dedup: same PR#, same branch, ≥50% same failing tests, or auto-fix PR
           // Prevents infinite loop: auto-fix PR → E2E fail → new issue → auto-fix → repeat
+          // failingTests format: "SuiteName > TestTitle" lines from extraction step
           const failingTestNames = failingTests.split('\n')
-            .map(l => l.trim().slice(0, 80))
+            .map(l => l.trim())
             .filter(l => l && l !== '(see CI log)' && l !== '(could not parse results)');
           // Detect auto-fix PRs by labels OR branch name pattern
           const hasAutoLabel = (context.payload.pull_request.labels || []).some(
@@ -158,11 +159,13 @@ jobs:
             if (i.title.includes(`PR #${prNumber}`)) return true;
             if (i.body?.includes(`Branch: \`${branch}\``)) return true;
             if (failingTestNames.length > 0 && i.body) {
-              const hits = failingTestNames.filter(t => i.body.includes(t)).length;
+              const hits = failingTestNames.filter(t => t.length >= 5 && i.body.includes(t)).length;
               if (hits >= Math.ceil(failingTestNames.length * 0.5)) return true;
             }
             return false;
-          }) || (isAutoFixPR ? existing.data[0] : null);
+          }) || (isAutoFixPR && existing.data.length > 0
+            ? existing.data.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))[0]
+            : null);
           console.log(`[dedup] tests=${failingTestNames.length}, isAutoFix=${isAutoFixPR}, matched=${matchingIssue?.number ?? 'none'}, existing=${existing.data.length}`);
 
           const bold = (s) => `**${s}**`;
