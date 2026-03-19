@@ -352,6 +352,9 @@ async def rate_limit_middleware(request: Request, call_next):
         if not check_rate_limit(client_ip):
             oldest = rate_limits.get(client_ip, [0])[0]
             retry_after = max(1, int(60 - (time.time() - oldest)))
+            logger.warning(
+                f"Rate limit hit: {client_ip} on {request.url.path} — retry after {retry_after}s"
+            )
             return JSONResponse(
                 status_code=429,
                 content={"detail": f"Rate limit exceeded. Retry after {retry_after}s."},
@@ -1436,29 +1439,59 @@ MARKET_REFRESH_INTERVAL = 300  # seconds — background fetch every 5min (Binanc
 _market_cache: Optional[dict] = None
 _market_cache_ts: float = 0.0  # timestamp of last successful cache update
 
+# Per-endpoint stale-cache fallbacks for CoinGecko (survives 429 / outages)
+_cg_global_last: Optional[dict] = None
+_cg_tickers_last: Optional[tuple] = None
+_cg_funding_last: Optional[list] = None
 
-def _cg_get(url: str, timeout: int = 10, max_retries: int = 3, raise_on_fail: bool = True):
-    """CoinGecko GET with 429 backoff."""
+
+_CG_BACKOFF_SCHEDULE = [10, 20, 40, 80, 160]  # seconds per attempt (exponential, 5 retries)
+
+def _cg_get(url: str, timeout: int = 10, max_retries: int = 5, raise_on_fail: bool = True,
+            cache_fallback=None):
+    """CoinGecko GET with exponential backoff.
+
+    Backoff schedule: 10s, 20s, 40s, 80s, 160s (5 retries total).
+    If all retries fail and cache_fallback is provided, returns cache_fallback instead of
+    raising/returning None — ensuring stale data is served rather than a broken response.
+    """
+    short_url = url.split("?")[0]
     for attempt in range(max_retries):
         try:
             resp = http_requests.get(url, headers=CG_HEADERS, timeout=timeout)
             if resp.status_code == 429:
-                retry_after = int(resp.headers.get("Retry-After", 30))
-                wait = max(retry_after, 15) * (2 ** attempt)
-                logger.warning(f"CoinGecko 429 on {url.split('?')[0]}, waiting {wait}s (attempt {attempt+1})")
+                wait = _CG_BACKOFF_SCHEDULE[min(attempt, len(_CG_BACKOFF_SCHEDULE) - 1)]
+                retry_after_header = resp.headers.get("Retry-After")
+                if retry_after_header:
+                    wait = max(wait, int(retry_after_header))
+                logger.warning(
+                    f"CoinGecko 429 on {short_url}, waiting {wait}s "
+                    f"(attempt {attempt + 1}/{max_retries})"
+                )
                 time.sleep(wait)
                 continue
             resp.raise_for_status()
             return resp
         except http_requests.exceptions.Timeout:
-            logger.warning(f"CoinGecko timeout on {url.split('?')[0]} (attempt {attempt+1})")
+            logger.warning(f"CoinGecko timeout on {short_url} (attempt {attempt + 1}/{max_retries})")
             continue
         except http_requests.exceptions.ConnectionError:
-            logger.warning(f"CoinGecko connection error on {url.split('?')[0]} (attempt {attempt+1})")
-            time.sleep(5 * (attempt + 1))
+            wait = _CG_BACKOFF_SCHEDULE[min(attempt, len(_CG_BACKOFF_SCHEDULE) - 1)]
+            logger.warning(
+                f"CoinGecko connection error on {short_url} "
+                f"(attempt {attempt + 1}/{max_retries}), waiting {wait}s"
+            )
+            time.sleep(wait)
             continue
+    # All retries exhausted
+    if cache_fallback is not None:
+        logger.info(
+            f"CoinGecko fetch failed after {max_retries} retries for {short_url} "
+            f"— serving cached fallback"
+        )
+        return cache_fallback
     if raise_on_fail:
-        raise Exception(f"CoinGecko rate limited after {max_retries} retries")
+        raise Exception(f"CoinGecko unavailable after {max_retries} retries: {short_url}")
     return None
 
 
@@ -1509,19 +1542,23 @@ def _fetch_fear_greed() -> dict:
 
 def _fetch_coingecko_global() -> dict:
     """Fetch global market data from CoinGecko (supplementary — not critical)."""
+    global _cg_global_last
+    _EMPTY = {"total_market_cap_b": 0, "btc_dominance": 0, "total_volume_24h_b": 0}
     try:
         resp = _cg_get("https://api.coingecko.com/api/v3/global", timeout=5, raise_on_fail=False)
         if resp is None:
-            return {"total_market_cap_b": 0, "btc_dominance": 0, "total_volume_24h_b": 0}
+            return _cg_global_last if _cg_global_last is not None else _EMPTY
         data = resp.json()["data"]
-        return {
+        result = {
             "total_market_cap_b": round(data["total_market_cap"].get("usd", 0) / 1e9, 1),
             "btc_dominance": round(data.get("market_cap_percentage", {}).get("btc", 0), 1),
             "total_volume_24h_b": round(data["total_volume"].get("usd", 0) / 1e9, 1),
         }
+        _cg_global_last = result  # update stale-cache
+        return result
     except Exception as e:
         logger.warning(f"CoinGecko global fetch failed: {e}")
-        return {"total_market_cap_b": 0, "btc_dominance": 0, "total_volume_24h_b": 0}
+        return _cg_global_last if _cg_global_last is not None else _EMPTY
 
 
 def _fetch_binance_tickers() -> tuple:
@@ -1575,6 +1612,8 @@ def _fetch_binance_tickers() -> tuple:
 
 def _fetch_coingecko_tickers_fallback() -> tuple:
     """CoinGecko fallback for tickers (only used when Binance fails)."""
+    global _cg_tickers_last
+    _EMPTY = ([], [], 0, 0, 0, 0)
     try:
         resp = _cg_get(
             "https://api.coingecko.com/api/v3/coins/markets"
@@ -1583,7 +1622,7 @@ def _fetch_coingecko_tickers_fallback() -> tuple:
             raise_on_fail=False,
         )
         if resp is None:
-            return [], [], 0, 0, 0, 0
+            return _cg_tickers_last if _cg_tickers_last is not None else _EMPTY
         coins = resp.json()
 
         btc = next((c for c in coins if c["symbol"] == "btc"), None)
@@ -1609,10 +1648,12 @@ def _fetch_coingecko_tickers_fallback() -> tuple:
         top_gainers = [_to_mover(c) for c in valid[:10]]
         top_losers = [_to_mover(c) for c in valid[-10:][::-1]]
 
-        return top_gainers, top_losers, btc_price, btc_change, eth_price, eth_change
+        result = (top_gainers, top_losers, btc_price, btc_change, eth_price, eth_change)
+        _cg_tickers_last = result  # update stale-cache
+        return result
     except Exception as e:
         logger.warning(f"CoinGecko tickers fallback also failed: {e}")
-        return [], [], 0, 0, 0, 0
+        return _cg_tickers_last if _cg_tickers_last is not None else _EMPTY
 
 
 def _fetch_coingecko_funding() -> list:
@@ -1620,6 +1661,7 @@ def _fetch_coingecko_funding() -> list:
     CoinGecko funding_rate is already a percentage decimal (e.g. -0.005 = -0.5%).
     We filter to major exchanges only to avoid noisy data.
     """
+    global _cg_funding_last
     MAJOR_EXCHANGES = {"binance", "bybit", "okx", "bitget", "dydx", "htx", "gate", "kucoin", "mexc"}
     try:
         resp = _cg_get(
@@ -1628,7 +1670,7 @@ def _fetch_coingecko_funding() -> list:
             raise_on_fail=False,
         )
         if resp is None:
-            return []
+            return _cg_funding_last if _cg_funding_last is not None else []
         data = resp.json()
 
         # Filter perpetual USDT pairs from major exchanges
@@ -1667,7 +1709,7 @@ def _fetch_coingecko_funding() -> list:
         # Sort by abs funding rate
         unique.sort(key=lambda d: abs(d["rate"]), reverse=True)
 
-        return [
+        result = [
             FundingRate(
                 symbol=d["symbol"],
                 rate=round(d["rate"], 4),  # already % decimal
@@ -1675,9 +1717,11 @@ def _fetch_coingecko_funding() -> list:
             )
             for d in unique[:10]
         ]
+        _cg_funding_last = result  # update stale-cache
+        return result
     except Exception as e:
         logger.warning(f"CoinGecko funding fetch failed: {e}")
-        return []
+        return _cg_funding_last if _cg_funding_last is not None else []
 
 
 def _build_market_overview() -> dict:

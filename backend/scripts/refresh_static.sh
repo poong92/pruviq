@@ -21,8 +21,8 @@ TELEGRAM_TOKEN=""
 TELEGRAM_CHAT_ID=""
 if [[ -f "$HOME/.config/telegram.env" ]]; then
     source "$HOME/.config/telegram.env"
-elif [[ -f /Users/jepo/.config/telegram.env ]]; then
-    source /Users/jepo/.config/telegram.env
+elif [[ -f "/Users/${RUNNING_USER}/.config/telegram.env" ]]; then
+    source "/Users/${RUNNING_USER}/.config/telegram.env"
 fi
 TG_TOKEN="${TELEGRAM_TOKEN:-}"
 TG_CHAT="${TELEGRAM_CHAT_ID:-}"
