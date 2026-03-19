@@ -146,8 +146,7 @@ jobs:
           // Dedup by: same PR#, same branch, OR ≥70% same failing test names
           // Prevents infinite loop: auto-fix PR → E2E fail → new issue → auto-fix → repeat
           const failingTestNames = failingTests.split('\n')
-            .filter(l => /^\s+(●|\d+\))/.test(l))
-            .map(l => l.replace(/^\s+(●|\d+\))\s*/, '').trim().slice(0, 80))
+            .map(l => l.trim().slice(0, 80))
             .filter(Boolean);
           const matchingIssue = existing.data.find(i => {
             if (i.title.includes(`PR #${prNumber}`)) return true;
