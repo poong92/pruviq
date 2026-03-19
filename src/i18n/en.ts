@@ -52,11 +52,11 @@ export const en = {
   "problem.title": "Crypto Trading is Broken.",
   "problem.card1_title": "Backtests Lie",
   "problem.card1_desc":
-    "We tested 88 strategy combinations on 569+ coins. Only 1 survived 2+ years of data. Look-ahead bias, overfitting, regime blindness — most strategies fail for the same reasons.",
+    "We stress-tested 88 strategy combinations on 569+ coins across 2+ years of data so you don't have to. Look-ahead bias, overfitting, regime blindness — most strategies fail for the same reasons. We show you exactly which ones and why.",
   "problem.card1_source": "Source: PRUVIQ validation pipeline, 2024-2026",
   "problem.card2_title": "4 Strategies Killed",
   "problem.card2_desc":
-    "We tested 5 strategies on 569+ coins over 2+ years. Only 1 survived. The other 4 lost money. Most platforms never show you the failures.",
+    "We tested 5 strategies on 569+ coins over 2+ years. 4 failed — and we published every one of those failures. Most platforms hide this. We made it the main feature.",
   "problem.card2_source":
     "Source: PRUVIQ strategy library — all results published",
   "problem.card3_title": "Experts Were Wrong",
@@ -439,12 +439,12 @@ export const en = {
   "meta.simulate_title":
     "Strategy Simulator \u2014 Build & Backtest Custom Strategies | PRUVIQ",
   "meta.simulate_desc":
-    "Build custom trading strategies with 11+ indicators and backtest on 569+ coins. No coding required. Free, instant results with realistic fee modeling.",
+    "Build a custom crypto trading strategy and backtest it across 569+ coins in seconds. No code, no signup, free forever.",
   "meta.index_desc":
     "Free crypto strategy backtesting — test strategies on 569+ coins with 2+ years of real market data, realistic fees, and published results, including failures.",
   "meta.strategies_title": "Strategy Library - PRUVIQ",
   "meta.strategies_desc":
-    "Every strategy we've tested with full simulation results — verified, killed, and everything in between. No cherry-picking.",
+    "Explore 37 backtested crypto strategies — 5 fully documented, 32 presets. See what survived 2+ years of real market data.",
   "meta.blog_title": "Trading IQ - PRUVIQ",
   "meta.blog_desc":
     "Raise your trading IQ. Backtesting, risk management, algorithmic strategies, and lessons from real trades.",
@@ -1206,7 +1206,7 @@ export const en = {
     "See this week's best and worst performing crypto trading strategies. Updated weekly with real backtest data.",
   "meta.ranking_title": "Daily Strategy Ranking | PRUVIQ",
   "meta.ranking_desc":
-    "Today's top and worst crypto trading strategies based on PRUVIQ backtests. Ranked by Profit Factor and Win Rate. Updated daily.",
+    "Daily crypto strategy rankings by profit factor and win rate. Updated every day from 569-coin backtest data across 37 strategy configs.",
   "fees.savings_callout":
     "Trade $10,000/month? Save ~$144/year with Binance VIP discount via PRUVIQ.",
   "nav.leaderboard": "Leaderboard",
