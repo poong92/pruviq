@@ -61,7 +61,7 @@ export default defineConfig({
     : {
         command: "npm run preview -- --host 0.0.0.0 --port 4321",
         port: 4321,
-        reuseExistingServer: !process.env.CI,
+        reuseExistingServer: true,
         timeout: 30000,
       },
 });
