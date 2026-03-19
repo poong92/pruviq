@@ -604,12 +604,21 @@ export default function MarketDashboard({
                 {l.calendarNote}
               </span>
             </div>
-            <div class="w-full h-[300px] md:h-[400px]">
+            <div class="w-full h-[300px] md:h-[400px] relative">
+              {/* Loading placeholder — shown until iframe paints */}
+              <div
+                class="absolute inset-0 flex flex-col items-center justify-center gap-2 text-[--color-text-muted] text-xs font-mono pointer-events-none"
+                id="cal-placeholder"
+              >
+                <span class="animate-spin inline-block w-5 h-5 border-2 border-[--color-accent] border-t-transparent rounded-full" />
+                Loading economic calendar...
+              </div>
               <iframe
                 src={`https://s.tradingview.com/embed-widget/events/?locale=${lang === "ko" ? "kr" : "en"}#%7B%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Atrue%2C%22width%22%3A%22100%25%22%2C%22height%22%3A%22100%25%22%2C%22importanceFilter%22%3A%220%2C1%22%7D`}
                 title={l.economicCalendar}
-                class="w-full h-full border-0"
+                class="w-full h-full border-0 relative z-10"
                 loading="lazy"
+                onLoad="document.getElementById('cal-placeholder')?.remove()"
               />
             </div>
           </div>
