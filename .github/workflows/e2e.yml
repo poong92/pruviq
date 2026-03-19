@@ -143,21 +143,23 @@ jobs:
             labels: 'e2e-fix', state: 'open',
             per_page: 50,
           });
-          // Dedup by: same PR#, same branch, OR ≥70% same failing test names
+          // Dedup: same PR#, same branch, ≥50% same failing tests, or auto-fix PR
           // Prevents infinite loop: auto-fix PR → E2E fail → new issue → auto-fix → repeat
           const failingTestNames = failingTests.split('\n')
             .map(l => l.trim().slice(0, 80))
-            .filter(Boolean);
-          // Auto-fix PRs (created by JEPO agent) should never spawn new issues
-          const isAutoFixPR = (context.payload.pull_request.labels || []).some(
+            .filter(l => l && l !== '(see CI log)' && l !== '(could not parse results)');
+          // Detect auto-fix PRs by labels OR branch name pattern
+          const hasAutoLabel = (context.payload.pull_request.labels || []).some(
             l => l.name === 'claude-auto' || l.name === 'e2e-fix'
           );
+          const hasAutoFixBranch = /e2e[-_]?fix|auto[-_]?fix/i.test(branch);
+          const isAutoFixPR = hasAutoLabel || hasAutoFixBranch;
           const matchingIssue = existing.data.find(i => {
             if (i.title.includes(`PR #${prNumber}`)) return true;
             if (i.body?.includes(`Branch: \`${branch}\``)) return true;
             if (failingTestNames.length > 0 && i.body) {
               const hits = failingTestNames.filter(t => i.body.includes(t)).length;
-              if (hits >= Math.ceil(failingTestNames.length * 0.7)) return true;
+              if (hits >= Math.ceil(failingTestNames.length * 0.5)) return true;
             }
             return false;
           }) || (isAutoFixPR ? existing.data[0] : null);
