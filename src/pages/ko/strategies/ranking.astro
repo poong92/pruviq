@@ -133,7 +133,11 @@ try {
                     </div>
                     <div>
                       <p class="text-[--color-text-muted] text-xs mb-0.5">PF</p>
-                      <p class={`font-bold text-base ${pfColor}`}>{entry.profit_factor.toFixed(2)}</p>
+                      {entry.profit_factor >= 50 ? (
+                        <p class={`font-bold text-base ${pfColor} cursor-help underline decoration-dotted`} title="PF 99.99로 제한됨 (거래 샘플 부족)">{entry.profit_factor.toFixed(2)} <span class="text-[0.6rem] font-normal text-[--color-text-muted]">(cap)</span></p>
+                      ) : (
+                        <p class={`font-bold text-base ${pfColor}`}>{entry.profit_factor.toFixed(2)}</p>
+                      )}
                     </div>
                     <div>
                       <p class="text-[--color-text-muted] text-xs mb-0.5">Trades</p>
@@ -162,14 +166,13 @@ try {
                   </div>
                   <div class="grid grid-cols-3 gap-2 font-mono text-sm">
                     <div><p class="text-[--color-text-muted] text-xs mb-0.5">Win Rate</p><p class={`font-bold ${wrColor}`}>{entry.win_rate.toFixed(1)}%</p></div>
-                    <div><p class="text-[--color-text-muted] text-xs mb-0.5">PF</p><p class={`font-bold ${pfColor}`}>{entry.profit_factor.toFixed(2)}</p></div>
+                    <div><p class="text-[--color-text-muted] text-xs mb-0.5">PF</p>{entry.profit_factor >= 50 ? (<p class={`font-bold ${pfColor} cursor-help underline decoration-dotted`} title="PF 99.99로 제한됨 (거래 샘플 부족)">{entry.profit_factor.toFixed(2)} <span class="text-[0.6rem] font-normal text-[--color-text-muted]">(cap)</span></p>) : (<p class={`font-bold ${pfColor}`}>{entry.profit_factor.toFixed(2)}</p>)}</div>
                     <div><p class="text-[--color-text-muted] text-xs mb-0.5">Trades</p><p class="font-bold text-[--color-text]">{entry.total_trades}</p></div>
                   </div>
                 </div>
               );
             })}
           </div>
-          <p class="text-[--color-text-muted] text-xs font-mono mt-3">인터랙티브 필터 로딩 중...</p>
         </div>
       )}
       <!-- Script to hide SSR fallback once JS component renders -->

@@ -126,7 +126,11 @@ try {
                     </div>
                     <div>
                       <p class="text-[--color-text-muted] text-xs mb-0.5">PF</p>
-                      <p class={`font-bold text-base ${pfColor}`}>{entry.profit_factor.toFixed(2)}</p>
+                      {entry.profit_factor >= 50 ? (
+                        <p class={`font-bold text-base ${pfColor} cursor-help underline decoration-dotted`} title="Profit Factor capped at 99.99 (limited trade data)">{entry.profit_factor.toFixed(2)} <span class="text-[0.6rem] font-normal text-[--color-text-muted]">(cap)</span></p>
+                      ) : (
+                        <p class={`font-bold text-base ${pfColor}`}>{entry.profit_factor.toFixed(2)}</p>
+                      )}
                     </div>
                     <div>
                       <p class="text-[--color-text-muted] text-xs mb-0.5">Trades</p>
@@ -155,14 +159,13 @@ try {
                   </div>
                   <div class="grid grid-cols-3 gap-2 font-mono text-sm">
                     <div><p class="text-[--color-text-muted] text-xs mb-0.5">Win Rate</p><p class={`font-bold ${wrColor}`}>{entry.win_rate.toFixed(1)}%</p></div>
-                    <div><p class="text-[--color-text-muted] text-xs mb-0.5">PF</p><p class={`font-bold ${pfColor}`}>{entry.profit_factor.toFixed(2)}</p></div>
+                    <div><p class="text-[--color-text-muted] text-xs mb-0.5">PF</p>{entry.profit_factor >= 50 ? (<p class={`font-bold ${pfColor} cursor-help underline decoration-dotted`} title="Profit Factor capped at 99.99 (limited trade data)">{entry.profit_factor.toFixed(2)} <span class="text-[0.6rem] font-normal text-[--color-text-muted]">(cap)</span></p>) : (<p class={`font-bold ${pfColor}`}>{entry.profit_factor.toFixed(2)}</p>)}</div>
                     <div><p class="text-[--color-text-muted] text-xs mb-0.5">Trades</p><p class="font-bold text-[--color-text]">{entry.total_trades}</p></div>
                   </div>
                 </div>
               );
             })}
           </div>
-          <p class="text-[--color-text-muted] text-xs font-mono mt-3">Loading interactive filters...</p>
         </div>
       )}
       <!-- Script to hide SSR fallback once JS component renders -->

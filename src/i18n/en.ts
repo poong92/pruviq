@@ -18,9 +18,9 @@ export const en = {
 
   // Hero
   "hero.tag": "FREE BACKTESTING TOOL",
-  "hero.title1": "Test Your Strategy",
-  "hero.title2": "Before You Trade.",
-  "hero.subtitle": "The only backtesting tool that publishes its failures.",
+  "hero.title1": "Test Any Crypto Strategy",
+  "hero.title2": "on {coins} Coins in 3 Seconds.",
+  "hero.subtitle": "No code. No signup. No cost. Just data.",
   "hero.desc":
     "We tested 5 strategies on 569+ coins. 4 lost money. We published them all. Because you deserve to know what actually works before risking real money.",
   "hero.cta_primary": "Try Simulator Free",
@@ -1066,6 +1066,9 @@ export const en = {
   "home.cta_test_yourself": "Test It Yourself — Free",
   "home.quotes_heading": "What Traders Say",
   "home.ranking_shortcut": "Today's top strategies",
+  "home.competitor_banner":
+    "TradingView charges $14–240/mo for backtesting. PRUVIQ is free, forever.",
+  "home.social_proof_cta": "Free forever. No signup. No credit card.",
 
   // TradingView comparison page
   "meta.vs_tv_title":

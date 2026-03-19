@@ -19,9 +19,9 @@ export const ko: Record<TranslationKey, string> = {
 
   // Hero
   "hero.tag": "무료 백테스팅 도구",
-  "hero.title1": "실전 전에",
-  "hero.title2": "전략을 검증하세요.",
-  "hero.subtitle": "실패도 공개하는 몇 안 되는 백테스팅 도구.",
+  "hero.title1": "{coins}개 코인, 3초 만에",
+  "hero.title2": "전략 검증 완료.",
+  "hero.subtitle": "코딩 없음. 가입 없음. 비용 없음. 데이터만 있습니다.",
   "hero.desc":
     "569개 이상의 코인에서 5개의 전략을 테스트했습니다. 4개는 손실을 기록했습니다. 모든 결과를 공개합니다. 실제 자금을 투입하기 전에 무엇이 실제로 작동하는지 확인하세요.",
   "hero.cta_primary": "무료 시뮬레이터 체험",
@@ -1045,6 +1045,9 @@ export const ko: Record<TranslationKey, string> = {
   "home.cta_test_yourself": "직접 테스트 — 무료",
   "home.quotes_heading": "트레이더들의 이야기",
   "home.ranking_shortcut": "오늘의 상위 전략",
+  "home.competitor_banner":
+    "TradingView는 백테스팅에 월 $14~240를 청구합니다. PRUVIQ는 영원히 무료입니다.",
+  "home.social_proof_cta": "영원히 무료. 가입 없음. 카드 없음.",
 
   // TradingView comparison page
   "meta.vs_tv_title": "PRUVIQ vs 트레이딩뷰 - 무료 크립토 백테스팅 비교",
