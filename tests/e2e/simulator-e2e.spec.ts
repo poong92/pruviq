@@ -252,7 +252,19 @@ test.describe("Simulator — Expert Load & Defaults", () => {
     expect(await tf1H.count(), "1H button exists").toBeGreaterThan(0);
   });
 
-  test("Preview chart renders canvas", async ({ page }) => {
+  test("Preview chart renders canvas", async ({ page, request }) => {
+    // Chart requires API data — skip if API is unreachable
+    const probe = await request
+      .get(`${API_BASE}/health`, { timeout: 10000 })
+      .catch(() => null);
+    if (!probe || probe.status() >= 500) {
+      test.skip(
+        true,
+        `API returned ${probe?.status() ?? "unreachable"} — skipping`,
+      );
+      return;
+    }
+
     await openSimulator(page);
     await switchToExpert(page);
     // Chart data loads async from API — wait up to 10s for canvas to appear
