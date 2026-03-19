@@ -152,7 +152,7 @@ jobs:
           const hasAutoLabel = (context.payload.pull_request.labels || []).some(
             l => l.name === 'claude-auto' || l.name === 'e2e-fix'
           );
-          const hasAutoFixBranch = /e2e[-_]?fix|auto[-_]?fix|fix[-_]?e2e/i.test(branch);
+          const hasAutoFixBranch = /e2e/i.test(branch) && /fix/i.test(branch);
           const isAutoFixPR = hasAutoLabel || hasAutoFixBranch;
           const matchingIssue = existing.data.find(i => {
             if (i.title.includes(`PR #${prNumber}`)) return true;
