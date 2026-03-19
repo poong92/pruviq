@@ -58,6 +58,9 @@ jobs:
         BASE_URL: https://api.pruviq.com
       timeout-minutes: 3
 
+    - name: Kill orphaned dev server on port 4321
+      run: lsof -ti:4321 | xargs kill -9 2>/dev/null || true
+
     - name: Run E2E tests
       id: e2e
       run: |
