@@ -52,11 +52,11 @@ export const en = {
   "problem.title": "Crypto Trading is Broken.",
   "problem.card1_title": "Backtests Lie",
   "problem.card1_desc":
-    "We tested 88 strategy combinations on 569+ coins. Only 1 survived 2+ years of data. Look-ahead bias, overfitting, regime blindness — most strategies fail for the same reasons.",
+    "We stress-tested 88 strategy combinations on 569+ coins across 2+ years of data so you don't have to. Look-ahead bias, overfitting, regime blindness — most strategies fail for the same reasons. We show you exactly which ones and why.",
   "problem.card1_source": "Source: PRUVIQ validation pipeline, 2024-2026",
   "problem.card2_title": "4 Strategies Killed",
   "problem.card2_desc":
-    "We tested 5 strategies on 569+ coins over 2+ years. Only 1 survived. The other 4 lost money. Most platforms never show you the failures.",
+    "We tested 5 strategies on 569+ coins over 2+ years. 4 failed — and we published every one of those failures. Most platforms hide this. We made it the main feature.",
   "problem.card2_source":
     "Source: PRUVIQ strategy library — all results published",
   "problem.card3_title": "Experts Were Wrong",
