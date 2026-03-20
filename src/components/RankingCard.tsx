@@ -86,7 +86,8 @@ export function RankingCard({
 
   return (
     <div
-      class={`border rounded-lg p-4 bg-[--color-bg-card] transition-colors ${lowSampleBest ? "border-[--color-yellow]/50 hover:border-[--color-yellow]" : "border-[--color-border] hover:border-[--color-accent]/40"}`}
+      class={`rounded-lg p-4 bg-[--color-bg-card] card-hover ${lowSampleBest ? "border border-[--color-yellow]/50 hover:border-[--color-yellow]" : "border border-[--color-border]"}`}
+      style="box-shadow: var(--shadow-card);"
     >
       {/* Header row */}
       <div class="flex items-start justify-between gap-2 mb-3">
