@@ -299,6 +299,16 @@ export function StrategyRanking({ lang = "en" }: { lang?: Lang }) {
       {/* Top 3 */}
       <section>
         <SectionHeader title={lbl.best3Title} subtitle={lbl.best3Sub} />
+        {!loading &&
+          data &&
+          data.low_sample_count != null &&
+          data.low_sample_count > 0 && (
+            <div class="mb-3 border border-[--color-yellow]/30 rounded-lg px-3 py-2 bg-[--color-yellow]/5">
+              <p class="text-[--color-yellow] text-xs font-mono">
+                ⚠️ {lbl.lowSampleWarning(data.low_sample_count)}
+              </p>
+            </div>
+          )}
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {loading
             ? [0, 1, 2].map((i) => <SkeletonCard key={i} />)
@@ -320,7 +330,7 @@ export function StrategyRanking({ lang = "en" }: { lang?: Lang }) {
           {loading
             ? [0, 1, 2].map((i) => <SkeletonCard key={i} />)
             : (data?.worst3 ?? [])
-                .filter((e) => e.total_trades > 0)
+                .filter((e) => e.total_trades >= 10)
                 .map((entry) => (
                   <RankingCard
                     key={`worst-${entry.rank}`}

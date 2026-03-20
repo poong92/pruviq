@@ -82,9 +82,12 @@ export function RankingCard({
   const medal = rankBadge(entry.rank);
   const isWeekly = variant === "weekly";
   const lbl = cardLabels[lang] ?? cardLabels.en;
+  const lowSampleBest = entry.low_sample && variant === "best";
 
   return (
-    <div class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card] hover:border-[--color-accent]/40 transition-colors">
+    <div
+      class={`border rounded-lg p-4 bg-[--color-bg-card] transition-colors ${lowSampleBest ? "border-[--color-yellow]/50 hover:border-[--color-yellow]" : "border-[--color-border] hover:border-[--color-accent]/40"}`}
+    >
       {/* Header row */}
       <div class="flex items-start justify-between gap-2 mb-3">
         <div class="flex items-center gap-2 min-w-0">
