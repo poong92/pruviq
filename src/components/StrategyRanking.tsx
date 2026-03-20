@@ -323,7 +323,7 @@ export function StrategyRanking({ lang = "en" }: { lang?: Lang }) {
               </p>
             </div>
           )}
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           {isFirstLoad
             ? [0, 1, 2].map((i) => <SkeletonCard key={i} />)
             : data?.top3.map((entry) => (
@@ -346,7 +346,7 @@ export function StrategyRanking({ lang = "en" }: { lang?: Lang }) {
         }
       >
         <SectionHeader title={lbl.worst3Title} subtitle={lbl.worst3Sub} />
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           {isFirstLoad
             ? [0, 1, 2].map((i) => <SkeletonCard key={i} />)
             : (data?.worst3 ?? [])
@@ -366,7 +366,7 @@ export function StrategyRanking({ lang = "en" }: { lang?: Lang }) {
       {!loading && data?.weekly_best3 && data.weekly_best3.length > 0 && (
         <section>
           <SectionHeader title={lbl.weeklyTitle} subtitle={lbl.weeklySub} />
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             {data?.weekly_best3.map((entry) => (
               <RankingCard
                 key={`weekly-${entry.rank}`}
