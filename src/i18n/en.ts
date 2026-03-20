@@ -510,6 +510,21 @@ export const en = {
   "about.proof_commits": "Active development",
   "about.proof_since": "In development since 2025",
 
+  // About - Solo Founder section
+  "about.solo_tag": "SOLO FOUNDER",
+  "about.solo_headline":
+    "Built and maintained by a single developer and systematic trader.",
+  "about.solo_background":
+    "Background: algorithmic trading, quantitative research, crypto markets since 2021.",
+  "about.solo_why":
+    "Why PRUVIQ: After losing $4,000 on a backtested strategy that failed live — because every tool hid its failures — I built what I wished existed.",
+
+  // Home hero stat labels
+  "home.stat_coins": "Coins Tested",
+  "home.stat_trades": "Backtested Trades",
+  "home.stat_datapoints": "Data Points",
+  "home.stat_free": "Forever Free",
+
   // Performance page static fallback
   "perf.tag": "BACKTEST RESULTS",
   "perf.archived_badge": "ARCHIVED",
@@ -1068,6 +1083,11 @@ export const en = {
   "home.trust_oos_label": "OOS-validated strategies",
   "home.cta_survives": "See What Survives",
   "home.cta_test_yourself": "Test It Yourself — Free",
+  "home.not_sure": "Not sure?",
+  "home.not_sure_cta": "See how it works in 30 seconds",
+  "home.community_feedback_tag": "COMMUNITY FEEDBACK",
+  "home.quotes_initials_note":
+    "Names shown as initials at community members' request.",
   "home.quotes_heading": "What Traders Say",
   "home.quotes_cta": "Join them — Try Simulator Free",
   "home.ranking_shortcut": "Today's top strategies",

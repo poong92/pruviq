@@ -6,6 +6,22 @@ const t = useTranslations('ko');
 ---
 
 <Layout title={t('meta.about_title')} description={t('meta.about_desc')}>
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "AboutPage",
+    "name": "PRUVIQ 소개",
+    "description": "PRUVIQ는 1인 개발자이자 시스템 트레이더가 만든 독립 크립토 백테스팅 리서치 플랫폼입니다.",
+    "url": "https://pruviq.com/ko/about/",
+    "inLanguage": "ko",
+    "publisher": {
+      "@type": "Organization",
+      "name": "PRUVIQ",
+      "url": "https://pruviq.com",
+      "foundingDate": "2025",
+      "email": "contact@pruviq.com",
+      "sameAs": ["https://github.com/pruviq", "https://x.com/pruviq"]
+    }
+  })} />
   <section class="py-12">
     <div class="max-w-3xl mx-auto px-4">
 
@@ -35,6 +51,23 @@ const t = useTranslations('ko');
             <p class="font-mono text-[--color-accent] text-xl font-bold">{t('about.team_stat3_val')}</p>
             <p class="text-[--color-text-muted] text-xs">{t('about.team_stat3_label')}</p>
           </div>
+        </div>
+      </div>
+
+      <!-- Solo Founder -->
+      <div class="border border-[--color-accent]/30 rounded-lg p-6 bg-[--color-bg-card] mb-12">
+        <p class="font-mono text-[--color-accent] text-xs tracking-wider mb-3">{t('about.solo_tag')}</p>
+        <p class="font-bold text-base mb-3">{t('about.solo_headline')}</p>
+        <p class="text-[--color-text-muted] text-sm leading-relaxed mb-3">
+          {t('about.solo_background')}
+        </p>
+        <p class="text-[--color-text-muted] text-sm leading-relaxed mb-4">
+          {t('about.solo_why')}
+        </p>
+        <div class="flex flex-wrap gap-3 text-sm">
+          <a href="mailto:contact@pruviq.com" class="font-mono text-[--color-accent] hover:underline">contact@pruviq.com</a>
+          <span class="text-[--color-border]">·</span>
+          <a href="https://github.com/pruviq" target="_blank" rel="noopener noreferrer" class="font-mono text-[--color-accent] hover:underline">github.com/pruviq</a>
         </div>
       </div>
 
