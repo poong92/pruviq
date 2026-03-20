@@ -109,8 +109,9 @@ export default function WeeklyLeaderboard({ lang }: Props) {
     return () => controller.abort();
   }, []);
 
-  // Filter out 0-trade sentinel entries (PF=99.99 cap artifacts)
-  const hasValidTrades = (e: RankingEntry) => e.total_trades > 0;
+  // Filter out 0-trade sentinel entries (PF=99.99 cap artifacts) and capped PF entries
+  const hasValidTrades = (e: RankingEntry) =>
+    e.total_trades > 0 && e.profit_factor < 50;
   const rawWeekly =
     data?.weekly_best3 && data.weekly_best3.length > 0
       ? data.weekly_best3
