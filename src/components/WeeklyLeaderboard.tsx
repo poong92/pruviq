@@ -24,7 +24,7 @@ const labels = {
     worstTitle: "Worst 3 This Week",
     worstSub: "Avoid these — bottom 3 by 7-day PF",
     loading: "Loading weekly rankings...",
-    error: "Failed to load weekly data",
+    error: "Weekly data is being refreshed — check back shortly.",
     simCta: "Test in Simulator",
     rankingLink: "See daily rankings →",
     noData: "Weekly data not available yet.",
@@ -43,7 +43,7 @@ const labels = {
     worstTitle: "이번 주 하위 3개",
     worstSub: "피해야 할 조합 — 7일 PF 하위 3개",
     loading: "주간 랭킹 로딩 중...",
-    error: "주간 데이터 로드 실패",
+    error: "주간 데이터를 불러오는 중입니다. 잠시 후 다시 확인해 주세요.",
     simCta: "시뮬레이터에서 확인",
     rankingLink: "일일 랭킹 보기 →",
     noData: "주간 데이터가 아직 없습니다.",
@@ -144,8 +144,16 @@ export default function WeeklyLeaderboard({ lang }: Props) {
           </p>
         </div>
         {error ? (
-          <div class="border border-[--color-red]/30 rounded-lg p-4 text-[--color-red] text-sm font-mono">
-            {error}
+          <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card] text-center">
+            <p class="text-[--color-text-muted] text-sm font-mono mb-2">
+              {l.error}
+            </p>
+            <a
+              href={rankingPath}
+              class="inline-block text-[--color-accent] text-xs font-mono hover:underline"
+            >
+              {l.rankingLink}
+            </a>
           </div>
         ) : (
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
