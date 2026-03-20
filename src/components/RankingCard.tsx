@@ -107,7 +107,8 @@ export function RankingCard({
         </div>
         <div class="flex items-center gap-1.5 shrink-0">
           {directionTag(entry.direction)}
-          {!isWeekly && (
+          {/* Show timeframe badge only in KO mode (EN shows timeframe in subtitle already) */}
+          {!isWeekly && lang === "ko" && (
             <span class="font-mono text-xs px-2 py-0.5 rounded border border-[--color-border] text-[--color-text-muted]">
               {entry.timeframe}
             </span>
