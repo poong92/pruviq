@@ -187,7 +187,9 @@ export function StrategyRanking({ lang = "en" }: { lang?: Lang }) {
   };
 
   // Only show periods/groups confirmed by API — no fallback phantom buttons
-  // During loading: empty → skeleton placeholders rendered instead
+  // isFirstLoad: never fetched yet → show skeleton buttons
+  // Re-fetch (data exists): keep buttons visible, show spinner on cards instead
+  const isFirstLoad = loading && data === null;
   const availablePeriods = data?.available_periods ?? [];
   const availableGroups = data?.available_groups ?? [];
 
@@ -230,7 +232,7 @@ export function StrategyRanking({ lang = "en" }: { lang?: Lang }) {
           <span class="text-xs font-mono text-[--color-text-muted] mr-1">
             {lbl.periodLabel}:
           </span>
-          {loading
+          {isFirstLoad
             ? [0, 1, 2].map((i) => (
                 <div
                   key={i}
@@ -244,7 +246,8 @@ export function StrategyRanking({ lang = "en" }: { lang?: Lang }) {
                   <button
                     key={p}
                     onClick={() => handlePeriodChange(p)}
-                    class={`px-3 py-1 rounded font-mono text-xs border transition-colors ${
+                    disabled={loading}
+                    class={`px-3 py-1 rounded font-mono text-xs border transition-colors disabled:cursor-wait ${
                       active
                         ? "bg-[--color-accent] text-[--color-bg] border-[--color-accent] font-semibold"
                         : "border-[--color-border] text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent]"
@@ -254,6 +257,10 @@ export function StrategyRanking({ lang = "en" }: { lang?: Lang }) {
                   </button>
                 );
               })}
+          {/* Subtle refresh indicator — visible only during re-fetch (not first load) */}
+          {loading && !isFirstLoad && (
+            <span class="inline-block w-3 h-3 border-2 border-[--color-accent] border-t-transparent rounded-full animate-spin ml-1" />
+          )}
         </div>
 
         {/* Group filter */}
@@ -261,7 +268,7 @@ export function StrategyRanking({ lang = "en" }: { lang?: Lang }) {
           <span class="text-xs font-mono text-[--color-text-muted] mr-1">
             {lbl.groupLabel}:
           </span>
-          {loading
+          {isFirstLoad
             ? [0, 1, 2, 3].map((i) => (
                 <div
                   key={i}
@@ -275,7 +282,8 @@ export function StrategyRanking({ lang = "en" }: { lang?: Lang }) {
                   <button
                     key={g}
                     onClick={() => handleGroupChange(g)}
-                    class={`px-3 py-1 rounded font-mono text-xs border transition-colors ${
+                    disabled={loading}
+                    class={`px-3 py-1 rounded font-mono text-xs border transition-colors disabled:cursor-wait ${
                       active
                         ? "bg-[--color-accent] text-[--color-bg] border-[--color-accent] font-semibold"
                         : "border-[--color-border] text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent]"
@@ -288,8 +296,8 @@ export function StrategyRanking({ lang = "en" }: { lang?: Lang }) {
         </div>
       </div>
 
-      {/* Loading spinner overlay */}
-      {loading && (
+      {/* Loading spinner — first load only (re-fetch keeps cards visible above) */}
+      {isFirstLoad && (
         <div class="flex items-center gap-2 text-[--color-text-muted] text-sm font-mono py-2">
           <span class="animate-spin inline-block w-4 h-4 border-2 border-[--color-accent] border-t-transparent rounded-full" />
           {lbl.loading}
@@ -297,7 +305,13 @@ export function StrategyRanking({ lang = "en" }: { lang?: Lang }) {
       )}
 
       {/* Top 3 */}
-      <section>
+      <section
+        class={
+          loading && !isFirstLoad
+            ? "opacity-50 pointer-events-none transition-opacity"
+            : "transition-opacity"
+        }
+      >
         <SectionHeader title={lbl.best3Title} subtitle={lbl.best3Sub} />
         {!loading &&
           data &&
@@ -310,7 +324,7 @@ export function StrategyRanking({ lang = "en" }: { lang?: Lang }) {
             </div>
           )}
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {loading
+          {isFirstLoad
             ? [0, 1, 2].map((i) => <SkeletonCard key={i} />)
             : data?.top3.map((entry) => (
                 <RankingCard
@@ -324,10 +338,16 @@ export function StrategyRanking({ lang = "en" }: { lang?: Lang }) {
       </section>
 
       {/* Worst 3 — exclude 0-trade sentinel entries */}
-      <section>
+      <section
+        class={
+          loading && !isFirstLoad
+            ? "opacity-50 pointer-events-none transition-opacity"
+            : "transition-opacity"
+        }
+      >
         <SectionHeader title={lbl.worst3Title} subtitle={lbl.worst3Sub} />
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {loading
+          {isFirstLoad
             ? [0, 1, 2].map((i) => <SkeletonCard key={i} />)
             : (data?.worst3 ?? [])
                 .filter((e) => e.total_trades >= 10)

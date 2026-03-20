@@ -1783,10 +1783,9 @@ def _parse_rss(source: str, url: str) -> list:
     items = []
     MAX_FEED_BYTES = 2 * 1024 * 1024  # 2 MB hard cap
     try:
-        resp = http_requests.get(url, timeout=8, stream=True, headers={"User-Agent": "PRUVIQ/1.0"})
+        resp = http_requests.get(url, timeout=8, headers={"User-Agent": "PRUVIQ/1.0"})
         resp.raise_for_status()
-        raw = resp.raw.read(MAX_FEED_BYTES + 1)
-        resp.close()
+        raw = resp.content  # auto-decompresses gzip/deflate (resp.raw.read() does not)
         if len(raw) > MAX_FEED_BYTES:
             logger.warning(f"RSS feed {source} exceeded 2MB size limit, skipping")
             return []
