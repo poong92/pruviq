@@ -330,7 +330,7 @@ export function StrategyRanking({ lang = "en" }: { lang?: Lang }) {
           {loading
             ? [0, 1, 2].map((i) => <SkeletonCard key={i} />)
             : (data?.worst3 ?? [])
-                .filter((e) => e.total_trades > 0)
+                .filter((e) => e.total_trades >= 10)
                 .map((entry) => (
                   <RankingCard
                     key={`worst-${entry.rank}`}

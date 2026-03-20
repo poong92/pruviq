@@ -162,7 +162,7 @@ if (!ssrRanking) {
           </div>
           <p class="font-mono text-[--color-red] text-xs mb-3 tracking-wider">최악 3</p>
           <div class="grid md:grid-cols-3 gap-4 mb-2">
-            {ssrRanking.worst3.map((entry) => {
+            {ssrRanking.worst3.filter(e => e.total_trades >= 10).map((entry) => {
               const medals = ['🥇','🥈','🥉'];
               const medal = medals[entry.rank - 1] ?? `#${entry.rank}`;
               const wrColor = entry.win_rate >= 55 ? 'text-[--color-up]' : entry.win_rate >= 50 ? 'text-[--color-yellow]' : 'text-[--color-red]';
