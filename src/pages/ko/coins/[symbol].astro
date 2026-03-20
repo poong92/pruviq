@@ -149,6 +149,22 @@ const canonicalOverride = symbol.endsWith('usdt') ? undefined : `/ko/coins/${sym
           </details>
         </div>
       </div>
+
+      <!-- Bottom CTA -->
+      <div class="mt-10 pt-8 border-t border-[--color-border] text-center">
+        <a href={`/ko/simulate?coin=${symbolUpper}`}
+           class="inline-block bg-[--color-accent] text-[--color-bg] px-6 py-2.5 rounded font-semibold text-sm hover:bg-[--color-accent-dim] transition-colors">
+          {t('coin_detail.simulate_coin').replace('{coin}', coinName)} &rarr;
+        </a>
+        <div class="flex flex-wrap gap-3 justify-center mt-4">
+          <a href="/ko/strategies/ranking" class="inline-block border border-[--color-border] px-5 py-2 rounded font-semibold text-sm hover:border-[--color-accent] transition-colors no-underline">
+            {t('ranking.tag')} &rarr;
+          </a>
+          <a href="/ko/coins" class="inline-block border border-[--color-border] px-5 py-2 rounded font-semibold text-sm hover:border-[--color-accent] transition-colors no-underline">
+            {t('coin_detail.all_coins')} &rarr;
+          </a>
+        </div>
+      </div>
     </div>
   </section>
 
