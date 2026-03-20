@@ -35,6 +35,20 @@ const categoryColors: Record<string, string> = {
 ---
 
 <Layout title={t('meta.blog_title')} description={t('meta.blog_desc')}>
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Blog",
+    "name": "PRUVIQ 리서치 블로그",
+    "description": "PRUVIQ의 암호화폐 트레이딩 전략 리서치, 백테스트 분석, 퀀트 인사이트.",
+    "url": "https://pruviq.com/ko/blog/",
+    "blogPost": allPosts.slice(0, 10).map(p => ({
+      "@type": "BlogPosting",
+      "headline": p.data.title,
+      "description": p.data.description,
+      "datePublished": p.data.date,
+      "url": `https://pruviq.com/ko/blog/${p.id}`
+    }))
+  })} />
   <section class="py-12">
     <div class="max-w-4xl mx-auto px-4">
       <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('blog.tag')}</p>
