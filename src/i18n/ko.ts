@@ -277,6 +277,7 @@ export const ko: Record<TranslationKey, string> = {
     "시장 분석, 퀀트 교육, 전략 시뮬레이션 업데이트를 확인하세요.",
   "blog.coming_cta": "지금 기사 보기",
   "blog.coming_cta2": "또는 커뮤니티에 참여해 업데이트를 확인하세요.",
+  "blog.coming_prepare": "더 많은 콘텐츠를 준비하는 동안:",
   "blog.back": "트레이딩 IQ로 돌아가기",
   "blog.category.market": "시장 분석",
   "blog.category.quant": "퀀트 개념",

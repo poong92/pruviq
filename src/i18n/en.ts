@@ -277,6 +277,7 @@ export const en = {
     "Market analysis, quant education, and strategy simulation updates.",
   "blog.coming_cta": "Explore articles",
   "blog.coming_cta2": "or join the community for updates.",
+  "blog.coming_prepare": "While we prepare more content:",
   "blog.back": "Back to Trading IQ",
   "blog.category.market": "MARKET ANALYSIS",
   "blog.category.quant": "QUANT CONCEPTS",
