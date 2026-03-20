@@ -275,7 +275,10 @@ function MetricBox({
   description?: string;
 }) {
   return (
-    <div class="p-3 rounded-lg bg-[--color-bg-tooltip] border border-[--color-border] relative">
+    <div
+      class="p-3 rounded-lg bg-[--color-bg-card] relative"
+      style="box-shadow: var(--shadow-card);"
+    >
       <div class="font-mono text-[0.625rem] text-[--color-text-muted] uppercase tracking-wider mb-1 flex items-center gap-1">
         {label}
         {description && (
