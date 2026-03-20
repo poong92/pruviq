@@ -1,8 +1,12 @@
 ---
 import Layout from '../../../layouts/Layout.astro';
 import { useTranslations } from '../../../i18n/index';
+import perfData from '../../../../public/data/performance.json';
 
 const t = useTranslations('ko');
+const perfUpdated = new Date(
+  (perfData as { generated: string }).generated
+).toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' });
 ---
 
 <Layout title={t('meta.performance_title')} description={t('meta.performance_desc')}>
@@ -20,7 +24,7 @@ const t = useTranslations('ko');
       <h1 class="text-3xl md:text-4xl font-bold mb-4">{t('perf.title')}</h1>
       <p class="text-[--color-text-muted] text-lg mb-4 max-w-2xl">{t('perf.desc')}</p>
       <p class="font-mono text-xs text-[--color-text-muted] mb-6">
-        {t('perf.updated_label')}: <span class="text-[--color-text]">{t('perf.updated_val')}</span>
+        {t('perf.updated_label')}: <span class="text-[--color-text]">{perfUpdated}</span>
         &nbsp;&middot;&nbsp;
         {t('perf.period_label')}: <span class="text-[--color-text]">{t('perf.period_val')}</span>
       </p>
