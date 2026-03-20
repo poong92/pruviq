@@ -36,6 +36,7 @@ const L = {
     expert: "Expert",
     expertSub: "Full control",
     bestStart: "Best Start",
+    mostPopular: "Popular",
     advanced: "advanced",
     ariaLabel: "Simulator mode",
   },
@@ -47,6 +48,7 @@ const L = {
     expert: "엑스퍼트",
     expertSub: "전체 제어",
     bestStart: "추천",
+    mostPopular: "인기",
     advanced: "고급",
     ariaLabel: "시뮬레이터 모드",
   },
@@ -74,7 +76,12 @@ export default function ModeSwitcher({
       sub: t.quickSub,
       badge: isFirstVisit ? t.bestStart : undefined,
     },
-    { key: "standard", label: t.standard, sub: t.standardSub },
+    {
+      key: "standard",
+      label: t.standard,
+      sub: t.standardSub,
+      badge: isFirstVisit ? undefined : t.mostPopular,
+    },
     { key: "expert", label: t.expert, sub: t.expertSub },
   ];
 
