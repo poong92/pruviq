@@ -10,7 +10,13 @@ const t = useTranslations('ko');
   <!-- HERO -->
   <section class="py-12 md:py-16">
     <div class="max-w-5xl mx-auto px-4">
-      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('perf.tag')}</p>
+      <div class="flex items-center gap-2 mb-3">
+        <p class="font-mono text-[--color-accent] text-sm tracking-wider">{t('perf.tag')}</p>
+        <span class="font-mono text-xs px-2 py-0.5 rounded border border-[--color-yellow]/40 text-[--color-yellow] bg-[--color-yellow]/5">{t('perf.archived_badge')}</span>
+      </div>
+      <div class="mb-4 border border-[--color-yellow]/30 rounded-lg px-4 py-2.5 bg-[--color-yellow]/5">
+        <p class="text-[--color-yellow] text-xs font-mono">⚠️ {t('perf.archived_notice')}</p>
+      </div>
       <h1 class="text-3xl md:text-4xl font-bold mb-4">{t('perf.title')}</h1>
       <p class="text-[--color-text-muted] text-lg mb-4 max-w-2xl">{t('perf.desc')}</p>
       <p class="font-mono text-xs text-[--color-text-muted] mb-6">
