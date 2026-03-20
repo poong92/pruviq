@@ -36,28 +36,16 @@ const coinsAnalyzed = (siteStats as { coins_analyzed: number }).coins_analyzed;
       </div>
 
       <!-- Social proof counters -->
-      <div class="flex flex-wrap gap-4 mb-4 font-mono text-sm">
-        <span class="flex items-center gap-1.5 text-[--color-text-muted]">
-          <span class="text-[--color-accent] font-bold">{simulationsRun}</span>
-          회 시뮬레이션 실행
-        </span>
-        <span class="text-[--color-border]">·</span>
-        <span class="flex items-center gap-1.5 text-[--color-text-muted]">
-          <span class="text-[--color-accent] font-bold">{coinsAnalyzed}</span>
-          코인 분석
-        </span>
-        <span class="text-[--color-border]">·</span>
-        <span class="flex items-center gap-1.5 text-[--color-text-muted]">
-          <span class="text-[--color-accent] font-bold">{presetCount}</span>
-          개 전략 이용 가능
-        </span>
+      <div class="flex flex-wrap gap-x-4 gap-y-1 mb-4 font-mono text-sm">
+        <span class="text-[--color-text-muted]"><span class="text-[--color-accent] font-bold">{simulationsRun}</span> 회 시뮬레이션 실행</span>
+        <span class="text-[--color-text-muted] hidden sm:inline">·</span>
+        <span class="text-[--color-text-muted]"><span class="text-[--color-accent] font-bold">{coinsAnalyzed}</span> 코인 분석</span>
+        <span class="text-[--color-text-muted] hidden sm:inline">·</span>
+        <span class="text-[--color-text-muted]"><span class="text-[--color-accent] font-bold">{presetCount}</span> 개 전략 이용 가능</span>
       </div>
 
-      <!-- 3-step onboarding guide: 모바일에서 숨김 (시뮬레이터 공간 확보) -->
-      <p class="sm:hidden text-xs text-[--color-text-muted] mb-3 font-mono">
-        ① {t('simulate.step1_title')} → ② {t('simulate.step2_title')} → ③ {t('simulate.step3_title')}
-      </p>
-      <div class="hidden sm:grid sm:grid-cols-3 gap-3 mb-4">
+      <!-- 3-step onboarding guide: 모바일 세로 스택, 데스크톱 가로 3열 -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
         <div class="flex items-center gap-3 border border-[--color-border] rounded-lg px-4 py-3 bg-[--color-bg-card]">
           <span class="font-mono text-[--color-accent] text-lg font-bold shrink-0">1</span>
           <div>
