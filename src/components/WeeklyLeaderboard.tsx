@@ -156,7 +156,7 @@ export default function WeeklyLeaderboard({ lang }: Props) {
             </a>
           </div>
         ) : (
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             {loading ? (
               [0, 1, 2].map((i) => <SkeletonCard key={i} />)
             ) : weeklyEntries.length > 0 ? (
@@ -195,7 +195,7 @@ export default function WeeklyLeaderboard({ lang }: Props) {
               {l.worstSub}
             </p>
           </div>
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             {worstEntries.map((entry) => (
               <RankingCard
                 key={`ww-${entry.rank}`}
