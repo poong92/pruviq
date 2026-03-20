@@ -618,7 +618,9 @@ export default function MarketDashboard({
                 title={l.economicCalendar}
                 class="w-full h-full border-0 relative z-10"
                 loading="lazy"
-                onLoad="document.getElementById('cal-placeholder')?.remove()"
+                onLoad={() =>
+                  document.getElementById("cal-placeholder")?.remove()
+                }
               />
             </div>
           </div>

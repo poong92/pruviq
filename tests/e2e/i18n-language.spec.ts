@@ -36,7 +36,7 @@ const KO_PAGES_HAS_KOREAN = ["/ko/", "/ko/simulate", "/ko/strategies/ranking"];
 
 // ─── Helpers ──────────────────────────────────────────────────
 
-/** Get all visible text on page (excludes scripts, style, hidden elements) */
+/** Get all visible text on page (excludes scripts, style, hidden elements, lang toggles) */
 async function getVisibleText(page: Page): Promise<string> {
   return page.evaluate(() => {
     const walker = document.createTreeWalker(
@@ -52,6 +52,8 @@ async function getVisibleText(page: Page): Promise<string> {
           const style = getComputedStyle(parent);
           if (style.display === "none" || style.visibility === "hidden")
             return NodeFilter.FILTER_REJECT;
+          // Exclude language toggle links — intentional Korean label "한국어" on EN pages
+          if (parent.closest("[hreflang]")) return NodeFilter.FILTER_REJECT;
           return NodeFilter.FILTER_ACCEPT;
         },
       },

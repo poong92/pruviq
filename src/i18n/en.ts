@@ -14,7 +14,7 @@ export const en = {
   "nav.blog": "Blog",
   "nav.performance": "Performance",
   "nav.ranking": "Daily Strategy Ranking",
-  "nav.lang": "KO",
+  "nav.lang": "한국어",
 
   // Hero
   "hero.tag": "FREE BACKTESTING TOOL",
@@ -900,7 +900,7 @@ export const en = {
   "meta.api_desc":
     "Free REST API for crypto strategy backtesting. Simulate strategies on 569+ coins, get OHLCV data, market overview, and more. Interactive docs included.",
   "api.tag": "API REFERENCE",
-  "api.title": "Build with",
+  "api.title": "Build with ",
   "api.title2": "PRUVIQ data.",
   "api.desc":
     "Free REST API for strategy backtesting, market data, and OHLCV candles. No API key required. Rate limit: 30 requests/minute.",

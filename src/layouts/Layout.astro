@@ -18,6 +18,7 @@ interface Props {
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 const altPath = getAlternatePath(Astro.url.pathname, lang);
+const altLang = lang === 'ko' ? 'en' : 'ko';
 const basePath = getBasePath(Astro.url.pathname);
 const cfToken = import.meta.env.PUBLIC_CF_ANALYTICS_TOKEN;
 const buildTime = new Date().toISOString();
@@ -423,7 +424,7 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
         </div>
         <!-- 3열: Lang + Mobile hamburger (우측) -->
         <div class="flex items-center justify-end gap-3">
-          <a href={altPath} class="hidden md:inline-flex font-mono text-xs px-3 py-1.5 border border-[--color-border] rounded hover:border-[--color-accent] hover:text-[--color-accent] hover:bg-[--color-accent]/5 text-[--color-text-muted] transition-colors">{t('nav.lang')}</a>
+          <a href={altPath} hreflang={altLang} class="hidden md:inline-flex font-mono text-xs px-3 py-1.5 border border-[--color-border] rounded hover:border-[--color-accent] hover:text-[--color-accent] hover:bg-[--color-accent]/5 text-[--color-text-muted] transition-colors" aria-label={lang === 'ko' ? 'Switch to English' : '한국어로 전환'}>{t('nav.lang')}</a>
           <button id="mobile-menu-btn" class="md:hidden text-[--color-text-muted]" aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-menu">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
           </button>
@@ -446,7 +447,7 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
             </Fragment>
           ))}
           <div class="border-t border-[--color-border] mt-2 pt-2">
-            <a href={altPath} class="font-mono text-xs px-2 py-1 border border-[--color-border] rounded text-[--color-text-muted] w-fit min-h-[44px] flex items-center hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">{t('nav.lang')}</a>
+            <a href={altPath} hreflang={altLang} class="font-mono text-xs px-2 py-1 border border-[--color-border] rounded text-[--color-text-muted] w-fit min-h-[44px] flex items-center hover:border-[--color-accent] hover:text-[--color-accent] transition-colors" aria-label={lang === 'ko' ? 'Switch to English' : '한국어로 전환'}>{t('nav.lang')}</a>
           </div>
         </div>
       </div>
