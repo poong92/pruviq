@@ -3441,7 +3441,7 @@ def _get_daily_rankings_sync(
         weekly_agg.sort(key=lambda x: (x["avg_pf"], x["avg_wr"]), reverse=True)
         for i, item in enumerate(weekly_agg[:3]):
             meta = item["meta"]
-            trades = meta.get("total_trades", 0)
+            trades = sum(e.get("total_trades", 0) for e in item["entries"])
             weekly_best3.append({
                 "rank": i + 1,
                 "name_ko": meta.get("category_ko", meta.get("strategy", "")),
