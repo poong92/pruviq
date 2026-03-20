@@ -512,6 +512,9 @@ export const en = {
 
   // Performance page static fallback
   "perf.tag": "BACKTEST RESULTS",
+  "perf.archived_badge": "ARCHIVED",
+  "perf.archived_notice":
+    "Trading paused Mar 2026. Data below covers Jan 2024 – Feb 2026 backtests.",
   "perf.title": "Every Trade Published. Including Losses.",
   "perf.desc":
     "Backtest results for BB Squeeze SHORT strategy on 569 coins. 2+ years of historical data. No cherry-picking.",

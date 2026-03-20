@@ -513,6 +513,9 @@ export const ko: Record<TranslationKey, string> = {
 
   // Performance page static fallback
   "perf.tag": "백테스트 결과",
+  "perf.archived_badge": "보관됨",
+  "perf.archived_notice":
+    "2026년 3월 실거래 중단. 아래 데이터는 2024년 1월 – 2026년 2월 백테스트 결과입니다.",
   "perf.title": "모든 거래 공개. 손실 포함.",
   "perf.desc":
     "BB Squeeze SHORT 전략 백테스트 결과. 569개 코인, 2년 이상 과거 데이터. 체리피킹 없음.",
