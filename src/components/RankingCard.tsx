@@ -92,7 +92,10 @@ export function RankingCard({
             {medal}
           </span>
           <div class="min-w-0">
-            <p class="font-semibold text-[--color-text] text-sm leading-tight truncate">
+            <p
+              class="font-semibold text-[--color-text] text-sm leading-tight truncate"
+              title={lang === "ko" ? entry.name_ko : entry.name_en}
+            >
               {lang === "ko" ? entry.name_ko : entry.name_en}
             </p>
             <p class="text-[--color-text-muted] text-xs font-mono truncate">
@@ -104,9 +107,11 @@ export function RankingCard({
         </div>
         <div class="flex items-center gap-1.5 shrink-0">
           {directionTag(entry.direction)}
-          <span class="font-mono text-xs px-2 py-0.5 rounded border border-[--color-border] text-[--color-text-muted]">
-            {entry.timeframe}
-          </span>
+          {!isWeekly && (
+            <span class="font-mono text-xs px-2 py-0.5 rounded border border-[--color-border] text-[--color-text-muted]">
+              {entry.timeframe}
+            </span>
+          )}
         </div>
       </div>
 
