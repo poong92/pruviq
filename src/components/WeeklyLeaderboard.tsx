@@ -28,6 +28,8 @@ const labels = {
     simCta: "Test in Simulator",
     rankingLink: "See daily rankings →",
     noData: "Weekly data not available yet.",
+    noDataWeekly:
+      "No strategy has enough weekly trades yet. Check daily rankings.",
     weeklyNote: "Updated daily · 7-day rolling window",
     pfTip:
       "Profit Factor = avg win ÷ avg loss. 1.0 = breakeven, 2.0+ = strong.",
@@ -42,6 +44,7 @@ const labels = {
     simCta: "시뮬레이터에서 확인",
     rankingLink: "일일 랭킹 보기 →",
     noData: "주간 데이터가 아직 없습니다.",
+    noDataWeekly: "이번 주 거래 샘플이 부족합니다. 일일 랭킹을 확인하세요.",
     weeklyNote: "매일 업데이트 · 7일 롤링",
     pfTip: "PF(수익팩터) = 평균 수익 ÷ 평균 손실. 1.0 = 손익분기, 2.0+ = 우수.",
   },
@@ -102,10 +105,15 @@ export default function WeeklyLeaderboard({ lang }: Props) {
     return () => controller.abort();
   }, []);
 
-  const weeklyEntries =
+  // Filter out 0-trade sentinel entries (PF=99.99 cap artifacts)
+  const hasValidTrades = (e: RankingEntry) => e.total_trades > 0;
+  const rawWeekly =
     data?.weekly_best3 && data.weekly_best3.length > 0
       ? data.weekly_best3
       : (data?.top3 ?? []);
+  const weeklyEntries = rawWeekly.filter(hasValidTrades);
+  // worst3: require at least 5 trades to avoid statistical noise
+  const worstEntries = (data?.worst3 ?? []).filter((e) => e.total_trades >= 5);
 
   return (
     <div class="space-y-8">
@@ -136,15 +144,22 @@ export default function WeeklyLeaderboard({ lang }: Props) {
               ))
             ) : (
               <div class="col-span-3 text-center py-8 text-[--color-text-muted] text-sm font-mono">
-                {l.noData}
+                {l.noDataWeekly}
+                <br />
+                <a
+                  href={rankingPath}
+                  class="mt-2 inline-block text-[--color-accent] hover:underline text-xs"
+                >
+                  {l.rankingLink}
+                </a>
               </div>
             )}
           </div>
         )}
       </section>
 
-      {/* Worst 3 this week */}
-      {!loading && !error && data?.worst3 && data.worst3.length > 0 && (
+      {/* Worst 3 this week — only entries with ≥5 trades */}
+      {!loading && !error && worstEntries.length > 0 && (
         <section>
           <div class="mb-4">
             <h2 class="text-lg font-bold text-[--color-text]">
@@ -155,7 +170,7 @@ export default function WeeklyLeaderboard({ lang }: Props) {
             </p>
           </div>
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {data.worst3.map((entry) => (
+            {worstEntries.map((entry) => (
               <RankingCard
                 key={`ww-${entry.rank}`}
                 entry={entry}

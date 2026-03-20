@@ -131,6 +131,13 @@ if (!ssrRanking) {
                     </div>
                     <span class={`font-mono text-xs px-2 py-0.5 rounded border shrink-0 ${dirColor}`}>{dirLabel}</span>
                   </div>
+                  {entry.low_sample && (
+                    <div class="mb-3">
+                      <span class="inline-flex items-center gap-1 text-xs font-mono px-2 py-0.5 rounded border border-[--color-yellow]/40 text-[--color-yellow] bg-[--color-yellow]/5">
+                        ⚠️ Low sample ({entry.total_trades} trades &lt; 100)
+                      </span>
+                    </div>
+                  )}
                   <div class="grid grid-cols-3 gap-2 font-mono text-sm">
                     <div>
                       <p class="text-[--color-text-muted] text-xs mb-0.5">Win Rate</p>

@@ -100,6 +100,30 @@ const PAGE_CONTEXT: Record<string, string> = {
   "strategies-desktop": `전략 목록 (데스크탑). 정상 기대: 전략 카드들(BB Squeeze/RSI Divergence 등), 각 카드에 Win Rate/PF/Trades. 필터(Active/Retired/Under Review). 카드 없으면 DATA_MISSING.`,
   "about-desktop": `소개 페이지 (데스크탑). 정상 기대: H1 존재, 텍스트 렌더링, 내용 완전 표시. 완전 공백이면 BLANK_PAGE critical.`,
   "fees-desktop": `수수료 비교 (데스크탑). 정상 기대: 거래소 수수료 비교 테이블, 실제 % 수치(0.0x%). 완전 공백이면 BLANK_PAGE critical.`,
+  // ── EN Desktop 추가 ──────────────────────────────────────────────
+  "learn-desktop": `학습 센터(EN). 정상 기대: 아티클 카드 6개+, 난이도 분류(Beginner/Intermediate/Advanced), 카드 클릭 가능. 카드 없으면 DATA_MISSING. 완전 공백이면 BLANK_PAGE critical.`,
+  "leaderboard-desktop": `리더보드(EN). 정상 기대: 주간 최고 전략 테이블, 전략명/PF/WR 수치 표시. 테이블 없으면 DATA_MISSING. 완전 공백이면 BLANK_PAGE critical.`,
+  "compare-tradingview-desktop": `TradingView 비교(EN). 정상 기대: 기능 비교 테이블, PRUVIQ/TradingView 컬럼. 내용 없으면 BLANK_PAGE critical. 비교 항목이 5개 미만이면 UX_ISSUE.`,
+  "api-desktop": `API 문서(EN). 정상 기대: 엔드포인트 목록, 사용법 설명. 완전 비어있으면 BLANK_PAGE critical.`,
+  "methodology-desktop": `방법론(EN). 정상 기대: 슬리피지/수수료 가정, survivorship bias 설명 페이지. 텍스트 콘텐츠 있어야 함. 완전 공백이면 BLANK_PAGE critical.`,
+  "builder-desktop": `전략 빌더(EN). 정상 기대: 지표 선택, 파라미터 입력, 실행 버튼. 완전 공백이면 BLANK_PAGE critical.`,
+  "changelog-desktop": `변경 이력(EN). 정상 기대: 날짜별 업데이트 항목, 최소 3개 이상 항목 존재. 완전 공백이면 BLANK_PAGE critical.`,
+  "privacy-desktop": `개인정보 처리방침(EN). 정상 기대: 법적 텍스트, 섹션 구분. 완전 공백이면 BLANK_PAGE critical.`,
+  "terms-desktop": `이용약관(EN). 정상 기대: 법적 텍스트, 섹션 구분. 완전 공백이면 BLANK_PAGE critical.`,
+  // ── KO Desktop 추가 ──────────────────────────────────────────────
+  "home-ko-desktop": `홈(KO). 정상 기대: H1 "실전 전에 전략을 검증하세요.", ${CURRENT_COIN_COUNT}+ 코인 수 배지, CTA 버튼 한국어. 영어 H1이면 LANGUAGE_WRONG critical.`,
+  "simulate-ko-desktop": `시뮬레이터(KO). 정상 기대: H1에 "${CURRENT_COIN_COUNT}" 포함, UI 레이블 한국어, 시나리오 카드 존재. 영어만 있으면 LANGUAGE_WRONG.`,
+  "leaderboard-ko-desktop": `리더보드(KO). 정상 기대: 한국어 레이블, 랭킹 데이터 테이블. 완전 공백이면 BLANK_PAGE critical.`,
+  "market-ko-desktop": `마켓(KO). 정상 기대: 한국어 H1, BTC/ETH 가격 표시, 시장 지표. 완전 공백이면 DATA_MISSING.`,
+  "fees-ko-desktop": `수수료 비교(KO). 정상 기대: 한국어 레이블, 거래소 수수료 테이블, % 수치. 완전 공백이면 BLANK_PAGE critical.`,
+  "about-ko-desktop": `소개(KO). 정상 기대: H1 한국어, 소개 텍스트. 완전 공백이면 BLANK_PAGE critical.`,
+  "learn-ko-desktop": `학습 센터(KO). 정상 기대: 한국어 아티클 카드, 난이도 분류. 완전 공백이면 BLANK_PAGE critical.`,
+  // ── Tablet 추가 ──────────────────────────────────────────────────
+  "home-tablet": `홈(Tablet 768px). 정상 기대: H1 가독성, ${CURRENT_COIN_COUNT}+ 코인 수, CTA 버튼 겹치지 않음, 레이아웃 적응. 가로 스크롤이면 LAYOUT_BROKEN.`,
+  "simulate-tablet": `시뮬레이터(Tablet 768px). 정상 기대: 시나리오 카드 가독성, 입력 필드 겹치지 않음, 가로 스크롤 없음.`,
+  "ranking-tablet": `랭킹(Tablet 768px). 정상 기대: 랭킹 카드 가독성, 필터 버튼 터치 가능, 전략명 잘리지 않음.`,
+  "leaderboard-tablet": `리더보드(Tablet 768px). 정상 기대: 테이블 가독성, 컬럼 잘리지 않음, 가로 스크롤 최소화.`,
+  "fees-tablet": `수수료 비교(Tablet 768px). 정상 기대: 테이블 가독성, 거래소 컬럼 모두 표시, 가로 스크롤 최소화.`,
 };
 
 // ── Claude CLI Vision 분석 ──────────────────────────────────────────────────

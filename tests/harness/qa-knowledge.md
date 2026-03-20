@@ -157,7 +157,75 @@ PRUVIQ는 크립토 트레이딩 전략 백테스팅 플랫폼이다.
 - Trades < 100 카드 표시 → INFO (주의 필요)
 - "Verified" vs "ACTIVE" 용어 불일치 → UX_ISSUE info (알려진 이슈)
 
-### /about/, /fees/ 등 정적 페이지
+### /learn/ (학습 센터) — EN
+**정상:**
+- 아티클 카드 6개+ 표시
+- Beginner/Intermediate/Advanced 난이도 구분 존재
+- 각 카드 클릭 가능 (링크 활성)
+- 검색/필터 기능 있으면 추가 점수
+
+**비정상:**
+- 카드 0개 → DATA_MISSING critical
+- 카드 클릭 불가 → UX_ISSUE warning
+- 완전 공백 → BLANK_PAGE critical
+
+### /leaderboard/ (리더보드) — EN
+**정상:**
+- 주간 최고 전략 테이블 표시 (최소 3행)
+- PF, WR, Direction 컬럼 존재
+- 전략 행 클릭 가능 (상세 이동)
+
+**비정상:**
+- 테이블 없음 → DATA_MISSING critical
+- 완전 공백 → BLANK_PAGE critical
+
+### /compare/tradingview/ (비교 페이지)
+**정상:**
+- 비교 테이블 표시
+- PRUVIQ vs TradingView 행/컬럼 존재
+- 비교 항목 5개+
+
+**비정상:**
+- 테이블 없음 → BLANK_PAGE critical
+- 비교 항목 3개 미만 → UX_ISSUE warning
+
+### /api/ (API 문서)
+**정상:**
+- 엔드포인트 목록 표시
+- 사용법 설명 텍스트
+- 코드 예시 또는 curl 명령
+
+**비정상:**
+- 완전 공백 → BLANK_PAGE critical
+
+### /methodology/ (방법론)
+**정상:**
+- 슬리피지/수수료 가정 설명
+- Survivorship bias 설명
+- 텍스트 콘텐츠 충분
+
+**비정상:**
+- 완전 공백 → BLANK_PAGE critical
+
+### /builder/ (전략 빌더)
+**정상:**
+- 지표 선택 UI
+- 파라미터 입력 필드
+- 실행/테스트 버튼
+
+**비정상:**
+- 완전 공백 → BLANK_PAGE critical
+
+### /changelog/ (변경 이력)
+**정상:**
+- 날짜별 업데이트 항목 3개+
+- 최근 항목이 30일 이내
+
+**비정상:**
+- 완전 공백 → BLANK_PAGE critical
+- 최근 항목 90일+ 경과 → DATA_MISSING warning
+
+### /about/, /fees/, /privacy/, /terms/ 등 정적 페이지
 **정상:**
 - H1 존재, 텍스트 렌더링
 - 내용 완전 표시
@@ -165,6 +233,28 @@ PRUVIQ는 크립토 트레이딩 전략 백테스팅 플랫폼이다.
 **비정상:**
 - 완전 공백 → BLANK_PAGE critical
 - 4xx/5xx → critical
+
+### /ko/ 하위 페이지 (KO)
+**정상:**
+- H1 한국어
+- 주요 UI 레이블 한국어 (일부 기술 용어 영어 허용)
+- 기능 동일 (EN 페이지와 동일한 데이터)
+
+**비정상:**
+- 영어 H1 → LANGUAGE_WRONG warning
+- 완전 공백 → BLANK_PAGE critical
+
+### Tablet (768px) 공통 기준
+**정상:**
+- 가로 스크롤 없음
+- 텍스트 가독성 유지
+- 터치 타겟 최소 44px
+- 레이아웃 적응 (1컬럼 또는 2컬럼)
+
+**비정상:**
+- 가로 스크롤 필요 → LAYOUT_BROKEN warning
+- 요소 겹침 → LAYOUT_BROKEN warning
+- 텍스트 잘림 → UX_ISSUE warning
 
 ---
 

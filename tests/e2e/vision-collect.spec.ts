@@ -22,7 +22,7 @@ const API_BASE = "https://api.pruviq.com";
 type PageEntry = {
   path: string;
   name: string;
-  viewport: "desktop" | "mobile";
+  viewport: "desktop" | "mobile" | "tablet";
   expectations: string;
 };
 
@@ -125,6 +125,154 @@ const PAGES: PageEntry[] = [
     expectations:
       "Korean text on mobile, rankings visible, no horizontal scroll needed for content",
   },
+  // ── EN Desktop (추가) ────────────────────────────────────────────
+  {
+    path: "/learn/",
+    name: "learn-desktop",
+    viewport: "desktop",
+    expectations:
+      "article cards 6+, difficulty labels (Beginner/Intermediate/Advanced), clickable cards",
+  },
+  {
+    path: "/leaderboard/",
+    name: "leaderboard-desktop",
+    viewport: "desktop",
+    expectations:
+      "weekly top strategies table, strategy name/PF/WR columns, rows clickable or selectable",
+  },
+  {
+    path: "/compare/tradingview/",
+    name: "compare-tradingview-desktop",
+    viewport: "desktop",
+    expectations:
+      "feature comparison table, PRUVIQ vs TradingView columns, not blank",
+  },
+  {
+    path: "/api/",
+    name: "api-desktop",
+    viewport: "desktop",
+    expectations:
+      "API documentation, endpoint list, example code blocks, not completely blank",
+  },
+  {
+    path: "/methodology/",
+    name: "methodology-desktop",
+    viewport: "desktop",
+    expectations:
+      "methodology page, slippage/fee assumptions, survivorship bias explanation, not blank",
+  },
+  {
+    path: "/builder/",
+    name: "builder-desktop",
+    viewport: "desktop",
+    expectations:
+      "strategy builder page, indicator selection, parameter inputs, not blank",
+  },
+  {
+    path: "/changelog/",
+    name: "changelog-desktop",
+    viewport: "desktop",
+    expectations:
+      "changelog entries with dates, version numbers or update descriptions, not blank",
+  },
+  {
+    path: "/privacy/",
+    name: "privacy-desktop",
+    viewport: "desktop",
+    expectations: "privacy policy text, legal content, not blank page",
+  },
+  {
+    path: "/terms/",
+    name: "terms-desktop",
+    viewport: "desktop",
+    expectations: "terms of service text, legal content, not blank page",
+  },
+  // ── KO Desktop (추가) ───────────────────────────────────────────
+  {
+    path: "/ko/",
+    name: "home-ko-desktop",
+    viewport: "desktop",
+    expectations:
+      "Korean H1 text, CTA buttons in Korean, no English-only main content, 569+ coins",
+  },
+  {
+    path: "/ko/simulate/",
+    name: "simulate-ko-desktop",
+    viewport: "desktop",
+    expectations:
+      "Korean UI labels, scenario cards present, strategy selector in Korean context",
+  },
+  {
+    path: "/ko/leaderboard/",
+    name: "leaderboard-ko-desktop",
+    viewport: "desktop",
+    expectations:
+      "Korean labels, ranking data visible, strategy table with Korean column headers",
+  },
+  {
+    path: "/ko/market/",
+    name: "market-ko-desktop",
+    viewport: "desktop",
+    expectations:
+      "Korean H1, BTC/ETH prices displayed, market indicators in Korean context",
+  },
+  {
+    path: "/ko/fees/",
+    name: "fees-ko-desktop",
+    viewport: "desktop",
+    expectations:
+      "Korean labels, exchange fee comparison table, fee percentages visible",
+  },
+  {
+    path: "/ko/about/",
+    name: "about-ko-desktop",
+    viewport: "desktop",
+    expectations:
+      "Korean about page, H1 in Korean, mission/team content in Korean",
+  },
+  {
+    path: "/ko/learn/",
+    name: "learn-ko-desktop",
+    viewport: "desktop",
+    expectations:
+      "Korean learn page, article cards in Korean, difficulty labels translated",
+  },
+  // ── Tablet (768px) ──────────────────────────────────────────────
+  {
+    path: "/",
+    name: "home-tablet",
+    viewport: "tablet",
+    expectations:
+      "hero h1 readable at 768px, coin count visible, CTA buttons not overlapping, layout adapts",
+  },
+  {
+    path: "/simulate/",
+    name: "simulate-tablet",
+    viewport: "tablet",
+    expectations:
+      "scenario cards readable at 768px, inputs not overlapping, no horizontal scroll",
+  },
+  {
+    path: "/strategies/ranking",
+    name: "ranking-tablet",
+    viewport: "tablet",
+    expectations:
+      "ranking cards readable at 768px, strategy names visible, filter buttons accessible",
+  },
+  {
+    path: "/leaderboard/",
+    name: "leaderboard-tablet",
+    viewport: "tablet",
+    expectations:
+      "leaderboard table readable at 768px, columns not truncated, rows visible",
+  },
+  {
+    path: "/fees/",
+    name: "fees-tablet",
+    viewport: "tablet",
+    expectations:
+      "fee table readable at 768px, exchange columns visible, no horizontal scroll",
+  },
 ];
 
 type ExtractedData = {
@@ -180,16 +328,20 @@ test.describe("Vision QA: collect screenshots and data", () => {
       const viewport =
         entry.viewport === "mobile"
           ? { width: 375, height: 812 }
-          : { width: 1280, height: 900 };
+          : entry.viewport === "tablet"
+            ? { width: 768, height: 1024 }
+            : { width: 1280, height: 900 };
 
       const context = await browser.newContext({
         viewport,
         isMobile: entry.viewport === "mobile",
-        hasTouch: entry.viewport === "mobile",
+        hasTouch: entry.viewport === "mobile" || entry.viewport === "tablet",
         userAgent:
           entry.viewport === "mobile"
             ? "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"
-            : "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+            : entry.viewport === "tablet"
+              ? "Mozilla/5.0 (iPad; CPU OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"
+              : "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
       });
 
       const page = await context.newPage();
