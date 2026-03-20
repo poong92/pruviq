@@ -539,7 +539,7 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
     </footer>
 
     <!-- Sticky CTA Bar (appears on scroll) -->
-    <div id="sticky-cta" class="fixed bottom-0 left-0 right-0 z-40 translate-y-full transition-transform duration-300 border-t border-[--color-border] bg-[--color-bg]/95 backdrop-blur-md" role="complementary" aria-label="Quick action bar">
+    <div id="sticky-cta" class="fixed bottom-0 left-0 right-0 z-50 translate-y-full transition-transform duration-300 border-t border-[--color-border] bg-[--color-bg]/95 backdrop-blur-md" role="complementary" aria-label="Quick action bar">
       <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
         <p class="text-sm text-[--color-text-muted] hidden sm:block">{t('hero.subtitle')}</p>
         <a href={simulatePath} class="bg-[--color-accent] text-[--color-bg] px-6 py-2 rounded font-semibold text-sm hover:bg-[--color-accent-dim] whitespace-nowrap shrink-0">
@@ -566,7 +566,7 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
       })();
     </script>
     <!-- Cookie Notice (GDPR essential notice) -->
-    <div id="cookie-notice" class="fixed bottom-0 left-0 right-0 z-50 bg-[--color-bg-card] border-t border-[--color-border] px-4 py-3 flex items-center justify-between gap-4 text-sm" style="display:none" aria-live="polite">
+    <div id="cookie-notice" class="fixed bottom-0 left-0 right-0 z-30 bg-[--color-bg-card] border-t border-[--color-border] px-4 py-3 flex items-center justify-between gap-4 text-sm" style="display:none" aria-live="polite">
       <p class="text-[--color-text-muted] text-xs max-w-xl">{t('cookie.notice')}</p>
       <button id="cookie-ok" class="shrink-0 font-mono text-xs px-3 py-1.5 rounded border border-[--color-border] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
         {t('cookie.ok')}
@@ -582,11 +582,18 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
           var h = notice.offsetHeight;
           document.body.style.paddingBottom = h + 'px';
           if (stickyCta) stickyCta.style.bottom = h + 'px';
+          // On mobile: push hero/first section up so CTA isn't hidden behind banner
+          if (window.innerWidth < 640) {
+            var hero = document.querySelector('section');
+            if (hero) hero.style.paddingBottom = (h + 16) + 'px';
+          }
         }
 
         function removeOffset() {
           document.body.style.paddingBottom = '';
           if (stickyCta) stickyCta.style.bottom = '';
+          var hero = document.querySelector('section');
+          if (hero) hero.style.paddingBottom = '';
         }
 
         if (!localStorage.getItem('cookie-ok')) {
