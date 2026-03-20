@@ -115,7 +115,7 @@ if (!ssrRanking) {
       <!-- SSR fallback: static top3/worst3 visible before JS loads -->
       {ssrRanking && (
         <div id="ranking-ssr-fallback" class="mb-8">
-          <p class="font-mono text-[--color-accent] text-xs mb-3 tracking-wider">최고 3 — {ssrRanking.date} · 30d · Top 50</p>
+          <p class="font-mono text-[--color-accent] text-xs mb-3 tracking-wider">상위 3개 — {ssrRanking.date} · 30일 · 시가총액 상위 50</p>
           <div class="grid md:grid-cols-3 gap-4 mb-6">
             {ssrRanking.top3.map((entry) => {
               const isLong = entry.direction === 'long';
@@ -160,7 +160,7 @@ if (!ssrRanking) {
               );
             })}
           </div>
-          <p class="font-mono text-[--color-red] text-xs mb-3 tracking-wider">최악 3</p>
+          <p class="font-mono text-[--color-red] text-xs mb-3 tracking-wider">하위 3개</p>
           <div class="grid md:grid-cols-3 gap-4 mb-2">
             {ssrRanking.worst3.map((entry) => {
               const medals = ['🥇','🥈','🥉'];
