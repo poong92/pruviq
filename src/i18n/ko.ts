@@ -1045,6 +1045,7 @@ export const ko: Record<TranslationKey, string> = {
   "home.cta_survives": "살아남는 전략 보기",
   "home.cta_test_yourself": "직접 테스트 — 무료",
   "home.quotes_heading": "트레이더들의 이야기",
+  "home.quotes_cta": "함께 해보세요 — 무료 시뮬레이터 체험",
   "home.ranking_shortcut": "오늘의 상위 전략",
   "home.competitor_banner":
     "TradingView는 백테스팅에 월 $14~240를 청구합니다. PRUVIQ는 영원히 무료입니다.",

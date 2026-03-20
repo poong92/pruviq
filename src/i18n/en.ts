@@ -1066,6 +1066,7 @@ export const en = {
   "home.cta_survives": "See What Survives",
   "home.cta_test_yourself": "Test It Yourself — Free",
   "home.quotes_heading": "What Traders Say",
+  "home.quotes_cta": "Join them — Try Simulator Free",
   "home.ranking_shortcut": "Today's top strategies",
   "home.competitor_banner":
     "TradingView charges $14–240/mo for backtesting. PRUVIQ is free, forever.",
