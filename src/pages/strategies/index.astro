@@ -14,6 +14,21 @@ const simulatorPresets: Array<{id: string; name_ko?: string; name?: string; dire
 const statusOrder = { verified: 0, testing: 1, killed: 2, shelved: 3 };
 const strategies = allStrategies.sort((a, b) => statusOrder[a.data.status] - statusOrder[b.data.status]);
 
+// Group by status for section dividers
+const strategyGroups: Record<string, typeof strategies> = {};
+for (const s of strategies) {
+  const st = s.data.status as string;
+  if (!strategyGroups[st]) strategyGroups[st] = [];
+  strategyGroups[st].push(s);
+}
+const statusGroupOrder = ['verified', 'testing', 'killed', 'shelved'].filter(s => strategyGroups[s]?.length);
+const statusGroupLabels: Record<string, string> = {
+  verified: '✓ VERIFIED',
+  testing: '⟳ IN TESTING',
+  killed: '✕ RETIRED',
+  shelved: '⬜ SHELVED',
+};
+
 const statusColors: Record<string, string> = {
   verified: '--color-accent',
   testing: '--color-yellow',
@@ -160,9 +175,21 @@ const difficultyColors: Record<string, string> = {
         </div>
       </div>
 
-      <div class="space-y-4" id="strategy-list">
-        {strategies.map((strategy) => (
-          <div class="block border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] hover:border-[--color-accent] transition-colors group"
+      <div class="space-y-8" id="strategy-list">
+        {statusGroupOrder.map((statusKey) => (
+          <div data-status-group={statusKey}>
+            {/* Section divider */}
+            <div class="flex items-center gap-3 mb-4">
+              <span class={`font-mono text-xs font-bold tracking-widest ${statusKey === 'verified' ? 'text-[--color-accent]' : statusKey === 'testing' ? 'text-[--color-yellow]' : 'text-[--color-text-muted]'}`}>
+                {statusGroupLabels[statusKey]}
+              </span>
+              <div class="flex-1 border-t border-[--color-border]"></div>
+              <span class="font-mono text-xs text-[--color-text-disabled]">{strategyGroups[statusKey].length}</span>
+            </div>
+            <div class="space-y-4">
+        {strategyGroups[statusKey].map((strategy) => (
+          <div class="block border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] card-hover group"
+               style="box-shadow: var(--shadow-card);"
                data-status={strategy.data.status}
                data-direction={strategy.data.direction.toLowerCase()}
                data-win-rate={strategy.data.winRate ?? 0}
@@ -243,6 +270,9 @@ const difficultyColors: Record<string, string> = {
             )}
           </div>
         ))}
+            </div>
+          </div>
+        ))}
       </div>
 
       {simulatorPresets.length > 0 && (
@@ -302,13 +332,20 @@ const difficultyColors: Record<string, string> = {
     const mutedText = 'var(--color-text-muted, #888)';
 
     function applyFilters() {
-      const cards = document.querySelectorAll<HTMLElement>('#strategy-list > [data-status]');
+      const cards = document.querySelectorAll<HTMLElement>('#strategy-list [data-status]');
       cards.forEach((card) => {
         const statusMatch =
           activeStatus.status === 'all' || card.dataset.status === activeStatus.status;
         const directionMatch =
           activeStatus.direction === 'all' || card.dataset.direction === activeStatus.direction;
         card.style.display = statusMatch && directionMatch ? '' : 'none';
+      });
+
+      // Hide empty group sections
+      document.querySelectorAll<HTMLElement>('[data-status-group]').forEach((group) => {
+        const visibleCards = group.querySelectorAll<HTMLElement>('[data-status]');
+        const anyVisible = Array.from(visibleCards).some(c => c.style.display !== 'none');
+        group.style.display = anyVisible ? '' : 'none';
       });
     }
 
@@ -334,25 +371,26 @@ const difficultyColors: Record<string, string> = {
       });
     });
 
-    // Sort logic
+    // Sort logic — operates within each group's space-y-4 container
     let currentSort = 'default';
-    const originalOrder: HTMLElement[] = Array.from(
-      document.querySelectorAll<HTMLElement>('#strategy-list > [data-status]')
-    );
 
     function applySort() {
-      const list = document.getElementById('strategy-list');
-      if (!list) return;
-      const cards = Array.from(list.querySelectorAll<HTMLElement>('[data-status]'));
-      if (currentSort === 'default') {
-        originalOrder.forEach(c => list.appendChild(c));
-      } else if (currentSort === 'winrate') {
-        cards.sort((a, b) => parseFloat(b.dataset.winRate || '0') - parseFloat(a.dataset.winRate || '0'));
-        cards.forEach(c => list.appendChild(c));
-      } else if (currentSort === 'pf') {
-        cards.sort((a, b) => parseFloat(b.dataset.profitFactor || '0') - parseFloat(a.dataset.profitFactor || '0'));
-        cards.forEach(c => list.appendChild(c));
-      }
+      document.querySelectorAll<HTMLElement>('[data-status-group]').forEach((group) => {
+        const container = group.querySelector<HTMLElement>('.space-y-4');
+        if (!container) return;
+        const cards = Array.from(container.querySelectorAll<HTMLElement>(':scope > [data-status]'));
+        const originalOrder = Array.from(cards); // preserve per-group order
+
+        if (currentSort === 'winrate') {
+          cards.sort((a, b) => parseFloat(b.dataset.winRate || '0') - parseFloat(a.dataset.winRate || '0'));
+        } else if (currentSort === 'pf') {
+          cards.sort((a, b) => parseFloat(b.dataset.profitFactor || '0') - parseFloat(a.dataset.profitFactor || '0'));
+        } else {
+          originalOrder.forEach(c => container.appendChild(c));
+          return;
+        }
+        cards.forEach(c => container.appendChild(c));
+      });
       applyFilters();
     }
 
