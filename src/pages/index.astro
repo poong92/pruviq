@@ -113,7 +113,7 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
   <!-- HOW IT WORKS (compact 3-step guide) -->
   <section id="how-it-works" class="border-t border-[--color-border] bg-[--color-bg-subtle]">
     <div class="max-w-6xl mx-auto px-4 py-8">
-      <div class="grid grid-cols-3 gap-6 text-center">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-6 text-center">
         <div>
           <div class="font-mono text-[--color-accent] text-xs tracking-wider mb-1">① {t('how.step1')}</div>
           <p class="text-xs text-[--color-text-muted]">{t('how.step1_desc')}</p>
@@ -126,6 +126,11 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
           <div class="font-mono text-[--color-accent] text-xs tracking-wider mb-1">③ {t('how.step3')}</div>
           <p class="text-xs text-[--color-text-muted]">{t('how.step3_desc')}</p>
         </div>
+      </div>
+      <div class="mt-6 text-center">
+        <a href="/simulate" class="inline-block bg-[--color-accent] text-[--color-bg] px-6 py-2.5 rounded font-semibold text-sm hover:bg-[--color-accent-dim] transition-colors">
+          {t('hero.cta_primary')} &rarr;
+        </a>
       </div>
     </div>
   </section>
@@ -179,6 +184,11 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
             <p class="text-xs text-[--color-text-muted]">{t('home.trust_oos_label')}</p>
           </div>
         </div>
+      </div>
+      <div class="mt-8 text-center">
+        <a href="/simulate" class="inline-block bg-[--color-accent] text-[--color-bg] px-6 py-2.5 rounded font-semibold text-sm hover:bg-[--color-accent-dim] transition-colors">
+          {t('hero.cta_primary')} &rarr;
+        </a>
       </div>
     </div>
   </section>
@@ -440,6 +450,11 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
           <p class="text-[--color-text-muted] text-sm">{t('trust.badge_open_desc')}</p>
         </a>
       </div>
+      <div class="mt-10 text-center">
+        <a href="/simulate" class="inline-block bg-[--color-accent] text-[--color-bg] px-6 py-2.5 rounded font-semibold text-sm hover:bg-[--color-accent-dim] transition-colors">
+          {t('hero.cta_primary')} &rarr;
+        </a>
+      </div>
     </div>
   </section>
 
@@ -483,6 +498,11 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
             </div>
           </footer>
         </blockquote>
+      </div>
+      <div class="mt-8 text-center">
+        <a href="/simulate" class="inline-block bg-[--color-accent] text-[--color-bg] px-6 py-2.5 rounded font-semibold text-sm hover:bg-[--color-accent-dim] transition-colors">
+          {t('home.quotes_cta')} &rarr;
+        </a>
       </div>
     </div>
   </section>
@@ -528,6 +548,11 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
           </summary>
           <div class="faq-body"><div><p class="px-6 pb-4 text-[--color-text-muted] text-sm leading-relaxed">{t('faq.a5')}</p></div></div>
         </details>
+      </div>
+      <div class="mt-8 text-center">
+        <a href="/simulate" class="inline-block bg-[--color-accent] text-[--color-bg] px-6 py-2.5 rounded font-semibold text-sm hover:bg-[--color-accent-dim] transition-colors">
+          {t('hero.cta_primary')} &rarr;
+        </a>
       </div>
     </div>
   </section>
