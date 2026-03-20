@@ -1047,6 +1047,11 @@ export const ko: Record<TranslationKey, string> = {
   "home.trust_oos_label": "OOS 검증 전략",
   "home.cta_survives": "살아남는 전략 보기",
   "home.cta_test_yourself": "직접 테스트 — 무료",
+  "home.not_sure": "확신이 없으신가요?",
+  "home.not_sure_cta": "30초 만에 작동 방식 확인하기",
+  "home.community_feedback_tag": "커뮤니티 피드백",
+  "home.quotes_initials_note":
+    "이름은 커뮤니티 회원 요청에 따라 이니셜로 표시합니다.",
   "home.quotes_heading": "트레이더들의 이야기",
   "home.quotes_cta": "함께 해보세요 — 무료 시뮬레이터 체험",
   "home.ranking_shortcut": "오늘의 상위 전략",
