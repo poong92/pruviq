@@ -162,7 +162,7 @@ if (!ssrRanking) {
           </div>
           <p class="font-mono text-[--color-red] text-xs mb-3 tracking-wider">WORST 3</p>
           <div class="grid md:grid-cols-3 gap-4 mb-2">
-            {ssrRanking.worst3.map((entry) => {
+            {ssrRanking.worst3.filter(e => e.total_trades > 0).map((entry) => {
               const medals = ['🥇','🥈','🥉'];
               const medal = medals[entry.rank - 1] ?? `#${entry.rank}`;
               const wrColor = entry.win_rate >= 55 ? 'text-[--color-up]' : entry.win_rate >= 50 ? 'text-[--color-yellow]' : 'text-[--color-red]';
@@ -172,10 +172,17 @@ if (!ssrRanking) {
                   <div class="flex items-center gap-2 mb-3">
                     <span class="text-xl">{medal}</span>
                     <div>
-                      <p class="font-semibold text-[--color-text] text-sm">{entry.name_en}</p>
+                      <p class="font-semibold text-[--color-text] text-sm" title={entry.name_en}>{entry.name_en}</p>
                       <p class="text-[--color-text-muted] text-xs font-mono">{entry.timeframe}</p>
                     </div>
                   </div>
+                  {entry.low_sample && (
+                    <div class="mb-3">
+                      <span class="inline-flex items-center gap-1 text-xs font-mono px-2 py-0.5 rounded border border-[--color-yellow]/40 text-[--color-yellow] bg-[--color-yellow]/5">
+                        ⚠️ Low sample ({entry.total_trades} trades &lt; 100)
+                      </span>
+                    </div>
+                  )}
                   <div class="grid grid-cols-3 gap-2 font-mono text-sm">
                     <div><p class="text-[--color-text-muted] text-xs mb-0.5">Win Rate</p><p class={`font-bold ${wrColor}`}>{entry.win_rate.toFixed(1)}%</p></div>
                     <div><p class="text-[--color-text-muted] text-xs mb-0.5">PF</p>{entry.profit_factor >= 50 ? (<p class={`font-bold ${pfColor} cursor-help underline decoration-dotted`} title="Profit Factor capped at 99.99 (limited trade data)">{entry.profit_factor.toFixed(2)} <span class="text-[0.6rem] font-normal text-[--color-text-muted]">(cap)</span></p>) : (<p class={`font-bold ${pfColor}`}>{entry.profit_factor.toFixed(2)}</p>)}</div>

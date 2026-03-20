@@ -313,20 +313,22 @@ export function StrategyRanking({ lang = "en" }: { lang?: Lang }) {
         </div>
       </section>
 
-      {/* Worst 3 */}
+      {/* Worst 3 — exclude 0-trade sentinel entries */}
       <section>
         <SectionHeader title={lbl.worst3Title} subtitle={lbl.worst3Sub} />
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {loading
             ? [0, 1, 2].map((i) => <SkeletonCard key={i} />)
-            : data?.worst3.map((entry) => (
-                <RankingCard
-                  key={`worst-${entry.rank}`}
-                  entry={entry}
-                  variant="worst"
-                  lang={lang}
-                />
-              ))}
+            : (data?.worst3 ?? [])
+                .filter((e) => e.total_trades > 0)
+                .map((entry) => (
+                  <RankingCard
+                    key={`worst-${entry.rank}`}
+                    entry={entry}
+                    variant="worst"
+                    lang={lang}
+                  />
+                ))}
         </div>
       </section>
 
