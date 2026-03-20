@@ -29,7 +29,7 @@ const coinsAnalyzed = (siteStats as { coins_analyzed: number }).coins_analyzed;
             {t('simulate.cta_preset')} &rarr;
           </a>
           <a href="/ko/strategies"
-             class="inline-flex items-center gap-2 border border-[--color-border] text-[--color-text-muted] px-4 py-2 rounded text-sm hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
+             class="hidden sm:inline-flex items-center gap-2 border border-[--color-border] text-[--color-text-muted] px-4 py-2 rounded text-sm hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
             {t('simulate.all_strategies')}
           </a>
         </div>
@@ -53,8 +53,11 @@ const coinsAnalyzed = (siteStats as { coins_analyzed: number }).coins_analyzed;
         </span>
       </div>
 
-      <!-- 3-step onboarding guide -->
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
+      <!-- 3-step onboarding guide: 모바일에서 숨김 (시뮬레이터 공간 확보) -->
+      <p class="sm:hidden text-xs text-[--color-text-muted] mb-3 font-mono">
+        ① {t('simulate.step1_title')} → ② {t('simulate.step2_title')} → ③ {t('simulate.step3_title')}
+      </p>
+      <div class="hidden sm:grid sm:grid-cols-3 gap-3 mb-4">
         <div class="flex items-center gap-3 border border-[--color-border] rounded-lg px-4 py-3 bg-[--color-bg-card]">
           <span class="font-mono text-[--color-accent] text-lg font-bold shrink-0">1</span>
           <div>

@@ -13,7 +13,9 @@ const labels = {
     exchange: "Exchange",
     standard: "Standard Fee",
     withPruviq: "With PRUVIQ",
-    savings: "You Save / Year",
+    savings: "Monthly Savings",
+    savingsYear: "per year",
+    saveYr: "Save",
     signup: "Sign Up",
     coming: "Coming Soon",
     disclaimer:
@@ -32,7 +34,9 @@ const labels = {
     exchange: "거래소",
     standard: "기본 수수료",
     withPruviq: "PRUVIQ 적용",
-    savings: "연간 절약액",
+    savings: "월 절약액",
+    savingsYear: "연간",
+    saveYr: "절약",
     signup: "가입하기",
     coming: "준비 중",
     disclaimer:
@@ -199,14 +203,17 @@ export default function FeeCalculator({ lang = "en" }: Props) {
                 <div class="font-mono text-[0.625rem] sm:text-xs text-[--color-text-muted] mb-1">
                   {t.savings}
                 </div>
-                <div class="font-mono text-xs sm:text-sm font-bold text-[--color-accent]">
-                  {fmtFull(Math.round(savingsYear))}
-                  {lang === "ko" && (
-                    <div class="text-[0.6rem] text-[--color-text-muted]">
-                      ({fmtKrw(savingsYear)})
-                    </div>
-                  )}
+                <div class="font-mono text-xs sm:text-sm font-bold text-[--color-up]">
+                  {savingsYear > 0
+                    ? `+${fmt(Math.round(savingsYear / 12))}/mo`
+                    : "—"}
                 </div>
+                {savingsYear > 0 && (
+                  <div class="font-mono text-[0.6rem] text-[--color-text-muted] mt-0.5">
+                    {t.savingsYear} {fmtFull(Math.round(savingsYear))}
+                    {lang === "ko" && ` (${fmtKrw(savingsYear)})`}
+                  </div>
+                )}
               </div>
             </div>
 
@@ -223,7 +230,7 @@ export default function FeeCalculator({ lang = "en" }: Props) {
                   <span>{t.signup} &rarr;</span>
                   {savingsYear > 0 && (
                     <span class="text-[0.6rem] opacity-80 font-normal mt-0.5">
-                      Save {fmt(savingsYear)}/yr
+                      {t.saveYr} {fmt(savingsYear)}/yr
                     </span>
                   )}
                 </a>
