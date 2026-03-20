@@ -1,8 +1,41 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { useTranslations } from '../../i18n/index';
+import fs from 'node:fs';
+import path from 'node:path';
 
 const t = useTranslations('en');
+
+// Load live trading equity data for chart
+interface DailyEntry { date: string; pnl: number; trades: number; cum_pnl: number; }
+interface PerfData { generated: string; summary: Record<string, number>; daily: DailyEntry[]; }
+let perfData: PerfData | null = null;
+try {
+  const raw = fs.readFileSync(path.join(process.cwd(), 'public/data/performance.json'), 'utf-8');
+  perfData = JSON.parse(raw) as PerfData;
+} catch { /* chart will be omitted */ }
+
+// Compute SVG equity curve path
+const equitySvg = (() => {
+  if (!perfData?.daily?.length) return null;
+  const daily = perfData.daily;
+  const W = 800, H = 140, PAD_LEFT = 10, PAD_RIGHT = 10, PAD_TOP = 12, PAD_BOTTOM = 20;
+  const innerW = W - PAD_LEFT - PAD_RIGHT;
+  const innerH = H - PAD_TOP - PAD_BOTTOM;
+  const minY = Math.min(...daily.map(d => d.cum_pnl), 0);
+  const maxY = Math.max(...daily.map(d => d.cum_pnl), 0);
+  const rangeY = maxY - minY || 1;
+  const toX = (i: number) => PAD_LEFT + (i / (daily.length - 1)) * innerW;
+  const toY = (v: number) => PAD_TOP + innerH - ((v - minY) / rangeY) * innerH;
+  const points = daily.map((d, i) => `${toX(i).toFixed(1)},${toY(d.cum_pnl).toFixed(1)}`).join(' ');
+  const zeroY = toY(0).toFixed(1);
+  const lastVal = daily[daily.length - 1].cum_pnl;
+  const lastX = toX(daily.length - 1).toFixed(1);
+  const lastY = toY(lastVal).toFixed(1);
+  const startDate = daily[0].date.slice(5); // MM-DD
+  const endDate = daily[daily.length - 1].date.slice(5);
+  return { points, zeroY, lastVal, lastX, lastY, startDate, endDate, W, H };
+})();
 ---
 
 <Layout title={t('meta.performance_title')} description={t('meta.performance_desc')}>
@@ -46,6 +79,40 @@ const t = useTranslations('en');
       </div>
     </div>
   </section>
+
+  <!-- LIVE TRADING EQUITY CURVE -->
+  {equitySvg && (
+    <section class="pb-8 border-t border-[--color-border] pt-8">
+      <div class="max-w-5xl mx-auto px-4">
+        <div class="flex items-center justify-between mb-3">
+          <div>
+            <h2 class="text-lg font-bold">{t('perf.live_curve_title')}</h2>
+            <p class="text-[--color-text-muted] text-xs font-mono mt-0.5">{t('perf.live_curve_subtitle')}</p>
+          </div>
+          <span class={`font-mono text-sm font-bold ${equitySvg.lastVal >= 0 ? 'text-[--color-up]' : 'text-[--color-red]'}`}>
+            {equitySvg.lastVal >= 0 ? '+' : ''}{equitySvg.lastVal.toFixed(2)} USD
+          </span>
+        </div>
+        <div class="border border-[--color-border] rounded-lg bg-[--color-bg-card] p-3 overflow-hidden">
+          <svg viewBox={`0 0 ${equitySvg.W} ${equitySvg.H}`} class="w-full h-auto" aria-label="Live trading equity curve Jan-Mar 2026" role="img">
+            {/* Zero line */}
+            <line x1="10" y1={equitySvg.zeroY} x2={equitySvg.W - 10} y2={equitySvg.zeroY}
+              stroke="var(--color-border)" stroke-width="1" stroke-dasharray="4 3" />
+            {/* Equity line */}
+            <polyline points={equitySvg.points}
+              fill="none" stroke="var(--color-red)" stroke-width="2" stroke-linejoin="round" />
+            {/* Start label */}
+            <text x="10" y={equitySvg.H - 4} font-size="9" fill="var(--color-text-muted)" font-family="monospace">{equitySvg.startDate}</text>
+            {/* End label */}
+            <text x={equitySvg.W - 10} y={equitySvg.H - 4} font-size="9" fill="var(--color-text-muted)" font-family="monospace" text-anchor="end">{equitySvg.endDate}</text>
+            {/* Final value dot */}
+            <circle cx={equitySvg.lastX} cy={equitySvg.lastY} r="3" fill="var(--color-red)" />
+          </svg>
+        </div>
+        <p class="text-[--color-text-muted] text-xs font-mono mt-2">{t('perf.live_curve_note')}</p>
+      </div>
+    </section>
+  )}
 
   <!-- BACKTEST RESULTS -->
   <section class="pb-12 border-t border-[--color-border] pt-8">

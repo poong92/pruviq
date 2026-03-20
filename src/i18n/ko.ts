@@ -516,6 +516,11 @@ export const ko: Record<TranslationKey, string> = {
   "perf.archived_badge": "보관됨",
   "perf.archived_notice":
     "2026년 3월 실거래 중단. 아래 데이터는 2024년 1월 – 2026년 2월 백테스트 결과입니다.",
+  "perf.live_curve_title": "실거래 자본 곡선",
+  "perf.live_curve_subtitle":
+    "BB Squeeze SHORT · 2026년 1월–3월 · 누적 PnL (USD)",
+  "perf.live_curve_note":
+    "2026년 3월 MDD 한계 도달로 실거래 중단. 차트는 실제 포지션의 일별 누적 PnL.",
   "perf.title": "모든 거래 공개. 손실 포함.",
   "perf.desc":
     "BB Squeeze SHORT 전략 백테스트 결과. 569개 코인, 2년 이상 과거 데이터. 체리피킹 없음.",

@@ -515,6 +515,11 @@ export const en = {
   "perf.archived_badge": "ARCHIVED",
   "perf.archived_notice":
     "Trading paused Mar 2026. Data below covers Jan 2024 – Feb 2026 backtests.",
+  "perf.live_curve_title": "Live Trading Equity Curve",
+  "perf.live_curve_subtitle":
+    "BB Squeeze SHORT · Jan – Mar 2026 · Cumulative PnL (USD)",
+  "perf.live_curve_note":
+    "Live trading stopped at MDD limit (Mar 2026). Chart shows daily cumulative PnL from actual positions.",
   "perf.title": "Every Trade Published. Including Losses.",
   "perf.desc":
     "Backtest results for BB Squeeze SHORT strategy on 569 coins. 2+ years of historical data. No cherry-picking.",
