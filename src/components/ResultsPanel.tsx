@@ -1210,8 +1210,7 @@ export default function ResultsPanel({
               {t.noResults}
             </div>
             <div class="text-[--color-text-muted] text-xs font-mono opacity-60">
-              {t.noResultsHint ??
-                "Try Quick Test above for instant results with the top-ranked strategy."}
+              {t.noResultsHint ?? ""}
             </div>
           </div>
         )

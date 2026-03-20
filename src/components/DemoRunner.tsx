@@ -44,6 +44,8 @@ const labels = {
     tpCount: "TP Count",
     slCount: "SL Count",
     timeoutCount: "Timeout Count",
+    mddTooltip:
+      "Max Drawdown reflects leveraged position sizing (default 5x). Unleveraged MDD would be ~5x lower.",
   },
   ko: {
     runningDemo: "데모 실행 중...",
@@ -71,6 +73,8 @@ const labels = {
     tpCount: "TP 횟수",
     slCount: "SL 횟수",
     timeoutCount: "타임아웃 횟수",
+    mddTooltip:
+      "최대 낙폭은 레버리지 포지션 사이징(기본 5x)을 반영합니다. 비레버리지 MDD는 약 5배 낮습니다.",
   },
 };
 
@@ -213,10 +217,7 @@ export default function DemoRunner({ lang = "en" }: Props) {
               <div class="text-sm text-[--color-text-muted]">
                 {t.maxDrawdown}
               </div>
-              <div
-                class="text-xl font-bold cursor-help"
-                title="Max Drawdown reflects leveraged position sizing (default 5x). Unleveraged MDD would be ~5x lower."
-              >
+              <div class="text-xl font-bold cursor-help" title={t.mddTooltip}>
                 {data.max_drawdown}%
               </div>
             </div>
