@@ -286,12 +286,12 @@ def get_client_ip(request: Request) -> str:
     """Extract real client IP, only trusting proxy headers from trusted sources."""
     direct_ip = request.client.host if request.client else "unknown"
 
+    if direct_ip not in TRUSTED_PROXIES:
+        return direct_ip
+
     cf_ip = request.headers.get("cf-connecting-ip")
     if cf_ip:
         return cf_ip.strip()
-
-    if direct_ip not in TRUSTED_PROXIES:
-        return direct_ip
 
     forwarded = request.headers.get("x-forwarded-for")
     if forwarded:
@@ -3172,20 +3172,15 @@ async def export_csv(hash: str):
 
 RANKING_DIR = "/Users/jepo/Desktop/autotrader/data/daily_rankings"
 
+_rankings_cache: dict = {}
+_RANKINGS_CACHE_TTL = 60
 
-@app.get("/rankings/daily")
-async def get_daily_rankings(
-    date: Optional[str] = None,
-    period: str = "30d",
-    group: str = "top50",
-):
-    """Return daily strategy rankings from pre-computed JSON files.
 
-    Query params:
-        date:   YYYYMMDD (default: today). Falls back to most recent file.
-        period: "7d" | "30d" | "365d" (default: "30d")
-        group:  "top30" | "top50" | "top100" | "btc" (default: "top50")
-    """
+def _get_daily_rankings_sync(
+    date: Optional[str],
+    period: str,
+    group: str,
+) -> dict:
     VALID_PERIODS = {"7d", "30d", "365d"}
     VALID_GROUPS = {"top30", "top50", "top100", "btc"}
 
@@ -3479,3 +3474,22 @@ async def get_daily_rankings(
         "available_periods": available_periods,
         "available_groups": available_groups,
     }
+
+
+@app.get("/rankings/daily")
+async def get_daily_rankings(
+    date: Optional[str] = None,
+    period: str = "30d",
+    group: str = "top50",
+):
+    """Return daily strategy rankings from pre-computed JSON files."""
+    cache_key = (date, period, group)
+    cached = _rankings_cache.get(cache_key)
+    if cached and (time.time() - cached[1]) < _RANKINGS_CACHE_TTL:
+        return cached[0]
+    result = await asyncio.to_thread(_get_daily_rankings_sync, date, period, group)
+    _rankings_cache[cache_key] = (result, time.time())
+    if len(_rankings_cache) > 50:
+        oldest_key = min(_rankings_cache, key=lambda k: _rankings_cache[k][1])
+        _rankings_cache.pop(oldest_key, None)
+    return result
