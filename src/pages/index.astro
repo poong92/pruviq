@@ -98,10 +98,14 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
           <span>{t('trust.badge_privacy')}</span>
           <span>{t('trust.badge_validated')}</span>
         </div>
-        <a href="/strategies/ranking" class="inline-flex items-center gap-1.5 text-xs font-mono text-[--color-accent] hover:underline mb-4">
+        <a href="/strategies/ranking" class="inline-flex items-center gap-1.5 text-xs font-mono text-[--color-accent] hover:underline mb-3">
           <span class="inline-block w-1.5 h-1.5 rounded-full bg-[--color-accent] animate-pulse"></span>
           {t('home.ranking_shortcut')} &rarr;
         </a>
+        <!-- Data source attribution -->
+        <p class="text-xs text-[--color-text-muted] font-mono opacity-50">
+          Data powered by <span class="text-[--color-text-muted] opacity-80">Binance</span> &amp; <span class="text-[--color-text-muted] opacity-80">CoinGecko</span>
+        </p>
       </div>
     </div>
   </section>
