@@ -35,6 +35,20 @@ const categoryColors: Record<string, string> = {
 ---
 
 <Layout title={t('meta.blog_title')} description={t('meta.blog_desc')}>
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Blog",
+    "name": "PRUVIQ 리서치 블로그",
+    "description": "PRUVIQ의 암호화폐 트레이딩 전략 리서치, 백테스트 분석, 퀀트 인사이트.",
+    "url": "https://pruviq.com/ko/blog/",
+    "blogPost": allPosts.slice(0, 10).map(p => ({
+      "@type": "BlogPosting",
+      "headline": p.data.title,
+      "description": p.data.description,
+      "datePublished": p.data.date,
+      "url": `https://pruviq.com/ko/blog/${p.id}`
+    }))
+  })} />
   <section class="py-12">
     <div class="max-w-4xl mx-auto px-4">
       <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('blog.tag')}</p>
@@ -70,27 +84,42 @@ const categoryColors: Record<string, string> = {
           </div>
         </div>
       ) : (
-        <div class="space-y-6">
-          {allPosts.map((post) => (
-            <a href={post.isKorean ? `/ko/blog/${post.id}` : `/blog/${post.id}`}
-               class="block border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] hover:border-[--color-accent] transition-colors group">
-              <div class="flex items-center gap-3 mb-3">
-                <span class={`font-mono text-xs tracking-wider`}
-                      style={`color: var(${categoryColors[post.data.category] || '--color-text-muted'})`}>
-                  {categoryLabels[post.data.category] || post.data.category.toUpperCase()}
-                </span>
-                {!post.isKorean && (
-                  <span class="font-mono text-xs px-1.5 py-0.5 rounded bg-[--color-border] text-[--color-text-muted]">{t('blog.en_badge')}</span>
-                )}
-                <span class="text-[--color-text-muted] text-xs font-mono">{post.data.date}</span>
-              </div>
-              <h2 class="text-xl font-bold mb-2 group-hover:text-[--color-accent] transition-colors">
-                {post.data.title}
-              </h2>
-              <p class="text-[--color-text-muted] text-sm">{post.data.description}</p>
+        <>
+          <div class="space-y-6">
+            {allPosts.map((post) => (
+              <a href={post.isKorean ? `/ko/blog/${post.id}` : `/blog/${post.id}`}
+                 class="block border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] hover:border-[--color-accent] transition-colors group">
+                <div class="flex items-center gap-3 mb-3">
+                  <span class={`font-mono text-xs tracking-wider`}
+                        style={`color: var(${categoryColors[post.data.category] || '--color-text-muted'})`}>
+                    {categoryLabels[post.data.category] || post.data.category.toUpperCase()}
+                  </span>
+                  {!post.isKorean && (
+                    <span class="font-mono text-xs px-1.5 py-0.5 rounded bg-[--color-border] text-[--color-text-muted]">{t('blog.en_badge')}</span>
+                  )}
+                  <span class="text-[--color-text-muted] text-xs font-mono">{post.data.date}</span>
+                </div>
+                <h2 class="text-xl font-bold mb-2 group-hover:text-[--color-accent] transition-colors">
+                  {post.data.title}
+                </h2>
+                <p class="text-[--color-text-muted] text-sm">{post.data.description}</p>
+              </a>
+            ))}
+          </div>
+          <div class="mt-12 pt-8 border-t border-[--color-border] text-center">
+            <a href="/ko/simulate" class="inline-block bg-[--color-accent] text-[--color-bg] px-6 py-2.5 rounded font-semibold text-sm hover:bg-[--color-accent-dim] transition-colors no-underline">
+              {t('blog.simulate_cta')} &rarr;
             </a>
-          ))}
-        </div>
+            <div class="flex flex-wrap gap-3 justify-center mt-4">
+              <a href="/ko/strategies/ranking" class="inline-block border border-[--color-border] px-5 py-2 rounded font-semibold text-sm hover:border-[--color-accent] transition-colors no-underline">
+                {t('ranking.tag')} &rarr;
+              </a>
+              <a href="/ko/learn" class="inline-block border border-[--color-border] px-5 py-2 rounded font-semibold text-sm hover:border-[--color-accent] transition-colors no-underline">
+                {t('blog.learn_cta')} &rarr;
+              </a>
+            </div>
+          </div>
+        </>
       )}
     </div>
   </section>
