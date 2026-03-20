@@ -24,7 +24,7 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
     <div class="max-w-6xl mx-auto px-4 py-20">
       <div class="max-w-3xl">
         <p class="font-mono text-[--color-accent] text-sm mb-4 tracking-wider">{t('hero.tag')}</p>
-        <h1 id="hero-heading" class="text-4xl md:text-6xl font-bold leading-tight mb-6">
+        <h1 id="hero-heading" class="text-4xl md:text-6xl font-bold leading-tight mb-6" style="letter-spacing: -0.03em;">
           {t('hero.title1')}<br/>
           <span class="text-[--color-accent]">{t('hero.title2').replace('{coins}', String(coinsAnalyzed))}</span>
         </h1>
@@ -141,30 +141,30 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
       <div>
         <!-- Stats -->
         <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
-          <div class="border border-[--color-border] rounded p-4 bg-[--color-bg-card] card-hover">
+          <div class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card] card-hover" style="box-shadow: var(--shadow-card);">
             <p class="font-mono text-[--color-accent] text-2xl font-bold">{coinsAnalyzed}</p>
             <p class="text-[--color-text-muted] text-sm">{t('hero.stat1')}</p>
             <p class="text-[--color-text-muted] text-xs mt-1 opacity-60">{t('hero.stat1_sub')}</p>
           </div>
-          <div class="border border-[--color-border] rounded p-4 bg-[--color-bg-card] card-hover">
+          <div class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card] card-hover" style="box-shadow: var(--shadow-card);">
             <p class="font-mono text-[--color-accent] text-2xl font-bold">{tradingDays}+</p>
             <p class="text-[--color-text-muted] text-sm">{t('hero.stat4')}</p>
             <p class="text-[--color-text-muted] text-xs mt-1 opacity-60">{t('hero.stat4_sub')}</p>
           </div>
-          <div class="border border-[--color-border] rounded p-4 bg-[--color-bg-card] card-hover">
+          <div class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card] card-hover" style="box-shadow: var(--shadow-card);">
             <p class="font-mono text-[--color-accent] text-2xl font-bold">{candlesProcessed}+</p>
             <p class="text-[--color-text-muted] text-sm">{t('hero.stat5')}</p>
             <p class="text-[--color-text-muted] text-xs mt-1 opacity-60">{t('hero.stat5_sub')}</p>
           </div>
-          <div class="border border-[--color-border] rounded p-4 bg-[--color-bg-card] card-hover">
+          <div class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card] card-hover" style="box-shadow: var(--shadow-card);">
             <p class="font-mono text-[--color-accent] text-2xl font-bold">{t('hero.stat2_val')}</p>
             <p class="text-[--color-text-muted] text-sm">{t('hero.stat2')}</p>
           </div>
-          <div class="border border-[--color-border] rounded p-4 bg-[--color-bg-card] card-hover">
+          <div class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card] card-hover" style="box-shadow: var(--shadow-card);">
             <p class="font-mono text-[--color-accent] text-2xl font-bold">100%</p>
             <p class="text-[--color-text-muted] text-sm">{t('hero.stat3')}</p>
           </div>
-          <div class="border border-[--color-border] rounded p-4 bg-[--color-bg-card] card-hover">
+          <div class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card] card-hover" style="box-shadow: var(--shadow-card);">
             <p class="font-mono text-[--color-accent] text-2xl font-bold">$0</p>
             <p class="text-[--color-text-muted] text-sm">{t('hero.stat6')}</p>
             <p class="text-[--color-text-muted] text-xs mt-1 opacity-60">{t('hero.stat6_sub')}</p>
