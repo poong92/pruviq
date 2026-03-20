@@ -6,6 +6,22 @@ const t = useTranslations('en');
 ---
 
 <Layout title={t('meta.about_title')} description={t('meta.about_desc')}>
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "AboutPage",
+    "name": "About PRUVIQ",
+    "description": "PRUVIQ is an independent crypto backtesting research platform built by a solo developer and systematic trader.",
+    "url": "https://pruviq.com/about/",
+    "inLanguage": "en",
+    "publisher": {
+      "@type": "Organization",
+      "name": "PRUVIQ",
+      "url": "https://pruviq.com",
+      "foundingDate": "2025",
+      "email": "contact@pruviq.com",
+      "sameAs": ["https://github.com/pruviq", "https://x.com/pruviq"]
+    }
+  })} />
   <section class="py-12">
     <div class="max-w-3xl mx-auto px-4">
 

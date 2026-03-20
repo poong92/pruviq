@@ -81,6 +81,22 @@ const levelConfig = [
 ---
 
 <Layout title={t('meta.learn_title')} description={t('meta.learn_desc')}>
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "Learn Crypto Trading — PRUVIQ",
+    "description": "Free crypto trading education: beginner, intermediate, and advanced guides on backtesting, risk management, and trading strategies.",
+    "url": "https://pruviq.com/learn/",
+    "inLanguage": "en",
+    "hasPart": posts.slice(0, 20).map(p => ({
+      "@type": "Article",
+      "name": p.data.title,
+      "description": p.data.description,
+      "url": `https://pruviq.com/blog/${p.id}/`,
+      "datePublished": p.data.date,
+      "publisher": { "@type": "Organization", "name": "PRUVIQ" }
+    }))
+  })} />
 
   <!-- HERO -->
   <section class="pt-16 pb-8">
