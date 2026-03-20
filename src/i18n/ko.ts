@@ -575,7 +575,7 @@ export const ko: Record<TranslationKey, string> = {
   "perf.tbl_safety": "안전 마진",
 
   // Daily Ranking page
-  "ranking.tag": "DAILY RANKING",
+  "ranking.tag": "데일리 랭킹",
   "ranking.title": "오늘의 전략 랭킹",
   "ranking.date_label": "{date} 기준 · PRUVIQ 시뮬레이터 백테스트 결과",
   "ranking.desc":

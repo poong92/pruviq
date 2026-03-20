@@ -93,7 +93,7 @@ export default function ModeSwitcher({ mode, setMode, lang, isFirstVisit }: Prop
             tabIndex={active ? 0 : -1}
             onClick={() => setMode(tab.key)}
             onKeyDown={(e: KeyboardEvent) => handleKeyDown(e, idx)}
-            class={`relative flex-1 min-h-[44px] py-2.5 px-2 rounded-lg border transition-all text-center
+            class={`relative flex-1 min-h-[44px] py-2.5 px-2 rounded-lg border transition-all text-center overflow-visible
               ${active
                 ? 'border-[--color-accent]'
                 : 'border-[--color-border] hover:border-[--color-text-muted]'
@@ -130,7 +130,7 @@ export default function ModeSwitcher({ mode, setMode, lang, isFirstVisit }: Prop
 
             {/* Expert "advanced" label */}
             {tab.key === 'expert' && !active && (
-              <span aria-hidden="true" class="absolute top-1 right-1.5 text-[8px] opacity-70 font-mono"
+              <span aria-hidden="true" class="absolute top-1 right-2 text-[8px] opacity-70 font-mono"
                 style={{ color: COLORS.accentDim }}>
                 {t.advanced}
               </span>
