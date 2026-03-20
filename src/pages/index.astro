@@ -373,11 +373,11 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
         </table>
       </div>
 
-      <div class="mt-8 text-center">
-        <a href="/compare/tradingview" class="text-sm text-[--color-accent] hover:underline">{t('compare_table.detail_link')} &rarr;</a>
-        <div class="mt-4">
-          <a href="/simulate" class="text-sm text-[--color-accent] font-semibold hover:underline">{t('home.cta_test_yourself')} &rarr;</a>
-        </div>
+      <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+        <a href="/simulate" class="bg-[--color-accent] text-[--color-bg] px-6 py-2.5 rounded font-semibold text-sm hover:bg-[--color-accent-dim] transition-colors">
+          {t('home.cta_test_yourself')} &rarr;
+        </a>
+        <a href="/compare/tradingview" class="text-sm text-[--color-accent] hover:underline font-mono">{t('compare_table.detail_link')} &rarr;</a>
       </div>
     </div>
   </section>
@@ -499,6 +499,7 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
           </footer>
         </blockquote>
       </div>
+      <!-- CTA after social proof quotes -->
       <div class="mt-8 text-center">
         <a href="/simulate" class="inline-block bg-[--color-accent] text-[--color-bg] px-6 py-2.5 rounded font-semibold text-sm hover:bg-[--color-accent-dim] transition-colors">
           {t('home.quotes_cta')} &rarr;
@@ -549,6 +550,7 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
           <div class="faq-body"><div><p class="px-6 pb-4 text-[--color-text-muted] text-sm leading-relaxed">{t('faq.a5')}</p></div></div>
         </details>
       </div>
+      <!-- CTA after FAQ -->
       <div class="mt-8 text-center">
         <a href="/simulate" class="inline-block bg-[--color-accent] text-[--color-bg] px-6 py-2.5 rounded font-semibold text-sm hover:bg-[--color-accent-dim] transition-colors">
           {t('hero.cta_primary')} &rarr;
