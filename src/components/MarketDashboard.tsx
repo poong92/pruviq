@@ -241,10 +241,25 @@ function getFGSegment(value: number) {
   return FG_SCALE.find((s) => value >= s.min && value < s.max) || FG_SCALE[0];
 }
 
+interface MarketDataShape {
+  btc_price: number;
+  btc_change_24h: number;
+  eth_price: number;
+  eth_change_24h: number;
+  fear_greed_index: number;
+  fear_greed_label: string;
+  total_market_cap_b: number;
+  btc_dominance: number;
+  total_volume_24h_b: number;
+  generated: string;
+}
+
 export default function MarketDashboard({
   lang = "en",
+  initialMarket = null,
 }: {
   lang?: "en" | "ko";
+  initialMarket?: MarketDataShape | null;
 }) {
   const l = labels[lang] || labels.en;
   const [coinsCount, setCoinsCount] = useState("569");
@@ -304,9 +319,13 @@ export default function MarketDashboard({
     return () => clearInterval(id);
   }, [generated]);
 
+  // Effective market: live hook data first, then SSR-injected cached fallback
+  const effectiveMarket = market || initialMarket;
+
   // Determine if we have enough data to render (either live prices or market overview)
-  const hasData = btcPrice > 0 || market;
-  const hasError = liveErr && marketErr;
+  const hasData = btcPrice > 0 || effectiveMarket;
+  // Only show error if we have no data at all (cached fallback prevents error state)
+  const hasError = liveErr && marketErr && !effectiveMarket;
 
   const activeNewsSources =
     newsTab === "crypto" ? CRYPTO_SOURCES : MACRO_SOURCES;
@@ -328,30 +347,36 @@ export default function MarketDashboard({
       return true;
     }) ?? [];
 
-  // Use live prices (30s) with fallback to market overview (5min)
-  const displayBtcPrice = btcPrice || market?.btc_price || 0;
-  const displayBtcChange = btcPrice ? btcChange : (market?.btc_change_24h ?? 0);
-  const displayEthPrice = ethPrice || market?.eth_price || 0;
-  const displayEthChange = ethPrice ? ethChange : (market?.eth_change_24h ?? 0);
+  // Use live prices (30s) with fallback to market overview (5min) or cached initial data
+  const displayBtcPrice = btcPrice || effectiveMarket?.btc_price || 0;
+  const displayBtcChange = btcPrice
+    ? btcChange
+    : (effectiveMarket?.btc_change_24h ?? 0);
+  const displayEthPrice = ethPrice || effectiveMarket?.eth_price || 0;
+  const displayEthChange = ethPrice
+    ? ethChange
+    : (effectiveMarket?.eth_change_24h ?? 0);
 
   // Display helpers
   const totalMcapDisplay =
-    market && market.total_market_cap_b
-      ? `$${market.total_market_cap_b.toFixed(0)}B`
+    effectiveMarket && effectiveMarket.total_market_cap_b
+      ? `$${effectiveMarket.total_market_cap_b.toFixed(0)}B`
       : "—";
   const btcDomDisplay =
-    market && market.btc_dominance ? `${market.btc_dominance}%` : "—";
+    effectiveMarket && effectiveMarket.btc_dominance
+      ? `${effectiveMarket.btc_dominance}%`
+      : "—";
   const volume24hDisplay =
-    market && market.total_volume_24h_b
-      ? `$${market.total_volume_24h_b.toFixed(0)}B`
+    effectiveMarket && effectiveMarket.total_volume_24h_b
+      ? `$${effectiveMarket.total_volume_24h_b.toFixed(0)}B`
       : "—";
 
   // Fear & Greed gauge
-  const fgSegment = market
-    ? getFGSegment(market.fear_greed_index)
+  const fgSegment = effectiveMarket
+    ? getFGSegment(effectiveMarket.fear_greed_index)
     : FG_SCALE[0];
-  const fgPct = market
-    ? Math.max(0, Math.min(100, market.fear_greed_index))
+  const fgPct = effectiveMarket
+    ? Math.max(0, Math.min(100, effectiveMarket.fear_greed_index))
     : 0;
 
   return (
@@ -441,7 +466,7 @@ export default function MarketDashboard({
           {/* Stat Cards — 5min market overview refresh */}
           <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
             {/* Fear & Greed with enhanced gauge */}
-            {market ? (
+            {effectiveMarket ? (
               <div
                 class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card] card-hover"
                 style={{ backgroundColor: `${fgSegment.color}10` }}
@@ -454,7 +479,7 @@ export default function MarketDashboard({
                     class="text-2xl font-bold font-mono"
                     style={{ color: fgSegment.color }}
                   >
-                    {market.fear_greed_index}
+                    {effectiveMarket.fear_greed_index}
                   </span>
                   <span class="text-sm font-mono text-[--color-text-muted]">
                     / 100
@@ -467,7 +492,7 @@ export default function MarketDashboard({
                     class="w-full bg-[--color-bg-hover] rounded-full overflow-hidden"
                     style={{ height: "8px" }}
                     role="img"
-                    aria-label={`Fear and Greed gauge ${market.fear_greed_index} out of 100`}
+                    aria-label={`Fear and Greed gauge ${effectiveMarket.fear_greed_index} out of 100`}
                   >
                     <div
                       style={{
@@ -502,7 +527,9 @@ export default function MarketDashboard({
                   class="text-xs font-semibold"
                   style={{ color: fgSegment.color }}
                 >
-                  {lang === "ko" ? fgSegment.labelKo : market.fear_greed_label}
+                  {lang === "ko"
+                    ? fgSegment.labelKo
+                    : effectiveMarket.fear_greed_label}
                 </div>
               </div>
             ) : (

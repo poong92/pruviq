@@ -1,8 +1,10 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { useTranslations } from '../../i18n/index';
+import marketDataRaw from '../../../public/data/market.json';
 
 const t = useTranslations('en');
+const marketDataJson = JSON.stringify(marketDataRaw);
 ---
 
 <Layout title={t('meta.market_title')} description={t('meta.market_desc')}>
@@ -13,7 +15,7 @@ const t = useTranslations('en');
       <p class="text-[--color-text-muted] text-lg mb-8 max-w-2xl">
         {t('market.desc')}
       </p>
-      <div id="market-mount">
+      <div id="market-mount" data-initial-market={marketDataJson}>
         <div class="animate-pulse space-y-4">
           <div class="flex gap-4 flex-wrap">
             <div class="flex-1 min-w-[200px] h-16 bg-[--color-bg-hover] rounded-lg"></div>
@@ -54,7 +56,8 @@ const t = useTranslations('en');
 
     const mount = document.getElementById('market-mount');
     if (mount) {
-      render(h(ErrorBoundary, { name: 'Market Dashboard' }, h(MarketDashboard, { lang: 'en' })), mount);
+      const initialMarket = JSON.parse(mount.dataset.initialMarket || 'null');
+      render(h(ErrorBoundary, { name: 'Market Dashboard' }, h(MarketDashboard, { lang: 'en', initialMarket })), mount);
     }
   </script>
 </Layout>
