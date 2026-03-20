@@ -27,13 +27,13 @@ const t = useTranslations('en');
 
       <!-- Header -->
       <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('about.tag')}</p>
-      <h1 class="text-3xl md:text-4xl font-bold mb-6">{t('about.title')}</h1>
+      <h1 class="text-3xl md:text-4xl font-bold mb-6" style="letter-spacing: -0.03em;">{t('about.title')}</h1>
       <p class="text-[--color-text-muted] text-lg mb-12 max-w-2xl leading-relaxed">
         {t('about.mission')}
       </p>
 
       <!-- Team -->
-      <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] mb-12">
+      <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] mb-12" style="box-shadow: var(--shadow-card);">
         <p class="font-mono text-[--color-accent] text-xs tracking-wider mb-4">{t('about.team_tag')}</p>
         <p class="text-[--color-text-muted] text-sm leading-relaxed">{t('about.team_desc')}</p>
 
@@ -55,7 +55,7 @@ const t = useTranslations('en');
       </div>
 
       <!-- Solo Founder -->
-      <div class="border border-[--color-accent]/30 rounded-lg p-6 bg-[--color-bg-card] mb-12">
+      <div class="border border-[--color-accent]/30 rounded-lg p-6 bg-[--color-bg-card] mb-12" style="box-shadow: var(--shadow-accent-glow);">
         <p class="font-mono text-[--color-accent] text-xs tracking-wider mb-3">{t('about.solo_tag')}</p>
         <p class="font-bold text-base mb-3">{t('about.solo_headline')}</p>
         <p class="text-[--color-text-muted] text-sm leading-relaxed mb-3">
@@ -76,19 +76,19 @@ const t = useTranslations('en');
         <p class="font-mono text-[--color-accent] text-xs tracking-wider mb-2">{t('about.philosophy_tag')}</p>
         <h2 class="text-2xl font-bold mb-8">{t('about.philosophy_title')}</h2>
         <div class="grid sm:grid-cols-2 gap-6">
-          <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card]">
+          <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card]" style="box-shadow: var(--shadow-card);">
             <h3 class="font-bold mb-2">{t('about.philosophy1_title')}</h3>
             <p class="text-[--color-text-muted] text-sm">{t('about.philosophy1_desc')}</p>
           </div>
-          <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card]">
+          <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card]" style="box-shadow: var(--shadow-card);">
             <h3 class="font-bold mb-2">{t('about.philosophy2_title')}</h3>
             <p class="text-[--color-text-muted] text-sm">{t('about.philosophy2_desc')}</p>
           </div>
-          <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card]">
+          <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card]" style="box-shadow: var(--shadow-card);">
             <h3 class="font-bold mb-2">{t('about.philosophy3_title')}</h3>
             <p class="text-[--color-text-muted] text-sm">{t('about.philosophy3_desc')}</p>
           </div>
-          <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card]">
+          <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card]" style="box-shadow: var(--shadow-card);">
             <h3 class="font-bold mb-2">{t('about.philosophy4_title')}</h3>
             <p class="text-[--color-text-muted] text-sm">{t('about.philosophy4_desc')}</p>
           </div>
@@ -124,7 +124,7 @@ const t = useTranslations('en');
       </details>
 
       <!-- Social Proof -->
-      <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] mb-8">
+      <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] mb-8" style="box-shadow: var(--shadow-card);">
         <p class="font-mono text-[--color-accent] text-xs tracking-wider mb-3">{t('about.proof_tag')}</p>
         <p class="text-[--color-text-muted] text-sm leading-relaxed mb-4">{t('about.proof_desc')}</p>
         <div class="flex flex-wrap gap-3">
