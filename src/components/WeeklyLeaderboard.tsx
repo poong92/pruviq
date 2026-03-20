@@ -31,15 +31,16 @@ const labels = {
     noDataWeekly:
       "No strategy has enough weekly trades yet. Check daily rankings.",
     weeklyNote: "Updated daily · 7-day rolling window",
+    wr50Label: "WR 50%+ strategies:",
     pfTip:
       "Profit Factor = avg win ÷ avg loss. 1.0 = breakeven, 2.0+ = strong.",
     allLowSampleWarning:
       "All strategies have < 100 weekly trades. Results have low statistical reliability — check daily rankings for more data.",
   },
   ko: {
-    weeklyBest: "이번 주 Best 3",
+    weeklyBest: "이번 주 상위 3개",
     weeklyBestSub: "569+ 코인 기준 7일 PF 랭킹",
-    worstTitle: "이번 주 Worst 3",
+    worstTitle: "이번 주 하위 3개",
     worstSub: "피해야 할 조합 — 7일 PF 하위 3개",
     loading: "주간 랭킹 로딩 중...",
     error: "주간 데이터 로드 실패",
@@ -48,6 +49,7 @@ const labels = {
     noData: "주간 데이터가 아직 없습니다.",
     noDataWeekly: "이번 주 거래 샘플이 부족합니다. 일일 랭킹을 확인하세요.",
     weeklyNote: "매일 업데이트 · 7일 롤링",
+    wr50Label: "WR 50%+ 전략:",
     pfTip: "PF(수익팩터) = 평균 수익 ÷ 평균 손실. 1.0 = 손익분기, 2.0+ = 우수.",
     allLowSampleWarning:
       "이번 주 모든 전략의 거래 샘플이 부족합니다(< 100건). 통계적 신뢰도가 낮을 수 있습니다.",
@@ -209,7 +211,7 @@ export default function WeeklyLeaderboard({ lang }: Props) {
               class="font-mono text-sm text-[--color-text-muted] cursor-help"
               title={l.pfTip}
             >
-              WR 50%+ strategies:{" "}
+              {l.wr50Label}{" "}
               <span class="text-[--color-accent] font-bold">
                 {data.summary.wr_50plus}
               </span>

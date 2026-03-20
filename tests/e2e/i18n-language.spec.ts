@@ -217,7 +217,7 @@ test.describe("Ranking page: EN component language", () => {
       )
       .catch(() => null);
 
-    const bestSection = page.locator("text=Best 3 전략");
+    const bestSection = page.locator("text=상위 3개 전략");
     await expect(bestSection.first()).toBeVisible({ timeout: 10000 });
   });
 });
