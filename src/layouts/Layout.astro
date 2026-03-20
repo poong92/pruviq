@@ -566,7 +566,7 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
       })();
     </script>
     <!-- Cookie Notice (GDPR essential notice) -->
-    <div id="cookie-notice" class="fixed bottom-0 left-0 right-0 z-30 bg-[--color-bg-card] border-t border-[--color-border] px-4 py-3 flex items-center justify-between gap-4 text-sm" style="display:none" aria-live="polite">
+    <div id="cookie-notice" class="fixed bottom-0 max-sm:bottom-auto max-sm:top-16 left-0 right-0 z-40 bg-[--color-bg-card] border-t border-[--color-border] max-sm:border-t-0 max-sm:border-b px-4 py-3 flex items-center justify-between gap-4 text-sm" style="display:none" aria-live="polite">
       <p class="text-[--color-text-muted] text-xs max-w-xl">{t('cookie.notice')}</p>
       <button id="cookie-ok" class="shrink-0 font-mono text-xs px-3 py-1.5 rounded border border-[--color-border] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
         {t('cookie.ok')}
@@ -580,20 +580,20 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
 
         function applyOffset() {
           var h = notice.offsetHeight;
-          document.body.style.paddingBottom = h + 'px';
-          if (stickyCta) stickyCta.style.bottom = h + 'px';
-          // On mobile: push hero/first section up so CTA isn't hidden behind banner
           if (window.innerWidth < 640) {
-            var hero = document.querySelector('section');
-            if (hero) hero.style.paddingBottom = (h + 16) + 'px';
+            // Mobile: cookie is at top — push body content down
+            document.body.style.paddingTop = h + 'px';
+          } else {
+            // Desktop: cookie is at bottom — push body content up
+            document.body.style.paddingBottom = h + 'px';
+            if (stickyCta) stickyCta.style.bottom = h + 'px';
           }
         }
 
         function removeOffset() {
+          document.body.style.paddingTop = '';
           document.body.style.paddingBottom = '';
           if (stickyCta) stickyCta.style.bottom = '';
-          var hero = document.querySelector('section');
-          if (hero) hero.style.paddingBottom = '';
         }
 
         if (!localStorage.getItem('cookie-ok')) {
