@@ -15,6 +15,7 @@ const labels = {
     withPruviq: "With PRUVIQ",
     savings: "Monthly Savings",
     savingsYear: "per year",
+    saveYr: "Save",
     signup: "Sign Up",
     coming: "Coming Soon",
     disclaimer:
@@ -35,6 +36,7 @@ const labels = {
     withPruviq: "PRUVIQ 적용",
     savings: "월 절약액",
     savingsYear: "연간",
+    saveYr: "절약",
     signup: "가입하기",
     coming: "준비 중",
     disclaimer:
@@ -228,7 +230,7 @@ export default function FeeCalculator({ lang = "en" }: Props) {
                   <span>{t.signup} &rarr;</span>
                   {savingsYear > 0 && (
                     <span class="text-[0.6rem] opacity-80 font-normal mt-0.5">
-                      Save {fmt(savingsYear)}/yr
+                      {t.saveYr} {fmt(savingsYear)}/yr
                     </span>
                   )}
                 </a>
