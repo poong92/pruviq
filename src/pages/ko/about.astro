@@ -38,6 +38,23 @@ const t = useTranslations('ko');
         </div>
       </div>
 
+      <!-- Solo Founder -->
+      <div class="border border-[--color-accent]/30 rounded-lg p-6 bg-[--color-bg-card] mb-12">
+        <p class="font-mono text-[--color-accent] text-xs tracking-wider mb-3">{t('about.solo_tag')}</p>
+        <p class="font-bold text-base mb-3">{t('about.solo_headline')}</p>
+        <p class="text-[--color-text-muted] text-sm leading-relaxed mb-3">
+          {t('about.solo_background')}
+        </p>
+        <p class="text-[--color-text-muted] text-sm leading-relaxed mb-4">
+          {t('about.solo_why')}
+        </p>
+        <div class="flex flex-wrap gap-3 text-sm">
+          <a href="mailto:contact@pruviq.com" class="font-mono text-[--color-accent] hover:underline">contact@pruviq.com</a>
+          <span class="text-[--color-border]">·</span>
+          <a href="https://github.com/pruviq" target="_blank" rel="noopener noreferrer" class="font-mono text-[--color-accent] hover:underline">github.com/pruviq</a>
+        </div>
+      </div>
+
       <!-- Philosophy -->
       <div class="mb-12">
         <p class="font-mono text-[--color-accent] text-xs tracking-wider mb-2">{t('about.philosophy_tag')}</p>
