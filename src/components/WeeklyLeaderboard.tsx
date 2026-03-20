@@ -119,8 +119,8 @@ export default function WeeklyLeaderboard({ lang }: Props) {
       ? data.weekly_best3
       : (data?.top3 ?? []);
   const weeklyEntries = rawWeekly.filter(hasValidTrades);
-  // worst3: require at least 10 trades to avoid statistical noise (matches daily ranking threshold)
-  const worstEntries = (data?.worst3 ?? []).filter((e) => e.total_trades >= 10);
+  // worst3: require at least 30 trades for statistical reliability
+  const worstEntries = (data?.worst3 ?? []).filter((e) => e.total_trades >= 30);
   // Detect when all valid entries are low_sample (INFO-2)
   const allLowSample =
     weeklyEntries.length > 0 && weeklyEntries.every((e) => e.low_sample);
