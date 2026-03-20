@@ -183,6 +183,13 @@ const labels = {
     feeConsumeOf: "% of returns",
     showDetails: "Show details",
     hideDetails: "Hide details",
+    showAdvanced: "Show advanced metrics \u25BE",
+    hideAdvanced: "Hide advanced metrics \u25B2",
+    gradePrefix: "Grade",
+    mcBeats: (pct: number) => `Beats ${pct}% of random strategies`,
+    referralCta: "Ready to trade this strategy? Save up to 20% on trading fees",
+    survivorshipNote:
+      "Results based on currently listed assets only. Delisted coins excluded (survivorship bias).",
   },
   ko: {
     live: "기본 설정",
@@ -246,6 +253,13 @@ const labels = {
     feeConsumeOf: "%를 차지합니다",
     showDetails: "상세 보기",
     hideDetails: "접기",
+    showAdvanced: "고급 지표 보기 \u25BE",
+    hideAdvanced: "접기 \u25B2",
+    gradePrefix: "등급",
+    mcBeats: (pct: number) => `랜덤 전략 중 상위 ${(100 - pct).toFixed(0)}%`,
+    referralCta: "이 전략으로 거래 준비됐나요? 거래 수수료 최대 20% 절약",
+    survivorshipNote:
+      "현재 상장된 자산만 테스트됩니다. 상폐 코인 제외 (생존 편향).",
   },
 };
 
@@ -459,9 +473,7 @@ export default function ResultsCard({
                       : "text-[--color-red]"
               }`}
             >
-              {lang === "ko"
-                ? `등급 ${data.strategy_grade}`
-                : `Grade ${data.strategy_grade}`}
+              {`${t.gradePrefix} ${data.strategy_grade}`}
             </span>
             {data.grade_details && (
               <span class="font-mono text-[10px] text-[--color-text-muted]">
@@ -583,7 +595,7 @@ export default function ResultsCard({
           onClick={() => setShowAllMetrics(true)}
           class="w-full py-2 mb-3 rounded-lg border border-[--color-border] font-mono text-xs text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors"
         >
-          {lang === "ko" ? "고급 지표 보기 ▾" : "Show advanced metrics ▾"}
+          {t.showAdvanced}
         </button>
       )}
 
@@ -854,11 +866,7 @@ export default function ResultsCard({
             {data.mc_percentile != null && (
               <div class="mt-2 mb-1">
                 <div class="flex items-center justify-between font-mono text-[10px] text-[--color-text-muted] mb-1">
-                  <span>
-                    {lang === "ko"
-                      ? `랜덤 전략 중 상위 ${(100 - data.mc_percentile).toFixed(0)}%`
-                      : `Beats ${data.mc_percentile}% of random strategies`}
-                  </span>
+                  <span>{t.mcBeats(data.mc_percentile)}</span>
                   <span
                     style={{
                       color:
@@ -1003,7 +1011,7 @@ export default function ResultsCard({
           onClick={() => setShowAllMetrics(false)}
           class="w-full py-2 mb-3 rounded-lg border border-[--color-border] font-mono text-xs text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors"
         >
-          {lang === "ko" ? "접기 ▲" : "Hide advanced metrics ▲"}
+          {t.hideAdvanced}
         </button>
       )}
 
@@ -1053,9 +1061,7 @@ export default function ResultsCard({
         class="mt-3 flex items-center justify-between gap-2 px-3 py-2.5 rounded-lg border border-[--color-yellow]/40 bg-[--color-yellow]/5 hover:border-[--color-yellow]/70 hover:bg-[--color-yellow]/10 transition-colors no-underline group"
       >
         <span class="font-mono text-[11px] text-[--color-yellow] group-hover:text-[--color-yellow]">
-          {lang === "ko"
-            ? "이 전략으로 거래 준비됐나요? 거래 수수료 최대 20% 절약"
-            : "Ready to trade this strategy? Save up to 20% on trading fees"}
+          {t.referralCta}
         </span>
         <span class="font-mono text-[11px] text-[--color-yellow] shrink-0">
           &rarr;
@@ -1066,9 +1072,7 @@ export default function ResultsCard({
         class="text-[9px] mt-2"
         style={{ color: "var(--color-text-muted)", opacity: 0.6 }}
       >
-        {lang === "ko"
-          ? "현재 상장된 자산만 테스트됩니다. 상폐 코인 제외 (생존 편향)."
-          : "Results based on currently listed assets only. Delisted coins excluded (survivorship bias)."}
+        {t.survivorshipNote}
       </p>
     </div>
   );

@@ -28,12 +28,14 @@ const L = {
     coins: "Coins Tested",
     strategies: "Variations Tested",
     history: "Historical Data",
+    yrs: "yrs",
   },
   ko: {
     trades: "백테스트 거래",
     coins: "테스트 코인",
     strategies: "테스트 조합",
     history: "과거 데이터",
+    yrs: "년",
   },
 };
 
@@ -80,7 +82,7 @@ function AnimatedNumber({
 }
 
 export default function LiveStats({ lang = "en" }: Props) {
-  const t = L[lang] || L.en;
+  const t = L[lang] ?? L.en;
   const [stats, setStats] = useState<SiteStats>(DEFAULTS);
 
   useEffect(() => {
@@ -122,7 +124,7 @@ export default function LiveStats({ lang = "en" }: Props) {
       <div class="text-center p-4">
         <p class="font-mono text-[--color-accent] text-3xl md:text-4xl font-bold">
           <AnimatedNumber value={2} suffix="+" />
-          <span class="text-xl ml-1">{lang === "ko" ? "년" : "yrs"}</span>
+          <span class="text-xl ml-1">{t.yrs}</span>
         </p>
         <p class="text-[--color-text-muted] text-sm mt-1">{t.history}</p>
       </div>
