@@ -89,6 +89,8 @@ const rankingLabels = {
     simCta: "Test in Simulator",
     lowSampleWarning: (n: number) =>
       `${n} strategies have low sample counts (< 100 trades) — treat results with caution.`,
+    top1LowSampleAlert: (n: number) =>
+      `Today's #1 ranked strategy has only ${n} trades — statistically unreliable. Explore, don't follow.`,
     periodLabel: "Period",
     groupLabel: "Group",
     loading: "Loading...",
@@ -106,6 +108,8 @@ const rankingLabels = {
     simCta: "시뮬레이터에서 직접 확인",
     lowSampleWarning: (n: number) =>
       `일부 전략은 샘플 수가 부족합니다 (< 100건): ${n}개`,
+    top1LowSampleAlert: (n: number) =>
+      `오늘 1위 전략은 거래 수가 ${n}건에 불과합니다 — 통계적 신뢰도 낮음. 참고용으로만 보세요.`,
     periodLabel: "기간",
     groupLabel: "그룹",
     loading: "로딩 중...",
@@ -313,10 +317,18 @@ export function StrategyRanking({ lang = "en" }: { lang?: Lang }) {
         }
       >
         <SectionHeader title={lbl.best3Title} subtitle={lbl.best3Sub} />
+        {!loading && data?.top3?.[0]?.low_sample && (
+          <div class="mb-3 border border-[--color-yellow] rounded-lg px-3 py-2.5 bg-[--color-yellow]/10">
+            <p class="text-[--color-yellow] text-xs font-mono font-semibold">
+              ⚠️ {lbl.top1LowSampleAlert(data.top3[0].total_trades)}
+            </p>
+          </div>
+        )}
         {!loading &&
           data &&
           data.low_sample_count != null &&
-          data.low_sample_count > 0 && (
+          data.low_sample_count > 0 &&
+          !data.top3?.[0]?.low_sample && (
             <div class="mb-3 border border-[--color-yellow]/30 rounded-lg px-3 py-2 bg-[--color-yellow]/5">
               <p class="text-[--color-yellow] text-xs font-mono">
                 ⚠️ {lbl.lowSampleWarning(data.low_sample_count)}
