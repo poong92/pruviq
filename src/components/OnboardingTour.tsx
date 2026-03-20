@@ -59,8 +59,20 @@ const STEPS: Record<"en" | "ko", Step[]> = {
 };
 
 const L = {
-  en: { next: "Next", done: "Done", skip: "Skip tour", step: "Step" },
-  ko: { next: "다음", done: "완료", skip: "건너뛰기", step: "단계" },
+  en: {
+    next: "Next",
+    done: "Done",
+    skip: "Skip tour",
+    step: "Step",
+    ariaLabel: "Onboarding guide",
+  },
+  ko: {
+    next: "다음",
+    done: "완료",
+    skip: "건너뛰기",
+    step: "단계",
+    ariaLabel: "온보딩 가이드",
+  },
 };
 
 interface Props {
@@ -115,7 +127,7 @@ export default function OnboardingTour({ lang = "en" }: Props) {
     <div
       role="dialog"
       aria-modal="true"
-      aria-label={lang === "ko" ? "온보딩 가이드" : "Onboarding guide"}
+      aria-label={t.ariaLabel}
       style={{
         position: "fixed",
         inset: 0,

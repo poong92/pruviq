@@ -159,6 +159,55 @@ const L = {
     retryingIn: "Retrying in {n}s...",
     elapsed: "{n}s",
     estimatedTime: "~{n}s for {c} coins",
+    // BuilderPanel direction descriptions
+    dirShortDesc: "Profit when price falls",
+    dirLongDesc: "Profit when price rises",
+    dirBothDesc: "Test SHORT + LONG simultaneously",
+    // BuilderPanel capital/compound labels
+    capitalLabel: "Capital $",
+    compoundLabel: "Compound",
+    simpleLabel: "Simple",
+    // BuilderPanel compound info (coinLabel injected at render)
+    allCoinsLabel: "All Coins",
+    compoundInfoTpl: (
+      coinLabel: string,
+      capital: number,
+      lev: number,
+      exposure: number,
+    ) =>
+      `${coinLabel} — $${capital.toLocaleString()} × ${lev}x = $${exposure.toLocaleString()} position, profits compound into next trade`,
+    // ResultsPanel strategy verdict
+    gradeStrong: "STRONG",
+    gradeGood: "GOOD",
+    gradeFair: "FAIR",
+    gradeWeak: "WEAK",
+    strategyLabel: "Strategy:",
+    reasonStrong: (pf: string, wr: string, mdd: string) =>
+      `PF ${pf}, WR ${wr}%, MDD ${mdd}% — all three metrics strong`,
+    reasonGood: (pf: string, wr: string, mdd: string) =>
+      `PF ${pf}, WR ${wr}%, MDD ${mdd}% — viable for live use`,
+    reasonFairPf: (pf: string) => `PF ${pf} (target: ≥1.5)`,
+    reasonFairWr: (wr: string) => `WR ${wr}% (target: ≥50%)`,
+    reasonFairSuffix: (weak: string) => `${weak} — consider parameter tuning`,
+    reasonWeakPf: (pf: string) => `PF ${pf} (net loss)`,
+    reasonWeakMdd: (mdd: string) => `MDD ${mdd}% (excessive drawdown)`,
+    reasonWeakWr: (wr: string) => `WR ${wr}% (below 50%)`,
+    reasonWeakSuffix: (issue: string) =>
+      `${issue} — not recommended for live trading`,
+    // ResultsPanel coins used / shared buttons
+    coinsUnit: "coins",
+    cumulativePct: "cumulative % — sum of per-coin trades",
+    settingsCopied: "Copied!",
+    copySettings: "Copy Strategy Settings",
+    // ResultsPanel coins tab headers + stats
+    coinHeader: "Coin",
+    tradesHeader: "Trades",
+    winRateHeader: "Win%",
+    returnHeader: "Return",
+    profitableUnit: "profitable",
+    losingUnit: "losing",
+    flatUnit: "flat",
+    profitableCoinsUnit: "profitable",
   },
   ko: {
     title: "전략 시뮬레이터",
@@ -283,6 +332,54 @@ const L = {
     retryingIn: "{n}초 후 재시도...",
     elapsed: "{n}초",
     estimatedTime: "~{n}초 ({c}개 코인)",
+    // BuilderPanel direction descriptions
+    dirShortDesc: "하락 시 수익",
+    dirLongDesc: "상승 시 수익",
+    dirBothDesc: "SHORT + LONG 동시 테스트",
+    // BuilderPanel capital/compound labels
+    capitalLabel: "투자 원금 $",
+    compoundLabel: "복리",
+    simpleLabel: "단리",
+    // BuilderPanel compound info
+    allCoinsLabel: "전체 코인",
+    compoundInfoTpl: (
+      coinLabel: string,
+      capital: number,
+      lev: number,
+      exposure: number,
+    ) =>
+      `${coinLabel} — $${capital.toLocaleString()} × ${lev}x = $${exposure.toLocaleString()} 포지션, 수익이 다음 거래 원금에 누적`,
+    // ResultsPanel strategy verdict
+    gradeStrong: "강력함",
+    gradeGood: "양호함",
+    gradeFair: "보통",
+    gradeWeak: "위험",
+    strategyLabel: "전략 등급:",
+    reasonStrong: (pf: string, wr: string, mdd: string) =>
+      `PF ${pf}, 승률 ${wr}%, MDD ${mdd}% — 세 지표 모두 우수`,
+    reasonGood: (pf: string, wr: string, mdd: string) =>
+      `PF ${pf}, 승률 ${wr}%, MDD ${mdd}% — 실사용 가능 수준`,
+    reasonFairPf: (pf: string) => `PF ${pf} (목표: 1.5 이상)`,
+    reasonFairWr: (wr: string) => `승률 ${wr}% (목표: 50% 이상)`,
+    reasonFairSuffix: (weak: string) => `${weak} — 파라미터 조정 권장`,
+    reasonWeakPf: (pf: string) => `PF ${pf} (손익 역전)`,
+    reasonWeakMdd: (mdd: string) => `MDD ${mdd}% (과도한 낙폭)`,
+    reasonWeakWr: (wr: string) => `승률 ${wr}% (50% 미만)`,
+    reasonWeakSuffix: (issue: string) => `${issue} — 실거래 비권장`,
+    // ResultsPanel coins used / shared buttons
+    coinsUnit: "코인",
+    cumulativePct: "누적 % — 개별 코인 합산",
+    settingsCopied: "복사됨!",
+    copySettings: "설정 복사",
+    // ResultsPanel coins tab headers + stats
+    coinHeader: "코인",
+    tradesHeader: "거래",
+    winRateHeader: "승률",
+    returnHeader: "수익률",
+    profitableUnit: "수익",
+    losingUnit: "손실",
+    flatUnit: "보합",
+    profitableCoinsUnit: "수익 코인",
   },
 };
 

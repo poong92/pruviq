@@ -112,8 +112,7 @@ export default function ResultsPanel({
     const presetName = activePreset
       ? activePreset.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())
       : `Custom ${dir}`;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- timeframe not in type but may be present in API response
-    const tf = (result as any).timeframe ?? "1H";
+    const tf = result.timeframe ?? "1H";
     const lines = [
       `Strategy: ${presetName}`,
       `Direction: ${dir} | SL: ${result.sl_pct ?? slPct}% | TP: ${result.tp_pct ?? tpPct}%`,
@@ -586,53 +585,39 @@ export default function ResultsPanel({
                   let gradeColor: string;
                   let reason: string;
                   if (pf >= 2.0 && wr >= 55 && mdd <= 20) {
-                    grade = lang === "ko" ? "강력함" : "STRONG";
+                    grade = t.gradeStrong;
                     gradeColor = "#22c55e";
-                    reason =
-                      lang === "ko"
-                        ? `PF ${formatPF(pf)}, 승률 ${wr.toFixed(1)}%, MDD ${mdd.toFixed(1)}% — 세 지표 모두 우수`
-                        : `PF ${formatPF(pf)}, WR ${wr.toFixed(1)}%, MDD ${mdd.toFixed(1)}% — all three metrics strong`;
+                    reason = t.reasonStrong(
+                      formatPF(pf),
+                      wr.toFixed(1),
+                      mdd.toFixed(1),
+                    );
                   } else if (pf >= 1.5 && wr >= 50 && mdd <= 30) {
-                    grade = lang === "ko" ? "양호함" : "GOOD";
+                    grade = t.gradeGood;
                     gradeColor = "#86efac";
-                    reason =
-                      lang === "ko"
-                        ? `PF ${formatPF(pf)}, 승률 ${wr.toFixed(1)}%, MDD ${mdd.toFixed(1)}% — 실사용 가능 수준`
-                        : `PF ${formatPF(pf)}, WR ${wr.toFixed(1)}%, MDD ${mdd.toFixed(1)}% — viable for live use`;
+                    reason = t.reasonGood(
+                      formatPF(pf),
+                      wr.toFixed(1),
+                      mdd.toFixed(1),
+                    );
                   } else if (pf >= 1.2 && mdd <= 40) {
-                    grade = lang === "ko" ? "보통" : "FAIR";
+                    grade = t.gradeFair;
                     gradeColor = "#facc15";
                     const weak =
                       pf < 1.5
-                        ? lang === "ko"
-                          ? `PF ${formatPF(pf)} (목표: 1.5 이상)`
-                          : `PF ${formatPF(pf)} (target: ≥1.5)`
-                        : lang === "ko"
-                          ? `승률 ${wr.toFixed(1)}% (목표: 50% 이상)`
-                          : `WR ${wr.toFixed(1)}% (target: ≥50%)`;
-                    reason =
-                      lang === "ko"
-                        ? `${weak} — 파라미터 조정 권장`
-                        : `${weak} — consider parameter tuning`;
+                        ? t.reasonFairPf(formatPF(pf))
+                        : t.reasonFairWr(wr.toFixed(1));
+                    reason = t.reasonFairSuffix(weak);
                   } else {
-                    grade = lang === "ko" ? "위험" : "WEAK";
+                    grade = t.gradeWeak;
                     gradeColor = "#f87171";
                     const mainIssue =
                       pf < 1.0
-                        ? lang === "ko"
-                          ? `PF ${formatPF(pf)} (손익 역전)`
-                          : `PF ${formatPF(pf)} (net loss)`
+                        ? t.reasonWeakPf(formatPF(pf))
                         : mdd > 40
-                          ? lang === "ko"
-                            ? `MDD ${mdd.toFixed(1)}% (과도한 낙폭)`
-                            : `MDD ${mdd.toFixed(1)}% (excessive drawdown)`
-                          : lang === "ko"
-                            ? `승률 ${wr.toFixed(1)}% (50% 미만)`
-                            : `WR ${wr.toFixed(1)}% (below 50%)`;
-                    reason =
-                      lang === "ko"
-                        ? `${mainIssue} — 실거래 비권장`
-                        : `${mainIssue} — not recommended for live trading`;
+                          ? t.reasonWeakMdd(mdd.toFixed(1))
+                          : t.reasonWeakWr(wr.toFixed(1));
+                    reason = t.reasonWeakSuffix(mainIssue);
                   }
                   return (
                     <div
@@ -646,7 +631,7 @@ export default function ResultsPanel({
                         class="font-bold shrink-0"
                         style={{ color: gradeColor }}
                       >
-                        {lang === "ko" ? "전략 등급:" : "Strategy:"}{" "}
+                        {t.strategyLabel}{" "}
                         <span style={{ color: gradeColor }}>{grade}</span>
                       </span>
                       <span class="text-[--color-text-muted]">—</span>
@@ -823,7 +808,7 @@ export default function ResultsPanel({
                 )}
               <div class="mt-3 flex flex-wrap gap-3 text-[10px] text-[--color-text-muted] font-mono">
                 <span>
-                  {result.coins_used} {lang === "ko" ? "코인" : "coins"}
+                  {result.coins_used} {t.coinsUnit}
                 </span>
                 <span>{result.data_range}</span>
                 <span>{result.compute_time_ms}ms</span>
@@ -871,10 +856,7 @@ export default function ResultsPanel({
                       <polyline points="16 6 12 2 8 6" />
                       <line x1="12" y1="2" x2="12" y2="15" />
                     </svg>
-                    {linkCopied
-                      ? t.linkCopied || (lang === "ko" ? "복사됨!" : "Copied!")
-                      : t.shareResults ||
-                        (lang === "ko" ? "결과 공유하기" : "Share Results")}
+                    {linkCopied ? t.linkCopied : t.shareResults}
                   </button>
                 )}
                 {/* Fix 2: Copy Strategy Settings button */}
@@ -907,22 +889,13 @@ export default function ResultsPanel({
                     <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
                     <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
                   </svg>
-                  {settingsCopied
-                    ? lang === "ko"
-                      ? "복사됨!"
-                      : "Copied!"
-                    : t.copySettings ||
-                      (lang === "ko" ? "설정 복사" : "Copy Strategy Settings")}
+                  {settingsCopied ? t.settingsCopied : t.copySettings}
                 </button>
                 <a
                   href="/fees"
                   class="flex items-center gap-1.5 px-4 py-2 text-xs font-mono rounded border border-[--color-border] text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors"
                 >
-                  {t.saveOnFees ||
-                    (lang === "ko"
-                      ? "거래소 수수료 절약하기"
-                      : "Save on exchange fees")}{" "}
-                  &rarr;
+                  {t.saveOnFees} &rarr;
                 </a>
               </div>
               {/* Fix 1: ExchangeCTA — shown when result is profitable */}
@@ -955,11 +928,7 @@ export default function ResultsPanel({
                   </span>
                   {result.max_drawdown_pct > 100 && (
                     <span class="ml-1.5 text-[10px] opacity-70">
-                      (
-                      {lang === "ko"
-                        ? "누적 % — 개별 코인 합산"
-                        : "cumulative % — sum of per-coin trades"}
-                      )
+                      ({t.cumulativePct})
                     </span>
                   )}
                 </div>
@@ -1119,19 +1088,18 @@ export default function ResultsPanel({
                 <div class="p-2">
                   <div class="flex flex-wrap gap-3 mb-3 px-2 text-[10px] font-mono text-[--color-text-muted]">
                     <span style={{ color: COLORS.green }}>
-                      {profitable} {lang === "ko" ? "수익" : "profitable"}
+                      {profitable} {t.profitableUnit}
                     </span>
                     <span style={{ color: COLORS.red }}>
-                      {losing} {lang === "ko" ? "손실" : "losing"}
+                      {losing} {t.losingUnit}
                     </span>
                     {neutral > 0 && (
                       <span>
-                        {neutral} {lang === "ko" ? "보합" : "flat"}
+                        {neutral} {t.flatUnit}
                       </span>
                     )}
                     <span>
-                      {profitPct.toFixed(0)}%{" "}
-                      {lang === "ko" ? "수익 코인" : "profitable"}
+                      {profitPct.toFixed(0)}% {t.profitableCoinsUnit}
                     </span>
                   </div>
                   <div class="overflow-x-auto -webkit-overflow-scrolling-touch">
@@ -1145,21 +1113,21 @@ export default function ResultsPanel({
                             class="py-2 px-2 text-left cursor-pointer select-none hover:text-[--color-text]"
                             onClick={() => toggleSort("symbol")}
                           >
-                            {lang === "ko" ? "코인" : "Coin"}
+                            {t.coinHeader}
                             {arrow("symbol")}
                           </th>
                           <th
                             class="py-2 px-2 text-right cursor-pointer select-none hover:text-[--color-text]"
                             onClick={() => toggleSort("trades")}
                           >
-                            {lang === "ko" ? "거래" : "Trades"}
+                            {t.tradesHeader}
                             {arrow("trades")}
                           </th>
                           <th
                             class="py-2 px-2 text-right cursor-pointer select-none hover:text-[--color-text]"
                             onClick={() => toggleSort("win_rate")}
                           >
-                            {lang === "ko" ? "승률" : "Win%"}
+                            {t.winRateHeader}
                             {arrow("win_rate")}
                           </th>
                           <th
@@ -1172,7 +1140,7 @@ export default function ResultsPanel({
                             class="py-2 px-2 text-right cursor-pointer select-none hover:text-[--color-text]"
                             onClick={() => toggleSort("total_return_pct")}
                           >
-                            {lang === "ko" ? "수익률" : "Return"}
+                            {t.returnHeader}
                             {arrow("total_return_pct")}
                           </th>
                           <th class="py-2 px-2 text-center hidden sm:table-cell">

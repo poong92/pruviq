@@ -45,6 +45,7 @@ const labels = {
     showMoreNews: "Show more news",
     showLessNews: "Show less",
     retry: "Retry",
+    noResults: "No results found.",
   },
   ko: {
     tag: "시장 현황",
@@ -85,6 +86,7 @@ const labels = {
     showMoreNews: "더 보기",
     showLessNews: "접기",
     retry: "다시 시도",
+    noResults: "검색 결과가 없습니다.",
   },
 };
 
@@ -783,7 +785,7 @@ export default function MarketDashboard({
             )}
             {news && filteredNews.length === 0 && (
               <div class="text-center py-8 text-[--color-text-muted] text-[13px]">
-                {lang === "ko" ? "검색 결과가 없습니다." : "No results found."}
+                {l.noResults}
               </div>
             )}
           </div>

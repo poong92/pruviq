@@ -33,6 +33,8 @@ const labels = {
     weeklyNote: "Updated daily · 7-day rolling window",
     pfTip:
       "Profit Factor = avg win ÷ avg loss. 1.0 = breakeven, 2.0+ = strong.",
+    allLowSampleWarning:
+      "All strategies have < 100 weekly trades. Results have low statistical reliability — check daily rankings for more data.",
   },
   ko: {
     weeklyBest: "이번 주 Best 3",
@@ -47,6 +49,8 @@ const labels = {
     noDataWeekly: "이번 주 거래 샘플이 부족합니다. 일일 랭킹을 확인하세요.",
     weeklyNote: "매일 업데이트 · 7일 롤링",
     pfTip: "PF(수익팩터) = 평균 수익 ÷ 평균 손실. 1.0 = 손익분기, 2.0+ = 우수.",
+    allLowSampleWarning:
+      "이번 주 모든 전략의 거래 샘플이 부족합니다(< 100건). 통계적 신뢰도가 낮을 수 있습니다.",
   },
 };
 
@@ -124,10 +128,7 @@ export default function WeeklyLeaderboard({ lang }: Props) {
       {!loading && !error && allLowSample && (
         <div class="border border-[--color-yellow]/40 rounded-lg px-4 py-3 bg-[--color-yellow]/5">
           <p class="text-[--color-yellow] text-xs font-mono">
-            ⚠️{" "}
-            {lang === "ko"
-              ? "이번 주 모든 전략의 거래 샘플이 부족합니다(< 100건). 통계적 신뢰도가 낮을 수 있습니다."
-              : "All strategies have < 100 weekly trades. Results have low statistical reliability — check daily rankings for more data."}
+            ⚠️ {l.allLowSampleWarning}
           </p>
         </div>
       )}

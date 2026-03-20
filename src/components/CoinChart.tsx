@@ -6,7 +6,14 @@ import {
   getCssVar,
 } from "../utils/format";
 import { API_BASE_URL as API_URL } from "../config/api";
-import type { MouseEventParams, Time, IChartApi, ISeriesApi, SeriesType, UTCTimestamp } from "lightweight-charts";
+import type {
+  MouseEventParams,
+  Time,
+  IChartApi,
+  ISeriesApi,
+  SeriesType,
+  UTCTimestamp,
+} from "lightweight-charts";
 
 interface OhlcvBar {
   t: number;
@@ -473,7 +480,7 @@ export default function CoinChart({
           }}
           class="px-4 py-2 rounded-lg border border-[--color-border] bg-[--color-bg-card] text-[--color-text] font-mono text-sm cursor-pointer hover:border-[--color-accent] transition-colors min-h-[44px]"
         >
-          {lang === "ko" ? "다시 시도" : "Retry"}
+          {t.retry}
         </button>
       </div>
     );
