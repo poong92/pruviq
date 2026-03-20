@@ -66,9 +66,6 @@ export default defineConfig({
           item.priority = 0.5; item.changefreq = /** @type {any} */ ('monthly');
         }
 
-        // Freshness signal for search engines
-        item.lastmod = new Date().toISOString().split('T')[0];
-
         return item;
       }
     }),

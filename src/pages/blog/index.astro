@@ -38,7 +38,9 @@ const categoryColors: Record<string, string> = {
       "headline": p.data.title,
       "description": p.data.description,
       "datePublished": p.data.date,
-      "url": `https://pruviq.com/blog/${p.id}`
+      "url": `https://pruviq.com/blog/${p.id}`,
+      "author": { "@type": "Organization", "name": "PRUVIQ" },
+      "mainEntityOfPage": { "@type": "WebPage", "@id": `https://pruviq.com/blog/${p.id}` }
     }))
   })} />
   <section class="py-12">
