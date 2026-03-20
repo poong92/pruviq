@@ -1,8 +1,11 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { useTranslations } from '../../i18n/index';
+import siteStats from '../../../public/data/site-stats.json';
 
 const t = useTranslations('ko');
+const coinsAnalyzed = (siteStats as { coins_analyzed: number }).coins_analyzed;
+const simulationsRun = (siteStats as { simulations_run: number }).simulations_run.toLocaleString('ko-KR');
 ---
 
 <Layout title={t('meta.about_title')} description={t('meta.about_desc')}>
@@ -44,11 +47,11 @@ const t = useTranslations('ko');
             <p class="text-[--color-text-muted] text-xs">{t('about.team_stat1_label')}</p>
           </div>
           <div class="text-center">
-            <p class="font-mono text-[--color-accent] text-xl font-bold">{t('about.team_stat2_val')}</p>
+            <p class="font-mono text-[--color-accent] text-xl font-bold">{coinsAnalyzed}+</p>
             <p class="text-[--color-text-muted] text-xs">{t('about.team_stat2_label')}</p>
           </div>
           <div class="text-center">
-            <p class="font-mono text-[--color-accent] text-xl font-bold">{t('about.team_stat3_val')}</p>
+            <p class="font-mono text-[--color-accent] text-xl font-bold">{simulationsRun}</p>
             <p class="text-[--color-text-muted] text-xs">{t('about.team_stat3_label')}</p>
           </div>
         </div>

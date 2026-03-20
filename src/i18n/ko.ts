@@ -478,7 +478,7 @@ export const ko: Record<TranslationKey, string> = {
   "about.team_stat1_val": "88+",
   "about.team_stat2_label": "커버 코인",
   "about.team_stat2_val": "569",
-  "about.team_stat3_label": "시뮬레이션 거래",
+  "about.team_stat3_label": "시뮬레이터 실행 수",
   "about.team_stat3_val": "100만+",
   "about.philosophy_tag": "우리의 철학",
   "about.philosophy_title": "증명하거나, 제거하거나.",

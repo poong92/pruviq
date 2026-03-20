@@ -477,7 +477,7 @@ export const en = {
   "about.team_stat1_val": "88+",
   "about.team_stat2_label": "Coins Covered",
   "about.team_stat2_val": "569",
-  "about.team_stat3_label": "Simulated Trades",
+  "about.team_stat3_label": "Simulator Sessions",
   "about.team_stat3_val": "1M+",
   "about.philosophy_tag": "OUR PHILOSOPHY",
   "about.philosophy_title": "Prove It or Kill It.",
