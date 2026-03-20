@@ -1068,6 +1068,11 @@ export const en = {
   "home.trust_oos_label": "OOS-validated strategies",
   "home.cta_survives": "See What Survives",
   "home.cta_test_yourself": "Test It Yourself — Free",
+  "home.not_sure": "Not sure?",
+  "home.not_sure_cta": "See how it works in 30 seconds",
+  "home.community_feedback_tag": "COMMUNITY FEEDBACK",
+  "home.quotes_initials_note":
+    "Names shown as initials at community members' request.",
   "home.quotes_heading": "What Traders Say",
   "home.quotes_cta": "Join them — Try Simulator Free",
   "home.ranking_shortcut": "Today's top strategies",
