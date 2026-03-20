@@ -5,6 +5,27 @@ import WeeklyLeaderboard from '../components/WeeklyLeaderboard';
 import ErrorBoundary from '../components/ErrorBoundary';
 
 const t = useTranslations('en');
+
+// SSR fallback: fetch weekly data at build time so crawlers + no-JS users see content
+interface RankingEntry {
+  rank: number; name_en: string; strategy: string; direction: string;
+  win_rate: number; profit_factor: number; total_trades: number;
+  timeframe: string; low_sample: boolean;
+}
+interface WeeklySSR { date: string; weekly_best3: RankingEntry[]; top3: RankingEntry[]; }
+let ssrWeekly: WeeklySSR | null = null;
+try {
+  const res = await fetch('https://api.pruviq.com/rankings/daily?period=7d&group=top50', {
+    signal: AbortSignal.timeout(5000),
+  });
+  if (res.ok) ssrWeekly = await res.json() as WeeklySSR;
+} catch { /* API unavailable at build time */ }
+const ssrEntries = ssrWeekly?.weekly_best3?.filter(e => e.total_trades > 0 && e.profit_factor < 50) ?? [];
+const ssrTop3 = ssrEntries.length > 0 ? ssrEntries : (ssrWeekly?.top3 ?? []);
+function formatDate(iso: string) {
+  try { return new Date(iso + 'T00:00:00').toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Asia/Seoul' }); }
+  catch { return iso; }
+}
 ---
 
 <Layout title={t('meta.leaderboard_title')} description={t('meta.leaderboard_desc')}>
@@ -30,6 +51,62 @@ const t = useTranslations('en');
       <p class="text-[--color-text-muted] text-lg mb-10 max-w-2xl leading-relaxed">
         {t('leaderboard.desc')}
       </p>
+
+      <!-- SSR fallback: visible before JS loads or when API unavailable -->
+      {ssrTop3.length > 0 && (
+        <div id="leaderboard-ssr-fallback" class="mb-8">
+          <p class="font-mono text-[--color-accent] text-xs mb-3 tracking-wider">
+            THIS WEEK'S BEST — {ssrWeekly?.date ? formatDate(ssrWeekly.date) : ''} · 7d · Top 50
+          </p>
+          <div class="grid md:grid-cols-3 gap-4">
+            {ssrTop3.slice(0, 3).map((entry) => {
+              const medals = ['🥇','🥈','🥉'];
+              const medal = medals[entry.rank - 1] ?? `#${entry.rank}`;
+              const isLong = entry.direction === 'long';
+              const isBoth = entry.direction === 'both';
+              const dirLabel = isBoth ? 'BOTH↕' : isLong ? 'LONG↑' : 'SHORT↓';
+              const dirColor = isBoth ? 'text-[--color-yellow] border-[--color-yellow]/40' : isLong ? 'text-[--color-up] border-[--color-up]/40' : 'text-[--color-red] border-[--color-red]/40';
+              const wrColor = entry.win_rate >= 55 ? 'text-[--color-up]' : entry.win_rate >= 50 ? 'text-[--color-yellow]' : 'text-[--color-red]';
+              const pfColor = entry.profit_factor >= 1.5 ? 'text-[--color-up]' : entry.profit_factor >= 1.0 ? 'text-[--color-yellow]' : 'text-[--color-red]';
+              return (
+                <div class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card]">
+                  <div class="flex items-start justify-between gap-2 mb-3">
+                    <div class="flex items-center gap-2 min-w-0">
+                      <span class="text-xl shrink-0">{medal}</span>
+                      <div class="min-w-0">
+                        <p class="font-semibold text-[--color-text] text-sm leading-tight truncate">{entry.name_en}</p>
+                        <p class="text-[--color-text-muted] text-xs font-mono">{entry.timeframe} · {entry.direction}</p>
+                      </div>
+                    </div>
+                    <span class={`font-mono text-xs px-2 py-0.5 rounded border shrink-0 ${dirColor}`}>{dirLabel}</span>
+                  </div>
+                  <div class="grid grid-cols-3 gap-2 font-mono text-sm">
+                    <div>
+                      <p class="text-[--color-text-muted] text-xs mb-0.5">Win Rate</p>
+                      <p class={`font-bold text-base ${wrColor}`}>{entry.win_rate.toFixed(1)}%</p>
+                    </div>
+                    <div>
+                      <p class="text-[--color-text-muted] text-xs mb-0.5">PF</p>
+                      <p class={`font-bold text-base ${pfColor}`}>{entry.profit_factor.toFixed(2)}</p>
+                    </div>
+                    <div>
+                      <p class="text-[--color-text-muted] text-xs mb-0.5">Trades</p>
+                      <p class="font-bold text-base text-[--color-text]">{entry.total_trades}</p>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+      <script>
+        document.addEventListener('astro:page-load', () => {
+          const el = document.getElementById('leaderboard-ssr-fallback');
+          if (el) setTimeout(() => { el.style.display = 'none'; }, 1500);
+        });
+      </script>
+      <noscript><style>#leaderboard-ssr-fallback { display: block !important; }</style></noscript>
 
       <ErrorBoundary name="Weekly Leaderboard" client:load>
         <WeeklyLeaderboard lang="en" client:load />
