@@ -39,8 +39,8 @@ const t = useTranslations('ko');
         <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-[--color-accent]"></div>
         <div class="flex items-center gap-3 mb-2">
           <span class="font-mono font-bold text-lg">v1.7.1</span>
-          <span class="bg-[--color-accent]/20 text-[--color-accent] font-mono text-xs px-2 py-0.5 rounded">CURRENT</span>
-          <span class="text-[--color-text-muted] font-mono text-xs">2026년 2월 26일</span>
+          <span class="bg-[--color-yellow]/20 text-[--color-yellow] font-mono text-xs px-2 py-0.5 rounded">일시중단</span>
+          <span class="text-[--color-text-muted] font-mono text-xs">2026년 2월 26일 &ndash; 3월 9일</span>
         </div>
         <h3 class="font-bold mb-2">P0 버그 수정: reduceOnly 파라미터</h3>
         <ul class="text-[--color-text-muted] text-sm space-y-1">
@@ -49,6 +49,16 @@ const t = useTranslations('ko');
           <li>&bull; RSI&lt;30 필터 및 TIMEOUT 조기청산 평가 완료, 적용 보류 (충분한 엣지 없음)</li>
         </ul>
         <p class="text-[--color-text-muted] text-xs mt-2 font-mono">근거: 2,898건 백테스트, 549개 코인, 2년 이상</p>
+        <!-- Trading halt notice -->
+        <div class="mt-4 pt-4 border-t border-[--color-border]">
+          <div class="flex items-start gap-2">
+            <span class="font-mono text-xs text-[--color-yellow] mt-0.5">&#9888;</span>
+            <div>
+              <p class="font-mono text-xs text-[--color-yellow] font-semibold mb-1">실거래 중단 &mdash; 2026년 3월 9일</p>
+              <p class="text-[--color-text-muted] text-xs">최대 낙폭(MDD) 20% 초과로 실거래 일시 중단. 48일 운영 결과: 순수익 $46 (손익분기점 수준). 전략 재설계 중 — PRUVIQ 시뮬레이터는 리서치 및 공개 백테스팅에 활용 중. 재개 조건: 3개월 OOS 검증 필수.</p>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- v1.7.0 -->

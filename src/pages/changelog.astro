@@ -39,8 +39,8 @@ const t = useTranslations('en');
         <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-[--color-accent]"></div>
         <div class="flex items-center gap-3 mb-2">
           <span class="font-mono font-bold text-lg">v1.7.1</span>
-          <span class="bg-[--color-accent]/20 text-[--color-accent] font-mono text-xs px-2 py-0.5 rounded">CURRENT</span>
-          <span class="text-[--color-text-muted] font-mono text-xs">Feb 26, 2026</span>
+          <span class="bg-[--color-yellow]/20 text-[--color-yellow] font-mono text-xs px-2 py-0.5 rounded">PAUSED</span>
+          <span class="text-[--color-text-muted] font-mono text-xs">Feb 26 &ndash; Mar 9, 2026</span>
         </div>
         <h3 class="font-bold mb-2">P0 Bug Fix: reduceOnly Parameter</h3>
         <ul class="text-[--color-text-muted] text-sm space-y-1">
@@ -49,6 +49,16 @@ const t = useTranslations('en');
           <li>&bull; RSI&lt;30 filter and TIMEOUT early exit evaluated and deferred (insufficient edge)</li>
         </ul>
         <p class="text-[--color-text-muted] text-xs mt-2 font-mono">Evidence: 2,898 trades backtested, 549 coins, 2+ years</p>
+        <!-- Trading halt notice -->
+        <div class="mt-4 pt-4 border-t border-[--color-border]">
+          <div class="flex items-start gap-2">
+            <span class="font-mono text-xs text-[--color-yellow] mt-0.5">&#9888;</span>
+            <div>
+              <p class="font-mono text-xs text-[--color-yellow] font-semibold mb-1">Trading Halted &mdash; Mar 9, 2026</p>
+              <p class="text-[--color-text-muted] text-xs">Live trading paused after MDD exceeded 20% threshold. 48-day run: $46 net profit (break-even). Strategy under redesign — PRUVIQ simulator is now used for research and public backtesting. Resumption requires 3-month out-of-sample validation.</p>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- v1.7.0 -->
