@@ -511,6 +511,21 @@ export const ko: Record<TranslationKey, string> = {
   "about.proof_commits": "활발한 개발 진행 중",
   "about.proof_since": "2025년부터 개발 중",
 
+  // About - Solo Founder section
+  "about.solo_tag": "1인 창업자",
+  "about.solo_headline":
+    "개발자이자 시스템 트레이더 한 명이 만들고 유지합니다.",
+  "about.solo_background":
+    "배경: 2021년부터 알고리즘 트레이딩, 퀀트 리서치, 크립토 시장 연구.",
+  "about.solo_why":
+    "PRUVIQ를 만든 이유: 백테스트에서 검증된 전략으로 $4,000을 잃은 경험 — 모든 툴이 실패를 숨겼기 때문입니다. 그래서 내가 원했던 것을 직접 만들었습니다.",
+
+  // Home hero stat labels
+  "home.stat_coins": "테스트 코인",
+  "home.stat_trades": "백테스트 거래",
+  "home.stat_datapoints": "데이터 포인트",
+  "home.stat_free": "영원히 무료",
+
   // Performance page static fallback
   "perf.tag": "백테스트 결과",
   "perf.archived_badge": "보관됨",
