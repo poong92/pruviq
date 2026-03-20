@@ -114,9 +114,23 @@ export default function WeeklyLeaderboard({ lang }: Props) {
   const weeklyEntries = rawWeekly.filter(hasValidTrades);
   // worst3: require at least 5 trades to avoid statistical noise
   const worstEntries = (data?.worst3 ?? []).filter((e) => e.total_trades >= 5);
+  // Detect when all valid entries are low_sample (INFO-2)
+  const allLowSample =
+    weeklyEntries.length > 0 && weeklyEntries.every((e) => e.low_sample);
 
   return (
     <div class="space-y-8">
+      {/* Low-data warning banner — shown when every entry is flagged low_sample */}
+      {!loading && !error && allLowSample && (
+        <div class="border border-[--color-yellow]/40 rounded-lg px-4 py-3 bg-[--color-yellow]/5">
+          <p class="text-[--color-yellow] text-xs font-mono">
+            ⚠️{" "}
+            {lang === "ko"
+              ? "이번 주 모든 전략의 거래 샘플이 부족합니다(< 100건). 통계적 신뢰도가 낮을 수 있습니다."
+              : "All strategies have < 100 weekly trades. Results have low statistical reliability — check daily rankings for more data."}
+          </p>
+        </div>
+      )}
       {/* Best 3 this week */}
       <section>
         <div class="mb-4">
