@@ -60,6 +60,8 @@ const L = {
     running: "Running...",
     results: "Results",
     noResults: "Run a backtest to see results.",
+    noResultsHint:
+      "Try Quick Test above — instant results with the top-ranked strategy.",
     exportCsv: "Download CSV",
     exportExcel: "Download Excel",
     trades: "Trade List",
@@ -238,6 +240,8 @@ const L = {
     running: "실행 중...",
     results: "결과",
     noResults: "백테스트를 실행하면 결과가 표시됩니다.",
+    noResultsHint:
+      "위의 퀵 테스트를 눌러보세요 — 상위 전략으로 즉시 결과를 확인할 수 있습니다.",
     exportCsv: "CSV 다운로드",
     exportExcel: "Excel 다운로드",
     trades: "거래 목록",
