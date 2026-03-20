@@ -17,3 +17,21 @@
 
 /og-image.jpg
   Cache-Control: public, max-age=86400
+
+/data/market.json
+  Cache-Control: public, max-age=600, stale-while-revalidate=300
+
+/data/coins-stats.json
+  Cache-Control: public, max-age=3600, stale-while-revalidate=1800
+
+/data/macro.json
+  Cache-Control: public, max-age=3600, stale-while-revalidate=1800
+
+/data/rankings/*.json
+  Cache-Control: public, max-age=1800, stale-while-revalidate=900
+
+/data/news.json
+  Cache-Control: public, max-age=1800, stale-while-revalidate=900
+
+/data/performance.json
+  Cache-Control: public, max-age=86400, stale-while-revalidate=3600

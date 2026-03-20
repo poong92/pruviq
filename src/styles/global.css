@@ -173,6 +173,17 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
+/* Precision typography — headings default */
+h1 {
+  letter-spacing: -0.03em;
+}
+h2 {
+  letter-spacing: -0.02em;
+}
+h3 {
+  letter-spacing: -0.01em;
+}
+
 ::selection {
   background-color: var(--color-accent);
   color: #ffffff;
