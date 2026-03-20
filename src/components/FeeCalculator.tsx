@@ -68,7 +68,7 @@ interface Props {
 
 export default function FeeCalculator({ lang = "en" }: Props) {
   const t = labels[lang] || labels.en;
-  const [volume, setVolume] = useState(10000);
+  const [volume, setVolume] = useState(50000);
   const [market, setMarket] = useState<"futures" | "spot">("futures");
 
   const volumeSteps = [10000, 25000, 50000, 100000, 250000, 500000, 1000000];

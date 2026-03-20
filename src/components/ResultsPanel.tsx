@@ -1205,9 +1205,12 @@ export default function ResultsPanel({
         </div>
       ) : (
         !error && (
-          <div class="border border-[--color-border] rounded-lg bg-[--color-bg-card] p-8 text-center">
+          <div class="border border-[--color-border] rounded-lg bg-[--color-bg-card] p-8 text-center space-y-2">
             <div class="text-[--color-text-muted] text-sm font-mono">
               {t.noResults}
+            </div>
+            <div class="text-[--color-text-muted] text-xs font-mono opacity-60">
+              {t.noResultsHint ?? ""}
             </div>
           </div>
         )
