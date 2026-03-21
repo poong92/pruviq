@@ -109,12 +109,25 @@ const levelConfig = [
         {t('learn.desc').replace('{count}', String(posts.length))}
       </p>
       <LearnProgress client:visible postIds={posts.map(p => p.id)} lang="en" />
+      <div class="mt-4 relative max-w-md">
+        <input
+          id="learn-search"
+          type="search"
+          placeholder="Search articles..."
+          autocomplete="off"
+          class="w-full bg-[--color-bg-hover] border border-[--color-border] rounded-lg pl-9 pr-4 py-2 text-sm text-[--color-text] placeholder:text-[--color-text-muted] outline-none focus:border-[--color-accent] transition-colors"
+        />
+        <svg class="absolute left-2.5 top-2.5 w-4 h-4 text-[--color-text-muted] pointer-events-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+      </div>
+      <p id="learn-search-count" class="text-xs text-[--color-text-muted] font-mono mt-2 hidden" aria-live="polite"></p>
     </div>
   </section>
 
   <!-- LEVELS -->
   {levelConfig.map(({ level, label, title, desc, color, posts: levelPosts }) => (
-    <section class="pb-12 border-t border-[--color-border] pt-12">
+    <section class="pb-12 border-t border-[--color-border] pt-12" data-level-section={level}>
       <div class="max-w-5xl mx-auto px-4">
         <div class="flex items-center gap-3 mb-2">
           <span class={`text-xs font-mono px-2 py-0.5 rounded border ${levelColorMap[color]}`}>
@@ -126,15 +139,22 @@ const levelConfig = [
 
         <div class="grid md:grid-cols-2 gap-4">
           {levelPosts.map(post => (
-            <LearnCard
-              client:visible
-              postId={post.id}
-              href={`/blog/${post.id}`}
-              title={post.data.title}
-              description={post.data.description}
-              tags={post.data.tags}
-              tagMap={tagMap}
-            />
+            <div
+              data-search-item
+              data-title={post.data.title.toLowerCase()}
+              data-desc={post.data.description.toLowerCase()}
+              data-tags={(post.data.tags ?? []).join(' ').toLowerCase()}
+            >
+              <LearnCard
+                client:visible
+                postId={post.id}
+                href={`/blog/${post.id}`}
+                title={post.data.title}
+                description={post.data.description}
+                tags={post.data.tags}
+                tagMap={tagMap}
+              />
+            </div>
           ))}
         </div>
       </div>
@@ -159,5 +179,46 @@ const levelConfig = [
       </div>
     </div>
   </section>
+
+  <script>
+    const input = document.getElementById('learn-search') as HTMLInputElement | null;
+    const counter = document.getElementById('learn-search-count');
+
+    if (input) {
+      input.addEventListener('input', () => {
+        const q = input.value.trim().toLowerCase();
+        let visibleCount = 0;
+
+        document.querySelectorAll<HTMLElement>('[data-search-item]').forEach(item => {
+          if (!q) {
+            item.style.display = '';
+            return;
+          }
+          const matches =
+            (item.dataset.title || '').includes(q) ||
+            (item.dataset.desc || '').includes(q) ||
+            (item.dataset.tags || '').includes(q);
+          item.style.display = matches ? '' : 'none';
+          if (matches) visibleCount++;
+        });
+
+        document.querySelectorAll<HTMLElement>('[data-level-section]').forEach(section => {
+          if (!q) { section.style.display = ''; return; }
+          const hasVisible = Array.from(section.querySelectorAll<HTMLElement>('[data-search-item]'))
+            .some(el => el.style.display !== 'none');
+          section.style.display = hasVisible ? '' : 'none';
+        });
+
+        if (counter) {
+          if (q) {
+            counter.textContent = `${visibleCount} result${visibleCount !== 1 ? 's' : ''} for "${input.value.trim()}"`;
+            counter.classList.remove('hidden');
+          } else {
+            counter.classList.add('hidden');
+          }
+        }
+      });
+    }
+  </script>
 
 </Layout>
