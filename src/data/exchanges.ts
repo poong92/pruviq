@@ -1,3 +1,5 @@
+import { EXCHANGES } from "../config/exchanges";
+
 export interface FeeRate {
   maker: number; // decimal, e.g. 0.001 = 0.10%
   taker: number;
@@ -10,7 +12,7 @@ export interface Exchange {
   futures: FeeRate;
   spotDiscount: number; // decimal, e.g. 0.19 = 19%
   futuresDiscount: number; // decimal, e.g. 0.09 = 9%
-  discount: number; // primary display discount (futures), decimal
+  discount: number; // primary display discount (highest), decimal
   discountLabel: string; // display string, e.g. "Up to 19%"
   referralUrl: string;
   available: boolean;
@@ -19,21 +21,35 @@ export interface Exchange {
   infoOnly?: boolean; // true for non-affiliate info-only exchanges
 }
 
-export const exchanges: Exchange[] = [
-  {
-    id: "binance",
-    name: "Binance",
-    spot: { maker: 0.001, taker: 0.001 },
-    futures: { maker: 0.0002, taker: 0.0005 },
-    spotDiscount: 0.19, // 19% off spot fees
-    futuresDiscount: 0.09, // 9% off futures fees
-    discount: 0.19, // primary display: spot (highest)
-    discountLabel: "Up to 19%",
-    referralUrl: "https://accounts.binance.com/register?ref=PRUVIQ",
+/** Spot fee rates per exchange (not in config — config only tracks futures) */
+const SPOT_RATES: Record<string, FeeRate> = {
+  binance: { maker: 0.001, taker: 0.001 }, // 0.10% / 0.10%
+};
+
+const EXCHANGE_TAGS: Record<string, string> = {
+  binance: "#1 Volume",
+};
+
+/** Derive discount rates from config/exchanges.ts (SSoT) */
+function configToExchange(cfg: (typeof EXCHANGES)[number]): Exchange {
+  const spotDiscount = cfg.spotDiscountPct / 100;
+  const futuresDiscount = cfg.futuresDiscountPct / 100;
+  return {
+    id: cfg.id,
+    name: cfg.name,
+    spot: SPOT_RATES[cfg.id] ?? { maker: cfg.standardMakerFee / 100, taker: cfg.standardTakerFee / 100 },
+    futures: { maker: cfg.standardMakerFee / 100, taker: cfg.standardTakerFee / 100 },
+    spotDiscount,
+    futuresDiscount,
+    discount: Math.max(spotDiscount, futuresDiscount),
+    discountLabel: cfg.marketingLabel,
+    referralUrl: cfg.referralUrl,
     available: true,
-    tag: "#1 Volume",
-  },
-];
+    tag: EXCHANGE_TAGS[cfg.id] ?? "",
+  };
+}
+
+export const exchanges: Exchange[] = EXCHANGES.map(configToExchange);
 
 /** Korean exchanges — info-only, no referral */
 export const koreanExchanges: Exchange[] = [

@@ -340,7 +340,7 @@ export const en = {
   "fees.title1": "Compare Fees.",
   "fees.title2": "Save on Every Trade.",
   "fees.desc":
-    "Spot & futures fees at a glance. Sign up through PRUVIQ and get a Binance referral discount: 10% off trading fees.",
+    "Spot & futures fees at a glance. Sign up through PRUVIQ and get up to 19% off Binance trading fees.",
   "fees.disclosure":
     "Affiliate disclosure: PRUVIQ earns a commission when you sign up through our referral links. Your fee discount is not affected.",
   "fees.compare_title": "Compare Exchanges",

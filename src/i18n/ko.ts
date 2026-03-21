@@ -338,7 +338,7 @@ export const ko: Record<TranslationKey, string> = {
   "fees.title1": "수수료 비교.",
   "fees.title2": "매 거래마다 절약.",
   "fees.desc":
-    "현물 & 선물 수수료 한눈에. PRUVIQ 추천 링크로 바이낸스 가입 시 수수료 10% 할인.",
+    "현물 & 선물 수수료 한눈에. PRUVIQ 추천 링크로 바이낸스 가입 시 최대 19% 할인.",
   "fees.disclosure":
     "제휴 공개: PRUVIQ는 추천 링크로 가입 시 거래소로부터 수수료를 받습니다. 회원의 수수료 할인에는 영향이 없습니다.",
   "fees.compare_title": "거래소 비교",
