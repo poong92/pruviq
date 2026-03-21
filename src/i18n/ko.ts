@@ -207,9 +207,9 @@ export const ko: Record<TranslationKey, string> = {
   "strategies.desc":
     "실패를 숨기지 않습니다. 테스트한 모든 전략이 완전한 백테스트 데이터, 실제 결과, 솔직한 분석과 함께 여기 문서화되어 있습니다.",
   "strategies.count":
-    "총 {total}개 전략 — {verified}개 검증됨, {killed}개 중단됨, {shelved}개 검토 중.",
+    "총 {total}개 전략 문서화 — 실거래 데이터 기반, 결과 100% 공개.",
   "strategies.funnel":
-    "88개 파라미터 조합 테스트 → {total}개 전략 완전 문서화 → {verified}개만 검증 통과. 이것은 실패가 아니라 필터입니다.",
+    "88개 파라미터 조합 테스트 → {total}개 전략 완전 문서화 → 통과/탈락 포함 모든 결과 공개. 이것이 진짜 투명성입니다.",
   "strategies.more_tag": "더 많은 전략 예정",
   "strategies.more_desc":
     "새로운 접근법을 지속적으로 테스트합니다. 백테스트 검증이 완료되면 여기에 표시됩니다.",
