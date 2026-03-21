@@ -365,7 +365,12 @@ details .faq-body > div {
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
 }
-a:focus-visible, button:focus-visible, [tabindex]:focus-visible {
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
   border-radius: 2px;
@@ -502,11 +507,15 @@ input:focus {
 }
 
 /* ─── Focus visible ─── */
-button:focus-visible,
 a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
 [tabindex]:focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
+  border-radius: 2px;
 }
 
 /* ─── Responsive table ─── */
@@ -845,6 +854,38 @@ a:focus-visible,
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   pointer-events: none;
+}
+
+/* ─── Backtest result micro-celebrations ─── */
+@keyframes positive-glow {
+  0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+}
+
+@keyframes negative-shake {
+  0%, 100% { transform: translateX(0); }
+  15% { transform: translateX(-3px); }
+  30% { transform: translateX(3px); }
+  45% { transform: translateX(-2px); }
+  60% { transform: translateX(2px); }
+  75% { transform: translateX(-1px); }
+  90% { transform: translateX(1px); }
+}
+
+.result-positive {
+  animation: positive-glow 0.8s ease-out;
+}
+
+.result-negative {
+  animation: negative-shake 0.6s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .result-positive,
+  .result-negative {
+    animation: none;
+  }
 }
 
 /* ─── Hero staggered entrance animation ─── */

@@ -22,9 +22,12 @@ const t = useTranslations('en');
       </div>
 
       <noscript>
-        <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] text-center mt-6">
-          <p class="text-[--color-text-muted] text-sm">{t('compare.noscript_text')}</p>
-          <a href="/strategies" class="text-[--color-accent] text-sm hover:underline mt-2 inline-block">&larr; {t('compare.back')}</a>
+        <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] mt-6">
+          <h2 class="text-xl font-bold mb-3">{t('compare.noscript_title')}</h2>
+          <p class="text-[--color-text-muted] text-sm mb-4">{t('compare.noscript_desc')}</p>
+          <p class="text-[--color-text-muted] text-xs mb-4">{t('compare.noscript_strategies')}</p>
+          <p class="text-[--color-text-muted] text-xs italic mb-4">{t('compare.noscript_text')}</p>
+          <a href="/strategies" class="text-[--color-accent] text-sm hover:underline inline-block">&larr; {t('compare.back')}</a>
         </div>
       </noscript>
     </div>

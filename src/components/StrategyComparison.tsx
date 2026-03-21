@@ -1,13 +1,44 @@
-import { useState, useEffect } from 'preact/hooks';
-import { winRateColor, profitFactorColor, signColor, formatPF } from '../utils/format';
-import { API_BASE_URL as API_URL, STATIC_DATA, fetchWithFallback } from '../config/api';
+import { useState, useEffect } from "preact/hooks";
+import {
+  winRateColor,
+  profitFactorColor,
+  signColor,
+  formatPF,
+} from "../utils/format";
+import {
+  API_BASE_URL as API_URL,
+  STATIC_DATA,
+  fetchWithFallback,
+} from "../config/api";
+
+/** fetch with AbortController timeout (default 10s) */
+function fetchWithTimeout(
+  url: string,
+  opts: RequestInit = {},
+  timeoutMs = 10000,
+): Promise<Response> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  return fetch(url, { ...opts, signal: controller.signal }).finally(() =>
+    clearTimeout(timer),
+  );
+}
 
 interface PresetFull {
   id: string;
   name: string;
   direction: string;
   indicators: Record<string, Record<string, number>>;
-  entry: { type: string; conditions: { field: string; op: string; value?: number | boolean; field2?: string; shift?: number }[] };
+  entry: {
+    type: string;
+    conditions: {
+      field: string;
+      op: string;
+      value?: number | boolean;
+      field2?: string;
+      shift?: number;
+    }[];
+  };
   avoid_hours: number[];
   sl_pct: number;
   tp_pct: number;
@@ -32,68 +63,74 @@ interface BacktestResult {
 
 const labels = {
   en: {
-    tag: 'STRATEGY COMPARISON',
-    title: 'Compare All Strategies',
-    desc: 'Same conditions, same data. Adjust SL/TP to see how each strategy responds.',
-    sl: 'Stop Loss %',
-    tp: 'Take Profit %',
-    run: 'Compare',
-    running: 'Running backtests...',
-    loading: 'Loading strategies...',
-    strategy: 'Strategy',
-    direction: 'Dir',
-    trades: 'Trades',
-    winRate: 'Win Rate',
-    pf: 'PF',
-    totalReturn: 'Return',
-    maxDD: 'Max DD',
-    noData: 'Run comparison to see results.',
-    error: 'Failed to load strategies.',
-    disclaimer: '* All strategies simulated on 50 coins with identical fees (0.04% + 0.02% slippage). Past performance does not guarantee future results.',
-    computeTime: 'Computed in',
-    useDefault: 'Use each strategy\'s default SL/TP',
-    view: 'Details',
-    ctaTitle: 'Build Your Own',
-    ctaDesc: 'Combine indicators and test with the strategy builder.',
-    ctaButton: 'Try Simulator',
+    tag: "STRATEGY COMPARISON",
+    title: "Compare All Strategies",
+    desc: "Same conditions, same data. Adjust SL/TP to see how each strategy responds.",
+    sl: "Stop Loss %",
+    tp: "Take Profit %",
+    run: "Compare",
+    running: "Running backtests...",
+    loading: "Loading strategies...",
+    strategy: "Strategy",
+    direction: "Dir",
+    trades: "Trades",
+    winRate: "Win Rate",
+    pf: "PF",
+    totalReturn: "Return",
+    maxDD: "Max DD",
+    noData: "Run comparison to see results.",
+    error: "Failed to load strategies.",
+    disclaimer:
+      "* All strategies simulated on 50 coins with identical fees (0.04% + 0.02% slippage). Past performance does not guarantee future results.",
+    computeTime: "Computed in",
+    useDefault: "Use each strategy's default SL/TP",
+    view: "Details",
+    ctaTitle: "Build Your Own",
+    ctaDesc: "Combine indicators and test with the strategy builder.",
+    ctaButton: "Try Simulator",
   },
   ko: {
-    tag: '전략 비교',
-    title: '모든 전략 비교',
-    desc: '동일한 조건, 동일한 데이터. SL/TP를 조정하여 각 전략의 반응을 확인하세요.',
-    sl: '손절 %',
-    tp: '익절 %',
-    run: '비교 실행',
-    running: '백테스트 실행 중...',
-    loading: '전략 로딩 중...',
-    strategy: '전략',
-    direction: '방향',
-    trades: '거래 수',
-    winRate: '승률',
-    pf: '수익 팩터',
-    totalReturn: '수익률',
-    maxDD: '최대 DD',
-    noData: '비교를 실행하면 결과가 표시됩니다.',
-    error: '전략 데이터 로딩 실패.',
-    disclaimer: '* 모든 전략은 50개 코인, 동일한 수수료(0.04% + 0.02% 슬리피지)로 시뮬레이션됩니다. 과거 성과는 미래 결과를 보장하지 않습니다.',
-    computeTime: '계산 시간',
-    useDefault: '각 전략의 기본 SL/TP 사용',
-    view: '자세히 보기',
-    ctaTitle: '나만의 전략 만들기',
-    ctaDesc: '인디케이터를 조합하고 전략 빌더로 테스트하세요.',
-    ctaButton: '시뮬레이터 시작',
+    tag: "전략 비교",
+    title: "모든 전략 비교",
+    desc: "동일한 조건, 동일한 데이터. SL/TP를 조정하여 각 전략의 반응을 확인하세요.",
+    sl: "손절 %",
+    tp: "익절 %",
+    run: "비교 실행",
+    running: "백테스트 실행 중...",
+    loading: "전략 로딩 중...",
+    strategy: "전략",
+    direction: "방향",
+    trades: "거래 수",
+    winRate: "승률",
+    pf: "수익 팩터",
+    totalReturn: "수익률",
+    maxDD: "최대 DD",
+    noData: "비교를 실행하면 결과가 표시됩니다.",
+    error: "전략 데이터 로딩 실패.",
+    disclaimer:
+      "* 모든 전략은 50개 코인, 동일한 수수료(0.04% + 0.02% 슬리피지)로 시뮬레이션됩니다. 과거 성과는 미래 결과를 보장하지 않습니다.",
+    computeTime: "계산 시간",
+    useDefault: "각 전략의 기본 SL/TP 사용",
+    view: "자세히 보기",
+    ctaTitle: "나만의 전략 만들기",
+    ctaDesc: "인디케이터를 조합하고 전략 빌더로 테스트하세요.",
+    ctaButton: "시뮬레이터 시작",
   },
 };
 
 const STATUS_MAP: Record<string, { en: string; ko: string; color: string }> = {
-  'bb-squeeze-short': { en: 'LIVE', ko: '실거래 중', color: 'var(--color-accent)' },
+  "bb-squeeze-short": {
+    en: "LIVE",
+    ko: "실거래 중",
+    color: "var(--color-accent)",
+  },
 };
 
 interface Props {
-  lang?: 'en' | 'ko';
+  lang?: "en" | "ko";
 }
 
-export default function StrategyComparison({ lang = 'en' }: Props) {
+export default function StrategyComparison({ lang = "en" }: Props) {
   const t = labels[lang] || labels.en;
   const [presets, setPresets] = useState<PresetFull[]>([]);
   const [results, setResults] = useState<Record<string, BacktestResult>>({});
@@ -105,29 +142,91 @@ export default function StrategyComparison({ lang = 'en' }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [totalTime, setTotalTime] = useState(0);
 
-  // Load presets on mount
+  // Load presets + static comparison results on mount
   useEffect(() => {
+    let cancelled = false;
     const loadPresets = async () => {
       try {
-        const listData = await fetchWithFallback<{ id: string }[]>('/builder/presets', STATIC_DATA.builderPresets);
+        // 1. Load preset list (static-first, fast)
+        const listData = await fetchWithFallback<
+          {
+            id: string;
+            name?: string;
+            direction?: string;
+            sl_pct?: number;
+            tp_pct?: number;
+          }[]
+        >("/builder/presets", STATIC_DATA.builderPresets);
         const list = Array.isArray(listData) ? listData : [];
-        // Fetch preset details with bounded concurrency to avoid API rate limits
+        if (cancelled) return;
+
+        // 2. Load static comparison results in parallel (instant render)
+        let staticResults: Record<string, BacktestResult> | null = null;
+        try {
+          const staticRes = await fetchWithTimeout(
+            STATIC_DATA.comparisonResults,
+            {},
+            5000,
+          );
+          if (staticRes.ok) {
+            const staticData = await staticRes.json();
+            if (staticData?.strategies) {
+              staticResults = {};
+              for (const [id, strat] of Object.entries(
+                staticData.strategies,
+              ) as [
+                string,
+                {
+                  name: string;
+                  direction: string;
+                  defaults: { sl: number; tp: number };
+                  results: Record<string, BacktestResult>;
+                },
+              ][]) {
+                // Use the default SL/TP result from static data
+                const defaultKey = `sl${strat.defaults.sl}_tp${strat.defaults.tp}`;
+                if (strat.results[defaultKey]) {
+                  staticResults[id] = strat.results[defaultKey];
+                }
+              }
+            }
+          }
+        } catch {
+          // static fallback failed, proceed without it
+        }
+
+        // 3. Fetch preset details with timeout + bounded concurrency
         const concurrency = 5;
         const resultsArr: Array<PresetFull | null> = [];
         for (let i = 0; i < list.length; i += concurrency) {
+          if (cancelled) return;
           const batch = list.slice(i, i + concurrency);
-          const batchResults = await Promise.all(batch.map(async (item: { id: string }) => {
-            try {
-              const res = await fetch(`${API_URL}/builder/presets/${encodeURIComponent(item.id)}`);
-              if (!res.ok) return null;
-              return { ...(await res.json()), id: item.id } as PresetFull;
-            } catch {
-              return null;
-            }
-          }));
+          const batchResults = await Promise.all(
+            batch.map(async (item: { id: string }) => {
+              try {
+                const res = await fetchWithTimeout(
+                  `${API_URL}/builder/presets/${encodeURIComponent(item.id)}`,
+                  {},
+                  10000,
+                );
+                if (!res.ok) return null;
+                return { ...(await res.json()), id: item.id } as PresetFull;
+              } catch {
+                return null;
+              }
+            }),
+          );
           resultsArr.push(...batchResults);
         }
-        setPresets(resultsArr.filter(Boolean) as PresetFull[]);
+        if (cancelled) return;
+
+        const loadedPresets = resultsArr.filter(Boolean) as PresetFull[];
+        setPresets(loadedPresets);
+
+        // 4. If we got static results, show them immediately (no auto-run needed)
+        if (staticResults && Object.keys(staticResults).length > 0) {
+          setResults(staticResults);
+        }
         setIsLoading(false);
       } catch {
         setError(t.error);
@@ -135,14 +234,10 @@ export default function StrategyComparison({ lang = 'en' }: Props) {
       }
     };
     loadPresets();
+    return () => {
+      cancelled = true;
+    };
   }, []);
-
-  // Auto-run once presets loaded
-  useEffect(() => {
-    if (presets.length > 0 && Object.keys(results).length === 0) {
-      runComparison();
-    }
-  }, [presets]);
 
   const runComparison = async () => {
     if (presets.length === 0) return;
@@ -166,11 +261,15 @@ export default function StrategyComparison({ lang = 'en' }: Props) {
           top_n: 50,
         };
 
-        const res = await fetch(`${API_URL}/backtest`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(body),
-        });
+        const res = await fetchWithTimeout(
+          `${API_URL}/backtest`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body),
+          },
+          10000,
+        );
 
         if (res.ok) {
           const data = await res.json();
@@ -198,7 +297,7 @@ export default function StrategyComparison({ lang = 'en' }: Props) {
     return rb.total_return_pct - ra.total_return_pct;
   });
 
-  const strategyBase = lang === 'ko' ? '/ko/strategies' : '/strategies';
+  const strategyBase = lang === "ko" ? "/ko/strategies" : "/strategies";
 
   if (isLoading) {
     return (
@@ -210,7 +309,10 @@ export default function StrategyComparison({ lang = 'en' }: Props) {
         </div>
         <div class="space-y-3">
           {[1, 2, 3, 4, 5].map((i) => (
-            <div key={i} class="h-16 bg-[--color-border] rounded-lg animate-pulse" />
+            <div
+              key={i}
+              class="h-16 bg-[--color-border] rounded-lg animate-pulse"
+            />
           ))}
         </div>
       </div>
@@ -221,7 +323,9 @@ export default function StrategyComparison({ lang = 'en' }: Props) {
     <div class="space-y-8">
       {/* Header */}
       <div>
-        <div class="font-mono text-xs text-[--color-accent] tracking-widest mb-2 uppercase">{t.tag}</div>
+        <div class="font-mono text-xs text-[--color-accent] tracking-widest mb-2 uppercase">
+          {t.tag}
+        </div>
         <h1 class="text-3xl md:text-4xl font-bold mb-3">{t.title}</h1>
         <p class="text-[--color-text-muted] text-lg max-w-2xl">{t.desc}</p>
       </div>
@@ -236,32 +340,46 @@ export default function StrategyComparison({ lang = 'en' }: Props) {
               onChange={() => setUseDefaults(!useDefaults)}
               class="accent-[--color-accent] w-4 h-4"
             />
-            <span class="font-mono text-sm text-[--color-text-muted]">{t.useDefault}</span>
+            <span class="font-mono text-sm text-[--color-text-muted]">
+              {t.useDefault}
+            </span>
           </label>
 
           {!useDefaults && (
             <>
               <div>
-                <label class="font-mono text-xs text-[--color-text-muted] block mb-1">{t.sl}</label>
+                <label class="font-mono text-xs text-[--color-text-muted] block mb-1">
+                  {t.sl}
+                </label>
                 <input
                   type="number"
                   value={slPct}
                   min={1}
                   max={50}
                   step={0.5}
-                  onChange={(e: Event) => setSlPct(parseFloat((e.target as HTMLInputElement).value) || 10)}
+                  onChange={(e: Event) =>
+                    setSlPct(
+                      parseFloat((e.target as HTMLInputElement).value) || 10,
+                    )
+                  }
                   class="w-20 bg-[--color-bg] border border-[--color-border] rounded px-2 py-1.5 text-sm font-mono text-[--color-text]"
                 />
               </div>
               <div>
-                <label class="font-mono text-xs text-[--color-text-muted] block mb-1">{t.tp}</label>
+                <label class="font-mono text-xs text-[--color-text-muted] block mb-1">
+                  {t.tp}
+                </label>
                 <input
                   type="number"
                   value={tpPct}
                   min={1}
                   max={100}
                   step={0.5}
-                  onChange={(e: Event) => setTpPct(parseFloat((e.target as HTMLInputElement).value) || 8)}
+                  onChange={(e: Event) =>
+                    setTpPct(
+                      parseFloat((e.target as HTMLInputElement).value) || 8,
+                    )
+                  }
                   class="w-20 bg-[--color-bg] border border-[--color-border] rounded px-2 py-1.5 text-sm font-mono text-[--color-text]"
                 />
               </div>
@@ -272,11 +390,19 @@ export default function StrategyComparison({ lang = 'en' }: Props) {
             onClick={runComparison}
             disabled={isRunning || presets.length === 0}
             class={`px-6 py-2.5 rounded-lg font-mono font-bold text-sm cursor-pointer transition-all
-              ${isRunning
-                ? 'cursor-not-allowed'
-                : 'hover:shadow-[0_0_15px_var(--color-up-fill)]'
+              ${
+                isRunning
+                  ? "cursor-not-allowed"
+                  : "hover:shadow-[0_0_15px_var(--color-up-fill)]"
               }`}
-            style={isRunning ? { background: 'var(--color-bg-hover)', color: 'var(--color-text-muted)' } : { background: 'var(--color-accent)', color: '#fff' }}
+            style={
+              isRunning
+                ? {
+                    background: "var(--color-bg-hover)",
+                    color: "var(--color-text-muted)",
+                  }
+                : { background: "var(--color-accent)", color: "#fff" }
+            }
           >
             {isRunning ? t.running : t.run}
           </button>
@@ -326,47 +452,88 @@ export default function StrategyComparison({ lang = 'en' }: Props) {
                   if (!r) return null;
                   const total = r.tp_count + r.sl_count + r.timeout_count;
                   return (
-                    <tr key={preset.id} class="border-b border-[--color-border] last:border-0 hover:bg-[--color-bg-hover] transition-colors">
+                    <tr
+                      key={preset.id}
+                      class="border-b border-[--color-border] last:border-0 hover:bg-[--color-bg-hover] transition-colors"
+                    >
                       <td class="px-4 py-3">
                         <div class="flex items-center gap-2">
-                          <span class="text-[0.6875rem] px-1.5 py-0.5 rounded border"
-                                style={{ color: status?.color, borderColor: status?.color }}>
-                            {status?.[lang] || ''}
+                          <span
+                            class="text-[0.6875rem] px-1.5 py-0.5 rounded border"
+                            style={{
+                              color: status?.color,
+                              borderColor: status?.color,
+                            }}
+                          >
+                            {status?.[lang] || ""}
                           </span>
-                          <a href={`${strategyBase}/${preset.id}`}
-                             class="font-semibold text-[--color-text] hover:text-[--color-accent] transition-colors">
+                          <a
+                            href={`${strategyBase}/${preset.id}`}
+                            class="font-semibold text-[--color-text] hover:text-[--color-accent] transition-colors"
+                          >
                             {preset.name}
                           </a>
                         </div>
                       </td>
                       <td class="px-3 py-3 text-center">
-                        <span class={`text-xs ${preset.direction === 'short' ? 'text-[--color-red]' : 'text-[--color-accent]'}`}>
+                        <span
+                          class={`text-xs ${preset.direction === "short" ? "text-[--color-red]" : "text-[--color-accent]"}`}
+                        >
                           {preset.direction.toUpperCase()}
                         </span>
                       </td>
-                      <td class="px-3 py-3 text-right text-[--color-text-muted]">{r.total_trades}</td>
-                      <td class="px-3 py-3 text-right font-bold" style={{ color: winRateColor(r.win_rate) }}>
+                      <td class="px-3 py-3 text-right text-[--color-text-muted]">
+                        {r.total_trades}
+                      </td>
+                      <td
+                        class="px-3 py-3 text-right font-bold"
+                        style={{ color: winRateColor(r.win_rate) }}
+                      >
                         {r.win_rate}%
                       </td>
-                      <td class="px-3 py-3 text-right font-bold" style={{ color: profitFactorColor(r.profit_factor) }}>
+                      <td
+                        class="px-3 py-3 text-right font-bold"
+                        style={{ color: profitFactorColor(r.profit_factor) }}
+                      >
                         {formatPF(r.profit_factor)}
                       </td>
-                      <td class="px-3 py-3 text-right font-bold" style={{ color: signColor(r.total_return_pct) }}>
-                        {r.total_return_pct > 0 ? '+' : ''}{r.total_return_pct}%
+                      <td
+                        class="px-3 py-3 text-right font-bold"
+                        style={{ color: signColor(r.total_return_pct) }}
+                      >
+                        {r.total_return_pct > 0 ? "+" : ""}
+                        {r.total_return_pct}%
                       </td>
                       <td class="px-3 py-3 text-right text-[--color-red]">
                         {r.max_drawdown_pct}%
                       </td>
                       <td class="px-3 py-3 text-right text-xs">
-                        <span class="text-[--color-accent]">{total > 0 ? Math.round(r.tp_count / total * 100) : 0}%</span>
-                        {'/'}
-                        <span class="text-[--color-red]">{total > 0 ? Math.round(r.sl_count / total * 100) : 0}%</span>
-                        {'/'}
-                        <span class="text-[--color-text-muted]">{total > 0 ? Math.round(r.timeout_count / total * 100) : 0}%</span>
+                        <span class="text-[--color-accent]">
+                          {total > 0
+                            ? Math.round((r.tp_count / total) * 100)
+                            : 0}
+                          %
+                        </span>
+                        {"/"}
+                        <span class="text-[--color-red]">
+                          {total > 0
+                            ? Math.round((r.sl_count / total) * 100)
+                            : 0}
+                          %
+                        </span>
+                        {"/"}
+                        <span class="text-[--color-text-muted]">
+                          {total > 0
+                            ? Math.round((r.timeout_count / total) * 100)
+                            : 0}
+                          %
+                        </span>
                       </td>
                       <td class="px-3 py-3 text-center">
-                        <a href={`${strategyBase}/${preset.id}`}
-                           class="text-[--color-accent] text-xs hover:underline">
+                        <a
+                          href={`${strategyBase}/${preset.id}`}
+                          class="text-[--color-accent] text-xs hover:underline"
+                        >
                           {t.view} &rarr;
                         </a>
                       </td>
@@ -384,57 +551,108 @@ export default function StrategyComparison({ lang = 'en' }: Props) {
               const status = STATUS_MAP[preset.id];
               if (!r) return null;
               const total = r.tp_count + r.sl_count + r.timeout_count;
-              const tpPctVal = total > 0 ? Math.round(r.tp_count / total * 100) : 0;
-              const slPctVal = total > 0 ? Math.round(r.sl_count / total * 100) : 0;
-              const toPctVal = total > 0 ? Math.round(r.timeout_count / total * 100) : 0;
+              const tpPctVal =
+                total > 0 ? Math.round((r.tp_count / total) * 100) : 0;
+              const slPctVal =
+                total > 0 ? Math.round((r.sl_count / total) * 100) : 0;
+              const toPctVal =
+                total > 0 ? Math.round((r.timeout_count / total) * 100) : 0;
 
               return (
-                <a key={preset.id}
-                   href={`${strategyBase}/${preset.id}`}
-                   class="block border border-[--color-border] rounded-xl p-4 bg-[--color-bg-card] hover:border-[--color-accent] transition-colors">
+                <a
+                  key={preset.id}
+                  href={`${strategyBase}/${preset.id}`}
+                  class="block border border-[--color-border] rounded-xl p-4 bg-[--color-bg-card] hover:border-[--color-accent] transition-colors"
+                >
                   <div class="flex items-center gap-2 mb-3">
-                    <span class="text-[0.6875rem] px-1.5 py-0.5 rounded border font-mono"
-                          style={{ color: status?.color, borderColor: status?.color }}>
-                      {status?.[lang] || ''}
+                    <span
+                      class="text-[0.6875rem] px-1.5 py-0.5 rounded border font-mono"
+                      style={{
+                        color: status?.color,
+                        borderColor: status?.color,
+                      }}
+                    >
+                      {status?.[lang] || ""}
                     </span>
-                    <span class="font-mono font-bold text-sm">{preset.name}</span>
-                    <span class={`text-xs font-mono ml-auto ${preset.direction === 'short' ? 'text-[--color-red]' : 'text-[--color-accent]'}`}>
+                    <span class="font-mono font-bold text-sm">
+                      {preset.name}
+                    </span>
+                    <span
+                      class={`text-xs font-mono ml-auto ${preset.direction === "short" ? "text-[--color-red]" : "text-[--color-accent]"}`}
+                    >
                       {preset.direction.toUpperCase()}
                     </span>
                   </div>
 
                   <div class="grid grid-cols-2 gap-2 font-mono text-xs sm:text-sm mb-3">
                     <div class="p-1.5 sm:p-2 rounded bg-[--color-bg-tooltip] border border-[--color-border]">
-                      <div class="text-[0.625rem] sm:text-[0.6875rem] text-[--color-text-muted] uppercase">{t.winRate}</div>
-                      <div class="font-bold" style={{ color: winRateColor(r.win_rate) }}>{r.win_rate}%</div>
-                    </div>
-                    <div class="p-1.5 sm:p-2 rounded bg-[--color-bg-tooltip] border border-[--color-border]">
-                      <div class="text-[0.625rem] sm:text-[0.6875rem] text-[--color-text-muted] uppercase">{t.pf}</div>
-                      <div class="font-bold" style={{ color: profitFactorColor(r.profit_factor) }}>{formatPF(r.profit_factor)}</div>
-                    </div>
-                    <div class="p-1.5 sm:p-2 rounded bg-[--color-bg-tooltip] border border-[--color-border]">
-                      <div class="text-[0.625rem] sm:text-[0.6875rem] text-[--color-text-muted] uppercase">{t.totalReturn}</div>
-                      <div class="font-bold" style={{ color: signColor(r.total_return_pct) }}>
-                        {r.total_return_pct > 0 ? '+' : ''}{r.total_return_pct}%
+                      <div class="text-[0.625rem] sm:text-[0.6875rem] text-[--color-text-muted] uppercase">
+                        {t.winRate}
+                      </div>
+                      <div
+                        class="font-bold"
+                        style={{ color: winRateColor(r.win_rate) }}
+                      >
+                        {r.win_rate}%
                       </div>
                     </div>
                     <div class="p-1.5 sm:p-2 rounded bg-[--color-bg-tooltip] border border-[--color-border]">
-                      <div class="text-[0.625rem] sm:text-[0.6875rem] text-[--color-text-muted] uppercase">{t.maxDD}</div>
-                      <div class="font-bold text-[--color-red]">{r.max_drawdown_pct}%</div>
+                      <div class="text-[0.625rem] sm:text-[0.6875rem] text-[--color-text-muted] uppercase">
+                        {t.pf}
+                      </div>
+                      <div
+                        class="font-bold"
+                        style={{ color: profitFactorColor(r.profit_factor) }}
+                      >
+                        {formatPF(r.profit_factor)}
+                      </div>
+                    </div>
+                    <div class="p-1.5 sm:p-2 rounded bg-[--color-bg-tooltip] border border-[--color-border]">
+                      <div class="text-[0.625rem] sm:text-[0.6875rem] text-[--color-text-muted] uppercase">
+                        {t.totalReturn}
+                      </div>
+                      <div
+                        class="font-bold"
+                        style={{ color: signColor(r.total_return_pct) }}
+                      >
+                        {r.total_return_pct > 0 ? "+" : ""}
+                        {r.total_return_pct}%
+                      </div>
+                    </div>
+                    <div class="p-1.5 sm:p-2 rounded bg-[--color-bg-tooltip] border border-[--color-border]">
+                      <div class="text-[0.625rem] sm:text-[0.6875rem] text-[--color-text-muted] uppercase">
+                        {t.maxDD}
+                      </div>
+                      <div class="font-bold text-[--color-red]">
+                        {r.max_drawdown_pct}%
+                      </div>
                     </div>
                   </div>
 
                   {/* Exit bar */}
                   <div class="flex h-1.5 rounded-full overflow-hidden bg-[--color-border] mb-1">
-                    <div class="bg-[--color-accent]" style={{ width: `${tpPctVal}%` }} />
-                    <div class="bg-[--color-red]" style={{ width: `${slPctVal}%` }} />
-                    <div class="bg-[--color-text-muted]" style={{ width: `${toPctVal}%` }} />
+                    <div
+                      class="bg-[--color-accent]"
+                      style={{ width: `${tpPctVal}%` }}
+                    />
+                    <div
+                      class="bg-[--color-red]"
+                      style={{ width: `${slPctVal}%` }}
+                    />
+                    <div
+                      class="bg-[--color-text-muted]"
+                      style={{ width: `${toPctVal}%` }}
+                    />
                   </div>
                   <div class="flex gap-3 font-mono text-[0.6875rem]">
                     <span class="text-[--color-accent]">TP {tpPctVal}%</span>
                     <span class="text-[--color-red]">SL {slPctVal}%</span>
-                    <span class="text-[--color-text-muted]">TO {toPctVal}%</span>
-                    <span class="text-[--color-text-muted] ml-auto">{r.total_trades} {t.trades}</span>
+                    <span class="text-[--color-text-muted]">
+                      TO {toPctVal}%
+                    </span>
+                    <span class="text-[--color-text-muted] ml-auto">
+                      {r.total_trades} {t.trades}
+                    </span>
                   </div>
                 </a>
               );
@@ -454,13 +672,19 @@ export default function StrategyComparison({ lang = 'en' }: Props) {
             <h3 class="font-bold text-sm mb-1">{t.ctaTitle}</h3>
             <p class="text-[--color-text-muted] text-xs">{t.ctaDesc}</p>
           </div>
-          <a href={lang === 'ko' ? '/ko/simulate' : '/simulate'} class="shrink-0 px-5 py-2.5 rounded-lg font-semibold text-sm no-underline hover:opacity-90 transition-opacity whitespace-nowrap" style="background:var(--color-accent);color:#fff">
+          <a
+            href={lang === "ko" ? "/ko/simulate" : "/simulate"}
+            class="shrink-0 px-5 py-2.5 rounded-lg font-semibold text-sm no-underline hover:opacity-90 transition-opacity whitespace-nowrap"
+            style="background:var(--color-accent);color:#fff"
+          >
             {t.ctaButton} &rarr;
           </a>
         </div>
       </div>
 
-      <p class="font-mono text-[0.625rem] text-[--color-text-muted] leading-relaxed">{t.disclaimer}</p>
+      <p class="font-mono text-[0.625rem] text-[--color-text-muted] leading-relaxed">
+        {t.disclaimer}
+      </p>
     </div>
   );
 }

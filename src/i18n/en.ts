@@ -810,6 +810,11 @@ export const en = {
     "Rankings are updated daily and require JavaScript to load. Please enable JavaScript in your browser.",
   "compare.noscript_text":
     "JavaScript is required to use the strategy comparison tool.",
+  "compare.noscript_title": "Strategy Comparison",
+  "compare.noscript_desc":
+    "Compare 5 backtested strategies (BB Squeeze SHORT, BB Squeeze LONG, RSI Reversal, MACD Momentum, and more) across 50 coins with identical conditions. Adjust SL/TP parameters and see win rate, profit factor, max drawdown, and return side by side.",
+  "compare.noscript_strategies":
+    "Available strategies: BB Squeeze SHORT (verified, live trading), BB Squeeze LONG, RSI Reversal LONG, MACD Momentum LONG, and ATR Breakout LONG. All simulated with 0.04% fee + 0.02% slippage on 2+ years of data.",
 
   // Blog article CTA
   "blog.cta_title": "Ready to test strategies yourself?",

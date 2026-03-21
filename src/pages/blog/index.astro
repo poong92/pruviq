@@ -24,6 +24,20 @@ const categoryColors: Record<string, string> = {
   weekly: '--color-accent',
   education: '--color-text-muted',
 };
+
+const categoryBorderColors: Record<string, string> = {
+  market: 'var(--color-yellow)',
+  quant: 'var(--color-accent)',
+  strategy: 'var(--color-text)',
+  weekly: 'var(--color-accent)',
+  education: 'var(--color-text-muted)',
+};
+
+function getReadingTime(body: string | undefined): string {
+  if (!body) return '1 min read';
+  const wordCount = body.trim().split(/\s+/).length;
+  return Math.ceil(wordCount / 200) + ' min read';
+}
 ---
 
 <Layout title={t('meta.blog_title')} description={t('meta.blog_desc')}>
@@ -83,13 +97,14 @@ const categoryColors: Record<string, string> = {
             {posts.map((post) => (
               <a href={`/blog/${post.id}`}
                  class="block border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] card-hover group"
-                 style="box-shadow: var(--shadow-card);">
+                 style={`box-shadow: var(--shadow-card); border-left: 3px solid ${categoryBorderColors[post.data.category] || 'var(--color-text-muted)'};`}>
                 <div class="flex items-center gap-3 mb-3">
                   <span class={`font-mono text-xs tracking-wider`}
                         style={`color: var(${categoryColors[post.data.category] || '--color-text-muted'})`}>
                     {categoryLabels[post.data.category] || post.data.category.toUpperCase()}
                   </span>
                   <span class="text-[--color-text-muted] text-xs font-mono">{post.data.date}</span>
+                  <span class="text-[--color-text-muted] text-xs font-mono ml-auto">{getReadingTime(post.body)}</span>
                 </div>
                 <h2 class="text-xl font-bold mb-2 group-hover:text-[--color-accent] transition-colors">
                   {post.data.title}
