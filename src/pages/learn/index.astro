@@ -73,6 +73,11 @@ const levelColorMap: Record<string, string> = {
   red: 'bg-red-500/10 text-red-400 border-red-500/20',
 };
 
+function getReadTime(body: string): number {
+  const words = body.trim().split(/\s+/).length;
+  return Math.max(1, Math.ceil(words / 200));
+}
+
 const levelConfig = [
   { level: 'beginner', label: t('learn.level_beginner'), title: t('learn.level_beginner_title'), desc: t('learn.level_beginner_desc'), color: 'green', posts: beginner },
   { level: 'intermediate', label: t('learn.level_intermediate'), title: t('learn.level_intermediate_title'), desc: t('learn.level_intermediate_desc'), color: 'yellow', posts: intermediate },
@@ -155,6 +160,7 @@ const levelConfig = [
                 tagMap={tagMap}
                 levelLabel={label}
                 levelColor={color}
+                readTime={getReadTime(post.body)}
               />
             </div>
           ))}
