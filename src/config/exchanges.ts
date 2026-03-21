@@ -50,24 +50,4 @@ export const EXCHANGES: ExchangeFeeConfig[] = [
     url: "https://www.binance.com",
     referralUrl: "https://accounts.binance.com/register?ref=PRUVIQ",
   },
-  {
-    id: "bitget",
-    name: "Bitget",
-    standardMakerFee: 0.02, // futures maker: 0.020%
-    standardTakerFee: 0.06, // futures taker: 0.060%
-    referralDiscountPct: 20,
-    marketingLabel: "20% off",
-    url: "https://www.bitget.com",
-    referralUrl: "https://partner.bitget.com/bg/71KRCS",
-  },
-  {
-    id: "okx",
-    name: "OKX",
-    standardMakerFee: 0.02, // futures maker: 0.020%
-    standardTakerFee: 0.05, // futures taker: 0.050%
-    referralDiscountPct: 20,
-    marketingLabel: "20% off",
-    url: "https://www.okx.com",
-    referralUrl: "#",
-  },
 ];

@@ -100,49 +100,6 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
         </div>
         <a href="/ko/compare/tradingview" class="text-xs text-[--color-accent] hover:underline font-mono mb-8 inline-block">{t('compare_table.detail_link_alt')} &rarr;</a>
 
-        <!-- Stats -->
-        <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
-          <div class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card] card-hover" style="box-shadow: var(--shadow-card);">
-            <p class="font-mono text-[--color-accent] text-2xl font-bold">{coinsAnalyzed}</p>
-            <p class="text-[--color-text-muted] text-sm">{t('hero.stat1')}</p>
-            <p class="text-[--color-text-muted] text-xs mt-1 opacity-60">{t('hero.stat1_sub')}</p>
-          </div>
-          <div class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card] card-hover" style="box-shadow: var(--shadow-card);">
-            <p class="font-mono text-[--color-accent] text-2xl font-bold">{tradingDays}+</p>
-            <p class="text-[--color-text-muted] text-sm">{t('hero.stat4')}</p>
-            <p class="text-[--color-text-muted] text-xs mt-1 opacity-60">{t('hero.stat4_sub')}</p>
-          </div>
-          <div class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card] card-hover" style="box-shadow: var(--shadow-card);">
-            <p class="font-mono text-[--color-accent] text-2xl font-bold">{candlesProcessed}+</p>
-            <p class="text-[--color-text-muted] text-sm">{t('hero.stat5')}</p>
-            <p class="text-[--color-text-muted] text-xs mt-1 opacity-60">{t('hero.stat5_sub')}</p>
-          </div>
-          <div class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card] card-hover" style="box-shadow: var(--shadow-card);">
-            <p class="font-mono text-[--color-accent] text-2xl font-bold">{t('hero.stat2_val')}</p>
-            <p class="text-[--color-text-muted] text-sm">{t('hero.stat2')}</p>
-          </div>
-          <div class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card] card-hover" style="box-shadow: var(--shadow-card);">
-            <p class="font-mono text-[--color-accent] text-2xl font-bold">100%</p>
-            <p class="text-[--color-text-muted] text-sm">{t('hero.stat3')}</p>
-          </div>
-          <div class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card] card-hover" style="box-shadow: var(--shadow-card);">
-            <p class="font-mono text-[--color-accent] text-2xl font-bold">$0</p>
-            <p class="text-[--color-text-muted] text-sm">{t('hero.stat6')}</p>
-            <p class="text-[--color-text-muted] text-xs mt-1 opacity-60">{t('hero.stat6_sub')}</p>
-          </div>
-        </div>
-
-        <!-- TRUST BLOCK: "N개 검증됨" 제거 — 숫자가 작을 때 부정적 신호 -->
-        <div class="mt-6 border border-[--color-border] rounded p-4 bg-[--color-bg-card] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <p class="text-sm font-mono text-[--color-text-muted]">{t('trust.badge_validated')}</p>
-            <p class="text-xl font-bold">{coinsAnalyzed}개 코인 백테스트 가능</p>
-            <p class="text-xs text-[--color-text-muted]">{t('trust.last_updated').replace('{date}', lastUpdated)}</p>
-          </div>
-          <div class="sm:text-right">
-            <a href="/ko/simulate" class="btn btn-primary btn-md">{t('cta.button1')}</a>
-          </div>
-        </div>
       </div>
       <!-- Right: Live strategy widget -->
       <div class="mt-6 md:mt-0">
@@ -168,129 +125,6 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
         <div>
           <div class="font-mono text-[--color-accent] text-xs tracking-wider mb-1">③ {t('how.step3')}</div>
           <p class="text-xs text-[--color-text-muted]">{t('how.step3_desc')}</p>
-        </div>
-      </div>
-      <div class="mt-6 text-center">
-        <a href="/ko/simulate" class="btn btn-primary btn-md
-          {t('hero.cta_primary')} &rarr;
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- WHY PRUVIQ (Merged Problem + Evidence) -->
-  <hr class="section-divider" />
-  <section class="py-20 bg-[--color-bg-subtle]" aria-labelledby="why-heading-ko">
-    <div class="max-w-6xl mx-auto px-4">
-      <p class="font-mono text-[--color-down] text-sm mb-2 tracking-wider">{t('problem.tag')}</p>
-      <h2 id="why-heading-ko" class="text-3xl md:text-4xl font-bold mb-4">{t('problem.title')}</h2>
-      <p class="text-[--color-text-muted] text-lg mb-12 max-w-3xl">{t('evidence.desc')}</p>
-
-      <!-- Case Studies -->
-      <div class="grid md:grid-cols-3 gap-8 mb-12">
-        <div class="border border-[--color-down]/30 rounded-lg p-6 bg-[--color-bg-card]">
-          <div class="text-[--color-down] font-mono text-xs font-bold mb-3 flex items-center gap-2">
-            <span class="inline-block w-2 h-2 rounded-full bg-[--color-down]"></span>
-            {t('problem.case1_label')}
-          </div>
-          <h3 class="font-bold text-lg mb-2">{t('problem.card1_title')}</h3>
-          <p class="text-[--color-text-muted] text-sm leading-relaxed mb-3">{t('problem.card1_desc')}</p>
-          <p class="text-xs text-[--color-text-muted] opacity-60 italic">{t('problem.card1_source')}</p>
-        </div>
-        <div class="border border-[--color-down]/30 rounded-lg p-6 bg-[--color-bg-card]">
-          <div class="text-[--color-down] font-mono text-xs font-bold mb-3 flex items-center gap-2">
-            <span class="inline-block w-2 h-2 rounded-full bg-[--color-down]"></span>
-            {t('problem.case2_label')}
-          </div>
-          <h3 class="font-bold text-lg mb-2">{t('problem.card2_title')}</h3>
-          <p class="text-[--color-text-muted] text-sm leading-relaxed mb-3">{t('problem.card2_desc')}</p>
-          <p class="text-xs text-[--color-text-muted] opacity-60 italic">{t('problem.card2_source')}</p>
-        </div>
-        <div class="border border-[--color-down]/30 rounded-lg p-6 bg-[--color-bg-card]">
-          <div class="text-[--color-down] font-mono text-xs font-bold mb-3 flex items-center gap-2">
-            <span class="inline-block w-2 h-2 rounded-full bg-[--color-down]"></span>
-            {t('problem.case3_label')}
-          </div>
-          <h3 class="font-bold text-lg mb-2">{t('problem.card3_title')}</h3>
-          <p class="text-[--color-text-muted] text-sm leading-relaxed mb-3">{t('problem.card3_desc')}</p>
-          <p class="text-xs text-[--color-text-muted] opacity-60 italic">{t('problem.card3_source')}</p>
-        </div>
-      </div>
-
-      <!-- The Elimination Process -->
-      <div class="border border-[--color-accent]/30 rounded-lg p-8 bg-[--color-bg-card] max-w-3xl mx-auto mb-12">
-        <p class="font-mono text-[--color-accent] text-xs font-bold mb-4">{t('evidence.lesson_tag')}</p>
-        <p class="text-[--color-text-muted] leading-relaxed mb-3">
-          {t('evidence.lesson1')} <span class="text-[--color-accent] font-bold text-lg">{t('evidence.lesson_loss')}</span> <span class="text-[--color-up] font-bold text-lg">{t('evidence.lesson1_end')}</span>
-        </p>
-        <p class="text-[--color-text-muted] leading-relaxed mb-4">{t('evidence.lesson3')}</p>
-        <p class="text-[--color-accent] font-bold text-lg italic">{t('evidence.lesson_rule')}</p>
-      </div>
-
-      <!-- What we publish vs don't promise -->
-      <div class="grid md:grid-cols-2 gap-8 mb-12">
-        <div class="border border-[--color-up]/30 rounded-lg p-6 bg-[--color-bg-card]">
-          <p class="font-mono text-[--color-up] text-xs font-bold mb-4">{t('evidence.publish_tag')}</p>
-          <ul class="space-y-2 text-sm text-[--color-text-muted]">
-            <li class="flex items-start gap-2"><span class="text-[--color-up] shrink-0 mt-0.5">&#10003;</span> {t('evidence.publish1')}</li>
-            <li class="flex items-start gap-2"><span class="text-[--color-up] shrink-0 mt-0.5">&#10003;</span> {t('evidence.publish2')}</li>
-            <li class="flex items-start gap-2"><span class="text-[--color-up] shrink-0 mt-0.5">&#10003;</span> {t('evidence.publish3')}</li>
-            <li class="flex items-start gap-2"><span class="text-[--color-up] shrink-0 mt-0.5">&#10003;</span> {t('evidence.publish4')}</li>
-          </ul>
-        </div>
-        <div class="border border-[--color-down]/30 rounded-lg p-6 bg-[--color-bg-card]">
-          <p class="font-mono text-[--color-down] text-xs font-bold mb-4">{t('evidence.nopromise_tag')}</p>
-          <ul class="space-y-2 text-sm text-[--color-text-muted]">
-            <li class="flex items-start gap-2"><span class="text-[--color-down] shrink-0 mt-0.5">&#10007;</span> {t('evidence.nopromise1')}</li>
-            <li class="flex items-start gap-2"><span class="text-[--color-down] shrink-0 mt-0.5">&#10007;</span> {t('evidence.nopromise2')}</li>
-            <li class="flex items-start gap-2"><span class="text-[--color-down] shrink-0 mt-0.5">&#10007;</span> {t('evidence.nopromise3')}</li>
-            <li class="flex items-start gap-2"><span class="text-[--color-down] shrink-0 mt-0.5">&#10007;</span> {t('evidence.nopromise4')}</li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="text-center">
-        <p class="text-xl md:text-2xl font-bold mb-6">
-          {t('problem.hook')} <span class="text-[--color-accent]">{t('problem.hook_accent')}</span>
-        </p>
-        <a href="/ko/simulate" class="btn btn-primary btn-lg">
-          {t('hero.cta_primary')} &rarr;
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- SYSTEM (How It Works - Visual) -->
-  <hr class="section-divider" />
-  <section class="py-20 bg-[--color-bg-subtle]" aria-labelledby="system-heading-ko">
-    <div class="max-w-6xl mx-auto px-4">
-      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('system.tag')}</p>
-      <h2 id="system-heading-ko" class="text-3xl md:text-4xl font-bold mb-4">{t('system.title')}</h2>
-      <p class="text-[--color-text-muted] text-lg mb-12 max-w-2xl">{t('system.desc')}</p>
-
-      <div class="grid md:grid-cols-3 gap-8 mb-12">
-        <div class="relative">
-          <div class="font-mono text-[--color-accent] text-5xl font-bold opacity-20 absolute -top-4 -left-2">1</div>
-          <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] relative">
-            <h3 class="font-mono text-[--color-accent] font-bold mb-2">{t('system.step1')}</h3>
-            <p class="text-[--color-text-muted] text-sm leading-relaxed">{t('system.step1_desc')}</p>
-          </div>
-          <div class="hidden md:block absolute top-1/2 -right-4 text-[--color-text-muted] text-2xl">&rarr;</div>
-        </div>
-        <div class="relative">
-          <div class="font-mono text-[--color-accent] text-5xl font-bold opacity-20 absolute -top-4 -left-2">2</div>
-          <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] relative">
-            <h3 class="font-mono text-[--color-accent] font-bold mb-2">{t('system.step2')}</h3>
-            <p class="text-[--color-text-muted] text-sm leading-relaxed">{t('system.step2_desc')}</p>
-          </div>
-          <div class="hidden md:block absolute top-1/2 -right-4 text-[--color-text-muted] text-2xl">&rarr;</div>
-        </div>
-        <div class="relative">
-          <div class="font-mono text-[--color-accent] text-5xl font-bold opacity-20 absolute -top-4 -left-2">3</div>
-          <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] relative">
-            <h3 class="font-mono text-[--color-accent] font-bold mb-2">{t('system.step3')}</h3>
-            <p class="text-[--color-text-muted] text-sm leading-relaxed">{t('system.step3_desc')}</p>
-          </div>
         </div>
       </div>
     </div>
@@ -367,6 +201,53 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
     </div>
   </section>
 
+  <!-- WHY PRUVIQ (Merged Problem + Evidence) -->
+  <hr class="section-divider" />
+  <section class="py-20 bg-[--color-bg-subtle]" aria-labelledby="why-heading-ko">
+    <div class="max-w-6xl mx-auto px-4">
+      <p class="font-mono text-[--color-down] text-sm mb-2 tracking-wider">{t('problem.tag')}</p>
+      <h2 id="why-heading-ko" class="text-3xl md:text-4xl font-bold mb-4">{t('problem.title')}</h2>
+      <p class="text-[--color-text-muted] text-lg mb-12 max-w-3xl">{t('evidence.desc')}</p>
+
+      <!-- Case Studies -->
+      <div class="grid md:grid-cols-3 gap-8 mb-12">
+        <div class="border border-[--color-down]/30 rounded-lg p-6 bg-[--color-bg-card]">
+          <div class="text-[--color-down] font-mono text-xs font-bold mb-3 flex items-center gap-2">
+            <span class="inline-block w-2 h-2 rounded-full bg-[--color-down]"></span>
+            {t('problem.case1_label')}
+          </div>
+          <h3 class="font-bold text-lg mb-2">{t('problem.card1_title')}</h3>
+          <p class="text-[--color-text-muted] text-sm leading-relaxed mb-3">{t('problem.card1_desc')}</p>
+          <p class="text-xs text-[--color-text-muted] opacity-60 italic">{t('problem.card1_source')}</p>
+        </div>
+        <div class="border border-[--color-down]/30 rounded-lg p-6 bg-[--color-bg-card]">
+          <div class="text-[--color-down] font-mono text-xs font-bold mb-3 flex items-center gap-2">
+            <span class="inline-block w-2 h-2 rounded-full bg-[--color-down]"></span>
+            {t('problem.case2_label')}
+          </div>
+          <h3 class="font-bold text-lg mb-2">{t('problem.card2_title')}</h3>
+          <p class="text-[--color-text-muted] text-sm leading-relaxed mb-3">{t('problem.card2_desc')}</p>
+          <p class="text-xs text-[--color-text-muted] opacity-60 italic">{t('problem.card2_source')}</p>
+        </div>
+        <div class="border border-[--color-down]/30 rounded-lg p-6 bg-[--color-bg-card]">
+          <div class="text-[--color-down] font-mono text-xs font-bold mb-3 flex items-center gap-2">
+            <span class="inline-block w-2 h-2 rounded-full bg-[--color-down]"></span>
+            {t('problem.case3_label')}
+          </div>
+          <h3 class="font-bold text-lg mb-2">{t('problem.card3_title')}</h3>
+          <p class="text-[--color-text-muted] text-sm leading-relaxed mb-3">{t('problem.card3_desc')}</p>
+          <p class="text-xs text-[--color-text-muted] opacity-60 italic">{t('problem.card3_source')}</p>
+        </div>
+      </div>
+
+      <div class="text-center">
+        <p class="text-xl md:text-2xl font-bold">
+          {t('problem.hook')} <span class="text-[--color-accent]">{t('problem.hook_accent')}</span>
+        </p>
+      </div>
+    </div>
+  </section>
+
   <!-- FEATURES & TRUST (Merged) -->
   <hr class="section-divider" />
   <section class="py-20 bg-[--color-bg-subtle]" aria-labelledby="features-heading-ko">
@@ -436,11 +317,6 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
           <p class="text-[--color-text-muted] text-sm">{t('trust.badge_open_desc')}</p>
         </a>
       </div>
-      <div class="mt-10 text-center">
-        <a href="/ko/simulate" class="btn btn-primary btn-md
-          {t('hero.cta_primary')} &rarr;
-        </a>
-      </div>
     </div>
   </section>
 
@@ -482,11 +358,6 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
             </div>
           </footer>
         </blockquote>
-      </div>
-      <div class="mt-8 text-center">
-        <a href="/ko/simulate" class="btn btn-primary btn-md
-          {t('home.quotes_cta')} &rarr;
-        </a>
       </div>
     </div>
   </section>
@@ -533,11 +404,6 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
           </summary>
           <p class="px-6 pb-4 text-[--color-text-muted] text-sm leading-relaxed">{t('faq.a5')}</p>
         </details>
-      </div>
-      <div class="mt-8 text-center">
-        <a href="/ko/simulate" class="btn btn-primary btn-md
-          {t('hero.cta_primary')} &rarr;
-        </a>
       </div>
     </div>
   </section>
