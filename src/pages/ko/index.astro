@@ -31,9 +31,6 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
         <p class="text-lg md:text-xl text-[--color-up] font-semibold mb-3 max-w-2xl">
           {t('hero.subcopy')}
         </p>
-        <p class="text-lg md:text-xl text-[--color-text-muted] mb-4 max-w-2xl">
-          {t('hero.desc')}
-        </p>
         <!-- 히어로 스탯 그리드 -->
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-px border border-[--color-border] rounded-lg overflow-hidden mb-3 bg-[--color-border]">
           <div class="bg-[--color-bg-card] px-4 py-3 text-center">
@@ -85,8 +82,8 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
             {t('hero.cta_primary')} &rarr;
           </a>
           <a href="/ko/strategies"
-             class="border border-[--color-border] text-[--color-text] px-8 py-3 rounded font-semibold text-center hover:border-[--color-accent] hover:text-[--color-accent] hover:bg-[--color-accent]/5 transition-colors">
-            {t('hero.cta1')}
+             class="border border-[--color-border] text-[--color-text] px-8 py-3 rounded font-semibold text-center hover:border-[--color-accent] hover:text-[--color-accent] hover:bg-[--color-accent]/5 transition-colors min-h-[44px] text-lg">
+            {t('hero.cta_secondary')}
           </a>
         </div>
         <!-- 소프트 CTA -->
@@ -100,7 +97,14 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
           <span>{t('trust.badge_privacy')}</span>
           <span>{t('trust.badge_validated')}</span>
         </div>
-        <a href="/ko/compare/tradingview" class="text-xs text-[--color-accent] hover:underline font-mono mb-3 inline-block">{t('compare_table.detail_link_alt')} &rarr;</a>
+        <a href="/ko/strategies/ranking" class="inline-flex items-center gap-1.5 text-xs font-mono text-[--color-accent] hover:underline mb-3">
+          <span class="inline-block w-1.5 h-1.5 rounded-full bg-[--color-accent] animate-pulse"></span>
+          {t('home.ranking_shortcut')} &rarr;
+        </a>
+        <!-- Data source attribution -->
+        <p class="text-xs text-[--color-text-muted] font-mono opacity-50">
+          {t('hero.data_attribution')} <span class="text-[--color-text-muted] opacity-80">Binance</span> &amp; <span class="text-[--color-text-muted] opacity-80">CoinGecko</span>
+        </p>
       </div>
     </div>
   </section>
@@ -126,7 +130,7 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
   </section>
 
   <!-- COMPARISON TABLE (vs Competitors) -->
-  <section class="py-16 border-t border-[--color-border]" aria-labelledby="compare-heading-ko">
+  <section class="py-16 border-t border-[--color-border] reveal" aria-labelledby="compare-heading-ko">
     <div class="max-w-6xl mx-auto px-4">
       <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('compare_table.tag')}</p>
       <h2 id="compare-heading-ko" class="text-3xl md:text-4xl font-bold mb-12">{t('compare_table.title')}</h2>
@@ -196,13 +200,13 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
   </section>
 
   <!-- WHY PRUVIQ (Problem — compact case studies only) -->
-  <section class="py-16 border-t border-[--color-border] bg-[--color-bg-subtle]" aria-labelledby="why-heading-ko">
+  <section class="py-16 border-t border-[--color-border] bg-[--color-bg-subtle] reveal" aria-labelledby="why-heading-ko">
     <div class="max-w-6xl mx-auto px-4">
       <p class="font-mono text-[--color-down] text-sm mb-2 tracking-wider">{t('problem.tag')}</p>
       <h2 id="why-heading-ko" class="text-3xl md:text-4xl font-bold mb-4">{t('problem.title')}</h2>
       <p class="text-[--color-text-muted] text-lg mb-8 max-w-3xl">{t('evidence.desc')}</p>
 
-      <div class="grid md:grid-cols-3 gap-6 mb-8">
+      <div class="grid md:grid-cols-3 gap-6 mb-8 reveal-child">
         <div class="border border-[--color-down]/30 rounded-lg p-6 bg-[--color-bg-card]">
           <div class="text-[--color-down] font-mono text-xs font-bold mb-3 flex items-center gap-2">
             <span class="inline-block w-2 h-2 rounded-full bg-[--color-down]"></span>
