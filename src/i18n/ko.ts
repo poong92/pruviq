@@ -555,6 +555,9 @@ export const ko: Record<TranslationKey, string> = {
   "perf.killed_title": "기각된 전략",
   "perf.killed_desc":
     "테스트 후 기각한 전략들입니다. 실패도 성공만큼 중요하기에 공개합니다.",
+  "perf.equity_title": "실거래 손익 곡선",
+  "perf.equity_desc":
+    "실거래 누적 PnL (2026년 1월 13일 – 3월 5일). MDD가 20% 리스크 한도를 초과하여 전략이 중단되었습니다.",
   "perf.verify_title": "직접 확인하세요",
   "perf.verify_desc":
     "저희를 믿지 마세요. 시뮬레이터에서 SL/TP를 조정하여 결과가 실시간으로 변하는 것을 직접 확인하세요.",
