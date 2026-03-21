@@ -203,6 +203,42 @@ function ExpandButton({
   );
 }
 
+// Tooltip explanations for macro indicators
+const MACRO_TOOLTIPS: Record<string, { en: string; ko: string }> = {
+  SPX: {
+    en: "S&P 500 — US large-cap stock index. Rising S&P often signals risk-on, which can lift crypto.",
+    ko: "S&P 500 — 미국 대형주 지수. 상승 시 위험선호(risk-on) 신호로 암호화폐에도 긍정적.",
+  },
+  IXIC: {
+    en: "Nasdaq Composite — tech-heavy US index. High correlation with crypto during risk-off periods.",
+    ko: "나스닥 — 기술주 중심 미국 지수. 위험회피(risk-off) 시 암호화폐와 높은 상관관계.",
+  },
+  DXY: {
+    en: "US Dollar Index — measures USD strength vs 6 major currencies. Rising DXY typically pressures crypto prices.",
+    ko: "달러 인덱스 — 6개 주요 통화 대비 달러 강도. DXY 상승 시 암호화폐 가격에 하방 압력.",
+  },
+  US10Y: {
+    en: "10-Year Treasury Yield — key rate for global risk appetite. Higher yields = less appetite for speculative assets.",
+    ko: "미국 10년물 금리 — 글로벌 위험선호 핵심 지표. 금리 상승 시 위험자산 선호도 감소.",
+  },
+  US2Y: {
+    en: "2-Year Treasury Yield — sensitive to Fed rate expectations. When 2Y > 10Y (inverted yield curve), recession risk rises.",
+    ko: "미국 2년물 금리 — 연준 금리 기대에 민감. 2Y > 10Y(역전) 시 경기침체 위험 신호.",
+  },
+  VIX: {
+    en: "CBOE Volatility Index — 'fear gauge' of US markets. VIX > 30 = high fear, often precedes crypto sell-offs.",
+    ko: "변동성 지수(공포 지수) — VIX > 30은 높은 공포 수준으로, 암호화폐 하락 선행 지표.",
+  },
+  GOLD: {
+    en: "Gold price — traditional safe-haven asset. Sometimes moves inversely to BTC, sometimes in tandem (both vs USD).",
+    ko: "금 가격 — 전통적 안전자산. BTC와 역의 관계를 보이기도 하고, 달러 약세 시 동반 상승하기도 함.",
+  },
+  DFF: {
+    en: "Fed Funds Rate — US benchmark interest rate set by the Federal Reserve. Higher rates = tighter liquidity for crypto.",
+    ko: "연방기금금리 — 연준이 설정하는 미국 기준 금리. 금리 인상 시 암호화폐 유동성 감소.",
+  },
+};
+
 const CRYPTO_SOURCES = [
   "CoinDesk",
   "CoinTelegraph",
@@ -592,11 +628,35 @@ export default function MarketDashboard({
                       key={ind.id}
                       class="p-2 sm:p-3 bg-[--color-bg-hover] rounded-lg"
                     >
-                      <div
-                        class="text-[0.625rem] text-[--color-text-muted] uppercase tracking-wider mb-1 truncate"
-                        title={ind.name}
-                      >
-                        {ind.name}
+                      <div class="tooltip-wrap mb-1">
+                        <span class="text-[0.625rem] text-[--color-text-muted] uppercase tracking-wider truncate">
+                          {ind.name}
+                        </span>
+                        {MACRO_TOOLTIPS[ind.id] && (
+                          <>
+                            <svg
+                              width="10"
+                              height="10"
+                              viewBox="0 0 12 12"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="1.5"
+                              class="ml-1 shrink-0 text-[--color-text-muted] opacity-50"
+                              aria-hidden="true"
+                            >
+                              <circle cx="6" cy="6" r="5" />
+                              <path
+                                d="M6 5v4M6 3.5v.5"
+                                stroke-linecap="round"
+                              />
+                            </svg>
+                            <span class="tooltip-text">
+                              {lang === "ko"
+                                ? MACRO_TOOLTIPS[ind.id].ko
+                                : MACRO_TOOLTIPS[ind.id].en}
+                            </span>
+                          </>
+                        )}
                       </div>
                       <div class="flex items-baseline gap-1.5">
                         <span class="text-sm sm:text-lg font-bold font-mono tabular-nums">
@@ -828,10 +888,9 @@ export default function MarketDashboard({
               </div>
               <a
                 href={lang === "ko" ? "/ko/simulate" : "/simulate"}
-                class="shrink-0 px-5 py-2.5 rounded-lg font-semibold text-sm no-underline hover:opacity-90 transition-opacity whitespace-nowrap"
-                style="background:var(--color-accent);color:#fff"
+                class="shrink-0 btn btn-primary btn-md whitespace-nowrap no-underline"
               >
-                {l.ctaButton} &rarr;
+                {l.ctaButton} →
               </a>
             </div>
           </div>
