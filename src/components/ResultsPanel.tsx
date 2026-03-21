@@ -1012,14 +1012,12 @@ export default function ResultsPanel({
                   {t.saveOnFees} &rarr;
                 </a>
               </div>
-              {/* Fix 1: ExchangeCTA — shown when result is profitable */}
-              {result.total_return_pct > 0 && (
-                <ExchangeCTA
-                  mode="inline"
-                  lang={lang}
-                  strategy={activePreset ?? undefined}
-                />
-              )}
+              {/* ExchangeCTA — always shown: profitable = start trading, loss = save on fees */}
+              <ExchangeCTA
+                mode="inline"
+                lang={lang}
+                strategy={activePreset ?? undefined}
+              />
             </div>
           )}
 
