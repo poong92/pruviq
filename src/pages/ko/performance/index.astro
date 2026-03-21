@@ -200,13 +200,21 @@ const xLast = daily[daily.length - 1]?.date ?? '';
           </svg>
         </div>
 
-        <div class="flex flex-wrap gap-4 mt-3 text-xs font-mono">
+        <div class="flex flex-wrap items-center gap-4 mt-3 text-xs font-mono">
           <span class="text-[--color-text-muted]">시작: <span class="text-[--color-text]">$0</span></span>
           <span class="text-[--color-text-muted]">최종: <span style={`color:${(perfData as any).summary?.total_pnl >= 0 ? 'var(--color-up)' : 'var(--color-down)'}`}>
             {(perfData as any).summary?.total_pnl >= 0 ? '+' : ''}{(perfData as any).summary?.total_pnl?.toFixed(2) ?? '—'}
           </span></span>
           <span class="text-[--color-text-muted]">MDD: <span class="text-[--color-red]">{(perfData as any).summary?.max_drawdown_pct ?? '—'}%</span></span>
           <span class="text-[--color-text-muted]">거래 수: <span class="text-[--color-text]">{(perfData as any).summary?.total_trades ?? '—'}</span></span>
+          <a
+            href="/data/performance.json"
+            download="pruviq-performance.json"
+            class="ml-auto border border-[--color-border] px-3 py-1.5 rounded text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors no-underline"
+            title="JSON 형식으로 퍼포먼스 데이터 다운로드"
+          >
+            &#8595; {t('perf.download_json')}
+          </a>
         </div>
       </div>
     </section>
