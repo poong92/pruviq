@@ -574,6 +574,26 @@ export const en = {
   "perf.results_title": "Backtest Results",
   "perf.results_desc":
     "2+ years, 569 coins, 2,898 trades. Includes 0.08%/side fees.",
+  "perf.gap_title": "Backtest vs Reality",
+  "perf.gap_desc":
+    "Every backtest has a gap with live trading. We experienced it firsthand — and stopped trading when it exceeded our limits.",
+  "perf.gap_backtest": "Backtest (2yr, 569 coins)",
+  "perf.gap_live": "Live Trading (52 days)",
+  "perf.gap_pnl_label": "Total PnL",
+  "perf.gap_mdd_label": "Max Drawdown",
+  "perf.gap_status_label": "Status",
+  "perf.gap_status_stopped": "Stopped at MDD limit",
+  "perf.gap_why_title": "Why the gap?",
+  "perf.gap_why1": "Market impact: live orders move prices, backtests don't",
+  "perf.gap_why2": "Timing: backtests assume instant fills, live has latency",
+  "perf.gap_why3":
+    "Regime shifts: 2024-2025 data didn't predict 2026 conditions",
+  "perf.gap_why4": "Sample size: 52 days of live vs 2+ years of backtest",
+  "perf.gap_action_title": "What we did about it",
+  "perf.gap_action_desc":
+    "We enforced a 20% MDD hard stop. When live trading hit this limit, we killed the strategy immediately — no exceptions. This is the same discipline we recommend for all traders.",
+  "perf.gap_lesson":
+    "A profitable backtest is necessary but not sufficient. Always verify with out-of-sample testing and strict risk limits.",
   "perf.killed_title": "Killed Strategies",
   "perf.killed_desc":
     "Strategies we tested and rejected. We show failures because they're just as important as successes.",

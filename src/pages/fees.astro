@@ -5,35 +5,17 @@ import { useTranslations } from '../i18n/index';
 import { exchanges, formatFeeRange } from '../data/exchanges';
 import { EXCHANGES, discountTooltip } from '../config/exchanges';
 
-// Build a lookup map for tooltip data keyed by exchange id
-const exchangeTooltips = Object.fromEntries(EXCHANGES.map((ex) => [ex.id, discountTooltip(ex)]));
+// Get Binance config (single exchange focus)
+const binanceConfig = EXCHANGES[0];
+const binanceDisplay = exchanges[0];
+const binanceTooltip = discountTooltip(binanceConfig);
 
-// Compute annual savings badge per exchange based on $10k/month volume (2 sides)
-// savings = discountPct% × standardTakerFee × $120k/year × 2 sides
-const savingsBadge = Object.fromEntries(
-  EXCHANGES.map((ex) => {
-    const annualVolume = 10_000 * 12; // $120,000/year
-    const saved = (ex.referralDiscountPct / 100) * (ex.standardTakerFee / 100) * annualVolume * 2;
-    return [ex.id, saved >= 1 ? `Save $${Math.round(saved)}/yr` : null];
-  })
-);
+// Compute annual savings at $10k/month volume (2 sides)
+const annualVolume = 10_000 * 12;
+const annualSavings = (binanceConfig.referralDiscountPct / 100) * (binanceConfig.standardTakerFee / 100) * annualVolume * 2;
+const savingsBadge = annualSavings >= 1 ? `Save $${Math.round(annualSavings)}/yr` : null;
 
 const t = useTranslations('en');
-
-const exchangeCards: Record<string, { tagLabel: string; description: string }> = {
-  binance: {
-    tagLabel: t('fees.card_binance_tag'),
-    description: t('fees.card_binance_desc'),
-  },
-  bitget: {
-    tagLabel: t('fees.card_bitget_tag'),
-    description: t('fees.card_bitget_desc'),
-  },
-  okx: {
-    tagLabel: t('fees.card_okx_tag'),
-    description: t('fees.card_okx_desc'),
-  },
-};
 ---
 
 <Layout title={t('meta.fees_title')} description={t('meta.fees_desc')}>
@@ -66,58 +48,56 @@ const exchangeCards: Record<string, { tagLabel: string; description: string }> =
     </div>
   </section>
 
-  <!-- 3 EXCHANGE CARDS -->
+  <!-- BINANCE FEATURED CARD -->
   <section class="pb-12 border-t border-[--color-border] pt-12">
     <div class="max-w-5xl mx-auto px-4">
       <h2 class="text-2xl font-bold mb-2">{t('fees.compare_title')}</h2>
       <p class="text-[--color-text-muted] text-sm mb-6">{t('fees.compare_desc')}</p>
 
-      <div class="grid md:grid-cols-3 gap-6">
-        {exchanges.map((ex) => {
-          const card = exchangeCards[ex.id];
-          return (
-            <div class={`border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] flex flex-col${!ex.available ? ' opacity-50' : ''}`}>
-              <div class="font-mono text-[--color-accent] text-xs font-bold mb-1">{card.tagLabel}</div>
-              <h3 class="text-xl font-bold mb-3">{ex.name}</h3>
-              <div class="space-y-2 text-sm mb-4 flex-grow">
-                <div class="flex justify-between">
-                  <span class="text-[--color-text-muted]">{t('fees.label_spot')}</span>
-                  <span class="font-mono">{formatFeeRange(ex.spot, 'spot')}</span>
-                </div>
-                <div class="flex justify-between">
-                  <span class="text-[--color-text-muted]">{t('fees.label_futures')}</span>
-                  <span class="font-mono">{formatFeeRange(ex.futures, 'futures')}</span>
-                </div>
-                <div class="flex justify-between border-t border-[--color-border] pt-2 mt-2">
-                  <span class="text-[--color-accent] font-medium">{t('fees.pruviq_discount')}</span>
-                  <span
-                    class="font-mono font-bold text-[--color-accent] cursor-help underline decoration-dotted"
-                    title={exchangeTooltips[ex.id]}
-                  >{ex.discountLabel} {t('fees.discount_off')}</span>
-                </div>
+      <div class="max-w-3xl mx-auto">
+        <div class="border border-[--color-accent]/30 rounded-xl p-8">
+          <div class="flex items-center gap-3 mb-6">
+            <h3 class="text-2xl font-bold">{binanceDisplay.name}</h3>
+            <span class="font-mono text-[--color-accent] text-xs font-bold px-2 py-0.5 rounded border border-[--color-accent]/30 bg-[--color-accent]/5">{binanceDisplay.tag}</span>
+          </div>
+
+          <div class="grid md:grid-cols-2 gap-8">
+            <!-- Left: fee rates -->
+            <div class="space-y-3 text-sm">
+              <div class="flex justify-between">
+                <span class="text-[--color-text-muted]">{t('fees.label_spot')}</span>
+                <span class="font-mono">{formatFeeRange(binanceDisplay.spot, 'spot')}</span>
               </div>
-              <p class="text-[--color-text-muted] text-xs mb-4">{card.description}</p>
-              {savingsBadge[ex.id] && ex.available && (
-                <div class="mb-3">
+              <div class="flex justify-between">
+                <span class="text-[--color-text-muted]">{t('fees.label_futures')}</span>
+                <span class="font-mono">{formatFeeRange(binanceDisplay.futures, 'futures')}</span>
+              </div>
+              <div class="flex justify-between border-t border-[--color-border] pt-3 mt-3">
+                <span class="text-[--color-accent] font-medium">{t('fees.pruviq_discount')}</span>
+                <span
+                  class="font-mono font-bold text-[--color-accent] cursor-help underline decoration-dotted"
+                  title={binanceTooltip}
+                >{binanceDisplay.discountLabel} {t('fees.discount_off')}</span>
+              </div>
+            </div>
+
+            <!-- Right: savings + CTA -->
+            <div class="flex flex-col justify-between">
+              {savingsBadge && (
+                <div class="mb-4">
                   <span class="inline-flex items-center gap-1 text-xs font-mono px-2 py-1 rounded border border-[--color-up]/40 bg-[--color-up]/5 text-[--color-up] font-semibold">
-                    &#9650; {savingsBadge[ex.id]}
+                    &#9650; {savingsBadge}
                     <span class="font-normal text-[--color-text-muted]">at $10k/mo</span>
                   </span>
                 </div>
               )}
-              {ex.available ? (
-                <a href={ex.referralUrl} target="_blank" rel="noopener noreferrer"
-                   class="block text-center bg-[--color-accent] text-[--color-bg] px-4 py-3 min-h-[48px] flex items-center justify-center rounded text-sm font-bold hover:opacity-90 transition-opacity shadow-sm">
-                  {t('fees.signup')} &rarr;
-                </a>
-              ) : (
-                <span class="block text-center bg-[--color-border] text-[--color-text-muted] px-4 py-2 min-h-[44px] flex items-center justify-center rounded text-sm font-semibold cursor-default">
-                  {t('fees.coming_soon')}
-                </span>
-              )}
+              <a href={binanceDisplay.referralUrl} target="_blank" rel="noopener noreferrer"
+                 class="block text-center bg-[--color-accent] text-[--color-bg] px-4 py-3 min-h-[48px] flex items-center justify-center rounded text-sm font-bold hover:opacity-90 transition-opacity shadow-sm">
+                {t('fees.signup')} &rarr;
+              </a>
             </div>
-          );
-        })}
+          </div>
+        </div>
       </div>
 
       <p class="text-[--color-text-muted] text-xs mt-4">
