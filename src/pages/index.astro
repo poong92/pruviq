@@ -4,6 +4,10 @@ import { useTranslations } from '../i18n/index';
 import { getCollection } from 'astro:content';
 import LiveStats from '../components/LiveStats';
 import { TopStrategyWidget } from '../components/TopStrategyWidget';
+import HeroGlow from '../components/ui/HeroGlow.astro';
+import HeroBadge from '../components/ui/HeroBadge.astro';
+import BrowserFrame from '../components/ui/BrowserFrame.astro';
+import StepCard from '../components/ui/StepCard.astro';
 import siteStats from '../../public/data/site-stats.json';
 import presetsJson from '../../public/data/builder-presets.json';
 
@@ -21,182 +25,64 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
 <Layout title={t('meta.home_title')} description={t('meta.index_desc')}>
 
   <!-- HERO -->
-  <section class="min-h-[80vh] flex items-center" aria-labelledby="hero-heading">
-    <div class="max-w-6xl mx-auto px-4 py-20 w-full">
-      <div class="grid md:grid-cols-[1fr_360px] lg:grid-cols-[1fr_400px] gap-12 items-center">
-      <div>
-        <p class="font-mono text-[--color-accent] text-sm mb-4 tracking-wider">{t('hero.tag')}</p>
-        <h1 id="hero-heading" class="text-4xl md:text-6xl font-bold leading-tight mb-6" style="letter-spacing: -0.03em;">
-          {t('hero.title1')}<br/>
-          <span class="text-[--color-accent]">{t('hero.title2').replace('{coins}', String(coinsAnalyzed))}</span>
-        </h1>
-        <p class="text-lg text-[--color-text-muted] mb-2 font-mono">
-          {t('hero.subtitle')}
-        </p>
-        <p class="text-lg md:text-xl text-[--color-up] font-semibold mb-3 max-w-2xl">
-          {t('hero.subcopy')}
-        </p>
-        <!-- Hero Stats Grid -->
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-px border border-[--color-border] rounded-lg overflow-hidden mb-3 bg-[--color-border]">
-          <div class="bg-[--color-bg-card] px-4 py-3 text-center">
-            <p class="font-mono text-[--color-accent] text-xl font-bold">{coinsAnalyzed}+</p>
-            <p class="text-[--color-text-muted] text-xs mt-0.5">{t('home.stat_coins')}</p>
-          </div>
-          <div class="bg-[--color-bg-card] px-4 py-3 text-center">
-            <p class="font-mono text-[--color-accent] text-xl font-bold">{tradingDays}+</p>
-            <p class="text-[--color-text-muted] text-xs mt-0.5">{t('home.stat_trades')}</p>
-          </div>
-          <div class="bg-[--color-bg-card] px-4 py-3 text-center">
-            <p class="font-mono text-[--color-accent] text-xl font-bold">{candlesProcessed}+</p>
-            <p class="text-[--color-text-muted] text-xs mt-0.5">{t('home.stat_datapoints')}</p>
-          </div>
-          <div class="bg-[--color-bg-card] px-4 py-3 text-center">
-            <p class="font-mono text-[--color-up] text-xl font-bold">$0</p>
-            <p class="text-[--color-text-muted] text-xs mt-0.5">{t('home.stat_free')}</p>
-          </div>
-        </div>
-
-        <p class="text-sm text-[--color-text-muted] mb-4 max-w-2xl opacity-70">{t('hero.beginner_note')}</p>
-
-        <!-- Competitor comparison block -->
-        <div class="mb-4 max-w-2xl border border-[--color-border] rounded-lg overflow-hidden text-sm">
-          <div class="grid grid-cols-2">
-            <div class="bg-[--color-down]/5 border-r border-[--color-border] px-4 py-3">
-              <p class="font-mono text-xs text-[--color-down] font-bold mb-1.5">TradingView</p>
-              <p class="text-xs text-[--color-text-muted]">Pine Script required</p>
-              <p class="text-xs text-[--color-text-muted]">$14.95/mo minimum</p>
-              <p class="text-xs text-[--color-text-muted]">1 coin per backtest</p>
-            </div>
-            <div class="bg-[--color-up]/5 px-4 py-3">
-              <p class="font-mono text-xs text-[--color-up] font-bold mb-1.5">PRUVIQ ✓</p>
-              <p class="text-xs text-[--color-text-muted]">Zero code needed</p>
-              <p class="text-xs text-[--color-text-muted]">100% free, no account</p>
-              <p class="text-xs text-[--color-text-muted]">569 coins at once</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Social proof line above CTA -->
-        <p class="text-sm text-[--color-up] font-mono mb-3">{t('home.social_proof_cta')}</p>
-
-        <div class="flex flex-col sm:flex-row gap-4 mb-2">
-          <a href="/simulate"
-             class="btn-primary bg-[--color-accent] text-[--color-bg] px-8 py-3 rounded font-semibold text-center hover:bg-[--color-accent-dim] min-h-[44px] text-lg">
-            {t('hero.cta_primary')} &rarr;
-          </a>
-          <a href="/strategies"
-             class="border border-[--color-border] text-[--color-text] px-8 py-3 rounded font-semibold text-center hover:border-[--color-accent] hover:text-[--color-accent] hover:bg-[--color-accent]/5 transition-colors min-h-[44px] text-lg">
-            {t('hero.cta_secondary')}
-          </a>
-        </div>
-        <!-- Soft CTA: see how it works -->
-        <p class="text-sm text-[--color-text-muted] font-mono mb-4">
-          {t('home.not_sure')} <a href="#how-it-works" class="text-[--color-accent] hover:underline">&#9654; {t('home.not_sure_cta')}</a>
-        </p>
-        <!-- Trust signals + Ranking shortcut -->
-        <div class="flex flex-wrap gap-x-4 gap-y-1 text-sm text-[--color-text-muted] font-mono mb-3">
-          <span>{t('trust.badge_api')}</span>
-          <span>{t('trust.badge_source')}</span>
-          <span>{t('trust.badge_privacy')}</span>
-          <span>{t('trust.badge_validated')}</span>
-        </div>
-        <a href="/strategies/ranking" class="inline-flex items-center gap-1.5 text-xs font-mono text-[--color-accent] hover:underline mb-3">
-          <span class="inline-block w-1.5 h-1.5 rounded-full bg-[--color-accent] animate-pulse"></span>
-          {t('home.ranking_shortcut')} &rarr;
+  <section class="relative overflow-hidden min-h-[85vh] flex flex-col justify-center" style="background: var(--gradient-hero)">
+    <HeroGlow />
+    <div class="relative max-w-6xl mx-auto px-6 pt-28 pb-16 md:pt-36 md:pb-20 hero-enter">
+      <HeroBadge stat={simulationsRun} label="simulations run" />
+      <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold text-center tracking-[-0.04em] leading-[1.08] max-w-4xl mx-auto">
+        Test Any Crypto Strategy<br class="hidden md:block" /> on {coinsAnalyzed} Coins in Seconds
+      </h1>
+      <p class="mt-6 text-lg md:text-xl text-[--color-text-secondary] text-center max-w-2xl mx-auto leading-relaxed">
+        Free backtesting with real fees. No code. No signup.<br class="hidden sm:block" /> We publish our failures too.
+      </p>
+      <!-- CTA pair -->
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mt-10">
+        <a href="/simulate" class="btn btn-primary btn-lg w-full sm:w-auto text-center">
+          Open Simulator &rarr;
         </a>
-        <!-- Data source attribution -->
-        <p class="text-xs text-[--color-text-muted] font-mono opacity-50">
-          Data powered by <span class="text-[--color-text-muted] opacity-80">Binance</span> &amp; <span class="text-[--color-text-muted] opacity-80">CoinGecko</span>
-        </p>
+        <a href="/strategies" class="btn btn-ghost btn-lg w-full sm:w-auto text-center">
+          Browse Strategies
+        </a>
       </div>
-      <!-- Right: Live strategy widget -->
-      <div class="mt-6 md:mt-0">
-        <TopStrategyWidget client:load lang="en" />
-      </div>
+      <!-- Stats bar -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mt-16 max-w-3xl mx-auto">
+        <div class="text-center">
+          <p class="text-2xl md:text-3xl font-bold font-mono">{coinsAnalyzed}+</p>
+          <p class="text-sm text-[--color-text-muted] mt-1">Coins Tested</p>
+        </div>
+        <div class="text-center">
+          <p class="text-2xl md:text-3xl font-bold font-mono">2,898+</p>
+          <p class="text-sm text-[--color-text-muted] mt-1">Simulated Trades</p>
+        </div>
+        <div class="text-center">
+          <p class="text-2xl md:text-3xl font-bold font-mono">9.4M+</p>
+          <p class="text-sm text-[--color-text-muted] mt-1">Data Points</p>
+        </div>
+        <div class="text-center">
+          <p class="text-2xl md:text-3xl font-bold font-mono" style="color:var(--color-up)">$0</p>
+          <p class="text-sm text-[--color-text-muted] mt-1">Always Free</p>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- HOW IT WORKS (compact 3-step guide) -->
-  <section id="how-it-works" class="border-t border-[--color-border] bg-[--color-bg-subtle]">
-    <div class="max-w-6xl mx-auto px-4 py-8">
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-6 text-center">
-        <div>
-          <div class="font-mono text-[--color-accent] text-xs tracking-wider mb-1">① {t('how.step1')}</div>
-          <p class="text-xs text-[--color-text-muted]">{t('how.step1_desc')}</p>
-        </div>
-        <div>
-          <div class="font-mono text-[--color-accent] text-xs tracking-wider mb-1">② {t('how.step2')}</div>
-          <p class="text-xs text-[--color-text-muted]">{t('how.step2_desc')}</p>
-        </div>
-        <div>
-          <div class="font-mono text-[--color-accent] text-xs tracking-wider mb-1">③ {t('how.step3')}</div>
-          <p class="text-xs text-[--color-text-muted]">{t('how.step3_desc')}</p>
-        </div>
-      </div>
-      <div class="mt-6 text-center">
-        <a href="/simulate" class="inline-block bg-[--color-accent] text-[--color-bg] px-6 py-2.5 rounded font-semibold text-sm hover:bg-[--color-accent-dim] transition-colors">
-          {t('hero.cta_primary')} &rarr;
-        </a>
-      </div>
-    </div>
+  <!-- PRODUCT PREVIEW -->
+  <section class="max-w-6xl mx-auto px-6 -mt-4 pb-20 relative z-10">
+    <BrowserFrame
+      src="/images/simulator-preview.png"
+      alt="PRUVIQ Strategy Simulator — backtest 569 coins in seconds"
+      url="pruviq.com/simulate"
+    />
   </section>
 
-  <!-- STATS & TRUST (moved out of Hero) -->
-  <section class="py-12 border-t border-[--color-border]">
-    <div class="max-w-6xl mx-auto px-4">
-      <div>
-        <!-- Stats -->
-        <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
-          <div class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card] card-hover" style="box-shadow: var(--shadow-card);">
-            <p class="font-mono text-[--color-accent] text-2xl font-bold">{coinsAnalyzed}</p>
-            <p class="text-[--color-text-muted] text-sm">{t('hero.stat1')}</p>
-            <p class="text-[--color-text-muted] text-xs mt-1 opacity-60">{t('hero.stat1_sub')}</p>
-          </div>
-          <div class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card] card-hover" style="box-shadow: var(--shadow-card);">
-            <p class="font-mono text-[--color-accent] text-2xl font-bold">{tradingDays}+</p>
-            <p class="text-[--color-text-muted] text-sm">{t('hero.stat4')}</p>
-            <p class="text-[--color-text-muted] text-xs mt-1 opacity-60">{t('hero.stat4_sub')}</p>
-          </div>
-          <div class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card] card-hover" style="box-shadow: var(--shadow-card);">
-            <p class="font-mono text-[--color-accent] text-2xl font-bold">{candlesProcessed}+</p>
-            <p class="text-[--color-text-muted] text-sm">{t('hero.stat5')}</p>
-            <p class="text-[--color-text-muted] text-xs mt-1 opacity-60">{t('hero.stat5_sub')}</p>
-          </div>
-          <div class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card] card-hover" style="box-shadow: var(--shadow-card);">
-            <p class="font-mono text-[--color-accent] text-2xl font-bold">{t('hero.stat2_val')}</p>
-            <p class="text-[--color-text-muted] text-sm">{t('hero.stat2')}</p>
-          </div>
-          <div class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card] card-hover" style="box-shadow: var(--shadow-card);">
-            <p class="font-mono text-[--color-accent] text-2xl font-bold">100%</p>
-            <p class="text-[--color-text-muted] text-sm">{t('hero.stat3')}</p>
-          </div>
-          <div class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card] card-hover" style="box-shadow: var(--shadow-card);">
-            <p class="font-mono text-[--color-accent] text-2xl font-bold">$0</p>
-            <p class="text-[--color-text-muted] text-sm">{t('hero.stat6')}</p>
-            <p class="text-[--color-text-muted] text-xs mt-1 opacity-60">{t('hero.stat6_sub')}</p>
-          </div>
-        </div>
-
-        <!-- TRUST BLOCK -->
-        <div class="mt-6 border border-[--color-border] rounded p-4 bg-[--color-bg-card] flex flex-wrap gap-6 items-center">
-          <div>
-            <p class="text-sm font-mono text-[--color-text-muted]">{t('home.trust_documented')}</p>
-            <p class="text-xl font-bold text-[--color-accent]">{allStrategies.length + simulatorPresetCount} configurations</p>
-            <p class="text-xs text-[--color-text-muted]">{allStrategies.length} documented + {simulatorPresetCount} presets · {t('trust.last_updated').replace('{date}', lastUpdated)}</p>
-          </div>
-          <div class="border-l border-[--color-border] pl-6">
-            <p class="text-sm font-mono text-[--color-text-muted]">{t('home.trust_verified_active')}</p>
-            <p class="text-xl font-bold text-[--color-up]">{verifiedCount}</p>
-            <p class="text-xs text-[--color-text-muted]">{t('home.trust_oos_label')}</p>
-          </div>
-        </div>
-      </div>
-      <div class="mt-8 text-center">
-        <a href="/simulate" class="inline-block bg-[--color-accent] text-[--color-bg] px-6 py-2.5 rounded font-semibold text-sm hover:bg-[--color-accent-dim] transition-colors">
-          {t('hero.cta_primary')} &rarr;
-        </a>
-      </div>
+  <!-- HOW IT WORKS -->
+  <section class="max-w-6xl mx-auto px-6 py-24">
+    <h2 class="text-2xl md:text-4xl font-bold text-center mb-4">How It Works</h2>
+    <p class="text-[--color-text-secondary] text-center mb-16 max-w-xl mx-auto">From strategy idea to verified results in 3 steps.</p>
+    <div class="grid md:grid-cols-3 gap-8">
+      <StepCard step={1} title="Pick a Strategy" description="Choose from 36 presets or build custom with 14 indicators. AND/OR logic supported." />
+      <StepCard step={2} title="Set Your Risk" description="Stop-loss, take-profit, position size, time filters. Realistic fees and slippage included." />
+      <StepCard step={3} title="See Real Results" description="Backtest on 569 coins with 2+ years of data. Results in seconds, no cherry-picking." />
     </div>
   </section>
 
@@ -277,41 +163,6 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
         <a href="/simulate" class="inline-block bg-[--color-accent] text-[--color-bg] px-8 py-3 rounded font-semibold text-lg hover:bg-[--color-accent-dim]">
           {t('home.cta_survives')} &rarr;
         </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- SYSTEM (How It Works - Visual) -->
-  <section class="py-20 border-t border-[--color-border] bg-[--color-bg-subtle] reveal" aria-labelledby="system-heading">
-    <div class="max-w-6xl mx-auto px-4">
-      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('system.tag')}</p>
-      <h2 id="system-heading" class="text-3xl md:text-4xl font-bold mb-4">{t('system.title')}</h2>
-      <p class="text-[--color-text-muted] text-lg mb-12 max-w-2xl">{t('system.desc')}</p>
-
-      <div class="grid md:grid-cols-3 gap-8 mb-12">
-        <div class="relative">
-          <div class="font-mono text-[--color-accent] text-5xl font-bold opacity-20 absolute -top-4 -left-2">1</div>
-          <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] relative">
-            <h3 class="font-mono text-[--color-accent] font-bold mb-2">{t('system.step1')}</h3>
-            <p class="text-[--color-text-muted] text-sm leading-relaxed">{t('system.step1_desc')}</p>
-          </div>
-          <div class="hidden md:block absolute top-1/2 -right-4 text-[--color-text-muted] text-2xl">&rarr;</div>
-        </div>
-        <div class="relative">
-          <div class="font-mono text-[--color-accent] text-5xl font-bold opacity-20 absolute -top-4 -left-2">2</div>
-          <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] relative">
-            <h3 class="font-mono text-[--color-accent] font-bold mb-2">{t('system.step2')}</h3>
-            <p class="text-[--color-text-muted] text-sm leading-relaxed">{t('system.step2_desc')}</p>
-          </div>
-          <div class="hidden md:block absolute top-1/2 -right-4 text-[--color-text-muted] text-2xl">&rarr;</div>
-        </div>
-        <div class="relative">
-          <div class="font-mono text-[--color-accent] text-5xl font-bold opacity-20 absolute -top-4 -left-2">3</div>
-          <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] relative">
-            <h3 class="font-mono text-[--color-accent] font-bold mb-2">{t('system.step3')}</h3>
-            <p class="text-[--color-text-muted] text-sm leading-relaxed">{t('system.step3_desc')}</p>
-          </div>
-        </div>
       </div>
     </div>
   </section>
