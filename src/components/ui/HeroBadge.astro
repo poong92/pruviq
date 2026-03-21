@@ -1,0 +1,15 @@
+---
+interface Props {
+  href?: string;
+  stat?: string;
+  label?: string;
+}
+const { href = '/simulate', stat = '12,847', label = 'simulations run' } = Astro.props;
+---
+<div class="flex justify-center mb-8">
+  <a href={href} class="inline-flex items-center gap-2 rounded-full border border-[--color-border-hover] bg-[--color-bg-card]/50 px-4 py-1.5 text-sm text-[--color-text-secondary] hover:border-[--color-accent]/30 transition-colors no-underline">
+    <span class="inline-block w-1.5 h-1.5 rounded-full bg-[--color-up] animate-pulse"></span>
+    <span class="font-mono">{stat}</span> {label}
+    <span class="text-[--color-accent]">Try free →</span>
+  </a>
+</div>

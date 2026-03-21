@@ -1,0 +1,11 @@
+---
+interface Props {
+  lastDate?: string;
+  message?: string;
+}
+const { lastDate = '', message = 'Updating data. Showing last available results' } = Astro.props;
+---
+<div class="flex items-center gap-3 rounded-lg border border-[--color-border] px-4 py-2.5 mb-6 text-sm text-[--color-text-secondary] bg-[--color-bg-card]">
+  <span class="inline-block w-2 h-2 rounded-full bg-[--color-warning] animate-pulse flex-shrink-0"></span>
+  <span>{message}{lastDate ? ` (${lastDate})` : ''}.</span>
+</div>
