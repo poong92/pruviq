@@ -11,6 +11,7 @@ interface Props {
   levelLabel?: string;
   levelColor?: string;
   readTime?: number;
+  readTimeLabel?: string;
 }
 
 const STORAGE_KEY = "pruviq_learn_read";
@@ -41,6 +42,7 @@ export default function LearnCard({
   levelLabel,
   levelColor,
   readTime,
+  readTimeLabel,
 }: Props) {
   const [read, setRead] = useState(false);
 
@@ -77,9 +79,9 @@ export default function LearnCard({
             {levelLabel}
           </span>
         )}
-        {readTime && readTime > 0 && (
+        {readTime != null && readTime > 0 && (
           <span class="text-[10px] font-mono text-[--color-text-muted]">
-            {readTime} min read
+            {readTime} {readTimeLabel || "min read"}
           </span>
         )}
       </div>

@@ -704,6 +704,7 @@ export const ko: Record<TranslationKey, string> = {
   "learn.level_advanced": "고급",
   "learn.level_advanced_title": "퀀트 & 전략",
   "learn.level_advanced_desc": "백테스팅, 포지션 사이징, 실제 의사결정 과정.",
+  "learn.min_read": "분 소요",
   "learn.cta_title": "배운 것을 테스트할 준비가 되셨나요?",
   "learn.cta_desc":
     "전략을 만들고 569개 이상의 코인에서 실행하세요 — 무료, 계정 불필요.",

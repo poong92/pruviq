@@ -706,6 +706,7 @@ export const en = {
   "learn.level_advanced_title": "Quant & Strategy",
   "learn.level_advanced_desc":
     "Backtesting, position sizing, and real decision-making.",
+  "learn.min_read": "min read",
   "learn.cta_title": "Ready to test what you've learned?",
   "learn.cta_desc":
     "Build a strategy and run it on 569+ coins — free, no account needed.",
