@@ -5,8 +5,10 @@ import { getCollection } from 'astro:content';
 import LiveStats from '../../components/LiveStats';
 import { TopStrategyWidget } from '../../components/TopStrategyWidget';
 import siteStats from '../../../public/data/site-stats.json';
+import presetsJson from '../../../public/data/builder-presets.json';
 
 const t = useTranslations('ko');
+const simulatorPresetCount = (presetsJson as Array<unknown>).length;
 const allStrategies = await getCollection('strategies');
 const lastUpdated = new Date().toLocaleDateString('ko-KR');
 const coinsAnalyzed = (siteStats as { coins_analyzed: number }).coins_analyzed;
@@ -47,8 +49,8 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
             <p class="text-[--color-text-muted] text-xs mt-0.5">데이터 포인트</p>
           </div>
           <div class="bg-[--color-bg-card] px-4 py-3 text-center">
-            <p class="font-mono text-[--color-up] text-xl font-bold">$0</p>
-            <p class="text-[--color-text-muted] text-xs mt-0.5">완전 무료</p>
+            <p class="font-mono text-[--color-accent] text-xl font-bold">{simulatorPresetCount}+</p>
+            <p class="text-[--color-text-muted] text-xs mt-0.5">전략 프리셋</p>
           </div>
         </div>
 

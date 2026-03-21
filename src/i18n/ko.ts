@@ -807,6 +807,11 @@ export const ko: Record<TranslationKey, string> = {
     "랭킹은 매일 업데이트되며 JavaScript가 필요합니다. 브라우저에서 JavaScript를 활성화하세요.",
   "compare.noscript_text":
     "전략 비교 도구를 사용하려면 JavaScript가 필요합니다.",
+  "compare.noscript_title": "전략 비교",
+  "compare.noscript_desc":
+    "BB Squeeze SHORT, BB Squeeze LONG, RSI Reversal, MACD Momentum 등 5개 백테스트된 전략을 50개 코인에서 동일 조건으로 비교합니다. SL/TP 파라미터를 조정하고 승률, 수익 팩터, 최대 드로다운, 수익률을 나란히 확인하세요.",
+  "compare.noscript_strategies":
+    "제공 전략: BB Squeeze SHORT (검증 완료, 실거래 중), BB Squeeze LONG, RSI Reversal LONG, MACD Momentum LONG, ATR Breakout LONG. 모두 0.04% 수수료 + 0.02% 슬리피지, 2년 이상 데이터로 시뮬레이션.",
 
   // Blog article CTA
   "blog.cta_title": "직접 전략을 테스트해 보시겠습니까?",

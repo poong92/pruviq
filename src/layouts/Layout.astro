@@ -576,6 +576,50 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
         }
       })();
     </script>
+    <!-- Sticky bottom CTA bar (non-simulator pages only) -->
+    {!basePath.startsWith('/simulate') && (
+      <div id="bottom-cta-bar" class="fixed bottom-0 left-0 right-0 z-40 border-t border-[--color-border] bg-[--color-bg-elevated] transition-transform duration-300 translate-y-full" style="height:48px;" role="complementary" aria-label="Try simulator">
+        <div class="max-w-6xl mx-auto px-4 h-full flex items-center justify-between gap-3">
+          <p class="text-sm text-[--color-text-muted] truncate">
+            {lang === 'ko' ? '569+ 코인에서 전략 테스트' : 'Test your strategy on 569+ coins'}
+          </p>
+          <div class="flex items-center gap-2 shrink-0">
+            <a href={simulatePath} class="btn btn-primary btn-sm no-underline whitespace-nowrap text-xs">
+              {lang === 'ko' ? '무료 시작 →' : 'Start Free →'}
+            </a>
+            <button id="bottom-cta-dismiss" aria-label="Dismiss" class="w-7 h-7 flex items-center justify-center rounded text-[--color-text-muted] hover:text-[--color-text] hover:bg-[--color-bg-hover] transition-colors">
+              <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 2l10 10M12 2L2 12"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
+    <script>
+      /* Bottom CTA bar — show if user hasn't visited /simulate yet */
+      (function() {
+        var bar = document.getElementById('bottom-cta-bar');
+        if (!bar) return;
+        if (localStorage.getItem('visited-simulator') || localStorage.getItem('bottom-cta-dismissed')) return;
+        var cookieNotice = document.getElementById('cookie-notice');
+        function tryShow() {
+          if (cookieNotice && cookieNotice.style.display !== 'none' && window.innerWidth < 640) return;
+          bar.style.transform = 'translateY(0)';
+        }
+        setTimeout(tryShow, 1500);
+        var dismiss = document.getElementById('bottom-cta-dismiss');
+        if (dismiss) {
+          dismiss.addEventListener('click', function() {
+            localStorage.setItem('bottom-cta-dismissed', '1');
+            bar.style.transform = 'translateY(100%)';
+          });
+        }
+      })();
+      /* Mark visited-simulator when user lands on /simulate */
+      if (window.location.pathname.match(/\/(ko\/)?simulate/)) {
+        localStorage.setItem('visited-simulator', '1');
+      }
+    </script>
+
     <!-- Cookie Notice (GDPR essential notice) -->
     <div id="cookie-notice" class="fixed bottom-0 max-sm:bottom-auto max-sm:top-16 left-0 right-0 z-40 bg-[--color-bg-card] shadow-[0_-2px_12px_rgba(0,0,0,0.35)] max-sm:shadow-none max-sm:border-b border-[--color-border] px-4 py-3 flex items-center justify-between gap-4 text-sm" style="display:none" aria-live="polite">
       <p class="text-[--color-text-muted] text-xs max-w-xl">{t('cookie.notice')}</p>
@@ -608,9 +652,15 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
         }
 
         if (!localStorage.getItem('cookie-ok')) {
-          notice.style.display = 'flex';
-          // Defer offset calculation until after layout paint
-          requestAnimationFrame(applyOffset);
+          function showBanner() {
+            notice.style.display = 'flex';
+            requestAnimationFrame(applyOffset);
+          }
+          if (window.location.pathname.includes('/simulate')) {
+            setTimeout(showBanner, 10000);
+          } else {
+            showBanner();
+          }
         }
         var btn = document.getElementById('cookie-ok');
         if (btn) btn.addEventListener('click', function() {

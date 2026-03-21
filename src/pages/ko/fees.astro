@@ -20,6 +20,21 @@ const t = useTranslations('ko');
 
 <Layout title={t('meta.fees_title')} description={t('meta.fees_desc')}>
 
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      { "@type": "Question", "name": t('fees.referral.faq.q1'), "acceptedAnswer": { "@type": "Answer", "text": t('fees.referral.faq.a1') } },
+      { "@type": "Question", "name": t('fees.referral.faq.q2'), "acceptedAnswer": { "@type": "Answer", "text": t('fees.referral.faq.a2') } },
+      { "@type": "Question", "name": t('fees.referral.faq.q3'), "acceptedAnswer": { "@type": "Answer", "text": t('fees.referral.faq.a3') } },
+      { "@type": "Question", "name": t('fees.referral.faq.q4'), "acceptedAnswer": { "@type": "Answer", "text": t('fees.referral.faq.a4') } },
+      { "@type": "Question", "name": t('fees.referral.faq.q5'), "acceptedAnswer": { "@type": "Answer", "text": t('fees.referral.faq.a5') } },
+      { "@type": "Question", "name": t('fees.faq1_q'), "acceptedAnswer": { "@type": "Answer", "text": t('fees.faq1_a') } },
+      { "@type": "Question", "name": t('fees.faq2_q'), "acceptedAnswer": { "@type": "Answer", "text": t('fees.faq2_a') } },
+      { "@type": "Question", "name": t('fees.faq3_q'), "acceptedAnswer": { "@type": "Answer", "text": t('fees.faq3_a') } }
+    ]
+  })} />
+
   <!-- HERO -->
   <section class="py-16">
     <div class="max-w-5xl mx-auto px-4">
