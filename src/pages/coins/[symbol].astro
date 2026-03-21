@@ -156,10 +156,10 @@ const canonicalOverride = symbol.endsWith('usdt') ? undefined : `/coins/${symbol
           {t('coin_detail.simulate_coin').replace('{coin}', coinName)} &rarr;
         </a>
         <div class="flex flex-wrap gap-3 justify-center mt-4">
-          <a href="/strategies/ranking" class="inline-block border border-[--color-border] px-5 py-2 rounded font-semibold text-sm hover:border-[--color-accent] transition-colors no-underline">
+          <a href="/strategies/ranking" class="btn btn-ghost btn-md hover:border-[--color-accent] transition-colors no-underline">
             {t('ranking.tag')} &rarr;
           </a>
-          <a href="/coins" class="inline-block border border-[--color-border] px-5 py-2 rounded font-semibold text-sm hover:border-[--color-accent] transition-colors no-underline">
+          <a href="/coins" class="btn btn-ghost btn-md hover:border-[--color-accent] transition-colors no-underline">
             {t('coin_detail.all_coins')} &rarr;
           </a>
         </div>
