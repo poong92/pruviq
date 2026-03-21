@@ -538,31 +538,42 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
       </div>
     </footer>
 
-    <!-- Sticky CTA Bar (appears on scroll) -->
-    <div id="sticky-cta" class="fixed bottom-0 left-0 right-0 z-50 translate-y-full transition-transform duration-300 border-t border-[--color-border] bg-[--color-bg]/95 backdrop-blur-md" role="complementary" aria-label="Quick action bar">
-      <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
-        <p class="text-sm text-[--color-text-muted] hidden sm:block">{t('hero.subtitle')}</p>
-        <a href={simulatePath} class="bg-[--color-accent] text-[--color-bg] px-6 py-2 rounded font-semibold text-sm hover:bg-[--color-accent-dim] whitespace-nowrap shrink-0">
-          {t('hero.cta_primary')} &rarr;
+    <!-- Sticky CTA Bar (mobile-only, appears on scroll past hero) -->
+    <div id="sticky-cta" class="sm:hidden fixed bottom-0 left-0 right-0 z-50 translate-y-full transition-transform duration-300 border-t border-[--color-border] bg-[--color-bg]/95 backdrop-blur-md safe-area-bottom" role="complementary" aria-label="Quick action bar">
+      <div class="px-4 py-3 flex items-center justify-between gap-3">
+        <a href={simulatePath} class="btn btn-primary btn-md flex-1 text-center no-underline whitespace-nowrap">
+          {t('hero.cta_primary')} →
         </a>
+        <button id="sticky-cta-dismiss" aria-label="Dismiss" class="shrink-0 w-8 h-8 flex items-center justify-center rounded text-[--color-text-muted] hover:text-[--color-text] hover:bg-[--color-bg-hover] transition-colors">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 2l10 10M12 2L2 12"/></svg>
+        </button>
       </div>
     </div>
 
     <script type="module" src="/scripts/layout-client.js" defer></script>
     <script>
-      /* Sticky CTA bar - show after scrolling past hero */
+      /* Sticky CTA bar - show after scrolling past hero (mobile only) */
       (function() {
         var bar = document.getElementById('sticky-cta');
+        var dismiss = document.getElementById('sticky-cta-dismiss');
         if (!bar) return;
         var shown = false;
+        var dismissed = false;
         function check() {
-          var shouldShow = window.scrollY > 300;
+          if (dismissed) return;
+          var shouldShow = window.scrollY > 400;
           if (shouldShow !== shown) {
             shown = shouldShow;
             bar.style.transform = shown ? 'translateY(0)' : 'translateY(100%)';
           }
         }
         window.addEventListener('scroll', check, { passive: true });
+        if (dismiss) {
+          dismiss.addEventListener('click', function() {
+            dismissed = true;
+            bar.style.transform = 'translateY(100%)';
+          });
+        }
       })();
     </script>
     <!-- Cookie Notice (GDPR essential notice) -->
