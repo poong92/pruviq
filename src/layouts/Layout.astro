@@ -88,7 +88,7 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
   const name = isLast && breadcrumbSegments.length > 1
     ? (breadcrumbLabelMap[lang]?.[seg] || title)
     : (breadcrumbLabelMap[lang]?.[seg] || seg.replace(/-/g, ' ').replace(/usdt$/i, '/USDT').toUpperCase());
-  const fullUrl = `https://pruviq.com${lang === 'ko' ? '/ko' : ''}${cumPath}/`;
+  const fullUrl = `https://pruviq.com${lang === 'ko' ? '/ko' : ''}${cumPath}`;
   breadcrumbItems.push({ name, item: fullUrl });
 }
 ---
