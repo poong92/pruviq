@@ -249,16 +249,40 @@ const xLast = daily[daily.length - 1]?.date ?? '';
           <span class="text-[--color-text-muted]">
             Trades: <span class="text-[--color-text]">{(perfData as any).summary?.total_trades ?? '—'}</span>
           </span>
-          <a
-            href="/data/performance.json"
-            download="pruviq-performance.json"
-            class="ml-auto border border-[--color-border] px-3 py-1.5 rounded text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors no-underline"
-            title="Download raw performance data as JSON"
-          >
-            &#8595; {t('perf.download_json')}
-          </a>
+          <div class="ml-auto flex gap-2">
+            <button
+              id="dl-csv-btn"
+              class="border border-[--color-border] px-3 py-1.5 rounded text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors cursor-pointer bg-transparent font-mono text-xs"
+              title="Download daily PnL data as CSV"
+            >
+              &#8595; {t('perf.download_csv')}
+            </button>
+            <a
+              href="/data/performance.json"
+              download="pruviq-performance.json"
+              class="border border-[--color-border] px-3 py-1.5 rounded text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors no-underline"
+              title="Download raw performance data as JSON"
+            >
+              &#8595; {t('perf.download_json')}
+            </a>
+          </div>
         </div>
       </div>
+      <script>
+        document.getElementById('dl-csv-btn')?.addEventListener('click', async () => {
+          const r = await fetch('/data/performance.json');
+          const d = await r.json();
+          const rows = [['date','pnl','cum_pnl','trades']];
+          (d.daily || []).forEach((e: {date:string;pnl:number;cum_pnl:number;trades:number}) => {
+            rows.push([e.date, String(e.pnl), String(e.cum_pnl), String(e.trades)]);
+          });
+          const csv = rows.map(r => r.join(',')).join('\n');
+          const a = document.createElement('a');
+          a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv'}));
+          a.download = 'pruviq-performance-daily.csv';
+          a.click();
+        });
+      </script>
     </section>
   )}
 

@@ -207,9 +207,9 @@ export const en = {
   "strategies.desc":
     "We don't hide failures. Every strategy we've tested is documented here with full backtest data, real results, and honest analysis of what worked and what didn't.",
   "strategies.count":
-    "{total} strategies documented — {verified} active, {killed} retired, {shelved} under review.",
+    "{total} strategies documented — real market data, 100% results published.",
   "strategies.funnel":
-    "88 parameter combinations tested → {total} strategies fully documented → {verified} survived validation. This is the filter, not the failure.",
+    "88 parameter combinations tested → {total} strategies fully documented → pass and fail results all published. That's real transparency.",
   "strategies.more_tag": "MORE STRATEGIES COMING",
   "strategies.more_desc":
     "We continuously test new approaches. Documented strategies will appear here as they complete backtesting validation.",
@@ -557,6 +557,7 @@ export const en = {
   "perf.equity_title": "Live Trading Equity Curve",
   "perf.equity_desc":
     "Cumulative PnL from live trading (Jan 13 – Mar 5, 2026). Strategy paused after MDD exceeded the 20% risk limit.",
+  "perf.download_csv": "Download CSV",
   "perf.download_json": "Download JSON",
   "perf.verify_title": "Verify It Yourself",
   "perf.verify_desc":
