@@ -1,0 +1,152 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { useTranslations } from '../../i18n/index';
+
+const t = useTranslations('ko');
+
+const steps = [
+  { num: '01', title: t('how.step1'), desc: t('how.step1_desc') },
+  { num: '02', title: t('how.step2'), desc: t('how.step2_desc') },
+  { num: '03', title: t('how.step3'), desc: t('how.step3_desc') },
+];
+
+const features = [
+  { stat: '569+', label: '코인', desc: '바이낸스 선물의 모든 페어 — 상위 10개만이 아닙니다.' },
+  { stat: '36', label: '전략', desc: '즉시 테스트할 수 있는 사전 구축 전략, 또는 직접 커스터마이즈하세요.' },
+  { stat: '2년+', label: '과거 데이터', desc: '현실적인 수수료와 슬리피지 모델링이 포함된 OHLCV 캔들.' },
+  { stat: '실제 수수료', label: '포함', desc: '모든 시뮬레이션에 메이커/테이커 수수료, 펀딩비, 슬리피지가 반영됩니다.' },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "무료 크립토 트레이딩 시뮬레이터 — 회원가입 불필요",
+  "description": "무료 시뮬레이터로 크립토 트레이딩을 연습하세요. 569개 이상 코인, 실제 수수료, 36개 전략, 2년 이상의 과거 데이터로 테스트할 수 있습니다.",
+  "datePublished": "2026-03-22",
+  "dateModified": "2026-03-22",
+  "author": { "@type": "Organization", "name": "PRUVIQ", "url": "https://pruviq.com" },
+  "publisher": { "@type": "Organization", "name": "PRUVIQ", "url": "https://pruviq.com" },
+  "inLanguage": "ko"
+};
+---
+
+<Layout title={t('meta.crypto_simulator_title')} description={t('meta.crypto_simulator_desc')}>
+
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+  <!-- HERO -->
+  <section class="pt-16 pb-8">
+    <div class="max-w-5xl mx-auto px-4">
+      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">트레이딩 시뮬레이터</p>
+      <h1 class="text-3xl md:text-5xl font-bold mb-4">
+        무료 크립토 트레이딩 시뮬레이터 — 회원가입 불필요
+        <span class="block text-lg md:text-2xl font-normal text-[--color-text-muted] mt-2">실제 돈을 투자하기 전에 실제 시장 데이터로 전략을 테스트하세요.</span>
+      </h1>
+      <p class="text-[--color-text-muted] text-lg max-w-2xl mb-6">
+        PRUVIQ의 트레이딩 시뮬레이터는 569개 이상의 암호화폐에서 현실적인 수수료를 반영하여
+        어떤 전략이든 백테스트할 수 있게 해줍니다 — 완전 무료, 회원가입 불필요.
+      </p>
+    </div>
+  </section>
+
+  <!-- WHAT IS A TRADING SIMULATOR -->
+  <hr class="section-divider" />
+  <section class="pb-12 pt-12">
+    <div class="max-w-5xl mx-auto px-4">
+      <h2 class="text-2xl md:text-3xl font-bold mb-6">크립토 트레이딩 시뮬레이터란?</h2>
+      <div class="space-y-4 text-[--color-text-muted] max-w-3xl">
+        <p>
+          크립토 트레이딩 시뮬레이터는 과거 시장 데이터에 전략을 적용하여 실제로 어떤 성과를 냈을지 보여줍니다
+          — 실제 돈을 잃을 위험 없이. 트레이더를 위한 비행 시뮬레이터라고 생각하세요: 실거래에 들어가기 전에
+          현실적인 조건에서 연습합니다.
+        </p>
+        <p>
+          실시간으로 진행되어 몇 주가 걸리는 페이퍼 트레이딩과 달리, 시뮬레이터는 수개월 또는 수년간의
+          시장 움직임을 몇 초로 압축합니다. 즉각적인 피드백을 받을 수 있습니다: 승률, 최대 낙폭,
+          손익비, 그리고 전체 자산 곡선 — 모두 실제 거래소 수수료가 포함된 상태로 계산됩니다.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <hr class="section-divider" />
+  <section class="pb-12 pt-12 bg-[--color-bg-subtle]">
+    <div class="max-w-5xl mx-auto px-4">
+      <h2 class="text-2xl md:text-3xl font-bold mb-8">PRUVIQ 시뮬레이터 작동 방식</h2>
+      <div class="grid md:grid-cols-3 gap-8">
+        {steps.map((step) => (
+          <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card]">
+            <div class="flex items-center gap-3 mb-4">
+              <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-[--color-accent]/10 text-[--color-accent] font-mono text-sm font-bold shrink-0">{step.num}</span>
+              <h3 class="font-bold text-lg">{step.title}</h3>
+            </div>
+            <p class="text-sm text-[--color-text-muted]">{step.desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- KEY FEATURES -->
+  <hr class="section-divider" />
+  <section class="pb-12 pt-12">
+    <div class="max-w-5xl mx-auto px-4">
+      <h2 class="text-2xl md:text-3xl font-bold mb-8">주요 기능</h2>
+      <div class="grid sm:grid-cols-2 md:grid-cols-4 gap-6">
+        {features.map((f) => (
+          <div class="text-center border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card]">
+            <p class="text-3xl font-bold text-[--color-accent] mb-1">{f.stat}</p>
+            <p class="font-mono text-xs text-[--color-text-muted] uppercase tracking-wider mb-2">{f.label}</p>
+            <p class="text-sm text-[--color-text-muted]">{f.desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- SEE IT IN ACTION -->
+  <hr class="section-divider" />
+  <section class="pb-12 pt-12 bg-[--color-bg-subtle]">
+    <div class="max-w-5xl mx-auto px-4 text-center">
+      <h2 class="text-2xl md:text-3xl font-bold mb-4">직접 확인하세요</h2>
+      <p class="text-[--color-text-muted] text-lg mb-8 max-w-2xl mx-auto">
+        인터랙티브 데모로 백테스트가 어떻게 보이는지 확인하거나, 바로 전체 시뮬레이터를 사용하세요.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="/ko/simulate" class="btn btn-primary btn-lg">
+          시뮬레이터 열기 &rarr;
+        </a>
+        <a href="/ko/demo" class="btn btn-ghost btn-lg hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
+          인터랙티브 데모
+        </a>
+      </div>
+      <p class="text-xs text-[--color-text-muted] mt-6">
+        함께 둘러보기: <a href="/ko/strategies" class="text-[--color-accent] underline">전략 라이브러리</a> |
+        <a href="/ko/compare/tradingview" class="text-[--color-accent] underline">TradingView와 비교</a> |
+        <a href="/ko/learn" class="text-[--color-accent] underline">트레이딩 학습</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <hr class="section-divider" />
+  <section class="py-20">
+    <div class="max-w-5xl mx-auto px-4 text-center">
+      <h2 class="text-3xl md:text-4xl font-bold mb-4">
+        <span class="text-[--color-accent]">시뮬레이터 열기</span>
+      </h2>
+      <p class="text-[--color-text-muted] text-lg mb-8 max-w-xl mx-auto">회원가입 없음, 수수료 없음, 리스크 없음. 30초 안에 첫 번째 백테스트를 실행하세요.</p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center mb-4">
+        <a href="/ko/simulate" class="btn btn-primary btn-lg">
+          {t('cta.button1')} &rarr;
+        </a>
+        <a href="/ko/strategies" class="btn btn-ghost btn-lg hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
+          전략 둘러보기
+        </a>
+      </div>
+      <p class="text-[--color-text-muted] text-xs mt-6 max-w-lg mx-auto">{t('cta.disclaimer')}</p>
+    </div>
+  </section>
+
+</Layout>

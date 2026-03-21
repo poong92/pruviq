@@ -1,0 +1,151 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { useTranslations } from '../i18n/index';
+
+const t = useTranslations('en');
+
+const reasons = [
+  {
+    title: 'Look-Ahead Bias',
+    desc: 'Your strategy uses information that wasn\'t available at the time of the trade. For example, using a full day\'s high/low to make a decision at market open. This is the most common — and most dangerous — backtesting error.',
+    fix: 'PRUVIQ uses strictly sequential data processing. Each candle is evaluated only with data available up to that point. We lost $14,115 to look-ahead bias in our own trading — that\'s why we built the engine to prevent it.'
+  },
+  {
+    title: 'Survivorship Bias',
+    desc: 'Testing only on coins that still exist today. Delisted coins (Luna, FTT, etc.) are excluded from your dataset, making results look artificially better. If your data only includes survivors, your backtest is lying.',
+    fix: 'PRUVIQ includes delisted and dead coins in historical data. Your strategy gets tested on the full universe of coins that existed during the test period — not just the ones that survived.'
+  },
+  {
+    title: 'Overfitting',
+    desc: 'Tweaking parameters until the backtest looks perfect on historical data, but the strategy fails on new data. A strategy with 20 optimized parameters probably won\'t work next month.',
+    fix: 'PRUVIQ encourages out-of-sample testing by letting you run the same strategy across 569+ coins. If it only works on 3 coins, it\'s overfit. We also show Monte Carlo simulations to reveal how sensitive results are to randomness.'
+  },
+  {
+    title: 'Ignoring Fees and Slippage',
+    desc: 'Many backtesting tools skip trading fees, funding rates, and slippage. A strategy that shows 15% returns before fees might actually lose money. On leveraged futures, funding fees alone can eat 5-10% annually.',
+    fix: 'Every PRUVIQ simulation includes maker/taker fees, funding rates, and realistic slippage modeling. What you see is what you\'d actually get — minus the surprises.'
+  },
+  {
+    title: 'Market Regime Changes',
+    desc: 'A strategy that crushed it in a bull market may bleed in a sideways or bear market. Markets change regimes, and strategies that don\'t adapt will fail. Testing only on favorable periods hides this risk.',
+    fix: 'PRUVIQ\'s 2+ year historical data spans multiple market cycles (bull, bear, consolidation). We also killed 88 strategies that worked in one regime but failed in others — and we show them publicly.'
+  },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Why Backtests Fail — And How to Avoid It",
+  "description": "Learn the 5 most common reasons crypto backtests fail: look-ahead bias, survivorship bias, overfitting, ignoring fees, and market regime changes. See how PRUVIQ addresses each one.",
+  "datePublished": "2026-03-22",
+  "dateModified": "2026-03-22",
+  "author": { "@type": "Organization", "name": "PRUVIQ", "url": "https://pruviq.com" },
+  "publisher": { "@type": "Organization", "name": "PRUVIQ", "url": "https://pruviq.com" }
+};
+---
+
+<Layout title={t('meta.why_backtests_fail_title')} description={t('meta.why_backtests_fail_desc')}>
+
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+  <!-- HERO -->
+  <section class="pt-16 pb-8">
+    <div class="max-w-5xl mx-auto px-4">
+      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">BACKTESTING EDUCATION</p>
+      <h1 class="text-3xl md:text-5xl font-bold mb-4">
+        Why Backtests Fail — And How to Avoid It
+        <span class="block text-lg md:text-2xl font-normal text-[--color-text-muted] mt-2">5 common traps that make backtests unreliable, and how to fix each one.</span>
+      </h1>
+      <p class="text-[--color-text-muted] text-lg max-w-2xl mb-6">
+        A backtest that shows 200% returns means nothing if the methodology is flawed.
+        Here are the 5 most common reasons backtests fail in crypto — and how PRUVIQ is built to prevent them.
+      </p>
+    </div>
+  </section>
+
+  <!-- 5 REASONS -->
+  <hr class="section-divider" />
+  <section class="pb-12 pt-12">
+    <div class="max-w-5xl mx-auto px-4">
+      <h2 class="text-2xl md:text-3xl font-bold mb-10">5 Common Reasons Backtests Fail</h2>
+      <div class="space-y-12">
+        {reasons.map((reason, i) => (
+          <div class="border-l-2 border-[--color-accent]/30 pl-6">
+            <div class="flex items-center gap-3 mb-3">
+              <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-[--color-accent]/10 text-[--color-accent] font-mono text-sm font-bold shrink-0">{i + 1}</span>
+              <h3 class="text-xl font-bold">{reason.title}</h3>
+            </div>
+            <p class="text-[--color-text-muted] mb-4">{reason.desc}</p>
+            <div class="border border-[--color-accent]/20 rounded-lg p-4 bg-[--color-accent]/5">
+              <p class="font-mono text-[--color-accent] text-xs font-bold mb-1">HOW PRUVIQ ADDRESSES THIS</p>
+              <p class="text-sm text-[--color-text-muted]">{reason.fix}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 88 KILLED STRATEGIES -->
+  <hr class="section-divider" />
+  <section class="pb-12 pt-12 bg-[--color-bg-subtle]">
+    <div class="max-w-5xl mx-auto px-4">
+      <h2 class="text-2xl md:text-3xl font-bold mb-4">Our Proof: 88 Strategies We Killed</h2>
+      <p class="text-[--color-text-muted] max-w-3xl mb-6">
+        Most platforms only show winning strategies. We do the opposite — we publicly disclose every strategy that
+        failed our testing criteria. Look-ahead bias, overfitting, poor risk-adjusted returns: if a strategy
+        doesn't survive rigorous testing, we kill it and explain why.
+      </p>
+      <p class="text-[--color-text-muted] max-w-3xl mb-8">
+        This isn't marketing — it's methodology. The 88 strategies we've killed are just as important as the
+        ones that survived. They show you what <em>doesn't</em> work, so you can focus on what does.
+      </p>
+      <a href="/strategies" class="btn btn-ghost btn-lg hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
+        Browse Strategy Library &rarr;
+      </a>
+    </div>
+  </section>
+
+  <!-- INTERNAL LINKS -->
+  <hr class="section-divider" />
+  <section class="pb-12 pt-12">
+    <div class="max-w-5xl mx-auto px-4">
+      <h2 class="text-2xl md:text-3xl font-bold mb-6">Learn More</h2>
+      <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
+        <a href="/simulate" class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card] hover:border-[--color-accent]/50 transition-colors block">
+          <p class="font-bold mb-1">Simulator</p>
+          <p class="text-sm text-[--color-text-muted]">Run your own backtest with real data</p>
+        </a>
+        <a href="/learn" class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card] hover:border-[--color-accent]/50 transition-colors block">
+          <p class="font-bold mb-1">Learn</p>
+          <p class="text-sm text-[--color-text-muted]">Trading education and guides</p>
+        </a>
+        <a href="/compare/tradingview" class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card] hover:border-[--color-accent]/50 transition-colors block">
+          <p class="font-bold mb-1">Compare</p>
+          <p class="text-sm text-[--color-text-muted]">PRUVIQ vs other platforms</p>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <hr class="section-divider" />
+  <section class="py-20">
+    <div class="max-w-5xl mx-auto px-4 text-center">
+      <h2 class="text-3xl md:text-4xl font-bold mb-4">
+        <span class="text-[--color-accent]">Test Your Strategy</span>
+      </h2>
+      <p class="text-[--color-text-muted] text-lg mb-8 max-w-xl mx-auto">Don't guess. Test it with real data, real fees, and real market conditions.</p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center mb-4">
+        <a href="/simulate" class="btn btn-primary btn-lg">
+          {t('cta.button1')} &rarr;
+        </a>
+        <a href="/strategies" class="btn btn-ghost btn-lg hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
+          {t('hero.cta1')}
+        </a>
+      </div>
+      <p class="text-[--color-text-muted] text-xs mt-6 max-w-lg mx-auto">{t('cta.disclaimer')}</p>
+    </div>
+  </section>
+
+</Layout>

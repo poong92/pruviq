@@ -1,0 +1,151 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { useTranslations } from '../i18n/index';
+
+const t = useTranslations('en');
+
+const steps = [
+  { num: '01', title: t('how.step1'), desc: t('how.step1_desc') },
+  { num: '02', title: t('how.step2'), desc: t('how.step2_desc') },
+  { num: '03', title: t('how.step3'), desc: t('how.step3_desc') },
+];
+
+const features = [
+  { stat: '569+', label: 'Coins', desc: 'Every Binance Futures pair — not just the top 10.' },
+  { stat: '36', label: 'Strategies', desc: 'Pre-built strategies you can test immediately, or customize your own.' },
+  { stat: '2+ Years', label: 'Historical Data', desc: 'OHLCV candles with realistic fee and slippage modeling.' },
+  { stat: 'Real Fees', label: 'Included', desc: 'Maker/taker fees, funding rates, and slippage in every simulation.' },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Free Crypto Trading Simulator — No Account Needed",
+  "description": "Practice crypto trading with a free simulator. Test 569+ coins with real fees, 36 strategies, and 2+ years of historical data. No signup required.",
+  "datePublished": "2026-03-22",
+  "dateModified": "2026-03-22",
+  "author": { "@type": "Organization", "name": "PRUVIQ", "url": "https://pruviq.com" },
+  "publisher": { "@type": "Organization", "name": "PRUVIQ", "url": "https://pruviq.com" }
+};
+---
+
+<Layout title={t('meta.crypto_simulator_title')} description={t('meta.crypto_simulator_desc')}>
+
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+  <!-- HERO -->
+  <section class="pt-16 pb-8">
+    <div class="max-w-5xl mx-auto px-4">
+      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">TRADING SIMULATOR</p>
+      <h1 class="text-3xl md:text-5xl font-bold mb-4">
+        Free Crypto Trading Simulator — No Account Needed
+        <span class="block text-lg md:text-2xl font-normal text-[--color-text-muted] mt-2">Test strategies with real market data before risking real money.</span>
+      </h1>
+      <p class="text-[--color-text-muted] text-lg max-w-2xl mb-6">
+        PRUVIQ's trading simulator lets you backtest any strategy on 569+ cryptocurrencies
+        with realistic fees — completely free, no signup required.
+      </p>
+    </div>
+  </section>
+
+  <!-- WHAT IS A TRADING SIMULATOR -->
+  <hr class="section-divider" />
+  <section class="pb-12 pt-12">
+    <div class="max-w-5xl mx-auto px-4">
+      <h2 class="text-2xl md:text-3xl font-bold mb-6">What Is a Crypto Trading Simulator?</h2>
+      <div class="space-y-4 text-[--color-text-muted] max-w-3xl">
+        <p>
+          A crypto trading simulator runs your strategy against historical market data to show you how it would
+          have performed — without risking any real money. Think of it as a flight simulator for traders: you
+          practice with realistic conditions before going live.
+        </p>
+        <p>
+          Unlike paper trading (which runs in real-time and takes weeks), a simulator compresses months or years
+          of market action into seconds. You get immediate feedback: win rate, maximum drawdown, profit factor,
+          and a full equity curve — all calculated with real exchange fees included.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS (reusing i18n step keys) -->
+  <hr class="section-divider" />
+  <section class="pb-12 pt-12 bg-[--color-bg-subtle]">
+    <div class="max-w-5xl mx-auto px-4">
+      <h2 class="text-2xl md:text-3xl font-bold mb-8">How PRUVIQ's Simulator Works</h2>
+      <div class="grid md:grid-cols-3 gap-8">
+        {steps.map((step) => (
+          <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card]">
+            <div class="flex items-center gap-3 mb-4">
+              <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-[--color-accent]/10 text-[--color-accent] font-mono text-sm font-bold shrink-0">{step.num}</span>
+              <h3 class="font-bold text-lg">{step.title}</h3>
+            </div>
+            <p class="text-sm text-[--color-text-muted]">{step.desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- KEY FEATURES -->
+  <hr class="section-divider" />
+  <section class="pb-12 pt-12">
+    <div class="max-w-5xl mx-auto px-4">
+      <h2 class="text-2xl md:text-3xl font-bold mb-8">Key Features</h2>
+      <div class="grid sm:grid-cols-2 md:grid-cols-4 gap-6">
+        {features.map((f) => (
+          <div class="text-center border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card]">
+            <p class="text-3xl font-bold text-[--color-accent] mb-1">{f.stat}</p>
+            <p class="font-mono text-xs text-[--color-text-muted] uppercase tracking-wider mb-2">{f.label}</p>
+            <p class="text-sm text-[--color-text-muted]">{f.desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- SEE IT IN ACTION -->
+  <hr class="section-divider" />
+  <section class="pb-12 pt-12 bg-[--color-bg-subtle]">
+    <div class="max-w-5xl mx-auto px-4 text-center">
+      <h2 class="text-2xl md:text-3xl font-bold mb-4">See It in Action</h2>
+      <p class="text-[--color-text-muted] text-lg mb-8 max-w-2xl mx-auto">
+        Try the interactive demo to see how a backtest looks, or jump straight into the full simulator.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="/simulate" class="btn btn-primary btn-lg">
+          Open Simulator &rarr;
+        </a>
+        <a href="/demo" class="btn btn-ghost btn-lg hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
+          Interactive Demo
+        </a>
+      </div>
+      <p class="text-xs text-[--color-text-muted] mt-6">
+        Also explore: <a href="/strategies" class="text-[--color-accent] underline">Strategy Library</a> |
+        <a href="/compare/tradingview" class="text-[--color-accent] underline">Compare with TradingView</a> |
+        <a href="/learn" class="text-[--color-accent] underline">Learn Trading</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <hr class="section-divider" />
+  <section class="py-20">
+    <div class="max-w-5xl mx-auto px-4 text-center">
+      <h2 class="text-3xl md:text-4xl font-bold mb-4">
+        <span class="text-[--color-accent]">Open Simulator</span>
+      </h2>
+      <p class="text-[--color-text-muted] text-lg mb-8 max-w-xl mx-auto">No signup, no fees, no risk. Run your first backtest in under 30 seconds.</p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center mb-4">
+        <a href="/simulate" class="btn btn-primary btn-lg">
+          {t('cta.button1')} &rarr;
+        </a>
+        <a href="/strategies" class="btn btn-ghost btn-lg hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
+          Browse Strategies
+        </a>
+      </div>
+      <p class="text-[--color-text-muted] text-xs mt-6 max-w-lg mx-auto">{t('cta.disclaimer')}</p>
+    </div>
+  </section>
+
+</Layout>

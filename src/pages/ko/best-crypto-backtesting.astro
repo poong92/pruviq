@@ -1,0 +1,223 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { useTranslations } from '../../i18n/index';
+
+const t = useTranslations('ko');
+
+const criteria = [
+  { label: '멀티코인 지원', desc: '주요 거래소의 569개 이상 코인 — BTC/ETH뿐만 아니라 모든 페어를 테스트할 수 있습니다.' },
+  { label: '실제 수수료 및 슬리피지', desc: '모든 백테스트에 메이커/테이커 수수료, 펀딩비, 슬리피지 모델링이 포함됩니다.' },
+  { label: '실패 투명성', desc: '성공한 전략만 보여주지 않습니다 — 실패한 전략도 공개합니다.' },
+  { label: '노코드 인터페이스', desc: '지표를 선택하고, 파라미터를 설정하고, 실행하세요. Pine Script나 Python이 필요 없습니다.' },
+  { label: '영원히 무료', desc: '구독 티어 없음, 신용카드 없음, 회원가입 불필요.' },
+];
+
+const comparisonRows = [
+  { feature: '가격', pruviq: '영원히 무료', tv: '$14.95~59.95/월', c3: '$14.50~49.50/월', win: 'p' },
+  { feature: '코인 수', pruviq: '569+', tv: '~50개 암호화폐 페어', c3: '~20개 지원', win: 'p' },
+  { feature: '코딩 필요', pruviq: '노코드', tv: 'Pine Script', c3: '템플릿 기반', win: 'p' },
+  { feature: '실제 수수료 모델링', pruviq: '예 (메이커/테이커/펀딩)', tv: '기본 커미션만', c3: '일부', win: 'p' },
+  { feature: '실패 전략 공개', pruviq: '예 (88개 제거)', tv: '아니오', c3: '아니오', win: 'p' },
+  { feature: '과거 데이터', pruviq: '2년+', tv: '2년+', c3: '제한적', win: 'both' },
+  { feature: '실거래', pruviq: '아니오 (시뮬레이션 전용)', tv: '예', c3: '예', win: 'tv' },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "2026년 최고의 무료 크립토 백테스팅 플랫폼",
+  "description": "2026년 최고의 크립토 백테스팅 플랫폼을 비교하세요. PRUVIQ는 569개 이상 코인, 실제 수수료, 투명한 실패 데이터를 갖춘 무료 노코드 백테스팅을 제공합니다.",
+  "datePublished": "2026-03-22",
+  "dateModified": "2026-03-22",
+  "author": { "@type": "Organization", "name": "PRUVIQ", "url": "https://pruviq.com" },
+  "publisher": { "@type": "Organization", "name": "PRUVIQ", "url": "https://pruviq.com" },
+  "inLanguage": "ko"
+};
+---
+
+<Layout title={t('meta.best_backtesting_title')} description={t('meta.best_backtesting_desc')}>
+
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+  <!-- HERO -->
+  <section class="pt-16 pb-8">
+    <div class="max-w-5xl mx-auto px-4">
+      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">백테스팅 가이드</p>
+      <h1 class="text-3xl md:text-5xl font-bold mb-4">
+        2026년 최고의 무료 크립토 백테스팅 플랫폼
+        <span class="block text-lg md:text-2xl font-normal text-[--color-text-muted] mt-2">주요 플랫폼의 기능, 비용, 투명성을 비교합니다.</span>
+      </h1>
+      <p class="text-[--color-text-muted] text-lg max-w-2xl mb-6">
+        대부분의 백테스팅 도구는 월 구독료를 받고, 코딩을 요구하며, 성공한 전략만 보여줍니다.
+        PRUVIQ는 이 세 가지 문제를 모두 해결하기 위해 만들어졌습니다.
+      </p>
+    </div>
+  </section>
+
+  <!-- WHY BACKTESTING MATTERS -->
+  <hr class="section-divider" />
+  <section class="pb-12 pt-12">
+    <div class="max-w-5xl mx-auto px-4">
+      <h2 class="text-2xl md:text-3xl font-bold mb-6">백테스팅이 중요한 이유</h2>
+      <div class="space-y-4 text-[--color-text-muted] max-w-3xl">
+        <p>
+          모든 수익성 있는 크립토 전략은 사후에 보면 당연해 보입니다. 문제는 대부분의 트레이더가 백테스팅을
+          완전히 건너뛰거나 — 불편한 진실을 숨기는 도구를 사용한다는 것입니다. 과거 데이터에 대한 테스트 없이
+          거래하는 것은 증거가 아닌 희망에 기반한 거래입니다.
+        </p>
+        <p>
+          올바른 백테스트는 최악의 낙폭, 수수료 반영 후 실제 승률, 그리고 전략이 다른 시장 레짐에서도 생존하는지를
+          보여줍니다. 직감을 데이터로 전환합니다. 테스트된 전략과 테스트되지 않은 전략의 차이는 종종 자본을
+          지키느냐 잃느냐의 차이입니다.
+        </p>
+        <p>
+          하지만 모든 백테스팅 플랫폼이 동일하지는 않습니다. 일부는 수수료를 무시합니다. 일부는 비트코인만
+          테스트합니다. 일부는 단일 테스트를 실행하기 전에 Pine Script나 Python을 배워야 합니다. 최고의
+          백테스팅 플랫폼은 이러한 장벽을 제거하면서 결과를 정직하게 유지합니다.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHAT MAKES A GOOD BACKTESTER -->
+  <hr class="section-divider" />
+  <section class="pb-12 pt-12 bg-[--color-bg-subtle]">
+    <div class="max-w-5xl mx-auto px-4">
+      <h2 class="text-2xl md:text-3xl font-bold mb-8">좋은 백테스팅 플랫폼의 조건</h2>
+      <div class="space-y-6">
+        {criteria.map((item) => (
+          <div class="flex gap-4 items-start">
+            <span class="text-[--color-up] text-xl mt-0.5 shrink-0" aria-hidden="true">&#10003;</span>
+            <div>
+              <h3 class="font-bold text-lg mb-1">{item.label}</h3>
+              <p class="text-[--color-text-muted] text-sm">{item.desc}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- PRUVIQ FEATURES -->
+  <hr class="section-divider" />
+  <section class="pb-12 pt-12">
+    <div class="max-w-5xl mx-auto px-4">
+      <h2 class="text-2xl md:text-3xl font-bold mb-8">PRUVIQ가 모든 기준을 충족하는 방법</h2>
+      <div class="grid md:grid-cols-2 gap-6">
+        <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card]">
+          <h3 class="font-bold mb-2">569개 이상 코인, 실제 데이터</h3>
+          <p class="text-sm text-[--color-text-muted]">바이낸스 선물의 모든 페어를 2년 이상의 OHLCV 데이터로 테스트할 수 있습니다. 상위 10개뿐만 아니라 상장된 모든 코인이 포함됩니다.</p>
+        </div>
+        <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card]">
+          <h3 class="font-bold mb-2">현실적인 수수료 모델링</h3>
+          <p class="text-sm text-[--color-text-muted]">메이커/테이커 수수료, 펀딩비, 슬리피지가 모든 시뮬레이션에 반영됩니다. 실거래 시 예상치 못한 비용이 발생하지 않습니다.</p>
+        </div>
+        <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card]">
+          <h3 class="font-bold mb-2">88개의 제거된 전략</h3>
+          <p class="text-sm text-[--color-text-muted]">실패를 숨기지 않습니다. <a href="/ko/strategies" class="text-[--color-accent] underline">전략 라이브러리</a>에서 무엇이 효과가 없었는지 — 그리고 왜 그런지 확인하세요.</p>
+        </div>
+        <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card]">
+          <h3 class="font-bold mb-2">코딩 제로</h3>
+          <p class="text-sm text-[--color-text-muted]">지표를 선택하고, SL/TP를 설정하고, 실행하세요. <a href="/ko/simulate" class="text-[--color-accent] underline">시뮬레이터</a>가 모든 것을 처리합니다 — Pine Script도, Python도 필요 없습니다.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMPARISON TABLE -->
+  <hr class="section-divider" />
+  <section class="pb-12 pt-12 bg-[--color-bg-subtle]">
+    <div class="max-w-5xl mx-auto px-4">
+      <h2 class="text-2xl md:text-3xl font-bold mb-8">빠른 비교: PRUVIQ vs TradingView vs 3Commas</h2>
+
+      <!-- Desktop table -->
+      <div class="hidden md:block overflow-x-auto">
+        <table class="w-full text-sm">
+          <caption class="sr-only">크립토 백테스팅 플랫폼 비교표</caption>
+          <thead>
+            <tr class="border-b border-[--color-border]">
+              <th class="text-left py-3 px-4 font-mono text-[--color-text-muted] text-xs uppercase tracking-wider w-1/4">기능</th>
+              <th class="text-left py-3 px-4 font-mono text-[--color-accent] text-xs uppercase tracking-wider">PRUVIQ</th>
+              <th class="text-left py-3 px-4 font-mono text-[--color-text-muted] text-xs uppercase tracking-wider">TradingView</th>
+              <th class="text-left py-3 px-4 font-mono text-[--color-text-muted] text-xs uppercase tracking-wider">3Commas</th>
+            </tr>
+          </thead>
+          <tbody>
+            {comparisonRows.map((row) => (
+              <tr class="border-b border-[--color-border]">
+                <td class="py-3 px-4 font-medium text-[--color-text-secondary] text-xs uppercase tracking-wide">{row.feature}</td>
+                <td class={`py-3 px-4 ${row.win === 'p' || row.win === 'both' ? 'text-[--color-up]' : 'text-[--color-text-muted]'}`}>
+                  <span class="flex items-start gap-2">
+                    <span class="mt-0.5 shrink-0 text-base leading-none" aria-hidden="true">{row.win === 'p' ? '\u2713' : row.win === 'both' ? '~' : '\u2014'}</span>
+                    <span>{row.pruviq}</span>
+                  </span>
+                </td>
+                <td class="py-3 px-4 text-[--color-text-muted]">
+                  <span class="flex items-start gap-2">
+                    <span class="mt-0.5 shrink-0 text-base leading-none" aria-hidden="true">{row.win === 'tv' ? '\u2713' : '\u2014'}</span>
+                    <span>{row.tv}</span>
+                  </span>
+                </td>
+                <td class="py-3 px-4 text-[--color-text-muted]">
+                  <span class="flex items-start gap-2">
+                    <span class="mt-0.5 shrink-0 text-base leading-none" aria-hidden="true">\u2014</span>
+                    <span>{row.c3}</span>
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Mobile cards -->
+      <div class="md:hidden space-y-4">
+        {comparisonRows.map((row) => (
+          <div class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card]">
+            <p class="font-mono text-xs text-[--color-text-muted] uppercase tracking-wider mb-2">{row.feature}</p>
+            <div class="grid grid-cols-3 gap-2">
+              <div>
+                <p class="text-xs text-[--color-accent] font-mono mb-1">PRUVIQ</p>
+                <p class="text-sm text-[--color-accent]">{row.pruviq}</p>
+              </div>
+              <div>
+                <p class="text-xs text-[--color-text-muted] font-mono mb-1">TV</p>
+                <p class="text-sm text-[--color-text-muted]">{row.tv}</p>
+              </div>
+              <div>
+                <p class="text-xs text-[--color-text-muted] font-mono mb-1">3C</p>
+                <p class="text-sm text-[--color-text-muted]">{row.c3}</p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <p class="text-xs text-[--color-text-muted] mt-4">
+        전체 비교 보기: <a href="/ko/compare/tradingview" class="text-[--color-accent] underline">PRUVIQ vs TradingView</a> |
+        <a href="/ko/compare/3commas" class="text-[--color-accent] underline">PRUVIQ vs 3Commas</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <hr class="section-divider" />
+  <section class="py-20">
+    <div class="max-w-5xl mx-auto px-4 text-center">
+      <h2 class="text-3xl md:text-4xl font-bold mb-4">
+        <span class="text-[--color-accent]">시뮬레이터 무료 체험</span>
+      </h2>
+      <p class="text-[--color-text-muted] text-lg mb-8 max-w-xl mx-auto">회원가입도, 신용카드도, Pine Script도 필요 없습니다. 전략을 선택하고, 백테스트를 실행하고, 실제 결과를 확인하세요.</p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center mb-4">
+        <a href="/ko/simulate" class="btn btn-primary btn-lg">
+          {t('cta.button1')} &rarr;
+        </a>
+        <a href="/ko/learn" class="btn btn-ghost btn-lg hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
+          더 알아보기
+        </a>
+      </div>
+      <p class="text-[--color-text-muted] text-xs mt-6 max-w-lg mx-auto">{t('cta.disclaimer')}</p>
+    </div>
+  </section>
+
+</Layout>

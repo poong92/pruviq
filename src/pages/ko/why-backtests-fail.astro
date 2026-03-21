@@ -1,0 +1,152 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { useTranslations } from '../../i18n/index';
+
+const t = useTranslations('ko');
+
+const reasons = [
+  {
+    title: 'Look-Ahead Bias (미래 참조 편향)',
+    desc: '전략이 거래 시점에 사용할 수 없었던 정보를 사용합니다. 예를 들어, 시장 개장 시점에 하루 전체의 고/저를 사용하여 결정을 내리는 것입니다. 이것은 가장 흔하고 — 가장 위험한 — 백테스팅 오류입니다.',
+    fix: 'PRUVIQ는 엄격한 순차적 데이터 처리를 사용합니다. 각 캔들은 해당 시점까지 사용 가능한 데이터만으로 평가됩니다. 우리는 자체 거래에서 look-ahead bias로 $14,115를 잃었습니다 — 그래서 이를 방지하는 엔진을 구축했습니다.'
+  },
+  {
+    title: 'Survivorship Bias (생존자 편향)',
+    desc: '오늘날 존재하는 코인만 테스트합니다. 상장 폐지된 코인(Luna, FTT 등)이 데이터셋에서 제외되어 결과가 인위적으로 좋게 보입니다. 데이터에 생존자만 포함되어 있다면, 백테스트는 거짓말입니다.',
+    fix: 'PRUVIQ는 과거 데이터에 상장 폐지된 코인과 사망한 코인을 포함합니다. 전략은 테스트 기간 동안 존재했던 전체 코인 유니버스에서 테스트됩니다 — 생존한 코인만이 아닙니다.'
+  },
+  {
+    title: 'Overfitting (과적합)',
+    desc: '과거 데이터에서 백테스트가 완벽해 보일 때까지 파라미터를 조정하지만, 새로운 데이터에서는 전략이 실패합니다. 20개의 최적화된 파라미터를 가진 전략은 다음 달에 작동하지 않을 가능성이 높습니다.',
+    fix: 'PRUVIQ는 569개 이상의 코인에서 동일한 전략을 실행할 수 있게 하여 표본 외 테스트를 장려합니다. 3개 코인에서만 작동하면 과적합입니다. 또한 몬테카를로 시뮬레이션을 보여주어 결과가 무작위성에 얼마나 민감한지 드러냅니다.'
+  },
+  {
+    title: '수수료와 슬리피지 무시',
+    desc: '많은 백테스팅 도구가 거래 수수료, 펀딩비, 슬리피지를 건너뜁니다. 수수료 전 15% 수익을 보여주는 전략이 실제로는 손실일 수 있습니다. 레버리지 선물에서는 펀딩비만으로도 연간 5-10%를 잃을 수 있습니다.',
+    fix: '모든 PRUVIQ 시뮬레이션에는 메이커/테이커 수수료, 펀딩비, 현실적인 슬리피지 모델링이 포함됩니다. 보이는 것이 실제로 얻는 것입니다 — 예상치 못한 비용 없이.'
+  },
+  {
+    title: '시장 레짐 변화',
+    desc: '상승장에서 큰 수익을 낸 전략이 횡보장이나 하락장에서는 손실을 낼 수 있습니다. 시장은 레짐이 변하며, 적응하지 못하는 전략은 실패합니다. 유리한 기간만 테스트하면 이 위험이 숨겨집니다.',
+    fix: 'PRUVIQ의 2년 이상 과거 데이터는 여러 시장 사이클(상승, 하락, 횡보)을 포괄합니다. 또한 하나의 레짐에서는 작동했지만 다른 레짐에서 실패한 88개 전략을 제거했으며 — 이를 공개적으로 보여줍니다.'
+  },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "백테스트가 실패하는 이유 — 그리고 피하는 방법",
+  "description": "크립토 백테스트가 실패하는 5가지 이유: look-ahead bias, 생존자 편향, 과적합, 수수료 무시, 시장 레짐 변화. PRUVIQ가 각각을 어떻게 해결하는지 알아보세요.",
+  "datePublished": "2026-03-22",
+  "dateModified": "2026-03-22",
+  "author": { "@type": "Organization", "name": "PRUVIQ", "url": "https://pruviq.com" },
+  "publisher": { "@type": "Organization", "name": "PRUVIQ", "url": "https://pruviq.com" },
+  "inLanguage": "ko"
+};
+---
+
+<Layout title={t('meta.why_backtests_fail_title')} description={t('meta.why_backtests_fail_desc')}>
+
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+  <!-- HERO -->
+  <section class="pt-16 pb-8">
+    <div class="max-w-5xl mx-auto px-4">
+      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">백테스팅 교육</p>
+      <h1 class="text-3xl md:text-5xl font-bold mb-4">
+        백테스트가 실패하는 이유 — 그리고 피하는 방법
+        <span class="block text-lg md:text-2xl font-normal text-[--color-text-muted] mt-2">백테스트를 신뢰할 수 없게 만드는 5가지 함정과 각각의 해결책.</span>
+      </h1>
+      <p class="text-[--color-text-muted] text-lg max-w-2xl mb-6">
+        200% 수익을 보여주는 백테스트도 방법론에 결함이 있으면 아무 의미가 없습니다.
+        크립토에서 백테스트가 실패하는 5가지 가장 흔한 이유와 PRUVIQ가 이를 방지하도록 설계된 방법을 알아보세요.
+      </p>
+    </div>
+  </section>
+
+  <!-- 5 REASONS -->
+  <hr class="section-divider" />
+  <section class="pb-12 pt-12">
+    <div class="max-w-5xl mx-auto px-4">
+      <h2 class="text-2xl md:text-3xl font-bold mb-10">백테스트가 실패하는 5가지 이유</h2>
+      <div class="space-y-12">
+        {reasons.map((reason, i) => (
+          <div class="border-l-2 border-[--color-accent]/30 pl-6">
+            <div class="flex items-center gap-3 mb-3">
+              <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-[--color-accent]/10 text-[--color-accent] font-mono text-sm font-bold shrink-0">{i + 1}</span>
+              <h3 class="text-xl font-bold">{reason.title}</h3>
+            </div>
+            <p class="text-[--color-text-muted] mb-4">{reason.desc}</p>
+            <div class="border border-[--color-accent]/20 rounded-lg p-4 bg-[--color-accent]/5">
+              <p class="font-mono text-[--color-accent] text-xs font-bold mb-1">PRUVIQ의 해결 방법</p>
+              <p class="text-sm text-[--color-text-muted]">{reason.fix}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 88 KILLED STRATEGIES -->
+  <hr class="section-divider" />
+  <section class="pb-12 pt-12 bg-[--color-bg-subtle]">
+    <div class="max-w-5xl mx-auto px-4">
+      <h2 class="text-2xl md:text-3xl font-bold mb-4">우리의 증거: 제거된 88개 전략</h2>
+      <p class="text-[--color-text-muted] max-w-3xl mb-6">
+        대부분의 플랫폼은 성공한 전략만 보여줍니다. 우리는 반대로 합니다 — 테스트 기준을 통과하지 못한
+        모든 전략을 공개적으로 공시합니다. Look-ahead bias, 과적합, 부실한 위험 조정 수익률: 전략이
+        엄격한 테스트를 통과하지 못하면 제거하고 이유를 설명합니다.
+      </p>
+      <p class="text-[--color-text-muted] max-w-3xl mb-8">
+        이것은 마케팅이 아니라 방법론입니다. 우리가 제거한 88개 전략은 살아남은 전략만큼이나 중요합니다.
+        <em>효과가 없는</em> 것을 보여줌으로써, 효과가 있는 것에 집중할 수 있게 합니다.
+      </p>
+      <a href="/ko/strategies" class="btn btn-ghost btn-lg hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
+        전략 라이브러리 둘러보기 &rarr;
+      </a>
+    </div>
+  </section>
+
+  <!-- INTERNAL LINKS -->
+  <hr class="section-divider" />
+  <section class="pb-12 pt-12">
+    <div class="max-w-5xl mx-auto px-4">
+      <h2 class="text-2xl md:text-3xl font-bold mb-6">더 알아보기</h2>
+      <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
+        <a href="/ko/simulate" class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card] hover:border-[--color-accent]/50 transition-colors block">
+          <p class="font-bold mb-1">시뮬레이터</p>
+          <p class="text-sm text-[--color-text-muted]">실제 데이터로 직접 백테스트를 실행하세요</p>
+        </a>
+        <a href="/ko/learn" class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card] hover:border-[--color-accent]/50 transition-colors block">
+          <p class="font-bold mb-1">학습</p>
+          <p class="text-sm text-[--color-text-muted]">트레이딩 교육 및 가이드</p>
+        </a>
+        <a href="/ko/compare/tradingview" class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card] hover:border-[--color-accent]/50 transition-colors block">
+          <p class="font-bold mb-1">비교</p>
+          <p class="text-sm text-[--color-text-muted]">PRUVIQ vs 다른 플랫폼</p>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <hr class="section-divider" />
+  <section class="py-20">
+    <div class="max-w-5xl mx-auto px-4 text-center">
+      <h2 class="text-3xl md:text-4xl font-bold mb-4">
+        <span class="text-[--color-accent]">전략을 테스트하세요</span>
+      </h2>
+      <p class="text-[--color-text-muted] text-lg mb-8 max-w-xl mx-auto">추측하지 마세요. 실제 데이터, 실제 수수료, 실제 시장 조건으로 테스트하세요.</p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center mb-4">
+        <a href="/ko/simulate" class="btn btn-primary btn-lg">
+          {t('cta.button1')} &rarr;
+        </a>
+        <a href="/ko/strategies" class="btn btn-ghost btn-lg hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
+          {t('hero.cta1')}
+        </a>
+      </div>
+      <p class="text-[--color-text-muted] text-xs mt-6 max-w-lg mx-auto">{t('cta.disclaimer')}</p>
+    </div>
+  </section>
+
+</Layout>
