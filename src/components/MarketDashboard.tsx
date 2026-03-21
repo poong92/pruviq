@@ -460,7 +460,7 @@ export default function MarketDashboard({
             </div>
           )}
           {/* BTC + ETH Price Bar — 30s live refresh */}
-          <div class="flex gap-4 flex-wrap mb-4">
+          <div id="prices" class="flex gap-4 flex-wrap mb-4">
             <div
               class={`flex items-center gap-3 border border-[--color-border] rounded-lg py-3 px-5 bg-[--color-bg-card] flex-1 min-w-[200px] ${flash.btc}`}
             >
@@ -578,7 +578,10 @@ export default function MarketDashboard({
           </div>
 
           {/* Macro Economic Indicators — 30min refresh */}
-          <div class="border border-[--color-border] rounded-lg bg-[--color-bg-card] overflow-hidden mb-6">
+          <div
+            id="macro"
+            class="border border-[--color-border] rounded-lg bg-[--color-bg-card] overflow-hidden mb-6"
+          >
             <div class="px-4 py-3 border-b border-[--color-border] flex items-center justify-between">
               <span class="text-xs font-semibold text-[--color-text-muted] uppercase tracking-wider">
                 {l.macroTitle}
@@ -684,7 +687,10 @@ export default function MarketDashboard({
           </div>
 
           {/* TradingView Economic Calendar Widget */}
-          <div class="border border-[--color-border] rounded-lg bg-[--color-bg-card] overflow-hidden mb-6">
+          <div
+            id="calendar"
+            class="border border-[--color-border] rounded-lg bg-[--color-bg-card] overflow-hidden mb-6"
+          >
             <div class="px-4 py-3 border-b border-[--color-border] flex items-center justify-between">
               <span class="text-xs font-semibold text-[--color-text-muted] uppercase tracking-wider">
                 {l.economicCalendar}
@@ -715,7 +721,10 @@ export default function MarketDashboard({
           </div>
 
           {/* News Feed — 5min refresh */}
-          <div class="border border-[--color-border] rounded-lg bg-[--color-bg-card] overflow-hidden mb-6">
+          <div
+            id="news"
+            class="border border-[--color-border] rounded-lg bg-[--color-bg-card] overflow-hidden mb-6"
+          >
             <div class="px-4 py-3 border-b border-[--color-border] flex flex-wrap items-center gap-2.5">
               <span class="text-xs font-semibold text-[--color-text-muted] uppercase tracking-wider mr-auto">
                 {l.latestNews}

@@ -290,7 +290,8 @@ const xLast = daily[daily.length - 1]?.date ?? '';
   <section class="pb-12 border-t border-[--color-border] pt-8">
     <div class="max-w-5xl mx-auto px-4">
       <h2 class="text-2xl font-bold mb-2">{t('perf.gap_title')}</h2>
-      <p class="text-[--color-text-muted] text-sm mb-8">{t('perf.gap_desc')}</p>
+      <p class="text-[--color-text-muted] text-sm mb-4">{t('perf.gap_desc')}</p>
+      <p class="text-sm text-[--color-text-muted] italic mb-8 border-l-2 border-[--color-accent]/30 pl-4">Why the gap? Market regimes change. That's why we show both.</p>
 
       <!-- Side-by-side comparison -->
       <div class="grid md:grid-cols-2 gap-6 mb-8">
@@ -358,6 +359,7 @@ const xLast = daily[daily.length - 1]?.date ?? '';
   <section class="pb-12 border-t border-[--color-border] pt-8">
     <div class="max-w-5xl mx-auto px-4">
       <h2 class="text-2xl font-bold mb-2">{t('perf.killed_title')}</h2>
+      <p class="text-sm text-[--color-text-muted] italic mb-4 border-l-2 border-[--color-down]/30 pl-4">Strategies we tested and retired — because transparency matters.</p>
       <p class="text-[--color-text-muted] text-sm mb-6">
         {t('perf.killed_desc')}
       </p>

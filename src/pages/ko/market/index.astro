@@ -20,6 +20,21 @@ const marketDataJson = JSON.stringify(marketDataRaw);
         <span class="text-[--color-text-muted]">{t('market.context_tip')}</span>
         <a href="/ko/simulate" class="text-[--color-accent] font-semibold hover:underline whitespace-nowrap">{t('market.context_cta')} &rarr;</a>
       </div>
+      <!-- Mobile section nav (visible on small screens only) -->
+      <div class="flex md:hidden overflow-x-auto gap-2 px-4 py-3 sticky top-16 z-30 bg-[--color-bg] border-b border-[--color-border]">
+        <a href="#prices" class="whitespace-nowrap px-3 py-1.5 rounded-full text-xs font-mono border border-[--color-border] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
+          시세
+        </a>
+        <a href="#macro" class="whitespace-nowrap px-3 py-1.5 rounded-full text-xs font-mono border border-[--color-border] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
+          거시경제
+        </a>
+        <a href="#calendar" class="whitespace-nowrap px-3 py-1.5 rounded-full text-xs font-mono border border-[--color-border] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
+          캘린더
+        </a>
+        <a href="#news" class="whitespace-nowrap px-3 py-1.5 rounded-full text-xs font-mono border border-[--color-border] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
+          뉴스
+        </a>
+      </div>
       <div id="market-mount" data-initial-market={marketDataJson}>
         <div class="animate-pulse space-y-4">
           <div class="flex gap-4 flex-wrap">

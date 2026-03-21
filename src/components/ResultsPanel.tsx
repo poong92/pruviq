@@ -783,6 +783,13 @@ export default function ResultsPanel({
                 lang={lang}
                 isDemo={result._isDemo}
                 simMode={simMode}
+                strategyName={
+                  activePreset
+                    ? activePreset
+                        .replace(/-/g, " ")
+                        .replace(/\b\w/g, (c: string) => c.toUpperCase())
+                    : undefined
+                }
               />
               {result.yearly_stats && result.yearly_stats.length > 0 && (
                 <div class="mt-4">

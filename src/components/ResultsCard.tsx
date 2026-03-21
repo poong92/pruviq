@@ -1,4 +1,4 @@
-import { useState } from "preact/hooks";
+import { useState, useCallback } from "preact/hooks";
 import { winRateColor, profitFactorColor, signColor } from "../utils/format";
 import { COLORS } from "./simulator-types";
 
@@ -118,6 +118,7 @@ interface ResultsCardProps {
   lang?: "en" | "ko";
   isDemo?: boolean;
   simMode?: "quick" | "standard" | "expert";
+  strategyName?: string;
 }
 
 const labels = {
@@ -188,6 +189,8 @@ const labels = {
     gradePrefix: "Grade",
     mcBeats: (pct: number) => `Beats ${pct}% of random strategies`,
     referralCta: "Ready to trade this strategy? Save up to 20% on trading fees",
+    shareResults: "Share results",
+    copiedTooltip: "Copied!",
     survivorshipNote:
       "Results based on currently listed assets only. Delisted coins excluded (survivorship bias).",
   },
@@ -258,6 +261,8 @@ const labels = {
     gradePrefix: "등급",
     mcBeats: (pct: number) => `랜덤 전략 중 상위 ${(100 - pct).toFixed(0)}%`,
     referralCta: "이 전략으로 거래 준비됐나요? 거래 수수료 최대 20% 절약",
+    shareResults: "결과 공유",
+    copiedTooltip: "복사됨!",
     survivorshipNote:
       "현재 상장된 자산만 테스트됩니다. 상폐 코인 제외 (생존 편향).",
   },
@@ -355,8 +360,10 @@ export default function ResultsCard({
   lang = "en",
   isDemo = false,
   simMode = "expert",
+  strategyName,
 }: ResultsCardProps) {
   const [showAllMetrics, setShowAllMetrics] = useState(false);
+  const [copied, setCopied] = useState(false);
   // 3-tier metric visibility: quick → standard → expert
   const isQuick = simMode === "quick" && !showAllMetrics;
   const isStandard = simMode === "standard" && !showAllMetrics;
@@ -1057,6 +1064,109 @@ export default function ResultsCard({
         </span>
         <span class="text-[--color-text-muted]">TO {toPct.toFixed(0)}%</span>
       </div>
+
+      {/* Share results */}
+      {(() => {
+        const sName = strategyName || "My strategy";
+        const shareText = `I backtested ${sName} on PRUVIQ: WR ${data.win_rate}%, PF ${data.profit_factor}, ${data.total_trades.toLocaleString()} trades. Try it free \u{1F50D}`;
+        const shareUrl = "https://pruviq.com/simulate";
+        const copyText = `PRUVIQ Backtest: ${sName} — WR ${data.win_rate}%, PF ${data.profit_factor}, ${data.total_trades.toLocaleString()} trades. Try it: ${shareUrl}`;
+        const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+        const redditTitle = `${sName} backtest: WR ${data.win_rate}%, PF ${data.profit_factor} — PRUVIQ`;
+        const redditUrl = `https://reddit.com/submit?url=${encodeURIComponent(shareUrl)}&title=${encodeURIComponent(redditTitle)}`;
+        return (
+          <div class="mt-3 mb-3">
+            <div class="font-mono text-[10px] text-[--color-text-muted] uppercase tracking-wider mb-1.5">
+              {t.shareResults}
+            </div>
+            <div class="flex items-center gap-2">
+              {/* X / Twitter */}
+              <button
+                type="button"
+                onClick={() =>
+                  window.open(
+                    twitterUrl,
+                    "_blank",
+                    "noopener,width=550,height=420",
+                  )
+                }
+                class="inline-flex items-center justify-center w-8 h-8 rounded-md border border-[--color-border] bg-[--color-bg-card] hover:border-[--color-accent] hover:text-[--color-accent] text-[--color-text-muted] transition-colors"
+                aria-label="Share on X"
+                title="Share on X"
+              >
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                </svg>
+              </button>
+              {/* Copy link */}
+              <div class="relative">
+                <button
+                  type="button"
+                  onClick={() => {
+                    navigator.clipboard.writeText(copyText).then(() => {
+                      setCopied(true);
+                      setTimeout(() => setCopied(false), 2000);
+                    });
+                  }}
+                  class="inline-flex items-center justify-center w-8 h-8 rounded-md border border-[--color-border] bg-[--color-bg-card] hover:border-[--color-accent] hover:text-[--color-accent] text-[--color-text-muted] transition-colors"
+                  aria-label="Copy share text"
+                  title="Copy share text"
+                >
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                    <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+                  </svg>
+                </button>
+                {copied && (
+                  <span class="absolute -top-7 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded bg-[--color-accent] text-white text-[10px] font-mono whitespace-nowrap pointer-events-none">
+                    {t.copiedTooltip}
+                  </span>
+                )}
+              </div>
+              {/* Reddit */}
+              <button
+                type="button"
+                onClick={() =>
+                  window.open(
+                    redditUrl,
+                    "_blank",
+                    "noopener,width=550,height=420",
+                  )
+                }
+                class="inline-flex items-center justify-center w-8 h-8 rounded-md border border-[--color-border] bg-[--color-bg-card] hover:border-[--color-accent] hover:text-[--color-accent] text-[--color-text-muted] transition-colors"
+                aria-label="Share on Reddit"
+                title="Share on Reddit"
+              >
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path d="M12 0A12 12 0 000 12a12 12 0 0012 12 12 12 0 0012-12A12 12 0 0012 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 01-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 01.042.52c0 2.694-3.13 4.884-7.003 4.884-3.874 0-7.004-2.19-7.004-4.884 0-.18.015-.36.043-.529A1.745 1.745 0 014.028 12.2a1.754 1.754 0 012.96-1.272c1.194-.868 2.86-1.425 4.694-1.493l.89-4.182a.452.452 0 01.539-.359l2.898.611a1.25 1.25 0 011 .497zM9.524 15.8a.878.878 0 100-1.756.878.878 0 000 1.756zm4.95 0a.878.878 0 100-1.756.878.878 0 000 1.756zm-4.34 1.62c-.116-.116-.116-.3 0-.415a.294.294 0 01.415 0 2.93 2.93 0 002.026.748 2.93 2.93 0 002.026-.748.294.294 0 01.415 0c.116.115.116.3 0 .415A3.515 3.515 0 0112.575 18a3.515 3.515 0 01-2.44-.58z" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        );
+      })()}
 
       {/* QW3: Referral CTA banner */}
       <a
