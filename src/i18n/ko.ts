@@ -534,6 +534,28 @@ export const ko: Record<TranslationKey, string> = {
   "perf.results_title": "백테스트 결과",
   "perf.results_desc":
     "2년+, 569개 코인, 2,898건 거래. 0.08%/side 수수료 포함.",
+  "perf.gap_title": "백테스트 vs 현실",
+  "perf.gap_desc":
+    "모든 백테스트에는 실거래와의 괴리가 있습니다. 직접 경험했고 — 한계를 초과했을 때 즉시 중단했습니다.",
+  "perf.gap_backtest": "백테스트 (2년, 569개 코인)",
+  "perf.gap_live": "실거래 (52일)",
+  "perf.gap_pnl_label": "총 손익",
+  "perf.gap_mdd_label": "최대 낙폭",
+  "perf.gap_status_label": "상태",
+  "perf.gap_status_stopped": "MDD 한도 도달로 중단",
+  "perf.gap_why_title": "왜 괴리가 발생하나?",
+  "perf.gap_why1":
+    "시장 충격: 실제 주문은 가격을 움직이지만, 백테스트는 그렇지 않음",
+  "perf.gap_why2":
+    "체결 시간: 백테스트는 즉시 체결을 가정하지만, 실제로는 지연 발생",
+  "perf.gap_why3":
+    "시장 체제 변화: 2024-2025 데이터가 2026 상황을 예측하지 못함",
+  "perf.gap_why4": "샘플 크기: 52일 실거래 vs 2년+ 백테스트",
+  "perf.gap_action_title": "어떻게 대응했나",
+  "perf.gap_action_desc":
+    "MDD 20% 하드 스톱을 적용했습니다. 실거래에서 이 한계에 도달하자 전략을 즉시 중단했습니다 — 예외 없이. 모든 트레이더에게 동일한 규율을 권장합니다.",
+  "perf.gap_lesson":
+    "수익성 있는 백테스트는 필요조건이지 충분조건이 아닙니다. 항상 표본외 검증과 엄격한 리스크 한도로 확인하세요.",
   "perf.killed_title": "기각된 전략",
   "perf.killed_desc":
     "테스트 후 기각한 전략들입니다. 실패도 성공만큼 중요하기에 공개합니다.",
