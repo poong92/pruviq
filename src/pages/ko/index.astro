@@ -38,19 +38,19 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-px border border-[--color-border] rounded-lg overflow-hidden mb-3 bg-[--color-border]">
           <div class="bg-[--color-bg-card] px-4 py-3 text-center">
             <p class="font-mono text-[--color-accent] text-xl font-bold">{coinsAnalyzed}+</p>
-            <p class="text-[--color-text-muted] text-xs mt-0.5">테스트 코인</p>
+            <p class="text-[--color-text-muted] text-xs mt-0.5">{t('hero.stats_coins')}</p>
           </div>
           <div class="bg-[--color-bg-card] px-4 py-3 text-center">
             <p class="font-mono text-[--color-accent] text-xl font-bold">{tradingDays}+</p>
-            <p class="text-[--color-text-muted] text-xs mt-0.5">백테스트 거래</p>
+            <p class="text-[--color-text-muted] text-xs mt-0.5">{t('hero.stats_trades')}</p>
           </div>
           <div class="bg-[--color-bg-card] px-4 py-3 text-center">
             <p class="font-mono text-[--color-accent] text-xl font-bold">{candlesProcessed}+</p>
-            <p class="text-[--color-text-muted] text-xs mt-0.5">데이터 포인트</p>
+            <p class="text-[--color-text-muted] text-xs mt-0.5">{t('hero.stats_data')}</p>
           </div>
           <div class="bg-[--color-bg-card] px-4 py-3 text-center">
             <p class="font-mono text-[--color-up] text-xl font-bold">$0</p>
-            <p class="text-[--color-text-muted] text-xs mt-0.5">완전 무료</p>
+            <p class="text-[--color-text-muted] text-xs mt-0.5">{t('hero.stats_free')}</p>
           </div>
         </div>
 
@@ -63,15 +63,15 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
           <div class="grid grid-cols-2">
             <div class="bg-[--color-down]/5 border-r border-[--color-border] px-4 py-3">
               <p class="font-mono text-xs text-[--color-down] font-bold mb-1.5">TradingView</p>
-              <p class="text-xs text-[--color-text-muted]">Pine Script 코딩 필요</p>
-              <p class="text-xs text-[--color-text-muted]">월 $14.95 이상</p>
-              <p class="text-xs text-[--color-text-muted]">코인 1개씩 테스트</p>
+              <p class="text-xs text-[--color-text-muted]">{t('hero.compare_tv_code')}</p>
+              <p class="text-xs text-[--color-text-muted]">{t('hero.compare_tv_price')}</p>
+              <p class="text-xs text-[--color-text-muted]">{t('hero.compare_tv_coins')}</p>
             </div>
             <div class="bg-[--color-up]/5 px-4 py-3">
               <p class="font-mono text-xs text-[--color-up] font-bold mb-1.5">PRUVIQ ✓</p>
-              <p class="text-xs text-[--color-text-muted]">코딩 불필요</p>
-              <p class="text-xs text-[--color-text-muted]">완전 무료, 회원가입 없음</p>
-              <p class="text-xs text-[--color-text-muted]">569개 코인 동시 테스트</p>
+              <p class="text-xs text-[--color-text-muted]">{t('hero.compare_pruviq_code')}</p>
+              <p class="text-xs text-[--color-text-muted]">{t('hero.compare_pruviq_price')}</p>
+              <p class="text-xs text-[--color-text-muted]">{t('hero.compare_pruviq_coins')}</p>
             </div>
           </div>
         </div>
@@ -91,7 +91,7 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
         </div>
         <!-- 소프트 CTA -->
         <p class="text-sm text-[--color-text-muted] font-mono mb-4">
-          처음이신가요? <a href="#how-it-works-ko" class="text-[--color-accent] hover:underline">&#9654; 30초 만에 작동 방식 확인</a>
+          {t('hero.soft_cta_prefix')} <a href="#how-it-works-ko" class="text-[--color-accent] hover:underline">&#9654; {t('hero.soft_cta_link')}</a>
         </p>
         <!-- 신뢰 신호 -->
         <div class="flex flex-wrap gap-x-4 gap-y-1 text-sm text-[--color-text-muted] font-mono mb-4">
@@ -314,37 +314,37 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
   <!-- 사용자 후기 -->
   <section class="py-16 border-t border-[--color-border]" aria-labelledby="quotes-heading-ko">
     <div class="max-w-6xl mx-auto px-4">
-      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">커뮤니티 피드백</p>
-      <h2 id="quotes-heading-ko" class="text-2xl font-bold mb-1">트레이더들의 PRUVIQ 사용 후기</h2>
-      <p class="text-[--color-text-muted] text-xs font-mono mb-8 opacity-60">커뮤니티 멤버 요청에 따라 이름은 이니셜로 표시합니다.</p>
+      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('home.quotes_tag')}</p>
+      <h2 id="quotes-heading-ko" class="text-2xl font-bold mb-1">{t('home.quotes_heading')}</h2>
+      <p class="text-[--color-text-muted] text-xs font-mono mb-8 opacity-60">{t('home.quotes_subtitle')}</p>
       <div class="grid md:grid-cols-3 gap-6">
         <blockquote class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card]">
-          <p class="text-[--color-text-muted] text-sm leading-relaxed mb-4">"TradingView에서 8개 전략을 테스트하다가 PRUVIQ를 발견했습니다. 수백 개 코인을 한 번에 테스트할 수 있어서 몇 주가 절약됐어요. 중단된 전략까지 공개하는 게 신뢰가 갔습니다."</p>
+          <p class="text-[--color-text-muted] text-sm leading-relaxed mb-4">"{t('home.quote1_text')}"</p>
           <footer class="flex items-center gap-3">
             <div class="w-8 h-8 rounded-full bg-[--color-accent]/20 flex items-center justify-center text-[--color-accent] font-mono text-xs font-bold">DK</div>
             <div>
               <p class="text-sm font-semibold">DK</p>
-              <p class="text-xs text-[--color-text-muted]">커뮤니티 멤버</p>
+              <p class="text-xs text-[--color-text-muted]">{t('home.quote1_role')}</p>
             </div>
           </footer>
         </blockquote>
         <blockquote class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card]">
-          <p class="text-[--color-text-muted] text-sm leading-relaxed mb-4">"수익뿐 아니라 손실까지 공개하는 플랫폼은 처음입니다. 중단된 전략을 공개한다는 건 뭐가 효과 있고 없는지 정직하게 보여준다는 뜻이죠."</p>
+          <p class="text-[--color-text-muted] text-sm leading-relaxed mb-4">"{t('home.quote2_text')}"</p>
           <footer class="flex items-center gap-3">
             <div class="w-8 h-8 rounded-full bg-[--color-up]/20 flex items-center justify-center text-[--color-up] font-mono text-xs font-bold">JM</div>
             <div>
               <p class="text-sm font-semibold">JM</p>
-              <p class="text-xs text-[--color-text-muted]">크립토 선물 트레이더</p>
+              <p class="text-xs text-[--color-text-muted]">{t('home.quote2_role')}</p>
             </div>
           </footer>
         </blockquote>
         <blockquote class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card]">
-          <p class="text-[--color-text-muted] text-sm leading-relaxed mb-4">"계정도 필요 없고, 카드도 필요 없고, 숨은 비용도 없었어요. 5분 만에 커스텀 전략을 만들어서 2년 데이터로 테스트했습니다. 에쿼티 커브가 결과를 한눈에 보여줬어요."</p>
+          <p class="text-[--color-text-muted] text-sm leading-relaxed mb-4">"{t('home.quote3_text')}"</p>
           <footer class="flex items-center gap-3">
             <div class="w-8 h-8 rounded-full bg-[--color-yellow]/20 flex items-center justify-center text-[--color-yellow] font-mono text-xs font-bold">AT</div>
             <div>
               <p class="text-sm font-semibold">AT</p>
-              <p class="text-xs text-[--color-text-muted]">알고리즘 트레이딩 입문자</p>
+              <p class="text-xs text-[--color-text-muted]">{t('home.quote3_role')}</p>
             </div>
           </footer>
         </blockquote>

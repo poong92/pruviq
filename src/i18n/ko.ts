@@ -1051,6 +1051,43 @@ export const ko: Record<TranslationKey, string> = {
     "TradingView는 백테스팅에 월 $14~240를 청구합니다. PRUVIQ는 영원히 무료입니다.",
   "home.social_proof_cta": "이번 달 4,200명 이상이 백테스트를 실행했습니다.",
 
+  // Hero stats bar (compact)
+  "hero.stats_coins": "테스트 코인",
+  "hero.stats_trades": "백테스트 거래",
+  "hero.stats_data": "데이터 포인트",
+  "hero.stats_free": "완전 무료",
+
+  // Hero inline comparison
+  "hero.compare_tv_code": "Pine Script 코딩 필요",
+  "hero.compare_tv_price": "월 $14.95 이상",
+  "hero.compare_tv_coins": "코인 1개씩 테스트",
+  "hero.compare_pruviq_code": "코딩 불필요",
+  "hero.compare_pruviq_price": "완전 무료, 회원가입 없음",
+  "hero.compare_pruviq_coins": "569개 코인 동시 테스트",
+
+  // Hero soft CTA
+  "hero.soft_cta_prefix": "처음이신가요?",
+  "hero.soft_cta_link": "30초 만에 작동 방식 확인",
+
+  // Hero data attribution
+  "hero.data_attribution": "데이터 제공",
+
+  // Social proof quotes
+  "home.quotes_tag": "커뮤니티 피드백",
+  "home.quotes_subtitle": "커뮤니티 멤버 요청에 따라 이름은 이니셜로 표시합니다.",
+  "home.quote1_text":
+    "TradingView에서 8개 전략을 테스트하다가 PRUVIQ를 발견했습니다. 수백 개 코인을 한 번에 테스트할 수 있어서 몇 주가 절약됐어요. 중단된 전략까지 공개하는 게 신뢰가 갔습니다.",
+  "home.quote1_role": "커뮤니티 멤버",
+  "home.quote1_via": "텔레그램",
+  "home.quote2_text":
+    "수익뿐 아니라 손실까지 공개하는 플랫폼은 처음입니다. 중단된 전략을 공개한다는 건 뭐가 효과 있고 없는지 정직하게 보여준다는 뜻이죠.",
+  "home.quote2_role": "크립토 선물 트레이더",
+  "home.quote2_via": "텔레그램",
+  "home.quote3_text":
+    "계정도 필요 없고, 카드도 필요 없고, 숨은 비용도 없었어요. 5분 만에 커스텀 전략을 만들어서 2년 데이터로 테스트했습니다. 에쿼티 커브가 결과를 한눈에 보여줬어요.",
+  "home.quote3_role": "알고리즘 트레이딩 입문자",
+  "home.quote3_via": "텔레그램",
+
   // TradingView comparison page
   "meta.vs_tv_title": "PRUVIQ vs 트레이딩뷰 - 무료 크립토 백테스팅 비교",
   "meta.vs_tv_desc":

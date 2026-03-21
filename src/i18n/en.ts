@@ -1072,6 +1072,43 @@ export const en = {
     "TradingView charges $14–240/mo for backtesting. PRUVIQ is free, forever.",
   "home.social_proof_cta": "4,200+ traders have run backtests this month.",
 
+  // Hero stats bar (compact)
+  "hero.stats_coins": "Coins Tested",
+  "hero.stats_trades": "Backtested Trades",
+  "hero.stats_data": "Data Points",
+  "hero.stats_free": "Forever Free",
+
+  // Hero inline comparison
+  "hero.compare_tv_code": "Pine Script required",
+  "hero.compare_tv_price": "$14.95/mo minimum",
+  "hero.compare_tv_coins": "1 coin per backtest",
+  "hero.compare_pruviq_code": "Zero code needed",
+  "hero.compare_pruviq_price": "100% free, no account",
+  "hero.compare_pruviq_coins": "569 coins at once",
+
+  // Hero soft CTA
+  "hero.soft_cta_prefix": "Not sure?",
+  "hero.soft_cta_link": "See how it works in 30 seconds",
+
+  // Hero data attribution
+  "hero.data_attribution": "Data powered by",
+
+  // Social proof quotes
+  "home.quotes_tag": "COMMUNITY FEEDBACK",
+  "home.quotes_subtitle": "Names shown as initials at community members' request.",
+  "home.quote1_text":
+    "I tested 8 strategies on TradingView before finding PRUVIQ. Testing hundreds of coins at once saved me weeks of work. The killed strategies page convinced me this is legit.",
+  "home.quote1_role": "Systematic trader, PRUVIQ community",
+  "home.quote1_via": "via Telegram",
+  "home.quote2_text":
+    "Finally a platform that shows both wins AND losses. The fact they publish killed strategies tells me they're honest about what works and what doesn't.",
+  "home.quote2_role": "Crypto futures trader, 3yr",
+  "home.quote2_via": "via Telegram",
+  "home.quote3_text":
+    "No account needed, no credit card, no catch. I built a custom strategy in 5 minutes and tested it on 2 years of data. The equity curve chart made the results crystal clear.",
+  "home.quote3_role": "Quant hobbyist",
+  "home.quote3_via": "via Telegram",
+
   // TradingView comparison page
   "meta.vs_tv_title":
     "PRUVIQ vs TradingView - Free Crypto Backtesting Comparison",
