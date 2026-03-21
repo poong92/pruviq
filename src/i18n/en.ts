@@ -387,8 +387,26 @@ export const en = {
   "fees.faq3_q": "I already have an account. Can I still get a discount?",
   "fees.faq3_a":
     "Referral discounts must be applied at account creation. Existing accounts may not qualify retroactively.",
+  "fees.trust_tag": "THE REFERRAL HIDDEN TAX",
+  "fees.trust_title": "What You Actually Keep (vs. What They Advertise)",
+  "fees.trust_desc":
+    "Most referral programs advertise a '20% discount,' but you only get half. The other half vanishes into the referrer's margin — on every single trade. PRUVIQ keeps 1%. The rest belongs to you, permanently.",
+  "fees.trust_col_user": "User Gets",
+  "fees.trust_col_platform": "Platform Keeps",
+  "fees.trust_typical": "Typical referral",
+  "fees.trust_influencer": "Crypto influencer",
+  "fees.trust_point1_title": "No expiration",
+  "fees.trust_point1_desc":
+    "Your discount never resets. No quarterly limits, no 12-month cliffs. Permanent — because we're not banking on you forgetting.",
+  "fees.trust_point2_title": "Verifiable right now",
+  "fees.trust_point2_desc":
+    "Don't take our word for it. Binance Account → Fee Schedule — confirm your actual rate. We don't hide behind T&Cs.",
+  "fees.trust_point3_title": "The actual split",
+  "fees.trust_point3_desc":
+    "Spot: you keep 19%, we keep 1%. Futures: you keep 9%, we keep 1%. No hidden redistribution. This is what lands in your account.",
+
   "fees.affiliate_disclosure":
-    "Affiliate disclosure: PRUVIQ earns a commission from exchanges when you sign up through our referral links. Your fee discounts are not affected. Not financial advice. Crypto trading involves substantial risk of loss.",
+    "Affiliate disclosure: PRUVIQ earns a 1% commission from Binance when you sign up through our referral link. Your fee discount (19% spot, 9% futures) is not affected. Not financial advice. Crypto trading involves substantial risk of loss.",
 
   // Changelog
   "changelog.tag": "CHANGELOG",

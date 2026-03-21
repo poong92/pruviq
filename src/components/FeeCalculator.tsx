@@ -75,10 +75,14 @@ export default function FeeCalculator({ lang = "en" }: Props) {
 
   function calcFees(ex: Exchange) {
     const rates = market === "futures" ? ex.futures : ex.spot;
+    const disc =
+      market === "futures"
+        ? (ex.futuresDiscount ?? ex.discount)
+        : (ex.spotDiscount ?? ex.discount);
     const standard = volume * rates.taker;
-    const discounted = standard * (1 - ex.discount);
+    const discounted = standard * (1 - disc);
     const savingsYear = (standard - discounted) * 12;
-    return { standard, discounted, savingsYear };
+    return { standard, discounted, savingsYear, discPct: disc };
   }
 
   const results = exchanges.map((ex) => ({ ex, ...calcFees(ex) }));
@@ -169,7 +173,7 @@ export default function FeeCalculator({ lang = "en" }: Props) {
 
       {/* Results — Simple Cards */}
       <div class="grid gap-4">
-        {results.map(({ ex, standard, discounted, savingsYear }) => (
+        {results.map(({ ex, standard, discounted, savingsYear, discPct }) => (
           <div class="border border-[--color-border] rounded-lg p-4 flex flex-col sm:flex-row sm:items-center gap-3">
             {/* Exchange Name */}
             <div class="sm:w-36 flex-shrink-0">
@@ -192,7 +196,7 @@ export default function FeeCalculator({ lang = "en" }: Props) {
               </div>
               <div>
                 <div class="font-mono text-[0.625rem] sm:text-xs text-[--color-accent] mb-1">
-                  {t.withPruviq} ({ex.discountLabel})
+                  {t.withPruviq} ({Math.round(discPct * 100)}% off)
                 </div>
                 <div class="font-mono text-xs sm:text-sm font-bold text-[--color-accent]">
                   {fmt(discounted)}

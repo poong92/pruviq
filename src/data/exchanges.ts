@@ -8,8 +8,10 @@ export interface Exchange {
   name: string;
   spot: FeeRate;
   futures: FeeRate;
-  discount: number; // decimal, e.g. 0.10 = 10%
-  discountLabel: string; // display string, e.g. "10%"
+  spotDiscount: number; // decimal, e.g. 0.19 = 19%
+  futuresDiscount: number; // decimal, e.g. 0.09 = 9%
+  discount: number; // primary display discount (futures), decimal
+  discountLabel: string; // display string, e.g. "Up to 19%"
   referralUrl: string;
   available: boolean;
   tag: string; // English tag, e.g. "#1 Volume"
@@ -23,8 +25,10 @@ export const exchanges: Exchange[] = [
     name: "Binance",
     spot: { maker: 0.001, taker: 0.001 },
     futures: { maker: 0.0002, taker: 0.0005 },
-    discount: 0.1,
-    discountLabel: "10%",
+    spotDiscount: 0.19, // 19% off spot fees
+    futuresDiscount: 0.09, // 9% off futures fees
+    discount: 0.19, // primary display: spot (highest)
+    discountLabel: "Up to 19%",
     referralUrl: "https://accounts.binance.com/register?ref=PRUVIQ",
     available: true,
     tag: "#1 Volume",
