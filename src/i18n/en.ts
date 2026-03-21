@@ -387,23 +387,23 @@ export const en = {
   "fees.faq3_q": "I already have an account. Can I still get a discount?",
   "fees.faq3_a":
     "Referral discounts must be applied at account creation. Existing accounts may not qualify retroactively.",
-  "fees.trust_tag": "THE REFERRAL PROBLEM",
-  "fees.trust_title": "They Advertise 20%. You Might Be Getting 0%.",
+  "fees.trust_tag": "HOW REFERRAL CODES ACTUALLY WORK",
+  "fees.trust_title": '"20% Fee Discount!" — But Who\'s Getting That 20%?',
   "fees.trust_desc":
-    "Binance lets referrers set your discount to 0% and keep everything. It's an official setting, not a bug. Most users never check — and once you sign up, you can't change the referral code. Ever.",
-  "fees.trust_col_user": "User Gets",
-  "fees.trust_col_platform": "Referrer Keeps",
-  "fees.trust_typical": "Typical '20% discount' ad",
-  "fees.trust_influencer": "Worst case (allowed)",
-  "fees.trust_point1_title": "Others can set your share to 0%",
+    "Every influencer, every affiliate site, every \"exclusive link\" promotes the same thing: big fee discounts. What they don't mention? They can set your share to 0% and pocket everything. You sign up thinking you saved money. You didn't. You just made someone else money. And once you register, you can never change it.",
+  "fees.trust_col_user": "You Actually Get",
+  "fees.trust_col_platform": "They Keep",
+  "fees.trust_typical": '"Use my code for 20% off!"',
+  "fees.trust_influencer": "What they can actually set",
+  "fees.trust_point1_title": 'Their "discount" is their paycheck',
   "fees.trust_point1_desc":
-    "Binance officially allows referrers to keep 100% of the commission. You see '20% discount' in the ad, you get 0% in your account. No notification.",
-  "fees.trust_point2_title": "PRUVIQ keeps only 1%",
+    "Referrers can keep the entire commission and give you nothing. Zero. That '20% discount' in the YouTube description? It might be 20% for them, 0% for you. No one tells you, and no notification is sent.",
+  "fees.trust_point2_title": "PRUVIQ gives you 95%",
   "fees.trust_point2_desc":
-    "Spot: you get 19%, we keep 1%. Futures: you get 9%, we keep 1%. Verify it yourself — Binance Account → Fee Schedule.",
-  "fees.trust_point3_title": "Once signed up, you can't switch",
+    "We keep 1%. You get 19% on spot, 9% on futures. Not because we're generous — because our product is the simulator, not your trading fees. Verify it: Binance → Fee Schedule.",
+  "fees.trust_point3_title": "You can't undo a bad referral",
   "fees.trust_point3_desc":
-    "Binance locks your referral code at registration. If you signed up through someone who gave you 0%, there's no fix. Choose wisely before you register.",
+    "Referral codes are locked at registration. Forever. If you signed up through someone's \"exclusive link\" and got 0%, there's no fix. No support ticket. No reset. Choose before you register.",
 
   "fees.affiliate_disclosure":
     "Affiliate disclosure: PRUVIQ earns a 1% commission from Binance when you sign up through our referral link. Your fee discount (19% spot, 9% futures) is not affected. Not financial advice. Crypto trading involves substantial risk of loss.",
