@@ -75,7 +75,7 @@ const exchangeCards: Record<string, { tagLabel: string; description: string }> =
         {exchanges.map((ex) => {
           const card = exchangeCards[ex.id];
           return (
-            <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] flex flex-col">
+            <div class={`border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] flex flex-col${!ex.available ? ' opacity-50' : ''}`}>
               <div class="font-mono text-[--color-accent] text-xs font-bold mb-1">{card.tagLabel}</div>
               <h3 class="text-xl font-bold mb-3">{ex.name}</h3>
               <div class="space-y-2 text-sm mb-4 flex-grow">
