@@ -12,9 +12,14 @@ const marketDataJson = JSON.stringify(marketDataRaw);
     <div class="max-w-6xl mx-auto px-4">
       <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('market.tag')}</p>
       <h1 class="text-3xl md:text-5xl font-bold mb-4">{t('market.title')}</h1>
-      <p class="text-[--color-text-muted] text-lg mb-8 max-w-2xl">
+      <p class="text-[--color-text-muted] text-lg mb-4 max-w-2xl">
         {t('market.desc')}
       </p>
+      <div class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-[--color-accent]/20 bg-[--color-accent]/5 text-sm mb-8">
+        <span class="text-[--color-accent] font-mono text-xs font-bold">TIP</span>
+        <span class="text-[--color-text-muted]">{t('market.context_tip')}</span>
+        <a href="/simulate" class="text-[--color-accent] font-semibold hover:underline whitespace-nowrap">{t('market.context_cta')} &rarr;</a>
+      </div>
       <div id="market-mount" data-initial-market={marketDataJson}>
         <div class="animate-pulse space-y-4">
           <div class="flex gap-4 flex-wrap">
