@@ -35,6 +35,12 @@ const STEPS: Record<"en" | "ko", Step[]> = {
       target: "Results section",
       icon: "3",
     },
+    {
+      title: "What do the numbers mean?",
+      desc: "Win Rate: % of profitable trades (>55% is good). Profit Factor: money won ÷ lost (>1.5 is strong). MDD: largest peak-to-trough drop (lower is safer). A strategy needs ALL three to be viable.",
+      target: "Key metrics",
+      icon: "?",
+    },
   ],
   ko: [
     {
@@ -54,6 +60,12 @@ const STEPS: Record<"en" | "ko", Step[]> = {
       desc: "PnL, 승률, 최대 낙폭(MDD), 샤프 비율, 자본 곡선을 확인하세요. CSV 또는 Excel로 내보낼 수 있습니다.",
       target: "결과 섹션",
       icon: "3",
+    },
+    {
+      title: "숫자가 뭘 의미하나요?",
+      desc: "승률: 수익 거래 비율 (55%+ 양호). 수익 팩터(PF): 수익 ÷ 손실 (1.5+ 우수). MDD: 최대 낙폭 (낮을수록 안전). 세 지표 모두 좋아야 실전에서 생존합니다.",
+      target: "핵심 지표",
+      icon: "?",
     },
   ],
 };

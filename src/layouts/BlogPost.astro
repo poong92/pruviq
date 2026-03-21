@@ -8,9 +8,10 @@ interface Props {
   category: string;
   author?: string;
   image?: string;
+  tags?: string[];
 }
 
-const { title, description, date, category, author = 'PRUVIQ Research', image } = Astro.props;
+const { title, description, date, category, author = 'PRUVIQ Research', image, tags = [] } = Astro.props;
 
 const categoryLabels: Record<string, string> = {
   market: 'MARKET ANALYSIS',
@@ -19,6 +20,22 @@ const categoryLabels: Record<string, string> = {
   weekly: 'WEEKLY REVIEW',
   education: 'EDUCATION',
 };
+
+// Tag → simulator preset mapping for contextual CTA
+const tagPresetMap: Record<string, { preset: string; label: string }> = {
+  'rsi': { preset: 'rsi-reversal', label: 'RSI Reversal' },
+  'macd': { preset: 'macd-cross', label: 'MACD Cross' },
+  'ema': { preset: 'ema-crossover', label: 'EMA Crossover' },
+  'bollinger-bands': { preset: 'bb-squeeze-short', label: 'BB Squeeze' },
+  'squeeze': { preset: 'bb-squeeze-short', label: 'BB Squeeze' },
+  'ichimoku': { preset: 'ichimoku', label: 'Ichimoku Cloud' },
+  'stochastic': { preset: 'stochastic-rsi', label: 'Stochastic RSI' },
+  'adx': { preset: 'adx-trend', label: 'ADX Trend' },
+  'atr': { preset: 'atr-breakout', label: 'ATR Breakout' },
+  'volume': { preset: 'volume-breakout', label: 'Volume Breakout' },
+  'vwap': { preset: 'vwap', label: 'VWAP' },
+};
+const matchedPreset = tags.map(t => tagPresetMap[t]).find(Boolean);
 ---
 
 <Layout title={`${title} - PRUVIQ`} description={description} type="article" date={date} category={category} ogImage={image}>
@@ -47,23 +64,24 @@ const categoryLabels: Record<string, string> = {
 
       <!-- Article end CTA -->
       <div class="mt-12 border-t border-[--color-border] pt-8">
-        {category === 'education' ? (
-          <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] text-center">
-            <h3 class="font-bold text-lg mb-2">Build Your Own Strategy</h3>
-            <p class="text-[--color-text-muted] text-sm mb-4">Combine indicators, set conditions, and backtest on 569+ coins with 2+ years of data. No code required.</p>
+        {matchedPreset ? (
+          <div class="border border-[--color-accent]/30 rounded-lg p-6 bg-[--color-bg-card] text-center">
+            <p class="font-mono text-[--color-accent] text-xs mb-2">TRY IT YOURSELF</p>
+            <h3 class="font-bold text-lg mb-2">Test {matchedPreset.label} on 569+ Coins</h3>
+            <p class="text-[--color-text-muted] text-sm mb-4">Apply what you just learned. Run a backtest with the {matchedPreset.label} preset — no code, no signup.</p>
             <div class="flex flex-col sm:flex-row gap-3 justify-center">
-              <a href="/simulate" class="btn btn-primary btn-md">
-                Open Strategy Builder &rarr;
+              <a href={`/simulate?preset=${matchedPreset.preset}`} class="btn btn-primary btn-md">
+                Open {matchedPreset.label} Preset &rarr;
               </a>
-              <a href="/fees" class="btn btn-ghost btn-md">
-                Save on Fees
+              <a href="/simulate" class="btn btn-ghost btn-md">
+                Build Custom Strategy
               </a>
             </div>
           </div>
         ) : (
           <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] text-center">
             <h3 class="font-bold text-lg mb-2">Ready to test strategies yourself?</h3>
-            <p class="text-[--color-text-muted] text-sm mb-4">Simulate trading strategies on 569+ coins with 2+ years of data. Free.</p>
+            <p class="text-[--color-text-muted] text-sm mb-4">Simulate trading strategies on 569+ coins with 2+ years of data. Free, no signup.</p>
             <div class="flex flex-col sm:flex-row gap-3 justify-center">
               <a href="/simulate" class="btn btn-primary btn-md">
                 Try the Simulator &rarr;

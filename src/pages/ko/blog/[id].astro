@@ -35,6 +35,22 @@ const categoryLabels: Record<string, string> = {
   weekly: t('blog.category.weekly'),
   education: t('blog.category.education'),
 };
+
+// Tag → simulator preset mapping
+const tagPresetMap: Record<string, { preset: string; label: string; labelKo: string }> = {
+  'rsi': { preset: 'rsi-reversal', label: 'RSI Reversal', labelKo: 'RSI 역전' },
+  'macd': { preset: 'macd-cross', label: 'MACD Cross', labelKo: 'MACD 크로스' },
+  'ema': { preset: 'ema-crossover', label: 'EMA Crossover', labelKo: 'EMA 크로스오버' },
+  'bollinger-bands': { preset: 'bb-squeeze-short', label: 'BB Squeeze', labelKo: 'BB 스퀴즈' },
+  'squeeze': { preset: 'bb-squeeze-short', label: 'BB Squeeze', labelKo: 'BB 스퀴즈' },
+  'ichimoku': { preset: 'ichimoku', label: 'Ichimoku Cloud', labelKo: '이치모쿠 클라우드' },
+  'stochastic': { preset: 'stochastic-rsi', label: 'Stochastic RSI', labelKo: '스토캐스틱 RSI' },
+  'adx': { preset: 'adx-trend', label: 'ADX Trend', labelKo: 'ADX 트렌드' },
+  'atr': { preset: 'atr-breakout', label: 'ATR Breakout', labelKo: 'ATR 브레이크아웃' },
+  'volume': { preset: 'volume-breakout', label: 'Volume Breakout', labelKo: '거래량 브레이크아웃' },
+};
+const tags = post.data.tags || [];
+const matchedPreset = tags.map((tg: string) => tagPresetMap[tg]).find(Boolean);
 ---
 
 <Layout title={`${post.data.title} - PRUVIQ`} description={post.data.description} type="article" date={post.data.date} category={post.data.category} ogImage={post.data.image} noAlternate={!isKorean}>
@@ -69,19 +85,34 @@ const categoryLabels: Record<string, string> = {
 
       <!-- Article end CTA -->
       <div class="mt-12 border-t border-[--color-border] pt-8">
-        <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] text-center">
-          <h3 class="font-bold text-lg mb-2">{t('blog.cta_title')}</h3>
-          <p class="text-[--color-text-muted] text-sm mb-4">{t('blog.cta_desc')}</p>
-          <div class="flex flex-col sm:flex-row gap-3 justify-center">
-            <a href="/ko/simulate" class="btn btn-primary btn-md">
-              {t('blog.cta_button')} &rarr;
-            </a>
-            <a href="/ko/fees"
-               class="btn btn-ghost btn-md hover:border-[--color-accent] transition-colors">
-              {t('blog.cta_fees')}
-            </a>
+        {matchedPreset ? (
+          <div class="border border-[--color-accent]/30 rounded-lg p-6 bg-[--color-bg-card] text-center">
+            <p class="font-mono text-[--color-accent] text-xs mb-2">직접 테스트</p>
+            <h3 class="font-bold text-lg mb-2">569+ 코인에서 {matchedPreset.labelKo} 테스트</h3>
+            <p class="text-[--color-text-muted] text-sm mb-4">방금 배운 내용을 적용해 보세요. {matchedPreset.labelKo} 프리셋으로 백테스트 — 코딩 없이, 가입 없이.</p>
+            <div class="flex flex-col sm:flex-row gap-3 justify-center">
+              <a href={`/ko/simulate?preset=${matchedPreset.preset}`} class="btn btn-primary btn-md">
+                {matchedPreset.labelKo} 프리셋 열기 &rarr;
+              </a>
+              <a href="/ko/simulate" class="btn btn-ghost btn-md">
+                커스텀 전략 만들기
+              </a>
+            </div>
           </div>
-        </div>
+        ) : (
+          <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] text-center">
+            <h3 class="font-bold text-lg mb-2">{t('blog.cta_title')}</h3>
+            <p class="text-[--color-text-muted] text-sm mb-4">{t('blog.cta_desc')}</p>
+            <div class="flex flex-col sm:flex-row gap-3 justify-center">
+              <a href="/ko/simulate" class="btn btn-primary btn-md">
+                {t('blog.cta_button')} &rarr;
+              </a>
+              <a href="/ko/fees" class="btn btn-ghost btn-md hover:border-[--color-accent] transition-colors">
+                {t('blog.cta_fees')}
+              </a>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   </article>
