@@ -10,6 +10,8 @@ interface Props {
   isEnglish?: boolean;
   levelLabel?: string;
   levelColor?: string;
+  readTime?: number;
+  readTimeLabel?: string;
 }
 
 const STORAGE_KEY = "pruviq_learn_read";
@@ -39,6 +41,8 @@ export default function LearnCard({
   isEnglish,
   levelLabel,
   levelColor,
+  readTime,
+  readTimeLabel,
 }: Props) {
   const [read, setRead] = useState(false);
 
@@ -67,13 +71,20 @@ export default function LearnCard({
           </svg>
         </span>
       )}
-      {levelLabel && levelColor && (
-        <span
-          class={`inline-block text-[10px] font-mono px-1.5 py-0.5 rounded border mb-2 ${levelColorMap[levelColor] ?? ""}`}
-        >
-          {levelLabel}
-        </span>
-      )}
+      <div class="flex items-center gap-2 mb-2 flex-wrap">
+        {levelLabel && levelColor && (
+          <span
+            class={`text-[10px] font-mono px-1.5 py-0.5 rounded border ${levelColorMap[levelColor] ?? ""}`}
+          >
+            {levelLabel}
+          </span>
+        )}
+        {readTime != null && readTime > 0 && (
+          <span class="text-[10px] font-mono text-[--color-text-muted]">
+            {readTime} {readTimeLabel || "min read"}
+          </span>
+        )}
+      </div>
       <div class="flex items-center gap-2 mb-1 pr-6">
         <h3 class="font-bold group-hover:text-[--color-accent] transition-colors text-sm">
           {title}

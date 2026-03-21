@@ -4,6 +4,7 @@ import { getCollection } from 'astro:content';
 import { useTranslations } from '../../i18n/index';
 import LearnProgress from '../../components/LearnProgress.tsx';
 import LearnCard from '../../components/LearnCard.tsx';
+import { getReadTime } from '../../utils/readTime';
 
 const t = useTranslations('en');
 
@@ -155,6 +156,8 @@ const levelConfig = [
                 tagMap={tagMap}
                 levelLabel={label}
                 levelColor={color}
+                readTime={getReadTime(post.body)}
+                readTimeLabel={t('learn.min_read')}
               />
             </div>
           ))}
