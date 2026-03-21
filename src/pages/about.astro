@@ -148,6 +148,32 @@ const simulationsRun = (siteStats as { simulations_run: number }).simulations_ru
         </div>
       </div>
 
+      <!-- Roadmap -->
+      <div class="mb-12">
+        <p class="font-mono text-[--color-accent] text-xs tracking-wider mb-2">{t('about.roadmap_tag')}</p>
+        <h2 class="text-2xl font-bold mb-3">{t('about.roadmap_title')}</h2>
+        <p class="text-[--color-text-muted] text-sm mb-6">{t('about.roadmap_desc')}</p>
+        <div class="grid sm:grid-cols-2 gap-4">
+          <div class="border border-[--color-up]/30 rounded-lg p-5 bg-[--color-bg-card]">
+            <p class="font-mono text-xs text-[--color-up] font-bold mb-3">{t('about.roadmap_label_done')}</p>
+            <ul class="space-y-2 text-sm text-[--color-text-muted]">
+              <li class="flex items-start gap-2"><span class="text-[--color-up] shrink-0">&#10003;</span> {t('about.roadmap_done1')}</li>
+              <li class="flex items-start gap-2"><span class="text-[--color-up] shrink-0">&#10003;</span> {t('about.roadmap_done2')}</li>
+              <li class="flex items-start gap-2"><span class="text-[--color-up] shrink-0">&#10003;</span> {t('about.roadmap_done3')}</li>
+              <li class="flex items-start gap-2"><span class="text-[--color-up] shrink-0">&#10003;</span> {t('about.roadmap_done4')}</li>
+            </ul>
+          </div>
+          <div class="border border-[--color-accent]/30 rounded-lg p-5 bg-[--color-bg-card]">
+            <p class="font-mono text-xs text-[--color-accent] font-bold mb-3">{t('about.roadmap_label_next')}</p>
+            <ul class="space-y-2 text-sm text-[--color-text-muted]">
+              <li class="flex items-start gap-2"><span class="text-[--color-accent] shrink-0">&#9679;</span> {t('about.roadmap_next1')}</li>
+              <li class="flex items-start gap-2"><span class="text-[--color-accent] shrink-0">&#9679;</span> {t('about.roadmap_next2')}</li>
+              <li class="flex items-start gap-2"><span class="text-[--color-accent] shrink-0">&#9679;</span> {t('about.roadmap_next3')}</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
       <!-- Contact -->
       <div class="text-center">
         <p class="font-mono text-[--color-accent] text-xs tracking-wider mb-2">{t('about.contact_tag')}</p>

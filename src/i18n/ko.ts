@@ -430,6 +430,9 @@ export const ko: Record<TranslationKey, string> = {
   "market.title": "시장 대시보드",
   "market.desc":
     "실시간 암호화폐 시장 데이터. 공포/탐욕 지수, 상승/하락 순위, 경제 캘린더, 주요 뉴스를 한눈에 확인하세요.",
+  "market.context_tip":
+    "관심 가는 움직임이 있나요? 전략이 어떻게 작동할지 테스트해 보세요.",
+  "market.context_cta": "시뮬레이터 열기",
   "market.fear_greed": "공포/탐욕 지수",
   "market.total_mcap": "총 시가총액",
   "market.btc_dom": "BTC 도미넌스",
@@ -525,6 +528,19 @@ export const ko: Record<TranslationKey, string> = {
   "about.contact_telegram": "텔레그램 커뮤니티",
   "about.explore_desc":
     "전략을 테스트할 준비가 되셨나요? 시뮬레이터를 사용하거나 검증된 전략을 둘러보세요.",
+
+  "about.roadmap_tag": "다음 단계",
+  "about.roadmap_title": "로드맵",
+  "about.roadmap_desc": "PRUVIQ는 활발히 개발 중입니다. 현재 작업 중인 내용:",
+  "about.roadmap_done1": "36개 프리셋 전략 시뮬레이터",
+  "about.roadmap_done2": "569+ 코인 백테스팅 엔진",
+  "about.roadmap_done3": "29개 교육 가이드 (영어 + 한국어)",
+  "about.roadmap_done4": "일일 전략 랭킹",
+  "about.roadmap_next1": "더 많은 전략 유형과 지표",
+  "about.roadmap_next2": "포트폴리오 레벨 백테스팅",
+  "about.roadmap_next3": "커뮤니티 전략 공유",
+  "about.roadmap_label_done": "완료",
+  "about.roadmap_label_next": "진행 중",
 
   "about.proof_tag": "공개 개발",
   "about.proof_desc":

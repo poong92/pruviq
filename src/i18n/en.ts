@@ -431,6 +431,9 @@ export const en = {
   "market.title": "Market Dashboard",
   "market.desc":
     "Real-time crypto market data. Fear & Greed Index, top movers, economic calendar, and aggregated news from major crypto outlets.",
+  "market.context_tip":
+    "See something interesting? Test how a strategy would perform.",
+  "market.context_cta": "Open Simulator",
   "market.fear_greed": "Fear & Greed",
   "market.total_mcap": "Total Market Cap",
   "market.btc_dom": "BTC Dominance",
@@ -525,6 +528,20 @@ export const en = {
   "about.contact_telegram": "Telegram Community",
   "about.explore_desc":
     "Ready to test strategies? Try our simulator or browse verified strategies.",
+
+  "about.roadmap_tag": "WHAT'S NEXT",
+  "about.roadmap_title": "Roadmap",
+  "about.roadmap_desc":
+    "PRUVIQ is actively developed. Here's what we're working on:",
+  "about.roadmap_done1": "Strategy simulator with 36 presets",
+  "about.roadmap_done2": "569+ coin backtesting engine",
+  "about.roadmap_done3": "29 educational guides (EN + KO)",
+  "about.roadmap_done4": "Daily strategy rankings",
+  "about.roadmap_next1": "More strategy types and indicators",
+  "about.roadmap_next2": "Portfolio-level backtesting",
+  "about.roadmap_next3": "Community strategy sharing",
+  "about.roadmap_label_done": "SHIPPED",
+  "about.roadmap_label_next": "IN PROGRESS",
 
   "about.proof_tag": "BUILT IN PUBLIC",
   "about.proof_desc":
