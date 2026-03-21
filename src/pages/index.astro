@@ -44,23 +44,27 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
           Browse Strategies
         </a>
       </div>
+      <!-- Trust micro-copy -->
+      <p class="text-xs text-[--color-text-disabled] text-center mt-4 tracking-wide">
+        No credit card · No email · No limits · Free forever
+      </p>
       <!-- Stats bar -->
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mt-16 max-w-3xl mx-auto">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mt-12 max-w-3xl mx-auto">
         <div class="text-center">
           <p class="text-2xl md:text-3xl font-bold font-mono">{coinsAnalyzed}+</p>
-          <p class="text-sm text-[--color-text-muted] mt-1">Coins Tested</p>
+          <p class="text-xs text-[--color-text-muted] mt-1 uppercase tracking-wider">Coins Tested</p>
         </div>
         <div class="text-center">
-          <p class="text-2xl md:text-3xl font-bold font-mono">2,898+</p>
-          <p class="text-sm text-[--color-text-muted] mt-1">Simulated Trades</p>
+          <p class="text-2xl md:text-3xl font-bold font-mono">{simulationsRun}</p>
+          <p class="text-xs text-[--color-text-muted] mt-1 uppercase tracking-wider">Simulations Run</p>
         </div>
         <div class="text-center">
-          <p class="text-2xl md:text-3xl font-bold font-mono">9.4M+</p>
-          <p class="text-sm text-[--color-text-muted] mt-1">Data Points</p>
+          <p class="text-2xl md:text-3xl font-bold font-mono">{candlesProcessed}</p>
+          <p class="text-xs text-[--color-text-muted] mt-1 uppercase tracking-wider">Data Points</p>
         </div>
         <div class="text-center">
           <p class="text-2xl md:text-3xl font-bold font-mono" style="color:var(--color-up)">$0</p>
-          <p class="text-sm text-[--color-text-muted] mt-1">Always Free</p>
+          <p class="text-xs text-[--color-text-muted] mt-1 uppercase tracking-wider">Always Free</p>
         </div>
       </div>
     </div>
@@ -160,7 +164,7 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
         <p class="text-xl md:text-2xl font-bold mb-6">
           {t('problem.hook')} <span class="text-[--color-accent]">{t('problem.hook_accent')}</span>
         </p>
-        <a href="/simulate" class="inline-block bg-[--color-accent] text-[--color-bg] px-8 py-3 rounded font-semibold text-lg hover:bg-[--color-accent-dim]">
+        <a href="/simulate" class="btn btn-primary btn-lg">
           {t('home.cta_survives')} →
         </a>
       </div>
@@ -232,7 +236,7 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
       </div>
 
       <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
-        <a href="/simulate" class="bg-[--color-accent] text-[--color-bg] px-6 py-2.5 rounded font-semibold text-sm hover:bg-[--color-accent-dim] transition-colors">
+        <a href="/simulate" class="btn btn-primary btn-md">
           {t('home.cta_test_yourself')} →
         </a>
         <a href="/compare/tradingview" class="text-sm text-[--color-accent] hover:underline font-mono">{t('compare_table.detail_link')} →</a>
@@ -309,7 +313,7 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
         </a>
       </div>
       <div class="mt-10 text-center">
-        <a href="/simulate" class="inline-block bg-[--color-accent] text-[--color-bg] px-6 py-2.5 rounded font-semibold text-sm hover:bg-[--color-accent-dim] transition-colors">
+        <a href="/simulate" class="btn btn-primary btn-md">
           {t('hero.cta_primary')} →
         </a>
       </div>
@@ -359,7 +363,7 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
       </div>
       <!-- CTA after social proof quotes -->
       <div class="mt-8 text-center">
-        <a href="/simulate" class="inline-block bg-[--color-accent] text-[--color-bg] px-6 py-2.5 rounded font-semibold text-sm hover:bg-[--color-accent-dim] transition-colors">
+        <a href="/simulate" class="btn btn-primary btn-md">
           {t('home.quotes_cta')} →
         </a>
       </div>
@@ -410,7 +414,7 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
       </div>
       <!-- CTA after FAQ -->
       <div class="mt-8 text-center">
-        <a href="/simulate" class="inline-block bg-[--color-accent] text-[--color-bg] px-6 py-2.5 rounded font-semibold text-sm hover:bg-[--color-accent-dim] transition-colors">
+        <a href="/simulate" class="btn btn-primary btn-md">
           {t('hero.cta_primary')} →
         </a>
       </div>
@@ -437,7 +441,7 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
 
       <div class="flex flex-col sm:flex-row gap-4 justify-center mb-4">
         <a href="/simulate"
-           class="btn-primary inline-block bg-[--color-accent] text-[--color-bg] px-8 py-3 rounded font-semibold text-lg hover:bg-[--color-accent-dim]">
+           class="btn btn-primary btn-lg">
           {t('cta.button1')} →
         </a>
         <a href="/strategies"

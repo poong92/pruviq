@@ -78,15 +78,17 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
         <p class="text-sm text-[--color-up] font-mono mb-3">{t('home.social_proof_cta')}</p>
 
         <div class="flex flex-col sm:flex-row gap-4 mb-2">
-          <a href="/ko/simulate"
-             class="btn-primary bg-[--color-accent] text-[--color-bg] px-8 py-3 rounded font-semibold text-center hover:bg-[--color-accent-dim]">
-            {t('hero.cta_primary')} &rarr;
+          <a href="/ko/simulate" class="btn btn-primary btn-lg text-center">
+            {t('hero.cta_primary')} →
           </a>
-          <a href="/ko/strategies"
-             class="border border-[--color-border] text-[--color-text] px-8 py-3 rounded font-semibold text-center hover:border-[--color-accent] hover:text-[--color-accent] hover:bg-[--color-accent]/5 transition-colors">
+          <a href="/ko/strategies" class="btn btn-ghost btn-lg text-center">
             {t('hero.cta1')}
           </a>
         </div>
+        <!-- Trust micro-copy -->
+        <p class="text-xs text-[--color-text-disabled] font-mono mt-1 mb-3">
+          신용카드 불필요 · 이메일 불필요 · 한도 없음 · 영원히 무료
+        </p>
         <!-- 소프트 CTA -->
         <p class="text-sm text-[--color-text-muted] font-mono mb-4">
           처음이신가요? <a href="#how-it-works-ko" class="text-[--color-accent] hover:underline">&#9654; 30초 만에 작동 방식 확인</a>
@@ -140,7 +142,7 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
             <p class="text-xs text-[--color-text-muted]">{t('trust.last_updated').replace('{date}', lastUpdated)}</p>
           </div>
           <div class="sm:text-right">
-            <a href="/ko/simulate" class="inline-block bg-[--color-accent] text-[--color-bg] px-4 py-2 rounded font-semibold text-sm hover:bg-[--color-accent-dim]">{t('cta.button1')}</a>
+            <a href="/ko/simulate" class="btn btn-primary btn-sm">{t('cta.button1')}</a>
           </div>
         </div>
       </div>
@@ -170,7 +172,7 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
         </div>
       </div>
       <div class="mt-6 text-center">
-        <a href="/ko/simulate" class="inline-block bg-[--color-accent] text-[--color-bg] px-6 py-2.5 rounded font-semibold text-sm hover:bg-[--color-accent-dim] transition-colors">
+        <a href="/ko/simulate" class="btn btn-primary btn-md">
           {t('hero.cta_primary')} &rarr;
         </a>
       </div>
@@ -251,7 +253,7 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
         <p class="text-xl md:text-2xl font-bold mb-6">
           {t('problem.hook')} <span class="text-[--color-accent]">{t('problem.hook_accent')}</span>
         </p>
-        <a href="/ko/simulate" class="inline-block bg-[--color-accent] text-[--color-bg] px-8 py-3 rounded font-semibold text-lg hover:bg-[--color-accent-dim]">
+        <a href="/ko/simulate" class="btn btn-primary btn-lg">
           {t('hero.cta_primary')} &rarr;
         </a>
       </div>
@@ -432,7 +434,7 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
         </a>
       </div>
       <div class="mt-10 text-center">
-        <a href="/ko/simulate" class="inline-block bg-[--color-accent] text-[--color-bg] px-6 py-2.5 rounded font-semibold text-sm hover:bg-[--color-accent-dim] transition-colors">
+        <a href="/ko/simulate" class="btn btn-primary btn-md">
           {t('hero.cta_primary')} &rarr;
         </a>
       </div>
@@ -478,7 +480,7 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
         </blockquote>
       </div>
       <div class="mt-8 text-center">
-        <a href="/ko/simulate" class="inline-block bg-[--color-accent] text-[--color-bg] px-6 py-2.5 rounded font-semibold text-sm hover:bg-[--color-accent-dim] transition-colors">
+        <a href="/ko/simulate" class="btn btn-primary btn-md">
           {t('home.quotes_cta')} &rarr;
         </a>
       </div>
@@ -528,7 +530,7 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
         </details>
       </div>
       <div class="mt-8 text-center">
-        <a href="/ko/simulate" class="inline-block bg-[--color-accent] text-[--color-bg] px-6 py-2.5 rounded font-semibold text-sm hover:bg-[--color-accent-dim] transition-colors">
+        <a href="/ko/simulate" class="btn btn-primary btn-md">
           {t('hero.cta_primary')} &rarr;
         </a>
       </div>
