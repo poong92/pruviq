@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "preact/hooks";
 import ResultsCard from "./ResultsCard";
 import OOSValidation from "./OOSValidation";
 import ExchangeCTA from "./ExchangeCTA";
+import { exchanges } from "../data/exchanges";
 import {
   winRateColor,
   profitFactorColor,
@@ -316,6 +317,116 @@ export default function ResultsPanel({
 
       {result ? (
         <div class="border border-[--color-border] rounded-lg bg-[--color-bg-card] overflow-hidden">
+          {/* ── Results Action Bar — shown immediately when results load ── */}
+          {(() => {
+            const isProfitable = result.total_return_pct > 0;
+            const availableExchanges = exchanges.filter(
+              (e) => e.available && e.referralUrl !== "#",
+            );
+            const topExchange = availableExchanges.sort(
+              (a, b) => b.discount - a.discount,
+            )[0];
+            const returnLabel = isProfitable
+              ? `+${result.total_return_pct.toFixed(1)}%`
+              : `${result.total_return_pct.toFixed(1)}%`;
+            const bgColor = isProfitable
+              ? "rgba(34,171,148,0.05)"
+              : "rgba(255,255,255,0.02)";
+            const borderColor = isProfitable
+              ? "rgba(34,171,148,0.2)"
+              : "var(--color-border)";
+
+            return (
+              <div
+                class="flex flex-wrap items-center gap-3 px-4 py-2.5 border-b text-xs"
+                style={{ background: bgColor, borderColor }}
+              >
+                {/* Return badge */}
+                <span
+                  class="font-mono font-bold px-2 py-0.5 rounded text-xs"
+                  style={{
+                    color: isProfitable ? COLORS.green : COLORS.red,
+                    background: isProfitable
+                      ? `${COLORS.green}15`
+                      : `${COLORS.red}15`,
+                  }}
+                >
+                  {returnLabel} {lang === "ko" ? "수익" : "return"}
+                </span>
+
+                {/* Share button */}
+                {onCopyLink && (
+                  <button
+                    onClick={onCopyLink}
+                    class="flex items-center gap-1 font-mono transition-colors"
+                    style={{
+                      color: linkCopied
+                        ? COLORS.green
+                        : "var(--color-text-muted)",
+                    }}
+                  >
+                    <svg
+                      width="11"
+                      height="11"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+                      <polyline points="16 6 12 2 8 6" />
+                      <line x1="12" y1="2" x2="12" y2="15" />
+                    </svg>
+                    {linkCopied
+                      ? lang === "ko"
+                        ? "복사됨!"
+                        : "Copied!"
+                      : lang === "ko"
+                        ? "결과 공유"
+                        : "Share"}
+                  </button>
+                )}
+
+                {/* Fees link */}
+                <a
+                  href={lang === "ko" ? "/ko/fees" : "/fees"}
+                  class="font-mono transition-colors"
+                  style={{ color: "var(--color-text-muted)" }}
+                  onMouseOver={(e) =>
+                    (e.currentTarget.style.color = COLORS.accent)
+                  }
+                  onMouseOut={(e) =>
+                    (e.currentTarget.style.color = "var(--color-text-muted)")
+                  }
+                >
+                  {lang === "ko" ? "수수료 절약" : "Save on fees"}
+                </a>
+
+                {/* Exchange CTA — most prominent, pushed right */}
+                {topExchange && (
+                  <a
+                    href={`${topExchange.referralUrl}`}
+                    target="_blank"
+                    rel="noopener noreferrer sponsored"
+                    class="ml-auto flex items-center gap-2 px-3 py-1.5 rounded-md font-semibold transition-all"
+                    style={{
+                      background: COLORS.accent,
+                      color: "#000",
+                      fontSize: "0.6875rem",
+                    }}
+                    onMouseOver={(e) => (e.currentTarget.style.opacity = "0.9")}
+                    onMouseOut={(e) => (e.currentTarget.style.opacity = "1")}
+                  >
+                    {lang === "ko"
+                      ? `${topExchange.name} ${topExchange.discountLabel} 할인으로 시작 →`
+                      : `Trade on ${topExchange.name} — ${topExchange.discountLabel} off →`}
+                  </a>
+                )}
+              </div>
+            );
+          })()}
           {/* Result tabs + CSV button */}
           <div class="flex flex-col sm:flex-row border-b border-[--color-border]">
             <div class="flex flex-1" role="tablist">

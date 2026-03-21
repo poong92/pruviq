@@ -4,17 +4,18 @@ import { useTranslations } from '../../i18n/index';
 
 const t = useTranslations('en');
 
+// win: 'p' = PRUVIQ wins, 'tv' = TradingView wins, 'both' = tie
 const rows = [
-  { label: t('vs.row_price'), p: t('vs.row_price_p'), tv: t('vs.row_price_tv'), highlight: true },
-  { label: t('vs.row_coding'), p: t('vs.row_coding_p'), tv: t('vs.row_coding_tv'), highlight: true },
-  { label: t('vs.row_coins'), p: t('vs.row_coins_p'), tv: t('vs.row_coins_tv') },
-  { label: t('vs.row_data'), p: t('vs.row_data_p'), tv: t('vs.row_data_tv') },
-  { label: t('vs.row_fees'), p: t('vs.row_fees_p'), tv: t('vs.row_fees_tv') },
-  { label: t('vs.row_multi'), p: t('vs.row_multi_p'), tv: t('vs.row_multi_tv'), highlight: true },
-  { label: t('vs.row_live'), p: t('vs.row_live_p'), tv: t('vs.row_live_tv') },
-  { label: t('vs.row_builder'), p: t('vs.row_builder_p'), tv: t('vs.row_builder_tv') },
-  { label: t('vs.row_api'), p: t('vs.row_api_p'), tv: t('vs.row_api_tv') },
-  { label: t('vs.row_community'), p: t('vs.row_community_p'), tv: t('vs.row_community_tv') },
+  { label: t('vs.row_price'),     p: t('vs.row_price_p'),     tv: t('vs.row_price_tv'),     highlight: true,  win: 'p' },
+  { label: t('vs.row_coding'),    p: t('vs.row_coding_p'),    tv: t('vs.row_coding_tv'),    highlight: true,  win: 'p' },
+  { label: t('vs.row_coins'),     p: t('vs.row_coins_p'),     tv: t('vs.row_coins_tv'),     highlight: false, win: 'p' },
+  { label: t('vs.row_data'),      p: t('vs.row_data_p'),      tv: t('vs.row_data_tv'),      highlight: false, win: 'both' },
+  { label: t('vs.row_fees'),      p: t('vs.row_fees_p'),      tv: t('vs.row_fees_tv'),      highlight: false, win: 'p' },
+  { label: t('vs.row_multi'),     p: t('vs.row_multi_p'),     tv: t('vs.row_multi_tv'),     highlight: true,  win: 'p' },
+  { label: t('vs.row_live'),      p: t('vs.row_live_p'),      tv: t('vs.row_live_tv'),      highlight: false, win: 'tv' },
+  { label: t('vs.row_builder'),   p: t('vs.row_builder_p'),   tv: t('vs.row_builder_tv'),   highlight: false, win: 'p' },
+  { label: t('vs.row_api'),       p: t('vs.row_api_p'),       tv: t('vs.row_api_tv'),       highlight: false, win: 'p' },
+  { label: t('vs.row_community'), p: t('vs.row_community_p'), tv: t('vs.row_community_tv'), highlight: false, win: 'p' },
 ];
 ---
 
@@ -55,9 +56,23 @@ const rows = [
           <tbody>
             {rows.map((row) => (
               <tr class={`border-b border-[--color-border] ${row.highlight ? 'bg-[--color-accent]/5' : ''}`}>
-                <td class="py-3 px-4 font-medium">{row.label}</td>
-                <td class="py-3 px-4 text-[--color-accent]">{row.p}</td>
-                <td class="py-3 px-4 text-[--color-text-muted]">{row.tv}</td>
+                <td class="py-3 px-4 font-medium text-[--color-text-secondary] text-xs uppercase tracking-wide">{row.label}</td>
+                <td class={`py-3 px-4 ${row.win === 'p' ? 'text-[--color-up]' : row.win === 'both' ? 'text-[--color-accent]' : 'text-[--color-text-muted]'}`}>
+                  <span class="flex items-start gap-2">
+                    <span class="mt-0.5 shrink-0 text-base leading-none" aria-hidden="true">
+                      {row.win === 'p' ? '✓' : row.win === 'both' ? '~' : '—'}
+                    </span>
+                    <span>{row.p}</span>
+                  </span>
+                </td>
+                <td class={`py-3 px-4 ${row.win === 'tv' ? 'text-[--color-up]' : row.win === 'both' ? 'text-[--color-accent]' : 'text-[--color-text-muted]'}`}>
+                  <span class="flex items-start gap-2">
+                    <span class="mt-0.5 shrink-0 text-base leading-none" aria-hidden="true">
+                      {row.win === 'tv' ? '✓' : row.win === 'both' ? '~' : '—'}
+                    </span>
+                    <span>{row.tv}</span>
+                  </span>
+                </td>
               </tr>
             ))}
           </tbody>
