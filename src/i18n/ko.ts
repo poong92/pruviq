@@ -49,6 +49,28 @@ export const ko: Record<TranslationKey, string> = {
   "hero.stat5_sub": "2024년 1월부터 1시간봉",
   "hero.stat6_sub": "숨겨진 비용이나 프리미엄 없음",
 
+  // Hero (centered layout)
+  "hero.h1_line1": "모든 크립토 전략을 테스트하세요",
+  "hero.h1_line2": "{coins}개 코인, 몇 초 만에 검증",
+  "hero.subtitle_new": "실제 수수료 기반 무료 백테스팅. 코딩 없음. 가입 없음.",
+  "hero.subtitle_new2": "실패한 전략도 공개합니다.",
+  "hero.cta_open_sim": "시뮬레이터 열기",
+  "hero.cta_browse": "전략 탐색하기",
+  "hero.badge_label": "회 시뮬레이션 실행",
+  "hero.badge_cta": "무료 체험 →",
+  "hero.how_title": "이렇게 작동합니다",
+  "hero.how_subtitle": "전략 아이디어에서 검증 결과까지 3단계.",
+  "hero.step1_title": "전략 선택",
+  "hero.step1_desc":
+    "{presets}개 프리셋에서 선택하거나 14개 지표로 커스텀 구성. AND/OR 로직 지원.",
+  "hero.step2_title": "리스크 설정",
+  "hero.step2_desc":
+    "손절, 익절, 포지션 크기, 시간 필터. 실제 수수료와 슬리피지 포함.",
+  "hero.step3_title": "실제 결과 확인",
+  "hero.step3_desc":
+    "{coins}개 코인에서 2년+ 데이터로 백테스트. 몇 초 만에 결과, 체리피킹 없음.",
+  "hero.browser_alt": "PRUVIQ 전략 시뮬레이터 — {coins}개 코인 백테스트",
+
   // Problem
   "problem.tag": "문제점",
   "problem.title": "크립토 트레이딩, 뭐가 문제인가?",

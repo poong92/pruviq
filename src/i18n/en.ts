@@ -48,6 +48,29 @@ export const en = {
   "hero.stat5_sub": "1-hour candles since Jan 2024",
   "hero.stat6_sub": "No hidden fees or premium tiers",
 
+  // Hero (centered layout)
+  "hero.h1_line1": "Test Any Crypto Strategy",
+  "hero.h1_line2": "on {coins} Coins in Seconds",
+  "hero.subtitle_new": "Free backtesting with real fees. No code. No signup.",
+  "hero.subtitle_new2": "We publish our failures too.",
+  "hero.cta_open_sim": "Open Simulator",
+  "hero.cta_browse": "Browse Strategies",
+  "hero.badge_label": "simulations run",
+  "hero.badge_cta": "Try free →",
+  "hero.how_title": "How It Works",
+  "hero.how_subtitle": "From strategy idea to verified results in 3 steps.",
+  "hero.step1_title": "Pick a Strategy",
+  "hero.step1_desc":
+    "Choose from {presets} presets or build custom with 14 indicators. AND/OR logic supported.",
+  "hero.step2_title": "Set Your Risk",
+  "hero.step2_desc":
+    "Stop-loss, take-profit, position size, time filters. Realistic fees and slippage included.",
+  "hero.step3_title": "See Real Results",
+  "hero.step3_desc":
+    "Backtest on {coins} coins with 2+ years of data. Results in seconds, no cherry-picking.",
+  "hero.browser_alt":
+    "PRUVIQ Strategy Simulator — backtest {coins} coins in seconds",
+
   // Problem
   "problem.tag": "THE PROBLEM",
   "problem.title": "Crypto Trading is Broken.",
