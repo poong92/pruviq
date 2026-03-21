@@ -1,0 +1,12 @@
+---
+interface Props {
+  color?: string;
+  opacity?: string;
+}
+const { color = 'var(--color-accent)', opacity = '0.08' } = Astro.props;
+---
+<div
+  class="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] rounded-full blur-[150px]"
+  style={`background: ${color}; opacity: ${opacity};`}
+  aria-hidden="true"
+></div>
