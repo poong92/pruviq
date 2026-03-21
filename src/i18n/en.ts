@@ -177,7 +177,7 @@ export const en = {
   "features.card3_tag": "FEE CALCULATOR",
   "features.card3_title": "Compare & Save",
   "features.card3_desc":
-    "Compare fees across 3 exchanges. Sign up through PRUVIQ for referral discounts.",
+    "Compare exchange fees and save with PRUVIQ referral discounts.",
 
   // How it works
   "how.tag": "HOW IT WORKS",
@@ -340,7 +340,7 @@ export const en = {
   "fees.title1": "Compare Fees.",
   "fees.title2": "Save on Every Trade.",
   "fees.desc":
-    "3 exchanges, spot & futures fees side by side. Sign up through PRUVIQ and get referral discounts: Binance 10% off, Bitget & OKX up to 20% off.",
+    "Spot & futures fees at a glance. Sign up through PRUVIQ and get a Binance referral discount: 10% off trading fees.",
   "fees.disclosure":
     "Affiliate disclosure: PRUVIQ earns a commission when you sign up through our referral links. Your fee discount is not affected.",
   "fees.compare_title": "Compare Exchanges",
@@ -480,7 +480,7 @@ export const en = {
     "Try PRUVIQ's strategy simulator instantly. Adjust stop-loss and take-profit to see real backtest results on 569+ coins.",
   "meta.fees_title": "Compare Exchange Fees - PRUVIQ",
   "meta.fees_desc":
-    "Compare trading fees across Binance, Bitget, and OKX. Save up to 20% with PRUVIQ referral links. Transparent fee comparison.",
+    "Compare Binance trading fees. Save 10% with PRUVIQ referral link. Transparent fee comparison for spot and futures.",
   "meta.changelog_title": "Changelog - PRUVIQ",
   "meta.changelog_desc":
     "Complete version history of PRUVIQ's trading system. Every change, every reason, every date.",

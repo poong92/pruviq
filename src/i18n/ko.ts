@@ -175,8 +175,7 @@ export const ko: Record<TranslationKey, string> = {
     "569개 이상의 코인에서 5개 전략 백테스트. 검증된 것과 중단된 것 모두 결과 공개.",
   "features.card3_tag": "수수료 계산기",
   "features.card3_title": "비교하고 절약하기",
-  "features.card3_desc":
-    "3개 거래소 수수료 비교. PRUVIQ 추천 링크로 할인 혜택.",
+  "features.card3_desc": "거래소 수수료 비교. PRUVIQ 추천 링크로 할인 혜택.",
 
   // How it works
   "how.tag": "이렇게 작동합니다",
@@ -339,7 +338,7 @@ export const ko: Record<TranslationKey, string> = {
   "fees.title1": "수수료 비교.",
   "fees.title2": "매 거래마다 절약.",
   "fees.desc":
-    "3개 거래소, 현물 & 선물 수수료 한눈에. PRUVIQ 추천 링크로 가입 시 할인: 바이낸스 10%, 빗겟·OKX 최대 20% 할인.",
+    "현물 & 선물 수수료 한눈에. PRUVIQ 추천 링크로 바이낸스 가입 시 수수료 10% 할인.",
   "fees.disclosure":
     "제휴 공개: PRUVIQ는 추천 링크로 가입 시 거래소로부터 수수료를 받습니다. 회원의 수수료 할인에는 영향이 없습니다.",
   "fees.compare_title": "거래소 비교",
@@ -480,7 +479,7 @@ export const ko: Record<TranslationKey, string> = {
     "PRUVIQ 전략 시뮬레이터를 즉시 체험하세요. 손절/익절을 조정하여 569개+ 코인에 대한 실제 백테스트 결과를 확인하세요.",
   "meta.fees_title": "거래소 수수료 비교 - PRUVIQ",
   "meta.fees_desc":
-    "Binance, Bitget, OKX 거래소 수수료 비교. PRUVIQ 추천 링크로 최대 20% 절약. 투명한 수수료 비교.",
+    "바이낸스 거래소 수수료 비교. PRUVIQ 추천 링크로 10% 절약. 투명한 수수료 비교.",
   "meta.changelog_title": "변경 이력 - PRUVIQ",
   "meta.changelog_desc":
     "PRUVIQ 트레이딩 시스템의 전체 버전 히스토리. 모든 변경, 모든 이유, 모든 날짜.",
