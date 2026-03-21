@@ -120,7 +120,7 @@ if (!ssrRanking) {
       {ssrRanking && (
         <div id="ranking-ssr-fallback" class="mb-8">
           <p class="font-mono text-[--color-accent] text-xs mb-3 tracking-wider">BEST 3 — {formatRankingDate(ssrRanking.date)} · 30d · Top 50</p>
-          <div class="grid md:grid-cols-3 gap-4 mb-6">
+          <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
             {ssrRanking.top3.map((entry) => {
               const isLong = entry.direction === 'long';
               const isBoth = entry.direction === 'both';
@@ -136,7 +136,7 @@ if (!ssrRanking) {
                     <div class="flex items-center gap-2 min-w-0">
                       <span class="text-xl shrink-0">{medal}</span>
                       <div class="min-w-0">
-                        <p class="font-semibold text-[--color-text] text-sm leading-tight truncate">{entry.name_en}</p>
+                        <p class="font-semibold text-[--color-text] text-sm leading-tight truncate" title={entry.name_en}>{entry.name_en}</p>
                         <p class="text-[--color-text-muted] text-xs font-mono">{entry.timeframe} · {entry.direction}</p>
                       </div>
                     </div>
@@ -172,7 +172,7 @@ if (!ssrRanking) {
             })}
           </div>
           <p class="font-mono text-[--color-red] text-xs mb-3 tracking-wider">WORST 3</p>
-          <div class="grid md:grid-cols-3 gap-4 mb-2">
+          <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-2">
             {ssrRanking.worst3.filter(e => e.total_trades >= 30).map((entry) => {
               const medals = ['🥇','🥈','🥉'];
               const medal = medals[entry.rank - 1] ?? `#${entry.rank}`;
@@ -181,9 +181,9 @@ if (!ssrRanking) {
               return (
                 <div class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card] opacity-70">
                   <div class="flex items-center gap-2 mb-3">
-                    <span class="text-xl">{medal}</span>
-                    <div>
-                      <p class="font-semibold text-[--color-text] text-sm" title={entry.name_en}>{entry.name_en}</p>
+                    <span class="text-xl shrink-0">{medal}</span>
+                    <div class="min-w-0">
+                      <p class="font-semibold text-[--color-text] text-sm truncate" title={entry.name_en}>{entry.name_en}</p>
                       <p class="text-[--color-text-muted] text-xs font-mono">{entry.timeframe}</p>
                     </div>
                   </div>
