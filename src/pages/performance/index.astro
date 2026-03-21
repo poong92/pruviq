@@ -7,6 +7,39 @@ const t = useTranslations('en');
 const perfUpdated = new Date(
   (perfData as { generated: string }).generated
 ).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+
+// ── Equity Curve SVG (SSR, no JS) ──────────────────────────────────────────
+type DayEntry = { date: string; pnl: number; cum_pnl: number; trades: number };
+const daily = (perfData as unknown as { daily: DayEntry[] }).daily ?? [];
+
+const W = 600; const H = 120;
+const pL = 44; const pR = 12; const pT = 10; const pB = 24;
+const cW = W - pL - pR; const cH = H - pT - pB;
+
+const pnls = daily.map(d => d.cum_pnl);
+const minP = Math.min(...pnls, 0);
+const maxP = Math.max(...pnls, 0);
+const range = maxP - minP || 1;
+
+const toX = (i: number) => pL + (i / Math.max(daily.length - 1, 1)) * cW;
+const toY = (v: number) => pT + cH - ((v - minP) / range) * cH;
+const zeroY = toY(0);
+
+const pts = daily.map((d, i) => `${toX(i).toFixed(1)},${toY(d.cum_pnl).toFixed(1)}`);
+const linePath = pts.length ? `M ${pts.join(' L ')}` : '';
+const areaPath = pts.length
+  ? `M ${toX(0).toFixed(1)},${zeroY.toFixed(1)} L ${pts.join(' L ')} L ${toX(daily.length - 1).toFixed(1)},${zeroY.toFixed(1)} Z`
+  : '';
+
+// Y-axis labels (3 ticks)
+const yTicks = [minP, (minP + maxP) / 2, maxP].map(v => ({
+  v: Math.round(v),
+  y: toY(v).toFixed(1),
+}));
+
+// X-axis: first and last date
+const xFirst = daily[0]?.date ?? '';
+const xLast = daily[daily.length - 1]?.date ?? '';
 ---
 
 <Layout title={t('meta.performance_title')} description={t('meta.performance_desc')}>
@@ -136,6 +169,90 @@ const perfUpdated = new Date(
       </div>
     </div>
   </section>
+
+  <!-- LIVE TRADING EQUITY CURVE -->
+  {daily.length > 0 && (
+    <section class="pb-12 border-t border-[--color-border] pt-8">
+      <div class="max-w-5xl mx-auto px-4">
+        <h2 class="text-2xl font-bold mb-1">{t('perf.equity_title')}</h2>
+        <p class="text-[--color-text-muted] text-sm mb-4">{t('perf.equity_desc')}</p>
+
+        <div class="border border-[--color-border] rounded-lg bg-[--color-bg-card] p-4 overflow-x-auto">
+          <svg
+            viewBox={`0 0 ${W} ${H}`}
+            width="100%"
+            style="max-height:160px;display:block;"
+            aria-label="Live trading cumulative PnL equity curve"
+            role="img"
+          >
+            {/* Zero line */}
+            <line
+              x1={pL} y1={zeroY} x2={W - pR} y2={zeroY}
+              stroke="var(--color-border)"
+              stroke-width="1"
+              stroke-dasharray="4,3"
+            />
+
+            {/* Area fill */}
+            {areaPath && (
+              <path
+                d={areaPath}
+                fill={pnls[pnls.length - 1] >= 0 ? 'var(--color-up)' : 'var(--color-down)'}
+                fill-opacity="0.10"
+              />
+            )}
+
+            {/* Equity line */}
+            {linePath && (
+              <path
+                d={linePath}
+                fill="none"
+                stroke={pnls[pnls.length - 1] >= 0 ? 'var(--color-up)' : 'var(--color-down)'}
+                stroke-width="1.5"
+                stroke-linejoin="round"
+                stroke-linecap="round"
+              />
+            )}
+
+            {/* Y-axis labels */}
+            {yTicks.map(tick => (
+              <text
+                x={pL - 4}
+                y={Number(tick.y) + 3}
+                text-anchor="end"
+                font-size="9"
+                fill="var(--color-text-muted)"
+                font-family="monospace"
+              >
+                {tick.v >= 0 ? `+$${tick.v}` : `-$${Math.abs(tick.v)}`}
+              </text>
+            ))}
+
+            {/* X-axis date labels */}
+            <text x={pL} y={H - 4} font-size="9" fill="var(--color-text-muted)" font-family="monospace">{xFirst}</text>
+            <text x={W - pR} y={H - 4} font-size="9" fill="var(--color-text-muted)" font-family="monospace" text-anchor="end">{xLast}</text>
+          </svg>
+        </div>
+
+        <div class="flex flex-wrap gap-4 mt-3 text-xs font-mono">
+          <span class="text-[--color-text-muted]">
+            Start: <span class="text-[--color-text]">$0</span>
+          </span>
+          <span class="text-[--color-text-muted]">
+            End: <span style={`color:${(perfData as any).summary?.total_pnl >= 0 ? 'var(--color-up)' : 'var(--color-down)'}`}>
+              {(perfData as any).summary?.total_pnl >= 0 ? '+' : ''}{(perfData as any).summary?.total_pnl?.toFixed(2) ?? '—'}
+            </span>
+          </span>
+          <span class="text-[--color-text-muted]">
+            MDD: <span class="text-[--color-red]">{(perfData as any).summary?.max_drawdown_pct ?? '—'}%</span>
+          </span>
+          <span class="text-[--color-text-muted]">
+            Trades: <span class="text-[--color-text]">{(perfData as any).summary?.total_trades ?? '—'}</span>
+          </span>
+        </div>
+      </div>
+    </section>
+  )}
 
   <!-- KILLED STRATEGIES -->
   <section class="pb-12 border-t border-[--color-border] pt-8">
