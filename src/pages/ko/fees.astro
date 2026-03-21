@@ -10,9 +10,9 @@ const binanceConfig = EXCHANGES[0];
 const binanceDisplay = exchanges[0];
 const binanceTooltip = discountTooltip(binanceConfig);
 
-// Compute annual savings at $10k/month volume (2 sides)
+// Compute annual savings at $10k/month volume (futures, 2 sides)
 const annualVolume = 10_000 * 12;
-const annualSavings = (binanceConfig.referralDiscountPct / 100) * (binanceConfig.standardTakerFee / 100) * annualVolume * 2;
+const annualSavings = (binanceConfig.futuresDiscountPct / 100) * (binanceConfig.standardTakerFee / 100) * annualVolume * 2;
 const savingsBadge = annualSavings >= 1 ? `연 $${Math.round(annualSavings)} 절약` : null;
 
 const t = useTranslations('ko');
@@ -72,12 +72,19 @@ const t = useTranslations('ko');
                 <span class="text-[--color-text-muted]">{t('fees.label_futures')}</span>
                 <span class="font-mono">{formatFeeRange(binanceDisplay.futures, 'futures')}</span>
               </div>
-              <div class="flex justify-between border-t border-[--color-border] pt-3 mt-3">
-                <span class="text-[--color-accent] font-medium">{t('fees.pruviq_discount')}</span>
-                <span
-                  class="font-mono font-bold text-[--color-accent] cursor-help underline decoration-dotted"
-                  title={binanceTooltip}
-                >{binanceDisplay.discountLabel} {t('fees.discount_off')}</span>
+              <div class="border-t border-[--color-border] pt-3 mt-3 space-y-1.5">
+                <div class="flex justify-between">
+                  <span class="text-[--color-accent] font-medium text-xs">{t('fees.pruviq_discount')} (현물)</span>
+                  <span class="font-mono font-bold text-[--color-accent]">{binanceConfig.spotDiscountPct}% 할인</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-[--color-accent] font-medium text-xs">{t('fees.pruviq_discount')} (선물)</span>
+                  <span class="font-mono font-bold text-[--color-accent]">{binanceConfig.futuresDiscountPct}% 할인</span>
+                </div>
+                <div class="flex justify-between pt-1">
+                  <span class="text-[--color-up] font-medium text-xs">PRUVIQ 수취</span>
+                  <span class="font-mono font-bold text-[--color-up]">단 {binanceConfig.platformCommissionPct}%</span>
+                </div>
               </div>
             </div>
 
@@ -103,6 +110,60 @@ const t = useTranslations('ko');
       <p class="text-[--color-text-muted] text-xs mt-4">
         {t('fees.footnote')}
       </p>
+    </div>
+  </section>
+
+  <!-- 레퍼럴 투명성 -->
+  <section class="pb-12 border-t border-[--color-border] pt-12">
+    <div class="max-w-5xl mx-auto px-4">
+      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('fees.trust_tag')}</p>
+      <h2 class="text-2xl font-bold mb-2">{t('fees.trust_title')}</h2>
+      <p class="text-[--color-text-muted] text-sm mb-6 max-w-2xl">{t('fees.trust_desc')}</p>
+
+      <div class="overflow-x-auto mb-6">
+        <table class="w-full text-sm border-collapse max-w-2xl">
+          <caption class="sr-only">레퍼럴 커미션 분할 비교</caption>
+          <thead>
+            <tr class="border-b border-[--color-border]">
+              <th class="text-left py-2 px-3 font-mono text-xs text-[--color-text-muted]">플랫폼</th>
+              <th class="text-center py-2 px-3 font-mono text-xs text-[--color-text-muted]">{t('fees.trust_col_user')}</th>
+              <th class="text-center py-2 px-3 font-mono text-xs text-[--color-text-muted]">{t('fees.trust_col_platform')}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="border-b border-[--color-accent]/20 bg-[--color-accent]/5">
+              <td class="py-2 px-3 font-bold text-[--color-accent]">PRUVIQ</td>
+              <td class="py-2 px-3 text-center font-mono font-bold text-[--color-up]">19% / 9%</td>
+              <td class="py-2 px-3 text-center font-mono text-[--color-up]">1%</td>
+            </tr>
+            <tr class="border-b border-[--color-border]/50">
+              <td class="py-2 px-3 text-[--color-text-muted]">{t('fees.trust_typical')}</td>
+              <td class="py-2 px-3 text-center font-mono text-[--color-text-muted]">10%</td>
+              <td class="py-2 px-3 text-center font-mono text-[--color-down]">10%</td>
+            </tr>
+            <tr class="border-b border-[--color-border]/50">
+              <td class="py-2 px-3 text-[--color-text-muted]">{t('fees.trust_influencer')}</td>
+              <td class="py-2 px-3 text-center font-mono text-[--color-text-muted]">5-10%</td>
+              <td class="py-2 px-3 text-center font-mono text-[--color-down]">10-15%</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="grid sm:grid-cols-3 gap-4 max-w-2xl">
+        <div class="border border-[--color-up]/30 rounded-lg p-4 bg-[--color-bg-card]">
+          <p class="font-mono text-[--color-up] text-xs font-bold mb-1">&#10003; {t('fees.trust_point1_title')}</p>
+          <p class="text-[--color-text-muted] text-xs">{t('fees.trust_point1_desc')}</p>
+        </div>
+        <div class="border border-[--color-up]/30 rounded-lg p-4 bg-[--color-bg-card]">
+          <p class="font-mono text-[--color-up] text-xs font-bold mb-1">&#10003; {t('fees.trust_point2_title')}</p>
+          <p class="text-[--color-text-muted] text-xs">{t('fees.trust_point2_desc')}</p>
+        </div>
+        <div class="border border-[--color-up]/30 rounded-lg p-4 bg-[--color-bg-card]">
+          <p class="font-mono text-[--color-up] text-xs font-bold mb-1">&#10003; {t('fees.trust_point3_title')}</p>
+          <p class="text-[--color-text-muted] text-xs">{t('fees.trust_point3_desc')}</p>
+        </div>
+      </div>
     </div>
   </section>
 

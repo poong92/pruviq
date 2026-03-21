@@ -385,8 +385,26 @@ export const ko: Record<TranslationKey, string> = {
   "fees.faq3_q": "이미 계정이 있어도 할인 받을 수 있나요?",
   "fees.faq3_a":
     "추천 할인은 계정 생성 시 적용됩니다. 기존 계정은 소급 적용이 안 될 수 있습니다.",
+  "fees.trust_tag": "레퍼럴의 숨겨진 세금",
+  "fees.trust_title": "광고한 것 vs. 실제 받는 것",
+  "fees.trust_desc":
+    "대부분의 레퍼럴 프로그램은 '20% 할인'을 광고하지만, 실제로 받는 건 절반뿐입니다. 나머지 절반은 추천인의 마진으로 사라집니다 — 매 거래마다. PRUVIQ는 1%만 가져갑니다. 나머지는 전부 당신 것, 영구적으로.",
+  "fees.trust_col_user": "사용자 할인",
+  "fees.trust_col_platform": "플랫폼 수취",
+  "fees.trust_typical": "일반 레퍼럴",
+  "fees.trust_influencer": "크립토 인플루언서",
+  "fees.trust_point1_title": "만료 기한 없음",
+  "fees.trust_point1_desc":
+    "할인은 절대 초기화되지 않습니다. 분기별 제한도, 12개월 마감도 없습니다. 당신이 잊을 때까지 기다리지 않으니까요.",
+  "fees.trust_point2_title": "지금 바로 확인 가능",
+  "fees.trust_point2_desc":
+    "우리 말을 믿지 말고 직접 확인하세요. 바이낸스 계정 → 수수료 일정에서 실제 수수료율을 확인하세요. 약관 뒤에 숨지 않습니다.",
+  "fees.trust_point3_title": "정확한 배분",
+  "fees.trust_point3_desc":
+    "현물: 당신 19%, 우리 1%. 선물: 당신 9%, 우리 1%. 숨겨진 재분배 없음. 이것이 당신 계좌에 입금되는 것입니다.",
+
   "fees.affiliate_disclosure":
-    "제휴 공개: PRUVIQ는 추천 링크를 통해 가입 시 거래소로부터 수수료를 받습니다. 회원의 수수료 할인에는 영향이 없습니다. 투자 조언이 아닙니다. 암호화폐 거래는 상당한 손실 위험을 수반합니다.",
+    "제휴 공개: PRUVIQ는 바이낸스 추천 링크로 가입 시 1% 커미션을 받습니다. 회원의 수수료 할인(현물 19%, 선물 9%)에는 영향이 없습니다. 투자 조언이 아닙니다. 암호화폐 거래는 상당한 손실 위험을 수반합니다.",
 
   // Changelog
   "changelog.tag": "변경 이력",
