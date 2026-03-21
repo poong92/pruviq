@@ -1329,6 +1329,15 @@ export default function ResultsPanel({
           </div>
         )
       )}
+      {result && result.total_trades > 0 && (
+        <div class="px-3 pb-3 md:px-4 md:pb-4">
+          <ExchangeCTA
+            mode="card"
+            lang={lang}
+            strategy={activePreset ?? undefined}
+          />
+        </div>
+      )}
     </div>
   );
 }
