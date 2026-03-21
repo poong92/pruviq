@@ -220,9 +220,23 @@ export function StrategyRanking({ lang = "en" }: { lang?: Lang }) {
 
   if (error) {
     return (
-      <div class="border border-[--color-red]/30 rounded-lg p-5 bg-[--color-down-fill] text-[--color-red] text-sm font-mono">
-        <p class="font-bold mb-1">{lbl.loadFail}</p>
-        <p class="text-xs opacity-80">{error}</p>
+      <div class="rounded-lg border border-[--color-yellow]/20 p-6 bg-[--color-yellow]/5 text-center my-4">
+        <p class="text-[--color-yellow] font-medium mb-2">
+          {lang === "ko"
+            ? "랭킹 데이터를 일시적으로 불러올 수 없습니다"
+            : "Rankings temporarily unavailable"}
+        </p>
+        <p class="text-sm text-[--color-text-muted] mb-4">
+          {lang === "ko"
+            ? "일일 랭킹은 매일 09:00 KST에 업데이트됩니다. 새로고침하거나 잠시 후 다시 확인해 주세요."
+            : "Daily rankings update at 09:00 KST. Try refreshing or check back shortly."}
+        </p>
+        <button
+          onClick={() => window.location.reload()}
+          class="border border-[--color-border] text-[--color-text-muted] px-4 py-2 rounded font-semibold text-xs hover:border-[--color-accent] hover:text-[--color-accent] transition-colors cursor-pointer"
+        >
+          &#8635; {lang === "ko" ? "새로고침" : "Refresh"}
+        </button>
       </div>
     );
   }
