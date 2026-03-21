@@ -405,6 +405,7 @@ export default function ResultsPanel({
                       setQaSl(parseFloat((e.target as HTMLInputElement).value))
                     }
                     class="slider-range mt-1"
+                    aria-label={`Stop Loss ${qaSl}%`}
                     style={{
                       background: `linear-gradient(to right, ${COLORS.red} 0%, ${COLORS.red} ${((qaSl - 1) / 49) * 100}%, var(--color-border) ${((qaSl - 1) / 49) * 100}%, var(--color-border) 100%)`,
                     }}
@@ -425,6 +426,7 @@ export default function ResultsPanel({
                       setQaTp(parseFloat((e.target as HTMLInputElement).value))
                     }
                     class="slider-range mt-1"
+                    aria-label={`Take Profit ${qaTp}%`}
                     style={{
                       background: `linear-gradient(to right, ${COLORS.green} 0%, ${COLORS.green} ${((qaTp - 1) / 49) * 100}%, var(--color-border) ${((qaTp - 1) / 49) * 100}%, var(--color-border) 100%)`,
                     }}
@@ -445,6 +447,7 @@ export default function ResultsPanel({
                       setQaCoins(parseInt((e.target as HTMLInputElement).value))
                     }
                     class="slider-range mt-1"
+                    aria-label={`Coins ${qaCoins}`}
                     style={{
                       background: `linear-gradient(to right, ${COLORS.accent} 0%, ${COLORS.accent} ${((qaCoins - 1) / 568) * 100}%, var(--color-border) ${((qaCoins - 1) / 568) * 100}%, var(--color-border) 100%)`,
                     }}
