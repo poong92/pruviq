@@ -557,6 +557,7 @@ export const en = {
   "perf.equity_title": "Live Trading Equity Curve",
   "perf.equity_desc":
     "Cumulative PnL from live trading (Jan 13 – Mar 5, 2026). Strategy paused after MDD exceeded the 20% risk limit.",
+  "perf.download_json": "Download JSON",
   "perf.verify_title": "Verify It Yourself",
   "perf.verify_desc":
     "Don't trust us. Use our strategy simulator to adjust SL/TP parameters and see results change in real-time.",
