@@ -13,6 +13,7 @@ const labels = {
     exchange: "Exchange",
     standard: "Standard Fee",
     withPruviq: "With PRUVIQ",
+    discountOff: "% off",
     savings: "Monthly Savings",
     savingsYear: "per year",
     saveYr: "Save",
@@ -34,6 +35,7 @@ const labels = {
     exchange: "거래소",
     standard: "기본 수수료",
     withPruviq: "PRUVIQ 적용",
+    discountOff: "% 할인",
     savings: "월 절약액",
     savingsYear: "연간",
     saveYr: "절약",
@@ -196,7 +198,7 @@ export default function FeeCalculator({ lang = "en" }: Props) {
               </div>
               <div>
                 <div class="font-mono text-[0.625rem] sm:text-xs text-[--color-accent] mb-1">
-                  {t.withPruviq} ({Math.round(discPct * 100)}% off)
+                  {t.withPruviq} ({Math.round(discPct * 100)}{t.discountOff})
                 </div>
                 <div class="font-mono text-xs sm:text-sm font-bold text-[--color-accent]">
                   {fmt(discounted)}
