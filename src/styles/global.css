@@ -58,14 +58,14 @@
   --color-accent-subtle: rgba(79,142,247,0.10);
   --color-accent-glow:   rgba(79,142,247,0.22);
 
-  /* ─── SEMANTIC ─── */
-  --color-up:            #22C55E;   /* Green-500 — profit/positive */
-  --color-up-fill:       rgba(34,197,94,0.15);
-  --color-green:         #22C55E;
-  --color-green-dim:     #16A34A;
-  --color-down:          #EF4444;   /* Red-500 — loss/negative */
-  --color-down-fill:     rgba(239,68,68,0.15);
-  --color-red:           #EF4444;
+  /* ─── SEMANTIC — TradingView-standard colors (familiar to all crypto traders) ─── */
+  --color-up:            #22AB94;   /* TradingView teal-green — profit/positive */
+  --color-up-fill:       rgba(34,171,148,0.15);
+  --color-green:         #22AB94;
+  --color-green-dim:     #1A8A77;
+  --color-down:          #F23645;   /* TradingView warm-red — loss/negative */
+  --color-down-fill:     rgba(242,54,69,0.15);
+  --color-red:           #F23645;
   --color-warning:       #F59E0B;   /* Amber-500 */
   --color-warning-muted: rgba(245,158,11,0.12);
   --color-yellow:        #F59E0B;
@@ -81,8 +81,8 @@
   --color-border:        rgba(255,255,255,0.07);
   --color-border-hover:  rgba(255,255,255,0.14);
   --color-border-accent: rgba(79,142,247,0.30);
-  --color-border-up:     rgba(34,197,94,0.30);
-  --color-border-down:   rgba(239,68,68,0.30);
+  --color-border-up:     rgba(34,171,148,0.30);
+  --color-border-down:   rgba(242,54,69,0.30);
 
   /* ─── CHARTS ─── */
   --color-chart-grid:        #18181B;
@@ -92,8 +92,8 @@
   --color-chart-bb-mid:      rgba(79,142,247,0.25);
   --color-chart-ema20:       #F59E0B;
   --color-chart-ema50:       #A855F7;
-  --color-chart-vol-up:      rgba(34,197,94,0.30);
-  --color-chart-vol-down:    rgba(239,68,68,0.30);
+  --color-chart-vol-up:      rgba(34,171,148,0.30);
+  --color-chart-vol-down:    rgba(242,54,69,0.30);
 
   /* ─── BRAND ─── */
   --color-btc: #F7931A;

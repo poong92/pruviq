@@ -96,7 +96,7 @@ const canonicalOverride = symbol.endsWith('usdt') ? undefined : `/ko/coins/${sym
       <!-- CTA -->
       <div class="mt-6 flex flex-wrap items-center gap-3">
         <a href={`/ko/simulate?coin=${symbolUpper}`}
-           class="inline-flex items-center gap-2 bg-[--color-accent] text-[--color-bg] px-5 py-2.5 rounded font-semibold text-sm hover:bg-[--color-accent-dim]">
+           class="btn btn-primary btn-md inline-flex items-center gap-2">
           {t('coin_detail.simulate_coin').replace('{coin}', coinName)} &rarr;
         </a>
         <a href="/ko/strategies" class="text-sm text-[--color-text-muted] hover:text-[--color-accent]">{t('coin_detail.all_strategies')}</a>
@@ -153,7 +153,7 @@ const canonicalOverride = symbol.endsWith('usdt') ? undefined : `/ko/coins/${sym
       <!-- Bottom CTA -->
       <div class="mt-10 pt-8 border-t border-[--color-border] text-center">
         <a href={`/ko/simulate?coin=${symbolUpper}`}
-           class="inline-block bg-[--color-accent] text-[--color-bg] px-6 py-2.5 rounded font-semibold text-sm hover:bg-[--color-accent-dim] transition-colors">
+           class="btn btn-primary btn-md">
           {t('coin_detail.simulate_coin').replace('{coin}', coinName)} &rarr;
         </a>
         <div class="flex flex-wrap gap-3 justify-center mt-4">
