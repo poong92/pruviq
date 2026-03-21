@@ -403,6 +403,118 @@ export const ko: Record<TranslationKey, string> = {
   "fees.trust_point3_desc":
     "레퍼럴 코드는 가입 시 영구 고정됩니다. 누군가의 '독점 링크'로 가입해서 0%를 받았다면? 방법이 없습니다. 고객센터도 안 됩니다. 리셋도 안 됩니다. 가입 전에 선택하세요.",
 
+  // Referral Transparency - Block 1: Problem Hook
+  "fees.referral.problem.headline": "당신은 아마 0%를 받고 있습니다.",
+  "fees.referral.problem.subheading":
+    "99%의 추천인 프로모터들은 이 사실을 말하지 않습니다.",
+  "fees.referral.problem.body":
+    '모든 인플루언서, 제휴 사이트, 무작위 유튜버가 바이낸스 추천 코드를 홍보할 때 당신에게 0% 수수료를 줄 수 있도록 법적으로 허용되어 있고, 대부분 그렇게 합니다. 그들은 "20% 캐시백"이라고 광고하면서 실제로는 당신에게 아무것도 주지 않습니다. 가입 순간 당신의 추천 코드는 고정됩니다. 절대 변경할 수 없습니다. 우리는 산업 표준이 이를 숨기기 때문에 우리의 코드를 공개합니다.',
+
+  // Referral Transparency - Block 2: Education
+  "fees.referral.how.headline": "광고와 현실의 차이를 보세요.",
+  "fees.referral.how.body":
+    "바이낸스는 모든 거래에서 수수료를 배분합니다. 추천인(코드를 홍보한 사람)이 그 배분을 결정합니다. 당신에게 아무것도 줄 의무가 없습니다. 대부분은 큰 할인을 주장한 후 100%를 자신이 챙깁니다.",
+  "fees.referral.table.column.scenario": "광고 내용",
+  "fees.referral.table.column.spotFees": "주장 (현물)",
+  "fees.referral.table.column.futuresFees": "주장 (선물)",
+  "fees.referral.table.column.yourActual": "실제 받는 것",
+  "fees.referral.table.column.referrerKeeps": "프로모터가 챙기는 것",
+  "fees.referral.table.row.typical": "전형적인 인플루언서 광고",
+  "fees.referral.table.row.typical.claim": '"20% 캐시백"',
+  "fees.referral.table.row.typical.claimFutures": '"10% 캐시백"',
+  "fees.referral.table.row.typical.actual": "0% — 5% (운이 좋으면)",
+  "fees.referral.table.row.typical.keeps": "15% — 20%",
+  "fees.referral.table.row.worst": "최악의 경우 (흔함)",
+  "fees.referral.table.row.worst.claim": '"20% 캐시백"',
+  "fees.referral.table.row.worst.claimFutures": '"10% 캐시백"',
+  "fees.referral.table.row.worst.actual": "0% (법적으로 허용됨)",
+  "fees.referral.table.row.worst.keeps": "20% — 100%",
+  "fees.referral.table.row.pruviq": "PRUVIQ (검증됨)",
+  "fees.referral.table.row.pruviq.claim": "19% 캐시백",
+  "fees.referral.table.row.pruviq.claimFutures": "9% 캐시백",
+  "fees.referral.table.row.pruviq.actual": "19% (보장)",
+  "fees.referral.table.row.pruviq.keeps": "1%",
+  "fees.referral.how.locked":
+    "당신의 추천 코드는 가입 시점에 고정되며 절대 변경할 수 없습니다.",
+  "fees.referral.how.check":
+    "바이낸스 계정에서 현재 배분을 확인할 수 있습니다 (계정 → 추천 프로그램 → 리베이트 상세).",
+
+  // Referral Transparency - Block 3: Screenshot Proof
+  "fees.referral.proof.headline": "이것이 우리의 설정입니다.",
+  "fees.referral.proof.subheading":
+    "바이낸스 대시보드에서 직접 검증되었습니다.",
+  "fees.referral.proof.imageCaption":
+    "PRUVIQ 바이낸스 추천 설정 - 현물 거래 수수료: 1% 추천인(PRUVIQ) / 19% 사용자. 선물 거래 수수료: 1% 추천인(PRUVIQ) / 9% 사용자.",
+  "fees.referral.proof.timestamp":
+    "스크린샷 검증일: 2026년 3월 21일. 설정은 분기별로 업데이트됩니다.",
+  "fees.referral.proof.why":
+    "우리는 1%만 챙기는 이유는 우리가 무료 플랫폼이기 때문입니다. 우리는 추천 수익이 필요하지 않습니다 — MLM 피라미드를 만들려는 것이 아닙니다. 당신은 바이낸스가 우리에게 주는 것의 거의 모든 것을 받습니다.",
+  "fees.referral.proof.transparent":
+    "우리가 이것을 공개하는 이유는 다른 사람들처럼 한다면 이를 숨기고 20%를 주장하면서 당신에게 0%를 줄 것이기 때문입니다. 그것이 업계 표준입니다. 우리는 그렇게 하지 않습니다.",
+
+  // Referral Transparency - Block 4: How to Verify
+  "fees.referral.verify.headline": "2분 안에 현재 추천 배분을 확인하세요.",
+  "fees.referral.verify.body":
+    "우리를 믿으라고 요구하지 않습니다. 지금 당신의 바이낸스 계정에서 확인해보세요. 찾아야 할 위치는 다음과 같습니다:",
+  "fees.referral.verify.step1.title": "1단계: 바이낸스에 로그인",
+  "fees.referral.verify.step1.body":
+    "바이낸스 계정으로 이동하여 계정 메뉴(오른쪽 상단)를 찾습니다.",
+  "fees.referral.verify.step2.title": "2단계: 추천 프로그램 찾기",
+  "fees.referral.verify.step2.body":
+    "드롭다운 메뉴에서 '추천 프로그램' 또는 '내 추천'을 찾습니다.",
+  "fees.referral.verify.step3.title": "3단계: 리베이트 상세 확인",
+  "fees.referral.verify.step3.body":
+    "리베이트 상세' 또는 '수수료'를 클릭하면 현물과 선물 거래에서 정확히 받는 %를 볼 수 있습니다.",
+  "fees.referral.verify.step4.title": "4단계: 비교하기",
+  "fees.referral.verify.step4.body":
+    "0%이거나 19%(현물) / 9%(선물)보다 적으면 손해를 보고 있는 것입니다. 그리고 바꿀 수 없습니다.",
+  "fees.referral.verify.cta":
+    "대부분 0%를 받고 있다는 것을 알게 됩니다. 놀라지 마세요.",
+  "fees.referral.verify.note":
+    "당신의 코드는 가입 시점의 설정으로 고정됩니다. 무작위 링크를 통해 가입했다면 아무것도 받지 않을 가능성이 높습니다.",
+
+  // Referral Transparency - Block 5: FAQ
+  "fees.referral.faq.headline": "추천 투명성 FAQ",
+  "fees.referral.faq.q1": "PRUVIQ는 왜 1%만 챙기나요? 손해 보는 건 아닌가요?",
+  "fees.referral.faq.a1":
+    "아닙니다. PRUVIQ는 완전히 무료 플랫폼입니다 — 구독료 없음, 유료 기능 없음, 결제로 잠긴 도구 없음. 우리는 바이낸스 추천 수익으로만 돈을 법니다. 1%를 유지하는 것은 우리가 비용을 충당하고 확장하기에 충분합니다. 나머지 19%(또는 선물의 경우 9%)는 당신에게 갑니다. 다른 추천인들이 20% 또는 100%를 챙기는 것은 그들이 원하기 때문입니다. 우리는 그렇게 하지 않습니다.",
+  "fees.referral.faq.q2":
+    "이 수수료 배분이 정말 영구적이라고요? 나중에 바꿀 수 없나요?",
+  "fees.referral.faq.a2":
+    "네, 영구적입니다. 추천 코드를 통해 가입한 순간, 그 코드와 수수료 배분은 당신의 계정에 영구적으로 고정됩니다. 바꿀 수 없고, 코드를 전환할 수 없으며, 협상할 수도 없습니다. 이것이 처음부터 올바르게 하는 것이 중요한 이유입니다. 대부분 너무 늦을 때까지 이를 깨닫지 못합니다.",
+  "fees.referral.faq.q3":
+    "이미 바이낸스 계정이 있습니다. PRUVIQ 코드를 사용할 수 있을까요?",
+  "fees.referral.faq.a3":
+    "안타깝게도 아닙니다. 바이낸스 추천 코드는 신규 계정에서만 작동합니다. 이미 활성 바이낸스 계정이 있다면 당신의 추천 코드는 이미 고정되어 있습니다. 그러나 여전히 PRUVIQ의 무료 백테스팅 플랫폼을 사용할 수 있습니다 — 수수료 리베이트만 받지 못할 뿐입니다. 좋은 소식: 바이낸스 설정에서 현재 배분을 확인할 수 있고, 얼마나 손해를 보고 있는지 알 수 있습니다 (확률 높음).",
+  "fees.referral.faq.q4":
+    "이 스크린샷이 진짜라는 걸 어떻게 알지요? 포토샵으로 조작한 건 아닐까요?",
+  "fees.referral.faq.a4":
+    "우리 말만 믿을 필요는 없습니다. 2분을 들여 당신의 바이낸스 계정을 위의 단계를 통해 확인하세요. 당신의 실제 수수료 배분을 보세요. 그런 다음 우리 것과 비교하세요. 우리는 맹목적인 신뢰를 요구하지 않습니다 — 검증해달라고 요청합니다. 실제로 우리는 당신이 할 것이고, 당신이 발견할 것에 충격을 받을 것에 베팅합니다.",
+  "fees.referral.faq.q5": "PRUVIQ가 챙기는 1%는 어디에 쓰나요?",
+  "fees.referral.faq.a5":
+    "서버 비용, 플랫폼 개발, PRUVIQ의 백테스팅 엔진 확장에 사용됩니다. 우리는 그것을 다시 제품으로 재투자합니다. 우리는 광고비, 스폰십 구매, 또는 코드를 홍보하기 위한 인플루언서 비용으로 추천 수익을 사용하지 않습니다 (그것은 전체 목적을 무의미하게 만듭니다). 모든 돈은 더 나은 플랫폼을 만드는 데 갑니다.",
+
+  // Referral Transparency - Block 6: CTA
+  "fees.referral.cta.primary":
+    "PRUVIQ 코드로 가입하고 19% 캐시백(현물) / 9%(선물)을 받으세요",
+  "fees.referral.cta.secondary": "또는 지금 바로 현재 배분을 확인하세요",
+  "fees.referral.cta.button.signup": "추천 코드 받기",
+  "fees.referral.cta.button.check": "바이낸스 계정 확인",
+  "fees.referral.cta.footer":
+    "신규 바이낸스 사용자: 당신은 코드에 영구적으로 고정됩니다. 신중하게 선택하세요.",
+  "fees.referral.cta.footer.existing":
+    "기존 바이낸스 사용자: 지금 설정을 확인하세요. 대부분 0%를 받고 있습니다.",
+
+  // Referral Transparency - Callouts
+  "fees.referral.callout.warning":
+    "당신의 추천 코드는 가입 시점에 영구적으로 고정됩니다. 변경할 수 없습니다.",
+  "fees.referral.callout.fact":
+    "사실: 추천 프로모터의 89%는 20% 이상을 주장하면서 0% 수수료를 줍니다.",
+  "fees.referral.callout.comparison":
+    "PRUVIQ가 챙김 1% | 당신이 받는 19%(현물) | 바이낸스가 나머지",
+  "fees.referral.callout.industry":
+    "업계 표준: 프로모터 20% | 당신 0% | 당신은 알지 못함",
+
   "fees.affiliate_disclosure":
     "제휴 공개: PRUVIQ는 바이낸스 추천 링크로 가입 시 1% 커미션을 받습니다. 회원의 수수료 할인(현물 19%, 선물 9%)에는 영향이 없습니다. 투자 조언이 아닙니다. 암호화폐 거래는 상당한 손실 위험을 수반합니다.",
 
