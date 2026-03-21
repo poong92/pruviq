@@ -234,7 +234,7 @@ const xLast = daily[daily.length - 1]?.date ?? '';
           </svg>
         </div>
 
-        <div class="flex flex-wrap gap-4 mt-3 text-xs font-mono">
+        <div class="flex flex-wrap items-center gap-4 mt-3 text-xs font-mono">
           <span class="text-[--color-text-muted]">
             Start: <span class="text-[--color-text]">$0</span>
           </span>
@@ -249,6 +249,14 @@ const xLast = daily[daily.length - 1]?.date ?? '';
           <span class="text-[--color-text-muted]">
             Trades: <span class="text-[--color-text]">{(perfData as any).summary?.total_trades ?? '—'}</span>
           </span>
+          <a
+            href="/data/performance.json"
+            download="pruviq-performance.json"
+            class="ml-auto border border-[--color-border] px-3 py-1.5 rounded text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors no-underline"
+            title="Download raw performance data as JSON"
+          >
+            &#8595; {t('perf.download_json')}
+          </a>
         </div>
       </div>
     </section>
