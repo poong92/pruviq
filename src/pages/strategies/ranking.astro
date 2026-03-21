@@ -2,6 +2,7 @@
 import Layout from '../../layouts/Layout.astro';
 import { StrategyRanking } from '../../components/StrategyRanking';
 import ErrorBoundary from '../../components/ErrorBoundary';
+import ErrorFallback from '../../components/ui/ErrorFallback.astro';
 import { useTranslations } from '../../i18n/index';
 
 const t = useTranslations('en');
@@ -219,6 +220,13 @@ if (!ssrRanking) {
       <noscript>
         <style>#ranking-ssr-fallback { display: block !important; }</style>
       </noscript>
+      {!ssrRanking && (
+        <ErrorFallback
+          message="Rankings temporarily unavailable"
+          detail="Daily rankings update at 09:00 KST. Try refreshing or check back shortly."
+        />
+      )}
+
       <ErrorBoundary name="Strategy Ranking" client:load>
         <StrategyRanking lang="en" client:load />
       </ErrorBoundary>

@@ -3,6 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import { useTranslations } from '../i18n/index';
 import WeeklyLeaderboard from '../components/WeeklyLeaderboard';
 import ErrorBoundary from '../components/ErrorBoundary';
+import StaleBanner from '../components/ui/StaleBanner.astro';
 
 const t = useTranslations('en');
 
@@ -107,6 +108,23 @@ function formatDate(iso: string) {
         });
       </script>
       <noscript><style>#leaderboard-ssr-fallback { display: block !important; }</style></noscript>
+
+      {ssrTop3.length === 0 && (
+        <div>
+          <StaleBanner message="Weekly rankings are being refreshed. Check back Monday morning KST." />
+          <div class="rounded-xl border border-[--color-border] bg-[--color-bg-card] p-12 text-center">
+            <p class="text-4xl mb-4">📊</p>
+            <h3 class="text-xl font-semibold mb-3">Weekly Rankings Coming Soon</h3>
+            <p class="text-[--color-text-muted] text-sm mb-6 max-w-md mx-auto">
+              We publish weekly strategy performance every Monday. Rankings compare real backtested results across 569 coins.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-3 justify-center">
+              <a href="/strategies/ranking" class="inline-flex items-center justify-center bg-[--color-accent] text-[--color-bg] px-5 py-2.5 rounded font-semibold text-sm hover:bg-[--color-accent-dim] transition-colors no-underline">View Daily Rankings &rarr;</a>
+              <a href="/simulate" class="inline-flex items-center justify-center border border-[--color-border] px-5 py-2.5 rounded font-semibold text-sm hover:border-[--color-accent] transition-colors no-underline">Run Your Own Backtest</a>
+            </div>
+          </div>
+        </div>
+      )}
 
       <ErrorBoundary name="Weekly Leaderboard" client:load>
         <WeeklyLeaderboard lang="en" client:load />
