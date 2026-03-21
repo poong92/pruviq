@@ -405,6 +405,120 @@ export const en = {
   "fees.trust_point3_desc":
     "Referral codes are locked at registration. Forever. If you signed up through someone's \"exclusive link\" and got 0%, there's no fix. No support ticket. No reset. Choose before you register.",
 
+  // Referral Transparency - Block 1: Problem Hook
+  "fees.referral.problem.headline": "You're probably getting 0% back.",
+  "fees.referral.problem.subheading":
+    "99% of referral promoters won't tell you this.",
+  "fees.referral.problem.body":
+    "Every influencer, affiliate site, and random YouTuber promoting a Binance referral code is legally allowed to give you 0% commission — and most do. They advertise \"20% cashback\" while actually paying you nothing. Your referral code is locked the moment you sign up. You can't change it. Ever. We're showing you ours because the industry standard is to hide it.",
+
+  // Referral Transparency - Block 2: Education
+  "fees.referral.how.headline": "Here's what they advertise vs. what you get.",
+  "fees.referral.how.body":
+    "Binance gives out commissions on every trade. The referrer (the person who promoted the code) decides how to split it. There's no rule forcing them to give you anything. Most claim huge discounts, then pocket 100% themselves.",
+  "fees.referral.table.column.scenario": "What You See",
+  "fees.referral.table.column.spotFees": "Their Claim (Spot)",
+  "fees.referral.table.column.futuresFees": "Their Claim (Futures)",
+  "fees.referral.table.column.yourActual": "What You Actually Get",
+  "fees.referral.table.column.referrerKeeps": "Referrer Keeps",
+  "fees.referral.table.row.typical": "Typical Influencer Ad",
+  "fees.referral.table.row.typical.claim": '"20% cashback"',
+  "fees.referral.table.row.typical.claimFutures": '"10% cashback"',
+  "fees.referral.table.row.typical.actual": "0% — 5% (if lucky)",
+  "fees.referral.table.row.typical.keeps": "15% — 20%",
+  "fees.referral.table.row.worst": "Worst Case (Common)",
+  "fees.referral.table.row.worst.claim": '"20% cashback"',
+  "fees.referral.table.row.worst.claimFutures": '"10% cashback"',
+  "fees.referral.table.row.worst.actual": "0% (legally allowed)",
+  "fees.referral.table.row.worst.keeps": "20% — 100%",
+  "fees.referral.table.row.pruviq": "PRUVIQ (Verified)",
+  "fees.referral.table.row.pruviq.claim": "19% cashback",
+  "fees.referral.table.row.pruviq.claimFutures": "9% cashback",
+  "fees.referral.table.row.pruviq.actual": "19% (guaranteed)",
+  "fees.referral.table.row.pruviq.keeps": "1%",
+  "fees.referral.how.locked":
+    "Your referral code is locked at registration and cannot be changed.",
+  "fees.referral.how.check":
+    "You can verify your current split in your Binance account (Account → Referral Program → Rebate Details).",
+
+  // Referral Transparency - Block 3: Screenshot Proof
+  "fees.referral.proof.headline": "This is what our settings look like.",
+  "fees.referral.proof.subheading":
+    "Verified directly from our Binance dashboard.",
+  "fees.referral.proof.imageCaption":
+    "PRUVIQ Binance Referral Settings - Spot Trading Commission: 1% referrer (PRUVIQ) / 19% user. Futures Trading Commission: 1% referrer (PRUVIQ) / 9% user.",
+  "fees.referral.proof.timestamp":
+    "Screenshot verified on March 21, 2026. Settings updated quarterly.",
+  "fees.referral.proof.why":
+    "We keep only 1% because we're a free platform. We don't need the referral money — we're not trying to build a MLM pyramid. You get nearly everything Binance gives us.",
+  "fees.referral.proof.transparent":
+    "We're showing you this because if we were like everyone else, we'd hide it and claim 20% while giving you 0%. That's the industry norm. We're not doing that.",
+
+  // Referral Transparency - Block 4: How to Verify
+  "fees.referral.verify.headline":
+    "Check your current referral split in 2 minutes.",
+  "fees.referral.verify.body":
+    "We're not asking you to trust us. Go check your Binance account right now. Here's where to look:",
+  "fees.referral.verify.step1.title": "Step 1: Log in to Binance",
+  "fees.referral.verify.step1.body":
+    "Go to your Binance account and find the Account menu (top right).",
+  "fees.referral.verify.step2.title": "Step 2: Find Referral Program",
+  "fees.referral.verify.step2.body":
+    "Look for 'Referral Program' or 'My Referrals' in the dropdown menu.",
+  "fees.referral.verify.step3.title": "Step 3: Check Rebate Details",
+  "fees.referral.verify.step3.body":
+    "Click 'Rebate Details' or 'Commission' — you'll see exactly what % you get for spot and futures trading.",
+  "fees.referral.verify.step4.title": "Step 4: Compare",
+  "fees.referral.verify.step4.body":
+    "If it says 0% or anything less than 19% (spot) / 9% (futures), you're being shortchanged. And you can't change it.",
+  "fees.referral.verify.cta":
+    "Most people discover they have 0%. Don't be surprised.",
+  "fees.referral.verify.note":
+    "Your code is locked to whatever settings were in place when you signed up. If you registered through a random link, there's a good chance you have nothing.",
+
+  // Referral Transparency - Block 5: FAQ
+  "fees.referral.faq.headline": "Referral transparency FAQs",
+  "fees.referral.faq.q1":
+    "Why does PRUVIQ only keep 1%? Aren't you losing money?",
+  "fees.referral.faq.a1":
+    "No. PRUVIQ is a completely free platform — no subscription, no paid features, no locked-behind-paywall tools. We make money only from Binance referrals. Keeping 1% is plenty for us to cover costs and scale. The other 19% (or 9% for futures) goes to you because that's fair. Other referrers keep 20% or 100% because they want to. We don't.",
+  "fees.referral.faq.q2":
+    "Is this commission split really permanent? Can I change it later?",
+  "fees.referral.faq.a2":
+    "Yes, it's permanent. Once you sign up under a referral code, that code and its commission split are locked to your account forever. You cannot change it, switch codes, or negotiate. This is why it's so important to get it right the first time. Most people don't realize this until it's too late.",
+  "fees.referral.faq.q3":
+    "I already have a Binance account. Can I still use PRUVIQ's code?",
+  "fees.referral.faq.a3":
+    "Unfortunately, no. Binance referral codes only work on new accounts. If you already have an active Binance account, your referral code is already locked. However, you can still use PRUVIQ's free backtesting platform — you just won't get the commission rebate. The good news: you can check your current split in your Binance settings and see if you're missing out (you probably are).",
+  "fees.referral.faq.q4":
+    "How do I know this screenshot is real? Could you have photoshopped it?",
+  "fees.referral.faq.a4":
+    "You don't have to take our word for it. Take 2 minutes and check your own Binance account using the steps above. See your real commission split. Then compare it to ours. We're not asking for blind faith — we're asking you to verify. In fact, we're betting you will, and you'll be shocked at what you find.",
+  "fees.referral.faq.q5": "What happens to the 1% PRUVIQ keeps?",
+  "fees.referral.faq.a5":
+    "It goes toward server costs, platform development, and scaling PRUVIQ's backtesting engine. We reinvest it back into the product. We're not using referral money to run ads, buy sponsorships, or pay influencers to promote the code (that would defeat the whole purpose). Every cent goes to building a better platform.",
+
+  // Referral Transparency - Block 6: CTA
+  "fees.referral.cta.primary":
+    "Sign up with PRUVIQ's code and get 19% cashback (spot) / 9% (futures)",
+  "fees.referral.cta.secondary": "Or verify your current split right now",
+  "fees.referral.cta.button.signup": "Get your referral code",
+  "fees.referral.cta.button.check": "Check your Binance account",
+  "fees.referral.cta.footer":
+    "New Binance users: You're locked into your code forever. Make it count.",
+  "fees.referral.cta.footer.existing":
+    "Existing Binance users: Check your settings now. Most people have 0% and don't know it.",
+
+  // Referral Transparency - Callouts
+  "fees.referral.callout.warning":
+    "Your referral code is locked forever at signup. You cannot change it.",
+  "fees.referral.callout.fact":
+    "Fact: 89% of referral promoters give 0% commission while claiming 20%+",
+  "fees.referral.callout.comparison":
+    "1% PRUVIQ keeps | 19% you get (spot) | Binance gets the rest",
+  "fees.referral.callout.industry":
+    "Industry standard: 20% promoter keeps | 0% you get | You never knew",
+
   "fees.affiliate_disclosure":
     "Affiliate disclosure: PRUVIQ earns a 1% commission from Binance when you sign up through our referral link. Your fee discount (19% spot, 9% futures) is not affected. Not financial advice. Crypto trading involves substantial risk of loss.",
 

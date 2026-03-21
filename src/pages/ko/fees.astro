@@ -113,61 +113,196 @@ const t = useTranslations('ko');
     </div>
   </section>
 
-  <!-- 레퍼럴 투명성 -->
+  <!-- BLOCK 1: PROBLEM HOOK -->
   <section class="pb-12 border-t border-[--color-border] pt-12">
     <div class="max-w-5xl mx-auto px-4">
       <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('fees.trust_tag')}</p>
-      <h2 class="text-2xl font-bold mb-2">{t('fees.trust_title')}</h2>
-      <p class="text-[--color-text-muted] text-sm mb-6 max-w-2xl">{t('fees.trust_desc')}</p>
+      <h2 class="text-2xl font-bold mb-2">{t('fees.referral.problem.headline')}</h2>
+      <p class="text-[--color-text-muted] text-sm mb-4 font-medium">{t('fees.referral.problem.subheading')}</p>
+      <p class="text-[--color-text-muted] text-sm mb-6 max-w-3xl">{t('fees.referral.problem.body')}</p>
 
+      <!-- Fact callout -->
+      <div class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-[--color-down]/30 bg-[--color-down]/5 text-[--color-down] text-sm">
+        <span>{t('fees.referral.callout.fact')}</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- BLOCK 2: EDUCATION / COMPARISON TABLE -->
+  <section class="pb-12 border-t border-[--color-border] pt-12">
+    <div class="max-w-5xl mx-auto px-4">
+      <h2 class="text-2xl font-bold mb-2">{t('fees.referral.how.headline')}</h2>
+      <p class="text-[--color-text-muted] text-sm mb-6 max-w-3xl">{t('fees.referral.how.body')}</p>
+
+      <!-- Comparison table -->
       <div class="overflow-x-auto mb-6">
-        <table class="w-full text-sm border-collapse max-w-2xl">
-          <caption class="sr-only">레퍼럴 커미션 분할 비교</caption>
+        <table class="w-full text-sm border-collapse max-w-4xl">
+          <caption class="sr-only">레퍼럴 커미션 비교: 광고 vs 실제</caption>
           <thead>
             <tr class="border-b border-[--color-border]">
-              <th class="text-left py-2 px-3 font-mono text-xs text-[--color-text-muted]">플랫폼</th>
-              <th class="text-center py-2 px-3 font-mono text-xs text-[--color-text-muted]">{t('fees.trust_col_user')}</th>
-              <th class="text-center py-2 px-3 font-mono text-xs text-[--color-text-muted]">{t('fees.trust_col_platform')}</th>
+              <th class="text-left py-2 px-3 font-mono text-xs text-[--color-text-muted]">{t('fees.referral.table.column.scenario')}</th>
+              <th class="text-center py-2 px-3 font-mono text-xs text-[--color-text-muted]">{t('fees.referral.table.column.spotFees')}</th>
+              <th class="text-center py-2 px-3 font-mono text-xs text-[--color-text-muted]">{t('fees.referral.table.column.futuresFees')}</th>
+              <th class="text-center py-2 px-3 font-mono text-xs text-[--color-text-muted]">{t('fees.referral.table.column.yourActual')}</th>
+              <th class="text-center py-2 px-3 font-mono text-xs text-[--color-text-muted]">{t('fees.referral.table.column.referrerKeeps')}</th>
             </tr>
           </thead>
           <tbody>
-            <tr class="border-b border-[--color-accent]/20 bg-[--color-accent]/5">
-              <td class="py-2 px-3 font-bold text-[--color-accent]">PRUVIQ</td>
-              <td class="py-2 px-3 text-center font-mono font-bold text-[--color-up]">19% / 9%</td>
-              <td class="py-2 px-3 text-center font-mono text-[--color-up]">1%</td>
-            </tr>
             <tr class="border-b border-[--color-border]/50">
-              <td class="py-2 px-3 text-[--color-text-muted]">{t('fees.trust_typical')}</td>
-              <td class="py-2 px-3 text-center font-mono text-[--color-text-muted]">5-10%</td>
-              <td class="py-2 px-3 text-center font-mono text-[--color-down]">10-15%</td>
+              <td class="py-2 px-3 text-[--color-text-muted]">{t('fees.referral.table.row.typical')}</td>
+              <td class="py-2 px-3 text-center font-mono text-[--color-text-muted]">{t('fees.referral.table.row.typical.claim')}</td>
+              <td class="py-2 px-3 text-center font-mono text-[--color-text-muted]">{t('fees.referral.table.row.typical.claimFutures')}</td>
+              <td class="py-2 px-3 text-center font-mono text-[--color-down]">{t('fees.referral.table.row.typical.actual')}</td>
+              <td class="py-2 px-3 text-center font-mono text-[--color-down]">{t('fees.referral.table.row.typical.keeps')}</td>
             </tr>
             <tr class="border-b border-[--color-border]/50 bg-[--color-down]/5">
-              <td class="py-2 px-3 text-[--color-down]">{t('fees.trust_influencer')}</td>
-              <td class="py-2 px-3 text-center font-mono font-bold text-[--color-down]">0%</td>
-              <td class="py-2 px-3 text-center font-mono text-[--color-down]">20%</td>
+              <td class="py-2 px-3 text-[--color-down]">{t('fees.referral.table.row.worst')}</td>
+              <td class="py-2 px-3 text-center font-mono text-[--color-text-muted]">{t('fees.referral.table.row.worst.claim')}</td>
+              <td class="py-2 px-3 text-center font-mono text-[--color-text-muted]">{t('fees.referral.table.row.worst.claimFutures')}</td>
+              <td class="py-2 px-3 text-center font-mono font-bold text-[--color-down]">{t('fees.referral.table.row.worst.actual')}</td>
+              <td class="py-2 px-3 text-center font-mono text-[--color-down]">{t('fees.referral.table.row.worst.keeps')}</td>
+            </tr>
+            <tr class="border-b border-[--color-accent]/20 bg-[--color-accent]/5">
+              <td class="py-2 px-3 font-bold text-[--color-accent]">{t('fees.referral.table.row.pruviq')}</td>
+              <td class="py-2 px-3 text-center font-mono text-[--color-up]">{t('fees.referral.table.row.pruviq.claim')}</td>
+              <td class="py-2 px-3 text-center font-mono text-[--color-up]">{t('fees.referral.table.row.pruviq.claimFutures')}</td>
+              <td class="py-2 px-3 text-center font-mono font-bold text-[--color-up]">{t('fees.referral.table.row.pruviq.actual')}</td>
+              <td class="py-2 px-3 text-center font-mono text-[--color-up]">{t('fees.referral.table.row.pruviq.keeps')}</td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      <div class="grid sm:grid-cols-3 gap-4 max-w-2xl">
-        <div class="border border-[--color-up]/30 rounded-lg p-4 bg-[--color-bg-card]">
-          <p class="font-mono text-[--color-up] text-xs font-bold mb-1">&#10003; {t('fees.trust_point1_title')}</p>
-          <p class="text-[--color-text-muted] text-xs">{t('fees.trust_point1_desc')}</p>
-        </div>
-        <div class="border border-[--color-up]/30 rounded-lg p-4 bg-[--color-bg-card]">
-          <p class="font-mono text-[--color-up] text-xs font-bold mb-1">&#10003; {t('fees.trust_point2_title')}</p>
-          <p class="text-[--color-text-muted] text-xs">{t('fees.trust_point2_desc')}</p>
-        </div>
-        <div class="border border-[--color-up]/30 rounded-lg p-4 bg-[--color-bg-card]">
-          <p class="font-mono text-[--color-up] text-xs font-bold mb-1">&#10003; {t('fees.trust_point3_title')}</p>
-          <p class="text-[--color-text-muted] text-xs">{t('fees.trust_point3_desc')}</p>
-        </div>
+      <!-- Warning callout -->
+      <div class="border border-[--color-down]/30 bg-[--color-down]/5 rounded-lg p-4 max-w-4xl mb-4">
+        <p class="text-[--color-down] text-sm font-medium">{t('fees.referral.callout.warning')}</p>
+      </div>
+      <p class="text-[--color-text-muted] text-xs max-w-3xl">{t('fees.referral.how.check')}</p>
+    </div>
+  </section>
+
+  <!-- BLOCK 3: SCREENSHOT PROOF -->
+  <section class="pb-12 border-t border-[--color-border] pt-12">
+    <div class="max-w-5xl mx-auto px-4">
+      <h2 class="text-2xl font-bold mb-2">{t('fees.referral.proof.headline')}</h2>
+      <p class="text-[--color-text-muted] text-sm mb-6">{t('fees.referral.proof.subheading')}</p>
+
+      <div class="text-center mb-4">
+        <img src="/images/binance-referral-proof.png" alt="PRUVIQ Binance referral dashboard showing 1% platform, 19% spot and 9% futures commission to users" class="rounded-lg border border-[--color-border] w-full max-w-2xl mx-auto" loading="lazy" />
+      </div>
+      <p class="text-[--color-text-muted] text-xs text-center mb-2 max-w-2xl mx-auto">{t('fees.referral.proof.imageCaption')}</p>
+      <p class="text-[--color-text-muted] text-xs text-center mb-6 max-w-2xl mx-auto">{t('fees.referral.proof.timestamp')}</p>
+
+      <!-- Why we show this -->
+      <div class="border border-[--color-up]/30 bg-[--color-up]/5 rounded-lg p-6 max-w-2xl mx-auto">
+        <p class="text-sm mb-3">{t('fees.referral.proof.why')}</p>
+        <p class="text-[--color-text-muted] text-sm">{t('fees.referral.proof.transparent')}</p>
       </div>
     </div>
   </section>
 
-  <!-- FAQ (compact) -->
+  <!-- BLOCK 4: HOW TO VERIFY -->
+  <section class="pb-12 border-t border-[--color-border] pt-12">
+    <div class="max-w-5xl mx-auto px-4">
+      <h2 class="text-2xl font-bold mb-2">{t('fees.referral.verify.headline')}</h2>
+      <p class="text-[--color-text-muted] text-sm mb-6 max-w-3xl">{t('fees.referral.verify.body')}</p>
+
+      <div class="grid sm:grid-cols-2 gap-4 max-w-3xl mb-6">
+        <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card]">
+          <p class="font-mono text-[--color-accent] text-sm font-bold mb-2">{t('fees.referral.verify.step1.title')}</p>
+          <p class="text-[--color-text-muted] text-sm">{t('fees.referral.verify.step1.body')}</p>
+        </div>
+        <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card]">
+          <p class="font-mono text-[--color-accent] text-sm font-bold mb-2">{t('fees.referral.verify.step2.title')}</p>
+          <p class="text-[--color-text-muted] text-sm">{t('fees.referral.verify.step2.body')}</p>
+        </div>
+        <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card]">
+          <p class="font-mono text-[--color-accent] text-sm font-bold mb-2">{t('fees.referral.verify.step3.title')}</p>
+          <p class="text-[--color-text-muted] text-sm">{t('fees.referral.verify.step3.body')}</p>
+        </div>
+        <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card]">
+          <p class="font-mono text-[--color-accent] text-sm font-bold mb-2">{t('fees.referral.verify.step4.title')}</p>
+          <p class="text-[--color-text-muted] text-sm">{t('fees.referral.verify.step4.body')}</p>
+        </div>
+      </div>
+
+      <!-- Warning note -->
+      <div class="border border-[--color-down]/30 bg-[--color-down]/5 rounded-lg p-4 max-w-3xl mb-4">
+        <p class="text-[--color-down] text-sm font-medium">{t('fees.referral.verify.cta')}</p>
+      </div>
+      <p class="text-[--color-text-muted] text-xs max-w-3xl">{t('fees.referral.verify.note')}</p>
+    </div>
+  </section>
+
+  <!-- BLOCK 5: REFERRAL FAQ -->
+  <section class="pb-12 border-t border-[--color-border] pt-12">
+    <div class="max-w-5xl mx-auto px-4">
+      <h2 class="text-2xl font-bold mb-6">{t('fees.referral.faq.headline')}</h2>
+
+      <div class="space-y-4 max-w-3xl">
+        <details class="border border-[--color-border] rounded-lg bg-[--color-bg-card] group">
+          <summary class="p-4 cursor-pointer font-medium flex justify-between items-center min-h-[44px]">
+            {t('fees.referral.faq.q1')}
+            <span class="text-[--color-text-muted] group-open:rotate-45 transition-transform text-xl leading-none">+</span>
+          </summary>
+          <p class="px-4 pb-4 text-[--color-text-muted] text-sm">{t('fees.referral.faq.a1')}</p>
+        </details>
+
+        <details class="border border-[--color-border] rounded-lg bg-[--color-bg-card] group">
+          <summary class="p-4 cursor-pointer font-medium flex justify-between items-center min-h-[44px]">
+            {t('fees.referral.faq.q2')}
+            <span class="text-[--color-text-muted] group-open:rotate-45 transition-transform text-xl leading-none">+</span>
+          </summary>
+          <p class="px-4 pb-4 text-[--color-text-muted] text-sm">{t('fees.referral.faq.a2')}</p>
+        </details>
+
+        <details class="border border-[--color-border] rounded-lg bg-[--color-bg-card] group">
+          <summary class="p-4 cursor-pointer font-medium flex justify-between items-center min-h-[44px]">
+            {t('fees.referral.faq.q3')}
+            <span class="text-[--color-text-muted] group-open:rotate-45 transition-transform text-xl leading-none">+</span>
+          </summary>
+          <p class="px-4 pb-4 text-[--color-text-muted] text-sm">{t('fees.referral.faq.a3')}</p>
+        </details>
+
+        <details class="border border-[--color-border] rounded-lg bg-[--color-bg-card] group">
+          <summary class="p-4 cursor-pointer font-medium flex justify-between items-center min-h-[44px]">
+            {t('fees.referral.faq.q4')}
+            <span class="text-[--color-text-muted] group-open:rotate-45 transition-transform text-xl leading-none">+</span>
+          </summary>
+          <p class="px-4 pb-4 text-[--color-text-muted] text-sm">{t('fees.referral.faq.a4')}</p>
+        </details>
+
+        <details class="border border-[--color-border] rounded-lg bg-[--color-bg-card] group">
+          <summary class="p-4 cursor-pointer font-medium flex justify-between items-center min-h-[44px]">
+            {t('fees.referral.faq.q5')}
+            <span class="text-[--color-text-muted] group-open:rotate-45 transition-transform text-xl leading-none">+</span>
+          </summary>
+          <p class="px-4 pb-4 text-[--color-text-muted] text-sm">{t('fees.referral.faq.a5')}</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- BLOCK 6: FINAL CTA -->
+  <section class="pb-12 border-t border-[--color-border] pt-12">
+    <div class="max-w-5xl mx-auto px-4 text-center">
+      <p class="text-[--color-text-muted] text-sm mb-4">{t('fees.referral.cta.primary')}</p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center mb-6">
+        <a href={binanceDisplay.referralUrl} target="_blank" rel="noopener noreferrer"
+           class="inline-flex items-center justify-center bg-[--color-accent] text-[--color-bg] px-6 py-3 min-h-[48px] rounded text-sm font-bold hover:opacity-90 transition-opacity shadow-sm">
+          {t('fees.referral.cta.button.signup')} &rarr;
+        </a>
+        <a href="https://www.binance.com/en/my/dashboard" target="_blank" rel="noopener noreferrer"
+           class="inline-flex items-center justify-center border border-[--color-border] px-6 py-3 min-h-[48px] rounded text-sm font-medium hover:border-[--color-accent] transition-colors">
+          {t('fees.referral.cta.button.check')} &rarr;
+        </a>
+      </div>
+      <p class="text-[--color-text-muted] text-xs mb-1">{t('fees.referral.cta.footer')}</p>
+      <p class="text-[--color-text-muted] text-xs">{t('fees.referral.cta.footer.existing')}</p>
+    </div>
+  </section>
+
+  <!-- EXISTING FAQ (compact) -->
   <section class="pb-16 border-t border-[--color-border] pt-12">
     <div class="max-w-5xl mx-auto px-4">
       <h2 class="text-2xl font-bold mb-6">{t('fees.faq_title')}</h2>
