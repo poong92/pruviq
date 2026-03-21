@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'preact/hooks';
+import { useState, useEffect } from "preact/hooks";
 
 interface Props {
   postId: string;
@@ -8,9 +8,11 @@ interface Props {
   tags?: string[];
   tagMap?: Record<string, string>;
   isEnglish?: boolean;
+  levelLabel?: string;
+  levelColor?: string;
 }
 
-const STORAGE_KEY = 'pruviq_learn_read';
+const STORAGE_KEY = "pruviq_learn_read";
 
 function isRead(id: string): boolean {
   try {
@@ -21,7 +23,23 @@ function isRead(id: string): boolean {
   }
 }
 
-export default function LearnCard({ postId, href, title, description, tags, tagMap, isEnglish }: Props) {
+const levelColorMap: Record<string, string> = {
+  green: "bg-green-500/10 text-green-400 border-green-500/20",
+  yellow: "bg-yellow-500/10 text-yellow-400 border-yellow-500/20",
+  red: "bg-red-500/10 text-red-400 border-red-500/20",
+};
+
+export default function LearnCard({
+  postId,
+  href,
+  title,
+  description,
+  tags,
+  tagMap,
+  isEnglish,
+  levelLabel,
+  levelColor,
+}: Props) {
   const [read, setRead] = useState(false);
 
   useEffect(() => {
@@ -36,11 +54,24 @@ export default function LearnCard({ postId, href, title, description, tags, tagM
       {read && (
         <span
           class="absolute top-3 right-3 w-5 h-5 rounded-full bg-[--color-accent]/20 flex items-center justify-center"
-          title={isEnglish !== false ? 'Read' : '읽음'}
+          title={isEnglish !== false ? "Read" : "읽음"}
         >
           <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-            <path d="M2.5 6L5 8.5L9.5 3.5" stroke="var(--color-accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+            <path
+              d="M2.5 6L5 8.5L9.5 3.5"
+              stroke="var(--color-accent)"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
           </svg>
+        </span>
+      )}
+      {levelLabel && levelColor && (
+        <span
+          class={`inline-block text-[10px] font-mono px-1.5 py-0.5 rounded border mb-2 ${levelColorMap[levelColor] ?? ""}`}
+        >
+          {levelLabel}
         </span>
       )}
       <div class="flex items-center gap-2 mb-1 pr-6">
@@ -48,13 +79,17 @@ export default function LearnCard({ postId, href, title, description, tags, tagM
           {title}
         </h3>
         {isEnglish && (
-          <span class="font-mono text-[10px] px-1.5 py-0.5 rounded bg-[--color-border] text-[--color-text-muted] shrink-0">EN</span>
+          <span class="font-mono text-[10px] px-1.5 py-0.5 rounded bg-[--color-border] text-[--color-text-muted] shrink-0">
+            EN
+          </span>
         )}
       </div>
-      <p class="text-[--color-text-muted] text-xs line-clamp-2">{description}</p>
+      <p class="text-[--color-text-muted] text-xs line-clamp-2">
+        {description}
+      </p>
       {tags && tags.length > 0 && (
         <div class="flex flex-wrap gap-1 mt-2">
-          {tags.slice(0, 3).map(tag => (
+          {tags.slice(0, 3).map((tag) => (
             <span class="text-[10px] font-mono text-[--color-text-muted] bg-[--color-border]/50 px-1.5 py-0.5 rounded">
               {tagMap?.[tag] || tag}
             </span>
