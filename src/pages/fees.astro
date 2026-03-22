@@ -103,16 +103,24 @@ const t = useTranslations('en');
               </div>
             </div>
 
-            <!-- Right: savings + CTA -->
+            <!-- Right: rewards + CTA -->
             <div class="flex flex-col justify-between">
-              {savingsBadge && (
-                <div class="mb-4">
+              <div class="mb-4 space-y-2">
+                <div class="flex items-center gap-3">
+                  <span class="inline-flex items-center gap-1 text-xs font-mono px-2 py-1 rounded border border-[--color-up]/40 bg-[--color-up]/5 text-[--color-up] font-semibold">
+                    Up to 19% Trade Rebates
+                  </span>
+                  <span class="inline-flex items-center gap-1 text-xs font-mono px-2 py-1 rounded border border-[--color-yellow]/40 bg-[--color-yellow]/5 text-[--color-yellow] font-semibold">
+                    Up to $600 Bonus
+                  </span>
+                </div>
+                {savingsBadge && (
                   <span class="inline-flex items-center gap-1 text-xs font-mono px-2 py-1 rounded border border-[--color-up]/40 bg-[--color-up]/5 text-[--color-up] font-semibold">
                     &#9650; {savingsBadge}
                     <span class="font-normal text-[--color-text-muted]">at $10k/mo</span>
                   </span>
-                </div>
-              )}
+                )}
+              </div>
               <a href={binanceDisplay.referralUrl} target="_blank" rel="noopener noreferrer"
                  class="block text-center bg-[--color-accent] text-[--color-bg] px-4 py-3 min-h-[48px] flex items-center justify-center rounded text-sm font-bold hover:opacity-90 transition-opacity shadow-sm">
                 {t('fees.signup')} &rarr;
@@ -202,10 +210,16 @@ const t = useTranslations('en');
       <h2 class="text-2xl font-bold mb-2">{t('fees.referral.proof.headline')}</h2>
       <p class="text-[--color-text-muted] text-sm mb-6">{t('fees.referral.proof.subheading')}</p>
 
-      <div class="text-center mb-4">
-        <img src="/images/binance-referral-proof.png" alt="PRUVIQ Binance referral dashboard showing 1% platform, 19% spot and 9% futures commission to users" class="rounded-lg border border-[--color-border] w-full max-w-2xl mx-auto" loading="lazy" />
+      <div class="grid md:grid-cols-2 gap-6 mb-6">
+        <div class="text-center">
+          <img src="/images/binance-signup-rewards.png" alt="Binance signup page showing PRUVIQ referral rewards: up to 19% trade rebates and up to $600 new user bonus" class="rounded-lg border border-[--color-border] w-full" loading="lazy" />
+          <p class="text-[--color-text-muted] text-xs mt-2">What you see when signing up via PRUVIQ</p>
+        </div>
+        <div class="text-center">
+          <img src="/images/binance-referral-proof.png" alt="PRUVIQ Binance referral dashboard showing 1% platform, 19% spot and 9% futures commission to users" class="rounded-lg border border-[--color-border] w-full" loading="lazy" />
+          <p class="text-[--color-text-muted] text-xs mt-2">{t('fees.referral.proof.imageCaption')}</p>
+        </div>
       </div>
-      <p class="text-[--color-text-muted] text-xs text-center mb-2 max-w-2xl mx-auto">{t('fees.referral.proof.imageCaption')}</p>
       <p class="text-[--color-text-muted] text-xs text-center mb-6 max-w-2xl mx-auto">{t('fees.referral.proof.timestamp')}</p>
 
       <!-- Why we show this -->

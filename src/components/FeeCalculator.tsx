@@ -71,7 +71,7 @@ interface Props {
 export default function FeeCalculator({ lang = "en" }: Props) {
   const t = labels[lang] || labels.en;
   const [volume, setVolume] = useState(50000);
-  const [market, setMarket] = useState<"futures" | "spot">("futures");
+  const [market, setMarket] = useState<"futures" | "spot">("spot");
 
   const volumeSteps = [10000, 25000, 50000, 100000, 250000, 500000, 1000000];
 
@@ -198,7 +198,8 @@ export default function FeeCalculator({ lang = "en" }: Props) {
               </div>
               <div>
                 <div class="font-mono text-[0.625rem] sm:text-xs text-[--color-accent] mb-1">
-                  {t.withPruviq} ({Math.round(discPct * 100)}{t.discountOff})
+                  {t.withPruviq} ({Math.round(discPct * 100)}
+                  {t.discountOff})
                 </div>
                 <div class="font-mono text-xs sm:text-sm font-bold text-[--color-accent]">
                   {fmt(discounted)}
