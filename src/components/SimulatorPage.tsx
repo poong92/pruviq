@@ -28,6 +28,7 @@ import ModeSwitcher, { SIM_MODE_KEY, isValidSimMode } from "./ModeSwitcher";
 import type { SimMode } from "./ModeSwitcher";
 import QuickTestPanel from "./QuickTestPanel";
 import StandardPanel from "./StandardPanel";
+import AchievementBadges from "./AchievementBadges";
 
 // ─── i18n ───
 const L = {
@@ -926,6 +927,32 @@ export default function SimulatorPage({ lang = "en" }: Props) {
       setResultTab("summary");
       scrollPositions.current[mobileTab] = window.scrollY;
       setMobileTab("results");
+
+      // Achievement badge tracking
+      try {
+        localStorage.setItem("has-run-backtest", "true");
+        // Track strategies tried
+        if (activePreset) {
+          const tried = JSON.parse(
+            localStorage.getItem("strategies-tried") || "[]",
+          );
+          if (Array.isArray(tried) && !tried.includes(activePreset)) {
+            tried.push(activePreset);
+            localStorage.setItem("strategies-tried", JSON.stringify(tried));
+          }
+        }
+        // Multi-coin badge: 100+ coins
+        if (data.coins_used >= 100) {
+          localStorage.setItem("multi-coin-badge", "true");
+        }
+        // Expert mode badge
+        if (simMode === "expert") {
+          localStorage.setItem("expert-mode-used", "true");
+        }
+      } catch {
+        // localStorage unavailable — skip silently
+      }
+
       // Save to history (max 3)
       setHistory((prev) => {
         const label = `SL${slPct}/TP${tpPct}/${direction.toUpperCase()}`;
@@ -1398,6 +1425,11 @@ export default function SimulatorPage({ lang = "en" }: Props) {
           }}
           onClearHistory={() => setHistory([])}
         />
+        {result && (
+          <div class="mt-4">
+            <AchievementBadges lang={lang} />
+          </div>
+        )}
       </div>
 
       {/* Mobile sticky Run button — Standard & Expert modes */}
