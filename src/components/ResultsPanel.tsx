@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "preact/hooks";
 import ResultsCard from "./ResultsCard";
 import OOSValidation from "./OOSValidation";
 import ExchangeCTA from "./ExchangeCTA";
+import EmailCapture from "./EmailCapture";
 import { exchanges } from "../data/exchanges";
 import {
   winRateColor,
@@ -784,6 +785,7 @@ export default function ResultsPanel({
                 isDemo={result._isDemo}
                 simMode={simMode}
               />
+              <EmailCapture lang={lang} />
               {result.yearly_stats && result.yearly_stats.length > 0 && (
                 <div class="mt-4">
                   <div class="text-[10px] font-mono text-[--color-text-muted] uppercase mb-2">

@@ -378,6 +378,7 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
         ]
       })} />
     )}
+    <noscript><style>.reveal,.reveal-child>*{opacity:1!important;transform:none!important;transition:none!important}</style></noscript>
 </head>
   <body class="min-h-screen">
     <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:bg-[--color-accent] focus:text-white focus:rounded">
@@ -642,6 +643,8 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
             // Desktop: cookie is at bottom — push body content up
             document.body.style.paddingBottom = h + 'px';
             if (stickyCta) stickyCta.style.bottom = h + 'px';
+            var bottomCta = document.getElementById('bottom-cta-bar');
+            if (bottomCta) bottomCta.style.bottom = h + 'px';
           }
         }
 
@@ -649,6 +652,8 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
           document.body.style.paddingTop = '';
           document.body.style.paddingBottom = '';
           if (stickyCta) stickyCta.style.bottom = '';
+          var bottomCta = document.getElementById('bottom-cta-bar');
+          if (bottomCta) bottomCta.style.bottom = '0';
         }
 
         if (!localStorage.getItem('cookie-ok')) {
@@ -696,5 +701,20 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
         </script>
       </>
     )}
+    <script>
+      (function() {
+        var els = document.querySelectorAll('.reveal, .reveal-child');
+        if (!els.length) return;
+        var observer = new IntersectionObserver(function(entries) {
+          entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+        els.forEach(function(el) { observer.observe(el); });
+      })();
+    </script>
   </body>
 </html>

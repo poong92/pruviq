@@ -176,6 +176,70 @@ Naming convention tip: include the hypothesis & date in the preset name, e.g., `
 - PRUVIQ Strategies (examples & transparency): /strategies
 - Coin market context and volumes: /market and /coins
 
+## Advanced Tips: Combining Indicators
+
+The Strategy Builder supports AND/OR logic for chaining multiple indicator conditions into a single entry or exit rule. Knowing when to use each operator — and which indicators actually complement each other — is the difference between a robust filter and a redundant mess.
+
+**AND logic (all conditions must be true)** narrows your entry criteria. Each additional AND condition reduces the number of trades but should increase their quality. A classic example: RSI(14) < 30 AND ADX(14) > 25. The RSI identifies oversold conditions; the ADX confirms that the market is trending (not just ranging near support). Without the ADX filter, you'd enter mean-reversion trades in sideways chop where RSI oscillates around 30 without producing clean reversals.
+
+**OR logic (any condition can trigger)** widens your net. Use OR when you want to capture signals from multiple independent setups. Example: RSI(14) < 25 OR Stochastic(14,3) < 15. Both measure oversold conditions but on different calculations, so OR gives you more entries while still requiring at least one strong signal.
+
+**Signal confirmation** is the practice of requiring a second, independent indicator to agree with the primary signal before entering. The key word is *independent*. Adding RSI(14) < 30 AND RSI(7) < 35 is not confirmation — both indicators measure the same thing (momentum) on similar lookbacks. A better confirmation pair: RSI (momentum) + Bollinger Band width (volatility) + Volume spike (participation). Each measures a different market dimension.
+
+**Indicators to avoid combining:**
+- RSI + Stochastic (both measure momentum; redundant)
+- EMA(20) + EMA(25) (nearly identical lookback periods)
+- MACD + RSI on the same timeframe (high correlation)
+
+**Indicators that complement each other:**
+- Momentum (RSI, MACD) + Volatility (Bollinger, ATR) + Trend (ADX, EMA slope)
+- Volume confirmation + any price-based signal
+
+A practical rule: never add more than 3–4 conditions per entry. Each additional condition reduces sample size exponentially, and with fewer trades your backtest becomes statistically meaningless. Start with 1–2 conditions, test, and only add a third if it measurably improves profit factor without cutting trade count below 100.
+
+Try different combinations in the [PRUVIQ Simulator](/simulate) and compare results in the [Strategy Library](/strategies).
+
+## Interpreting Your Results: Beyond Win Rate
+
+After running a backtest, most builders fixate on win rate. But win rate is the least informative metric on the results page. Here's what actually matters and why.
+
+**Profit Factor (PF)** is gross profit divided by gross loss. It's the single best summary of edge quality. A PF above 2.0 with 100+ trades is the minimum bar for a strategy worth forward-testing. Below 1.5, real-world costs (fees, slippage, funding) will likely erase the edge entirely.
+
+**Sharpe Ratio** measures return per unit of risk (volatility). A Sharpe above 1.0 is acceptable; above 2.0 is strong. But Sharpe penalizes upside volatility equally to downside volatility — which is why **Sortino Ratio** exists. Sortino only penalizes downside deviation, making it a better fit for strategies with large occasional winners and tight stop-losses. If your Sortino is significantly higher than your Sharpe, your strategy has asymmetric (favorable) return distribution.
+
+**Max Drawdown (MDD)** is the largest peak-to-trough equity decline during the backtest. It tells you the worst pain you'd have experienced. A strategy with PF 2.5 but MDD 60% is psychologically and financially dangerous — most traders abandon strategies during deep drawdowns, negating the long-term edge. Target MDD below 20–25% for sustainable trading.
+
+**Which metric matters most?** It depends on your goal. For strategy selection, PF + trade count is the primary filter. For risk sizing, MDD is king. For comparing two strategies with similar PF, Sortino breaks the tie. No single metric tells the whole story — use them as a dashboard, not a scoreboard.
+
+Learn more about profit factor in our [detailed PF guide](/blog/understanding-profit-factor), or review methodology details on the [Methodology page](/methodology).
+
+## What to Do When a Strategy Fails
+
+Every strategy eventually underperforms. The question is whether the failure is fixable or fundamental.
+
+**Parameter adjustment failures** are the easier kind. If your RSI mean-reversion strategy worked well with RSI(14) < 30 but recently stopped producing trades, the market regime may have shifted. Try widening the threshold (RSI < 35) or shortening the lookback (RSI(10)). If a small parameter tweak restores performance across multiple coins and time periods, the core logic is sound — it just needed recalibration.
+
+**Fundamental failures** are different. If your strategy only worked during a specific regime (e.g., the 2024 bull run) and produces PF < 1.0 in every other period, no amount of parameter tuning will save it. Signs of a fundamental flaw:
+- Performance collapses when tested on out-of-sample data
+- PF drops below 1.0 on more than half the coins in the universe
+- The strategy requires extremely tight parameters to be profitable (e.g., RSI must be exactly 28–31)
+- Walk-forward validation shows declining performance over successive windows
+
+**When to kill a strategy:** If three consecutive out-of-sample periods show PF below 1.2, or if expanding the coin universe from 50 to 500 coins destroys profitability, the strategy likely captured noise rather than a genuine market inefficiency. Archive the preset, document what you learned, and move on. PRUVIQ's [Strategy Library](/strategies) includes killed strategies with full data — studying failures is often more instructive than studying successes.
+
+**The iteration loop:** Failed strategy → analyze *why* it failed (regime? costs? sample size?) → form a new hypothesis → test again. This loop, not the first backtest, is where real edges are found.
+
+## FAQ
+
+**Q: How many indicators should I use in a single strategy?**
+Start with 1–2 entry conditions and a clear exit rule (stop-loss + take-profit). Adding more indicators reduces trade count and increases the risk of overfitting. In practice, the best-performing strategies on PRUVIQ use 2–3 conditions maximum. If you need 5+ conditions to make a strategy profitable, you're likely curve-fitting to historical noise.
+
+**Q: Should I optimize on all coins or just a few?**
+Optimize on a focused subset (top 30–50 by volume) to find promising parameters, then validate on the full 500+ coin universe. If performance holds across the broader universe, the signal is more likely to be real. If it collapses, you've found a strategy that only works on a handful of coins — which is fragile and risky to trade live.
+
+**Q: How long should my backtest period be?**
+Use at least 1 year of data, ideally 2+ years to capture both bull and bear market regimes. A strategy that only works in one regime is not robust. The [PRUVIQ Simulator](/simulate) provides 2+ years of historical data across 500+ coins, giving you enough coverage to test regime sensitivity.
+
 ## Conclusion
 
 PRUVIQ's Strategy Builder turns ideas into verified experiments. The disciplined workflow above—simple hypothesis, realistic execution, robust validation, and forward testing—separates a fragile backtest from a repeatable edge.
