@@ -116,13 +116,15 @@ class IndicatorCache:
     def strategy_count(self, strategy_id: str) -> int:
         return len(self._multi_cache.get(strategy_id, {}))
 
-    def _merged(self, symbol: str, indicator_df: pd.DataFrame) -> pd.DataFrame:
+    def _merged(self, symbol: str, indicator_df: pd.DataFrame) -> Optional[pd.DataFrame]:
         """Merge OHLCV from DataManager + indicator columns from cache."""
         if self._data_manager is None:
-            return indicator_df
+            logger.warning(f"[indicator_cache] _merged({symbol}): DataManager is None, returning None")
+            return None
         ohlcv = self._data_manager.get_df(symbol)
         if ohlcv is None:
-            return indicator_df
+            logger.warning(f"[indicator_cache] _merged({symbol}): OHLCV data not found, returning None")
+            return None
         return _merge_ohlcv(ohlcv, indicator_df)
 
     # --- Legacy (flat) accessors for bb-squeeze-short ---
@@ -141,7 +143,9 @@ class IndicatorCache:
             symbol = info["symbol"]
             ind = self._cache.get(symbol)
             if ind is not None:
-                result.append((symbol, self._merged(symbol, ind)))
+                merged = self._merged(symbol, ind)
+                if merged is not None:
+                    result.append((symbol, merged))
             if len(result) >= n:
                 break
         return result
@@ -153,7 +157,9 @@ class IndicatorCache:
             sym_upper = sym.upper()
             ind = self._cache.get(sym_upper)
             if ind is not None:
-                result.append((sym_upper, self._merged(sym_upper, ind)))
+                merged = self._merged(sym_upper, ind)
+                if merged is not None:
+                    result.append((sym_upper, merged))
         return result
 
     # --- Multi-strategy accessors ---
@@ -174,7 +180,9 @@ class IndicatorCache:
             symbol = info["symbol"]
             ind = cache.get(symbol)
             if ind is not None:
-                result.append((symbol, self._merged(symbol, ind)))
+                merged = self._merged(symbol, ind)
+                if merged is not None:
+                    result.append((symbol, merged))
             if len(result) >= n:
                 break
         return result
@@ -187,5 +195,7 @@ class IndicatorCache:
             sym_upper = sym.upper()
             ind = cache.get(sym_upper)
             if ind is not None:
-                result.append((sym_upper, self._merged(sym_upper, ind)))
+                merged = self._merged(sym_upper, ind)
+                if merged is not None:
+                    result.append((sym_upper, merged))
         return result

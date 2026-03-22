@@ -143,7 +143,7 @@ cleanup_worktree() {
         git -C "$REPO_DIR" worktree remove "$DEPLOY_WORKTREE" --force 2>/dev/null || rm -rf "$DEPLOY_WORKTREE"
     fi
 }
-trap 'cleanup_worktree' EXIT
+trap 'cleanup_worktree; release_lock' EXIT
 
 git fetch origin main -q 2>/dev/null
 git worktree add "$DEPLOY_WORKTREE" origin/main --detach -q 2>/dev/null || {
