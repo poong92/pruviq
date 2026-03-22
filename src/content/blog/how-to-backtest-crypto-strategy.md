@@ -16,6 +16,18 @@ Backtesting means testing a trading strategy against historical market data to s
 
 **Why most backtests lie**: The gap between a backtest and live trading is enormous. Our own Momentum LONG strategy backtested at +400% but showed negative expectancy after fixing a candle index bug. The difference? Bugs that only show up under rigorous validation.
 
+## Types of Backtesting
+
+Not all backtests are created equal. Before diving into the rules, understand the three main approaches:
+
+**Walk-Forward Analysis**: Split your data into sequential windows. Optimize on window 1, test on window 2. Then optimize on windows 1+2, test on window 3. This mimics real-world conditions where you only have past data to work with. It is the closest thing to simulating how your strategy would evolve over time with periodic re-optimization.
+
+**Monte Carlo Simulation**: Randomize the order of your trades (or slightly vary parameters) and run thousands of iterations. If your strategy only works with trades in the exact historical order, it is fragile. Monte Carlo tells you the probability distribution of outcomes — not just the single historical path. A strategy with a 95th percentile max drawdown of 40% is very different from one with a 95th percentile max drawdown of 15%, even if their average returns are identical.
+
+**Out-of-Sample Testing**: The most basic and most important. Train your strategy on 2022-2024 data, then test on 2025 data that the model has never seen. If performance degrades significantly, you have overfit. This is non-negotiable — any backtest result that does not include out-of-sample validation is essentially worthless.
+
+Each approach catches different failure modes. Walk-forward catches regime-dependent overfitting. Monte Carlo catches sequence-dependent fragility. Out-of-sample catches plain overfitting. Use all three if you want confidence in your results.
+
 ## The 5 Critical Rules of Honest Backtesting
 
 ### Rule 1: Only Use Completed Candles
@@ -119,6 +131,75 @@ Only testing on coins that still exist today. Coins that got delisted (often aft
 A strategy that works in a bear market may fail completely in a bull market. We tested 4 different BTC regime filters to see if adapting to market conditions helps. All 4 failed — the overhead of missed trades outweighed the loss prevention.
 
 **Lesson**: Sometimes the best filter is no filter. Let the data decide.
+
+## Common Backtesting Mistakes (Case Studies)
+
+The mistakes above are abstract. Here are three concrete examples of how they destroy real money.
+
+### Case Study 1: Look-Ahead Bias — The $14,115 Loss
+
+We built a Momentum LONG strategy that backtested at +400% returns over 18 months. The equity curve was smooth, the Sharpe ratio was above 3.0, and the drawdowns were manageable. We allocated real capital.
+
+The problem: our signal function was reading the current candle's volume spike to trigger entries. In a backtest, that candle is already complete — the volume spike is confirmed. In live trading, the candle has only been open for 1 minute when the bot runs. The "volume spike" does not exist yet. After fixing the candle index bug and retesting, the strategy showed negative expectancy. We had already lost $14,115 in live trading before catching it. This is why Rule 1 (completed candles only) is non-negotiable. One index offset turned a +400% winner into a money-losing strategy.
+
+### Case Study 2: Survivorship Bias — Testing Only Top 50 Coins
+
+A common shortcut is to backtest on today's top 50 coins by market cap. The logic seems sound — these are the most liquid, most traded assets. But here is the problem: coins in today's top 50 were selected because they succeeded. You are excluding every coin that crashed 95% and got delisted — LUNA, FTT, dozens of DeFi tokens from 2021.
+
+A strategy that goes long on momentum signals will show inflated returns when tested only on survivors. We ran the same BB Squeeze SHORT strategy on two datasets: top 50 coins only (win rate: 74.2%, profit factor: 3.1) versus all 535 coins including delisted ones (win rate: 68.6%, profit factor: 2.22). The survivorship-biased version overstated profit factor by 40%. If you had sized positions based on the inflated metrics, you would be taking on far more risk than the data actually supports.
+
+### Case Study 3: Overfitting — The 25-Parameter Strategy
+
+A trader in our community built an elaborate mean-reversion strategy with 25 adjustable parameters: RSI period, RSI overbought threshold, RSI oversold threshold, Bollinger Band period, BB standard deviations, MACD fast/slow/signal periods, volume filter window, volume multiplier, ATR period, ATR multiplier for stop-loss, trailing stop activation, trailing stop distance, time-of-day filter start, time-of-day filter end, day-of-week filter, minimum spread filter, maximum position hold time, re-entry cooldown, and seven more.
+
+The backtest showed 92% win rate and a profit factor above 8.0. In live trading, it lost money in the first week. With 25 parameters and 2 years of hourly data, the optimizer had enough degrees of freedom to fit noise perfectly. The strategy was essentially memorizing historical patterns rather than capturing a genuine market edge. When we stripped it down to 4 core parameters (BB period, BB deviation, SL%, TP%), the win rate dropped to 63% but the strategy actually made money forward. Fewer parameters, tested on more data, beats a complex model every time.
+
+## How PRUVIQ Handles These Issues
+
+Every strategy on PRUVIQ goes through a validation pipeline designed to catch exactly these problems.
+
+**Monte Carlo Validation**: We do not report a single backtest equity curve. We run 1,000+ Monte Carlo iterations, randomizing trade order and applying parameter perturbation (plus or minus 10% on each parameter). If the strategy survives with positive expectancy across 95% of iterations, it passes. If it only works with the exact historical sequence, it gets killed. You can see this in action on the [PRUVIQ Simulator](/simulate).
+
+**Out-of-Sample Testing**: Every strategy is trained on one time period and validated on a completely separate period. Our BB Squeeze SHORT was optimized on 2022-2024 data and validated on 2025-2026 data — with consistent performance across both periods. Strategies that degrade on out-of-sample data are marked as killed, not hidden.
+
+**Real Fee Modeling**: We model actual Binance Futures fees (0.04% maker, 0.05% taker), slippage (0.05-0.1%), and funding rates at real historical values. No "zero-cost" fantasies. You can [compare fees across exchanges](/fees) to see how costs vary.
+
+**Killed Strategies on Display**: Four of our five strategies failed validation and are publicly documented with full data. We do not hide failures — they are the proof that our validation process actually works. A platform that only shows winners is a platform that is not testing honestly.
+
+## Checklist: Before You Trust a Backtest
+
+Use this 10-point checklist before risking real money on any backtested strategy — yours or someone else's.
+
+- [ ] **Completed candles only**: All signal conditions use the previous (closed) candle. No current-candle data in entry logic.
+- [ ] **Code parity**: Backtest signal function is identical to live trading signal function. Verified by running both on the same dataset and comparing outputs.
+- [ ] **Realistic costs**: Fees, slippage, spread, and funding rates are included. Total round-trip cost is at least 0.15% for liquid futures.
+- [ ] **Sufficient data**: Minimum 2 years covering bull, bear, and sideways regimes. At least 500 trades in the sample.
+- [ ] **Out-of-sample validation**: Strategy tested on data it was never optimized on. Performance does not degrade more than 20% versus in-sample.
+- [ ] **Survivorship bias addressed**: Dataset includes delisted or crashed coins, or the limitation is explicitly acknowledged.
+- [ ] **Parameter count under control**: Fewer than 8 free parameters for a simple strategy. Each parameter has economic justification.
+- [ ] **Monte Carlo survival**: Strategy maintains positive expectancy across 1,000+ randomized iterations.
+- [ ] **Realistic position sizing**: Simulated with actual capital allocation, not simple percentage addition.
+- [ ] **No cherry-picked timeframe**: Results are not dependent on starting or ending on a specific date.
+
+If any of these fail, the backtest is not trustworthy. Go back, fix the issue, and retest.
+
+## FAQ
+
+### How many trades do I need for a statistically significant backtest?
+
+At minimum, 500 trades. Below 100, random variance dominates and any pattern you see is likely noise. With 500+ trades, you can start making reasonable claims about win rate, profit factor, and drawdown. Our BB Squeeze SHORT strategy uses 2,898 trades across 535 coins — that is enough to have high confidence in the metrics.
+
+### Can I backtest on TradingView?
+
+TradingView's Strategy Tester is a good starting point for quick validation, but it has significant limitations. It does not model realistic slippage, uses simplified fee structures, and makes it easy to accidentally use current-candle data (look-ahead bias). For serious validation, export your logic to Python and run it with proper cost modeling. Use TradingView for idea generation, not for final validation.
+
+### How often should I re-optimize my strategy parameters?
+
+Re-optimization is a double-edged sword. Too frequent (weekly) and you are curve-fitting to recent noise. Too rare (never) and your strategy may drift as market microstructure changes. Our approach: re-validate quarterly using walk-forward analysis. If out-of-sample performance drops below 50% of in-sample performance, investigate. But do not change parameters just because last month was bad — that is how you turn a working strategy into an overfit one.
+
+### What is the difference between backtesting and paper trading?
+
+Backtesting runs your strategy on historical data — it is fast (minutes to hours) and covers years of market conditions. Paper trading runs your strategy in real-time with simulated money. Paper trading catches bugs that backtesting misses: API latency, order fill issues, rate limits, exchange downtime. You need both. Backtest first to filter out bad strategies quickly, then paper trade survivors for at least 2-4 weeks before risking real capital. Try the [PRUVIQ Simulator](/simulate) to run backtests without writing code.
 
 ## Getting Started
 
