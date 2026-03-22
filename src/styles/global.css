@@ -58,6 +58,12 @@
   --color-accent-subtle: rgba(79,142,247,0.10);
   --color-accent-glow:   rgba(79,142,247,0.22);
 
+  /* ─── VERIFICATION ACCENT — used for trust signals, verified badges, proven results ─── */
+  --color-verified:        #f59e0b;          /* amber-500 */
+  --color-verified-dim:    #d97706;          /* amber-600 */
+  --color-verified-subtle: rgba(245, 158, 11, 0.1);
+  --color-verified-border: rgba(245, 158, 11, 0.3);
+
   /* ─── SEMANTIC — TradingView-standard colors (familiar to all crypto traders) ─── */
   --color-up:            #22AB94;   /* TradingView teal-green — profit/positive */
   --color-up-fill:       rgba(34,171,148,0.15);

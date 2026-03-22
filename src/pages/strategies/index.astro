@@ -30,7 +30,7 @@ const statusGroupLabels: Record<string, string> = {
 };
 
 const statusColors: Record<string, string> = {
-  verified: '--color-accent',
+  verified: '--color-verified',
   testing: '--color-yellow',
   killed: '--color-red',
   shelved: '--color-text-muted',
@@ -180,7 +180,7 @@ const difficultyColors: Record<string, string> = {
           <div data-status-group={statusKey}>
             {/* Section divider */}
             <div class="flex items-center gap-3 mb-4">
-              <span class={`font-mono text-xs font-bold tracking-widest ${statusKey === 'verified' ? 'text-[--color-accent]' : statusKey === 'testing' ? 'text-[--color-yellow]' : 'text-[--color-text-muted]'}`}>
+              <span class={`font-mono text-xs font-bold tracking-widest ${statusKey === 'verified' ? 'text-[--color-verified]' : statusKey === 'testing' ? 'text-[--color-yellow]' : 'text-[--color-text-muted]'}`}>
                 {statusGroupLabels[statusKey]}
               </span>
               <div class="flex-1 border-t border-[--color-border]"></div>
@@ -221,7 +221,7 @@ const difficultyColors: Record<string, string> = {
                 <p class="font-mono text-[10px] text-[--color-yellow]/80 mb-3">&#9888; Not OOS-validated &mdash; research only</p>
               )}
               {strategy.data.status === 'verified' && (
-                <p class="font-mono text-[10px] text-[--color-accent] mb-3">&#10003; OOS-validated</p>
+                <p class="font-mono text-[10px] text-[--color-verified] mb-3">&#10003; OOS-validated</p>
               )}
 
               {(strategy.data.winRate || strategy.data.profitFactor || strategy.data.totalPnl) && (

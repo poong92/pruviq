@@ -137,6 +137,23 @@ function formatDate(iso: string) {
     </div>
   </section>
 
+  <!-- Track leaderboard visit week for achievement badge -->
+  <script>
+    (function() {
+      try {
+        const now = new Date();
+        const startOfYear = new Date(now.getFullYear(), 0, 1);
+        const dayOfYear = Math.floor((now.getTime() - startOfYear.getTime()) / 86400000);
+        const weekNum = now.getFullYear() + '-W' + String(Math.ceil((dayOfYear + startOfYear.getDay() + 1) / 7)).padStart(2, '0');
+        const weeks = JSON.parse(localStorage.getItem('leaderboard-weeks') || '[]');
+        if (Array.isArray(weeks) && !weeks.includes(weekNum)) {
+          weeks.push(weekNum);
+          localStorage.setItem('leaderboard-weeks', JSON.stringify(weeks));
+        }
+      } catch {}
+    })();
+  </script>
+
   <!-- Footer CTAs -->
   <section class="pb-12 border-t border-[--color-border] pt-8">
     <div class="max-w-4xl mx-auto px-4 text-center">
