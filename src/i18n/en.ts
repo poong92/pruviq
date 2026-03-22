@@ -748,7 +748,7 @@ export const en = {
     "Strategies we tested and rejected. We show failures because they're just as important as successes.",
   "perf.equity_title": "Live Trading Equity Curve",
   "perf.equity_desc":
-    "Cumulative PnL from live trading (Jan 13 – Mar 5, 2026). Strategy paused after MDD exceeded the 20% risk limit.",
+    "Cumulative PnL from live trading (Jan 13 – Mar 9, 2026). Strategy paused after MDD exceeded the 20% risk limit.",
   "perf.download_csv": "Download CSV",
   "perf.download_json": "Download JSON",
   "perf.verify_title": "Verify It Yourself",
