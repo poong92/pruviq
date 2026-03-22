@@ -160,7 +160,7 @@ export default function StrategyComparison({ lang = "en" }: Props) {
         const list = Array.isArray(listData) ? listData : [];
         if (cancelled) return;
 
-        // 2. Load static comparison results in parallel (instant render)
+        // 2. Load static comparison results (instant render)
         let staticResults: Record<string, BacktestResult> | null = null;
         try {
           const staticRes = await fetchWithTimeout(
@@ -195,7 +195,13 @@ export default function StrategyComparison({ lang = "en" }: Props) {
           // static fallback failed, proceed without it
         }
 
-        // 3. Fetch preset details with timeout + bounded concurrency
+        // 3. Show static results immediately — don't wait for preset details
+        if (staticResults && Object.keys(staticResults).length > 0) {
+          setResults(staticResults);
+        }
+        setIsLoading(false);
+
+        // 4. Fetch preset details in background (enrich data, non-blocking)
         const concurrency = 5;
         const resultsArr: Array<PresetFull | null> = [];
         for (let i = 0; i < list.length; i += concurrency) {
@@ -222,12 +228,6 @@ export default function StrategyComparison({ lang = "en" }: Props) {
 
         const loadedPresets = resultsArr.filter(Boolean) as PresetFull[];
         setPresets(loadedPresets);
-
-        // 4. If we got static results, show them immediately (no auto-run needed)
-        if (staticResults && Object.keys(staticResults).length > 0) {
-          setResults(staticResults);
-        }
-        setIsLoading(false);
       } catch {
         setError(t.error);
         setIsLoading(false);

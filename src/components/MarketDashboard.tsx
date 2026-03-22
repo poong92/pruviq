@@ -54,7 +54,7 @@ const labels = {
     totalMcap: "총 시가총액",
     btcDom: "BTC 도미넌스",
     volume24h: "24시간 거래량",
-    latestNews: "최신 뉴스",
+    latestNews: "최신 뉴스 (영문)",
     cryptoNews: "크립토",
     macroNews: "매크로",
     loading: "시장 데이터 로딩 중...",
@@ -693,7 +693,7 @@ export default function MarketDashboard({
                 {l.calendarNote}
               </span>
             </div>
-            <div class="w-full h-[300px] md:h-[400px] relative">
+            <div class="w-full h-[400px] md:h-[500px] relative">
               {/* Loading placeholder — shown until iframe paints */}
               <div
                 class="absolute inset-0 flex flex-col items-center justify-center gap-2 text-[--color-text-muted] text-xs font-mono pointer-events-none"

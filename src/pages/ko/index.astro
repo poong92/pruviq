@@ -30,10 +30,10 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
     <div class="relative max-w-6xl mx-auto px-6 pt-28 pb-16 md:pt-36 md:pb-20 hero-enter">
       <HeroBadge stat={simulationsRun} label="시뮬레이션 실행" />
       <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold text-center tracking-[-0.04em] leading-[1.08] max-w-4xl mx-auto">
-        Test Any Crypto Strategy<br class="hidden md:block" /> on {coinsAnalyzed} Coins in Seconds
+        {t('hero.h1_line1')}<br class="hidden md:block" /> {t('hero.h1_line2').replace('{coins}', String(coinsAnalyzed))}
       </h1>
       <p class="mt-6 text-lg md:text-xl text-[--color-text-secondary] text-center max-w-2xl mx-auto leading-relaxed">
-        Free backtesting with real fees. No code. No signup.<br class="hidden sm:block" /> We publish our failures too.
+        {t('hero.subtitle_new')}<br class="hidden sm:block" /> 우리는 실패한 전략도 공개합니다.
       </p>
       <!-- Founder story hook -->
       <p class="mt-3 text-sm text-[--color-text-muted] max-w-xl mx-auto text-center italic">
@@ -43,29 +43,29 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
       <!-- CTA pair -->
       <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mt-10">
         <a href="/ko/simulate" class="btn btn-primary btn-lg w-full sm:w-auto text-center">
-          Open Simulator →
+          {t('hero.cta_primary')} →
         </a>
         <a href="/ko/strategies" class="btn btn-ghost btn-lg w-full sm:w-auto text-center">
-          Browse Strategies
+          {t('hero.cta_secondary')}
         </a>
       </div>
       <!-- Stats bar -->
       <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mt-16 max-w-3xl mx-auto">
         <div class="text-center">
           <p class="text-2xl md:text-3xl font-bold font-mono">{coinsAnalyzed}+</p>
-          <p class="text-sm text-[--color-text-muted] mt-1">Coins Tested</p>
+          <p class="text-sm text-[--color-text-muted] mt-1">코인 테스트</p>
         </div>
         <div class="text-center">
           <p class="text-2xl md:text-3xl font-bold font-mono">2,898+</p>
-          <p class="text-sm text-[--color-text-muted] mt-1">Simulated Trades</p>
+          <p class="text-sm text-[--color-text-muted] mt-1">시뮬레이션 거래</p>
         </div>
         <div class="text-center">
           <p class="text-2xl md:text-3xl font-bold font-mono">9.4M+</p>
-          <p class="text-sm text-[--color-text-muted] mt-1">Data Points</p>
+          <p class="text-sm text-[--color-text-muted] mt-1">데이터 포인트</p>
         </div>
         <div class="text-center">
           <p class="text-2xl md:text-3xl font-bold font-mono">{simulatorPresetCount}+</p>
-          <p class="text-sm text-[--color-text-muted] mt-1">Strategies</p>
+          <p class="text-sm text-[--color-text-muted] mt-1">전략</p>
         </div>
       </div>
     </div>
