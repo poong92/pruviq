@@ -38,6 +38,11 @@ const yTicks = [minP, (minP + maxP) / 2, maxP].map(v => ({
 
 const xFirst = daily[0]?.date ?? '';
 const xLast = daily[daily.length - 1]?.date ?? '';
+
+const perf = perfData as unknown as { summary: { total_pnl: number; max_drawdown_pct: number; total_trades: number } };
+const livePnl = perf.summary.total_pnl;
+const liveMdd = perf.summary.max_drawdown_pct;
+const liveTrades = perf.summary.total_trades.toLocaleString();
 ---
 
 <Layout title={t('meta.performance_title')} description={t('meta.performance_desc')}>
@@ -255,11 +260,11 @@ const xLast = daily[daily.length - 1]?.date ?? '';
           <div class="space-y-3">
             <div class="flex justify-between text-sm">
               <span class="text-[--color-text-muted]">{t('perf.gap_pnl_label')}</span>
-              <span class="font-mono font-bold text-[--color-down]">-$275</span>
+              <span class="font-mono font-bold text-[--color-down]">${livePnl}</span>
             </div>
             <div class="flex justify-between text-sm">
               <span class="text-[--color-text-muted]">{t('perf.gap_mdd_label')}</span>
-              <span class="font-mono">15.7%</span>
+              <span class="font-mono">{liveMdd}%</span>
             </div>
             <div class="flex justify-between text-sm">
               <span class="text-[--color-text-muted]">{t('perf.gap_status_label')}</span>
