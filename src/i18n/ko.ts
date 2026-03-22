@@ -1858,4 +1858,18 @@ export const ko: Record<TranslationKey, string> = {
   "vs_streak.cta_title": "PRUVIQ 지금 무료로 시작하기",
   "vs_streak.cta_desc":
     "Pine Script도, TradingView 계정도, 구독료도 필요 없습니다. 569개 코인으로 실제 결과를 몇 초 만에 확인하세요.",
+
+  // SEO landing pages
+  "meta.best_backtesting_title":
+    "2026년 최고의 무료 크립토 백테스팅 플랫폼 | PRUVIQ",
+  "meta.best_backtesting_desc":
+    "2026년 최고의 크립토 백테스팅 플랫폼을 비교하세요. PRUVIQ는 569개 이상 코인, 실제 수수료, 투명한 실패 데이터를 갖춘 무료 노코드 백테스팅을 제공합니다.",
+  "meta.crypto_simulator_title":
+    "무료 크립토 트레이딩 시뮬레이터 — 회원가입 불필요 | PRUVIQ",
+  "meta.crypto_simulator_desc":
+    "무료 시뮬레이터로 크립토 트레이딩을 연습하세요. 569개 이상 코인, 실제 수수료, 36개 전략, 2년 이상의 과거 데이터로 테스트할 수 있습니다.",
+  "meta.why_backtests_fail_title":
+    "백테스트가 실패하는 이유 — 그리고 피하는 방법 | PRUVIQ",
+  "meta.why_backtests_fail_desc":
+    "크립토 백테스트가 실패하는 5가지 이유: look-ahead bias, 생존자 편향, 과적합, 수수료 무시, 시장 레짐 변화. PRUVIQ가 각각을 어떻게 해결하는지 알아보세요.",
 };

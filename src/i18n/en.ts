@@ -1886,6 +1886,20 @@ export const en = {
   "vs_streak.cta_title": "Try PRUVIQ Free Today",
   "vs_streak.cta_desc":
     "No Pine Script, no TradingView account, no fees. Test 569+ coins and see real results in seconds.",
+
+  // SEO landing pages
+  "meta.best_backtesting_title":
+    "Best Free Crypto Backtesting Platform (2026) | PRUVIQ",
+  "meta.best_backtesting_desc":
+    "Compare the best crypto backtesting platforms in 2026. PRUVIQ offers free, no-code backtesting with 569+ coins, real fees, and transparent failure data.",
+  "meta.crypto_simulator_title":
+    "Free Crypto Trading Simulator — No Account Needed | PRUVIQ",
+  "meta.crypto_simulator_desc":
+    "Practice crypto trading with a free simulator. Test 569+ coins with real fees, 36 strategies, and 2+ years of historical data. No signup required.",
+  "meta.why_backtests_fail_title":
+    "Why Backtests Fail — And How to Avoid It | PRUVIQ",
+  "meta.why_backtests_fail_desc":
+    "Learn the 5 most common reasons crypto backtests fail: look-ahead bias, survivorship bias, overfitting, ignoring fees, and market regime changes.",
 } as const;
 
 export type TranslationKey = keyof typeof en;
