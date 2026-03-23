@@ -51,8 +51,6 @@ export const en = {
   // Hero (centered layout)
   "hero.h1_line1": "Test Any Crypto Strategy",
   "hero.h1_line2": "on {coins} Coins in Seconds",
-  "hero.subtitle_new": "Free backtesting with real fees. No code. No signup.",
-  "hero.subtitle_new2": "We publish our failures too.",
   "hero.cta_open_sim": "Open Simulator",
   "hero.cta_browse": "Browse Strategies",
   "hero.badge_label": "simulations run",
@@ -1229,29 +1227,6 @@ export const en = {
   "compare_index.tbl_transparency": "Failure Transparency",
   "compare_index.tbl_no_code": "No Coding Required",
 
-  // Comparison table (index page)
-  "compare_table.tag": "WHY PRUVIQ",
-  "compare_table.title": "How We Compare",
-  "compare_table.feature": "Feature",
-  "compare_table.detail_link": "See detailed comparison",
-  "compare_table.feat_nocode": "No-code strategy builder",
-  "compare_table.feat_coins": "500+ coins simultaneously",
-  "compare_table.feat_failures": "Publishes failures",
-  "compare_table.feat_verification": "Real trading verification",
-  "compare_table.feat_fees": "Realistic fees & slippage",
-  "compare_table.feat_free": "Free tier",
-  "compare_table.feat_no_account": "No account required",
-  "compare_table.tv_nocode": "Pine Script",
-  "compare_table.tv_coins": "1 at a time",
-  "compare_table.tv_fees": "Basic",
-  "compare_table.tv_free": "$14.95/mo+",
-  "compare_table.qc_nocode": "Python/C#",
-  "compare_table.qc_coins": "Limited",
-  "compare_table.qc_free": "Free tier (limited)",
-  "compare_table.qc_verification": "Paper only",
-  "compare_table.pruviq_free": "100% Free",
-  "compare_table.pruviq_verification": "Live",
-
   // Social proof / trust section
   "trust.badge_api": "CoinGecko Data",
   "trust.badge_source": "Source Available",
@@ -1518,9 +1493,6 @@ export const en = {
   "cta.badge2": "No account needed",
   "cta.badge3": "100% free forever",
   "cta.badge4": "Results in 3 seconds",
-
-  // Compare table alt link
-  "compare_table.detail_link_alt": "Why traders switch from TradingView",
 
   // Coins page
   "coins.explore_next": "Found interesting coins? Test them in a strategy.",

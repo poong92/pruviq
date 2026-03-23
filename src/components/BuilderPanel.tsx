@@ -191,6 +191,7 @@ export default function BuilderPanel(props: Props) {
           onSelectPreset={props.onSelectPreset}
           label={t.preset}
           loading={props.presetLoading}
+          lang={props.lang}
         />
         {props.presetError && (
           <div

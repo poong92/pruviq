@@ -52,8 +52,6 @@ export const ko: Record<TranslationKey, string> = {
   // Hero (centered layout)
   "hero.h1_line1": "모든 크립토 전략을 테스트하세요",
   "hero.h1_line2": "{coins}개 코인, 몇 초 만에 검증",
-  "hero.subtitle_new": "실제 수수료 기반 무료 백테스팅. 코딩 없음. 가입 없음.",
-  "hero.subtitle_new2": "실패한 전략도 공개합니다.",
   "hero.cta_open_sim": "시뮬레이터 열기",
   "hero.cta_browse": "전략 탐색하기",
   "hero.badge_label": "회 시뮬레이션 실행",
@@ -1208,29 +1206,6 @@ export const ko: Record<TranslationKey, string> = {
   "compare_index.tbl_transparency": "실패 투명성",
   "compare_index.tbl_no_code": "코딩 불필요",
 
-  // Comparison table (index page)
-  "compare_table.tag": "WHY PRUVIQ",
-  "compare_table.title": "비교해 보세요",
-  "compare_table.feature": "기능",
-  "compare_table.detail_link": "상세 비교 보기",
-  "compare_table.feat_nocode": "노코드 전략 빌더",
-  "compare_table.feat_coins": "500+ 코인 동시 테스트",
-  "compare_table.feat_failures": "실패 사례 공개",
-  "compare_table.feat_verification": "백테스트 투명성",
-  "compare_table.feat_fees": "현실적 수수료 & 슬리피지",
-  "compare_table.feat_free": "무료 플랜",
-  "compare_table.feat_no_account": "계정 불필요",
-  "compare_table.tv_nocode": "Pine Script",
-  "compare_table.tv_coins": "1개씩",
-  "compare_table.tv_fees": "기본",
-  "compare_table.tv_free": "$14.95/월~",
-  "compare_table.qc_nocode": "Python/C#",
-  "compare_table.qc_coins": "제한적",
-  "compare_table.qc_free": "무료 플랜 (제한적)",
-  "compare_table.qc_verification": "모의만",
-  "compare_table.pruviq_free": "100% 무료",
-  "compare_table.pruviq_verification": "전체 공개",
-
   // Social proof / trust section
   "trust.badge_api": "CoinGecko 데이터",
   "trust.badge_source": "소스 공개",
@@ -1488,9 +1463,6 @@ export const ko: Record<TranslationKey, string> = {
   "cta.badge2": "계정 생성 불필요",
   "cta.badge3": "영구 무료",
   "cta.badge4": "3초 만에 결과",
-
-  // Compare table alt link
-  "compare_table.detail_link_alt": "TradingView에서 전환하는 이유",
 
   // Coins page
   "coins.explore_next":

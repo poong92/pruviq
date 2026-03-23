@@ -3,6 +3,7 @@
  */
 import { useEffect, useRef, useState } from "preact/hooks";
 import ResultsCard from "./ResultsCard";
+import ResultHero from "./ResultHero";
 import OOSValidation from "./OOSValidation";
 import ExchangeCTA from "./ExchangeCTA";
 import EmailCapture from "./EmailCapture";
@@ -99,6 +100,15 @@ export default function ResultsPanel({
   // Results guide banner
   const [showResultsGuide, setShowResultsGuide] = useState(true);
 
+  // Trade detail expansion (Phase 1.4)
+  const [expandedTrade, setExpandedTrade] = useState<number | null>(null);
+
+  // Equity crosshair hover (Phase 1.2)
+  const [equityHover, setEquityHover] = useState<{
+    date: string;
+    value: number;
+  } | null>(null);
+
   // Quick Adjust local state
   const [qaSl, setQaSl] = useState(slPct);
   const [qaTp, setQaTp] = useState(tpPct);
@@ -149,53 +159,97 @@ export default function ResultsPanel({
     let disposed = false;
     let roRef: ResizeObserver | null = null;
 
-    import("lightweight-charts").then(({ createChart, AreaSeries }) => {
-      if (disposed || !equityChartRef.current) return;
-      if (equityInstanceRef.current) {
-        equityInstanceRef.current.remove();
-        equityInstanceRef.current = null;
-      }
+    import("lightweight-charts").then(
+      ({ createChart, AreaSeries, LineSeries }) => {
+        if (disposed || !equityChartRef.current) return;
+        if (equityInstanceRef.current) {
+          equityInstanceRef.current.remove();
+          equityInstanceRef.current = null;
+        }
 
-      const chart = createChart(equityChartRef.current, {
-        width: equityChartRef.current.clientWidth,
-        height: 300,
-        layout: {
-          background: { color: getCssVar("--color-bg-card") },
-          textColor: getCssVar("--color-text-muted"),
-          fontFamily: "'JetBrains Mono', monospace",
-          fontSize: 11,
-        },
-        grid: {
-          vertLines: { color: getCssVar("--color-bg-hover") },
-          horzLines: { color: getCssVar("--color-bg-hover") },
-        },
-      });
+        const chart = createChart(equityChartRef.current, {
+          width: equityChartRef.current.clientWidth,
+          height: 300,
+          layout: {
+            background: { color: getCssVar("--color-bg-card") },
+            textColor: getCssVar("--color-text-muted"),
+            fontFamily: "'JetBrains Mono', monospace",
+            fontSize: 11,
+          },
+          grid: {
+            vertLines: { color: getCssVar("--color-bg-hover") },
+            horzLines: { color: getCssVar("--color-bg-hover") },
+          },
+        });
 
-      const isPos =
-        result.equity_curve[result.equity_curve.length - 1]?.value >= 0;
-      const color = isPos ? COLORS.green : COLORS.red;
+        const isPos =
+          result.equity_curve[result.equity_curve.length - 1]?.value >= 0;
+        const color = isPos ? COLORS.green : COLORS.red;
 
-      const series = chart.addSeries(AreaSeries, {
-        lineColor: color,
-        topColor: isPos ? COLORS.greenBg : COLORS.redBg,
-        bottomColor: "transparent",
-        lineWidth: 2,
-        priceFormat: {
-          type: "custom",
-          formatter: (p: number) => `${p > 0 ? "+" : ""}${p.toFixed(1)}%`,
-        },
-      });
-      series.setData(result.equity_curve);
-      chart.timeScale().fitContent();
-      equityInstanceRef.current = chart;
+        const series = chart.addSeries(AreaSeries, {
+          lineColor: color,
+          topColor: isPos ? COLORS.greenBg : COLORS.redBg,
+          bottomColor: "transparent",
+          lineWidth: 2,
+          priceFormat: {
+            type: "custom",
+            formatter: (p: number) => `${p > 0 ? "+" : ""}${p.toFixed(1)}%`,
+          },
+        });
+        series.setData(result.equity_curve);
 
-      const ro = new ResizeObserver((entries) => {
-        for (const e of entries)
-          chart.applyOptions({ width: e.contentRect.width });
-      });
-      ro.observe(equityChartRef.current);
-      roRef = ro;
-    });
+        // Phase 1.3: BTC Buy & Hold comparison line
+        if (
+          result.btc_hold_return_pct != null &&
+          result.equity_curve.length >= 2
+        ) {
+          const ec = result.equity_curve;
+          const btcFinal = result.btc_hold_return_pct;
+          const btcLine = chart.addSeries(LineSeries, {
+            color: "#F7931A80",
+            lineWidth: 1,
+            lineStyle: 2, // dashed
+            priceFormat: {
+              type: "custom",
+              formatter: (p: number) => `${p > 0 ? "+" : ""}${p.toFixed(1)}%`,
+            },
+          });
+          // Linear interpolation from 0% to btc_hold_return_pct
+          const n = ec.length;
+          btcLine.setData(
+            ec.map((pt, idx) => ({
+              time: pt.time,
+              value: (btcFinal * idx) / (n - 1),
+            })),
+          );
+        }
+
+        chart.timeScale().fitContent();
+        equityInstanceRef.current = chart;
+
+        // Phase 1.2: interactive crosshair
+        chart.subscribeCrosshairMove((param) => {
+          if (!param.time || !param.seriesData.size) {
+            setEquityHover(null);
+            return;
+          }
+          const val = param.seriesData.get(series);
+          if (val && "value" in val) {
+            setEquityHover({
+              date: String(param.time),
+              value: (val as { value: number }).value,
+            });
+          }
+        });
+
+        const ro = new ResizeObserver((entries) => {
+          for (const e of entries)
+            chart.applyOptions({ width: e.contentRect.width });
+        });
+        ro.observe(equityChartRef.current);
+        roRef = ro;
+      },
+    );
 
     return () => {
       disposed = true;
@@ -690,6 +744,8 @@ export default function ResultsPanel({
           {/* Summary tab */}
           {resultTab === "summary" && (
             <div class="p-3 md:p-4">
+              {/* Hero: single big number (토스 패턴) */}
+              <ResultHero result={result} t={t} />
               {/* Strategy verdict banner */}
               {result &&
                 (() => {
@@ -1026,10 +1082,69 @@ export default function ResultsPanel({
           {/* Equity tab */}
           {resultTab === "equity" && (
             <div class="p-3 md:p-4">
-              <div class="font-mono text-[0.625rem] text-[--color-text-muted] uppercase tracking-wider mb-1">
-                {t.equityCurve || "Equity Curve"}
+              <div class="flex items-baseline justify-between mb-1">
+                <div class="font-mono text-[0.625rem] text-[--color-text-muted] uppercase tracking-wider">
+                  {t.equityCurve || "Equity Curve"}
+                </div>
+                {/* Phase 1.2: crosshair hover readout */}
+                <div class="font-mono text-xs text-right min-w-[120px]">
+                  {equityHover ? (
+                    <>
+                      <span class="text-[--color-text-muted] mr-1.5">
+                        {equityHover.date}
+                      </span>
+                      <span
+                        style={{
+                          color:
+                            equityHover.value >= 0 ? COLORS.green : COLORS.red,
+                        }}
+                      >
+                        {equityHover.value >= 0 ? "+" : ""}
+                        {equityHover.value.toFixed(1)}%
+                      </span>
+                    </>
+                  ) : result ? (
+                    <span
+                      style={{
+                        color:
+                          result.total_return_pct >= 0
+                            ? COLORS.green
+                            : COLORS.red,
+                      }}
+                    >
+                      {result.total_return_pct >= 0 ? "+" : ""}
+                      {result.total_return_pct.toFixed(1)}%
+                    </span>
+                  ) : null}
+                </div>
               </div>
               <div ref={equityChartRef} style={{ height: "300px" }} />
+              {/* Phase 1.3: legend */}
+              {result?.btc_hold_return_pct != null && (
+                <div class="flex items-center gap-3 mt-1 text-[10px] font-mono text-[--color-text-muted]">
+                  <span class="flex items-center gap-1">
+                    <span
+                      class="inline-block w-3 h-0.5 rounded"
+                      style={{
+                        backgroundColor:
+                          result.total_return_pct >= 0
+                            ? COLORS.green
+                            : COLORS.red,
+                      }}
+                    />
+                    {t.legendStrategy || "Strategy"}
+                  </span>
+                  <span class="flex items-center gap-1">
+                    <span
+                      class="inline-block w-3 h-0.5 rounded"
+                      style={{ backgroundColor: "#F7931A80" }}
+                    />
+                    {t.legendBtcHold || "BTC Hold"} (
+                    {result.btc_hold_return_pct > 0 ? "+" : ""}
+                    {result.btc_hold_return_pct.toFixed(1)}%)
+                  </span>
+                </div>
+              )}
               <div class="font-mono text-[0.625rem] text-[--color-text-muted] uppercase tracking-wider mt-3 mb-1">
                 {t.drawdown || "Drawdown"}
               </div>
@@ -1072,52 +1187,130 @@ export default function ResultsPanel({
                     </tr>
                   </thead>
                   <tbody>
-                    {result.trades.slice(0, 200).map((tr, i) => (
-                      <tr
-                        key={i}
-                        class="border-b border-[--color-border]/30 hover:bg-[--color-bg-hover]/30"
-                      >
-                        <td class="py-1.5 px-2">
-                          {tr.symbol?.replace("USDT", "")}
-                        </td>
-                        <td class="py-1.5 px-2 text-[--color-text-muted] hidden sm:table-cell">
-                          {tr.entry_time?.slice(0, 16)}
-                        </td>
-                        <td class="py-1.5 px-2 text-[--color-text-muted]">
-                          {tr.exit_time?.slice(0, 16)}
-                        </td>
-                        <td
-                          class="py-1.5 px-2 text-right"
-                          style={{ color: signColor(tr.pnl_pct) }}
-                        >
-                          {tr.pnl_pct > 0 ? "+" : ""}
-                          {tr.pnl_pct.toFixed(2)}%
-                        </td>
-                        <td
-                          class="py-1.5 px-2 text-right"
-                          style={{ color: signColor(tr.pnl_usd || 0) }}
-                        >
-                          {(tr.pnl_usd || 0) > 0 ? "+" : ""}$
-                          {(tr.pnl_usd || 0).toFixed(2)}
-                        </td>
-                        <td class="py-1.5 px-2 text-center">
-                          <span
-                            class={`px-1.5 py-0.5 rounded text-[10px] ${
-                              tr.exit_reason === "TP"
-                                ? "bg-[--color-green]/10 text-[--color-green]"
-                                : tr.exit_reason === "SL"
-                                  ? "bg-[--color-red]/10 text-[--color-red]"
-                                  : "bg-[--color-yellow]/10 text-[--color-yellow]"
-                            }`}
+                    {result.trades.slice(0, 200).map((tr, i) => {
+                      const isExpanded = expandedTrade === i;
+                      return (
+                        <>
+                          <tr
+                            key={i}
+                            class={`border-b border-[--color-border]/30 hover:bg-[--color-bg-hover]/30 cursor-pointer select-none ${isExpanded ? "bg-[--color-bg-hover]/20" : ""}`}
+                            onClick={() =>
+                              setExpandedTrade(isExpanded ? null : i)
+                            }
+                            role="button"
+                            aria-expanded={isExpanded}
+                            tabIndex={0}
+                            onKeyDown={(e: KeyboardEvent) => {
+                              if (e.key === "Enter" || e.key === " ") {
+                                e.preventDefault();
+                                setExpandedTrade(isExpanded ? null : i);
+                              }
+                            }}
                           >
-                            {tr.exit_reason}
-                          </span>
-                        </td>
-                        <td class="py-1.5 px-2 text-right text-[--color-text-muted]">
-                          {tr.bars_held}h
-                        </td>
-                      </tr>
-                    ))}
+                            <td class="py-1.5 px-2">
+                              {tr.symbol?.replace("USDT", "")}
+                            </td>
+                            <td class="py-1.5 px-2 text-[--color-text-muted] hidden sm:table-cell">
+                              {tr.entry_time?.slice(0, 16)}
+                            </td>
+                            <td class="py-1.5 px-2 text-[--color-text-muted]">
+                              {tr.exit_time?.slice(0, 16)}
+                            </td>
+                            <td
+                              class="py-1.5 px-2 text-right"
+                              style={{ color: signColor(tr.pnl_pct) }}
+                            >
+                              {tr.pnl_pct > 0 ? "+" : ""}
+                              {tr.pnl_pct.toFixed(2)}%
+                            </td>
+                            <td
+                              class="py-1.5 px-2 text-right"
+                              style={{ color: signColor(tr.pnl_usd || 0) }}
+                            >
+                              {(tr.pnl_usd || 0) > 0 ? "+" : ""}$
+                              {(tr.pnl_usd || 0).toFixed(2)}
+                            </td>
+                            <td class="py-1.5 px-2 text-center">
+                              <span
+                                class={`px-1.5 py-0.5 rounded text-[10px] ${
+                                  tr.exit_reason === "TP"
+                                    ? "bg-[--color-green]/10 text-[--color-green]"
+                                    : tr.exit_reason === "SL"
+                                      ? "bg-[--color-red]/10 text-[--color-red]"
+                                      : "bg-[--color-yellow]/10 text-[--color-yellow]"
+                                }`}
+                              >
+                                {tr.exit_reason}
+                              </span>
+                            </td>
+                            <td class="py-1.5 px-2 text-right text-[--color-text-muted]">
+                              {tr.bars_held}h
+                            </td>
+                          </tr>
+                          {isExpanded && (
+                            <tr
+                              key={`detail-${i}`}
+                              class="border-b border-[--color-border]/30 bg-[--color-bg-hover]/10"
+                            >
+                              <td colSpan={7} class="px-3 py-2.5">
+                                <div class="grid grid-cols-2 sm:grid-cols-4 gap-x-4 gap-y-1.5 text-[10px] font-mono">
+                                  <div>
+                                    <span class="text-[--color-text-muted] uppercase">
+                                      {t.tradeDirection || "Direction"}
+                                    </span>
+                                    <div
+                                      class={`font-bold ${tr.direction === "SHORT" ? "text-[--color-red]" : "text-[--color-green]"}`}
+                                    >
+                                      {tr.direction}
+                                    </div>
+                                  </div>
+                                  <div>
+                                    <span class="text-[--color-text-muted] uppercase">
+                                      {t.tradeEntryPrice || "Entry Price"}
+                                    </span>
+                                    <div>
+                                      $
+                                      {tr.entry_price?.toLocaleString(
+                                        undefined,
+                                        {
+                                          minimumFractionDigits: 2,
+                                          maximumFractionDigits: 6,
+                                        },
+                                      )}
+                                    </div>
+                                  </div>
+                                  <div>
+                                    <span class="text-[--color-text-muted] uppercase">
+                                      {t.tradeExitPrice || "Exit Price"}
+                                    </span>
+                                    <div>
+                                      $
+                                      {tr.exit_price?.toLocaleString(
+                                        undefined,
+                                        {
+                                          minimumFractionDigits: 2,
+                                          maximumFractionDigits: 6,
+                                        },
+                                      )}
+                                    </div>
+                                  </div>
+                                  <div>
+                                    <span class="text-[--color-text-muted] uppercase">
+                                      {t.tradeHoldTime || "Hold Time"}
+                                    </span>
+                                    <div>
+                                      {tr.bars_held >= 24
+                                        ? `${(tr.bars_held / 24).toFixed(1)}d`
+                                        : `${tr.bars_held}h`}
+                                    </div>
+                                  </div>
+                                </div>
+                              </td>
+                            </tr>
+                          )}
+                        </>
+                      );
+                    })}
                   </tbody>
                 </table>
               ) : (

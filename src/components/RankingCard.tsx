@@ -129,6 +129,24 @@ export function RankingCard({
         </div>
       )}
 
+      {/* Dollar translation */}
+      {entry.total_return != null && (
+        <div class="mb-2 font-mono text-xs text-[--color-text-muted]">
+          $1,000 →{" "}
+          <span
+            style={{
+              color:
+                entry.total_return >= 0
+                  ? "var(--color-up)"
+                  : "var(--color-red)",
+            }}
+          >
+            $
+            {Math.round(1000 * (1 + entry.total_return / 100)).toLocaleString()}
+          </span>
+        </div>
+      )}
+
       {/* Stats row */}
       <div class="grid grid-cols-3 gap-2 font-mono text-sm">
         <div>
@@ -171,6 +189,14 @@ export function RankingCard({
           </p>
         </div>
       </div>
+
+      {/* Simulate button */}
+      <a
+        href={`/${lang === "ko" ? "ko/" : ""}simulate?preset=${entry.strategy}`}
+        class="mt-3 block text-center text-xs font-mono px-3 py-1.5 rounded border border-[--color-accent]/30 text-[--color-accent] hover:bg-[--color-accent]/10 transition-colors"
+      >
+        {lang === "ko" ? "시뮬레이션 →" : "Simulate →"}
+      </a>
     </div>
   );
 }

@@ -2,6 +2,7 @@
 import '../styles/global.css'
 import { getLangFromUrl, useTranslations, getAlternatePath, getBasePath } from '../i18n/index';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
+import CommandPalette from '../components/CommandPalette';
 
 interface Props {
   title: string;
@@ -453,6 +454,8 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
     </nav>
     </header>
 
+    <CommandPalette lang={lang} client:idle />
+
     <main id="main-content" role="main" aria-label="Page content" class="pt-16 pb-16">
       {!basePath.startsWith('/404') && <Breadcrumbs />}
       <slot />
@@ -529,6 +532,9 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
         <div class="border-t border-[--color-border] pt-6 flex flex-col md:flex-row justify-between items-center gap-3 text-xs text-[--color-text-muted]">
           <p>{t('footer.disclaimer')}</p>
           <div class="flex items-center gap-4 flex-wrap">
+            <span class="font-mono opacity-60">{lang === 'ko' ? '서울에서 제작' : 'Built in Seoul'}</span>
+            <span class="font-mono opacity-40">v0.3.0</span>
+            <a href="https://github.com/pruviq" target="_blank" rel="noopener noreferrer" class="font-mono opacity-40 hover:opacity-80 transition-opacity">GitHub</a>
             {lang === 'ko' && <span>운영: PRUVIQ Project</span>}
             <p>{t('footer.affiliate')} <a href={feesPath} class="text-[--color-accent] hover:underline">{t('footer.details')}</a></p>
             <span>&copy; {currentYear} PRUVIQ</span>
