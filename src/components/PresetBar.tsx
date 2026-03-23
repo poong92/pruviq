@@ -12,6 +12,7 @@ interface Props {
   onSelectPreset: (id: string | null) => void;
   label: string;
   loading?: boolean;
+  lang?: "en" | "ko";
 }
 
 const RECOMMENDED_COUNT = 5;
@@ -27,12 +28,16 @@ function PresetButton({
   p,
   activePreset,
   onSelectPreset,
+  lang,
 }: {
   p: PresetItem;
   activePreset: string | null;
   onSelectPreset: (id: string | null) => void;
+  lang?: "en" | "ko";
 }) {
   const isActive = activePreset === p.id;
+  const friendlyName = lang === "ko" ? p.friendlyName_ko : p.friendlyName_en;
+  const displayName = friendlyName || p.name;
   return (
     <button
       key={p.id}
@@ -44,8 +49,9 @@ function PresetButton({
             : "bg-[--color-bg-tooltip] text-[--color-text-muted] border-[--color-border] hover:border-[--color-accent]/30 hover:text-[--color-text]"
         }`}
       style={isActive ? activeStyle : undefined}
+      title={friendlyName ? p.name : undefined}
     >
-      {p.name}
+      {displayName}
     </button>
   );
 }
@@ -56,6 +62,7 @@ export default function PresetBar({
   onSelectPreset,
   label,
   loading,
+  lang,
 }: Props) {
   const [showAll, setShowAll] = useState(false);
 
@@ -103,6 +110,7 @@ export default function PresetBar({
             p={p}
             activePreset={activePreset}
             onSelectPreset={onSelectPreset}
+            lang={lang}
           />
         ))}
       </div>

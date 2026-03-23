@@ -159,6 +159,8 @@ export interface PresetItem {
   conditions_count: number;
   sl_pct: number;
   tp_pct: number;
+  friendlyName_en?: string;
+  friendlyName_ko?: string;
 }
 
 export interface CoinOption {

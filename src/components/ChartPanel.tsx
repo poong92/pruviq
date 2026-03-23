@@ -237,6 +237,9 @@ export default function ChartPanel({
         <div class="flex items-center gap-2">
           <span class="font-mono text-sm font-bold">{chartSymbol}</span>
           <span class="text-[--color-text-muted] text-xs">{timeframe}</span>
+          <span class="text-[--color-text-muted] text-[9px] font-mono opacity-50 hidden sm:inline">
+            Binance Futures
+          </span>
         </div>
         <div class="flex items-center gap-1.5">
           {["BTCUSDT", "ETHUSDT", "SOLUSDT"].map((sym) => (

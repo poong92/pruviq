@@ -7,6 +7,7 @@ import { TopStrategyWidget } from '../../components/TopStrategyWidget';
 import HeroGlow from '../../components/ui/HeroGlow.astro';
 import HeroBadge from '../../components/ui/HeroBadge.astro';
 import BrowserFrame from '../../components/ui/BrowserFrame.astro';
+import SimulatorPreview from '../../components/SimulatorPreview';
 import StepCard from '../../components/ui/StepCard.astro';
 import siteStats from '../../../public/data/site-stats.json';
 import presetsJson from '../../../public/data/builder-presets.json';
@@ -33,7 +34,7 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
         {t('hero.h1_line1')}<br class="hidden md:block" /> {t('hero.h1_line2').replace('{coins}', String(coinsAnalyzed))}
       </h1>
       <p class="mt-6 text-lg md:text-xl text-[--color-text-secondary] text-center max-w-2xl mx-auto leading-relaxed">
-        {t('hero.subtitle_new')}<br class="hidden sm:block" /> 우리는 실패한 전략도 공개합니다.
+        내 전략이 실제로 어떤 성과를 냈을지 확인하세요.<br class="hidden sm:block" /> 무료. 코딩 불필요. 가입 불필요. 실제 수수료 포함.
       </p>
       <!-- Founder story hook -->
       <p class="mt-3 text-sm text-[--color-text-muted] max-w-xl mx-auto text-center italic">
@@ -71,13 +72,27 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
     </div>
   </section>
 
-  <!-- PRODUCT PREVIEW -->
+  <!-- DATA TRUST BAR -->
+  <div class="max-w-6xl mx-auto px-6 pb-4 relative z-10">
+    <div class="flex items-center justify-center gap-6 text-[--color-text-muted] text-xs font-mono">
+      <span class="opacity-60">데이터 출처:</span>
+      <span class="opacity-40 hover:opacity-80 transition-opacity">Binance Futures</span>
+      <span class="opacity-40 hover:opacity-80 transition-opacity">CoinGecko</span>
+    </div>
+  </div>
+
+  <!-- PRODUCT PREVIEW (animated) -->
   <section class="max-w-6xl mx-auto px-6 -mt-4 pb-20 relative z-10">
     <BrowserFrame
       src="/images/simulator-preview.png"
       alt="PRUVIQ Strategy Simulator — backtest 569 coins in seconds"
       url="pruviq.com/simulate"
-    />
+    >
+      <SimulatorPreview client:visible />
+      <noscript>
+        <img src="/images/simulator-preview.png" alt="PRUVIQ Strategy Simulator" class="w-full block" loading="eager" />
+      </noscript>
+    </BrowserFrame>
   </section>
 
   <!-- HOW IT WORKS -->
@@ -89,79 +104,31 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
       <StepCard step={2} title={t('how.step2')} description={t('how.step2_desc')} />
       <StepCard step={3} title={t('how.step3')} description={t('how.step3_desc')} />
     </div>
+    <!-- 페르소나별 진입점 -->
+    <div class="mt-12 grid sm:grid-cols-3 gap-4 max-w-3xl mx-auto">
+      <a href="/ko/learn" class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card] card-hover text-center group">
+        <p class="text-xs text-[--color-text-muted] mb-1 font-mono">처음이신가요?</p>
+        <p class="text-sm font-semibold group-hover:text-[--color-accent] transition-colors">학습 시작 →</p>
+      </a>
+      <a href="/ko/simulate" class="border border-[--color-accent]/30 rounded-lg p-4 bg-[--color-accent]/5 card-hover text-center group">
+        <p class="text-xs text-[--color-text-muted] mb-1 font-mono">경험 있는 트레이더?</p>
+        <p class="text-sm font-semibold group-hover:text-[--color-accent] transition-colors">시뮬레이터 열기 →</p>
+      </a>
+      <a href="/ko/strategies" class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card] card-hover text-center group">
+        <p class="text-xs text-[--color-text-muted] mb-1 font-mono">둘러보는 중?</p>
+        <p class="text-sm font-semibold group-hover:text-[--color-accent] transition-colors">전략 탐색 →</p>
+      </a>
+    </div>
   </section>
 
-  <!-- COMPARISON TABLE (vs Competitors) -->
+  <!-- COMPARISON (compact) -->
   <hr class="section-divider" />
-  <section class="py-20 reveal" aria-labelledby="compare-heading-ko">
-    <div class="max-w-6xl mx-auto px-4">
-      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('compare_table.tag')}</p>
-      <h2 id="compare-heading-ko" class="text-3xl md:text-4xl font-bold mb-12">{t('compare_table.title')}</h2>
-
-      <div class="overflow-x-auto" role="region" aria-label="플랫폼 비교 테이블" tabindex="0">
-        <table class="w-full text-sm border-collapse" role="table" aria-label="PRUVIQ vs TradingView vs QuantConnect 기능 비교">
-          <caption class="sr-only">PRUVIQ, TradingView, QuantConnect 백테스팅 플랫폼 기능 비교표</caption>
-          <thead>
-            <tr class="border-b border-[--color-border]">
-              <th scope="col" class="text-left py-3 px-4 font-mono text-[--color-text-muted] text-xs">{t('compare_table.feature')}</th>
-              <th scope="col" class="text-center py-3 px-4 font-mono text-[--color-accent] text-xs bg-[--color-accent]/5">PRUVIQ</th>
-              <th scope="col" class="text-center py-3 px-4 font-mono text-[--color-text-muted] text-xs">TradingView</th>
-              <th scope="col" class="text-center py-3 px-4 font-mono text-[--color-text-muted] text-xs">QuantConnect</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr class="border-b border-[--color-border]/50">
-              <td class="py-3 px-4">{t('compare_table.feat_nocode')}</td>
-              <td class="py-3 px-4 text-center text-[--color-up] bg-[--color-accent]/5">&#10003;</td>
-              <td class="py-3 px-4 text-center text-[--color-down]">&#10007; {t('compare_table.tv_nocode')}</td>
-              <td class="py-3 px-4 text-center text-[--color-down]">&#10007; {t('compare_table.qc_nocode')}</td>
-            </tr>
-            <tr class="border-b border-[--color-border]/50">
-              <td class="py-3 px-4">{t('compare_table.feat_coins')}</td>
-              <td class="py-3 px-4 text-center text-[--color-up] bg-[--color-accent]/5">&#10003;</td>
-              <td class="py-3 px-4 text-center text-[--color-down]">&#10007; {t('compare_table.tv_coins')}</td>
-              <td class="py-3 px-4 text-center text-yellow-400">{t('compare_table.qc_coins')}</td>
-            </tr>
-            <tr class="border-b border-[--color-border]/50">
-              <td class="py-3 px-4">{t('compare_table.feat_failures')}</td>
-              <td class="py-3 px-4 text-center text-[--color-up] bg-[--color-accent]/5">&#10003;</td>
-              <td class="py-3 px-4 text-center text-[--color-down]">&#10007;</td>
-              <td class="py-3 px-4 text-center text-[--color-down]">&#10007;</td>
-            </tr>
-            <tr class="border-b border-[--color-border]/50">
-              <td class="py-3 px-4">{t('compare_table.feat_verification')}</td>
-              <td class="py-3 px-4 text-center text-[--color-up] bg-[--color-accent]/5">&#10003; {t('compare_table.pruviq_verification')}</td>
-              <td class="py-3 px-4 text-center text-[--color-down]">&#10007;</td>
-              <td class="py-3 px-4 text-center text-yellow-400">{t('compare_table.qc_verification')}</td>
-            </tr>
-            <tr class="border-b border-[--color-border]/50">
-              <td class="py-3 px-4">{t('compare_table.feat_fees')}</td>
-              <td class="py-3 px-4 text-center text-[--color-up] bg-[--color-accent]/5">&#10003;</td>
-              <td class="py-3 px-4 text-center text-yellow-400">{t('compare_table.tv_fees')}</td>
-              <td class="py-3 px-4 text-center text-[--color-up]">&#10003;</td>
-            </tr>
-            <tr class="border-b border-[--color-border]/50">
-              <td class="py-3 px-4">{t('compare_table.feat_free')}</td>
-              <td class="py-3 px-4 text-center text-[--color-up] bg-[--color-accent]/5">{t('compare_table.pruviq_free')}</td>
-              <td class="py-3 px-4 text-center text-yellow-400">{t('compare_table.tv_free')}</td>
-              <td class="py-3 px-4 text-center text-yellow-400">{t('compare_table.qc_free')}</td>
-            </tr>
-            <tr>
-              <td class="py-3 px-4">{t('compare_table.feat_no_account')}</td>
-              <td class="py-3 px-4 text-center text-[--color-up] bg-[--color-accent]/5">&#10003;</td>
-              <td class="py-3 px-4 text-center text-[--color-down]">&#10007;</td>
-              <td class="py-3 px-4 text-center text-[--color-down]">&#10007;</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
-        <a href="/ko/simulate" class="btn btn-primary btn-md">
-          {t('home.cta_test_yourself')} →
-        </a>
-        <a href="/ko/compare/tradingview" class="text-sm text-[--color-accent] hover:underline font-mono">{t('compare_table.detail_link')} →</a>
-      </div>
+  <section class="py-12 reveal">
+    <div class="max-w-6xl mx-auto px-4 text-center">
+      <p class="text-[--color-text-muted] text-sm mb-3">
+        무료, 노코드, 가입 불필요 — TradingView나 QuantConnect와 다릅니다.
+      </p>
+      <a href="/ko/compare/tradingview" class="text-sm text-[--color-accent] hover:underline font-mono">전체 비교 보기 →</a>
     </div>
   </section>
 

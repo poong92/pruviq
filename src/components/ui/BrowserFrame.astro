@@ -19,5 +19,7 @@ const { src, alt, url = 'pruviq.com/simulate' } = Astro.props;
       </div>
     </div>
   </div>
-  <img {src} {alt} class="w-full block" loading="eager" />
+  <slot>
+    <img {src} {alt} class="w-full block" loading="eager" />
+  </slot>
 </div>

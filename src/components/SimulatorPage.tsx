@@ -29,6 +29,7 @@ import type { SimMode } from "./ModeSwitcher";
 import QuickTestPanel from "./QuickTestPanel";
 import StandardPanel from "./StandardPanel";
 import AchievementBadges from "./AchievementBadges";
+import LoadingEquityAnimation from "./LoadingEquityAnimation";
 
 // ─── i18n ───
 const L = {
@@ -197,6 +198,18 @@ const L = {
     reasonWeakWr: (wr: string) => `WR ${wr}% (below 50%)`,
     reasonWeakSuffix: (issue: string) =>
       `${issue} — not recommended for live trading`,
+    // ResultHero labels
+    heroWinRate: "Win Rate",
+    heroPF: "Profit Factor",
+    heroMDD: "Max DD",
+    // Trade detail expansion
+    tradeDirection: "Direction",
+    tradeEntryPrice: "Entry Price",
+    tradeExitPrice: "Exit Price",
+    tradeHoldTime: "Hold Time",
+    // Equity chart legend
+    legendStrategy: "Strategy",
+    legendBtcHold: "BTC Hold",
     // ResultsPanel coins used / shared buttons
     coinsUnit: "coins",
     cumulativePct: "cumulative % — sum of per-coin trades",
@@ -371,6 +384,18 @@ const L = {
     reasonWeakMdd: (mdd: string) => `MDD ${mdd}% (과도한 낙폭)`,
     reasonWeakWr: (wr: string) => `승률 ${wr}% (50% 미만)`,
     reasonWeakSuffix: (issue: string) => `${issue} — 실거래 비권장`,
+    // ResultHero labels
+    heroWinRate: "승률",
+    heroPF: "수익 팩터",
+    heroMDD: "최대 낙폭",
+    // Trade detail expansion
+    tradeDirection: "방향",
+    tradeEntryPrice: "진입가",
+    tradeExitPrice: "청산가",
+    tradeHoldTime: "보유 시간",
+    // Equity chart legend
+    legendStrategy: "전략",
+    legendBtcHold: "BTC 보유",
     // ResultsPanel coins used / shared buttons
     coinsUnit: "코인",
     cumulativePct: "누적 % — 개별 코인 합산",
@@ -1393,8 +1418,18 @@ export default function SimulatorPage({ lang = "en" }: Props) {
       {/* Results section */}
       <div
         ref={resultsRef}
-        class={`mt-3 ${mobileTab !== "results" && !result ? "hidden md:block" : ""}`}
+        class={`mt-3 ${mobileTab !== "results" && !result && !isRunning ? "hidden md:block" : ""}`}
       >
+        {/* Phase 1.5: Loading animation replaces empty results area */}
+        {isRunning && !result && (
+          <div class="rounded-xl border border-[--color-border] bg-[--color-bg-card] overflow-hidden">
+            <LoadingEquityAnimation
+              t={t}
+              progressStep={progressStep}
+              elapsedSec={elapsedSec}
+            />
+          </div>
+        )}
         <ResultsPanel
           t={t}
           result={result}

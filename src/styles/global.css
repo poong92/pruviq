@@ -295,6 +295,30 @@ h3 {
   50%       { opacity: 1; }
 }
 
+/* ─── Phase 5: Glass card + Gradient text ─── */
+.card-glass {
+  background: rgba(24, 24, 27, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.gradient-text {
+  background: var(--gradient-text-accent);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.live-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-up);
+  animation: live-pulse 2s ease-in-out infinite;
+}
+
 /* ─── Scroll reveal ─── */
 .reveal {
   opacity: 0;
