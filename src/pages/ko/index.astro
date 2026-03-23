@@ -98,7 +98,7 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
   <!-- HOW IT WORKS -->
   <section class="max-w-7xl mx-auto px-6 py-24">
     <h2 class="text-2xl md:text-4xl font-bold text-center mb-4">작동 방식</h2>
-    <p class="text-[--color-text-secondary] text-center mb-16 max-w-xl mx-auto">전략 아이디어에서 검증된 결과까지 3단계.</p>
+    <p class="text-[--color-text-secondary] text-center text-lg mb-16 max-w-xl mx-auto">전략 아이디어에서 검증된 결과까지 3단계.</p>
     <div class="grid md:grid-cols-3 gap-8">
       <StepCard step={1} title={t('how.step1')} description={t('how.step1_desc')} />
       <StepCard step={2} title={t('how.step2')} description={t('how.step2_desc')} />
@@ -107,16 +107,16 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
     <!-- 페르소나별 진입점 -->
     <div class="mt-12 grid sm:grid-cols-3 gap-4 max-w-3xl mx-auto">
       <a href="/ko/learn" class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card] card-hover text-center group">
-        <p class="text-xs text-[--color-text-muted] mb-1 font-mono">처음이신가요?</p>
-        <p class="text-sm font-semibold group-hover:text-[--color-accent] transition-colors">학습 시작 →</p>
+        <p class="text-sm text-[--color-text-muted] mb-1 font-mono">처음이신가요?</p>
+        <p class="text-base font-semibold group-hover:text-[--color-accent] transition-colors">학습 시작 →</p>
       </a>
       <a href="/ko/simulate" class="border border-[--color-accent]/30 rounded-lg p-4 bg-[--color-accent]/5 card-hover text-center group">
-        <p class="text-xs text-[--color-text-muted] mb-1 font-mono">경험 있는 트레이더?</p>
-        <p class="text-sm font-semibold group-hover:text-[--color-accent] transition-colors">시뮬레이터 열기 →</p>
+        <p class="text-sm text-[--color-text-muted] mb-1 font-mono">경험 있는 트레이더?</p>
+        <p class="text-base font-semibold group-hover:text-[--color-accent] transition-colors">시뮬레이터 열기 →</p>
       </a>
       <a href="/ko/strategies" class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card] card-hover text-center group">
-        <p class="text-xs text-[--color-text-muted] mb-1 font-mono">둘러보는 중?</p>
-        <p class="text-sm font-semibold group-hover:text-[--color-accent] transition-colors">전략 탐색 →</p>
+        <p class="text-sm text-[--color-text-muted] mb-1 font-mono">둘러보는 중?</p>
+        <p class="text-base font-semibold group-hover:text-[--color-accent] transition-colors">전략 탐색 →</p>
       </a>
     </div>
   </section>
@@ -125,7 +125,7 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
   <hr class="section-divider" />
   <section class="py-12 reveal">
     <div class="max-w-7xl mx-auto px-4 text-center">
-      <p class="text-[--color-text-muted] text-sm mb-3">
+      <p class="text-[--color-text-muted] text-base mb-3">
         무료, 노코드, 가입 불필요 — TradingView나 QuantConnect와 다릅니다.
       </p>
       <a href="/ko/compare/tradingview" class="text-sm text-[--color-accent] hover:underline font-mono">전체 비교 보기 →</a>
@@ -148,7 +148,7 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
             {t('problem.case1_label')}
           </div>
           <h3 class="font-bold text-lg mb-2">{t('problem.card1_title')}</h3>
-          <p class="text-[--color-text-muted] text-sm leading-relaxed mb-3">{t('problem.card1_desc')}</p>
+          <p class="text-[--color-text-muted] text-base leading-relaxed mb-3">{t('problem.card1_desc')}</p>
           <p class="text-xs text-[--color-text-muted] opacity-60 italic">{t('problem.card1_source')}</p>
         </div>
         <div class="border border-[--color-down]/30 rounded-lg p-6 bg-[--color-bg-card]">
@@ -157,7 +157,7 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
             {t('problem.case2_label')}
           </div>
           <h3 class="font-bold text-lg mb-2">{t('problem.card2_title')}</h3>
-          <p class="text-[--color-text-muted] text-sm leading-relaxed mb-3">{t('problem.card2_desc')}</p>
+          <p class="text-[--color-text-muted] text-base leading-relaxed mb-3">{t('problem.card2_desc')}</p>
           <p class="text-xs text-[--color-text-muted] opacity-60 italic">{t('problem.card2_source')}</p>
         </div>
         <div class="border border-[--color-down]/30 rounded-lg p-6 bg-[--color-bg-card]">
@@ -166,7 +166,7 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
             {t('problem.case3_label')}
           </div>
           <h3 class="font-bold text-lg mb-2">{t('problem.card3_title')}</h3>
-          <p class="text-[--color-text-muted] text-sm leading-relaxed mb-3">{t('problem.card3_desc')}</p>
+          <p class="text-[--color-text-muted] text-base leading-relaxed mb-3">{t('problem.card3_desc')}</p>
           <p class="text-xs text-[--color-text-muted] opacity-60 italic">{t('problem.card3_source')}</p>
         </div>
       </div>
@@ -189,24 +189,24 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
       <!-- Feature cards -->
       <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16 reveal-child">
         <a href="/ko/simulate" class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] card-hover block group">
-          <p class="font-mono text-[--color-accent] text-xs font-bold mb-3">{t('features.card1_tag')}</p>
+          <p class="font-mono text-[--color-accent] text-sm font-bold mb-3">{t('features.card1_tag')}</p>
           <h3 class="font-bold text-lg mb-2 group-hover:text-[--color-accent] transition-colors">{t('features.card1_title')}</h3>
-          <p class="text-[--color-text-muted] text-sm leading-relaxed">{t('features.card1_desc')}</p>
+          <p class="text-[--color-text-muted] text-base leading-relaxed">{t('features.card1_desc')}</p>
         </a>
         <a href="/ko/strategies" class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] card-hover block group">
-          <p class="font-mono text-[--color-accent] text-xs font-bold mb-3">{t('features.card2_tag')}</p>
+          <p class="font-mono text-[--color-accent] text-sm font-bold mb-3">{t('features.card2_tag')}</p>
           <h3 class="font-bold text-lg mb-2 group-hover:text-[--color-accent] transition-colors">{t('features.card2_title')}</h3>
-          <p class="text-[--color-text-muted] text-sm leading-relaxed">{t('features.card2_desc')}</p>
+          <p class="text-[--color-text-muted] text-base leading-relaxed">{t('features.card2_desc')}</p>
         </a>
         <a href="/ko/fees" class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] card-hover block group">
-          <p class="font-mono text-[--color-accent] text-xs font-bold mb-3">{t('features.card3_tag')}</p>
+          <p class="font-mono text-[--color-accent] text-sm font-bold mb-3">{t('features.card3_tag')}</p>
           <h3 class="font-bold text-lg mb-2 group-hover:text-[--color-accent] transition-colors">{t('features.card3_title')}</h3>
-          <p class="text-[--color-text-muted] text-sm leading-relaxed">{t('features.card3_desc')}</p>
+          <p class="text-[--color-text-muted] text-base leading-relaxed">{t('features.card3_desc')}</p>
         </a>
         <a href="/ko/learn" class="border border-[--color-accent]/30 rounded-lg p-6 bg-[--color-accent]/5 card-hover block group">
-          <p class="font-mono text-[--color-accent] text-xs font-bold mb-3">{t('features.learn_tag')}</p>
+          <p class="font-mono text-[--color-accent] text-sm font-bold mb-3">{t('features.learn_tag')}</p>
           <h3 class="font-bold text-lg mb-2 group-hover:text-[--color-accent] transition-colors">{t('features.learn_title')}</h3>
-          <p class="text-[--color-text-muted] text-sm leading-relaxed">{t('features.learn_desc')}</p>
+          <p class="text-[--color-text-muted] text-base leading-relaxed">{t('features.learn_desc')}</p>
         </a>
       </div>
 
@@ -260,33 +260,33 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
       <p class="text-[--color-text-muted] text-xs font-mono mb-8 opacity-60">{t('home.quotes_initials_note')}</p>
       <div class="grid md:grid-cols-3 gap-6">
         <blockquote class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card]">
-          <p class="text-[--color-text-muted] text-sm leading-relaxed mb-4">"TradingView에서 8개 전략을 테스트한 후 PRUVIQ를 발견했습니다. 수백 개 코인을 한 번에 테스트하니 몇 주가 절약됐어요. 실패 전략 페이지를 보고 이 플랫폼이 진짜라고 확신했습니다."</p>
+          <p class="text-[--color-text-muted] text-base leading-relaxed mb-4">"TradingView에서 8개 전략을 테스트한 후 PRUVIQ를 발견했습니다. 수백 개 코인을 한 번에 테스트하니 몇 주가 절약됐어요. 실패 전략 페이지를 보고 이 플랫폼이 진짜라고 확신했습니다."</p>
           <footer class="flex items-center gap-3">
             <div class="w-8 h-8 rounded-full bg-[--color-accent]/20 flex items-center justify-center text-[--color-accent] font-mono text-xs font-bold">DK</div>
             <div>
-              <p class="text-sm font-semibold">DK</p>
+              <p class="text-base font-semibold">DK</p>
               <p class="text-xs text-[--color-text-muted]">체계적 트레이더, PRUVIQ 커뮤니티</p>
               <p class="text-xs text-[--color-text-muted] opacity-50 mt-1">텔레그램</p>
             </div>
           </footer>
         </blockquote>
         <blockquote class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card]">
-          <p class="text-[--color-text-muted] text-sm leading-relaxed mb-4">"드디어 수익과 손실을 모두 보여주는 플랫폼입니다. 실패 전략을 공개한다는 건 정직하다는 뜻이죠."</p>
+          <p class="text-[--color-text-muted] text-base leading-relaxed mb-4">"드디어 수익과 손실을 모두 보여주는 플랫폼입니다. 실패 전략을 공개한다는 건 정직하다는 뜻이죠."</p>
           <footer class="flex items-center gap-3">
             <div class="w-8 h-8 rounded-full bg-[--color-up]/20 flex items-center justify-center text-[--color-up] font-mono text-xs font-bold">JM</div>
             <div>
-              <p class="text-sm font-semibold">JM</p>
+              <p class="text-base font-semibold">JM</p>
               <p class="text-xs text-[--color-text-muted]">크립토 선물 트레이더, 3년차</p>
               <p class="text-xs text-[--color-text-muted] opacity-50 mt-1">텔레그램</p>
             </div>
           </footer>
         </blockquote>
         <blockquote class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card]">
-          <p class="text-[--color-text-muted] text-sm leading-relaxed mb-4">"계정 없이, 카드 없이, 조건 없이. 5분 만에 커스텀 전략을 만들고 2년치 데이터로 테스트했어요. 에퀴티 커브 차트가 결과를 한눈에 보여줬습니다."</p>
+          <p class="text-[--color-text-muted] text-base leading-relaxed mb-4">"계정 없이, 카드 없이, 조건 없이. 5분 만에 커스텀 전략을 만들고 2년치 데이터로 테스트했어요. 에퀴티 커브 차트가 결과를 한눈에 보여줬습니다."</p>
           <footer class="flex items-center gap-3">
             <div class="w-8 h-8 rounded-full bg-[--color-yellow]/20 flex items-center justify-center text-[--color-yellow] font-mono text-xs font-bold">AT</div>
             <div>
-              <p class="text-sm font-semibold">AT</p>
+              <p class="text-base font-semibold">AT</p>
               <p class="text-xs text-[--color-text-muted]">퀀트 취미가</p>
               <p class="text-xs text-[--color-text-muted] opacity-50 mt-1">텔레그램</p>
             </div>
@@ -308,35 +308,35 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
             {t('faq.q1')}
             <span class="text-[--color-text-muted] group-open:rotate-180 transition-transform shrink-0">&#9662;</span>
           </summary>
-          <div class="faq-body"><div><p class="px-6 pb-4 text-[--color-text-muted] text-sm leading-relaxed">{t('faq.a1')}</p></div></div>
+          <div class="faq-body"><div><p class="px-6 pb-4 text-[--color-text-muted] text-base leading-relaxed">{t('faq.a1')}</p></div></div>
         </details>
         <details class="group border border-[--color-border] rounded-lg bg-[--color-bg-card]">
           <summary class="cursor-pointer px-6 py-4 font-semibold text-sm flex items-center justify-between gap-4 min-h-[44px]">
             {t('faq.q2')}
             <span class="text-[--color-text-muted] group-open:rotate-180 transition-transform shrink-0">&#9662;</span>
           </summary>
-          <div class="faq-body"><div><p class="px-6 pb-4 text-[--color-text-muted] text-sm leading-relaxed">{t('faq.a2')}</p></div></div>
+          <div class="faq-body"><div><p class="px-6 pb-4 text-[--color-text-muted] text-base leading-relaxed">{t('faq.a2')}</p></div></div>
         </details>
         <details class="group border border-[--color-border] rounded-lg bg-[--color-bg-card]">
           <summary class="cursor-pointer px-6 py-4 font-semibold text-sm flex items-center justify-between gap-4 min-h-[44px]">
             {t('faq.q3')}
             <span class="text-[--color-text-muted] group-open:rotate-180 transition-transform shrink-0">&#9662;</span>
           </summary>
-          <div class="faq-body"><div><p class="px-6 pb-4 text-[--color-text-muted] text-sm leading-relaxed">{t('faq.a3')}</p></div></div>
+          <div class="faq-body"><div><p class="px-6 pb-4 text-[--color-text-muted] text-base leading-relaxed">{t('faq.a3')}</p></div></div>
         </details>
         <details class="group border border-[--color-border] rounded-lg bg-[--color-bg-card]">
           <summary class="cursor-pointer px-6 py-4 font-semibold text-sm flex items-center justify-between gap-4 min-h-[44px]">
             {t('faq.q4')}
             <span class="text-[--color-text-muted] group-open:rotate-180 transition-transform shrink-0">&#9662;</span>
           </summary>
-          <div class="faq-body"><div><p class="px-6 pb-4 text-[--color-text-muted] text-sm leading-relaxed">{t('faq.a4')}</p></div></div>
+          <div class="faq-body"><div><p class="px-6 pb-4 text-[--color-text-muted] text-base leading-relaxed">{t('faq.a4')}</p></div></div>
         </details>
         <details class="group border border-[--color-border] rounded-lg bg-[--color-bg-card]">
           <summary class="cursor-pointer px-6 py-4 font-semibold text-sm flex items-center justify-between gap-4 min-h-[44px]">
             {t('faq.q5')}
             <span class="text-[--color-text-muted] group-open:rotate-180 transition-transform shrink-0">&#9662;</span>
           </summary>
-          <div class="faq-body"><div><p class="px-6 pb-4 text-[--color-text-muted] text-sm leading-relaxed">{t('faq.a5')}</p></div></div>
+          <div class="faq-body"><div><p class="px-6 pb-4 text-[--color-text-muted] text-base leading-relaxed">{t('faq.a5')}</p></div></div>
         </details>
       </div>
     </div>
