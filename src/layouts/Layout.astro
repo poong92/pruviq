@@ -434,7 +434,7 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
         <div class="flex flex-col px-4 py-4 gap-1 text-sm">
           {navItems.map(item => (
             <Fragment>
-              <a href={item.href} aria-current={isActive(item.match) ? "page" : undefined} class="min-h-[44px] flex items-center" style={isActive(item.match) ? 'color:var(--color-accent);font-weight:500' : 'color:var(--color-text-muted)'}>{item.label}</a>
+              <a href={item.href} aria-current={isActive(item.match) ? "page" : undefined} class="min-h-[48px] flex items-center px-3 rounded-lg text-[15px] font-medium transition-colors hover:bg-[--color-bg-hover]" style={isActive(item.match) ? 'color:var(--color-accent);font-weight:500' : 'color:var(--color-text-muted)'}>{item.label}</a>
               {item.match === '/strategies' && (
                 <div class="flex flex-col ml-1 pl-2 border-l border-[--color-border] mb-1">
                   <a href={rankingPath} aria-current={isActive('/strategies/ranking') ? "page" : undefined} class="min-h-[44px] flex items-center gap-2 rounded hover:bg-[--color-bg-subtle]" style={isActive('/strategies/ranking') ? 'color:var(--color-accent);font-weight:500' : 'color:var(--color-text-muted)'}>
@@ -626,9 +626,9 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
     </script>
 
     <!-- Cookie Notice (GDPR essential notice) -->
-    <div id="cookie-notice" class="fixed bottom-0 max-sm:bottom-auto max-sm:top-16 left-0 right-0 z-40 bg-[--color-bg-card] shadow-[0_-2px_12px_rgba(0,0,0,0.35)] max-sm:shadow-none max-sm:border-b border-[--color-border] px-4 py-3 flex items-center justify-between gap-4 text-sm" style="display:none" aria-live="polite">
-      <p class="text-[--color-text-muted] text-xs max-w-xl">{t('cookie.notice')}</p>
-      <button id="cookie-ok" class="shrink-0 font-mono text-xs px-3 py-1.5 rounded border border-[--color-border] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
+    <div id="cookie-notice" class="fixed bottom-0 max-sm:bottom-auto max-sm:top-16 left-0 right-0 z-[60] bg-[--color-bg-elevated] border-t border-[--color-border] max-sm:border-t-0 max-sm:border-b px-6 py-4 flex items-center justify-between gap-6 shadow-[0_-4px_20px_rgba(0,0,0,0.5)]" style="display:none" aria-live="polite">
+      <p class="text-[--color-text-secondary] text-sm leading-relaxed max-w-2xl">{t('cookie.notice')}</p>
+      <button id="cookie-ok" class="shrink-0 font-mono text-sm font-medium px-5 py-2.5 rounded-lg border border-[--color-border] bg-[--color-bg-card] hover:border-[--color-accent] hover:text-[--color-accent] hover:bg-[--color-accent]/5 transition-all min-h-[44px]">
         {t('cookie.ok')}
       </button>
     </div>
