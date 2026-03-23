@@ -57,7 +57,7 @@ let cumulativePath = lang === 'ko' ? '/ko' : '';
 for (const seg of segments) {
   cumulativePath += `/${seg}`;
   const label = labelMap[lang]?.[seg] || seg.replace(/-/g, ' ').replace(/usdt$/i, '/USDT').toUpperCase();
-  items.push({ label, href: `${cumulativePath}/` });
+  items.push({ label, href: cumulativePath });
 }
 ---
 
