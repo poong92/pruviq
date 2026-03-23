@@ -15,7 +15,10 @@ ENV_FILE="$REPO_DIR/backend/.env"
 STATE_FILE="/tmp/pruviq-monitor-state"
 LOG_FILE="$HOME/pruviq-monitor.log"
 
-# Load .env if exists
+# Load Telegram tokens
+source "$HOME/.secrets.env" 2>/dev/null || true
+
+# Load project .env if exists
 if [ -f "$ENV_FILE" ]; then
     set -a
     source "$ENV_FILE"
