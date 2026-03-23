@@ -453,7 +453,7 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
             <Fragment>
               <a href={item.href} aria-current={isActive(item.match) ? "page" : undefined}
                 class="min-h-[48px] flex items-center px-3 rounded-lg text-[15px] font-medium transition-colors hover:bg-[--color-bg-hover]"
-                style={isActive(item.match) ? 'color:var(--color-accent)' : 'color:var(--color-text)'}>{item.label}</a>
+                style={isActive(item.match) ? 'color:var(--color-accent);font-weight:500' : 'color:var(--color-text)'}>{item.label}</a>
               {item.match === '/strategies' && (
                 <div class="flex flex-col ml-3 mb-1 rounded-lg bg-[--color-bg-surface] overflow-hidden">
                   <a href={rankingPath} aria-current={isActive('/strategies/ranking') ? "page" : undefined}
