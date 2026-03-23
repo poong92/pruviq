@@ -400,20 +400,22 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
                  class="transition-colors flex items-center gap-1"
                  style={isActive(item.match) ? 'color:var(--color-accent);font-weight:500' : 'color:var(--color-text-muted)'}>
                 {item.label}
-                <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5" class="opacity-50 transition-transform group-hover:rotate-180" aria-hidden="true"><path d="M2 3.5l3 3 3-3"/></svg>
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" class="opacity-50 transition-transform duration-200 group-hover:rotate-180" aria-hidden="true"><path d="M2.5 4.5l3.5 3 3.5-3"/></svg>
               </a>
-              <div class="absolute top-full left-1/2 -translate-x-1/2 pt-3 hidden group-hover:block z-50">
-                <div class="bg-[--color-bg-card] border border-[--color-border] rounded-lg py-1.5 min-w-[160px]" style="box-shadow: var(--shadow-elevated);">
-                  <a href={rankingPath} class="flex items-center gap-2.5 px-4 py-2.5 text-sm text-[--color-text-muted] hover:text-[--color-accent] hover:bg-[--color-bg-subtle] transition-colors">
-                    <span class="w-1.5 h-1.5 rounded-full bg-[--color-accent] animate-pulse shrink-0"></span>
-                    {t('nav.ranking')}
+              <div class="absolute top-full left-1/2 -translate-x-1/2 pt-2 hidden group-hover:block z-50">
+                <div class="bg-[--color-bg-elevated] border border-white/[0.08] rounded-xl p-1.5 min-w-[200px] backdrop-blur-xl" style="box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.06);">
+                  <a href={rankingPath} class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm text-[--color-text] hover:bg-white/[0.06] transition-colors">
+                    <span class="w-8 h-8 rounded-lg bg-[--color-accent]/10 flex items-center justify-center shrink-0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="2"><path d="M12 20V10M18 20V4M6 20v-4"/></svg></span>
+                    <div><div class="font-medium">{t('nav.ranking')}</div><div class="text-[11px] text-[--color-text-muted] mt-0.5">{lang === 'ko' ? '일일 성과 순위' : 'Daily performance'}</div></div>
                   </a>
-                  <a href={leaderboardPath} class="flex items-center gap-2.5 px-4 py-2.5 text-sm text-[--color-text-muted] hover:text-[--color-accent] hover:bg-[--color-bg-subtle] transition-colors pl-[26px]">
-                    {t('nav.leaderboard')}
+                  <a href={leaderboardPath} class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm text-[--color-text] hover:bg-white/[0.06] transition-colors">
+                    <span class="w-8 h-8 rounded-lg bg-[--color-up]/10 flex items-center justify-center shrink-0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-up)" stroke-width="2"><path d="M8 21V11M16 21V3M12 21v-6"/></svg></span>
+                    <div><div class="font-medium">{t('nav.leaderboard')}</div><div class="text-[11px] text-[--color-text-muted] mt-0.5">{lang === 'ko' ? '주간 베스트' : 'Weekly best'}</div></div>
                   </a>
-                  <div class="border-t border-[--color-border] my-1"></div>
-                  <a href={lang === 'ko' ? '/ko/compare' : '/compare'} class="flex items-center gap-2.5 px-4 py-2.5 text-sm text-[--color-text-muted] hover:text-[--color-accent] hover:bg-[--color-bg-subtle] transition-colors pl-[26px]">
-                    {t('nav.compare_tools')}
+                  <div class="border-t border-white/[0.06] my-1 mx-2"></div>
+                  <a href={lang === 'ko' ? '/ko/compare' : '/compare'} class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm text-[--color-text-muted] hover:text-[--color-text] hover:bg-white/[0.06] transition-colors">
+                    <span class="w-8 h-8 rounded-lg bg-white/[0.04] flex items-center justify-center shrink-0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg></span>
+                    <div><div class="font-medium">{t('nav.compare_tools')}</div><div class="text-[11px] text-[--color-text-muted] mt-0.5">{lang === 'ko' ? 'vs TradingView 등' : 'vs TradingView & more'}</div></div>
                   </a>
                 </div>
               </div>
@@ -436,18 +438,21 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
             <Fragment>
               <a href={item.href} aria-current={isActive(item.match) ? "page" : undefined} class="min-h-[48px] flex items-center px-3 rounded-lg text-[15px] font-medium transition-colors hover:bg-[--color-bg-hover]" style={isActive(item.match) ? 'color:var(--color-accent);font-weight:500' : 'color:var(--color-text-muted)'}>{item.label}</a>
               {item.match === '/strategies' && (
-                <div class="flex flex-col ml-1 pl-2 border-l border-[--color-border] mb-1">
-                  <a href={rankingPath} aria-current={isActive('/strategies/ranking') ? "page" : undefined} class="min-h-[44px] flex items-center gap-2 rounded hover:bg-[--color-bg-subtle]" style={isActive('/strategies/ranking') ? 'color:var(--color-accent);font-weight:500' : 'color:var(--color-text-muted)'}>
-                    <span class="inline-block w-1.5 h-1.5 rounded-full bg-[--color-accent] animate-pulse shrink-0"></span>
+                <div class="flex flex-col ml-3 mb-1 rounded-lg bg-[--color-bg-surface] overflow-hidden">
+                  <a href={rankingPath} aria-current={isActive('/strategies/ranking') ? "page" : undefined} class="min-h-[44px] flex items-center gap-2.5 px-4 text-[13px] transition-colors hover:bg-[--color-bg-hover]" style={isActive('/strategies/ranking') ? 'color:var(--color-accent);font-weight:500' : 'color:var(--color-text-secondary)'}>
+                    <span class="inline-block w-1.5 h-1.5 rounded-full bg-[--color-accent] shrink-0"></span>
                     {t('nav.ranking')}
                   </a>
-                  <a href={leaderboardPath} aria-current={isActive('/leaderboard') ? "page" : undefined} class="min-h-[44px] flex items-center pl-[22px] rounded hover:bg-[--color-bg-subtle]" style={isActive('/leaderboard') ? 'color:var(--color-accent);font-weight:500' : 'color:var(--color-text-muted)'}>{t('nav.leaderboard')}</a>
+                  <a href={leaderboardPath} aria-current={isActive('/leaderboard') ? "page" : undefined} class="min-h-[44px] flex items-center gap-2.5 px-4 text-[13px] transition-colors hover:bg-[--color-bg-hover]" style={isActive('/leaderboard') ? 'color:var(--color-accent);font-weight:500' : 'color:var(--color-text-secondary)'}>
+                    <span class="inline-block w-1.5 h-1.5 rounded-full bg-transparent shrink-0"></span>
+                    {t('nav.leaderboard')}
+                  </a>
                 </div>
               )}
             </Fragment>
           ))}
           <div class="border-t border-[--color-border] mt-2 pt-2">
-            <a href={altPath} hreflang={altLang} class="font-mono text-xs px-2 py-1 border border-[--color-border] rounded text-[--color-text-muted] w-fit min-h-[44px] flex items-center hover:border-[--color-accent] hover:text-[--color-accent] transition-colors" aria-label={lang === 'ko' ? 'Switch to English' : '한국어로 전환'}>{t('nav.lang')}</a>
+            <a href={altPath} hreflang={altLang} class="font-mono text-xs px-3 py-2 border border-[--color-border] rounded-lg text-[--color-text-muted] w-fit min-h-[44px] flex items-center hover:border-[--color-accent] hover:text-[--color-accent] transition-colors" aria-label={lang === 'ko' ? 'Switch to English' : '한국어로 전환'}>{t('nav.lang')}</a>
           </div>
         </div>
       </div>
