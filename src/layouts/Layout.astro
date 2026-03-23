@@ -386,14 +386,14 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
     <div id="page-loader"></div>
     <header>
     <nav class="fixed top-0 w-full z-50 border-b border-[--color-border] bg-[--color-bg]/80 backdrop-blur-md" role="navigation" aria-label="Main">
-      <div class="max-w-6xl mx-auto px-4 h-16 grid grid-cols-[auto_1fr_auto] items-center">
+      <div class="w-full px-6 lg:px-10 h-16 grid grid-cols-[auto_1fr_auto] items-center">
         <!-- 1열: Logo (좌측) -->
         <a href={lang === 'ko' ? '/ko/' : '/'} class="flex items-center gap-2">
-          <img src="/favicon.svg" alt="PRUVIQ" width="28" height="28" class="w-7 h-7" />
-          <span class="font-mono font-bold text-xl tracking-wider"><span class="text-[--color-text]">PRUV</span><span class="text-[#2CB5E8]">IQ</span></span>
+          <img src="/favicon.svg" alt="PRUVIQ" width="32" height="32" class="w-8 h-8" />
+          <span class="font-mono font-bold text-2xl tracking-wider"><span class="text-[--color-text]">PRUV</span><span class="text-[#2CB5E8]">IQ</span></span>
         </a>
         <!-- 2열: Nav (정중앙, 데스크톱 only) -->
-        <div class="hidden md:flex items-center justify-center gap-8 text-sm">
+        <div class="hidden md:flex items-center justify-center gap-10 text-[15px]">
           {navItems.map(item => item.match === '/strategies' ? (
             <div class="relative group">
               <a href={item.href} aria-current={isActive(item.match) ? "page" : undefined}
@@ -424,7 +424,7 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
         </div>
         <!-- 3열: Lang + Mobile hamburger (우측) -->
         <div class="flex items-center justify-end gap-3">
-          <a href={altPath} hreflang={altLang} class="hidden md:inline-flex font-mono text-xs px-3 py-1.5 border border-[--color-border] rounded hover:border-[--color-accent] hover:text-[--color-accent] hover:bg-[--color-accent]/5 text-[--color-text-muted] transition-colors" aria-label={lang === 'ko' ? 'Switch to English' : '한국어로 전환'}>{t('nav.lang')}</a>
+          <a href={altPath} hreflang={altLang} class="hidden md:inline-flex font-mono text-sm px-4 py-2 border border-[--color-border] rounded-lg hover:border-[--color-accent] hover:text-[--color-accent] hover:bg-[--color-accent]/5 text-[--color-text-muted] transition-colors" aria-label={lang === 'ko' ? 'Switch to English' : '한국어로 전환'}>{t('nav.lang')}</a>
           <button id="mobile-menu-btn" class="md:hidden text-[--color-text-muted]" aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-menu">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
           </button>
@@ -462,7 +462,7 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
     </main>
 
     <footer class="border-t border-[--color-border] mt-20" role="contentinfo" aria-label="Site footer">
-      <div class="max-w-6xl mx-auto px-4 py-12">
+      <div class="max-w-7xl mx-auto px-6 lg:px-10 py-12">
         <!-- Brand + 3-column links -->
         <div class="flex flex-col md:flex-row gap-10 mb-10">
           <div class="md:w-1/3">
@@ -584,7 +584,7 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
     <!-- Sticky bottom CTA bar (non-simulator pages only) -->
     {!basePath.startsWith('/simulate') && (
       <div id="bottom-cta-bar" class="fixed bottom-0 left-0 right-0 z-40 border-t border-[--color-border] bg-[--color-bg-elevated] transition-transform duration-300 translate-y-full" style="height:48px;" role="complementary" aria-label="Try simulator">
-        <div class="max-w-6xl mx-auto px-4 h-full flex items-center justify-between gap-3">
+        <div class="max-w-7xl mx-auto px-6 lg:px-10 h-full flex items-center justify-between gap-3">
           <p class="text-sm text-[--color-text-muted] truncate">
             {lang === 'ko' ? '569+ 코인에서 전략 테스트' : 'Test your strategy on 569+ coins'}
           </p>
