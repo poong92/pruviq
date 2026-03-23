@@ -28,7 +28,7 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
   <!-- HERO -->
   <section class="relative overflow-hidden min-h-[85vh] flex flex-col justify-center" style="background: var(--gradient-hero)">
     <HeroGlow />
-    <div class="relative max-w-6xl mx-auto px-6 pt-28 pb-16 md:pt-36 md:pb-20 hero-enter">
+    <div class="relative max-w-7xl mx-auto px-6 pt-28 pb-16 md:pt-36 md:pb-20 hero-enter">
       <HeroBadge stat={simulationsRun} label="simulations run" />
       <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold text-center tracking-[-0.04em] leading-[1.08] max-w-4xl mx-auto">
         Test Any Crypto Strategy<br class="hidden md:block" /> on <span class="gradient-text">{coinsAnalyzed} Coins</span> in Seconds
@@ -73,7 +73,7 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
   </section>
 
   <!-- DATA TRUST BAR -->
-  <div class="max-w-6xl mx-auto px-6 pb-4 relative z-10">
+  <div class="max-w-7xl mx-auto px-6 pb-4 relative z-10">
     <div class="flex items-center justify-center gap-6 text-[--color-text-muted] text-xs font-mono">
       <span class="opacity-60">Data from:</span>
       <span class="opacity-40 hover:opacity-80 transition-opacity">Binance Futures</span>
@@ -82,7 +82,7 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
   </div>
 
   <!-- PRODUCT PREVIEW (animated) -->
-  <section class="max-w-6xl mx-auto px-6 -mt-4 pb-20 relative z-10">
+  <section class="max-w-7xl mx-auto px-6 -mt-4 pb-20 relative z-10">
     <BrowserFrame
       src="/images/simulator-preview.png"
       alt="PRUVIQ Strategy Simulator — backtest 569 coins in seconds"
@@ -96,7 +96,7 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
   </section>
 
   <!-- HOW IT WORKS -->
-  <section class="max-w-6xl mx-auto px-6 py-24">
+  <section class="max-w-7xl mx-auto px-6 py-24">
     <h2 class="text-2xl md:text-4xl font-bold text-center mb-4">How It Works</h2>
     <p class="text-[--color-text-secondary] text-center mb-16 max-w-xl mx-auto">From strategy idea to verified results in 3 steps.</p>
     <div class="grid md:grid-cols-3 gap-8">
@@ -124,7 +124,7 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
   <!-- COMPARISON (compact) -->
   <hr class="section-divider" />
   <section class="py-12 reveal">
-    <div class="max-w-6xl mx-auto px-4 text-center">
+    <div class="max-w-7xl mx-auto px-4 text-center">
       <p class="text-[--color-text-muted] text-sm mb-3">
         Free, no-code, no account — unlike TradingView or QuantConnect.
       </p>
@@ -135,7 +135,7 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
   <!-- WHY PRUVIQ (Merged Problem + Evidence) -->
   <hr class="section-divider" />
   <section class="py-20 bg-[--color-bg-subtle] reveal" aria-labelledby="why-heading">
-    <div class="max-w-6xl mx-auto px-4">
+    <div class="max-w-7xl mx-auto px-4">
       <p class="font-mono text-[--color-down] text-sm mb-2 tracking-wider">{t('problem.tag')}</p>
       <h2 id="why-heading" class="text-3xl md:text-4xl font-bold mb-4">{t('problem.title')}</h2>
       <p class="text-[--color-text-muted] text-lg mb-12 max-w-3xl">{t('evidence.desc')}</p>
@@ -182,7 +182,7 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
   <!-- FEATURES & TRUST (Merged) -->
   <hr class="section-divider" />
   <section class="py-20 bg-[--color-bg-subtle] reveal" aria-labelledby="features-heading">
-    <div class="max-w-6xl mx-auto px-4">
+    <div class="max-w-7xl mx-auto px-4">
       <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('features.tag')}</p>
       <h2 id="features-heading" class="text-3xl md:text-4xl font-bold mb-12">{t('features.title')}</h2>
 
@@ -254,7 +254,7 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
   <!-- SOCIAL PROOF QUOTES -->
   <hr class="section-divider" />
   <section class="py-16 reveal" aria-labelledby="quotes-heading">
-    <div class="max-w-6xl mx-auto px-4">
+    <div class="max-w-7xl mx-auto px-4">
       <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('home.community_feedback_tag')}</p>
       <h2 id="quotes-heading" class="text-2xl font-bold mb-1">{t('home.quotes_heading')}</h2>
       <p class="text-[--color-text-muted] text-xs font-mono mb-8 opacity-60">{t('home.quotes_initials_note')}</p>
@@ -299,7 +299,7 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
   <!-- FAQ (visible section matching JSON-LD) -->
   <hr class="section-divider" />
   <section class="py-20 reveal" aria-labelledby="faq-heading">
-    <div class="max-w-6xl mx-auto px-4">
+    <div class="max-w-7xl mx-auto px-4">
       <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">FAQ</p>
       <h2 id="faq-heading" class="text-3xl md:text-4xl font-bold mb-12">{t('faq.title')}</h2>
       <div class="max-w-3xl space-y-6">
@@ -345,7 +345,7 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
   <!-- CTA -->
   <hr class="section-divider" />
   <section class="py-20 bg-[--color-bg-subtle] reveal" aria-labelledby="cta-heading">
-    <div class="max-w-6xl mx-auto px-4 text-center">
+    <div class="max-w-7xl mx-auto px-4 text-center">
       <p class="font-mono text-[--color-text-muted] text-sm mb-4 tracking-wider">{t('cta.tag')}</p>
       <h2 id="cta-heading" class="text-3xl md:text-4xl font-bold mb-4">
         <span class="text-[--color-accent]">{t('cta.title')}</span>
