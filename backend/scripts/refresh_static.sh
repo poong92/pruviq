@@ -128,8 +128,24 @@ for f in $DATA_FILES; do
     fi
 done
 
-if [[ "$HAS_CHANGES" == "false" ]]; then
-    log "No data changes"
+# Check if origin/main has new code commits since last deploy
+# Deploy marker file stores the last deployed commit SHA
+DEPLOY_MARKER="$HOME/.pruviq-last-deploy-sha"
+git fetch origin main -q 2>/dev/null
+ORIGIN_SHA=$(git rev-parse origin/main 2>/dev/null)
+LAST_DEPLOYED_SHA=""
+if [[ -f "$DEPLOY_MARKER" ]]; then
+    LAST_DEPLOYED_SHA=$(cat "$DEPLOY_MARKER")
+fi
+
+HAS_CODE_CHANGES=false
+if [[ "$ORIGIN_SHA" != "$LAST_DEPLOYED_SHA" ]]; then
+    HAS_CODE_CHANGES=true
+    log "New code on origin/main: $LAST_DEPLOYED_SHA -> $ORIGIN_SHA"
+fi
+
+if [[ "$HAS_CHANGES" == "false" && "$HAS_CODE_CHANGES" == "false" ]]; then
+    log "No data or code changes"
     exit 0
 fi
 
@@ -165,6 +181,7 @@ if npm run build 2>&1 | tail -3; then
     log "Deploying to Cloudflare..."
     if npx wrangler deploy 2>&1 | tail -5; then
         log "Deployed to Cloudflare Workers (from origin/main worktree)"
+        echo "$ORIGIN_SHA" > "$DEPLOY_MARKER"
     else
         log "Wrangler deploy failed"
         send_alert "ERROR" "CF Workers deploy failed"
