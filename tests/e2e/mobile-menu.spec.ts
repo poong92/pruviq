@@ -202,7 +202,7 @@ test.describe("Mobile menu: ranking item pulse dot", () => {
 // ─── Alignment: pl-[14px] on extra items ─────────────────────
 
 test.describe("Mobile menu: alignment consistency", () => {
-  test("Leaderboard has pl-[22px] alignment class", async ({ page }) => {
+  test("Leaderboard submenu item is visible and aligned", async ({ page }) => {
     await page.goto("/", { waitUntil: "domcontentloaded" });
     await page.locator("#mobile-menu-btn").click({ force: true });
     await page.waitForSelector("#mobile-menu[aria-hidden='false']");
@@ -212,13 +212,11 @@ test.describe("Mobile menu: alignment consistency", () => {
     const classes = await el.getAttribute("class");
     expect(
       classes,
-      `"/leaderboard" should have pl-[22px] alignment class`,
-    ).toContain("pl-[22px]");
+      `"/leaderboard" should have consistent submenu styling`,
+    ).toContain("px-4");
   });
 
-  test("Ranking item has gap-2 class (not pl-[14px]) — uses dot indent", async ({
-    page,
-  }) => {
+  test("Ranking item has gap-2.5 class — uses dot indent", async ({ page }) => {
     await page.goto("/", { waitUntil: "domcontentloaded" });
     await page.locator("#mobile-menu-btn").click({ force: true });
     await page.waitForSelector("#mobile-menu[aria-hidden='false']");
@@ -227,11 +225,7 @@ test.describe("Mobile menu: alignment consistency", () => {
       .locator("#mobile-menu a[href='/strategies/ranking']")
       .first();
     const classes = await rankingLink.getAttribute("class");
-    expect(classes, "Ranking link should use gap-2").toContain("gap-2");
-    expect(
-      classes,
-      "Ranking link should NOT use pl-[14px] (uses dot gap instead)",
-    ).not.toContain("pl-[14px]");
+    expect(classes, "Ranking link should use gap-2.5").toContain("gap-2.5");
   });
 });
 

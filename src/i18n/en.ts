@@ -1414,6 +1414,9 @@ export const en = {
     "Trade $10,000/month? Save ~$144/year with Binance VIP discount via PRUVIQ.",
   "nav.leaderboard": "Leaderboard",
   "nav.compare_tools": "Compare Tools",
+  "nav.ranking_desc": "Daily performance",
+  "nav.leaderboard_desc": "Weekly best",
+  "nav.compare_tools_desc": "vs TradingView & more",
 
   // Metric explanation tooltips
   "metric.sharpe_desc":
