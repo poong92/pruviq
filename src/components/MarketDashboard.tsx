@@ -710,6 +710,10 @@ export default function MarketDashboard({
                 onLoad={() =>
                   document.getElementById("cal-placeholder")?.remove()
                 }
+                onError={() => {
+                  const el = document.getElementById("cal-placeholder");
+                  if (el) el.innerHTML = '<p class="text-sm">Calendar unavailable. Check <a href="https://www.tradingview.com/economic-calendar/" target="_blank" rel="noopener" class="text-[--color-accent] hover:underline">TradingView</a> directly.</p>';
+                }}
               />
             </div>
           </div>
