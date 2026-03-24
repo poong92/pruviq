@@ -1096,6 +1096,7 @@ export default function SimulatorPage({ lang = "en" }: Props) {
     const pending = (window as any).__pruviq_pending_preset;
     if (pending && presets.length > 0) {
       delete (window as any).__pruviq_pending_preset;
+      setSimMode("expert");
       loadPreset(pending);
     }
   }, [presets, loadPreset]);
