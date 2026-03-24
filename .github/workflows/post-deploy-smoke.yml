@@ -20,7 +20,7 @@ permissions:
 jobs:
   smoke:
     name: Production Smoke — pruviq.com
-    runs-on: [self-hosted, macOS, arm64]
+    runs-on: [self-hosted, ops]
     timeout-minutes: 10
 
     steps:
