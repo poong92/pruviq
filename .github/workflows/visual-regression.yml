@@ -21,10 +21,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      with:
-        fetch-depth: 1
         with:
-          # push시 커밋을 위해 토큰 필요
+          fetch-depth: 1
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: actions/setup-node@v4
