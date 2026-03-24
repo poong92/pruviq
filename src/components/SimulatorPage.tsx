@@ -691,10 +691,9 @@ export default function SimulatorPage({ lang = "en" }: Props) {
         setSelectedCoins([sym]);
         setChartSymbol(sym);
       }
-      // Auto-select preset from URL (e.g., ?preset=bb-squeeze-short)
+      // Store pending preset from URL — applied after presets load
       if (params.has("preset")) {
-        const presetId = params.get("preset")!;
-        setTimeout(() => onSelectPreset(presetId), 500);
+        (window as any).__pruviq_pending_preset = params.get("preset")!;
       }
     } catch {}
   }, []);
@@ -1091,6 +1090,15 @@ export default function SimulatorPage({ lang = "en" }: Props) {
       /* presetLoading state handled above */
     }
   }, []);
+
+  // Apply pending preset from URL after presets are loaded
+  useEffect(() => {
+    const pending = (window as any).__pruviq_pending_preset;
+    if (pending && presets.length > 0) {
+      delete (window as any).__pruviq_pending_preset;
+      loadPreset(pending);
+    }
+  }, [presets, loadPreset]);
 
   const onSelectPreset = useCallback(
     (id: string | null) => {
