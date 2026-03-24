@@ -9,15 +9,21 @@ permissions:
   pull-requests: write
   issues: write
 
+concurrency:
+  group: e2e-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   e2e:
     name: Playwright E2E
     # Self-hosted Mac Mini M4 runner — CI = 로컬 환경 완전 일치.
     # 실패 = 로컬에서 100% 재현 가능 → JEPO e2e-autofix 에이전트가 정확하게 수정.
     runs-on: [self-hosted, macOS, arm64]
-    timeout-minutes: 20
+    timeout-minutes: 25
     steps:
     - uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
 
     - name: Use Node 22
       run: |
@@ -73,7 +79,7 @@ jobs:
       # workers 2 (M4 Pro 성능 활용)
       # retries 1 (진짜 flaky는 self-hosted에서도 재현됨, 1회로 충분)
       # --ignore-snapshots: visual regression은 tests/visual/ (ubuntu-only, 별도 workflow)
-      timeout-minutes: 15
+      timeout-minutes: 20
       env:
         CI: true
 

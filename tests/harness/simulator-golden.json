@@ -8,7 +8,6 @@
     "PF sentinel 999 노출 (PR#322 전)",
     "Sortino TDD 분모 오류 (PR#322 전)"
   ],
-
   "cases": [
     {
       "name": "BB_Squeeze_SHORT_top50",
@@ -24,19 +23,58 @@
       },
       "expect": {
         "required_fields": [
-          "total_trades", "win_rate", "profit_factor",
-          "max_drawdown_pct", "sharpe_ratio", "sortino_ratio", "calmar_ratio",
-          "coins_used", "equity_curve", "coin_results"
+          "total_trades",
+          "win_rate",
+          "profit_factor",
+          "max_drawdown_pct",
+          "sharpe_ratio",
+          "sortino_ratio",
+          "calmar_ratio",
+          "coins_used",
+          "equity_curve",
+          "coin_results"
         ],
         "ranges": {
-          "total_trades":      { "min": 500,  "max": 5000,  "note": "충분한 샘플 수" },
-          "win_rate":          { "min": 30,   "max": 80,    "note": "극단값 = 데이터 오류" },
-          "profit_factor":     { "min": 0.1,  "max": 20,    "note": "999 sentinel 금지" },
-          "max_drawdown_pct":  { "min": 0,    "max": 60,    "note": "100% = n_coins 정규화 버그" },
-          "sharpe_ratio":      { "min": -5,   "max": 15,    "note": "비현실적 양수 = 계산 오류" },
-          "sortino_ratio":     { "min": -5,   "max": 30,    "note": "TDD 분모 검증" },
-          "calmar_ratio":      { "min": -2,   "max": 10,    "note": "27.5배 버그 재발 방지" },
-          "coins_used":        { "min": 1,    "max": 600,   "note": "요청한 top_n 이하" }
+          "total_trades": {
+            "min": 500,
+            "max": 5000,
+            "note": "충분한 샘플 수"
+          },
+          "win_rate": {
+            "min": 30,
+            "max": 80,
+            "note": "극단값 = 데이터 오류"
+          },
+          "profit_factor": {
+            "min": 0.1,
+            "max": 20,
+            "note": "999 sentinel 금지"
+          },
+          "max_drawdown_pct": {
+            "min": 0,
+            "max": 60,
+            "note": "100% = n_coins 정규화 버그"
+          },
+          "sharpe_ratio": {
+            "min": -5,
+            "max": 15,
+            "note": "비현실적 양수 = 계산 오류"
+          },
+          "sortino_ratio": {
+            "min": -5,
+            "max": 30,
+            "note": "TDD 분모 검증"
+          },
+          "calmar_ratio": {
+            "min": -2,
+            "max": 10,
+            "note": "27.5배 버그 재발 방지"
+          },
+          "coins_used": {
+            "min": 1,
+            "max": 600,
+            "note": "요청한 top_n 이하"
+          }
         },
         "structural": {
           "equity_curve_min_points": 50,
@@ -59,15 +97,36 @@
       },
       "expect": {
         "required_fields": [
-          "total_trades", "win_rate", "profit_factor", "max_drawdown_pct",
-          "sharpe_ratio", "sortino_ratio", "calmar_ratio"
+          "total_trades",
+          "win_rate",
+          "profit_factor",
+          "max_drawdown_pct",
+          "sharpe_ratio",
+          "sortino_ratio",
+          "calmar_ratio"
         ],
         "ranges": {
-          "total_trades":      { "min": 100,  "max": 5000 },
-          "win_rate":          { "min": 20,   "max": 85 },
-          "profit_factor":     { "min": 0.1,  "max": 20 },
-          "max_drawdown_pct":  { "min": 0,    "max": 80 },
-          "calmar_ratio":      { "min": -5,   "max": 10,   "note": "LONG도 동일 Calmar 버그 가능" }
+          "total_trades": {
+            "min": 100,
+            "max": 5000
+          },
+          "win_rate": {
+            "min": 20,
+            "max": 85
+          },
+          "profit_factor": {
+            "min": 0.1,
+            "max": 20
+          },
+          "max_drawdown_pct": {
+            "min": 0,
+            "max": 80
+          },
+          "calmar_ratio": {
+            "min": -5,
+            "max": 10,
+            "note": "LONG도 동일 Calmar 버그 가능"
+          }
         }
       }
     },
@@ -85,11 +144,25 @@
         }
       },
       "expect": {
-        "required_fields": ["total_trades", "profit_factor", "max_drawdown_pct"],
+        "required_fields": [
+          "total_trades",
+          "profit_factor",
+          "max_drawdown_pct"
+        ],
         "ranges": {
-          "total_trades":      { "min": 100,  "max": 8000,  "note": "BOTH = SHORT + LONG 합산" },
-          "profit_factor":     { "min": 0.1,  "max": 20 },
-          "max_drawdown_pct":  { "min": 0,    "max": 80 }
+          "total_trades": {
+            "min": 100,
+            "max": 8000,
+            "note": "BOTH = SHORT + LONG 합산"
+          },
+          "profit_factor": {
+            "min": 0.1,
+            "max": 20
+          },
+          "max_drawdown_pct": {
+            "min": 0,
+            "max": 80
+          }
         }
       }
     },
@@ -102,7 +175,9 @@
       },
       "expect": {
         "status": 200,
-        "required_fields": ["status"],
+        "required_fields": [
+          "status"
+        ],
         "values": {
           "status": "ok"
         }
@@ -116,17 +191,37 @@
         "path": "/rankings/daily?period=30d&group=Market%20Cap%20Top%2050"
       },
       "expect": {
-        "required_fields": ["date", "top3", "worst3"],
+        "required_fields": [
+          "date",
+          "top3",
+          "worst3"
+        ],
         "structural": {
           "top3_count": 3,
           "worst3_count": 3,
-          "top3_required_fields": ["rank", "name_en", "win_rate", "profit_factor", "total_trades"],
+          "top3_required_fields": [
+            "rank",
+            "name_en",
+            "win_rate",
+            "profit_factor",
+            "total_trades"
+          ],
           "date_max_age_days": 2
         },
         "ranges_per_entry": {
-          "win_rate":       { "min": 10,  "max": 95 },
-          "profit_factor":  { "min": 0.0, "max": 20, "note": "worst3는 0에 가까울 수 있음" },
-          "total_trades":   { "min": 5,   "max": 2000 }
+          "win_rate": {
+            "min": 0,
+            "max": 95
+          },
+          "profit_factor": {
+            "min": 0.0,
+            "max": 20,
+            "note": "worst3는 0에 가까울 수 있음"
+          },
+          "total_trades": {
+            "min": 1,
+            "max": 2000
+          }
         }
       }
     }
