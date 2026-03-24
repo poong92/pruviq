@@ -45,6 +45,9 @@ export default defineConfig({
           { url: enUrl, lang: 'x-default' },
         ];
 
+        // lastmod: build date (SSG — content regenerated each deploy)
+        item.lastmod = new Date();
+
         // Priority + crawl frequency by page type
         // @ts-ignore — EnumChangefreq accepts these string values at runtime
         const p = basePath;
