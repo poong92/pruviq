@@ -45,6 +45,9 @@ export default defineConfig({
           { url: enUrl, lang: 'x-default' },
         ];
 
+        // lastmod — build date for all pages (SSG rebuilds everything)
+        item.lastmod = new Date().toISOString().slice(0, 10);
+
         // Priority + crawl frequency by page type
         // @ts-ignore — EnumChangefreq accepts these string values at runtime
         const p = basePath;
