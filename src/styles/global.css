@@ -134,6 +134,10 @@
   --text-xs:   0.8125rem;  /* 13px — captions, metadata */
   --text-sm:   0.9375rem;  /* 15px — secondary body text */
 
+  /* ─── CONSISTENT RADIUS ─── */
+  --radius-card: 0.75rem;
+  --radius-btn:  0.5rem;
+
   /* ─── DISPLAY TYPOGRAPHY (Hero-specific) ─── */
   --font-size-display:    clamp(2.5rem, 5vw, 4.5rem);   /* 40-72px */
   --font-size-display-sm: clamp(2rem, 4vw, 3.5rem);     /* 32-56px */
