@@ -55,6 +55,16 @@ const t = useTranslations('en');
       </div>
     </div>
   </section>
+  <!-- Quick Nav -->
+  <nav class="pb-8">
+    <div class="max-w-5xl mx-auto px-6 flex flex-wrap gap-3 text-sm font-mono">
+      <a href="#compare" class="px-3 py-1.5 rounded-lg border border-[--color-border] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">Compare</a>
+      <a href="#savings" class="px-3 py-1.5 rounded-lg border border-[--color-border] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">Savings</a>
+      <a href="#how" class="px-3 py-1.5 rounded-lg border border-[--color-border] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">How It Works</a>
+      <a href="#verify" class="px-3 py-1.5 rounded-lg border border-[--color-border] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">Verify</a>
+    </div>
+  </nav>
+
 
   <!-- INTERACTIVE FEE CALCULATOR -->
   <section class="pb-12 border-t border-[--color-border] pt-12">
@@ -66,7 +76,7 @@ const t = useTranslations('en');
   <!-- BINANCE FEATURED CARD -->
   <section class="pb-12 border-t border-[--color-border] pt-12">
     <div class="max-w-5xl mx-auto px-4">
-      <h2 class="text-2xl font-bold mb-2">{t('fees.compare_title')}</h2>
+      <h2 id="compare" class="text-2xl font-bold mb-2">{t('fees.compare_title')}</h2>
       <p class="text-[--color-text-muted] text-sm mb-6">{t('fees.compare_desc')}</p>
 
       <div class="max-w-3xl mx-auto">
@@ -140,7 +150,7 @@ const t = useTranslations('en');
   <section class="pb-12 border-t border-[--color-border] pt-12">
     <div class="max-w-5xl mx-auto px-4">
       <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('fees.trust_tag')}</p>
-      <h2 class="text-2xl font-bold mb-2">{t('fees.referral.problem.headline')}</h2>
+      <h2 id="savings" class="text-2xl font-bold mb-2">{t('fees.referral.problem.headline')}</h2>
       <p class="text-[--color-text-muted] text-sm mb-4 font-medium">{t('fees.referral.problem.subheading')}</p>
       <p class="text-[--color-text-muted] text-sm mb-6 max-w-3xl">{t('fees.referral.problem.body')}</p>
 
@@ -154,7 +164,7 @@ const t = useTranslations('en');
   <!-- BLOCK 2: EDUCATION / COMPARISON TABLE -->
   <section class="pb-12 border-t border-[--color-border] pt-12">
     <div class="max-w-5xl mx-auto px-4">
-      <h2 class="text-2xl font-bold mb-2">{t('fees.referral.how.headline')}</h2>
+      <h2 id="how" class="text-2xl font-bold mb-2">{t('fees.referral.how.headline')}</h2>
       <p class="text-[--color-text-muted] text-sm mb-6 max-w-3xl">{t('fees.referral.how.body')}</p>
 
       <!-- Comparison table -->
@@ -233,7 +243,7 @@ const t = useTranslations('en');
   <!-- BLOCK 4: HOW TO VERIFY -->
   <section class="pb-12 border-t border-[--color-border] pt-12">
     <div class="max-w-5xl mx-auto px-4">
-      <h2 class="text-2xl font-bold mb-2">{t('fees.referral.verify.headline')}</h2>
+      <h2 id="verify" class="text-2xl font-bold mb-2">{t('fees.referral.verify.headline')}</h2>
       <p class="text-[--color-text-muted] text-sm mb-6 max-w-3xl">{t('fees.referral.verify.body')}</p>
 
       <div class="grid sm:grid-cols-2 gap-4 max-w-3xl mb-6">
