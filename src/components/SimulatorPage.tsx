@@ -691,6 +691,11 @@ export default function SimulatorPage({ lang = "en" }: Props) {
         setSelectedCoins([sym]);
         setChartSymbol(sym);
       }
+      // Auto-select preset from URL (e.g., ?preset=bb-squeeze-short)
+      if (params.has("preset")) {
+        const presetId = params.get("preset")!;
+        setTimeout(() => onSelectPreset(presetId), 500);
+      }
     } catch {}
   }, []);
 
