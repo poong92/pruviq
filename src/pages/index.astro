@@ -100,13 +100,13 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
     <h2 class="text-2xl md:text-4xl font-bold text-center mb-4">How It Works</h2>
     <p class="text-[--color-text-secondary] text-center text-lg mb-16 max-w-xl mx-auto">From strategy idea to verified results in 3 steps.</p>
     <div class="grid md:grid-cols-3 gap-8">
-      <StepCard step={1} title="Pick a Strategy" description="Choose from 36 presets or build custom with 14 indicators. AND/OR logic supported." />
+      <StepCard step={1} title="Pick a Strategy" description="Choose from 36 presets or build your own with 14 indicators. Unlimited custom combinations." />
       <StepCard step={2} title="Set Your Risk" description="Stop-loss, take-profit, position size, time filters. Realistic fees and slippage included." />
       <StepCard step={3} title="See Real Results" description="Backtest on 569 coins with 2+ years of data. Results in seconds, no cherry-picking." />
     </div>
     <!-- Persona entry points -->
     <div class="mt-12 grid sm:grid-cols-3 gap-4 max-w-3xl mx-auto">
-      <a href="/learn" class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card] card-hover text-center group">
+      <a href="/learn" class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card] card-hover text-center group">
         <p class="text-sm text-[--color-text-muted] mb-1 font-mono">New to trading?</p>
         <p class="text-base font-semibold group-hover:text-[--color-accent] transition-colors">Start Learning →</p>
       </a>
@@ -114,7 +114,7 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
         <p class="text-sm text-[--color-text-muted] mb-1 font-mono">Experienced trader?</p>
         <p class="text-base font-semibold group-hover:text-[--color-accent] transition-colors">Open Simulator →</p>
       </a>
-      <a href="/strategies" class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card] card-hover text-center group">
+      <a href="/strategies" class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card] card-hover text-center group">
         <p class="text-sm text-[--color-text-muted] mb-1 font-mono">Just exploring?</p>
         <p class="text-base font-semibold group-hover:text-[--color-accent] transition-colors">Browse Strategies →</p>
       </a>
@@ -123,8 +123,8 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
 
   <!-- COMPARISON (compact) -->
   <hr class="section-divider" />
-  <section class="py-12 reveal">
-    <div class="max-w-7xl mx-auto px-4 text-center">
+  <section class="py-16 md:py-20 reveal">
+    <div class="max-w-7xl mx-auto px-6 text-center">
       <p class="text-[--color-text-muted] text-base mb-3">
         Free, no-code, no account — unlike TradingView or QuantConnect.
       </p>
@@ -134,8 +134,8 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
 
   <!-- WHY PRUVIQ (Merged Problem + Evidence) -->
   <hr class="section-divider" />
-  <section class="py-20 bg-[--color-bg-subtle] reveal" aria-labelledby="why-heading">
-    <div class="max-w-7xl mx-auto px-4">
+  <section class="py-16 md:py-20 bg-[--color-bg-subtle] reveal" aria-labelledby="why-heading">
+    <div class="max-w-7xl mx-auto px-6">
       <p class="font-mono text-[--color-down] text-sm mb-2 tracking-wider">{t('problem.tag')}</p>
       <h2 id="why-heading" class="text-3xl md:text-4xl font-bold mb-4">{t('problem.title')}</h2>
       <p class="text-[--color-text-muted] text-lg mb-12 max-w-3xl">{t('evidence.desc')}</p>
@@ -181,8 +181,8 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
 
   <!-- FEATURES & TRUST (Merged) -->
   <hr class="section-divider" />
-  <section class="py-20 bg-[--color-bg-subtle] reveal" aria-labelledby="features-heading">
-    <div class="max-w-7xl mx-auto px-4">
+  <section class="py-16 md:py-20 reveal" aria-labelledby="features-heading">
+    <div class="max-w-7xl mx-auto px-6">
       <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('features.tag')}</p>
       <h2 id="features-heading" class="text-3xl md:text-4xl font-bold mb-12">{t('features.title')}</h2>
 
@@ -253,8 +253,8 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
 
   <!-- SOCIAL PROOF QUOTES -->
   <hr class="section-divider" />
-  <section class="py-16 reveal" aria-labelledby="quotes-heading">
-    <div class="max-w-7xl mx-auto px-4">
+  <section class="py-16 md:py-20 reveal" aria-labelledby="quotes-heading">
+    <div class="max-w-7xl mx-auto px-6">
       <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('home.community_feedback_tag')}</p>
       <h2 id="quotes-heading" class="text-2xl font-bold mb-1">{t('home.quotes_heading')}</h2>
       <p class="text-[--color-text-muted] text-xs font-mono mb-8 opacity-60">{t('home.quotes_initials_note')}</p>
@@ -298,40 +298,40 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
 
   <!-- FAQ (visible section matching JSON-LD) -->
   <hr class="section-divider" />
-  <section class="py-20 reveal" aria-labelledby="faq-heading">
-    <div class="max-w-7xl mx-auto px-4">
+  <section class="py-16 md:py-20 reveal" aria-labelledby="faq-heading">
+    <div class="max-w-7xl mx-auto px-6">
       <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">FAQ</p>
       <h2 id="faq-heading" class="text-3xl md:text-4xl font-bold mb-12">{t('faq.title')}</h2>
       <div class="max-w-3xl space-y-6">
-        <details class="group border border-[--color-border] rounded-lg bg-[--color-bg-card]">
+        <details class="group border border-[--color-border] rounded-lg bg-[--color-bg-card] hover:border-[--color-accent]/30 transition-colors">
           <summary class="cursor-pointer px-6 py-4 font-semibold text-sm flex items-center justify-between gap-4 min-h-[44px]">
             {t('faq.q1')}
             <span class="text-[--color-text-muted] group-open:rotate-180 transition-transform shrink-0">&#9662;</span>
           </summary>
           <div class="faq-body"><div><p class="px-6 pb-4 text-[--color-text-muted] text-base leading-relaxed">{t('faq.a1')}</p></div></div>
         </details>
-        <details class="group border border-[--color-border] rounded-lg bg-[--color-bg-card]">
+        <details class="group border border-[--color-border] rounded-lg bg-[--color-bg-card] hover:border-[--color-accent]/30 transition-colors">
           <summary class="cursor-pointer px-6 py-4 font-semibold text-sm flex items-center justify-between gap-4 min-h-[44px]">
             {t('faq.q2')}
             <span class="text-[--color-text-muted] group-open:rotate-180 transition-transform shrink-0">&#9662;</span>
           </summary>
           <div class="faq-body"><div><p class="px-6 pb-4 text-[--color-text-muted] text-base leading-relaxed">{t('faq.a2')}</p></div></div>
         </details>
-        <details class="group border border-[--color-border] rounded-lg bg-[--color-bg-card]">
+        <details class="group border border-[--color-border] rounded-lg bg-[--color-bg-card] hover:border-[--color-accent]/30 transition-colors">
           <summary class="cursor-pointer px-6 py-4 font-semibold text-sm flex items-center justify-between gap-4 min-h-[44px]">
             {t('faq.q3')}
             <span class="text-[--color-text-muted] group-open:rotate-180 transition-transform shrink-0">&#9662;</span>
           </summary>
           <div class="faq-body"><div><p class="px-6 pb-4 text-[--color-text-muted] text-base leading-relaxed">{t('faq.a3')}</p></div></div>
         </details>
-        <details class="group border border-[--color-border] rounded-lg bg-[--color-bg-card]">
+        <details class="group border border-[--color-border] rounded-lg bg-[--color-bg-card] hover:border-[--color-accent]/30 transition-colors">
           <summary class="cursor-pointer px-6 py-4 font-semibold text-sm flex items-center justify-between gap-4 min-h-[44px]">
             {t('faq.q4')}
             <span class="text-[--color-text-muted] group-open:rotate-180 transition-transform shrink-0">&#9662;</span>
           </summary>
           <div class="faq-body"><div><p class="px-6 pb-4 text-[--color-text-muted] text-base leading-relaxed">{t('faq.a4')}</p></div></div>
         </details>
-        <details class="group border border-[--color-border] rounded-lg bg-[--color-bg-card]">
+        <details class="group border border-[--color-border] rounded-lg bg-[--color-bg-card] hover:border-[--color-accent]/30 transition-colors">
           <summary class="cursor-pointer px-6 py-4 font-semibold text-sm flex items-center justify-between gap-4 min-h-[44px]">
             {t('faq.q5')}
             <span class="text-[--color-text-muted] group-open:rotate-180 transition-transform shrink-0">&#9662;</span>
@@ -344,8 +344,8 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
 
   <!-- CTA -->
   <hr class="section-divider" />
-  <section class="py-20 bg-[--color-bg-subtle] reveal" aria-labelledby="cta-heading">
-    <div class="max-w-7xl mx-auto px-4 text-center">
+  <section class="py-16 md:py-20 bg-[--color-bg-subtle] reveal" aria-labelledby="cta-heading">
+    <div class="max-w-7xl mx-auto px-6 text-center">
       <p class="font-mono text-[--color-text-muted] text-sm mb-4 tracking-wider">{t('cta.tag')}</p>
       <h2 id="cta-heading" class="text-3xl md:text-4xl font-bold mb-4">
         <span class="text-[--color-accent]">{t('cta.title')}</span>
