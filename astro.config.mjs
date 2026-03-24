@@ -5,6 +5,8 @@ import tailwindcss from '@tailwindcss/vite';
 import preact from '@astrojs/preact';
 
 // https://astro.build/config
+const buildDate = new Date().toISOString();
+
 export default defineConfig({
   site: 'https://pruviq.com',
   i18n: {
@@ -65,6 +67,8 @@ export default defineConfig({
         } else {
           item.priority = 0.5; item.changefreq = /** @type {any} */ ('monthly');
         }
+
+        item.lastmod = buildDate;
 
         return item;
       }
