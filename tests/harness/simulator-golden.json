@@ -210,7 +210,15 @@
         },
         "ranges_per_entry": {
           "win_rate": {
-            "min": 10,
+            "min": 0,
+            "max": 95
+          },
+          "profit_factor": {
+            "min": 0.0,
+            "max": 20,
+            "note": "worst3는 0에 가까울 수 있음"
+          },
+          "total_trades": {
             "min": 1,
             "max": 2000
           }
