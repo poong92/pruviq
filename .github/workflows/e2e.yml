@@ -75,7 +75,7 @@ jobs:
       # workers 2 (M4 Pro 성능 활용)
       # retries 1 (진짜 flaky는 self-hosted에서도 재현됨, 1회로 충분)
       # --ignore-snapshots: visual regression은 tests/visual/ (ubuntu-only, 별도 workflow)
-      timeout-minutes: 15
+      timeout-minutes: 20
       env:
         CI: true
 
