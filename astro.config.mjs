@@ -39,6 +39,8 @@ export default defineConfig({
         const enUrl = `https://pruviq.com${basePath}`;
         const koUrl = `https://pruviq.com/ko${basePath === '/' ? '/' : basePath}`;
 
+        item.lastmod = new Date().toISOString().slice(0, 10);
+
         item.links = [
           { url: enUrl, lang: 'en' },
           { url: koUrl, lang: 'ko' },
