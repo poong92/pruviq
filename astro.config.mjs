@@ -45,6 +45,11 @@ export default defineConfig({
           { url: enUrl, lang: 'x-default' },
         ];
 
+        // Ensure every URL has lastmod so sitemap-index also gets one
+        if (!item.lastmod) {
+          item.lastmod = new Date();
+        }
+
         // Priority + crawl frequency by page type
         // @ts-ignore — EnumChangefreq accepts these string values at runtime
         const p = basePath;
