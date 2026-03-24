@@ -19,7 +19,7 @@ interface Props {
 
 const labels = {
   en: {
-    weeklyBest: "This Week's Best 3",
+    weeklyBest: "This Week's Best",
     weeklyBestSub: "7-day Profit Factor ranking across 569+ coins",
     worstTitle: "Worst 3 This Week",
     worstSub: "Avoid these — bottom 3 by 7-day PF",
@@ -38,7 +38,7 @@ const labels = {
       "All strategies have < 100 weekly trades. Results have low statistical reliability — check daily rankings for more data.",
   },
   ko: {
-    weeklyBest: "이번 주 상위 3개",
+    weeklyBest: "이번 주 베스트",
     weeklyBestSub: "569+ 코인 기준 7일 PF 랭킹",
     worstTitle: "이번 주 하위 3개",
     worstSub: "피해야 할 조합 — 7일 PF 하위 3개",
