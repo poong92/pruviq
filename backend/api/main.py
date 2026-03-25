@@ -856,6 +856,30 @@ async def simulate(req: SimulationRequest):
     else:
         data_range = data_manager.data_range()
 
+    # Yearly stats — group trades by exit year
+    from collections import defaultdict as _dd_yearly
+    _yearly_map = _dd_yearly(lambda: {"trades": 0, "wins": 0, "pnl": 0.0})
+    for t in all_trades:
+        _yk = t.get("exit_time", t["time"])[:4]
+        if _yk and _yk.isdigit():
+            _yearly_map[_yk]["trades"] += 1
+            _yearly_map[_yk]["pnl"] += t["pnl_pct"] / n_coins
+            if t["pnl_pct"] > 0:
+                _yearly_map[_yk]["wins"] += 1
+    yearly_stats_sim = []
+    for yr in sorted(_yearly_map):
+        yd = _yearly_map[yr]
+        yw = yd["wins"]
+        yt = yd["trades"]
+        ywr = round(yw / yt * 100, 1) if yt > 0 else 0.0
+        ywins_pnl = sum(t["pnl_pct"] / n_coins for t in all_trades if t.get("exit_time", t["time"])[:4] == yr and t["pnl_pct"] > 0)
+        yloss_pnl = abs(sum(t["pnl_pct"] / n_coins for t in all_trades if t.get("exit_time", t["time"])[:4] == yr and t["pnl_pct"] <= 0))
+        ypf = round(ywins_pnl / yloss_pnl, 2) if yloss_pnl > 0 else (999.99 if ywins_pnl > 0 else 0.0)
+        yearly_stats_sim.append({
+            "year": int(yr), "trades": yt, "wins": yw,
+            "win_rate": ywr, "total_return_pct": round(yd["pnl"], 2), "profit_factor": ypf,
+        })
+
     resp_data = {
         "strategy": req.strategy,
         "direction": direction,
@@ -883,6 +907,7 @@ async def simulate(req: SimulationRequest):
         "data_range": data_range,
         "equity_curve": downsample_equity(eq_times, eq_values),
         "coin_results": [cr.model_dump() for cr in coin_results],
+        "yearly_stats": yearly_stats_sim,
     }
 
     set_cached(ckey, resp_data)

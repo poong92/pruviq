@@ -98,6 +98,7 @@ class SimulationResponse(BaseModel):
     data_range: str
     equity_curve: List[EquityPoint]
     coin_results: List["CoinResult"] = []
+    yearly_stats: List[dict] = []
 
 
 class CoinInfo(BaseModel):
