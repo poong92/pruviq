@@ -10,7 +10,7 @@
   },
 
   "coin_count": {
-    "current": 569,
+    "current": 570,
     "stale_value": 549,
     "min_acceptable": 500,
     "description": "현재 코인 수. 새 코인 추가 시 여기만 수정."
