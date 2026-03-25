@@ -745,7 +745,7 @@ export default function ResultsPanel({
           {resultTab === "summary" && (
             <div class="p-3 md:p-4">
               {/* Hero: single big number (토스 패턴) */}
-              <ResultHero result={result} t={t} />
+              <ResultHero result={result} t={t} simMode={simMode} />
               {/* Strategy verdict banner */}
               {result &&
                 (() => {
@@ -755,11 +755,15 @@ export default function ResultsPanel({
                   let grade: string;
                   let gradeColor: string;
                   let reason: string;
-                  // Grade thresholds calibrated for multi-coin portfolio (50 coins).
-                  // Single-coin runs naturally produce higher PF; portfolio
-                  // aggregation dilutes edge. Thresholds reflect realistic
-                  // ranges from 2+ years of data across 16 strategies.
-                  if (pf >= 1.3 && wr >= 53 && mdd <= 15) {
+                  // Grade thresholds differ by mode:
+                  // - Standard (/simulate): MDD normalized by n_coins (portfolio-level)
+                  // - Expert (/backtest): MDD based on per-position USD (naturally higher)
+                  const isExpert = simMode === "expert";
+                  const mddStrong = isExpert ? 40 : 15;
+                  const mddGood = isExpert ? 55 : 25;
+                  const mddFair = isExpert ? 70 : 35;
+
+                  if (pf >= 1.3 && wr >= 53 && mdd <= mddStrong) {
                     grade = t.gradeStrong;
                     gradeColor = "#22c55e";
                     reason = t.reasonStrong(
@@ -767,7 +771,7 @@ export default function ResultsPanel({
                       wr.toFixed(1),
                       mdd.toFixed(1),
                     );
-                  } else if (pf >= 1.1 && wr >= 50 && mdd <= 25) {
+                  } else if (pf >= 1.1 && wr >= 50 && mdd <= mddGood) {
                     grade = t.gradeGood;
                     gradeColor = "#86efac";
                     reason = t.reasonGood(
@@ -775,7 +779,7 @@ export default function ResultsPanel({
                       wr.toFixed(1),
                       mdd.toFixed(1),
                     );
-                  } else if (pf >= 1.0 && mdd <= 35) {
+                  } else if (pf >= 1.0 && mdd <= mddFair) {
                     grade = t.gradeFair;
                     gradeColor = "#facc15";
                     const weak =
@@ -789,7 +793,7 @@ export default function ResultsPanel({
                     const mainIssue =
                       pf < 1.0
                         ? t.reasonWeakPf(formatPF(pf))
-                        : mdd > 35
+                        : mdd > mddFair
                           ? t.reasonWeakMdd(mdd.toFixed(1))
                           : t.reasonWeakWr(wr.toFixed(1));
                     reason = t.reasonWeakSuffix(mainIssue);
