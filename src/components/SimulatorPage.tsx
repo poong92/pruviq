@@ -1081,10 +1081,13 @@ export default function SimulatorPage({ lang = "en" }: Props) {
           })),
         );
       }
-      if (p.direction) setDirection(p.direction);
-      if (p.sl_pct) setSlPct(p.sl_pct);
-      if (p.tp_pct) setTpPct(p.tp_pct);
-      if (p.max_bars) setMaxBars(p.max_bars);
+      // URL params take priority over preset defaults (e.g., ranking → simulator
+      // passes &dir=long&sl=8&tp=6 which should NOT be overwritten by preset defaults)
+      const urlParams = new URLSearchParams(window.location.search);
+      if (p.direction && !urlParams.has("dir")) setDirection(p.direction);
+      if (p.sl_pct && !urlParams.has("sl")) setSlPct(p.sl_pct);
+      if (p.tp_pct && !urlParams.has("tp")) setTpPct(p.tp_pct);
+      if (p.max_bars && !urlParams.has("bars")) setMaxBars(p.max_bars);
       if (p.avoid_hours) setAvoidHours(new Set(p.avoid_hours));
       setPresetLoading(false);
       return p;
