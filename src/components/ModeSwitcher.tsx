@@ -115,6 +115,7 @@ export default function ModeSwitcher({
             aria-selected={active}
             aria-controls={`panel-${tab.key}`}
             id={`tab-${tab.key}`}
+            data-testid={`mode-${tab.key}`}
             tabIndex={active ? 0 : -1}
             onClick={() => setMode(tab.key)}
             onKeyDown={(e: KeyboardEvent) => handleKeyDown(e, idx)}
