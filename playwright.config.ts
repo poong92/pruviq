@@ -41,6 +41,22 @@ export default defineConfig({
         hasTouch: true,
       },
     },
+    // Firefox: same tests as desktop, cross-browser validation
+    {
+      name: "firefox",
+      testIgnore: [
+        "**/mobile-menu.spec.ts",
+        "**/visual-regression.spec.ts",
+        "**/visual-snapshot.spec.ts",
+        "**/prod-smoke.spec.ts",
+        "**/vision-collect.spec.ts",
+        "**/interactive-qa.spec.ts",
+      ],
+      use: {
+        browserName: "firefox",
+        viewport: { width: 1280, height: 720 },
+      },
+    },
     // prod-smoke: only active when BASE_URL=https://pruviq.com
     // Runs prod-smoke.spec.ts AND vision-collect.spec.ts against the LIVE site.
     {
@@ -49,6 +65,7 @@ export default defineConfig({
         "**/prod-smoke.spec.ts",
         "**/vision-collect.spec.ts",
         "**/interactive-qa.spec.ts",
+        "**/seo-api-contract.spec.ts",
       ],
       use: {
         baseURL: process.env.BASE_URL || "http://localhost:4321",

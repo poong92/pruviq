@@ -87,6 +87,49 @@ jobs:
         timeout-minutes: 6
         continue-on-error: true
 
+      - name: Run SEO + API contract tests
+        id: seo_api
+        run: |
+          npx playwright test tests/e2e/seo-api-contract.spec.ts \
+            --config=playwright.production.config.ts \
+            --project=desktop \
+            --timeout 60000 \
+            --retries 1
+        env:
+          BASE_URL: https://pruviq.com
+          CI: true
+        timeout-minutes: 3
+        continue-on-error: true
+
+      - name: Install Firefox + WebKit
+        run: npx playwright install firefox webkit
+
+      - name: Cross-browser smoke (Firefox)
+        run: |
+          npx playwright test tests/e2e/seo-api-contract.spec.ts tests/e2e/prod-smoke.spec.ts \
+            --config=playwright.production.config.ts \
+            --project=firefox \
+            --timeout 60000 \
+            --retries 1
+        env:
+          BASE_URL: https://pruviq.com
+          CI: true
+        timeout-minutes: 5
+        continue-on-error: true
+
+      - name: Cross-browser smoke (WebKit)
+        run: |
+          npx playwright test tests/e2e/seo-api-contract.spec.ts tests/e2e/prod-smoke.spec.ts \
+            --config=playwright.production.config.ts \
+            --project=webkit \
+            --timeout 60000 \
+            --retries 1
+        env:
+          BASE_URL: https://pruviq.com
+          CI: true
+        timeout-minutes: 5
+        continue-on-error: true
+
       - name: Upload smoke test report + interactive screenshots
         if: always()
         uses: actions/upload-artifact@v4
