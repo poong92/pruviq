@@ -46,23 +46,12 @@ test.describe("Interactive QA — 기능 클릭 테스트", () => {
     await page.goto("/simulate/");
     await page.waitForLoadState("domcontentloaded");
 
-<<<<<<< Updated upstream
-    const breakoutCard = page.locator('[data-testid="quick-cat-breakout"]');
-    const cardLocator =
-      (await breakoutCard.count()) > 0
-        ? breakoutCard
-        : page.locator("button:has-text('Breakout')").first();
-
-    await expect(cardLocator).toBeVisible({ timeout: 15000 });
-    await cardLocator.click();
-=======
     // Breakout 클릭
     const breakoutCard = page
       .locator('[data-testid="quick-cat-breakout"]')
       .first();
     await expect(breakoutCard).toBeVisible({ timeout: 10000 });
     await breakoutCard.click();
->>>>>>> Stashed changes
 
     await expect(page.locator("text=/\\d+\\.?\\d*%/").first()).toBeVisible({
       timeout: 60000,
@@ -287,41 +276,7 @@ test.describe("Interactive QA — 기능 클릭 테스트", () => {
     console.log("✅ Reversals 시나리오 수치 범위 정상");
   });
 
-<<<<<<< Updated upstream
-  // ── 8. 쿠키 배너 ──────────────────────────────────────────────────────────
-
-  test("cookie banner: Got it 클릭 → 사라짐", async ({ page }) => {
-    await page.goto("/");
-    await page.waitForLoadState("domcontentloaded");
-
-    const gotIt = page.locator('button:has-text("Got it")').first();
-    if ((await gotIt.count()) > 0) {
-      await gotIt.click();
-      await page.waitForTimeout(500);
-      await expect(gotIt).not.toBeVisible();
-    }
-  });
-
-  // ── 9. 모바일 메뉴 ────────────────────────────────────────────────────────
-
-  test("mobile: 햄버거 메뉴 열기 → 닫기", async ({ page, isMobile }) => {
-    test.skip(!isMobile, "Mobile only");
-
-    await page.goto("/");
-    await page.waitForLoadState("domcontentloaded");
-
-    const hamburger = page
-      .locator('[aria-label*="menu"], [aria-label*="Menu"]')
-      .first();
-
-    if ((await hamburger.count()) > 0) {
-      await hamburger.click();
-      await page.waitForTimeout(500);
-      const bodyText = await page.textContent("body");
-      expect(bodyText).toMatch(/simulat|ranking|coins/i);
-    }
-=======
-  // ── 7. Copy Link 버튼 클릭 ────────────────────────────────────────────────
+  // ── 8. Copy Link 버튼 클릭 ────────────────────────────────────────────────
 
   test("simulate: Copy Link 버튼 클릭 → Copied 표시", async ({ page }) => {
     await page.goto("/simulate/");
@@ -347,7 +302,7 @@ test.describe("Interactive QA — 기능 클릭 테스트", () => {
     console.log("✅ Copy Link 버튼 클릭 → 에러 없음");
   });
 
-  // ── 8. CSV Download 버튼 존재 확인 ────────────────────────────────────────
+  // ── 9. CSV Download 버튼 존재 확인 ────────────────────────────────────────
 
   test("simulate: Download CSV 버튼 존재 확인", async ({ page }) => {
     await page.goto("/simulate/");
@@ -372,7 +327,7 @@ test.describe("Interactive QA — 기능 클릭 테스트", () => {
     console.log("✅ Download CSV 버튼 존재 확인");
   });
 
-  // ── 9. Avoid Hours UI 클릭 ────────────────────────────────────────────────
+  // ── 10. Avoid Hours UI 클릭 ───────────────────────────────────────────────
 
   test("simulate: Expert Avoid Hours 버튼 클릭", async ({ page }) => {
     await page.goto("/simulate/");
@@ -413,7 +368,7 @@ test.describe("Interactive QA — 기능 클릭 테스트", () => {
     console.log("✅ Expert Avoid Hours 버튼 클릭 → JS 에러 없음");
   });
 
-  // ── 10. Quick Adjust 토글 ─────────────────────────────────────────────────
+  // ── 11. Quick Adjust 토글 ────────────────────────────────────────────────
 
   test("simulate: Quick Adjust 토글 → 슬라이더 표시", async ({ page }) => {
     await page.goto("/simulate/");
@@ -447,7 +402,7 @@ test.describe("Interactive QA — 기능 클릭 테스트", () => {
     console.log("✅ Quick Adjust 토글 → 슬라이더 표시 확인");
   });
 
-  // ── 11. Expert 프리셋 3개 순차 클릭 ───────────────────────────────────────
+  // ── 12. Expert 프리셋 3개 순차 클릭 ──────────────────────────────────────
 
   test("simulate: Expert 프리셋 3개 순차 클릭", async ({ page }) => {
     await page.goto("/simulate/");
@@ -485,6 +440,39 @@ test.describe("Interactive QA — 기능 클릭 테스트", () => {
     expect(errors.length).toBe(0);
 
     console.log("✅ Expert 프리셋 3개 순차 클릭 → JS 에러 없음");
->>>>>>> Stashed changes
+  });
+
+  // ── 13. 쿠키 배너 ─────────────────────────────────────────────────────────
+
+  test("cookie banner: Got it 클릭 → 사라짐", async ({ page }) => {
+    await page.goto("/");
+    await page.waitForLoadState("domcontentloaded");
+
+    const gotIt = page.locator('button:has-text("Got it")').first();
+    if ((await gotIt.count()) > 0) {
+      await gotIt.click();
+      await page.waitForTimeout(500);
+      await expect(gotIt).not.toBeVisible();
+    }
+  });
+
+  // ── 14. 모바일 메뉴 ───────────────────────────────────────────────────────
+
+  test("mobile: 햄버거 메뉴 열기 → 닫기", async ({ page, isMobile }) => {
+    test.skip(!isMobile, "Mobile only");
+
+    await page.goto("/");
+    await page.waitForLoadState("domcontentloaded");
+
+    const hamburger = page
+      .locator('[aria-label*="menu"], [aria-label*="Menu"]')
+      .first();
+
+    if ((await hamburger.count()) > 0) {
+      await hamburger.click();
+      await page.waitForTimeout(500);
+      const bodyText = await page.textContent("body");
+      expect(bodyText).toMatch(/simulat|ranking|coins/i);
+    }
   });
 });
