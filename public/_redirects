@@ -5,6 +5,8 @@
 
 /builder /simulate/ 301
 /builder/* /simulate/ 301
+/simulator /simulate/ 301
+/simulator/* /simulate/ 301
 
 # /performance page exists — no redirect needed
 

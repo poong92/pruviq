@@ -1,5 +1,5 @@
 // ⚠ STATS CONSTANTS — en.ts와 동기 유지. coins_analyzed 변경 시 두 파일 모두 업데이트.
-// 현재 값: 569 (2026-03-17 기준). 출처: /public/data/site-stats.json
+// 현재 값: 570 (2026-03-17 기준). 출처: /public/data/site-stats.json
 
 import type { TranslationKey } from "./en";
 
@@ -23,7 +23,7 @@ export const ko: Record<TranslationKey, string> = {
   "hero.title2": "전략 검증 완료.",
   "hero.subtitle": "코딩 없음. 가입 없음. 비용 없음. 데이터만 있습니다.",
   "hero.desc":
-    "569개 이상의 코인에서 5개의 전략을 테스트했습니다. 4개는 손실을 기록했습니다. 모든 결과를 공개합니다. 실제 자금을 투입하기 전에 무엇이 실제로 작동하는지 확인하세요.",
+    "570개 이상의 코인에서 5개의 전략을 테스트했습니다. 4개는 손실을 기록했습니다. 모든 결과를 공개합니다. 실제 자금을 투입하기 전에 무엇이 실제로 작동하는지 확인하세요.",
   "hero.cta_primary": "무료 시뮬레이터 체험",
   "hero.cta_builder": "나만의 전략 만들기",
   "hero.cta1": "전략 탐색하기",
@@ -37,7 +37,7 @@ export const ko: Record<TranslationKey, string> = {
   "hero.stat4": "백테스트 거래 수",
   "hero.stat5": "처리된 데이터 포인트",
   "hero.stat6": "신용카드 불필요",
-  "hero.tool_coins": "569+ 코인 테스트",
+  "hero.tool_coins": "570+ 코인 테스트",
   "hero.tool_strategies": "88+ 조합 백테스트",
   "hero.tool_data": "2년+ 과거 데이터",
   "hero.tool_free": "100% 무료, 가입 불필요",
@@ -74,11 +74,11 @@ export const ko: Record<TranslationKey, string> = {
   "problem.title": "크립토 트레이딩, 뭐가 문제인가?",
   "problem.card1_title": "백테스트는 거짓말합니다",
   "problem.card1_desc":
-    "569개 이상의 코인에서 88개 전략 조합을 2년 이상 실전 데이터로 검증했습니다. 선행 편향, 과적합, 레짐 무시 — 대부분의 전략이 같은 이유로 실패합니다. 저희는 어떤 전략이 왜 탈락했는지 전부 공개합니다.",
+    "570개 이상의 코인에서 88개 전략 조합을 2년 이상 실전 데이터로 검증했습니다. 선행 편향, 과적합, 레짐 무시 — 대부분의 전략이 같은 이유로 실패합니다. 저희는 어떤 전략이 왜 탈락했는지 전부 공개합니다.",
   "problem.card1_source": "출처: PRUVIQ 검증 파이프라인, 2024-2026",
   "problem.card2_title": "4개 전략 제거",
   "problem.card2_desc":
-    "569개 이상의 코인, 2년 이상 데이터로 5개 전략을 테스트했습니다. 4개가 탈락했고, 저희는 그 실패를 모두 공개했습니다. 대부분의 플랫폼은 이걸 숨깁니다. 저희는 그것을 핵심 기능으로 만들었습니다.",
+    "570개 이상의 코인, 2년 이상 데이터로 5개 전략을 테스트했습니다. 4개가 탈락했고, 저희는 그 실패를 모두 공개했습니다. 대부분의 플랫폼은 이걸 숨깁니다. 저희는 그것을 핵심 기능으로 만들었습니다.",
   "problem.card2_source": "출처: PRUVIQ 전략 라이브러리 — 모든 결과 공개",
   "problem.card3_title": "전문가도 틀렸습니다",
   "problem.card3_desc":
@@ -97,7 +97,7 @@ export const ko: Record<TranslationKey, string> = {
     "PRUVIQ는 실제 자금을 투입하기 전에 전략을 테스트할 수 있게 합니다. 모든 시뮬레이션은 현실적인 비용을 반영하며, 실패를 포함한 모든 결과를 공개합니다. 시그널 서비스가 아닌, 검증 도구입니다.",
   "evidence.step1_title": "트레이딩 전에 백테스트",
   "evidence.step1_desc":
-    "모든 전략은 569개 이상의 코인, 2년 이상의 데이터로 테스트한 후에만 실제 자본을 투입합니다. 예외 없음.",
+    "모든 전략은 570개 이상의 코인, 2년 이상의 데이터로 테스트한 후에만 실제 자본을 투입합니다. 예외 없음.",
   "evidence.step2_title": "트레이딩 전에 시뮬레이션",
   "evidence.step2_desc":
     "실제 수수료와 슬리피지를 반영한 과거 데이터로 전략을 테스트하세요. 드로다운, 연속 손실, 실제 리스크를 확인한 후 결정하세요.",
@@ -154,7 +154,7 @@ export const ko: Record<TranslationKey, string> = {
     "전략 라이브러리에서 선택하세요. BB Squeeze, 모멘텀, 평균회귀 — 또는 나만의 전략으로.",
   "system.step2": "시뮬레이션",
   "system.step2_desc":
-    "569개 이상의 코인, 2년 이상의 데이터로 실행. 수수료, 슬리피지, 드로다운 포함. 빈틈 없이.",
+    "570개 이상의 코인, 2년 이상의 데이터로 실행. 수수료, 슬리피지, 드로다운 포함. 빈틈 없이.",
   "system.step3": "검증",
   "system.step3_desc":
     "전체 그림 확인: 승률, 최대 드로다운, 연속 손실, 수익 팩터. 그리고 판단하세요.",
@@ -166,11 +166,11 @@ export const ko: Record<TranslationKey, string> = {
   "features.card1_tag": "전략 시뮬레이터",
   "features.card1_title": "만들고 테스트하기",
   "features.card1_desc":
-    "11개 이상의 지표, 노코드 빌더. 진입 조건, 손절, 익절 설정. 몇 초만에 백테스트 실행.",
+    "14개 지표, 노코드 빌더. 진입 조건, 손절, 익절 설정. 몇 초만에 백테스트 실행.",
   "features.card2_tag": "전략 라이브러리",
   "features.card2_title": "검증된 전략들",
   "features.card2_desc":
-    "569개 이상의 코인에서 5개 전략 백테스트. 검증된 것과 중단된 것 모두 결과 공개.",
+    "570개 이상의 코인에서 5개 전략 백테스트. 검증된 것과 중단된 것 모두 결과 공개.",
   "features.card3_tag": "수수료 계산기",
   "features.card3_title": "비교하고 절약하기",
   "features.card3_desc": "거래소 수수료 비교. PRUVIQ 추천 링크로 할인 혜택.",
@@ -183,7 +183,7 @@ export const ko: Record<TranslationKey, string> = {
     "지표를 선택하고 진입/청산 조건을 설정하세요. 프리셋을 쓰거나 처음부터 만드세요.",
   "how.step2": "백테스트",
   "how.step2_desc":
-    "569개 이상 코인, 2년 이상 데이터로 실행. 수수료, 슬리피지 포함.",
+    "570개 이상 코인, 2년 이상 데이터로 실행. 수수료, 슬리피지 포함.",
   "how.step3": "검증",
   "how.step3_desc":
     "승률, 수익 팩터, 최대 드로다운, 수익 곡선을 확인하고 판단하세요.",
@@ -276,7 +276,7 @@ export const ko: Record<TranslationKey, string> = {
     "전략을 탐색하기 전에 교육 가이드부터 시작하세요. 백테스팅 기초, 리스크 관리, 흔한 실수를 배우세요.",
   "strategies.beginner_cta": "학습 시작하기",
   "strategies.verified_explanation":
-    "검증됨 = 569개+ 코인, 2년+ 데이터에서 모든 검증 통과",
+    "검증됨 = 570개+ 코인, 2년+ 데이터에서 모든 검증 통과",
   "strategies.simulate_button": "시뮬레이션",
   "strategies.fees_cta": "거래소 수수료 비교",
   "strategies.performance_cta": "백테스트 결과 보기",
@@ -284,13 +284,13 @@ export const ko: Record<TranslationKey, string> = {
   // Strategies: Simulator Presets section
   "strategies.presets_title": "시뮬레이터 프리셋 전체 ({count}종)",
   "strategies.presets_desc":
-    "아래 전략을 클릭하면 시뮬레이터에서 바로 파라미터가 적용됩니다. 569개 코인 동시 테스트.",
+    "아래 전략을 클릭하면 시뮬레이터에서 바로 파라미터가 적용됩니다. 570개 코인 동시 테스트.",
 
   // Blog
   "blog.tag": "트레이딩 IQ",
   "blog.title": "트레이딩 IQ를 높이세요.",
   "blog.desc":
-    "무엇이 되고 안 되는지 확인하세요. 569개 코인, 88개 파라미터 조합에서 얻은 백테스팅 방법론, 리스크 관리, 교훈.",
+    "무엇이 되고 안 되는지 확인하세요. 570개 코인, 88개 파라미터 조합에서 얻은 백테스팅 방법론, 리스크 관리, 교훈.",
   "blog.coming_soon": "최신 인사이트",
   "blog.coming_desc":
     "시장 분석, 퀀트 교육, 전략 시뮬레이션 업데이트를 확인하세요.",
@@ -323,7 +323,7 @@ export const ko: Record<TranslationKey, string> = {
   "demo.interactive_tag": "인터랙티브 데모",
   "demo.hero_title": "직접 확인하세요",
   "demo.hero_desc":
-    "아래 손절/익절 슬라이더를 조정하여 전략 성과가 어떻게 변하는지 확인하세요. 569개+ 코인에 대한 실제 백테스트 결과이며, 수수료가 포함되어 있습니다.",
+    "아래 손절/익절 슬라이더를 조정하여 전략 성과가 어떻게 변하는지 확인하세요. 570개+ 코인에 대한 실제 백테스트 결과이며, 수수료가 포함되어 있습니다.",
   "demo.want_more": "더 세밀한 제어가 필요하신가요?",
   "demo.want_more_desc":
     "전체 시뮬레이터에서는 20개+ 지표로 커스텀 전략을 만들고, 원하는 코인을 선택하여 테스트하고, OOS 검증까지 할 수 있습니다.",
@@ -529,7 +529,7 @@ export const ko: Record<TranslationKey, string> = {
   "coins.tag": "코인 탐색기",
   "coins.title": "전체 코인 탐색",
   "coins.desc":
-    "569개 이상 암호화폐의 실시간 시장 데이터. 가격, 시가총액, 거래량, 7일 차트 — 15분마다 갱신.",
+    "570개 이상 암호화폐의 실시간 시장 데이터. 가격, 시가총액, 거래량, 7일 차트 — 15분마다 갱신.",
   "coins.search": "코인 검색...",
   "coins.apply": "전략 적용",
   "coins.resim": "재시뮬레이션",
@@ -585,17 +585,17 @@ export const ko: Record<TranslationKey, string> = {
     "실시간 암호화폐 시장 현황. 공포/탐욕 지수, BTC 도미넌스, 상승/하락 순위, 경제 캘린더, 주요 뉴스.",
   "meta.coins_title": "코인 탐색기 - 프루빅(PRUVIQ)",
   "meta.coins_desc":
-    "프루빅(PRUVIQ)의 실시간 암호화폐 시장 데이터. 569개 이상 코인의 가격, 시가총액, 거래량, 7일 차트를 확인하세요. 15분마다 갱신됩니다.",
+    "프루빅(PRUVIQ)의 실시간 암호화폐 시장 데이터. 570개 이상 코인의 가격, 시가총액, 거래량, 7일 차트를 확인하세요. 15분마다 갱신됩니다.",
   "meta.home_title":
-    "PRUVIQ \u2014 무료 암호화폐 전략 백테스터 | 569+ 코인, 가입 불필요",
+    "PRUVIQ \u2014 무료 암호화폐 전략 백테스터 | 570+ 코인, 가입 불필요",
   "meta.home_desc":
-    "569개 이상의 코인에서 2년+ 데이터로 무료 백테스트. 수수료, 슬리피지 모델링, 실패 포함 전체 결과 공개. 가입 불필요.",
+    "570개 이상의 코인에서 2년+ 데이터로 무료 백테스트. 수수료, 슬리피지 모델링, 실패 포함 전체 결과 공개. 가입 불필요.",
   "meta.simulate_title":
     "전략 시뮬레이터 \u2014 커스텀 전략 빌드 & 백테스트 | PRUVIQ",
   "meta.simulate_desc":
-    "11개+ 지표로 커스텀 전략을 만들고 569+ 코인에서 백테스트. 코딩 불필요. 무료, 즉시 결과.",
+    "14개 지표로 커스텀 전략을 만들고 570+ 코인에서 백테스트. 코딩 불필요. 무료, 즉시 결과.",
   "meta.index_desc":
-    "프루빅(PRUVIQ) — 무료 크립토 전략 백테스팅. 569개 이상 코인과 2년 이상의 실제 데이터로 전략을 검증하고, 실패 사례까지 투명하게 공개합니다.",
+    "프루빅(PRUVIQ) — 무료 크립토 전략 백테스팅. 570개 이상 코인과 2년 이상의 실제 데이터로 전략을 검증하고, 실패 사례까지 투명하게 공개합니다.",
   "meta.strategies_title": "전략 라이브러리 - 프루빅(PRUVIQ)",
   "meta.strategies_desc":
     "테스트한 모든 전략의 전체 시뮬레이션 결과 — 검증된 것, 중단된 것, 그 사이의 모든 것. 체리피킹 없음.",
@@ -604,7 +604,7 @@ export const ko: Record<TranslationKey, string> = {
     "트레이딩 IQ를 높이세요. 백테스팅, 리스크 관리, 알고리즘 전략, 실제 트레이딩의 교훈.",
   "meta.demo_title": "PRUVIQ 데모 — 인터랙티브 전략 시뮬레이터",
   "meta.demo_desc":
-    "PRUVIQ 전략 시뮬레이터를 즉시 체험하세요. 손절/익절을 조정하여 569개+ 코인에 대한 실제 백테스트 결과를 확인하세요.",
+    "PRUVIQ 전략 시뮬레이터를 즉시 체험하세요. 손절/익절을 조정하여 570개+ 코인에 대한 실제 백테스트 결과를 확인하세요.",
   "meta.fees_title": "거래소 수수료 비교 - PRUVIQ",
   "meta.fees_desc":
     "바이낸스 거래소 수수료 비교. PRUVIQ 추천 링크로 10% 절약. 투명한 수수료 비교.",
@@ -613,7 +613,7 @@ export const ko: Record<TranslationKey, string> = {
     "PRUVIQ 트레이딩 시스템의 전체 버전 히스토리. 모든 변경, 모든 이유, 모든 날짜.",
   "meta.performance_title": "백테스트 성과 - PRUVIQ",
   "meta.performance_desc":
-    "BB Squeeze SHORT 전략 백테스트 결과. 569개 코인, 2년 이상 데이터, 2,898건 거래. 실패 포함 전체 공개.",
+    "BB Squeeze SHORT 전략 백테스트 결과. 570개 코인, 2년 이상 데이터, 2,898건 거래. 실패 포함 전체 공개.",
   "meta.about_title": "소개 - PRUVIQ",
   "meta.about_desc":
     "PRUVIQ 프로젝트를 만나보세요. 우리의 미션: 크립토 전략 검증을 누구나 할 수 있게. 과대광고 없이. 데이터만.",
@@ -629,7 +629,7 @@ export const ko: Record<TranslationKey, string> = {
   "about.team_stat1_label": "백테스트 전략",
   "about.team_stat1_val": "88+",
   "about.team_stat2_label": "커버 코인",
-  "about.team_stat2_val": "569",
+  "about.team_stat2_val": "570",
   "about.team_stat3_label": "시뮬레이터 실행 수",
   "about.team_stat3_val": "100만+",
   "about.philosophy_tag": "우리의 철학",
@@ -642,7 +642,7 @@ export const ko: Record<TranslationKey, string> = {
     "6명의 전문가가 BTC 필터를 추천했습니다. 백테스트가 틀렸음을 증명했습니다. 의견이 아닌 숫자를 믿습니다.",
   "about.philosophy3_title": "자기 밥은 자기가",
   "about.philosophy3_desc":
-    "모든 전략은 569개 이상의 코인에서 2년 이상의 데이터로 백테스트한 후 공개합니다. 근거 없이 권하지 않습니다.",
+    "모든 전략은 570개 이상의 코인에서 2년 이상의 데이터로 백테스트한 후 공개합니다. 근거 없이 권하지 않습니다.",
   "about.philosophy4_title": "영원히 무료",
   "about.philosophy4_desc":
     "전략 검증은 누구나 접근할 수 있어야 합니다. 핵심 기능은 항상 무료. 거래소 제휴를 통해서만 수익을 창출합니다.",
@@ -660,7 +660,7 @@ export const ko: Record<TranslationKey, string> = {
   "about.roadmap_title": "로드맵",
   "about.roadmap_desc": "PRUVIQ는 활발히 개발 중입니다. 현재 작업 중인 내용:",
   "about.roadmap_done1": "36개 프리셋 전략 시뮬레이터",
-  "about.roadmap_done2": "569+ 코인 백테스팅 엔진",
+  "about.roadmap_done2": "570+ 코인 백테스팅 엔진",
   "about.roadmap_done3": "29개 교육 가이드 (영어 + 한국어)",
   "about.roadmap_done4": "일일 전략 랭킹",
   "about.roadmap_next1": "더 많은 전략 유형과 지표",
@@ -698,12 +698,12 @@ export const ko: Record<TranslationKey, string> = {
     "2026년 3월 실거래 중단. 아래 데이터는 2024년 1월 – 2026년 2월 백테스트 결과입니다.",
   "perf.title": "모든 거래 공개. 손실 포함.",
   "perf.desc":
-    "BB Squeeze SHORT 전략 백테스트 결과. 569개 코인, 2년 이상 과거 데이터. 체리피킹 없음.",
+    "BB Squeeze SHORT 전략 백테스트 결과. 570개 코인, 2년 이상 과거 데이터. 체리피킹 없음.",
   "perf.loading": "백테스트 성과 데이터 로딩 중...",
   "perf.stat1_label": "전략",
   "perf.stat1_val": "BB Squeeze SHORT",
   "perf.stat2_label": "코인",
-  "perf.stat2_val": "569개",
+  "perf.stat2_val": "570개",
   "perf.stat3_label": "레버리지",
   "perf.stat3_val": "5배",
   "perf.stat4_label": "데이터 소스",
@@ -716,11 +716,11 @@ export const ko: Record<TranslationKey, string> = {
     "성과 데이터는 2년 이상의 과거 데이터를 사용한 백테스트에서 수집되며, 수수료와 슬리피지를 포함합니다. 대시보드가 로딩되지 않으면 JavaScript를 활성화하거나 새로고침해 주세요.",
   "perf.results_title": "백테스트 결과",
   "perf.results_desc":
-    "2년+, 569개 코인, 2,898건 거래. 0.08%/side 수수료 포함.",
+    "2년+, 570개 코인, 2,898건 거래. 0.08%/side 수수료 포함.",
   "perf.gap_title": "백테스트 vs 현실",
   "perf.gap_desc":
     "모든 백테스트에는 실거래와의 괴리가 있습니다. 직접 경험했고 — 한계를 초과했을 때 즉시 중단했습니다.",
-  "perf.gap_backtest": "백테스트 (2년, 569개 코인)",
+  "perf.gap_backtest": "백테스트 (2년, 570개 코인)",
   "perf.gap_live": "실거래 (52일)",
   "perf.gap_pnl_label": "총 손익",
   "perf.gap_mdd_label": "최대 낙폭",
@@ -814,7 +814,7 @@ export const ko: Record<TranslationKey, string> = {
   // Blog article CTA
   "blog.cta_title": "직접 전략을 테스트해 보시겠습니까?",
   "blog.cta_desc":
-    "569개 코인, 2년 이상의 데이터로 트레이딩 전략을 시뮬레이션하세요. 무료.",
+    "570개 코인, 2년 이상의 데이터로 트레이딩 전략을 시뮬레이션하세요. 무료.",
   "blog.cta_button": "라이브 데모 체험",
   "blog.cta_fees": "수수료 절약하기",
   "blog.cta_community": "커뮤니티 참여",
@@ -852,7 +852,7 @@ export const ko: Record<TranslationKey, string> = {
   // Builder
   "meta.builder_title": "전략 빌더 - PRUVIQ",
   "meta.builder_desc":
-    "코드 없이 나만의 트레이딩 전략을 설계하세요. 지표 선택, 조건 설정, 569+ 코인 2년+ 실제 데이터로 백테스트.",
+    "코드 없이 나만의 트레이딩 전략을 설계하세요. 지표 선택, 조건 설정, 570+ 코인 2년+ 실제 데이터로 백테스트.",
 
   // Learn page
   "meta.learn_title": "학습 — 크립토 트레이딩 교육 | PRUVIQ",
@@ -877,7 +877,7 @@ export const ko: Record<TranslationKey, string> = {
   "learn.min_read": "분 소요",
   "learn.cta_title": "배운 것을 테스트할 준비가 되셨나요?",
   "learn.cta_desc":
-    "전략을 만들고 569개 이상의 코인에서 실행하세요 — 무료, 계정 불필요.",
+    "전략을 만들고 570개 이상의 코인에서 실행하세요 — 무료, 계정 불필요.",
   "learn.cta_button": "시뮬레이터 사용하기",
 
   // Learn page tag translations
@@ -961,7 +961,7 @@ export const ko: Record<TranslationKey, string> = {
   // Simulate page
   "simulate.tag": "전략 시뮬레이터",
   "simulate.title1": "전략을 만들고,",
-  "simulate.title2": "569개 코인에서 테스트하세요.",
+  "simulate.title2": "570개 코인에서 테스트하세요.",
   "simulate.desc":
     "지표를 선택하고, 진입 조건을 설정하고, 리스크 파라미터를 조정하세요. 2년 이상의 실제 데이터로 백테스트를 실행하거나, 프리셋으로 시작하세요.",
   "simulate.note":
@@ -977,10 +977,10 @@ export const ko: Record<TranslationKey, string> = {
   "simulate.disclaimer":
     "시뮬레이션에는 거래당 0.04% 선물 수수료 + 0.02% 슬리피지가 포함됩니다. 과거 성과가 미래 수익을 보장하지 않습니다. 투자 조언이 아닙니다.",
   "simulate.step1_title": "프리셋을 선택하거나 지표를 고르세요",
-  "simulate.step1_desc": "11개+ 지표, AND/OR 로직",
+  "simulate.step1_desc": "14개 지표, AND/OR 로직",
   "simulate.step2_title": "진입 조건과 리스크를 설정하세요",
   "simulate.step2_desc": "손절, 익절, 시간 필터, 포지션 크기",
-  "simulate.step3_title": "569개+ 코인에서 백테스트 실행",
+  "simulate.step3_title": "570개+ 코인에서 백테스트 실행",
   "simulate.step3_desc": "수초 내 결과, 수수료 포함",
   "simulate.risk_disclaimer":
     "시뮬레이션 전용 \u2014 실거래가 아닙니다. 과거 성과가 미래 수익을 보장하지 않습니다. 선물 거래는 손실 위험이 있습니다.",
@@ -1010,7 +1010,7 @@ export const ko: Record<TranslationKey, string> = {
     "바이낸스 선물에서 수집한 2년 이상의 1시간 OHLCV 캔들 데이터. 모든 캔들은 완성된(종료된) 데이터만 사용하며, 선행 편향(look-ahead bias)을 방지하기 위해 미완성 데이터는 사용하지 않습니다.",
   "methodology.universe_label": "유니버스",
   "methodology.universe_desc":
-    "바이낸스에 상장된 569개 이상의 USDT 무기한 선물 페어. 스테이블코인, 상장 폐지 코인, 유동성이 낮은 페어는 제외됩니다. 데일리 랭킹은 시가총액 상위 50개 코인 기준으로 산출됩니다. 정확한 수는 전략 버전에 따라 다릅니다.",
+    "바이낸스에 상장된 570개 이상의 USDT 무기한 선물 페어. 스테이블코인, 상장 폐지 코인, 유동성이 낮은 페어는 제외됩니다. 데일리 랭킹은 시가총액 상위 50개 코인 기준으로 산출됩니다. 정확한 수는 전략 버전에 따라 다릅니다.",
   "methodology.execution_label": "체결",
   "methodology.execution_desc":
     "진입은 캔들 종가에서 체결되는 것으로 가정합니다. 이는 보수적인 가정입니다 — 실제 체결가는 타이밍과 호가창 깊이에 따라 소폭 차이가 날 수 있습니다.",
@@ -1085,7 +1085,7 @@ export const ko: Record<TranslationKey, string> = {
     "과거 성과는 미래 결과를 보장하지 않습니다. 백테스트는 시뮬레이션이지 예측이 아닙니다. 실제 트레이딩에는 어떤 모델로도 포착할 수 없는 위험이 있으며, 감정적 의사결정, 연결 문제, 시장 레짐 변화 등이 포함됩니다. 항상 감당할 수 있는 자본으로만 테스트하세요.",
   "methodology.cta_title": "직접 확인하세요",
   "methodology.cta_desc":
-    "파라미터를 조정하고 569개+ 코인에 대한 실제 백테스트 결과를 확인하세요.",
+    "파라미터를 조정하고 570개+ 코인에 대한 실제 백테스트 결과를 확인하세요.",
   "methodology.cta_button": "시뮬레이터 시작",
   "methodology.sharpe_formula": "공식: (수익률 - 무위험 수익률) / 변동성",
   "methodology.sortino_formula": "공식: (수익률 - 무위험 수익률) / 하방 편차",
@@ -1105,7 +1105,7 @@ export const ko: Record<TranslationKey, string> = {
   // API Docs page
   "meta.api_title": "API 레퍼런스 - PRUVIQ",
   "meta.api_desc":
-    "무료 크립토 전략 백테스팅 REST API. 569개 이상 코인에서 전략 시뮬레이션, OHLCV 데이터, 시장 개요 등을 제공합니다.",
+    "무료 크립토 전략 백테스팅 REST API. 570개 이상 코인에서 전략 시뮬레이션, OHLCV 데이터, 시장 개요 등을 제공합니다.",
   "api.tag": "API 레퍼런스",
   "api.title": "PRUVIQ 데이터로",
   "api.title2": "직접 빌드하세요.",
@@ -1170,28 +1170,28 @@ export const ko: Record<TranslationKey, string> = {
   "compare_index.tag": "비교",
   "compare_index.title": "PRUVIQ vs 대안 플랫폼",
   "compare_index.subtitle":
-    "무료 백테스트. 가입 불필요. 569개 코인. 직접 비교해 보세요.",
+    "무료 백테스트. 가입 불필요. 570개 코인. 직접 비교해 보세요.",
   "compare_index.meta_title":
     "PRUVIQ vs 대안 플랫폼 — 무료 크립토 백테스트 비교",
   "compare_index.meta_desc":
-    "PRUVIQ를 TradingView, Coinrule, 3Commas, Cryptohopper, Gainium, Streak와 비교하세요. 무료, 가입 불필요, 569개 코인.",
+    "PRUVIQ를 TradingView, Coinrule, 3Commas, Cryptohopper, Gainium, Streak와 비교하세요. 무료, 가입 불필요, 570개 코인.",
   "compare_index.most_popular": "가장 인기",
   "compare_index.tradingview_desc": "코딩 없는 백테스트 vs 유료 Pine Script",
   "compare_index.coinrule_desc": "무료 무제한 백테스트 vs $29+/월 규칙 빌더",
-  "compare_index.cryptohopper_desc": "569개 코인 무료 vs 제한된 봇 구독",
+  "compare_index.cryptohopper_desc": "570개 코인 무료 vs 제한된 봇 구독",
   "compare_index.3commas_desc": "투명한 결과 vs 폐쇄형 전략 마켓",
   "compare_index.gainium_desc": "가입 불필요 vs 필수 계정 생성",
-  "compare_index.streak_desc": "크립토 네이티브 569개 코인 vs 주식 중심 플랫폼",
+  "compare_index.streak_desc": "크립토 네이티브 570개 코인 vs 주식 중심 플랫폼",
   "compare_index.footer": "모든 비교는 실제 백테스트 데이터를 사용합니다.",
   "compare_index.try_cta": "직접 체험하기 →",
   "compare_index.strength1_tag": "완전 무료",
   "compare_index.strength1_title": "$0 — 신용카드 불필요",
   "compare_index.strength1_desc":
     "경쟁사는 월 $19–$60를 청구합니다. PRUVIQ는 영원히 무료. 계정 없이 시뮬레이션 실행 가능.",
-  "compare_index.strength2_tag": "569개 코인 동시 테스트",
+  "compare_index.strength2_tag": "570개 코인 동시 테스트",
   "compare_index.strength2_title": "전체 시장을 한 번에",
   "compare_index.strength2_desc":
-    "다른 플랫폼은 코인 하나씩 테스트합니다. PRUVIQ는 569개 코인을 한 번에 스캔 — 진짜 작동하는 전략을 찾으세요.",
+    "다른 플랫폼은 코인 하나씩 테스트합니다. PRUVIQ는 570개 코인을 한 번에 스캔 — 진짜 작동하는 전략을 찾으세요.",
   "compare_index.strength3_tag": "실패도 공개합니다",
   "compare_index.strength3_title": "급진적 투명성",
   "compare_index.strength3_desc":
@@ -1252,7 +1252,7 @@ export const ko: Record<TranslationKey, string> = {
   // TradingView comparison page
   "meta.vs_tv_title": "PRUVIQ vs 트레이딩뷰 - 무료 크립토 백테스팅 비교",
   "meta.vs_tv_desc":
-    "크립토 전략 백테스팅에서 PRUVIQ와 트레이딩뷰를 비교합니다. Pine Script 불필요. 영원히 무료. 569개+ 코인. 완전 백테스트 투명성.",
+    "크립토 전략 백테스팅에서 PRUVIQ와 트레이딩뷰를 비교합니다. Pine Script 불필요. 영원히 무료. 570개+ 코인. 완전 백테스트 투명성.",
   "vs.tag": "솔직한 비교",
   "vs.title": "PRUVIQ vs 트레이딩뷰",
   "vs.subtitle": "크립토 백테스팅용",
@@ -1271,7 +1271,7 @@ export const ko: Record<TranslationKey, string> = {
   "vs.row_coding_p": "코딩 불필요 — 비주얼 빌더",
   "vs.row_coding_tv": "Pine Script (자체 프로그래밍 언어)",
   "vs.row_coins": "크립토 코인",
-  "vs.row_coins_p": "569개+ USDT 무기한 선물",
+  "vs.row_coins_p": "570개+ USDT 무기한 선물",
   "vs.row_coins_tv": "거래소 연결에 따라 다름",
   "vs.row_data": "과거 데이터",
   "vs.row_data_p": "2년+ 1시간 캔들 (무료)",
@@ -1280,13 +1280,13 @@ export const ko: Record<TranslationKey, string> = {
   "vs.row_fees_p": "내장 (편도 0.08% 선물)",
   "vs.row_fees_tv": "Pine Script에서 수동 설정",
   "vs.row_multi": "멀티코인 테스트",
-  "vs.row_multi_p": "569개 코인 원클릭 테스트",
+  "vs.row_multi_p": "570개 코인 원클릭 테스트",
   "vs.row_multi_tv": "한 번에 차트 1개",
   "vs.row_live": "백테스트 투명성",
   "vs.row_live_p": "실패 포함 전체 결과 공개",
   "vs.row_live_tv": "사용자 공유만 — 실패 결과 거의 공개 안 됨",
   "vs.row_builder": "전략 빌더",
-  "vs.row_builder_p": "비주얼, 11개+ 지표, AND/OR 로직",
+  "vs.row_builder_p": "비주얼, 14개 지표, AND/OR 로직",
   "vs.row_builder_tv": "Pine Script 에디터",
   "vs.row_api": "API 접근",
   "vs.row_api_p": "무료 REST API (분당 30회)",
@@ -1296,7 +1296,7 @@ export const ko: Record<TranslationKey, string> = {
   "vs.row_community_tv": "5000만+ 사용자, 소셜 기능",
   "vs.when_pruviq": "PRUVIQ를 선택할 때...",
   "vs.when_pruviq_1": "코딩 없이 무료 크립토 백테스팅",
-  "vs.when_pruviq_2": "569개+ 코인에서 동시 전략 테스트",
+  "vs.when_pruviq_2": "570개+ 코인에서 동시 전략 테스트",
   "vs.when_pruviq_3": "수수료와 슬리피지 포함 현실적 결과",
   "vs.when_pruviq_4": "투명한 백테스트 결과로 검증",
   "vs.when_tv": "트레이딩뷰를 선택할 때...",
@@ -1311,19 +1311,19 @@ export const ko: Record<TranslationKey, string> = {
   "faq.title": "자주 묻는 질문",
   "faq.q1": "PRUVIQ는 무엇인가요?",
   "faq.a1":
-    "PRUVIQ는 무료 크립토 전략 백테스팅 플랫폼입니다. 11개 이상의 기술 지표를 사용해 커스텀 전략을 만들고, 569개 이상의 코인에서 2년 이상의 실제 시장 데이터로 백테스트하며, 수수료와 슬리피지를 포함한 현실적인 결과를 확인할 수 있습니다. 코딩 불필요.",
+    "PRUVIQ는 무료 크립토 전략 백테스팅 플랫폼입니다. 14개 기술 지표를 사용해 커스텀 전략을 만들고, 570개 이상의 코인에서 2년 이상의 실제 시장 데이터로 백테스트하며, 수수료와 슬리피지를 포함한 현실적인 결과를 확인할 수 있습니다. 코딩 불필요.",
   "faq.q2": "전략 빌더는 어떻게 작동하나요?",
   "faq.a2":
     "노코드 전략 빌더에서 지표(볼린저 밴드, RSI, MACD, EMA, 스토캐스틱, ADX, ATR, 거래량 등)를 AND/OR 논리와 비교 연산자로 조합할 수 있습니다. 진입 조건, 손절, 익절, 시간 필터를 설정한 후 3초 이내에 전체 코인 백테스트를 실행합니다.",
   "faq.q3": "PRUVIQ는 무료인가요?",
   "faq.a3":
-    "네, PRUVIQ의 핵심 백테스팅 기능은 완전 무료입니다. 전략 만들기, 569개 이상 코인 백테스트, 모든 교육 콘텐츠 이용이 결제나 계정 생성 없이 가능합니다.",
+    "네, PRUVIQ의 핵심 백테스팅 기능은 완전 무료입니다. 전략 만들기, 570개 이상 코인 백테스트, 모든 교육 콘텐츠 이용이 결제나 계정 생성 없이 가능합니다.",
   "faq.q4": "PRUVIQ가 TradingView 등 다른 도구와 다른 점은?",
   "faq.a4":
-    "PRUVIQ는 코딩 없이 크립토 선물에 특화되어 설계되었습니다. TradingView(Pine Script 필요)나 QuantConnect(Python/C# 필요)와 달리 시각적 전략 빌더를 제공합니다. 또한 실패를 포함한 실제 거래 결과를 공개하고, 569개 이상 코인을 동시에 테스트하며, 모든 시뮬레이션에 현실적인 수수료와 슬리피지를 포함합니다.",
+    "PRUVIQ는 코딩 없이 크립토 선물에 특화되어 설계되었습니다. TradingView(Pine Script 필요)나 QuantConnect(Python/C# 필요)와 달리 시각적 전략 빌더를 제공합니다. 또한 실패를 포함한 실제 거래 결과를 공개하고, 570개 이상 코인을 동시에 테스트하며, 모든 시뮬레이션에 현실적인 수수료와 슬리피지를 포함합니다.",
   "faq.q5": "PRUVIQ는 전략을 어떻게 검증하나요?",
   "faq.a5":
-    "PRUVIQ는 569개 이상의 코인에서 2년 이상의 과거 데이터로 모든 전략을 백테스트합니다. 수수료, 슬리피지, 펀딩비를 포함한 현실적인 시뮬레이션으로 검증하며, 실패한 전략도 모두 공개합니다.",
+    "PRUVIQ는 570개 이상의 코인에서 2년 이상의 과거 데이터로 모든 전략을 백테스트합니다. 수수료, 슬리피지, 펀딩비를 포함한 현실적인 시뮬레이션으로 검증하며, 실패한 전략도 모두 공개합니다.",
 
   // Tooltips
   "tooltip.sl":
@@ -1361,7 +1361,7 @@ export const ko: Record<TranslationKey, string> = {
   "leaderboard.tag": "주간 순위",
   "leaderboard.title": "이번 주 최고의 전략",
   "leaderboard.desc":
-    "569개 이상의 코인에서 이번 주 가장 좋은 성과를 보인 전략 설정을 확인하세요. 매주 월요일 업데이트.",
+    "570개 이상의 코인에서 이번 주 가장 좋은 성과를 보인 전략 설정을 확인하세요. 매주 월요일 업데이트.",
   "leaderboard.best": "최고 성과",
   "leaderboard.worst": "저조한 성과",
   "leaderboard.coming_soon":
@@ -1382,7 +1382,7 @@ export const ko: Record<TranslationKey, string> = {
     "이번 주 최고 및 최악의 암호화폐 전략을 확인하세요. 실제 백테스트 데이터로 매주 업데이트.",
   "meta.ranking_title": "일별 전략 랭킹 | PRUVIQ",
   "meta.ranking_desc":
-    "수익 팩터와 승률 기반 일별 전략 랭킹. 569개 코인 · 37개 전략 설정 백테스트 데이터로 매일 업데이트.",
+    "수익 팩터와 승률 기반 일별 전략 랭킹. 570개 코인 · 37개 전략 설정 백테스트 데이터로 매일 업데이트.",
   "fees.savings_callout":
     "월 $10,000 거래 시? PRUVIQ 바이낸스 VIP 할인으로 연간 약 $144 절약.",
   "nav.leaderboard": "리더보드",
@@ -1440,7 +1440,7 @@ export const ko: Record<TranslationKey, string> = {
   "coin_detail.data_period": "데이터 기간",
   "coin_detail.data_period_val": "2년 이상 (1H)",
   "coin_detail.strategy_desc":
-    "BB Squeeze 전략은 {name}에서 저변동성 구간(볼린저밴드 압축)을 식별합니다. 밴드가 확장되고 가격이 하향 돌파하면 숏 포지션에 진입합니다. 569개 코인에서 Out-of-Sample 테스트와 몬테카를로 시뮬레이션으로 검증되었습니다.",
+    "BB Squeeze 전략은 {name}에서 저변동성 구간(볼린저밴드 압축)을 식별합니다. 밴드가 확장되고 가격이 하향 돌파하면 숏 포지션에 진입합니다. 570개 코인에서 Out-of-Sample 테스트와 몬테카를로 시뮬레이션으로 검증되었습니다.",
   "coin_detail.faq_title": "자주 묻는 질문",
   "coin_detail.faq_q1": "{name}의 BB Squeeze SHORT 전략이란?",
   "coin_detail.faq_a1":
@@ -1459,7 +1459,7 @@ export const ko: Record<TranslationKey, string> = {
   // Simulate Page
   "simulate.all_strategies": "전체 전략",
   "simulate.preset_verified_tooltip":
-    "검증됨 = 569개+ 코인, 2년+ 실제 시장 데이터 백테스트",
+    "검증됨 = 570개+ 코인, 2년+ 실제 시장 데이터 백테스트",
 
   // CTA badges
   "cta.badge1": "신용카드 불필요",
@@ -1472,7 +1472,7 @@ export const ko: Record<TranslationKey, string> = {
     "관심 있는 코인을 찾으셨나요? 전략에서 테스트해 보세요.",
   "coins.noscript_title": "코인 목록을 보려면 JavaScript가 필요합니다.",
   "coins.noscript_desc":
-    "569개 이상의 코인을 탐색하려면 JavaScript를 활성화하세요. 인기 코인:",
+    "570개 이상의 코인을 탐색하려면 JavaScript를 활성화하세요. 인기 코인:",
 
   // Changelog context callout
   "changelog.context_title": "여기서 추적하는 버전은?",
@@ -1523,7 +1523,7 @@ export const ko: Record<TranslationKey, string> = {
   // 비교 페이지: 3Commas
   "meta.vs_3commas_title": "PRUVIQ vs 3Commas — 무료 암호화폐 백테스트 대안",
   "meta.vs_3commas_desc":
-    "암호화폐 전략 백테스팅에서 PRUVIQ와 3Commas를 비교하세요. 구독료 없이 무료, 569개 코인, 실제 수수료 시뮬레이션.",
+    "암호화폐 전략 백테스팅에서 PRUVIQ와 3Commas를 비교하세요. 구독료 없이 무료, 570개 코인, 실제 수수료 시뮬레이션.",
   "vs_3commas.tag": "솔직한 비교",
   "vs_3commas.title": "PRUVIQ vs 3Commas",
   "vs_3commas.subtitle": "암호화폐 백테스팅 비교",
@@ -1531,7 +1531,7 @@ export const ko: Record<TranslationKey, string> = {
     "3Commas는 포트폴리오 자동화에 강한 도구입니다. 구독료를 지불하기 전에 수백 개 코인에 전략을 백테스트하고 싶다면, PRUVIQ가 그 연구 단계를 무료로 제공합니다.",
   "vs_3commas.tldr": "한 줄 요약",
   "vs_3commas.tldr_text":
-    "3Commas는 DCA/그리드 봇 실거래 실행에 강합니다. PRUVIQ는 연구 우선 백테스팅 도구 — 무료, 코딩 불필요, 569개 코인, 실제 수수료와 슬리피지 반영.",
+    "3Commas는 DCA/그리드 봇 실거래 실행에 강합니다. PRUVIQ는 연구 우선 백테스팅 도구 — 무료, 코딩 불필요, 570개 코인, 실제 수수료와 슬리피지 반영.",
   "vs_3commas.feature": "기능",
   "vs_3commas.pruviq": "PRUVIQ",
   "vs_3commas.other": "3Commas",
@@ -1542,7 +1542,7 @@ export const ko: Record<TranslationKey, string> = {
   "vs_3commas.row_coding_p": "코딩 불필요 — 시각적 빌더",
   "vs_3commas.row_coding_other": "코딩 불필요, 단 구독 필수",
   "vs_3commas.row_coins": "지원 코인",
-  "vs_3commas.row_coins_p": "569개 코인 (바이낸스 선물)",
+  "vs_3commas.row_coins_p": "570개 코인 (바이낸스 선물)",
   "vs_3commas.row_coins_other": "여러 거래소, 플랜에 따라 상이",
   "vs_3commas.row_data": "백테스트 데이터",
   "vs_3commas.row_data_p": "실제 OHLCV + 수수료·슬리피지 반영",
@@ -1551,7 +1551,7 @@ export const ko: Record<TranslationKey, string> = {
   "vs_3commas.row_fees_p": "메이커/테이커 0.08%, 펀딩비 포함",
   "vs_3commas.row_fees_other": "실거래 수수료만 적용",
   "vs_3commas.row_multi": "멀티코인 테스트",
-  "vs_3commas.row_multi_p": "569개 코인 동시 테스트",
+  "vs_3commas.row_multi_p": "570개 코인 동시 테스트",
   "vs_3commas.row_multi_other": "봇 단위 설정, 배치 백테스트 불가",
   "vs_3commas.row_live": "실거래",
   "vs_3commas.row_live_p": "연구 도구 — 백테스트 전용",
@@ -1567,7 +1567,7 @@ export const ko: Record<TranslationKey, string> = {
   "vs_3commas.row_community_other": "봇 전략 마켓플레이스",
   "vs_3commas.when_pruviq": "PRUVIQ를 선택하세요, 만약...",
   "vs_3commas.when_pruviq_1": "코딩 없이 무료로 암호화폐 백테스트를 원할 때",
-  "vs_3commas.when_pruviq_2": "569개 코인에 전략을 동시에 테스트하고 싶을 때",
+  "vs_3commas.when_pruviq_2": "570개 코인에 전략을 동시에 테스트하고 싶을 때",
   "vs_3commas.when_pruviq_3":
     "수수료·슬리피지를 반영한 현실적인 결과를 원할 때",
   "vs_3commas.when_pruviq_4": "투명한 백테스트 결과로 전략을 검증하고 싶을 때",
@@ -1581,12 +1581,12 @@ export const ko: Record<TranslationKey, string> = {
     "수동 주문 없이 자동으로 실거래를 실행하고 싶을 때",
   "vs_3commas.cta_title": "PRUVIQ 지금 무료로 시작하기",
   "vs_3commas.cta_desc":
-    "유료 도구를 결정하기 전에 569개 코인으로 전략을 무료로 백테스트하세요. 회원가입 불필요.",
+    "유료 도구를 결정하기 전에 570개 코인으로 전략을 무료로 백테스트하세요. 회원가입 불필요.",
 
   // 비교 페이지: Coinrule
   "meta.vs_coinrule_title": "PRUVIQ vs Coinrule — 무료 암호화폐 백테스트 대안",
   "meta.vs_coinrule_desc":
-    "암호화폐 전략 백테스팅에서 PRUVIQ와 Coinrule을 비교하세요. 무료, IF-THEN 제한 없음, 569개 코인 + 실제 수수료 시뮬레이션.",
+    "암호화폐 전략 백테스팅에서 PRUVIQ와 Coinrule을 비교하세요. 무료, IF-THEN 제한 없음, 570개 코인 + 실제 수수료 시뮬레이션.",
   "vs_coinrule.tag": "솔직한 비교",
   "vs_coinrule.title": "PRUVIQ vs Coinrule",
   "vs_coinrule.subtitle": "암호화폐 백테스팅 비교",
@@ -1594,7 +1594,7 @@ export const ko: Record<TranslationKey, string> = {
     "Coinrule은 IF-THEN 규칙으로 거래를 자동화하는 도구입니다. 전략을 실제로 배포하기 전에 수백 개 코인에 대해 엄격하게 백테스트하고 싶다면, PRUVIQ가 그 역할을 무료로 합니다.",
   "vs_coinrule.tldr": "한 줄 요약",
   "vs_coinrule.tldr_text":
-    "Coinrule은 규칙 기반 자동화 도구입니다. PRUVIQ는 백테스팅 우선 연구 도구 — 무료, 코딩 불필요, 569개 코인, 슬리피지·수수료 내장.",
+    "Coinrule은 규칙 기반 자동화 도구입니다. PRUVIQ는 백테스팅 우선 연구 도구 — 무료, 코딩 불필요, 570개 코인, 슬리피지·수수료 내장.",
   "vs_coinrule.feature": "기능",
   "vs_coinrule.pruviq": "PRUVIQ",
   "vs_coinrule.other": "Coinrule",
@@ -1605,7 +1605,7 @@ export const ko: Record<TranslationKey, string> = {
   "vs_coinrule.row_coding_p": "코딩 불필요 — 시각적 빌더",
   "vs_coinrule.row_coding_other": "코딩 불필요 — IF-THEN 규칙 빌더",
   "vs_coinrule.row_coins": "지원 코인",
-  "vs_coinrule.row_coins_p": "569개 코인 (바이낸스 선물)",
+  "vs_coinrule.row_coins_p": "570개 코인 (바이낸스 선물)",
   "vs_coinrule.row_coins_other": "여러 거래소, 플랜에 따라 한도 상이",
   "vs_coinrule.row_data": "백테스트 데이터",
   "vs_coinrule.row_data_p": "실제 OHLCV + 수수료·슬리피지 반영",
@@ -1614,7 +1614,7 @@ export const ko: Record<TranslationKey, string> = {
   "vs_coinrule.row_fees_p": "메이커/테이커 0.08%, 펀딩비 포함",
   "vs_coinrule.row_fees_other": "거래소 경유 실거래 수수료만 적용",
   "vs_coinrule.row_multi": "멀티코인 테스트",
-  "vs_coinrule.row_multi_p": "569개 코인 동시 테스트",
+  "vs_coinrule.row_multi_p": "570개 코인 동시 테스트",
   "vs_coinrule.row_multi_other": "규칙은 코인별 실행, 배치 백테스트 불가",
   "vs_coinrule.row_live": "실거래",
   "vs_coinrule.row_live_p": "연구 도구 — 백테스트 전용",
@@ -1630,7 +1630,7 @@ export const ko: Record<TranslationKey, string> = {
   "vs_coinrule.row_community_other": "규칙 템플릿 라이브러리 및 커뮤니티",
   "vs_coinrule.when_pruviq": "PRUVIQ를 선택하세요, 만약...",
   "vs_coinrule.when_pruviq_1": "코딩 없이 무료로 암호화폐 백테스트를 원할 때",
-  "vs_coinrule.when_pruviq_2": "569개 코인에 전략을 동시에 테스트하고 싶을 때",
+  "vs_coinrule.when_pruviq_2": "570개 코인에 전략을 동시에 테스트하고 싶을 때",
   "vs_coinrule.when_pruviq_3":
     "수수료·슬리피지를 반영한 현실적인 결과를 원할 때",
   "vs_coinrule.when_pruviq_4": "투명한 백테스트 결과로 전략을 검증하고 싶을 때",
@@ -1643,13 +1643,13 @@ export const ko: Record<TranslationKey, string> = {
   "vs_coinrule.when_other_4": "24시간 자동 실거래 전략을 운영하고 싶을 때",
   "vs_coinrule.cta_title": "PRUVIQ 지금 무료로 시작하기",
   "vs_coinrule.cta_desc":
-    "어떤 자동화 도구에 비용을 지불하기 전에 569개 코인으로 전략을 백테스트하세요. 회원가입 불필요.",
+    "어떤 자동화 도구에 비용을 지불하기 전에 570개 코인으로 전략을 백테스트하세요. 회원가입 불필요.",
 
   // 비교 페이지: Cryptohopper
   "meta.vs_cryptohopper_title":
     "PRUVIQ vs Cryptohopper — 무료 암호화폐 백테스트 대안",
   "meta.vs_cryptohopper_desc":
-    "암호화폐 전략 백테스팅에서 PRUVIQ와 Cryptohopper를 비교하세요. 무료, 클라우드 구독 불필요, 569개 코인 + 실제 수수료·슬리피지 시뮬레이션.",
+    "암호화폐 전략 백테스팅에서 PRUVIQ와 Cryptohopper를 비교하세요. 무료, 클라우드 구독 불필요, 570개 코인 + 실제 수수료·슬리피지 시뮬레이션.",
   "vs_cryptohopper.tag": "솔직한 비교",
   "vs_cryptohopper.title": "PRUVIQ vs Cryptohopper",
   "vs_cryptohopper.subtitle": "암호화폐 백테스팅 비교",
@@ -1657,7 +1657,7 @@ export const ko: Record<TranslationKey, string> = {
     "Cryptohopper는 전략 마켓플레이스를 갖춘 클라우드 기반 봇 서비스입니다. 실제 배포 전에 수백 개 코인에서 아이디어를 엄밀하게 테스트하고 싶다면, PRUVIQ가 그 연구 레이어를 무료로 제공합니다.",
   "vs_cryptohopper.tldr": "한 줄 요약",
   "vs_cryptohopper.tldr_text":
-    "Cryptohopper는 유료 마켓플레이스를 갖춘 클라우드 봇입니다. PRUVIQ는 무료 백테스팅 연구 도구 — 569개 코인, 실제 수수료 반영, 모든 결과 투명하게 공개.",
+    "Cryptohopper는 유료 마켓플레이스를 갖춘 클라우드 봇입니다. PRUVIQ는 무료 백테스팅 연구 도구 — 570개 코인, 실제 수수료 반영, 모든 결과 투명하게 공개.",
   "vs_cryptohopper.feature": "기능",
   "vs_cryptohopper.pruviq": "PRUVIQ",
   "vs_cryptohopper.other": "Cryptohopper",
@@ -1668,7 +1668,7 @@ export const ko: Record<TranslationKey, string> = {
   "vs_cryptohopper.row_coding_p": "코딩 불필요 — 시각적 빌더",
   "vs_cryptohopper.row_coding_other": "코딩 불필요 — 템플릿 기반 설정",
   "vs_cryptohopper.row_coins": "지원 코인",
-  "vs_cryptohopper.row_coins_p": "569개 코인 (바이낸스 선물)",
+  "vs_cryptohopper.row_coins_p": "570개 코인 (바이낸스 선물)",
   "vs_cryptohopper.row_coins_other": "여러 거래소, 플랜에 따라 상이",
   "vs_cryptohopper.row_data": "백테스트 데이터",
   "vs_cryptohopper.row_data_p": "실제 OHLCV + 수수료·슬리피지 반영",
@@ -1677,7 +1677,7 @@ export const ko: Record<TranslationKey, string> = {
   "vs_cryptohopper.row_fees_p": "메이커/테이커 0.08%, 펀딩비 포함",
   "vs_cryptohopper.row_fees_other": "실거래 실행 시 거래소 수수료 적용",
   "vs_cryptohopper.row_multi": "멀티코인 테스트",
-  "vs_cryptohopper.row_multi_p": "569개 코인 동시 테스트",
+  "vs_cryptohopper.row_multi_p": "570개 코인 동시 테스트",
   "vs_cryptohopper.row_multi_other": "봇별 설정, 배치 백테스트 불가",
   "vs_cryptohopper.row_live": "실거래",
   "vs_cryptohopper.row_live_p": "연구 도구 — 백테스트 전용",
@@ -1695,7 +1695,7 @@ export const ko: Record<TranslationKey, string> = {
   "vs_cryptohopper.when_pruviq_1":
     "코딩 없이 무료로 암호화폐 백테스트를 원할 때",
   "vs_cryptohopper.when_pruviq_2":
-    "569개 코인에 전략을 동시에 테스트하고 싶을 때",
+    "570개 코인에 전략을 동시에 테스트하고 싶을 때",
   "vs_cryptohopper.when_pruviq_3":
     "수수료·슬리피지를 반영한 현실적인 결과를 원할 때",
   "vs_cryptohopper.when_pruviq_4":
@@ -1711,12 +1711,12 @@ export const ko: Record<TranslationKey, string> = {
     "서드파티 시그널 제공업체와 연동한 트레이딩을 원할 때",
   "vs_cryptohopper.cta_title": "PRUVIQ 지금 무료로 시작하기",
   "vs_cryptohopper.cta_desc":
-    "클라우드 봇 구독을 결정하기 전에 569개 코인으로 전략을 무료로 테스트하세요. 회원가입 불필요.",
+    "클라우드 봇 구독을 결정하기 전에 570개 코인으로 전략을 무료로 테스트하세요. 회원가입 불필요.",
 
   // 비교 페이지: Gainium
   "meta.vs_gainium_title": "PRUVIQ vs Gainium — 무료 암호화폐 백테스트 대안",
   "meta.vs_gainium_desc":
-    "암호화폐 전략 백테스팅에서 PRUVIQ와 Gainium을 비교하세요. 무료, DCA 전용 제약 없음, 569개 코인 + 실제 슬리피지·수수료 시뮬레이션.",
+    "암호화폐 전략 백테스팅에서 PRUVIQ와 Gainium을 비교하세요. 무료, DCA 전용 제약 없음, 570개 코인 + 실제 슬리피지·수수료 시뮬레이션.",
   "vs_gainium.tag": "솔직한 비교",
   "vs_gainium.title": "PRUVIQ vs Gainium",
   "vs_gainium.subtitle": "암호화폐 백테스팅 비교",
@@ -1724,7 +1724,7 @@ export const ko: Record<TranslationKey, string> = {
     "Gainium은 바이낸스 중심의 DCA 봇과 포트폴리오 관리에 특화된 도구입니다. 자본을 투입하기 전에 수백 개 코인에서 전략을 엄밀하게 검증하고 싶다면, PRUVIQ가 그 연구 레이어를 무료로 제공합니다.",
   "vs_gainium.tldr": "한 줄 요약",
   "vs_gainium.tldr_text":
-    "Gainium은 DCA 실행과 포트폴리오 관리에 집중합니다. PRUVIQ는 연구 우선 백테스팅 도구 — 무료, 코딩 불필요, 569개 코인, 실제 비용 시뮬레이션.",
+    "Gainium은 DCA 실행과 포트폴리오 관리에 집중합니다. PRUVIQ는 연구 우선 백테스팅 도구 — 무료, 코딩 불필요, 570개 코인, 실제 비용 시뮬레이션.",
   "vs_gainium.feature": "기능",
   "vs_gainium.pruviq": "PRUVIQ",
   "vs_gainium.other": "Gainium",
@@ -1735,7 +1735,7 @@ export const ko: Record<TranslationKey, string> = {
   "vs_gainium.row_coding_p": "코딩 불필요 — 시각적 빌더",
   "vs_gainium.row_coding_other": "코딩 불필요 — DCA 봇 설정",
   "vs_gainium.row_coins": "지원 코인",
-  "vs_gainium.row_coins_p": "569개 코인 (바이낸스 선물)",
+  "vs_gainium.row_coins_p": "570개 코인 (바이낸스 선물)",
   "vs_gainium.row_coins_other": "바이낸스 중심, 선별된 코인 목록",
   "vs_gainium.row_data": "백테스트 데이터",
   "vs_gainium.row_data_p": "실제 OHLCV + 수수료·슬리피지 반영",
@@ -1744,7 +1744,7 @@ export const ko: Record<TranslationKey, string> = {
   "vs_gainium.row_fees_p": "메이커/테이커 0.08%, 펀딩비 포함",
   "vs_gainium.row_fees_other": "실거래 실행 시 수수료 적용",
   "vs_gainium.row_multi": "멀티코인 테스트",
-  "vs_gainium.row_multi_p": "569개 코인 동시 테스트",
+  "vs_gainium.row_multi_p": "570개 코인 동시 테스트",
   "vs_gainium.row_multi_other": "포트폴리오 뷰, 배치 백테스트 불가",
   "vs_gainium.row_live": "실거래",
   "vs_gainium.row_live_p": "연구 도구 — 백테스트 전용",
@@ -1760,7 +1760,7 @@ export const ko: Record<TranslationKey, string> = {
   "vs_gainium.row_community_other": "커뮤니티 및 봇 설정 공유",
   "vs_gainium.when_pruviq": "PRUVIQ를 선택하세요, 만약...",
   "vs_gainium.when_pruviq_1": "코딩 없이 무료로 암호화폐 백테스트를 원할 때",
-  "vs_gainium.when_pruviq_2": "569개 코인에 전략을 동시에 테스트하고 싶을 때",
+  "vs_gainium.when_pruviq_2": "570개 코인에 전략을 동시에 테스트하고 싶을 때",
   "vs_gainium.when_pruviq_3":
     "수수료·슬리피지를 반영한 현실적인 결과를 원할 때",
   "vs_gainium.when_pruviq_4": "투명한 백테스트 결과로 전략을 검증하고 싶을 때",
@@ -1772,12 +1772,12 @@ export const ko: Record<TranslationKey, string> = {
   "vs_gainium.when_other_4": "수동 주문 없이 자동 실거래를 운영하고 싶을 때",
   "vs_gainium.cta_title": "PRUVIQ 지금 무료로 시작하기",
   "vs_gainium.cta_desc":
-    "DCA 봇을 배포하기 전에 569개 코인으로 전략을 무료로 리서치하세요. 회원가입 불필요.",
+    "DCA 봇을 배포하기 전에 570개 코인으로 전략을 무료로 리서치하세요. 회원가입 불필요.",
 
   // 비교 페이지: Streak
   "meta.vs_streak_title": "PRUVIQ vs Streak — 무료 암호화폐 백테스트 대안",
   "meta.vs_streak_desc":
-    "암호화폐 전략 백테스팅에서 PRUVIQ와 Streak을 비교하세요. 무료, Pine Script 불필요, 569개 코인 + 실제 수수료·슬리피지 시뮬레이션.",
+    "암호화폐 전략 백테스팅에서 PRUVIQ와 Streak을 비교하세요. 무료, Pine Script 불필요, 570개 코인 + 실제 수수료·슬리피지 시뮬레이션.",
   "vs_streak.tag": "솔직한 비교",
   "vs_streak.title": "PRUVIQ vs Streak",
   "vs_streak.subtitle": "암호화폐 백테스팅 비교",
@@ -1796,7 +1796,7 @@ export const ko: Record<TranslationKey, string> = {
   "vs_streak.row_coding_p": "코딩 불필요 — 시각적 빌더",
   "vs_streak.row_coding_other": "Pine Script 필요 (TradingView 연동 필수)",
   "vs_streak.row_coins": "지원 코인",
-  "vs_streak.row_coins_p": "569개 코인 (바이낸스 선물)",
+  "vs_streak.row_coins_p": "570개 코인 (바이낸스 선물)",
   "vs_streak.row_coins_other": "TradingView 데이터 연동에 따라 상이",
   "vs_streak.row_data": "백테스트 데이터",
   "vs_streak.row_data_p": "실제 OHLCV + 수수료·슬리피지 반영",
@@ -1805,7 +1805,7 @@ export const ko: Record<TranslationKey, string> = {
   "vs_streak.row_fees_p": "메이커/테이커 0.08%, 펀딩비 포함",
   "vs_streak.row_fees_other": "Pine Script에서 수동 설정 필요",
   "vs_streak.row_multi": "멀티코인 테스트",
-  "vs_streak.row_multi_p": "569개 코인 동시 테스트",
+  "vs_streak.row_multi_p": "570개 코인 동시 테스트",
   "vs_streak.row_multi_other": "TradingView에서 차트 하나씩 확인",
   "vs_streak.row_live": "실거래",
   "vs_streak.row_live_p": "연구 도구 — 백테스트 전용",
@@ -1821,7 +1821,7 @@ export const ko: Record<TranslationKey, string> = {
   "vs_streak.row_community_other": "TradingView 커뮤니티 스크립트",
   "vs_streak.when_pruviq": "PRUVIQ를 선택하세요, 만약...",
   "vs_streak.when_pruviq_1": "코딩 없이 무료로 암호화폐 백테스트를 원할 때",
-  "vs_streak.when_pruviq_2": "569개 코인에 전략을 동시에 테스트하고 싶을 때",
+  "vs_streak.when_pruviq_2": "570개 코인에 전략을 동시에 테스트하고 싶을 때",
   "vs_streak.when_pruviq_3": "수수료·슬리피지를 반영한 현실적인 결과를 원할 때",
   "vs_streak.when_pruviq_4": "투명한 백테스트 결과로 전략을 검증하고 싶을 때",
   "vs_streak.when_other": "Streak을 선택하세요, 만약...",
@@ -1832,17 +1832,17 @@ export const ko: Record<TranslationKey, string> = {
   "vs_streak.when_other_4": "암호화폐 선물 이외 다양한 자산군을 다루고 싶을 때",
   "vs_streak.cta_title": "PRUVIQ 지금 무료로 시작하기",
   "vs_streak.cta_desc":
-    "Pine Script도, TradingView 계정도, 구독료도 필요 없습니다. 569개 코인으로 실제 결과를 몇 초 만에 확인하세요.",
+    "Pine Script도, TradingView 계정도, 구독료도 필요 없습니다. 570개 코인으로 실제 결과를 몇 초 만에 확인하세요.",
 
   // SEO landing pages
   "meta.best_backtesting_title":
     "2026년 최고의 무료 크립토 백테스팅 플랫폼 | PRUVIQ",
   "meta.best_backtesting_desc":
-    "2026년 최고의 크립토 백테스팅 플랫폼을 비교하세요. PRUVIQ는 569개 이상 코인, 실제 수수료, 투명한 실패 데이터를 갖춘 무료 노코드 백테스팅을 제공합니다.",
+    "2026년 최고의 크립토 백테스팅 플랫폼을 비교하세요. PRUVIQ는 570개 이상 코인, 실제 수수료, 투명한 실패 데이터를 갖춘 무료 노코드 백테스팅을 제공합니다.",
   "meta.crypto_simulator_title":
     "무료 크립토 트레이딩 시뮬레이터 — 회원가입 불필요 | PRUVIQ",
   "meta.crypto_simulator_desc":
-    "무료 시뮬레이터로 크립토 트레이딩을 연습하세요. 569개 이상 코인, 실제 수수료, 36개 전략, 2년 이상의 과거 데이터로 테스트할 수 있습니다.",
+    "무료 시뮬레이터로 크립토 트레이딩을 연습하세요. 570개 이상 코인, 실제 수수료, 36개 전략, 2년 이상의 과거 데이터로 테스트할 수 있습니다.",
   "meta.why_backtests_fail_title":
     "백테스트가 실패하는 이유 — 그리고 피하는 방법 | PRUVIQ",
   "meta.why_backtests_fail_desc":
