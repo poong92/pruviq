@@ -488,6 +488,7 @@ export default function ResultsPanel({
               {visibleTabs.map((tab) => (
                 <button
                   key={tab}
+                  data-testid={`tab-${tab}`}
                   role="tab"
                   aria-selected={resultTab === tab}
                   onClick={() => setResultTab(tab)}
@@ -506,6 +507,7 @@ export default function ResultsPanel({
             {simMode !== "quick" && (
               <div class="flex items-center justify-center gap-1 px-3 py-1.5 sm:py-0 border-t sm:border-t-0 border-[--color-border] flex-wrap">
                 <button
+                  data-testid="download-csv"
                   onClick={downloadCsv}
                   class="px-3 py-1.5 text-xs font-mono bg-[--color-bg-tooltip] border border-[--color-border] rounded hover:border-[--color-accent] transition-colors hover:bg-[--color-bg-hover]"
                 >
@@ -521,6 +523,7 @@ export default function ResultsPanel({
                 )}
                 {onCopyLink && (
                   <button
+                    data-testid="copy-link"
                     onClick={onCopyLink}
                     class="px-3 py-1.5 text-xs font-mono bg-[--color-bg-tooltip] border border-[--color-border] rounded hover:border-[--color-accent] transition-colors hover:bg-[--color-bg-hover]"
                     style={
@@ -535,6 +538,7 @@ export default function ResultsPanel({
                   </button>
                 )}
                 <button
+                  data-testid="quick-adjust-toggle"
                   onClick={() => setShowQuickAdjust(!showQuickAdjust)}
                   class={`px-3 py-1.5 text-xs font-mono border rounded transition-colors ${showQuickAdjust ? "border-[--color-accent] text-[--color-accent] bg-[--color-accent]/10" : "bg-[--color-bg-tooltip] border-[--color-border] hover:border-[--color-accent] hover:bg-[--color-bg-hover]"}`}
                 >

@@ -41,6 +41,7 @@ function PresetButton({
   return (
     <button
       key={p.id}
+      data-testid={`preset-${p.id}`}
       onClick={() => onSelectPreset(p.id)}
       class={`px-2.5 py-1 text-xs font-mono rounded transition-colors border
         ${
@@ -93,6 +94,7 @@ export default function PresetBar({
       </div>
       <div class="flex flex-wrap gap-1 mb-1.5">
         <button
+          data-testid="preset-custom"
           onClick={() => onSelectPreset(null)}
           class={`px-2.5 py-1 text-xs font-mono rounded transition-colors border
             ${

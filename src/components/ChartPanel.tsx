@@ -245,6 +245,7 @@ export default function ChartPanel({
           {["BTCUSDT", "ETHUSDT", "SOLUSDT"].map((sym) => (
             <button
               key={sym}
+              data-testid={`chart-${sym.replace("USDT", "").toLowerCase()}`}
               onClick={() => setChartSymbol(sym)}
               class={`px-2 py-1 text-xs font-mono rounded transition-colors
                 ${chartSymbol === sym ? "font-bold text-white" : "text-[--color-text-muted] hover:text-[--color-text] hover:bg-[--color-bg-hover]"}`}
@@ -261,6 +262,7 @@ export default function ChartPanel({
             </button>
           ))}
           <input
+            data-testid="chart-symbol-input"
             type="text"
             placeholder={symbolPlaceholder}
             aria-label={symbolPlaceholder}

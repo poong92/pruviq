@@ -313,6 +313,7 @@ export default function BuilderPanel(props: Props) {
               </label>
               <div class="flex gap-1 mt-0.5">
                 <button
+                  data-testid="dir-short"
                   onClick={() => props.setDirection("short")}
                   class={`flex-1 py-1 text-xs font-mono rounded transition-colors border ${props.direction === "short" ? "font-bold" : "bg-[--color-bg-tooltip] text-[--color-text-muted] border-[--color-border] hover:border-[--color-red]/30"}`}
                   style={
@@ -322,6 +323,7 @@ export default function BuilderPanel(props: Props) {
                   {t.short}
                 </button>
                 <button
+                  data-testid="dir-long"
                   onClick={() => props.setDirection("long")}
                   class={`flex-1 py-1 text-xs font-mono rounded transition-colors border ${props.direction === "long" ? "font-bold" : "bg-[--color-bg-tooltip] text-[--color-text-muted] border-[--color-border] hover:border-[--color-accent]/30"}`}
                   style={
@@ -331,6 +333,7 @@ export default function BuilderPanel(props: Props) {
                   {t.long}
                 </button>
                 <button
+                  data-testid="dir-both"
                   onClick={() => props.setDirection("both")}
                   class={`flex-1 py-1 text-xs font-mono rounded transition-colors border ${props.direction === "both" ? "font-bold" : "bg-[--color-bg-tooltip] text-[--color-text-muted] border-[--color-border] hover:border-[--color-accent]/30"}`}
                   style={
@@ -737,6 +740,7 @@ export default function BuilderPanel(props: Props) {
             </div>
           )}
           <button
+            data-testid="run-backtest"
             onClick={props.onRun}
             disabled={props.isRunning || props.conditions.length === 0}
             class={`w-full py-2 rounded-lg font-mono text-sm font-bold transition-colors

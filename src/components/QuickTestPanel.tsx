@@ -220,6 +220,7 @@ export default function QuickTestPanel({
           return (
             <button
               key={cat.id}
+              data-testid={`quick-cat-${cat.id}`}
               onClick={() => handleCategoryClick(cat)}
               disabled={isRunning}
               class={`relative rounded-lg border p-3 text-center transition-all group
