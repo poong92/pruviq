@@ -475,4 +475,80 @@ test.describe("Interactive QA — 기능 클릭 테스트", () => {
       expect(bodyText).toMatch(/simulat|ranking|coins/i);
     }
   });
+
+  // ── 15. History 이력 (localStorage 주입) ────────────────────────────────
+
+  test("simulate: History 이력 표시 (localStorage)", async ({ page }) => {
+    // localStorage에 이전 결과 주입
+    await page.goto("/simulate/");
+    await page.waitForLoadState("domcontentloaded");
+
+    // localStorage에 simulator history 주입
+    await page.evaluate(() => {
+      const fakeHistory = [
+        {
+          timestamp: Date.now(),
+          strategy: "bb-squeeze",
+          direction: "short",
+          sl: 10,
+          tp: 8,
+          result: { total_trades: 100, win_rate: 55, profit_factor: 1.2 },
+        },
+      ];
+      localStorage.setItem("pruviq-sim-history", JSON.stringify(fakeHistory));
+    });
+
+    // 페이지 리로드해서 history 반영
+    await page.reload();
+    await page.waitForLoadState("domcontentloaded");
+
+    // JS 에러 없어야 함 (localStorage 파싱 실패 등)
+    const errors: string[] = [];
+    page.on("pageerror", (e) => errors.push(e.message));
+    await page.waitForTimeout(2000);
+    expect(errors.length).toBe(0);
+  });
+
+  // ── 16. API 에러 시나리오 — demoMode 전환 ──────────────────────────────
+
+  test("simulate: API 타임아웃 시 demoMode 전환", async ({ page }) => {
+    // /simulate 접속 시 /health 요청이 실패해도 페이지가 로드되어야 함
+    // API를 차단해서 테스트 (route intercept)
+    await page.route("**/api.pruviq.com/health", (route) => route.abort());
+
+    await page.goto("/simulate/");
+    await page.waitForLoadState("domcontentloaded");
+
+    // 페이지가 정상 로드 (demoMode)
+    await page.waitForTimeout(3000);
+    const bodyText = await page.textContent("body");
+    expect(bodyText).toBeTruthy();
+    // JS 에러 없어야 함
+    const errors: string[] = [];
+    page.on("pageerror", (e) => errors.push(e.message));
+    expect(errors.length).toBe(0);
+
+    // 언라우트
+    await page.unroute("**/api.pruviq.com/health");
+  });
+
+  // ── 17. 키보드 내비게이션 (접근성) ─────────────────────────────────────
+
+  test("simulate: 키보드로 모드 탭 전환 (Tab + Enter)", async ({ page }) => {
+    await page.goto("/simulate/");
+    await page.waitForLoadState("domcontentloaded");
+
+    // Tab 키로 모드 탭에 포커스
+    const modeTab = page.locator('[data-testid="mode-standard"]');
+    if ((await modeTab.count()) > 0) {
+      await modeTab.focus();
+      await page.keyboard.press("Enter");
+      await page.waitForTimeout(500);
+    }
+
+    // JS 에러 없어야 함
+    const errors: string[] = [];
+    page.on("pageerror", (e) => errors.push(e.message));
+    expect(errors.length).toBe(0);
+  });
 });

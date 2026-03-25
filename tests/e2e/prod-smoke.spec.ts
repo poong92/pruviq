@@ -390,3 +390,48 @@ test.describe("Page coverage: KO + SEO landing pages", () => {
     });
   }
 });
+
+// ─── 9. Dynamic page samples: blog, learn, coins, strategies ─────────────────
+
+test.describe("Dynamic page samples: blog, learn, coins, strategies", () => {
+  const dynamicPages = [
+    // EN Blog (actual slugs from src/content/blog/)
+    "/blog/atr-volatility-guide",
+    "/blog/crypto-futures-beginners-guide",
+    // KO Blog
+    "/ko/blog/atr-volatility-guide",
+    "/ko/blog/crypto-futures-beginners-guide",
+    // EN Learn → redirects to /blog (301), use actual blog slugs
+    "/learn/atr-volatility-guide",
+    "/learn/crypto-futures-beginners-guide",
+    // KO Learn → redirects to /ko/blog
+    "/ko/learn/atr-volatility-guide",
+    "/ko/learn/crypto-futures-beginners-guide",
+    // Coins
+    "/coins/btcusdt",
+    "/coins/ethusdt",
+    "/coins/solusdt",
+    // KO Coins
+    "/ko/coins/btcusdt",
+    // Strategies
+    "/strategies/bb-squeeze-short",
+    "/strategies/momentum-long",
+    // KO Strategies
+    "/ko/strategies/bb-squeeze-short",
+  ];
+
+  for (const path of dynamicPages) {
+    test(`GET ${path} returns 200 with content`, async ({ page }) => {
+      const resp = await page.goto(`${path}/`);
+      expect(resp?.status()).toBe(200);
+
+      // h1 존재 + 5자 이상
+      const h1 = await page.locator("h1").first().textContent();
+      expect(h1?.trim().length).toBeGreaterThan(5);
+
+      // 본문 콘텐츠 존재
+      const article = page.locator("article, main, .prose").first();
+      expect(await article.textContent()).toBeTruthy();
+    });
+  }
+});
