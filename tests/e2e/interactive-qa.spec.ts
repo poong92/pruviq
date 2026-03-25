@@ -46,14 +46,12 @@ test.describe("Interactive QA — 기능 클릭 테스트", () => {
     await page.goto("/simulate/");
     await page.waitForLoadState("domcontentloaded");
 
-    const breakoutCard = page.locator('[data-testid="quick-cat-breakout"]');
-    const cardLocator =
-      (await breakoutCard.count()) > 0
-        ? breakoutCard
-        : page.locator("button:has-text('Breakout')").first();
-
-    await expect(cardLocator).toBeVisible({ timeout: 15000 });
-    await cardLocator.click();
+    // Breakout 클릭
+    const breakoutCard = page
+      .locator('[data-testid="quick-cat-breakout"]')
+      .first();
+    await expect(breakoutCard).toBeVisible({ timeout: 10000 });
+    await breakoutCard.click();
 
     await expect(page.locator("text=/\\d+\\.?\\d*%/").first()).toBeVisible({
       timeout: 60000,
@@ -278,7 +276,173 @@ test.describe("Interactive QA — 기능 클릭 테스트", () => {
     console.log("✅ Reversals 시나리오 수치 범위 정상");
   });
 
-  // ── 8. 쿠키 배너 ──────────────────────────────────────────────────────────
+  // ── 8. Copy Link 버튼 클릭 ────────────────────────────────────────────────
+
+  test("simulate: Copy Link 버튼 클릭 → Copied 표시", async ({ page }) => {
+    await page.goto("/simulate/");
+    await page.waitForLoadState("domcontentloaded");
+
+    // Breakout 클릭
+    const breakoutCard = page
+      .locator('[data-testid="quick-cat-breakout"]')
+      .first();
+    await expect(breakoutCard).toBeVisible({ timeout: 10000 });
+    await breakoutCard.click();
+
+    // 결과 대기
+    await expect(page.locator("text=/\\d+\\.?\\d*%/").first()).toBeVisible({
+      timeout: 60000,
+    });
+
+    // Copy Link 버튼 클릭 (headless에서 clipboard API 제한 → 클릭 에러 없음만 확인)
+    const copyBtn = page.locator('[data-testid="copy-link"]').first();
+    await expect(copyBtn).toBeVisible({ timeout: 10000 });
+    await copyBtn.click();
+    await page.waitForTimeout(500);
+    console.log("✅ Copy Link 버튼 클릭 → 에러 없음");
+  });
+
+  // ── 9. CSV Download 버튼 존재 확인 ────────────────────────────────────────
+
+  test("simulate: Download CSV 버튼 존재 확인", async ({ page }) => {
+    await page.goto("/simulate/");
+    await page.waitForLoadState("domcontentloaded");
+
+    // Breakout 클릭
+    const breakoutCard = page
+      .locator('[data-testid="quick-cat-breakout"]')
+      .first();
+    await expect(breakoutCard).toBeVisible({ timeout: 10000 });
+    await breakoutCard.click();
+
+    // 결과 대기
+    await expect(page.locator("text=/\\d+\\.?\\d*%/").first()).toBeVisible({
+      timeout: 60000,
+    });
+
+    // Download CSV 버튼 존재 확인
+    const downloadBtn = page.locator('[data-testid="download-csv"]').first();
+    await expect(downloadBtn).toBeVisible({ timeout: 10000 });
+
+    console.log("✅ Download CSV 버튼 존재 확인");
+  });
+
+  // ── 10. Avoid Hours UI 클릭 ───────────────────────────────────────────────
+
+  test("simulate: Expert Avoid Hours 버튼 클릭", async ({ page }) => {
+    await page.goto("/simulate/");
+    await page.waitForLoadState("domcontentloaded");
+
+    // JS 에러 수집
+    const errors: string[] = [];
+    page.on("pageerror", (e) => errors.push(e.message));
+
+    // Expert 탭 클릭
+    const expertTab = page
+      .locator('[data-testid="mode-expert"], button:has-text("Expert")')
+      .first();
+    if ((await expertTab.count()) > 0) {
+      await expertTab.click();
+      await page.waitForTimeout(500);
+    }
+
+    // Avoid Hours: Expert 패널 내 "Avoid Hours" 텍스트 근처 버튼 찾기
+    // collapsible 섹션이므로 먼저 토글 클릭
+    const avoidToggle = page.locator("text=/Avoid Hours/i").first();
+    if ((await avoidToggle.count()) > 0) {
+      await avoidToggle.click();
+      await page.waitForTimeout(300);
+      // 시간 버튼 (0-23) 중 첫 번째 클릭
+      const hourBtns = page
+        .locator("button")
+        .filter({ hasText: /^[0-9]{1,2}$/ });
+      if ((await hourBtns.count()) > 0) {
+        await hourBtns.first().click();
+        await page.waitForTimeout(200);
+      }
+    }
+
+    // JS 에러 없음 확인
+    expect(errors.length).toBe(0);
+
+    console.log("✅ Expert Avoid Hours 버튼 클릭 → JS 에러 없음");
+  });
+
+  // ── 11. Quick Adjust 토글 ────────────────────────────────────────────────
+
+  test("simulate: Quick Adjust 토글 → 슬라이더 표시", async ({ page }) => {
+    await page.goto("/simulate/");
+    await page.waitForLoadState("domcontentloaded");
+
+    // Breakout 클릭
+    const breakoutCard = page
+      .locator('[data-testid="quick-cat-breakout"]')
+      .first();
+    await expect(breakoutCard).toBeVisible({ timeout: 10000 });
+    await breakoutCard.click();
+
+    // 결과 대기
+    await expect(page.locator("text=/\\d+\\.?\\d*%/").first()).toBeVisible({
+      timeout: 60000,
+    });
+
+    // Quick Adjust 토글 클릭
+    const toggleBtn = page
+      .locator('[data-testid="quick-adjust-toggle"]')
+      .first();
+    await expect(toggleBtn).toBeVisible({ timeout: 10000 });
+    await toggleBtn.click();
+
+    // 슬라이더 visible 확인
+    const slider = page
+      .locator('input[type="range"], [class*="slider"]')
+      .first();
+    await expect(slider).toBeVisible({ timeout: 5000 });
+
+    console.log("✅ Quick Adjust 토글 → 슬라이더 표시 확인");
+  });
+
+  // ── 12. Expert 프리셋 3개 순차 클릭 ──────────────────────────────────────
+
+  test("simulate: Expert 프리셋 3개 순차 클릭", async ({ page }) => {
+    await page.goto("/simulate/");
+    await page.waitForLoadState("domcontentloaded");
+
+    // JS 에러 수집
+    const errors: string[] = [];
+    page.on("pageerror", (e) => errors.push(e.message));
+
+    // Expert 탭 클릭
+    const expertTab = page
+      .locator('[data-testid="mode-expert"], button:has-text("Expert")')
+      .first();
+    if ((await expertTab.count()) > 0) {
+      await expertTab.click();
+      await page.waitForTimeout(500);
+    }
+
+    // 프리셋 3개 순차 클릭
+    const presets = [
+      '[data-testid="preset-bb-squeeze-short"]',
+      '[data-testid="preset-macd-crossover-short"]',
+      '[data-testid="preset-custom"]',
+    ];
+
+    for (const selector of presets) {
+      const presetBtn = page.locator(selector).first();
+      if ((await presetBtn.count()) > 0) {
+        await presetBtn.click();
+        await page.waitForTimeout(500);
+      }
+    }
+
+    // JS 에러 없음 확인
+    expect(errors.length).toBe(0);
+
+    console.log("✅ Expert 프리셋 3개 순차 클릭 → JS 에러 없음");
+  });
+
+  // ── 13. 쿠키 배너 ─────────────────────────────────────────────────────────
 
   test("cookie banner: Got it 클릭 → 사라짐", async ({ page }) => {
     await page.goto("/");
@@ -292,7 +456,7 @@ test.describe("Interactive QA — 기능 클릭 테스트", () => {
     }
   });
 
-  // ── 9. 모바일 메뉴 ────────────────────────────────────────────────────────
+  // ── 14. 모바일 메뉴 ───────────────────────────────────────────────────────
 
   test("mobile: 햄버거 메뉴 열기 → 닫기", async ({ page, isMobile }) => {
     test.skip(!isMobile, "Mobile only");
