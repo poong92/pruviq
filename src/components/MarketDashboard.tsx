@@ -298,7 +298,7 @@ export default function MarketDashboard({
   initialMarket?: MarketDataShape | null;
 }) {
   const l = labels[lang] || labels.en;
-  const [coinsCount, setCoinsCount] = useState("569");
+  const [coinsCount, setCoinsCount] = useState("570");
 
   useEffect(() => {
     fetch("/data/site-stats.json")

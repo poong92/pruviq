@@ -606,7 +606,7 @@ export default function ResultsPanel({
                   <input
                     type="range"
                     min="1"
-                    max="569"
+                    max="570"
                     step="1"
                     value={qaCoins}
                     onInput={(e: Event) =>

@@ -9,7 +9,7 @@ const STATS = [
   { label: "Profit Factor", value: 2.14, suffix: "", color: "var(--color-up)" },
   {
     label: "Total Return",
-    value: 569.3,
+    value: 570.3,
     suffix: "%",
     color: "var(--color-up)",
     prefix: "+",
@@ -80,7 +80,7 @@ export default function SimulatorPreview() {
             BB Squeeze SHORT
           </span>
           <span class="text-[--color-text-muted] text-[10px]">
-            569 coins · 2yr
+            570 coins · 2yr
           </span>
         </div>
         <span class="text-[--color-text-muted] text-[10px]">
@@ -97,7 +97,7 @@ export default function SimulatorPreview() {
           style={{ color: "var(--color-up)" }}
         >
           {visible ? (
-            <AnimatedNumber target={569.3} prefix="+" duration={2000} />
+            <AnimatedNumber target={570.3} prefix="+" duration={2000} />
           ) : (
             "0.0"
           )}

@@ -908,7 +908,7 @@ export default function SimulatorPage({ lang = "en" }: Props) {
           ? topN
           : coinMode === "select"
             ? selectedCoins.length
-            : 569;
+            : 570;
       const timeoutMs = Math.max(120000, coinCount > 100 ? 180000 : 120000);
       const abortTimeout = setTimeout(() => controller.abort(), timeoutMs);
 

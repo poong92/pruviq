@@ -16,7 +16,7 @@ interface SiteStats {
 }
 
 const DEFAULTS: SiteStats = {
-  coins_analyzed: 569,
+  coins_analyzed: 570,
   trading_days: 2898,
   simulations_run: 12847,
   strategies_tested: 88,

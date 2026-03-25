@@ -184,7 +184,7 @@ export default function PerformanceDashboard({
 }) {
   const t = labels[lang] || labels.en;
 
-  const [coinsCount, setCoinsCount] = useState("569");
+  const [coinsCount, setCoinsCount] = useState("570");
   const [data, setData] = useState<RawPerformanceData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

@@ -20,7 +20,7 @@ interface Props {
 const labels = {
   en: {
     weeklyBest: "This Week's Best",
-    weeklyBestSub: "7-day Profit Factor ranking across 569+ coins",
+    weeklyBestSub: "7-day Profit Factor ranking across 570+ coins",
     worstTitle: "Worst 3 This Week",
     worstSub: "Avoid these — bottom 3 by 7-day PF",
     loading: "Loading weekly rankings...",
@@ -39,7 +39,7 @@ const labels = {
   },
   ko: {
     weeklyBest: "이번 주 베스트",
-    weeklyBestSub: "569+ 코인 기준 7일 PF 랭킹",
+    weeklyBestSub: "570+ 코인 기준 7일 PF 랭킹",
     worstTitle: "이번 주 하위 3개",
     worstSub: "피해야 할 조합 — 7일 PF 하위 3개",
     loading: "주간 랭킹 로딩 중...",
