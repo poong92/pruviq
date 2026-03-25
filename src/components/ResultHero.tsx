@@ -12,9 +12,10 @@ interface Props {
   result: BacktestResult;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   t: Record<string, any>;
+  simMode?: "quick" | "standard" | "expert";
 }
 
-export default function ResultHero({ result, t }: Props) {
+export default function ResultHero({ result, t, simMode = "expert" }: Props) {
   const returnPct = result.total_return_pct;
   const isPositive = returnPct > 0;
   const color = isPositive ? COLORS.green : COLORS.red;
@@ -58,6 +59,13 @@ export default function ResultHero({ result, t }: Props) {
           label={t.heroMDD || "Max DD"}
           value={`${result.max_drawdown_pct.toFixed(1)}%`}
           valueColor={COLORS.red}
+          tooltip={
+            simMode === "standard"
+              ? t.mddPortfolioTip ||
+                "Portfolio-level: capital split across coins equally"
+              : t.mddPositionTip ||
+                "Per-position: based on your capital × leverage setting"
+          }
         />
       </div>
     </div>
@@ -68,13 +76,18 @@ function Pill({
   label,
   value,
   valueColor,
+  tooltip,
 }: {
   label: string;
   value: string;
   valueColor: string;
+  tooltip?: string;
 }) {
   return (
-    <div class="px-2.5 py-1.5 rounded-lg bg-[--color-bg-tooltip] border border-[--color-border] text-center min-w-[80px]">
+    <div
+      class="px-2.5 py-1.5 rounded-lg bg-[--color-bg-tooltip] border border-[--color-border] text-center min-w-[80px]"
+      title={tooltip}
+    >
       <div class="text-[9px] font-mono text-[--color-text-muted] uppercase tracking-wider">
         {label}
       </div>
