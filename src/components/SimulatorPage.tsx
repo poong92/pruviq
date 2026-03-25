@@ -684,9 +684,16 @@ export default function SimulatorPage({ lang = "en" }: Props) {
         if (d === "short" || d === "long" || d === "both") setDirection(d);
       }
       if (params.has("coins")) setTopN(parseInt(params.get("coins")!) || 50);
+      if (params.has("tf")) {
+        const tf = params.get("tf")!.toUpperCase();
+        if (["1H", "2H", "4H", "6H", "12H", "1D", "1W"].includes(tf))
+          setTimeframe(tf);
+      }
       // Auto-select coin from URL (e.g., from /coins/[symbol] CTA)
-      if (params.has("symbol")) {
-        const sym = params.get("symbol")!.toUpperCase();
+      // Supports both ?symbol= and ?coin= for backwards compat
+      const symParam = params.get("symbol") || params.get("coin");
+      if (symParam) {
+        const sym = symParam.toUpperCase();
         setCoinMode("select");
         setSelectedCoins([sym]);
         setChartSymbol(sym);
