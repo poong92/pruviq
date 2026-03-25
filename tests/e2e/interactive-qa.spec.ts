@@ -86,6 +86,10 @@ test.describe("Interactive QA — 기능 클릭 테스트", () => {
     await page.goto("/simulate/");
     await page.waitForLoadState("domcontentloaded");
 
+    // JS 에러 수집 — 액션 전에 리스너 등록
+    const errors: string[] = [];
+    page.on("pageerror", (e) => errors.push(e.message));
+
     // data-testid 기반 모드 탭 전환
     for (const mode of ["standard", "expert", "quick"]) {
       const tab = page.locator(`[data-testid="mode-${mode}"]`);
@@ -95,9 +99,6 @@ test.describe("Interactive QA — 기능 클릭 테스트", () => {
       }
     }
 
-    // JS 에러 수집
-    const errors: string[] = [];
-    page.on("pageerror", (e) => errors.push(e.message));
     await page.waitForTimeout(500);
     expect(errors.length).toBe(0);
   });
@@ -145,6 +146,10 @@ test.describe("Interactive QA — 기능 클릭 테스트", () => {
     await page.goto("/simulate/");
     await page.waitForLoadState("domcontentloaded");
 
+    // JS 에러 수집 — 액션 전에 리스너 등록
+    const errors: string[] = [];
+    page.on("pageerror", (e) => errors.push(e.message));
+
     // Expert 모드로 전환
     const expertTab = page.locator('[data-testid="mode-expert"]');
     if ((await expertTab.count()) > 0) {
@@ -161,9 +166,6 @@ test.describe("Interactive QA — 기능 클릭 테스트", () => {
       }
     }
 
-    // JS 에러 없어야 함
-    const errors: string[] = [];
-    page.on("pageerror", (e) => errors.push(e.message));
     await page.waitForTimeout(300);
     expect(errors.length).toBe(0);
   });
@@ -173,6 +175,10 @@ test.describe("Interactive QA — 기능 클릭 테스트", () => {
   test("ranking: 필터 클릭 → 데이터 업데이트", async ({ page }) => {
     await page.goto("/strategies/ranking");
     await page.waitForLoadState("domcontentloaded");
+
+    // JS 에러 수집 — 액션 전에 리스너 등록
+    const jsErrors: string[] = [];
+    page.on("pageerror", (e) => jsErrors.push(e.message));
 
     const btn365 = page
       .locator('button:has-text("365"), button:has-text("365 Days")')
@@ -187,8 +193,6 @@ test.describe("Interactive QA — 기능 클릭 테스트", () => {
       expect(afterText).toBeTruthy();
     }
 
-    const jsErrors: string[] = [];
-    page.on("pageerror", (e) => jsErrors.push(e.message));
     expect(jsErrors.length).toBe(0);
   });
 
