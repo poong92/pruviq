@@ -236,7 +236,7 @@ def main():
             continue
 
         try:
-            df["timestamp"] = pd.to_datetime(df["timestamp"])
+            df["timestamp"] = pd.to_datetime(df["timestamp"], format="ISO8601")
         except (ValueError, TypeError):
             skipped += 1
             continue

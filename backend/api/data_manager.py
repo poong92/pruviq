@@ -64,7 +64,7 @@ class DataManager:
                 if len(df) < 500:
                     continue
 
-                df["timestamp"] = pd.to_datetime(df["timestamp"])
+                df["timestamp"] = pd.to_datetime(df["timestamp"], format="ISO8601")
                 df = df.drop_duplicates(subset=["timestamp"], keep="last").reset_index(drop=True)
                 symbol = stem.upper()
                 new_data[symbol] = df
