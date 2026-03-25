@@ -310,3 +310,83 @@ test.describe("HTTP status: no accidental 4xx/5xx", () => {
     });
   }
 });
+
+// ─── 8. Page coverage: KO + SEO landing pages ───────────────────────────────
+
+test.describe("Page coverage: KO + SEO landing pages", () => {
+  // EN pages that should return 200 + have h1
+  const enPages = [
+    "/best-crypto-backtesting",
+    "/crypto-trading-simulator",
+    "/demo",
+    "/blog",
+    "/why-backtests-fail",
+  ];
+
+  for (const path of enPages) {
+    test(`GET ${path} returns 200`, async ({ page }) => {
+      const resp = await page.goto(`${path}/`);
+      expect(resp?.status()).toBe(200);
+    });
+
+    test(`${path} has h1`, async ({ page }) => {
+      await page.goto(`${path}/`);
+      const h1 = page.locator("h1").first();
+      await expect(h1).toBeVisible({ timeout: 10000 });
+      const text = await h1.textContent();
+      expect(text?.trim().length ?? 0).toBeGreaterThan(0);
+    });
+  }
+
+  // /404 page — Cloudflare may return 200 with custom 404 content
+  test("GET /404 returns 404 or custom page", async ({ page }) => {
+    const resp = await page.goto("/404/");
+    // Cloudflare Workers may serve 200 with custom 404 HTML
+    expect([200, 404]).toContain(resp?.status());
+  });
+
+  test("/404 has h1", async ({ page }) => {
+    await page.goto("/404/");
+    const h1 = page.locator("h1").first();
+    await expect(h1).toBeVisible({ timeout: 10000 });
+    const text = await h1.textContent();
+    expect(text?.trim().length ?? 0).toBeGreaterThan(0);
+  });
+
+  // KO pages that should return 200 + have h1
+  const koPages = [
+    "/ko/about",
+    "/ko/blog",
+    "/ko/changelog",
+    "/ko/coins",
+    "/ko/compare/tradingview",
+    "/ko/crypto-trading-simulator",
+    "/ko/demo",
+    "/ko/fees",
+    "/ko/methodology",
+    "/ko/performance",
+    "/ko/privacy",
+    "/ko/simulate",
+    "/ko/strategies",
+    "/ko/strategies/compare",
+    "/ko/strategies/ranking",
+    "/ko/terms",
+    "/ko/why-backtests-fail",
+    "/ko/best-crypto-backtesting",
+  ];
+
+  for (const path of koPages) {
+    test(`GET ${path} returns 200`, async ({ page }) => {
+      const resp = await page.goto(`${path}/`);
+      expect(resp?.status()).toBe(200);
+    });
+
+    test(`${path} has h1`, async ({ page }) => {
+      await page.goto(`${path}/`);
+      const h1 = page.locator("h1").first();
+      await expect(h1).toBeVisible({ timeout: 10000 });
+      const text = await h1.textContent();
+      expect(text?.trim().length ?? 0).toBeGreaterThan(0);
+    });
+  }
+});
