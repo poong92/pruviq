@@ -190,9 +190,9 @@ export function RankingCard({
         </div>
       </div>
 
-      {/* Simulate button */}
+      {/* Simulate button — pass strategy params so simulator opens with matching config */}
       <a
-        href={`/${lang === "ko" ? "ko/" : ""}simulate?preset=${entry.strategy}`}
+        href={`/${lang === "ko" ? "ko/" : ""}simulate?preset=${entry.strategy}&dir=${entry.direction}&sl=${entry.sl_pct ?? ""}&tp=${entry.tp_pct ?? ""}${entry.timeframe && entry.timeframe !== "1H" ? `&tf=${entry.timeframe}` : ""}`}
         class="mt-3 block text-center text-xs font-mono px-3 py-1.5 rounded border border-[--color-accent]/30 text-[--color-accent] hover:bg-[--color-accent]/10 transition-colors"
       >
         {lang === "ko" ? "시뮬레이션 →" : "Simulate →"}
