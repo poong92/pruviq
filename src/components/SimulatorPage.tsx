@@ -190,7 +190,7 @@ const L = {
       `PF ${pf}, WR ${wr}%, MDD ${mdd}% — all three metrics strong`,
     reasonGood: (pf: string, wr: string, mdd: string) =>
       `PF ${pf}, WR ${wr}%, MDD ${mdd}% — viable for live use`,
-    reasonFairPf: (pf: string) => `PF ${pf} (target: ≥1.5)`,
+    reasonFairPf: (pf: string) => `PF ${pf} (target: ≥1.1)`,
     reasonFairWr: (wr: string) => `WR ${wr}% (target: ≥50%)`,
     reasonFairSuffix: (weak: string) => `${weak} — consider parameter tuning`,
     reasonWeakPf: (pf: string) => `PF ${pf} (net loss)`,
@@ -377,7 +377,7 @@ const L = {
       `PF ${pf}, 승률 ${wr}%, MDD ${mdd}% — 세 지표 모두 우수`,
     reasonGood: (pf: string, wr: string, mdd: string) =>
       `PF ${pf}, 승률 ${wr}%, MDD ${mdd}% — 실사용 가능 수준`,
-    reasonFairPf: (pf: string) => `PF ${pf} (목표: 1.5 이상)`,
+    reasonFairPf: (pf: string) => `PF ${pf} (목표: 1.1 이상)`,
     reasonFairWr: (wr: string) => `승률 ${wr}% (목표: 50% 이상)`,
     reasonFairSuffix: (weak: string) => `${weak} — 파라미터 조정 권장`,
     reasonWeakPf: (pf: string) => `PF ${pf} (손익 역전)`,

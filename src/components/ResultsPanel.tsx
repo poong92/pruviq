@@ -755,7 +755,11 @@ export default function ResultsPanel({
                   let grade: string;
                   let gradeColor: string;
                   let reason: string;
-                  if (pf >= 2.0 && wr >= 55 && mdd <= 20) {
+                  // Grade thresholds calibrated for multi-coin portfolio (50 coins).
+                  // Single-coin runs naturally produce higher PF; portfolio
+                  // aggregation dilutes edge. Thresholds reflect realistic
+                  // ranges from 2+ years of data across 16 strategies.
+                  if (pf >= 1.3 && wr >= 53 && mdd <= 15) {
                     grade = t.gradeStrong;
                     gradeColor = "#22c55e";
                     reason = t.reasonStrong(
@@ -763,7 +767,7 @@ export default function ResultsPanel({
                       wr.toFixed(1),
                       mdd.toFixed(1),
                     );
-                  } else if (pf >= 1.5 && wr >= 50 && mdd <= 30) {
+                  } else if (pf >= 1.1 && wr >= 50 && mdd <= 25) {
                     grade = t.gradeGood;
                     gradeColor = "#86efac";
                     reason = t.reasonGood(
@@ -771,11 +775,11 @@ export default function ResultsPanel({
                       wr.toFixed(1),
                       mdd.toFixed(1),
                     );
-                  } else if (pf >= 1.2 && mdd <= 40) {
+                  } else if (pf >= 1.0 && mdd <= 35) {
                     grade = t.gradeFair;
                     gradeColor = "#facc15";
                     const weak =
-                      pf < 1.5
+                      pf < 1.1
                         ? t.reasonFairPf(formatPF(pf))
                         : t.reasonFairWr(wr.toFixed(1));
                     reason = t.reasonFairSuffix(weak);
@@ -785,7 +789,7 @@ export default function ResultsPanel({
                     const mainIssue =
                       pf < 1.0
                         ? t.reasonWeakPf(formatPF(pf))
-                        : mdd > 40
+                        : mdd > 35
                           ? t.reasonWeakMdd(mdd.toFixed(1))
                           : t.reasonWeakWr(wr.toFixed(1));
                     reason = t.reasonWeakSuffix(mainIssue);
