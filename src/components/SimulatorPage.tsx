@@ -698,8 +698,15 @@ export default function SimulatorPage({ lang = "en" }: Props) {
         setSelectedCoins([sym]);
         setChartSymbol(sym);
       }
+      // ?strategy= from ranking page → open Standard mode and auto-run
+      if (params.has("strategy")) {
+        setSimMode("standard");
+        // sl/tp/dir already set above from URL params
+        // Mark for auto-run once API is ready
+        (window as any).__pruviq_pending_strategy = params.get("strategy")!;
+      }
       // Store pending preset from URL — applied after presets load
-      if (params.has("preset")) {
+      if (params.has("preset") && !params.has("strategy")) {
         (window as any).__pruviq_pending_preset = params.get("preset")!;
       }
     } catch {}
@@ -1110,6 +1117,16 @@ export default function SimulatorPage({ lang = "en" }: Props) {
       loadPreset(pending);
     }
   }, [presets, loadPreset]);
+
+  // Auto-run when ?strategy= is in URL (from ranking page)
+  useEffect(() => {
+    const pending = (window as any).__pruviq_pending_strategy;
+    if (pending && apiReady && !isRunning && !result) {
+      delete (window as any).__pruviq_pending_strategy;
+      // sl/tp/dir/tf already set from URL params — just run
+      runBacktest();
+    }
+  }, [apiReady, isRunning, result, runBacktest]);
 
   const onSelectPreset = useCallback(
     (id: string | null) => {
