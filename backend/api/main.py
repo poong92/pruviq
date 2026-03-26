@@ -3656,6 +3656,8 @@ async def generate_bot(req: GenerateBotRequest):
         headers={
             "Content-Disposition": f'attachment; filename="pruviq_bot_{req.strategy_id}.zip"',
         },
+    )
+
 # ---------------------------------------------------------------------------
 # Email Subscription
 # ---------------------------------------------------------------------------
