@@ -676,3 +676,9 @@ class GenerateBotRequest(BaseModel):
     avoid_hours: List[int] = []
     backtest_win_rate: float = 0
     backtest_profit_factor: float = 0
+# --- Subscribe Schemas ---
+
+class SubscribeRequest(BaseModel):
+    """Email subscription request."""
+    email: str
+    lang: str = "en"
