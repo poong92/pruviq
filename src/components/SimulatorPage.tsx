@@ -689,6 +689,8 @@ export default function SimulatorPage({ lang = "en" }: Props) {
         if (["1H", "2H", "4H", "6H", "12H", "1D", "1W"].includes(tf))
           setTimeframe(tf);
       }
+      if (params.has("start")) setStartDate(params.get("start")!);
+      if (params.has("end")) setEndDate(params.get("end")!);
       // Auto-select coin from URL (e.g., from /coins/[symbol] CTA)
       // Supports both ?symbol= and ?coin= for backwards compat
       const symParam = params.get("symbol") || params.get("coin");
@@ -1134,16 +1136,20 @@ export default function SimulatorPage({ lang = "en" }: Props) {
         1000,
       );
 
+      const body: Record<string, unknown> = {
+        strategy: pending,
+        direction: direction,
+        sl_pct: slPct,
+        tp_pct: tpPct,
+        top_n: topN,
+      };
+      if (startDate) body.start_date = startDate;
+      if (endDate) body.end_date = endDate;
+
       fetch(`${API_URL}/simulate`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          strategy: pending,
-          direction: direction,
-          sl_pct: slPct,
-          tp_pct: tpPct,
-          top_n: topN,
-        }),
+        body: JSON.stringify(body),
       })
         .then((r) => r.json())
         .then((data) => {
