@@ -26,7 +26,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException, Request, Header
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, Response
 
 _admin_key_raw = os.environ.get("ADMIN_API_KEY", "")
 ADMIN_API_KEY: Optional[str] = _admin_key_raw if len(_admin_key_raw) >= 32 else None
@@ -3520,6 +3520,142 @@ async def get_daily_rankings(
     return result
 
 
+# ── OG Image Generation ──────────────────────────────────────────────
+from PIL import Image, ImageDraw, ImageFont
+from io import BytesIO
+
+_og_cache: dict = {}
+_OG_CACHE_MAX = 200
+
+
+@app.get("/og")
+async def generate_og_image(
+    strategy: str = "bb-squeeze-short",
+    dir: str = "short",
+    wr: float = 0,
+    pf: float = 0,
+    ret: float = 0,
+    trades: int = 0,
+    mdd: float = 0,
+):
+    """Generate a 1200x630 OG image with strategy metrics."""
+    cache_key = f"{strategy}_{dir}_{wr}_{pf}_{ret}_{trades}_{mdd}"
+    if cache_key in _og_cache:
+        return Response(
+            content=_og_cache[cache_key],
+            media_type="image/png",
+            headers={"Cache-Control": "public, max-age=86400"},
+        )
+
+    W, H = 1200, 630
+    bg_color = (9, 9, 11)
+    accent = (0, 229, 255)
+    white = (255, 255, 255)
+    muted = (160, 160, 170)
+    green = (34, 197, 94)
+    red = (248, 113, 113)
+
+    img = Image.new("RGB", (W, H), bg_color)
+    draw = ImageDraw.Draw(img)
+
+    try:
+        font_lg = ImageFont.truetype("/System/Library/Fonts/Helvetica.ttc", 48)
+        font_md = ImageFont.truetype("/System/Library/Fonts/Helvetica.ttc", 32)
+        font_sm = ImageFont.truetype("/System/Library/Fonts/Helvetica.ttc", 24)
+        font_xs = ImageFont.truetype("/System/Library/Fonts/Helvetica.ttc", 18)
+    except Exception:
+        font_lg = ImageFont.load_default()
+        font_md = font_lg
+        font_sm = font_lg
+        font_xs = font_lg
+
+    # Header
+    draw.text((60, 40), "PRUVIQ", fill=accent, font=font_md)
+
+    # Strategy name
+    strategy_name = strategy.replace("-", " ").upper()
+    draw.text((60, 100), strategy_name, fill=white, font=font_lg)
+
+    # Direction badge
+    draw.text((60, 165), dir.upper(), fill=accent, font=font_sm)
+
+    # Metrics grid
+    metrics = [
+        ("Win Rate", f"{wr:.1f}%", green if wr >= 50 else red),
+        ("Profit Factor", f"{pf:.2f}", green if pf >= 1.0 else red),
+        ("Return", f"{'+' if ret >= 0 else ''}{ret:.1f}%", green if ret >= 0 else red),
+        ("Max DD", f"{mdd:.1f}%", red),
+    ]
+
+    box_w, box_h = 240, 140
+    start_x, start_y = 60, 240
+    gap = 30
+
+    for i, (label, value, color) in enumerate(metrics):
+        x = start_x + i * (box_w + gap)
+        y = start_y
+        draw.rounded_rectangle(
+            [x, y, x + box_w, y + box_h], radius=12, fill=(20, 20, 25)
+        )
+        draw.text((x + 20, y + 15), label, fill=muted, font=font_xs)
+        draw.text((x + 20, y + 50), value, fill=color, font=font_md)
+
+    # Trades count
+    draw.text((60, 420), f"{trades:,} trades", fill=muted, font=font_sm)
+
+    # Footer
+    draw.text((60, 560), "pruviq.com", fill=muted, font=font_sm)
+    draw.text((350, 560), "Don't Believe. Verify.", fill=accent, font=font_sm)
+
+    # Top accent line
+    draw.rectangle([0, 0, W, 4], fill=accent)
+
+    buf = BytesIO()
+    img.save(buf, format="PNG", optimize=True)
+    png_bytes = buf.getvalue()
+
+    # Cache (LRU eviction)
+    if len(_og_cache) >= _OG_CACHE_MAX:
+        _og_cache.pop(next(iter(_og_cache)))
+    _og_cache[cache_key] = png_bytes
+
+    return Response(
+        content=png_bytes,
+        media_type="image/png",
+        headers={"Cache-Control": "public, max-age=86400"},
+    )
+
+
+# ── Bot Code Generation ──────────────────────────────────────────────
+from src.codegen.bot_generator import generate_bot_zip
+from api.schemas import GenerateBotRequest
+
+
+@app.post("/generate-bot")
+async def generate_bot(req: GenerateBotRequest):
+    """Generate a downloadable trading bot zip from strategy config."""
+    try:
+        zip_bytes = generate_bot_zip(
+            strategy_id=req.strategy_id,
+            direction=req.direction,
+            sl_pct=req.sl_pct,
+            tp_pct=req.tp_pct,
+            max_bars=req.max_bars,
+            leverage=req.leverage,
+            position_size=req.position_size_usd,
+            coins=req.coins,
+            avoid_hours=req.avoid_hours,
+            wr=req.backtest_win_rate,
+            pf=req.backtest_profit_factor,
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Bot generation failed: {e}")
+    return Response(
+        content=zip_bytes,
+        media_type="application/zip",
+        headers={
+            "Content-Disposition": f'attachment; filename="pruviq_bot_{req.strategy_id}.zip"',
+        },
 # ---------------------------------------------------------------------------
 # Email Subscription
 # ---------------------------------------------------------------------------
