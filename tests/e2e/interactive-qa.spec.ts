@@ -560,13 +560,13 @@ test.describe("Interactive QA — 기능 클릭 테스트", () => {
     await page.goto("/strategies/ranking");
     await page.waitForLoadState("domcontentloaded");
 
-    // 랭킹 카드의 "Simulate →" 링크 찾기
-    const simLink = page.locator('a[href*="/simulate?preset="]').first();
+    // 랭킹 카드의 "Simulate →" 링크 찾기 (?strategy= 형태)
+    const simLink = page.locator('a[href*="/simulate?strategy="]').first();
     await expect(simLink).toBeVisible({ timeout: 15000 });
 
     // href에서 파라미터 확인
     const href = await simLink.getAttribute("href");
-    expect(href).toContain("preset=");
+    expect(href).toContain("strategy=");
     expect(href).toContain("dir=");
     expect(href).toContain("sl=");
     expect(href).toContain("tp=");
@@ -577,7 +577,7 @@ test.describe("Interactive QA — 기능 클릭 테스트", () => {
 
     // URL에 파라미터가 있는지
     const url = page.url();
-    expect(url).toContain("preset=");
+    expect(url).toContain("strategy=");
     expect(url).toContain("dir=");
 
     console.log(`✅ 랭킹 → 시뮬레이터: ${url}`);
@@ -589,7 +589,7 @@ test.describe("Interactive QA — 기능 클릭 테스트", () => {
     await page.goto("/strategies/ranking");
     await page.waitForLoadState("domcontentloaded");
 
-    const simLinks = page.locator('a[href*="/simulate?preset="]');
+    const simLinks = page.locator('a[href*="/simulate?strategy="]');
     const count = await simLinks.count();
 
     if (count >= 2) {
