@@ -87,6 +87,13 @@ jobs:
         timeout-minutes: 6
         continue-on-error: true
 
+      - name: Verify demo JSON ↔ API parity
+        run: bash scripts/verify-demo-api-parity.sh
+        env:
+          API_BASE_URL: https://api.pruviq.com
+        timeout-minutes: 2
+        continue-on-error: true
+
       - name: Upload smoke test report + interactive screenshots
         if: always()
         uses: actions/upload-artifact@v4

@@ -571,9 +571,11 @@ export const en = {
   "market.top_gainers": "Top Gainers",
   "market.top_losers": "Top Losers",
   "market.latest_news": "Latest News",
-  "market.noscript_title": "JavaScript required for live market data.",
+  "market.noscript_title": "Market Overview",
   "market.noscript_desc":
-    "Market prices require JavaScript to load. Please enable JavaScript to view live crypto data.",
+    "Real-time market data (BTC dominance, Fear & Greed Index, funding rates, top movers) requires JavaScript.",
+  "market.noscript_alt":
+    "Browse individual coin data or run a strategy simulation — no JavaScript required for static pages.",
   "market.loading": "Loading market data...",
   "market.error": "Failed to load market data.",
   "market.news_loading": "Loading news...",

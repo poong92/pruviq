@@ -567,10 +567,11 @@ export const ko: Record<TranslationKey, string> = {
   "market.top_gainers": "상승 TOP 10",
   "market.top_losers": "하락 TOP 10",
   "market.latest_news": "최신 뉴스",
-  "market.noscript_title":
-    "실시간 시장 데이터를 표시하려면 JavaScript가 필요합니다.",
+  "market.noscript_title": "시장 개요",
   "market.noscript_desc":
-    "시장 가격은 JavaScript가 필요합니다. 라이브 암호화폐 데이터를 보려면 JavaScript를 활성화하세요.",
+    "실시간 시장 데이터(BTC 도미넌스, 공포·탐욕 지수, 펀딩률, 상승/하락 TOP)는 JavaScript가 필요합니다.",
+  "market.noscript_alt":
+    "개별 코인 데이터를 탐색하거나 전략 시뮬레이션을 실행하세요 — 정적 페이지는 JavaScript 없이도 이용 가능합니다.",
   "market.loading": "시장 데이터 로딩 중...",
   "market.error": "시장 데이터 로딩 실패.",
   "market.news_loading": "뉴스 로딩 중...",
