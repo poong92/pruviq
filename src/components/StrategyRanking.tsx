@@ -358,6 +358,7 @@ export function StrategyRanking({ lang = "en" }: { lang?: Lang }) {
                   entry={entry}
                   lang={lang}
                   variant="best"
+                  period={period}
                 />
               ))}
         </div>
@@ -383,6 +384,7 @@ export function StrategyRanking({ lang = "en" }: { lang?: Lang }) {
                     entry={entry}
                     variant="worst"
                     lang={lang}
+                    period={period}
                   />
                 ))}
         </div>
@@ -399,6 +401,7 @@ export function StrategyRanking({ lang = "en" }: { lang?: Lang }) {
                 entry={entry}
                 variant="weekly"
                 lang={lang}
+                period="7d"
               />
             ))}
           </div>

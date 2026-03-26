@@ -19,6 +19,7 @@ interface RankingCardProps {
   entry: RankingEntry;
   variant?: "best" | "worst" | "weekly";
   lang?: "en" | "ko";
+  period?: string; // "30d" | "365d" | "7d" — used to set start_date in simulator link
 }
 
 const cardLabels = {
@@ -78,11 +79,18 @@ export function RankingCard({
   entry,
   variant = "best",
   lang = "en",
+  period = "30d",
 }: RankingCardProps) {
   const medal = rankBadge(entry.rank);
   const isWeekly = variant === "weekly";
   const lbl = cardLabels[lang] ?? cardLabels.en;
   const lowSampleBest = entry.low_sample && variant === "best";
+
+  // Calculate start date from period for simulator link
+  const periodDays = parseInt(period) || 30;
+  const startDate = new Date(Date.now() - periodDays * 86400000)
+    .toISOString()
+    .slice(0, 10);
 
   return (
     <div
@@ -192,7 +200,7 @@ export function RankingCard({
 
       {/* Simulate button — pass strategy params so simulator opens with matching config */}
       <a
-        href={`/${lang === "ko" ? "ko/" : ""}simulate?strategy=${entry.strategy}&dir=${entry.direction}&sl=${entry.sl_pct ?? ""}&tp=${entry.tp_pct ?? ""}${entry.timeframe && entry.timeframe !== "1H" ? `&tf=${entry.timeframe}` : ""}`}
+        href={`/${lang === "ko" ? "ko/" : ""}simulate?strategy=${entry.strategy}&dir=${entry.direction}&sl=${entry.sl_pct ?? ""}&tp=${entry.tp_pct ?? ""}&start=${startDate}${entry.timeframe && entry.timeframe !== "1H" ? `&tf=${entry.timeframe}` : ""}`}
         class="mt-3 block text-center text-xs font-mono px-3 py-1.5 rounded border border-[--color-accent]/30 text-[--color-accent] hover:bg-[--color-accent]/10 transition-colors"
       >
         {lang === "ko" ? "시뮬레이션 →" : "Simulate →"}
