@@ -35,9 +35,15 @@ const marketDataJson = JSON.stringify(marketDataRaw);
           <div class="h-64 bg-[--color-bg-hover] rounded-lg"></div>
         </div>
         <noscript>
-          <div class="border border-[--color-border] rounded-lg p-6 text-center text-[--color-text-muted] text-sm font-mono mt-4">
-            <p class="mb-2 font-bold">{t('market.noscript_title')}</p>
-            <p>{t('market.noscript_desc')}</p>
+          <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] mt-4">
+            <h2 class="text-lg font-bold mb-2">{t('market.noscript_title')}</h2>
+            <p class="text-[--color-text-muted] text-sm mb-3">{t('market.noscript_desc')}</p>
+            <p class="text-[--color-text-muted] text-sm mb-4">{t('market.noscript_alt')}</p>
+            <div class="flex flex-wrap gap-3">
+              <a href="/ko/coins" class="text-[--color-accent] text-sm font-semibold hover:underline">570+ 코인 탐색 &rarr;</a>
+              <a href="/ko/simulate" class="text-[--color-accent] text-sm font-semibold hover:underline">시뮬레이션 실행 &rarr;</a>
+              <a href="/ko/strategies" class="text-[--color-accent] text-sm font-semibold hover:underline">전략 보기 &rarr;</a>
+            </div>
           </div>
         </noscript>
       </div>
