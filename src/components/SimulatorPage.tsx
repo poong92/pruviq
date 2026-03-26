@@ -1119,14 +1119,45 @@ export default function SimulatorPage({ lang = "en" }: Props) {
   }, [presets, loadPreset]);
 
   // Auto-run when ?strategy= is in URL (from ranking page)
+  // Uses /simulate API (not /backtest) since we have strategy ID, not conditions
   useEffect(() => {
     const pending = (window as any).__pruviq_pending_strategy;
     if (pending && apiReady && !isRunning && !result) {
       delete (window as any).__pruviq_pending_strategy;
-      // sl/tp/dir/tf already set from URL params — just run
-      runBacktest();
+
+      // Call /simulate with strategy ID directly (matching Standard mode behavior)
+      setIsRunning(true);
+      setProgressStep(0);
+      setElapsedSec(0);
+      const timer = setInterval(
+        () => setElapsedSec((s: number) => s + 1),
+        1000,
+      );
+
+      fetch(`${API_BASE}/simulate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          strategy: pending,
+          direction: direction,
+          sl_pct: slPct,
+          tp_pct: tpPct,
+          top_n: topN,
+        }),
+      })
+        .then((r) => r.json())
+        .then((data) => {
+          setResult(data);
+          setResultTab("summary");
+          setMobileTab("results");
+        })
+        .catch((err) => setError(String(err.message || err)))
+        .finally(() => {
+          setIsRunning(false);
+          clearInterval(timer);
+        });
     }
-  }, [apiReady, isRunning, result, runBacktest]);
+  }, [apiReady, isRunning, result, direction, slPct, tpPct, topN]);
 
   const onSelectPreset = useCallback(
     (id: string | null) => {
