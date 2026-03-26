@@ -14,6 +14,8 @@ export interface RankingEntry {
   low_sample: boolean;
   total_return?: number;
   days_in_top?: number;
+  sl_pct?: number;
+  tp_pct?: number;
 }
 
 interface RankingCardProps {
