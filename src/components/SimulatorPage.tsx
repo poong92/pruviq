@@ -1134,7 +1134,7 @@ export default function SimulatorPage({ lang = "en" }: Props) {
         1000,
       );
 
-      fetch(`${API_BASE}/simulate`, {
+      fetch(`${API_URL}/simulate`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
