@@ -8,6 +8,7 @@ import OOSValidation from "./OOSValidation";
 import ExchangeCTA from "./ExchangeCTA";
 import EmailCapture from "./EmailCapture";
 import { exchanges } from "../data/exchanges";
+import { COINS_ANALYZED } from "../config/site-stats";
 import {
   winRateColor,
   profitFactorColor,
@@ -610,7 +611,7 @@ export default function ResultsPanel({
                   <input
                     type="range"
                     min="1"
-                    max="570"
+                    max={String(COINS_ANALYZED)}
                     step="1"
                     value={qaCoins}
                     onInput={(e: Event) =>
@@ -619,7 +620,7 @@ export default function ResultsPanel({
                     class="slider-range mt-1"
                     aria-label={`Coins ${qaCoins}`}
                     style={{
-                      background: `linear-gradient(to right, ${COLORS.accent} 0%, ${COLORS.accent} ${((qaCoins - 1) / 568) * 100}%, var(--color-border) ${((qaCoins - 1) / 568) * 100}%, var(--color-border) 100%)`,
+                      background: `linear-gradient(to right, ${COLORS.accent} 0%, ${COLORS.accent} ${((qaCoins - 1) / (COINS_ANALYZED - 1)) * 100}%, var(--color-border) ${((qaCoins - 1) / (COINS_ANALYZED - 1)) * 100}%, var(--color-border) 100%)`,
                     }}
                   />
                 </div>

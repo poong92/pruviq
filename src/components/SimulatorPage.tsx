@@ -12,6 +12,7 @@ import {
   STATIC_DATA,
   fetchWithFallback,
 } from "../config/api";
+import { COINS_ANALYZED } from "../config/site-stats";
 import type {
   OhlcvBar,
   IndicatorInfo,
@@ -924,7 +925,7 @@ export default function SimulatorPage({ lang = "en" }: Props) {
           ? topN
           : coinMode === "select"
             ? selectedCoins.length
-            : 570;
+            : COINS_ANALYZED;
       const timeoutMs = Math.max(120000, coinCount > 100 ? 180000 : 120000);
       const abortTimeout = setTimeout(() => controller.abort(), timeoutMs);
 
