@@ -661,3 +661,11 @@ class MacroResponse(BaseModel):
     derivatives: Optional[DerivativesData] = None
     events: List[EconomicEvent] = []
     generated: str = ""
+
+
+# --- Subscribe Schemas ---
+
+class SubscribeRequest(BaseModel):
+    """Email subscription request."""
+    email: str
+    lang: str = "en"

@@ -58,6 +58,7 @@ from api.schemas import (
     ValidateRequest, ValidateResponse, OOSResult, OOSPeriodMetrics,
     MonteCarloResult, MCEquityBand,
     TradeItem,
+    SubscribeRequest,
     VALID_TIMEFRAMES,
 )
 from api.data_manager import DataManager
@@ -3517,3 +3518,80 @@ async def get_daily_rankings(
         oldest_key = min(_rankings_cache, key=lambda k: _rankings_cache[k][1])
         _rankings_cache.pop(oldest_key, None)
     return result
+
+
+# ---------------------------------------------------------------------------
+# Email Subscription
+# ---------------------------------------------------------------------------
+
+SUBSCRIBERS_FILE = Path("/Users/jepo/pruviq-data/subscribers.json")
+
+
+@app.post("/api/subscribe")
+async def subscribe_email(req: SubscribeRequest):
+    """Subscribe an email to weekly strategy alerts."""
+    import re
+    import fcntl
+
+    # Validate email format
+    if not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', req.email):
+        raise HTTPException(422, detail="Invalid email format")
+
+    email = req.email.lower().strip()
+
+    # Read / write with file lock
+    SUBSCRIBERS_FILE.parent.mkdir(parents=True, exist_ok=True)
+    if SUBSCRIBERS_FILE.exists():
+        data = json.loads(SUBSCRIBERS_FILE.read_text())
+    else:
+        data = {"subscribers": []}
+
+    # Duplicate check
+    existing = [s for s in data["subscribers"] if s["email"] == email]
+    if existing:
+        if existing[0].get("active", True):
+            return {"ok": True, "message": "Already subscribed"}
+        else:
+            existing[0]["active"] = True
+            existing[0]["resubscribed_at"] = datetime.utcnow().isoformat()
+    else:
+        data["subscribers"].append({
+            "email": email,
+            "lang": req.lang,
+            "subscribed_at": datetime.utcnow().isoformat(),
+            "active": True,
+        })
+
+    # Atomic write
+    tmp = SUBSCRIBERS_FILE.with_suffix(".tmp")
+    tmp.write_text(json.dumps(data, indent=2))
+    tmp.rename(SUBSCRIBERS_FILE)
+
+    return {"ok": True, "message": "Subscribed successfully"}
+
+
+@app.get("/api/unsubscribe")
+async def unsubscribe_email(email: str, token: str):
+    """Unsubscribe via signed link in emails."""
+    from fastapi.responses import HTMLResponse
+
+    secret = os.environ.get("UNSUBSCRIBE_SECRET", "pruviq-unsub-2026")
+    expected = hmac.new(secret.encode(), email.lower().encode(), hashlib.sha256).hexdigest()[:16]
+
+    if token != expected:
+        raise HTTPException(403, detail="Invalid unsubscribe token")
+
+    if SUBSCRIBERS_FILE.exists():
+        data = json.loads(SUBSCRIBERS_FILE.read_text())
+        for s in data["subscribers"]:
+            if s["email"] == email.lower():
+                s["active"] = False
+        SUBSCRIBERS_FILE.write_text(json.dumps(data, indent=2))
+
+    return HTMLResponse(
+        "<html><body style=\"font-family:sans-serif;text-align:center;padding:60px\">"
+        "<h2>Unsubscribed</h2>"
+        "<p>You will no longer receive weekly strategy emails.</p>"
+        "<a href=\"https://pruviq.com\">Back to PRUVIQ</a>"
+        "</body></html>"
+    )
