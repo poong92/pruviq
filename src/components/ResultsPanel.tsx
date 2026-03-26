@@ -7,6 +7,7 @@ import ResultHero from "./ResultHero";
 import OOSValidation from "./OOSValidation";
 import ExchangeCTA from "./ExchangeCTA";
 import EmailCapture from "./EmailCapture";
+import BotCodeSection from "./BotCodeSection";
 import { exchanges } from "../data/exchanges";
 import { COINS_ANALYZED } from "../config/site-stats";
 import {
@@ -855,6 +856,14 @@ export default function ResultsPanel({
                 simMode={simMode}
               />
               <EmailCapture lang={lang} />
+              <BotCodeSection
+                result={result}
+                strategyId={activePreset || "custom"}
+                direction={result.direction || "short"}
+                slPct={result.sl_pct ?? slPct}
+                tpPct={result.tp_pct ?? tpPct}
+                lang={lang}
+              />
               {result.yearly_stats && result.yearly_stats.length > 0 && (
                 <div class="mt-4">
                   <div class="text-[10px] font-mono text-[--color-text-muted] uppercase mb-2">

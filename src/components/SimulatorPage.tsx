@@ -725,8 +725,28 @@ export default function SimulatorPage({ lang = "en" }: Props) {
     if (coinMode === "top") url.searchParams.set("coins", String(topN));
     if (startDate) url.searchParams.set("start", startDate);
     if (endDate) url.searchParams.set("end", endDate);
+    // OG image params (when result is available)
+    if (result) {
+      if (activePreset) url.searchParams.set("strategy", activePreset);
+      url.searchParams.set("wr", String(result.win_rate));
+      url.searchParams.set("pf", String(result.profit_factor));
+      url.searchParams.set("ret", String(result.total_return_pct));
+      url.searchParams.set("trades", String(result.total_trades));
+      url.searchParams.set("mdd", String(result.max_drawdown_pct));
+    }
     return url.toString();
-  }, [slPct, tpPct, maxBars, direction, coinMode, topN, startDate, endDate]);
+  }, [
+    slPct,
+    tpPct,
+    maxBars,
+    direction,
+    coinMode,
+    topN,
+    startDate,
+    endDate,
+    result,
+    activePreset,
+  ]);
 
   const copyLink = useCallback(() => {
     const url = buildShareUrl();
