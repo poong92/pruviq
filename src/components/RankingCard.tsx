@@ -1,4 +1,5 @@
 import { h } from "preact";
+import { buildSimulatorUrl } from "../config/simulation-context";
 
 export interface RankingEntry {
   rank: number;
@@ -198,9 +199,21 @@ export function RankingCard({
         </div>
       </div>
 
-      {/* Simulate button — pass strategy params so simulator opens with matching config */}
+      {/* Simulate button — uses centralized URL builder for consistency */}
       <a
-        href={`/${lang === "ko" ? "ko/" : ""}simulate?strategy=${entry.strategy}&dir=${entry.direction}&sl=${entry.sl_pct ?? ""}&tp=${entry.tp_pct ?? ""}&start=${startDate}${entry.timeframe && entry.timeframe !== "1H" ? `&tf=${entry.timeframe}` : ""}`}
+        href={buildSimulatorUrl(
+          {
+            strategy: entry.strategy,
+            direction: entry.direction as "short" | "long" | "both",
+            sl: entry.sl_pct,
+            tp: entry.tp_pct,
+            startDate,
+            timeframe: entry.timeframe !== "1H" ? entry.timeframe : undefined,
+            source: "ranking",
+            sourcePeriod: period,
+          },
+          lang,
+        )}
         class="mt-3 block text-center text-xs font-mono px-3 py-1.5 rounded border border-[--color-accent]/30 text-[--color-accent] hover:bg-[--color-accent]/10 transition-colors"
       >
         {lang === "ko" ? "시뮬레이션 →" : "Simulate →"}

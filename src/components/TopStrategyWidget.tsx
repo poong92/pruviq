@@ -4,8 +4,7 @@
  * as a premium data card. Used in homepage hero.
  */
 import { useState, useEffect } from "preact/hooks";
-
-const API_BASE = import.meta.env.PUBLIC_API_URL ?? "https://api.pruviq.com";
+import { API_BASE_URL } from "../config/api";
 
 interface RankingEntry {
   rank: number;
@@ -67,7 +66,7 @@ export function TopStrategyWidget({ lang = "en" }: { lang?: Lang }) {
 
   useEffect(() => {
     const ctrl = new AbortController();
-    fetch(`${API_BASE}/rankings/daily?period=30d&group=top50`, {
+    fetch(`${API_BASE_URL}/rankings/daily?period=30d&group=top50`, {
       signal: ctrl.signal,
     })
       .then((r) => {

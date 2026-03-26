@@ -3,6 +3,7 @@
  * Numbers fetched from /data/site-stats.json (SSoT).
  */
 import { useState, useEffect } from "preact/hooks";
+import { COINS_ANALYZED } from "../config/site-stats";
 
 interface Props {
   lang?: "en" | "ko";
@@ -16,7 +17,7 @@ interface SiteStats {
 }
 
 const DEFAULTS: SiteStats = {
-  coins_analyzed: 570,
+  coins_analyzed: COINS_ANALYZED,
   trading_days: 2898,
   simulations_run: 12847,
   strategies_tested: 88,
