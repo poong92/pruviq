@@ -28,6 +28,7 @@ import ResultsPanel from "./ResultsPanel";
 import ModeSwitcher, { SIM_MODE_KEY, isValidSimMode } from "./ModeSwitcher";
 import type { SimMode } from "./ModeSwitcher";
 import QuickTestPanel from "./QuickTestPanel";
+import HotStrategies from "./HotStrategies";
 import StandardPanel from "./StandardPanel";
 import AchievementBadges from "./AchievementBadges";
 import LoadingEquityAnimation from "./LoadingEquityAnimation";
@@ -1287,6 +1288,9 @@ export default function SimulatorPage({ lang = "en" }: Props) {
           ))}
         </div>
       )}
+
+      {/* Hot Strategies Banner — shows top performers */}
+      {!result && <HotStrategies lang={lang} />}
 
       {/* 3-Tier Mode Switcher */}
       <ModeSwitcher

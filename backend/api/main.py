@@ -553,6 +553,94 @@ async def list_indicators_flat():
     return INDICATOR_REGISTRY
 
 
+@app.get("/hot-strategies")
+async def hot_strategies():
+    """Return top-performing strategies in the last 30 days.
+
+    Runs lightweight simulation on BTC with each verified strategy,
+    returns sorted by recent PF. Used for "Hot Now" banner on frontend.
+    Cached for 1 hour.
+    """
+    import asyncio
+
+    cache_key = "_hot_strategies"
+    cached = get_cached(cache_key)
+    if cached:
+        return cached
+
+    def _compute():
+        from datetime import datetime as _dt, timedelta as _td
+        start_date = (_dt.now() - _td(days=30)).strftime("%Y-%m-%d")
+        results = []
+
+        for sid, entry in STRATEGY_REGISTRY.items():
+            if entry.get("status") not in ("verified", "research"):
+                continue
+
+            strategy, default_dir, defaults = get_strategy(sid)
+            for direction in [default_dir, "short"] if default_dir != "short" else ["short"]:
+                try:
+                    # BTC only for speed
+                    coins = indicator_cache.get_symbols_for_strategy(
+                        sid, ["BTCUSDT"]
+                    ) if indicator_cache.strategy_count(sid) > 0 else data_manager.get_symbols(["BTCUSDT"])
+
+                    if not coins:
+                        continue
+
+                    all_pnls = []
+                    for sym, df in coins:
+                        if indicator_cache.strategy_count(sid) == 0:
+                            df = strategy.calculate_indicators(df.copy())
+                        df = filter_df_by_date(df, start_date, None)
+                        if len(df) < 50:
+                            continue
+
+                        result = run_fast(
+                            df, strategy, sym,
+                            sl_pct=float(defaults["sl"]) / 100,
+                            tp_pct=float(defaults["tp"]) / 100,
+                            max_bars=48,
+                            fee_pct=0.0008,
+                            slippage_pct=0.0002,
+                            direction=direction,
+                            market_type="futures",
+                            strategy_id=sid,
+                            funding_rate_8h=0.0001,
+                        )
+                        for t in result.trades:
+                            all_pnls.append(t.pnl_pct)
+
+                    if len(all_pnls) >= 3:
+                        wins = [p for p in all_pnls if p > 0]
+                        losses = [p for p in all_pnls if p <= 0]
+                        tw = sum(wins) if wins else 0
+                        tl = abs(sum(losses)) if losses else 0.001
+                        pf = round(tw / tl, 2)
+                        wr = round(len(wins) / len(all_pnls) * 100, 1)
+
+                        results.append({
+                            "strategy_id": sid,
+                            "strategy_name": entry["name"],
+                            "direction": direction,
+                            "status": entry.get("status", "research"),
+                            "period": "30d",
+                            "profit_factor": pf,
+                            "win_rate": wr,
+                            "total_trades": len(all_pnls),
+                            "total_return_pct": round(sum(all_pnls), 1),
+                        })
+                except Exception:
+                    continue
+
+        results.sort(key=lambda x: x["profit_factor"], reverse=True)
+        return {"strategies": results[:10], "updated_at": _dt.now().isoformat()}
+
+    result = await asyncio.to_thread(_compute)
+    set_cached(cache_key, result, ttl=3600)  # 1h cache
+    return result
+
+
 @app.post("/simulate", response_model=SimulationResponse)
 async def simulate(req: SimulationRequest):
     """Run a strategy simulation with pre-computed indicators."""
