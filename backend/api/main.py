@@ -637,7 +637,7 @@ async def hot_strategies():
         return {"strategies": results[:10], "updated_at": _dt.now().isoformat()}
 
     result = await asyncio.to_thread(_compute)
-    set_cached(cache_key, result, ttl=3600)  # 1h cache
+    set_cached(cache_key, result)  # cached until evicted by LRU
     return result
 
 
