@@ -1,0 +1,103 @@
+name: Data Parity Check
+
+on:
+  schedule:
+    - cron: "0 3 * * *" # Daily at 03:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  data-parity:
+    name: Static JSON vs API Parity
+    runs-on: [self-hosted, e2e]
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Set up Python venv
+        run: |
+          python3 -m venv .venv
+          source .venv/bin/activate
+          pip install -q -r backend/requirements.txt
+
+      - name: Run data parity check
+        id: parity
+        run: |
+          source .venv/bin/activate
+          python3 backend/scripts/check_data_parity.py
+        env:
+          API_BASE: http://127.0.0.1:8080
+
+      - name: Create issue on failure
+        if: failure() && steps.parity.outcome == 'failure'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const runUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const today = new Date().toISOString().slice(0, 10);
+
+            // Check for existing open data-parity issue to avoid duplicates
+            const existing = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'data-parity',
+              state: 'open',
+              per_page: 5,
+            });
+
+            if (existing.data.length > 0) {
+              // Update existing issue with new comment
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: existing.data[0].number,
+                body: `Data parity check failed again on ${today}.\nRun: ${runUrl}`,
+              });
+            } else {
+              // Ensure label exists
+              await github.rest.issues.getLabel({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                name: 'data-parity',
+              }).catch(() => github.rest.issues.createLabel({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                name: 'data-parity',
+                color: 'f59e0b',
+                description: 'Static JSON and API response mismatch',
+              }).catch(() => {}));
+
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: `[data-parity] Static JSON and API mismatch (${today})`,
+                body: [
+                  '## Data Parity Failure',
+                  '',
+                  `**Date:** ${today}`,
+                  `**Run:** ${runUrl}`,
+                  '',
+                  'Static JSON files in `dist/data/` or `backend/data/` do not match API responses.',
+                  'Check the workflow run logs for detailed mismatch report.',
+                  '',
+                  '### How to fix',
+                  '```bash',
+                  'cd ~/pruviq',
+                  'source .venv/bin/activate',
+                  'API_BASE=http://127.0.0.1:8080 python3 backend/scripts/check_data_parity.py',
+                  '```',
+                  '',
+                  'Then run `bash backend/scripts/refresh_static.sh` to regenerate static files.',
+                ].join('\n'),
+                labels: ['data-parity'],
+              });
+            }
+
+      - name: Clean up venv
+        if: always()
+        run: rm -rf .venv
