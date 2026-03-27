@@ -30,13 +30,22 @@ export default function HotStrategies({ lang = "en" }: { lang?: string }) {
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    fetch(`${API_URL}/hot-strategies`)
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 5000);
+
+    fetch(`${API_URL}/hot-strategies`, { signal: controller.signal })
       .then((r) => {
         if (!r.ok) throw new Error(`${r.status}`);
         return r.json();
       })
       .then(setData)
-      .catch(() => setError(true));
+      .catch(() => setError(true))
+      .finally(() => clearTimeout(timer));
+
+    return () => {
+      controller.abort();
+      clearTimeout(timer);
+    };
   }, []);
 
   if (error || !data?.strategies?.length) return null;
