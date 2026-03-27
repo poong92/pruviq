@@ -101,6 +101,13 @@ jobs:
         timeout-minutes: 3
         continue-on-error: true
 
+      - name: Verify demo JSON ↔ API parity
+        run: bash scripts/verify-demo-api-parity.sh
+        env:
+          API_BASE_URL: https://api.pruviq.com
+        timeout-minutes: 2
+        continue-on-error: true
+
       - name: Install Firefox + WebKit
         run: npx playwright install firefox webkit
 

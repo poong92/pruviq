@@ -551,4 +551,110 @@ test.describe("Interactive QA — 기능 클릭 테스트", () => {
     page.on("pageerror", (e) => errors.push(e.message));
     expect(errors.length).toBe(0);
   });
+
+  // ── 15. 랭킹 → 시뮬레이터 흐름 (URL 파라미터 전달) ─────────────────────
+
+  test("ranking: Top 전략 클릭 → 시뮬레이터에 파라미터 반영", async ({
+    page,
+  }) => {
+    await page.goto("/strategies/ranking");
+    await page.waitForLoadState("domcontentloaded");
+
+    // 랭킹 카드의 "Simulate →" 링크 찾기 (?strategy= 형태)
+    const simLink = page.locator('a[href*="/simulate?strategy="]').first();
+    await expect(simLink).toBeVisible({ timeout: 15000 });
+
+    // href에서 파라미터 확인
+    const href = await simLink.getAttribute("href");
+    expect(href).toContain("strategy=");
+    expect(href).toContain("dir=");
+    expect(href).toContain("sl=");
+    expect(href).toContain("tp=");
+
+    // 클릭해서 시뮬레이터로 이동
+    await simLink.click();
+    await page.waitForURL(/simulat/, { timeout: 10000 });
+
+    // URL에 파라미터가 있는지
+    const url = page.url();
+    expect(url).toContain("strategy=");
+    expect(url).toContain("dir=");
+
+    console.log(`✅ 랭킹 → 시뮬레이터: ${url}`);
+  });
+
+  test("ranking: Top 3 전략이 각각 다른 파라미터를 갖는지", async ({
+    page,
+  }) => {
+    await page.goto("/strategies/ranking");
+    await page.waitForLoadState("domcontentloaded");
+
+    const simLinks = page.locator('a[href*="/simulate?strategy="]');
+    const count = await simLinks.count();
+
+    if (count >= 2) {
+      const hrefs: string[] = [];
+      for (let i = 0; i < Math.min(count, 3); i++) {
+        const href = await simLinks.nth(i).getAttribute("href");
+        if (href) hrefs.push(href);
+      }
+      // 최소 2개의 href가 서로 달라야 함
+      const unique = new Set(hrefs);
+      expect(unique.size).toBeGreaterThanOrEqual(2);
+      console.log(
+        `✅ Top ${hrefs.length} 전략 링크 각각 다름: ${hrefs.length} hrefs, ${unique.size} unique`,
+      );
+    }
+  });
+
+  // ── 16. 코인 상세 → 시뮬레이터 코인 반영 ────────────────────────────────
+
+  test("coins: /coins/btcusdt → Simulate 클릭 → 시뮬레이터에 BTC 선택", async ({
+    page,
+  }) => {
+    await page.goto("/coins/btcusdt/");
+    await page.waitForLoadState("domcontentloaded");
+
+    // "Simulate BTC" 링크 찾기
+    const simLink = page.locator('a[href*="/simulate?coin="]').first();
+    if ((await simLink.count()) === 0) {
+      // fallback: ?symbol= 형태
+      const simLink2 = page.locator('a[href*="/simulate?symbol="]').first();
+      if ((await simLink2.count()) > 0) {
+        const href = await simLink2.getAttribute("href");
+        expect(href).toMatch(/symbol=BTCUSDT/i);
+      }
+      return;
+    }
+
+    const href = await simLink.getAttribute("href");
+    expect(href).toMatch(/coin=BTCUSDT/i);
+
+    // 클릭해서 시뮬레이터로 이동
+    await simLink.click();
+    await page.waitForURL(/simulat/, { timeout: 10000 });
+
+    // URL에 coin 파라미터 존재
+    expect(page.url()).toMatch(/coin=BTCUSDT/i);
+
+    console.log(`✅ /coins/btcusdt → 시뮬레이터: ${page.url()}`);
+  });
+
+  // ── 17. 코인 테이블 → 시뮬레이터 흐름 ──────────────────────────────────
+
+  test("coins: 코인 테이블에서 개별 코인 행 클릭 → 코인 상세 이동", async ({
+    page,
+  }) => {
+    await page.goto("/coins/");
+    await page.waitForLoadState("domcontentloaded");
+
+    // 코인 테이블 행 링크 — nav 링크 제외, usdt 포함하는 것만
+    const coinLink = page.locator('a[href*="usdt"]').first();
+    await expect(coinLink).toBeVisible({ timeout: 15000 });
+
+    const href = await coinLink.getAttribute("href");
+    expect(href).toMatch(/\/coins\/[a-z0-9]+usdt/i);
+
+    console.log(`✅ 코인 테이블 행 링크: ${href}`);
+  });
 });

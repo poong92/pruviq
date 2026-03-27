@@ -12,6 +12,7 @@ import {
   STATIC_DATA,
   fetchWithFallback,
 } from "../config/api";
+import { COINS_ANALYZED } from "../config/site-stats";
 import type {
   OhlcvBar,
   IndicatorInfo,
@@ -27,6 +28,7 @@ import ResultsPanel from "./ResultsPanel";
 import ModeSwitcher, { SIM_MODE_KEY, isValidSimMode } from "./ModeSwitcher";
 import type { SimMode } from "./ModeSwitcher";
 import QuickTestPanel from "./QuickTestPanel";
+import HotStrategies from "./HotStrategies";
 import StandardPanel from "./StandardPanel";
 import AchievementBadges from "./AchievementBadges";
 import LoadingEquityAnimation from "./LoadingEquityAnimation";
@@ -684,15 +686,31 @@ export default function SimulatorPage({ lang = "en" }: Props) {
         if (d === "short" || d === "long" || d === "both") setDirection(d);
       }
       if (params.has("coins")) setTopN(parseInt(params.get("coins")!) || 50);
+      if (params.has("tf")) {
+        const tf = params.get("tf")!.toUpperCase();
+        if (["1H", "2H", "4H", "6H", "12H", "1D", "1W"].includes(tf))
+          setTimeframe(tf);
+      }
+      if (params.has("start")) setStartDate(params.get("start")!);
+      if (params.has("end")) setEndDate(params.get("end")!);
       // Auto-select coin from URL (e.g., from /coins/[symbol] CTA)
-      if (params.has("symbol")) {
-        const sym = params.get("symbol")!.toUpperCase();
+      // Supports both ?symbol= and ?coin= for backwards compat
+      const symParam = params.get("symbol") || params.get("coin");
+      if (symParam) {
+        const sym = symParam.toUpperCase();
         setCoinMode("select");
         setSelectedCoins([sym]);
         setChartSymbol(sym);
       }
+      // ?strategy= from ranking page → open Standard mode and auto-run
+      if (params.has("strategy")) {
+        setSimMode("standard");
+        // sl/tp/dir already set above from URL params
+        // Mark for auto-run once API is ready
+        (window as any).__pruviq_pending_strategy = params.get("strategy")!;
+      }
       // Store pending preset from URL — applied after presets load
-      if (params.has("preset")) {
+      if (params.has("preset") && !params.has("strategy")) {
         (window as any).__pruviq_pending_preset = params.get("preset")!;
       }
     } catch {}
@@ -708,8 +726,28 @@ export default function SimulatorPage({ lang = "en" }: Props) {
     if (coinMode === "top") url.searchParams.set("coins", String(topN));
     if (startDate) url.searchParams.set("start", startDate);
     if (endDate) url.searchParams.set("end", endDate);
+    // OG image params (when result is available)
+    if (result) {
+      if (activePreset) url.searchParams.set("strategy", activePreset);
+      url.searchParams.set("wr", String(result.win_rate));
+      url.searchParams.set("pf", String(result.profit_factor));
+      url.searchParams.set("ret", String(result.total_return_pct));
+      url.searchParams.set("trades", String(result.total_trades));
+      url.searchParams.set("mdd", String(result.max_drawdown_pct));
+    }
     return url.toString();
-  }, [slPct, tpPct, maxBars, direction, coinMode, topN, startDate, endDate]);
+  }, [
+    slPct,
+    tpPct,
+    maxBars,
+    direction,
+    coinMode,
+    topN,
+    startDate,
+    endDate,
+    result,
+    activePreset,
+  ]);
 
   const copyLink = useCallback(() => {
     const url = buildShareUrl();
@@ -908,7 +946,7 @@ export default function SimulatorPage({ lang = "en" }: Props) {
           ? topN
           : coinMode === "select"
             ? selectedCoins.length
-            : 570;
+            : COINS_ANALYZED;
       const timeoutMs = Math.max(120000, coinCount > 100 ? 180000 : 120000);
       const abortTimeout = setTimeout(() => controller.abort(), timeoutMs);
 
@@ -1074,10 +1112,13 @@ export default function SimulatorPage({ lang = "en" }: Props) {
           })),
         );
       }
-      if (p.direction) setDirection(p.direction);
-      if (p.sl_pct) setSlPct(p.sl_pct);
-      if (p.tp_pct) setTpPct(p.tp_pct);
-      if (p.max_bars) setMaxBars(p.max_bars);
+      // URL params take priority over preset defaults (e.g., ranking → simulator
+      // passes &dir=long&sl=8&tp=6 which should NOT be overwritten by preset defaults)
+      const urlParams = new URLSearchParams(window.location.search);
+      if (p.direction && !urlParams.has("dir")) setDirection(p.direction);
+      if (p.sl_pct && !urlParams.has("sl")) setSlPct(p.sl_pct);
+      if (p.tp_pct && !urlParams.has("tp")) setTpPct(p.tp_pct);
+      if (p.max_bars && !urlParams.has("bars")) setMaxBars(p.max_bars);
       if (p.avoid_hours) setAvoidHours(new Set(p.avoid_hours));
       setPresetLoading(false);
       return p;
@@ -1100,6 +1141,51 @@ export default function SimulatorPage({ lang = "en" }: Props) {
       loadPreset(pending);
     }
   }, [presets, loadPreset]);
+
+  // Auto-run when ?strategy= is in URL (from ranking page)
+  // Uses /simulate API (not /backtest) since we have strategy ID, not conditions
+  useEffect(() => {
+    const pending = (window as any).__pruviq_pending_strategy;
+    if (pending && apiReady && !isRunning && !result) {
+      delete (window as any).__pruviq_pending_strategy;
+
+      // Call /simulate with strategy ID directly (matching Standard mode behavior)
+      setIsRunning(true);
+      setProgressStep(0);
+      setElapsedSec(0);
+      const timer = setInterval(
+        () => setElapsedSec((s: number) => s + 1),
+        1000,
+      );
+
+      const body: Record<string, unknown> = {
+        strategy: pending,
+        direction: direction,
+        sl_pct: slPct,
+        tp_pct: tpPct,
+        top_n: topN,
+      };
+      if (startDate) body.start_date = startDate;
+      if (endDate) body.end_date = endDate;
+
+      fetch(`${API_URL}/simulate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      })
+        .then((r) => r.json())
+        .then((data) => {
+          setResult(data);
+          setResultTab("summary");
+          setMobileTab("results");
+        })
+        .catch((err) => setError(String(err.message || err)))
+        .finally(() => {
+          setIsRunning(false);
+          clearInterval(timer);
+        });
+    }
+  }, [apiReady, isRunning, result, direction, slPct, tpPct, topN]);
 
   const onSelectPreset = useCallback(
     (id: string | null) => {
@@ -1202,6 +1288,9 @@ export default function SimulatorPage({ lang = "en" }: Props) {
           ))}
         </div>
       )}
+
+      {/* Hot Strategies Banner — shows top performers */}
+      {!result && <HotStrategies lang={lang} />}
 
       {/* 3-Tier Mode Switcher */}
       <ModeSwitcher

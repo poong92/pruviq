@@ -3,6 +3,7 @@
  * Replaces static screenshot with a live-feeling demo.
  */
 import { useEffect, useState } from "preact/hooks";
+import { COINS_ANALYZED } from "../config/site-stats";
 
 const STATS = [
   { label: "Win Rate", value: 61.2, suffix: "%", color: "var(--color-up)" },
@@ -80,7 +81,7 @@ export default function SimulatorPreview() {
             BB Squeeze SHORT
           </span>
           <span class="text-[--color-text-muted] text-[10px]">
-            570 coins · 2yr
+            {COINS_ANALYZED} coins · 2yr
           </span>
         </div>
         <span class="text-[--color-text-muted] text-[10px]">

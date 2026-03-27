@@ -26,7 +26,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException, Request, Header
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, Response
 
 _admin_key_raw = os.environ.get("ADMIN_API_KEY", "")
 ADMIN_API_KEY: Optional[str] = _admin_key_raw if len(_admin_key_raw) >= 32 else None
@@ -58,6 +58,7 @@ from api.schemas import (
     ValidateRequest, ValidateResponse, OOSResult, OOSPeriodMetrics,
     MonteCarloResult, MCEquityBand,
     TradeItem,
+    SubscribeRequest,
     VALID_TIMEFRAMES,
 )
 from api.data_manager import DataManager
@@ -550,6 +551,94 @@ async def list_strategies():
 async def list_indicators_flat():
     """Return the full INDICATOR_REGISTRY for frontend field discovery."""
     return INDICATOR_REGISTRY
+
+
+@app.get("/hot-strategies")
+async def hot_strategies():
+    """Return top-performing strategies in the last 30 days.
+
+    Runs lightweight simulation on BTC with each verified strategy,
+    returns sorted by recent PF. Used for "Hot Now" banner on frontend.
+    Cached for 1 hour.
+    """
+    import asyncio
+
+    cache_key = "_hot_strategies"
+    cached = get_cached(cache_key)
+    if cached:
+        return cached
+
+    def _compute():
+        from datetime import datetime as _dt, timedelta as _td
+        start_date = (_dt.now() - _td(days=30)).strftime("%Y-%m-%d")
+        results = []
+
+        for sid, entry in STRATEGY_REGISTRY.items():
+            if entry.get("status") not in ("verified", "research"):
+                continue
+
+            strategy, default_dir, defaults = get_strategy(sid)
+            for direction in [default_dir, "short"] if default_dir != "short" else ["short"]:
+                try:
+                    # BTC only for speed
+                    coins = indicator_cache.get_symbols_for_strategy(
+                        sid, ["BTCUSDT"]
+                    ) if indicator_cache.strategy_count(sid) > 0 else data_manager.get_symbols(["BTCUSDT"])
+
+                    if not coins:
+                        continue
+
+                    all_pnls = []
+                    for sym, df in coins:
+                        if indicator_cache.strategy_count(sid) == 0:
+                            df = strategy.calculate_indicators(df.copy())
+                        df = filter_df_by_date(df, start_date, None)
+                        if len(df) < 50:
+                            continue
+
+                        result = run_fast(
+                            df, strategy, sym,
+                            sl_pct=float(defaults["sl"]) / 100,
+                            tp_pct=float(defaults["tp"]) / 100,
+                            max_bars=48,
+                            fee_pct=0.0008,
+                            slippage_pct=0.0002,
+                            direction=direction,
+                            market_type="futures",
+                            strategy_id=sid,
+                            funding_rate_8h=0.0001,
+                        )
+                        for t in result.trades:
+                            all_pnls.append(t.pnl_pct)
+
+                    if len(all_pnls) >= 3:
+                        wins = [p for p in all_pnls if p > 0]
+                        losses = [p for p in all_pnls if p <= 0]
+                        tw = sum(wins) if wins else 0
+                        tl = abs(sum(losses)) if losses else 0.001
+                        pf = round(tw / tl, 2)
+                        wr = round(len(wins) / len(all_pnls) * 100, 1)
+
+                        results.append({
+                            "strategy_id": sid,
+                            "strategy_name": entry["name"],
+                            "direction": direction,
+                            "status": entry.get("status", "research"),
+                            "period": "30d",
+                            "profit_factor": pf,
+                            "win_rate": wr,
+                            "total_trades": len(all_pnls),
+                            "total_return_pct": round(sum(all_pnls), 1),
+                        })
+                except Exception:
+                    continue
+
+        results.sort(key=lambda x: x["profit_factor"], reverse=True)
+        return {"strategies": results[:10], "updated_at": _dt.now().isoformat()}
+
+    result = await asyncio.to_thread(_compute)
+    set_cached(cache_key, result, ttl=3600)  # 1h cache
+    return result
 
 
 @app.post("/simulate", response_model=SimulationResponse)
@@ -3517,3 +3606,218 @@ async def get_daily_rankings(
         oldest_key = min(_rankings_cache, key=lambda k: _rankings_cache[k][1])
         _rankings_cache.pop(oldest_key, None)
     return result
+
+
+# ── OG Image Generation ──────────────────────────────────────────────
+from PIL import Image, ImageDraw, ImageFont
+from io import BytesIO
+
+_og_cache: dict = {}
+_OG_CACHE_MAX = 200
+
+
+@app.get("/og")
+async def generate_og_image(
+    strategy: str = "bb-squeeze-short",
+    dir: str = "short",
+    wr: float = 0,
+    pf: float = 0,
+    ret: float = 0,
+    trades: int = 0,
+    mdd: float = 0,
+):
+    """Generate a 1200x630 OG image with strategy metrics."""
+    cache_key = f"{strategy}_{dir}_{wr}_{pf}_{ret}_{trades}_{mdd}"
+    if cache_key in _og_cache:
+        return Response(
+            content=_og_cache[cache_key],
+            media_type="image/png",
+            headers={"Cache-Control": "public, max-age=86400"},
+        )
+
+    W, H = 1200, 630
+    bg_color = (9, 9, 11)
+    accent = (0, 229, 255)
+    white = (255, 255, 255)
+    muted = (160, 160, 170)
+    green = (34, 197, 94)
+    red = (248, 113, 113)
+
+    img = Image.new("RGB", (W, H), bg_color)
+    draw = ImageDraw.Draw(img)
+
+    try:
+        font_lg = ImageFont.truetype("/System/Library/Fonts/Helvetica.ttc", 48)
+        font_md = ImageFont.truetype("/System/Library/Fonts/Helvetica.ttc", 32)
+        font_sm = ImageFont.truetype("/System/Library/Fonts/Helvetica.ttc", 24)
+        font_xs = ImageFont.truetype("/System/Library/Fonts/Helvetica.ttc", 18)
+    except Exception:
+        font_lg = ImageFont.load_default()
+        font_md = font_lg
+        font_sm = font_lg
+        font_xs = font_lg
+
+    # Header
+    draw.text((60, 40), "PRUVIQ", fill=accent, font=font_md)
+
+    # Strategy name
+    strategy_name = strategy.replace("-", " ").upper()
+    draw.text((60, 100), strategy_name, fill=white, font=font_lg)
+
+    # Direction badge
+    draw.text((60, 165), dir.upper(), fill=accent, font=font_sm)
+
+    # Metrics grid
+    metrics = [
+        ("Win Rate", f"{wr:.1f}%", green if wr >= 50 else red),
+        ("Profit Factor", f"{pf:.2f}", green if pf >= 1.0 else red),
+        ("Return", f"{'+' if ret >= 0 else ''}{ret:.1f}%", green if ret >= 0 else red),
+        ("Max DD", f"{mdd:.1f}%", red),
+    ]
+
+    box_w, box_h = 240, 140
+    start_x, start_y = 60, 240
+    gap = 30
+
+    for i, (label, value, color) in enumerate(metrics):
+        x = start_x + i * (box_w + gap)
+        y = start_y
+        draw.rounded_rectangle(
+            [x, y, x + box_w, y + box_h], radius=12, fill=(20, 20, 25)
+        )
+        draw.text((x + 20, y + 15), label, fill=muted, font=font_xs)
+        draw.text((x + 20, y + 50), value, fill=color, font=font_md)
+
+    # Trades count
+    draw.text((60, 420), f"{trades:,} trades", fill=muted, font=font_sm)
+
+    # Footer
+    draw.text((60, 560), "pruviq.com", fill=muted, font=font_sm)
+    draw.text((350, 560), "Don't Believe. Verify.", fill=accent, font=font_sm)
+
+    # Top accent line
+    draw.rectangle([0, 0, W, 4], fill=accent)
+
+    buf = BytesIO()
+    img.save(buf, format="PNG", optimize=True)
+    png_bytes = buf.getvalue()
+
+    # Cache (LRU eviction)
+    if len(_og_cache) >= _OG_CACHE_MAX:
+        _og_cache.pop(next(iter(_og_cache)))
+    _og_cache[cache_key] = png_bytes
+
+    return Response(
+        content=png_bytes,
+        media_type="image/png",
+        headers={"Cache-Control": "public, max-age=86400"},
+    )
+
+
+# ── Bot Code Generation ──────────────────────────────────────────────
+from src.codegen.bot_generator import generate_bot_zip
+from api.schemas import GenerateBotRequest
+
+
+@app.post("/generate-bot")
+async def generate_bot(req: GenerateBotRequest):
+    """Generate a downloadable trading bot zip from strategy config."""
+    try:
+        zip_bytes = generate_bot_zip(
+            strategy_id=req.strategy_id,
+            direction=req.direction,
+            sl_pct=req.sl_pct,
+            tp_pct=req.tp_pct,
+            max_bars=req.max_bars,
+            leverage=req.leverage,
+            position_size=req.position_size_usd,
+            coins=req.coins,
+            avoid_hours=req.avoid_hours,
+            wr=req.backtest_win_rate,
+            pf=req.backtest_profit_factor,
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Bot generation failed: {e}")
+    return Response(
+        content=zip_bytes,
+        media_type="application/zip",
+        headers={
+            "Content-Disposition": f'attachment; filename="pruviq_bot_{req.strategy_id}.zip"',
+        },
+    )
+
+# ---------------------------------------------------------------------------
+# Email Subscription
+# ---------------------------------------------------------------------------
+
+SUBSCRIBERS_FILE = Path("/Users/jepo/pruviq-data/subscribers.json")
+
+
+@app.post("/api/subscribe")
+async def subscribe_email(req: SubscribeRequest):
+    """Subscribe an email to weekly strategy alerts."""
+    import re
+    import fcntl
+
+    # Validate email format
+    if not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', req.email):
+        raise HTTPException(422, detail="Invalid email format")
+
+    email = req.email.lower().strip()
+
+    # Read / write with file lock
+    SUBSCRIBERS_FILE.parent.mkdir(parents=True, exist_ok=True)
+    if SUBSCRIBERS_FILE.exists():
+        data = json.loads(SUBSCRIBERS_FILE.read_text())
+    else:
+        data = {"subscribers": []}
+
+    # Duplicate check
+    existing = [s for s in data["subscribers"] if s["email"] == email]
+    if existing:
+        if existing[0].get("active", True):
+            return {"ok": True, "message": "Already subscribed"}
+        else:
+            existing[0]["active"] = True
+            existing[0]["resubscribed_at"] = datetime.utcnow().isoformat()
+    else:
+        data["subscribers"].append({
+            "email": email,
+            "lang": req.lang,
+            "subscribed_at": datetime.utcnow().isoformat(),
+            "active": True,
+        })
+
+    # Atomic write
+    tmp = SUBSCRIBERS_FILE.with_suffix(".tmp")
+    tmp.write_text(json.dumps(data, indent=2))
+    tmp.rename(SUBSCRIBERS_FILE)
+
+    return {"ok": True, "message": "Subscribed successfully"}
+
+
+@app.get("/api/unsubscribe")
+async def unsubscribe_email(email: str, token: str):
+    """Unsubscribe via signed link in emails."""
+    from fastapi.responses import HTMLResponse
+
+    secret = os.environ.get("UNSUBSCRIBE_SECRET", "pruviq-unsub-2026")
+    expected = hmac.new(secret.encode(), email.lower().encode(), hashlib.sha256).hexdigest()[:16]
+
+    if token != expected:
+        raise HTTPException(403, detail="Invalid unsubscribe token")
+
+    if SUBSCRIBERS_FILE.exists():
+        data = json.loads(SUBSCRIBERS_FILE.read_text())
+        for s in data["subscribers"]:
+            if s["email"] == email.lower():
+                s["active"] = False
+        SUBSCRIBERS_FILE.write_text(json.dumps(data, indent=2))
+
+    return HTMLResponse(
+        "<html><body style=\"font-family:sans-serif;text-align:center;padding:60px\">"
+        "<h2>Unsubscribed</h2>"
+        "<p>You will no longer receive weekly strategy emails.</p>"
+        "<a href=\"https://pruviq.com\">Back to PRUVIQ</a>"
+        "</body></html>"
+    )

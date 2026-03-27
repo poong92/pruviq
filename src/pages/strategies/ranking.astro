@@ -35,6 +35,8 @@ interface RankingEntry {
   timeframe: string;
   low_sample: boolean;
   total_return?: number;
+  sl_pct: number;
+  tp_pct: number;
 }
 interface RankingData {
   date: string;
@@ -173,7 +175,7 @@ if (!ssrRanking) {
                       <p class="font-bold text-base text-[--color-text]">{entry.total_trades}</p>
                     </div>
                   </div>
-                  <a href={`/simulate?preset=${entry.strategy}`} class="mt-3 block text-center text-xs font-mono px-3 py-1.5 rounded border border-[--color-accent]/30 text-[--color-accent] hover:bg-[--color-accent]/10 transition-colors">Simulate &rarr;</a>
+                  <a href={`/simulate?strategy=${entry.strategy}&dir=${entry.direction}&sl=${entry.sl_pct}&tp=${entry.tp_pct}&start=${new Date(Date.now() - 30 * 86400000).toISOString().slice(0, 10)}&src=ranking&srcperiod=30d${entry.timeframe && entry.timeframe !== '1H' ? `&tf=${entry.timeframe}` : ''}`} class="mt-3 block text-center text-xs font-mono px-3 py-1.5 rounded border border-[--color-accent]/30 text-[--color-accent] hover:bg-[--color-accent]/10 transition-colors">Simulate &rarr;</a>
                 </div>
               );
             })}

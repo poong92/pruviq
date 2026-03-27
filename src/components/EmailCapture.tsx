@@ -1,10 +1,12 @@
 /**
- * EmailCapture.tsx - Lightweight email capture banner (localStorage-based)
+ * EmailCapture.tsx - Email capture banner with backend sync
  *
  * Shows a non-intrusive banner below backtest results on first completion.
- * Stores emails in localStorage (no backend required).
+ * Stores emails in localStorage + sends to backend API.
+ * Backend failure does not block UX (graceful degradation).
  */
 import { useState, useEffect } from "preact/hooks";
+import { API_BASE_URL } from "../config/api";
 
 interface Props {
   lang: "en" | "ko";
@@ -37,6 +39,7 @@ const labels = {
 export default function EmailCapture({ lang }: Props) {
   const [captured, setCaptured] = useState(true); // default hidden
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [email, setEmail] = useState("");
 
   useEffect(() => {
@@ -51,9 +54,12 @@ export default function EmailCapture({ lang }: Props) {
 
   const t = labels[lang] || labels.en;
 
-  const handleSubmit = (e: Event) => {
+  const handleSubmit = async (e: Event) => {
     e.preventDefault();
-    if (!email) return;
+    if (!email || submitting) return;
+    setSubmitting(true);
+
+    // 1. Always save to localStorage first (guaranteed offline-safe)
     try {
       const existing = JSON.parse(
         localStorage.getItem("captured-emails") || "[]",
@@ -69,6 +75,19 @@ export default function EmailCapture({ lang }: Props) {
       localStorage.setItem("captured-emails", JSON.stringify([email]));
       localStorage.setItem("email-captured", "true");
     }
+
+    // 2. Send to backend (fire-and-forget, failure does not block UX)
+    try {
+      await fetch(`${API_BASE_URL}/api/subscribe`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, lang }),
+      });
+    } catch {
+      // Backend unavailable — localStorage already saved above
+    }
+
+    setSubmitting(false);
     setSubmitted(true);
   };
 
@@ -100,9 +119,10 @@ export default function EmailCapture({ lang }: Props) {
         />
         <button
           type="submit"
-          class="px-4 py-2 bg-[--color-accent] text-[--color-bg] rounded text-sm font-medium hover:bg-[--color-accent-dim] transition-colors"
+          disabled={submitting}
+          class="px-4 py-2 bg-[--color-accent] text-[--color-bg] rounded text-sm font-medium hover:bg-[--color-accent-dim] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {t.subscribe}
+          {submitting ? "..." : t.subscribe}
         </button>
       </form>
       <p class="text-xs text-[--color-text-muted] mt-2 opacity-60">

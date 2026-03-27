@@ -661,3 +661,24 @@ class MacroResponse(BaseModel):
     derivatives: Optional[DerivativesData] = None
     events: List[EconomicEvent] = []
     generated: str = ""
+
+
+class GenerateBotRequest(BaseModel):
+    """Request to generate a trading bot zip."""
+    strategy_id: str = "bb-squeeze-short"
+    direction: str = "short"
+    sl_pct: float = Field(default=10.0, ge=0.5, le=50.0)
+    tp_pct: float = Field(default=8.0, ge=0.5, le=100.0)
+    max_bars: int = Field(default=48, ge=1, le=168)
+    leverage: int = Field(default=5, ge=1, le=125)
+    position_size_usd: float = Field(default=60.0, ge=1.0, le=10000.0)
+    coins: List[str] = ["BTCUSDT", "ETHUSDT"]
+    avoid_hours: List[int] = []
+    backtest_win_rate: float = 0
+    backtest_profit_factor: float = 0
+# --- Subscribe Schemas ---
+
+class SubscribeRequest(BaseModel):
+    """Email subscription request."""
+    email: str
+    lang: str = "en"

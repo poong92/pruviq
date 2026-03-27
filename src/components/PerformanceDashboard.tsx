@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "preact/hooks";
+import { COINS_ANALYZED } from "../config/site-stats";
 import {
   formatPrice,
   formatUsd,
@@ -184,7 +185,7 @@ export default function PerformanceDashboard({
 }) {
   const t = labels[lang] || labels.en;
 
-  const [coinsCount, setCoinsCount] = useState("570");
+  const [coinsCount, setCoinsCount] = useState(String(COINS_ANALYZED));
   const [data, setData] = useState<RawPerformanceData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

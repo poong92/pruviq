@@ -7,7 +7,10 @@ import ResultHero from "./ResultHero";
 import OOSValidation from "./OOSValidation";
 import ExchangeCTA from "./ExchangeCTA";
 import EmailCapture from "./EmailCapture";
+import BotCodeSection from "./BotCodeSection";
+import CollapsibleSection from "./ui/CollapsibleSection";
 import { exchanges } from "../data/exchanges";
+import { COINS_ANALYZED } from "../config/site-stats";
 import {
   winRateColor,
   profitFactorColor,
@@ -610,7 +613,7 @@ export default function ResultsPanel({
                   <input
                     type="range"
                     min="1"
-                    max="570"
+                    max={String(COINS_ANALYZED)}
                     step="1"
                     value={qaCoins}
                     onInput={(e: Event) =>
@@ -619,7 +622,7 @@ export default function ResultsPanel({
                     class="slider-range mt-1"
                     aria-label={`Coins ${qaCoins}`}
                     style={{
-                      background: `linear-gradient(to right, ${COLORS.accent} 0%, ${COLORS.accent} ${((qaCoins - 1) / 568) * 100}%, var(--color-border) ${((qaCoins - 1) / 568) * 100}%, var(--color-border) 100%)`,
+                      background: `linear-gradient(to right, ${COLORS.accent} 0%, ${COLORS.accent} ${((qaCoins - 1) / (COINS_ANALYZED - 1)) * 100}%, var(--color-border) ${((qaCoins - 1) / (COINS_ANALYZED - 1)) * 100}%, var(--color-border) 100%)`,
                     }}
                   />
                 </div>
@@ -750,78 +753,6 @@ export default function ResultsPanel({
             <div class="p-3 md:p-4">
               {/* Hero: single big number (토스 패턴) */}
               <ResultHero result={result} t={t} simMode={simMode} />
-              {/* Strategy verdict banner */}
-              {result &&
-                (() => {
-                  const pf = result.profit_factor;
-                  const wr = result.win_rate;
-                  const mdd = result.max_drawdown_pct;
-                  let grade: string;
-                  let gradeColor: string;
-                  let reason: string;
-                  // Grade thresholds differ by mode:
-                  // - Standard (/simulate): MDD normalized by n_coins (portfolio-level)
-                  // - Expert (/backtest): MDD based on per-position USD (naturally higher)
-                  const isExpert = simMode === "expert";
-                  const mddStrong = isExpert ? 40 : 15;
-                  const mddGood = isExpert ? 55 : 25;
-                  const mddFair = isExpert ? 70 : 35;
-
-                  if (pf >= 1.3 && wr >= 53 && mdd <= mddStrong) {
-                    grade = t.gradeStrong;
-                    gradeColor = "#22c55e";
-                    reason = t.reasonStrong(
-                      formatPF(pf),
-                      wr.toFixed(1),
-                      mdd.toFixed(1),
-                    );
-                  } else if (pf >= 1.1 && wr >= 50 && mdd <= mddGood) {
-                    grade = t.gradeGood;
-                    gradeColor = "#86efac";
-                    reason = t.reasonGood(
-                      formatPF(pf),
-                      wr.toFixed(1),
-                      mdd.toFixed(1),
-                    );
-                  } else if (pf >= 1.0 && mdd <= mddFair) {
-                    grade = t.gradeFair;
-                    gradeColor = "#facc15";
-                    const weak =
-                      pf < 1.1
-                        ? t.reasonFairPf(formatPF(pf))
-                        : t.reasonFairWr(wr.toFixed(1));
-                    reason = t.reasonFairSuffix(weak);
-                  } else {
-                    grade = t.gradeWeak;
-                    gradeColor = "#f87171";
-                    const mainIssue =
-                      pf < 1.0
-                        ? t.reasonWeakPf(formatPF(pf))
-                        : mdd > mddFair
-                          ? t.reasonWeakMdd(mdd.toFixed(1))
-                          : t.reasonWeakWr(wr.toFixed(1));
-                    reason = t.reasonWeakSuffix(mainIssue);
-                  }
-                  return (
-                    <div
-                      class="mb-3 px-3 py-2 rounded-lg border flex items-center gap-2 font-mono text-xs"
-                      style={{
-                        borderColor: gradeColor + "40",
-                        background: gradeColor + "12",
-                      }}
-                    >
-                      <span
-                        class="font-bold shrink-0"
-                        style={{ color: gradeColor }}
-                      >
-                        {t.strategyLabel}{" "}
-                        <span style={{ color: gradeColor }}>{grade}</span>
-                      </span>
-                      <span class="text-[--color-text-muted]">—</span>
-                      <span style={{ color: gradeColor + "cc" }}>{reason}</span>
-                    </div>
-                  );
-                })()}
               {/* Results interpretation guide banner */}
               {showResultsGuide && (
                 <div class="mb-3 px-3 py-2.5 rounded-lg border border-[--color-accent]/30 bg-[--color-accent]/5 flex items-start justify-between gap-2">
@@ -853,143 +784,179 @@ export default function ResultsPanel({
                 isDemo={result._isDemo}
                 simMode={simMode}
               />
-              <EmailCapture lang={lang} />
-              {result.yearly_stats && result.yearly_stats.length > 0 && (
+              {/* Performance Breakdown — collapsible */}
+              {(result.yearly_stats?.length ||
+                result.monthly_stats?.length ||
+                result.pnl_distribution?.length) && (
                 <div class="mt-4">
-                  <div class="text-[10px] font-mono text-[--color-text-muted] uppercase mb-2">
-                    {t.yearlyBreakdown || "Yearly Breakdown"}
-                  </div>
-                  <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
-                    {result.yearly_stats.map((y) => (
-                      <div
-                        key={y.year}
-                        class="p-2 rounded bg-[--color-bg-tooltip] border border-[--color-border]"
-                      >
-                        <div class="font-mono text-xs font-bold mb-1">
-                          {y.year}
+                  <CollapsibleSection
+                    title={t.yearlyBreakdown || "Performance Breakdown"}
+                    defaultOpen={false}
+                    badge={
+                      result.yearly_stats?.length
+                        ? `${result.yearly_stats.length} ${lang === "ko" ? "년" : "yrs"}`
+                        : undefined
+                    }
+                  >
+                    {/* Yearly */}
+                    {result.yearly_stats && result.yearly_stats.length > 0 && (
+                      <div class="mb-3">
+                        <div class="text-[10px] font-mono text-[--color-text-muted] uppercase mb-2">
+                          {t.yearlyBreakdown || "Yearly Breakdown"}
                         </div>
-                        <div class="grid grid-cols-2 gap-x-2 text-[10px]">
-                          <span class="text-[--color-text-muted]">WR</span>
-                          <span
-                            class="font-mono"
-                            style={{ color: winRateColor(y.win_rate) }}
-                          >
-                            {y.win_rate.toFixed(1)}%
-                          </span>
-                          <span class="text-[--color-text-muted]">PF</span>
-                          <span
-                            class="font-mono"
-                            style={{
-                              color: profitFactorColor(y.profit_factor),
-                            }}
-                          >
-                            {formatPF(y.profit_factor)}
-                          </span>
-                          <span class="text-[--color-text-muted]">Trades</span>
-                          <span class="font-mono">{y.trades}</span>
-                          <span class="text-[--color-text-muted]">Return</span>
-                          <span
-                            class="font-mono"
-                            style={{ color: signColor(y.total_return_pct) }}
-                          >
-                            {y.total_return_pct > 0 ? "+" : ""}
-                            {y.total_return_pct.toFixed(1)}%
-                          </span>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+                          {result.yearly_stats.map((y) => (
+                            <div
+                              key={y.year}
+                              class="p-2 rounded bg-[--color-bg-tooltip] border border-[--color-border]"
+                            >
+                              <div class="font-mono text-xs font-bold mb-1">
+                                {y.year}
+                              </div>
+                              <div class="grid grid-cols-2 gap-x-2 text-[10px]">
+                                <span class="text-[--color-text-muted]">
+                                  WR
+                                </span>
+                                <span
+                                  class="font-mono"
+                                  style={{ color: winRateColor(y.win_rate) }}
+                                >
+                                  {y.win_rate.toFixed(1)}%
+                                </span>
+                                <span class="text-[--color-text-muted]">
+                                  PF
+                                </span>
+                                <span
+                                  class="font-mono"
+                                  style={{
+                                    color: profitFactorColor(y.profit_factor),
+                                  }}
+                                >
+                                  {formatPF(y.profit_factor)}
+                                </span>
+                                <span class="text-[--color-text-muted]">
+                                  Trades
+                                </span>
+                                <span class="font-mono">{y.trades}</span>
+                                <span class="text-[--color-text-muted]">
+                                  Return
+                                </span>
+                                <span
+                                  class="font-mono"
+                                  style={{
+                                    color: signColor(y.total_return_pct),
+                                  }}
+                                >
+                                  {y.total_return_pct > 0 ? "+" : ""}
+                                  {y.total_return_pct.toFixed(1)}%
+                                </span>
+                              </div>
+                            </div>
+                          ))}
                         </div>
                       </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-              {result.monthly_stats && result.monthly_stats.length > 0 && (
-                <div class="mt-4">
-                  <div class="text-[10px] font-mono text-[--color-text-muted] uppercase mb-2">
-                    {t.monthlyReturns || "Monthly Returns"}
-                  </div>
-                  <div class="overflow-x-auto">
-                    <div class="flex gap-1 min-w-max">
-                      {result.monthly_stats.map((m) => {
-                        const maxRet = Math.max(
-                          ...result.monthly_stats!.map((x) =>
-                            Math.abs(x.total_return_pct),
-                          ),
-                          1,
-                        );
-                        const barH = Math.min(
-                          (Math.abs(m.total_return_pct) / maxRet) * 40,
-                          40,
-                        );
-                        return (
-                          <div
-                            key={m.month}
-                            class="flex flex-col items-center w-7"
-                            title={`${m.month}: ${m.trades} trades, WR ${m.win_rate}%, PF ${m.profit_factor}`}
-                          >
-                            <div class="relative h-10 w-4 flex items-end justify-center">
-                              <div
-                                class="w-full rounded-sm"
-                                style={{
-                                  height: `${barH}px`,
-                                  backgroundColor:
-                                    m.total_return_pct >= 0
-                                      ? "var(--color-green)"
-                                      : "var(--color-red)",
-                                  opacity: 0.7,
-                                }}
-                              />
-                            </div>
-                            <span class="text-[7px] font-mono text-[--color-text-muted] mt-0.5 rotate-[-45deg] origin-top-left translate-x-[6px]">
-                              {m.month.slice(2)}
-                            </span>
+                    )}
+
+                    {/* Monthly */}
+                    {result.monthly_stats &&
+                      result.monthly_stats.length > 0 && (
+                        <div class="mb-3">
+                          <div class="text-[10px] font-mono text-[--color-text-muted] uppercase mb-2">
+                            {t.monthlyReturns || "Monthly Returns"}
                           </div>
-                        );
-                      })}
-                    </div>
-                  </div>
+                          <div class="overflow-x-auto">
+                            <div class="flex gap-1 min-w-max">
+                              {result.monthly_stats.map((m) => {
+                                const maxRet = Math.max(
+                                  ...result.monthly_stats!.map((x) =>
+                                    Math.abs(x.total_return_pct),
+                                  ),
+                                  1,
+                                );
+                                const barH = Math.min(
+                                  (Math.abs(m.total_return_pct) / maxRet) * 40,
+                                  40,
+                                );
+                                return (
+                                  <div
+                                    key={m.month}
+                                    class="flex flex-col items-center w-7"
+                                    title={`${m.month}: ${m.trades} trades, WR ${m.win_rate}%, PF ${m.profit_factor}`}
+                                  >
+                                    <div class="relative h-10 w-4 flex items-end justify-center">
+                                      <div
+                                        class="w-full rounded-sm"
+                                        style={{
+                                          height: `${barH}px`,
+                                          backgroundColor:
+                                            m.total_return_pct >= 0
+                                              ? "var(--color-green)"
+                                              : "var(--color-red)",
+                                          opacity: 0.7,
+                                        }}
+                                      />
+                                    </div>
+                                    <span class="text-[7px] font-mono text-[--color-text-muted] mt-0.5 rotate-[-45deg] origin-top-left translate-x-[6px]">
+                                      {m.month.slice(2)}
+                                    </span>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                    {/* PnL Distribution */}
+                    {result.pnl_distribution &&
+                      result.pnl_distribution.length > 0 &&
+                      result.pnl_buckets && (
+                        <div>
+                          <div class="text-[10px] font-mono text-[--color-text-muted] uppercase mb-2">
+                            {t.pnlDistribution || "PnL Distribution"}
+                          </div>
+                          <div class="flex items-end gap-px h-16">
+                            {result.pnl_distribution.map((count, i) => {
+                              const maxCount = Math.max(
+                                ...result.pnl_distribution!,
+                                1,
+                              );
+                              const h =
+                                count > 0
+                                  ? Math.max((count / maxCount) * 100, 4)
+                                  : 0;
+                              const isNeg = i < 10;
+                              const isZero = i === 10;
+                              return (
+                                <div
+                                  key={i}
+                                  class="flex-1 rounded-t-sm transition-all"
+                                  style={{
+                                    height: `${h}%`,
+                                    backgroundColor: isZero
+                                      ? "var(--color-text-muted)"
+                                      : isNeg
+                                        ? "var(--color-red)"
+                                        : "var(--color-green)",
+                                    opacity: count > 0 ? 0.7 : 0.1,
+                                  }}
+                                  title={`${result.pnl_buckets![i]}: ${count} trades`}
+                                />
+                              );
+                            })}
+                          </div>
+                          <div class="flex justify-between text-[8px] font-mono text-[--color-text-muted] mt-0.5">
+                            <span>-10%</span>
+                            <span>0%</span>
+                            <span>+10%</span>
+                          </div>
+                        </div>
+                      )}
+                  </CollapsibleSection>
                 </div>
               )}
-              {result.pnl_distribution &&
-                result.pnl_distribution.length > 0 &&
-                result.pnl_buckets && (
-                  <div class="mt-4">
-                    <div class="text-[10px] font-mono text-[--color-text-muted] uppercase mb-2">
-                      {t.pnlDistribution || "PnL Distribution"}
-                    </div>
-                    <div class="flex items-end gap-px h-16">
-                      {result.pnl_distribution.map((count, i) => {
-                        const maxCount = Math.max(
-                          ...result.pnl_distribution!,
-                          1,
-                        );
-                        const h =
-                          count > 0 ? Math.max((count / maxCount) * 100, 4) : 0;
-                        const isNeg = i < 10;
-                        const isZero = i === 10;
-                        return (
-                          <div
-                            key={i}
-                            class="flex-1 rounded-t-sm transition-all"
-                            style={{
-                              height: `${h}%`,
-                              backgroundColor: isZero
-                                ? "var(--color-text-muted)"
-                                : isNeg
-                                  ? "var(--color-red)"
-                                  : "var(--color-green)",
-                              opacity: count > 0 ? 0.7 : 0.1,
-                            }}
-                            title={`${result.pnl_buckets![i]}: ${count} trades`}
-                          />
-                        );
-                      })}
-                    </div>
-                    <div class="flex justify-between text-[8px] font-mono text-[--color-text-muted] mt-0.5">
-                      <span>-10%</span>
-                      <span>0%</span>
-                      <span>+10%</span>
-                    </div>
-                  </div>
-                )}
+
+              {/* Meta info */}
               <div class="mt-3 flex flex-wrap gap-3 text-[10px] text-[--color-text-muted] font-mono">
                 <span>
                   {result.coins_used} {t.coinsUnit}
@@ -1006,7 +973,8 @@ export default function ResultsPanel({
                     </span>
                   )}
               </div>
-              {/* Share & Fees CTA */}
+
+              {/* Share & Copy Settings — consolidated action row */}
               <div class="mt-4 pt-3 border-t border-[--color-border] flex flex-wrap items-center gap-3">
                 {onCopyLink && (
                   <button
@@ -1043,7 +1011,6 @@ export default function ResultsPanel({
                     {linkCopied ? t.linkCopied : t.shareResults}
                   </button>
                 )}
-                {/* Fix 2: Copy Strategy Settings button */}
                 <button
                   onClick={copyStrategySettings}
                   class="flex items-center gap-1.5 px-4 py-2 text-xs font-mono rounded border transition-colors"
@@ -1076,13 +1043,23 @@ export default function ResultsPanel({
                   {settingsCopied ? t.settingsCopied : t.copySettings}
                 </button>
                 <a
-                  href="/fees"
+                  href={lang === "ko" ? "/ko/fees" : "/fees"}
                   class="flex items-center gap-1.5 px-4 py-2 text-xs font-mono rounded border border-[--color-border] text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors"
                 >
                   {t.saveOnFees} &rarr;
                 </a>
               </div>
-              {/* ExchangeCTA — always shown: profitable = start trading, loss = save on fees */}
+
+              {/* Email + Bot + Exchange */}
+              <EmailCapture lang={lang} />
+              <BotCodeSection
+                result={result}
+                strategyId={activePreset || "custom"}
+                direction={result.direction || "short"}
+                slPct={result.sl_pct ?? slPct}
+                tpPct={result.tp_pct ?? tpPct}
+                lang={lang}
+              />
               <ExchangeCTA
                 mode="inline"
                 lang={lang}

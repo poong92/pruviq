@@ -2,8 +2,7 @@ import { h } from "preact";
 import { useState, useEffect, useCallback } from "preact/hooks";
 import { RankingCard } from "./RankingCard";
 import type { RankingEntry } from "./RankingCard";
-
-const API_BASE = import.meta.env.PUBLIC_API_URL ?? "https://api.pruviq.com";
+import { API_BASE_URL } from "../config/api";
 
 interface RankingData {
   date: string;
@@ -151,7 +150,7 @@ export function StrategyRanking({ lang = "en" }: { lang?: Lang }) {
       const controller = new AbortController();
 
       fetch(
-        `${API_BASE}/rankings/daily?period=${encodeURIComponent(p)}&group=${encodeURIComponent(g)}`,
+        `${API_BASE_URL}/rankings/daily?period=${encodeURIComponent(p)}&group=${encodeURIComponent(g)}`,
         {
           signal: controller.signal,
         },
@@ -358,6 +357,7 @@ export function StrategyRanking({ lang = "en" }: { lang?: Lang }) {
                   entry={entry}
                   lang={lang}
                   variant="best"
+                  period={period}
                 />
               ))}
         </div>
@@ -383,6 +383,7 @@ export function StrategyRanking({ lang = "en" }: { lang?: Lang }) {
                     entry={entry}
                     variant="worst"
                     lang={lang}
+                    period={period}
                   />
                 ))}
         </div>
@@ -399,6 +400,7 @@ export function StrategyRanking({ lang = "en" }: { lang?: Lang }) {
                 entry={entry}
                 variant="weekly"
                 lang={lang}
+                period="7d"
               />
             ))}
           </div>

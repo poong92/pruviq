@@ -2,8 +2,8 @@ import { h } from "preact";
 import { useState, useEffect } from "preact/hooks";
 import { RankingCard } from "./RankingCard";
 import type { RankingEntry } from "./RankingCard";
-
-const API_BASE = import.meta.env.PUBLIC_API_URL ?? "https://api.pruviq.com";
+import { API_BASE_URL } from "../config/api";
+import { COINS_ANALYZED } from "../config/site-stats";
 
 interface WeeklyData {
   date: string;
@@ -20,7 +20,7 @@ interface Props {
 const labels = {
   en: {
     weeklyBest: "This Week's Best",
-    weeklyBestSub: "7-day Profit Factor ranking across 570+ coins",
+    weeklyBestSub: `7-day Profit Factor ranking across ${COINS_ANALYZED}+ coins`,
     worstTitle: "Worst 3 This Week",
     worstSub: "Avoid these — bottom 3 by 7-day PF",
     loading: "Loading weekly rankings...",
@@ -39,7 +39,7 @@ const labels = {
   },
   ko: {
     weeklyBest: "이번 주 베스트",
-    weeklyBestSub: "570+ 코인 기준 7일 PF 랭킹",
+    weeklyBestSub: `${COINS_ANALYZED}+ 코인 기준 7일 PF 랭킹`,
     worstTitle: "이번 주 하위 3개",
     worstSub: "피해야 할 조합 — 7일 PF 하위 3개",
     loading: "주간 랭킹 로딩 중...",
@@ -92,7 +92,7 @@ export default function WeeklyLeaderboard({ lang }: Props) {
 
   useEffect(() => {
     const controller = new AbortController();
-    fetch(`${API_BASE}/rankings/daily?period=7d&group=top50`, {
+    fetch(`${API_BASE_URL}/rankings/daily?period=7d&group=top50`, {
       signal: controller.signal,
     })
       .then((r) => {

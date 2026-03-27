@@ -1,4 +1,5 @@
 import { useState, useEffect } from "preact/hooks";
+import { COINS_ANALYZED } from "../config/site-stats";
 import { changeColor, timeAgo } from "../utils/format";
 import { useMarketLive } from "../hooks/useMarketLive";
 import { useMarketOverview } from "../hooks/useMarketOverview";
@@ -298,7 +299,7 @@ export default function MarketDashboard({
   initialMarket?: MarketDataShape | null;
 }) {
   const l = labels[lang] || labels.en;
-  const [coinsCount, setCoinsCount] = useState("570");
+  const [coinsCount, setCoinsCount] = useState(String(COINS_ANALYZED));
 
   useEffect(() => {
     fetch("/data/site-stats.json")
@@ -712,7 +713,9 @@ export default function MarketDashboard({
                 }
                 onError={() => {
                   const el = document.getElementById("cal-placeholder");
-                  if (el) el.innerHTML = '<p class="text-sm">Calendar unavailable. Check <a href="https://www.tradingview.com/economic-calendar/" target="_blank" rel="noopener" class="text-[--color-accent] hover:underline">TradingView</a> directly.</p>';
+                  if (el)
+                    el.innerHTML =
+                      '<p class="text-sm">Calendar unavailable. Check <a href="https://www.tradingview.com/economic-calendar/" target="_blank" rel="noopener" class="text-[--color-accent] hover:underline">TradingView</a> directly.</p>';
                 }}
               />
             </div>

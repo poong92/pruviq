@@ -1,4 +1,5 @@
 import { h } from "preact";
+import { buildSimulatorUrl } from "../config/simulation-context";
 
 export interface RankingEntry {
   rank: number;
@@ -13,12 +14,15 @@ export interface RankingEntry {
   low_sample: boolean;
   total_return?: number;
   days_in_top?: number;
+  sl_pct?: number;
+  tp_pct?: number;
 }
 
 interface RankingCardProps {
   entry: RankingEntry;
   variant?: "best" | "worst" | "weekly";
   lang?: "en" | "ko";
+  period?: string; // "30d" | "365d" | "7d" — used to set start_date in simulator link
 }
 
 const cardLabels = {
@@ -78,11 +82,18 @@ export function RankingCard({
   entry,
   variant = "best",
   lang = "en",
+  period = "30d",
 }: RankingCardProps) {
   const medal = rankBadge(entry.rank);
   const isWeekly = variant === "weekly";
   const lbl = cardLabels[lang] ?? cardLabels.en;
   const lowSampleBest = entry.low_sample && variant === "best";
+
+  // Calculate start date from period for simulator link
+  const periodDays = parseInt(period) || 30;
+  const startDate = new Date(Date.now() - periodDays * 86400000)
+    .toISOString()
+    .slice(0, 10);
 
   return (
     <div
@@ -190,9 +201,21 @@ export function RankingCard({
         </div>
       </div>
 
-      {/* Simulate button */}
+      {/* Simulate button — uses centralized URL builder for consistency */}
       <a
-        href={`/${lang === "ko" ? "ko/" : ""}simulate?preset=${entry.strategy}`}
+        href={buildSimulatorUrl(
+          {
+            strategy: entry.strategy,
+            direction: entry.direction as "short" | "long" | "both",
+            sl: entry.sl_pct,
+            tp: entry.tp_pct,
+            startDate,
+            timeframe: entry.timeframe !== "1H" ? entry.timeframe : undefined,
+            source: "ranking",
+            sourcePeriod: period,
+          },
+          lang,
+        )}
         class="mt-3 block text-center text-xs font-mono px-3 py-1.5 rounded border border-[--color-accent]/30 text-[--color-accent] hover:bg-[--color-accent]/10 transition-colors"
       >
         {lang === "ko" ? "시뮬레이션 →" : "Simulate →"}

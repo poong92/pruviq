@@ -94,7 +94,7 @@ const canonicalOverride = symbol.endsWith('usdt') ? undefined : `/coins/${symbol
 
       <!-- CTA -->
       <div class="mt-6 flex flex-wrap items-center gap-3">
-        <a href={`/simulate?coin=${symbolUpper}`}
+        <a href={`/simulate?coin=${symbolUpper}&src=coin-page`}
            class="inline-flex items-center gap-2 bg-[--color-accent] text-[--color-bg] px-5 py-2.5 rounded font-semibold text-sm hover:bg-[--color-accent-dim]">
           {t('coin_detail.simulate_coin').replace('{coin}', coinName)} &rarr;
         </a>
@@ -151,7 +151,7 @@ const canonicalOverride = symbol.endsWith('usdt') ? undefined : `/coins/${symbol
 
       <!-- Bottom CTA -->
       <div class="mt-10 pt-8 border-t border-[--color-border] text-center">
-        <a href={`/simulate?coin=${symbolUpper}`}
+        <a href={`/simulate?coin=${symbolUpper}&src=coin-page`}
            class="btn btn-primary btn-md
           {t('coin_detail.simulate_coin').replace('{coin}', coinName)} &rarr;
         </a>
