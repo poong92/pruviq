@@ -1247,6 +1247,35 @@ def find_signals_heikin_ashi(df: pd.DataFrame, strategy, direction: str = "both"
     return np.where(signal)[0]
 
 
+def find_signals_volume_profile(df: pd.DataFrame, strategy, direction: str) -> np.ndarray:
+    """Volume Profile POC reversion — uses pre-computed signal + deviation columns."""
+    n = len(df)
+    if n < 200 or "signal" not in df.columns or "vp_deviation" not in df.columns:
+        return np.array([], dtype=int)
+
+    signal = df["signal"].values.astype(bool)
+    deviation = df["vp_deviation"].values
+
+    # SHORT when deviation > 0 (price above POC), LONG when < 0
+    if direction == "short":
+        cond = signal & (deviation > 0)
+    elif direction == "long":
+        cond = signal & (deviation < 0)
+    else:  # both
+        cond = signal & (deviation != 0)
+
+    # Apply avoid_hours filter
+    avoid_hours = getattr(strategy, 'avoid_hours', [])
+    if avoid_hours and "timestamp" in df.columns:
+        hours = pd.to_datetime(df["timestamp"]).dt.hour.values
+        next_hours = np.roll(hours, -1)
+        next_hours[-1] = 0
+        for h in avoid_hours:
+            cond &= (next_hours != h)
+
+    return np.where(cond)[0]
+
+
 def find_signals_generic(df: pd.DataFrame, strategy, direction: str) -> np.ndarray:
     """
     Generic signal detection fallback — calls strategy.check_signal() per bar.
@@ -1438,6 +1467,8 @@ def run_fast(
         signal_indices = find_signals_ichimoku(df, strategy, direction)
     elif strategy_id == "heikin-ashi":
         signal_indices = find_signals_heikin_ashi(df, strategy, direction)
+    elif strategy_id == "volume-profile":
+        signal_indices = find_signals_volume_profile(df, strategy, direction)
     else:
         signal_indices = find_signals_generic(df, strategy, direction)
 
