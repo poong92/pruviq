@@ -63,19 +63,28 @@ class VolumeProfileStrategy:
             w_close = close[i - self.window:i]
             w_vol = volume[i - self.window:i]
 
+            # Skip if any NaN in window
+            if np.any(np.isnan(w_close)) or np.any(np.isnan(w_vol)):
+                continue
+
             if np.sum(w_vol) == 0:
                 continue
 
-            price_min, price_max = np.min(w_close), np.max(w_close)
-            if price_max <= price_min:
+            price_min, price_max = float(np.nanmin(w_close)), float(np.nanmax(w_close))
+            if price_max <= price_min or np.isnan(price_min):
                 continue
 
             bins = np.linspace(price_min, price_max, n_bins + 1)
             bin_volumes = np.zeros(n_bins)
+            price_range = price_max - price_min
 
             for j in range(len(w_close)):
-                idx = int((w_close[j] - price_min) / (price_max - price_min) * (n_bins - 1))
-                idx = min(idx, n_bins - 1)
+                val = w_close[j]
+                if np.isnan(val) or np.isnan(w_vol[j]):
+                    continue
+                ratio = (val - price_min) / price_range
+                idx = int(ratio * (n_bins - 1))
+                idx = max(0, min(idx, n_bins - 1))
                 bin_volumes[idx] += w_vol[j]
 
             poc_idx = np.argmax(bin_volumes)
