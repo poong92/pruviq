@@ -30,22 +30,22 @@ export default function HotStrategies({ lang = "en" }: { lang?: string }) {
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 5000);
+    // Delay fetch by 3s so page reaches networkidle first (prevents E2E timeout)
+    const delay = setTimeout(() => {
+      const controller = new AbortController();
+      const fetchTimer = setTimeout(() => controller.abort(), 5000);
 
-    fetch(`${API_URL}/hot-strategies`, { signal: controller.signal })
-      .then((r) => {
-        if (!r.ok) throw new Error(`${r.status}`);
-        return r.json();
-      })
-      .then(setData)
-      .catch(() => setError(true))
-      .finally(() => clearTimeout(timer));
+      fetch(`${API_URL}/hot-strategies`, { signal: controller.signal })
+        .then((r) => {
+          if (!r.ok) throw new Error(`${r.status}`);
+          return r.json();
+        })
+        .then(setData)
+        .catch(() => setError(true))
+        .finally(() => clearTimeout(fetchTimer));
+    }, 3000);
 
-    return () => {
-      controller.abort();
-      clearTimeout(timer);
-    };
+    return () => clearTimeout(delay);
   }, []);
 
   if (error || !data?.strategies?.length) return null;
