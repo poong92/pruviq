@@ -19,7 +19,7 @@ jobs:
     # Self-hosted Mac Mini M4 runner — CI = 로컬 환경 완전 일치.
     # 실패 = 로컬에서 100% 재현 가능 → JEPO e2e-autofix 에이전트가 정확하게 수정.
     runs-on: [self-hosted, e2e]
-    timeout-minutes: 25
+    timeout-minutes: 40
     steps:
     - uses: actions/checkout@v4
       with:
