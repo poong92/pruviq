@@ -76,6 +76,8 @@ jobs:
           --retries 1 \
           --ignore-snapshots
       timeout-minutes: 15
+      env:
+        CI: true
 
     - name: Run E2E tests (Firefox cross-browser)
       id: e2e_firefox
