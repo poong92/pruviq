@@ -1,0 +1,75 @@
+{
+  "run_id": "20260327_114838",
+  "timestamp": "2026-03-27T11:48:58.899009",
+  "name": "L2_vp_oos",
+  "rows": 6,
+  "coins": 30,
+  "cost_model": {
+    "fee_pct": 0.0008,
+    "slippage_pct": 0.0002,
+    "funding_rate_8h": 0.0001
+  },
+  "metadata": {},
+  "data": [
+    {
+      "window": 1,
+      "is_period": "2024-04~2024-09",
+      "oos_period": "2024-09~2024-12",
+      "is_pf": 1.0,
+      "is_trades": 12394,
+      "oos_pf": 1.05,
+      "oos_trades": 9277,
+      "degradation": 0.05
+    },
+    {
+      "window": 2,
+      "is_period": "2024-06~2024-12",
+      "oos_period": "2024-12~2025-03",
+      "is_pf": 1.01,
+      "is_trades": 10902,
+      "oos_pf": 1.06,
+      "oos_trades": 7643,
+      "degradation": 0.05
+    },
+    {
+      "window": 3,
+      "is_period": "2024-09~2025-03",
+      "oos_period": "2025-03~2025-06",
+      "is_pf": 1.05,
+      "is_trades": 9277,
+      "oos_pf": 1.03,
+      "oos_trades": 6003,
+      "degradation": -0.02
+    },
+    {
+      "window": 4,
+      "is_period": "2024-12~2025-06",
+      "oos_period": "2025-06~2025-09",
+      "is_pf": 1.06,
+      "is_trades": 7643,
+      "oos_pf": 1.07,
+      "oos_trades": 4486,
+      "degradation": 0.01
+    },
+    {
+      "window": 5,
+      "is_period": "2025-03~2025-09",
+      "oos_period": "2025-09~2025-12",
+      "is_pf": 1.03,
+      "is_trades": 6003,
+      "oos_pf": 1.15,
+      "oos_trades": 2972,
+      "degradation": 0.12
+    },
+    {
+      "window": 6,
+      "is_period": "2025-06~2025-12",
+      "oos_period": "2025-12~2026-03",
+      "is_pf": 1.07,
+      "is_trades": 4486,
+      "oos_pf": 1.03,
+      "oos_trades": 1412,
+      "degradation": -0.04
+    }
+  ]
+}

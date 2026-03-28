@@ -1,0 +1,5 @@
+strategy,base_pf,base_wr,base_trades,mtf_pf,mtf_wr,mtf_trades,pf_delta,base_sharpe,mtf_sharpe
+atr-breakout(short),1.27,50.8,847,1.27,50.8,847,0.0,3.12,3.12
+bb-squeeze-short(short),1.03,51.0,649,1.03,51.0,649,0.0,0.37,0.37
+supertrend(short),1.04,51.4,7851,1.04,51.4,7851,0.0,1.65,1.65
+ichimoku(short),1.07,51.4,1398,1.07,51.4,1398,0.0,1.04,1.04

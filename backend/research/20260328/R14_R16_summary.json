@@ -1,0 +1,70 @@
+{
+  "timestamp": "2026-03-28T14:41:46.547864",
+  "R14_coin_scaling": "Low vol 10=best, 15=good, 20+=diminishing",
+  "R15_extra_strategies": [
+    {
+      "strategy": "supertrend",
+      "fng": "Fear",
+      "pf": 1.31,
+      "wr": 59.1,
+      "trades": 237
+    },
+    {
+      "strategy": "donchian-breakout",
+      "fng": "Fear",
+      "pf": 1.45,
+      "wr": 57.8,
+      "trades": 339
+    },
+    {
+      "strategy": "hv-squeeze",
+      "fng": "Fear",
+      "pf": 1.58,
+      "wr": 59.2,
+      "trades": 284
+    },
+    {
+      "strategy": "macd-cross",
+      "fng": "ExFear",
+      "pf": 1.32,
+      "wr": 54.1,
+      "trades": 414
+    },
+    {
+      "strategy": "mean-reversion",
+      "fng": "Fear",
+      "pf": 1.31,
+      "wr": 54.9,
+      "trades": 122
+    },
+    {
+      "strategy": "rsi-divergence",
+      "fng": "ExFear",
+      "pf": 1.52,
+      "wr": 61.9,
+      "trades": 97
+    },
+    {
+      "strategy": "rsi-divergence",
+      "fng": "Neutral",
+      "pf": 1.52,
+      "wr": 60.3,
+      "trades": 68
+    },
+    {
+      "strategy": "stochastic-rsi",
+      "fng": "Fear",
+      "pf": 1.39,
+      "wr": 53.2,
+      "trades": 357
+    }
+  ],
+  "R16_stress": {
+    "weeks": 52,
+    "win_pct": 42.3,
+    "avg_weekly": 2.09,
+    "worst_week": -16.86,
+    "best_week": 56.5,
+    "max_consec_loss": 7
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "run_id": "20260327_120616",
+  "timestamp": "2026-03-27T12:06:33.730631",
+  "name": "L3_combined_portfolio",
+  "rows": 5,
+  "coins": 30,
+  "cost_model": {
+    "fee_pct": 0.0008,
+    "slippage_pct": 0.0002,
+    "funding_rate_8h": 0.0001
+  },
+  "metadata": {},
+  "data": [
+    {
+      "portfolio": "EW 5xSHORT (baseline)",
+      "final": 5408,
+      "return_pct": -45.9,
+      "mdd_pct": 73.1,
+      "sharpe": -0.35
+    },
+    {
+      "portfolio": "EW 5xSHORT + VP",
+      "final": 6277,
+      "return_pct": -37.2,
+      "mdd_pct": 65.9,
+      "sharpe": -0.35
+    },
+    {
+      "portfolio": "ATR+BB+VP (3-way)",
+      "final": 9687,
+      "return_pct": -3.1,
+      "mdd_pct": 44.8,
+      "sharpe": 0.23
+    },
+    {
+      "portfolio": "ATR+VP (2-way)",
+      "final": 11315,
+      "return_pct": 13.1,
+      "mdd_pct": 36.1,
+      "sharpe": 0.49
+    },
+    {
+      "portfolio": "VP alone",
+      "final": 10000,
+      "return_pct": 0.0,
+      "mdd_pct": 0.0,
+      "sharpe": 0
+    }
+  ]
+}

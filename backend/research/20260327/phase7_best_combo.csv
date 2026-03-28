@@ -1,0 +1,9 @@
+strategy,direction,sl_pct,tp_pct,max_bars,total_trades,wins,losses,win_rate,profit_factor,total_return_pct,max_drawdown_pct,sharpe,avg_win_pct,avg_loss_pct,coins_used,period,config
+keltner-squeeze,short,15,5,48,3674,2124,1550,57.8,1.1,766.19,91.2,0.06,4.1,-5.12,50,2y,SL=15 TP=5
+atr-breakout,short,3,8,48,2983,1222,1761,41.0,1.48,2555.07,44.0,0.3,6.41,-3.0,50,2y,SL=3 TP=8
+bb-squeeze-short,short,3,5,48,2443,1120,1323,45.8,1.24,967.59,41.8,0.2,4.41,-3.0,50,2y,SL=3 TP=5
+bb-squeeze-long,short,3,5,48,2443,1120,1323,45.8,1.24,967.59,41.8,0.2,4.41,-3.0,50,2y,SL=3 TP=5
+ichimoku,short,3,5,48,4907,2129,2778,43.4,1.11,933.45,75.7,0.07,4.35,-3.0,50,2y,SL=3 TP=5
+bb-squeeze-short,both,3,8,48,4034,1517,2517,37.6,1.17,1276.47,94.5,0.1,5.79,-2.98,50,2y,SL=3 TP=8
+bb-squeeze-long,both,3,8,48,4034,1517,2517,37.6,1.17,1276.47,94.5,0.1,5.79,-2.98,50,2y,SL=3 TP=8
+atr-breakout,both,3,8,48,5377,2007,3370,37.3,1.22,2254.24,99.9,0.11,6.17,-3.01,50,2y,SL=3 TP=8

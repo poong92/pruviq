@@ -1,0 +1,71 @@
+{
+  "run_id": "20260327_120959",
+  "timestamp": "2026-03-27T12:10:43.673712",
+  "name": "L5_ml_cv_results",
+  "rows": 8,
+  "coins": 5,
+  "cost_model": {
+    "fee_pct": 0.0008,
+    "slippage_pct": 0.0002,
+    "funding_rate_8h": 0.0001
+  },
+  "metadata": {},
+  "data": [
+    {
+      "split": 1,
+      "train_size": 11629,
+      "test_size": 973,
+      "accuracy": 49.2,
+      "f1": 0.519
+    },
+    {
+      "split": 2,
+      "train_size": 12602,
+      "test_size": 973,
+      "accuracy": 52.3,
+      "f1": 0.522
+    },
+    {
+      "split": 3,
+      "train_size": 13575,
+      "test_size": 973,
+      "accuracy": 49.4,
+      "f1": 0.511
+    },
+    {
+      "split": 4,
+      "train_size": 14548,
+      "test_size": 973,
+      "accuracy": 52.0,
+      "f1": 0.538
+    },
+    {
+      "split": 5,
+      "train_size": 15521,
+      "test_size": 973,
+      "accuracy": 50.9,
+      "f1": 0.59
+    },
+    {
+      "split": 6,
+      "train_size": 16494,
+      "test_size": 973,
+      "accuracy": 50.9,
+      "f1": 0.57
+    },
+    {
+      "split": 7,
+      "train_size": 17467,
+      "test_size": 973,
+      "accuracy": 47.5,
+      "f1": 0.54
+    },
+    {
+      "split": 8,
+      "train_size": 18440,
+      "test_size": 973,
+      "accuracy": 47.6,
+      "f1": 0.525
+    }
+  ]
+}

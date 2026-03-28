@@ -217,26 +217,11 @@ async def lifespan(app: FastAPI):
         coin_stats_cache = _build_coin_stats(strategy)
         print(f"Coin stats cached for {len(coin_stats_cache['coins'])} coins")
 
-    # Pre-fetch market data before accepting requests (avoid startup race)
-    print("Pre-fetching market data...")
+    # Pre-fetch market data — non-blocking on startup
+    # CoinGecko 429 시 startup blocking 방지: background task에 위임
+    print("Deferring market/macro pre-fetch to background tasks...")
     global _market_cache, _news_cache, _market_cache_ts
-    try:
-        _market_cache = await asyncio.to_thread(_build_market_overview)
-        _market_cache_ts = time.time()
-        _news_cache = await asyncio.to_thread(_build_news)
-        print("Market cache initialized")
-    except Exception as e:
-        print(f"Initial market fetch failed (will retry in background): {e}")
-
-    # Pre-populate macro cache so first user request is served from cache (<5ms)
-    print("Pre-fetching macro data...")
     global _macro_cache, _macro_cache_time
-    try:
-        _macro_cache = await asyncio.to_thread(_build_macro_data)
-        _macro_cache_time = time.time()
-        print("Macro cache initialized")
-    except Exception as e:
-        print(f"Initial macro fetch failed (will fetch on first request): {e}")
 
     # Start background refresh tasks
     # IMPORTANT: Deploy with --workers 1 (global cache not shared across processes)
