@@ -1188,8 +1188,10 @@ export default function SimulatorPage({ lang = "en" }: Props) {
   }, [apiReady, isRunning, result, direction, slPct, tpPct, topN]);
 
   // Auto-demo for first-time visitors: run BB Squeeze to show results immediately
+  // Skips in E2E/headless (navigator.webdriver) to prevent CI timeout
   useEffect(() => {
     if (!apiReady || isRunning || result) return;
+    if ((navigator as any).webdriver) return; // Skip in Playwright/headless
     const params = new URLSearchParams(window.location.search);
     if (params.get("preset") || params.get("strategy") || params.get("coin"))
       return;
