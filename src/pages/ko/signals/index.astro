@@ -13,16 +13,16 @@ const t = useTranslations('ko');
 
       <nav class="flex gap-1 mb-8 border-b border-[--color-border]" aria-label="전략 네비게이션">
         <a href="/ko/strategies" class="px-4 py-2.5 font-mono text-sm text-[--color-text-muted] border-b-2 border-transparent -mb-px hover:text-[--color-text] hover:border-[--color-border] transition-colors">
-          전략
+          {t('nav.strategies')}
         </a>
         <a href="/ko/strategies/ranking" class="px-4 py-2.5 font-mono text-sm text-[--color-text-muted] border-b-2 border-transparent -mb-px hover:text-[--color-text] hover:border-[--color-border] transition-colors">
-          일일 랭킹
+          {t('nav.daily_ranking')}
         </a>
         <a href="/ko/leaderboard" class="px-4 py-2.5 font-mono text-sm text-[--color-text-muted] border-b-2 border-transparent -mb-px hover:text-[--color-text] hover:border-[--color-border] transition-colors">
-          주간
+          {t('nav.weekly')}
         </a>
         <span class="px-4 py-2.5 font-mono text-sm text-[--color-accent] border-b-2 border-[--color-accent] -mb-px font-bold">
-          실시간 시그널
+          {t('nav.signals')}
         </span>
       </nav>
 

@@ -1419,6 +1419,9 @@ export const en = {
   "nav.ranking_desc": "Daily performance",
   "nav.leaderboard_desc": "Weekly best",
   "nav.compare_tools_desc": "vs TradingView & more",
+  "nav.daily_ranking": "Daily Ranking",
+  "nav.weekly": "Weekly",
+  "nav.signals": "Live Signals",
 
   // Metric explanation tooltips
   "metric.sharpe_desc":
