@@ -59,6 +59,7 @@ const rankingPath = lang === 'ko' ? '/ko/strategies/ranking' : '/strategies/rank
 
 // Legacy paths (for footer/redirects)
 const strategiesPath = lang === 'ko' ? '/ko/strategies' : '/strategies';
+const signalsPath = lang === 'ko' ? '/ko/signals' : '/signals';
 const coinsPath = lang === 'ko' ? '/ko/coins' : '/coins';
 const builderPath = lang === 'ko' ? '/ko/builder' : '/builder';
 const performancePath = lang === 'ko' ? '/ko/performance' : '/performance';
@@ -69,6 +70,7 @@ const navItems = [
   { href: marketPath, match: '/market', label: t('nav.market') },
   { href: simulatePath, match: '/simulate', label: t('nav.simulate') },
   { href: strategiesPath, match: '/strategies', label: t('nav.strategies') },
+  { href: signalsPath, match: '/signals', label: 'Signals' },
   { href: coinsPath, match: '/coins', label: t('nav.coins') },
   { href: learnPath, match: '/learn', label: t('nav.learn') },
   { href: feesPath, match: '/fees', label: t('nav.fees') },
@@ -77,8 +79,8 @@ const isActive = (match: string) => basePath.startsWith(match);
 
 // Build multi-level breadcrumb items (matching Breadcrumbs.astro logic)
 const breadcrumbLabelMap: Record<string, Record<string, string>> = {
-  en: { market: 'Market', strategies: 'Strategies', coins: 'Coins', builder: 'Builder', simulate: 'Simulate', learn: 'Learn', fees: 'Fees', blog: 'Blog', about: 'About', changelog: 'Changelog', performance: 'Performance', compare: 'Compare', privacy: 'Privacy', terms: 'Terms', methodology: 'Methodology', api: 'API', leaderboard: 'Leaderboard' },
-  ko: { market: '시장', strategies: '전략', coins: '코인', builder: '빌더', simulate: '시뮬레이션', learn: '학습', fees: '수수료', blog: '블로그', about: '소개', changelog: '변경 이력', performance: '성과', compare: '비교', privacy: '개인정보', terms: '이용약관', methodology: '방법론', api: 'API', leaderboard: '리더보드' },
+  en: { market: 'Market', strategies: 'Strategies', signals: 'Signals', coins: 'Coins', builder: 'Builder', simulate: 'Simulate', learn: 'Learn', fees: 'Fees', blog: 'Blog', about: 'About', changelog: 'Changelog', performance: 'Performance', compare: 'Compare', privacy: 'Privacy', terms: 'Terms', methodology: 'Methodology', api: 'API', leaderboard: 'Leaderboard' },
+  ko: { market: '시장', strategies: '전략', signals: '시그널', coins: '코인', builder: '빌더', simulate: '시뮬레이션', learn: '학습', fees: '수수료', blog: '블로그', about: '소개', changelog: '변경 이력', performance: '성과', compare: '비교', privacy: '개인정보', terms: '이용약관', methodology: '방법론', api: 'API', leaderboard: '리더보드' },
 };
 const breadcrumbSegments = basePath === '/' ? [] : basePath.split('/').filter(Boolean);
 const breadcrumbItems = [{ name: lang === 'ko' ? '홈' : 'Home', item: 'https://pruviq.com/' }];
