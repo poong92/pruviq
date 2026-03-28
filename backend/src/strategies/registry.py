@@ -124,8 +124,8 @@ STRATEGY_REGISTRY = {
         "direction": "both",
         "defaults": {"sl": 7, "tp": 6},
         "name": "Keltner Squeeze",
-        "description": "Enters when BB exits Keltner Channel (squeeze release) with directional breakout.",
-        "status": "research",
+        "description": "Enters when BB exits Keltner Channel (squeeze release) with directional breakout. SHORT PF 1.76 in recent 30d, strong in Fear+Greed regimes.",
+        "status": "verified",
     },
     "stochastic-rsi": {
         "class": StochasticRSIStrategy,

@@ -1306,12 +1306,22 @@ def simulate_vectorized(
     symbol: str,
     funding_rate_8h: float = 0.0001,
     timeframe: str = "1H",
+    trailing_pct: float = 0.0,
+    initial_sl_pct: float = 0.0,
 ) -> List[Trade]:
     """
     Vectorized simulation — given signal indices, process trades.
     Still sequential (no overlapping positions) but inner exit search is optimized.
+
+    Exit modes:
+    - Fixed SL/TP (default): sl_pct + tp_pct, exit on first hit
+    - Trailing stop: if trailing_pct > 0, uses trailing stop instead of fixed TP
+      - initial_sl_pct: initial stop loss (e.g., 0.20 = 20%)
+      - trailing_pct: trailing distance from best price (e.g., 0.02 = 2%)
+      - No fixed TP — profit captured by trailing stop tightening
     """
     direction = direction.lower() if direction else "short"
+    use_trailing = trailing_pct > 0
 
     if len(signal_indices) == 0 or len(df) < 10:
         return []
@@ -1335,50 +1345,100 @@ def simulate_vectorized(
         entry_price = opens[entry_idx]
         if direction == "short":
             entry_price *= (1 - slippage_pct)
-            sl_price = entry_price * (1 + sl_pct)
-            tp_price = entry_price * (1 - tp_pct)
         else:
             entry_price *= (1 + slippage_pct)
-            sl_price = entry_price * (1 - sl_pct)
-            tp_price = entry_price * (1 + tp_pct)
 
-        # Search for exit within max_bars
-        exit_idx = None
-        exit_price = None
-        exit_reason = None
-
-        end_idx = min(entry_idx + max_bars, n)
-
-        for j in range(entry_idx, end_idx):
+        if use_trailing:
+            # Trailing stop mode (matches AutoTrader bot logic)
             if direction == "short":
-                sl_hit = highs[j] >= sl_price
-                tp_hit = lows[j] <= tp_price
+                initial_sl = entry_price * (1 + initial_sl_pct) if initial_sl_pct > 0 else entry_price * (1 + sl_pct)
+                best_price = entry_price  # lowest price seen (for short)
+                trailing_stop = initial_sl
             else:
-                sl_hit = lows[j] <= sl_price
-                tp_hit = highs[j] >= tp_price
+                initial_sl = entry_price * (1 - initial_sl_pct) if initial_sl_pct > 0 else entry_price * (1 - sl_pct)
+                best_price = entry_price  # highest price seen (for long)
+                trailing_stop = initial_sl
 
-            if sl_hit and tp_hit:
-                # Conservative: SL wins
-                exit_idx = j
-                exit_price = sl_price
-                exit_reason = "sl"
-                break
-            elif sl_hit:
-                exit_idx = j
-                exit_price = sl_price
-                exit_reason = "sl"
-                break
-            elif tp_hit:
-                exit_idx = j
-                exit_price = tp_price
-                exit_reason = "tp"
-                break
+            exit_idx = None
+            exit_price = None
+            exit_reason = None
+            end_idx = min(entry_idx + max_bars, n)
 
-        if exit_idx is None:
-            # Timeout
-            exit_idx = end_idx - 1 if end_idx - 1 < n else n - 1
-            exit_price = closes[exit_idx]
-            exit_reason = "timeout"
+            for j in range(entry_idx, end_idx):
+                if direction == "short":
+                    # Track lowest price (best for short)
+                    if lows[j] < best_price:
+                        best_price = lows[j]
+                        new_trail = best_price * (1 + trailing_pct)
+                        trailing_stop = min(trailing_stop, new_trail)
+
+                    # Check if trailing stop hit
+                    if highs[j] >= trailing_stop:
+                        exit_idx = j
+                        exit_price = trailing_stop
+                        exit_reason = "trailing_stop"
+                        break
+                else:
+                    # Track highest price (best for long)
+                    if highs[j] > best_price:
+                        best_price = highs[j]
+                        new_trail = best_price * (1 - trailing_pct)
+                        trailing_stop = max(trailing_stop, new_trail)
+
+                    # Check if trailing stop hit
+                    if lows[j] <= trailing_stop:
+                        exit_idx = j
+                        exit_price = trailing_stop
+                        exit_reason = "trailing_stop"
+                        break
+
+            if exit_idx is None:
+                exit_idx = end_idx - 1 if end_idx - 1 < n else n - 1
+                exit_price = closes[exit_idx]
+                exit_reason = "timeout"
+
+        else:
+            # Fixed SL/TP mode (original logic)
+            if direction == "short":
+                sl_price = entry_price * (1 + sl_pct)
+                tp_price = entry_price * (1 - tp_pct)
+            else:
+                sl_price = entry_price * (1 - sl_pct)
+                tp_price = entry_price * (1 + tp_pct)
+
+            exit_idx = None
+            exit_price = None
+            exit_reason = None
+            end_idx = min(entry_idx + max_bars, n)
+
+            for j in range(entry_idx, end_idx):
+                if direction == "short":
+                    sl_hit = highs[j] >= sl_price
+                    tp_hit = lows[j] <= tp_price
+                else:
+                    sl_hit = lows[j] <= sl_price
+                    tp_hit = highs[j] >= tp_price
+
+                if sl_hit and tp_hit:
+                    exit_idx = j
+                    exit_price = sl_price
+                    exit_reason = "sl"
+                    break
+                elif sl_hit:
+                    exit_idx = j
+                    exit_price = sl_price
+                    exit_reason = "sl"
+                    break
+                elif tp_hit:
+                    exit_idx = j
+                    exit_price = tp_price
+                    exit_reason = "tp"
+                    break
+
+            if exit_idx is None:
+                exit_idx = end_idx - 1 if end_idx - 1 < n else n - 1
+                exit_price = closes[exit_idx]
+                exit_reason = "timeout"
 
         # Apply exit slippage
         if direction == "short":
@@ -1433,6 +1493,8 @@ def run_fast(
     strategy_id: str = None,
     funding_rate_8h: float = 0.0001,
     timeframe: str = "1H",
+    trailing_pct: float = 0.0,
+    initial_sl_pct: float = 0.0,
 ) -> SimResult:
     """Complete fast simulation pipeline."""
 
@@ -1480,6 +1542,8 @@ def run_fast(
         direction, symbol,
         funding_rate_8h=funding_rate_8h,
         timeframe=timeframe,
+        trailing_pct=trailing_pct,
+        initial_sl_pct=initial_sl_pct,
     )
 
     # Build result
