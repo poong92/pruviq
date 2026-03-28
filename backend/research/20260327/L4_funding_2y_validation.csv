@@ -1,0 +1,6 @@
+strategy,base_pf,base_wr,base_t,base_sharpe,fr_pos_pf,fr_pos_wr,fr_pos_t,fr_pos_sharpe,fr_high_pf,fr_high_wr,fr_high_t,fr_high_sharpe
+atr-breakout,1.35,53.4,1863,5.82,1.54,56.3,1669,7.95,1.96,65.5,171,4.05
+bb-squeeze-short,1.24,53.8,1579,3.84,1.29,54.3,1430,4.39,1.38,59.1,154,1.85
+supertrend,1.0,51.8,5960,0.1,1.02,51.7,5419,0.56,0.76,43.7,743,-3.49
+ichimoku,1.13,51.9,2899,2.8,1.18,52.8,2660,3.73,1.12,53.6,248,0.81
+keltner-squeeze,1.07,50.8,2382,1.52,1.09,50.9,2148,1.67,1.08,52.1,261,0.58

@@ -1,0 +1,4 @@
+strategy,direction,sl,tp,trades,initial,fixed_final,fixed_return_pct,fixed_mdd_pct,compound_final,compound_return_pct,compound_mdd_pct,conservative_final,conservative_return_pct,conservative_mdd_pct
+atr-breakout,short,3,8,1861,10000,506578,4965.8,16.4,506578,4965.8,16.4,74740,647.4,8.5
+bb-squeeze-short,short,3,5,1495,10000,50594,405.9,12.6,50594,405.9,12.6,23168,131.7,6.4
+keltner-squeeze,short,15,5,2173,10000,13282,32.8,11.6,13282,32.8,11.6,11566,15.7,5.9

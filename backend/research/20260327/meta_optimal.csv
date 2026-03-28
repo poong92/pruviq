@@ -1,0 +1,12 @@
+strategy,final,return_pct,mdd_pct
+META_adaptive_top2,1791,-82.1,89.3
+atr-breakout(short),7780,-22.2,62.1
+atr-breakout(both),523,-94.8,96.6
+bb-squeeze-short(short),10698,7.0,46.1
+bb-squeeze-short(both),10088,0.9,36.4
+keltner-squeeze(short),11824,18.2,63.4
+keltner-squeeze(both),185,-98.1,98.8
+ichimoku(short),42681,326.8,38.5
+supertrend(short),36884,268.8,81.3
+heikin-ashi(short),-1,-100.0,110.3
+donchian-breakout(short),13593,35.9,93.5

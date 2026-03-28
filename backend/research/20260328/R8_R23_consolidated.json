@@ -1,0 +1,97 @@
+{
+  "generated": "2026-03-28T12:30:00",
+  "description": "R8-R23 연구 결과 통합 (stdout에서 수집)",
+
+  "R8_oos_walkforward": {
+    "static_5way": {"windows": 4, "all_pass": true, "avg_pf": 1.15, "min_pf": 1.01},
+    "individual_fng": {"windows": 4, "all_pass": true, "avg_pf": 1.31, "min_pf": 1.02}
+  },
+
+  "R9_coin_selection": {
+    "all_30": {"pf": 1.28, "sharpe": 5.52, "mdd": 26.1},
+    "high_vol_10": {"pf": 1.12, "sharpe": 1.57, "mdd": 29.2},
+    "low_vol_10": {"pf": 1.57, "sharpe": 5.54, "mdd": 13.1},
+    "conclusion": "low volatility coins outperform significantly"
+  },
+
+  "R10_max_bars": {
+    "atr-breakout": 36, "ma-cross": 72, "ichimoku": 48,
+    "keltner-squeeze": 48, "bb-squeeze-short": 96
+  },
+
+  "R11_position_sizing": {
+    "initial": 10000, "final": 22168, "return_pct": 121.7, "mdd_pct": 7.7, "trades": 2948
+  },
+
+  "R12_optimal_combo": {
+    "fng_30coins": {"return": 121.7, "mdd": 7.7, "pf": 1.28, "sharpe": 4.3},
+    "lowvol_fng": {"return": 44.2, "mdd": 3.0, "pf": 1.57, "sharpe": 4.4},
+    "lowvol_fng_optmb": {"return": 36.0, "mdd": 3.1, "pf": 1.37, "sharpe": 4.1}
+  },
+
+  "R13_quarterly": {
+    "quarters": ["2025Q2", "2025Q2b", "2025Q3", "2025Q4"],
+    "all_profitable": true,
+    "pfs": [1.14, 1.45, 1.92, 1.32]
+  },
+
+  "R14_coin_scaling": {
+    "5coins": {"return": 21.5, "mdd": 1.7},
+    "10coins": {"return": 37.6, "mdd": 3.3},
+    "15coins": {"return": 67.5, "mdd": 3.6},
+    "20coins": {"return": 92.5, "mdd": 4.4},
+    "30coins": {"return": 131.6, "mdd": 7.6},
+    "50coins": {"return": 216.5, "mdd": 8.0}
+  },
+
+  "R15_7way_extension": {
+    "added": ["hv-squeeze (Fear, PF 1.58)", "rsi-divergence (ExFear, PF 1.52)"],
+    "result": {"return": 55.0, "mdd": 2.6}
+  },
+
+  "R16_stress": {
+    "weeks": 52, "win_pct": 42, "avg_weekly": 2.09,
+    "worst_week": -16.86, "best_week": 56.50, "max_consec_loss": 7
+  },
+
+  "R17_day_of_week": {
+    "best": "Wed (PF 1.84)", "worst": "Tue (PF 0.87)",
+    "avoid": ["Tuesday"]
+  },
+
+  "R18_hour_of_day": {
+    "best_kst": ["16:00 (PF 2.25)", "05:00 (PF 2.08)", "01:00 (PF 1.92)"],
+    "worst_kst": ["08:00 (PF 0.53)", "10:00 (PF 0.64)"],
+    "avoid_kst": ["08:00-10:00"]
+  },
+
+  "R19_weights": {
+    "equal": {"return": 52.8, "mdd": 3.1},
+    "pf_weighted": {"return": 59.8, "mdd": 3.0},
+    "weights": {"atr-breakout": 0.169, "ichimoku": 0.156, "hv-squeeze": 0.156, "keltner-squeeze": 0.135, "ma-cross": 0.133, "bb-squeeze-short": 0.131, "rsi-divergence": 0.121}
+  },
+
+  "R20_long_strategies": {
+    "tested": 17, "edge_found": 0,
+    "conclusion": "crypto technical LONG strategies have zero edge"
+  },
+
+  "R21_short_long_mix": {
+    "effect": "none — no LONG edge to add"
+  },
+
+  "R22_time_filters": {
+    "no_filter": {"return": 76.3, "mdd": 4.2, "trades": 1483},
+    "tue_avoid": {"return": 83.7, "mdd": 2.6, "trades": 1284},
+    "morning_avoid": {"return": 87.3, "mdd": 3.3, "trades": 1300},
+    "tue_and_morning": {"return": 95.0, "mdd": 2.6, "trades": 1129}
+  },
+
+  "R23_monte_carlo": {
+    "simulations": 1000,
+    "return_median": 755.5, "return_5th": 366.2, "return_95th": 1457.3,
+    "mdd_median": 12.1, "mdd_5th": 8.7, "mdd_95th": 18.5,
+    "pf_median": 1.48, "pf_5th": 1.33, "pf_95th": 1.63,
+    "profit_probability": 100.0
+  }
+}

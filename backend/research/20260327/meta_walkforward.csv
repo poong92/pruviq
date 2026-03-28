@@ -1,0 +1,9 @@
+method,final_capital,return_pct,mdd_pct,profitable_periods,total_periods,total_trades
+top1,-193,-101.9,128.1,11,23,1238
+top2,-2644,-126.4,154.7,11,23,2631
+top3,-1285,-112.9,132.2,9,23,4182
+pf_weighted,17,-99.8,99.9,9,23,4182
+static_atr_short,12013,20.1,64.6,10,22,636
+static_bb_short,11638,16.4,50.2,10,22,480
+static_keltner_short,8304,-17.0,66.8,13,23,917
+equal_weight_all,12338,23.4,49.8,10,23,17923

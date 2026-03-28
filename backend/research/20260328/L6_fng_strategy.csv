@@ -1,0 +1,17 @@
+strategy,fng_bin,pf,wr,trades
+atr-breakout(short),Extreme Fear (0-20),0.91,48.0,198
+atr-breakout(short),Fear (20-40),0.94,42.2,270
+atr-breakout(short),Neutral (40-60),1.93,61.3,225
+atr-breakout(short),Greed (60-80),1.73,57.5,167
+bb-squeeze-short(short),Extreme Fear (0-20),1.38,60.4,207
+bb-squeeze-short(short),Fear (20-40),1.16,54.5,200
+bb-squeeze-short(short),Neutral (40-60),0.54,37.5,144
+bb-squeeze-short(short),Greed (60-80),1.28,53.4,116
+ichimoku(short),Extreme Fear (0-20),1.26,53.6,338
+ichimoku(short),Fear (20-40),1.12,51.9,414
+ichimoku(short),Neutral (40-60),1.03,53.2,293
+ichimoku(short),Greed (60-80),0.93,48.2,355
+ma-cross(short),Extreme Fear (0-20),0.83,49.6,135
+ma-cross(short),Fear (20-40),0.82,47.5,202
+ma-cross(short),Neutral (40-60),1.16,48.7,158
+ma-cross(short),Greed (60-80),1.01,47.9,288

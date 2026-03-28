@@ -1,0 +1,93 @@
+{
+  "run_id": "20260327_122257",
+  "timestamp": "2026-03-27T12:23:00.900436",
+  "name": "L4_funding_2y_validation",
+  "rows": 5,
+  "coins": 30,
+  "cost_model": {
+    "fee_pct": 0.0008,
+    "slippage_pct": 0.0002,
+    "funding_rate_8h": 0.0001
+  },
+  "metadata": {
+    "funding_records": 2450,
+    "coins": 30
+  },
+  "data": [
+    {
+      "strategy": "atr-breakout",
+      "base_pf": 1.35,
+      "base_wr": 53.4,
+      "base_t": 1863,
+      "base_sharpe": 5.82,
+      "fr_pos_pf": 1.54,
+      "fr_pos_wr": 56.3,
+      "fr_pos_t": 1669,
+      "fr_pos_sharpe": 7.95,
+      "fr_high_pf": 1.96,
+      "fr_high_wr": 65.5,
+      "fr_high_t": 171,
+      "fr_high_sharpe": 4.05
+    },
+    {
+      "strategy": "bb-squeeze-short",
+      "base_pf": 1.24,
+      "base_wr": 53.8,
+      "base_t": 1579,
+      "base_sharpe": 3.84,
+      "fr_pos_pf": 1.29,
+      "fr_pos_wr": 54.3,
+      "fr_pos_t": 1430,
+      "fr_pos_sharpe": 4.39,
+      "fr_high_pf": 1.38,
+      "fr_high_wr": 59.1,
+      "fr_high_t": 154,
+      "fr_high_sharpe": 1.85
+    },
+    {
+      "strategy": "supertrend",
+      "base_pf": 1.0,
+      "base_wr": 51.8,
+      "base_t": 5960,
+      "base_sharpe": 0.1,
+      "fr_pos_pf": 1.02,
+      "fr_pos_wr": 51.7,
+      "fr_pos_t": 5419,
+      "fr_pos_sharpe": 0.56,
+      "fr_high_pf": 0.76,
+      "fr_high_wr": 43.7,
+      "fr_high_t": 743,
+      "fr_high_sharpe": -3.49
+    },
+    {
+      "strategy": "ichimoku",
+      "base_pf": 1.13,
+      "base_wr": 51.9,
+      "base_t": 2899,
+      "base_sharpe": 2.8,
+      "fr_pos_pf": 1.18,
+      "fr_pos_wr": 52.8,
+      "fr_pos_t": 2660,
+      "fr_pos_sharpe": 3.73,
+      "fr_high_pf": 1.12,
+      "fr_high_wr": 53.6,
+      "fr_high_t": 248,
+      "fr_high_sharpe": 0.81
+    },
+    {
+      "strategy": "keltner-squeeze",
+      "base_pf": 1.07,
+      "base_wr": 50.8,
+      "base_t": 2382,
+      "base_sharpe": 1.52,
+      "fr_pos_pf": 1.09,
+      "fr_pos_wr": 50.9,
+      "fr_pos_t": 2148,
+      "fr_pos_sharpe": 1.67,
+      "fr_high_pf": 1.08,
+      "fr_high_wr": 52.1,
+      "fr_high_t": 261,
+      "fr_high_sharpe": 0.58
+    }
+  ]
+}

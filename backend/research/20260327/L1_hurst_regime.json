@@ -1,0 +1,1628 @@
+{
+  "run_id": "20260327_114817",
+  "timestamp": "2026-03-27T11:48:26.503185",
+  "name": "L1_hurst_regime",
+  "rows": 161,
+  "coins": 30,
+  "cost_model": {
+    "fee_pct": 0.0008,
+    "slippage_pct": 0.0002,
+    "funding_rate_8h": 0.0001
+  },
+  "metadata": {
+    "window": 336,
+    "input": "log_returns"
+  },
+  "data": [
+    {
+      "month": "2024-04",
+      "hurst": 0.557,
+      "regime": "trending",
+      "strategy": "atr-breakout(short)",
+      "pf": 0.51,
+      "wr": 34.7,
+      "trades": 49,
+      "ret": -82.1
+    },
+    {
+      "month": "2024-04",
+      "hurst": 0.557,
+      "regime": "trending",
+      "strategy": "bb-squeeze-short(short)",
+      "pf": 0.38,
+      "wr": 25.4,
+      "trades": 59,
+      "ret": -115.1
+    },
+    {
+      "month": "2024-04",
+      "hurst": 0.557,
+      "regime": "trending",
+      "strategy": "supertrend(short)",
+      "pf": 0.7,
+      "wr": 45.5,
+      "trades": 220,
+      "ret": -187.2
+    },
+    {
+      "month": "2024-04",
+      "hurst": 0.557,
+      "regime": "trending",
+      "strategy": "ichimoku(short)",
+      "pf": 0.69,
+      "wr": 44.7,
+      "trades": 94,
+      "ret": -66.4
+    },
+    {
+      "month": "2024-04",
+      "hurst": 0.557,
+      "regime": "trending",
+      "strategy": "mean-reversion(long)",
+      "pf": 1.26,
+      "wr": 49.2,
+      "trades": 130,
+      "ret": 61.9
+    },
+    {
+      "month": "2024-04",
+      "hurst": 0.557,
+      "regime": "trending",
+      "strategy": "mean-reversion(short)",
+      "pf": 0.84,
+      "wr": 46.6,
+      "trades": 161,
+      "ret": -65.1
+    },
+    {
+      "month": "2024-04",
+      "hurst": 0.557,
+      "regime": "trending",
+      "strategy": "keltner-squeeze(short)",
+      "pf": 0.82,
+      "wr": 48.2,
+      "trades": 110,
+      "ret": -43.2
+    },
+    {
+      "month": "2024-05",
+      "hurst": 0.64,
+      "regime": "trending",
+      "strategy": "atr-breakout(short)",
+      "pf": 0.57,
+      "wr": 34.0,
+      "trades": 94,
+      "ret": -88.8
+    },
+    {
+      "month": "2024-05",
+      "hurst": 0.64,
+      "regime": "trending",
+      "strategy": "bb-squeeze-short(short)",
+      "pf": 1.95,
+      "wr": 58.9,
+      "trades": 73,
+      "ret": 92.0
+    },
+    {
+      "month": "2024-05",
+      "hurst": 0.64,
+      "regime": "trending",
+      "strategy": "supertrend(short)",
+      "pf": 2.84,
+      "wr": 66.0,
+      "trades": 212,
+      "ret": 431.2
+    },
+    {
+      "month": "2024-05",
+      "hurst": 0.64,
+      "regime": "trending",
+      "strategy": "ichimoku(short)",
+      "pf": 2.91,
+      "wr": 61.3,
+      "trades": 119,
+      "ret": 208.7
+    },
+    {
+      "month": "2024-05",
+      "hurst": 0.64,
+      "regime": "trending",
+      "strategy": "mean-reversion(long)",
+      "pf": 0.69,
+      "wr": 48.5,
+      "trades": 231,
+      "ret": -185.4
+    },
+    {
+      "month": "2024-05",
+      "hurst": 0.64,
+      "regime": "trending",
+      "strategy": "mean-reversion(short)",
+      "pf": 2.8,
+      "wr": 72.3,
+      "trades": 112,
+      "ret": 240.5
+    },
+    {
+      "month": "2024-05",
+      "hurst": 0.64,
+      "regime": "trending",
+      "strategy": "keltner-squeeze(short)",
+      "pf": 2.29,
+      "wr": 58.2,
+      "trades": 110,
+      "ret": 192.1
+    },
+    {
+      "month": "2024-06",
+      "hurst": 0.68,
+      "regime": "trending",
+      "strategy": "atr-breakout(short)",
+      "pf": 1.21,
+      "wr": 56.9,
+      "trades": 72,
+      "ret": 41.9
+    },
+    {
+      "month": "2024-06",
+      "hurst": 0.68,
+      "regime": "trending",
+      "strategy": "bb-squeeze-short(short)",
+      "pf": 1.44,
+      "wr": 56.5,
+      "trades": 62,
+      "ret": 67.0
+    },
+    {
+      "month": "2024-06",
+      "hurst": 0.68,
+      "regime": "trending",
+      "strategy": "supertrend(short)",
+      "pf": 0.98,
+      "wr": 46.7,
+      "trades": 225,
+      "ret": -9.9
+    },
+    {
+      "month": "2024-06",
+      "hurst": 0.68,
+      "regime": "trending",
+      "strategy": "ichimoku(short)",
+      "pf": 1.27,
+      "wr": 48.2,
+      "trades": 56,
+      "ret": 27.4
+    },
+    {
+      "month": "2024-06",
+      "hurst": 0.68,
+      "regime": "trending",
+      "strategy": "mean-reversion(long)",
+      "pf": 0.72,
+      "wr": 43.7,
+      "trades": 206,
+      "ret": -191.2
+    },
+    {
+      "month": "2024-06",
+      "hurst": 0.68,
+      "regime": "trending",
+      "strategy": "mean-reversion(short)",
+      "pf": 1.14,
+      "wr": 56.4,
+      "trades": 172,
+      "ret": 54.4
+    },
+    {
+      "month": "2024-06",
+      "hurst": 0.68,
+      "regime": "trending",
+      "strategy": "keltner-squeeze(short)",
+      "pf": 1.75,
+      "wr": 52.9,
+      "trades": 70,
+      "ret": 91.8
+    },
+    {
+      "month": "2024-07",
+      "hurst": 0.582,
+      "regime": "trending",
+      "strategy": "atr-breakout(short)",
+      "pf": 21.23,
+      "wr": 90.8,
+      "trades": 98,
+      "ret": 532.9
+    },
+    {
+      "month": "2024-07",
+      "hurst": 0.582,
+      "regime": "trending",
+      "strategy": "bb-squeeze-short(short)",
+      "pf": 6.6,
+      "wr": 87.2,
+      "trades": 86,
+      "ret": 416.5
+    },
+    {
+      "month": "2024-07",
+      "hurst": 0.582,
+      "regime": "trending",
+      "strategy": "supertrend(short)",
+      "pf": 0.86,
+      "wr": 51.3,
+      "trades": 189,
+      "ret": -64.4
+    },
+    {
+      "month": "2024-07",
+      "hurst": 0.582,
+      "regime": "trending",
+      "strategy": "ichimoku(short)",
+      "pf": 4.15,
+      "wr": 72.9,
+      "trades": 85,
+      "ret": 254.3
+    },
+    {
+      "month": "2024-07",
+      "hurst": 0.582,
+      "regime": "trending",
+      "strategy": "mean-reversion(long)",
+      "pf": 0.23,
+      "wr": 26.2,
+      "trades": 210,
+      "ret": -782.0
+    },
+    {
+      "month": "2024-07",
+      "hurst": 0.582,
+      "regime": "trending",
+      "strategy": "mean-reversion(short)",
+      "pf": 0.55,
+      "wr": 36.0,
+      "trades": 172,
+      "ret": -200.1
+    },
+    {
+      "month": "2024-07",
+      "hurst": 0.582,
+      "regime": "trending",
+      "strategy": "keltner-squeeze(short)",
+      "pf": 2.65,
+      "wr": 65.8,
+      "trades": 79,
+      "ret": 176.4
+    },
+    {
+      "month": "2024-08",
+      "hurst": 0.52,
+      "regime": "random",
+      "strategy": "atr-breakout(short)",
+      "pf": 0.61,
+      "wr": 39.1,
+      "trades": 64,
+      "ret": -42.1
+    },
+    {
+      "month": "2024-08",
+      "hurst": 0.52,
+      "regime": "random",
+      "strategy": "bb-squeeze-short(short)",
+      "pf": 2.14,
+      "wr": 51.0,
+      "trades": 51,
+      "ret": 39.7
+    },
+    {
+      "month": "2024-08",
+      "hurst": 0.52,
+      "regime": "random",
+      "strategy": "supertrend(short)",
+      "pf": 0.69,
+      "wr": 47.6,
+      "trades": 210,
+      "ret": -144.4
+    },
+    {
+      "month": "2024-08",
+      "hurst": 0.52,
+      "regime": "random",
+      "strategy": "ichimoku(short)",
+      "pf": 1.78,
+      "wr": 65.8,
+      "trades": 76,
+      "ret": 82.8
+    },
+    {
+      "month": "2024-08",
+      "hurst": 0.52,
+      "regime": "random",
+      "strategy": "mean-reversion(long)",
+      "pf": 0.93,
+      "wr": 49.3,
+      "trades": 144,
+      "ret": -19.7
+    },
+    {
+      "month": "2024-08",
+      "hurst": 0.52,
+      "regime": "random",
+      "strategy": "mean-reversion(short)",
+      "pf": 0.58,
+      "wr": 36.9,
+      "trades": 111,
+      "ret": -112.0
+    },
+    {
+      "month": "2024-08",
+      "hurst": 0.52,
+      "regime": "random",
+      "strategy": "keltner-squeeze(short)",
+      "pf": 0.78,
+      "wr": 42.0,
+      "trades": 100,
+      "ret": -45.2
+    },
+    {
+      "month": "2024-09",
+      "hurst": 0.645,
+      "regime": "trending",
+      "strategy": "atr-breakout(short)",
+      "pf": 4.05,
+      "wr": 74.2,
+      "trades": 31,
+      "ret": 99.7
+    },
+    {
+      "month": "2024-09",
+      "hurst": 0.645,
+      "regime": "trending",
+      "strategy": "bb-squeeze-short(short)",
+      "pf": 3.21,
+      "wr": 67.6,
+      "trades": 68,
+      "ret": 173.7
+    },
+    {
+      "month": "2024-09",
+      "hurst": 0.645,
+      "regime": "trending",
+      "strategy": "supertrend(short)",
+      "pf": 0.71,
+      "wr": 51.5,
+      "trades": 206,
+      "ret": -149.3
+    },
+    {
+      "month": "2024-09",
+      "hurst": 0.645,
+      "regime": "trending",
+      "strategy": "ichimoku(short)",
+      "pf": 2.1,
+      "wr": 61.3,
+      "trades": 80,
+      "ret": 116.0
+    },
+    {
+      "month": "2024-09",
+      "hurst": 0.645,
+      "regime": "trending",
+      "strategy": "mean-reversion(long)",
+      "pf": 0.61,
+      "wr": 40.9,
+      "trades": 115,
+      "ret": -150.1
+    },
+    {
+      "month": "2024-09",
+      "hurst": 0.645,
+      "regime": "trending",
+      "strategy": "mean-reversion(short)",
+      "pf": 0.89,
+      "wr": 52.6,
+      "trades": 154,
+      "ret": -37.8
+    },
+    {
+      "month": "2024-09",
+      "hurst": 0.645,
+      "regime": "trending",
+      "strategy": "keltner-squeeze(short)",
+      "pf": 0.35,
+      "wr": 32.5,
+      "trades": 80,
+      "ret": -154.8
+    },
+    {
+      "month": "2024-10",
+      "hurst": 0.596,
+      "regime": "trending",
+      "strategy": "atr-breakout(short)",
+      "pf": 3.09,
+      "wr": 77.1,
+      "trades": 48,
+      "ret": 132.1
+    },
+    {
+      "month": "2024-10",
+      "hurst": 0.596,
+      "regime": "trending",
+      "strategy": "bb-squeeze-short(short)",
+      "pf": 0.98,
+      "wr": 54.1,
+      "trades": 37,
+      "ret": -1.4
+    },
+    {
+      "month": "2024-10",
+      "hurst": 0.596,
+      "regime": "trending",
+      "strategy": "supertrend(short)",
+      "pf": 0.76,
+      "wr": 46.0,
+      "trades": 213,
+      "ret": -169.0
+    },
+    {
+      "month": "2024-10",
+      "hurst": 0.596,
+      "regime": "trending",
+      "strategy": "ichimoku(short)",
+      "pf": 0.44,
+      "wr": 33.0,
+      "trades": 91,
+      "ret": -215.4
+    },
+    {
+      "month": "2024-10",
+      "hurst": 0.596,
+      "regime": "trending",
+      "strategy": "mean-reversion(long)",
+      "pf": 1.06,
+      "wr": 47.6,
+      "trades": 105,
+      "ret": 13.4
+    },
+    {
+      "month": "2024-10",
+      "hurst": 0.596,
+      "regime": "trending",
+      "strategy": "mean-reversion(short)",
+      "pf": 0.5,
+      "wr": 34.9,
+      "trades": 278,
+      "ret": -547.1
+    },
+    {
+      "month": "2024-10",
+      "hurst": 0.596,
+      "regime": "trending",
+      "strategy": "keltner-squeeze(short)",
+      "pf": 0.41,
+      "wr": 39.7,
+      "trades": 68,
+      "ret": -142.6
+    },
+    {
+      "month": "2024-11",
+      "hurst": 0.475,
+      "regime": "random",
+      "strategy": "atr-breakout(short)",
+      "pf": 5.19,
+      "wr": 84.0,
+      "trades": 100,
+      "ret": 436.1
+    },
+    {
+      "month": "2024-11",
+      "hurst": 0.475,
+      "regime": "random",
+      "strategy": "bb-squeeze-short(short)",
+      "pf": 0.86,
+      "wr": 48.3,
+      "trades": 60,
+      "ret": -28.8
+    },
+    {
+      "month": "2024-11",
+      "hurst": 0.475,
+      "regime": "random",
+      "strategy": "supertrend(short)",
+      "pf": 0.7,
+      "wr": 44.0,
+      "trades": 241,
+      "ret": -241.6
+    },
+    {
+      "month": "2024-11",
+      "hurst": 0.475,
+      "regime": "random",
+      "strategy": "ichimoku(short)",
+      "pf": 1.14,
+      "wr": 56.1,
+      "trades": 82,
+      "ret": 34.1
+    },
+    {
+      "month": "2024-11",
+      "hurst": 0.475,
+      "regime": "random",
+      "strategy": "mean-reversion(long)",
+      "pf": 0.42,
+      "wr": 31.9,
+      "trades": 235,
+      "ret": -652.9
+    },
+    {
+      "month": "2024-11",
+      "hurst": 0.475,
+      "regime": "random",
+      "strategy": "mean-reversion(short)",
+      "pf": 0.84,
+      "wr": 46.6,
+      "trades": 193,
+      "ret": -102.8
+    },
+    {
+      "month": "2024-11",
+      "hurst": 0.475,
+      "regime": "random",
+      "strategy": "keltner-squeeze(short)",
+      "pf": 1.21,
+      "wr": 55.4,
+      "trades": 92,
+      "ret": 55.6
+    },
+    {
+      "month": "2024-12",
+      "hurst": 0.56,
+      "regime": "trending",
+      "strategy": "atr-breakout(short)",
+      "pf": 1.85,
+      "wr": 56.5,
+      "trades": 46,
+      "ret": 73.5
+    },
+    {
+      "month": "2024-12",
+      "hurst": 0.56,
+      "regime": "trending",
+      "strategy": "bb-squeeze-short(short)",
+      "pf": 0.88,
+      "wr": 41.1,
+      "trades": 56,
+      "ret": -19.9
+    },
+    {
+      "month": "2024-12",
+      "hurst": 0.56,
+      "regime": "trending",
+      "strategy": "supertrend(short)",
+      "pf": 1.82,
+      "wr": 59.8,
+      "trades": 224,
+      "ret": 348.6
+    },
+    {
+      "month": "2024-12",
+      "hurst": 0.56,
+      "regime": "trending",
+      "strategy": "ichimoku(short)",
+      "pf": 1.28,
+      "wr": 52.5,
+      "trades": 118,
+      "ret": 64.2
+    },
+    {
+      "month": "2024-12",
+      "hurst": 0.56,
+      "regime": "trending",
+      "strategy": "mean-reversion(long)",
+      "pf": 1.27,
+      "wr": 54.4,
+      "trades": 169,
+      "ret": 108.9
+    },
+    {
+      "month": "2024-12",
+      "hurst": 0.56,
+      "regime": "trending",
+      "strategy": "mean-reversion(short)",
+      "pf": 0.69,
+      "wr": 42.8,
+      "trades": 166,
+      "ret": -178.5
+    },
+    {
+      "month": "2024-12",
+      "hurst": 0.56,
+      "regime": "trending",
+      "strategy": "keltner-squeeze(short)",
+      "pf": 1.04,
+      "wr": 46.4,
+      "trades": 69,
+      "ret": 7.0
+    },
+    {
+      "month": "2025-01",
+      "hurst": 0.606,
+      "regime": "trending",
+      "strategy": "atr-breakout(short)",
+      "pf": 0.97,
+      "wr": 50.6,
+      "trades": 79,
+      "ret": -5.8
+    },
+    {
+      "month": "2025-01",
+      "hurst": 0.606,
+      "regime": "trending",
+      "strategy": "bb-squeeze-short(short)",
+      "pf": 1.41,
+      "wr": 58.5,
+      "trades": 53,
+      "ret": 58.1
+    },
+    {
+      "month": "2025-01",
+      "hurst": 0.606,
+      "regime": "trending",
+      "strategy": "supertrend(short)",
+      "pf": 0.79,
+      "wr": 46.9,
+      "trades": 258,
+      "ret": -151.9
+    },
+    {
+      "month": "2025-01",
+      "hurst": 0.606,
+      "regime": "trending",
+      "strategy": "ichimoku(short)",
+      "pf": 1.15,
+      "wr": 53.0,
+      "trades": 100,
+      "ret": 32.8
+    },
+    {
+      "month": "2025-01",
+      "hurst": 0.606,
+      "regime": "trending",
+      "strategy": "mean-reversion(long)",
+      "pf": 0.5,
+      "wr": 35.3,
+      "trades": 218,
+      "ret": -482.0
+    },
+    {
+      "month": "2025-01",
+      "hurst": 0.606,
+      "regime": "trending",
+      "strategy": "mean-reversion(short)",
+      "pf": 2.77,
+      "wr": 72.7,
+      "trades": 121,
+      "ret": 315.4
+    },
+    {
+      "month": "2025-01",
+      "hurst": 0.606,
+      "regime": "trending",
+      "strategy": "keltner-squeeze(short)",
+      "pf": 0.84,
+      "wr": 45.7,
+      "trades": 70,
+      "ret": -33.8
+    },
+    {
+      "month": "2025-02",
+      "hurst": 0.539,
+      "regime": "random",
+      "strategy": "atr-breakout(short)",
+      "pf": 1.58,
+      "wr": 62.5,
+      "trades": 96,
+      "ret": 116.6
+    },
+    {
+      "month": "2025-02",
+      "hurst": 0.539,
+      "regime": "random",
+      "strategy": "bb-squeeze-short(short)",
+      "pf": 0.95,
+      "wr": 49.1,
+      "trades": 57,
+      "ret": -8.7
+    },
+    {
+      "month": "2025-02",
+      "hurst": 0.539,
+      "regime": "random",
+      "strategy": "supertrend(short)",
+      "pf": 1.06,
+      "wr": 50.2,
+      "trades": 243,
+      "ret": 30.9
+    },
+    {
+      "month": "2025-02",
+      "hurst": 0.539,
+      "regime": "random",
+      "strategy": "ichimoku(short)",
+      "pf": 1.36,
+      "wr": 55.3,
+      "trades": 94,
+      "ret": 77.9
+    },
+    {
+      "month": "2025-02",
+      "hurst": 0.539,
+      "regime": "random",
+      "strategy": "mean-reversion(long)",
+      "pf": 0.91,
+      "wr": 52.7,
+      "trades": 239,
+      "ret": -69.4
+    },
+    {
+      "month": "2025-02",
+      "hurst": 0.539,
+      "regime": "random",
+      "strategy": "mean-reversion(short)",
+      "pf": 2.77,
+      "wr": 73.6,
+      "trades": 121,
+      "ret": 315.4
+    },
+    {
+      "month": "2025-02",
+      "hurst": 0.539,
+      "regime": "random",
+      "strategy": "keltner-squeeze(short)",
+      "pf": 1.49,
+      "wr": 57.7,
+      "trades": 78,
+      "ret": 81.1
+    },
+    {
+      "month": "2025-03",
+      "hurst": 0.629,
+      "regime": "trending",
+      "strategy": "atr-breakout(short)",
+      "pf": 2.56,
+      "wr": 60.8,
+      "trades": 74,
+      "ret": 163.9
+    },
+    {
+      "month": "2025-03",
+      "hurst": 0.629,
+      "regime": "trending",
+      "strategy": "bb-squeeze-short(short)",
+      "pf": 4.38,
+      "wr": 76.1,
+      "trades": 71,
+      "ret": 253.3
+    },
+    {
+      "month": "2025-03",
+      "hurst": 0.629,
+      "regime": "trending",
+      "strategy": "supertrend(short)",
+      "pf": 0.64,
+      "wr": 41.9,
+      "trades": 210,
+      "ret": -231.6
+    },
+    {
+      "month": "2025-03",
+      "hurst": 0.629,
+      "regime": "trending",
+      "strategy": "ichimoku(short)",
+      "pf": 3.1,
+      "wr": 71.7,
+      "trades": 99,
+      "ret": 255.3
+    },
+    {
+      "month": "2025-03",
+      "hurst": 0.629,
+      "regime": "trending",
+      "strategy": "mean-reversion(long)",
+      "pf": 0.42,
+      "wr": 35.9,
+      "trades": 184,
+      "ret": -436.8
+    },
+    {
+      "month": "2025-03",
+      "hurst": 0.629,
+      "regime": "trending",
+      "strategy": "mean-reversion(short)",
+      "pf": 0.85,
+      "wr": 40.4,
+      "trades": 141,
+      "ret": -43.5
+    },
+    {
+      "month": "2025-03",
+      "hurst": 0.629,
+      "regime": "trending",
+      "strategy": "keltner-squeeze(short)",
+      "pf": 1.84,
+      "wr": 58.4,
+      "trades": 89,
+      "ret": 136.6
+    },
+    {
+      "month": "2025-04",
+      "hurst": 0.54,
+      "regime": "random",
+      "strategy": "atr-breakout(short)",
+      "pf": 0.42,
+      "wr": 28.6,
+      "trades": 42,
+      "ret": -80.6
+    },
+    {
+      "month": "2025-04",
+      "hurst": 0.54,
+      "regime": "random",
+      "strategy": "bb-squeeze-short(short)",
+      "pf": 0.16,
+      "wr": 16.7,
+      "trades": 24,
+      "ret": -87.3
+    },
+    {
+      "month": "2025-04",
+      "hurst": 0.54,
+      "regime": "random",
+      "strategy": "supertrend(short)",
+      "pf": 0.54,
+      "wr": 40.1,
+      "trades": 217,
+      "ret": -294.9
+    },
+    {
+      "month": "2025-04",
+      "hurst": 0.54,
+      "regime": "random",
+      "strategy": "ichimoku(short)",
+      "pf": 0.75,
+      "wr": 44.8,
+      "trades": 96,
+      "ret": -59.9
+    },
+    {
+      "month": "2025-04",
+      "hurst": 0.54,
+      "regime": "random",
+      "strategy": "mean-reversion(long)",
+      "pf": 1.66,
+      "wr": 61.0,
+      "trades": 100,
+      "ret": 118.5
+    },
+    {
+      "month": "2025-04",
+      "hurst": 0.54,
+      "regime": "random",
+      "strategy": "mean-reversion(short)",
+      "pf": 0.57,
+      "wr": 41.5,
+      "trades": 195,
+      "ret": -313.8
+    },
+    {
+      "month": "2025-04",
+      "hurst": 0.54,
+      "regime": "random",
+      "strategy": "keltner-squeeze(short)",
+      "pf": 0.2,
+      "wr": 21.4,
+      "trades": 70,
+      "ret": -205.3
+    },
+    {
+      "month": "2025-05",
+      "hurst": 0.616,
+      "regime": "trending",
+      "strategy": "atr-breakout(short)",
+      "pf": 1.04,
+      "wr": 38.1,
+      "trades": 84,
+      "ret": 7.4
+    },
+    {
+      "month": "2025-05",
+      "hurst": 0.616,
+      "regime": "trending",
+      "strategy": "bb-squeeze-short(short)",
+      "pf": 0.18,
+      "wr": 14.8,
+      "trades": 27,
+      "ret": -87.4
+    },
+    {
+      "month": "2025-05",
+      "hurst": 0.616,
+      "regime": "trending",
+      "strategy": "supertrend(short)",
+      "pf": 2.4,
+      "wr": 68.0,
+      "trades": 219,
+      "ret": 485.5
+    },
+    {
+      "month": "2025-05",
+      "hurst": 0.616,
+      "regime": "trending",
+      "strategy": "ichimoku(short)",
+      "pf": 0.62,
+      "wr": 31.6,
+      "trades": 117,
+      "ret": -124.7
+    },
+    {
+      "month": "2025-05",
+      "hurst": 0.616,
+      "regime": "trending",
+      "strategy": "mean-reversion(long)",
+      "pf": 0.85,
+      "wr": 51.0,
+      "trades": 196,
+      "ret": -67.0
+    },
+    {
+      "month": "2025-05",
+      "hurst": 0.616,
+      "regime": "trending",
+      "strategy": "mean-reversion(short)",
+      "pf": 4.13,
+      "wr": 79.7,
+      "trades": 118,
+      "ret": 305.2
+    },
+    {
+      "month": "2025-05",
+      "hurst": 0.616,
+      "regime": "trending",
+      "strategy": "keltner-squeeze(short)",
+      "pf": 1.19,
+      "wr": 49.0,
+      "trades": 100,
+      "ret": 39.4
+    },
+    {
+      "month": "2025-06",
+      "hurst": 0.684,
+      "regime": "trending",
+      "strategy": "atr-breakout(short)",
+      "pf": 0.95,
+      "wr": 66.7,
+      "trades": 3,
+      "ret": -0.2
+    },
+    {
+      "month": "2025-06",
+      "hurst": 0.684,
+      "regime": "trending",
+      "strategy": "bb-squeeze-short(short)",
+      "pf": 0.01,
+      "wr": 7.7,
+      "trades": 13,
+      "ret": -41.8
+    },
+    {
+      "month": "2025-06",
+      "hurst": 0.684,
+      "regime": "trending",
+      "strategy": "supertrend(short)",
+      "pf": 0.29,
+      "wr": 34.8,
+      "trades": 207,
+      "ret": -507.7
+    },
+    {
+      "month": "2025-06",
+      "hurst": 0.684,
+      "regime": "trending",
+      "strategy": "ichimoku(short)",
+      "pf": 0.04,
+      "wr": 14.5,
+      "trades": 55,
+      "ret": -204.7
+    },
+    {
+      "month": "2025-06",
+      "hurst": 0.684,
+      "regime": "trending",
+      "strategy": "mean-reversion(long)",
+      "pf": 1.15,
+      "wr": 57.4,
+      "trades": 94,
+      "ret": 37.6
+    },
+    {
+      "month": "2025-06",
+      "hurst": 0.684,
+      "regime": "trending",
+      "strategy": "mean-reversion(short)",
+      "pf": 0.79,
+      "wr": 49.6,
+      "trades": 258,
+      "ret": -140.3
+    },
+    {
+      "month": "2025-06",
+      "hurst": 0.684,
+      "regime": "trending",
+      "strategy": "keltner-squeeze(short)",
+      "pf": 0.16,
+      "wr": 27.6,
+      "trades": 58,
+      "ret": -168.8
+    },
+    {
+      "month": "2025-07",
+      "hurst": 0.623,
+      "regime": "trending",
+      "strategy": "atr-breakout(short)",
+      "pf": 2.08,
+      "wr": 70.6,
+      "trades": 17,
+      "ret": 22.8
+    },
+    {
+      "month": "2025-07",
+      "hurst": 0.623,
+      "regime": "trending",
+      "strategy": "bb-squeeze-short(short)",
+      "pf": 0.84,
+      "wr": 46.2,
+      "trades": 52,
+      "ret": -23.1
+    },
+    {
+      "month": "2025-07",
+      "hurst": 0.623,
+      "regime": "trending",
+      "strategy": "supertrend(short)",
+      "pf": 3.04,
+      "wr": 69.3,
+      "trades": 218,
+      "ret": 508.8
+    },
+    {
+      "month": "2025-07",
+      "hurst": 0.623,
+      "regime": "trending",
+      "strategy": "ichimoku(short)",
+      "pf": 0.57,
+      "wr": 36.6,
+      "trades": 101,
+      "ret": -147.1
+    },
+    {
+      "month": "2025-07",
+      "hurst": 0.623,
+      "regime": "trending",
+      "strategy": "mean-reversion(long)",
+      "pf": 0.55,
+      "wr": 36.2,
+      "trades": 138,
+      "ret": -175.3
+    },
+    {
+      "month": "2025-07",
+      "hurst": 0.623,
+      "regime": "trending",
+      "strategy": "mean-reversion(short)",
+      "pf": 1.04,
+      "wr": 53.4,
+      "trades": 161,
+      "ret": 14.8
+    },
+    {
+      "month": "2025-07",
+      "hurst": 0.623,
+      "regime": "trending",
+      "strategy": "keltner-squeeze(short)",
+      "pf": 1.24,
+      "wr": 59.2,
+      "trades": 71,
+      "ret": 42.7
+    },
+    {
+      "month": "2025-08",
+      "hurst": 0.635,
+      "regime": "trending",
+      "strategy": "atr-breakout(short)",
+      "pf": 0.33,
+      "wr": 38.2,
+      "trades": 34,
+      "ret": -40.1
+    },
+    {
+      "month": "2025-08",
+      "hurst": 0.635,
+      "regime": "trending",
+      "strategy": "bb-squeeze-short(short)",
+      "pf": 0.05,
+      "wr": 15.4,
+      "trades": 39,
+      "ret": -105.0
+    },
+    {
+      "month": "2025-08",
+      "hurst": 0.635,
+      "regime": "trending",
+      "strategy": "supertrend(short)",
+      "pf": 0.95,
+      "wr": 44.7,
+      "trades": 215,
+      "ret": -19.7
+    },
+    {
+      "month": "2025-08",
+      "hurst": 0.635,
+      "regime": "trending",
+      "strategy": "ichimoku(short)",
+      "pf": 0.43,
+      "wr": 40.3,
+      "trades": 77,
+      "ret": -92.6
+    },
+    {
+      "month": "2025-08",
+      "hurst": 0.635,
+      "regime": "trending",
+      "strategy": "mean-reversion(long)",
+      "pf": 2.08,
+      "wr": 62.5,
+      "trades": 104,
+      "ret": 140.0
+    },
+    {
+      "month": "2025-08",
+      "hurst": 0.635,
+      "regime": "trending",
+      "strategy": "mean-reversion(short)",
+      "pf": 1.43,
+      "wr": 53.8,
+      "trades": 158,
+      "ret": 113.9
+    },
+    {
+      "month": "2025-08",
+      "hurst": 0.635,
+      "regime": "trending",
+      "strategy": "keltner-squeeze(short)",
+      "pf": 0.54,
+      "wr": 34.8,
+      "trades": 66,
+      "ret": -72.0
+    },
+    {
+      "month": "2025-09",
+      "hurst": 0.48,
+      "regime": "random",
+      "strategy": "atr-breakout(short)",
+      "pf": 1.9,
+      "wr": 66.4,
+      "trades": 107,
+      "ret": 214.7
+    },
+    {
+      "month": "2025-09",
+      "hurst": 0.48,
+      "regime": "random",
+      "strategy": "bb-squeeze-short(short)",
+      "pf": 7.81,
+      "wr": 86.6,
+      "trades": 67,
+      "ret": 294.6
+    },
+    {
+      "month": "2025-09",
+      "hurst": 0.48,
+      "regime": "random",
+      "strategy": "supertrend(short)",
+      "pf": 1.22,
+      "wr": 57.5,
+      "trades": 181,
+      "ret": 74.9
+    },
+    {
+      "month": "2025-09",
+      "hurst": 0.48,
+      "regime": "random",
+      "strategy": "ichimoku(short)",
+      "pf": 2.14,
+      "wr": 71.6,
+      "trades": 116,
+      "ret": 214.5
+    },
+    {
+      "month": "2025-09",
+      "hurst": 0.48,
+      "regime": "random",
+      "strategy": "mean-reversion(long)",
+      "pf": 0.53,
+      "wr": 38.0,
+      "trades": 287,
+      "ret": -469.4
+    },
+    {
+      "month": "2025-09",
+      "hurst": 0.48,
+      "regime": "random",
+      "strategy": "mean-reversion(short)",
+      "pf": 0.98,
+      "wr": 52.7,
+      "trades": 131,
+      "ret": -4.9
+    },
+    {
+      "month": "2025-09",
+      "hurst": 0.48,
+      "regime": "random",
+      "strategy": "keltner-squeeze(short)",
+      "pf": 6.26,
+      "wr": 80.3,
+      "trades": 76,
+      "ret": 312.5
+    },
+    {
+      "month": "2025-10",
+      "hurst": 0.618,
+      "regime": "trending",
+      "strategy": "atr-breakout(short)",
+      "pf": 13.24,
+      "wr": 85.2,
+      "trades": 54,
+      "ret": 267.0
+    },
+    {
+      "month": "2025-10",
+      "hurst": 0.618,
+      "regime": "trending",
+      "strategy": "bb-squeeze-short(short)",
+      "pf": 0.34,
+      "wr": 25.6,
+      "trades": 43,
+      "ret": -100.8
+    },
+    {
+      "month": "2025-10",
+      "hurst": 0.618,
+      "regime": "trending",
+      "strategy": "supertrend(short)",
+      "pf": 1.52,
+      "wr": 59.1,
+      "trades": 203,
+      "ret": 207.1
+    },
+    {
+      "month": "2025-10",
+      "hurst": 0.618,
+      "regime": "trending",
+      "strategy": "ichimoku(short)",
+      "pf": 2.13,
+      "wr": 65.9,
+      "trades": 91,
+      "ret": 143.8
+    },
+    {
+      "month": "2025-10",
+      "hurst": 0.618,
+      "regime": "trending",
+      "strategy": "mean-reversion(long)",
+      "pf": 0.76,
+      "wr": 49.4,
+      "trades": 176,
+      "ret": -130.3
+    },
+    {
+      "month": "2025-10",
+      "hurst": 0.618,
+      "regime": "trending",
+      "strategy": "mean-reversion(short)",
+      "pf": 1.41,
+      "wr": 57.8,
+      "trades": 128,
+      "ret": 96.5
+    },
+    {
+      "month": "2025-10",
+      "hurst": 0.618,
+      "regime": "trending",
+      "strategy": "keltner-squeeze(short)",
+      "pf": 0.9,
+      "wr": 47.7,
+      "trades": 107,
+      "ret": -28.5
+    },
+    {
+      "month": "2025-11",
+      "hurst": 0.614,
+      "regime": "trending",
+      "strategy": "atr-breakout(short)",
+      "pf": 0.54,
+      "wr": 33.9,
+      "trades": 109,
+      "ret": -138.0
+    },
+    {
+      "month": "2025-11",
+      "hurst": 0.614,
+      "regime": "trending",
+      "strategy": "bb-squeeze-short(short)",
+      "pf": 2.28,
+      "wr": 64.8,
+      "trades": 71,
+      "ret": 100.7
+    },
+    {
+      "month": "2025-11",
+      "hurst": 0.614,
+      "regime": "trending",
+      "strategy": "supertrend(short)",
+      "pf": 1.91,
+      "wr": 66.7,
+      "trades": 198,
+      "ret": 281.6
+    },
+    {
+      "month": "2025-11",
+      "hurst": 0.614,
+      "regime": "trending",
+      "strategy": "ichimoku(short)",
+      "pf": 1.07,
+      "wr": 49.2,
+      "trades": 128,
+      "ret": 14.0
+    },
+    {
+      "month": "2025-11",
+      "hurst": 0.614,
+      "regime": "trending",
+      "strategy": "mean-reversion(long)",
+      "pf": 0.97,
+      "wr": 47.2,
+      "trades": 195,
+      "ret": -13.1
+    },
+    {
+      "month": "2025-11",
+      "hurst": 0.614,
+      "regime": "trending",
+      "strategy": "mean-reversion(short)",
+      "pf": 1.53,
+      "wr": 54.9,
+      "trades": 113,
+      "ret": 116.4
+    },
+    {
+      "month": "2025-11",
+      "hurst": 0.614,
+      "regime": "trending",
+      "strategy": "keltner-squeeze(short)",
+      "pf": 1.13,
+      "wr": 59.0,
+      "trades": 100,
+      "ret": 24.1
+    },
+    {
+      "month": "2025-12",
+      "hurst": 0.568,
+      "regime": "trending",
+      "strategy": "atr-breakout(short)",
+      "pf": 0.16,
+      "wr": 23.3,
+      "trades": 30,
+      "ret": -78.2
+    },
+    {
+      "month": "2025-12",
+      "hurst": 0.568,
+      "regime": "trending",
+      "strategy": "bb-squeeze-short(short)",
+      "pf": 0.15,
+      "wr": 23.1,
+      "trades": 26,
+      "ret": -86.7
+    },
+    {
+      "month": "2025-12",
+      "hurst": 0.568,
+      "regime": "trending",
+      "strategy": "supertrend(short)",
+      "pf": 0.38,
+      "wr": 41.4,
+      "trades": 220,
+      "ret": -335.6
+    },
+    {
+      "month": "2025-12",
+      "hurst": 0.568,
+      "regime": "trending",
+      "strategy": "ichimoku(short)",
+      "pf": 0.37,
+      "wr": 32.7,
+      "trades": 101,
+      "ret": -155.1
+    },
+    {
+      "month": "2025-12",
+      "hurst": 0.568,
+      "regime": "trending",
+      "strategy": "mean-reversion(long)",
+      "pf": 4.52,
+      "wr": 67.0,
+      "trades": 100,
+      "ret": 224.7
+    },
+    {
+      "month": "2025-12",
+      "hurst": 0.568,
+      "regime": "trending",
+      "strategy": "mean-reversion(short)",
+      "pf": 0.58,
+      "wr": 45.3,
+      "trades": 172,
+      "ret": -202.2
+    },
+    {
+      "month": "2025-12",
+      "hurst": 0.568,
+      "regime": "trending",
+      "strategy": "keltner-squeeze(short)",
+      "pf": 0.13,
+      "wr": 33.3,
+      "trades": 99,
+      "ret": -281.8
+    },
+    {
+      "month": "2026-01",
+      "hurst": 0.493,
+      "regime": "random",
+      "strategy": "atr-breakout(short)",
+      "pf": 2.72,
+      "wr": 62.2,
+      "trades": 90,
+      "ret": 228.3
+    },
+    {
+      "month": "2026-01",
+      "hurst": 0.493,
+      "regime": "random",
+      "strategy": "bb-squeeze-short(short)",
+      "pf": 3.52,
+      "wr": 74.2,
+      "trades": 97,
+      "ret": 244.6
+    },
+    {
+      "month": "2026-01",
+      "hurst": 0.493,
+      "regime": "random",
+      "strategy": "supertrend(short)",
+      "pf": 1.89,
+      "wr": 67.0,
+      "trades": 182,
+      "ret": 297.3
+    },
+    {
+      "month": "2026-01",
+      "hurst": 0.493,
+      "regime": "random",
+      "strategy": "ichimoku(short)",
+      "pf": 2.2,
+      "wr": 60.0,
+      "trades": 155,
+      "ret": 244.7
+    },
+    {
+      "month": "2026-01",
+      "hurst": 0.493,
+      "regime": "random",
+      "strategy": "mean-reversion(long)",
+      "pf": 0.22,
+      "wr": 24.4,
+      "trades": 275,
+      "ret": -1007.5
+    },
+    {
+      "month": "2026-01",
+      "hurst": 0.493,
+      "regime": "random",
+      "strategy": "mean-reversion(short)",
+      "pf": 1.11,
+      "wr": 53.0,
+      "trades": 83,
+      "ret": 19.1
+    },
+    {
+      "month": "2026-01",
+      "hurst": 0.493,
+      "regime": "random",
+      "strategy": "keltner-squeeze(short)",
+      "pf": 2.51,
+      "wr": 65.9,
+      "trades": 123,
+      "ret": 262.6
+    },
+    {
+      "month": "2026-02",
+      "hurst": 0.588,
+      "regime": "trending",
+      "strategy": "atr-breakout(short)",
+      "pf": 0.15,
+      "wr": 17.6,
+      "trades": 68,
+      "ret": -244.5
+    },
+    {
+      "month": "2026-02",
+      "hurst": 0.588,
+      "regime": "trending",
+      "strategy": "bb-squeeze-short(short)",
+      "pf": 0.33,
+      "wr": 44.2,
+      "trades": 52,
+      "ret": -116.1
+    },
+    {
+      "month": "2026-02",
+      "hurst": 0.588,
+      "regime": "trending",
+      "strategy": "supertrend(short)",
+      "pf": 0.92,
+      "wr": 49.8,
+      "trades": 207,
+      "ret": -43.0
+    },
+    {
+      "month": "2026-02",
+      "hurst": 0.588,
+      "regime": "trending",
+      "strategy": "ichimoku(short)",
+      "pf": 0.29,
+      "wr": 28.4,
+      "trades": 95,
+      "ret": -260.1
+    },
+    {
+      "month": "2026-02",
+      "hurst": 0.588,
+      "regime": "trending",
+      "strategy": "mean-reversion(long)",
+      "pf": 1.47,
+      "wr": 52.5,
+      "trades": 120,
+      "ret": 103.8
+    },
+    {
+      "month": "2026-02",
+      "hurst": 0.588,
+      "regime": "trending",
+      "strategy": "mean-reversion(short)",
+      "pf": 1.1,
+      "wr": 54.3,
+      "trades": 175,
+      "ret": 40.9
+    },
+    {
+      "month": "2026-02",
+      "hurst": 0.588,
+      "regime": "trending",
+      "strategy": "keltner-squeeze(short)",
+      "pf": 1.22,
+      "wr": 59.1,
+      "trades": 66,
+      "ret": 23.4
+    }
+  ]
+}

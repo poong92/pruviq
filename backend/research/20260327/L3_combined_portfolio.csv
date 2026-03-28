@@ -1,0 +1,6 @@
+portfolio,final,return_pct,mdd_pct,sharpe
+EW 5xSHORT (baseline),5408,-45.9,73.1,-0.35
+EW 5xSHORT + VP,6277,-37.2,65.9,-0.35
+ATR+BB+VP (3-way),9687,-3.1,44.8,0.23
+ATR+VP (2-way),11315,13.1,36.1,0.49
+VP alone,10000,0.0,0.0,0

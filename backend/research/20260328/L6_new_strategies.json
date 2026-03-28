@@ -1,0 +1,60 @@
+{
+  "run_id": "20260328_122438",
+  "timestamp": "2026-03-28T12:24:41.738321",
+  "name": "L6_new_strategies",
+  "rows": 3,
+  "coins": 30,
+  "cost_model": {
+    "fee_pct": 0.0008,
+    "slippage_pct": 0.0002,
+    "funding_rate_8h": 0.0001
+  },
+  "metadata": {},
+  "data": [
+    {
+      "strategy": "z-score-168",
+      "coin": "BTC",
+      "pf": 0.81,
+      "wr": 49.0,
+      "trades": 361,
+      "sharpe": -1.83,
+      "sortino": -3.66,
+      "mdd": 69.3,
+      "ret": -79.4,
+      "avg_win": 1.89,
+      "avg_loss": -2.25,
+      "max_consec_loss": 10,
+      "calmar": -1.15
+    },
+    {
+      "strategy": "kalman-cross",
+      "coin": "BTC",
+      "pf": 1.2,
+      "wr": 51.6,
+      "trades": 190,
+      "sharpe": 1.09,
+      "sortino": 2.47,
+      "mdd": 33.3,
+      "ret": 38.6,
+      "avg_win": 2.41,
+      "avg_loss": -2.15,
+      "max_consec_loss": 5,
+      "calmar": 1.16
+    },
+    {
+      "strategy": "pairs-btceth",
+      "coin": "BTC/ETH",
+      "pf": 0.69,
+      "wr": 47.0,
+      "trades": 483,
+      "sharpe": -3.63,
+      "sortino": -6.42,
+      "mdd": 88.1,
+      "ret": -178.3,
+      "avg_win": 1.71,
+      "avg_loss": -2.22,
+      "max_consec_loss": 10,
+      "calmar": -2.02
+    }
+  ]
+}

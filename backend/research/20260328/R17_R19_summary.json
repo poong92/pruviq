@@ -1,0 +1,46 @@
+{
+  "R17_best_day": "Wed",
+  "R18_best_hours": [
+    [
+      2,
+      1.53,
+      114
+    ],
+    [
+      5,
+      1.71,
+      47
+    ],
+    [
+      7,
+      2.25,
+      44
+    ]
+  ],
+  "R18_worst_hours": [
+    [
+      1,
+      0.64,
+      61
+    ],
+    [
+      8,
+      0.69,
+      56
+    ],
+    [
+      23,
+      0.53,
+      68
+    ]
+  ],
+  "R19_pf_weights": {
+    "atr-breakout": 0.169,
+    "ma-cross": 0.133,
+    "ichimoku": 0.156,
+    "keltner-squeeze": 0.135,
+    "bb-squeeze-short": 0.131,
+    "hv-squeeze": 0.156,
+    "rsi-divergence": 0.121
+  }
+}
