@@ -62,6 +62,7 @@ from api.schemas import (
     VALID_TIMEFRAMES,
 )
 from api.data_manager import DataManager
+from api.signal_scanner import SignalScanner
 from api.indicator_cache import IndicatorCache
 from src.simulation.engine import CostModel
 from src.simulation.engine_fast import run_fast
@@ -88,6 +89,9 @@ rate_limits: Dict[str, list] = {}
 coin_stats_cache: Optional[dict] = None
 _cg_metadata: Dict[str, dict] = {}
 _cg_ts: float = 0.0
+
+# Signal scanner (lazy init after data loads)
+_signal_scanner = None
 
 
 REFRESH_INTERVAL = 3600  # seconds (1 hour)
@@ -536,6 +540,41 @@ async def list_strategies():
 async def list_indicators_flat():
     """Return the full INDICATOR_REGISTRY for frontend field discovery."""
     return INDICATOR_REGISTRY
+
+
+@app.get("/signals/live")
+async def signals_live(top_n: int = 30):
+    """Return currently active trading signals.
+
+    Scans verified strategies on top coins, returns active signals.
+    Cached for 5 minutes.
+
+    Response: [{"strategy": "bb-squeeze-short", "strategy_name": "BB Squeeze SHORT",
+                "coin": "BTCUSDT", "direction": "short", "signal_time": "...",
+                "entry_price": 87000.0, "status": "verified",
+                "sl_pct": 10, "tp_pct": 8}, ...]
+    """
+    import asyncio
+
+    global _signal_scanner
+    if _signal_scanner is None:
+        _signal_scanner = SignalScanner(data_manager, top_n=min(top_n, 50))
+
+    def _scan():
+        return _signal_scanner.scan()
+
+    signals = await asyncio.to_thread(_scan)
+    return signals
+
+
+@app.get("/signals/history")
+async def signals_history(hours: int = 24):
+    """Return signal history for the last N hours (max 72)."""
+    global _signal_scanner
+    if _signal_scanner is None:
+        _signal_scanner = SignalScanner(data_manager)
+
+    return _signal_scanner.get_history(min(hours, 72))
 
 
 @app.get("/hot-strategies")
