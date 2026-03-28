@@ -465,7 +465,7 @@ export default function ResultsPanel({
                 {/* Exchange CTA — most prominent, pushed right */}
                 {topExchange && (
                   <a
-                    href={`${topExchange.referralUrl}`}
+                    href={`${topExchange.referralUrl}${topExchange.referralUrl.includes("?") ? "&" : "?"}utm_source=pruviq&utm_medium=referral&utm_campaign=results`}
                     target="_blank"
                     rel="noopener noreferrer sponsored"
                     class="ml-auto flex items-center gap-2 px-3 py-1.5 rounded-md font-semibold transition-all"

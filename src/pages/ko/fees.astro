@@ -121,7 +121,7 @@ const t = useTranslations('ko');
                   </span>
                 )}
               </div>
-              <a href={binanceDisplay.referralUrl} target="_blank" rel="noopener noreferrer"
+              <a href={`${binanceDisplay.referralUrl}&utm_source=pruviq&utm_medium=referral&utm_campaign=fees`} target="_blank" rel="noopener noreferrer"
                  class="block text-center bg-[--color-accent] text-[--color-bg] px-4 py-3 min-h-[48px] flex items-center justify-center rounded text-sm font-bold hover:opacity-90 transition-opacity shadow-sm">
                 {t('fees.signup')} &rarr;
               </a>
@@ -317,7 +317,7 @@ const t = useTranslations('ko');
     <div class="max-w-5xl mx-auto px-4 text-center">
       <p class="text-[--color-text-muted] text-sm mb-4">{t('fees.referral.cta.primary')}</p>
       <div class="flex flex-col sm:flex-row gap-4 justify-center mb-6">
-        <a href={binanceDisplay.referralUrl} target="_blank" rel="noopener noreferrer"
+        <a href={`${binanceDisplay.referralUrl}&utm_source=pruviq&utm_medium=referral&utm_campaign=fees`} target="_blank" rel="noopener noreferrer"
            class="inline-flex items-center justify-center bg-[--color-accent] text-[--color-bg] px-6 py-3 min-h-[48px] rounded text-sm font-bold hover:opacity-90 transition-opacity shadow-sm">
           {t('fees.referral.cta.button.signup')} &rarr;
         </a>

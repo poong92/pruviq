@@ -228,7 +228,7 @@ export default function FeeCalculator({ lang = "en" }: Props) {
             <div class="sm:w-28 flex-shrink-0 text-center">
               {ex.available ? (
                 <a
-                  href={ex.referralUrl}
+                  href={`${ex.referralUrl}${ex.referralUrl.includes("?") ? "&" : "?"}utm_source=pruviq&utm_medium=referral&utm_campaign=fee-calculator`}
                   target="_blank"
                   rel="noopener noreferrer"
                   class="inline-block w-full px-4 py-2 min-h-[44px] flex flex-col items-center justify-center rounded text-xs font-semibold hover:opacity-90 transition-opacity"
