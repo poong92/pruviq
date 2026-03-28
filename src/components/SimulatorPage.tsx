@@ -1187,6 +1187,19 @@ export default function SimulatorPage({ lang = "en" }: Props) {
     }
   }, [apiReady, isRunning, result, direction, slPct, tpPct, topN]);
 
+  // Auto-demo for first-time visitors: run BB Squeeze to show results immediately
+  useEffect(() => {
+    if (!apiReady || isRunning || result) return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("preset") || params.get("strategy") || params.get("coin"))
+      return;
+    if ((window as any).__pruviq_pending_strategy) return;
+    try {
+      if (localStorage.getItem("has-run-backtest")) return;
+    } catch {}
+    runPresetQuick("bb-squeeze-short");
+  }, [apiReady, isRunning, result, runPresetQuick]);
+
   const onSelectPreset = useCallback(
     (id: string | null) => {
       if (id === null) {
