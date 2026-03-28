@@ -64,8 +64,18 @@ const t = useTranslations('ko');
   <noscript>
     <div class="max-w-4xl mx-auto px-4 py-12">
       <h1 class="text-2xl font-bold mb-4">실시간 매매 시그널</h1>
-      <p>17개 전략이 30개 코인을 실시간으로 스캔합니다. JavaScript를 활성화하면 실시간 데이터를 볼 수 있습니다.</p>
-      <p class="mt-4"><a href="/ko/simulate" class="text-[--color-accent]">시뮬레이터 사용하기 →</a></p>
+      <p class="mb-4">17개 전략이 매시간 캔들 마감 시 30개 이상의 코인을 스캔합니다. 시그널에는 진입가, 손절, 익절 수준이 포함됩니다.</p>
+      <h2 class="text-lg font-semibold mb-2">활성 전략</h2>
+      <ul class="list-disc pl-6 space-y-1 mb-6">
+        <li><a href="/ko/strategies/bb-squeeze-short" class="text-[--color-accent] hover:underline">BB Squeeze Short</a> — 볼린저 밴드 스퀴즈 하방 돌파 (검증됨, 승률 68.6%)</li>
+        <li><a href="/ko/strategies/bb-squeeze-long" class="text-[--color-accent] hover:underline">BB Squeeze Long</a> — 볼린저 밴드 스퀴즈 상방 돌파</li>
+        <li><a href="/ko/strategies/momentum-long" class="text-[--color-accent] hover:underline">Momentum Long</a> — 모멘텀 기반 진입</li>
+      </ul>
+      <p class="mb-2">실시간 시그널 데이터를 보려면 JavaScript를 활성화하세요.</p>
+      <div class="flex gap-4">
+        <a href="/ko/simulate" class="text-[--color-accent] hover:underline">시뮬레이터 열기 →</a>
+        <a href="/ko/strategies" class="text-[--color-accent] hover:underline">전략 둘러보기 →</a>
+      </div>
     </div>
   </noscript>
 </Layout>

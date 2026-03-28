@@ -80,7 +80,7 @@ export default function SignalsDashboard({ lang = "en" }: Props) {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [lang]);
 
   useEffect(() => {
     fetchSignals();
@@ -251,7 +251,7 @@ export default function SignalsDashboard({ lang = "en" }: Props) {
                   </div>
                   <a
                     href={buildSimUrl(s)}
-                    class="text-xs font-mono text-[--color-accent] opacity-0 group-hover:opacity-100 transition-opacity hover:underline"
+                    class="text-xs font-mono text-[--color-accent] md:opacity-0 md:group-hover:opacity-100 focus:opacity-100 transition-opacity hover:underline"
                   >
                     {t.verify}
                   </a>

@@ -69,8 +69,18 @@ const t = useTranslations('en');
   <noscript>
     <div class="max-w-4xl mx-auto px-4 py-12">
       <h1 class="text-2xl font-bold mb-4">Live Trading Signals</h1>
-      <p>Real-time signals from 17 strategies across 30+ coins. Enable JavaScript to view live data.</p>
-      <p class="mt-4"><a href="/simulate" class="text-[--color-accent]">Try the simulator instead →</a></p>
+      <p class="mb-4">17 strategies scan 30+ coins every hour at candle close. Signals include entry price, stop-loss, and take-profit levels.</p>
+      <h2 class="text-lg font-semibold mb-2">Active Strategies</h2>
+      <ul class="list-disc pl-6 space-y-1 mb-6">
+        <li><a href="/strategies/bb-squeeze-short" class="text-[--color-accent] hover:underline">BB Squeeze Short</a> — Bollinger Band squeeze breakdowns (verified, 68.6% win rate)</li>
+        <li><a href="/strategies/bb-squeeze-long" class="text-[--color-accent] hover:underline">BB Squeeze Long</a> — Bollinger Band squeeze breakouts</li>
+        <li><a href="/strategies/momentum-long" class="text-[--color-accent] hover:underline">Momentum Long</a> — Momentum-based entries</li>
+      </ul>
+      <p class="mb-2">Enable JavaScript to view real-time signal data.</p>
+      <div class="flex gap-4">
+        <a href="/simulate" class="text-[--color-accent] hover:underline">Open Simulator →</a>
+        <a href="/strategies" class="text-[--color-accent] hover:underline">Browse Strategies →</a>
+      </div>
     </div>
   </noscript>
 </Layout>
