@@ -253,7 +253,7 @@ export default function SignalsDashboard({ lang = "en" }: Props) {
                     href={buildSimUrl(s)}
                     class="text-xs font-mono text-[--color-accent] opacity-0 group-hover:opacity-100 transition-opacity hover:underline"
                   >
-                    Verify →
+                    {t.verify}
                   </a>
                 </div>
               ))}
@@ -264,15 +264,15 @@ export default function SignalsDashboard({ lang = "en" }: Props) {
 
       {filtered.length === 0 && (
         <div class="text-center py-12 text-[--color-text-muted]">
-          <p>No {filter !== "all" ? filter : ""} signals right now.</p>
-          <p class="text-sm mt-1">Signals update every hour at candle close.</p>
+          <p>{t.no_signals.replace("{filter}", filter !== "all" ? filter : "")}</p>
+          <p class="text-sm mt-1">{t.signals_update}</p>
         </div>
       )}
 
       {/* Footer */}
       <div class="mt-8 pt-4 border-t border-[--color-border] flex items-center justify-between text-xs text-[--color-text-muted]">
-        <p>Updated {lastUpdate || "loading..."} · Refreshes every 5 min</p>
-        <p>Signals are based on completed 1H candles. Not financial advice.</p>
+        <p>{t.updated.replace("{time}", lastUpdate || t.loading)}</p>
+        <p>{t.disclaimer}</p>
       </div>
     </div>
   );
