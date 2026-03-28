@@ -1187,6 +1187,21 @@ export default function SimulatorPage({ lang = "en" }: Props) {
     }
   }, [apiReady, isRunning, result, direction, slPct, tpPct, topN]);
 
+  // Auto-load BB Squeeze preset for first-time visitors (shows config, not auto-run)
+  // This just selects the preset — user still clicks "Run Backtest"
+  useEffect(() => {
+    if (!apiReady || result) return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("preset") || params.get("strategy") || params.get("coin"))
+      return;
+    if ((window as any).__pruviq_pending_strategy) return;
+    try {
+      if (localStorage.getItem("has-run-backtest")) return;
+    } catch {}
+    // Just load the preset (show config), don't auto-run
+    loadPreset("bb-squeeze-short");
+  }, [apiReady, result, loadPreset]);
+
   const onSelectPreset = useCallback(
     (id: string | null) => {
       if (id === null) {
