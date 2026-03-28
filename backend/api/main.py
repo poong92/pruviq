@@ -204,26 +204,32 @@ async def lifespan(app: FastAPI):
     else:
         print("WARNING: CoinGecko metadata unavailable — coin order falls back to data size")
 
-    if data_manager.coin_count > 0:
-        # Build multi-strategy indicator cache
-        print("Pre-computing indicators for all strategies...")
-        all_strategies = get_all_strategies()
-        indicator_cache.build_multi(data_manager, all_strategies)
-        for sid in all_strategies:
-            cnt = indicator_cache.strategy_count(sid)
-            print(f"  {sid}: {cnt} coins cached")
-        print(f"Total build time: {indicator_cache._build_time:.1f}s")
+    # Indicator cache + coin stats: build in background to avoid startup timeout
+    # HealthCheck fails if startup takes > 90s (LaunchAgent restart loop)
+    async def _deferred_indicator_build():
+        """Build indicator cache after server is already accepting requests."""
+        await asyncio.sleep(1)  # Let server start first
+        if data_manager.coin_count > 0:
+            def _build():
+                print("Pre-computing indicators for all strategies...")
+                all_strategies = get_all_strategies()
+                indicator_cache.build_multi(data_manager, all_strategies)
+                for sid in all_strategies:
+                    cnt = indicator_cache.strategy_count(sid)
+                    print(f"  {sid}: {cnt} coins cached")
+                print(f"Total build time: {indicator_cache._build_time:.1f}s")
 
-        # Pre-compute coin stats for /coins/stats endpoint (primary strategy)
-        print("Pre-computing coin stats...")
-        strategy = BBSqueezeStrategy(avoid_hours=AVOID_HOURS)
-        global coin_stats_cache
-        coin_stats_cache = _build_coin_stats(strategy)
-        print(f"Coin stats cached for {len(coin_stats_cache['coins'])} coins")
+                print("Pre-computing coin stats...")
+                strategy = BBSqueezeStrategy(avoid_hours=AVOID_HOURS)
+                global coin_stats_cache
+                coin_stats_cache = _build_coin_stats(strategy)
+                print(f"Coin stats cached for {len(coin_stats_cache['coins'])} coins")
+            await asyncio.to_thread(_build)
+
+    indicator_task = asyncio.create_task(_deferred_indicator_build())
 
     # Pre-fetch market data — non-blocking on startup
-    # CoinGecko 429 시 startup blocking 방지: background task에 위임
-    print("Deferring market/macro pre-fetch to background tasks...")
+    print("Deferring indicator build + market pre-fetch to background...")
     global _market_cache, _news_cache, _market_cache_ts
     global _macro_cache, _macro_cache_time
 
@@ -236,9 +242,10 @@ async def lifespan(app: FastAPI):
 
     yield
 
+    indicator_task.cancel()
     refresh_task.cancel()
     market_task.cancel()
-    for t in (refresh_task, market_task):
+    for t in (indicator_task, refresh_task, market_task):
         try:
             await t
         except asyncio.CancelledError:
