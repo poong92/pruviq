@@ -161,6 +161,7 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
     <link rel="preconnect" href="https://api.pruviq.com" crossorigin />
     <link rel="preconnect" href="https://coin-images.coingecko.com" crossorigin />
     <link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin />
+    <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin />
     <!-- Open Graph -->
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
@@ -378,6 +379,14 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
         ]
       })} />
     )}
+    <!-- Google Analytics 4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-XXXXXXXXXX');
+    </script>
     <noscript><style>.reveal,.reveal-child>*{opacity:1!important;transform:none!important;transition:none!important}</style></noscript>
 </head>
   <body class="min-h-screen">
