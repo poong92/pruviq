@@ -1391,6 +1391,9 @@ export const ko: Record<TranslationKey, string> = {
   "nav.ranking_desc": "일일 성과 순위",
   "nav.leaderboard_desc": "주간 베스트",
   "nav.compare_tools_desc": "vs TradingView 등",
+  "nav.daily_ranking": "일일 랭킹",
+  "nav.weekly": "주간",
+  "nav.signals": "실시간 시그널",
 
   // Metric explanation tooltips
   "metric.sharpe_desc":
