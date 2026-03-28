@@ -1187,11 +1187,10 @@ export default function SimulatorPage({ lang = "en" }: Props) {
     }
   }, [apiReady, isRunning, result, direction, slPct, tpPct, topN]);
 
-  // Auto-demo for first-time visitors: run BB Squeeze to show results immediately
-  // Skips in E2E/headless (navigator.webdriver) to prevent CI timeout
+  // Auto-load BB Squeeze preset for first-time visitors (shows config, not auto-run)
+  // This just selects the preset — user still clicks "Run Backtest"
   useEffect(() => {
-    if (!apiReady || isRunning || result) return;
-    if ((navigator as any).webdriver) return; // Skip in Playwright/headless
+    if (!apiReady || result) return;
     const params = new URLSearchParams(window.location.search);
     if (params.get("preset") || params.get("strategy") || params.get("coin"))
       return;
@@ -1199,8 +1198,9 @@ export default function SimulatorPage({ lang = "en" }: Props) {
     try {
       if (localStorage.getItem("has-run-backtest")) return;
     } catch {}
-    runPresetQuick("bb-squeeze-short");
-  }, [apiReady, isRunning, result, runPresetQuick]);
+    // Just load the preset (show config), don't auto-run
+    loadPreset("bb-squeeze-short");
+  }, [apiReady, result, loadPreset]);
 
   const onSelectPreset = useCallback(
     (id: string | null) => {
