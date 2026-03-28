@@ -119,11 +119,14 @@ export function RankingCard({
                 ? entry.name_en
                 : entry.timeframe + " · " + entry.direction}
             </p>
-            {getStrategyDescription(entry.strategy, lang) && (
-              <p class="text-[--color-text-muted] text-[10px] mt-0.5 truncate opacity-70">
-                {getStrategyDescription(entry.strategy, lang)}
-              </p>
-            )}
+            {(() => {
+              const desc = getStrategyDescription(entry.strategy, lang);
+              return desc ? (
+                <p class="text-[--color-text-muted] text-[10px] mt-0.5 truncate opacity-70">
+                  {desc}
+                </p>
+              ) : null;
+            })()}
           </div>
         </div>
         <div class="flex items-center gap-1.5 shrink-0">

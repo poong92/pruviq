@@ -87,6 +87,7 @@ indicator_cache = IndicatorCache()
 sim_cache: OrderedDict = OrderedDict()
 rate_limits: Dict[str, list] = {}
 coin_stats_cache: Optional[dict] = None
+_indicator_build_ready = False  # Set True after deferred indicator build completes
 _cg_metadata: Dict[str, dict] = {}
 _cg_ts: float = 0.0
 
@@ -224,6 +225,8 @@ async def lifespan(app: FastAPI):
                 global coin_stats_cache
                 coin_stats_cache = _build_coin_stats(strategy)
                 print(f"Coin stats cached for {len(coin_stats_cache['coins'])} coins")
+                global _indicator_build_ready
+                _indicator_build_ready = True
             await asyncio.to_thread(_build)
 
     indicator_task = asyncio.create_task(_deferred_indicator_build())
