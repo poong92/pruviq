@@ -1,0 +1,71 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import { useTranslations } from '../../../i18n/index';
+import SignalsDashboard from '../../../components/SignalsDashboard';
+import ErrorBoundary from '../../../components/ErrorBoundary';
+
+const t = useTranslations('ko');
+---
+
+<Layout title="실시간 매매 시그널 — PRUVIQ" description="17개 검증된 전략이 30개 코인을 매시간 스캔합니다. 실시간 시그널 확인 후 시뮬레이터에서 직접 검증하세요." lang="ko">
+  <section class="py-8 md:py-12">
+    <div class="max-w-4xl mx-auto px-4">
+
+      <nav class="flex gap-1 mb-8 border-b border-[--color-border]" aria-label="전략 네비게이션">
+        <a href="/ko/strategies" class="px-4 py-2.5 font-mono text-sm text-[--color-text-muted] border-b-2 border-transparent -mb-px hover:text-[--color-text] hover:border-[--color-border] transition-colors">
+          전략
+        </a>
+        <a href="/ko/strategies/ranking" class="px-4 py-2.5 font-mono text-sm text-[--color-text-muted] border-b-2 border-transparent -mb-px hover:text-[--color-text] hover:border-[--color-border] transition-colors">
+          일일 랭킹
+        </a>
+        <a href="/ko/leaderboard" class="px-4 py-2.5 font-mono text-sm text-[--color-text-muted] border-b-2 border-transparent -mb-px hover:text-[--color-text] hover:border-[--color-border] transition-colors">
+          주간
+        </a>
+        <span class="px-4 py-2.5 font-mono text-sm text-[--color-accent] border-b-2 border-[--color-accent] -mb-px font-bold">
+          실시간 시그널
+        </span>
+      </nav>
+
+      <div class="mb-8">
+        <div class="flex items-center gap-3 mb-2">
+          <span class="relative flex h-3 w-3">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+          </span>
+          <h1 class="text-3xl md:text-4xl font-bold">실시간 시그널</h1>
+        </div>
+        <p class="text-[--color-text-muted] max-w-2xl">
+          17개 전략이 30개 코인을 매시간 스캔합니다.
+          각 시그널에 진입가, 손절, 익절 수준이 표시됩니다.
+          "Verify"를 클릭하면 시뮬레이터에서 직접 백테스트할 수 있습니다.
+        </p>
+      </div>
+
+      <div class="mb-6 p-4 rounded-lg border border-[--color-accent]/20 bg-[--color-accent]/5">
+        <p class="text-sm text-[--color-text-secondary]">
+          <strong>작동 방식:</strong> 엔진이 최신 완성 1시간 캔들에서 17개 전략의 진입 조건을 확인합니다.
+          조건이 충족되면 시그널이 여기에 표시됩니다.
+          시그널은 매매 추천이 아닙니다 — 항상 시뮬레이터에서 먼저 검증하세요.
+        </p>
+      </div>
+
+      <ErrorBoundary client:load>
+        <SignalsDashboard client:load />
+      </ErrorBoundary>
+
+      <div class="mt-12 text-center">
+        <p class="text-[--color-text-muted] mb-4">테스트하고 싶은 시그널이 있나요?</p>
+        <a href="/ko/simulate" class="btn btn-primary">시뮬레이터 열기</a>
+      </div>
+
+    </div>
+  </section>
+
+  <noscript>
+    <div class="max-w-4xl mx-auto px-4 py-12">
+      <h1 class="text-2xl font-bold mb-4">실시간 매매 시그널</h1>
+      <p>17개 전략이 30개 코인을 실시간으로 스캔합니다. JavaScript를 활성화하면 실시간 데이터를 볼 수 있습니다.</p>
+      <p class="mt-4"><a href="/ko/simulate" class="text-[--color-accent]">시뮬레이터 사용하기 →</a></p>
+    </div>
+  </noscript>
+</Layout>

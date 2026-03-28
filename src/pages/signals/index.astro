@@ -1,0 +1,76 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { useTranslations } from '../../i18n/index';
+import SignalsDashboard from '../../components/SignalsDashboard';
+import ErrorBoundary from '../../components/ErrorBoundary';
+
+const t = useTranslations('en');
+---
+
+<Layout title="Live Trading Signals — PRUVIQ" description="Real-time crypto trading signals from 17 verified strategies across 30+ coins. Updated every hour. Don't Believe. Verify.">
+  <section class="py-8 md:py-12">
+    <div class="max-w-4xl mx-auto px-4">
+
+      <!-- Tab navigation (consistent with /strategies) -->
+      <nav class="flex gap-1 mb-8 border-b border-[--color-border]" aria-label="Strategy navigation">
+        <a href="/strategies" class="px-4 py-2.5 font-mono text-sm text-[--color-text-muted] border-b-2 border-transparent -mb-px hover:text-[--color-text] hover:border-[--color-border] transition-colors">
+          {t('nav.strategies')}
+        </a>
+        <a href="/strategies/ranking" class="px-4 py-2.5 font-mono text-sm text-[--color-text-muted] border-b-2 border-transparent -mb-px hover:text-[--color-text] hover:border-[--color-border] transition-colors">
+          Daily Ranking
+        </a>
+        <a href="/leaderboard" class="px-4 py-2.5 font-mono text-sm text-[--color-text-muted] border-b-2 border-transparent -mb-px hover:text-[--color-text] hover:border-[--color-border] transition-colors">
+          Weekly
+        </a>
+        <span class="px-4 py-2.5 font-mono text-sm text-[--color-accent] border-b-2 border-[--color-accent] -mb-px font-bold">
+          Live Signals
+        </span>
+      </nav>
+
+      <!-- Header -->
+      <div class="mb-8">
+        <div class="flex items-center gap-3 mb-2">
+          <span class="relative flex h-3 w-3">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+          </span>
+          <h1 class="text-3xl md:text-4xl font-bold">Live Signals</h1>
+        </div>
+        <p class="text-[--color-text-muted] max-w-2xl">
+          Real-time trading signals from 17 strategies scanning 30 coins every hour.
+          Each signal shows entry price, stop-loss, and take-profit levels.
+          Click "Verify" to backtest any signal in the simulator.
+        </p>
+      </div>
+
+      <!-- Info banner -->
+      <div class="mb-6 p-4 rounded-lg border border-[--color-accent]/20 bg-[--color-accent]/5">
+        <p class="text-sm text-[--color-text-secondary]">
+          <strong>How it works:</strong> Our engine scans 17 strategies on the latest completed 1H candles.
+          When a strategy's entry conditions are met, a signal appears here.
+          Signals are not trade recommendations — always verify with the simulator first.
+        </p>
+      </div>
+
+      <!-- Dashboard -->
+      <ErrorBoundary client:load>
+        <SignalsDashboard client:load />
+      </ErrorBoundary>
+
+      <!-- CTA -->
+      <div class="mt-12 text-center">
+        <p class="text-[--color-text-muted] mb-4">See a signal you want to test?</p>
+        <a href="/simulate" class="btn btn-primary">Open Simulator</a>
+      </div>
+
+    </div>
+  </section>
+
+  <noscript>
+    <div class="max-w-4xl mx-auto px-4 py-12">
+      <h1 class="text-2xl font-bold mb-4">Live Trading Signals</h1>
+      <p>Real-time signals from 17 strategies across 30+ coins. Enable JavaScript to view live data.</p>
+      <p class="mt-4"><a href="/simulate" class="text-[--color-accent]">Try the simulator instead →</a></p>
+    </div>
+  </noscript>
+</Layout>
