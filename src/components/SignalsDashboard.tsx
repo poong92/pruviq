@@ -13,7 +13,50 @@ interface Signal {
   tp_pct: number;
 }
 
-export default function SignalsDashboard() {
+interface Props {
+  lang?: "en" | "ko";
+}
+
+const i18n = {
+  en: {
+    active: "Active",
+    verified: "Verified",
+    short: "Short",
+    long: "Long",
+    warming_up: "Signal scanner is warming up...",
+    check_back: "Check back in a few minutes.",
+    signal: "signal",
+    signals: "signals",
+    no_signals: "No {filter} signals right now.",
+    signals_update: "Signals update every hour at candle close.",
+    updated: "Updated {time} · Refreshes every 5 min",
+    loading: "loading...",
+    disclaimer: "Signals are based on completed 1H candles. Not financial advice.",
+    verify: "Verify →",
+    just_now: "just now",
+    hours_ago: "{n}h ago",
+  },
+  ko: {
+    active: "활성",
+    verified: "검증됨",
+    short: "숏",
+    long: "롱",
+    warming_up: "시그널 스캐너 준비 중...",
+    check_back: "잠시 후 다시 확인하세요.",
+    signal: "시그널",
+    signals: "시그널",
+    no_signals: "현재 {filter} 시그널이 없습니다.",
+    signals_update: "시그널은 매시간 캔들 마감 시 업데이트됩니다.",
+    updated: "업데이트 {time} · 5분마다 갱신",
+    loading: "로딩 중...",
+    disclaimer: "시그널은 완성된 1시간 캔들 기반입니다. 투자 조언이 아닙니다.",
+    verify: "검증 →",
+    just_now: "방금",
+    hours_ago: "{n}시간 전",
+  },
+} as const;
+
+export default function SignalsDashboard({ lang = "en" }: Props) {
   const [signals, setSignals] = useState<Signal[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -33,7 +76,7 @@ export default function SignalsDashboard() {
       setLastUpdate(new Date().toLocaleTimeString());
       setError(null);
     } catch (e) {
-      setError("Signal data unavailable");
+      setError(lang === "ko" ? "시그널 데이터 사용 불가" : "Signal data unavailable");
     } finally {
       setLoading(false);
     }
@@ -63,13 +106,15 @@ export default function SignalsDashboard() {
     byStrategy[s.strategy_name].push(s);
   }
 
+  const t = i18n[lang];
+  const prefix = lang === "ko" ? "/ko" : "";
+
   function timeAgo(isoString: string): string {
     try {
       const diff = Date.now() - new Date(isoString).getTime();
       const hours = Math.floor(diff / 3600000);
-      if (hours < 1) return "just now";
-      if (hours === 1) return "1h ago";
-      return `${hours}h ago`;
+      if (hours < 1) return t.just_now;
+      return t.hours_ago.replace("{n}", String(hours));
     } catch {
       return "";
     }
@@ -78,7 +123,7 @@ export default function SignalsDashboard() {
   function buildSimUrl(s: Signal): string {
     const strategy = s.strategy;
     const coin = s.coin.replace("USDT", "/USDT:USDT");
-    return `/simulate?strategy=${strategy}&coin=${coin}&direction=${s.direction}`;
+    return `${prefix}/simulate?strategy=${strategy}&coin=${coin}&direction=${s.direction}`;
   }
 
   if (loading) {
@@ -97,8 +142,8 @@ export default function SignalsDashboard() {
   if (error) {
     return (
       <div class="text-center py-16 text-[--color-text-muted]">
-        <p class="text-lg mb-2">Signal scanner is warming up...</p>
-        <p class="text-sm">Check back in a few minutes.</p>
+        <p class="text-lg mb-2">{t.warming_up}</p>
+        <p class="text-sm">{t.check_back}</p>
       </div>
     );
   }
@@ -109,6 +154,7 @@ export default function SignalsDashboard() {
       <div class="grid grid-cols-4 gap-3 mb-6">
         <button
           onClick={() => setFilter("all")}
+          aria-pressed={filter === "all"}
           class={`text-center p-3 rounded-lg border transition-colors cursor-pointer ${
             filter === "all"
               ? "border-[--color-accent] bg-[--color-accent]/10"
@@ -116,10 +162,11 @@ export default function SignalsDashboard() {
           }`}
         >
           <p class="text-2xl font-bold font-mono">{signals.length}</p>
-          <p class="text-xs text-[--color-text-muted]">Active</p>
+          <p class="text-xs text-[--color-text-muted]">{t.active}</p>
         </button>
         <button
           onClick={() => setFilter("verified")}
+          aria-pressed={filter === "verified"}
           class={`text-center p-3 rounded-lg border transition-colors cursor-pointer ${
             filter === "verified"
               ? "border-green-500 bg-green-500/10"
@@ -129,10 +176,11 @@ export default function SignalsDashboard() {
           <p class="text-2xl font-bold font-mono text-green-400">
             {verifiedCount}
           </p>
-          <p class="text-xs text-[--color-text-muted]">Verified</p>
+          <p class="text-xs text-[--color-text-muted]">{t.verified}</p>
         </button>
         <button
           onClick={() => setFilter("short")}
+          aria-pressed={filter === "short"}
           class={`text-center p-3 rounded-lg border transition-colors cursor-pointer ${
             filter === "short"
               ? "border-red-500 bg-red-500/10"
@@ -140,10 +188,11 @@ export default function SignalsDashboard() {
           }`}
         >
           <p class="text-2xl font-bold font-mono text-red-400">{shortCount}</p>
-          <p class="text-xs text-[--color-text-muted]">Short</p>
+          <p class="text-xs text-[--color-text-muted]">{t.short}</p>
         </button>
         <button
           onClick={() => setFilter("long")}
+          aria-pressed={filter === "long"}
           class={`text-center p-3 rounded-lg border transition-colors cursor-pointer ${
             filter === "long"
               ? "border-blue-500 bg-blue-500/10"
@@ -151,7 +200,7 @@ export default function SignalsDashboard() {
           }`}
         >
           <p class="text-2xl font-bold font-mono text-blue-400">{longCount}</p>
-          <p class="text-xs text-[--color-text-muted]">Long</p>
+          <p class="text-xs text-[--color-text-muted]">{t.long}</p>
         </button>
       </div>
 
@@ -164,11 +213,11 @@ export default function SignalsDashboard() {
                 {strategyName}
               </h3>
               <span class="text-xs bg-[--color-bg-card] border border-[--color-border] px-2 py-0.5 rounded font-mono">
-                {sigs.length} signal{sigs.length > 1 ? "s" : ""}
+                {sigs.length} {sigs.length > 1 ? t.signals : t.signal}
               </span>
               {sigs[0]?.status === "verified" && (
                 <span class="text-[10px] bg-green-500/20 text-green-400 px-1.5 py-0.5 rounded">
-                  verified
+                  {t.verified.toLowerCase()}
                 </span>
               )}
             </div>
