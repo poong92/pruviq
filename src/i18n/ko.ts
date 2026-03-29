@@ -1393,7 +1393,7 @@ export const ko: Record<TranslationKey, string> = {
   "nav.compare_tools_desc": "vs TradingView 등",
   "nav.daily_ranking": "일일 랭킹",
   "nav.weekly": "주간",
-  "nav.signals": "실시간 시그널",
+  "nav.signals": "시그널",
 
   // Metric explanation tooltips
   "metric.sharpe_desc":
