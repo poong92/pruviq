@@ -84,15 +84,25 @@ class IndicatorCache:
         self._multi_cache[self._primary_strategy] = self._cache
         self._build_time = time.time() - start
 
-    def build_multi(self, data_manager: DataManager, strategies: Dict[str, object]):
-        """Pre-compute indicators for all strategies x all coins."""
+    def build_multi(self, data_manager: DataManager, strategies: Dict[str, object],
+                    max_coins: int = 50):
+        """Pre-compute indicators for all strategies x top N coins.
+
+        Memory optimization (2026-03-29): 572 coins x 17 strategies = 7.4GB OOM.
+        Limit to top 50 by market cap. /simulate computes on-the-fly for other coins.
+        50 coins x 17 strategies ≈ 500MB (93% reduction).
+        """
         start = time.time()
         self._multi_cache.clear()
         self._data_manager = data_manager
 
+        # Only cache top N coins (by market cap order from DataManager)
+        coins_to_cache = data_manager.coins[:max_coins]
+        logger.info(f"[indicator_cache] Building for {len(strategies)} strategies x {len(coins_to_cache)} coins (max_coins={max_coins})")
+
         for strategy_id, strategy in strategies.items():
             cache = {}
-            for info in data_manager.coins:
+            for info in coins_to_cache:
                 symbol = info["symbol"]
                 df = data_manager.get_df(symbol)
                 if df is None:
