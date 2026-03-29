@@ -1,12 +1,11 @@
-// Client-side layout behaviors (moved out of inline HTML to avoid render-blocking)
+// Client-side layout behaviors
 // Supports Astro View Transitions — re-initializes on every page-load event.
 
-function initLayout() {
+// Global listeners (registered once, never duplicated)
+function initGlobalListeners() {
   // Page loader on navigation
-  const loader = document.getElementById("page-loader");
-  loader?.classList.remove("loading");
-
   document.addEventListener("click", (e) => {
+    const loader = document.getElementById("page-loader");
     const el = e.target;
     const link = el && (el.closest ? el.closest("a[href]") : null);
     if (!link) return;
@@ -26,64 +25,77 @@ function initLayout() {
   });
 
   // Nav scroll shadow
-  const nav = document.querySelector("nav");
   window.addEventListener(
     "scroll",
     () => {
+      const nav = document.querySelector("nav");
       nav?.classList.toggle("scrolled", window.scrollY > 10);
     },
     { passive: true },
   );
 
-  const menuBtn = document.getElementById("mobile-menu-btn");
-  const mobileMenu = document.getElementById("mobile-menu");
-
-  function closeMenu() {
-    mobileMenu?.classList.add("hidden");
-    mobileMenu?.setAttribute("aria-hidden", "true");
-    menuBtn?.setAttribute("aria-expanded", "false");
-  }
-
-  menuBtn?.addEventListener("click", () => {
-    const isHidden = mobileMenu?.classList.toggle("hidden");
-    menuBtn.setAttribute("aria-expanded", String(!isHidden));
-    mobileMenu?.setAttribute("aria-hidden", String(!!isHidden));
-    if (!isHidden) {
-      mobileMenu?.scrollIntoView({ block: "nearest" });
-    }
-  });
-
+  // Escape to close mobile menu
   document.addEventListener("keydown", (e) => {
+    const mobileMenu = document.getElementById("mobile-menu");
+    const menuBtn = document.getElementById("mobile-menu-btn");
     if (
       e.key === "Escape" &&
       mobileMenu &&
       !mobileMenu.classList.contains("hidden")
     ) {
-      closeMenu();
+      mobileMenu.classList.add("hidden");
+      mobileMenu.setAttribute("aria-hidden", "true");
+      menuBtn?.setAttribute("aria-expanded", "false");
       menuBtn?.focus();
     }
   });
+}
 
-  mobileMenu?.addEventListener("keydown", (e) => {
-    if (e.key !== "Tab") return;
-    const focusable = mobileMenu.querySelectorAll("a, button");
-    if (focusable.length === 0) return;
-    const first = focusable[0];
-    const last = focusable[focusable.length - 1];
-    if (e.shiftKey && document.activeElement === first) {
-      e.preventDefault();
-      last.focus();
-    } else if (!e.shiftKey && document.activeElement === last) {
-      e.preventDefault();
-      first.focus();
+// Element-specific listeners (re-registered on every page-load)
+function initPageElements() {
+  const loader = document.getElementById("page-loader");
+  loader?.classList.remove("loading");
+
+  const menuBtn = document.getElementById("mobile-menu-btn");
+  const mobileMenu = document.getElementById("mobile-menu");
+
+  if (menuBtn && mobileMenu) {
+    function closeMenu() {
+      mobileMenu.classList.add("hidden");
+      mobileMenu.setAttribute("aria-hidden", "true");
+      menuBtn.setAttribute("aria-expanded", "false");
     }
-  });
 
-  mobileMenu?.querySelectorAll("a").forEach((link) => {
-    link.addEventListener("click", () => {
-      closeMenu();
+    menuBtn.addEventListener("click", () => {
+      const isHidden = mobileMenu.classList.toggle("hidden");
+      menuBtn.setAttribute("aria-expanded", String(!isHidden));
+      mobileMenu.setAttribute("aria-hidden", String(!!isHidden));
+      if (!isHidden) {
+        mobileMenu.scrollIntoView({ block: "nearest" });
+      }
     });
-  });
+
+    mobileMenu.addEventListener("keydown", (e) => {
+      if (e.key !== "Tab") return;
+      const focusable = mobileMenu.querySelectorAll("a, button");
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    });
+
+    mobileMenu.querySelectorAll("a").forEach((link) => {
+      link.addEventListener("click", () => {
+        closeMenu();
+      });
+    });
+  }
 }
 
 function initInteractions() {
@@ -146,11 +158,13 @@ function initInteractions() {
   }
 }
 
-// Initial load
-initLayout();
+// First load — global listeners once
+initGlobalListeners();
+initPageElements();
 initInteractions();
 
 // Re-init on Astro View Transition page swap
 document.addEventListener("astro:page-load", () => {
+  initPageElements();
   initInteractions();
 });
