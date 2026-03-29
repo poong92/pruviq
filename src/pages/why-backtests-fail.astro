@@ -8,7 +8,7 @@ const reasons = [
   {
     title: 'Look-Ahead Bias',
     desc: 'Your strategy uses information that wasn\'t available at the time of the trade. For example, using a full day\'s high/low to make a decision at market open. This is the most common — and most dangerous — backtesting error.',
-    fix: 'PRUVIQ uses strictly sequential data processing. Each candle is evaluated only with data available up to that point. We lost $14,115 to look-ahead bias in our own trading — that\'s why we built the engine to prevent it.'
+    fix: 'PRUVIQ uses strictly sequential data processing. Each candle is evaluated only with data available up to that point. Our team experienced significant losses from look-ahead bias firsthand — that\'s why we engineered the simulation engine to structurally prevent it.'
   },
   {
     title: 'Survivorship Bias',
