@@ -738,10 +738,17 @@ async def simulate(req: SimulationRequest):
             if not requested:
                 raise HTTPException(400, "No valid symbols provided. symbols list is empty or contains only blank values.")
 
-            coins = indicator_cache.get_symbols_for_strategy(strategy_id, requested) if has_cache else data_manager.get_symbols(requested)
+            if has_cache:
+                coins = indicator_cache.get_symbols_for_strategy(strategy_id, requested)
+                # Fallback: coins not in top-50 cache → compute on-the-fly
+                cached_syms = {sym for sym, _ in coins}
+                missing = [s for s in requested if s not in cached_syms]
+                if missing:
+                    coins.extend(data_manager.get_symbols(missing))
+            else:
+                coins = data_manager.get_symbols(requested)
 
             if not coins:
-                # coins is empty: every requested symbol was unknown
                 if len(requested) == 1:
                     raise HTTPException(404, f"Symbol {requested[0]} not found in available coins. Check the symbol spelling (e.g. BTCUSDT, ETHUSDT).")
                 raise HTTPException(404, f"None of the requested symbols were found: {', '.join(requested)}. Check symbol spelling (e.g. BTCUSDT).")
@@ -758,9 +765,14 @@ async def simulate(req: SimulationRequest):
     actual_date_min = None
     actual_date_max = None
 
+    # Track which symbols came from cache (have indicators) vs fallback (need computation)
+    _cached_syms = set()
+    if has_cache:
+        _cached_syms = {sym for sym, _ in indicator_cache.get_symbols_for_strategy(strategy_id, [s for s, _ in coins])}
+
     for run_dir in directions_to_run:
         for sym, df in coins:
-            if not has_cache:
+            if sym not in _cached_syms:
                 df = strategy.calculate_indicators(df.copy())
 
             df = filter_df_by_date(df, getattr(req, 'start_date', None), getattr(req, 'end_date', None))
