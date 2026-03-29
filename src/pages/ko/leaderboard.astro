@@ -4,6 +4,7 @@ import { useTranslations } from '../../i18n/index';
 import WeeklyLeaderboard from '../../components/WeeklyLeaderboard';
 import ErrorBoundary from '../../components/ErrorBoundary';
 import StaleBanner from '../../components/ui/StaleBanner.astro';
+import StrategyTabs from '../../components/ui/StrategyTabs.astro';
 
 const t = useTranslations('ko');
 
@@ -32,18 +33,7 @@ function formatDate(iso: string) {
   <section class="py-12">
     <div class="max-w-4xl mx-auto px-4">
 
-      <!-- Tab navigation -->
-      <nav class="flex gap-1 mb-8 border-b border-[--color-border]" aria-label="전략 내비게이션">
-        <a href="/ko/strategies" class="px-4 py-2.5 font-mono text-sm text-[--color-text-muted] border-b-2 border-transparent -mb-px hover:text-[--color-text] hover:border-[--color-border] transition-colors">
-          {t('nav.strategies')}
-        </a>
-        <a href="/ko/strategies/ranking" class="px-4 py-2.5 font-mono text-sm text-[--color-text-muted] border-b-2 border-transparent -mb-px hover:text-[--color-text] hover:border-[--color-border] transition-colors">
-          <span class="sm:hidden">데일리</span><span class="hidden sm:inline">{t('ranking.tag')}</span>
-        </a>
-        <a href="/ko/leaderboard" aria-current="page" class="px-4 py-2.5 font-mono text-sm font-semibold text-[--color-accent] border-b-2 border-[--color-accent] -mb-px bg-[--color-accent-bg] transition-colors">
-          <span class="sm:hidden">주간</span><span class="hidden sm:inline">{t('leaderboard.tag')}</span>
-        </a>
-      </nav>
+      <StrategyTabs active="leaderboard" lang="ko" />
 
       <!-- Header -->
       <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('leaderboard.tag')}</p>

@@ -9,6 +9,7 @@ const allStrategies = await getCollection('strategies');
 
 // Load all simulator presets for the "Try in Simulator" section (from static JSON)
 import presetsJson from '../../../public/data/builder-presets.json';
+import StrategyTabs from '../../components/ui/StrategyTabs.astro';
 const simulatorPresets: Array<{id: string; name_ko?: string; name?: string; direction?: string; timeframe?: string; description_ko?: string}> = presetsJson as Array<{id: string; name_ko?: string; name?: string; direction?: string; timeframe?: string; description_ko?: string}>;
 
 const statusOrder = { verified: 0, testing: 1, killed: 2, shelved: 3 };
@@ -81,18 +82,7 @@ const difficultyColors: Record<string, string> = {
   <section class="py-12">
     <div class="max-w-5xl mx-auto px-4">
 
-      <!-- QW4: Tab navigation -->
-      <nav class="flex gap-1 mb-8 border-b border-[--color-border]" aria-label="Strategy navigation">
-        <a href="/strategies" aria-current="page" class="px-4 py-2.5 font-mono text-sm font-semibold text-[--color-accent] border-b-2 border-[--color-accent] -mb-px bg-[--color-accent-bg] transition-colors">
-          {t('nav.strategies')}
-        </a>
-        <a href="/strategies/ranking" class="px-4 py-2.5 font-mono text-sm text-[--color-text-muted] border-b-2 border-transparent -mb-px hover:text-[--color-text] hover:border-[--color-border] transition-colors">
-          {t('ranking.tag')}
-        </a>
-        <a href="/leaderboard" class="px-4 py-2.5 font-mono text-sm text-[--color-text-muted] border-b-2 border-transparent -mb-px hover:text-[--color-text] hover:border-[--color-border] transition-colors">
-          {t('leaderboard.tag')}
-        </a>
-      </nav>
+      <StrategyTabs active="strategies" lang="en" />
 
       <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('strategies.tag')}</p>
       <h1 class="text-3xl md:text-5xl font-bold mb-4">{t('strategies.title')}</h1>

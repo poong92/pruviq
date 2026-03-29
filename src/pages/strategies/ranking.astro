@@ -4,6 +4,7 @@ import { StrategyRanking } from '../../components/StrategyRanking';
 import ErrorBoundary from '../../components/ErrorBoundary';
 import ErrorFallback from '../../components/ui/ErrorFallback.astro';
 import { useTranslations } from '../../i18n/index';
+import StrategyTabs from '../../components/ui/StrategyTabs.astro';
 
 const t = useTranslations('en');
 const today = new Date().toLocaleDateString('en-US', {
@@ -71,18 +72,7 @@ if (!ssrRanking) {
   <section class="py-12">
     <div class="max-w-5xl mx-auto px-4">
 
-      <!-- QW4: Tab navigation -->
-      <nav class="flex gap-1 mb-8 border-b border-[--color-border]" aria-label="Strategy navigation">
-        <a href="/strategies" class="px-4 py-2.5 font-mono text-sm text-[--color-text-muted] border-b-2 border-transparent -mb-px hover:text-[--color-text] hover:border-[--color-border] transition-colors">
-          {t('nav.strategies')}
-        </a>
-        <a href="/strategies/ranking" aria-current="page" class="px-4 py-2.5 font-mono text-sm font-semibold text-[--color-accent] border-b-2 border-[--color-accent] -mb-px bg-[--color-accent-bg] transition-colors">
-          <span class="sm:hidden">Daily</span><span class="hidden sm:inline">{t('ranking.tag')}</span>
-        </a>
-        <a href="/leaderboard" class="px-4 py-2.5 font-mono text-sm text-[--color-text-muted] border-b-2 border-transparent -mb-px hover:text-[--color-text] hover:border-[--color-border] transition-colors">
-          <span class="sm:hidden">Weekly</span><span class="hidden sm:inline">{t('leaderboard.tag')}</span>
-        </a>
-      </nav>
+      <StrategyTabs active="ranking" lang="en" />
 
       <!-- Page header -->
       <h1 class="text-3xl md:text-5xl font-bold mb-3">
