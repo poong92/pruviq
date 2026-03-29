@@ -1,11 +1,10 @@
-// Client-side layout behaviors
-// Supports Astro View Transitions — re-initializes on every page-load event.
-
-// Global listeners (registered once, never duplicated)
-function initGlobalListeners() {
+// Client-side layout behaviors (moved out of inline HTML to avoid render-blocking)
+(function () {
   // Page loader on navigation
+  const loader = document.getElementById("page-loader");
+  loader?.classList.remove("loading");
+
   document.addEventListener("click", (e) => {
-    const loader = document.getElementById("page-loader");
     const el = e.target;
     const link = el && (el.closest ? el.closest("a[href]") : null);
     if (!link) return;
@@ -25,89 +24,74 @@ function initGlobalListeners() {
   });
 
   // Nav scroll shadow
+  const nav = document.querySelector("nav");
   window.addEventListener(
     "scroll",
     () => {
-      const nav = document.querySelector("nav");
       nav?.classList.toggle("scrolled", window.scrollY > 10);
     },
     { passive: true },
   );
 
-  // Escape to close mobile menu
+  const menuBtn = document.getElementById("mobile-menu-btn");
+  const mobileMenu = document.getElementById("mobile-menu");
+
+  function closeMenu() {
+    mobileMenu?.classList.add("hidden");
+    mobileMenu?.setAttribute("aria-hidden", "true");
+    menuBtn?.setAttribute("aria-expanded", "false");
+  }
+
+  menuBtn?.addEventListener("click", () => {
+    const isHidden = mobileMenu?.classList.toggle("hidden");
+    menuBtn.setAttribute("aria-expanded", String(!isHidden));
+    mobileMenu?.setAttribute("aria-hidden", String(!!isHidden));
+    if (!isHidden) {
+      mobileMenu?.scrollIntoView({ block: "nearest" });
+    }
+  });
+
+  // Escape key closes menu
   document.addEventListener("keydown", (e) => {
-    const mobileMenu = document.getElementById("mobile-menu");
-    const menuBtn = document.getElementById("mobile-menu-btn");
     if (
       e.key === "Escape" &&
       mobileMenu &&
       !mobileMenu.classList.contains("hidden")
     ) {
-      mobileMenu.classList.add("hidden");
-      mobileMenu.setAttribute("aria-hidden", "true");
-      menuBtn?.setAttribute("aria-expanded", "false");
+      closeMenu();
       menuBtn?.focus();
     }
   });
-}
 
-// Element-specific listeners (re-registered on every page-load)
-function initPageElements() {
-  const loader = document.getElementById("page-loader");
-  loader?.classList.remove("loading");
-
-  const menuBtn = document.getElementById("mobile-menu-btn");
-  const mobileMenu = document.getElementById("mobile-menu");
-
-  if (menuBtn && mobileMenu) {
-    function closeMenu() {
-      mobileMenu.classList.add("hidden");
-      mobileMenu.setAttribute("aria-hidden", "true");
-      menuBtn.setAttribute("aria-expanded", "false");
+  // Focus trap when menu is open
+  mobileMenu?.addEventListener("keydown", (e) => {
+    if (e.key !== "Tab") return;
+    const focusable = mobileMenu.querySelectorAll("a, button");
+    if (focusable.length === 0) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
     }
+  });
 
-    menuBtn.addEventListener("click", () => {
-      const isHidden = mobileMenu.classList.toggle("hidden");
-      menuBtn.setAttribute("aria-expanded", String(!isHidden));
-      mobileMenu.setAttribute("aria-hidden", String(!!isHidden));
-      if (!isHidden) {
-        mobileMenu.scrollIntoView({ block: "nearest" });
-      }
+  // Close menu when clicking a link inside it
+  mobileMenu?.querySelectorAll("a").forEach((link) => {
+    link.addEventListener("click", () => {
+      closeMenu();
     });
+  });
 
-    mobileMenu.addEventListener("keydown", (e) => {
-      if (e.key !== "Tab") return;
-      const focusable = mobileMenu.querySelectorAll("a, button");
-      if (focusable.length === 0) return;
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-      if (e.shiftKey && document.activeElement === first) {
-        e.preventDefault();
-        last.focus();
-      } else if (!e.shiftKey && document.activeElement === last) {
-        e.preventDefault();
-        first.focus();
-      }
-    });
-
-    mobileMenu.querySelectorAll("a").forEach((link) => {
-      link.addEventListener("click", () => {
-        closeMenu();
-      });
-    });
-  }
-}
-
-function initInteractions() {
+  // Card glow — mouse-tracking radial highlight
   const prefersReduced = window.matchMedia(
     "(prefers-reduced-motion: reduce)",
   ).matches;
-
-  // Card glow — mouse-tracking radial highlight
   if (!prefersReduced) {
     document.querySelectorAll(".card-glow").forEach((card) => {
-      if (card.dataset.glowInit) return;
-      card.dataset.glowInit = "1";
       card.addEventListener("mousemove", (e) => {
         const rect = card.getBoundingClientRect();
         card.style.setProperty("--glow-x", `${e.clientX - rect.left}px`);
@@ -134,17 +118,13 @@ function initInteractions() {
     },
     { threshold: 0.1, rootMargin: "0px 0px -50px 0px" },
   );
-  document.querySelectorAll(".reveal, .reveal-child").forEach((el) => {
-    if (!el.classList.contains("visible")) {
-      revealObserver.observe(el);
-    }
-  });
+  document
+    .querySelectorAll(".reveal, .reveal-child")
+    .forEach((el) => revealObserver.observe(el));
 
-  // Card 3D tilt on hover (desktop only)
+  // Card 3D tilt on hover (desktop only, pointer: fine)
   if (!prefersReduced && window.matchMedia("(pointer: fine)").matches) {
     document.querySelectorAll(".card-tilt").forEach((card) => {
-      if (card.dataset.tiltInit) return;
-      card.dataset.tiltInit = "1";
       card.addEventListener("mousemove", (e) => {
         const rect = card.getBoundingClientRect();
         const x = (e.clientX - rect.left) / rect.width - 0.5;
@@ -156,15 +136,4 @@ function initInteractions() {
       });
     });
   }
-}
-
-// First load — global listeners once
-initGlobalListeners();
-initPageElements();
-initInteractions();
-
-// Re-init on Astro View Transition page swap
-document.addEventListener("astro:page-load", () => {
-  initPageElements();
-  initInteractions();
-});
+})();
