@@ -19,10 +19,10 @@ SCRIPT_PATH="$(cd "$(dirname "$0")" && pwd)/$(basename "$0")"
 # Telegram alerting (safe: check file exists before source to avoid set -e exit)
 TELEGRAM_TOKEN=""
 TELEGRAM_CHAT_ID=""
-if [[ -f "$HOME/.config/telegram.env" ]]; then
+if [[ -f "$HOME/.secrets.env" ]]; then
+    source "$HOME/.secrets.env"
+elif [[ -f "$HOME/.config/telegram.env" ]]; then
     source "$HOME/.config/telegram.env"
-elif [[ -f "/Users/${RUNNING_USER}/.config/telegram.env" ]]; then
-    source "/Users/${RUNNING_USER}/.config/telegram.env"
 fi
 TG_TOKEN="${TELEGRAM_TOKEN:-}"
 TG_CHAT="${TELEGRAM_CHAT_ID:-}"
@@ -68,7 +68,7 @@ acquire_lock
 
 cd "$REPO_DIR"
 
-# --- Cron self-healing (run EARLY so it works even if later steps fail) ---
+# --- Cron self-healing (re-register if accidentally removed) ---
 CRON_ENTRY="*/20 * * * * bash $SCRIPT_PATH >> /tmp/pruviq-refresh.log 2>&1"
 if ! crontab -l 2>/dev/null | grep -qF "refresh_static.sh"; then
     log "Cron entry missing — auto-installing..."
