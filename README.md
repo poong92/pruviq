@@ -32,7 +32,7 @@ Test strategies on real historical data with realistic market conditions.
 |----------|-----------|--------|----------|---------------|
 | BB Squeeze SHORT | Short | **Verified** (live trading) | 70.4% | 2.55 |
 | BB Squeeze LONG | Long | Killed | 51.0% | 0.98 |
-| Momentum LONG | Long | Killed (-$14,115) | 37.5% | 0.71 |
+| Momentum LONG | Long | Killed | 37.5% | 0.71 |
 | ATR Breakout | Long | Shelved | - | - |
 | HV Squeeze | Short | Shelved | - | - |
 
