@@ -129,22 +129,38 @@ export default function SignalsDashboard({ lang = "en" }: Props) {
 
   if (loading) {
     return (
-      <div>
-        <div class="flex items-center gap-3 mb-6">
-          <span class="relative flex h-3 w-3">
-            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[--color-accent] opacity-75"></span>
-            <span class="relative inline-flex rounded-full h-3 w-3 bg-[--color-accent]"></span>
-          </span>
-          <p class="text-sm text-[--color-text-muted] font-mono">
-            {lang === "ko" ? "시그널 스캔 중..." : "Scanning signals..."}
-          </p>
+      <div class="py-8">
+        <div class="flex flex-col items-center gap-4 mb-8">
+          <div class="relative">
+            <div class="w-12 h-12 rounded-full border-2 border-[--color-border]"></div>
+            <div class="absolute inset-0 w-12 h-12 rounded-full border-2 border-transparent border-t-[--color-accent] animate-spin"></div>
+          </div>
+          <div class="text-center">
+            <p class="text-base font-semibold mb-1">
+              {lang === "ko" ? "시그널 스캔 중" : "Scanning Signals"}
+            </p>
+            <p class="text-sm text-[--color-text-muted]">
+              {lang === "ko"
+                ? "535개 코인에서 전략 조건을 분석하고 있습니다..."
+                : "Analyzing strategy conditions across 535 coins..."}
+            </p>
+          </div>
         </div>
         <div class="space-y-3 animate-pulse">
           {[1, 2, 3, 4, 5].map((i) => (
             <div
               key={i}
-              class="h-16 rounded-lg bg-[--color-bg-card] border border-[--color-border]"
-            />
+              class="flex items-center justify-between p-4 rounded-lg bg-[--color-bg-card] border border-[--color-border]"
+            >
+              <div class="flex items-center gap-4">
+                <div class="w-12 h-6 rounded bg-[--color-bg-elevated]"></div>
+                <div>
+                  <div class="w-24 h-4 rounded bg-[--color-bg-elevated] mb-1"></div>
+                  <div class="w-40 h-3 rounded bg-[--color-bg-elevated]"></div>
+                </div>
+              </div>
+              <div class="w-16 h-4 rounded bg-[--color-bg-elevated]"></div>
+            </div>
           ))}
         </div>
       </div>
@@ -153,9 +169,32 @@ export default function SignalsDashboard({ lang = "en" }: Props) {
 
   if (error) {
     return (
-      <div class="text-center py-16 text-[--color-text-muted]">
-        <p class="text-lg mb-2">{t.warming_up}</p>
-        <p class="text-sm">{t.check_back}</p>
+      <div class="text-center py-16">
+        <div class="w-12 h-12 mx-auto mb-4 rounded-full bg-[--color-bg-card] border border-[--color-border] flex items-center justify-center">
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="var(--color-text-muted)"
+            stroke-width="2"
+          >
+            <circle cx="12" cy="12" r="10" />
+            <path d="M12 8v4M12 16h.01" />
+          </svg>
+        </div>
+        <p class="text-lg font-semibold mb-2">{t.warming_up}</p>
+        <p class="text-sm text-[--color-text-muted] mb-4">{t.check_back}</p>
+        <button
+          onClick={() => {
+            setLoading(true);
+            setError(null);
+            fetchSignals();
+          }}
+          class="text-sm font-mono text-[--color-accent] hover:underline cursor-pointer"
+        >
+          {lang === "ko" ? "다시 시도 →" : "Try again →"}
+        </button>
       </div>
     );
   }
