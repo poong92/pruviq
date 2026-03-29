@@ -48,7 +48,19 @@ const marketDataJson = JSON.stringify(marketDataRaw);
         </noscript>
       </div>
     </div>
-    <div class="mt-10 pt-8 border-t border-[--color-border] text-center max-w-5xl mx-auto px-4">
+    <div class="max-w-5xl mx-auto px-4 mt-10">
+      <div class="border border-[--color-accent]/20 rounded-lg p-5 bg-[--color-accent]/5">
+        <p class="font-mono text-[--color-accent] text-xs mb-2">WHAT TO DO</p>
+        <p class="text-sm text-[--color-text-secondary] mb-3">
+          See something interesting? Test how a strategy would perform in this market.
+        </p>
+        <div class="flex flex-wrap gap-3">
+          <a href="/simulate" class="btn btn-primary btn-sm no-underline">Test a Strategy &rarr;</a>
+          <a href="/strategies/ranking" class="btn btn-ghost btn-sm no-underline">Today's Rankings &rarr;</a>
+        </div>
+      </div>
+    </div>
+    <div class="mt-6 pt-8 border-t border-[--color-border] text-center max-w-5xl mx-auto px-4">
       <div class="flex flex-wrap gap-3 justify-center">
         <a href="/simulate" class="btn btn-primary btn-md no-underline">
           {t('cross.simulate_cta')} &rarr;
