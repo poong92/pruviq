@@ -31,7 +31,8 @@ const i18n = {
     signals_update: "Signals update every hour at candle close.",
     updated: "Updated {time} · Refreshes every 5 min",
     loading: "loading...",
-    disclaimer: "Signals are based on completed 1H candles. Not financial advice.",
+    disclaimer:
+      "Signals are based on completed 1H candles. Not financial advice.",
     verify: "Verify →",
     just_now: "just now",
     hours_ago: "{n}h ago",
@@ -76,7 +77,9 @@ export default function SignalsDashboard({ lang = "en" }: Props) {
       setLastUpdate(new Date().toLocaleTimeString());
       setError(null);
     } catch (e) {
-      setError(lang === "ko" ? "시그널 데이터 사용 불가" : "Signal data unavailable");
+      setError(
+        lang === "ko" ? "시그널 데이터 사용 불가" : "Signal data unavailable",
+      );
     } finally {
       setLoading(false);
     }
@@ -121,20 +124,29 @@ export default function SignalsDashboard({ lang = "en" }: Props) {
   }
 
   function buildSimUrl(s: Signal): string {
-    const strategy = s.strategy;
-    const coin = s.coin.replace("USDT", "/USDT:USDT");
-    return `${prefix}/simulate?strategy=${strategy}&coin=${coin}&direction=${s.direction}`;
+    return `${prefix}/simulate?strategy=${s.strategy}&symbol=${s.coin}&dir=${s.direction}&sl=${s.sl_pct}&tp=${s.tp_pct}`;
   }
 
   if (loading) {
     return (
-      <div class="space-y-4 animate-pulse">
-        {[1, 2, 3, 4, 5].map((i) => (
-          <div
-            key={i}
-            class="h-20 rounded-lg bg-[--color-bg-card] border border-[--color-border]"
-          />
-        ))}
+      <div>
+        <div class="flex items-center gap-3 mb-6">
+          <span class="relative flex h-3 w-3">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[--color-accent] opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-3 w-3 bg-[--color-accent]"></span>
+          </span>
+          <p class="text-sm text-[--color-text-muted] font-mono">
+            {lang === "ko" ? "시그널 스캔 중..." : "Scanning signals..."}
+          </p>
+        </div>
+        <div class="space-y-3 animate-pulse">
+          {[1, 2, 3, 4, 5].map((i) => (
+            <div
+              key={i}
+              class="h-16 rounded-lg bg-[--color-bg-card] border border-[--color-border]"
+            />
+          ))}
+        </div>
       </div>
     );
   }
@@ -264,7 +276,9 @@ export default function SignalsDashboard({ lang = "en" }: Props) {
 
       {filtered.length === 0 && (
         <div class="text-center py-12 text-[--color-text-muted]">
-          <p>{t.no_signals.replace("{filter}", filter !== "all" ? filter : "")}</p>
+          <p>
+            {t.no_signals.replace("{filter}", filter !== "all" ? filter : "")}
+          </p>
           <p class="text-sm mt-1">{t.signals_update}</p>
         </div>
       )}
