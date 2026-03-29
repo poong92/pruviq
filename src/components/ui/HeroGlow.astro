@@ -5,8 +5,20 @@ interface Props {
 }
 const { color = 'var(--color-accent)', opacity = '0.08' } = Astro.props;
 ---
-<div
-  class="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] rounded-full blur-[150px]"
-  style={`background: ${color}; opacity: ${opacity};`}
-  aria-hidden="true"
-></div>
+<div class="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+  <!-- Primary blue blob -->
+  <div
+    class="aurora-blob absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] rounded-full blur-[180px]"
+    style={`background: ${color}; opacity: ${opacity}; animation: aurora-1 15s ease-in-out infinite;`}
+  ></div>
+  <!-- Purple blob -->
+  <div
+    class="aurora-blob absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[500px] rounded-full blur-[150px]"
+    style="background: #A855F7; opacity: 0.06; animation: aurora-2 20s ease-in-out infinite;"
+  ></div>
+  <!-- Cyan blob -->
+  <div
+    class="aurora-blob absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[400px] rounded-full blur-[120px]"
+    style="background: #06B6D4; opacity: 0.05; animation: aurora-3 18s ease-in-out infinite;"
+  ></div>
+</div>

@@ -1,8 +1,9 @@
 // Client-side layout behaviors (moved out of inline HTML to avoid render-blocking)
-(function () {
+// Supports Astro View Transitions — re-initializes on every page-load event.
+
+function initLayout() {
   // Page loader on navigation
   const loader = document.getElementById("page-loader");
-  // Reset loader on page load (previous navigation may have left it in loading state)
   loader?.classList.remove("loading");
 
   document.addEventListener("click", (e) => {
@@ -47,13 +48,11 @@
     const isHidden = mobileMenu?.classList.toggle("hidden");
     menuBtn.setAttribute("aria-expanded", String(!isHidden));
     mobileMenu?.setAttribute("aria-hidden", String(!!isHidden));
-    // Scroll menu into view without stealing focus (avoids outline on first link)
     if (!isHidden) {
       mobileMenu?.scrollIntoView({ block: "nearest" });
     }
   });
 
-  // Escape key closes menu
   document.addEventListener("keydown", (e) => {
     if (
       e.key === "Escape" &&
@@ -65,7 +64,6 @@
     }
   });
 
-  // Focus trap when menu is open
   mobileMenu?.addEventListener("keydown", (e) => {
     if (e.key !== "Tab") return;
     const focusable = mobileMenu.querySelectorAll("a, button");
@@ -81,25 +79,78 @@
     }
   });
 
-  // Close menu when clicking a link inside it
   mobileMenu?.querySelectorAll("a").forEach((link) => {
     link.addEventListener("click", () => {
       closeMenu();
     });
   });
-  // Scroll-triggered reveal
+}
+
+function initInteractions() {
+  const prefersReduced = window.matchMedia(
+    "(prefers-reduced-motion: reduce)",
+  ).matches;
+
+  // Card glow — mouse-tracking radial highlight
+  if (!prefersReduced) {
+    document.querySelectorAll(".card-glow").forEach((card) => {
+      if (card.dataset.glowInit) return;
+      card.dataset.glowInit = "1";
+      card.addEventListener("mousemove", (e) => {
+        const rect = card.getBoundingClientRect();
+        card.style.setProperty("--glow-x", `${e.clientX - rect.left}px`);
+        card.style.setProperty("--glow-y", `${e.clientY - rect.top}px`);
+      });
+    });
+  }
+
+  // Scroll-triggered reveal with auto-stagger
   const revealObserver = new IntersectionObserver(
     (entries) => {
       entries.forEach((e) => {
         if (e.isIntersecting) {
           e.target.classList.add("visible");
+          if (e.target.classList.contains("reveal-child")) {
+            const children = e.target.querySelectorAll(":scope > *");
+            children.forEach((child, i) => {
+              child.style.transitionDelay = `${i * 80}ms`;
+            });
+          }
           revealObserver.unobserve(e.target);
         }
       });
     },
     { threshold: 0.1, rootMargin: "0px 0px -50px 0px" },
   );
-  document
-    .querySelectorAll(".reveal, .reveal-child")
-    .forEach((el) => revealObserver.observe(el));
-})();
+  document.querySelectorAll(".reveal, .reveal-child").forEach((el) => {
+    if (!el.classList.contains("visible")) {
+      revealObserver.observe(el);
+    }
+  });
+
+  // Card 3D tilt on hover (desktop only)
+  if (!prefersReduced && window.matchMedia("(pointer: fine)").matches) {
+    document.querySelectorAll(".card-tilt").forEach((card) => {
+      if (card.dataset.tiltInit) return;
+      card.dataset.tiltInit = "1";
+      card.addEventListener("mousemove", (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width - 0.5;
+        const y = (e.clientY - rect.top) / rect.height - 0.5;
+        card.style.transform = `perspective(800px) rotateY(${x * 4}deg) rotateX(${-y * 4}deg) translateY(-2px)`;
+      });
+      card.addEventListener("mouseleave", () => {
+        card.style.transform = "";
+      });
+    });
+  }
+}
+
+// Initial load
+initLayout();
+initInteractions();
+
+// Re-init on Astro View Transition page swap
+document.addEventListener("astro:page-load", () => {
+  initInteractions();
+});
