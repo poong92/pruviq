@@ -13,6 +13,7 @@ interface Props {
   category?: string;
   keywords?: string;
   ogImage?: string;
+  ogImageAlt?: string;
   canonicalOverride?: string;
   noAlternate?: boolean;
 }
@@ -26,7 +27,8 @@ const cfToken = import.meta.env.PUBLIC_CF_ANALYTICS_TOKEN;
 const buildTime = new Date().toISOString();
 const currentYear = new Date().getFullYear();
 
-const { title, description = t('meta.home_desc'), type = 'website', date, updatedDate, category, keywords: customKeywords, canonicalOverride, noAlternate = false } = Astro.props;
+const { title, description = t('meta.home_desc'), type = 'website', date, updatedDate, category, keywords: customKeywords, canonicalOverride, noAlternate = false, ogImageAlt: rawOgImageAlt } = Astro.props;
+const ogImageAlt = rawOgImageAlt || 'PRUVIQ — free crypto strategy backtesting platform';
 const lastModified = updatedDate || date || buildTime;
 const ogImage = new URL(Astro.props.ogImage || '/og-image.jpg', Astro.site || 'https://pruviq.com').href;
 // derive AVIF/WebP variants safely for jpg/png sources
@@ -172,7 +174,7 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
     <meta property="og:site_name" content="PRUVIQ" />
     <meta property="og:locale" content={lang === 'ko' ? 'ko_KR' : 'en_US'} />
     <meta property="og:image" content={ogImage} />
-    <meta property="og:image:alt" content={description} />
+    <meta property="og:image:alt" content={ogImageAlt} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <!-- Twitter -->
@@ -180,7 +182,7 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
-    <meta name="twitter:image:alt" content={description} />
+    <meta name="twitter:image:alt" content={ogImageAlt} />
     <meta name="twitter:site" content="@pruviq" />
     <title>{title}</title>
     <!-- JSON-LD Organization -->
