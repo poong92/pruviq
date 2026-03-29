@@ -3,7 +3,6 @@ import Layout from '../../../layouts/Layout.astro';
 import { useTranslations } from '../../../i18n/index';
 import SignalsDashboard from '../../../components/SignalsDashboard';
 import ErrorBoundary from '../../../components/ErrorBoundary';
-
 const t = useTranslations('ko');
 ---
 
@@ -11,20 +10,6 @@ const t = useTranslations('ko');
   <section class="py-8 md:py-12">
     <div class="max-w-4xl mx-auto px-4">
 
-      <nav class="flex gap-1 mb-8 border-b border-[--color-border]" aria-label="전략 네비게이션">
-        <a href="/ko/strategies" class="px-4 py-2.5 font-mono text-sm text-[--color-text-muted] border-b-2 border-transparent -mb-px hover:text-[--color-text] hover:border-[--color-border] transition-colors">
-          {t('nav.strategies')}
-        </a>
-        <a href="/ko/strategies/ranking" class="px-4 py-2.5 font-mono text-sm text-[--color-text-muted] border-b-2 border-transparent -mb-px hover:text-[--color-text] hover:border-[--color-border] transition-colors">
-          {t('nav.daily_ranking')}
-        </a>
-        <a href="/ko/leaderboard" class="px-4 py-2.5 font-mono text-sm text-[--color-text-muted] border-b-2 border-transparent -mb-px hover:text-[--color-text] hover:border-[--color-border] transition-colors">
-          {t('nav.weekly')}
-        </a>
-        <span class="px-4 py-2.5 font-mono text-sm text-[--color-accent] border-b-2 border-[--color-accent] -mb-px font-bold">
-          {t('nav.signals')}
-        </span>
-      </nav>
 
       <div class="mb-8">
         <div class="flex items-center gap-3 mb-2">

@@ -1,0 +1,38 @@
+---
+/**
+ * StrategyTabs — 전략 관련 페이지 공통 탭 내비게이션
+ * 사용처: /strategies, /strategies/ranking, /leaderboard, /signals (EN+KO)
+ *
+ * 탭 4개 고정: Strategies | Daily Ranking | Weekly | Signals
+ * active는 현재 페이지 경로로 자동 감지
+ */
+interface Props {
+  lang?: 'en' | 'ko';
+  active: 'strategies' | 'ranking' | 'leaderboard';
+}
+
+const { lang = 'en', active } = Astro.props;
+const prefix = lang === 'ko' ? '/ko' : '';
+
+const tabs = [
+  { id: 'strategies', href: `${prefix}/strategies`, label: lang === 'ko' ? '전략 라이브러리' : 'Strategies' },
+  { id: 'ranking', href: `${prefix}/strategies/ranking`, label: lang === 'ko' ? '일일 랭킹' : 'Daily Ranking' },
+  { id: 'leaderboard', href: `${prefix}/leaderboard`, label: lang === 'ko' ? '주간 순위' : 'Weekly' },
+];
+---
+
+<nav class="flex gap-1 mb-8 border-b border-[--color-border]" aria-label={lang === 'ko' ? '전략 내비게이션' : 'Strategy navigation'}>
+  {tabs.map(tab => (
+    tab.id === active ? (
+      <a href={tab.href} aria-current="page"
+         class="px-4 py-2.5 font-mono text-sm font-semibold text-[--color-accent] border-b-2 border-[--color-accent] -mb-px bg-[--color-accent-bg] transition-colors">
+        {tab.label}
+      </a>
+    ) : (
+      <a href={tab.href}
+         class="px-4 py-2.5 font-mono text-sm text-[--color-text-muted] border-b-2 border-transparent -mb-px hover:text-[--color-text] hover:border-[--color-border] transition-colors">
+        {tab.label}
+      </a>
+    )
+  ))}
+</nav>

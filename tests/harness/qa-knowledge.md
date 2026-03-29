@@ -106,7 +106,7 @@ PRUVIQ는 크립토 트레이딩 전략 백테스팅 플랫폼이다.
 - H1: "오늘의 전략 랭킹" (한국어)
 - SSR fallback div `#ranking-ssr-fallback` 존재 + 데이터 있음
 - 한국어 레이블 (Win Rate → "승률" 등)
-- 탭명: "전략", "DAILY RANKING", "주간 순위" (혼재 허용 — 현재 상태)
+- 탭명: StrategyTabs 컴포넌트 (전략 라이브러리 / 일일 랭킹 / 주간 순위) — 단일 소스, 전 페이지 동일
 - 전략명은 영어 유지 (MACD Cross 등) — 의도된 설계
 
 **비정상:**

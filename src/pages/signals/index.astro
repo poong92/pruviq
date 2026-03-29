@@ -3,7 +3,6 @@ import Layout from '../../layouts/Layout.astro';
 import { useTranslations } from '../../i18n/index';
 import SignalsDashboard from '../../components/SignalsDashboard';
 import ErrorBoundary from '../../components/ErrorBoundary';
-
 const t = useTranslations('en');
 ---
 
@@ -11,21 +10,6 @@ const t = useTranslations('en');
   <section class="py-8 md:py-12">
     <div class="max-w-4xl mx-auto px-4">
 
-      <!-- Tab navigation (consistent with /strategies) -->
-      <nav class="flex gap-1 mb-8 border-b border-[--color-border]" aria-label="Strategy navigation">
-        <a href="/strategies" class="px-4 py-2.5 font-mono text-sm text-[--color-text-muted] border-b-2 border-transparent -mb-px hover:text-[--color-text] hover:border-[--color-border] transition-colors">
-          {t('nav.strategies')}
-        </a>
-        <a href="/strategies/ranking" class="px-4 py-2.5 font-mono text-sm text-[--color-text-muted] border-b-2 border-transparent -mb-px hover:text-[--color-text] hover:border-[--color-border] transition-colors">
-          {t('nav.daily_ranking')}
-        </a>
-        <a href="/leaderboard" class="px-4 py-2.5 font-mono text-sm text-[--color-text-muted] border-b-2 border-transparent -mb-px hover:text-[--color-text] hover:border-[--color-border] transition-colors">
-          {t('nav.weekly')}
-        </a>
-        <span class="px-4 py-2.5 font-mono text-sm text-[--color-accent] border-b-2 border-[--color-accent] -mb-px font-bold">
-          {t('nav.signals')}
-        </span>
-      </nav>
 
       <!-- Header -->
       <div class="mb-8">
