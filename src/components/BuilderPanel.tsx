@@ -252,7 +252,7 @@ export default function BuilderPanel(props: Props) {
               {t.addCondition}
             </button>
           </div>
-          <div class="space-y-1">
+          <div class="space-y-2 sm:space-y-1">
             {props.conditions.map((c) => (
               <ConditionRow
                 key={c.id}
@@ -282,7 +282,7 @@ export default function BuilderPanel(props: Props) {
           <div class="text-xs font-mono text-[--color-text-muted] uppercase mb-1">
             {t.parameters}
           </div>
-          <div class="grid grid-cols-3 gap-x-2 gap-y-1.5">
+          <div class="grid grid-cols-3 gap-x-2 gap-y-3 sm:gap-y-1.5">
             {/* Timeframe - spans full width */}
             <div class="col-span-3 mb-1">
               <label class="text-[10px] text-[--color-text-muted]">

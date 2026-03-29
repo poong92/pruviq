@@ -98,13 +98,13 @@ function getReadingTime(body: string | undefined): string {
               <a href={`/blog/${post.id}`}
                  class="block border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] card-hover group"
                  style={`box-shadow: var(--shadow-card); border-left: 3px solid ${categoryBorderColors[post.data.category] || 'var(--color-text-muted)'};`}>
-                <div class="flex items-center gap-3 mb-3">
-                  <span class={`font-mono text-xs tracking-wider`}
-                        style={`color: var(${categoryColors[post.data.category] || '--color-text-muted'})`}>
+                <div class="flex items-center gap-2 mb-3">
+                  <span class="text-xs font-mono px-2 py-0.5 rounded"
+                        style={`color: var(${categoryColors[post.data.category] || '--color-text-muted'}); background: color-mix(in srgb, var(${categoryColors[post.data.category] || '--color-text-muted'}) 10%, transparent)`}>
                     {categoryLabels[post.data.category] || post.data.category.toUpperCase()}
                   </span>
-                  <span class="text-[--color-text-muted] text-xs font-mono">{post.data.date}</span>
-                  <span class="text-[--color-text-muted] text-xs font-mono ml-auto">{getReadingTime(post.body)}</span>
+                  <span class="text-[--color-text-disabled] text-xs font-mono">{post.data.date}</span>
+                  <span class="text-[--color-text-disabled] text-xs font-mono ml-auto">{getReadingTime(post.body)}</span>
                 </div>
                 <h2 class="text-xl font-bold mb-2 group-hover:text-[--color-accent] transition-colors">
                   {post.data.title}

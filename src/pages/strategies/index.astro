@@ -176,16 +176,19 @@ const difficultyColors: Record<string, string> = {
       </div>
 
       <div class="space-y-8" id="strategy-list">
-        {statusGroupOrder.map((statusKey) => (
-          <div data-status-group={statusKey}>
-            {/* Section divider */}
+        {statusGroupOrder.map((statusKey) => {
+          const isCollapsible = statusKey === 'killed' || statusKey === 'shelved';
+          const header = (
             <div class="flex items-center gap-3 mb-4">
               <span class={`font-mono text-xs font-bold tracking-widest ${statusKey === 'verified' ? 'text-[--color-verified]' : statusKey === 'testing' ? 'text-[--color-yellow]' : 'text-[--color-text-muted]'}`}>
                 {statusGroupLabels[statusKey]}
               </span>
               <div class="flex-1 border-t border-[--color-border]"></div>
               <span class="font-mono text-xs text-[--color-text-disabled]">{strategyGroups[statusKey].length}</span>
+              {isCollapsible && <span class="text-xs text-[--color-text-muted] transition-transform">▾</span>}
             </div>
+          );
+          const cards = (
             <div class="space-y-4">
         {strategyGroups[statusKey].map((strategy) => (
           <div class="block border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] card-hover group"
@@ -271,9 +274,26 @@ const difficultyColors: Record<string, string> = {
           </div>
         ))}
             </div>
-          </div>
-        ))}
+          );
+          return isCollapsible ? (
+            <details data-status-group={statusKey} class="group/collapse">
+              <summary class="cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+                {header}
+              </summary>
+              {cards}
+            </details>
+          ) : (
+            <div data-status-group={statusKey}>
+              {header}
+              {cards}
+            </div>
+          );
+        })}
       </div>
+
+      <p class="text-xs text-[--color-text-muted] mt-8 mb-2">
+        Why show failed strategies? <a href="/about" class="text-[--color-accent] hover:underline">Radical transparency</a> — we publish everything, wins and losses.
+      </p>
 
       {simulatorPresets.length > 0 && (
         <div class="mt-12">
@@ -341,11 +361,14 @@ const difficultyColors: Record<string, string> = {
         card.style.display = statusMatch && directionMatch ? '' : 'none';
       });
 
-      // Hide empty group sections
+      // Hide empty group sections + auto-open collapsed details when filtering
       document.querySelectorAll<HTMLElement>('[data-status-group]').forEach((group) => {
         const visibleCards = group.querySelectorAll<HTMLElement>('[data-status]');
         const anyVisible = Array.from(visibleCards).some(c => c.style.display !== 'none');
         group.style.display = anyVisible ? '' : 'none';
+        if (group.tagName === 'DETAILS' && anyVisible && activeStatus.status !== 'all') {
+          (group as HTMLDetailsElement).open = true;
+        }
       });
     }
 

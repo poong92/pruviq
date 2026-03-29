@@ -48,7 +48,19 @@ const marketDataJson = JSON.stringify(marketDataRaw);
         </noscript>
       </div>
     </div>
-    <div class="mt-10 pt-8 border-t border-[--color-border] text-center max-w-5xl mx-auto px-4">
+    <div class="max-w-5xl mx-auto px-4 mt-10">
+      <div class="border border-[--color-accent]/20 rounded-lg p-5 bg-[--color-accent]/5">
+        <p class="font-mono text-[--color-accent] text-xs mb-2">다음 행동</p>
+        <p class="text-sm text-[--color-text-secondary] mb-3">
+          흥미로운 점을 발견하셨나요? 이 시장에서 전략이 어떻게 수행될지 테스트해 보세요.
+        </p>
+        <div class="flex flex-wrap gap-3">
+          <a href="/ko/simulate" class="btn btn-primary btn-sm no-underline">전략 테스트 &rarr;</a>
+          <a href="/ko/strategies/ranking" class="btn btn-ghost btn-sm no-underline">오늘의 랭킹 &rarr;</a>
+        </div>
+      </div>
+    </div>
+    <div class="mt-6 pt-8 border-t border-[--color-border] text-center max-w-5xl mx-auto px-4">
       <div class="flex flex-wrap gap-3 justify-center">
         <a href="/ko/simulate" class="btn btn-primary btn-md no-underline">
           {t('cross.simulate_cta')} &rarr;

@@ -170,7 +170,16 @@ export function RankingCard({
       {/* Stats row */}
       <div class="grid grid-cols-3 gap-2 font-mono text-sm">
         <div>
-          <p class="text-[--color-text-muted] text-xs mb-0.5">{lbl.wr}</p>
+          <p
+            class="text-[--color-text-muted] text-xs mb-0.5 cursor-help"
+            title={
+              lang === "ko"
+                ? "승률 = 수익 거래 비율. 55%+ 양호."
+                : "Win Rate = % of profitable trades. 55%+ is good."
+            }
+          >
+            {lbl.wr} <span class="opacity-50 text-[0.6rem]">?</span>
+          </p>
           <p class={`font-bold text-base ${winRateColor(entry.win_rate)}`}>
             {entry.win_rate.toFixed(1)}%
           </p>
@@ -178,7 +187,11 @@ export function RankingCard({
         <div>
           <p
             class="text-[--color-text-muted] text-xs mb-0.5 cursor-help"
-            title="Profit Factor = avg win ÷ avg loss. 1.0 = breakeven, 1.5+ = good, 2.0+ = strong. Capped at 99.99 for low-sample results."
+            title={
+              lang === "ko"
+                ? "수익팩터 = 평균 수익 ÷ 평균 손실. 1.0 = 본전, 1.5+ = 양호, 2.0+ = 강함. 샘플 부족 시 99.99로 제한."
+                : "Profit Factor = avg win ÷ avg loss. 1.0 = breakeven, 1.5+ = good, 2.0+ = strong. Capped at 99.99 for low-sample results."
+            }
           >
             PF <span class="opacity-50 text-[0.6rem]">?</span>
           </p>

@@ -436,12 +436,13 @@ textarea:focus-visible,
   background-color: var(--color-accent) !important;
   color: #FFFFFF !important;
   font-weight: 600;
+  box-shadow: 0 0 16px rgba(79,142,247,0.3), 0 2px 8px rgba(0,0,0,0.3);
   transition: background-color var(--duration-fast) var(--ease-smooth),
               box-shadow var(--duration-fast) var(--ease-smooth);
 }
 .btn-primary:hover {
   background-color: var(--color-accent-dim) !important;
-  box-shadow: var(--shadow-accent-glow);
+  box-shadow: 0 0 24px rgba(79,142,247,0.45), 0 4px 12px rgba(0,0,0,0.4);
 }
 
 /* ─── Card hover ─── */
@@ -572,6 +573,9 @@ textarea:focus-visible,
     min-height: 44px;
     padding-top: 0.5rem;
     padding-bottom: 0.5rem;
+  }
+  select, input[type="number"], input[type="text"], input[type="search"] {
+    min-height: 44px;
   }
 }
 

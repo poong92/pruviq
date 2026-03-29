@@ -92,7 +92,7 @@ export default function ConditionRow({
 
   return (
     <div class="text-xs">
-      <div class="flex items-center gap-1.5">
+      <div class="flex flex-wrap sm:flex-nowrap items-center gap-1.5">
         {/* Field */}
         <select
           value={c.field}
