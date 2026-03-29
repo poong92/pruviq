@@ -136,11 +136,11 @@ A strategy that works in a bear market may fail completely in a bull market. We 
 
 The mistakes above are abstract. Here are three concrete examples of how they destroy real money.
 
-### Case Study 1: Look-Ahead Bias — The $14,115 Loss
+### Case Study 1: Look-Ahead Bias — A Costly Lesson
 
-We built a Momentum LONG strategy that backtested at +400% returns over 18 months. The equity curve was smooth, the Sharpe ratio was above 3.0, and the drawdowns were manageable. We allocated real capital.
+Our team built a Momentum LONG strategy that backtested at +400% returns over 18 months. The equity curve was smooth, the Sharpe ratio was above 3.0, and the drawdowns were manageable. Capital was allocated for live trading.
 
-The problem: our signal function was reading the current candle's volume spike to trigger entries. In a backtest, that candle is already complete — the volume spike is confirmed. In live trading, the candle has only been open for 1 minute when the bot runs. The "volume spike" does not exist yet. After fixing the candle index bug and retesting, the strategy showed negative expectancy. We had already lost $14,115 in live trading before catching it. This is why Rule 1 (completed candles only) is non-negotiable. One index offset turned a +400% winner into a money-losing strategy.
+The problem: the signal function was reading the current candle's volume spike to trigger entries. In a backtest, that candle is already complete — the volume spike is confirmed. In live trading, the candle has only been open for 1 minute when the bot runs. The "volume spike" does not exist yet. After fixing the candle index bug and retesting, the strategy showed negative expectancy. Significant capital had already been lost in live trading before catching it. This is why Rule 1 (completed candles only) is non-negotiable. One index offset turned a +400% winner into a money-losing strategy.
 
 ### Case Study 2: Survivorship Bias — Testing Only Top 50 Coins
 

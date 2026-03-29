@@ -684,7 +684,7 @@ export const ko: Record<TranslationKey, string> = {
   "about.solo_background":
     "배경: 2021년부터 알고리즘 트레이딩, 퀀트 리서치, 크립토 시장 연구.",
   "about.solo_why":
-    "PRUVIQ를 만든 이유: 백테스트에서 검증된 전략으로 $4,000을 잃은 경험 — 모든 툴이 실패를 숨겼기 때문입니다. 그래서 내가 원했던 것을 직접 만들었습니다.",
+    "PRUVIQ를 만든 이유: 백테스트에서 검증된 전략이 실전에서 실패하는 경험을 직접 겪었고, 기존 툴들이 실패를 숨긴다는 것을 깨달았습니다. 그래서 투명한 시뮬레이션 플랫폼을 설계했습니다.",
 
   // Home hero stat labels
   "home.stat_coins": "테스트 코인",

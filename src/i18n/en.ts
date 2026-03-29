@@ -689,7 +689,7 @@ export const en = {
   "about.solo_background":
     "Background: algorithmic trading, quantitative research, crypto markets since 2021.",
   "about.solo_why":
-    "Why PRUVIQ: After losing $4,000 on a backtested strategy that failed live — because every tool hid its failures — I built what I wished existed.",
+    "Why PRUVIQ: After experiencing firsthand how backtested strategies fail in live markets — and finding that existing tools hide their failures — we built the transparent simulation platform we wished existed.",
 
   // Home hero stat labels
   "home.stat_coins": "Coins Tested",
