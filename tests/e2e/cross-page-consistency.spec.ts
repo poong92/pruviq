@@ -92,3 +92,29 @@ test.describe("Strategy tabs consistency", () => {
     expect(await nav.count(), "/signals should not have strategy tabs").toBe(0);
   });
 });
+
+test.describe("Cross-page link parameter consistency", () => {
+  test("Signals Verify link passes correct simulator params", async ({
+    page,
+  }) => {
+    await page.goto("/signals", { waitUntil: "domcontentloaded" });
+    // Wait for signals to load (API call)
+    await page.waitForTimeout(8000);
+
+    const verifyLink = page.locator('a:has-text("Verify")').first();
+    if ((await verifyLink.count()) === 0) {
+      test.skip(true, "No signals available to test");
+      return;
+    }
+
+    const href = await verifyLink.getAttribute("href");
+    expect(href, "Verify link should exist").toBeTruthy();
+    // Must use symbol= (not coin=), dir= (not direction=)
+    expect(href, "Should use symbol= param").toContain("symbol=");
+    expect(href, "Should use dir= param").toContain("dir=");
+    expect(href, "Should include sl= param").toContain("sl=");
+    expect(href, "Should include tp= param").toContain("tp=");
+    // Must NOT have the broken /USDT:USDT transform
+    expect(href, "Should not have /USDT:USDT").not.toContain("/USDT:USDT");
+  });
+});
