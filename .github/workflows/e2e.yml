@@ -212,9 +212,25 @@ jobs:
               issue_number: matchingIssue.number, name: 'in-progress',
             }).catch(() => {});
           } else if (isAutoFixPR) {
-            // Auto-fix PR with no matching issue: do NOT create a new issue.
-            // Creating one would re-trigger the auto-fix loop.
-            console.log(`[dedup] Skipping issue creation for auto-fix PR #${prNumber} — no parent issue found`);
+            // Auto-fix PR failed E2E: close PR + record failure for feedback loop
+            console.log(`[dedup] Auto-fix PR #${prNumber} failed E2E — closing PR`);
+            await github.rest.pulls.update({
+              owner: context.repo.owner, repo: context.repo.repo,
+              pull_number: prNumber, state: 'closed',
+            });
+            await github.rest.issues.createComment({
+              owner: context.repo.owner, repo: context.repo.repo,
+              issue_number: prNumber,
+              body: `❌ Auto-fix PR closed: E2E tests failed.\n\`\`\`\n${failingTests}\n\`\`\`\nRun: ${runUrl}`,
+            });
+            // Remove in-progress from source issues so they can be retried (with failure count incremented)
+            const issueNums = (prTitle.match(/#(\d+)/g) || []).map(m => parseInt(m.slice(1)));
+            for (const num of issueNums) {
+              await github.rest.issues.removeLabel({
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: num, name: 'in-progress',
+              }).catch(() => {});
+            }
           } else {
             const issue = await github.rest.issues.create({
               owner: context.repo.owner, repo: context.repo.repo,
