@@ -7,6 +7,7 @@ import preact from '@astrojs/preact';
 // https://astro.build/config
 export default defineConfig({
   site: 'https://pruviq.com',
+  trailingSlash: 'never',
   i18n: {
     defaultLocale: 'en',
     locales: ['en', 'ko'],
