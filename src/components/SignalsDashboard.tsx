@@ -276,20 +276,23 @@ export default function SignalsDashboard({ lang = "en" }: Props) {
               {sigs.map((s, i) => (
                 <div
                   key={`${s.strategy}-${s.coin}-${i}`}
-                  class="flex items-center justify-between p-4 rounded-lg border border-[--color-border] bg-[--color-bg-card] hover:border-[--color-accent]/30 transition-colors group"
+                  class="flex items-center justify-between p-4 rounded-lg border border-[--color-border] bg-[--color-bg-card] hover:border-[--color-accent]/30 hover:bg-[--color-accent]/5 transition-all duration-200 group"
+                  style={{ animationDelay: `${i * 60}ms` }}
                 >
                   <div class="flex items-center gap-4">
                     <span
-                      class={`text-xs font-mono font-bold px-2 py-1 rounded ${
+                      class={`text-xs font-mono font-bold px-2.5 py-1 rounded-md ${
                         s.direction === "short"
-                          ? "bg-red-500/20 text-red-400"
-                          : "bg-blue-500/20 text-blue-400"
+                          ? "bg-red-500/20 text-red-400 shadow-[0_0_8px_rgba(239,68,68,0.15)]"
+                          : "bg-blue-500/20 text-blue-400 shadow-[0_0_8px_rgba(59,130,246,0.15)]"
                       }`}
                     >
                       {s.direction.toUpperCase()}
                     </span>
                     <div>
-                      <p class="font-semibold">{s.coin}</p>
+                      <p class="font-semibold group-hover:text-[--color-accent] transition-colors">
+                        {s.coin}
+                      </p>
                       <p class="text-xs text-[--color-text-muted]">
                         Entry $
                         {s.entry_price < 1
@@ -302,9 +305,9 @@ export default function SignalsDashboard({ lang = "en" }: Props) {
                   </div>
                   <a
                     href={buildSimUrl(s)}
-                    class="text-xs font-mono text-[--color-accent] md:opacity-0 md:group-hover:opacity-100 focus:opacity-100 transition-opacity hover:underline"
+                    class="text-xs font-mono font-semibold text-[--color-accent] bg-[--color-accent]/10 px-3 py-1.5 rounded-md hover:bg-[--color-accent]/20 transition-colors whitespace-nowrap"
                   >
-                    {t.verify}
+                    {t.verify} →
                   </a>
                 </div>
               ))}
