@@ -108,7 +108,7 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
     <meta name="description" content={description} />
     <link rel="canonical" href={canonicalURL.href} />
     {!noAlternate && <link rel="alternate" hreflang="en" href={enURL.href} />}
-    {!noAlternate && <link rel="alternate" hreflang="ko" href={koURL.href} />}
+    {!noAlternate && <link rel="alternate" hreflang="ko-KR" href={koURL.href} />}
     {!noAlternate && <link rel="alternate" hreflang="x-default" href={enURL.href} />}
     <meta name="naver-site-verification" content="ece19c45b3e33ec86f4fc79060c3283cea1493ee" />
     <meta name="yandex-verification" content="a20aa9b1eacf8e51" />
@@ -173,6 +173,7 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
     <meta property="og:url" content={canonicalURL.href} />
     <meta property="og:site_name" content="PRUVIQ" />
     <meta property="og:locale" content={lang === 'ko' ? 'ko_KR' : 'en_US'} />
+    {!noAlternate && <meta property="og:locale:alternate" content={lang === 'ko' ? 'en_US' : 'ko_KR'} />}
     <meta property="og:image" content={ogImage} />
     <meta property="og:image:alt" content={description} />
     <meta property="og:image:width" content="1200" />
