@@ -1520,6 +1520,80 @@ export default function ResultsPanel({
           />
         </div>
       )}
+      {/* Next Actions — keep users engaged after results */}
+      {result && result.total_trades > 0 && (
+        <div class="px-3 pb-4 md:px-4 md:pb-5">
+          <div class="border border-[--color-border] rounded-lg bg-[--color-bg-card] p-4">
+            <p class="text-xs font-mono text-[--color-text-muted] mb-3 uppercase tracking-wider">
+              {lang === "ko" ? "다음 단계" : "What's Next"}
+            </p>
+            <div class="grid gap-2">
+              <a
+                href="https://t.me/PRUVIQ"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="flex items-center gap-3 p-3 rounded-lg border border-[--color-border] hover:border-[--color-accent]/30 hover:bg-[--color-accent]/5 transition-colors"
+              >
+                <span class="w-8 h-8 rounded-lg bg-[--color-accent]/10 flex items-center justify-center shrink-0">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="var(--color-accent)"
+                    stroke-width="2"
+                  >
+                    <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
+                  </svg>
+                </span>
+                <div>
+                  <p class="text-sm font-semibold">
+                    {lang === "ko" ? "실시간 시그널 받기" : "Get Live Signals"}
+                  </p>
+                  <p class="text-xs text-[--color-text-muted]">
+                    {lang === "ko"
+                      ? "텔레그램에서 매매 신호 알림"
+                      : "Trading alerts via Telegram"}
+                  </p>
+                </div>
+              </a>
+              <a
+                href={
+                  lang === "ko"
+                    ? "/ko/strategies/ranking"
+                    : "/strategies/ranking"
+                }
+                class="flex items-center gap-3 p-3 rounded-lg border border-[--color-border] hover:border-[--color-accent]/30 hover:bg-[--color-accent]/5 transition-colors"
+              >
+                <span class="w-8 h-8 rounded-lg bg-[--color-up]/10 flex items-center justify-center shrink-0">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="var(--color-up)"
+                    stroke-width="2"
+                  >
+                    <path d="M12 20V10M18 20V4M6 20v-4" />
+                  </svg>
+                </span>
+                <div>
+                  <p class="text-sm font-semibold">
+                    {lang === "ko"
+                      ? "오늘의 Top 전략 보기"
+                      : "Today's Top Strategies"}
+                  </p>
+                  <p class="text-xs text-[--color-text-muted]">
+                    {lang === "ko"
+                      ? "매일 갱신되는 전략 랭킹"
+                      : "Daily updated strategy rankings"}
+                  </p>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

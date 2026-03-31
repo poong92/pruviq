@@ -9,7 +9,16 @@ const allStrategies = await getCollection('strategies');
 
 // Load all simulator presets for the "Try in Simulator" section (from static JSON)
 import presetsJson from '../../../public/data/builder-presets.json';
+import rankingsJson from '../../../public/data/rankings-daily.json';
 import StrategyTabs from '../../components/ui/StrategyTabs.astro';
+
+// Build lookup: strategy+direction → ranking stats
+const rankingsData = rankingsJson as { top3?: Array<{strategy: string; direction: string; win_rate: number; profit_factor: number; total_return: number}>; worst3?: Array<{strategy: string; direction: string; win_rate: number; profit_factor: number; total_return: number}>; summary?: {total: number} };
+const allRanked = [...(rankingsData.top3 || []), ...(rankingsData.worst3 || [])];
+const rankingLookup = new Map<string, {win_rate: number; profit_factor: number; total_return: number}>();
+for (const r of allRanked) {
+  rankingLookup.set(`${r.strategy}_${r.direction}`, { win_rate: r.win_rate, profit_factor: r.profit_factor, total_return: r.total_return });
+}
 const simulatorPresets: Array<{id: string; name_ko?: string; name?: string; direction?: string; timeframe?: string; description_ko?: string}> = presetsJson as Array<{id: string; name_ko?: string; name?: string; direction?: string; timeframe?: string; description_ko?: string}>;
 
 const statusOrder = { verified: 0, testing: 1, killed: 2, shelved: 3 };
@@ -293,13 +302,23 @@ const difficultyColors: Record<string, string> = {
             {t('strategies.presets_desc')}
           </p>
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {simulatorPresets.map((preset) => (
+            {simulatorPresets.map((preset) => {
+              const stats = preset.direction ? rankingLookup.get(`${preset.id}_${preset.direction}`) : (rankingLookup.get(`${preset.id}_short`) || rankingLookup.get(`${preset.id}_long`) || rankingLookup.get(`${preset.id}_both`));
+              return (
               <a
                 href={`/simulate?preset=${preset.id}`}
                 class="flex items-center justify-between border border-[--color-border] rounded-lg px-4 py-3 bg-[--color-bg-card] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors group"
               >
                 <div>
                   <p class="font-semibold text-sm">{preset.name}</p>
+                  {stats && (
+                    <p class="text-xs font-mono text-[--color-text-muted] mt-0.5">
+                      WR {stats.win_rate.toFixed(1)}% · PF {stats.profit_factor.toFixed(2)}
+                      {stats.total_return !== undefined && (
+                        <span class={stats.total_return >= 0 ? 'text-[--color-up]' : 'text-[--color-red]'}> · {stats.total_return >= 0 ? '+' : ''}{stats.total_return.toFixed(1)}%</span>
+                      )}
+                    </p>
+                  )}
                 </div>
                 <div class="flex items-center gap-2 shrink-0 ml-3">
                   {preset.direction && (
@@ -310,7 +329,8 @@ const difficultyColors: Record<string, string> = {
                   <span class="text-[--color-text-muted] text-xs group-hover:text-[--color-accent]">&rarr;</span>
                 </div>
               </a>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}
