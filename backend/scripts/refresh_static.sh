@@ -116,8 +116,19 @@ if [ -f "$MARKET_JSON" ]; then
     fi
 fi
 
+# --- Step 1b: Fetch rankings data for strategy cards ---
+RANKINGS_JSON="public/data/rankings-daily.json"
+log "Fetching daily rankings..."
+if curl -sf --max-time 15 "https://api.pruviq.com/rankings/daily" -o "$RANKINGS_JSON.tmp" 2>/dev/null; then
+    mv "$RANKINGS_JSON.tmp" "$RANKINGS_JSON"
+    log "Rankings updated"
+else
+    log "Rankings fetch failed (non-critical, keeping previous)"
+    rm -f "$RANKINGS_JSON.tmp"
+fi
+
 # All data files that refresh_static.py may update
-DATA_FILES="public/data/market.json public/data/coins-stats.json public/data/macro.json public/data/news.json public/data/coin-metadata.json"
+DATA_FILES="public/data/market.json public/data/coins-stats.json public/data/macro.json public/data/news.json public/data/coin-metadata.json public/data/rankings-daily.json"
 
 # Check if any data changed
 HAS_CHANGES=false
