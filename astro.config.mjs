@@ -20,7 +20,7 @@ export default defineConfig({
         defaultLocale: 'en',
         locales: {
           en: 'en',
-          ko: 'ko'
+          ko: 'ko-KR'
         }
       },
       filter(page) {
@@ -41,7 +41,7 @@ export default defineConfig({
 
         item.links = [
           { url: enUrl, lang: 'en' },
-          { url: koUrl, lang: 'ko' },
+          { url: koUrl, lang: 'ko-KR' },
           { url: enUrl, lang: 'x-default' },
         ];
 

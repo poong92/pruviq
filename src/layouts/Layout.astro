@@ -85,7 +85,7 @@ const breadcrumbLabelMap: Record<string, Record<string, string>> = {
   ko: { market: '시장', strategies: '전략', coins: '코인', builder: '빌더', simulate: '시뮬레이션', learn: '학습', fees: '수수료', blog: '블로그', about: '소개', changelog: '변경 이력', performance: '성과', compare: '비교', privacy: '개인정보', terms: '이용약관', methodology: '방법론', api: 'API', leaderboard: '리더보드' },
 };
 const breadcrumbSegments = basePath === '/' ? [] : basePath.split('/').filter(Boolean);
-const breadcrumbItems = [{ name: lang === 'ko' ? '홈' : 'Home', item: 'https://pruviq.com/' }];
+const breadcrumbItems = [{ name: lang === 'ko' ? '홈' : 'Home', item: lang === 'ko' ? 'https://pruviq.com/ko/' : 'https://pruviq.com/' }];
 let cumPath = '';
 for (let i = 0; i < breadcrumbSegments.length; i++) {
   const seg = breadcrumbSegments[i];
