@@ -8,6 +8,9 @@
  * Commission split (Binance referral dashboard, verified 2026-03-21):
  *   Spot:    PRUVIQ keeps 1%, User gets 19% → total pool 20%
  *   Futures: PRUVIQ keeps 1%, User gets 9%  → total pool 10%
+ *
+ * OKX affiliate dashboard (verified 2026-04-01):
+ *   PRUVIQ rate: 30%, Invitee rate: 20% (max rebate to user)
  */
 
 export interface ExchangeFeeConfig {
@@ -58,5 +61,17 @@ export const EXCHANGES: ExchangeFeeConfig[] = [
     marketingLabel: "Up to 19% off",
     url: "https://www.binance.com",
     referralUrl: "https://accounts.binance.com/register?ref=PRUVIQ",
+  },
+  {
+    id: "okx",
+    name: "OKX",
+    standardMakerFee: 0.02,
+    standardTakerFee: 0.05,
+    spotDiscountPct: 20,
+    futuresDiscountPct: 20,
+    platformCommissionPct: 30,
+    marketingLabel: "20% off fees",
+    url: "https://www.okx.com",
+    referralUrl: "https://okx.com/join/PRUVIQ",
   },
 ];
