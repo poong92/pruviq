@@ -19,6 +19,7 @@ interface Props {
   retryLabel?: string;
   noDataError?: string;
   symbolPlaceholder?: string;
+  chartAriaLabel?: string;
 }
 
 export default function ChartPanel({
