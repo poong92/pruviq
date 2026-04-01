@@ -282,6 +282,8 @@ export default function ChartPanel({
       {/* Chart body — responsive height: 360px mobile, 640px desktop */}
       <div
         ref={chartContainerRef}
+        role="img"
+        aria-label={`${symbol} price chart with strategy signals`}
         class="h-[360px] md:h-[640px]"
         style={{ minHeight: "300px" }}
       >

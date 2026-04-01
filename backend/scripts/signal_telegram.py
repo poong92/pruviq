@@ -11,7 +11,8 @@ from datetime import datetime, timezone
 
 API_URL = os.getenv("PRUVIQ_API_URL", "https://api.pruviq.com")
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN", "")
-TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "")
+TELEGRAM_CHAT_ID = os.getenv("SIGNAL_TELEGRAM_CHAT_ID", "@PRUVIQ")
+MAX_PER_HOUR = 5
 STATE_FILE = "/tmp/pruviq-signal-telegram-sent.json"
 SITE_URL = "https://pruviq.com"
 
@@ -92,12 +93,11 @@ def main():
         return
 
     sent = load_sent()
+    unsent = [s for s in signals if signal_key(s) not in sent][:MAX_PER_HOUR]
     new_count = 0
 
-    for s in signals:
+    for s in unsent:
         key = signal_key(s)
-        if key in sent:
-            continue
 
         msg = format_message(s)
         if send_telegram(msg):
