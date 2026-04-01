@@ -23,6 +23,7 @@ const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 const altPath = getAlternatePath(Astro.url.pathname, lang);
 const altLang = lang === 'ko' ? 'en' : 'ko';
+const altHreflang = lang === 'ko' ? 'en' : 'ko-KR';
 const basePath = getBasePath(Astro.url.pathname);
 const cfToken = import.meta.env.PUBLIC_CF_ANALYTICS_TOKEN;
 const buildTime = new Date().toISOString();
@@ -49,11 +50,11 @@ const changelogPath = lang === 'ko' ? '/ko/changelog' : '/changelog';
 const methodologyPath = lang === 'ko' ? '/ko/methodology' : '/methodology';
 const apiPath = lang === 'ko' ? '/ko/api' : '/api';
 const compareTvPath = lang === 'ko' ? '/ko/compare/tradingview' : '/compare/tradingview';
-const compareCoinrulePath = '/compare/coinrule';
-const compareCryptohopperPath = '/compare/cryptohopper';
-const compare3commasPath = '/compare/3commas';
-const compareGainiumPath = '/compare/gainium';
-const compareStreakPath = '/compare/streak';
+const compareCoinrulePath = lang === 'ko' ? '/ko/compare/coinrule' : '/compare/coinrule';
+const compareCryptohopperPath = lang === 'ko' ? '/ko/compare/cryptohopper' : '/compare/cryptohopper';
+const compare3commasPath = lang === 'ko' ? '/ko/compare/3commas' : '/compare/3commas';
+const compareGainiumPath = lang === 'ko' ? '/ko/compare/gainium' : '/compare/gainium';
+const compareStreakPath = lang === 'ko' ? '/ko/compare/streak' : '/compare/streak';
 const privacyPath = lang === 'ko' ? '/ko/privacy' : '/privacy';
 const termsPath = lang === 'ko' ? '/ko/terms' : '/terms';
 const leaderboardPath = lang === 'ko' ? '/ko/leaderboard' : '/leaderboard';
@@ -443,7 +444,7 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
         </div>
         <!-- 3열: Lang + Mobile hamburger (우측) -->
         <div class="flex items-center justify-end gap-3">
-          <a href={altPath} hreflang={altLang} class="hidden md:inline-flex font-mono text-sm px-4 py-2 border border-[--color-border] rounded-lg hover:border-[--color-accent] hover:text-[--color-accent] hover:bg-[--color-accent]/5 text-[--color-text-muted] transition-colors" aria-label={lang === 'ko' ? 'Switch to English' : '한국어로 전환'}>{t('nav.lang')}</a>
+          <a href={altPath} hreflang={altHreflang} class="hidden md:inline-flex font-mono text-sm px-4 py-2 border border-[--color-border] rounded-lg hover:border-[--color-accent] hover:text-[--color-accent] hover:bg-[--color-accent]/5 text-[--color-text-muted] transition-colors" aria-label={lang === 'ko' ? 'Switch to English' : '한국어로 전환'}>{t('nav.lang')}</a>
           <button id="mobile-menu-btn" class="md:hidden text-[--color-text-muted]" aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-menu">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
           </button>
@@ -469,7 +470,7 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
             </Fragment>
           ))}
           <div class="border-t border-[--color-border] mt-2 pt-2">
-            <a href={altPath} hreflang={altLang} class="font-mono text-xs px-3 py-2 border border-[--color-border] rounded-lg text-[--color-text-muted] w-fit min-h-[44px] flex items-center hover:border-[--color-accent] hover:text-[--color-accent] transition-colors" aria-label={lang === 'ko' ? 'Switch to English' : '한국어로 전환'}>{t('nav.lang')}</a>
+            <a href={altPath} hreflang={altHreflang} class="font-mono text-xs px-3 py-2 border border-[--color-border] rounded-lg text-[--color-text-muted] w-fit min-h-[44px] flex items-center hover:border-[--color-accent] hover:text-[--color-accent] transition-colors" aria-label={lang === 'ko' ? 'Switch to English' : '한국어로 전환'}>{t('nav.lang')}</a>
           </div>
         </div>
       </div>
