@@ -11,7 +11,7 @@ from datetime import datetime, timezone
 
 API_URL = os.getenv("PRUVIQ_API_URL", "https://api.pruviq.com")
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN", "")
-TELEGRAM_CHAT_ID = os.getenv("SIGNAL_TELEGRAM_CHAT_ID", "@PRUVIQ")
+TELEGRAM_CHAT_ID = os.getenv("SIGNAL_TELEGRAM_CHAT_ID", os.getenv("TELEGRAM_CHAT_ID", "@PRUVIQ"))
 MAX_PER_HOUR = 5
 STATE_FILE = "/tmp/pruviq-signal-telegram-sent.json"
 SITE_URL = "https://pruviq.com"

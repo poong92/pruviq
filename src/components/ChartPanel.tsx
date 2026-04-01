@@ -35,6 +35,7 @@ export default function ChartPanel({
   retryLabel = "Retry",
   noDataError = "Unable to load chart data. Check API connection.",
   symbolPlaceholder = "Symbol...",
+  chartAriaLabel,
 }: Props) {
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const chartInstanceRef = useRef<IChartApi | null>(null);
@@ -284,7 +285,7 @@ export default function ChartPanel({
       <div
         ref={chartContainerRef}
         role="img"
-        aria-label={`${symbol} price chart with strategy signals`}
+        aria-label={chartAriaLabel || `${chartSymbol} price chart with strategy signals`}
         class="h-[360px] md:h-[640px]"
         style={{ minHeight: "300px" }}
       >
