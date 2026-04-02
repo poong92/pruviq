@@ -131,20 +131,20 @@ test.describe("Simulator — 3-Tier Mode Switcher", () => {
   test("Mode switching: Quick → Standard → Expert", async ({ page }) => {
     await openSimulator(page);
 
-    // Switch to Standard
+    // Switch to Standard — panel depends on API hydration, may be slow in CI
     const stdTab = page
       .locator('[role="tab"]')
       .filter({ hasText: /Standard|스탠다드/i });
     await stdTab.click();
-    await page.waitForTimeout(2000);
-    // CI API may be slow — verify tab selection instead of panel visibility
-    const isSelected = await stdTab.getAttribute("aria-selected");
-    expect(isSelected === "true" || isSelected === null).toBeTruthy();
+    await page.waitForTimeout(1000);
+    // Verify tab is selected (works even if panel hasn't rendered yet)
+    const ariaSelected = await stdTab.getAttribute("aria-selected");
+    expect(ariaSelected).toBe("true");
 
     // Switch to Expert
     await switchToExpert(page);
     const header = page.locator("text=/STRATEGY BUILDER/i");
-    await expect(header).toBeVisible();
+    await expect(header).toBeVisible({ timeout: 10000 });
   });
 });
 
