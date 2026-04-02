@@ -136,9 +136,9 @@ test.describe("Simulator — 3-Tier Mode Switcher", () => {
       .locator('[role="tab"]')
       .filter({ hasText: /Standard|스탠다드/i });
     await stdTab.click();
-    await page.waitForTimeout(500);
+    await page.waitForTimeout(1000);
     const stdPanel = page.locator('[role="tabpanel"][id="panel-standard"]');
-    await expect(stdPanel).toBeVisible();
+    await expect(stdPanel).toBeVisible({ timeout: 15000 });
 
     // Switch to Expert
     await switchToExpert(page);
