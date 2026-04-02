@@ -24,14 +24,14 @@ export default defineConfig({
         }
       },
       filter(page) {
-        return !(/\/learn\/.+/.test(page)) && !page.includes('/demo/') && !page.includes('/builder/');
+        return !(/\/learn\/.+/.test(page)) && !page.includes('/demo/') && !page.includes('/builder/') && !page.includes('/404');
       },
       serialize(item) {
         if (!item || !item.url) return item;
         if (/\/learn\/.+/.test(item.url)) return undefined;
         if (item.url.includes('/demo/')) return undefined;
         if (item.url.includes('/builder/')) return undefined;
-        if (item.url.includes('/ko/404/')) return undefined;
+        if (item.url.includes('/404')) return undefined;
 
         const url = new URL(item.url);
         const isKo = url.pathname.startsWith('/ko/') || url.pathname === '/ko';
@@ -39,9 +39,13 @@ export default defineConfig({
         const enUrl = `https://pruviq.com${basePath}`;
         const koUrl = `https://pruviq.com/ko${basePath === '/' ? '/' : basePath}`;
 
+        // Only emit ko-KR hreflang for paths known to have Korean versions
+        const koPathPrefixes = ['/', '/about', '/api', '/fees', '/simulate', '/strategies', '/coins/', '/blog/', '/market', '/compare/', '/leaderboard', '/changelog', '/privacy', '/terms', '/methodology', '/signals', '/learn', '/best-crypto-backtesting', '/crypto-trading-simulator', '/why-backtests-fail'];
+        const hasKoVersion = koPathPrefixes.some(prefix => basePath === prefix || basePath.startsWith(prefix));
+
         item.links = [
           { url: enUrl, lang: 'en' },
-          { url: koUrl, lang: 'ko-KR' },
+          ...(hasKoVersion ? [{ url: koUrl, lang: 'ko-KR' }] : []),
           { url: enUrl, lang: 'x-default' },
         ];
 
