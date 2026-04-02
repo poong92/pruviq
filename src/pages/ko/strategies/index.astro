@@ -13,6 +13,42 @@ for (const r of allRanked) {
   rankingLookup.set(`${r.strategy}_${r.direction}`, { win_rate: r.win_rate, profit_factor: r.profit_factor, total_return: r.total_return });
 }
 
+// Alias map: preset ID → API strategy name (for presets whose ID doesn't match the API key)
+const presetToApiStrategy: Record<string, string> = {
+  'supertrend-long': 'supertrend',
+  'rsi-divergence-long': 'rsi-divergence',
+  'ichimoku-cloud-long': 'ichimoku',
+  'ichimoku-cloud-short': 'ichimoku',
+  'both-ichimoku': 'ichimoku',
+  'ema-crossover-long': 'ma-cross',
+  'ema-crossover-short': 'ma-cross',
+  'both-ema-crossover': 'ma-cross',
+  'macd-momentum-long': 'momentum-long',
+  'both-macd-momentum': 'momentum-long',
+  'hv-squeeze-breakout-short': 'keltner-squeeze',
+  'hv-squeeze-breakout-long': 'keltner-squeeze',
+  'both-bb-squeeze': 'bb-squeeze-short',
+  'both-rsi-reversal': 'rsi-divergence',
+  'both-adx-trend': 'atr-breakout',
+  'adx-trend-short': 'atr-breakout',
+  'adx-trend-long': 'atr-breakout',
+  'turtle-breakout-short': 'atr-breakout',
+  'turtle-breakout-long': 'atr-breakout',
+};
+
+function lookupPresetStats(presetId: string, direction?: string) {
+  if (direction) {
+    const exact = rankingLookup.get(`${presetId}_${direction}`);
+    if (exact) return exact;
+  }
+  const apiName = presetToApiStrategy[presetId];
+  if (apiName && direction) {
+    return rankingLookup.get(`${apiName}_${direction}`);
+  }
+  const id = apiName || presetId;
+  return rankingLookup.get(`${id}_short`) || rankingLookup.get(`${id}_long`) || rankingLookup.get(`${id}_both`);
+}
+
 const t = useTranslations('ko');
 
 const simulatorPresets: Array<{id: string; name_ko?: string; name?: string; direction?: string}> = presetsJson as Array<{id: string; name_ko?: string; name?: string; direction?: string}>;
@@ -282,7 +318,7 @@ const isKorean = (id: string) => koIds.has(id);
           </p>
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {simulatorPresets.map((preset) => {
-              const stats = preset.direction ? rankingLookup.get(`${preset.id}_${preset.direction}`) : (rankingLookup.get(`${preset.id}_short`) || rankingLookup.get(`${preset.id}_long`) || rankingLookup.get(`${preset.id}_both`));
+              const stats = lookupPresetStats(preset.id, preset.direction);
               return (
               <a
                 href={`/ko/simulate?preset=${preset.id}`}
