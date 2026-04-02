@@ -1,7 +1,7 @@
 ---
-title: "손절 3% vs 10% — 572개 코인으로 직접 돌려봤다"
-description: "BB Squeeze SHORT 전략을 손절 3%와 10%로 각각 백테스트한 결과. 좁은 손절은 더 많이 잘리고, 넓은 손절은 더 많이 번다."
-date: "2026-03-29"
+title: "손절 3% vs 10% — 50개 코인으로 직접 돌려봤다"
+description: "BB Squeeze SHORT 전략을 손절 3%와 10%로 상위 50개 코인에서 백테스트한 결과. 좁은 손절은 더 많이 잘리고, 넓은 손절은 더 많이 번다."
+date: "2026-04-02"
 category: "quant"
 tags: ["stop-loss", "risk-management", "backtest", "bb-squeeze", "crypto"]
 ---

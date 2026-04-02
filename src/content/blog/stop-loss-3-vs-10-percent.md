@@ -1,7 +1,7 @@
 ---
-title: "SL 3% vs 10% — We Tested Both on 572 Coins"
-description: "BB Squeeze SHORT strategy backtested with 3% and 10% stop loss across 50 coins over 2+ years. The tighter stop lost more trades but the wider stop made more money."
-date: "2026-03-29"
+title: "SL 3% vs 10% — We Tested Both on 50 Coins"
+description: "BB Squeeze SHORT strategy backtested with 3% and 10% stop loss across top 50 coins over 2+ years. The tighter stop lost more trades but the wider stop made more money."
+date: "2026-04-02"
 category: "quant"
 tags: ["stop-loss", "risk-management", "backtest", "bb-squeeze", "crypto"]
 ---
