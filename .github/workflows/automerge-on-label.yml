@@ -33,6 +33,13 @@ jobs:
           script: |
             const labelName = 'automerge';
             const restrictedPrefixes = ['backend/'];
+            const restrictedExactFiles = [
+              'astro.config.mjs',
+              'wrangler.toml',
+              'wrangler.jsonc',
+              'public/_redirects',
+              'playwright.config.ts',
+            ];
             const MIN_CHECK_RUNS = 2;
 
             let pr = null;
@@ -96,13 +103,27 @@ jobs:
               pull_number: prNumber,
             });
 
+            const restrictedHits = [];
             for (const f of files) {
               for (const prefix of restrictedPrefixes) {
                 if (f.filename.startsWith(prefix)) {
-                  core.info(`Skipping: PR touches restricted path: ${f.filename}`);
-                  return;
+                  restrictedHits.push({ file: f.filename, rule: `prefix: ${prefix}` });
                 }
               }
+              if (restrictedExactFiles.includes(f.filename)) {
+                restrictedHits.push({ file: f.filename, rule: 'infrastructure file' });
+              }
+            }
+            if (restrictedHits.length > 0) {
+              const list = restrictedHits.map(h => `- \`${h.file}\` (${h.rule})`).join('\n');
+              core.info(`Skipping: PR touches restricted files:\n${list}`);
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                body: `⚠️ **Auto-merge skipped** — infrastructure files detected:\n${list}\n\nManual merge required after review.`,
+              });
+              return;
             }
 
             // Check Runs (not legacy commit statuses) for head SHA

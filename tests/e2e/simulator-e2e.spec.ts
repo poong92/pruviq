@@ -1,4 +1,6 @@
 import { test, expect, type Page } from "@playwright/test";
+// Mock helper available for future use when Preact hydration issue is resolved:
+// import { mockPruviqApi } from "./helpers/mock-api";
 
 /**
  * PRUVIQ Simulator — Complete E2E Tests
@@ -11,10 +13,13 @@ import { test, expect, type Page } from "@playwright/test";
  * 5. All result tabs (Summary, Equity, Trades, Coins)
  * 6. API direct validation with complete response schema
  * 7. Edge cases & error handling
+ *
+ * API calls are mocked via page.route() with local fixture files.
+ * Expert/Backtest tests still skip in CI due to Preact hydration timing.
  */
 
 const API_BASE = process.env.API_URL || "https://api.pruviq.com";
-// Skip slow backtest tests in CI — production API too slow from GitHub runners
+// Skip slow backtest tests in CI — Preact hydration too slow on GitHub runners
 const skipInCI = !!process.env.CI;
 
 // ─── Helpers ──────────────────────────────────────────────────
