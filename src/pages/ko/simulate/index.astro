@@ -104,8 +104,11 @@ const coinsAnalyzed = (siteStats as { coins_analyzed: number }).coins_analyzed;
               </div>
             </div>
           </div>
-          <div class="spinner mx-auto mb-4 mt-4"></div>
-          <p class="text-[--color-text-muted] text-sm text-center">{t('simulate.loading')}</p>
+          <div class="flex flex-col items-center gap-3 mt-6">
+            <div class="spinner mx-auto"></div>
+            <p class="text-[--color-text-muted] text-sm text-center">{t('simulate.loading')}</p>
+            <p class="text-[--color-text-muted] text-xs text-center opacity-60">프리셋을 선택하거나 직접 전략을 구성할 수 있습니다</p>
+          </div>
         </div>
       </div>
     </div>

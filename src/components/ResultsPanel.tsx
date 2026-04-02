@@ -412,6 +412,22 @@ export default function ResultsPanel({
                   {returnLabel} {lang === "ko" ? "수익" : "return"}
                 </span>
 
+                {/* Data period */}
+                {result.equity_curve &&
+                  result.equity_curve.length >= 2 &&
+                  (() => {
+                    const first = result.equity_curve[0]?.time;
+                    const last =
+                      result.equity_curve[result.equity_curve.length - 1]?.time;
+                    if (!first || !last) return null;
+                    const fmt = (t: string | number) => String(t).slice(0, 10);
+                    return (
+                      <span class="font-mono text-[--color-text-muted] opacity-60">
+                        {fmt(first)} → {fmt(last)}
+                      </span>
+                    );
+                  })()}
+
                 {/* Share button */}
                 {onCopyLink && (
                   <button

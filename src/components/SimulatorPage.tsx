@@ -1286,7 +1286,7 @@ export default function SimulatorPage({ lang = "en" }: Props) {
             <button
               key={tab}
               onClick={() => handleMobileTabChange(tab)}
-              class={`flex-1 py-2.5 text-xs font-mono uppercase tracking-wider transition-colors
+              class={`flex-1 py-3 min-h-[44px] text-xs font-mono uppercase tracking-wider transition-colors
                 ${mobileTab === tab ? "font-bold border-b-2" : "text-[--color-text-muted] hover:text-[--color-text]"}`}
               style={
                 mobileTab === tab
