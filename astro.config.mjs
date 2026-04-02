@@ -20,7 +20,7 @@ export default defineConfig({
         defaultLocale: 'en',
         locales: {
           en: 'en',
-          ko: 'ko-KR'
+          ko: 'ko'
         }
       },
       filter(page) {
@@ -39,13 +39,13 @@ export default defineConfig({
         const enUrl = `https://pruviq.com${basePath}`;
         const koUrl = `https://pruviq.com/ko${basePath === '/' ? '/' : basePath}`;
 
-        // Only emit ko-KR hreflang for paths known to have Korean versions
+        // Only emit ko hreflang for paths known to have Korean versions
         const koPathPrefixes = ['/', '/about', '/api', '/fees', '/simulate', '/strategies', '/coins/', '/blog/', '/market', '/compare/', '/leaderboard', '/changelog', '/privacy', '/terms', '/methodology', '/signals', '/learn', '/best-crypto-backtesting', '/crypto-trading-simulator', '/why-backtests-fail'];
         const hasKoVersion = koPathPrefixes.some(prefix => basePath === prefix || basePath.startsWith(prefix));
 
         item.links = [
           { url: enUrl, lang: 'en' },
-          ...(hasKoVersion ? [{ url: koUrl, lang: 'ko-KR' }] : []),
+          ...(hasKoVersion ? [{ url: koUrl, lang: 'ko' }] : []),
           { url: enUrl, lang: 'x-default' },
         ];
 
