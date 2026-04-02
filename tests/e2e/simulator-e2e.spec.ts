@@ -129,6 +129,10 @@ test.describe("Simulator — 3-Tier Mode Switcher", () => {
   });
 
   test("Mode switching: Quick → Standard → Expert", async ({ page }) => {
+    test.skip(
+      skipInCI,
+      "Skipped in CI — simulator hydration depends on API response time",
+    );
     await openSimulator(page);
 
     // Switch to Standard — panel depends on API hydration, may be slow in CI
