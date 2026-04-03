@@ -50,7 +50,7 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
           <div class="flex flex-col gap-2 mt-6 text-sm text-[--color-text-secondary]">
             <span class="flex items-center gap-2">
               <svg class="w-4 h-4 text-[--color-up] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
-              {coinsAnalyzed}+ coins backtested with real fees
+              {coinsAnalyzed}+ coins simulated with real fees
             </span>
             <span class="flex items-center gap-2">
               <svg class="w-4 h-4 text-[--color-up] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
@@ -75,7 +75,7 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
         <div class="relative">
           <BrowserFrame
             src="/images/simulator-preview.png"
-            alt="PRUVIQ Strategy Simulator — backtest {coinsAnalyzed} coins in seconds"
+            alt="PRUVIQ Strategy Simulator — simulate {coinsAnalyzed} coins in seconds"
             url="pruviq.com/simulate"
           >
             <SimulatorPreview client:visible />
@@ -120,7 +120,7 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
     <div class="grid md:grid-cols-3 gap-8">
       <StepCard step={1} title="Pick a Strategy" description="Choose from 36 presets or build your own with 14 indicators. Unlimited custom combinations." />
       <StepCard step={2} title="Set Your Risk" description="Stop-loss, take-profit, position size, time filters. Realistic fees and slippage included." />
-      <StepCard step={3} title="See Real Results" description="Backtest on 570 coins with 2+ years of data. Results in seconds, no cherry-picking." />
+      <StepCard step={3} title="See Real Results" description="Simulate on 570 coins with 2+ years of data. Results in seconds, no cherry-picking." />
     </div>
     <div class="text-center mt-8">
       <a href="/simulate" class="btn btn-primary btn-md">Open Simulator — Free &rarr;</a>
