@@ -1038,3 +1038,20 @@ textarea:focus-visible,
 .hero-enter > *:nth-child(4) { animation: hero-enter 1.0s var(--ease-default) 0.60s both; }
 .hero-enter > *:nth-child(5) { animation: hero-enter 1.0s var(--ease-default) 0.75s both; }
 .hero-enter > *:nth-child(6) { animation: hero-enter 1.0s var(--ease-default) 0.90s both; }
+
+/* ─── Scroll hint fade for horizontally scrollable tables ─── */
+.scroll-hint-fade {
+  animation: scroll-hint-pulse 2s ease-in-out infinite;
+}
+
+@keyframes scroll-hint-pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-hint-fade {
+    animation: none;
+    opacity: 0.8;
+  }
+}

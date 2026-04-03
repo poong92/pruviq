@@ -9,6 +9,7 @@ import ExchangeCTA from "./ExchangeCTA";
 import EmailCapture from "./EmailCapture";
 import BotCodeSection from "./BotCodeSection";
 import CollapsibleSection from "./ui/CollapsibleSection";
+import ScrollHint from "./ui/ScrollHint";
 import { exchanges } from "../data/exchanges";
 import { COINS_ANALYZED } from "../config/site-stats";
 import {
@@ -681,7 +682,7 @@ export default function ResultsPanel({
                   {t.clearHistory || "Clear"}
                 </button>
               </div>
-              <div class="overflow-x-auto">
+              <ScrollHint label={lang === "ko" ? "스크롤 →" : "Scroll →"}>
                 <table class="w-full text-[10px] font-mono">
                   <caption class="sr-only">{t.history || "History"}</caption>
                   <thead>
@@ -760,7 +761,7 @@ export default function ResultsPanel({
                     })}
                   </tbody>
                 </table>
-              </div>
+              </ScrollHint>
             </div>
           )}
 
@@ -880,7 +881,7 @@ export default function ResultsPanel({
                           <div class="text-[10px] font-mono text-[--color-text-muted] uppercase mb-2">
                             {t.monthlyReturns || "Monthly Returns"}
                           </div>
-                          <div class="overflow-x-auto">
+                          <ScrollHint label={lang === "ko" ? "스크롤 →" : "Scroll →"}>
                             <div class="flex gap-1 min-w-max">
                               {result.monthly_stats.map((m) => {
                                 const maxRet = Math.max(
@@ -919,7 +920,7 @@ export default function ResultsPanel({
                                 );
                               })}
                             </div>
-                          </div>
+                          </ScrollHint>
                         </div>
                       )}
 
@@ -1172,8 +1173,9 @@ export default function ResultsPanel({
 
           {/* Trades tab */}
           {resultTab === "trades" && (
-            <div class="p-2 overflow-x-auto -webkit-overflow-scrolling-touch">
+            <div class="p-2">
               {result.trades && result.trades.length > 0 ? (
+                <ScrollHint label={lang === "ko" ? "스크롤 →" : "Scroll →"}>
                 <table class="w-full text-xs font-mono min-w-[500px] md:min-w-0">
                   <caption class="sr-only">
                     {t.tradeTableCaption || "Simulated trade details"}
@@ -1318,6 +1320,7 @@ export default function ResultsPanel({
                     })}
                   </tbody>
                 </table>
+                </ScrollHint>
               ) : (
                 <div class="text-center py-8 text-[--color-text-muted] text-sm">
                   {t.noTradeDetails ||
@@ -1414,7 +1417,7 @@ export default function ResultsPanel({
                       {profitPct.toFixed(0)}% {t.profitableCoinsUnit}
                     </span>
                   </div>
-                  <div class="overflow-x-auto -webkit-overflow-scrolling-touch">
+                  <ScrollHint label={lang === "ko" ? "스크롤 →" : "Scroll →"}>
                     <table class="w-full text-xs font-mono min-w-[600px] md:min-w-0">
                       <caption class="sr-only">
                         Per-coin backtest results
@@ -1510,7 +1513,7 @@ export default function ResultsPanel({
                         ))}
                       </tbody>
                     </table>
-                  </div>
+                  </ScrollHint>
                 </div>
               );
             })()}

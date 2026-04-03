@@ -103,6 +103,7 @@ const L = {
     ],
     simNotesTitle: "How it works",
     mobile: { chart: "Chart", config: "Settings", results: "Results" },
+    mobileIcon: { chart: "📊", config: "⚙️", results: "📋" },
     quickStart: "New to backtesting?",
     quickStartDesc:
       "Click 'BB Squeeze (Verified)' preset above, then hit 'Run Backtest'. Takes ~2 seconds. No signup needed.",
@@ -295,6 +296,7 @@ const L = {
     ],
     simNotesTitle: "시뮬레이션 안내",
     mobile: { chart: "차트", config: "설정", results: "결과" },
+    mobileIcon: { chart: "📊", config: "⚙️", results: "📋" },
     quickStart: "백테스트가 처음이라면?",
     quickStartDesc:
       "위의 'BB Squeeze (검증됨)' 프리셋을 선택하고 'Run Backtest'를 누르세요. 약 2초면 됩니다. 회원가입 불필요.",
@@ -1286,7 +1288,7 @@ export default function SimulatorPage({ lang = "en" }: Props) {
             <button
               key={tab}
               onClick={() => handleMobileTabChange(tab)}
-              class={`flex-1 py-3 min-h-[44px] text-xs font-mono uppercase tracking-wider transition-colors
+              class={`flex-1 py-2 min-h-[48px] text-xs font-mono uppercase tracking-wider transition-colors flex flex-col items-center justify-center
                 ${mobileTab === tab ? "font-bold border-b-2" : "text-[--color-text-muted] hover:text-[--color-text]"}`}
               style={
                 mobileTab === tab
@@ -1298,7 +1300,7 @@ export default function SimulatorPage({ lang = "en" }: Props) {
                   : undefined
               }
             >
-              {t.mobile[tab]}
+              {<><span class="block text-base leading-none mb-0.5" aria-hidden="true">{t.mobileIcon[tab]}</span><span class="block text-[10px]">{t.mobile[tab]}</span></>}
             </button>
           ))}
         </div>
