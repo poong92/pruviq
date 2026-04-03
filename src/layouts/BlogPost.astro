@@ -22,6 +22,32 @@ const categoryLabels: Record<string, string> = {
 ---
 
 <Layout title={`${title} - PRUVIQ`} description={description} type="article" date={date} category={category} ogImage={image}>
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": title,
+    "description": description,
+    "datePublished": date,
+    "author": {
+      "@type": "Organization",
+      "name": author,
+      "url": "https://pruviq.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "PRUVIQ",
+      "url": "https://pruviq.com",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://pruviq.com/favicon.svg"
+      }
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": `https://pruviq.com/learn/${Astro.params.id || ''}/`
+    },
+    ...(image ? { "image": `https://pruviq.com${image}` } : {})
+  })} />
   <article class="py-12">
     <div class="max-w-[45rem] mx-auto px-4">
       <a href="/learn" class="text-[--color-text-muted] text-sm hover:text-[--color-accent] transition-colors mb-8 inline-block">

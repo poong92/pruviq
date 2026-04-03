@@ -194,7 +194,7 @@ export const ko: Record<TranslationKey, string> = {
   "cta.desc1":
     "전략을 만들고, 백테스트를 돌리고, 결과를 확인하세요. 계정 불필요.",
   "cta.desc2": "영원히 무료. 이메일 불필요. 숨겨진 비용 없음.",
-  "cta.button1": "무료 시뮬레이터 체험",
+  "cta.button1": "시뮬레이터 열기 — 무료",
   "cta.button2": "커뮤니티 참여",
   "cta.button3": "수수료 절약하기",
   "cta.disclaimer":
@@ -1404,7 +1404,7 @@ export const ko: Record<TranslationKey, string> = {
     "몬테카를로 \u2014 1,000회+ 무작위 시뮬레이션으로 전략 견고성 확인.",
 
   // Cross-page CTAs
-  "cross.simulate_cta": "시뮬레이터 체험",
+  "cross.simulate_cta": "시뮬레이터 열기",
   "cross.strategies_cta": "전체 전략 보기",
   "cross.fees_cta": "거래소 수수료 비교",
   "cross.performance_cta": "백테스트 결과 보기",

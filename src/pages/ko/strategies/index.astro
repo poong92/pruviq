@@ -181,21 +181,21 @@ const isKorean = (id: string) => koIds.has(id);
       <div class="mb-6 flex flex-wrap gap-4 strategy-filter-bar" id="strategy-filters-ko">
         <div class="flex items-center gap-1.5 flex-wrap">
           <span class="font-mono text-xs text-[--color-text-muted] mr-1">상태:</span>
-          <button data-filter-group="status" data-filter-value="all"
-            class="font-mono text-xs border rounded px-3 py-1.5 transition-colors bg-[--color-accent] text-black border-[--color-accent]">전체</button>
-          <button data-filter-group="status" data-filter-value="verified"
-            class="font-mono text-xs border border-[--color-border] rounded px-3 py-1.5 text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">검증됨</button>
-          <button data-filter-group="status" data-filter-value="killed"
-            class="font-mono text-xs border border-[--color-border] rounded px-3 py-1.5 text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">종료</button>
+          <button data-filter-group="status" data-filter-value="all" aria-label="모든 전략 표시"
+            class="font-mono text-xs border rounded px-3 py-2.5 transition-colors bg-[--color-accent] text-black border-[--color-accent]">전체</button>
+          <button data-filter-group="status" data-filter-value="verified" aria-label="검증된 전략만 표시"
+            class="font-mono text-xs border border-[--color-border] rounded px-3 py-2.5 text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">검증됨</button>
+          <button data-filter-group="status" data-filter-value="killed" aria-label="종료된 전략만 표시"
+            class="font-mono text-xs border border-[--color-border] rounded px-3 py-2.5 text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">종료</button>
         </div>
         <div class="flex items-center gap-1.5 flex-wrap">
           <span class="font-mono text-xs text-[--color-text-muted] mr-1">정렬:</span>
-          <button data-sort-value="default"
-            class="font-mono text-xs border rounded px-3 py-1.5 transition-colors bg-[--color-accent] text-black border-[--color-accent]">기본</button>
-          <button data-sort-value="winrate"
-            class="font-mono text-xs border border-[--color-border] rounded px-3 py-1.5 text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">승률 ↓</button>
-          <button data-sort-value="pf"
-            class="font-mono text-xs border border-[--color-border] rounded px-3 py-1.5 text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">수익팩터 ↓</button>
+          <button data-sort-value="default" aria-label="기본 정렬"
+            class="font-mono text-xs border rounded px-3 py-2.5 transition-colors bg-[--color-accent] text-black border-[--color-accent]">기본</button>
+          <button data-sort-value="winrate" aria-label="승률 내림차순 정렬"
+            class="font-mono text-xs border border-[--color-border] rounded px-3 py-2.5 text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">승률 ↓</button>
+          <button data-sort-value="pf" aria-label="수익팩터 내림차순 정렬"
+            class="font-mono text-xs border border-[--color-border] rounded px-3 py-2.5 text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">수익팩터 ↓</button>
         </div>
       </div>
 

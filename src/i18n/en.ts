@@ -196,7 +196,7 @@ export const en = {
   "cta.desc1":
     "Build a strategy, run a backtest, see the results. No account needed.",
   "cta.desc2": "Free forever. No email required. No hidden fees.",
-  "cta.button1": "Try Simulator Free",
+  "cta.button1": "Open Simulator Free",
   "cta.button2": "Join Community",
   "cta.button3": "Save on Fees",
   "cta.disclaimer":
@@ -1436,7 +1436,7 @@ export const en = {
     "Monte Carlo \u2014 1,000+ random simulations to check strategy robustness.",
 
   // Cross-page CTAs
-  "cross.simulate_cta": "Try the Simulator",
+  "cross.simulate_cta": "Open Simulator",
   "cross.strategies_cta": "View All Strategies",
   "cross.fees_cta": "Compare Exchange Fees",
   "cross.performance_cta": "View Backtest Results",

@@ -168,50 +168,50 @@ const difficultyColors: Record<string, string> = {
       <div class="mb-6 flex flex-wrap gap-4 strategy-filter-bar" id="strategy-filters">
         <div class="flex items-center gap-1.5 flex-wrap">
           <span class="font-mono text-xs text-[--color-text-muted] mr-1">Status:</span>
-          <button data-filter-group="status" data-filter-value="all"
-            class="font-mono text-xs border rounded px-3 py-1.5 transition-colors bg-[--color-accent] text-black border-[--color-accent]">
+          <button data-filter-group="status" data-filter-value="all" aria-label="Show all strategies"
+            class="font-mono text-xs border rounded px-3 py-2.5 transition-colors bg-[--color-accent] text-black border-[--color-accent]">
             All
           </button>
-          <button data-filter-group="status" data-filter-value="verified"
-            class="font-mono text-xs border border-[--color-border] rounded px-3 py-1.5 text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
+          <button data-filter-group="status" data-filter-value="verified" aria-label="Show verified strategies only"
+            class="font-mono text-xs border border-[--color-border] rounded px-3 py-2.5 text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
             Verified
           </button>
-          <button data-filter-group="status" data-filter-value="killed"
-            class="font-mono text-xs border border-[--color-border] rounded px-3 py-1.5 text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
+          <button data-filter-group="status" data-filter-value="killed" aria-label="Show retired strategies only"
+            class="font-mono text-xs border border-[--color-border] rounded px-3 py-2.5 text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
             Retired
           </button>
         </div>
         <div class="flex items-center gap-1.5 flex-wrap">
           <span class="font-mono text-xs text-[--color-text-muted] mr-1">Direction:</span>
-          <button data-filter-group="direction" data-filter-value="all"
-            class="font-mono text-xs border rounded px-3 py-1.5 transition-colors bg-[--color-accent] text-black border-[--color-accent]">
+          <button data-filter-group="direction" data-filter-value="all" aria-label="Show all directions"
+            class="font-mono text-xs border rounded px-3 py-2.5 transition-colors bg-[--color-accent] text-black border-[--color-accent]">
             All
           </button>
-          <button data-filter-group="direction" data-filter-value="long"
-            class="font-mono text-xs border border-[--color-border] rounded px-3 py-1.5 text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
+          <button data-filter-group="direction" data-filter-value="long" aria-label="Show long strategies only"
+            class="font-mono text-xs border border-[--color-border] rounded px-3 py-2.5 text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
             LONG
           </button>
-          <button data-filter-group="direction" data-filter-value="short"
-            class="font-mono text-xs border border-[--color-border] rounded px-3 py-1.5 text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
+          <button data-filter-group="direction" data-filter-value="short" aria-label="Show short strategies only"
+            class="font-mono text-xs border border-[--color-border] rounded px-3 py-2.5 text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
             SHORT
           </button>
-          <button data-filter-group="direction" data-filter-value="both"
-            class="font-mono text-xs border border-[--color-border] rounded px-3 py-1.5 text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
+          <button data-filter-group="direction" data-filter-value="both" aria-label="Show both-direction strategies only"
+            class="font-mono text-xs border border-[--color-border] rounded px-3 py-2.5 text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
             BOTH
           </button>
         </div>
         <div class="flex items-center gap-1.5 flex-wrap">
           <span class="font-mono text-xs text-[--color-text-muted] mr-1">Sort:</span>
-          <button data-sort-value="default"
-            class="font-mono text-xs border rounded px-3 py-1.5 transition-colors bg-[--color-accent] text-black border-[--color-accent]" id="sort-default">
+          <button data-sort-value="default" aria-label="Sort by default order"
+            class="font-mono text-xs border rounded px-3 py-2.5 transition-colors bg-[--color-accent] text-black border-[--color-accent]" id="sort-default">
             Default
           </button>
-          <button data-sort-value="winrate"
-            class="font-mono text-xs border border-[--color-border] rounded px-3 py-1.5 text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors" id="sort-winrate">
+          <button data-sort-value="winrate" aria-label="Sort by win rate descending"
+            class="font-mono text-xs border border-[--color-border] rounded px-3 py-2.5 text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors" id="sort-winrate">
             Win Rate ↓
           </button>
-          <button data-sort-value="pf"
-            class="font-mono text-xs border border-[--color-border] rounded px-3 py-1.5 text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors" id="sort-pf">
+          <button data-sort-value="pf" aria-label="Sort by profit factor descending"
+            class="font-mono text-xs border border-[--color-border] rounded px-3 py-2.5 text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors" id="sort-pf">
             Profit Factor ↓
           </button>
         </div>
