@@ -858,6 +858,31 @@ textarea:focus-visible,
 }
 .card-glow:hover::before { opacity: 1; }
 
+/* ─── Search input focus glow ─── */
+.search-glow:focus {
+  border-color: var(--color-accent) !important;
+  box-shadow: 0 0 0 3px rgba(79,142,247,0.15), 0 0 12px rgba(79,142,247,0.1);
+}
+
+/* ─── Blog category badge colors ─── */
+.badge-quant { color: #60a5fa; background: rgba(96,165,250,0.12); }
+.badge-education { color: #4ade80; background: rgba(74,222,128,0.12); }
+.badge-weekly { color: #c084fc; background: rgba(192,132,252,0.12); }
+.badge-strategy { color: #fb923c; background: rgba(251,146,60,0.12); }
+.badge-market { color: #fbbf24; background: rgba(251,191,36,0.12); }
+.badge-autopsy { color: #f87171; background: rgba(248,113,113,0.12); }
+
+.badge-new {
+  color: #4ade80;
+  background: rgba(74,222,128,0.15);
+  border: 1px solid rgba(74,222,128,0.3);
+  animation: badge-pulse 2s ease-in-out infinite;
+}
+@keyframes badge-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
 /* ─── Direction-based preset glow ─── */
 .preset-glow-long:hover {
   box-shadow: 0 0 12px rgba(79,142,247,0.15), 0 0 4px rgba(79,142,247,0.08);
@@ -865,6 +890,84 @@ textarea:focus-visible,
 .preset-glow-short:hover {
   box-shadow: 0 0 12px rgba(239,68,68,0.15), 0 0 4px rgba(239,68,68,0.08);
 }
+
+/* ─── Strategy page: Verified card enhancement ─── */
+.strategy-card-verified {
+  border-color: var(--color-verified-border) !important;
+  box-shadow:
+    0 0 0 1px var(--color-verified-border),
+    0 0 16px var(--color-verified-subtle),
+    0 2px 8px rgba(0,0,0,0.3);
+}
+.strategy-card-verified:hover {
+  box-shadow:
+    0 0 0 1px rgba(245, 158, 11, 0.45),
+    0 0 24px rgba(245, 158, 11, 0.15),
+    0 4px 16px rgba(0,0,0,0.4);
+}
+
+/* ─── Strategy page: Status group headers ─── */
+.strategy-group-header {
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius-sm);
+}
+.strategy-group-header--verified {
+  border-left: 3px solid var(--color-verified);
+  background: var(--color-verified-subtle);
+}
+.strategy-group-header--testing {
+  border-left: 3px solid var(--color-yellow);
+  background: rgba(245, 158, 11, 0.05);
+}
+.strategy-group-header--killed {
+  border-left: 3px solid var(--color-red);
+  background: rgba(242, 54, 69, 0.04);
+}
+.strategy-group-header--shelved {
+  border-left: 3px solid var(--color-text-disabled);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+/* ─── Strategy page: Verified badge ─── */
+.badge-verified {
+  background: var(--color-verified-subtle);
+  color: var(--color-verified);
+  border-color: var(--color-verified-border);
+  font-weight: 700;
+  padding: 0.25rem 0.625rem;
+  box-shadow: 0 0 8px var(--color-verified-subtle);
+}
+
+/* ─── Strategy page: Filter bar scrollable on mobile ─── */
+.strategy-filter-bar {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.strategy-filter-bar::-webkit-scrollbar {
+  display: none;
+}
+
+/* ─── Strategy page: Active filter button ─── */
+.filter-btn-active {
+  box-shadow: 0 1px 4px rgba(79, 142, 247, 0.25);
+}
+
+/* ─── Strategy page: Preset card lift on hover ─── */
+.preset-card {
+  transition: border-color var(--duration-normal) var(--ease-smooth),
+              transform var(--duration-normal) var(--ease-default),
+              box-shadow var(--duration-normal) var(--ease-smooth);
+}
+.preset-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card-hover);
+}
+
+/* ─── Strategy page: Stats color classes ─── */
+.stat-positive { color: var(--color-up); }
+.stat-warning  { color: var(--color-yellow); }
+.stat-negative { color: var(--color-red); }
 
 /* ─── Border gradient on hover ─── */
 .border-gradient {
