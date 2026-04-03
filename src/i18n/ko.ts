@@ -1492,6 +1492,33 @@ export const ko: Record<TranslationKey, string> = {
   "cta.badge3": "영구 무료",
   "cta.badge4": "3초 만에 결과",
 
+  // Homepage comparison section
+  "compare.section_tag": "왜 PRUVIQ?",
+  "compare.section_title": "백테스트에 돈 쓰지 마세요",
+  "compare.other_label": "다른 도구",
+  "compare.pruviq_label": "PRUVIQ",
+  "compare.row1_label": "비용",
+  "compare.row1_other": "월 $15 - $200",
+  "compare.row1_pruviq": "영원히 무료",
+  "compare.row2_label": "코딩",
+  "compare.row2_other": "Python / Pine Script 필요",
+  "compare.row2_pruviq": "코딩 불필요",
+  "compare.row3_label": "코인",
+  "compare.row3_other": "한 번에 1개 코인",
+  "compare.row3_pruviq": "572개 코인 동시 테스트",
+  "compare.row4_label": "가입",
+  "compare.row4_other": "이메일 + 신용카드",
+  "compare.row4_pruviq": "계정 불필요",
+  "compare.row5_label": "수수료",
+  "compare.row5_other": "대부분 미반영",
+  "compare.row5_pruviq": "실제 수수료 포함",
+
+  // Homepage trust badges (below features)
+  "trust_badges.no_signup": "가입 불필요",
+  "trust_badges.free": "영구 무료",
+  "trust_badges.opensource": "GitHub에서 소스 공개",
+  "trust_badges.data_sources": "Binance + CoinGecko 데이터",
+
   // Coins page
   "coins.explore_next":
     "관심 있는 코인을 찾으셨나요? 전략에서 테스트해 보세요.",

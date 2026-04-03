@@ -1527,6 +1527,33 @@ export const en = {
   "cta.badge3": "100% free forever",
   "cta.badge4": "Results in 3 seconds",
 
+  // Homepage comparison section
+  "compare.section_tag": "WHY PRUVIQ?",
+  "compare.section_title": "Stop Paying for Backtesting",
+  "compare.other_label": "Other Tools",
+  "compare.pruviq_label": "PRUVIQ",
+  "compare.row1_label": "Cost",
+  "compare.row1_other": "$15 - $200/month",
+  "compare.row1_pruviq": "Free forever",
+  "compare.row2_label": "Coding",
+  "compare.row2_other": "Python / Pine Script required",
+  "compare.row2_pruviq": "No code needed",
+  "compare.row3_label": "Coins",
+  "compare.row3_other": "1 coin at a time",
+  "compare.row3_pruviq": "572 coins at once",
+  "compare.row4_label": "Signup",
+  "compare.row4_other": "Email + credit card",
+  "compare.row4_pruviq": "No account needed",
+  "compare.row5_label": "Fees",
+  "compare.row5_other": "Often ignored",
+  "compare.row5_pruviq": "Real fees included",
+
+  // Homepage trust badges (below features)
+  "trust_badges.no_signup": "No signup required",
+  "trust_badges.free": "Free forever",
+  "trust_badges.opensource": "Source available on GitHub",
+  "trust_badges.data_sources": "Data from Binance + CoinGecko",
+
   // Coins page
   "coins.explore_next": "Found interesting coins? Test them in a strategy.",
   "coins.noscript_title": "JavaScript required to browse coins.",
