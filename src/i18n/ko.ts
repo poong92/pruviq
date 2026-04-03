@@ -688,6 +688,40 @@ export const ko: Record<TranslationKey, string> = {
   "about.solo_why":
     "PRUVIQ를 만든 이유: 백테스트에서 검증된 전략이 실전에서 실패하는 경험을 직접 겪었고, 기존 툴들이 실패를 숨긴다는 것을 깨달았습니다. 그래서 투명한 시뮬레이션 플랫폼을 설계했습니다.",
 
+  // About - Numbers at a Glance
+  "about.numbers_tag": "한눈에 보는 숫자",
+  "about.numbers_title": "플랫폼 현황",
+  "about.num_coins": "분석 코인",
+  "about.num_presets": "전략 프리셋",
+  "about.num_presets_val": "36+",
+  "about.num_data": "데이터 포인트",
+  "about.num_data_val": "2년+",
+  "about.num_sims": "시뮬레이션 실행 수",
+
+  // About - Methodology Highlight
+  "about.method_tag": "방법론",
+  "about.method_title": "전략 검증 방법",
+  "about.method_desc":
+    "PRUVIQ의 모든 전략은 공개 전 엄격한 백테스팅 파이프라인을 거칩니다. 체리피킹 없이 투명한 데이터만 제공합니다.",
+  "about.method1_title": "히스토리컬 백테스팅",
+  "about.method1_desc":
+    "500+ 코인의 2년 이상 실제 시장 데이터로 전략을 검증합니다. 현실적인 수수료 모델링 포함.",
+  "about.method2_title": "워크포워드 검증",
+  "about.method2_desc":
+    "과적합을 감지하기 위한 표본 외 테스트. 과거 데이터에서만 작동하는 전략은 제거합니다.",
+  "about.method3_title": "완전 무료",
+  "about.method3_desc":
+    "모든 시뮬레이션은 무료입니다. 거래소 레퍼럴 파트너십으로 플랫폼을 운영합니다 — 숨겨진 비용 없음.",
+  "about.method_cta": "전체 방법론 보기",
+
+  // About - Partners
+  "about.partners_tag": "공식 파트너",
+  "about.partners_desc":
+    "PRUVIQ는 주요 거래소와 파트너십을 통해 수수료 할인을 제공합니다. 이 파트너십으로 플랫폼을 운영하며, 모든 기능은 무료로 유지됩니다.",
+  "about.partners_okx": "OKX — 수수료 할인",
+  "about.partners_binance": "바이낸스 — 수수료 할인",
+  "about.partners_detail": "수수료 비교 보기 →",
+
   // Home hero stat labels
   "home.stat_coins": "테스트 코인",
   "home.stat_trades": "백테스트 거래",
