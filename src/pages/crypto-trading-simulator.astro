@@ -34,7 +34,7 @@ const jsonLd = {
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
   <!-- HERO -->
-  <section class="pt-16 pb-8">
+  <section class="pt-16 pb-8 reveal">
     <div class="max-w-5xl mx-auto px-4">
       <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">TRADING SIMULATOR</p>
       <h1 class="text-3xl md:text-5xl font-bold mb-4">
@@ -50,7 +50,7 @@ const jsonLd = {
 
   <!-- WHAT IS A TRADING SIMULATOR -->
   <hr class="section-divider" />
-  <section class="pb-12 pt-12">
+  <section class="pb-12 pt-12 reveal">
     <div class="max-w-5xl mx-auto px-4">
       <h2 class="text-2xl md:text-3xl font-bold mb-6">What Is a Crypto Trading Simulator?</h2>
       <div class="space-y-4 text-[--color-text-muted] max-w-3xl">
@@ -70,12 +70,12 @@ const jsonLd = {
 
   <!-- HOW IT WORKS (reusing i18n step keys) -->
   <hr class="section-divider" />
-  <section class="pb-12 pt-12 bg-[--color-bg-subtle]">
+  <section class="pb-12 pt-12 bg-[--color-bg-subtle] reveal">
     <div class="max-w-5xl mx-auto px-4">
       <h2 class="text-2xl md:text-3xl font-bold mb-8">How PRUVIQ's Simulator Works</h2>
       <div class="grid md:grid-cols-3 gap-8">
         {steps.map((step) => (
-          <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card]">
+          <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] card-hover">
             <div class="flex items-center gap-3 mb-4">
               <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-[--color-accent]/10 text-[--color-accent] font-mono text-sm font-bold shrink-0">{step.num}</span>
               <h3 class="font-bold text-lg">{step.title}</h3>
@@ -89,7 +89,7 @@ const jsonLd = {
 
   <!-- KEY FEATURES -->
   <hr class="section-divider" />
-  <section class="pb-12 pt-12">
+  <section class="pb-12 pt-12 reveal">
     <div class="max-w-5xl mx-auto px-4">
       <h2 class="text-2xl md:text-3xl font-bold mb-8">Key Features</h2>
       <div class="grid sm:grid-cols-2 md:grid-cols-4 gap-6">
