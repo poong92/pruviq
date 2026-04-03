@@ -45,11 +45,11 @@
   --color-bg-subtle:     rgba(255,255,255,0.035);
   --color-bg-tooltip:    rgba(24,24,27,0.95);
 
-  /* ─── TEXT ─── */
-  --color-text:          #E4E4E7;   /* Zinc-200 — refined primary text (enterprise readability) */
-  --color-text-secondary:#A1A1AA;   /* Zinc-400 — secondary description */
-  --color-text-muted:    #A1A1AA;   /* Zinc-400 — labels, meta (WCAG AA 6.29:1) */
-  --color-text-disabled: #52525B;   /* Zinc-600 — inactive */
+  /* ─── TEXT (4-level hierarchy: text > secondary > muted > disabled) ─── */
+  --color-text:          #E4E4E7;   /* Zinc-200 — headings, body */
+  --color-text-secondary:#A1A1AA;   /* Zinc-400 — descriptions, subtitles */
+  --color-text-muted:    #898992;   /* Zinc-450 — labels, meta, captions (distinct from secondary) */
+  --color-text-disabled: #52525B;   /* Zinc-600 — inactive, placeholder */
 
   /* ─── ACCENT ─── */
   --color-accent:        #4F8EF7;   /* premium blue (was #3182f6) */
@@ -1006,6 +1006,30 @@ textarea:focus-visible,
   background: linear-gradient(90deg, transparent, rgba(79,142,247,0.15), transparent);
   border: none;
   margin: 0;
+}
+
+/* ─── Card accent variants (replace inline styles) ─── */
+.card-accent {
+  border-color: rgba(79,142,247,0.3) !important;
+  background: rgba(79,142,247,0.05);
+}
+.card-accent-gradient {
+  border-color: rgba(79,142,247,0.2) !important;
+  background: linear-gradient(135deg, rgba(79,142,247,0.04), var(--color-bg-card));
+}
+.card-accent-up {
+  border-color: rgba(34,171,148,0.2) !important;
+}
+
+/* ─── Step badge green variant ─── */
+.step-badge-green {
+  background: color-mix(in srgb, var(--color-up) 15%, transparent);
+  color: var(--color-up);
+}
+
+/* ─── Live signal dot ─── */
+.live-dot-ping {
+  background: var(--color-up);
 }
 
 /* ─── Card mouse-tracking glow ─── */

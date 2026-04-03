@@ -72,7 +72,7 @@ const quickStartPresets = (rankingsData.top3 || []).slice(0, 3);
           </div>
         </div>
         <div class="flex items-start gap-3 border border-[--color-up]/20 rounded-lg px-4 py-4 bg-[--color-up]/5 card-hover">
-          <div class="step-badge shrink-0 mt-0.5" style="background: color-mix(in srgb, var(--color-up) 15%, transparent); color: var(--color-up);">3</div>
+          <div class="step-badge step-badge-green shrink-0 mt-0.5">3</div>
           <div>
             <p class="text-sm font-semibold">{t('simulate.step3_title')}</p>
             <p class="text-xs text-[--color-text-muted] mt-1 leading-relaxed">{t('simulate.step3_desc')}</p>
@@ -113,7 +113,7 @@ const quickStartPresets = (rankingsData.top3 || []).slice(0, 3);
   <!-- Risk Disclaimer -->
   <hr class="section-divider" />
   <div class="max-w-[1400px] mx-auto px-4 mb-4">
-    <p class="text-xs text-gray-500 leading-relaxed">
+    <p class="text-xs text-[--color-text-muted] leading-relaxed">
       {t('simulate.risk_disclaimer')}
     </p>
     <div class="flex flex-wrap gap-2 mt-2">
@@ -184,8 +184,7 @@ const quickStartPresets = (rankingsData.top3 || []).slice(0, 3);
         <div class="absolute inset-0 flex flex-col items-center justify-center gap-4">
           <p class="text-[--color-text-muted] text-sm font-mono">Run a backtest to see your results</p>
           <a href="/simulate?preset=bb-squeeze-short"
-             class="btn btn-primary btn-md no-underline inline-flex items-center gap-2 animate-pulse"
-             style="animation-duration: 2s;">
+             class="btn btn-primary btn-md no-underline inline-flex items-center gap-2 animate-pulse [animation-duration:2s]">
             Start with BB Squeeze (Verified) &rarr;
           </a>
         </div>

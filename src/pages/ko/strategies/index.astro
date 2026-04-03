@@ -215,8 +215,7 @@ const isKorean = (id: string) => koIds.has(id);
           const cards = (
             <div class="space-y-4">
         {strategyGroups[statusKey].map((strategy) => (
-          <div class={`block border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] card-hover group ${strategy.data.status === 'verified' ? 'strategy-card-verified' : ''}`}
-               style="box-shadow: var(--shadow-card);"
+          <div class={`block card-enterprise p-6 card-hover group ${strategy.data.status === 'verified' ? 'strategy-card-verified' : ''}`}
                data-status={strategy.data.status}
                data-win-rate={strategy.data.winRate ?? 0}
                data-profit-factor={strategy.data.profitFactor ?? 0}>

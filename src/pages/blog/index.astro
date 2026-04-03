@@ -105,7 +105,7 @@ function getReadingTime(body: string | undefined): string {
             {posts.map((post) => (
               <a href={`/blog/${post.id}`}
                  class="block border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] card-hover card-glow group"
-                 style={`box-shadow: var(--shadow-card); border-left: 3px solid ${categoryBorderColors[post.data.category] || '#6b7280'};`}>
+                 style={`border-left: 3px solid ${categoryBorderColors[post.data.category] || 'var(--color-text-muted)'};`}>
                 <div class="flex items-center gap-2 mb-3">
                   <span class={`text-xs font-mono font-semibold px-2 py-0.5 rounded ${categoryBadgeClass[post.data.category] || 'badge-education'}`}>
                     {categoryLabels[post.data.category] || post.data.category.toUpperCase()}
