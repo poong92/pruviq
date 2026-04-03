@@ -46,7 +46,7 @@
   --color-bg-tooltip:    rgba(24,24,27,0.95);
 
   /* ─── TEXT ─── */
-  --color-text:          #FAFAFA;   /* Zinc-50 — primary text */
+  --color-text:          #E8E8EC;   /* Zinc-100 — softer primary text (less eye fatigue) */
   --color-text-secondary:#A1A1AA;   /* Zinc-400 — secondary description */
   --color-text-muted:    #A1A1AA;   /* Zinc-400 — labels, meta (WCAG AA 6.29:1) */
   --color-text-disabled: #52525B;   /* Zinc-600 — inactive */
@@ -237,6 +237,23 @@ h3 {
   color: #ffffff;
 }
 
+/* ─── Link underline animation (excludes nav, buttons, cards) ─── */
+a:not(.btn):not(.btn-primary):not(.btn-ghost):not(.btn-outline):not(.card-hover):not([role]):not(nav a) {
+  text-decoration: none;
+  background-image: linear-gradient(var(--color-accent), var(--color-accent));
+  background-size: 0% 1px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size var(--duration-normal) var(--ease-smooth);
+}
+a:not(.btn):not(.btn-primary):not(.btn-ghost):not(.btn-outline):not(.card-hover):not([role]):not(nav a):hover {
+  background-size: 100% 1px;
+}
+/* Prose links keep their own underline style */
+.prose a {
+  background-image: none !important;
+}
+
 /* ─── Keyframes ─── */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(8px); }
@@ -335,10 +352,14 @@ h3 {
 
 /* ─── Phase 5: Glass card + Gradient text ─── */
 .card-glass {
-  background: rgba(24, 24, 27, 0.6);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(
+    135deg,
+    rgba(24, 24, 27, 0.65) 0%,
+    rgba(24, 24, 27, 0.50) 100%
+  );
+  backdrop-filter: blur(24px) saturate(1.2);
+  -webkit-backdrop-filter: blur(24px) saturate(1.2);
+  border: 1px solid rgba(255, 255, 255, 0.10);
 }
 
 .gradient-text {
@@ -480,9 +501,12 @@ textarea:focus-visible,
               box-shadow var(--duration-normal) var(--ease-smooth);
 }
 .card-hover:hover {
-  border-color: var(--color-accent);
+  border-color: rgba(255,255,255,0.15);
   transform: translateY(-2px);
-  box-shadow: var(--shadow-card-hover);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.10),
+    0 8px 24px rgba(0,0,0,0.35),
+    0 20px 48px rgba(0,0,0,0.25);
 }
 
 /* ─── Table row hover ─── */
@@ -848,7 +872,7 @@ textarea:focus-visible,
   border-radius: inherit;
   background: radial-gradient(
     300px circle at var(--glow-x, 50%) var(--glow-y, 50%),
-    rgba(79,142,247,0.06),
+    rgba(79,142,247,0.03),
     transparent 70%
   );
   opacity: 0;
@@ -1157,4 +1181,20 @@ textarea:focus-visible,
     animation: none;
     opacity: 0.8;
   }
+}
+
+/* ─── Data metric typography utilities ─── */
+.metric-value {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+
+.metric-label {
+  font-size: var(--text-xs);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
 }
