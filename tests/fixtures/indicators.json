@@ -1,1 +1,215 @@
-{"bb":{"name":"Bollinger Bands","fields":["bb_upper","bb_lower","bb_mid","bb_width","bb_width_ma","bb_width_change","is_squeeze","recent_squeeze","bb_expanding","bb_width_above_ma"],"default_params":{"period":20,"std":2.0,"squeeze_lookback":10,"squeeze_threshold":0.8,"expansion_threshold":0.9}},"ema":{"name":"EMA Trend","fields":["ema_fast","ema_slow","uptrend","downtrend"],"default_params":{"fast":20,"slow":50}},"volume":{"name":"Volume Analysis","fields":["vol_ma","vol_ratio"],"default_params":{"ma_period":10}},"candle":{"name":"Candle Pattern","fields":["bullish","bearish","doji"],"default_params":{"doji_threshold":0.1}},"atr":{"name":"ATR","fields":["atr","atr_upper","atr_lower"],"default_params":{"period":14,"multiplier":2.0}},"hv":{"name":"Historical Volatility","fields":["hv","hv_ma","hv_squeeze","hv_percentile"],"default_params":{"period":20,"ma_period":50}},"rsi":{"name":"RSI","fields":["rsi","rsi_oversold","rsi_overbought"],"default_params":{"period":14,"oversold":30,"overbought":70}},"macd":{"name":"MACD","fields":["macd","macd_signal","macd_histogram","macd_crossover"],"default_params":{"fast":12,"slow":26,"signal":9}},"stochastic":{"name":"Stochastic","fields":["stoch_k","stoch_d","stoch_oversold","stoch_overbought"],"default_params":{"k_period":14,"d_period":3,"oversold":20,"overbought":80}},"adx":{"name":"ADX","fields":["adx","plus_di","minus_di","strong_trend"],"default_params":{"period":14,"threshold":25}},"price_action":{"name":"Price Action","fields":["close_vs_high_20","close_vs_low_20","breakout_up","breakout_down"],"default_params":{"lookback":20}},"ichimoku":{"name":"Ichimoku Cloud","fields":["tenkan","kijun","senkou_a","senkou_b","above_cloud","below_cloud","in_cloud","tk_cross_bull","tk_cross_bear","cloud_green","cloud_red"],"default_params":{"tenkan_period":9,"kijun_period":26,"senkou_b_period":52}},"psar":{"name":"Parabolic SAR","fields":["psar","psar_bull","psar_bear","psar_reversal_bull","psar_reversal_bear"],"default_params":{"af_start":0.02,"af_step":0.02,"af_max":0.2}},"williams_r":{"name":"Williams %R","fields":["williams_r","wr_oversold","wr_overbought","wr_exit_oversold","wr_exit_overbought"],"default_params":{"period":14,"oversold":-80,"overbought":-20}}}
+[
+  {
+    "id": "bb",
+    "name": "Bollinger Bands",
+    "fields": [
+      "bb_upper",
+      "bb_lower",
+      "bb_mid",
+      "bb_width",
+      "bb_width_ma",
+      "bb_width_change",
+      "is_squeeze",
+      "recent_squeeze",
+      "bb_expanding",
+      "bb_width_above_ma"
+    ],
+    "default_params": {
+      "period": 20,
+      "std": 2.0,
+      "squeeze_lookback": 10,
+      "squeeze_threshold": 0.8,
+      "expansion_threshold": 0.9
+    }
+  },
+  {
+    "id": "ema",
+    "name": "EMA Trend",
+    "fields": [
+      "ema_fast",
+      "ema_slow",
+      "uptrend",
+      "downtrend"
+    ],
+    "default_params": {
+      "fast": 20,
+      "slow": 50
+    }
+  },
+  {
+    "id": "volume",
+    "name": "Volume Analysis",
+    "fields": [
+      "vol_ma",
+      "vol_ratio"
+    ],
+    "default_params": {
+      "ma_period": 10
+    }
+  },
+  {
+    "id": "candle",
+    "name": "Candle Pattern",
+    "fields": [
+      "bullish",
+      "bearish",
+      "doji"
+    ],
+    "default_params": {
+      "doji_threshold": 0.1
+    }
+  },
+  {
+    "id": "atr",
+    "name": "ATR",
+    "fields": [
+      "atr",
+      "atr_upper",
+      "atr_lower"
+    ],
+    "default_params": {
+      "period": 14,
+      "multiplier": 2.0
+    }
+  },
+  {
+    "id": "hv",
+    "name": "Historical Volatility",
+    "fields": [
+      "hv",
+      "hv_ma",
+      "hv_squeeze",
+      "hv_percentile"
+    ],
+    "default_params": {
+      "period": 20,
+      "ma_period": 50
+    }
+  },
+  {
+    "id": "rsi",
+    "name": "RSI",
+    "fields": [
+      "rsi",
+      "rsi_oversold",
+      "rsi_overbought"
+    ],
+    "default_params": {
+      "period": 14,
+      "oversold": 30,
+      "overbought": 70
+    }
+  },
+  {
+    "id": "macd",
+    "name": "MACD",
+    "fields": [
+      "macd",
+      "macd_signal",
+      "macd_histogram",
+      "macd_crossover"
+    ],
+    "default_params": {
+      "fast": 12,
+      "slow": 26,
+      "signal": 9
+    }
+  },
+  {
+    "id": "stochastic",
+    "name": "Stochastic",
+    "fields": [
+      "stoch_k",
+      "stoch_d",
+      "stoch_oversold",
+      "stoch_overbought"
+    ],
+    "default_params": {
+      "k_period": 14,
+      "d_period": 3,
+      "oversold": 20,
+      "overbought": 80
+    }
+  },
+  {
+    "id": "adx",
+    "name": "ADX",
+    "fields": [
+      "adx",
+      "plus_di",
+      "minus_di",
+      "strong_trend"
+    ],
+    "default_params": {
+      "period": 14,
+      "threshold": 25
+    }
+  },
+  {
+    "id": "price_action",
+    "name": "Price Action",
+    "fields": [
+      "close_vs_high_20",
+      "close_vs_low_20",
+      "breakout_up",
+      "breakout_down"
+    ],
+    "default_params": {
+      "lookback": 20
+    }
+  },
+  {
+    "id": "ichimoku",
+    "name": "Ichimoku Cloud",
+    "fields": [
+      "tenkan",
+      "kijun",
+      "senkou_a",
+      "senkou_b",
+      "above_cloud",
+      "below_cloud",
+      "in_cloud",
+      "tk_cross_bull",
+      "tk_cross_bear",
+      "cloud_green",
+      "cloud_red"
+    ],
+    "default_params": {
+      "tenkan_period": 9,
+      "kijun_period": 26,
+      "senkou_b_period": 52
+    }
+  },
+  {
+    "id": "psar",
+    "name": "Parabolic SAR",
+    "fields": [
+      "psar",
+      "psar_bull",
+      "psar_bear",
+      "psar_reversal_bull",
+      "psar_reversal_bear"
+    ],
+    "default_params": {
+      "af_start": 0.02,
+      "af_step": 0.02,
+      "af_max": 0.2
+    }
+  },
+  {
+    "id": "williams_r",
+    "name": "Williams %R",
+    "fields": [
+      "williams_r",
+      "wr_oversold",
+      "wr_overbought",
+      "wr_exit_oversold",
+      "wr_exit_overbought"
+    ],
+    "default_params": {
+      "period": 14,
+      "oversold": -80,
+      "overbought": -20
+    }
+  }
+]

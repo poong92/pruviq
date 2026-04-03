@@ -1,6 +1,5 @@
 import { test, expect, type Page } from "@playwright/test";
-// Mock helper available for future use when Preact hydration issue is resolved:
-// import { mockPruviqApi } from "./helpers/mock-api";
+import { mockPruviqApi } from "./helpers/mock-api";
 
 /**
  * PRUVIQ Simulator — Complete E2E Tests
@@ -14,8 +13,8 @@ import { test, expect, type Page } from "@playwright/test";
  * 6. API direct validation with complete response schema
  * 7. Edge cases & error handling
  *
- * API calls are mocked via page.route() with local fixture files.
- * Expert/Backtest tests still skip in CI due to Preact hydration timing.
+ * Expert/Mode tests use page.route() mocks via mockPruviqApi() for deterministic
+ * fixture data (no live API dependency). Backtest result tabs still skip in CI.
  */
 
 const API_BASE = process.env.API_URL || "https://api.pruviq.com";
@@ -25,8 +24,10 @@ const skipInCI = !!process.env.CI;
 // ─── Helpers ──────────────────────────────────────────────────
 
 /** Opens simulator and waits for Preact hydration (lands on Quick Test by default).
- *  Uses event-based waits instead of hardcoded timeouts — reliable on slow CI runners. */
-async function openSimulator(page: Page) {
+ *  Uses event-based waits instead of hardcoded timeouts — reliable on slow CI runners.
+ *  @param mock — when true, intercept all API + static data requests with fixtures */
+async function openSimulator(page: Page, mock = false) {
+  if (mock) await mockPruviqApi(page);
   // domcontentloaded + waitForFunction: production pages poll APIs → networkidle never resolves → 60s timeout
   await page.goto("/simulate/", { waitUntil: "domcontentloaded" });
 
@@ -134,21 +135,16 @@ test.describe("Simulator — 3-Tier Mode Switcher", () => {
   });
 
   test("Mode switching: Quick → Standard → Expert", async ({ page }) => {
-    test.skip(
-      skipInCI,
-      "Skipped in CI — simulator hydration depends on API response time",
-    );
-    await openSimulator(page);
+    await openSimulator(page, true);
 
-    // Switch to Standard — panel depends on API hydration, may be slow in CI
+    // Switch to Standard — wait for Preact to re-render after click
     const stdTab = page
       .locator('[role="tab"]')
       .filter({ hasText: /Standard|스탠다드/i });
     await stdTab.click();
-    await page.waitForTimeout(1000);
-    // Verify tab is selected (works even if panel hasn't rendered yet)
-    const ariaSelected = await stdTab.getAttribute("aria-selected");
-    expect(ariaSelected).toBe("true");
+    await expect(stdTab).toHaveAttribute("aria-selected", "true", {
+      timeout: 5000,
+    });
 
     // Switch to Expert
     await switchToExpert(page);
@@ -158,21 +154,15 @@ test.describe("Simulator — 3-Tier Mode Switcher", () => {
 });
 
 test.describe("Simulator — Expert Load & Defaults", () => {
-  // CI: API hydration too slow → openSimulator/switchToExpert timeout
-  test.skip(
-    ({}, testInfo) => !!process.env.CI,
-    "Skipped in CI — API hydration timeout",
-  );
-
   test("Expert mode shows STRATEGY BUILDER header", async ({ page }) => {
-    await openSimulator(page);
+    await openSimulator(page, true);
     await switchToExpert(page);
     const header = page.locator("text=/STRATEGY BUILDER/i");
     await expect(header).toBeVisible();
   });
 
   test("Shows coin count from API", async ({ page }) => {
-    await openSimulator(page);
+    await openSimulator(page, true);
     await switchToExpert(page);
     // Header shows "N coins" text
     const coinText = page.locator("text=/\\d+ coins/i");
@@ -185,7 +175,7 @@ test.describe("Simulator — Expert Load & Defaults", () => {
   });
 
   test("Default direction is SHORT", async ({ page }) => {
-    await openSimulator(page);
+    await openSimulator(page, true);
     await switchToExpert(page);
     // SHORT button should be visually active (has accent/highlighted styling)
     const shortBtn = page.locator("button").filter({ hasText: /^SHORT$/ });
@@ -193,7 +183,7 @@ test.describe("Simulator — Expert Load & Defaults", () => {
   });
 
   test("Default indicators section exists", async ({ page }) => {
-    await openSimulator(page);
+    await openSimulator(page, true);
     await switchToExpert(page);
     // Indicators are shown as toggleable buttons/badges in the builder
     const body = (await page.textContent("body")) || "";
@@ -208,7 +198,7 @@ test.describe("Simulator — Expert Load & Defaults", () => {
   });
 
   test("Default conditions: entry conditions exist", async ({ page }) => {
-    await openSimulator(page);
+    await openSimulator(page, true);
     await switchToExpert(page);
     // Entry conditions use <select> dropdowns
     const selects = page.locator("select");
@@ -235,7 +225,7 @@ test.describe("Simulator — Expert Load & Defaults", () => {
   });
 
   test("24 Avoid Hours buttons with correct defaults", async ({ page }) => {
-    await openSimulator(page);
+    await openSimulator(page, true);
     await switchToExpert(page);
     const hourBtns = page.locator("button").filter({ hasText: /^[0-9]{1,2}$/ });
     expect(await hourBtns.count(), "Should have 24 hour buttons").toBe(24);
@@ -244,7 +234,7 @@ test.describe("Simulator — Expert Load & Defaults", () => {
   test("Default parameters: SL=10, TP=8, MaxBars=48, PerCoin=60, Leverage=5", async ({
     page,
   }) => {
-    await openSimulator(page);
+    await openSimulator(page, true);
     await switchToExpert(page);
     const numberInputs = page.locator('input[type="number"]');
     const count = await numberInputs.count();
@@ -262,26 +252,14 @@ test.describe("Simulator — Expert Load & Defaults", () => {
   });
 
   test("Timeframe default is 1H", async ({ page }) => {
-    await openSimulator(page);
+    await openSimulator(page, true);
     await switchToExpert(page);
     const tf1H = page.locator("button").filter({ hasText: /^1H$/ });
     expect(await tf1H.count(), "1H button exists").toBeGreaterThan(0);
   });
 
-  test("Preview chart renders canvas", async ({ page, request }) => {
-    // Chart requires API data — skip if API is unreachable
-    const probe = await request
-      .get(`${API_BASE}/health`, { timeout: 10000 })
-      .catch(() => null);
-    if (!probe || probe.status() >= 500) {
-      test.skip(
-        true,
-        `API returned ${probe?.status() ?? "unreachable"} — skipping`,
-      );
-      return;
-    }
-
-    await openSimulator(page);
+  test("Preview chart renders canvas", async ({ page }) => {
+    await openSimulator(page, true);
     await switchToExpert(page);
     // Chart data loads async from API — wait up to 10s for canvas to appear
     await page.waitForSelector("canvas", { timeout: 10000 }).catch(() => null);
@@ -295,13 +273,8 @@ test.describe("Simulator — Expert Load & Defaults", () => {
 // ═══════════════════════════════════════════════════════════════
 
 test.describe("Simulator — Expert Parameter Controls", () => {
-  test.skip(
-    ({}, testInfo) => !!process.env.CI,
-    "Skipped in CI — API hydration timeout",
-  );
-
   test("Direction toggle: SHORT → LONG → SHORT", async ({ page }) => {
-    await openSimulator(page);
+    await openSimulator(page, true);
     await switchToExpert(page);
 
     const longBtn = page.locator("button").filter({ hasText: /^LONG$/ });
@@ -324,7 +297,7 @@ test.describe("Simulator — Expert Parameter Controls", () => {
   test("SL/TP/MaxBars/PerCoin/Leverage inputs accept valid values", async ({
     page,
   }) => {
-    await openSimulator(page);
+    await openSimulator(page, true);
     await switchToExpert(page);
 
     const inputs = page.locator('input[type="number"]');
@@ -345,7 +318,7 @@ test.describe("Simulator — Expert Parameter Controls", () => {
   });
 
   test("Timeframe switching: 1H → 4H → 1D → 1H", async ({ page }) => {
-    await openSimulator(page);
+    await openSimulator(page, true);
     await switchToExpert(page);
 
     for (const tf of ["4H", "1D", "1H"]) {
@@ -362,7 +335,7 @@ test.describe("Simulator — Expert Parameter Controls", () => {
   });
 
   test("Avoid Hours toggle works", async ({ page }) => {
-    await openSimulator(page);
+    await openSimulator(page, true);
     await switchToExpert(page);
 
     const hourBtns = page.locator("button").filter({ hasText: /^[0-9]{1,2}$/ });
@@ -383,7 +356,7 @@ test.describe("Simulator — Expert Parameter Controls", () => {
     const errors: string[] = [];
     page.on("pageerror", (e) => errors.push(e.message));
 
-    await openSimulator(page);
+    await openSimulator(page, true);
     await switchToExpert(page);
 
     const topBtn = page.locator("button").filter({ hasText: /Top N|Top/i });
@@ -421,7 +394,7 @@ test.describe("Simulator — Expert Parameter Controls", () => {
   });
 
   test("Add Condition button adds a new row", async ({ page }) => {
-    await openSimulator(page);
+    await openSimulator(page, true);
     await switchToExpert(page);
 
     const addBtn = page
@@ -451,7 +424,7 @@ test.describe("Simulator — Backtest & Results", () => {
       "Skipped in CI — production API too slow from GitHub runners",
     );
     test.setTimeout(120000);
-    await openSimulator(page);
+    await openSimulator(page, true);
     await switchToExpert(page);
 
     const ok = await runBacktestAndWait(page);
@@ -540,7 +513,7 @@ test.describe("Simulator — Backtest & Results", () => {
       "Skipped in CI — production API too slow from GitHub runners",
     );
     test.setTimeout(120000);
-    await openSimulator(page);
+    await openSimulator(page, true);
     await switchToExpert(page);
 
     const ok = await runBacktestAndWait(page);
@@ -580,7 +553,7 @@ test.describe("Simulator — Backtest & Results", () => {
       "Skipped in CI — production API too slow from GitHub runners",
     );
     test.setTimeout(120000);
-    await openSimulator(page);
+    await openSimulator(page, true);
     await switchToExpert(page);
 
     const ok = await runBacktestAndWait(page);
@@ -648,7 +621,7 @@ test.describe("Simulator — Backtest & Results", () => {
       "Skipped in CI — production API too slow from GitHub runners",
     );
     test.setTimeout(120000);
-    await openSimulator(page);
+    await openSimulator(page, true);
     await switchToExpert(page);
 
     const ok = await runBacktestAndWait(page);
@@ -717,7 +690,7 @@ test.describe("Simulator — Backtest & Results", () => {
       "Skipped in CI — production API too slow from GitHub runners",
     );
     test.setTimeout(180000);
-    await openSimulator(page);
+    await openSimulator(page, true);
     await switchToExpert(page);
 
     const ok = await runBacktestAndWait(page);
@@ -770,7 +743,7 @@ test.describe("Simulator — Backtest & Results", () => {
       "Skipped in CI — production API too slow from GitHub runners",
     );
     test.setTimeout(120000);
-    await openSimulator(page);
+    await openSimulator(page, true);
     await switchToExpert(page);
 
     const ok = await runBacktestAndWait(page);

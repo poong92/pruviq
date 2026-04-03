@@ -12,10 +12,37 @@ function loadFixture(name: string): string {
 }
 
 /** Mock all PRUVIQ API endpoints with local fixture files.
- *  Call BEFORE page.goto() — Playwright routes are set up per-page. */
+ *  Call BEFORE page.goto() — Playwright routes are set up per-page.
+ *
+ *  Intercepts BOTH api.pruviq.com requests AND static /data/*.json paths
+ *  because fetchWithFallback() tries static CDN files first, then API. */
 export async function mockPruviqApi(page: Page) {
-  // Single catch-all handler for all api.pruviq.com requests.
-  // Dispatches to fixture files based on URL path.
+  // 1. Intercept static data paths (fetchWithFallback tries these first)
+  await page.route("**/data/builder-indicators.json", (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: loadFixture("indicators.json"),
+    }),
+  );
+
+  await page.route("**/data/builder-presets.json", (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: loadFixture("builder-presets.json"),
+    }),
+  );
+
+  await page.route("**/data/coins-stats.json", (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ coins: JSON.parse(loadFixture("coins.json")) }),
+    }),
+  );
+
+  // 2. Intercept api.pruviq.com requests (fallback path + direct fetches)
   await page.route("**/api.pruviq.com/**", (route) => {
     const url = route.request().url();
 

@@ -283,7 +283,7 @@ export default function ChartPanel({
       <div
         ref={chartContainerRef}
         role="img"
-        aria-label={`${symbol} price chart with strategy signals`}
+        aria-label={`${chartSymbol} price chart with strategy signals`}
         class="h-[360px] md:h-[640px]"
         style={{ minHeight: "300px" }}
       >
