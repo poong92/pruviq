@@ -179,7 +179,7 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
 
       <!-- Case Studies: Problem cards -->
       <div class="grid md:grid-cols-3 gap-8 mb-12 reveal-child">
-        <div class="border border-[--color-down]/30 rounded-lg p-6 bg-[--color-bg-card]">
+        <div class="card-enterprise p-6 border-[--color-down]/20 card-hover">
           <div class="text-[--color-down] font-mono text-xs font-bold mb-3 flex items-center gap-2">
             <span class="inline-block w-2 h-2 rounded-full bg-[--color-down]"></span>
             {t('problem.case1_label')}
@@ -188,7 +188,7 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
           <p class="text-[--color-text-muted] text-base leading-relaxed mb-3">{t('problem.card1_desc')}</p>
           <p class="text-xs text-[--color-text-muted] opacity-60 italic">{t('problem.card1_source')}</p>
         </div>
-        <div class="border border-[--color-down]/30 rounded-lg p-6 bg-[--color-bg-card]">
+        <div class="card-enterprise p-6 border-[--color-down]/20 card-hover">
           <div class="text-[--color-down] font-mono text-xs font-bold mb-3 flex items-center gap-2">
             <span class="inline-block w-2 h-2 rounded-full bg-[--color-down]"></span>
             {t('problem.case2_label')}
@@ -197,7 +197,7 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
           <p class="text-[--color-text-muted] text-base leading-relaxed mb-3">{t('problem.card2_desc')}</p>
           <p class="text-xs text-[--color-text-muted] opacity-60 italic">{t('problem.card2_source')}</p>
         </div>
-        <div class="border border-[--color-down]/30 rounded-lg p-6 bg-[--color-bg-card]">
+        <div class="card-enterprise p-6 border-[--color-down]/20 card-hover">
           <div class="text-[--color-down] font-mono text-xs font-bold mb-3 flex items-center gap-2">
             <span class="inline-block w-2 h-2 rounded-full bg-[--color-down]"></span>
             {t('problem.case3_label')}
@@ -224,7 +224,7 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
       <h2 id="features-heading-ko" class="text-2xl md:text-3xl font-bold mb-12">{t('features.title')}</h2>
 
       <!-- Feature cards -->
-      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16 reveal-child">
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16 reveal-child">
         <a href="/ko/simulate" class="card-premium p-6 block group">
           <div class="w-10 h-10 rounded-xl bg-[--color-accent]/10 flex items-center justify-center mb-4">
             <svg class="w-5 h-5 text-[--color-accent]" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5"/></svg>
@@ -298,25 +298,7 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
         </a>
       </div>
 
-      <!-- Quick trust badges -->
-      <div class="flex flex-wrap gap-3 justify-center mt-12 font-mono text-xs">
-        <span class="px-4 py-2 rounded-full border border-[--color-border] text-[--color-text-muted] bg-[--color-bg-subtle] flex items-center gap-2">
-          <svg class="w-3.5 h-3.5 text-[--color-up]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-          {t('trust_badges.no_signup')}
-        </span>
-        <span class="px-4 py-2 rounded-full border border-[--color-border] text-[--color-text-muted] bg-[--color-bg-subtle] flex items-center gap-2">
-          <svg class="w-3.5 h-3.5 text-[--color-up]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-          {t('trust_badges.free')}
-        </span>
-        <span class="px-4 py-2 rounded-full border border-[--color-border] text-[--color-text-muted] bg-[--color-bg-subtle] flex items-center gap-2">
-          <svg class="w-3.5 h-3.5 text-[--color-up]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-          {t('trust_badges.opensource')}
-        </span>
-        <span class="px-4 py-2 rounded-full border border-[--color-border] text-[--color-text-muted] bg-[--color-bg-subtle] flex items-center gap-2">
-          <svg class="w-3.5 h-3.5 text-[--color-up]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-          {t('trust_badges.data_sources')}
-        </span>
-      </div>
+      <!-- Trust badges removed: already covered by hero trust signals -->
     </div>
   </section>
 
