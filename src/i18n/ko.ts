@@ -285,6 +285,8 @@ export const ko: Record<TranslationKey, string> = {
   "strategies.presets_title": "시뮬레이터 프리셋 전체 ({count}종)",
   "strategies.presets_desc":
     "아래 전략을 클릭하면 시뮬레이터에서 바로 파라미터가 적용됩니다. 570개 코인 동시 테스트.",
+  "strategies.todays_pick": "오늘의 추천",
+  "strategies.click_to_simulate": "클릭하여 시뮬레이션",
 
   // Blog
   "blog.tag": "트레이딩 IQ",
@@ -965,6 +967,8 @@ export const ko: Record<TranslationKey, string> = {
   "simulate.title2": "570개 코인에서 테스트하세요.",
   "simulate.desc":
     "지표를 선택하고, 진입 조건을 설정하고, 리스크 파라미터를 조정하세요. 2년 이상의 실제 데이터로 백테스트를 실행하거나, 프리셋으로 시작하세요.",
+  "simulate.quick_start": "퀵 스타트",
+  "simulate.quick_start_desc": "이번 달 최고 성과 전략 — 클릭하면 바로 실행",
   "simulate.note":
     "코드 불필요. 계정 불필요. 비용 없음. 결과에는 현실적인 수수료와 슬리피지가 포함됩니다.",
   "simulate.loading": "전략 빌더 로딩중...",

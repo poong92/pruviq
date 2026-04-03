@@ -287,6 +287,8 @@ export const en = {
   "strategies.presets_title": "All Simulator Presets ({count})",
   "strategies.presets_desc":
     "Click any preset to load it directly in the simulator. Tests on 570+ coins simultaneously.",
+  "strategies.todays_pick": "Today's Pick",
+  "strategies.click_to_simulate": "Click to simulate",
 
   // Blog
   "blog.tag": "TRADING IQ",
@@ -970,6 +972,9 @@ export const en = {
   "simulate.title2": "Test It on 570+ Coins.",
   "simulate.desc":
     "Pick indicators, set entry conditions, adjust risk parameters. Run a backtest on 2+ years of real data — or start from a preset.",
+  "simulate.quick_start": "QUICK START",
+  "simulate.quick_start_desc":
+    "Top performing strategies this month — click to run instantly",
   "simulate.note":
     "No code. No account. No cost. Results include realistic fees and slippage.",
   "simulate.loading": "Loading strategy builder...",
@@ -1619,6 +1624,7 @@ export const en = {
     "PRUVIQ vs Coinrule — Free Crypto Backtesting Alternative",
   "meta.vs_coinrule_desc":
     "Compare PRUVIQ with Coinrule for crypto strategy backtesting. Free forever, no IF-THEN limits, 570+ coins with real fee simulation.",
+
   "vs_coinrule.tag": "HONEST COMPARISON",
   "vs_coinrule.title": "PRUVIQ vs Coinrule",
   "vs_coinrule.subtitle": "for crypto backtesting",
