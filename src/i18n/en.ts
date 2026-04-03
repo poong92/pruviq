@@ -43,6 +43,7 @@ export const en = {
   "hero.subcopy":
     "We tested 88 strategy combinations. 4 failed — and we published every one.",
   "hero.cta_secondary": "See Simulation Results",
+  "hero.open_source": "Open Source",
   "hero.stat1_sub": "Including BTC, ETH, and altcoins",
   "hero.stat4_sub": "Across all verified strategies",
   "hero.stat5_sub": "1-hour candles since Jan 2024",

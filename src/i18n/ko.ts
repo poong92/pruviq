@@ -44,6 +44,7 @@ export const ko: Record<TranslationKey, string> = {
   "hero.subcopy":
     "88가지 전략 조합을 검증했습니다. 4개가 실패했고 — 전부 공개했습니다.",
   "hero.cta_secondary": "시뮬레이션 결과 보기",
+  "hero.open_source": "오픈 소스",
   "hero.stat1_sub": "BTC, ETH 포함 알트코인",
   "hero.stat4_sub": "검증된 전략 전체",
   "hero.stat5_sub": "2024년 1월부터 1시간봉",
