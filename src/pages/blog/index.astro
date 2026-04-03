@@ -17,21 +17,29 @@ const categoryLabels: Record<string, string> = {
   education: t('blog.cat_short.education'),
 };
 
-const categoryColors: Record<string, string> = {
-  market: '--color-yellow',
-  quant: '--color-accent',
-  strategy: '--color-text',
-  weekly: '--color-accent',
-  education: '--color-text-muted',
+const categoryBadgeClass: Record<string, string> = {
+  market: 'badge-market',
+  quant: 'badge-quant',
+  strategy: 'badge-strategy',
+  weekly: 'badge-weekly',
+  education: 'badge-education',
+  autopsy: 'badge-autopsy',
 };
 
 const categoryBorderColors: Record<string, string> = {
-  market: 'var(--color-yellow)',
-  quant: 'var(--color-accent)',
-  strategy: 'var(--color-text)',
-  weekly: 'var(--color-accent)',
-  education: 'var(--color-text-muted)',
+  market: '#fbbf24',
+  quant: '#60a5fa',
+  strategy: '#fb923c',
+  weekly: '#c084fc',
+  education: '#4ade80',
+  autopsy: '#f87171',
 };
+
+const now = new Date();
+function isNew(dateStr: string): boolean {
+  const diff = now.getTime() - new Date(dateStr).getTime();
+  return diff < 7 * 24 * 60 * 60 * 1000;
+}
 
 function getReadingTime(body: string | undefined): string {
   if (!body) return '1 min read';
@@ -96,14 +104,16 @@ function getReadingTime(body: string | undefined): string {
           <div class="space-y-6">
             {posts.map((post) => (
               <a href={`/blog/${post.id}`}
-                 class="block border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] card-hover group"
-                 style={`box-shadow: var(--shadow-card); border-left: 3px solid ${categoryBorderColors[post.data.category] || 'var(--color-text-muted)'};`}>
+                 class="block border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] card-hover card-glow group"
+                 style={`box-shadow: var(--shadow-card); border-left: 3px solid ${categoryBorderColors[post.data.category] || '#6b7280'};`}>
                 <div class="flex items-center gap-2 mb-3">
-                  <span class="text-xs font-mono px-2 py-0.5 rounded"
-                        style={`color: var(${categoryColors[post.data.category] || '--color-text-muted'}); background: color-mix(in srgb, var(${categoryColors[post.data.category] || '--color-text-muted'}) 10%, transparent)`}>
+                  <span class={`text-xs font-mono font-semibold px-2 py-0.5 rounded ${categoryBadgeClass[post.data.category] || 'badge-education'}`}>
                     {categoryLabels[post.data.category] || post.data.category.toUpperCase()}
                   </span>
-                  <span class="text-[--color-text-disabled] text-xs font-mono">{post.data.date}</span>
+                  {isNew(post.data.date) && (
+                    <span class="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded badge-new">NEW</span>
+                  )}
+                  <span class="text-[--color-text] text-xs font-mono font-medium">{post.data.date}</span>
                   <span class="text-[--color-text-disabled] text-xs font-mono ml-auto">{getReadingTime(post.body)}</span>
                 </div>
                 <h2 class="text-xl font-bold mb-2 group-hover:text-[--color-accent] transition-colors">
