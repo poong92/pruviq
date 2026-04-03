@@ -854,6 +854,7 @@ export const en = {
   "footer.about": "About",
   "footer.col_product": "Product",
   "footer.col_resources": "Resources",
+  "footer.col_compare": "Compare",
   "footer.col_legal": "Legal",
 
   // Builder

@@ -850,6 +850,7 @@ export const ko: Record<TranslationKey, string> = {
   "footer.about": "소개",
   "footer.col_product": "서비스",
   "footer.col_resources": "리소스",
+  "footer.col_compare": "비교",
   "footer.col_legal": "법적 고지",
 
   // Builder
