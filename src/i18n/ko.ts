@@ -43,7 +43,7 @@ export const ko: Record<TranslationKey, string> = {
   "hero.tool_free": "100% 무료, 가입 불필요",
   "hero.subcopy":
     "88가지 전략 조합을 검증했습니다. 4개가 실패했고 — 전부 공개했습니다.",
-  "hero.cta_secondary": "백테스트 결과 보기",
+  "hero.cta_secondary": "시뮬레이션 결과 보기",
   "hero.stat1_sub": "BTC, ETH 포함 알트코인",
   "hero.stat4_sub": "검증된 전략 전체",
   "hero.stat5_sub": "2024년 1월부터 1시간봉",
@@ -162,11 +162,11 @@ export const ko: Record<TranslationKey, string> = {
 
   // Features section
   "features.tag": "도구",
-  "features.title": "백테스팅에 필요한 모든 것",
+  "features.title": "시뮬레이션에 필요한 모든 것",
   "features.card1_tag": "전략 시뮬레이터",
-  "features.card1_title": "만들고 테스트하기",
+  "features.card1_title": "만들고 시뮬레이션하기",
   "features.card1_desc":
-    "14개 지표, 노코드 빌더. 진입 조건, 손절, 익절 설정. 몇 초만에 백테스트 실행.",
+    "14개 지표, 노코드 빌더. 진입 조건, 손절, 익절 설정. 몇 초만에 시뮬레이션 실행.",
   "features.card2_tag": "전략 라이브러리",
   "features.card2_title": "검증된 전략들",
   "features.card2_desc":
@@ -181,7 +181,7 @@ export const ko: Record<TranslationKey, string> = {
   "how.step1": "선택",
   "how.step1_desc":
     "지표를 선택하고 진입/청산 조건을 설정하세요. 프리셋을 쓰거나 처음부터 만드세요.",
-  "how.step2": "백테스트",
+  "how.step2": "시뮬레이션",
   "how.step2_desc":
     "570개 이상 코인, 2년 이상 데이터로 실행. 수수료, 슬리피지 포함.",
   "how.step3": "검증",
