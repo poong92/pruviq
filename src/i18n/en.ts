@@ -1185,6 +1185,26 @@ export const en = {
     "Python SDK and WebSocket feed are in development. Follow us on X for updates.",
   "api.request_body": "Request Body",
   "api.params_label": "Params:",
+  "api.try_it": "Try it",
+  "api.response_example": "Response Example",
+  "api.curl_example": "cURL",
+  "api.copy": "Copy",
+  "api.copied": "Copied!",
+  "api.section_signals": "Rankings & Signals",
+  "api.endpoint_rankings_daily":
+    "Today's top-performing strategies ranked by profit factor. Updated daily at 00:30 UTC.",
+  "api.endpoint_signals_live":
+    "Real-time trading signals from all active strategies. Includes entry price, direction, SL/TP.",
+  "api.endpoint_hot_strategies":
+    "Hot strategies ranked by recent 30-day performance across top 50 coins.",
+  "api.endpoint_market_live":
+    "Live market data stream. Real-time BTC/ETH prices and market metrics.",
+  "api.endpoint_export_csv":
+    "Export simulation results as CSV file for further analysis.",
+  "api.endpoint_validate":
+    "Validate strategy configuration before running a full simulation.",
+  "api.note_async":
+    "Long-running backtests (large top_n or wide date ranges) may require async processing. To avoid timeouts, use a smaller top_n (e.g., 50), narrow the date range, or split into multiple smaller requests.",
   "footer.api": "API",
   "footer.compare": "vs TradingView",
 
@@ -1566,58 +1586,85 @@ export const en = {
     "Compare PRUVIQ with 3Commas for crypto strategy backtesting. No subscription fees. Free forever. 570+ coins with real fee simulation.",
   "vs_3commas.tag": "HONEST COMPARISON",
   "vs_3commas.title": "PRUVIQ vs 3Commas",
-  "vs_3commas.subtitle": "for crypto backtesting",
+  "vs_3commas.subtitle": "Backtesting research vs. automated trading bots",
   "vs_3commas.desc":
-    "3Commas is a solid portfolio automation tool. But if you want to backtest a strategy on hundreds of coins before paying for a subscription, PRUVIQ gives you that for free.",
+    "3Commas is a leading automated trading platform with DCA and Grid bots. PRUVIQ is a dedicated backtesting research tool. Different purposes — here is how they compare when you need to validate a strategy before risking real money.",
   "vs_3commas.tldr": "TL;DR",
   "vs_3commas.tldr_text":
-    "3Commas excels at live DCA/Grid bot execution. PRUVIQ is built for research-first backtesting — free, no-code, 570+ coins, with real fees and slippage modeled in.",
+    "3Commas automates live trading ($15-110/mo). PRUVIQ validates strategies before you trade — free, no-code, 570+ coins, with real fees and slippage. Use PRUVIQ to research, then 3Commas to execute.",
   "vs_3commas.feature": "Feature",
   "vs_3commas.pruviq": "PRUVIQ",
   "vs_3commas.other": "3Commas",
   "vs_3commas.row_price": "Price",
-  "vs_3commas.row_price_p": "Free forever",
-  "vs_3commas.row_price_other": "$22–37/mo (Starter–Advanced)",
+  "vs_3commas.row_price_p": "Free forever — $0/mo",
+  "vs_3commas.row_price_other": "$15–110/mo (Starter–Expert)",
+  "vs_3commas.row_annual": "Annual Cost",
+  "vs_3commas.row_annual_p": "$0",
+  "vs_3commas.row_annual_other": "$180–1,320/year",
   "vs_3commas.row_coding": "Coding Required",
-  "vs_3commas.row_coding_p": "No code — visual builder",
-  "vs_3commas.row_coding_other": "No coding, but subscription required",
+  "vs_3commas.row_coding_p": "No code — visual indicator builder",
+  "vs_3commas.row_coding_other": "No coding — DCA/Grid bot wizard",
   "vs_3commas.row_coins": "Coins Supported",
-  "vs_3commas.row_coins_p": "570+ coins (Binance Futures)",
+  "vs_3commas.row_coins_p": "570+ coins (Binance USDT Futures)",
   "vs_3commas.row_coins_other": "Multiple exchanges, varies by plan",
   "vs_3commas.row_data": "Backtest Data",
-  "vs_3commas.row_data_p": "Real OHLCV with fees & slippage",
-  "vs_3commas.row_data_other": "Limited backtesting, primarily live bots",
+  "vs_3commas.row_data_p": "2+ years hourly OHLCV with fee & slippage modeling",
+  "vs_3commas.row_data_other":
+    "Limited backtesting — primarily a live bot tool",
   "vs_3commas.row_fees": "Fee Simulation",
-  "vs_3commas.row_fees_p": "0.08% maker/taker, funding included",
-  "vs_3commas.row_fees_other": "Live trading fees only",
+  "vs_3commas.row_fees_p": "0.08% maker/taker + funding rate built-in",
+  "vs_3commas.row_fees_other": "Live trading fees only (no backtest fee model)",
   "vs_3commas.row_multi": "Multi-coin Test",
-  "vs_3commas.row_multi_p": "570+ coins simultaneously",
-  "vs_3commas.row_multi_other": "Bot-by-bot, not batch backtest",
+  "vs_3commas.row_multi_p": "570+ coins in one click",
+  "vs_3commas.row_multi_other": "Bot-by-bot setup, no batch backtest",
+  "vs_3commas.row_transparency": "Failed Strategy Disclosure",
+  "vs_3commas.row_transparency_p":
+    "Published — failed strategies shown with data",
+  "vs_3commas.row_transparency_other": "Not applicable — execution-focused",
   "vs_3commas.row_live": "Live Trading",
   "vs_3commas.row_live_p": "Research tool — backtest only",
-  "vs_3commas.row_live_other": "Yes — DCA and Grid bots",
+  "vs_3commas.row_live_other": "Yes — DCA, Grid, and Smart Trade bots",
   "vs_3commas.row_builder": "Strategy Builder",
-  "vs_3commas.row_builder_p": "Visual indicator builder",
-  "vs_3commas.row_builder_other": "DCA/Grid bot configuration",
+  "vs_3commas.row_builder_p": "Visual builder with 14 indicators, AND/OR logic",
+  "vs_3commas.row_builder_other": "DCA/Grid bot configuration panel",
   "vs_3commas.row_api": "API Access",
-  "vs_3commas.row_api_p": "Open REST API",
-  "vs_3commas.row_api_other": "Available on paid plans",
+  "vs_3commas.row_api_p": "Free open REST API",
+  "vs_3commas.row_api_other": "API available on paid plans",
   "vs_3commas.row_community": "Community",
-  "vs_3commas.row_community_p": "Public rankings & leaderboard",
-  "vs_3commas.row_community_other": "Marketplace for bot strategies",
+  "vs_3commas.row_community_p": "Public rankings & strategy leaderboard",
+  "vs_3commas.row_community_other": "Bot marketplace + copy trading",
+  "vs_3commas.why_title": "Why traders use PRUVIQ before 3Commas",
+  "vs_3commas.why_1_title": "Validate Before You Automate",
+  "vs_3commas.why_1_desc":
+    "Running a DCA bot on a coin that trends down loses money regardless of configuration. PRUVIQ lets you test your thesis across 570+ coins with real fee modeling before committing capital.",
+  "vs_3commas.why_2_title": "See the Failures, Not Just the Wins",
+  "vs_3commas.why_2_desc":
+    "PRUVIQ publishes failed strategies alongside successful ones. Seeing a strategy fail on 400 out of 570 coins is more valuable than cherry-picked wins.",
+  "vs_3commas.why_3_title": "$0 Research Budget",
+  "vs_3commas.why_3_desc":
+    "At $15-110/mo, 3Commas is worth it for live execution. But paying to discover your strategy does not work is expensive. PRUVIQ handles the research phase at zero cost.",
   "vs_3commas.when_pruviq": "Choose PRUVIQ when you want...",
-  "vs_3commas.when_pruviq_1": "Free crypto backtesting with zero coding",
-  "vs_3commas.when_pruviq_2": "Test a strategy on 570+ coins simultaneously",
-  "vs_3commas.when_pruviq_3": "See realistic results with fees and slippage",
-  "vs_3commas.when_pruviq_4": "Verify with transparent backtest results",
+  "vs_3commas.when_pruviq_1":
+    "Free strategy validation before committing to a paid bot",
+  "vs_3commas.when_pruviq_2":
+    "Test one strategy across 570+ coins in one click",
+  "vs_3commas.when_pruviq_3":
+    "See honest results including fees, slippage, and failures",
+  "vs_3commas.when_pruviq_4":
+    "Research without a subscription or exchange API key",
   "vs_3commas.when_other": "Choose 3Commas when you want...",
-  "vs_3commas.when_other_1": "Automated DCA or Grid bots running 24/7",
+  "vs_3commas.when_other_1":
+    "Automated DCA or Grid bots running 24/7 on live exchanges",
   "vs_3commas.when_other_2": "Portfolio rebalancing across multiple exchanges",
-  "vs_3commas.when_other_3": "Pre-built marketplace strategies to copy",
-  "vs_3commas.when_other_4": "Live trading without manual order management",
-  "vs_3commas.cta_title": "Try PRUVIQ Free Today",
+  "vs_3commas.when_other_3": "Copy-trade from a marketplace of strategies",
+  "vs_3commas.when_other_4":
+    "Smart Trade features with take-profit and trailing stop",
+  "vs_3commas.best_together": "Best Together",
+  "vs_3commas.best_together_desc":
+    "Use PRUVIQ to research and validate your strategy for free. Then deploy the winning strategy on 3Commas for automated execution. Research first, automate second.",
+  "vs_3commas.cta_title": "Research First, Trade Later",
   "vs_3commas.cta_desc":
-    "Backtest your strategy on 570+ coins before committing to any paid tool. No signup required.",
+    "Backtest your strategy on 570+ coins before paying for any bot subscription. Free forever, no signup required.",
 
   // Comparison pages: Coinrule
   "meta.vs_coinrule_title":
@@ -1689,67 +1736,97 @@ export const en = {
     "Compare PRUVIQ with Cryptohopper for crypto strategy backtesting. Free forever, no cloud subscription, 570+ coins with real fee and slippage simulation.",
   "vs_cryptohopper.tag": "HONEST COMPARISON",
   "vs_cryptohopper.title": "PRUVIQ vs Cryptohopper",
-  "vs_cryptohopper.subtitle": "for crypto backtesting",
+  "vs_cryptohopper.subtitle": "Backtesting research vs. cloud trading bots",
   "vs_cryptohopper.desc":
-    "Cryptohopper is a cloud-based bot with a marketplace of strategies. If you want to backtest an idea thoroughly across hundreds of coins before deploying it, PRUVIQ does that for free.",
+    "Cryptohopper is a cloud-based automated trading platform with a strategy marketplace. PRUVIQ is a dedicated backtesting research tool. Both serve crypto traders — at different stages of the workflow.",
   "vs_cryptohopper.tldr": "TL;DR",
   "vs_cryptohopper.tldr_text":
-    "Cryptohopper is a cloud bot with a paid marketplace. PRUVIQ is a free, no-code backtesting tool — 570+ coins, real fees modeled, all results published transparently.",
+    "Cryptohopper executes trades via cloud bots ($24-107/mo). PRUVIQ validates strategies before you trade — free, no-code, 570+ coins, with realistic fee and slippage modeling. Research first, then automate.",
   "vs_cryptohopper.feature": "Feature",
   "vs_cryptohopper.pruviq": "PRUVIQ",
   "vs_cryptohopper.other": "Cryptohopper",
   "vs_cryptohopper.row_price": "Price",
-  "vs_cryptohopper.row_price_p": "Free forever",
-  "vs_cryptohopper.row_price_other": "$19–107/mo (Pioneer–Hero)",
+  "vs_cryptohopper.row_price_p": "Free forever — $0/mo",
+  "vs_cryptohopper.row_price_other": "$24–107/mo (Explorer–Hero)",
+  "vs_cryptohopper.row_annual": "Annual Cost",
+  "vs_cryptohopper.row_annual_p": "$0",
+  "vs_cryptohopper.row_annual_other": "$288–1,284/year",
   "vs_cryptohopper.row_coding": "Coding Required",
-  "vs_cryptohopper.row_coding_p": "No code — visual builder",
+  "vs_cryptohopper.row_coding_p": "No code — visual indicator builder",
   "vs_cryptohopper.row_coding_other":
-    "No coding — template-based configuration",
+    "No coding — template-based + marketplace strategies",
   "vs_cryptohopper.row_coins": "Coins Supported",
-  "vs_cryptohopper.row_coins_p": "570+ coins (Binance Futures)",
-  "vs_cryptohopper.row_coins_other": "Multiple exchanges, varies by plan",
+  "vs_cryptohopper.row_coins_p": "570+ coins (Binance USDT Futures)",
+  "vs_cryptohopper.row_coins_other":
+    "Multiple exchanges, coin count varies by plan",
   "vs_cryptohopper.row_data": "Backtest Data",
-  "vs_cryptohopper.row_data_p": "Real OHLCV with fees & slippage",
-  "vs_cryptohopper.row_data_other": "Basic backtesting on limited history",
+  "vs_cryptohopper.row_data_p":
+    "2+ years hourly OHLCV with fee & slippage modeling",
+  "vs_cryptohopper.row_data_other":
+    "Basic backtesting on limited historical data",
   "vs_cryptohopper.row_fees": "Fee Simulation",
-  "vs_cryptohopper.row_fees_p": "0.08% maker/taker, funding included",
-  "vs_cryptohopper.row_fees_other": "Exchange fees applied at live execution",
+  "vs_cryptohopper.row_fees_p": "0.08% maker/taker + funding rate built-in",
+  "vs_cryptohopper.row_fees_other":
+    "Exchange fees at live execution (no backtest fee model)",
   "vs_cryptohopper.row_multi": "Multi-coin Test",
-  "vs_cryptohopper.row_multi_p": "570+ coins simultaneously",
+  "vs_cryptohopper.row_multi_p": "570+ coins in one click",
   "vs_cryptohopper.row_multi_other":
-    "Per-bot configuration, not batch backtest",
+    "Per-bot setup, no batch backtest across all coins",
+  "vs_cryptohopper.row_transparency": "Failed Strategy Disclosure",
+  "vs_cryptohopper.row_transparency_p":
+    "Published — failed strategies shown with data",
+  "vs_cryptohopper.row_transparency_other":
+    "Marketplace reviews only — no failure data",
   "vs_cryptohopper.row_live": "Live Trading",
   "vs_cryptohopper.row_live_p": "Research tool — backtest only",
-  "vs_cryptohopper.row_live_other": "Yes — cloud bots running continuously",
+  "vs_cryptohopper.row_live_other":
+    "Yes — cloud bots, signal bots, market-making",
   "vs_cryptohopper.row_builder": "Strategy Builder",
-  "vs_cryptohopper.row_builder_p": "Visual indicator builder",
+  "vs_cryptohopper.row_builder_p":
+    "Visual builder with 14 indicators, AND/OR logic",
   "vs_cryptohopper.row_builder_other":
-    "Template designer and marketplace strategies",
+    "Template designer + marketplace strategies",
   "vs_cryptohopper.row_api": "API Access",
-  "vs_cryptohopper.row_api_p": "Open REST API",
-  "vs_cryptohopper.row_api_other": "Available on paid plans",
+  "vs_cryptohopper.row_api_p": "Free open REST API",
+  "vs_cryptohopper.row_api_other": "API available on paid plans",
   "vs_cryptohopper.row_community": "Community",
-  "vs_cryptohopper.row_community_p": "Public rankings & leaderboard",
+  "vs_cryptohopper.row_community_p": "Public rankings & strategy leaderboard",
   "vs_cryptohopper.row_community_other":
-    "Marketplace for buying/selling strategies",
+    "Strategy marketplace (buy/sell strategies)",
+  "vs_cryptohopper.why_title": "Why traders use PRUVIQ before Cryptohopper",
+  "vs_cryptohopper.why_1_title": "Test Before You Subscribe",
+  "vs_cryptohopper.why_1_desc":
+    "At $24-107/mo, Cryptohopper is an investment. PRUVIQ lets you validate your strategy idea across 570+ coins for free before committing to a subscription.",
+  "vs_cryptohopper.why_2_title": "Marketplace Strategies Need Verification",
+  "vs_cryptohopper.why_2_desc":
+    "Cryptohopper's marketplace shows strategy descriptions but limited backtest proof. Use PRUVIQ to independently verify any strategy logic across hundreds of coins with real fee modeling.",
+  "vs_cryptohopper.why_3_title": "Transparent Failures Build Confidence",
+  "vs_cryptohopper.why_3_desc":
+    "PRUVIQ publishes strategies that failed alongside those that worked. Knowing where a strategy breaks is as valuable as knowing where it wins.",
   "vs_cryptohopper.when_pruviq": "Choose PRUVIQ when you want...",
-  "vs_cryptohopper.when_pruviq_1": "Free crypto backtesting with zero coding",
+  "vs_cryptohopper.when_pruviq_1":
+    "Free strategy research before subscribing to a cloud bot",
   "vs_cryptohopper.when_pruviq_2":
-    "Test a strategy on 570+ coins simultaneously",
+    "Verify a marketplace strategy idea across 570+ coins",
   "vs_cryptohopper.when_pruviq_3":
-    "See realistic results with fees and slippage",
-  "vs_cryptohopper.when_pruviq_4": "Verify with transparent backtest results",
+    "See honest results including fees, slippage, and failures",
+  "vs_cryptohopper.when_pruviq_4":
+    "Research without an exchange API key or account",
   "vs_cryptohopper.when_other": "Choose Cryptohopper when you want...",
   "vs_cryptohopper.when_other_1":
-    "Cloud bots that run 24/7 without keeping a PC on",
+    "Cloud bots running 24/7 without keeping a PC on",
   "vs_cryptohopper.when_other_2":
-    "Buy or sell ready-made strategies via marketplace",
-  "vs_cryptohopper.when_other_3": "Automated trading across multiple exchanges",
+    "Buy ready-made strategies from the marketplace",
+  "vs_cryptohopper.when_other_3":
+    "Signal-based automated trading with third-party providers",
   "vs_cryptohopper.when_other_4":
-    "Signal-based trading with third-party providers",
-  "vs_cryptohopper.cta_title": "Try PRUVIQ Free Today",
+    "Automated execution across multiple exchanges simultaneously",
+  "vs_cryptohopper.best_together": "Best Together",
+  "vs_cryptohopper.best_together_desc":
+    "Use PRUVIQ to research and validate strategies for free. Then deploy proven strategies on Cryptohopper for automated cloud execution. Research first, automate second.",
+  "vs_cryptohopper.cta_title": "Research First, Trade Later",
   "vs_cryptohopper.cta_desc":
-    "Test any strategy on 570+ coins for free before buying into a cloud bot subscription. No account needed.",
+    "Test any strategy on 570+ coins for free before subscribing to a cloud bot. No account needed.",
 
   // Comparison pages: Gainium
   "meta.vs_gainium_title":

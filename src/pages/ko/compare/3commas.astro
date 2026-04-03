@@ -4,33 +4,34 @@ import { useTranslations } from '../../../i18n/index';
 
 const t = useTranslations('ko');
 
+// win: 'p' = PRUVIQ wins, 'other' = competitor wins, 'both' = tie
 const rows = [
-  { label: t('vs_3commas.row_price'), p: t('vs_3commas.row_price_p'), other: t('vs_3commas.row_price_other'), highlight: true },
-  { label: t('vs_3commas.row_coding'), p: t('vs_3commas.row_coding_p'), other: t('vs_3commas.row_coding_other') },
-  { label: t('vs_3commas.row_coins'), p: t('vs_3commas.row_coins_p'), other: t('vs_3commas.row_coins_other') },
-  { label: t('vs_3commas.row_data'), p: t('vs_3commas.row_data_p'), other: t('vs_3commas.row_data_other') },
-  { label: t('vs_3commas.row_fees'), p: t('vs_3commas.row_fees_p'), other: t('vs_3commas.row_fees_other') },
-  { label: t('vs_3commas.row_multi'), p: t('vs_3commas.row_multi_p'), other: t('vs_3commas.row_multi_other'), highlight: true },
-  { label: t('vs_3commas.row_live'), p: t('vs_3commas.row_live_p'), other: t('vs_3commas.row_live_other') },
-  { label: t('vs_3commas.row_builder'), p: t('vs_3commas.row_builder_p'), other: t('vs_3commas.row_builder_other') },
-  { label: t('vs_3commas.row_api'), p: t('vs_3commas.row_api_p'), other: t('vs_3commas.row_api_other') },
-  { label: t('vs_3commas.row_community'), p: t('vs_3commas.row_community_p'), other: t('vs_3commas.row_community_other') },
+  { label: t('vs_3commas.row_price'), p: t('vs_3commas.row_price_p'), other: t('vs_3commas.row_price_other'), highlight: true, win: 'p' },
+  { label: t('vs_3commas.row_annual'), p: t('vs_3commas.row_annual_p'), other: t('vs_3commas.row_annual_other'), highlight: true, win: 'p' },
+  { label: t('vs_3commas.row_coding'), p: t('vs_3commas.row_coding_p'), other: t('vs_3commas.row_coding_other'), highlight: false, win: 'both' },
+  { label: t('vs_3commas.row_coins'), p: t('vs_3commas.row_coins_p'), other: t('vs_3commas.row_coins_other'), highlight: false, win: 'p' },
+  { label: t('vs_3commas.row_data'), p: t('vs_3commas.row_data_p'), other: t('vs_3commas.row_data_other'), highlight: false, win: 'p' },
+  { label: t('vs_3commas.row_fees'), p: t('vs_3commas.row_fees_p'), other: t('vs_3commas.row_fees_other'), highlight: false, win: 'p' },
+  { label: t('vs_3commas.row_multi'), p: t('vs_3commas.row_multi_p'), other: t('vs_3commas.row_multi_other'), highlight: true, win: 'p' },
+  { label: t('vs_3commas.row_transparency'), p: t('vs_3commas.row_transparency_p'), other: t('vs_3commas.row_transparency_other'), highlight: true, win: 'p' },
+  { label: t('vs_3commas.row_live'), p: t('vs_3commas.row_live_p'), other: t('vs_3commas.row_live_other'), highlight: false, win: 'other' },
+  { label: t('vs_3commas.row_builder'), p: t('vs_3commas.row_builder_p'), other: t('vs_3commas.row_builder_other'), highlight: false, win: 'p' },
+  { label: t('vs_3commas.row_api'), p: t('vs_3commas.row_api_p'), other: t('vs_3commas.row_api_other'), highlight: false, win: 'p' },
+  { label: t('vs_3commas.row_community'), p: t('vs_3commas.row_community_p'), other: t('vs_3commas.row_community_other'), highlight: false, win: 'both' },
 ];
 ---
 
 <Layout title={t('meta.vs_3commas_title')} description={t('meta.vs_3commas_desc')}>
 
   <!-- HERO -->
-  <section class="py-16">
+  <section class="pt-16 pb-8">
     <div class="max-w-5xl mx-auto px-4">
       <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('vs_3commas.tag')}</p>
       <h1 class="text-3xl md:text-5xl font-bold mb-4">
         {t('vs_3commas.title')}
         <span class="block text-lg md:text-2xl font-normal text-[--color-text-muted] mt-2">{t('vs_3commas.subtitle')}</span>
       </h1>
-      <p class="text-[--color-text-muted] text-lg max-w-2xl mb-6">
-        {t('vs_3commas.desc')}
-      </p>
+      <p class="text-[--color-text-muted] text-lg max-w-2xl mb-6">{t('vs_3commas.desc')}</p>
       <div class="border border-[--color-accent]/30 rounded-lg p-4 bg-[--color-accent]/5 max-w-2xl">
         <p class="font-mono text-[--color-accent] text-xs font-bold mb-1">{t('vs_3commas.tldr')}</p>
         <p class="text-sm text-[--color-text-muted]">{t('vs_3commas.tldr_text')}</p>
@@ -38,10 +39,10 @@ const rows = [
     </div>
   </section>
 
-  <!-- COMPARISON TABLE -->
-  <section class="pb-12 border-t border-[--color-border] pt-12">
+  <!-- TABLE -->
+  <hr class="section-divider" />
+  <section class="pb-12 pt-12">
     <div class="max-w-5xl mx-auto px-4">
-      <!-- Desktop table -->
       <div class="hidden md:block overflow-x-auto">
         <table class="w-full text-sm">
           <caption class="sr-only">PRUVIQ vs 3Commas 기능 비교표</caption>
@@ -55,29 +56,25 @@ const rows = [
           <tbody>
             {rows.map((row) => (
               <tr class={`border-b border-[--color-border] ${row.highlight ? 'bg-[--color-accent]/5' : ''}`}>
-                <td class="py-3 px-4 font-medium">{row.label}</td>
-                <td class="py-3 px-4 text-[--color-accent]">{row.p}</td>
-                <td class="py-3 px-4 text-[--color-text-muted]">{row.other}</td>
+                <td class="py-3 px-4 font-medium text-[--color-text-secondary] text-xs uppercase tracking-wide">{row.label}</td>
+                <td class={`py-3 px-4 ${row.win === 'p' ? 'text-[--color-up]' : row.win === 'both' ? 'text-[--color-accent]' : 'text-[--color-text-muted]'}`}>
+                  <span class="flex items-start gap-2"><span class="mt-0.5 shrink-0 text-base leading-none" aria-hidden="true">{row.win === 'p' ? '\u2713' : row.win === 'both' ? '~' : '\u2014'}</span><span>{row.p}</span></span>
+                </td>
+                <td class={`py-3 px-4 ${row.win === 'other' ? 'text-[--color-up]' : row.win === 'both' ? 'text-[--color-accent]' : 'text-[--color-text-muted]'}`}>
+                  <span class="flex items-start gap-2"><span class="mt-0.5 shrink-0 text-base leading-none" aria-hidden="true">{row.win === 'other' ? '\u2713' : row.win === 'both' ? '~' : '\u2014'}</span><span>{row.other}</span></span>
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-
-      <!-- Mobile cards -->
       <div class="md:hidden space-y-4">
         {rows.map((row) => (
           <div class={`border border-[--color-border] rounded-lg p-4 ${row.highlight ? 'bg-[--color-accent]/5 border-[--color-accent]/30' : 'bg-[--color-bg-card]'}`}>
             <p class="font-mono text-xs text-[--color-text-muted] uppercase tracking-wider mb-2">{row.label}</p>
             <div class="grid grid-cols-2 gap-3">
-              <div>
-                <p class="text-xs text-[--color-accent] font-mono mb-1">PRUVIQ</p>
-                <p class="text-sm text-[--color-accent]">{row.p}</p>
-              </div>
-              <div>
-                <p class="text-xs text-[--color-text-muted] font-mono mb-1">3Commas</p>
-                <p class="text-sm text-[--color-text-muted]">{row.other}</p>
-              </div>
+              <div><p class="text-xs text-[--color-accent] font-mono mb-1">PRUVIQ</p><p class="text-sm text-[--color-accent]">{row.p}</p></div>
+              <div><p class="text-xs text-[--color-text-muted] font-mono mb-1">3Commas</p><p class="text-sm text-[--color-text-muted]">{row.other}</p></div>
             </div>
           </div>
         ))}
@@ -85,16 +82,35 @@ const rows = [
     </div>
   </section>
 
-  <!-- WHEN TO CHOOSE -->
-  <section class="pb-12 border-t border-[--color-border] pt-12 bg-[--color-bg-subtle]">
+  <!-- WHY -->
+  <hr class="section-divider" />
+  <section class="pb-12 pt-12">
+    <div class="max-w-5xl mx-auto px-4">
+      <h2 class="text-2xl md:text-3xl font-bold mb-8">{t('vs_3commas.why_title')}</h2>
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card]">
+          <h3 class="font-bold text-lg mb-2 text-[--color-accent]">{t('vs_3commas.why_1_title')}</h3>
+          <p class="text-sm text-[--color-text-muted]">{t('vs_3commas.why_1_desc')}</p>
+        </div>
+        <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card]">
+          <h3 class="font-bold text-lg mb-2 text-[--color-accent]">{t('vs_3commas.why_2_title')}</h3>
+          <p class="text-sm text-[--color-text-muted]">{t('vs_3commas.why_2_desc')}</p>
+        </div>
+        <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card]">
+          <h3 class="font-bold text-lg mb-2 text-[--color-accent]">{t('vs_3commas.why_3_title')}</h3>
+          <p class="text-sm text-[--color-text-muted]">{t('vs_3commas.why_3_desc')}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHEN -->
+  <hr class="section-divider" />
+  <section class="pb-12 pt-12 bg-[--color-bg-subtle]">
     <div class="max-w-5xl mx-auto px-4">
       <div class="grid md:grid-cols-2 gap-8">
-        <!-- Choose PRUVIQ -->
         <div class="border border-[--color-accent]/30 rounded-lg p-6 bg-[--color-bg-card]">
-          <div class="flex items-center gap-3 mb-4">
-            <span class="inline-flex items-center justify-center w-8 h-8 rounded bg-[--color-accent]/10 text-[--color-accent] font-mono text-sm font-bold shrink-0">P</span>
-            <h3 class="font-bold text-lg">{t('vs_3commas.when_pruviq')}</h3>
-          </div>
+          <div class="flex items-center gap-3 mb-4"><span class="inline-flex items-center justify-center w-8 h-8 rounded bg-[--color-accent]/10 text-[--color-accent] font-mono text-sm font-bold shrink-0">P</span><h3 class="font-bold text-lg">{t('vs_3commas.when_pruviq')}</h3></div>
           <ul class="space-y-3">
             <li class="flex gap-2 text-sm"><span class="text-[--color-accent] shrink-0 mt-0.5">+</span><span>{t('vs_3commas.when_pruviq_1')}</span></li>
             <li class="flex gap-2 text-sm"><span class="text-[--color-accent] shrink-0 mt-0.5">+</span><span>{t('vs_3commas.when_pruviq_2')}</span></li>
@@ -102,13 +118,8 @@ const rows = [
             <li class="flex gap-2 text-sm"><span class="text-[--color-accent] shrink-0 mt-0.5">+</span><span>{t('vs_3commas.when_pruviq_4')}</span></li>
           </ul>
         </div>
-
-        <!-- Choose 3Commas -->
         <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card]">
-          <div class="flex items-center gap-3 mb-4">
-            <span class="inline-flex items-center justify-center w-8 h-8 rounded bg-[--color-bg-subtle] text-[--color-text-muted] font-mono text-sm font-bold shrink-0">3C</span>
-            <h3 class="font-bold text-lg">{t('vs_3commas.when_other')}</h3>
-          </div>
+          <div class="flex items-center gap-3 mb-4"><span class="inline-flex items-center justify-center w-8 h-8 rounded bg-[--color-bg-subtle] text-[--color-text-muted] font-mono text-sm font-bold shrink-0">3C</span><h3 class="font-bold text-lg">{t('vs_3commas.when_other')}</h3></div>
           <ul class="space-y-3">
             <li class="flex gap-2 text-sm text-[--color-text-muted]"><span class="shrink-0 mt-0.5">+</span><span>{t('vs_3commas.when_other_1')}</span></li>
             <li class="flex gap-2 text-sm text-[--color-text-muted]"><span class="shrink-0 mt-0.5">+</span><span>{t('vs_3commas.when_other_2')}</span></li>
@@ -120,22 +131,26 @@ const rows = [
     </div>
   </section>
 
+  <!-- BEST TOGETHER -->
+  <hr class="section-divider" />
+  <section class="pb-12 pt-12">
+    <div class="max-w-5xl mx-auto px-4">
+      <div class="border border-[--color-accent]/30 rounded-lg p-6 bg-[--color-accent]/5 max-w-3xl mx-auto text-center">
+        <h3 class="font-bold text-xl mb-3 text-[--color-accent]">{t('vs_3commas.best_together')}</h3>
+        <p class="text-[--color-text-muted]">{t('vs_3commas.best_together_desc')}</p>
+      </div>
+    </div>
+  </section>
+
   <!-- CTA -->
-  <section class="py-20 border-t border-[--color-border]">
+  <hr class="section-divider" />
+  <section class="py-20">
     <div class="max-w-5xl mx-auto px-4 text-center">
-      <h2 class="text-3xl md:text-4xl font-bold mb-4">
-        <span class="text-[--color-accent]">{t('vs_3commas.cta_title')}</span>
-      </h2>
+      <h2 class="text-3xl md:text-4xl font-bold mb-4"><span class="text-[--color-accent]">{t('vs_3commas.cta_title')}</span></h2>
       <p class="text-[--color-text-muted] text-lg mb-8 max-w-xl mx-auto">{t('vs_3commas.cta_desc')}</p>
       <div class="flex flex-col sm:flex-row gap-4 justify-center mb-4">
-        <a href="/ko/simulate"
-           class="btn btn-primary btn-lg">
-          {t('cta.button1')} &rarr;
-        </a>
-        <a href="/ko/strategies"
-           class="btn btn-ghost btn-lg hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
-          {t('hero.cta1')}
-        </a>
+        <a href="/ko/simulate" class="btn btn-primary btn-lg">{t('cta.button1')} &rarr;</a>
+        <a href="/ko/strategies" class="btn btn-ghost btn-lg hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">{t('hero.cta1')}</a>
       </div>
       <p class="text-[--color-text-muted] text-xs mt-6 max-w-lg mx-auto">{t('cta.disclaimer')}</p>
     </div>
