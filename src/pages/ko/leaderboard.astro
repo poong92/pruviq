@@ -30,7 +30,7 @@ function formatDate(iso: string) {
 ---
 
 <Layout title={t('meta.leaderboard_title')} description={t('meta.leaderboard_desc')}>
-  <section class="py-12">
+  <section class="py-12 reveal">
     <div class="max-w-4xl mx-auto px-4">
 
       <StrategyTabs active="leaderboard" lang="ko" />
@@ -58,7 +58,7 @@ function formatDate(iso: string) {
               const wrColor = entry.win_rate >= 55 ? 'text-[--color-up]' : entry.win_rate >= 50 ? 'text-[--color-yellow]' : 'text-[--color-red]';
               const pfColor = entry.profit_factor >= 1.5 ? 'text-[--color-up]' : entry.profit_factor >= 1.0 ? 'text-[--color-yellow]' : 'text-[--color-red]';
               return (
-                <div class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card]">
+                <div class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card] card-hover">
                   <div class="flex items-start justify-between gap-2 mb-3">
                     <div class="flex items-center gap-2 min-w-0">
                       <span class="text-xl shrink-0">{medal}</span>
@@ -145,7 +145,8 @@ function formatDate(iso: string) {
   </script>
 
   <!-- Footer CTAs -->
-  <section class="pb-12 border-t border-[--color-border] pt-8">
+  <hr class="section-divider" />
+  <section class="pb-12 pt-8 reveal">
     <div class="max-w-4xl mx-auto px-4 text-center">
       <div class="flex flex-wrap gap-3 justify-center">
         <a href="/ko/simulate" class="btn btn-primary btn-md no-underline">

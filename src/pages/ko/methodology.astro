@@ -8,7 +8,7 @@ const t = useTranslations('ko');
 <Layout title={t('meta.methodology_title')} description={t('meta.methodology_desc')}>
 
   <!-- HERO -->
-  <section class="py-16">
+  <section class="py-16 reveal">
     <div class="max-w-5xl mx-auto px-4">
       <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('methodology.tag')}</p>
       <h1 class="text-3xl md:text-5xl font-bold mb-4">
@@ -21,7 +21,8 @@ const t = useTranslations('ko');
   </section>
 
   <!-- 백테스트 방법 -->
-  <section class="pb-12 border-t border-[--color-border] pt-12">
+  <hr class="section-divider" />
+  <section class="pb-12 pt-12 reveal">
     <div class="max-w-5xl mx-auto px-4">
       <h2 class="text-2xl font-bold mb-6">{t('methodology.backtest_title')}</h2>
 
@@ -60,7 +61,8 @@ const t = useTranslations('ko');
   </section>
 
   <!-- 전략 평가 지표 -->
-  <section class="pb-12 border-t border-[--color-border] pt-12">
+  <hr class="section-divider" />
+  <section class="pb-12 pt-12 reveal">
     <div class="max-w-5xl mx-auto px-4">
       <h2 class="text-2xl font-bold mb-2">{t('methodology.metrics_title')}</h2>
       <p class="text-[--color-text-muted] text-sm mb-6">{t('methodology.metrics_desc')}</p>
@@ -100,7 +102,8 @@ const t = useTranslations('ko');
   </section>
 
   <!-- 검증 방법 -->
-  <section class="pb-12 border-t border-[--color-border] pt-12">
+  <hr class="section-divider" />
+  <section class="pb-12 pt-12 reveal">
     <div class="max-w-5xl mx-auto px-4">
       <h2 class="text-2xl font-bold mb-2">{t('methodology.validation_title')}</h2>
       <p class="text-[--color-text-muted] text-sm mb-6">{t('methodology.validation_desc')}</p>
@@ -121,7 +124,8 @@ const t = useTranslations('ko');
   </section>
 
   <!-- 모델링하지 않는 것 -->
-  <section class="pb-12 border-t border-[--color-border] pt-12">
+  <hr class="section-divider" />
+  <section class="pb-12 pt-12 reveal">
     <div class="max-w-5xl mx-auto px-4">
       <h2 class="text-2xl font-bold mb-2">{t('methodology.not_modeled_title')}</h2>
       <p class="text-[--color-text-muted] text-sm mb-6">{t('methodology.not_modeled_desc')}</p>
@@ -152,7 +156,8 @@ const t = useTranslations('ko');
   </section>
 
   <!-- 재현 가능성 -->
-  <section class="pb-12 border-t border-[--color-border] pt-12">
+  <hr class="section-divider" />
+  <section class="pb-12 pt-12 reveal">
     <div class="max-w-5xl mx-auto px-4">
       <h2 class="text-2xl font-bold mb-4">{t('methodology.reproducibility_title')}</h2>
       <div class="prose max-w-3xl">
@@ -162,7 +167,8 @@ const t = useTranslations('ko');
   </section>
 
   <!-- 면책 조항 -->
-  <section class="pb-12 border-t border-[--color-border] pt-12">
+  <hr class="section-divider" />
+  <section class="pb-12 pt-12 reveal">
     <div class="max-w-5xl mx-auto px-4">
       <h2 class="text-2xl font-bold mb-4">{t('methodology.disclaimer_title')}</h2>
       <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] max-w-3xl">
@@ -174,7 +180,8 @@ const t = useTranslations('ko');
   </section>
 
   <!-- CTA -->
-  <section class="pb-16 border-t border-[--color-border] pt-12">
+  <hr class="section-divider" />
+  <section class="pb-16 pt-12 reveal">
     <div class="max-w-5xl mx-auto px-4 text-center">
       <h2 class="text-xl font-bold mb-3">{t('methodology.cta_title')}</h2>
       <p class="text-[--color-text-muted] text-sm mb-6">{t('methodology.cta_desc')}</p>
