@@ -215,22 +215,22 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
 
       <!-- Feature cards -->
       <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16 reveal-child">
-        <a href="/simulate" class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] card-hover card-glow card-tilt block group">
+        <a href="/simulate" class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] card-hover block group">
           <p class="font-mono text-[--color-accent] text-sm font-bold mb-3">{t('features.card1_tag')}</p>
           <h3 class="font-bold text-lg mb-2 group-hover:text-[--color-accent] transition-colors">{t('features.card1_title')}</h3>
           <p class="text-[--color-text-muted] text-base leading-relaxed">{t('features.card1_desc')}</p>
         </a>
-        <a href="/strategies" class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] card-hover card-glow card-tilt block group">
+        <a href="/strategies" class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] card-hover block group">
           <p class="font-mono text-[--color-accent] text-sm font-bold mb-3">{t('features.card2_tag')}</p>
           <h3 class="font-bold text-lg mb-2 group-hover:text-[--color-accent] transition-colors">{t('features.card2_title')}</h3>
           <p class="text-[--color-text-muted] text-base leading-relaxed">{t('features.card2_desc')}</p>
         </a>
-        <a href="/fees" class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] card-hover card-glow card-tilt block group">
+        <a href="/fees" class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] card-hover block group">
           <p class="font-mono text-[--color-accent] text-sm font-bold mb-3">{t('features.card3_tag')}</p>
           <h3 class="font-bold text-lg mb-2 group-hover:text-[--color-accent] transition-colors">{t('features.card3_title')}</h3>
           <p class="text-[--color-text-muted] text-base leading-relaxed">{t('features.card3_desc')}</p>
         </a>
-        <a href="/learn" class="border border-[--color-accent]/30 rounded-lg p-6 bg-[--color-accent]/5 card-hover card-glow card-tilt block group">
+        <a href="/learn" class="border border-[--color-accent]/30 rounded-lg p-6 bg-[--color-accent]/5 card-hover block group">
           <p class="font-mono text-[--color-accent] text-sm font-bold mb-3">{t('features.learn_tag')}</p>
           <h3 class="font-bold text-lg mb-2 group-hover:text-[--color-accent] transition-colors">{t('features.learn_title')}</h3>
           <p class="text-[--color-text-muted] text-base leading-relaxed">{t('features.learn_desc')}</p>
@@ -246,28 +246,28 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
       </div>
 
       <div class="grid md:grid-cols-2 gap-6">
-        <a href="/methodology" class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card] card-hover card-glow card-tilt block group">
+        <a href="/methodology" class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card] card-hover block group">
           <div class="flex items-center gap-3 mb-2">
             <span class="inline-flex items-center justify-center w-8 h-8 rounded bg-[--color-accent]/10 text-[--color-accent] font-mono text-sm font-bold shrink-0">MC</span>
             <h4 class="font-bold group-hover:text-[--color-accent] transition-colors">{t('trust.badge_mc')}</h4>
           </div>
           <p class="text-[--color-text-muted] text-sm">{t('trust.badge_mc_desc')}</p>
         </a>
-        <a href="/methodology" class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card] card-hover card-glow card-tilt block group">
+        <a href="/methodology" class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card] card-hover block group">
           <div class="flex items-center gap-3 mb-2">
             <span class="inline-flex items-center justify-center w-8 h-8 rounded bg-[--color-accent]/10 text-[--color-accent] font-mono text-sm font-bold shrink-0">OOS</span>
             <h4 class="font-bold group-hover:text-[--color-accent] transition-colors">{t('trust.badge_oos')}</h4>
           </div>
           <p class="text-[--color-text-muted] text-sm">{t('trust.badge_oos_desc')}</p>
         </a>
-        <a href="/strategies/bb-squeeze-short" class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card] card-hover card-glow card-tilt block group">
+        <a href="/strategies/bb-squeeze-short" class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card] card-hover block group">
           <div class="flex items-center gap-3 mb-2">
             <span class="inline-flex items-center justify-center w-8 h-8 rounded bg-[--color-verified-subtle] text-[--color-verified] font-mono text-xs font-bold shrink-0">LIVE</span>
             <h4 class="font-bold group-hover:text-[--color-accent] transition-colors">{t('trust.badge_live')}</h4>
           </div>
           <p class="text-[--color-text-muted] text-sm">{t('trust.badge_live_desc')}</p>
         </a>
-        <a href="/api" class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card] card-hover card-glow card-tilt block group">
+        <a href="/api" class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card] card-hover block group">
           <div class="flex items-center gap-3 mb-2">
             <span class="inline-flex items-center justify-center w-8 h-8 rounded bg-[--color-accent]/10 text-[--color-accent] font-mono text-xs font-bold shrink-0">&lt;/&gt;</span>
             <h4 class="font-bold group-hover:text-[--color-accent] transition-colors">{t('trust.badge_open')}</h4>
