@@ -46,7 +46,7 @@
   --color-bg-tooltip:    rgba(24,24,27,0.95);
 
   /* ─── TEXT ─── */
-  --color-text:          #E8E8EC;   /* Zinc-100 — softer primary text (less eye fatigue) */
+  --color-text:          #E4E4E7;   /* Zinc-200 — refined primary text (enterprise readability) */
   --color-text-secondary:#A1A1AA;   /* Zinc-400 — secondary description */
   --color-text-muted:    #A1A1AA;   /* Zinc-400 — labels, meta (WCAG AA 6.29:1) */
   --color-text-disabled: #52525B;   /* Zinc-600 — inactive */
@@ -151,7 +151,7 @@
   --font-size-display:    clamp(2.5rem, 5vw, 4.5rem);   /* 40-72px */
   --font-size-display-sm: clamp(2rem, 4vw, 3.5rem);     /* 32-56px */
   --line-height-display:  1.05;
-  --letter-spacing-display: -0.04em;
+  --letter-spacing-display: -0.03em;
 
   /* ─── GRADIENTS ─── */
   --gradient-hero:       linear-gradient(180deg, #09090B 0%, #0C1220 50%, #09090B 100%);
@@ -214,7 +214,7 @@ body {
   color: var(--color-text);
   font-family: var(--font-sans);
   font-size: 16px; /* base — components should use text-base (16px) not text-sm (14px) */
-  line-height: 1.6;
+  line-height: 1.7;
   font-feature-settings: 'kern' 1, 'liga' 1;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -228,7 +228,7 @@ body {
 
 /* Precision typography — headings default */
 h1 {
-  letter-spacing: -0.04em;
+  letter-spacing: -0.03em;
   line-height: 1.08;
   font-weight: 700;
 }
@@ -332,18 +332,8 @@ a:not(.btn):not(.btn-primary):not(.btn-ghost):not(.btn-outline):not(.card-hover)
 /* ─── Aurora blob animations ─── */
 @keyframes aurora-1 {
   0%, 100% { transform: translate(-50%, -50%) translate(0, 0); }
-  33% { transform: translate(-50%, -50%) translate(30px, -50px); }
-  66% { transform: translate(-50%, -50%) translate(-20px, 20px); }
-}
-@keyframes aurora-2 {
-  0%, 100% { transform: translate(-50%, -50%) translate(0, 0); }
-  33% { transform: translate(-50%, -50%) translate(-40px, 30px); }
-  66% { transform: translate(-50%, -50%) translate(25px, -35px); }
-}
-@keyframes aurora-3 {
-  0%, 100% { transform: translate(-50%, -50%) translate(0, 0); }
-  33% { transform: translate(-50%, -50%) translate(20px, 40px); }
-  66% { transform: translate(-50%, -50%) translate(-30px, -20px); }
+  33% { transform: translate(-50%, -50%) translate(15px, -25px); }
+  66% { transform: translate(-50%, -50%) translate(-10px, 10px); }
 }
 
 @keyframes pageLoad {
@@ -879,11 +869,11 @@ textarea:focus-visible,
   border-radius: inherit;
   background: radial-gradient(
     300px circle at var(--glow-x, 50%) var(--glow-y, 50%),
-    rgba(79,142,247,0.03),
+    rgba(79,142,247,0.015),
     transparent 70%
   );
   opacity: 0;
-  transition: opacity 0.3s;
+  transition: opacity 0.4s;
   pointer-events: none;
   z-index: 1;
 }
@@ -893,6 +883,32 @@ textarea:focus-visible,
 .search-glow:focus {
   border-color: var(--color-accent) !important;
   box-shadow: 0 0 0 3px rgba(79,142,247,0.15), 0 0 12px rgba(79,142,247,0.1);
+}
+
+/* ─── Enterprise card style ─── */
+.card-enterprise {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  transition: border-color 200ms, box-shadow 200ms, transform 200ms;
+}
+.card-enterprise:hover {
+  border-color: var(--color-border-hover);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  transform: translateY(-2px);
+}
+
+/* ─── Section gap utility ─── */
+.section-gap {
+  padding-top: 5rem;
+  padding-bottom: 5rem;
+}
+
+/* ─── Data highlight (mono numerals) ─── */
+.data-highlight {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  letter-spacing: 0.02em;
 }
 
 /* ─── Blog category badge colors ─── */

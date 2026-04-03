@@ -121,19 +121,4 @@
   document
     .querySelectorAll(".reveal, .reveal-child")
     .forEach((el) => revealObserver.observe(el));
-
-  // Card 3D tilt on hover (desktop only, pointer: fine)
-  if (!prefersReduced && window.matchMedia("(pointer: fine)").matches) {
-    document.querySelectorAll(".card-tilt").forEach((card) => {
-      card.addEventListener("mousemove", (e) => {
-        const rect = card.getBoundingClientRect();
-        const x = (e.clientX - rect.left) / rect.width - 0.5;
-        const y = (e.clientY - rect.top) / rect.height - 0.5;
-        card.style.transform = `perspective(800px) rotateY(${x * 4}deg) rotateX(${-y * 4}deg) translateY(-2px)`;
-      });
-      card.addEventListener("mouseleave", () => {
-        card.style.transform = "";
-      });
-    });
-  }
 })();
