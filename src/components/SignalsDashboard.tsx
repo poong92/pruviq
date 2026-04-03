@@ -232,10 +232,10 @@ export default function SignalsDashboard({ lang = "en" }: Props) {
         <button
           onClick={() => setFilter("all")}
           aria-pressed={filter === "all"}
-          class={`text-center p-3 rounded-lg border transition-colors cursor-pointer ${
+          class={`text-center p-3 rounded-lg border transition-all cursor-pointer ${
             filter === "all"
-              ? "border-[--color-accent] bg-[--color-accent]/10"
-              : "border-[--color-border] bg-[--color-bg-card]"
+              ? "border-[--color-accent] bg-[--color-accent]/10 shadow-[0_0_12px_rgba(var(--accent-rgb,99,102,241),0.3)]"
+              : "border-[--color-border] bg-[--color-bg-card] hover:border-[--color-accent]/50"
           }`}
         >
           <p class="text-2xl font-bold font-mono">{signals.length}</p>
@@ -244,10 +244,10 @@ export default function SignalsDashboard({ lang = "en" }: Props) {
         <button
           onClick={() => setFilter("verified")}
           aria-pressed={filter === "verified"}
-          class={`text-center p-3 rounded-lg border transition-colors cursor-pointer ${
+          class={`text-center p-3 rounded-lg border transition-all cursor-pointer ${
             filter === "verified"
-              ? "border-green-500 bg-green-500/10"
-              : "border-[--color-border] bg-[--color-bg-card]"
+              ? "border-green-500 bg-green-500/10 shadow-[0_0_12px_rgba(34,197,94,0.3)]"
+              : "border-[--color-border] bg-[--color-bg-card] hover:border-green-500/50"
           }`}
         >
           <p class="text-2xl font-bold font-mono text-green-400">
@@ -258,10 +258,10 @@ export default function SignalsDashboard({ lang = "en" }: Props) {
         <button
           onClick={() => setFilter("short")}
           aria-pressed={filter === "short"}
-          class={`text-center p-3 rounded-lg border transition-colors cursor-pointer ${
+          class={`text-center p-3 rounded-lg border transition-all cursor-pointer ${
             filter === "short"
-              ? "border-red-500 bg-red-500/10"
-              : "border-[--color-border] bg-[--color-bg-card]"
+              ? "border-red-500 bg-red-500/10 shadow-[0_0_12px_rgba(239,68,68,0.3)]"
+              : "border-[--color-border] bg-[--color-bg-card] hover:border-red-500/50"
           }`}
         >
           <p class="text-2xl font-bold font-mono text-red-400">{shortCount}</p>
@@ -270,10 +270,10 @@ export default function SignalsDashboard({ lang = "en" }: Props) {
         <button
           onClick={() => setFilter("long")}
           aria-pressed={filter === "long"}
-          class={`text-center p-3 rounded-lg border transition-colors cursor-pointer ${
+          class={`text-center p-3 rounded-lg border transition-all cursor-pointer ${
             filter === "long"
-              ? "border-blue-500 bg-blue-500/10"
-              : "border-[--color-border] bg-[--color-bg-card]"
+              ? "border-blue-500 bg-blue-500/10 shadow-[0_0_12px_rgba(59,130,246,0.3)]"
+              : "border-[--color-border] bg-[--color-bg-card] hover:border-blue-500/50"
           }`}
         >
           <p class="text-2xl font-bold font-mono text-blue-400">{longCount}</p>
@@ -302,7 +302,11 @@ export default function SignalsDashboard({ lang = "en" }: Props) {
               {sigs.map((s, i) => (
                 <div
                   key={`${s.strategy}-${s.coin}-${i}`}
-                  class="flex items-center justify-between p-4 rounded-lg border border-[--color-border] bg-[--color-bg-card] hover:border-[--color-accent]/30 transition-colors group"
+                  class={`flex items-center justify-between p-4 rounded-lg border transition-colors group ${
+                    s.direction === "long"
+                      ? "border-blue-500/20 bg-blue-500/5 hover:border-blue-500/40"
+                      : "border-red-500/20 bg-red-500/5 hover:border-red-500/40"
+                  }`}
                 >
                   <div class="flex items-center gap-4">
                     <span
@@ -328,7 +332,7 @@ export default function SignalsDashboard({ lang = "en" }: Props) {
                   </div>
                   <a
                     href={buildSimUrl(s)}
-                    class="text-xs font-mono text-[--color-accent] md:opacity-0 md:group-hover:opacity-100 focus:opacity-100 transition-opacity hover:underline"
+                    class="text-xs font-mono font-bold px-3 py-1.5 rounded border border-[--color-accent]/40 bg-[--color-accent]/10 text-[--color-accent] hover:bg-[--color-accent]/20 transition-colors"
                   >
                     {t.verify}
                   </a>

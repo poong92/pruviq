@@ -28,6 +28,7 @@ const SPOT_RATES: Record<string, FeeRate> = {
 
 const EXCHANGE_TAGS: Record<string, string> = {
   binance: "#1 Volume",
+  okx: "#2 Global",
 };
 
 /** Derive discount rates from config/exchanges.ts (SSoT) */
@@ -37,8 +38,14 @@ function configToExchange(cfg: (typeof EXCHANGES)[number]): Exchange {
   return {
     id: cfg.id,
     name: cfg.name,
-    spot: SPOT_RATES[cfg.id] ?? { maker: cfg.standardMakerFee / 100, taker: cfg.standardTakerFee / 100 },
-    futures: { maker: cfg.standardMakerFee / 100, taker: cfg.standardTakerFee / 100 },
+    spot: SPOT_RATES[cfg.id] ?? {
+      maker: cfg.standardMakerFee / 100,
+      taker: cfg.standardTakerFee / 100,
+    },
+    futures: {
+      maker: cfg.standardMakerFee / 100,
+      taker: cfg.standardTakerFee / 100,
+    },
     spotDiscount,
     futuresDiscount,
     discount: Math.max(spotDiscount, futuresDiscount),

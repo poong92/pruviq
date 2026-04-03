@@ -87,7 +87,7 @@ const statusGroupLabels: Record<string, string> = {
 };
 
 const statusColors: Record<string, string> = {
-  verified: '--color-accent',
+  verified: '--color-verified',
   testing: '--color-yellow',
   killed: '--color-red',
   shelved: '--color-text-muted',
@@ -178,7 +178,7 @@ const isKorean = (id: string) => koIds.has(id);
       </div>
 
       <!-- 필터 + 정렬 바 -->
-      <div class="mb-6 flex flex-wrap gap-4" id="strategy-filters-ko">
+      <div class="mb-6 flex flex-wrap gap-4 strategy-filter-bar" id="strategy-filters-ko">
         <div class="flex items-center gap-1.5 flex-wrap">
           <span class="font-mono text-xs text-[--color-text-muted] mr-1">상태:</span>
           <button data-filter-group="status" data-filter-value="all"
@@ -203,8 +203,8 @@ const isKorean = (id: string) => koIds.has(id);
         {statusGroupOrder.map((statusKey) => {
           const isCollapsible = statusKey === 'killed' || statusKey === 'shelved';
           const header = (
-            <div class="flex items-center gap-3 mb-4">
-              <span class={`font-mono text-xs font-bold tracking-widest ${statusKey === 'verified' ? 'text-[--color-accent]' : statusKey === 'testing' ? 'text-[--color-yellow]' : 'text-[--color-text-muted]'}`}>
+            <div class={`flex items-center gap-3 mb-4 strategy-group-header strategy-group-header--${statusKey}`}>
+              <span class={`font-mono text-sm font-bold tracking-widest ${statusKey === 'verified' ? 'text-[--color-verified]' : statusKey === 'testing' ? 'text-[--color-yellow]' : 'text-[--color-text-muted]'}`}>
                 {statusGroupLabels[statusKey]}
               </span>
               <div class="flex-1 border-t border-[--color-border]"></div>
@@ -215,7 +215,7 @@ const isKorean = (id: string) => koIds.has(id);
           const cards = (
             <div class="space-y-4">
         {strategyGroups[statusKey].map((strategy) => (
-          <div class="block border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] card-hover group"
+          <div class={`block border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] card-hover group ${strategy.data.status === 'verified' ? 'strategy-card-verified' : ''}`}
                style="box-shadow: var(--shadow-card);"
                data-status={strategy.data.status}
                data-win-rate={strategy.data.winRate ?? 0}
@@ -223,7 +223,7 @@ const isKorean = (id: string) => koIds.has(id);
             <a href={`/ko/strategies/${strategy.id}`} class="block">
               <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
                 <div class="flex items-center gap-3">
-                  <span class="font-mono text-xs tracking-wider px-2 py-0.5 rounded border"
+                  <span class={`font-mono text-xs tracking-wider rounded border ${strategy.data.status === 'verified' ? 'badge-verified' : 'px-2 py-0.5'}`}
                         style={`color: var(${statusColors[strategy.data.status]}); border-color: var(${statusColors[strategy.data.status]})`}>
                     {statusLabels[strategy.data.status]}
                   </span>
@@ -332,7 +332,7 @@ const isKorean = (id: string) => koIds.has(id);
               return (
               <a
                 href={`/ko/simulate?preset=${preset.id}`}
-                class={`relative flex flex-col border border-[--color-border] rounded-lg px-4 py-3 bg-[--color-bg-card] hover:border-[--color-accent] transition-colors group card-glow ${glowClass}`}
+                class={`relative flex flex-col border border-[--color-border] rounded-lg px-4 py-3 bg-[--color-bg-card] hover:border-[--color-accent] transition-colors group card-glow preset-card ${glowClass}`}
               >
                 {isTodaysPick && (
                   <span class="absolute -top-2.5 left-3 font-mono text-[10px] tracking-wider px-2 py-0.5 rounded-full bg-[--color-accent] text-black font-bold z-10">
@@ -344,7 +344,7 @@ const isKorean = (id: string) => koIds.has(id);
                     <p class="font-semibold text-sm truncate">{preset.name_ko ?? preset.name}</p>
                     {stats && (
                       <p class="text-xs font-mono text-[--color-text-muted] mt-0.5">
-                        WR {stats.win_rate.toFixed(1)}% · PF {stats.profit_factor.toFixed(2)}
+                        WR <span class={stats.win_rate >= 55 ? 'stat-positive' : stats.win_rate < 45 ? 'stat-negative' : 'stat-warning'}>{stats.win_rate.toFixed(1)}%</span> · PF <span class={stats.profit_factor >= 1.5 ? 'stat-positive' : stats.profit_factor < 1.0 ? 'stat-negative' : 'stat-warning'}>{stats.profit_factor.toFixed(2)}</span>
                         {stats.total_return !== undefined && (
                           <span class={stats.total_return >= 0 ? 'text-[--color-up]' : 'text-[--color-red]'}> · {stats.total_return >= 0 ? '+' : ''}{stats.total_return.toFixed(1)}%</span>
                         )}

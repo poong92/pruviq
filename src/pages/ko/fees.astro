@@ -5,15 +5,22 @@ import { useTranslations } from '../../i18n/index';
 import { exchanges, formatFeeRange } from '../../data/exchanges';
 import { EXCHANGES, discountTooltip } from '../../config/exchanges';
 
-// Get Binance config (single exchange focus)
+// Get Binance config
 const binanceConfig = EXCHANGES[0];
 const binanceDisplay = exchanges[0];
 const binanceTooltip = discountTooltip(binanceConfig);
+
+// Get OKX config
+const okxConfig = EXCHANGES[1];
+const okxDisplay = exchanges[1];
 
 // Compute annual savings at $10k/month volume (futures, 2 sides)
 const annualVolume = 10_000 * 12;
 const annualSavings = (binanceConfig.futuresDiscountPct / 100) * (binanceConfig.standardTakerFee / 100) * annualVolume * 2;
 const savingsBadge = annualSavings >= 1 ? `연 $${Math.round(annualSavings)} 절약` : null;
+
+const okxAnnualSavings = (okxConfig.futuresDiscountPct / 100) * (okxConfig.standardTakerFee / 100) * annualVolume * 2;
+const okxSavingsBadge = okxAnnualSavings >= 1 ? `연 $${Math.round(okxAnnualSavings)} 절약` : null;
 
 const t = useTranslations('ko');
 ---
@@ -63,74 +70,117 @@ const t = useTranslations('ko');
     </div>
   </section>
 
-  <!-- 바이낸스 추천 카드 -->
+  <!-- 거래소 비교 카드 -->
   <section class="pb-12 border-t border-[--color-border] pt-12">
     <div class="max-w-5xl mx-auto px-4">
       <h2 class="text-2xl font-bold mb-2">{t('fees.compare_title')}</h2>
-      <p class="text-[--color-text-muted] text-sm mb-6">{t('fees.compare_desc')}</p>
+      <p class="text-[--color-text-muted] text-sm mb-8">{t('fees.compare_desc')}</p>
 
-      <div class="max-w-3xl mx-auto">
-        <div class="border border-[--color-accent]/30 rounded-xl p-8">
+      <div class="grid md:grid-cols-2 gap-6">
+        <!-- Binance 카드 -->
+        <div class="border border-[--color-accent]/30 rounded-xl p-6 md:p-8 flex flex-col">
           <div class="flex items-center gap-3 mb-6">
             <h3 class="text-2xl font-bold">{binanceDisplay.name}</h3>
             <span class="font-mono text-[--color-accent] text-xs font-bold px-2 py-0.5 rounded border border-[--color-accent]/30 bg-[--color-accent]/5">{binanceDisplay.tag}</span>
           </div>
 
-          <div class="grid md:grid-cols-2 gap-8">
-            <!-- 왼쪽: 수수료율 -->
-            <div class="space-y-3 text-sm">
+          <!-- 할인율 강조 -->
+          <div class="text-center mb-6 py-4 rounded-lg bg-[--color-accent]/5 border border-[--color-accent]/20">
+            <p class="text-3xl font-bold font-mono text-[--color-accent]">{binanceConfig.spotDiscountPct}%</p>
+            <p class="text-xs text-[--color-text-muted]">현물 수수료 할인</p>
+          </div>
+
+          <div class="space-y-3 text-sm flex-1">
+            <div class="flex justify-between">
+              <span class="text-[--color-text-muted]">{t('fees.label_spot')}</span>
+              <span class="font-mono">{formatFeeRange(binanceDisplay.spot, 'spot')}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-[--color-text-muted]">{t('fees.label_futures')}</span>
+              <span class="font-mono">{formatFeeRange(binanceDisplay.futures, 'futures')}</span>
+            </div>
+            <div class="border-t border-[--color-border] pt-3 mt-3 space-y-1.5">
               <div class="flex justify-between">
-                <span class="text-[--color-text-muted]">{t('fees.label_spot')}</span>
-                <span class="font-mono">{formatFeeRange(binanceDisplay.spot, 'spot')}</span>
+                <span class="text-[--color-accent] font-medium text-xs">{t('fees.pruviq_discount')} (현물)</span>
+                <span class="font-mono font-bold text-[--color-accent]">{binanceConfig.spotDiscountPct}% 할인</span>
               </div>
               <div class="flex justify-between">
-                <span class="text-[--color-text-muted]">{t('fees.label_futures')}</span>
-                <span class="font-mono">{formatFeeRange(binanceDisplay.futures, 'futures')}</span>
-              </div>
-              <div class="border-t border-[--color-border] pt-3 mt-3 space-y-1.5">
-                <div class="flex justify-between">
-                  <span class="text-[--color-accent] font-medium text-xs">{t('fees.pruviq_discount')} (현물)</span>
-                  <span class="font-mono font-bold text-[--color-accent]">{binanceConfig.spotDiscountPct}% 할인</span>
-                </div>
-                <div class="flex justify-between">
-                  <span class="text-[--color-accent] font-medium text-xs">{t('fees.pruviq_discount')} (선물)</span>
-                  <span class="font-mono font-bold text-[--color-accent]">{binanceConfig.futuresDiscountPct}% 할인</span>
-                </div>
-                <div class="flex justify-between pt-1">
-                  <span class="text-[--color-up] font-medium text-xs">PRUVIQ 수취</span>
-                  <span class="font-mono font-bold text-[--color-up]">단 {binanceConfig.platformCommissionPct}%</span>
-                </div>
+                <span class="text-[--color-accent] font-medium text-xs">{t('fees.pruviq_discount')} (선물)</span>
+                <span class="font-mono font-bold text-[--color-accent]">{binanceConfig.futuresDiscountPct}% 할인</span>
               </div>
             </div>
 
-            <!-- 오른쪽: 혜택 + CTA -->
-            <div class="flex flex-col justify-between">
-              <div class="mb-4 space-y-2">
-                <div class="flex items-center gap-3">
-                  <span class="inline-flex items-center gap-1 text-xs font-mono px-2 py-1 rounded border border-[--color-up]/40 bg-[--color-up]/5 text-[--color-up] font-semibold">
-                    최대 19% 거래 리베이트
-                  </span>
-                  <span class="inline-flex items-center gap-1 text-xs font-mono px-2 py-1 rounded border border-[--color-yellow]/40 bg-[--color-yellow]/5 text-[--color-yellow] font-semibold">
-                    최대 $600 보너스
-                  </span>
-                </div>
-                {savingsBadge && (
-                  <span class="inline-flex items-center gap-1 text-xs font-mono px-2 py-1 rounded border border-[--color-up]/40 bg-[--color-up]/5 text-[--color-up] font-semibold">
-                    &#9650; {savingsBadge}
-                    <span class="font-normal text-[--color-text-muted]">($10k/월 기준)</span>
-                  </span>
-                )}
-              </div>
-              <a href={`${binanceDisplay.referralUrl}&utm_source=pruviq&utm_medium=referral&utm_campaign=fees`} target="_blank" rel="noopener noreferrer"
-                 class="block text-center bg-[--color-accent] text-[--color-bg] px-4 py-3 min-h-[48px] flex items-center justify-center rounded text-sm font-bold hover:opacity-90 transition-opacity shadow-sm">
-                {t('fees.signup')} &rarr;
-              </a>
+            <div class="flex flex-wrap items-center gap-2 pt-2">
+              <span class="inline-flex items-center gap-1 text-xs font-mono px-2 py-1 rounded border border-[--color-up]/40 bg-[--color-up]/5 text-[--color-up] font-semibold">
+                최대 19% 거래 리베이트
+              </span>
+              <span class="inline-flex items-center gap-1 text-xs font-mono px-2 py-1 rounded border border-[--color-yellow]/40 bg-[--color-yellow]/5 text-[--color-yellow] font-semibold">
+                최대 $600 보너스
+              </span>
             </div>
+            {savingsBadge && (
+              <span class="inline-flex items-center gap-1 text-xs font-mono px-2 py-1 rounded border border-[--color-up]/40 bg-[--color-up]/5 text-[--color-up] font-semibold">
+                &#9650; {savingsBadge}
+                <span class="font-normal text-[--color-text-muted]">($10k/월 기준)</span>
+              </span>
+            )}
           </div>
+
+          <a href={`${binanceDisplay.referralUrl}&utm_source=pruviq&utm_medium=referral&utm_campaign=fees`} target="_blank" rel="noopener noreferrer"
+             class="mt-6 block text-center bg-[--color-accent] text-[--color-bg] px-4 py-3 min-h-[48px] rounded text-sm font-bold hover:opacity-90 transition-opacity shadow-sm">
+            Binance 가입하기 &rarr;
+          </a>
+        </div>
+
+        <!-- OKX 카드 -->
+        <div class="border border-[--color-border] rounded-xl p-6 md:p-8 flex flex-col relative overflow-hidden">
+          <div class="flex items-center gap-3 mb-6">
+            <h3 class="text-2xl font-bold">{okxDisplay.name}</h3>
+            <span class="font-mono text-[--color-up] text-xs font-bold px-2 py-0.5 rounded border border-[--color-up]/30 bg-[--color-up]/5">공식 파트너</span>
+          </div>
+
+          <!-- 할인율 강조 -->
+          <div class="text-center mb-6 py-4 rounded-lg bg-[--color-up]/5 border border-[--color-up]/20">
+            <p class="text-3xl font-bold font-mono text-[--color-up]">{okxConfig.futuresDiscountPct}%</p>
+            <p class="text-xs text-[--color-text-muted]">수수료 할인 (현물 + 선물)</p>
+          </div>
+
+          <div class="space-y-3 text-sm flex-1">
+            <div class="flex justify-between">
+              <span class="text-[--color-text-muted]">{t('fees.label_spot')}</span>
+              <span class="font-mono">{formatFeeRange(okxDisplay.spot, 'spot')}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-[--color-text-muted]">{t('fees.label_futures')}</span>
+              <span class="font-mono">{formatFeeRange(okxDisplay.futures, 'futures')}</span>
+            </div>
+            <div class="border-t border-[--color-border] pt-3 mt-3 space-y-1.5">
+              <div class="flex justify-between">
+                <span class="text-[--color-up] font-medium text-xs">{t('fees.pruviq_discount')} (현물)</span>
+                <span class="font-mono font-bold text-[--color-up]">{okxConfig.spotDiscountPct}% 할인</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-[--color-up] font-medium text-xs">{t('fees.pruviq_discount')} (선물)</span>
+                <span class="font-mono font-bold text-[--color-up]">{okxConfig.futuresDiscountPct}% 할인</span>
+              </div>
+            </div>
+
+            {okxSavingsBadge && (
+              <span class="inline-flex items-center gap-1 text-xs font-mono px-2 py-1 rounded border border-[--color-up]/40 bg-[--color-up]/5 text-[--color-up] font-semibold mt-2">
+                &#9650; {okxSavingsBadge}
+                <span class="font-normal text-[--color-text-muted]">($10k/월 기준)</span>
+              </span>
+            )}
+          </div>
+
+          <a href={`${okxDisplay.referralUrl}?utm_source=pruviq&utm_medium=referral&utm_campaign=fees`} target="_blank" rel="noopener noreferrer"
+             class="mt-6 block text-center border-2 border-[--color-up] text-[--color-up] px-4 py-3 min-h-[48px] rounded text-sm font-bold hover:bg-[--color-up]/10 transition-colors">
+            OKX 가입하기 &rarr;
+          </a>
         </div>
       </div>
 
-      <p class="text-[--color-text-muted] text-xs mt-4">
+      <p class="text-[--color-text-muted] text-xs mt-6">
         {t('fees.footnote')}
       </p>
     </div>

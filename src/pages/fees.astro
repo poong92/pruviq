@@ -5,15 +5,22 @@ import { useTranslations } from '../i18n/index';
 import { exchanges, formatFeeRange } from '../data/exchanges';
 import { EXCHANGES, discountTooltip } from '../config/exchanges';
 
-// Get Binance config (single exchange focus)
+// Get Binance config
 const binanceConfig = EXCHANGES[0];
 const binanceDisplay = exchanges[0];
 const binanceTooltip = discountTooltip(binanceConfig);
+
+// Get OKX config
+const okxConfig = EXCHANGES[1];
+const okxDisplay = exchanges[1];
 
 // Compute annual savings at $10k/month volume (futures, 2 sides)
 const annualVolume = 10_000 * 12;
 const annualSavings = (binanceConfig.futuresDiscountPct / 100) * (binanceConfig.standardTakerFee / 100) * annualVolume * 2;
 const savingsBadge = annualSavings >= 1 ? `Save $${Math.round(annualSavings)}/yr` : null;
+
+const okxAnnualSavings = (okxConfig.futuresDiscountPct / 100) * (okxConfig.standardTakerFee / 100) * annualVolume * 2;
+const okxSavingsBadge = okxAnnualSavings >= 1 ? `Save $${Math.round(okxAnnualSavings)}/yr` : null;
 
 const t = useTranslations('en');
 ---
@@ -73,74 +80,117 @@ const t = useTranslations('en');
     </div>
   </section>
 
-  <!-- BINANCE FEATURED CARD -->
+  <!-- EXCHANGE COMPARISON CARDS -->
   <section class="pb-12 border-t border-[--color-border] pt-12">
     <div class="max-w-5xl mx-auto px-4">
       <h2 id="compare" class="text-2xl font-bold mb-2">{t('fees.compare_title')}</h2>
-      <p class="text-[--color-text-muted] text-sm mb-6">{t('fees.compare_desc')}</p>
+      <p class="text-[--color-text-muted] text-sm mb-8">{t('fees.compare_desc')}</p>
 
-      <div class="max-w-3xl mx-auto">
-        <div class="border border-[--color-accent]/30 rounded-xl p-8">
+      <div class="grid md:grid-cols-2 gap-6">
+        <!-- Binance Card -->
+        <div class="border border-[--color-accent]/30 rounded-xl p-6 md:p-8 flex flex-col">
           <div class="flex items-center gap-3 mb-6">
             <h3 class="text-2xl font-bold">{binanceDisplay.name}</h3>
             <span class="font-mono text-[--color-accent] text-xs font-bold px-2 py-0.5 rounded border border-[--color-accent]/30 bg-[--color-accent]/5">{binanceDisplay.tag}</span>
           </div>
 
-          <div class="grid md:grid-cols-2 gap-8">
-            <!-- Left: fee rates -->
-            <div class="space-y-3 text-sm">
+          <!-- Discount highlight -->
+          <div class="text-center mb-6 py-4 rounded-lg bg-[--color-accent]/5 border border-[--color-accent]/20">
+            <p class="text-3xl font-bold font-mono text-[--color-accent]">{binanceConfig.spotDiscountPct}%</p>
+            <p class="text-xs text-[--color-text-muted]">Spot fee discount</p>
+          </div>
+
+          <div class="space-y-3 text-sm flex-1">
+            <div class="flex justify-between">
+              <span class="text-[--color-text-muted]">{t('fees.label_spot')}</span>
+              <span class="font-mono">{formatFeeRange(binanceDisplay.spot, 'spot')}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-[--color-text-muted]">{t('fees.label_futures')}</span>
+              <span class="font-mono">{formatFeeRange(binanceDisplay.futures, 'futures')}</span>
+            </div>
+            <div class="border-t border-[--color-border] pt-3 mt-3 space-y-1.5">
               <div class="flex justify-between">
-                <span class="text-[--color-text-muted]">{t('fees.label_spot')}</span>
-                <span class="font-mono">{formatFeeRange(binanceDisplay.spot, 'spot')}</span>
+                <span class="text-[--color-accent] font-medium text-xs">{t('fees.pruviq_discount')} (Spot)</span>
+                <span class="font-mono font-bold text-[--color-accent]">{binanceConfig.spotDiscountPct}% off</span>
               </div>
               <div class="flex justify-between">
-                <span class="text-[--color-text-muted]">{t('fees.label_futures')}</span>
-                <span class="font-mono">{formatFeeRange(binanceDisplay.futures, 'futures')}</span>
-              </div>
-              <div class="border-t border-[--color-border] pt-3 mt-3 space-y-1.5">
-                <div class="flex justify-between">
-                  <span class="text-[--color-accent] font-medium text-xs">{t('fees.pruviq_discount')} (Spot)</span>
-                  <span class="font-mono font-bold text-[--color-accent]">{binanceConfig.spotDiscountPct}% off</span>
-                </div>
-                <div class="flex justify-between">
-                  <span class="text-[--color-accent] font-medium text-xs">{t('fees.pruviq_discount')} (Futures)</span>
-                  <span class="font-mono font-bold text-[--color-accent]">{binanceConfig.futuresDiscountPct}% off</span>
-                </div>
-                <div class="flex justify-between pt-1">
-                  <span class="text-[--color-up] font-medium text-xs">PRUVIQ keeps</span>
-                  <span class="font-mono font-bold text-[--color-up]">only {binanceConfig.platformCommissionPct}%</span>
-                </div>
+                <span class="text-[--color-accent] font-medium text-xs">{t('fees.pruviq_discount')} (Futures)</span>
+                <span class="font-mono font-bold text-[--color-accent]">{binanceConfig.futuresDiscountPct}% off</span>
               </div>
             </div>
 
-            <!-- Right: rewards + CTA -->
-            <div class="flex flex-col justify-between">
-              <div class="mb-4 space-y-2">
-                <div class="flex items-center gap-3">
-                  <span class="inline-flex items-center gap-1 text-xs font-mono px-2 py-1 rounded border border-[--color-up]/40 bg-[--color-up]/5 text-[--color-up] font-semibold">
-                    Up to 19% Trade Rebates
-                  </span>
-                  <span class="inline-flex items-center gap-1 text-xs font-mono px-2 py-1 rounded border border-[--color-yellow]/40 bg-[--color-yellow]/5 text-[--color-yellow] font-semibold">
-                    Up to $600 Bonus
-                  </span>
-                </div>
-                {savingsBadge && (
-                  <span class="inline-flex items-center gap-1 text-xs font-mono px-2 py-1 rounded border border-[--color-up]/40 bg-[--color-up]/5 text-[--color-up] font-semibold">
-                    &#9650; {savingsBadge}
-                    <span class="font-normal text-[--color-text-muted]">at $10k/mo</span>
-                  </span>
-                )}
-              </div>
-              <a href={`${binanceDisplay.referralUrl}&utm_source=pruviq&utm_medium=referral&utm_campaign=fees`} target="_blank" rel="noopener noreferrer"
-                 class="block text-center bg-[--color-accent] text-[--color-bg] px-4 py-3 min-h-[48px] flex items-center justify-center rounded text-sm font-bold hover:opacity-90 transition-opacity shadow-sm">
-                {t('fees.signup')} &rarr;
-              </a>
+            <div class="flex flex-wrap items-center gap-2 pt-2">
+              <span class="inline-flex items-center gap-1 text-xs font-mono px-2 py-1 rounded border border-[--color-up]/40 bg-[--color-up]/5 text-[--color-up] font-semibold">
+                Up to 19% Trade Rebates
+              </span>
+              <span class="inline-flex items-center gap-1 text-xs font-mono px-2 py-1 rounded border border-[--color-yellow]/40 bg-[--color-yellow]/5 text-[--color-yellow] font-semibold">
+                Up to $600 Bonus
+              </span>
             </div>
+            {savingsBadge && (
+              <span class="inline-flex items-center gap-1 text-xs font-mono px-2 py-1 rounded border border-[--color-up]/40 bg-[--color-up]/5 text-[--color-up] font-semibold">
+                &#9650; {savingsBadge}
+                <span class="font-normal text-[--color-text-muted]">at $10k/mo</span>
+              </span>
+            )}
           </div>
+
+          <a href={`${binanceDisplay.referralUrl}&utm_source=pruviq&utm_medium=referral&utm_campaign=fees`} target="_blank" rel="noopener noreferrer"
+             class="mt-6 block text-center bg-[--color-accent] text-[--color-bg] px-4 py-3 min-h-[48px] rounded text-sm font-bold hover:opacity-90 transition-opacity shadow-sm">
+            Sign up on Binance &rarr;
+          </a>
+        </div>
+
+        <!-- OKX Card -->
+        <div class="border border-[--color-border] rounded-xl p-6 md:p-8 flex flex-col relative overflow-hidden">
+          <div class="flex items-center gap-3 mb-6">
+            <h3 class="text-2xl font-bold">{okxDisplay.name}</h3>
+            <span class="font-mono text-[--color-up] text-xs font-bold px-2 py-0.5 rounded border border-[--color-up]/30 bg-[--color-up]/5">Official Partner</span>
+          </div>
+
+          <!-- Discount highlight -->
+          <div class="text-center mb-6 py-4 rounded-lg bg-[--color-up]/5 border border-[--color-up]/20">
+            <p class="text-3xl font-bold font-mono text-[--color-up]">{okxConfig.futuresDiscountPct}%</p>
+            <p class="text-xs text-[--color-text-muted]">Fee discount (Spot + Futures)</p>
+          </div>
+
+          <div class="space-y-3 text-sm flex-1">
+            <div class="flex justify-between">
+              <span class="text-[--color-text-muted]">{t('fees.label_spot')}</span>
+              <span class="font-mono">{formatFeeRange(okxDisplay.spot, 'spot')}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-[--color-text-muted]">{t('fees.label_futures')}</span>
+              <span class="font-mono">{formatFeeRange(okxDisplay.futures, 'futures')}</span>
+            </div>
+            <div class="border-t border-[--color-border] pt-3 mt-3 space-y-1.5">
+              <div class="flex justify-between">
+                <span class="text-[--color-up] font-medium text-xs">{t('fees.pruviq_discount')} (Spot)</span>
+                <span class="font-mono font-bold text-[--color-up]">{okxConfig.spotDiscountPct}% off</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-[--color-up] font-medium text-xs">{t('fees.pruviq_discount')} (Futures)</span>
+                <span class="font-mono font-bold text-[--color-up]">{okxConfig.futuresDiscountPct}% off</span>
+              </div>
+            </div>
+
+            {okxSavingsBadge && (
+              <span class="inline-flex items-center gap-1 text-xs font-mono px-2 py-1 rounded border border-[--color-up]/40 bg-[--color-up]/5 text-[--color-up] font-semibold mt-2">
+                &#9650; {okxSavingsBadge}
+                <span class="font-normal text-[--color-text-muted]">at $10k/mo</span>
+              </span>
+            )}
+          </div>
+
+          <a href={`${okxDisplay.referralUrl}?utm_source=pruviq&utm_medium=referral&utm_campaign=fees`} target="_blank" rel="noopener noreferrer"
+             class="mt-6 block text-center border-2 border-[--color-up] text-[--color-up] px-4 py-3 min-h-[48px] rounded text-sm font-bold hover:bg-[--color-up]/10 transition-colors">
+            Sign up on OKX &rarr;
+          </a>
         </div>
       </div>
 
-      <p class="text-[--color-text-muted] text-xs mt-4">
+      <p class="text-[--color-text-muted] text-xs mt-6">
         {t('fees.footnote')}
       </p>
     </div>
