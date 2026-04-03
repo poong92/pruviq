@@ -163,6 +163,13 @@
   --color-bg-hero: #0A0E1A;
 }
 
+/* ─── Hero background depth ─── */
+.hero-bg-depth {
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(79,142,247,0.08) 0%, transparent 60%),
+    var(--gradient-hero);
+}
+
 /* ─── Shadows (not in @theme — multi-value not supported) ─── */
 :root {
   --shadow-card:

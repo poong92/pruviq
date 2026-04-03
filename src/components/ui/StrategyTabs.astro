@@ -21,7 +21,7 @@ const tabs = [
 ];
 ---
 
-<nav class="flex gap-1 mb-8 border-b border-[--color-border]" aria-label={lang === 'ko' ? '전략 내비게이션' : 'Strategy navigation'}>
+<nav class="flex gap-1 mb-4 border-b border-[--color-border]" aria-label={lang === 'ko' ? '전략 내비게이션' : 'Strategy navigation'}>
   {tabs.map(tab => (
     tab.id === active ? (
       <a href={tab.href} aria-current="page"
