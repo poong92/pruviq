@@ -84,7 +84,7 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
 
   <!-- STATS BAR -->
   <div class="max-w-7xl mx-auto px-6 py-10 relative z-10">
-    <div class="grid grid-cols-3 md:grid-cols-5 gap-3 md:gap-4 max-w-4xl mx-auto">
+    <div class="grid grid-cols-3 gap-3 md:gap-4 max-w-3xl mx-auto">
       <div class="stat-glass text-center">
         <p class="text-2xl md:text-3xl font-bold font-mono text-[--color-text]"><CountUp client:visible target={coinsAnalyzed} suffix="+" locale="ko-KR" /></p>
         <p class="text-xs text-[--color-text-muted] mt-1.5 font-mono uppercase tracking-wider">코인 테스트</p>
@@ -96,14 +96,6 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
       <div class="stat-glass text-center">
         <p class="text-2xl md:text-3xl font-bold font-mono text-[--color-text]"><CountUp client:visible target={simulatorPresetCount} suffix="+" /></p>
         <p class="text-xs text-[--color-text-muted] mt-1.5 font-mono uppercase tracking-wider">전략</p>
-      </div>
-      <div class="stat-glass text-center hidden md:block">
-        <p class="text-2xl md:text-3xl font-bold font-mono text-[--color-text]"><CountUp client:visible target={9.4} decimals={1} suffix="M+" /></p>
-        <p class="text-xs text-[--color-text-muted] mt-1.5 font-mono uppercase tracking-wider">데이터 포인트</p>
-      </div>
-      <div class="stat-glass text-center hidden md:block">
-        <p class="text-2xl md:text-3xl font-bold font-mono text-[--color-text]"><CountUp client:visible target={2898} suffix="+" locale="ko-KR" /></p>
-        <p class="text-xs text-[--color-text-muted] mt-1.5 font-mono uppercase tracking-wider">시뮬 거래</p>
       </div>
     </div>
     <div class="flex items-center justify-center gap-3 md:gap-8 text-[--color-text-muted] text-xs font-mono mt-6">
@@ -126,15 +118,15 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
     </div>
     <!-- 페르소나별 진입점 -->
     <div class="mt-12 grid sm:grid-cols-3 gap-4 max-w-3xl mx-auto">
-      <a href="/ko/learn" class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card] card-hover card-glow text-center group">
+      <a href="/ko/learn" class="card-premium card-hover card-glow p-5 text-center group">
         <p class="text-sm text-[--color-text-muted] mb-1 font-mono">처음이신가요?</p>
         <p class="text-base font-semibold group-hover:text-[--color-accent] transition-colors">학습 시작 →</p>
       </a>
-      <a href="/ko/simulate" class="border border-[--color-accent]/30 rounded-lg p-4 bg-[--color-accent]/5 card-hover card-glow text-center group">
+      <a href="/ko/simulate" class="card-premium card-hover card-glow p-4 text-center group" style="border-color: rgba(79,142,247,0.3); background: rgba(79,142,247,0.05);">
         <p class="text-sm text-[--color-text-muted] mb-1 font-mono">경험 있는 트레이더?</p>
         <p class="text-base font-semibold group-hover:text-[--color-accent] transition-colors">시뮬레이터 열기 →</p>
       </a>
-      <a href="/ko/strategies" class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card] card-hover card-glow text-center group">
+      <a href="/ko/strategies" class="card-premium card-hover card-glow p-5 text-center group">
         <p class="text-sm text-[--color-text-muted] mb-1 font-mono">둘러보는 중?</p>
         <p class="text-base font-semibold group-hover:text-[--color-accent] transition-colors">전략 탐색 →</p>
       </a>
@@ -276,28 +268,28 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
       </div>
 
       <div class="grid md:grid-cols-2 gap-6">
-        <a href="/ko/methodology" class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card] card-hover block group">
+        <a href="/ko/methodology" class="card-premium card-hover p-5 block group">
           <div class="flex items-center gap-3 mb-2">
             <span class="inline-flex items-center justify-center w-8 h-8 rounded bg-[--color-accent]/10 text-[--color-accent] font-mono text-sm font-bold shrink-0">MC</span>
             <h4 class="font-bold group-hover:text-[--color-accent] transition-colors">{t('trust.badge_mc')}</h4>
           </div>
           <p class="text-[--color-text-muted] text-sm">{t('trust.badge_mc_desc')}</p>
         </a>
-        <a href="/ko/methodology" class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card] card-hover block group">
+        <a href="/ko/methodology" class="card-premium card-hover p-5 block group">
           <div class="flex items-center gap-3 mb-2">
             <span class="inline-flex items-center justify-center w-8 h-8 rounded bg-[--color-accent]/10 text-[--color-accent] font-mono text-sm font-bold shrink-0">OOS</span>
             <h4 class="font-bold group-hover:text-[--color-accent] transition-colors">{t('trust.badge_oos')}</h4>
           </div>
           <p class="text-[--color-text-muted] text-sm">{t('trust.badge_oos_desc')}</p>
         </a>
-        <a href="/ko/strategies/bb-squeeze-short" class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card] card-hover block group">
+        <a href="/ko/strategies/bb-squeeze-short" class="card-premium card-hover p-5 block group">
           <div class="flex items-center gap-3 mb-2">
             <span class="inline-flex items-center justify-center w-8 h-8 rounded bg-[--color-verified-subtle] text-[--color-verified] font-mono text-xs font-bold shrink-0">LIVE</span>
             <h4 class="font-bold group-hover:text-[--color-accent] transition-colors">{t('trust.badge_live')}</h4>
           </div>
           <p class="text-[--color-text-muted] text-sm">{t('trust.badge_live_desc')}</p>
         </a>
-        <a href="/ko/api" class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card] card-hover block group">
+        <a href="/ko/api" class="card-premium card-hover p-5 block group">
           <div class="flex items-center gap-3 mb-2">
             <span class="inline-flex items-center justify-center w-8 h-8 rounded bg-[--color-accent]/10 text-[--color-accent] font-mono text-xs font-bold shrink-0">&lt;/&gt;</span>
             <h4 class="font-bold group-hover:text-[--color-accent] transition-colors">{t('trust.badge_open')}</h4>
