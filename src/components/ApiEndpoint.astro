@@ -1,0 +1,137 @@
+---
+/**
+ * ApiEndpoint.astro — Reusable endpoint card with cURL, response example, and "Try it" link.
+ */
+interface Props {
+  method: 'GET' | 'POST';
+  path: string;
+  description: string;
+  params?: string;
+  curl: string;
+  response: string;
+  tryUrl?: string;
+  requestBody?: string;
+  note?: string;
+  tryLabel: string;
+  responseLabel: string;
+  curlLabel: string;
+  requestBodyLabel?: string;
+  copyLabel: string;
+  copiedLabel: string;
+}
+
+const {
+  method,
+  path,
+  description,
+  params,
+  curl,
+  response,
+  tryUrl,
+  requestBody,
+  note,
+  tryLabel,
+  responseLabel,
+  curlLabel,
+  requestBodyLabel,
+  copyLabel,
+  copiedLabel,
+} = Astro.props;
+
+const isGet = method === 'GET';
+const methodColor = isGet ? '--color-green' : '--color-accent';
+const endpointId = path.replace(/[/{}\[\]]/g, '-').replace(/^-/, '').replace(/-+/g, '-');
+---
+
+<div class="border border-[--color-border] rounded-lg bg-[--color-bg-card] overflow-hidden" id={`ep-${endpointId}`}>
+  <!-- Header -->
+  <div class="p-5">
+    <div class="flex items-center gap-2 mb-2 flex-wrap">
+      <span class={`font-mono text-xs px-2 py-0.5 rounded bg-[${methodColor}]/10 text-[${methodColor}] font-bold`}>{method}</span>
+      <code class="font-mono text-sm text-[--color-text]">{path}</code>
+      {tryUrl && (
+        <a
+          href={tryUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="ml-auto font-mono text-xs px-3 py-1 rounded border border-[--color-accent] text-[--color-accent] hover:bg-[--color-accent]/10 transition-colors min-h-[32px] flex items-center"
+        >
+          {tryLabel} &rarr;
+        </a>
+      )}
+    </div>
+    <p class="text-[--color-text-muted] text-sm">{description}</p>
+    {params && (
+      <div class="mt-3 font-mono text-xs text-[--color-text-muted]">
+        <span class="text-[--color-accent] font-bold">Params:</span> {params}
+      </div>
+    )}
+    {note && (
+      <div class="mt-3 p-3 rounded bg-[--color-bg-subtle] border border-[--color-border] text-sm text-[--color-text-muted]">
+        <strong class="font-mono text-xs text-[--color-accent]">Note:</strong>
+        <span class="ml-2">{note}</span>
+      </div>
+    )}
+  </div>
+
+  <!-- Expandable sections -->
+  <div class="border-t border-[--color-border]">
+    {requestBody && (
+      <details class="group">
+        <summary class="min-h-[44px] flex items-center px-5 py-3 cursor-pointer text-[--color-accent] font-mono text-xs hover:bg-[--color-bg-subtle] transition-colors">
+          <svg class="w-3 h-3 mr-2 transform transition-transform group-open:rotate-90" fill="currentColor" viewBox="0 0 12 12"><path d="M4 2l4 4-4 4"/></svg>
+          {requestBodyLabel}
+        </summary>
+        <div class="px-5 pb-4">
+          <pre class="p-3 rounded bg-[--color-bg] border border-[--color-border] overflow-x-auto text-xs"><code>{requestBody}</code></pre>
+        </div>
+      </details>
+    )}
+
+    <details class="group">
+      <summary class="min-h-[44px] flex items-center px-5 py-3 cursor-pointer text-[--color-accent] font-mono text-xs hover:bg-[--color-bg-subtle] transition-colors border-t border-[--color-border]">
+        <svg class="w-3 h-3 mr-2 transform transition-transform group-open:rotate-90" fill="currentColor" viewBox="0 0 12 12"><path d="M4 2l4 4-4 4"/></svg>
+        {curlLabel}
+      </summary>
+      <div class="px-5 pb-4 relative">
+        <button
+          class="api-copy-btn absolute top-2 right-7 font-mono text-[10px] px-2 py-1 rounded border border-[--color-border] text-[--color-text-muted] hover:text-[--color-accent] hover:border-[--color-accent] transition-colors"
+          data-copy={curl}
+          data-label={copyLabel}
+          data-copied={copiedLabel}
+          aria-label={copyLabel}
+        >
+          {copyLabel}
+        </button>
+        <pre class="p-3 rounded bg-[--color-bg] border border-[--color-border] overflow-x-auto text-xs"><code>{curl}</code></pre>
+      </div>
+    </details>
+
+    <details class="group">
+      <summary class="min-h-[44px] flex items-center px-5 py-3 cursor-pointer text-[--color-accent] font-mono text-xs hover:bg-[--color-bg-subtle] transition-colors border-t border-[--color-border]">
+        <svg class="w-3 h-3 mr-2 transform transition-transform group-open:rotate-90" fill="currentColor" viewBox="0 0 12 12"><path d="M4 2l4 4-4 4"/></svg>
+        {responseLabel}
+      </summary>
+      <div class="px-5 pb-4">
+        <pre class="p-3 rounded bg-[--color-bg] border border-[--color-border] overflow-x-auto text-xs max-h-[400px] overflow-y-auto"><code>{response}</code></pre>
+      </div>
+    </details>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement).closest('.api-copy-btn') as HTMLButtonElement;
+    if (!btn) return;
+    const text = btn.dataset.copy || '';
+    navigator.clipboard.writeText(text).then(() => {
+      const original = btn.dataset.label || 'Copy';
+      btn.textContent = btn.dataset.copied || 'Copied!';
+      btn.classList.add('text-[--color-green]', 'border-[--color-green]');
+      setTimeout(() => {
+        btn.textContent = original;
+        btn.classList.remove('text-[--color-green]', 'border-[--color-green]');
+      }, 2000);
+    });
+  });
+</script>

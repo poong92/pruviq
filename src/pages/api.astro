@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import ApiEndpoint from '../components/ApiEndpoint.astro';
 import { useTranslations } from '../i18n/index';
 
 const t = useTranslations('en');
@@ -62,37 +63,94 @@ const API_BASE = 'https://api.pruviq.com';
       <h2 class="text-2xl font-bold mb-6">{t('api.section_market')}</h2>
       <div class="space-y-4 max-w-4xl">
 
-        <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card]">
-          <div class="flex items-center gap-2 mb-2">
-            <span class="font-mono text-xs px-2 py-0.5 rounded bg-[--color-green]/10 text-[--color-green] font-bold">GET</span>
-            <code class="font-mono text-sm text-[--color-text]">/health</code>
-          </div>
-          <p class="text-[--color-text-muted] text-sm">{t('api.endpoint_health')}</p>
-        </div>
+        <ApiEndpoint
+          method="GET"
+          path="/health"
+          description={t('api.endpoint_health')}
+          tryUrl={`${API_BASE}/health`}
+          tryLabel={t('api.try_it')}
+          curlLabel={t('api.curl_example')}
+          responseLabel={t('api.response_example')}
+          copyLabel={t('api.copy')}
+          copiedLabel={t('api.copied')}
+          curl={`curl ${API_BASE}/health`}
+          response={`{
+  "status": "ok",
+  "version": "0.3.0",
+  "coins_loaded": 572,
+  "uptime_seconds": 415785.5
+}`}
+        />
 
-        <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card]">
-          <div class="flex items-center gap-2 mb-2">
-            <span class="font-mono text-xs px-2 py-0.5 rounded bg-[--color-green]/10 text-[--color-green] font-bold">GET</span>
-            <code class="font-mono text-sm text-[--color-text]">/market</code>
-          </div>
-          <p class="text-[--color-text-muted] text-sm">{t('api.endpoint_market')}</p>
-        </div>
+        <ApiEndpoint
+          method="GET"
+          path="/market"
+          description={t('api.endpoint_market')}
+          tryUrl={`${API_BASE}/market`}
+          tryLabel={t('api.try_it')}
+          curlLabel={t('api.curl_example')}
+          responseLabel={t('api.response_example')}
+          copyLabel={t('api.copy')}
+          copiedLabel={t('api.copied')}
+          curl={`curl ${API_BASE}/market`}
+          response={`{
+  "btc_price": 66658.4,
+  "btc_change_24h": -0.29,
+  "eth_price": 2054.17,
+  "eth_change_24h": -0.92,
+  "fear_greed_index": 9,
+  "fear_greed_label": "Extreme Fear",
+  "total_market_cap_b": 2377.4,
+  "btc_dominance": 56.1,
+  "total_volume_24h_b": 93.5,
+  "top_gainers": [ ... ],
+  "top_losers": [ ... ],
+  "extreme_funding": [ ... ]
+}`}
+        />
 
-        <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card]">
-          <div class="flex items-center gap-2 mb-2">
-            <span class="font-mono text-xs px-2 py-0.5 rounded bg-[--color-green]/10 text-[--color-green] font-bold">GET</span>
-            <code class="font-mono text-sm text-[--color-text]">/news</code>
-          </div>
-          <p class="text-[--color-text-muted] text-sm">{t('api.endpoint_news')}</p>
-        </div>
+        <ApiEndpoint
+          method="GET"
+          path="/news"
+          description={t('api.endpoint_news')}
+          tryUrl={`${API_BASE}/news`}
+          tryLabel={t('api.try_it')}
+          curlLabel={t('api.curl_example')}
+          responseLabel={t('api.response_example')}
+          copyLabel={t('api.copy')}
+          copiedLabel={t('api.copied')}
+          curl={`curl ${API_BASE}/news`}
+          response={`[
+  {
+    "title": "Bitcoin drops below $67K amid macro uncertainty",
+    "source": "CoinDesk",
+    "url": "https://...",
+    "published": "2026-04-03T10:30:00Z"
+  },
+  ...
+]`}
+        />
 
-        <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card]">
-          <div class="flex items-center gap-2 mb-2">
-            <span class="font-mono text-xs px-2 py-0.5 rounded bg-[--color-green]/10 text-[--color-green] font-bold">GET</span>
-            <code class="font-mono text-sm text-[--color-text]">/macro</code>
-          </div>
-          <p class="text-[--color-text-muted] text-sm">{t('api.endpoint_macro')}</p>
-        </div>
+        <ApiEndpoint
+          method="GET"
+          path="/macro"
+          description={t('api.endpoint_macro')}
+          tryUrl={`${API_BASE}/macro`}
+          tryLabel={t('api.try_it')}
+          curlLabel={t('api.curl_example')}
+          responseLabel={t('api.response_example')}
+          copyLabel={t('api.copy')}
+          copiedLabel={t('api.copied')}
+          curl={`curl ${API_BASE}/macro`}
+          response={`{
+  "dxy": { "value": 104.2, "change": -0.3 },
+  "us10y": { "value": 4.25, "change": 0.02 },
+  "sp500": { "value": 5280, "change": -1.2 },
+  "open_interest": { ... },
+  "funding_rates": { ... },
+  "events": [ ... ]
+}`}
+        />
 
       </div>
     </div>
@@ -104,40 +162,260 @@ const API_BASE = 'https://api.pruviq.com';
       <h2 class="text-2xl font-bold mb-6">{t('api.section_data')}</h2>
       <div class="space-y-4 max-w-4xl">
 
-        <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card]">
-          <div class="flex items-center gap-2 mb-2">
-            <span class="font-mono text-xs px-2 py-0.5 rounded bg-[--color-green]/10 text-[--color-green] font-bold">GET</span>
-            <code class="font-mono text-sm text-[--color-text]">/coins</code>
-          </div>
-          <p class="text-[--color-text-muted] text-sm">{t('api.endpoint_coins')}</p>
-        </div>
+        <ApiEndpoint
+          method="GET"
+          path="/coins"
+          description={t('api.endpoint_coins')}
+          tryUrl={`${API_BASE}/coins`}
+          tryLabel={t('api.try_it')}
+          curlLabel={t('api.curl_example')}
+          responseLabel={t('api.response_example')}
+          copyLabel={t('api.copy')}
+          copiedLabel={t('api.copied')}
+          curl={`curl ${API_BASE}/coins`}
+          response={`[
+  {
+    "symbol": "BTCUSDT",
+    "rows": 19800,
+    "date_from": "2023-12-30",
+    "date_to": "2026-04-03"
+  },
+  {
+    "symbol": "ETHUSDT",
+    "rows": 19800,
+    "date_from": "2023-12-30",
+    "date_to": "2026-04-03"
+  },
+  ... // 572 coins total
+]`}
+        />
 
-        <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card]">
-          <div class="flex items-center gap-2 mb-2">
-            <span class="font-mono text-xs px-2 py-0.5 rounded bg-[--color-green]/10 text-[--color-green] font-bold">GET</span>
-            <code class="font-mono text-sm text-[--color-text]">/coins/stats</code>
-          </div>
-          <p class="text-[--color-text-muted] text-sm">{t('api.endpoint_coins_stats')}</p>
-        </div>
+        <ApiEndpoint
+          method="GET"
+          path="/coins/stats"
+          description={t('api.endpoint_coins_stats')}
+          tryUrl={`${API_BASE}/coins/stats`}
+          tryLabel={t('api.try_it')}
+          curlLabel={t('api.curl_example')}
+          responseLabel={t('api.response_example')}
+          copyLabel={t('api.copy')}
+          copiedLabel={t('api.copied')}
+          curl={`curl ${API_BASE}/coins/stats`}
+          response={`[
+  {
+    "symbol": "BTCUSDT",
+    "price": 66658.4,
+    "volume_24h": 28500000000,
+    "win_rate": 68.6,
+    "profit_factor": 2.22,
+    "total_trades": 142
+  },
+  ...
+]`}
+        />
 
-        <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card]">
-          <div class="flex items-center gap-2 mb-2">
-            <span class="font-mono text-xs px-2 py-0.5 rounded bg-[--color-green]/10 text-[--color-green] font-bold">GET</span>
-            <code class="font-mono text-sm text-[--color-text]">/ohlcv/&#123;symbol&#125;</code>
-          </div>
-          <p class="text-[--color-text-muted] text-sm">{t('api.endpoint_ohlcv')}</p>
-          <div class="mt-3 font-mono text-xs text-[--color-text-muted]">
-            <span class="text-[--color-accent]">{t('api.params_label')}</span> symbol (path), limit (query, default: 3000)
-          </div>
-        </div>
+        <ApiEndpoint
+          method="GET"
+          path="/ohlcv/{symbol}"
+          description={t('api.endpoint_ohlcv')}
+          params="symbol (path, required), limit (query, default: 3000)"
+          tryUrl={`${API_BASE}/ohlcv/BTCUSDT?limit=5`}
+          tryLabel={t('api.try_it')}
+          curlLabel={t('api.curl_example')}
+          responseLabel={t('api.response_example')}
+          copyLabel={t('api.copy')}
+          copiedLabel={t('api.copied')}
+          curl={`curl "${API_BASE}/ohlcv/BTCUSDT?limit=168"`}
+          response={`{
+  "symbol": "BTCUSDT",
+  "timeframe": "1H",
+  "total_bars": 168,
+  "data": [
+    {
+      "t": 1775178000,
+      "o": 66761.8,
+      "h": 66881.3,
+      "l": 66450.0,
+      "c": 66599.0,
+      "v": 4087.42,
+      "bb_upper": 67266.78,
+      "bb_lower": 66077.55,
+      "bb_mid": 66672.17,
+      "ema20": 66865.21,
+      "ema50": 67163.85,
+      "vol_ratio": 0.9
+    },
+    ...
+  ]
+}`}
+        />
 
-        <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card]">
-          <div class="flex items-center gap-2 mb-2">
-            <span class="font-mono text-xs px-2 py-0.5 rounded bg-[--color-green]/10 text-[--color-green] font-bold">GET</span>
-            <code class="font-mono text-sm text-[--color-text]">/strategies</code>
-          </div>
-          <p class="text-[--color-text-muted] text-sm">{t('api.endpoint_strategies')}</p>
-        </div>
+        <ApiEndpoint
+          method="GET"
+          path="/strategies"
+          description={t('api.endpoint_strategies')}
+          tryUrl={`${API_BASE}/strategies`}
+          tryLabel={t('api.try_it')}
+          curlLabel={t('api.curl_example')}
+          responseLabel={t('api.response_example')}
+          copyLabel={t('api.copy')}
+          copiedLabel={t('api.copied')}
+          curl={`curl ${API_BASE}/strategies`}
+          response={`[
+  {
+    "id": "bb-squeeze-short",
+    "name": "BB Squeeze SHORT",
+    "description": "Bollinger Band squeeze breakout. Enters short on volatility expansion after contraction.",
+    "default_params": {
+      "sl_pct": 10.0,
+      "tp_pct": 8.0,
+      "max_bars": 48,
+      "direction": "short",
+      "status": "verified"
+    }
+  },
+  ...
+]`}
+        />
+
+        <ApiEndpoint
+          method="GET"
+          path="/indicators"
+          description={t('api.endpoint_indicators')}
+          tryUrl={`${API_BASE}/indicators`}
+          tryLabel={t('api.try_it')}
+          curlLabel={t('api.curl_example')}
+          responseLabel={t('api.response_example')}
+          copyLabel={t('api.copy')}
+          copiedLabel={t('api.copied')}
+          curl={`curl ${API_BASE}/indicators`}
+          response={`{
+  "bb": {
+    "name": "Bollinger Bands",
+    "fields": ["bb_upper", "bb_lower", "bb_mid", "bb_width", "is_squeeze", ...],
+    "default_params": { "period": 20, "std": 2.0 }
+  },
+  "ema": {
+    "name": "EMA Trend",
+    "fields": ["ema_fast", "ema_slow", "uptrend", "downtrend"],
+    "default_params": { "fast": 9, "slow": 21 }
+  },
+  ...
+}`}
+        />
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ENDPOINTS: RANKINGS & SIGNALS -->
+  <section class="pb-12 border-t border-[--color-border] pt-12">
+    <div class="max-w-5xl mx-auto px-4">
+      <h2 class="text-2xl font-bold mb-6">{t('api.section_signals')}</h2>
+      <div class="space-y-4 max-w-4xl">
+
+        <ApiEndpoint
+          method="GET"
+          path="/rankings/daily"
+          description={t('api.endpoint_rankings_daily')}
+          tryUrl={`${API_BASE}/rankings/daily`}
+          tryLabel={t('api.try_it')}
+          curlLabel={t('api.curl_example')}
+          responseLabel={t('api.response_example')}
+          copyLabel={t('api.copy')}
+          copiedLabel={t('api.copied')}
+          curl={`curl ${API_BASE}/rankings/daily`}
+          response={`{
+  "date": "2026-04-03",
+  "generated_at": "2026-04-03T00:27:22Z",
+  "period": "30d",
+  "group": "top50",
+  "top3": [
+    {
+      "rank": 1,
+      "name_en": "Keltner Squeeze LONG 6H",
+      "strategy": "keltner-squeeze",
+      "direction": "long",
+      "win_rate": 54.17,
+      "profit_factor": 1.78,
+      "total_return": 0.58,
+      "total_trades": 24,
+      "sharpe": 3.19,
+      "max_drawdown": 0.34,
+      "rank_change": 0,
+      "streak": 3
+    },
+    ...
+  ]
+}`}
+        />
+
+        <ApiEndpoint
+          method="GET"
+          path="/signals/live"
+          description={t('api.endpoint_signals_live')}
+          tryUrl={`${API_BASE}/signals/live`}
+          tryLabel={t('api.try_it')}
+          curlLabel={t('api.curl_example')}
+          responseLabel={t('api.response_example')}
+          copyLabel={t('api.copy')}
+          copiedLabel={t('api.copied')}
+          curl={`curl ${API_BASE}/signals/live`}
+          response={`[
+  {
+    "strategy": "ma-cross",
+    "strategy_name": "MA Cross",
+    "coin": "ETHUSDT",
+    "direction": "short",
+    "signal_time": "2026-04-03T02:00:00",
+    "entry_price": 2049.44,
+    "status": "verified",
+    "sl_pct": 5,
+    "tp_pct": 10
+  },
+  {
+    "strategy": "heikin-ashi",
+    "strategy_name": "Heikin Ashi Trend",
+    "coin": "BEAMXUSDT",
+    "direction": "long",
+    "signal_time": "2026-04-03T02:00:00",
+    "entry_price": 0.00171,
+    "status": "research",
+    "sl_pct": 7,
+    "tp_pct": 8
+  },
+  ...
+]`}
+        />
+
+        <ApiEndpoint
+          method="GET"
+          path="/hot-strategies"
+          description={t('api.endpoint_hot_strategies')}
+          tryUrl={`${API_BASE}/hot-strategies`}
+          tryLabel={t('api.try_it')}
+          curlLabel={t('api.curl_example')}
+          responseLabel={t('api.response_example')}
+          copyLabel={t('api.copy')}
+          copiedLabel={t('api.copied')}
+          curl={`curl ${API_BASE}/hot-strategies`}
+          response={`{
+  "strategies": [
+    {
+      "strategy_id": "supertrend",
+      "strategy_name": "SuperTrend",
+      "direction": "short",
+      "status": "research",
+      "period": "30d",
+      "profit_factor": 4.11,
+      "win_rate": 60.0,
+      "total_trades": 5,
+      "total_return_pct": 5.9
+    },
+    ...
+  ]
+}`}
+        />
 
       </div>
     </div>
@@ -149,64 +427,147 @@ const API_BASE = 'https://api.pruviq.com';
       <h2 class="text-2xl font-bold mb-6">{t('api.section_simulation')}</h2>
       <div class="space-y-4 max-w-4xl">
 
-        <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card]">
-          <div class="flex items-center gap-2 mb-2">
-            <span class="font-mono text-xs px-2 py-0.5 rounded bg-[--color-accent]/10 text-[--color-accent] font-bold">POST</span>
-            <code class="font-mono text-sm text-[--color-text]">/simulate</code>
-          </div>
-          <p class="text-[--color-text-muted] text-sm mb-3">{t('api.endpoint_simulate')}</p>
-          <details class="text-sm">
-            <summary class="min-h-[44px] flex items-center cursor-pointer text-[--color-accent] font-mono text-xs hover:underline">{t('api.request_body')}</summary>
-            <pre class="mt-2 p-3 rounded bg-[--color-bg] border border-[--color-border] overflow-x-auto text-xs"><code>{`{
+        <ApiEndpoint
+          method="POST"
+          path="/simulate"
+          description={t('api.endpoint_simulate')}
+          tryLabel={t('api.try_it')}
+          curlLabel={t('api.curl_example')}
+          responseLabel={t('api.response_example')}
+          requestBodyLabel={t('api.request_body')}
+          copyLabel={t('api.copy')}
+          copiedLabel={t('api.copied')}
+          requestBody={`{
   "strategy": "bb-squeeze-short",
   "sl_pct": 10.0,
   "tp_pct": 8.0,
   "max_bars": 48,
   "market_type": "futures",
   "top_n": 50
-}`}</code></pre>
-          </details>
-        </div>
+}`}
+          curl={`curl -X POST ${API_BASE}/simulate \\
+  -H "Content-Type: application/json" \\
+  -d '{"strategy":"bb-squeeze-short","sl_pct":10,"tp_pct":8,"top_n":50}'`}
+          response={`{
+  "strategy": "bb-squeeze-short",
+  "direction": "short",
+  "total_trades": 1247,
+  "win_rate": 68.6,
+  "profit_factor": 2.22,
+  "total_return_pct": 142.5,
+  "sharpe_ratio": 3.45,
+  "max_drawdown_pct": 8.2,
+  "avg_bars_held": 12.3,
+  "equity_curve": [ ... ]
+}`}
+        />
 
-        <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card]">
-          <div class="flex items-center gap-2 mb-2">
-            <span class="font-mono text-xs px-2 py-0.5 rounded bg-[--color-accent]/10 text-[--color-accent] font-bold">POST</span>
-            <code class="font-mono text-sm text-[--color-text]">/simulate/coin</code>
-          </div>
-          <p class="text-[--color-text-muted] text-sm mb-3">{t('api.endpoint_simulate_coin')}</p>
-          <details class="text-sm">
-            <summary class="min-h-[44px] flex items-center cursor-pointer text-[--color-accent] font-mono text-xs hover:underline">{t('api.request_body')}</summary>
-            <pre class="mt-2 p-3 rounded bg-[--color-bg] border border-[--color-border] overflow-x-auto text-xs"><code>{`{
+        <ApiEndpoint
+          method="POST"
+          path="/simulate/coin"
+          description={t('api.endpoint_simulate_coin')}
+          tryLabel={t('api.try_it')}
+          curlLabel={t('api.curl_example')}
+          responseLabel={t('api.response_example')}
+          requestBodyLabel={t('api.request_body')}
+          copyLabel={t('api.copy')}
+          copiedLabel={t('api.copied')}
+          requestBody={`{
   "symbol": "BTCUSDT",
   "sl_pct": 10.0,
   "tp_pct": 8.0,
   "max_bars": 48,
   "direction": "short",
   "market_type": "futures"
-}`}</code></pre>
-          </details>
-        </div>
+}`}
+          curl={`curl -X POST ${API_BASE}/simulate/coin \\
+  -H "Content-Type: application/json" \\
+  -d '{"symbol":"BTCUSDT","sl_pct":10,"tp_pct":8,"max_bars":48,"direction":"short","market_type":"futures"}'`}
+          response={`{
+  "symbol": "BTCUSDT",
+  "total_trades": 42,
+  "win_rate": 71.4,
+  "profit_factor": 2.85,
+  "trades": [
+    {
+      "entry_time": "2025-06-15T14:00:00",
+      "exit_time": "2025-06-16T02:00:00",
+      "entry_price": 67500.0,
+      "exit_price": 62100.0,
+      "pnl_pct": 8.0,
+      "result": "tp"
+    },
+    ...
+  ]
+}`}
+        />
 
-        <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card]">
-          <div class="flex items-center gap-2 mb-2">
-            <span class="font-mono text-xs px-2 py-0.5 rounded bg-[--color-accent]/10 text-[--color-accent] font-bold">POST</span>
-            <code class="font-mono text-sm text-[--color-text]">/simulate/compare</code>
-          </div>
-          <p class="text-[--color-text-muted] text-sm mb-3">{t('api.endpoint_compare')}</p>
-          <details class="text-sm">
-            <summary class="min-h-[44px] flex items-center cursor-pointer text-[--color-accent] font-mono text-xs hover:underline">{t('api.request_body')}</summary>
-            <pre class="mt-2 p-3 rounded bg-[--color-bg] border border-[--color-border] overflow-x-auto text-xs"><code>{`{
+        <ApiEndpoint
+          method="POST"
+          path="/simulate/compare"
+          description={t('api.endpoint_compare')}
+          note={t('api.note_async')}
+          tryLabel={t('api.try_it')}
+          curlLabel={t('api.curl_example')}
+          responseLabel={t('api.response_example')}
+          requestBodyLabel={t('api.request_body')}
+          copyLabel={t('api.copy')}
+          copiedLabel={t('api.copied')}
+          requestBody={`{
   "sl_pct": 10.0,
   "tp_pct": 8.0,
   "max_bars": 48,
   "top_n": 50
-}`}</code></pre>
-          </details>
-          <div class="mt-3 p-3 rounded bg-[--color-bg-subtle] border border-[--color-border] text-sm text-[--color-text-muted]">
-            <strong class="font-mono text-xs text-[--color-accent]">Note:</strong>
-            <span class="ml-2">Long-running backtests (large <code class="font-mono">top_n</code> or wide date ranges) may require async processing. To avoid timeouts, use a smaller <code class="font-mono">top_n</code> (e.g., 50), narrow the date range, or split into multiple smaller requests. A job status endpoint for async processing is planned for a future release.</span>
-          </div>
-        </div>
+}`}
+          curl={`curl -X POST ${API_BASE}/simulate/compare \\
+  -H "Content-Type: application/json" \\
+  -d '{"sl_pct":10,"tp_pct":8,"max_bars":48,"top_n":50}'`}
+          response={`{
+  "params": { "sl_pct": 10.0, "tp_pct": 8.0, "top_n": 50 },
+  "results": [
+    {
+      "strategy": "bb-squeeze-short",
+      "win_rate": 68.6,
+      "profit_factor": 2.22,
+      "total_trades": 1247,
+      "sharpe": 3.45
+    },
+    {
+      "strategy": "ma-cross-short",
+      "win_rate": 55.2,
+      "profit_factor": 1.45,
+      "total_trades": 890,
+      "sharpe": 1.82
+    },
+    ...
+  ]
+}`}
+        />
+
+        <ApiEndpoint
+          method="POST"
+          path="/simulate/validate"
+          description={t('api.endpoint_validate')}
+          tryLabel={t('api.try_it')}
+          curlLabel={t('api.curl_example')}
+          responseLabel={t('api.response_example')}
+          requestBodyLabel={t('api.request_body')}
+          copyLabel={t('api.copy')}
+          copiedLabel={t('api.copied')}
+          requestBody={`{
+  "strategy": "bb-squeeze-short",
+  "sl_pct": 10.0,
+  "tp_pct": 8.0
+}`}
+          curl={`curl -X POST ${API_BASE}/simulate/validate \\
+  -H "Content-Type: application/json" \\
+  -d '{"strategy":"bb-squeeze-short","sl_pct":10,"tp_pct":8}'`}
+          response={`{
+  "valid": true,
+  "strategy": "bb-squeeze-short",
+  "warnings": []
+}`}
+        />
 
       </div>
     </div>
@@ -218,15 +579,17 @@ const API_BASE = 'https://api.pruviq.com';
       <h2 class="text-2xl font-bold mb-6">{t('api.section_builder')}</h2>
       <div class="space-y-4 max-w-4xl">
 
-        <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card]">
-          <div class="flex items-center gap-2 mb-2">
-            <span class="font-mono text-xs px-2 py-0.5 rounded bg-[--color-accent]/10 text-[--color-accent] font-bold">POST</span>
-            <code class="font-mono text-sm text-[--color-text]">/backtest</code>
-          </div>
-          <p class="text-[--color-text-muted] text-sm mb-3">{t('api.endpoint_backtest')}</p>
-          <details class="text-sm">
-            <summary class="min-h-[44px] flex items-center cursor-pointer text-[--color-accent] font-mono text-xs hover:underline">{t('api.request_body')}</summary>
-            <pre class="mt-2 p-3 rounded bg-[--color-bg] border border-[--color-border] overflow-x-auto text-xs"><code>{`{
+        <ApiEndpoint
+          method="POST"
+          path="/backtest"
+          description={t('api.endpoint_backtest')}
+          tryLabel={t('api.try_it')}
+          curlLabel={t('api.curl_example')}
+          responseLabel={t('api.response_example')}
+          requestBodyLabel={t('api.request_body')}
+          copyLabel={t('api.copy')}
+          copiedLabel={t('api.copied')}
+          requestBody={`{
   "name": "My Strategy",
   "direction": "short",
   "indicators": { "bb": {}, "volume": {} },
@@ -241,33 +604,108 @@ const API_BASE = 'https://api.pruviq.com';
   "tp_pct": 8.0,
   "max_bars": 48,
   "top_n": 50
-}`}</code></pre>
-          </details>
-        </div>
+}`}
+          curl={`curl -X POST ${API_BASE}/backtest \\
+  -H "Content-Type: application/json" \\
+  -d '{"name":"My Strategy","direction":"short","indicators":{"bb":{},"volume":{}},"entry":{"type":"AND","conditions":[{"field":"bb_squeeze","op":"==","value_bool":true},{"field":"vol_ratio","op":">","value":2.0}]},"sl_pct":10,"tp_pct":8,"top_n":50}'`}
+          response={`{
+  "name": "My Strategy",
+  "direction": "short",
+  "total_trades": 856,
+  "win_rate": 62.3,
+  "profit_factor": 1.89,
+  "sharpe_ratio": 2.67,
+  "max_drawdown_pct": 11.4,
+  "equity_curve": [ ... ],
+  "per_coin": [ ... ]
+}`}
+        />
 
-        <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card]">
-          <div class="flex items-center gap-2 mb-2">
-            <span class="font-mono text-xs px-2 py-0.5 rounded bg-[--color-green]/10 text-[--color-green] font-bold">GET</span>
-            <code class="font-mono text-sm text-[--color-text]">/builder/indicators</code>
-          </div>
-          <p class="text-[--color-text-muted] text-sm">{t('api.endpoint_indicators')}</p>
-        </div>
+        <ApiEndpoint
+          method="GET"
+          path="/builder/presets"
+          description={t('api.endpoint_presets')}
+          tryUrl={`${API_BASE}/builder/presets`}
+          tryLabel={t('api.try_it')}
+          curlLabel={t('api.curl_example')}
+          responseLabel={t('api.response_example')}
+          copyLabel={t('api.copy')}
+          copiedLabel={t('api.copied')}
+          curl={`curl ${API_BASE}/builder/presets`}
+          response={`[
+  {
+    "id": "bb-squeeze-short",
+    "name": "BB Squeeze SHORT",
+    "direction": "short",
+    "indicators": ["ema", "bb", "volume"],
+    "conditions_count": 7,
+    "sl_pct": 10.0,
+    "tp_pct": 8.0
+  },
+  {
+    "id": "bb-squeeze-long",
+    "name": "BB Squeeze LONG",
+    "direction": "long",
+    "indicators": ["ema", "bb", "volume"],
+    "conditions_count": 7,
+    "sl_pct": 7.0,
+    "tp_pct": 6.0
+  },
+  ...
+]`}
+        />
 
-        <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card]">
-          <div class="flex items-center gap-2 mb-2">
-            <span class="font-mono text-xs px-2 py-0.5 rounded bg-[--color-green]/10 text-[--color-green] font-bold">GET</span>
-            <code class="font-mono text-sm text-[--color-text]">/builder/presets</code>
-          </div>
-          <p class="text-[--color-text-muted] text-sm">{t('api.endpoint_presets')}</p>
-        </div>
+        <ApiEndpoint
+          method="GET"
+          path="/builder/presets/{preset_id}"
+          description={t('api.endpoint_preset_detail')}
+          params="preset_id (path, required)"
+          tryUrl={`${API_BASE}/builder/presets/bb-squeeze-short`}
+          tryLabel={t('api.try_it')}
+          curlLabel={t('api.curl_example')}
+          responseLabel={t('api.response_example')}
+          copyLabel={t('api.copy')}
+          copiedLabel={t('api.copied')}
+          curl={`curl ${API_BASE}/builder/presets/bb-squeeze-short`}
+          response={`{
+  "id": "bb-squeeze-short",
+  "name": "BB Squeeze SHORT",
+  "direction": "short",
+  "indicators": { "bb": {}, "ema": {}, "volume": {} },
+  "entry": {
+    "type": "AND",
+    "conditions": [
+      { "field": "bb_squeeze", "op": "==", "value_bool": true },
+      { "field": "vol_ratio", "op": ">", "value": 2.0 },
+      ...
+    ]
+  },
+  "sl_pct": 10.0,
+  "tp_pct": 8.0,
+  "max_bars": 48
+}`}
+        />
 
-        <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card]">
-          <div class="flex items-center gap-2 mb-2">
-            <span class="font-mono text-xs px-2 py-0.5 rounded bg-[--color-green]/10 text-[--color-green] font-bold">GET</span>
-            <code class="font-mono text-sm text-[--color-text]">/builder/presets/&#123;preset_id&#125;</code>
-          </div>
-          <p class="text-[--color-text-muted] text-sm">{t('api.endpoint_preset_detail')}</p>
-        </div>
+        <ApiEndpoint
+          method="GET"
+          path="/builder/indicators"
+          description={t('api.endpoint_indicators')}
+          tryUrl={`${API_BASE}/builder/indicators`}
+          tryLabel={t('api.try_it')}
+          curlLabel={t('api.curl_example')}
+          responseLabel={t('api.response_example')}
+          copyLabel={t('api.copy')}
+          copiedLabel={t('api.copied')}
+          curl={`curl ${API_BASE}/builder/indicators`}
+          response={`{
+  "bb": {
+    "name": "Bollinger Bands",
+    "fields": ["bb_upper", "bb_lower", "bb_mid", "bb_width", "is_squeeze", ...],
+    "default_params": { "period": 20, "std": 2.0 }
+  },
+  ...
+}`}
+        />
 
       </div>
     </div>
@@ -319,6 +757,12 @@ curl ${API_BASE}/market
 # OHLCV data (last 168 bars)
 curl "${API_BASE}/ohlcv/ETHUSDT?limit=168"
 
+# Today's strategy rankings
+curl ${API_BASE}/rankings/daily
+
+# Live signals
+curl ${API_BASE}/signals/live
+
 # Run simulation
 curl -X POST ${API_BASE}/simulate \\
   -H "Content-Type: application/json" \\
@@ -331,6 +775,10 @@ curl -X POST ${API_BASE}/simulate \\
           <pre class="p-4 rounded-lg bg-[--color-bg-card] border border-[--color-border] overflow-x-auto text-sm"><code class="text-[--color-text]">{`// Fetch all available strategies
 const strategies = await fetch("${API_BASE}/strategies").then(r => r.json());
 console.log(strategies.map(s => s.name));
+
+// Get today's rankings
+const rankings = await fetch("${API_BASE}/rankings/daily").then(r => r.json());
+console.log(\`#1: \${rankings.top3[0].name_en} (PF: \${rankings.top3[0].profit_factor})\`);
 
 // Simulate single coin
 const sim = await fetch("${API_BASE}/simulate/coin", {
