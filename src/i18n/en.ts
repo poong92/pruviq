@@ -42,7 +42,8 @@ export const en = {
   "hero.tool_free": "100% Free, No Signup",
   "hero.subcopy":
     "We tested 88 strategy combinations. 4 failed — and we published every one.",
-  "hero.cta_secondary": "See Backtest Results",
+  "hero.cta_secondary": "See Simulation Results",
+  "hero.open_source": "Open Source",
   "hero.stat1_sub": "Including BTC, ETH, and altcoins",
   "hero.stat4_sub": "Across all verified strategies",
   "hero.stat5_sub": "1-hour candles since Jan 2024",
@@ -163,11 +164,11 @@ export const en = {
 
   // Features section
   "features.tag": "TOOLS",
-  "features.title": "Everything You Need to Backtest",
+  "features.title": "Everything You Need to Simulate",
   "features.card1_tag": "STRATEGY SIMULATOR",
-  "features.card1_title": "Build & Backtest",
+  "features.card1_title": "Build & Simulate",
   "features.card1_desc":
-    "14 indicators, no-code builder. Set entry conditions, stop-loss, take-profit. Run a full backtest in seconds.",
+    "14 indicators, no-code builder. Set entry conditions, stop-loss, take-profit. Run a full simulation in seconds.",
   "features.card2_tag": "STRATEGY LIBRARY",
   "features.card2_title": "Tested Strategies",
   "features.card2_desc":
@@ -183,7 +184,7 @@ export const en = {
   "how.step1": "Choose",
   "how.step1_desc":
     "Pick indicators and set entry/exit conditions. Use presets or build from scratch.",
-  "how.step2": "Backtest",
+  "how.step2": "Simulate",
   "how.step2_desc":
     "Run on 570+ coins with 2+ years of data. Fees and slippage included.",
   "how.step3": "Verify",
