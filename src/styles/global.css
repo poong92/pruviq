@@ -219,7 +219,7 @@
 }
 .card-premium:hover {
   border-color: rgba(255,255,255,0.15);
-  transform: translateY(-3px);
+  transform: translateY(-2px);
   box-shadow:
     0 0 0 1px rgba(255,255,255,0.08),
     0 12px 32px rgba(0,0,0,0.4),
@@ -320,9 +320,13 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Tabular numbers for all mono/data contexts */
+/* Tabular numbers for all mono/data/stat contexts */
 .font-mono,
-[class*="font-mono"] {
+[class*="font-mono"],
+.stat-glass,
+.metric-bar,
+.card-enterprise [class*="font-bold"],
+td {
   font-variant-numeric: tabular-nums;
 }
 
@@ -1271,13 +1275,15 @@ textarea:focus-visible,
   text-align: center;
   z-index: 50;
   transition: opacity var(--duration-fast) var(--ease-smooth),
-              visibility var(--duration-fast);
+              visibility var(--duration-fast),
+              transform var(--duration-fast) var(--ease-smooth);
   pointer-events: none;
 }
 .tooltip-wrap:hover .tooltip-text,
 .tooltip-wrap:focus-within .tooltip-text {
   visibility: visible;
   opacity: 1;
+  transform: translateX(-50%) translateY(-2px);
 }
 
 /* ─── Results action bar (post-simulation CTA) ─── */

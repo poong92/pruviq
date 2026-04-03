@@ -590,7 +590,7 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
         var dismissed = false;
         function check() {
           if (dismissed) return;
-          var shouldShow = window.scrollY > 400;
+          var shouldShow = window.scrollY > 300;
           if (shouldShow !== shown) {
             shown = shouldShow;
             bar.style.transform = shown ? 'translateY(0)' : 'translateY(100%)';

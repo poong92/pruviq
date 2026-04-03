@@ -180,7 +180,7 @@ export default function SimulatorPreview() {
             key={s.label}
             class="text-center p-1.5 rounded bg-[--color-bg-tooltip] border border-[--color-border]"
           >
-            <div class="text-[8px] text-[--color-text-muted] uppercase">
+            <div class="text-[10px] text-[--color-text-muted] uppercase tracking-wide">
               {s.label}
             </div>
             <div class="text-sm font-bold mt-0.5" style={{ color: s.color }}>
