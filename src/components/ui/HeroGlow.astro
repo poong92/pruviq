@@ -3,7 +3,7 @@ interface Props {
   color?: string;
   opacity?: string;
 }
-const { color = 'var(--color-accent)', opacity = '0.08' } = Astro.props;
+const { color = 'var(--color-accent)', opacity = '0.05' } = Astro.props;
 ---
 <div class="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
   <!-- Primary blue blob -->
@@ -14,11 +14,11 @@ const { color = 'var(--color-accent)', opacity = '0.08' } = Astro.props;
   <!-- Purple blob -->
   <div
     class="aurora-blob absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[500px] rounded-full blur-[150px]"
-    style="background: #A855F7; opacity: 0.06; animation: aurora-2 20s ease-in-out infinite;"
+    style="background: #A855F7; opacity: 0.035; animation: aurora-2 20s ease-in-out infinite;"
   ></div>
   <!-- Cyan blob -->
   <div
     class="aurora-blob absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[400px] rounded-full blur-[120px]"
-    style="background: #06B6D4; opacity: 0.05; animation: aurora-3 18s ease-in-out infinite;"
+    style="background: #06B6D4; opacity: 0.03; animation: aurora-3 18s ease-in-out infinite;"
   ></div>
 </div>
