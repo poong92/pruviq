@@ -87,7 +87,7 @@ const labels = {
     view: "Details",
     ctaTitle: "Build Your Own",
     ctaDesc: "Combine indicators and test with the strategy builder.",
-    ctaButton: "Try Simulator",
+    ctaButton: "Open Simulator",
   },
   ko: {
     tag: "전략 비교",
@@ -114,7 +114,7 @@ const labels = {
     view: "자세히 보기",
     ctaTitle: "나만의 전략 만들기",
     ctaDesc: "인디케이터를 조합하고 전략 빌더로 테스트하세요.",
-    ctaButton: "시뮬레이터 시작",
+    ctaButton: "시뮬레이터 열기",
   },
 };
 

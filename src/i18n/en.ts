@@ -23,7 +23,7 @@ export const en = {
   "hero.subtitle": "No code. No signup. No cost. Just data.",
   "hero.desc":
     "We tested 5 strategies on 570+ coins. 4 lost money. We published them all. Because you deserve to know what actually works before risking real money.",
-  "hero.cta_primary": "Try Simulator Free",
+  "hero.cta_primary": "Open Simulator Free",
   "hero.cta_builder": "Build Your Own Strategy",
   "hero.cta1": "Explore Strategies",
   "hero.cta2": "Raise Your Trading IQ",
@@ -861,7 +861,7 @@ export const en = {
   "blog.cta_community": "Join Community",
   "blog.learn_cta": "Start Learning",
   "blog.strategies_cta": "Explore Strategies",
-  "blog.simulate_cta": "Try Simulator",
+  "blog.simulate_cta": "Open Simulator",
 
   // Compare page
   "compare.tag": "STRATEGY COMPARISON",
@@ -921,7 +921,7 @@ export const en = {
   "learn.cta_title": "Ready to test what you've learned?",
   "learn.cta_desc":
     "Build a strategy and run it on 570+ coins — free, no account needed.",
-  "learn.cta_button": "Try the Simulator",
+  "learn.cta_button": "Open Simulator",
 
   // Learn page tag translations
   "learn.tag_beginners": "Beginners",
@@ -1138,7 +1138,7 @@ export const en = {
   "methodology.cta_title": "See It in Action",
   "methodology.cta_desc":
     "Run a backtest yourself — adjust parameters and see real results on 570+ coins.",
-  "methodology.cta_button": "Try the Simulator",
+  "methodology.cta_button": "Open Simulator",
   "methodology.sharpe_formula":
     "Formula: (Return - Risk-free Rate) / Volatility",
   "methodology.sortino_formula":
@@ -1329,7 +1329,7 @@ export const en = {
   "home.quotes_initials_note":
     "Names shown as initials at community members' request.",
   "home.quotes_heading": "What Traders Say",
-  "home.quotes_cta": "Join them — Try Simulator Free",
+  "home.quotes_cta": "Join them — Open Simulator Free",
   "home.ranking_shortcut": "Today's top strategies",
   "home.competitor_banner":
     "TradingView charges $14–240/mo for backtesting. PRUVIQ is free, forever.",
@@ -1455,7 +1455,7 @@ export const en = {
   "leaderboard.worst": "Underperformers",
   "leaderboard.coming_soon":
     "Live leaderboard coming soon. For now, try the simulator to run your own backtests.",
-  "leaderboard.cta": "Try Simulator",
+  "leaderboard.cta": "Open Simulator",
   "leaderboard.rank": "#",
   "leaderboard.strategy": "Strategy",
   "leaderboard.direction": "Direction",
