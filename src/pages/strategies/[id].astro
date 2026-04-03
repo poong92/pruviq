@@ -98,7 +98,7 @@ const statusLabels: Record<string, string> = {
       <ReproBadge client:visible strategy={strategy.id} />
 
       {(strategy.data.winRate || strategy.data.profitFactor || strategy.data.totalPnl || strategy.data.maxDrawdown) && (
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 font-mono text-sm border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card] mb-8">
+        <div class="reveal card-enterprise grid grid-cols-2 sm:grid-cols-4 gap-4 font-mono text-sm p-4 mb-8">
           {strategy.data.winRate !== undefined && (
             <div>
               <span class="text-[--color-text-muted] text-xs">{t('strategy.win_rate')}</span>
@@ -136,19 +136,23 @@ const statusLabels: Record<string, string> = {
         </div>
       )}
 
-      <div class="flex flex-wrap gap-4 text-xs font-mono text-[--color-text-muted] mb-8">
+      <div class="reveal flex flex-wrap gap-4 text-xs font-mono text-[--color-text-muted] mb-8">
         <span>{t('strategy.added')}: {strategy.data.dateAdded}</span>
         {strategy.data.dateKilled && <span>{t('strategy.killed_date')}: {strategy.data.dateKilled}</span>}
         {strategy.data.coins && <span>{strategy.data.coins} {t('strategy.coins_tested')}</span>}
         {strategy.data.dataPoints && <span>{strategy.data.dataPoints.toLocaleString()} {t('strategy.trades_analyzed')}</span>}
       </div>
 
-      <div class="prose">
+      <hr class="section-divider" />
+
+      <div class="reveal prose">
         <Content />
       </div>
 
+      <hr class="section-divider" />
+
       {strategy.data.status === 'verified' && (
-        <div class="mt-8 mb-8 border border-[--color-yellow]/30 rounded-lg p-4 bg-[--color-yellow]/5">
+        <div class="reveal mt-8 mb-8 border border-[--color-yellow]/30 rounded-lg p-4 bg-[--color-yellow]/5">
           <p class="font-mono text-[--color-yellow] text-xs font-bold mb-2">{t('strategy.leverage_warning_title')}</p>
           <p class="text-[--color-text-muted] text-sm leading-relaxed">{t('strategy.leverage_warning')}</p>
         </div>
@@ -166,7 +170,9 @@ const statusLabels: Record<string, string> = {
 
       <div id="exchange-cta-mount" data-strategy={strategy.id}></div>
 
-      <div class="mt-12 border-t border-[--color-border] pt-8 text-center">
+      <hr class="section-divider" />
+
+      <div class="reveal mt-12 border-t border-[--color-border] pt-8 text-center">
         <p class="text-[--color-text-muted] text-sm mb-4">
           {demo ? t('strategies.detail_demo_footer') : t('strategies.detail_nodemo_footer')}
         </p>

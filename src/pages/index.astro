@@ -26,73 +26,87 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
 
 <Layout title={t('meta.home_title')} description={t('meta.index_desc')}>
 
-  <!-- HERO -->
-  <section class="relative overflow-hidden min-h-[85vh] flex flex-col justify-center hero-bg-depth">
+  <!-- HERO — 50/50 layout: text left, live demo right -->
+  <section class="relative overflow-hidden hero-bg-depth">
     <HeroGlow />
-    <div class="relative max-w-7xl mx-auto px-6 pt-20 pb-12 md:pt-28 md:pb-16 hero-enter">
-      <HeroBadge stat={simulationsRun} label="simulations run" />
-      <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold text-center tracking-[-0.04em] leading-[1.08] max-w-4xl mx-auto">
-        Test Any Crypto Strategy<br class="hidden md:block" /> on <span class="gradient-text">{coinsAnalyzed} Coins</span> in Seconds
-      </h1>
-      <p class="mt-6 text-lg md:text-xl text-[--color-text-secondary] text-center max-w-2xl mx-auto leading-relaxed">
-        See exactly how your strategy would have performed.<br class="hidden sm:block" /> Free. No code. No signup. Real fees included.
-      </p>
-      <!-- CTA -->
-      <div class="flex flex-col items-center gap-3 mt-10">
-        <a href="/simulate" class="btn btn-primary btn-lg w-full sm:w-auto text-center">
-          Open Simulator — It's Free →
-        </a>
-        <span class="text-sm text-[--color-text-muted]">
-          or <a href="/strategies" class="text-[--color-accent] hover:underline">browse verified strategies</a>
-        </span>
-      </div>
-      <!-- Stats bar — glass cards -->
-      <div class="grid grid-cols-2 md:grid-cols-5 gap-3 md:gap-4 mt-16 max-w-4xl mx-auto">
-        <div class="stat-glass text-center">
-          <p class="text-2xl md:text-3xl font-bold font-mono text-[--color-text]"><CountUp client:visible target={coinsAnalyzed} suffix="+" locale="en-US" /></p>
-          <p class="text-xs text-[--color-text-muted] mt-1.5 font-mono uppercase tracking-wider">Coins Tested</p>
+    <div class="relative max-w-7xl mx-auto px-6 pt-24 pb-16 md:pt-32 md:pb-20 hero-enter">
+      <div class="grid md:grid-cols-2 gap-12 md:gap-16 items-center">
+        <!-- Left: Text + CTA -->
+        <div>
+          <HeroBadge stat={simulationsRun} label="simulations run" />
+          <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold tracking-[-0.04em] leading-[1.08]">
+            Test Any Crypto Strategy on <span class="gradient-text">{coinsAnalyzed} Coins</span>
+          </h1>
+          <p class="mt-6 text-lg text-[--color-text-secondary] leading-relaxed max-w-lg">
+            See exactly how your strategy would have performed. Free. No code. No signup. Real fees included.
+          </p>
+          <!-- Trust signals inline -->
+          <div class="flex flex-col gap-2 mt-6 text-sm text-[--color-text-secondary]">
+            <span class="flex items-center gap-2">
+              <svg class="w-4 h-4 text-[--color-up] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              {coinsAnalyzed}+ coins backtested with real fees
+            </span>
+            <span class="flex items-center gap-2">
+              <svg class="w-4 h-4 text-[--color-up] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              No signup · No credit card · 100% free
+            </span>
+            <span class="flex items-center gap-2">
+              <svg class="w-4 h-4 text-[--color-up] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              Failed strategies published openly
+            </span>
+          </div>
+          <!-- CTA -->
+          <div class="flex flex-col sm:flex-row gap-3 mt-8">
+            <a href="/simulate" class="btn btn-primary btn-lg text-center">
+              Try Simulator — Results in Seconds →
+            </a>
+            <a href="/strategies" class="btn btn-ghost btn-lg text-center">
+              Browse Strategies
+            </a>
+          </div>
         </div>
-        <div class="stat-glass text-center">
-          <p class="text-2xl md:text-3xl font-bold font-mono text-[--color-text]"><CountUp client:visible target={(siteStats as { simulations_run: number }).simulations_run} suffix="+" locale="en-US" /></p>
-          <p class="text-xs text-[--color-text-muted] mt-1.5 font-mono uppercase tracking-wider">Simulations Run</p>
-        </div>
-        <div class="stat-glass text-center">
-          <p class="text-2xl md:text-3xl font-bold font-mono text-[--color-text]"><CountUp client:visible target={2898} suffix="+" locale="en-US" /></p>
-          <p class="text-xs text-[--color-text-muted] mt-1.5 font-mono uppercase tracking-wider">Simulated Trades</p>
-        </div>
-        <div class="stat-glass text-center">
-          <p class="text-2xl md:text-3xl font-bold font-mono text-[--color-text]"><CountUp client:visible target={9.4} decimals={1} suffix="M+" /></p>
-          <p class="text-xs text-[--color-text-muted] mt-1.5 font-mono uppercase tracking-wider">Data Points</p>
-        </div>
-        <div class="stat-glass text-center col-span-2 md:col-span-1">
-          <p class="text-2xl md:text-3xl font-bold font-mono text-[--color-text]"><CountUp client:visible target={simulatorPresetCount} suffix="+" /></p>
-          <p class="text-xs text-[--color-text-muted] mt-1.5 font-mono uppercase tracking-wider">Strategies</p>
+        <!-- Right: Live simulator demo -->
+        <div class="relative">
+          <BrowserFrame
+            src="/images/simulator-preview.png"
+            alt="PRUVIQ Strategy Simulator — backtest {coinsAnalyzed} coins in seconds"
+            url="pruviq.com/simulate"
+          >
+            <SimulatorPreview client:visible />
+            <noscript>
+              <img src="/images/simulator-preview.png" alt="PRUVIQ Strategy Simulator" class="w-full block" loading="eager" />
+            </noscript>
+          </BrowserFrame>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- TRUST SIGNALS -->
-  <div class="max-w-3xl mx-auto px-6 py-8 relative z-10 reveal">
-    <div class="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 text-sm text-[--color-text-secondary]">
-      <span class="flex items-center gap-2">
-        <svg class="w-4 h-4 text-[--color-up] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
-        <span>{coinsAnalyzed}+ coins backtested with real fees</span>
-      </span>
-      <span class="flex items-center gap-2">
-        <svg class="w-4 h-4 text-[--color-up] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
-        <span>No signup · No credit card · 100% free</span>
-      </span>
-      <span class="flex items-center gap-2">
-        <svg class="w-4 h-4 text-[--color-up] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
-        <span>Failed strategies published openly</span>
-      </span>
+  <!-- STATS BAR -->
+  <div class="max-w-7xl mx-auto px-6 py-10 relative z-10">
+    <div class="grid grid-cols-3 md:grid-cols-5 gap-3 md:gap-4 max-w-4xl mx-auto">
+      <div class="stat-glass text-center">
+        <p class="text-2xl md:text-3xl font-bold font-mono text-[--color-text]"><CountUp client:visible target={coinsAnalyzed} suffix="+" locale="en-US" /></p>
+        <p class="text-xs text-[--color-text-muted] mt-1.5 font-mono uppercase tracking-wider">Coins Tested</p>
+      </div>
+      <div class="stat-glass text-center">
+        <p class="text-2xl md:text-3xl font-bold font-mono text-[--color-text]"><CountUp client:visible target={(siteStats as { simulations_run: number }).simulations_run} suffix="+" locale="en-US" /></p>
+        <p class="text-xs text-[--color-text-muted] mt-1.5 font-mono uppercase tracking-wider">Simulations</p>
+      </div>
+      <div class="stat-glass text-center">
+        <p class="text-2xl md:text-3xl font-bold font-mono text-[--color-text]"><CountUp client:visible target={simulatorPresetCount} suffix="+" /></p>
+        <p class="text-xs text-[--color-text-muted] mt-1.5 font-mono uppercase tracking-wider">Strategies</p>
+      </div>
+      <div class="stat-glass text-center hidden md:block">
+        <p class="text-2xl md:text-3xl font-bold font-mono text-[--color-text]"><CountUp client:visible target={9.4} decimals={1} suffix="M+" /></p>
+        <p class="text-xs text-[--color-text-muted] mt-1.5 font-mono uppercase tracking-wider">Data Points</p>
+      </div>
+      <div class="stat-glass text-center hidden md:block">
+        <p class="text-2xl md:text-3xl font-bold font-mono text-[--color-text]"><CountUp client:visible target={2898} suffix="+" locale="en-US" /></p>
+        <p class="text-xs text-[--color-text-muted] mt-1.5 font-mono uppercase tracking-wider">Trades Simulated</p>
+      </div>
     </div>
-  </div>
-
-  <!-- DATA TRUST BAR -->
-  <div class="max-w-7xl mx-auto px-6 py-4 relative z-10">
-    <div class="flex items-center justify-center gap-3 md:gap-8 text-[--color-text-muted] text-xs font-mono">
+    <div class="flex items-center justify-center gap-3 md:gap-8 text-[--color-text-muted] text-xs font-mono mt-6">
       <span class="opacity-50 text-[10px] uppercase tracking-widest">Powered by data from</span>
       <span class="hidden md:inline opacity-20">|</span>
       <span class="opacity-50 hover:opacity-90 transition-opacity text-sm font-semibold tracking-wide">Binance Futures</span>
@@ -100,20 +114,6 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
       <span class="opacity-50 hover:opacity-90 transition-opacity text-sm font-semibold tracking-wide">CoinGecko</span>
     </div>
   </div>
-
-  <!-- PRODUCT PREVIEW (animated) -->
-  <section class="max-w-7xl mx-auto px-6 -mt-4 pb-20 relative z-10">
-    <BrowserFrame
-      src="/images/simulator-preview.png"
-      alt="PRUVIQ Strategy Simulator — backtest 570 coins in seconds"
-      url="pruviq.com/simulate"
-    >
-      <SimulatorPreview client:visible />
-      <noscript>
-        <img src="/images/simulator-preview.png" alt="PRUVIQ Strategy Simulator" class="w-full block" loading="eager" />
-      </noscript>
-    </BrowserFrame>
-  </section>
 
   <!-- HOW IT WORKS -->
   <section class="max-w-7xl mx-auto px-6 py-24">

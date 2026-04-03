@@ -246,8 +246,8 @@ export default function SignalsDashboard({ lang = "en" }: Props) {
           aria-pressed={filter === "verified"}
           class={`text-center p-3 rounded-lg border transition-all cursor-pointer ${
             filter === "verified"
-              ? "border-green-500 bg-green-500/10 shadow-[0_0_12px_rgba(34,197,94,0.3)]"
-              : "border-[--color-border] bg-[--color-bg-card] hover:border-green-500/50"
+              ? "border-[--color-up] bg-[--color-up]/10 shadow-[0_0_12px_rgba(34,171,148,0.3)]"
+              : "border-[--color-border] bg-[--color-bg-card] hover:border-[--color-up]/50"
           }`}
         >
           <p class="text-2xl font-bold font-mono text-green-400">
@@ -260,11 +260,13 @@ export default function SignalsDashboard({ lang = "en" }: Props) {
           aria-pressed={filter === "short"}
           class={`text-center p-3 rounded-lg border transition-all cursor-pointer ${
             filter === "short"
-              ? "border-red-500 bg-red-500/10 shadow-[0_0_12px_rgba(239,68,68,0.3)]"
-              : "border-[--color-border] bg-[--color-bg-card] hover:border-red-500/50"
+              ? "border-[--color-down] bg-[--color-down]/10 shadow-[0_0_12px_rgba(242,54,69,0.3)]"
+              : "border-[--color-border] bg-[--color-bg-card] hover:border-[--color-down]/50"
           }`}
         >
-          <p class="text-2xl font-bold font-mono text-red-400">{shortCount}</p>
+          <p class="text-2xl font-bold font-mono text-[--color-down]">
+            {shortCount}
+          </p>
           <p class="text-xs text-[--color-text-muted]">{t.short}</p>
         </button>
         <button
@@ -272,11 +274,13 @@ export default function SignalsDashboard({ lang = "en" }: Props) {
           aria-pressed={filter === "long"}
           class={`text-center p-3 rounded-lg border transition-all cursor-pointer ${
             filter === "long"
-              ? "border-blue-500 bg-blue-500/10 shadow-[0_0_12px_rgba(59,130,246,0.3)]"
-              : "border-[--color-border] bg-[--color-bg-card] hover:border-blue-500/50"
+              ? "border-[--color-accent] bg-[--color-accent]/10 shadow-[0_0_12px_rgba(79,142,247,0.3)]"
+              : "border-[--color-border] bg-[--color-bg-card] hover:border-[--color-accent]/50"
           }`}
         >
-          <p class="text-2xl font-bold font-mono text-blue-400">{longCount}</p>
+          <p class="text-2xl font-bold font-mono text-[--color-accent]">
+            {longCount}
+          </p>
           <p class="text-xs text-[--color-text-muted]">{t.long}</p>
         </button>
       </div>
@@ -293,7 +297,7 @@ export default function SignalsDashboard({ lang = "en" }: Props) {
                 {sigs.length} {sigs.length > 1 ? t.signals : t.signal}
               </span>
               {sigs[0]?.status === "verified" && (
-                <span class="text-[10px] bg-green-500/20 text-green-400 px-1.5 py-0.5 rounded">
+                <span class="text-[10px] bg-[--color-up]/20 text-[--color-up] px-1.5 py-0.5 rounded">
                   {t.verified.toLowerCase()}
                 </span>
               )}
@@ -304,16 +308,16 @@ export default function SignalsDashboard({ lang = "en" }: Props) {
                   key={`${s.strategy}-${s.coin}-${i}`}
                   class={`flex items-center justify-between p-4 rounded-lg border transition-colors group ${
                     s.direction === "long"
-                      ? "border-blue-500/20 bg-blue-500/5 hover:border-blue-500/40"
-                      : "border-red-500/20 bg-red-500/5 hover:border-red-500/40"
+                      ? "border-[--color-accent]/20 bg-[--color-accent]/5 hover:border-[--color-accent]/40"
+                      : "border-[--color-down]/20 bg-[--color-down]/5 hover:border-[--color-down]/40"
                   }`}
                 >
                   <div class="flex items-center gap-4">
                     <span
                       class={`text-xs font-mono font-bold px-2 py-1 rounded ${
                         s.direction === "short"
-                          ? "bg-red-500/20 text-red-400"
-                          : "bg-blue-500/20 text-blue-400"
+                          ? "bg-[--color-down]/20 text-[--color-down]"
+                          : "bg-[--color-accent]/20 text-[--color-accent]"
                       }`}
                     >
                       {s.direction.toUpperCase()}

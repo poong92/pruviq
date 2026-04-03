@@ -49,27 +49,33 @@ const quickStartPresets = (rankingsData.top3 || []).slice(0, 3);
         <span class="text-[--color-text-muted]"><span class="text-[--color-accent] font-bold">{presetCount}</span> 개 전략 이용 가능</span>
       </div>
 
-      <!-- 3-step onboarding guide: 모바일 세로 스택, 데스크톱 가로 3열 -->
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
-        <div class="flex items-center gap-3 border border-[--color-border] rounded-lg px-4 py-3 bg-[--color-bg-card]">
-          <span class="font-mono text-[--color-accent] text-lg font-bold shrink-0">1</span>
+      <!-- 3단계 온보딩 가이드 + 진행 표시 -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4 reveal-child">
+        <div class="relative flex items-start gap-3 border border-[--color-accent]/30 rounded-lg px-4 py-4 bg-[--color-accent]/5 card-hover">
+          <div class="step-badge shrink-0 mt-0.5">1</div>
           <div>
             <p class="text-sm font-semibold">{t('simulate.step1_title')}</p>
-            <p class="text-xs text-[--color-text-muted]">{t('simulate.step1_desc')}</p>
+            <p class="text-xs text-[--color-text-muted] mt-1 leading-relaxed">{t('simulate.step1_desc')}</p>
+          </div>
+          <div class="hidden sm:block absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 z-10 text-[--color-accent]/40">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
           </div>
         </div>
-        <div class="flex items-center gap-3 border border-[--color-border] rounded-lg px-4 py-3 bg-[--color-bg-card]">
-          <span class="font-mono text-[--color-accent] text-lg font-bold shrink-0">2</span>
+        <div class="relative flex items-start gap-3 border border-[--color-border] rounded-lg px-4 py-4 bg-[--color-bg-card] card-hover">
+          <div class="step-badge shrink-0 mt-0.5">2</div>
           <div>
             <p class="text-sm font-semibold">{t('simulate.step2_title')}</p>
-            <p class="text-xs text-[--color-text-muted]">{t('simulate.step2_desc')}</p>
+            <p class="text-xs text-[--color-text-muted] mt-1 leading-relaxed">{t('simulate.step2_desc')}</p>
+          </div>
+          <div class="hidden sm:block absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 z-10 text-[--color-accent]/40">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
           </div>
         </div>
-        <div class="flex items-center gap-3 border border-[--color-border] rounded-lg px-4 py-3 bg-[--color-bg-card]">
-          <span class="font-mono text-[--color-accent] text-lg font-bold shrink-0">3</span>
+        <div class="flex items-start gap-3 border border-[--color-up]/20 rounded-lg px-4 py-4 bg-[--color-up]/5 card-hover">
+          <div class="step-badge shrink-0 mt-0.5" style="background: color-mix(in srgb, var(--color-up) 15%, transparent); color: var(--color-up);">3</div>
           <div>
             <p class="text-sm font-semibold">{t('simulate.step3_title')}</p>
-            <p class="text-xs text-[--color-text-muted]">{t('simulate.step3_desc')}</p>
+            <p class="text-xs text-[--color-text-muted] mt-1 leading-relaxed">{t('simulate.step3_desc')}</p>
           </div>
         </div>
       </div>

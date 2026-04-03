@@ -26,7 +26,7 @@ const t = useTranslations('ko');
         </p>
       </div>
 
-      <div class="mb-6 p-4 rounded-lg border border-[--color-accent]/20 bg-[--color-accent]/5">
+      <div class="mb-6 p-4 rounded-lg border border-[--color-accent]/20 bg-[--color-accent]/5 card-enterprise">
         <p class="text-sm text-[--color-text-secondary]">
           <strong>작동 방식:</strong> 엔진이 최신 완성 1시간 캔들에서 17개 전략의 진입 조건을 확인합니다.
           조건이 충족되면 시그널이 여기에 표시됩니다.
@@ -38,7 +38,9 @@ const t = useTranslations('ko');
         <SignalsDashboard lang="ko" client:load />
       </ErrorBoundary>
 
-      <div class="mt-12 text-center">
+      <hr class="section-divider" />
+
+      <div class="mt-8 text-center reveal">
         <p class="text-[--color-text-muted] mb-4">테스트하고 싶은 시그널이 있나요?</p>
         <a href="/ko/simulate" class="btn btn-primary">시뮬레이터 열기</a>
       </div>
