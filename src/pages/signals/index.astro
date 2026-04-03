@@ -28,7 +28,7 @@ const t = useTranslations('en');
       </div>
 
       <!-- Info banner -->
-      <div class="mb-6 p-4 rounded-lg border border-[--color-accent]/20 bg-[--color-accent]/5">
+      <div class="mb-6 p-4 rounded-lg border border-[--color-accent]/20 bg-[--color-accent]/5 card-enterprise">
         <p class="text-sm text-[--color-text-secondary]">
           <strong>How it works:</strong> Our engine scans 17 strategies on the latest completed 1H candles.
           When a strategy's entry conditions are met, a signal appears here.
@@ -41,8 +41,10 @@ const t = useTranslations('en');
         <SignalsDashboard client:load />
       </ErrorBoundary>
 
+      <hr class="section-divider" />
+
       <!-- CTA -->
-      <div class="mt-12 text-center">
+      <div class="mt-8 text-center reveal">
         <p class="text-[--color-text-muted] mb-4">See a signal you want to test?</p>
         <a href="/simulate" class="btn btn-primary">Open Simulator</a>
       </div>

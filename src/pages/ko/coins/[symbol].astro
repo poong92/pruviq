@@ -86,7 +86,7 @@ const canonicalOverride = symbol.endsWith('usdt') ? undefined : `/ko/coins/${sym
       </div>
 
       <!-- Chart -->
-      <div id="coin-mount" data-symbol={symbolUpper}>
+      <div class="reveal" id="coin-mount" data-symbol={symbolUpper}>
         <div class="animate-pulse">
           <div class="h-64 bg-[--color-bg-hover] rounded mb-4"></div>
           <div class="h-4 bg-[--color-bg-hover] rounded w-1/3"></div>
@@ -105,23 +105,25 @@ const canonicalOverride = symbol.endsWith('usdt') ? undefined : `/ko/coins/${sym
 
       <div id="exchange-cta-mount" data-coin={symbolUpper}></div>
 
+      <hr class="section-divider" />
+
       <!-- Strategy overview -->
-      <div class="mt-10 border-t border-[--color-border] pt-8">
+      <div class="reveal mt-10 border-t border-[--color-border] pt-8">
         <h2 class="text-lg font-bold mb-4">{t('coin_detail.strategy_overview')}</h2>
-        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-          <div class="border border-[--color-border] rounded p-3 bg-[--color-bg-card]">
+        <div class="reveal-child grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <div class="card-enterprise p-3">
             <p class="text-xs text-[--color-text-muted] font-mono mb-1">{t('coin_detail.direction')}</p>
             <p class="font-bold text-[--color-accent]">{t('coin_detail.short_only')}</p>
           </div>
-          <div class="border border-[--color-border] rounded p-3 bg-[--color-bg-card]">
+          <div class="card-enterprise p-3">
             <p class="text-xs text-[--color-text-muted] font-mono mb-1">{t('coin_detail.sl_tp')}</p>
-            <p class="font-bold">10% / 8%</p>
+            <p class="font-bold font-mono">10% / 8%</p>
           </div>
-          <div class="border border-[--color-border] rounded p-3 bg-[--color-bg-card]">
+          <div class="card-enterprise p-3">
             <p class="text-xs text-[--color-text-muted] font-mono mb-1">{t('coin_detail.max_hold')}</p>
             <p class="font-bold">{t('coin_detail.max_hold_val')}</p>
           </div>
-          <div class="border border-[--color-border] rounded p-3 bg-[--color-bg-card]">
+          <div class="card-enterprise p-3">
             <p class="text-xs text-[--color-text-muted] font-mono mb-1">{t('coin_detail.data_period')}</p>
             <p class="font-bold">{t('coin_detail.data_period_val')}</p>
           </div>
@@ -131,27 +133,31 @@ const canonicalOverride = symbol.endsWith('usdt') ? undefined : `/ko/coins/${sym
         </p>
       </div>
 
+      <hr class="section-divider" />
+
       <!-- FAQ -->
-      <div class="mt-10 border-t border-[--color-border] pt-8">
+      <div class="reveal mt-10 border-t border-[--color-border] pt-8">
         <h2 class="text-lg font-bold mb-4">{t('coin_detail.faq_title')}</h2>
         <div class="space-y-4 max-w-3xl">
-          <details class="border border-[--color-border] rounded bg-[--color-bg-card]">
+          <details class="card-hover border border-[--color-border] rounded bg-[--color-bg-card]">
             <summary class="px-4 py-3 cursor-pointer font-semibold text-sm hover:text-[--color-accent]">{t('coin_detail.faq_q1').replace('{name}', fullName)}</summary>
             <p class="px-4 pb-3 text-sm text-[--color-text-muted]">{t('coin_detail.faq_a1').replace('{display}', displayName)}</p>
           </details>
-          <details class="border border-[--color-border] rounded bg-[--color-bg-card]">
+          <details class="card-hover border border-[--color-border] rounded bg-[--color-bg-card]">
             <summary class="px-4 py-3 cursor-pointer font-semibold text-sm hover:text-[--color-accent]">{t('coin_detail.faq_q2').replace('{name}', fullName)}</summary>
             <p class="px-4 pb-3 text-sm text-[--color-text-muted]">{t('coin_detail.faq_a2')}</p>
           </details>
-          <details class="border border-[--color-border] rounded bg-[--color-bg-card]">
+          <details class="card-hover border border-[--color-border] rounded bg-[--color-bg-card]">
             <summary class="px-4 py-3 cursor-pointer font-semibold text-sm hover:text-[--color-accent]">{t('coin_detail.faq_q3').replace('{name}', fullName)}</summary>
             <p class="px-4 pb-3 text-sm text-[--color-text-muted]">{t('coin_detail.faq_a3')}</p>
           </details>
         </div>
       </div>
 
+      <hr class="section-divider" />
+
       <!-- Bottom CTA -->
-      <div class="mt-10 pt-8 border-t border-[--color-border] text-center">
+      <div class="reveal mt-10 pt-8 border-t border-[--color-border] text-center">
         <a href={`/ko/simulate?coin=${symbolUpper}&src=coin-page`}
            class="btn btn-primary btn-md
           {t('coin_detail.simulate_coin').replace('{coin}', coinName)} &rarr;

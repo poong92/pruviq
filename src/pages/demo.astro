@@ -7,7 +7,7 @@ const t = useTranslations('en');
 ---
 
 <Layout title={t('meta.demo_title')} description={t('meta.demo_desc')}>
-  <section class="max-w-7xl mx-auto px-4 py-12">
+  <section class="max-w-7xl mx-auto px-4 py-12 reveal">
     <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('demo.interactive_tag')}</p>
     <h1 class="text-3xl md:text-5xl font-bold mb-4">{t('demo.hero_title')}</h1>
     <p class="text-[--color-text-muted] mb-8 max-w-2xl">
@@ -16,8 +16,10 @@ const t = useTranslations('en');
 
     <StrategyDemo client:visible lang="en" />
 
+    <hr class="section-divider" />
+
     <!-- CTA to full simulator -->
-    <div class="mt-12 border-t border-[--color-border] pt-10 text-center">
+    <div class="mt-8 pt-10 text-center reveal">
       <h2 class="text-xl font-bold mb-3">{t('demo.want_more')}</h2>
       <p class="text-[--color-text-muted] text-sm mb-6 max-w-lg mx-auto">
         {t('demo.want_more_desc')}
