@@ -22,6 +22,32 @@ const categoryLabels: Record<string, string> = {
 ---
 
 <Layout title={`${title} - PRUVIQ`} description={description} type="article" date={date} category={category} ogImage={image}>
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": title,
+    "description": description,
+    "datePublished": date,
+    "author": {
+      "@type": "Organization",
+      "name": author,
+      "url": "https://pruviq.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "PRUVIQ",
+      "url": "https://pruviq.com",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://pruviq.com/favicon.svg"
+      }
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": `https://pruviq.com/learn/${Astro.params.id || ''}/`
+    },
+    ...(image ? { "image": `https://pruviq.com${image}` } : {})
+  })} />
   <article class="py-12">
     <div class="max-w-[45rem] mx-auto px-4">
       <a href="/learn" class="text-[--color-text-muted] text-sm hover:text-[--color-accent] transition-colors mb-8 inline-block">
@@ -68,7 +94,7 @@ const categoryLabels: Record<string, string> = {
             <p class="text-[--color-text-muted] text-sm mb-4">Simulate trading strategies on 570+ coins with 2+ years of data. Free.</p>
             <div class="flex flex-col sm:flex-row gap-3 justify-center">
               <a href="/simulate" class="btn btn-primary btn-md">
-                Try the Simulator &rarr;
+                Open Simulator &rarr;
               </a>
               <a href="/fees" class="btn btn-ghost btn-md">
                 Save on Fees

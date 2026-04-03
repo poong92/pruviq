@@ -184,7 +184,7 @@ export default function CoinChart({
   const [crosshairData, setCrosshairData] = useState<OhlcvBar | null>(null);
 
   const chartContainerRef = useRef<HTMLDivElement>(null);
-  // TODO: lightweight-charts does not export IChartApi/ISeriesApi for direct typing
+  // Types imported from lightweight-charts v5 (IChartApi, ISeriesApi, SeriesType)
   const chartRef = useRef<IChartApi | null>(null);
   const candleSeriesRef = useRef<ISeriesApi<SeriesType> | null>(null);
   const bbUpperRef = useRef<ISeriesApi<SeriesType> | null>(null);

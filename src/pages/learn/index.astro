@@ -110,6 +110,7 @@ const levelConfig = [
         {t('learn.desc').replace('{count}', String(posts.length))}
       </p>
       <LearnProgress client:visible postIds={posts.map(p => p.id)} lang="en" />
+      <noscript><p class="text-[--color-text-muted] text-sm py-4">JavaScript를 활성화하면 학습 진행률을 추적할 수 있습니다.</p></noscript>
       <div class="mt-4 relative max-w-md">
         <input
           id="learn-search"

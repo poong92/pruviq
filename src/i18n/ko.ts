@@ -24,7 +24,7 @@ export const ko: Record<TranslationKey, string> = {
   "hero.subtitle": "코딩 없음. 가입 없음. 비용 없음. 데이터만 있습니다.",
   "hero.desc":
     "570개 이상의 코인에서 5개의 전략을 테스트했습니다. 4개는 손실을 기록했습니다. 모든 결과를 공개합니다. 실제 자금을 투입하기 전에 무엇이 실제로 작동하는지 확인하세요.",
-  "hero.cta_primary": "무료 시뮬레이터 체험",
+  "hero.cta_primary": "시뮬레이터 열기 — 무료",
   "hero.cta_builder": "나만의 전략 만들기",
   "hero.cta1": "전략 탐색하기",
   "hero.cta2": "트레이딩 IQ 높이기",
@@ -194,7 +194,7 @@ export const ko: Record<TranslationKey, string> = {
   "cta.desc1":
     "전략을 만들고, 백테스트를 돌리고, 결과를 확인하세요. 계정 불필요.",
   "cta.desc2": "영원히 무료. 이메일 불필요. 숨겨진 비용 없음.",
-  "cta.button1": "무료 시뮬레이터 체험",
+  "cta.button1": "시뮬레이터 열기 — 무료",
   "cta.button2": "커뮤니티 참여",
   "cta.button3": "수수료 절약하기",
   "cta.disclaimer":
@@ -857,7 +857,7 @@ export const ko: Record<TranslationKey, string> = {
   "blog.cta_community": "커뮤니티 참여",
   "blog.learn_cta": "학습 시작하기",
   "blog.strategies_cta": "전략 탐색하기",
-  "blog.simulate_cta": "시뮬레이터 체험",
+  "blog.simulate_cta": "시뮬레이터 열기",
 
   // Compare page
   "compare.tag": "전략 비교",
@@ -916,7 +916,7 @@ export const ko: Record<TranslationKey, string> = {
   "learn.cta_title": "배운 것을 테스트할 준비가 되셨나요?",
   "learn.cta_desc":
     "전략을 만들고 570개 이상의 코인에서 실행하세요 — 무료, 계정 불필요.",
-  "learn.cta_button": "시뮬레이터 사용하기",
+  "learn.cta_button": "시뮬레이터 열기",
 
   // Learn page tag translations
   "learn.tag_beginners": "입문",
@@ -1126,7 +1126,7 @@ export const ko: Record<TranslationKey, string> = {
   "methodology.cta_title": "직접 확인하세요",
   "methodology.cta_desc":
     "파라미터를 조정하고 570개+ 코인에 대한 실제 백테스트 결과를 확인하세요.",
-  "methodology.cta_button": "시뮬레이터 시작",
+  "methodology.cta_button": "시뮬레이터 열기",
   "methodology.sharpe_formula": "공식: (수익률 - 무위험 수익률) / 변동성",
   "methodology.sortino_formula": "공식: (수익률 - 무위험 수익률) / 하방 편차",
   "methodology.calmar_formula": "공식: 연간 수익률 / 최대 낙폭",
@@ -1300,7 +1300,7 @@ export const ko: Record<TranslationKey, string> = {
   "home.quotes_initials_note":
     "이름은 커뮤니티 회원 요청에 따라 이니셜로 표시합니다.",
   "home.quotes_heading": "트레이더들의 이야기",
-  "home.quotes_cta": "함께 해보세요 — 무료 시뮬레이터 체험",
+  "home.quotes_cta": "함께 해보세요 — 시뮬레이터 열기",
   "home.ranking_shortcut": "오늘의 상위 전략",
   "home.competitor_banner":
     "TradingView는 백테스팅에 월 $14~240를 청구합니다. PRUVIQ는 영원히 무료입니다.",
@@ -1404,7 +1404,7 @@ export const ko: Record<TranslationKey, string> = {
     "몬테카를로 \u2014 1,000회+ 무작위 시뮬레이션으로 전략 견고성 확인.",
 
   // Cross-page CTAs
-  "cross.simulate_cta": "시뮬레이터 체험",
+  "cross.simulate_cta": "시뮬레이터 열기",
   "cross.strategies_cta": "전체 전략 보기",
   "cross.fees_cta": "거래소 수수료 비교",
   "cross.performance_cta": "백테스트 결과 보기",
@@ -1423,7 +1423,7 @@ export const ko: Record<TranslationKey, string> = {
   "leaderboard.worst": "저조한 성과",
   "leaderboard.coming_soon":
     "실시간 리더보드 준비 중. 지금은 시뮬레이터에서 직접 백테스트를 해보세요.",
-  "leaderboard.cta": "시뮬레이터 체험",
+  "leaderboard.cta": "시뮬레이터 열기",
   "leaderboard.rank": "#",
   "leaderboard.strategy": "전략",
   "leaderboard.direction": "방향",
