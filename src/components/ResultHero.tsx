@@ -44,7 +44,7 @@ export default function ResultHero({ result, t, simMode = "expert" }: Props) {
       </div>
 
       {/* 3 mini stat pills */}
-      <div class="flex justify-center gap-2 mt-3">
+      <div class="flex justify-center gap-1.5 sm:gap-2 mt-3">
         <Pill
           label={t.heroWinRate || "Win Rate"}
           value={`${result.win_rate.toFixed(1)}%`}
@@ -85,7 +85,7 @@ function Pill({
 }) {
   return (
     <div
-      class="px-2.5 py-1.5 rounded-lg bg-[--color-bg-tooltip] border border-[--color-border] text-center min-w-[80px]"
+      class="px-2 py-1.5 sm:px-2.5 rounded-lg bg-[--color-bg-tooltip] border border-[--color-border] text-center min-w-[70px] sm:min-w-[80px] flex-1 max-w-[120px]"
       title={tooltip}
     >
       <div class="text-[9px] font-mono text-[--color-text-muted] uppercase tracking-wider">

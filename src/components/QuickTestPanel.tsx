@@ -210,7 +210,7 @@ export default function QuickTestPanel({
       </div>
 
       {/* Category Cards Grid — 5 categories, clean layout */}
-      <div class="grid grid-cols-3 sm:grid-cols-5 gap-2">
+      <div class="grid grid-cols-3 sm:grid-cols-5 gap-1.5 sm:gap-2">
         {CATEGORIES.map((cat) => {
           const isSelected = selectedCat === cat.id;
           const isCatRunning =
@@ -223,7 +223,7 @@ export default function QuickTestPanel({
               data-testid={`quick-cat-${cat.id}`}
               onClick={() => handleCategoryClick(cat)}
               disabled={isRunning}
-              class={`relative rounded-lg border p-3 text-center transition-all group
+              class={`relative rounded-lg border p-3 text-center transition-all group min-h-[72px]
                 ${isRunning ? "cursor-not-allowed opacity-60" : "cursor-pointer hover:scale-[1.02] active:scale-[0.98]"}
                 ${isSelected ? "border-[--color-accent]" : "border-[--color-border] hover:border-[--color-text-muted]"}`}
               style={
@@ -280,7 +280,7 @@ export default function QuickTestPanel({
                 <button
                   key={presetId}
                   onClick={() => handleAltPreset(presetId)}
-                  class="px-2 py-1 rounded border border-[--color-border] font-mono text-[10px] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors"
+                  class="px-2.5 py-1.5 min-h-[36px] rounded border border-[--color-border] font-mono text-[10px] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors"
                 >
                   {PRESET_LABELS[presetId]?.[lang] || presetId}
                 </button>
