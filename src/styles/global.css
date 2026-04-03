@@ -435,6 +435,16 @@ a:not(.btn):not(.btn-primary):not(.btn-ghost):not(.btn-outline):not(.card-hover)
   33% { transform: translate(-50%, -50%) translate(15px, -25px); }
   66% { transform: translate(-50%, -50%) translate(-10px, 10px); }
 }
+@keyframes aurora-2 {
+  0%, 100% { transform: translate(-50%, -50%) translate(0, 0); }
+  33% { transform: translate(-50%, -50%) translate(-20px, 15px); }
+  66% { transform: translate(-50%, -50%) translate(12px, -18px); }
+}
+@keyframes aurora-3 {
+  0%, 100% { transform: translate(-50%, -50%) translate(0, 0); }
+  33% { transform: translate(-50%, -50%) translate(10px, 20px); }
+  66% { transform: translate(-50%, -50%) translate(-15px, -10px); }
+}
 
 @keyframes pageLoad {
   0%   { width: 0; }

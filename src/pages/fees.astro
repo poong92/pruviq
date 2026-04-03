@@ -73,20 +73,24 @@ const t = useTranslations('en');
   </nav>
 
 
+  <hr class="section-divider" />
+
   <!-- INTERACTIVE FEE CALCULATOR -->
-  <section class="pb-12 border-t border-[--color-border] pt-12">
+  <section class="reveal pb-12 border-t border-[--color-border] pt-12">
     <div class="max-w-5xl mx-auto px-4">
       <FeeCalculator client:visible lang="en" />
     </div>
   </section>
 
+  <hr class="section-divider" />
+
   <!-- EXCHANGE COMPARISON CARDS -->
-  <section class="pb-12 border-t border-[--color-border] pt-12">
+  <section class="reveal-child pb-12 border-t border-[--color-border] pt-12">
     <div class="max-w-5xl mx-auto px-4">
       <h2 id="compare" class="text-2xl font-bold mb-2">{t('fees.compare_title')}</h2>
       <p class="text-[--color-text-muted] text-sm mb-8">{t('fees.compare_desc')}</p>
 
-      <div class="grid md:grid-cols-2 gap-6">
+      <div class="reveal-child grid md:grid-cols-2 gap-6">
         <!-- Binance Card -->
         <div class="border border-[--color-accent]/30 rounded-xl p-6 md:p-8 flex flex-col">
           <div class="flex items-center gap-3 mb-6">
@@ -196,8 +200,10 @@ const t = useTranslations('en');
     </div>
   </section>
 
+  <hr class="section-divider" />
+
   <!-- BLOCK 1: PROBLEM HOOK -->
-  <section class="pb-12 border-t border-[--color-border] pt-12">
+  <section class="reveal pb-12 border-t border-[--color-border] pt-12">
     <div class="max-w-5xl mx-auto px-4">
       <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('fees.trust_tag')}</p>
       <h2 id="savings" class="text-2xl font-bold mb-2">{t('fees.referral.problem.headline')}</h2>
@@ -211,8 +217,10 @@ const t = useTranslations('en');
     </div>
   </section>
 
+  <hr class="section-divider" />
+
   <!-- BLOCK 2: EDUCATION / COMPARISON TABLE -->
-  <section class="pb-12 border-t border-[--color-border] pt-12">
+  <section class="reveal pb-12 border-t border-[--color-border] pt-12">
     <div class="max-w-5xl mx-auto px-4">
       <h2 id="how" class="text-2xl font-bold mb-2">{t('fees.referral.how.headline')}</h2>
       <p class="text-[--color-text-muted] text-sm mb-6 max-w-3xl">{t('fees.referral.how.body')}</p>
@@ -264,8 +272,10 @@ const t = useTranslations('en');
     </div>
   </section>
 
+  <hr class="section-divider" />
+
   <!-- BLOCK 3: SCREENSHOT PROOF -->
-  <section class="pb-12 border-t border-[--color-border] pt-12">
+  <section class="reveal pb-12 border-t border-[--color-border] pt-12">
     <div class="max-w-5xl mx-auto px-4">
       <h2 class="text-2xl font-bold mb-2">{t('fees.referral.proof.headline')}</h2>
       <p class="text-[--color-text-muted] text-sm mb-6">{t('fees.referral.proof.subheading')}</p>
@@ -290,13 +300,15 @@ const t = useTranslations('en');
     </div>
   </section>
 
+  <hr class="section-divider" />
+
   <!-- BLOCK 4: HOW TO VERIFY -->
-  <section class="pb-12 border-t border-[--color-border] pt-12">
+  <section class="reveal-child pb-12 border-t border-[--color-border] pt-12">
     <div class="max-w-5xl mx-auto px-4">
       <h2 id="verify" class="text-2xl font-bold mb-2">{t('fees.referral.verify.headline')}</h2>
       <p class="text-[--color-text-muted] text-sm mb-6 max-w-3xl">{t('fees.referral.verify.body')}</p>
 
-      <div class="grid sm:grid-cols-2 gap-4 max-w-3xl mb-6">
+      <div class="reveal-child grid sm:grid-cols-2 gap-4 max-w-3xl mb-6">
         <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card]">
           <p class="font-mono text-[--color-accent] text-sm font-bold mb-2">{t('fees.referral.verify.step1.title')}</p>
           <p class="text-[--color-text-muted] text-sm">{t('fees.referral.verify.step1.body')}</p>
@@ -323,8 +335,10 @@ const t = useTranslations('en');
     </div>
   </section>
 
+  <hr class="section-divider" />
+
   <!-- BLOCK 5: REFERRAL FAQ -->
-  <section class="pb-12 border-t border-[--color-border] pt-12">
+  <section class="reveal pb-12 border-t border-[--color-border] pt-12">
     <div class="max-w-5xl mx-auto px-4">
       <h2 class="text-2xl font-bold mb-6">{t('fees.referral.faq.headline')}</h2>
 
@@ -372,8 +386,10 @@ const t = useTranslations('en');
     </div>
   </section>
 
+  <hr class="section-divider" />
+
   <!-- BLOCK 6: FINAL CTA -->
-  <section class="pb-12 border-t border-[--color-border] pt-12">
+  <section class="reveal pb-12 border-t border-[--color-border] pt-12">
     <div class="max-w-5xl mx-auto px-4 text-center">
       <p class="text-[--color-text-muted] text-sm mb-4">{t('fees.referral.cta.primary')}</p>
       <div class="flex flex-col sm:flex-row gap-4 justify-center mb-6">
@@ -391,8 +407,10 @@ const t = useTranslations('en');
     </div>
   </section>
 
+  <hr class="section-divider" />
+
   <!-- EXISTING FAQ (compact) -->
-  <section class="pb-16 border-t border-[--color-border] pt-12">
+  <section class="reveal pb-16 border-t border-[--color-border] pt-12">
     <div class="max-w-5xl mx-auto px-4">
       <h2 class="text-2xl font-bold mb-6">{t('fees.faq_title')}</h2>
 
