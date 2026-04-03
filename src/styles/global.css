@@ -858,6 +858,14 @@ textarea:focus-visible,
 }
 .card-glow:hover::before { opacity: 1; }
 
+/* ─── Direction-based preset glow ─── */
+.preset-glow-long:hover {
+  box-shadow: 0 0 12px rgba(79,142,247,0.15), 0 0 4px rgba(79,142,247,0.08);
+}
+.preset-glow-short:hover {
+  box-shadow: 0 0 12px rgba(239,68,68,0.15), 0 0 4px rgba(239,68,68,0.08);
+}
+
 /* ─── Border gradient on hover ─── */
 .border-gradient {
   position: relative;
