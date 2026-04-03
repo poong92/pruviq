@@ -50,7 +50,7 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
           <div class="flex flex-col gap-2 mt-6 text-sm text-[--color-text-secondary]">
             <span class="flex items-center gap-2">
               <svg class="w-4 h-4 text-[--color-up] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
-              {coinsAnalyzed}개 코인 · 실제 수수료 포함 백테스트
+              {coinsAnalyzed}개 코인 · 실제 수수료 포함 시뮬레이션
             </span>
             <span class="flex items-center gap-2">
               <svg class="w-4 h-4 text-[--color-up] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
@@ -75,7 +75,7 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
         <div class="relative">
           <BrowserFrame
             src="/images/simulator-preview.png"
-            alt="PRUVIQ 전략 시뮬레이터 — {coinsAnalyzed}개 코인 백테스트"
+            alt="PRUVIQ 전략 시뮬레이터 — {coinsAnalyzed}개 코인 시뮬레이션"
             url="pruviq.com/simulate"
           >
             <SimulatorPreview client:visible />
