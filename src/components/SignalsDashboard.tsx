@@ -250,7 +250,7 @@ export default function SignalsDashboard({ lang = "en" }: Props) {
               : "border-[--color-border] bg-[--color-bg-card] hover:border-[--color-up]/50"
           }`}
         >
-          <p class="text-2xl font-bold font-mono text-green-400">
+          <p class="text-2xl font-bold font-mono text-[--color-up]">
             {verifiedCount}
           </p>
           <p class="text-xs text-[--color-text-muted]">{t.verified}</p>
