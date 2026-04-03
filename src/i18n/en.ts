@@ -693,6 +693,40 @@ export const en = {
   "about.solo_why":
     "Why PRUVIQ: After experiencing firsthand how backtested strategies fail in live markets — and finding that existing tools hide their failures — we built the transparent simulation platform we wished existed.",
 
+  // About - Numbers at a Glance
+  "about.numbers_tag": "NUMBERS AT A GLANCE",
+  "about.numbers_title": "Platform in Numbers",
+  "about.num_coins": "Coins Analyzed",
+  "about.num_presets": "Strategy Presets",
+  "about.num_presets_val": "36+",
+  "about.num_data": "Data Points",
+  "about.num_data_val": "2Y+",
+  "about.num_sims": "Simulations Run",
+
+  // About - Methodology Highlight
+  "about.method_tag": "OUR METHODOLOGY",
+  "about.method_title": "How We Test Strategies",
+  "about.method_desc":
+    "Every strategy on PRUVIQ goes through a rigorous backtesting pipeline before publication. No cherry-picked results — just transparent data.",
+  "about.method1_title": "Historical Backtesting",
+  "about.method1_desc":
+    "Test strategies against 2+ years of real market data across 500+ coins with realistic fee modeling.",
+  "about.method2_title": "Walk-Forward Validation",
+  "about.method2_desc":
+    "Out-of-sample testing to detect overfitting. If a strategy only works on past data, we kill it.",
+  "about.method3_title": "Zero Cost to You",
+  "about.method3_desc":
+    "All simulations are free. We sustain the platform through exchange referral partnerships — no hidden fees.",
+  "about.method_cta": "Read full methodology",
+
+  // About - Partners
+  "about.partners_tag": "OFFICIAL PARTNERS",
+  "about.partners_desc":
+    "PRUVIQ partners with leading exchanges to offer fee discounts. These partnerships fund the platform — all features stay free.",
+  "about.partners_okx": "OKX — Fee Discount",
+  "about.partners_binance": "Binance — Fee Discount",
+  "about.partners_detail": "View fee comparison →",
+
   // Home hero stat labels
   "home.stat_coins": "Coins Tested",
   "home.stat_trades": "Backtested Trades",
@@ -854,6 +888,7 @@ export const en = {
   "footer.about": "About",
   "footer.col_product": "Product",
   "footer.col_resources": "Resources",
+  "footer.col_compare": "Compare",
   "footer.col_legal": "Legal",
 
   // Builder
