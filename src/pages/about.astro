@@ -2,6 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import { useTranslations } from '../i18n/index';
 import siteStats from '../../public/data/site-stats.json';
+import HeroGlow from '../components/ui/HeroGlow.astro';
 
 const t = useTranslations('en');
 const coinsAnalyzed = (siteStats as { coins_analyzed: number }).coins_analyzed;
@@ -25,177 +26,262 @@ const simulationsRun = (siteStats as { simulations_run: number }).simulations_ru
       "sameAs": ["https://github.com/pruviq", "https://x.com/pruviq"]
     }
   })} />
-  <section class="py-16 md:py-20">
-    <div class="max-w-3xl mx-auto px-4">
 
-      <!-- Header -->
-      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('about.tag')}</p>
-      <h1 class="text-3xl md:text-5xl font-bold mb-6">{t('about.title')}</h1>
-      <p class="text-[--color-text-muted] text-lg mb-16 max-w-2xl leading-relaxed">
+  <!-- HERO — Full-width with glow -->
+  <section class="relative overflow-hidden py-20 md:py-28">
+    <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
+      <div class="absolute left-1/2 top-[40%] -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] rounded-full blur-[200px] bg-[--color-accent] opacity-[0.05]"></div>
+    </div>
+    <div class="relative max-w-4xl mx-auto px-6 text-center">
+      <p class="font-mono text-[--color-accent] text-sm mb-3 tracking-wider">{t('about.tag')}</p>
+      <h1 class="text-4xl md:text-6xl font-bold tracking-[-0.04em] leading-[1.08] mb-6">{t('about.title')}</h1>
+      <p class="text-[--color-text-muted] text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
         {t('about.mission')}
       </p>
+    </div>
+  </section>
 
-      <!-- Numbers at a Glance -->
-      <div class="mb-16">
-        <p class="font-mono text-[--color-accent] text-xs tracking-wider mb-2">{t('about.numbers_tag')}</p>
-        <h2 class="text-2xl font-bold mb-6">{t('about.numbers_title')}</h2>
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card] text-center" style="box-shadow: var(--shadow-card);">
-            <p class="font-mono text-[--color-accent] text-2xl sm:text-3xl font-bold">{coinsAnalyzed}+</p>
-            <p class="text-[--color-text-muted] text-xs mt-1">{t('about.num_coins')}</p>
+  <!-- Numbers — Glass cards -->
+  <section class="max-w-5xl mx-auto px-6 -mt-4 mb-20">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div class="stat-glass text-center">
+        <p class="font-mono text-3xl md:text-4xl font-bold gradient-text">{coinsAnalyzed}+</p>
+        <p class="text-xs text-[--color-text-muted] mt-2 font-mono uppercase tracking-wider">{t('about.num_coins')}</p>
+      </div>
+      <div class="stat-glass text-center">
+        <p class="font-mono text-3xl md:text-4xl font-bold gradient-text">{t('about.num_presets_val')}</p>
+        <p class="text-xs text-[--color-text-muted] mt-2 font-mono uppercase tracking-wider">{t('about.num_presets')}</p>
+      </div>
+      <div class="stat-glass text-center">
+        <p class="font-mono text-3xl md:text-4xl font-bold gradient-text">{t('about.num_data_val')}</p>
+        <p class="text-xs text-[--color-text-muted] mt-2 font-mono uppercase tracking-wider">{t('about.num_data')}</p>
+      </div>
+      <div class="stat-glass text-center">
+        <p class="font-mono text-3xl md:text-4xl font-bold gradient-text">{simulationsRun}+</p>
+        <p class="text-xs text-[--color-text-muted] mt-2 font-mono uppercase tracking-wider">{t('about.num_sims')}</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="max-w-4xl mx-auto px-6">
+
+    <!-- Founder Section — Premium card -->
+    <section class="mb-20 section-glow">
+      <div class="card-premium p-8 md:p-10" style="border-color: rgba(79,142,247,0.2); background: linear-gradient(135deg, rgba(79,142,247,0.04), var(--color-bg-card));">
+        <div class="flex flex-col md:flex-row gap-8 items-start">
+          <div class="shrink-0">
+            <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-[--color-accent]/20 to-[--color-purple]/20 flex items-center justify-center">
+              <span class="text-2xl font-bold font-mono gradient-text">JP</span>
+            </div>
           </div>
-          <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card] text-center" style="box-shadow: var(--shadow-card);">
-            <p class="font-mono text-[--color-accent] text-2xl sm:text-3xl font-bold">{t('about.num_presets_val')}</p>
-            <p class="text-[--color-text-muted] text-xs mt-1">{t('about.num_presets')}</p>
-          </div>
-          <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card] text-center" style="box-shadow: var(--shadow-card);">
-            <p class="font-mono text-[--color-accent] text-2xl sm:text-3xl font-bold">{t('about.num_data_val')}</p>
-            <p class="text-[--color-text-muted] text-xs mt-1">{t('about.num_data')}</p>
-          </div>
-          <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card] text-center" style="box-shadow: var(--shadow-card);">
-            <p class="font-mono text-[--color-accent] text-2xl sm:text-3xl font-bold">{simulationsRun}+</p>
-            <p class="text-[--color-text-muted] text-xs mt-1">{t('about.num_sims')}</p>
+          <div class="flex-1">
+            <p class="font-mono text-[--color-accent] text-xs tracking-wider mb-3">{t('about.solo_tag')}</p>
+            <p class="font-bold text-xl mb-4">{t('about.solo_headline')}</p>
+            <p class="text-[--color-text-muted] text-sm leading-relaxed mb-3">
+              {t('about.solo_background')}
+            </p>
+            <p class="text-[--color-text-muted] text-sm leading-relaxed mb-6">
+              {t('about.solo_why')}
+            </p>
+            <div class="flex items-center gap-2 mb-4">
+              <span class="inline-block w-1.5 h-1.5 rounded-full bg-[--color-up] animate-pulse"></span>
+              <span class="text-[--color-text-muted] text-xs font-mono">Built in Seoul, South Korea</span>
+            </div>
+            <div class="flex flex-wrap gap-3 text-sm">
+              <a href="mailto:contact@pruviq.com" class="inline-flex items-center gap-1.5 font-mono text-xs px-3 py-2 rounded-lg border border-[--color-border] text-[--color-accent] hover:border-[--color-accent] transition-colors">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>
+                contact@pruviq.com
+              </a>
+              <a href="https://github.com/pruviq" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 font-mono text-xs px-3 py-2 rounded-lg border border-[--color-border] text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
+                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"/></svg>
+                GitHub
+              </a>
+              <a href="https://x.com/praboratory" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 font-mono text-xs px-3 py-2 rounded-lg border border-[--color-border] text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
+                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                X
+              </a>
+              <a href="https://www.threads.net/@praboratory" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 font-mono text-xs px-3 py-2 rounded-lg border border-[--color-border] text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
+                Threads
+              </a>
+            </div>
           </div>
         </div>
       </div>
+    </section>
 
-      <!-- Team / Project -->
-      <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] mb-16" style="box-shadow: var(--shadow-card);">
-        <p class="font-mono text-[--color-accent] text-xs tracking-wider mb-4">{t('about.team_tag')}</p>
-        <p class="text-[--color-text-muted] text-sm leading-relaxed">{t('about.team_desc')}</p>
-        <div class="grid grid-cols-3 gap-2 sm:gap-4 mt-6 pt-6 border-t border-[--color-border]">
-          <div class="text-center">
-            <p class="font-mono text-[--color-accent] text-xl font-bold">{t('about.team_stat1_val')}</p>
-            <p class="text-[--color-text-muted] text-xs">{t('about.team_stat1_label')}</p>
+    <!-- Methodology -->
+    <section class="mb-20">
+      <p class="font-mono text-[--color-accent] text-xs tracking-wider mb-2">{t('about.method_tag')}</p>
+      <h2 class="text-2xl md:text-3xl font-bold mb-3">{t('about.method_title')}</h2>
+      <p class="text-[--color-text-muted] text-sm mb-8 leading-relaxed max-w-2xl">{t('about.method_desc')}</p>
+      <div class="grid sm:grid-cols-3 gap-4">
+        <div class="card-premium p-6">
+          <div class="w-10 h-10 rounded-xl bg-[--color-accent]/10 flex items-center justify-center mb-4">
+            <svg class="w-5 h-5 text-[--color-accent]" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"/></svg>
           </div>
-          <div class="text-center">
-            <p class="font-mono text-[--color-accent] text-xl font-bold">{coinsAnalyzed}+</p>
-            <p class="text-[--color-text-muted] text-xs">{t('about.team_stat2_label')}</p>
+          <h3 class="font-bold text-sm mb-2">{t('about.method1_title')}</h3>
+          <p class="text-[--color-text-muted] text-xs leading-relaxed">{t('about.method1_desc')}</p>
+        </div>
+        <div class="card-premium p-6">
+          <div class="w-10 h-10 rounded-xl bg-[--color-up]/10 flex items-center justify-center mb-4">
+            <svg class="w-5 h-5 text-[--color-up]" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/></svg>
           </div>
-          <div class="text-center">
-            <p class="font-mono text-[--color-accent] text-xl font-bold">{simulationsRun}</p>
-            <p class="text-[--color-text-muted] text-xs">{t('about.team_stat3_label')}</p>
+          <h3 class="font-bold text-sm mb-2">{t('about.method2_title')}</h3>
+          <p class="text-[--color-text-muted] text-xs leading-relaxed">{t('about.method2_desc')}</p>
+        </div>
+        <div class="card-premium p-6">
+          <div class="w-10 h-10 rounded-xl bg-[--color-verified]/10 flex items-center justify-center mb-4">
+            <svg class="w-5 h-5 text-[--color-verified]" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <h3 class="font-bold text-sm mb-2">{t('about.method3_title')}</h3>
+          <p class="text-[--color-text-muted] text-xs leading-relaxed">{t('about.method3_desc')}</p>
+        </div>
+      </div>
+      <div class="mt-6 text-center">
+        <a href="/methodology" class="inline-flex items-center gap-1.5 font-mono text-xs text-[--color-accent] hover:underline">
+          {t('about.method_cta')} &rarr;
+        </a>
+      </div>
+    </section>
+
+    <!-- Philosophy -->
+    <section class="mb-20">
+      <p class="font-mono text-[--color-accent] text-xs tracking-wider mb-2">{t('about.philosophy_tag')}</p>
+      <h2 class="text-2xl md:text-3xl font-bold mb-8">{t('about.philosophy_title')}</h2>
+      <div class="grid sm:grid-cols-2 gap-4">
+        <div class="card-premium p-6 group">
+          <h3 class="font-bold mb-2 group-hover:text-[--color-accent] transition-colors">{t('about.philosophy1_title')}</h3>
+          <p class="text-[--color-text-muted] text-sm leading-relaxed">{t('about.philosophy1_desc')}</p>
+        </div>
+        <div class="card-premium p-6 group">
+          <h3 class="font-bold mb-2 group-hover:text-[--color-accent] transition-colors">{t('about.philosophy2_title')}</h3>
+          <p class="text-[--color-text-muted] text-sm leading-relaxed">{t('about.philosophy2_desc')}</p>
+        </div>
+        <div class="card-premium p-6 group">
+          <h3 class="font-bold mb-2 group-hover:text-[--color-accent] transition-colors">{t('about.philosophy3_title')}</h3>
+          <p class="text-[--color-text-muted] text-sm leading-relaxed">{t('about.philosophy3_desc')}</p>
+        </div>
+        <div class="card-premium p-6 group">
+          <h3 class="font-bold mb-2 group-hover:text-[--color-accent] transition-colors">{t('about.philosophy4_title')}</h3>
+          <p class="text-[--color-text-muted] text-sm leading-relaxed">{t('about.philosophy4_desc')}</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Roadmap — Timeline design -->
+    <section class="mb-20">
+      <p class="font-mono text-[--color-accent] text-xs tracking-wider mb-2">{t('about.roadmap_tag')}</p>
+      <h2 class="text-2xl md:text-3xl font-bold mb-3">{t('about.roadmap_title')}</h2>
+      <p class="text-[--color-text-muted] text-sm mb-8">{t('about.roadmap_desc')}</p>
+      <div class="grid sm:grid-cols-2 gap-6">
+        <div class="card-premium p-6" style="border-color: rgba(34,171,148,0.2);">
+          <p class="font-mono text-xs text-[--color-up] font-bold mb-4 flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-[--color-up]"></span>
+            {t('about.roadmap_label_done')}
+          </p>
+          <div class="timeline-line space-y-4">
+            <div class="relative">
+              <div class="timeline-dot"></div>
+              <p class="text-sm text-[--color-text-muted]">{t('about.roadmap_done1')}</p>
+            </div>
+            <div class="relative">
+              <div class="timeline-dot"></div>
+              <p class="text-sm text-[--color-text-muted]">{t('about.roadmap_done2')}</p>
+            </div>
+            <div class="relative">
+              <div class="timeline-dot"></div>
+              <p class="text-sm text-[--color-text-muted]">{t('about.roadmap_done3')}</p>
+            </div>
+            <div class="relative">
+              <div class="timeline-dot"></div>
+              <p class="text-sm text-[--color-text-muted]">{t('about.roadmap_done4')}</p>
+            </div>
+          </div>
+        </div>
+        <div class="card-premium p-6" style="border-color: rgba(79,142,247,0.2);">
+          <p class="font-mono text-xs text-[--color-accent] font-bold mb-4 flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-[--color-accent] animate-pulse"></span>
+            {t('about.roadmap_label_next')}
+          </p>
+          <div class="timeline-line space-y-4">
+            <div class="relative">
+              <div class="timeline-dot"></div>
+              <p class="text-sm text-[--color-text-muted]">{t('about.roadmap_next1')}</p>
+            </div>
+            <div class="relative">
+              <div class="timeline-dot timeline-dot-muted"></div>
+              <p class="text-sm text-[--color-text-muted]">{t('about.roadmap_next2')}</p>
+            </div>
+            <div class="relative">
+              <div class="timeline-dot timeline-dot-muted"></div>
+              <p class="text-sm text-[--color-text-muted]">{t('about.roadmap_next3')}</p>
+            </div>
           </div>
         </div>
       </div>
+    </section>
 
-      <!-- Methodology Highlight -->
-      <div class="mb-16">
-        <p class="font-mono text-[--color-accent] text-xs tracking-wider mb-2">{t('about.method_tag')}</p>
-        <h2 class="text-2xl font-bold mb-3">{t('about.method_title')}</h2>
-        <p class="text-[--color-text-muted] text-sm mb-6 leading-relaxed">{t('about.method_desc')}</p>
-        <div class="grid sm:grid-cols-3 gap-4">
-          <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card]" style="box-shadow: var(--shadow-card);">
-            <div class="w-8 h-8 rounded-full bg-[--color-accent-subtle] flex items-center justify-center mb-3">
-              <svg class="w-4 h-4 text-[--color-accent]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-            </div>
-            <h3 class="font-bold text-sm mb-2">{t('about.method1_title')}</h3>
-            <p class="text-[--color-text-muted] text-xs leading-relaxed">{t('about.method1_desc')}</p>
+    <!-- Partners -->
+    <section class="mb-20">
+      <p class="font-mono text-[--color-accent] text-xs tracking-wider mb-2">{t('about.partners_tag')}</p>
+      <p class="text-[--color-text-muted] text-sm mb-6 leading-relaxed">{t('about.partners_desc')}</p>
+      <div class="grid sm:grid-cols-2 gap-4">
+        <div class="card-premium p-5 flex items-center gap-4">
+          <div class="w-12 h-12 rounded-xl bg-[--color-bg-elevated] flex items-center justify-center shrink-0">
+            <span class="font-mono font-bold text-sm text-[--color-text]">OKX</span>
           </div>
-          <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card]" style="box-shadow: var(--shadow-card);">
-            <div class="w-8 h-8 rounded-full bg-[--color-accent-subtle] flex items-center justify-center mb-3">
-              <svg class="w-4 h-4 text-[--color-accent]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-            </div>
-            <h3 class="font-bold text-sm mb-2">{t('about.method2_title')}</h3>
-            <p class="text-[--color-text-muted] text-xs leading-relaxed">{t('about.method2_desc')}</p>
-          </div>
-          <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card]" style="box-shadow: var(--shadow-card);">
-            <div class="w-8 h-8 rounded-full bg-[--color-accent-subtle] flex items-center justify-center mb-3">
-              <svg class="w-4 h-4 text-[--color-accent]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-            </div>
-            <h3 class="font-bold text-sm mb-2">{t('about.method3_title')}</h3>
-            <p class="text-[--color-text-muted] text-xs leading-relaxed">{t('about.method3_desc')}</p>
+          <div>
+            <p class="font-bold text-sm">{t('about.partners_okx')}</p>
+            <a href="/fees" class="font-mono text-[--color-accent] text-xs hover:underline">{t('about.partners_detail')}</a>
           </div>
         </div>
-        <div class="mt-4 text-center">
-          <a href="/methodology" class="inline-flex items-center gap-1.5 font-mono text-xs text-[--color-accent] hover:underline">
-            {t('about.method_cta')} &rarr;
+        <div class="card-premium p-5 flex items-center gap-4">
+          <div class="w-12 h-12 rounded-xl bg-[--color-bg-elevated] flex items-center justify-center shrink-0">
+            <span class="font-mono font-bold text-xs text-[--color-text]">BNC</span>
+          </div>
+          <div>
+            <p class="font-bold text-sm">{t('about.partners_binance')}</p>
+            <a href="/fees" class="font-mono text-[--color-accent] text-xs hover:underline">{t('about.partners_detail')}</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Social Proof -->
+    <section class="mb-20">
+      <div class="card-premium p-6 md:p-8">
+        <p class="font-mono text-[--color-accent] text-xs tracking-wider mb-3">{t('about.proof_tag')}</p>
+        <p class="text-[--color-text-muted] text-sm leading-relaxed mb-6">{t('about.proof_desc')}</p>
+        <div class="flex flex-wrap gap-3">
+          <a href="https://github.com/pruviq" target="_blank" rel="noopener noreferrer"
+             class="inline-flex items-center gap-2 font-mono text-xs px-4 py-2.5 rounded-lg border border-[--color-border] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"/>
+            </svg>
+            {t('about.proof_github')}
           </a>
+          <span class="inline-flex items-center gap-2 font-mono text-xs px-4 py-2.5 rounded-lg border border-[--color-border] text-[--color-text-muted]">
+            <span class="w-2 h-2 rounded-full bg-[--color-up] animate-pulse inline-block"></span>
+            {t('about.proof_commits')}
+          </span>
+          <span class="inline-flex items-center font-mono text-xs px-4 py-2.5 rounded-lg border border-[--color-border] text-[--color-text-muted]">
+            {t('about.proof_since')}
+          </span>
         </div>
       </div>
+    </section>
 
-      <!-- Solo Founder -->
-      <div class="border border-[--color-accent]/30 rounded-lg p-6 bg-[--color-bg-card] mb-16" style="box-shadow: var(--shadow-accent-glow);">
-        <p class="font-mono text-[--color-accent] text-xs tracking-wider mb-3">{t('about.solo_tag')}</p>
-        <p class="font-bold text-base mb-3">{t('about.solo_headline')}</p>
-        <p class="text-[--color-text-muted] text-sm leading-relaxed mb-3">
-          {t('about.solo_background')}
-        </p>
-        <p class="text-[--color-text-muted] text-sm leading-relaxed mb-4">
-          {t('about.solo_why')}
-        </p>
-        <p class="text-[--color-text-muted] text-xs mb-3 font-mono">Built in Seoul, South Korea</p>
-        <div class="flex flex-wrap gap-3 text-sm">
-          <a href="mailto:contact@pruviq.com" class="font-mono text-[--color-accent] hover:underline">contact@pruviq.com</a>
-          <span class="text-[--color-border]">&#183;</span>
-          <a href="https://github.com/pruviq" target="_blank" rel="noopener noreferrer" class="font-mono text-[--color-accent] hover:underline">GitHub</a>
-          <span class="text-[--color-border]">&#183;</span>
-          <a href="https://x.com/praboratory" target="_blank" rel="noopener noreferrer" class="font-mono text-[--color-accent] hover:underline">X</a>
-          <span class="text-[--color-border]">&#183;</span>
-          <a href="https://www.threads.net/@praboratory" target="_blank" rel="noopener noreferrer" class="font-mono text-[--color-accent] hover:underline">Threads</a>
-        </div>
-      </div>
-
-      <!-- Philosophy -->
-      <div class="mb-16">
-        <p class="font-mono text-[--color-accent] text-xs tracking-wider mb-2">{t('about.philosophy_tag')}</p>
-        <h2 class="text-2xl font-bold mb-8">{t('about.philosophy_title')}</h2>
-        <div class="grid sm:grid-cols-2 gap-6">
-          <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card]" style="box-shadow: var(--shadow-card);">
-            <h3 class="font-bold mb-2">{t('about.philosophy1_title')}</h3>
-            <p class="text-[--color-text-muted] text-sm">{t('about.philosophy1_desc')}</p>
-          </div>
-          <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card]" style="box-shadow: var(--shadow-card);">
-            <h3 class="font-bold mb-2">{t('about.philosophy2_title')}</h3>
-            <p class="text-[--color-text-muted] text-sm">{t('about.philosophy2_desc')}</p>
-          </div>
-          <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card]" style="box-shadow: var(--shadow-card);">
-            <h3 class="font-bold mb-2">{t('about.philosophy3_title')}</h3>
-            <p class="text-[--color-text-muted] text-sm">{t('about.philosophy3_desc')}</p>
-          </div>
-          <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card]" style="box-shadow: var(--shadow-card);">
-            <h3 class="font-bold mb-2">{t('about.philosophy4_title')}</h3>
-            <p class="text-[--color-text-muted] text-sm">{t('about.philosophy4_desc')}</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Partners -->
-      <div class="mb-16">
-        <p class="font-mono text-[--color-accent] text-xs tracking-wider mb-2">{t('about.partners_tag')}</p>
-        <p class="text-[--color-text-muted] text-sm mb-6 leading-relaxed">{t('about.partners_desc')}</p>
-        <div class="grid sm:grid-cols-2 gap-4">
-          <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card] flex items-center gap-4" style="box-shadow: var(--shadow-card);">
-            <div class="w-10 h-10 rounded-full bg-[--color-bg-elevated] flex items-center justify-center shrink-0">
-              <span class="font-mono font-bold text-sm text-[--color-text]">OKX</span>
-            </div>
-            <div>
-              <p class="font-bold text-sm">{t('about.partners_okx')}</p>
-              <a href="/fees" class="font-mono text-[--color-accent] text-xs hover:underline">{t('about.partners_detail')}</a>
-            </div>
-          </div>
-          <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card] flex items-center gap-4" style="box-shadow: var(--shadow-card);">
-            <div class="w-10 h-10 rounded-full bg-[--color-bg-elevated] flex items-center justify-center shrink-0">
-              <span class="font-mono font-bold text-xs text-[--color-text]">BNC</span>
-            </div>
-            <div>
-              <p class="font-bold text-sm">{t('about.partners_binance')}</p>
-              <a href="/fees" class="font-mono text-[--color-accent] text-xs hover:underline">{t('about.partners_detail')}</a>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Tech Stack -->
-      <details class="border border-[--color-border] rounded-lg bg-[--color-bg-card] mb-16 group">
-        <summary class="p-5 cursor-pointer flex items-center justify-between list-none min-h-[44px]">
+    <!-- Tech Stack -->
+    <section class="mb-20">
+      <details class="card-premium group" style="padding: 0;">
+        <summary class="p-6 cursor-pointer flex items-center justify-between list-none min-h-[44px]">
           <div>
             <p class="font-mono text-[--color-accent] text-xs tracking-wider mb-1">{t('about.stack_tag')}</p>
             <p class="text-[--color-text-muted] text-sm">{t('about.stack_desc')}</p>
           </div>
           <span class="text-[--color-text-muted] group-open:rotate-180 transition-transform shrink-0 ml-4">&#9662;</span>
         </summary>
-        <div class="px-5 pb-5 border-t border-[--color-border]">
+        <div class="px-6 pb-6 border-t border-[--color-border]">
           <div class="flex flex-wrap gap-2 mt-4">
             {[
               { label: 'Python', note: 'Data engine & backtester' },
@@ -205,7 +291,7 @@ const simulationsRun = (siteStats as { simulations_run: number }).simulations_ru
               { label: 'Cloudflare Pages', note: 'Hosting & CDN' },
               { label: 'CoinGecko API', note: 'Coin metadata' },
             ].map(({ label, note }) => (
-              <div class="font-mono text-xs px-3 py-2 rounded border border-[--color-border] text-[--color-text-muted] flex flex-col gap-0.5">
+              <div class="font-mono text-xs px-3 py-2 rounded-lg border border-[--color-border] text-[--color-text-muted] flex flex-col gap-0.5 hover:border-[--color-accent]/30 transition-colors">
                 <span class="text-[--color-text] font-semibold">{label}</span>
                 <span class="opacity-60">{note}</span>
               </div>
@@ -213,69 +299,24 @@ const simulationsRun = (siteStats as { simulations_run: number }).simulations_ru
           </div>
         </div>
       </details>
+    </section>
 
-      <!-- Social Proof -->
-      <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] mb-8" style="box-shadow: var(--shadow-card);">
-        <p class="font-mono text-[--color-accent] text-xs tracking-wider mb-3">{t('about.proof_tag')}</p>
-        <p class="text-[--color-text-muted] text-sm leading-relaxed mb-4">{t('about.proof_desc')}</p>
-        <div class="flex flex-wrap gap-3">
-          <a href="https://github.com/pruviq" target="_blank" rel="noopener noreferrer"
-             class="inline-flex items-center gap-2 font-mono text-xs px-3 py-2 rounded border border-[--color-border] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
-            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"/>
-            </svg>
-            {t('about.proof_github')}
-          </a>
-          <span class="inline-flex items-center gap-2 font-mono text-xs px-3 py-2 rounded border border-[--color-border] text-[--color-text-muted]">
-            <span class="w-2 h-2 rounded-full bg-[--color-accent] animate-pulse inline-block"></span>
-            {t('about.proof_commits')}
-          </span>
-          <span class="inline-flex items-center font-mono text-xs px-3 py-2 rounded border border-[--color-border] text-[--color-text-muted]">
-            {t('about.proof_since')}
-          </span>
-        </div>
-      </div>
-
-      <!-- Roadmap -->
-      <div class="mb-16">
-        <p class="font-mono text-[--color-accent] text-xs tracking-wider mb-2">{t('about.roadmap_tag')}</p>
-        <h2 class="text-2xl font-bold mb-3">{t('about.roadmap_title')}</h2>
-        <p class="text-[--color-text-muted] text-sm mb-6">{t('about.roadmap_desc')}</p>
-        <div class="grid sm:grid-cols-2 gap-4">
-          <div class="border border-[--color-up]/30 rounded-lg p-5 bg-[--color-bg-card]">
-            <p class="font-mono text-xs text-[--color-up] font-bold mb-3">{t('about.roadmap_label_done')}</p>
-            <ul class="space-y-2 text-sm text-[--color-text-muted]">
-              <li class="flex items-start gap-2"><span class="text-[--color-up] shrink-0">&#10003;</span> {t('about.roadmap_done1')}</li>
-              <li class="flex items-start gap-2"><span class="text-[--color-up] shrink-0">&#10003;</span> {t('about.roadmap_done2')}</li>
-              <li class="flex items-start gap-2"><span class="text-[--color-up] shrink-0">&#10003;</span> {t('about.roadmap_done3')}</li>
-              <li class="flex items-start gap-2"><span class="text-[--color-up] shrink-0">&#10003;</span> {t('about.roadmap_done4')}</li>
-            </ul>
-          </div>
-          <div class="border border-[--color-accent]/30 rounded-lg p-5 bg-[--color-bg-card]">
-            <p class="font-mono text-xs text-[--color-accent] font-bold mb-3">{t('about.roadmap_label_next')}</p>
-            <ul class="space-y-2 text-sm text-[--color-text-muted]">
-              <li class="flex items-start gap-2"><span class="text-[--color-accent] shrink-0">&#9679;</span> {t('about.roadmap_next1')}</li>
-              <li class="flex items-start gap-2"><span class="text-[--color-accent] shrink-0">&#9679;</span> {t('about.roadmap_next2')}</li>
-              <li class="flex items-start gap-2"><span class="text-[--color-accent] shrink-0">&#9679;</span> {t('about.roadmap_next3')}</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <!-- Contact -->
-      <div class="text-center">
+    <!-- Contact + CTA -->
+    <section class="mb-8">
+      <div class="text-center py-12 border-t border-[--color-border]">
         <p class="font-mono text-[--color-accent] text-xs tracking-wider mb-2">{t('about.contact_tag')}</p>
-        <p class="text-[--color-text-muted] text-sm mb-4">{t('about.contact_desc')}</p>
+        <p class="text-[--color-text-muted] text-sm mb-6">{t('about.contact_desc')}</p>
         <div class="flex flex-col sm:flex-row gap-3 justify-center">
-          <a href="mailto:contact@pruviq.com"
-             class="btn btn-primary btn-md">
+          <a href="mailto:contact@pruviq.com" class="btn btn-primary btn-md">
             {t('about.contact_email')}
           </a>
         </div>
       </div>
+    </section>
 
-      <!-- Explore CTAs -->
-      <div class="mt-16 pt-8 border-t border-[--color-border] text-center">
+    <!-- Explore CTAs -->
+    <section class="pb-8">
+      <div class="text-center">
         <p class="text-[--color-text-muted] text-sm mb-4">{t('about.explore_desc')}</p>
         <div class="flex flex-wrap gap-3 justify-center">
           <a href="/simulate" class="btn btn-primary btn-md">
@@ -286,7 +327,7 @@ const simulationsRun = (siteStats as { simulations_run: number }).simulations_ru
           </a>
         </div>
       </div>
+    </section>
 
-    </div>
-  </section>
+  </div>
 </Layout>
