@@ -8,7 +8,7 @@ const marketDataJson = JSON.stringify(marketDataRaw);
 ---
 
 <Layout title={t('meta.market_title')} description={t('meta.market_desc')}>
-  <section class="py-12">
+  <section class="py-12 reveal">
     <div class="max-w-7xl mx-auto px-4">
       <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('market.tag')}</p>
       <h1 class="text-3xl md:text-5xl font-bold mb-4">{t('market.title')}</h1>
@@ -60,7 +60,8 @@ const marketDataJson = JSON.stringify(marketDataRaw);
         </div>
       </div>
     </div>
-    <div class="mt-6 pt-8 border-t border-[--color-border] text-center max-w-5xl mx-auto px-4">
+    <hr class="section-divider" />
+    <div class="mt-6 pt-8 text-center max-w-5xl mx-auto px-4">
       <div class="flex flex-wrap gap-3 justify-center">
         <a href="/ko/simulate" class="btn btn-primary btn-md no-underline">
           {t('cross.simulate_cta')} &rarr;

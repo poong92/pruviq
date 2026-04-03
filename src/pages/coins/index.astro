@@ -36,7 +36,7 @@ const TOP_COINS = [
 ---
 
 <Layout title={t('meta.coins_title')} description={t('meta.coins_desc')}>
-  <section class="py-12">
+  <section class="py-12 reveal">
     <div class="max-w-7xl mx-auto px-4">
       <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('coins.tag')}</p>
       <h1 class="text-3xl md:text-5xl font-bold mb-4">{t('coins.title')}</h1>
@@ -69,7 +69,8 @@ const TOP_COINS = [
           </ul>
         </noscript>
       </div>
-      <div class="mt-10 pt-8 border-t border-[--color-border] text-center">
+      <hr class="section-divider" />
+      <div class="mt-10 pt-8 text-center">
         <p class="text-[--color-text-muted] text-sm mb-4">{t('coins.explore_next')}</p>
         <div class="flex flex-wrap gap-3 justify-center">
           <a href="/simulate" class="btn btn-primary btn-md no-underline">
