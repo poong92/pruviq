@@ -131,26 +131,52 @@ export default function SignalsDashboard({ lang = "en" }: Props) {
     return (
       <div class="py-8">
         <div class="flex flex-col items-center gap-4 mb-8">
-          <div class="relative">
-            <div class="w-12 h-12 rounded-full border-2 border-[--color-border]"></div>
-            <div class="absolute inset-0 w-12 h-12 rounded-full border-2 border-transparent border-t-[--color-accent] animate-spin"></div>
+          <div class="flex gap-1.5">
+            <span
+              class="w-2 h-2 rounded-full bg-[--color-accent] animate-pulse"
+              style={{ animationDelay: "0s" }}
+            ></span>
+            <span
+              class="w-2 h-2 rounded-full bg-[--color-accent] animate-pulse"
+              style={{ animationDelay: "0.2s" }}
+            ></span>
+            <span
+              class="w-2 h-2 rounded-full bg-[--color-accent] animate-pulse"
+              style={{ animationDelay: "0.4s" }}
+            ></span>
           </div>
           <div class="text-center">
             <p class="text-base font-semibold mb-1">
               {lang === "ko" ? "시그널 스캔 중" : "Scanning Signals"}
             </p>
             <p class="text-sm text-[--color-text-muted]">
-              {lang === "ko"
-                ? "535개 코인에서 전략 조건을 분석하고 있습니다..."
-                : "Analyzing strategy conditions across 535 coins..."}
+              {lang === "ko" ? (
+                <>
+                  전략 조건을{" "}
+                  <span class="font-mono text-[--color-accent]">535</span>개
+                  코인에서 분석 중...
+                </>
+              ) : (
+                <>
+                  Analyzing strategy conditions across{" "}
+                  <span class="font-mono text-[--color-accent]">535</span>{" "}
+                  coins...
+                </>
+              )}
             </p>
           </div>
         </div>
-        <div class="space-y-3 animate-pulse">
+        <div class="space-y-3">
           {[1, 2, 3, 4, 5].map((i) => (
             <div
               key={i}
-              class="flex items-center justify-between p-4 rounded-lg bg-[--color-bg-card] border border-[--color-border]"
+              class="flex items-center justify-between p-4 rounded-lg border border-[--color-border]"
+              style={{
+                background:
+                  "linear-gradient(90deg, var(--color-bg-card) 25%, var(--color-bg-elevated) 50%, var(--color-bg-card) 75%)",
+                backgroundSize: "200% 100%",
+                animation: "shimmer 1.5s infinite",
+              }}
             >
               <div class="flex items-center gap-4">
                 <div class="w-12 h-6 rounded bg-[--color-bg-elevated]"></div>

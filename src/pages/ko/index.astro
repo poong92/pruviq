@@ -27,10 +27,10 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
 <Layout title={t('meta.home_title')} description={t('meta.index_desc')}>
 
   <!-- HERO -->
-  <section class="relative overflow-hidden min-h-[85vh] flex flex-col justify-center" style="background: var(--gradient-hero)">
+  <section class="relative overflow-hidden min-h-[85vh] flex flex-col justify-center hero-bg-depth">
     <HeroGlow />
-    <div class="relative max-w-7xl mx-auto px-6 pt-28 pb-16 md:pt-36 md:pb-20 hero-enter">
-      <HeroBadge stat={simulationsRun} label="시뮬레이션 실행" />
+    <div class="relative max-w-7xl mx-auto px-6 pt-20 pb-12 md:pt-28 md:pb-16 hero-enter">
+      <HeroBadge stat={simulationsRun} label="시뮬레이션 실행" cta="무료 체험 →" />
       <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold text-center tracking-[-0.04em] leading-[1.08] max-w-4xl mx-auto">
         {t('hero.h1_line1')}<br class="hidden md:block" /> <span class="gradient-text">{coinsAnalyzed}개 코인</span>, 몇 초 만에 검증
       </h1>
