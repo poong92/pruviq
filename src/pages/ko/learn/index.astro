@@ -135,7 +135,9 @@ const levelConfig = [
 
   <!-- LEVELS -->
   {levelConfig.map(({ level, label, title, desc, color, posts: levelPosts }) => (
-    <section class="pb-12 border-t border-[--color-border] pt-12" data-level-section={level}>
+    <>
+    <hr class="section-divider" />
+    <section class="reveal-child pb-12 border-t border-[--color-border] pt-12" data-level-section={level}>
       <div class="max-w-5xl mx-auto px-4">
         <div class="flex items-center gap-3 mb-2">
           <span class={`text-xs font-mono px-2 py-0.5 rounded border ${levelColorMap[color]}`}>
@@ -145,7 +147,7 @@ const levelConfig = [
         </div>
         <p class="text-[--color-text-muted] text-sm mb-6">{desc}</p>
 
-        <div class="grid md:grid-cols-2 gap-4">
+        <div class="reveal-child grid md:grid-cols-2 gap-4">
           {levelPosts.map(post => (
             <div
               data-search-item
@@ -172,10 +174,12 @@ const levelConfig = [
         </div>
       </div>
     </section>
+    </>
   ))}
 
   <!-- CTA -->
-  <section class="pb-16 border-t border-[--color-border] pt-12">
+  <hr class="section-divider" />
+  <section class="reveal pb-16 border-t border-[--color-border] pt-12">
     <div class="max-w-5xl mx-auto px-4 text-center">
       <h2 class="text-xl font-bold mb-3">{t('learn.cta_title')}</h2>
       <p class="text-[--color-text-muted] text-sm mb-6">{t('learn.cta_desc')}</p>

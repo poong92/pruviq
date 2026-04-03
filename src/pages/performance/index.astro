@@ -90,8 +90,10 @@ const liveTrades = perf.summary.total_trades.toLocaleString();
     </div>
   </section>
 
+  <hr class="section-divider" />
+
   <!-- BACKTEST RESULTS -->
-  <section class="pb-12 border-t border-[--color-border] pt-8">
+  <section class="reveal pb-12 border-t border-[--color-border] pt-8">
     <div class="max-w-5xl mx-auto px-4">
       <h2 class="text-2xl font-bold mb-2">{t('perf.results_title')}</h2>
       <p class="text-[--color-text-muted] text-sm mb-6">
@@ -176,9 +178,11 @@ const liveTrades = perf.summary.total_trades.toLocaleString();
     </div>
   </section>
 
+  <hr class="section-divider" />
+
   <!-- LIVE TRADING EQUITY CURVE -->
   {daily.length > 0 && (
-    <section class="pb-12 border-t border-[--color-border] pt-8">
+    <section class="reveal pb-12 border-t border-[--color-border] pt-8">
       <div class="max-w-5xl mx-auto px-4">
         <h2 class="text-2xl font-bold mb-1">{t('perf.equity_title')}</h2>
         <p class="text-[--color-text-muted] text-sm mb-4">{t('perf.equity_desc')}</p>
@@ -292,8 +296,10 @@ const liveTrades = perf.summary.total_trades.toLocaleString();
     </section>
   )}
 
+  <hr class="section-divider" />
+
   <!-- BACKTEST VS REALITY -->
-  <section class="pb-12 border-t border-[--color-border] pt-8">
+  <section class="reveal pb-12 border-t border-[--color-border] pt-8">
     <div class="max-w-5xl mx-auto px-4">
       <h2 class="text-2xl font-bold mb-2">{t('perf.gap_title')}</h2>
       <p class="text-[--color-text-muted] text-sm mb-8">{t('perf.gap_desc')}</p>
@@ -360,8 +366,10 @@ const liveTrades = perf.summary.total_trades.toLocaleString();
     </div>
   </section>
 
+  <hr class="section-divider" />
+
   <!-- KILLED STRATEGIES -->
-  <section class="pb-12 border-t border-[--color-border] pt-8">
+  <section class="reveal-child pb-12 border-t border-[--color-border] pt-8">
     <div class="max-w-5xl mx-auto px-4">
       <h2 class="text-2xl font-bold mb-2">{t('perf.killed_title')}</h2>
       <p class="text-[--color-text-muted] text-sm mb-6">
@@ -460,8 +468,10 @@ const liveTrades = perf.summary.total_trades.toLocaleString();
     </div>
   </section>
 
+  <hr class="section-divider" />
+
   <!-- TRY IT YOURSELF -->
-  <section class="pb-12 border-t border-[--color-border] pt-8">
+  <section class="reveal pb-12 border-t border-[--color-border] pt-8">
     <div class="max-w-5xl mx-auto px-4 text-center">
       <h2 class="text-2xl font-bold mb-3">{t('perf.verify_title')}</h2>
       <p class="text-[--color-text-muted] text-sm mb-6 max-w-lg mx-auto">
@@ -486,8 +496,10 @@ const liveTrades = perf.summary.total_trades.toLocaleString();
     </div>
   </section>
 
+  <hr class="section-divider" />
+
   <!-- DISCLAIMER -->
-  <section class="pb-16 bg-[--color-bg-subtle]">
+  <section class="reveal pb-16 bg-[--color-bg-subtle]">
     <div class="max-w-5xl mx-auto px-4 text-center pt-12">
       <p class="text-[--color-text-muted] text-xs max-w-lg mx-auto">
         {t('cta.disclaimer')}

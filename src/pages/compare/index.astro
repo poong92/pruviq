@@ -15,8 +15,8 @@ const comparisons = [
 ---
 
 <Layout title={t('compare_index.meta_title')} description={t('compare_index.meta_desc')}>
-  <section class="py-16">
-    <div class="max-w-4xl mx-auto px-4">
+  <section class="py-16 md:py-24">
+    <div class="max-w-4xl mx-auto px-6">
       <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('compare_index.tag')}</p>
       <h1 class="text-3xl md:text-5xl font-bold mb-4">
         {t('compare_index.title')}
@@ -26,7 +26,7 @@ const comparisons = [
       </h1>
 
       <!-- Why PRUVIQ: 3 strengths -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10 mb-10">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10 mb-10 reveal-child">
         <div class="border border-[--color-up]/30 rounded-lg p-6 bg-[--color-bg-card]">
           <p class="font-mono text-[--color-up] text-xs font-bold mb-2 tracking-wider">{t('compare_index.strength1_tag')}</p>
           <p class="font-bold text-lg mb-2">{t('compare_index.strength1_title')}</p>
@@ -117,14 +117,14 @@ const comparisons = [
         <p class="text-xs text-[--color-text-muted] mt-3 font-mono">{t('compare_index.cta_note')}</p>
       </div>
 
-      <hr class="border-[--color-border] mb-10" />
+      <hr class="section-divider mb-10" />
 
       <p class="font-mono text-[--color-accent] text-sm mb-6 tracking-wider">{t('compare_index.detailed_label')}</p>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 reveal-child">
         {comparisons.map((c) => (
           <a
             href={`/compare/${c.slug}`}
-            class="group relative border border-[--color-border] rounded-lg p-6 hover:border-[--color-accent] transition-colors"
+            class="group relative border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] card-hover card-glow"
           >
             {c.badge && (
               <span class="absolute top-4 right-4 text-xs font-mono bg-[--color-accent] text-black px-2 py-0.5 rounded">

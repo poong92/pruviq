@@ -435,6 +435,16 @@ a:not(.btn):not(.btn-primary):not(.btn-ghost):not(.btn-outline):not(.card-hover)
   33% { transform: translate(-50%, -50%) translate(15px, -25px); }
   66% { transform: translate(-50%, -50%) translate(-10px, 10px); }
 }
+@keyframes aurora-2 {
+  0%, 100% { transform: translate(-50%, -50%) translate(0, 0); }
+  33% { transform: translate(-50%, -50%) translate(-20px, 15px); }
+  66% { transform: translate(-50%, -50%) translate(12px, -18px); }
+}
+@keyframes aurora-3 {
+  0%, 100% { transform: translate(-50%, -50%) translate(0, 0); }
+  33% { transform: translate(-50%, -50%) translate(10px, 20px); }
+  66% { transform: translate(-50%, -50%) translate(-15px, -10px); }
+}
 
 @keyframes pageLoad {
   0%   { width: 0; }
@@ -499,6 +509,14 @@ a:not(.btn):not(.btn-primary):not(.btn-ghost):not(.btn-outline):not(.card-hover)
 .reveal-child.visible > *:nth-child(2) { transition-delay: 80ms; }
 .reveal-child.visible > *:nth-child(3) { transition-delay: 160ms; }
 .reveal-child.visible > *:nth-child(4) { transition-delay: 240ms; }
+.reveal-child.visible > *:nth-child(5) { transition-delay: 320ms; }
+.reveal-child.visible > *:nth-child(6) { transition-delay: 400ms; }
+.reveal-child.visible > *:nth-child(7) { transition-delay: 480ms; }
+.reveal-child.visible > *:nth-child(8) { transition-delay: 560ms; }
+.reveal-child.visible > *:nth-child(9) { transition-delay: 640ms; }
+.reveal-child.visible > *:nth-child(10) { transition-delay: 720ms; }
+.reveal-child.visible > *:nth-child(11) { transition-delay: 800ms; }
+.reveal-child.visible > *:nth-child(12) { transition-delay: 880ms; }
 
 /* Stagger variant */
 .reveal-stagger > *:nth-child(1) { transition-delay: 0ms; }
