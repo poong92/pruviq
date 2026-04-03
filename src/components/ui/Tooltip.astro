@@ -1,12 +1,8 @@
 ---
-interface Props {
-  text: string;
-}
+interface Props { text: string; }
 const { text } = Astro.props;
 ---
-<span class="cursor-help border-b border-dotted border-[--color-text-muted]/30 relative group inline-block">
+<span class="tooltip-wrap cursor-help border-b border-dotted border-[--color-text-muted]/30">
   <slot />
-  <span class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 rounded-lg bg-[--color-bg-tooltip] text-xs text-[--color-text] border border-[--color-border] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50" role="tooltip">
-    {text}
-  </span>
+  <span class="tooltip-text">{text}</span>
 </span>

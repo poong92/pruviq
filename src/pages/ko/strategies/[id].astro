@@ -3,6 +3,7 @@ import { getCollection, render } from 'astro:content';
 import Layout from '../../../layouts/Layout.astro';
 import StrategyDemo from '../../../components/StrategyDemo';
 import ReproBadge from '../../../components/ReproBadge';
+import Tooltip from '../../../components/ui/Tooltip.astro';
 import { useTranslations } from '../../../i18n/index';
 
 const t = useTranslations('ko');
@@ -120,19 +121,21 @@ const statusLabels: Record<string, string> = {
         <div class="reveal card-enterprise grid grid-cols-2 sm:grid-cols-4 gap-4 font-mono text-sm p-4 mb-8">
           {strategy.data.winRate !== undefined && (
             <div>
-              <span class="text-[--color-text-muted] text-xs">{t('strategy.win_rate')}</span>
+              <Tooltip text={t('tooltip.wr')}><span class="text-[--color-text-muted] text-xs">{t('strategy.win_rate')}</span></Tooltip>
               <p class={`text-xl font-bold ${strategy.data.winRate >= 55 ? 'text-[--color-accent]' : strategy.data.winRate >= 50 ? 'text-[--color-yellow]' : 'text-[--color-red]'}`}>
                 {strategy.data.winRate}%
               </p>
+              <div class="metric-bar"><div class="metric-bar-fill" style={`width: ${strategy.data.winRate}%; background: var(--color-up);`}></div></div>
               <p class="text-[--color-text-muted] text-[10px] mt-0.5 leading-tight">{t('strategy.wr_desc')}</p>
             </div>
           )}
           {strategy.data.profitFactor !== undefined && (
             <div>
-              <span class="text-[--color-text-muted] text-xs">{t('strategy.profit_factor')}</span>
+              <Tooltip text={t('tooltip.pf')}><span class="text-[--color-text-muted] text-xs">{t('strategy.profit_factor')}</span></Tooltip>
               <p class={`text-xl font-bold ${strategy.data.profitFactor >= 1.5 ? 'text-[--color-accent]' : strategy.data.profitFactor >= 1.0 ? 'text-[--color-yellow]' : 'text-[--color-red]'}`}>
                 {strategy.data.profitFactor}
               </p>
+              <div class="metric-bar"><div class="metric-bar-fill" style={`width: ${Math.min(strategy.data.profitFactor / 3 * 100, 100)}%; background: var(--color-up);`}></div></div>
               <p class="text-[--color-text-muted] text-[10px] mt-0.5 leading-tight">{t('strategy.pf_desc')}</p>
             </div>
           )}
@@ -147,7 +150,7 @@ const statusLabels: Record<string, string> = {
           )}
           {strategy.data.maxDrawdown !== undefined && (
             <div>
-              <span class="text-[--color-text-muted] text-xs">{t('strategy.max_drawdown')}</span>
+              <Tooltip text={t('tooltip.mdd')}><span class="text-[--color-text-muted] text-xs">{t('strategy.max_drawdown')}</span></Tooltip>
               <p class="text-xl font-bold text-[--color-red]">{strategy.data.maxDrawdown}%</p>
               <p class="text-[--color-text-muted] text-[10px] mt-0.5 leading-tight">{t('strategy.mdd_desc')}</p>
             </div>
