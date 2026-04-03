@@ -47,10 +47,14 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
         </span>
       </div>
       <!-- Stats bar -->
-      <div class="grid grid-cols-2 gap-4 md:gap-6 mt-16 max-w-3xl mx-auto">
+      <div class="grid grid-cols-2 md:grid-cols-5 gap-4 md:gap-6 mt-16 max-w-4xl mx-auto">
         <div class="text-center">
           <p class="text-2xl md:text-3xl font-bold font-mono"><CountUp client:visible target={coinsAnalyzed} suffix="+" locale="en-US" /></p>
           <p class="text-sm text-[--color-text-muted] mt-1">Coins Tested</p>
+        </div>
+        <div class="text-center">
+          <p class="text-2xl md:text-3xl font-bold font-mono"><CountUp client:visible target={(siteStats as { simulations_run: number }).simulations_run} suffix="+" locale="en-US" /></p>
+          <p class="text-sm text-[--color-text-muted] mt-1">Simulations Run</p>
         </div>
         <div class="text-center">
           <p class="text-2xl md:text-3xl font-bold font-mono"><CountUp client:visible target={2898} suffix="+" locale="en-US" /></p>
@@ -60,7 +64,7 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
           <p class="text-2xl md:text-3xl font-bold font-mono"><CountUp client:visible target={9.4} decimals={1} suffix="M+" /></p>
           <p class="text-sm text-[--color-text-muted] mt-1">Data Points</p>
         </div>
-        <div class="text-center">
+        <div class="text-center col-span-2 md:col-span-1">
           <p class="text-2xl md:text-3xl font-bold font-mono"><CountUp client:visible target={simulatorPresetCount} suffix="+" /></p>
           <p class="text-sm text-[--color-text-muted] mt-1">Strategies</p>
         </div>
@@ -69,11 +73,13 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
   </section>
 
   <!-- DATA TRUST BAR -->
-  <div class="max-w-7xl mx-auto px-6 pb-4 relative z-10">
-    <div class="flex items-center justify-center gap-6 text-[--color-text-muted] text-xs font-mono">
-      <span class="opacity-60">Data from:</span>
-      <span class="opacity-40 hover:opacity-80 transition-opacity">Binance Futures</span>
-      <span class="opacity-40 hover:opacity-80 transition-opacity">CoinGecko</span>
+  <div class="max-w-7xl mx-auto px-6 py-6 relative z-10">
+    <div class="flex items-center justify-center gap-3 md:gap-8 text-[--color-text-muted] text-xs font-mono">
+      <span class="opacity-50 text-[10px] uppercase tracking-widest">Powered by data from</span>
+      <span class="hidden md:inline opacity-20">|</span>
+      <span class="opacity-50 hover:opacity-90 transition-opacity text-sm font-semibold tracking-wide">Binance Futures</span>
+      <span class="opacity-20">&middot;</span>
+      <span class="opacity-50 hover:opacity-90 transition-opacity text-sm font-semibold tracking-wide">CoinGecko</span>
     </div>
   </div>
 
@@ -117,14 +123,39 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
     </div>
   </section>
 
-  <!-- COMPARISON (compact) -->
+  <!-- COMPARISON TABLE -->
   <hr class="section-divider" />
-  <section class="py-16 md:py-20 reveal">
-    <div class="max-w-7xl mx-auto px-6 text-center">
-      <p class="text-[--color-text-muted] text-base mb-3">
-        Free forever. No code. No account. No credit card.
-      </p>
-      <a href="/compare" class="text-sm text-[--color-accent] hover:underline font-mono">Compare with other tools →</a>
+  <section class="py-16 md:py-24 reveal">
+    <div class="max-w-4xl mx-auto px-6">
+      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider text-center">{t('compare.section_tag')}</p>
+      <h2 class="text-3xl md:text-4xl font-bold text-center mb-12">{t('compare.section_title')}</h2>
+
+      <div class="overflow-hidden rounded-xl border border-[--color-border] bg-[--color-bg-card]">
+        <!-- Header -->
+        <div class="grid grid-cols-3 text-sm font-mono">
+          <div class="p-4 md:p-5"></div>
+          <div class="p-4 md:p-5 text-center text-[--color-text-muted] border-l border-[--color-border] bg-[--color-bg-subtle]">{t('compare.other_label')}</div>
+          <div class="p-4 md:p-5 text-center font-bold text-[--color-accent] border-l border-[--color-accent]/20 bg-[--color-accent]/5">{t('compare.pruviq_label')}</div>
+        </div>
+        <!-- Rows -->
+        {[
+          { label: t('compare.row1_label'), other: t('compare.row1_other'), pruviq: t('compare.row1_pruviq') },
+          { label: t('compare.row2_label'), other: t('compare.row2_other'), pruviq: t('compare.row2_pruviq') },
+          { label: t('compare.row3_label'), other: t('compare.row3_other'), pruviq: t('compare.row3_pruviq') },
+          { label: t('compare.row4_label'), other: t('compare.row4_other'), pruviq: t('compare.row4_pruviq') },
+          { label: t('compare.row5_label'), other: t('compare.row5_other'), pruviq: t('compare.row5_pruviq') },
+        ].map((row) => (
+          <div class="grid grid-cols-3 text-sm border-t border-[--color-border]">
+            <div class="p-4 md:p-5 font-semibold">{row.label}</div>
+            <div class="p-4 md:p-5 text-center text-[--color-text-muted] border-l border-[--color-border] bg-[--color-bg-subtle]">{row.other}</div>
+            <div class="p-4 md:p-5 text-center font-semibold text-[--color-up] border-l border-[--color-accent]/20 bg-[--color-accent]/5">{row.pruviq}</div>
+          </div>
+        ))}
+      </div>
+
+      <div class="text-center mt-6">
+        <a href="/compare" class="text-sm text-[--color-accent] hover:underline font-mono">See full comparison →</a>
+      </div>
     </div>
   </section>
 
@@ -243,6 +274,26 @@ const candlesProcessed = ((siteStats as { candles_processed: number }).candles_p
           </div>
           <p class="text-[--color-text-muted] text-sm">{t('trust.badge_open_desc')}</p>
         </a>
+      </div>
+
+      <!-- Quick trust badges -->
+      <div class="flex flex-wrap gap-3 justify-center mt-12 font-mono text-xs">
+        <span class="px-4 py-2 rounded-full border border-[--color-border] text-[--color-text-muted] bg-[--color-bg-subtle] flex items-center gap-2">
+          <svg class="w-3.5 h-3.5 text-[--color-up]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+          {t('trust_badges.no_signup')}
+        </span>
+        <span class="px-4 py-2 rounded-full border border-[--color-border] text-[--color-text-muted] bg-[--color-bg-subtle] flex items-center gap-2">
+          <svg class="w-3.5 h-3.5 text-[--color-up]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+          {t('trust_badges.free')}
+        </span>
+        <span class="px-4 py-2 rounded-full border border-[--color-border] text-[--color-text-muted] bg-[--color-bg-subtle] flex items-center gap-2">
+          <svg class="w-3.5 h-3.5 text-[--color-up]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+          {t('trust_badges.opensource')}
+        </span>
+        <span class="px-4 py-2 rounded-full border border-[--color-border] text-[--color-text-muted] bg-[--color-bg-subtle] flex items-center gap-2">
+          <svg class="w-3.5 h-3.5 text-[--color-up]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+          {t('trust_badges.data_sources')}
+        </span>
       </div>
     </div>
   </section>
