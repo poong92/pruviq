@@ -36,9 +36,26 @@ const marketDataJson = JSON.stringify(marketDataRaw);
         </div>
         <noscript>
           <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] mt-4">
-            <h2 class="text-lg font-bold mb-2">{t('market.noscript_title')}</h2>
-            <p class="text-[--color-text-muted] text-sm mb-3">{t('market.noscript_desc')}</p>
-            <p class="text-[--color-text-muted] text-sm mb-4">{t('market.noscript_alt')}</p>
+            <h2 class="text-lg font-bold mb-4">{t('market.noscript_title')}</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+              <div class="p-3 rounded-lg bg-[--color-bg-hover]">
+                <p class="text-xs text-[--color-text-muted]">BTC Price</p>
+                <p class="font-bold font-mono">${marketDataRaw.btc_price?.toLocaleString('en-US', { maximumFractionDigits: 0 })}</p>
+              </div>
+              <div class="p-3 rounded-lg bg-[--color-bg-hover]">
+                <p class="text-xs text-[--color-text-muted]">BTC Dominance</p>
+                <p class="font-bold font-mono">{marketDataRaw.btc_dominance}%</p>
+              </div>
+              <div class="p-3 rounded-lg bg-[--color-bg-hover]">
+                <p class="text-xs text-[--color-text-muted]">Fear & Greed</p>
+                <p class="font-bold font-mono">{marketDataRaw.fear_greed_index} — {marketDataRaw.fear_greed_label}</p>
+              </div>
+              <div class="p-3 rounded-lg bg-[--color-bg-hover]">
+                <p class="text-xs text-[--color-text-muted]">Total Market Cap</p>
+                <p class="font-bold font-mono">${marketDataRaw.total_market_cap_b}B</p>
+              </div>
+            </div>
+            <p class="text-[--color-text-muted] text-sm mb-4">{t('market.noscript_desc')}</p>
             <div class="flex flex-wrap gap-3">
               <a href="/coins" class="text-[--color-accent] text-sm font-semibold hover:underline">Browse 570+ Coins &rarr;</a>
               <a href="/simulate" class="text-[--color-accent] text-sm font-semibold hover:underline">Run Simulation &rarr;</a>
