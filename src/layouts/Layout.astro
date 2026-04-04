@@ -41,32 +41,33 @@ const hreflangBase = canonicalPath.replace(/^\/ko(\/|$)/, '/');
 const enURL = new URL(hreflangBase, Astro.site || 'https://pruviq.com');
 const koURL = new URL(`/ko${hreflangBase === '/' ? '/' : hreflangBase}`, Astro.site || 'https://pruviq.com');
 
-const marketPath = lang === 'ko' ? '/ko/market' : '/market';
-const simulatePath = lang === 'ko' ? '/ko/simulate' : '/simulate';
-const learnPath = lang === 'ko' ? '/ko/learn' : '/learn';
-const feesPath = lang === 'ko' ? '/ko/fees' : '/fees';
-const aboutPath = lang === 'ko' ? '/ko/about' : '/about';
-const changelogPath = lang === 'ko' ? '/ko/changelog' : '/changelog';
-const methodologyPath = lang === 'ko' ? '/ko/methodology' : '/methodology';
-const apiPath = lang === 'ko' ? '/ko/api' : '/api';
-const compareTvPath = lang === 'ko' ? '/ko/compare/tradingview' : '/compare/tradingview';
-const compareCoinrulePath = lang === 'ko' ? '/ko/compare/coinrule' : '/compare/coinrule';
-const compareCryptohopperPath = lang === 'ko' ? '/ko/compare/cryptohopper' : '/compare/cryptohopper';
-const compare3commasPath = lang === 'ko' ? '/ko/compare/3commas' : '/compare/3commas';
-const compareGainiumPath = lang === 'ko' ? '/ko/compare/gainium' : '/compare/gainium';
-const compareStreakPath = lang === 'ko' ? '/ko/compare/streak' : '/compare/streak';
-const privacyPath = lang === 'ko' ? '/ko/privacy' : '/privacy';
-const termsPath = lang === 'ko' ? '/ko/terms' : '/terms';
-const leaderboardPath = lang === 'ko' ? '/ko/leaderboard' : '/leaderboard';
-const rankingPath = lang === 'ko' ? '/ko/strategies/ranking' : '/strategies/ranking';
+// Locale-aware path helper — eliminates 24× DRY violations
+const lp = (path: string) => lang === 'ko' ? `/ko${path}` : path;
 
-// Legacy paths (for footer/redirects)
-const strategiesPath = lang === 'ko' ? '/ko/strategies' : '/strategies';
-const signalsPath = lang === 'ko' ? '/ko/signals' : '/signals';
-const coinsPath = lang === 'ko' ? '/ko/coins' : '/coins';
-const builderPath = lang === 'ko' ? '/ko/builder' : '/builder';
-const performancePath = lang === 'ko' ? '/ko/performance' : '/performance';
-const blogPath = lang === 'ko' ? '/ko/blog' : '/blog';
+const marketPath = lp('/market');
+const simulatePath = lp('/simulate');
+const learnPath = lp('/learn');
+const feesPath = lp('/fees');
+const aboutPath = lp('/about');
+const changelogPath = lp('/changelog');
+const methodologyPath = lp('/methodology');
+const apiPath = lp('/api');
+const compareTvPath = lp('/compare/tradingview');
+const compareCoinrulePath = lp('/compare/coinrule');
+const compareCryptohopperPath = lp('/compare/cryptohopper');
+const compare3commasPath = lp('/compare/3commas');
+const compareGainiumPath = lp('/compare/gainium');
+const compareStreakPath = lp('/compare/streak');
+const privacyPath = lp('/privacy');
+const termsPath = lp('/terms');
+const leaderboardPath = lp('/leaderboard');
+const rankingPath = lp('/strategies/ranking');
+const strategiesPath = lp('/strategies');
+const signalsPath = lp('/signals');
+const coinsPath = lp('/coins');
+const builderPath = lp('/builder');
+const performancePath = lp('/performance');
+const blogPath = lp('/blog');
 
 // Active nav detection
 const navItems = [
