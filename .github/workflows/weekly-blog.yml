@@ -1,0 +1,37 @@
+name: Weekly Blog Auto-Generation
+
+on:
+  schedule:
+    # Monday 06:00 UTC (15:00 KST)
+    - cron: '0 6 * * 1'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  generate:
+    name: Generate weekly blog post
+    runs-on: [self-hosted, ops]
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        run: |
+          python3 --version
+          pip3 install httpx --quiet 2>/dev/null || true
+
+      - name: Generate blog post + create PR
+        run: |
+          python3 backend/scripts/generate_weekly_blog.py --auto-pr
+        env:
+          API_BASE_URL: https://api.pruviq.com
+        timeout-minutes: 5
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "::warning::Weekly blog generation failed. Check API availability."
