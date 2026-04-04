@@ -38,20 +38,22 @@ interface RankingData {
 let ssrRanking: RankingData | null = null;
 try {
   const res = await fetch('https://api.pruviq.com/rankings/daily?period=30d&group=top50', {
-    signal: AbortSignal.timeout(5000),
+    signal: AbortSignal.timeout(10000),
   });
   if (res.ok) ssrRanking = await res.json() as RankingData;
 } catch {
-  // API unavailable at build time
+  // API unavailable at build time — fallback below
 }
 
-// Static fallback: ensure SSR div always renders for crawlers
+// Static fallback: try rankings-daily.json first (always fresh), then ranking-fallback.json
 if (!ssrRanking) {
   try {
     const fs = await import('node:fs');
     const path = await import('node:path');
+    const dailyPath = path.default.join(process.cwd(), 'public/data/rankings-daily.json');
     const fallbackPath = path.default.join(process.cwd(), 'public/data/ranking-fallback.json');
-    ssrRanking = JSON.parse(fs.default.readFileSync(fallbackPath, 'utf-8')) as RankingData;
+    const dataPath = fs.default.existsSync(dailyPath) ? dailyPath : fallbackPath;
+    ssrRanking = JSON.parse(fs.default.readFileSync(dataPath, 'utf-8')) as RankingData;
   } catch {
     // Both API and static fallback failed
   }
