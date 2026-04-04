@@ -2912,8 +2912,8 @@ def _run_backtest_sync(req: BacktestRequest, bt_key: str) -> BacktestResponse:
                     e = float(sym_df.iloc[-1]["close"])
                     if s > 0:
                         return round((e - s) / s * 100, 2)
-        except Exception:
-            pass
+        except Exception as exc:
+            logger.warning("hold_return calc failed for %s: %s", symbol, exc)
         return 0.0
     btc_hold_return_pct = _calc_hold_return("BTCUSDT")
     eth_hold_return_pct = _calc_hold_return("ETHUSDT")
@@ -2982,8 +2982,8 @@ def _run_backtest_sync(req: BacktestRequest, bt_key: str) -> BacktestResponse:
                 p = d * np.exp(-0.5 * a * a) * t * (0.319381530 + t * (-0.356563782 + t * (1.781477937 + t * (-1.821255978 + t * 1.330274429))))
                 return 1.0 - p if x >= 0 else p
             edge_p_value = round(1.0 - _norm_cdf_fallback(z), 4) if z > 0 else 1.0
-        except Exception:
-            pass
+        except Exception as exc:
+            logger.warning("p-value calculation failed: %s", exc)
 
     # --- Strategy grade (7 dimensions, max 16 points) ---
     pf = round(gross_profit / gross_loss, 2) if gross_loss > 0 else (999.99 if gross_profit > 0 else 0.0)
@@ -3464,8 +3464,8 @@ def _get_daily_rankings_sync(
             for i, e in enumerate(yranked):
                 k = (e.get("strategy"), e.get("direction"), e.get("timeframe", "1H"))
                 yesterday_rank_map[k] = i + 1
-        except Exception:
-            pass
+        except Exception as exc:
+            logger.warning("yesterday ranking load failed: %s", exc)
 
     # ── streak: consecutive days in Top N ────────────────────────
     top_n_keys = {(e.get("strategy"), e.get("direction"), e.get("timeframe", "1H")) for e in ranked[:10]}
