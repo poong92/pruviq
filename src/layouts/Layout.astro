@@ -414,14 +414,15 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
         <!-- 2열: Nav (정중앙, 데스크톱 only) -->
         <div class="hidden md:flex items-center justify-center gap-10 text-[15px]">
           {navItems.map(item => item.match === '/strategies' ? (
-            <div class="relative group">
+            <div class="relative group" role="navigation" aria-label="Strategy submenu">
               <a href={item.href} aria-current={isActive(item.match) ? "page" : undefined}
-                 class="transition-colors flex items-center gap-1"
+                 aria-haspopup="true" aria-expanded="false"
+                 class="transition-colors flex items-center gap-1 nav-dropdown-trigger"
                  style={isActive(item.match) ? 'color:var(--color-accent);font-weight:500' : 'color:var(--color-text-muted)'}>
                 {item.label}
                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" class="opacity-50 transition-transform duration-200 group-hover:rotate-180" aria-hidden="true"><path d="M2.5 4.5l3.5 3 3.5-3"/></svg>
               </a>
-              <div class="absolute top-full left-1/2 -translate-x-1/2 pt-2 hidden group-hover:block z-50">
+              <div class="absolute top-full left-1/2 -translate-x-1/2 pt-2 hidden group-hover:block group-focus-within:block z-50" role="menu">
                 <div class="bg-[--color-bg-elevated] border border-white/[0.08] rounded-xl p-1.5 min-w-[200px] backdrop-blur-xl" style="box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.06);">
                   <a href={rankingPath} class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm text-[--color-text] hover:bg-white/[0.06] transition-colors">
                     <span class="w-8 h-8 rounded-lg bg-[--color-accent]/10 flex items-center justify-center shrink-0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="2"><path d="M12 20V10M18 20V4M6 20v-4"/></svg></span>
@@ -432,7 +433,7 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
                     <div><div class="font-medium">{t('nav.leaderboard')}</div><div class="text-[11px] text-[--color-text-muted] mt-0.5">{t('nav.leaderboard_desc')}</div></div>
                   </a>
                   <div class="border-t border-white/[0.06] my-1 mx-2"></div>
-                  <a href={lang === 'ko' ? '/ko/compare' : '/compare'} class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm text-[--color-text-muted] hover:text-[--color-text] hover:bg-white/[0.06] transition-colors">
+                  <a href={lp('/compare')} class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm text-[--color-text-muted] hover:text-[--color-text] hover:bg-white/[0.06] transition-colors">
                     <span class="w-8 h-8 rounded-lg bg-white/[0.04] flex items-center justify-center shrink-0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg></span>
                     <div><div class="font-medium">{t('nav.compare_tools')}</div><div class="text-[11px] text-[--color-text-muted] mt-0.5">{t('nav.compare_tools_desc')}</div></div>
                   </a>
