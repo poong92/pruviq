@@ -1,0 +1,32 @@
+name: QA Redirects Check
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'public/_redirects'
+      - 'src/pages/**'
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Verify _redirects vs dist/
+    runs-on: [self-hosted, ops]
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node 22
+        run: node --version
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Run QA redirects check
+        run: bash scripts/qa-redirects.sh
