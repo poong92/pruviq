@@ -18,15 +18,15 @@ concurrency:
 
 jobs:
   run-lighthouse:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, ops]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
+      - name: Verify Chrome available
+        run: |
+          node --version
+          which google-chrome || which chromium || npx playwright install chromium
 
       - name: Install Lighthouse
         run: npm install -g lighthouse@10 || npm install -g lighthouse
@@ -52,7 +52,7 @@ jobs:
           path: reports/
 
       - name: Summarize and comment on PR (if available)
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           script: |
             const fs = require('fs')

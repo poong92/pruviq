@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import subprocess
 import sys
 from datetime import datetime, timedelta
@@ -27,7 +28,7 @@ import httpx
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 BLOG_EN_DIR = PROJECT_ROOT / "src" / "content" / "blog"
 BLOG_KO_DIR = PROJECT_ROOT / "src" / "content" / "blog-ko"
-API_URL = "http://localhost:8080"
+API_URL = os.environ.get("API_BASE_URL", "https://api.pruviq.com")
 TIMEOUT = 15
 
 
