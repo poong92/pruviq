@@ -172,8 +172,8 @@ def test_cost_model_futures_parity():
     """Futures cost model: 0.08% fee, 0% slippage (AT parity)."""
     cm = CostModel.futures()
     assert cm.fee_pct == 0.0008, f"Expected 0.0008 (0.08%), got {cm.fee_pct}"
-    assert cm.slippage_pct == 0.0, f"Expected 0.0 slippage, got {cm.slippage_pct}"
-    print("  Futures: 0.08% fee, 0% slippage (AT parity)")
+    assert cm.slippage_pct == 0.0002, f"Expected 0.0002 slippage, got {cm.slippage_pct}"
+    print("  Futures: 0.08% fee, 0.02% slippage (realistic)")
 
 
 def test_three_paths_consistent():

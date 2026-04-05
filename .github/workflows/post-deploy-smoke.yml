@@ -37,10 +37,10 @@ jobs:
 
       - name: Wait for Cloudflare Pages deployment
         run: |
-          echo "Waiting 90s for Cloudflare Pages to propagate..."
-          sleep 90
-          # Verify site is up before running tests
-          for i in {1..6}; do
+          echo "Waiting 120s for Cloudflare deployment to propagate..."
+          sleep 120
+          # Verify site is up AND serving fresh content
+          for i in {1..8}; do
             STATUS=$(curl -sL -A "Mozilla/5.0" -o /dev/null -w '%{http_code}' \
               https://pruviq.com --max-time 10 || echo "000")
             echo "Attempt $i: HTTP $STATUS"
@@ -48,9 +48,9 @@ jobs:
               echo "Site is up — proceeding with smoke tests"
               exit 0
             fi
-            sleep 10
+            sleep 15
           done
-          echo "::error::pruviq.com not reachable after 150s"
+          echo "::error::pruviq.com not reachable after 240s"
           exit 1
 
       - name: Run simulator golden harness
