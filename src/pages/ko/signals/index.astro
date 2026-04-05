@@ -6,45 +6,65 @@ import ErrorBoundary from '../../../components/ErrorBoundary';
 const t = useTranslations('ko');
 ---
 
-<Layout title="실시간 매매 시그널 — PRUVIQ" description="17개 검증된 전략이 30개 코인을 매시간 스캔합니다. 실시간 시그널 확인 후 시뮬레이터에서 직접 검증하세요." lang="ko">
+<Layout title={t('meta.signals_title')} description={t('meta.signals_desc')} lang="ko">
   <section class="reveal pt-2 pb-16 md:pt-4 md:pb-24">
     <div class="max-w-4xl mx-auto px-4">
 
+      <!-- Header -->
+      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">실시간 시그널</p>
+      <div class="flex items-center gap-3 mb-4">
+        <span class="relative flex h-3 w-3">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full live-dot-ping opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-3 w-3 bg-[--color-up]"></span>
+        </span>
+        <h1 class="text-3xl md:text-5xl font-bold">{t('signals.title')}</h1>
+      </div>
+      <p class="text-[--color-text-muted] text-lg mb-8 max-w-2xl">
+        {t('signals.desc')}
+      </p>
 
-      <div class="mb-8">
-        <div class="flex items-center gap-3 mb-2">
-          <span class="relative flex h-3 w-3">
-            <span class="animate-ping absolute inline-flex h-full w-full rounded-full live-dot-ping opacity-75"></span>
-            <span class="relative inline-flex rounded-full h-3 w-3 bg-[--color-up]"></span>
-          </span>
-          <h1 class="text-3xl md:text-4xl font-bold">실시간 시그널</h1>
+      <!-- Stats -->
+      <div class="grid grid-cols-3 gap-4 mb-8">
+        <div class="card-premium p-4 text-center">
+          <p class="text-2xl md:text-3xl font-bold font-mono text-[--color-text]">17</p>
+          <p class="text-xs text-[--color-text-muted] mt-1 font-mono uppercase tracking-wider">{t('signals.stat_strategies')}</p>
         </div>
-        <p class="text-[--color-text-muted] max-w-2xl">
-          17개 전략이 30개 코인을 매시간 스캔합니다.
-          각 시그널에 진입가, 손절, 익절 수준이 표시됩니다.
-          "Verify"를 클릭하면 시뮬레이터에서 직접 백테스트할 수 있습니다.
-        </p>
+        <div class="card-premium p-4 text-center">
+          <p class="text-2xl md:text-3xl font-bold font-mono text-[--color-text]">30+</p>
+          <p class="text-xs text-[--color-text-muted] mt-1 font-mono uppercase tracking-wider">{t('signals.stat_coins')}</p>
+        </div>
+        <div class="card-premium p-4 text-center">
+          <p class="text-2xl md:text-3xl font-bold font-mono text-[--color-text]">1H</p>
+          <p class="text-xs text-[--color-text-muted] mt-1 font-mono uppercase tracking-wider">{t('signals.stat_interval')}</p>
+        </div>
       </div>
 
-      <div class="mb-6 p-4 rounded-lg border border-[--color-accent]/20 bg-[--color-accent]/5 card-enterprise">
+      <!-- Info banner -->
+      <div class="mb-8 p-4 rounded-lg border border-[--color-accent]/20 bg-[--color-accent]/5 card-enterprise">
         <p class="text-sm text-[--color-text-secondary]">
-          <strong>작동 방식:</strong> 엔진이 최신 완성 1시간 캔들에서 17개 전략의 진입 조건을 확인합니다.
-          조건이 충족되면 시그널이 여기에 표시됩니다.
-          시그널은 매매 추천이 아닙니다 — 항상 시뮬레이터에서 먼저 검증하세요.
+          <strong>{t('signals.how_title')}</strong> {t('signals.how_desc')}
         </p>
       </div>
 
+      <!-- Dashboard -->
       <ErrorBoundary client:load>
         <SignalsDashboard lang="ko" client:load />
       </ErrorBoundary>
 
-      <hr class="section-divider" />
+    </div>
+  </section>
 
-      <div class="mt-8 text-center reveal">
-        <p class="text-[--color-text-muted] mb-4">테스트하고 싶은 시그널이 있나요?</p>
-        <a href="/ko/simulate" class="btn btn-primary">시뮬레이터 열기</a>
+  <!-- Bottom CTA -->
+  <hr class="section-divider" />
+  <section class="py-16 md:py-20 reveal">
+    <div class="max-w-4xl mx-auto px-4 text-center">
+      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('signals.cta_tag')}</p>
+      <h2 class="text-2xl md:text-3xl font-bold mb-4">{t('signals.cta_title')}</h2>
+      <p class="text-[--color-text-muted] mb-8 max-w-xl mx-auto">{t('signals.cta_desc')}</p>
+      <div class="flex flex-wrap gap-3 justify-center">
+        <a href="/ko/simulate" class="btn btn-primary btn-lg no-underline">{t('signals.cta_simulate')} &rarr;</a>
+        <a href="/ko/strategies" class="btn btn-ghost btn-lg no-underline">{t('signals.cta_strategies')} &rarr;</a>
       </div>
-
     </div>
   </section>
 
@@ -60,8 +80,8 @@ const t = useTranslations('ko');
       </ul>
       <p class="mb-2">실시간 시그널 데이터를 보려면 JavaScript를 활성화하세요.</p>
       <div class="flex gap-4">
-        <a href="/ko/simulate" class="text-[--color-accent] hover:underline">시뮬레이터 열기 →</a>
-        <a href="/ko/strategies" class="text-[--color-accent] hover:underline">전략 둘러보기 →</a>
+        <a href="/ko/simulate" class="btn btn-primary">시뮬레이터 열기 &rarr;</a>
+        <a href="/ko/strategies" class="btn btn-ghost">전략 둘러보기 &rarr;</a>
       </div>
     </div>
   </noscript>
