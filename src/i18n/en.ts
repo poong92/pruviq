@@ -204,7 +204,7 @@ export const en = {
     "Not financial advice. Crypto trading involves substantial risk of loss. Past performance does not guarantee future results. PRUVIQ is an educational and research project.",
 
   // Footer
-  "footer.tagline": "Don't believe. Verify.",
+  "footer.tagline": "Verify. Execute. Profit.",
   "footer.strategies": "Strategies",
   "footer.learn": "Learn",
   "footer.fees": "Save on Fees",
