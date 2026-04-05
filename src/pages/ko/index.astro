@@ -17,11 +17,13 @@ const t = useTranslations('ko');
 const allStrategies = await getCollection('strategies');
 const verifiedCount = allStrategies.filter(s => s.data.status === 'verified').length;
 const lastUpdated = new Date().toLocaleDateString('ko-KR');
-const simulatorPresetCount = (presetsJson as Array<unknown>).length;
-const simulationsRun = (siteStats as { simulations_run: number }).simulations_run.toLocaleString('ko-KR');
-const coinsAnalyzed = (siteStats as { coins_analyzed: number }).coins_analyzed;
-const tradingDays = (siteStats as { trading_days: number }).trading_days.toLocaleString('ko-KR');
-const candlesProcessed = ((siteStats as { candles_processed: number }).candles_processed / 1_000_000).toFixed(1) + 'M';
+const stats = siteStats as Record<string, number>;
+const presets = presetsJson as Array<unknown>;
+const simulatorPresetCount = presets.length;
+const simulationsRun = (stats.simulations_run ?? 0).toLocaleString('ko-KR');
+const coinsAnalyzed = stats.coins_analyzed ?? 0;
+const tradingDays = (stats.trading_days ?? 0).toLocaleString('ko-KR');
+const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1) + 'M';
 ---
 
 <Layout title={t('meta.home_title')} description={t('meta.index_desc')}>

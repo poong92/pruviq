@@ -37,20 +37,26 @@ jobs:
 
       - name: Wait for Cloudflare Pages deployment
         run: |
-          echo "Waiting 90s for Cloudflare Pages to propagate..."
-          sleep 90
-          # Verify site is up before running tests
-          for i in {1..6}; do
+          echo "Waiting 120s for Cloudflare Pages to propagate..."
+          sleep 120
+          # Verify site is up AND new build is deployed (check SSR content)
+          for i in {1..8}; do
             STATUS=$(curl -sL -A "Mozilla/5.0" -o /dev/null -w '%{http_code}' \
               https://pruviq.com --max-time 10 || echo "000")
             echo "Attempt $i: HTTP $STATUS"
             if [ "$STATUS" = "200" ]; then
-              echo "Site is up — proceeding with smoke tests"
-              exit 0
+              # Also verify ranking SSR has data (not stale cache)
+              SSR_CHECK=$(curl -sL https://pruviq.com/strategies/ranking/ --max-time 10 \
+                | grep -c 'ranking-ssr-fallback' || echo "0")
+              if [ "$SSR_CHECK" -gt 0 ]; then
+                echo "Site is up + SSR data present — proceeding"
+                exit 0
+              fi
+              echo "Site up but SSR data missing — cache may be stale, retrying..."
             fi
-            sleep 10
+            sleep 15
           done
-          echo "::error::pruviq.com not reachable after 150s"
+          echo "::error::pruviq.com not reachable or SSR stale after 240s"
           exit 1
 
       - name: Run simulator golden harness
