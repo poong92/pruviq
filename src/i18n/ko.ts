@@ -1143,6 +1143,26 @@ export const ko: Record<TranslationKey, string> = {
   // CSV download
   "csv.download": "CSV 다운로드",
 
+  // Signals page
+  "meta.signals_title": "실시간 매매 시그널 - PRUVIQ",
+  "meta.signals_desc":
+    "17개 검증된 전략이 30개 코인을 매시간 스캔합니다. 실시간 시그널 확인 후 시뮬레이터에서 직접 검증하세요.",
+  "signals.title": "실시간 시그널",
+  "signals.desc":
+    '17개 전략이 30개 코인을 매시간 스캔합니다. 각 시그널에 진입가, 손절, 익절 수준이 표시됩니다. "Verify"를 클릭하면 시뮬레이터에서 직접 백테스트할 수 있습니다.',
+  "signals.stat_strategies": "전략 수",
+  "signals.stat_coins": "스캔 코인",
+  "signals.stat_interval": "스캔 주기",
+  "signals.how_title": "작동 방식:",
+  "signals.how_desc":
+    "엔진이 최신 완성 1시간 캔들에서 17개 전략의 진입 조건을 확인합니다. 조건이 충족되면 시그널이 여기에 표시됩니다. 시그널은 매매 추천이 아닙니다 — 항상 시뮬레이터에서 먼저 검증하세요.",
+  "signals.cta_tag": "검증 & 실행",
+  "signals.cta_title": "테스트하고 싶은 시그널이 있나요?",
+  "signals.cta_desc":
+    "시뮬레이터에서 백테스트를 실행해 매매 전 시그널을 검증하세요. 무료, 가입 불필요.",
+  "signals.cta_simulate": "시뮬레이터 열기",
+  "signals.cta_strategies": "전략 둘러보기",
+
   // API Docs page
   "meta.api_title": "API 레퍼런스 - PRUVIQ",
   "meta.api_desc":

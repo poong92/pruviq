@@ -1157,6 +1157,26 @@ export const en = {
   // CSV download
   "csv.download": "Download CSV",
 
+  // Signals page
+  "meta.signals_title": "Live Trading Signals - PRUVIQ",
+  "meta.signals_desc":
+    "Real-time crypto trading signals from 17 verified strategies across 30+ coins. Updated every hour. Verify any signal with the simulator.",
+  "signals.title": "Live Signals",
+  "signals.desc":
+    'Real-time trading signals from 17 strategies scanning 30 coins every hour. Each signal shows entry price, stop-loss, and take-profit levels. Click "Verify" to backtest any signal in the simulator.',
+  "signals.stat_strategies": "Strategies",
+  "signals.stat_coins": "Coins Scanned",
+  "signals.stat_interval": "Scan Interval",
+  "signals.how_title": "How it works:",
+  "signals.how_desc":
+    "Our engine scans 17 strategies on the latest completed 1H candles. When a strategy's entry conditions are met, a signal appears here. Signals are not trade recommendations — always verify with the simulator first.",
+  "signals.cta_tag": "VERIFY & EXECUTE",
+  "signals.cta_title": "See a signal you want to test?",
+  "signals.cta_desc":
+    "Run a backtest in the simulator to verify any signal before trading. Free, no signup required.",
+  "signals.cta_simulate": "Open Simulator",
+  "signals.cta_strategies": "Browse Strategies",
+
   // API Docs page
   "meta.api_title": "API Reference - PRUVIQ",
   "meta.api_desc":

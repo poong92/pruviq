@@ -6,33 +6,43 @@ import ErrorBoundary from '../../components/ErrorBoundary';
 const t = useTranslations('en');
 ---
 
-<Layout title="Live Trading Signals — PRUVIQ" description="Real-time crypto trading signals from 17 verified strategies across 30+ coins. Updated every hour. Verify. Execute. Profit.">
+<Layout title={t('meta.signals_title')} description={t('meta.signals_desc')}>
   <section class="reveal pt-2 pb-16 md:pt-4 md:pb-24">
     <div class="max-w-4xl mx-auto px-4">
 
-
       <!-- Header -->
-      <div class="mb-8">
-        <div class="flex items-center gap-3 mb-2">
-          <span class="relative flex h-3 w-3">
-            <span class="animate-ping absolute inline-flex h-full w-full rounded-full live-dot-ping opacity-75"></span>
-            <span class="relative inline-flex rounded-full h-3 w-3 bg-[--color-up]"></span>
-          </span>
-          <h1 class="text-3xl md:text-4xl font-bold">Live Signals</h1>
+      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">LIVE SIGNALS</p>
+      <div class="flex items-center gap-3 mb-4">
+        <span class="relative flex h-3 w-3">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full live-dot-ping opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-3 w-3 bg-[--color-up]"></span>
+        </span>
+        <h1 class="text-3xl md:text-5xl font-bold">{t('signals.title')}</h1>
+      </div>
+      <p class="text-[--color-text-muted] text-lg mb-8 max-w-2xl">
+        {t('signals.desc')}
+      </p>
+
+      <!-- Stats -->
+      <div class="grid grid-cols-3 gap-4 mb-8">
+        <div class="card-premium p-4 text-center">
+          <p class="text-2xl md:text-3xl font-bold font-mono text-[--color-text]">17</p>
+          <p class="text-xs text-[--color-text-muted] mt-1 font-mono uppercase tracking-wider">{t('signals.stat_strategies')}</p>
         </div>
-        <p class="text-[--color-text-muted] max-w-2xl">
-          Real-time trading signals from 17 strategies scanning 30 coins every hour.
-          Each signal shows entry price, stop-loss, and take-profit levels.
-          Click "Verify" to backtest any signal in the simulator.
-        </p>
+        <div class="card-premium p-4 text-center">
+          <p class="text-2xl md:text-3xl font-bold font-mono text-[--color-text]">30+</p>
+          <p class="text-xs text-[--color-text-muted] mt-1 font-mono uppercase tracking-wider">{t('signals.stat_coins')}</p>
+        </div>
+        <div class="card-premium p-4 text-center">
+          <p class="text-2xl md:text-3xl font-bold font-mono text-[--color-text]">1H</p>
+          <p class="text-xs text-[--color-text-muted] mt-1 font-mono uppercase tracking-wider">{t('signals.stat_interval')}</p>
+        </div>
       </div>
 
       <!-- Info banner -->
-      <div class="mb-6 p-4 rounded-lg border border-[--color-accent]/20 bg-[--color-accent]/5 card-enterprise">
+      <div class="mb-8 p-4 rounded-lg border border-[--color-accent]/20 bg-[--color-accent]/5 card-enterprise">
         <p class="text-sm text-[--color-text-secondary]">
-          <strong>How it works:</strong> Our engine scans 17 strategies on the latest completed 1H candles.
-          When a strategy's entry conditions are met, a signal appears here.
-          Signals are not trade recommendations — always verify with the simulator first.
+          <strong>{t('signals.how_title')}</strong> {t('signals.how_desc')}
         </p>
       </div>
 
@@ -41,14 +51,20 @@ const t = useTranslations('en');
         <SignalsDashboard client:load />
       </ErrorBoundary>
 
-      <hr class="section-divider" />
+    </div>
+  </section>
 
-      <!-- CTA -->
-      <div class="mt-8 text-center reveal">
-        <p class="text-[--color-text-muted] mb-4">See a signal you want to test?</p>
-        <a href="/simulate" class="btn btn-primary">Open Simulator</a>
+  <!-- Bottom CTA -->
+  <hr class="section-divider" />
+  <section class="py-16 md:py-20 reveal">
+    <div class="max-w-4xl mx-auto px-4 text-center">
+      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('signals.cta_tag')}</p>
+      <h2 class="text-2xl md:text-3xl font-bold mb-4">{t('signals.cta_title')}</h2>
+      <p class="text-[--color-text-muted] mb-8 max-w-xl mx-auto">{t('signals.cta_desc')}</p>
+      <div class="flex flex-wrap gap-3 justify-center">
+        <a href="/simulate" class="btn btn-primary btn-lg no-underline">{t('signals.cta_simulate')} &rarr;</a>
+        <a href="/strategies" class="btn btn-ghost btn-lg no-underline">{t('signals.cta_strategies')} &rarr;</a>
       </div>
-
     </div>
   </section>
 
@@ -64,8 +80,8 @@ const t = useTranslations('en');
       </ul>
       <p class="mb-2">Enable JavaScript to view real-time signal data.</p>
       <div class="flex gap-4">
-        <a href="/simulate" class="text-[--color-accent] hover:underline">Open Simulator →</a>
-        <a href="/strategies" class="text-[--color-accent] hover:underline">Browse Strategies →</a>
+        <a href="/simulate" class="btn btn-primary">Open Simulator &rarr;</a>
+        <a href="/strategies" class="btn btn-ghost">Browse Strategies &rarr;</a>
       </div>
     </div>
   </noscript>
