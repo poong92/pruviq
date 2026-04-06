@@ -44,7 +44,7 @@ const categoryLabels: Record<string, string> = {
     },
     "mainEntityOfPage": {
       "@type": "WebPage",
-      "@id": `https://pruviq.com/learn/${Astro.params.id || ''}/`
+      "@id": `https://pruviq.com${Astro.url.pathname}`
     },
     ...(image ? { "image": { "@type": "ImageObject", "url": `https://pruviq.com${image}`, "width": 1200, "height": 630 } } : {})
   })} />
