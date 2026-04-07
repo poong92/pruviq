@@ -206,7 +206,7 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
           ? '무료 크립토 전략 백테스팅 플랫폼. 570개 이상 코인에서 2년 이상의 실제 시장 데이터로 트레이딩 전략을 만들고 테스트하세요.'
           : 'Free crypto strategy backtesting platform. Build and test trading strategies on 570+ coins with 2+ years of real market data.',
         "founder": { "@type": "Person", "name": "PRUVIQ Team" },
-        "sameAs": ["https://x.com/pruviq", "https://github.com/pruviq/pruviq"],
+        "sameAs": ["https://x.com/pruviq"],
         "knowsAbout": lang === 'ko'
           ? ['암호화폐 트레이딩', '백테스팅', '알고리즘 트레이딩', '퀀트 금융']
           : ['cryptocurrency trading', 'backtesting', 'algorithmic trading', 'quantitative finance']
@@ -520,7 +520,7 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
                 <a href={apiPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('footer.api')}</a>
                 <a href="https://x.com/pruviq" target="_blank" rel="noopener noreferrer" class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">X / Twitter</a>
                 <a href="https://t.me/PRUVIQ" target="_blank" rel="noopener noreferrer" class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">Telegram</a>
-                <a href="https://github.com/pruviq/pruviq" target="_blank" rel="noopener noreferrer" class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">GitHub</a>
+                <a href="mailto:contact@pruviq.com" class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">contact@pruviq.com</a>
               </div>
             </div>
             <div>
@@ -540,7 +540,7 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
                 <a href={privacyPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('footer.privacy')}</a>
                 <a href={termsPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('footer.terms')}</a>
                 <a href={`mailto:${t('about.contact_email')}`} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('about.contact_email')}</a>
-                <span class="text-[--color-text-muted] text-xs">PRUVIQ Project (Seoul, Korea) · {lang === 'ko' ? '오픈소스 퀀트 리서치 플랫폼' : 'Open-source quant research platform'}</span>
+                <span class="text-[--color-text-muted] text-xs">PRUVIQ · {lang === 'ko' ? '투명한 퀀트 리서치 플랫폼' : 'Transparent quant research platform'}</span>
               </div>
             </div>
           </div>
@@ -560,8 +560,7 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
           <div class="flex items-center gap-4 flex-wrap">
             <span class="font-mono opacity-60">{lang === 'ko' ? '독립 리서치 플랫폼' : 'Independent Research'}</span>
             <span class="font-mono opacity-40">v0.3.0</span>
-            <a href="https://github.com/pruviq" target="_blank" rel="noopener noreferrer" class="font-mono opacity-40 hover:opacity-80 transition-opacity">GitHub</a>
-            {lang === 'ko' && <span>운영: PRUVIQ Project</span>}
+            {lang === 'ko' && <span>운영: PRUVIQ</span>}
             <p>{t('footer.affiliate')} <a href={feesPath} class="text-[--color-accent] hover:underline">{t('footer.details')}</a></p>
             <span>&copy; {currentYear} PRUVIQ</span>
           </div>
