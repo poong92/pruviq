@@ -43,7 +43,7 @@ export const en = {
   "hero.subcopy":
     "We tested 88 strategy combinations. 4 failed — and we published every one.",
   "hero.cta_secondary": "See Simulation Results",
-  "hero.open_source": "Open Source",
+  "hero.open_source": "Transparent",
   "hero.stat1_sub": "Including BTC, ETH, and altcoins",
   "hero.stat4_sub": "Across all verified strategies",
   "hero.stat5_sub": "1-hour candles since Jan 2024",
@@ -160,7 +160,7 @@ export const en = {
   "system.step3": "VERIFY",
   "system.step3_desc":
     "See the full picture: win rate, max drawdown, losing streaks, and profit factor. Then decide.",
-  "system.engine_tag": "SOURCE AVAILABLE ENGINE",
+  "system.engine_tag": "TRANSPARENT ENGINE",
 
   // Features section
   "features.tag": "TOOLS",
@@ -1312,7 +1312,7 @@ export const en = {
 
   // Social proof / trust section
   "trust.badge_api": "CoinGecko Data",
-  "trust.badge_source": "Source Available",
+  "trust.badge_source": "Transparent Methodology",
   "trust.badge_privacy": "No Personal Data",
   "trust.badge_validated": "Monte Carlo Validated",
   "trust.verified_label": "Verified strategies",
@@ -1328,9 +1328,9 @@ export const en = {
   "trust.badge_live": "Full Transparency Journal",
   "trust.badge_live_desc":
     "Every trade, every failure, every result — all published",
-  "trust.badge_open": "Source Available & Auditable",
+  "trust.badge_open": "Fully Auditable",
   "trust.badge_open_desc":
-    "All strategy code public on GitHub. Verify it yourself.",
+    "Every strategy, every parameter, every result — documented and verifiable.",
   "trust.stat_trades": "Trades Backtested",
   "trust.stat_datapoints": "Data Points Processed",
   "trust.stat_live_days": "Coins Backtested",
@@ -1607,7 +1607,7 @@ export const en = {
   // Homepage trust badges (below features)
   "trust_badges.no_signup": "No signup required",
   "trust_badges.free": "Free forever",
-  "trust_badges.opensource": "Source available on GitHub",
+  "trust_badges.opensource": "Transparent methodology",
   "trust_badges.data_sources": "Data from Binance + CoinGecko",
 
   // Coins page
