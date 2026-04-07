@@ -680,12 +680,11 @@ export const ko: Record<TranslationKey, string> = {
   "about.proof_commits": "활발한 개발 진행 중",
   "about.proof_since": "2025년부터 개발 중",
 
-  // About - Solo Founder section
-  "about.solo_tag": "1인 창업자",
-  "about.solo_headline":
-    "개발자이자 시스템 트레이더 한 명이 만들고 유지합니다.",
+  // About - Founder section
+  "about.solo_tag": "창업자",
+  "about.solo_headline": "시스템 트레이더이자 퀀트 리서처가 설립했습니다.",
   "about.solo_background":
-    "배경: 2021년부터 알고리즘 트레이딩, 퀀트 리서치, 크립토 시장 연구.",
+    "2021년부터 알고리즘 트레이딩, 퀀트 리서치, 크립토 시장 연구.",
   "about.solo_why":
     "PRUVIQ를 만든 이유: 백테스트에서 검증된 전략이 실전에서 실패하는 경험을 직접 겪었고, 기존 툴들이 실패를 숨긴다는 것을 깨달았습니다. 그래서 투명한 시뮬레이션 플랫폼을 설계했습니다.",
 

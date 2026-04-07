@@ -685,12 +685,12 @@ export const en = {
   "about.proof_commits": "Active development",
   "about.proof_since": "In development since 2025",
 
-  // About - Solo Founder section
-  "about.solo_tag": "SOLO FOUNDER",
+  // About - Founder section
+  "about.solo_tag": "FOUNDER",
   "about.solo_headline":
-    "Built and maintained by a single developer and systematic trader.",
+    "Founded by a systematic trader and quantitative researcher.",
   "about.solo_background":
-    "Background: algorithmic trading, quantitative research, crypto markets since 2021.",
+    "Background in algorithmic trading, quantitative research, and crypto markets since 2021.",
   "about.solo_why":
     "Why PRUVIQ: After experiencing firsthand how backtested strategies fail in live markets — and finding that existing tools hide their failures — we built the transparent simulation platform we wished existed.",
 
