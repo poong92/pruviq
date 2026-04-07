@@ -681,7 +681,7 @@ export const en = {
   "about.proof_tag": "BUILT IN PUBLIC",
   "about.proof_desc":
     "PRUVIQ is actively developed. The simulation engine, API, and all strategy logic are continuously updated based on real backtesting data.",
-  "about.proof_github": "View on GitHub",
+  "about.proof_github": "Verified & Auditable",
   "about.proof_commits": "Active development",
   "about.proof_since": "In development since 2025",
 
