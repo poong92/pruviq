@@ -676,7 +676,7 @@ export const ko: Record<TranslationKey, string> = {
   "about.proof_tag": "공개 개발",
   "about.proof_desc":
     "PRUVIQ는 지속적으로 개발 중입니다. 시뮬레이션 엔진, API, 전략 로직은 실제 백테스트 데이터를 바탕으로 꾸준히 업데이트됩니다.",
-  "about.proof_github": "GitHub에서 보기",
+  "about.proof_github": "검증 가능한 데이터",
   "about.proof_commits": "활발한 개발 진행 중",
   "about.proof_since": "2025년부터 개발 중",
 
