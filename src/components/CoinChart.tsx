@@ -504,10 +504,10 @@ export default function CoinChart({
       {/* Header */}
       <div class="mb-3">
         <div class="flex items-baseline gap-3 flex-wrap mb-2">
-          <h1 class="text-[1.375rem] font-bold font-mono m-0">
+          <h2 class="text-[1.375rem] font-bold font-mono m-0">
             {SYMBOL.endsWith("USDT") ? SYMBOL.slice(0, -4) : SYMBOL}
             <span class="text-[--color-text-muted] font-normal">/USDT</span>
-          </h1>
+          </h2>
           <span class="font-mono text-xl font-semibold">
             ${formatChartPrice(lastBar.c)}
           </span>

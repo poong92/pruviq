@@ -326,7 +326,7 @@ export default function StrategyComparison({ lang = "en" }: Props) {
         <div class="font-mono text-xs text-[--color-accent] tracking-widest mb-2 uppercase">
           {t.tag}
         </div>
-        <h1 class="text-3xl md:text-4xl font-bold mb-3">{t.title}</h1>
+        <h2 class="text-3xl md:text-4xl font-bold mb-3">{t.title}</h2>
         <p class="text-[--color-text-muted] text-lg max-w-2xl">{t.desc}</p>
       </div>
 
