@@ -44,7 +44,7 @@ export const ko: Record<TranslationKey, string> = {
   "hero.subcopy":
     "88가지 전략 조합을 검증했습니다. 4개가 실패했고 — 전부 공개했습니다.",
   "hero.cta_secondary": "시뮬레이션 결과 보기",
-  "hero.open_source": "오픈 소스",
+  "hero.open_source": "투명한 검증",
   "hero.stat1_sub": "BTC, ETH 포함 알트코인",
   "hero.stat4_sub": "검증된 전략 전체",
   "hero.stat5_sub": "2024년 1월부터 1시간봉",
@@ -143,13 +143,13 @@ export const ko: Record<TranslationKey, string> = {
   "evidence.sim_slippage": "슬리피지",
   "evidence.sim_slippage_val": "반영",
   "evidence.sim_note":
-    "소스 공개 엔진이 현실적인 비용으로 전략을 시뮬레이션합니다. 선행 편향 없음. 신뢰하고 재현할 수 있는 결과.",
+    "투명한 엔진이 현실적인 비용으로 전략을 시뮬레이션합니다. 선행 편향 없음. 신뢰하고 재현할 수 있는 결과.",
 
   // System
   "system.tag": "시스템",
   "system.title": "코드로, 직감이 아닌.",
   "system.desc":
-    "추측 없이. 체리피킹 없이. 현실적인 시장 조건으로 전략을 시뮬레이션하는 소스 공개 Python 엔진.",
+    "추측 없이. 체리피킹 없이. 현실적인 시장 조건으로 전략을 시뮬레이션하는 Python 엔진.",
   "system.step1": "선택",
   "system.step1_desc":
     "전략 라이브러리에서 선택하세요. BB Squeeze, 모멘텀, 평균회귀 — 또는 나만의 전략으로.",
@@ -159,7 +159,7 @@ export const ko: Record<TranslationKey, string> = {
   "system.step3": "검증",
   "system.step3_desc":
     "전체 그림 확인: 승률, 최대 드로다운, 연속 손실, 수익 팩터. 그리고 판단하세요.",
-  "system.engine_tag": "소스 공개 엔진",
+  "system.engine_tag": "투명한 엔진",
 
   // Features section
   "features.tag": "도구",
@@ -652,7 +652,7 @@ export const ko: Record<TranslationKey, string> = {
     "전략 검증은 누구나 접근할 수 있어야 합니다. 핵심 기능은 항상 무료. 거래소 제휴를 통해서만 수익을 창출합니다.",
   "about.stack_tag": "기술 스택",
   "about.stack_desc":
-    "소스 공개 Python 백테스팅 엔진, Astro 정적 사이트, Cloudflare 엣지 배포, Binance Futures API. 독점 블랙박스 없음.",
+    "Python 백테스팅 엔진, Astro 정적 사이트, Cloudflare 엣지 배포, Binance Futures API. 독점 블랙박스 없음.",
   "about.contact_tag": "연락하기",
   "about.contact_desc": "질문, 피드백, 파트너십 문의:",
   "about.contact_email": "contact@pruviq.com",
@@ -1285,7 +1285,7 @@ export const ko: Record<TranslationKey, string> = {
 
   // Social proof / trust section
   "trust.badge_api": "CoinGecko 데이터",
-  "trust.badge_source": "소스 공개",
+  "trust.badge_source": "투명한 방법론",
   "trust.badge_privacy": "개인정보 불필요",
   "trust.badge_validated": "몬테카를로 검증",
   "trust.verified_label": "검증된 전략",
@@ -1299,8 +1299,9 @@ export const ko: Record<TranslationKey, string> = {
   "trust.badge_oos_desc": "2024, 2025, 2026년 데이터에서 독립 검증",
   "trust.badge_live": "완전 투명 저널",
   "trust.badge_live_desc": "모든 거래, 모든 실패, 모든 결과 — 전부 공개",
-  "trust.badge_open": "소스 공개 감사 가능",
-  "trust.badge_open_desc": "모든 전략 코드를 GitHub에 공개. 직접 확인하세요.",
+  "trust.badge_open": "완전 감사 가능",
+  "trust.badge_open_desc":
+    "모든 전략, 모든 파라미터, 모든 결과 — 문서화되고 검증 가능합니다.",
   "trust.stat_trades": "백테스트 거래 수",
   "trust.stat_datapoints": "처리된 데이터 포인트",
   "trust.stat_live_days": "백테스트 코인 수",
@@ -1571,7 +1572,7 @@ export const ko: Record<TranslationKey, string> = {
   // Homepage trust badges (below features)
   "trust_badges.no_signup": "가입 불필요",
   "trust_badges.free": "영구 무료",
-  "trust_badges.opensource": "GitHub에서 소스 공개",
+  "trust_badges.opensource": "투명한 방법론",
   "trust_badges.data_sources": "Binance + CoinGecko 데이터",
 
   // Coins page
