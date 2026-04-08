@@ -3,33 +3,45 @@ import Layout from '../layouts/Layout.astro';
 ---
 
 <Layout title="404 - Page Not Found | PRUVIQ" description="Page not found. Explore PRUVIQ's free crypto strategy backtesting tools.">
-  <section class="min-h-[60vh] flex flex-col items-center justify-center px-4 text-center">
-    <p class="font-mono text-[--color-accent] text-sm tracking-widest mb-4">404</p>
-    <h1 class="text-4xl font-bold mb-4">Page Not Found</h1>
-    <p class="text-[--color-text-muted] mb-8 max-w-md">
-      The page you're looking for doesn't exist or has been moved.
+  <section class="min-h-[60vh] flex flex-col items-center justify-center px-4 text-center relative overflow-hidden">
+    <!-- Background glow -->
+    <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
+      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full" style="background: radial-gradient(circle, rgba(44,181,232,0.06) 0%, transparent 70%);"></div>
+    </div>
+
+    <!-- Glitch-style 404 -->
+    <div class="relative mb-6">
+      <span class="font-mono text-[8rem] md:text-[10rem] font-black leading-none tracking-tighter text-[--color-bg-elevated] select-none" aria-hidden="true">404</span>
+      <span class="absolute inset-0 flex items-center justify-center font-mono text-[8rem] md:text-[10rem] font-black leading-none tracking-tighter gradient-text select-none">404</span>
+    </div>
+
+    <h1 class="text-2xl md:text-3xl font-bold mb-3 relative">
+      This page doesn't exist
+    </h1>
+    <p class="text-[--color-text-muted] mb-2 max-w-md relative">
+      But unlike bad backtests, we won't pretend it does.
     </p>
-    <div class="flex flex-wrap gap-4 justify-center mb-8">
+    <p class="font-mono text-[--color-accent] text-xs tracking-wider mb-8 relative">
+      Don't Believe. Verify.
+    </p>
+
+    <div class="flex flex-wrap gap-3 justify-center mb-10 relative">
       <a href="/" class="btn btn-primary btn-md">
-        Home
+        Back to Home
       </a>
-      <a href="/simulate" class="border border-[--color-border] px-6 py-2 rounded text-sm hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
-        Strategy Simulator
-      </a>
-      <a href="/strategies" class="border border-[--color-border] px-6 py-2 rounded text-sm hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
-        Strategies
+      <a href="/simulate" class="btn btn-ghost btn-md">
+        Open Simulator
       </a>
     </div>
-    <div class="text-sm text-[--color-text-muted]">
-      <p class="mb-2">Popular pages:</p>
-      <div class="flex flex-wrap gap-2 justify-center">
+
+    <div class="text-sm text-[--color-text-muted] relative">
+      <p class="mb-3 font-mono text-xs text-[--color-text-disabled] uppercase tracking-wider">Or try these</p>
+      <div class="flex flex-wrap gap-x-4 gap-y-1 justify-center">
         <a href="/strategies/bb-squeeze-short" class="text-[--color-accent] hover:underline">BB Squeeze SHORT</a>
-        <span>&middot;</span>
         <a href="/learn" class="text-[--color-accent] hover:underline">Learn</a>
-        <span>&middot;</span>
-        <a href="/fees" class="text-[--color-accent] hover:underline">Fees</a>
-        <span>&middot;</span>
         <a href="/market" class="text-[--color-accent] hover:underline">Market</a>
+        <a href="/fees" class="text-[--color-accent] hover:underline">Fees</a>
+        <a href="/blog" class="text-[--color-accent] hover:underline">Blog</a>
       </div>
     </div>
   </section>

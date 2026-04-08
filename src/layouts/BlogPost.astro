@@ -1,5 +1,7 @@
 ---
 import Layout from './Layout.astro';
+import { getCollection } from 'astro:content';
+import { getLangFromUrl, useTranslations } from '../i18n/index';
 
 interface Props {
   title: string;
@@ -8,9 +10,16 @@ interface Props {
   category: string;
   author?: string;
   image?: string;
+  body?: string;
+  tags?: string[];
+  postId?: string;
+  noAlternate?: boolean;
+  isKorean?: boolean;
 }
 
-const { title, description, date, category, author = 'PRUVIQ Research', image } = Astro.props;
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const { title, description, date, category, author = 'PRUVIQ Research', image, body, tags = [], postId, noAlternate = false, isKorean } = Astro.props;
 
 const categoryLabels: Record<string, string> = {
   market: 'MARKET ANALYSIS',
@@ -18,10 +27,28 @@ const categoryLabels: Record<string, string> = {
   strategy: 'STRATEGY UPDATE',
   weekly: 'WEEKLY REVIEW',
   education: 'EDUCATION',
+  autopsy: 'STRATEGY AUTOPSY',
 };
+
+// Reading time
+const wordCount = body ? body.trim().split(/\s+/).length : 0;
+const readingTime = Math.max(1, Math.ceil(wordCount / 200));
+
+// Related posts (same category, excluding current)
+const collectionName = lang === 'ko' ? 'blog-ko' : 'blog';
+const allPosts = await getCollection(collectionName);
+const relatedPosts = allPosts
+  .filter(p => p.data.category === category && p.id !== postId)
+  .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime())
+  .slice(0, 3);
+
+// Share URL
+const shareUrl = `https://pruviq.com${Astro.url.pathname}`;
+const shareText = encodeURIComponent(`${title} — PRUVIQ`);
+const shareUrlEnc = encodeURIComponent(shareUrl);
 ---
 
-<Layout title={`${title} - PRUVIQ`} description={description} type="article" date={date} category={category} ogImage={image}>
+<Layout title={`${title} - PRUVIQ`} description={description} type="article" date={date} category={category} ogImage={image} noAlternate={noAlternate}>
   <script type="application/ld+json" set:html={JSON.stringify({
     "@context": "https://schema.org",
     "@type": "Article",
@@ -44,60 +71,126 @@ const categoryLabels: Record<string, string> = {
     },
     "mainEntityOfPage": {
       "@type": "WebPage",
-      "@id": `https://pruviq.com${Astro.url.pathname}`
+      "@id": shareUrl
     },
     ...(image ? { "image": { "@type": "ImageObject", "url": `https://pruviq.com${image}`, "width": 1200, "height": 630 } } : {})
   })} />
   <article class="py-12">
-    <div class="max-w-[45rem] mx-auto px-4">
-      <a href="/learn" class="text-[--color-text-muted] text-sm hover:text-[--color-accent] transition-colors mb-8 inline-block">
-        &larr; Back to Learn
+    <div class="max-w-[52rem] mx-auto px-4">
+      <!-- Back link -->
+      <a href={lang === 'ko' ? '/ko/blog' : '/blog'} class="text-[--color-text-muted] text-sm hover:text-[--color-accent] transition-colors mb-8 inline-block">
+        &larr; {lang === 'ko' ? '블로그로 돌아가기' : 'Back to Blog'}
       </a>
 
+      <!-- Header -->
       <div class="mb-8">
         <span class="font-mono text-[--color-accent] text-xs tracking-wider">
           {categoryLabels[category] || category.toUpperCase()}
         </span>
         <h1 class="text-3xl md:text-4xl font-bold mt-2 mb-4">{title}</h1>
-        <div class="flex items-center gap-3 text-sm text-[--color-text-muted]">
+        <div class="flex items-center gap-3 text-sm text-[--color-text-muted] flex-wrap">
           <span class="font-mono">{date}</span>
-          <span class="text-[--color-border]">|</span>
+          <span class="text-[--color-border-hover]">&middot;</span>
           <span>{author}</span>
+          <span class="text-[--color-border-hover]">&middot;</span>
+          <span class="font-mono">{readingTime} min read</span>
         </div>
       </div>
 
-      <div class="prose">
-        <slot />
+      <!-- Content wrapper with TOC sidebar on desktop -->
+      <div class="lg:grid lg:grid-cols-[1fr_200px] lg:gap-12">
+        <!-- Main content -->
+        <div>
+          <div class="prose" id="article-content">
+            <slot />
+          </div>
+
+          <!-- Social sharing -->
+          <div class="mt-10 pt-6 border-t border-[--color-border]">
+            <p class="text-[--color-text-muted] text-xs font-mono uppercase tracking-wider mb-3">
+              {lang === 'ko' ? '공유하기' : 'Share'}
+            </p>
+            <div class="flex gap-3">
+              <a href={`https://x.com/intent/tweet?text=${shareText}&url=${shareUrlEnc}`}
+                 target="_blank" rel="noopener noreferrer"
+                 class="btn btn-ghost btn-sm text-xs no-underline" aria-label="Share on X">
+                <svg class="w-4 h-4 mr-1.5 inline-block" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                X
+              </a>
+              <a href={`https://www.linkedin.com/sharing/share-offsite/?url=${shareUrlEnc}`}
+                 target="_blank" rel="noopener noreferrer"
+                 class="btn btn-ghost btn-sm text-xs no-underline" aria-label="Share on LinkedIn">
+                <svg class="w-4 h-4 mr-1.5 inline-block" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                LinkedIn
+              </a>
+              <button onclick="navigator.clipboard.writeText(window.location.href).then(()=>{this.textContent='Copied!';setTimeout(()=>this.textContent='Copy link',2000)})"
+                      class="btn btn-ghost btn-sm text-xs" aria-label="Copy link">
+                <svg class="w-4 h-4 mr-1.5 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+                Copy link
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- TOC sidebar (desktop only) -->
+        <aside class="hidden lg:block">
+          <nav id="toc-nav" class="sticky top-24 text-sm" aria-label="Table of contents">
+            <p class="font-mono text-[--color-text-disabled] text-xs uppercase tracking-wider mb-3">
+              {lang === 'ko' ? '목차' : 'Contents'}
+            </p>
+            <ul id="toc-list" class="space-y-2 border-l border-[--color-border] pl-3"></ul>
+          </nav>
+        </aside>
       </div>
 
+      <hr class="section-divider my-12" />
 
-      <hr class="section-divider" />
+      <!-- Related posts -->
+      {relatedPosts.length > 0 && (
+        <div class="reveal mb-12">
+          <h3 class="font-bold text-lg mb-6">
+            {lang === 'ko' ? '관련 글' : 'Related Articles'}
+          </h3>
+          <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {relatedPosts.map(rp => (
+              <a href={`${lang === 'ko' ? '/ko' : ''}/blog/${rp.id}`}
+                 class="block border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card] card-hover no-underline group">
+                <span class="font-mono text-[--color-accent] text-xs">{rp.data.date}</span>
+                <h4 class="font-semibold text-sm mt-1 group-hover:text-[--color-accent] transition-colors line-clamp-2">
+                  {rp.data.title}
+                </h4>
+                <p class="text-[--color-text-muted] text-xs mt-1 line-clamp-2">{rp.data.description}</p>
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
 
       <!-- Article end CTA -->
-      <div class="reveal mt-12 border-t border-[--color-border] pt-8">
+      <div class="reveal border-t border-[--color-border] pt-8">
         {category === 'education' ? (
           <div class="card-hover border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] text-center">
-            <h3 class="font-bold text-lg mb-2">Build Your Own Strategy</h3>
-            <p class="text-[--color-text-muted] text-sm mb-4">Combine indicators, set conditions, and backtest on 570+ coins with 2+ years of data. No code required.</p>
+            <h3 class="font-bold text-lg mb-2">{lang === 'ko' ? '나만의 전략 만들기' : 'Build Your Own Strategy'}</h3>
+            <p class="text-[--color-text-muted] text-sm mb-4">{lang === 'ko' ? '14개 지표를 조합하고 570개 이상 코인에서 백테스트하세요. 코딩 불필요.' : 'Combine indicators, set conditions, and backtest on 570+ coins with 2+ years of data. No code required.'}</p>
             <div class="flex flex-col sm:flex-row gap-3 justify-center">
-              <a href="/simulate" class="btn btn-primary btn-md">
-                Open Strategy Builder &rarr;
+              <a href={lang === 'ko' ? '/ko/simulate' : '/simulate'} class="btn btn-primary btn-md">
+                {lang === 'ko' ? '전략 빌더 열기' : 'Open Strategy Builder'} &rarr;
               </a>
-              <a href="/fees" class="btn btn-ghost btn-md">
-                Save on Fees
+              <a href={lang === 'ko' ? '/ko/fees' : '/fees'} class="btn btn-ghost btn-md">
+                {lang === 'ko' ? '수수료 절약' : 'Save on Fees'}
               </a>
             </div>
           </div>
         ) : (
           <div class="card-hover border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] text-center">
-            <h3 class="font-bold text-lg mb-2">Ready to test strategies yourself?</h3>
-            <p class="text-[--color-text-muted] text-sm mb-4">Simulate trading strategies on 570+ coins with 2+ years of data. Free.</p>
+            <h3 class="font-bold text-lg mb-2">{lang === 'ko' ? '직접 전략을 테스트해보세요' : 'Ready to test strategies yourself?'}</h3>
+            <p class="text-[--color-text-muted] text-sm mb-4">{lang === 'ko' ? '570개 이상 코인에서 트레이딩 전략을 시뮬레이션하세요. 무료.' : 'Simulate trading strategies on 570+ coins with 2+ years of data. Free.'}</p>
             <div class="flex flex-col sm:flex-row gap-3 justify-center">
-              <a href="/simulate" class="btn btn-primary btn-md">
-                Open Simulator &rarr;
+              <a href={lang === 'ko' ? '/ko/simulate' : '/simulate'} class="btn btn-primary btn-md">
+                {lang === 'ko' ? '시뮬레이터 열기' : 'Open Simulator'} &rarr;
               </a>
-              <a href="/fees" class="btn btn-ghost btn-md">
-                Save on Fees
+              <a href={lang === 'ko' ? '/ko/fees' : '/fees'} class="btn btn-ghost btn-md">
+                {lang === 'ko' ? '수수료 절약' : 'Save on Fees'}
               </a>
             </div>
           </div>
@@ -105,4 +198,50 @@ const categoryLabels: Record<string, string> = {
       </div>
     </div>
   </article>
+
+  <!-- TOC generation script -->
+  <script is:inline>
+    (function() {
+      const content = document.getElementById('article-content');
+      const tocList = document.getElementById('toc-list');
+      if (!content || !tocList) return;
+      const headings = content.querySelectorAll('h2, h3');
+      if (headings.length < 3) {
+        const tocNav = document.getElementById('toc-nav');
+        if (tocNav) tocNav.style.display = 'none';
+        return;
+      }
+      headings.forEach(function(h, i) {
+        if (!h.id) h.id = 'heading-' + i;
+        var li = document.createElement('li');
+        var a = document.createElement('a');
+        a.href = '#' + h.id;
+        a.textContent = h.textContent;
+        a.className = 'block text-[--color-text-muted] hover:text-[--color-accent] transition-colors no-underline leading-snug';
+        if (h.tagName === 'H3') {
+          a.className += ' pl-3 text-xs';
+          a.style.color = 'var(--color-text-disabled)';
+        }
+        li.appendChild(a);
+        tocList.appendChild(li);
+      });
+      // Active heading tracking
+      var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            tocList.querySelectorAll('a').forEach(function(a) {
+              a.style.color = '';
+              a.style.fontWeight = '';
+            });
+            var active = tocList.querySelector('a[href="#' + entry.target.id + '"]');
+            if (active) {
+              active.style.color = 'var(--color-accent)';
+              active.style.fontWeight = '600';
+            }
+          }
+        });
+      }, { rootMargin: '-80px 0px -80% 0px' });
+      headings.forEach(function(h) { observer.observe(h); });
+    })();
+  </script>
 </Layout>
