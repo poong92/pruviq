@@ -266,12 +266,14 @@ test.describe("Interactive QA — 기능 클릭 테스트", () => {
     const resultIndicator = page.locator("text=/\\d+\\.?\\d*%/").first();
     await expect(resultIndicator).toBeVisible({ timeout: 60000 });
 
-    const bodyText = (await page.textContent("body")) ?? "";
+    // 결과 영역만 확인 (전체 body는 인라인 스크립트 포함하여 false positive)
+    const resultArea = page.locator("main").first();
+    const resultText = (await resultArea.textContent()) ?? "";
 
     // PF sentinel 999 금지
-    expect(bodyText).not.toMatch(/\b999\b/);
+    expect(resultText).not.toMatch(/Profit Factor\s*999/);
     // MDD 800%+ 이상 금지
-    expect(bodyText).not.toMatch(/\b[89]\d{2}\.?\d*%/);
+    expect(resultText).not.toMatch(/Max DD\s*-?[89]\d{2}\.?\d*%/);
 
     console.log("✅ Reversals 시나리오 수치 범위 정상");
   });
@@ -346,20 +348,19 @@ test.describe("Interactive QA — 기능 클릭 테스트", () => {
       await page.waitForTimeout(500);
     }
 
-    // Avoid Hours: Expert 패널 내 "Avoid Hours" 텍스트 근처 버튼 찾기
-    // collapsible 섹션이므로 먼저 토글 클릭
-    const avoidToggle = page.locator("text=/Avoid Hours/i").first();
-    if ((await avoidToggle.count()) > 0) {
-      await avoidToggle.click();
-      await page.waitForTimeout(300);
-      // 시간 버튼 (0-23) 중 첫 번째 클릭
-      const hourBtns = page
-        .locator("button")
-        .filter({ hasText: /^[0-9]{1,2}$/ });
-      if ((await hourBtns.count()) > 0) {
-        await hourBtns.first().click();
-        await page.waitForTimeout(200);
-      }
+    // Avoid Hours: Expert 패널 내 시간 버튼(0-23) 찾기
+    // Avoid Hours가 이미 열려있을 수 있으므로 토글 없이 직접 시간 버튼 탐색
+    const hourBtn = page
+      .locator('[data-testid="hour-0"], button:has-text("0")')
+      .first();
+    // 시간 버튼이 visible할 때까지 대기 (collapsible section 열릴 때까지)
+    try {
+      await expect(hourBtn).toBeVisible({ timeout: 5000 });
+      await hourBtn.click();
+      await page.waitForTimeout(200);
+    } catch {
+      // Avoid Hours 섹션이 없거나 접힌 상태 — 스킵 (non-critical)
+      console.log("Avoid Hours buttons not visible — skipping click");
     }
 
     // JS 에러 없음 확인
