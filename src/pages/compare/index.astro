@@ -5,12 +5,12 @@ import { useTranslations } from '../../i18n/index';
 const t = useTranslations('en');
 
 const comparisons = [
-  { slug: 'tradingview', name: 'TradingView', desc: t('compare_index.tradingview_desc'), badge: t('compare_index.most_popular') },
-  { slug: 'coinrule', name: 'Coinrule', desc: t('compare_index.coinrule_desc'), badge: null },
-  { slug: 'cryptohopper', name: 'Cryptohopper', desc: t('compare_index.cryptohopper_desc'), badge: null },
-  { slug: '3commas', name: '3Commas', desc: t('compare_index.3commas_desc'), badge: null },
-  { slug: 'gainium', name: 'Gainium', desc: t('compare_index.gainium_desc'), badge: null },
-  { slug: 'streak', name: 'Streak', desc: t('compare_index.streak_desc'), badge: null },
+  { slug: 'tradingview', name: 'TradingView', desc: t('compare_index.tradingview_desc'), badge: t('compare_index.most_popular'), accent: '#2962FF', icon: '📈' },
+  { slug: 'coinrule', name: 'Coinrule', desc: t('compare_index.coinrule_desc'), badge: null, accent: '#6C5CE7', icon: '🤖' },
+  { slug: 'cryptohopper', name: 'Cryptohopper', desc: t('compare_index.cryptohopper_desc'), badge: null, accent: '#00B894', icon: '🐸' },
+  { slug: '3commas', name: '3Commas', desc: t('compare_index.3commas_desc'), badge: null, accent: '#FDCB6E', icon: '⚡' },
+  { slug: 'gainium', name: 'Gainium', desc: t('compare_index.gainium_desc'), badge: null, accent: '#E17055', icon: '🔥' },
+  { slug: 'streak', name: 'Streak', desc: t('compare_index.streak_desc'), badge: null, accent: '#74B9FF', icon: '📊' },
 ];
 ---
 
@@ -124,16 +124,22 @@ const comparisons = [
         {comparisons.map((c) => (
           <a
             href={`/compare/${c.slug}`}
-            class="group relative border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] card-hover card-glow"
+            class="group relative border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] card-hover card-glow overflow-hidden"
+            style={`--card-accent: ${c.accent};`}
           >
+            {/* Subtle accent line top */}
+            <div class="absolute top-0 left-0 right-0 h-[2px] opacity-40" style={`background: ${c.accent};`} aria-hidden="true"></div>
             {c.badge && (
               <span class="absolute top-4 right-4 text-xs font-mono bg-[--color-accent] text-black px-2 py-0.5 rounded">
                 {c.badge}
               </span>
             )}
-            <h2 class="text-lg font-bold mb-1 group-hover:text-[--color-accent] transition-colors">
-              PRUVIQ vs {c.name}
-            </h2>
+            <div class="flex items-center gap-3 mb-2">
+              <span class="text-2xl" aria-hidden="true">{c.icon}</span>
+              <h2 class="text-lg font-bold group-hover:text-[--color-accent] transition-colors">
+                PRUVIQ vs {c.name}
+              </h2>
+            </div>
             <p class="text-sm text-[--color-text-muted]">{c.desc}</p>
           </a>
         ))}
