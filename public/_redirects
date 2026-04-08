@@ -3,6 +3,10 @@
 # 검증: bash scripts/qa-redirects.sh
 # 참고: 코인 대소문자 리다이렉트는 _worker.js에서 처리 (Cloudflare 100개 제한)
 
+# /en/ → / (English is root, hreflang points to /)
+/en /  301
+/en/* /:splat 301
+
 /builder /simulate/ 301
 /builder/* /simulate/ 301
 /simulator /simulate/ 301

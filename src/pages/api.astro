@@ -61,8 +61,21 @@ const API_BASE = 'https://api.pruviq.com';
 
   <hr class="section-divider" />
 
+  <!-- API Sidebar Navigation (desktop) -->
+  <nav id="api-sidebar" class="hidden xl:block fixed left-[max(1rem,calc(50%-40rem))] top-24 w-48 text-sm z-40" aria-label="API sections">
+    <p class="font-mono text-[--color-text-disabled] text-xs uppercase tracking-wider mb-3">Endpoints</p>
+    <ul class="space-y-1.5 border-l border-[--color-border] pl-3">
+      <li><a href="#market-data" class="block text-[--color-text-muted] hover:text-[--color-accent] transition-colors no-underline py-0.5">Market Data</a></li>
+      <li><a href="#data-retrieval" class="block text-[--color-text-muted] hover:text-[--color-accent] transition-colors no-underline py-0.5">Data Retrieval</a></li>
+      <li><a href="#signals" class="block text-[--color-text-muted] hover:text-[--color-accent] transition-colors no-underline py-0.5">Signals</a></li>
+      <li><a href="#simulation" class="block text-[--color-text-muted] hover:text-[--color-accent] transition-colors no-underline py-0.5">Simulation</a></li>
+      <li><a href="#builder" class="block text-[--color-text-muted] hover:text-[--color-accent] transition-colors no-underline py-0.5">Builder</a></li>
+      <li><a href="#quickstart" class="block text-[--color-text-muted] hover:text-[--color-accent] transition-colors no-underline py-0.5">Quick Start</a></li>
+    </ul>
+  </nav>
+
   <!-- ENDPOINTS: MARKET DATA -->
-  <section class="reveal pb-12 border-t border-[--color-border] pt-12">
+  <section id="market-data" class="reveal pb-12 border-t border-[--color-border] pt-12">
     <div class="max-w-5xl mx-auto px-4">
       <h2 class="text-2xl font-bold mb-6">{t('api.section_market')}</h2>
       <div class="space-y-4 max-w-4xl">
@@ -163,7 +176,7 @@ const API_BASE = 'https://api.pruviq.com';
   <hr class="section-divider" />
 
   <!-- ENDPOINTS: DATA -->
-  <section class="reveal pb-12 border-t border-[--color-border] pt-12">
+  <section id="data-retrieval" class="reveal pb-12 border-t border-[--color-border] pt-12">
     <div class="max-w-5xl mx-auto px-4">
       <h2 class="text-2xl font-bold mb-6">{t('api.section_data')}</h2>
       <div class="space-y-4 max-w-4xl">
@@ -317,7 +330,7 @@ const API_BASE = 'https://api.pruviq.com';
   <hr class="section-divider" />
 
   <!-- ENDPOINTS: RANKINGS & SIGNALS -->
-  <section class="reveal pb-12 border-t border-[--color-border] pt-12">
+  <section id="signals" class="reveal pb-12 border-t border-[--color-border] pt-12">
     <div class="max-w-5xl mx-auto px-4">
       <h2 class="text-2xl font-bold mb-6">{t('api.section_signals')}</h2>
       <div class="space-y-4 max-w-4xl">
@@ -432,7 +445,7 @@ const API_BASE = 'https://api.pruviq.com';
   <hr class="section-divider" />
 
   <!-- ENDPOINTS: SIMULATION -->
-  <section class="reveal pb-12 border-t border-[--color-border] pt-12">
+  <section id="simulation" class="reveal pb-12 border-t border-[--color-border] pt-12">
     <div class="max-w-5xl mx-auto px-4">
       <h2 class="text-2xl font-bold mb-6">{t('api.section_simulation')}</h2>
       <div class="space-y-4 max-w-4xl">
@@ -586,7 +599,7 @@ const API_BASE = 'https://api.pruviq.com';
   <hr class="section-divider" />
 
   <!-- ENDPOINTS: STRATEGY BUILDER -->
-  <section class="reveal pb-12 border-t border-[--color-border] pt-12">
+  <section id="builder" class="reveal pb-12 border-t border-[--color-border] pt-12">
     <div class="max-w-5xl mx-auto px-4">
       <h2 class="text-2xl font-bold mb-6">{t('api.section_builder')}</h2>
       <div class="space-y-4 max-w-4xl">
@@ -726,7 +739,7 @@ const API_BASE = 'https://api.pruviq.com';
   <hr class="section-divider" />
 
   <!-- QUICK START -->
-  <section class="reveal pb-12 border-t border-[--color-border] pt-12">
+  <section id="quickstart" class="reveal pb-12 border-t border-[--color-border] pt-12">
     <div class="max-w-5xl mx-auto px-4">
       <h2 class="text-2xl font-bold mb-2">{t('api.quickstart')}</h2>
       <p class="text-[--color-text-muted] text-sm mb-6">{t('api.quickstart_desc')}</p>

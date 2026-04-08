@@ -21,6 +21,9 @@ const { Content } = await render(post);
   category={post.data.category}
   author={post.data.author}
   image={post.data.image}
+  body={post.body}
+  tags={post.data.tags}
+  postId={post.id}
 >
   <Content />
 </BlogPost>
