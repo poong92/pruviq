@@ -124,7 +124,7 @@ const liveTrades = perf.summary.total_trades.toLocaleString();
         <table class="w-full text-sm min-w-[400px]">
           <caption class="sr-only">BB Squeeze SHORT strategy performance metrics</caption>
           <thead>
-            <tr class="border-b border-[--color-border] bg-[--color-bg-subtle]">
+            <tr class="border-b border-[--color-border] bg-[var(--color-bg-subtle)]">
               <th class="text-left p-3 font-mono text-xs text-[--color-text-muted]">{t('perf.tbl_header_metric')}</th>
               <th class="text-right p-3 font-mono text-xs text-[--color-text-muted]">{t('perf.tbl_header_value')}</th>
             </tr>
@@ -499,7 +499,7 @@ const liveTrades = perf.summary.total_trades.toLocaleString();
   <hr class="section-divider" />
 
   <!-- DISCLAIMER -->
-  <section class="reveal pb-16 bg-[--color-bg-subtle]">
+  <section class="reveal pb-16 bg-[var(--color-bg-subtle)]">
     <div class="max-w-5xl mx-auto px-4 text-center pt-12">
       <p class="text-[--color-text-muted] text-xs max-w-lg mx-auto">
         {t('cta.disclaimer')}
