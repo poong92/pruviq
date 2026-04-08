@@ -127,8 +127,31 @@ else
     rm -f "$RANKINGS_JSON.tmp"
 fi
 
+# --- site-stats.json auto-update (coins, strategies, trading_days from API) ---
+SITE_STATS="public/data/site-stats.json"
+log "Updating site-stats.json..."
+python3 -c "
+import json, datetime, urllib.request
+path = '$REPO_DIR/$SITE_STATS'
+with open(path) as f:
+    d = json.load(f)
+try:
+    health = json.loads(urllib.request.urlopen('http://127.0.0.1:8080/health', timeout=5).read())
+    d['coins_analyzed'] = health.get('coins_loaded', d.get('coins_analyzed', 572))
+except: pass
+try:
+    strats = json.loads(urllib.request.urlopen('http://127.0.0.1:8080/strategies', timeout=5).read())
+    d['strategies_tested'] = len(strats) if isinstance(strats, list) else d.get('strategies_tested', 17)
+except: pass
+start = datetime.date(2023, 12, 30)
+d['trading_days'] = (datetime.date.today() - start).days
+d['last_updated'] = datetime.date.today().isoformat()
+with open(path, 'w') as f:
+    json.dump(d, f)
+" 2>/dev/null && log "site-stats.json updated" || log "site-stats.json update failed (non-critical)"
+
 # All data files that refresh_static.py may update
-DATA_FILES="public/data/market.json public/data/coins-stats.json public/data/macro.json public/data/news.json public/data/coin-metadata.json public/data/rankings-daily.json"
+DATA_FILES="public/data/market.json public/data/coins-stats.json public/data/macro.json public/data/news.json public/data/coin-metadata.json public/data/rankings-daily.json public/data/site-stats.json"
 
 # Check if any data changed
 HAS_CHANGES=false

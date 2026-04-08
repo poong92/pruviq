@@ -23,7 +23,7 @@
 
 # PRUVIQ v0.3.0
 
-"Don't Believe. Verify." — 무료 크립토 전략 시뮬레이션 + 시장 컨텍스트 플랫폼
+"Verify. Execute. Profit." — 무료 크립토 전략 시뮬레이션 + 시장 컨텍스트 플랫폼
 - 배포: Cloudflare Pages (pruviq.com) / 백엔드: api.pruviq.com (Mac Mini, FastAPI)
 - 수익: 거래소 레퍼럴 (모든 기능 무료)
 
