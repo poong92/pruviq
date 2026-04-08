@@ -32,7 +32,7 @@ const rows = [
         <span class="block text-lg md:text-2xl font-normal text-[--color-text-muted] mt-2">{t('vs_3commas.subtitle')}</span>
       </h1>
       <p class="text-[--color-text-muted] text-lg max-w-2xl mb-6">{t('vs_3commas.desc')}</p>
-      <div class="border border-[--color-accent]/30 rounded-lg p-4 bg-[--color-accent]/5 max-w-2xl">
+      <div class="border border-[--color-accent]/30 rounded-lg p-4 bg-[--color-accent]/10 border-x border-[--color-accent]/20 max-w-2xl">
         <p class="font-mono text-[--color-accent] text-xs font-bold mb-1">{t('vs_3commas.tldr')}</p>
         <p class="text-sm text-[--color-text-muted]">{t('vs_3commas.tldr_text')}</p>
       </div>
@@ -55,7 +55,7 @@ const rows = [
           </thead>
           <tbody>
             {rows.map((row) => (
-              <tr class={`border-b border-[--color-border] ${row.highlight ? 'bg-[--color-accent]/5' : ''}`}>
+              <tr class={`border-b border-[--color-border] ${row.highlight ? 'bg-[--color-accent]/10 border-x border-[--color-accent]/20' : ''}`}>
                 <td class="py-3 px-4 font-medium text-[--color-text-secondary] text-xs uppercase tracking-wide">{row.label}</td>
                 <td class={`py-3 px-4 ${row.win === 'p' ? 'text-[--color-up]' : row.win === 'both' ? 'text-[--color-accent]' : 'text-[--color-text-muted]'}`}>
                   <span class="flex items-start gap-2"><span class="mt-0.5 shrink-0 text-base leading-none" aria-hidden="true">{row.win === 'p' ? '\u2713' : row.win === 'both' ? '~' : '\u2014'}</span><span>{row.p}</span></span>
@@ -70,7 +70,7 @@ const rows = [
       </div>
       <div class="md:hidden space-y-4">
         {rows.map((row) => (
-          <div class={`border border-[--color-border] rounded-lg p-4 ${row.highlight ? 'bg-[--color-accent]/5 border-[--color-accent]/30' : 'bg-[--color-bg-card]'}`}>
+          <div class={`border border-[--color-border] rounded-lg p-4 ${row.highlight ? 'bg-[--color-accent]/10 border-x border-[--color-accent]/20 border-[--color-accent]/30' : 'bg-[--color-bg-card]'}`}>
             <p class="font-mono text-xs text-[--color-text-muted] uppercase tracking-wider mb-2">{row.label}</p>
             <div class="grid grid-cols-2 gap-3">
               <div><p class="text-xs text-[--color-accent] font-mono mb-1">PRUVIQ</p><p class="text-sm text-[--color-accent]">{row.p}</p></div>
@@ -135,7 +135,7 @@ const rows = [
   <hr class="section-divider" />
   <section class="pb-12 pt-12 reveal">
     <div class="max-w-5xl mx-auto px-4">
-      <div class="border border-[--color-accent]/30 rounded-lg p-6 bg-[--color-accent]/5 max-w-3xl mx-auto text-center">
+      <div class="border border-[--color-accent]/30 rounded-lg p-6 bg-[--color-accent]/10 border-x border-[--color-accent]/20 max-w-3xl mx-auto text-center">
         <h3 class="font-bold text-xl mb-3 text-[--color-accent]">{t('vs_3commas.best_together')}</h3>
         <p class="text-[--color-text-muted]">{t('vs_3commas.best_together_desc')}</p>
       </div>
