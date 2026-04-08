@@ -42,7 +42,7 @@
   --color-bg-elevated:   #1C1C20;   /* hover/active card state */
   --color-bg-hover:      #1C1C20;   /* alias for hover state */
   --color-bg-overlay:    #27272A;   /* dropdown, toast overlay */
-  --color-bg-subtle:     rgba(255,255,255,0.035);
+  --color-bg-subtle:     rgba(255,255,255,0.06);
   --color-bg-tooltip:    rgba(24,24,27,0.95);
 
   /* ─── TEXT (4-level hierarchy: text > secondary > muted > disabled) ─── */

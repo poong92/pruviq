@@ -571,13 +571,19 @@ export default function CoinListTable({ lang = "en" }: { lang?: "en" | "ko" }) {
               >
                 {t.chart}
               </th>
+              <th
+                scope="col"
+                class="px-2 py-2 text-center font-mono text-[0.6875rem] tracking-wider uppercase border-b border-[--color-border] text-[--color-text-muted] hidden lg:table-cell cursor-default select-none"
+              >
+                TEST
+              </th>
             </tr>
           </thead>
           <tbody>
             {pageItems.length === 0 && (
               <tr>
                 <td
-                  colSpan={9}
+                  colSpan={10}
                   class="py-8 text-center text-[--color-text-muted]"
                 >
                   {t.noResults}
@@ -668,6 +674,15 @@ export default function CoinListTable({ lang = "en" }: { lang?: "en" | "ko" }) {
                     ) : (
                       <span class="text-[--color-text-muted]">-</span>
                     )}
+                  </td>
+                  <td class="px-2 py-2.5 hidden lg:table-cell text-center">
+                    <a
+                      href={`${lang === "ko" ? "/ko" : ""}/simulate?coin=${coin.symbol}`}
+                      onClick={(e: MouseEvent) => e.stopPropagation()}
+                      class="text-xs font-mono text-[--color-accent] hover:underline"
+                    >
+                      Test &rarr;
+                    </a>
                   </td>
                 </tr>
               );

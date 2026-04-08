@@ -1606,7 +1606,8 @@ export const ko: Record<TranslationKey, string> = {
   "ranking.card_trades": "거래 수",
   "ranking.card_days": "집계 일수",
   "ranking.card_days_unit": "일",
-  "ranking.card_low_sample": "샘플 부족 ({n}건 < 100건)",
+  "ranking.card_low_sample":
+    "제한된 데이터 ({n}거래). 참고용으로만 활용하세요.",
   "ranking.card_load_fail": "데이터 로드 실패",
   "ranking.section_best3_title": "상위 3개 전략",
   "ranking.section_best3_sub": "PF(수익팩터) 기준 상위 3개",

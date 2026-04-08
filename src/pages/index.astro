@@ -110,7 +110,8 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
   </div>
 
   <!-- HOW IT WORKS -->
-  <section class="max-w-7xl mx-auto px-6 py-16 md:py-24">
+  <hr class="section-divider" />
+  <section class="max-w-7xl mx-auto px-6 py-16 md:py-24 bg-[--color-bg-subtle]">
     <h2 class="text-2xl md:text-3xl font-bold text-center mb-4">How It Works</h2>
     <p class="text-[--color-text-secondary] text-center text-lg mb-16 max-w-xl mx-auto">From strategy idea to verified results in 3 steps.</p>
     <div class="grid md:grid-cols-3 gap-8">
@@ -309,7 +310,7 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
 
   <!-- FAQ (visible section matching JSON-LD) -->
   <hr class="section-divider" />
-  <section class="py-16 md:py-24 reveal" aria-labelledby="faq-heading">
+  <section class="py-16 md:py-24 bg-[--color-bg-subtle] reveal" aria-labelledby="faq-heading">
     <div class="max-w-7xl mx-auto px-6">
       <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">FAQ</p>
       <h2 id="faq-heading" class="text-2xl md:text-3xl font-bold mb-12">{t('faq.title')}</h2>
