@@ -29,16 +29,16 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
 <Layout title={t('meta.home_title')} description={t('meta.index_desc')}>
 
   <!-- HERO — 50/50 layout: text left, live demo right -->
-  <section class="relative overflow-hidden hero-bg-depth">
+  <section class="relative overflow-hidden hero-bg-depth bg-noise">
     <HeroGlow />
     <div class="relative max-w-7xl mx-auto px-6 pt-10 pb-16 md:pt-14 md:pb-20 hero-enter">
       <div class="grid md:grid-cols-2 gap-12 md:gap-16 items-center">
         <!-- Left: Text + CTA -->
         <div>
           <HeroBadge stat={simulationsRun} label="시뮬레이션 실행" cta="무료 체험 →" />
-          <p class="font-mono text-[--color-accent] text-sm tracking-wider mb-4 opacity-80">Don't Believe. Verify.</p>
-          <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold tracking-[-0.02em] leading-[1.15]">
-            대부분의 백테스트는 거짓말합니다.<br/><span class="gradient-text">우리는 증거를 공개합니다.</span>
+          <p class="font-mono text-[--color-accent] text-sm tracking-wider mb-4 opacity-80">검증하고. 실행하고. 수익내세요.</p>
+          <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold tracking-[-0.02em] leading-[1.2] word-break-keep">
+            대부분의 백테스트는<br/>거짓말합니다.<br/><span class="gradient-text">우리는 증거를 공개합니다.</span>
           </h1>
           <p class="mt-6 text-lg text-[--color-text-secondary] leading-relaxed max-w-lg">
             <strong class="text-[--color-text]">{coinsAnalyzed}개 이상의 코인</strong>에서 실제 수수료를 포함한 전략 검증. 실패를 확인하고, 살아남은 전략만 남기세요. 코딩 불필요. 가입 불필요.
