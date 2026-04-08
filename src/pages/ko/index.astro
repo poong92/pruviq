@@ -36,36 +36,33 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
         <!-- Left: Text + CTA -->
         <div>
           <HeroBadge stat={simulationsRun} label="시뮬레이션 실행" cta="무료 체험 →" />
-          <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold tracking-[-0.04em] leading-[1.08]">
-            {t('hero.h1_line1')} <span class="gradient-text">{coinsAnalyzed}개 코인</span>, 몇 초 만에 검증
+          <p class="font-mono text-[--color-accent] text-sm tracking-wider mb-4 opacity-80">Don't Believe. Verify.</p>
+          <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold tracking-[-0.02em] leading-[1.15]">
+            대부분의 백테스트는 거짓말합니다.<br/><span class="gradient-text">우리는 증거를 공개합니다.</span>
           </h1>
           <p class="mt-6 text-lg text-[--color-text-secondary] leading-relaxed max-w-lg">
-            내 전략이 실제로 어떤 성과를 냈을지 확인하세요. 무료. 코딩 불필요. 가입 불필요. 실제 수수료 포함.
+            <strong class="text-[--color-text]">{coinsAnalyzed}개 이상의 코인</strong>에서 실제 수수료를 포함한 전략 검증. 실패를 확인하고, 살아남은 전략만 남기세요. 코딩 불필요. 가입 불필요.
           </p>
-          <!-- Trust signals inline -->
-          <div class="flex flex-col gap-2 mt-6 text-sm text-[--color-text-secondary]">
-            <span class="flex items-center gap-2">
-              <svg class="w-4 h-4 text-[--color-up] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
-              {coinsAnalyzed}개 코인 · 실제 수수료 포함 시뮬레이션
-            </span>
-            <span class="flex items-center gap-2">
-              <svg class="w-4 h-4 text-[--color-up] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
-              가입 불필요 · 무료 · 신용카드 불필요
-            </span>
-            <span class="flex items-center gap-2">
-              <svg class="w-4 h-4 text-[--color-up] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
-              실패한 전략도 투명하게 공개
-            </span>
+          <!-- Differentiator — front and center -->
+          <div class="mt-6 flex items-start gap-3 px-4 py-3 rounded-lg border border-[--color-verified-border] bg-[--color-verified-subtle]">
+            <span class="text-[--color-verified] text-lg leading-none mt-0.5" aria-hidden="true">&#9888;</span>
+            <p class="text-sm text-[--color-text-secondary]">
+              <strong class="text-[--color-verified]">88개 전략 테스트, 4개 폐기.</strong> 모든 실패를 전체 데이터와 함께 공개합니다. <a href="/ko/strategies" class="text-[--color-accent] hover:underline">전부 보기 &rarr;</a>
+            </p>
           </div>
           <!-- CTA -->
           <div class="flex flex-col sm:flex-row gap-3 mt-8">
             <a href="/ko/simulate" class="btn btn-primary btn-lg text-center">
-              시뮬레이터 열기 — 무료 →
+              시뮬레이터 열기 — 무료 &rarr;
             </a>
             <a href="/ko/strategies" class="btn btn-ghost btn-lg text-center">
               전략 탐색하기
             </a>
           </div>
+          <!-- Micro trust -->
+          <p class="mt-4 text-xs text-[--color-text-disabled] font-mono">
+            {coinsAnalyzed}+ 코인 · 2년+ 데이터 · 실제 수수료 · 신용카드 불필요
+          </p>
         </div>
         <!-- Right: Live simulator demo -->
         <div class="relative">

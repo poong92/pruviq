@@ -750,6 +750,29 @@ textarea:focus-visible,
   .stat-glass { min-height: 56px; }
 }
 
+/* ─── Mobile layout improvements ─── */
+@media (max-width: 767px) {
+  /* Tighter hero padding on mobile */
+  .hero-enter { padding-top: 1.5rem; padding-bottom: 2rem; }
+
+  /* Stack stats vertically if cramped */
+  .stat-glass { padding: 0.75rem; }
+  .stat-glass p:first-child { font-size: 1.25rem; }
+
+  /* Full-width buttons on mobile */
+  .btn-lg { width: 100%; justify-content: center; }
+
+  /* Reduce section gaps on mobile */
+  .section-gap { padding-top: 3rem; padding-bottom: 3rem; }
+
+  /* Prose: tighter margins */
+  .prose h2 { margin-top: 1.75rem; font-size: 1.3rem; }
+  .prose h3 { margin-top: 1.25rem; font-size: 1.1rem; }
+
+  /* Hide API sidebar on smaller screens (already xl:block but explicit) */
+  #api-sidebar { display: none; }
+}
+
 /* ─── Metric progress bar ─── */
 .metric-bar {
   display: block;
@@ -1396,4 +1419,44 @@ textarea:focus-visible,
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--color-text-muted);
+}
+
+/* ─── Korean market convention: up=red, down=blue ─── */
+:lang(ko) .color-up, :lang(ko) .stat-positive { color: var(--color-down); }
+:lang(ko) .color-down, :lang(ko) .stat-negative { color: var(--color-up); }
+:lang(ko) .flash-up { animation: flash-red 0.6s ease-out; }
+:lang(ko) .flash-down { animation: flash-green 0.6s ease-out; }
+
+/* ─── Enhanced hover interactions ─── */
+.card-premium:hover::before {
+  background: linear-gradient(
+    135deg,
+    rgba(44,181,232,0.06) 0%,
+    rgba(255,255,255,0.03) 50%,
+    transparent 100%
+  );
+}
+
+/* Link hover: subtle glow */
+a:not(.btn):not(.card-hover):not(nav a):hover {
+  text-shadow: 0 0 12px rgba(44,181,232,0.15);
+}
+
+/* Button hover: micro-lift + glow intensify */
+.btn-ghost:hover {
+  border-color: var(--color-accent);
+  background: rgba(44,181,232,0.06);
+  box-shadow: 0 0 12px rgba(44,181,232,0.08);
+}
+
+/* Card hover: border gradient sweep */
+.card-enterprise:hover {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 1px rgba(44,181,232,0.15), 0 8px 24px rgba(0,0,0,0.15);
+}
+
+/* Stat glass hover: accent tint */
+.stat-glass:hover {
+  border-color: rgba(44,181,232,0.15);
+  background: rgba(44,181,232,0.04);
 }

@@ -26,6 +26,21 @@ const t = useTranslations('ko');
     <div class="max-w-5xl mx-auto px-4">
       <h2 class="text-2xl font-bold mb-6">{t('methodology.backtest_title')}</h2>
 
+      <!-- Visual pipeline diagram -->
+      <div class="flex flex-wrap items-center gap-2 mb-10 text-xs font-mono" role="img" aria-label="백테스트 파이프라인: 데이터 → 유니버스 → 실행 → 수수료 → 슬리피지 → 결과">
+        <span class="px-3 py-1.5 rounded-full bg-[--color-accent-subtle] text-[--color-accent] border border-[--color-accent]/20">OHLCV 데이터</span>
+        <span class="text-[--color-text-disabled]">&rarr;</span>
+        <span class="px-3 py-1.5 rounded-full bg-[--color-accent-subtle] text-[--color-accent] border border-[--color-accent]/20">유니버스 필터</span>
+        <span class="text-[--color-text-disabled]">&rarr;</span>
+        <span class="px-3 py-1.5 rounded-full bg-[--color-accent-subtle] text-[--color-accent] border border-[--color-accent]/20">시그널 → 주문</span>
+        <span class="text-[--color-text-disabled]">&rarr;</span>
+        <span class="px-3 py-1.5 rounded-full bg-[--color-warning]/10 text-[--color-warning] border border-[--color-warning]/20">− 수수료</span>
+        <span class="text-[--color-text-disabled]">&rarr;</span>
+        <span class="px-3 py-1.5 rounded-full bg-[--color-warning]/10 text-[--color-warning] border border-[--color-warning]/20">− 슬리피지</span>
+        <span class="text-[--color-text-disabled]">&rarr;</span>
+        <span class="px-3 py-1.5 rounded-full bg-[--color-up]/10 text-[--color-up] border border-[--color-up]/20 font-bold">결과</span>
+      </div>
+
       <div class="space-y-6 max-w-3xl">
         <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card]">
           <div class="font-mono text-[--color-accent] text-xs font-bold mb-1">{t('methodology.data_label')}</div>
