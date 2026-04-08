@@ -307,6 +307,7 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 
 body {
@@ -1003,7 +1004,7 @@ textarea:focus-visible,
 /* ─── Divider line ─── */
 .section-divider {
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(79,142,247,0.15), transparent);
+  background: linear-gradient(90deg, transparent, rgba(79,142,247,0.25), transparent);
   border: none;
   margin: 0;
 }
