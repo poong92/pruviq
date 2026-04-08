@@ -1640,7 +1640,8 @@ export const en = {
   "ranking.card_trades": "Trades",
   "ranking.card_days": "Days in Top",
   "ranking.card_days_unit": "days",
-  "ranking.card_low_sample": "Low sample ({n} trades < 100)",
+  "ranking.card_low_sample":
+    "Limited data ({n} trades). Use as reference, not trading signal.",
   "ranking.card_load_fail": "Failed to load data",
   "ranking.section_best3_title": "Best 3 Strategies",
   "ranking.section_best3_sub": "Top 3 by Profit Factor (PF)",

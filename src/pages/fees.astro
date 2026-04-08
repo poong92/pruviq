@@ -52,9 +52,6 @@ const t = useTranslations('en');
       <p class="text-[--color-text-muted] text-lg mb-4 max-w-2xl">
         {t('fees.desc')}
       </p>
-      <p class="text-[--color-text-muted] text-xs mb-4">
-        {t('fees.disclosure')}
-      </p>
       <!-- Savings example callout -->
       <div class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-[--color-up]/30 bg-[--color-up]/5 text-[--color-up] font-mono text-sm">
         <span class="font-bold">&#9650;</span>
@@ -80,6 +77,9 @@ const t = useTranslations('en');
     <div class="max-w-5xl mx-auto px-4">
       <FeeCalculator client:visible lang="en" />
       <noscript><p class="text-[--color-text-muted] text-sm py-4">Enable JavaScript to use the fee calculator.</p></noscript>
+      <p class="text-[--color-text-muted] text-xs mt-6">
+        {t('fees.disclosure')}
+      </p>
     </div>
   </section>
 

@@ -43,6 +43,8 @@ const categoryBorderColors: Record<string, string> = {
   autopsy: '#f87171',
 };
 
+const categoryIcons: Record<string, string> = { market: '\u{1F4CA}', quant: '\u{1F4C8}', education: '\u{1F4DA}', weekly: '\u{1F4C5}', strategy: '\u26A1', autopsy: '\u{1F480}' };
+
 const now = new Date();
 function isNew(dateStr: string): boolean {
   const diff = now.getTime() - new Date(dateStr).getTime();
@@ -116,7 +118,7 @@ function getReadingTime(body: string | undefined): string {
                  style={`box-shadow: var(--shadow-card); border-left: 3px solid ${categoryBorderColors[post.data.category] || '#6b7280'};`}>
                 <div class="flex items-center gap-2 mb-3">
                   <span class={`text-xs font-mono font-semibold px-2 py-0.5 rounded ${categoryBadgeClass[post.data.category] || 'badge-education'}`}>
-                    {categoryLabels[post.data.category] || post.data.category.toUpperCase()}
+                    {categoryIcons[post.data.category] || '\u{1F4C4}'} {categoryLabels[post.data.category] || post.data.category.toUpperCase()}
                   </span>
                   {!post.isKorean && (
                     <span class="font-mono text-xs px-1.5 py-0.5 rounded bg-[--color-border] text-[--color-text-muted]">{t('blog.en_badge')}</span>
