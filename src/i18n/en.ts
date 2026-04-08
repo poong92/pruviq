@@ -307,6 +307,13 @@ export const en = {
   "blog.category.strategy": "STRATEGY UPDATE",
   "blog.category.weekly": "WEEKLY REVIEW",
   "blog.category.education": "EDUCATION",
+  "blog.category.autopsy": "STRATEGY AUTOPSY",
+  "blog.min_read": "min read",
+  "blog.share": "Share",
+  "blog.copy_link": "Copy link",
+  "blog.copied": "Copied!",
+  "blog.contents": "Contents",
+  "blog.related": "Related Articles",
   "blog.en_badge": "EN",
 
   // Demo
@@ -2047,6 +2054,15 @@ export const en = {
     "Why Backtests Fail — And How to Avoid It | PRUVIQ",
   "meta.why_backtests_fail_desc":
     "Learn the 5 most common reasons crypto backtests fail: look-ahead bias, survivorship bias, overfitting, ignoring fees, and market regime changes.",
+  // 404
+  "404.title": "404 - Page Not Found | PRUVIQ",
+  "404.desc": "Page not found. Explore PRUVIQ's free crypto strategy backtesting tools.",
+  "404.heading": "This page doesn't exist",
+  "404.subtext": "But unlike bad backtests, we won't pretend it does.",
+  "404.tagline": "Don't Believe. Verify.",
+  "404.back_home": "Back to Home",
+  "404.open_simulator": "Open Simulator",
+  "404.or_try": "Or try these",
 } as const;
 
 export type TranslationKey = keyof typeof en;

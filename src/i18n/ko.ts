@@ -305,6 +305,13 @@ export const ko: Record<TranslationKey, string> = {
   "blog.category.strategy": "전략 업데이트",
   "blog.category.weekly": "주간 리뷰",
   "blog.category.education": "교육",
+  "blog.category.autopsy": "전략 부검",
+  "blog.min_read": "분 소요",
+  "blog.share": "공유하기",
+  "blog.copy_link": "링크 복사",
+  "blog.copied": "복사됨!",
+  "blog.contents": "목차",
+  "blog.related": "관련 글",
   "blog.en_badge": "EN",
 
   // Demo
@@ -1999,4 +2006,13 @@ export const ko: Record<TranslationKey, string> = {
     "백테스트가 실패하는 이유 — 그리고 피하는 방법 | PRUVIQ",
   "meta.why_backtests_fail_desc":
     "크립토 백테스트가 실패하는 5가지 이유: look-ahead bias, 생존자 편향, 과적합, 수수료 무시, 시장 레짐 변화. PRUVIQ가 각각을 어떻게 해결하는지 알아보세요.",
+  // 404
+  "404.title": "404 - 페이지를 찾을 수 없습니다 | PRUVIQ",
+  "404.desc": "페이지를 찾을 수 없습니다. PRUVIQ의 무료 크립토 전략 백테스팅 도구를 살펴보세요.",
+  "404.heading": "이 페이지는 존재하지 않습니다",
+  "404.subtext": "하지만 잘못된 백테스트와 달리, 존재하는 척하지 않겠습니다.",
+  "404.tagline": "Don't Believe. Verify.",
+  "404.back_home": "홈으로 돌아가기",
+  "404.open_simulator": "시뮬레이터 열기",
+  "404.or_try": "이것도 살펴보세요",
 };
