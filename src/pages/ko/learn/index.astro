@@ -20,27 +20,26 @@ const allPosts = [
 ].sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
 
 // Group by level
+const beginnerIds = new Set(['how-to-backtest-crypto-strategy', 'what-is-bb-squeeze', 'risk-management-101', 'why-pruviq', 'crypto-trading-fees-explained', 'strategy-builder-step-by-step']);
 const beginner = allPosts.filter(p =>
   p.data.tags?.includes('beginners') ||
-  p.id === 'how-to-backtest-crypto-strategy' ||
-  p.id === 'what-is-bb-squeeze' ||
-  p.id === 'risk-management-101' ||
-  p.id === 'why-pruviq' ||
-  p.id === 'crypto-trading-fees-explained'
+  (p.data.category === 'education' && p.data.tags?.includes('how-to')) ||
+  beginnerIds.has(p.id)
 );
+const beginnerIdSet = new Set(beginner.map(p => p.id));
 
+const intermediateIds = new Set(['rsi-oversold-overbought-guide', 'ema-crossover-strategy-guide', 'macd-divergence-trading-guide', 'volume-analysis-crypto-trading', 'stochastic-adx-trend-strength', 'sl-tp-optimization-guide', 'save-on-binance-futures-fees', 'ichimoku-cloud-trading-guide', 'fibonacci-retracement-guide', 'vwap-trading-guide', 'support-resistance-guide', 'candlestick-patterns-guide', 'atr-volatility-guide']);
 const intermediate = allPosts.filter(p =>
-  ['rsi-oversold-overbought-guide', 'ema-crossover-strategy-guide', 'macd-divergence-trading-guide',
-   'volume-analysis-crypto-trading', 'stochastic-adx-trend-strength', 'sl-tp-optimization-guide',
-   'save-on-binance-futures-fees', 'ichimoku-cloud-trading-guide', 'fibonacci-retracement-guide',
-   'vwap-trading-guide', 'support-resistance-guide', 'candlestick-patterns-guide',
-   'atr-volatility-guide'].includes(p.id)
+  (p.data.category === 'education' && !beginnerIdSet.has(p.id)) ||
+  intermediateIds.has(p.id)
 );
 
 const advanced = allPosts.filter(p =>
   p.data.category === 'quant' ||
   p.data.category === 'market' ||
-  ['tp8-decision-process'].includes(p.id)
+  p.data.category === 'autopsy' ||
+  p.data.category === 'weekly' ||
+  p.id === 'tp8-decision-process'
 );
 
 // Tag translation map (EN → KO) from i18n

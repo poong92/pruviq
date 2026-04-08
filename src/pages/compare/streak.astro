@@ -31,7 +31,7 @@ const rows = [
       <p class="text-[--color-text-muted] text-lg max-w-2xl mb-6">
         {t('vs_streak.desc')}
       </p>
-      <div class="border border-[--color-accent]/30 rounded-lg p-4 bg-[--color-accent]/5 max-w-2xl">
+      <div class="border border-[--color-accent]/30 rounded-lg p-4 bg-[--color-accent]/10 border-x border-[--color-accent]/20 max-w-2xl">
         <p class="font-mono text-[--color-accent] text-xs font-bold mb-1">{t('vs_streak.tldr')}</p>
         <p class="text-sm text-[--color-text-muted]">{t('vs_streak.tldr_text')}</p>
       </div>
@@ -55,7 +55,7 @@ const rows = [
           </thead>
           <tbody>
             {rows.map((row) => (
-              <tr class={`border-b border-[--color-border] ${row.highlight ? 'bg-[--color-accent]/5' : ''}`}>
+              <tr class={`border-b border-[--color-border] ${row.highlight ? 'bg-[--color-accent]/10 border-x border-[--color-accent]/20' : ''}`}>
                 <td class="py-3 px-4 font-medium">{row.label}</td>
                 <td class="py-3 px-4 text-[--color-accent]">{row.p}</td>
                 <td class="py-3 px-4 text-[--color-text-muted]">{row.other}</td>
@@ -68,7 +68,7 @@ const rows = [
       <!-- Mobile cards -->
       <div class="md:hidden space-y-4">
         {rows.map((row) => (
-          <div class={`border border-[--color-border] rounded-lg p-4 ${row.highlight ? 'bg-[--color-accent]/5 border-[--color-accent]/30' : 'bg-[--color-bg-card]'}`}>
+          <div class={`border border-[--color-border] rounded-lg p-4 ${row.highlight ? 'bg-[--color-accent]/10 border-x border-[--color-accent]/20 border-[--color-accent]/30' : 'bg-[--color-bg-card]'}`}>
             <p class="font-mono text-xs text-[--color-text-muted] uppercase tracking-wider mb-2">{row.label}</p>
             <div class="grid grid-cols-2 gap-3">
               <div>
