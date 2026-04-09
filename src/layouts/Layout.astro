@@ -453,7 +453,7 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
           </button>
         </div>
       </div>
-      <div id="mobile-menu" class="hidden md:hidden border-t border-[--color-border] bg-[--color-bg]" aria-hidden="true">
+      <div id="mobile-menu" class="hidden md:hidden border-t border-[--color-border] bg-[--color-bg] backdrop-blur-sm" aria-hidden="true">
         <div class="flex flex-col px-4 py-4 gap-1 text-sm">
           {navItems.map(item => (
             <Fragment>
@@ -570,7 +570,7 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
     </footer>
 
     <!-- Sticky CTA Bar (mobile-only, appears on scroll past hero) -->
-    <div id="sticky-cta" class="sm:hidden fixed bottom-0 left-0 right-0 z-50 translate-y-full transition-transform duration-300 border-t border-[--color-border] bg-[--color-bg]/95 backdrop-blur-md safe-area-bottom" role="complementary" aria-label="Quick action bar">
+    <div id="sticky-cta" data-hide-in-hero class="sm:hidden fixed bottom-0 left-0 right-0 z-50 translate-y-full transition-transform duration-300 border-t border-[--color-border] bg-[--color-bg]/95 backdrop-blur-md safe-area-bottom" role="complementary" aria-label="Quick action bar">
       <div class="px-4 py-3 flex items-center justify-between gap-3">
         <a href={simulatePath} class="btn btn-primary btn-md flex-1 text-center no-underline whitespace-nowrap">
           {t('hero.cta_primary')} →
@@ -609,7 +609,7 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
     </script>
     <!-- Sticky bottom CTA bar (non-simulator pages only) -->
     {!basePath.startsWith('/simulate') && (
-      <div id="bottom-cta-bar" class="fixed bottom-0 left-0 right-0 z-40 border-t border-[--color-border] bg-[--color-bg-elevated] transition-transform duration-300 translate-y-full" style="height:48px;" role="complementary" aria-label="Try simulator">
+      <div id="bottom-cta-bar" data-hide-in-hero class="fixed bottom-0 left-0 right-0 z-40 border-t border-[--color-border] bg-[--color-bg-elevated] transition-transform duration-300 translate-y-full" style="height:48px;" role="complementary" aria-label="Try simulator">
         <div class="max-w-7xl mx-auto px-6 lg:px-10 h-full flex items-center justify-between gap-3">
           <p class="text-sm text-[--color-text-muted] truncate">
             {lang === 'ko' ? '570+ 코인에서 전략 테스트' : 'Test your strategy on 570+ coins'}

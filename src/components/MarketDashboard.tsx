@@ -847,6 +847,11 @@ export default function MarketDashboard({
                         <div class="flex-1 min-w-0">
                           <div class="text-sm font-medium text-[--color-text] leading-snug mb-1 truncate">
                             {item.title}
+                            {lang === "ko" && (
+                              <span class="ml-1.5 inline-flex align-middle text-[9px] font-mono font-bold text-[--color-text-muted] border border-[--color-border] rounded px-1 py-0.5 leading-none">
+                                EN
+                              </span>
+                            )}
                           </div>
                           {item.summary && (
                             <div class="text-xs text-[--color-text-muted] leading-snug truncate">
@@ -884,18 +889,15 @@ export default function MarketDashboard({
             )}
           </div>
 
-          {/* CTA */}
-          <div class="mt-8 p-6 bg-[--color-bg-card] border border-[--color-border] rounded-xl">
-            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div>
-                <h3 class="font-bold text-sm mb-1">{l.ctaTitle}</h3>
-                <p class="text-[--color-text-muted] text-xs">
-                  {l.ctaDesc.replace("{coins}", coinsCount)}
-                </p>
-              </div>
+          {/* CTA — ghost style to avoid competing with global bottom CTA bar */}
+          <div class="mt-8 px-4 py-3 border border-[--color-border] rounded-lg">
+            <div class="flex items-center justify-between gap-3">
+              <p class="text-[--color-text-muted] text-xs truncate">
+                {l.ctaDesc.replace("{coins}", coinsCount)}
+              </p>
               <a
                 href={lang === "ko" ? "/ko/simulate" : "/simulate"}
-                class="shrink-0 btn btn-primary btn-md whitespace-nowrap no-underline"
+                class="shrink-0 text-xs font-semibold text-[--color-accent] border border-[--color-accent]/30 px-4 py-2 rounded hover:bg-[--color-accent]/10 transition-colors no-underline whitespace-nowrap"
               >
                 {l.ctaButton} →
               </a>

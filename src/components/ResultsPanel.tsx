@@ -881,7 +881,9 @@ export default function ResultsPanel({
                           <div class="text-[10px] font-mono text-[--color-text-muted] uppercase mb-2">
                             {t.monthlyReturns || "Monthly Returns"}
                           </div>
-                          <ScrollHint label={lang === "ko" ? "스크롤 →" : "Scroll →"}>
+                          <ScrollHint
+                            label={lang === "ko" ? "스크롤 →" : "Scroll →"}
+                          >
                             <div class="flex gap-1 min-w-max">
                               {result.monthly_stats.map((m) => {
                                 const maxRet = Math.max(
@@ -1176,150 +1178,150 @@ export default function ResultsPanel({
             <div class="p-2">
               {result.trades && result.trades.length > 0 ? (
                 <ScrollHint label={lang === "ko" ? "스크롤 →" : "Scroll →"}>
-                <table class="w-full text-xs font-mono min-w-[500px] md:min-w-0">
-                  <caption class="sr-only">
-                    {t.tradeTableCaption || "Simulated trade details"}
-                  </caption>
-                  <thead>
-                    <tr class="text-[--color-text-muted] border-b border-[--color-border]">
-                      <th class="py-2 px-2 text-left">{t.symbol}</th>
-                      <th class="py-2 px-2 text-left hidden sm:table-cell">
-                        {t.entryTime}
-                      </th>
-                      <th class="py-2 px-2 text-left">{t.exitTime}</th>
-                      <th class="py-2 px-2 text-right">{t.pnl}</th>
-                      <th class="py-2 px-2 text-right">PnL $</th>
-                      <th class="py-2 px-2 text-center">{t.reason}</th>
-                      <th class="py-2 px-2 text-right">{t.held}</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {result.trades.slice(0, 200).map((tr, i) => {
-                      const isExpanded = expandedTrade === i;
-                      return (
-                        <>
-                          <tr
-                            key={i}
-                            class={`border-b border-[--color-border]/30 hover:bg-[--color-bg-hover]/30 cursor-pointer select-none ${isExpanded ? "bg-[--color-bg-hover]/20" : ""}`}
-                            onClick={() =>
-                              setExpandedTrade(isExpanded ? null : i)
-                            }
-                            role="button"
-                            aria-expanded={isExpanded}
-                            tabIndex={0}
-                            onKeyDown={(e: KeyboardEvent) => {
-                              if (e.key === "Enter" || e.key === " ") {
-                                e.preventDefault();
-                                setExpandedTrade(isExpanded ? null : i);
-                              }
-                            }}
-                          >
-                            <td class="py-1.5 px-2">
-                              {tr.symbol?.replace("USDT", "")}
-                            </td>
-                            <td class="py-1.5 px-2 text-[--color-text-muted] hidden sm:table-cell">
-                              {tr.entry_time?.slice(0, 16)}
-                            </td>
-                            <td class="py-1.5 px-2 text-[--color-text-muted]">
-                              {tr.exit_time?.slice(0, 16)}
-                            </td>
-                            <td
-                              class="py-1.5 px-2 text-right"
-                              style={{ color: signColor(tr.pnl_pct) }}
-                            >
-                              {tr.pnl_pct > 0 ? "+" : ""}
-                              {tr.pnl_pct.toFixed(2)}%
-                            </td>
-                            <td
-                              class="py-1.5 px-2 text-right"
-                              style={{ color: signColor(tr.pnl_usd || 0) }}
-                            >
-                              {(tr.pnl_usd || 0) > 0 ? "+" : ""}$
-                              {(tr.pnl_usd || 0).toFixed(2)}
-                            </td>
-                            <td class="py-1.5 px-2 text-center">
-                              <span
-                                class={`px-1.5 py-0.5 rounded text-[10px] ${
-                                  tr.exit_reason === "TP"
-                                    ? "bg-[--color-green]/10 text-[--color-green]"
-                                    : tr.exit_reason === "SL"
-                                      ? "bg-[--color-red]/10 text-[--color-red]"
-                                      : "bg-[--color-yellow]/10 text-[--color-yellow]"
-                                }`}
-                              >
-                                {tr.exit_reason}
-                              </span>
-                            </td>
-                            <td class="py-1.5 px-2 text-right text-[--color-text-muted]">
-                              {tr.bars_held}h
-                            </td>
-                          </tr>
-                          {isExpanded && (
+                  <table class="w-full text-xs font-mono min-w-[500px] md:min-w-0">
+                    <caption class="sr-only">
+                      {t.tradeTableCaption || "Simulated trade details"}
+                    </caption>
+                    <thead>
+                      <tr class="text-[--color-text-muted] border-b border-[--color-border]">
+                        <th class="py-2 px-2 text-left">{t.symbol}</th>
+                        <th class="py-2 px-2 text-left hidden sm:table-cell">
+                          {t.entryTime}
+                        </th>
+                        <th class="py-2 px-2 text-left">{t.exitTime}</th>
+                        <th class="py-2 px-2 text-right">{t.pnl}</th>
+                        <th class="py-2 px-2 text-right">PnL $</th>
+                        <th class="py-2 px-2 text-center">{t.reason}</th>
+                        <th class="py-2 px-2 text-right">{t.held}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {result.trades.slice(0, 200).map((tr, i) => {
+                        const isExpanded = expandedTrade === i;
+                        return (
+                          <>
                             <tr
-                              key={`detail-${i}`}
-                              class="border-b border-[--color-border]/30 bg-[--color-bg-hover]/10"
+                              key={i}
+                              class={`border-b border-[--color-border]/30 hover:bg-[--color-bg-hover]/30 cursor-pointer select-none ${isExpanded ? "bg-[--color-bg-hover]/20" : ""}`}
+                              onClick={() =>
+                                setExpandedTrade(isExpanded ? null : i)
+                              }
+                              role="button"
+                              aria-expanded={isExpanded}
+                              tabIndex={0}
+                              onKeyDown={(e: KeyboardEvent) => {
+                                if (e.key === "Enter" || e.key === " ") {
+                                  e.preventDefault();
+                                  setExpandedTrade(isExpanded ? null : i);
+                                }
+                              }}
                             >
-                              <td colSpan={7} class="px-3 py-2.5">
-                                <div class="grid grid-cols-2 sm:grid-cols-4 gap-x-4 gap-y-1.5 text-[10px] font-mono">
-                                  <div>
-                                    <span class="text-[--color-text-muted] uppercase">
-                                      {t.tradeDirection || "Direction"}
-                                    </span>
-                                    <div
-                                      class={`font-bold ${tr.direction === "SHORT" ? "text-[--color-red]" : "text-[--color-green]"}`}
-                                    >
-                                      {tr.direction}
-                                    </div>
-                                  </div>
-                                  <div>
-                                    <span class="text-[--color-text-muted] uppercase">
-                                      {t.tradeEntryPrice || "Entry Price"}
-                                    </span>
-                                    <div>
-                                      $
-                                      {tr.entry_price?.toLocaleString(
-                                        undefined,
-                                        {
-                                          minimumFractionDigits: 2,
-                                          maximumFractionDigits: 6,
-                                        },
-                                      )}
-                                    </div>
-                                  </div>
-                                  <div>
-                                    <span class="text-[--color-text-muted] uppercase">
-                                      {t.tradeExitPrice || "Exit Price"}
-                                    </span>
-                                    <div>
-                                      $
-                                      {tr.exit_price?.toLocaleString(
-                                        undefined,
-                                        {
-                                          minimumFractionDigits: 2,
-                                          maximumFractionDigits: 6,
-                                        },
-                                      )}
-                                    </div>
-                                  </div>
-                                  <div>
-                                    <span class="text-[--color-text-muted] uppercase">
-                                      {t.tradeHoldTime || "Hold Time"}
-                                    </span>
-                                    <div>
-                                      {tr.bars_held >= 24
-                                        ? `${(tr.bars_held / 24).toFixed(1)}d`
-                                        : `${tr.bars_held}h`}
-                                    </div>
-                                  </div>
-                                </div>
+                              <td class="py-1.5 px-2">
+                                {tr.symbol?.replace("USDT", "")}
+                              </td>
+                              <td class="py-1.5 px-2 text-[--color-text-muted] hidden sm:table-cell">
+                                {tr.entry_time?.slice(0, 16)}
+                              </td>
+                              <td class="py-1.5 px-2 text-[--color-text-muted]">
+                                {tr.exit_time?.slice(0, 16)}
+                              </td>
+                              <td
+                                class="py-1.5 px-2 text-right"
+                                style={{ color: signColor(tr.pnl_pct) }}
+                              >
+                                {tr.pnl_pct > 0 ? "+" : ""}
+                                {tr.pnl_pct.toFixed(2)}%
+                              </td>
+                              <td
+                                class="py-1.5 px-2 text-right"
+                                style={{ color: signColor(tr.pnl_usd || 0) }}
+                              >
+                                {(tr.pnl_usd || 0) > 0 ? "+" : ""}$
+                                {(tr.pnl_usd || 0).toFixed(2)}
+                              </td>
+                              <td class="py-1.5 px-2 text-center">
+                                <span
+                                  class={`px-1.5 py-0.5 rounded text-[10px] ${
+                                    tr.exit_reason === "TP"
+                                      ? "bg-[--color-green]/10 text-[--color-green]"
+                                      : tr.exit_reason === "SL"
+                                        ? "bg-[--color-red]/10 text-[--color-red]"
+                                        : "bg-[--color-yellow]/10 text-[--color-yellow]"
+                                  }`}
+                                >
+                                  {tr.exit_reason}
+                                </span>
+                              </td>
+                              <td class="py-1.5 px-2 text-right text-[--color-text-muted]">
+                                {tr.bars_held}h
                               </td>
                             </tr>
-                          )}
-                        </>
-                      );
-                    })}
-                  </tbody>
-                </table>
+                            {isExpanded && (
+                              <tr
+                                key={`detail-${i}`}
+                                class="border-b border-[--color-border]/30 bg-[--color-bg-hover]/10"
+                              >
+                                <td colSpan={7} class="px-3 py-2.5">
+                                  <div class="grid grid-cols-2 sm:grid-cols-4 gap-x-4 gap-y-1.5 text-[10px] font-mono">
+                                    <div>
+                                      <span class="text-[--color-text-muted] uppercase">
+                                        {t.tradeDirection || "Direction"}
+                                      </span>
+                                      <div
+                                        class={`font-bold ${tr.direction === "SHORT" ? "text-[--color-red]" : "text-[--color-green]"}`}
+                                      >
+                                        {tr.direction}
+                                      </div>
+                                    </div>
+                                    <div>
+                                      <span class="text-[--color-text-muted] uppercase">
+                                        {t.tradeEntryPrice || "Entry Price"}
+                                      </span>
+                                      <div>
+                                        $
+                                        {tr.entry_price?.toLocaleString(
+                                          undefined,
+                                          {
+                                            minimumFractionDigits: 2,
+                                            maximumFractionDigits: 6,
+                                          },
+                                        )}
+                                      </div>
+                                    </div>
+                                    <div>
+                                      <span class="text-[--color-text-muted] uppercase">
+                                        {t.tradeExitPrice || "Exit Price"}
+                                      </span>
+                                      <div>
+                                        $
+                                        {tr.exit_price?.toLocaleString(
+                                          undefined,
+                                          {
+                                            minimumFractionDigits: 2,
+                                            maximumFractionDigits: 6,
+                                          },
+                                        )}
+                                      </div>
+                                    </div>
+                                    <div>
+                                      <span class="text-[--color-text-muted] uppercase">
+                                        {t.tradeHoldTime || "Hold Time"}
+                                      </span>
+                                      <div>
+                                        {tr.bars_held >= 24
+                                          ? `${(tr.bars_held / 24).toFixed(1)}d`
+                                          : `${tr.bars_held}h`}
+                                      </div>
+                                    </div>
+                                  </div>
+                                </td>
+                              </tr>
+                            )}
+                          </>
+                        );
+                      })}
+                    </tbody>
+                  </table>
                 </ScrollHint>
               ) : (
                 <div class="text-center py-8 text-[--color-text-muted] text-sm">
@@ -1400,7 +1402,7 @@ export default function ResultsPanel({
                   : "";
 
               return (
-                <div class="p-2">
+                <div class="p-3 sm:p-4">
                   <div class="flex flex-wrap gap-3 mb-3 px-2 text-[10px] font-mono text-[--color-text-muted]">
                     <span style={{ color: COLORS.green }}>
                       {profitable} {t.profitableUnit}
