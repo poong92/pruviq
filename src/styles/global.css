@@ -176,10 +176,10 @@
 /* ─── Hero background depth ─── */
 .hero-bg-depth {
   background:
-    radial-gradient(ellipse at 50% -20%, rgba(44,181,232,0.12) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 50%, rgba(168,85,247,0.04) 0%, transparent 50%),
-    radial-gradient(ellipse at 20% 80%, rgba(6,182,212,0.03) 0%, transparent 50%),
-    var(--gradient-hero);
+    radial-gradient(ellipse at 50% -10%, rgba(44,181,232,0.18) 0%, transparent 55%),
+    radial-gradient(ellipse at 80% 40%, rgba(168,85,247,0.08) 0%, transparent 45%),
+    radial-gradient(ellipse at 20% 70%, rgba(6,182,212,0.06) 0%, transparent 45%),
+    linear-gradient(180deg, #09090B 0%, #0C1220 40%, #0A0F1A 70%, #09090B 100%);
 }
 
 /* ─── Subtle grid pattern for hero ─── */
@@ -226,10 +226,18 @@
 
 /* ─── Section glow backgrounds ─── */
 .section-glow-green {
-  background: radial-gradient(ellipse at 50% 0%, rgba(0,220,130,0.04) 0%, transparent 70%);
+  background: radial-gradient(ellipse at 50% 0%, rgba(0,220,130,0.06) 0%, transparent 60%);
 }
 .section-glow-cyan {
-  background: radial-gradient(ellipse at 50% 100%, rgba(44,181,232,0.03) 0%, transparent 70%);
+  background: radial-gradient(ellipse at 50% 100%, rgba(44,181,232,0.05) 0%, transparent 60%);
+}
+
+/* ─── Alternating section surfaces ─── */
+.section-surface {
+  background-color: var(--color-bg-surface);
+}
+.section-surface-subtle {
+  background: linear-gradient(180deg, rgba(255,255,255,0.015) 0%, transparent 100%);
 }
 
 /* ─── Frosted glass enhancement ─── */
