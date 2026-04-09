@@ -115,9 +115,9 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
     <h2 class="text-2xl md:text-3xl font-bold text-center mb-4">How It Works</h2>
     <p class="text-[--color-text-secondary] text-center text-lg mb-16 max-w-xl mx-auto">From strategy idea to verified results in 3 steps.</p>
     <div class="grid md:grid-cols-3 gap-8">
-      <StepCard step={1} title="Pick a Strategy" description="Choose from 36 presets or build your own with 14 indicators. Unlimited custom combinations." />
-      <StepCard step={2} title="Set Your Risk" description="Stop-loss, take-profit, position size, time filters. Realistic fees and slippage included." />
-      <StepCard step={3} title="See Real Results" description="Simulate on 570 coins with 2+ years of data. Results in seconds, no cherry-picking." />
+      <StepCard step={1} title="Pick a Strategy" description="36 presets or build your own with 14 indicators." />
+      <StepCard step={2} title="Set Your Risk" description="SL, TP, leverage, time filters. Real fees included." />
+      <StepCard step={3} title="See Real Results" description="570+ coins, 2+ years of data. Results in seconds." />
     </div>
     <div class="text-center mt-8">
       <a href="/simulate" class="btn btn-primary btn-md">Open Simulator — Free &rarr;</a>
@@ -324,31 +324,10 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
         </details>
         <details class="group border border-[--color-border] rounded-lg bg-[--color-bg-card] hover:border-[--color-accent]/30 transition-colors focus-within:ring-2 focus-within:ring-[--color-accent]/30">
           <summary class="cursor-pointer px-6 py-4 font-semibold text-sm flex items-center justify-between gap-4 min-h-[44px]">
-            {t('faq.q2')}
-            <span class="text-[--color-text-muted] group-open:rotate-180 transition-transform shrink-0">&#9662;</span>
-          </summary>
-          <div class="faq-body"><div><p class="px-6 pb-4 text-[--color-text-muted] text-base leading-relaxed">{t('faq.a2')}</p></div></div>
-        </details>
-        <details class="group border border-[--color-border] rounded-lg bg-[--color-bg-card] hover:border-[--color-accent]/30 transition-colors focus-within:ring-2 focus-within:ring-[--color-accent]/30">
-          <summary class="cursor-pointer px-6 py-4 font-semibold text-sm flex items-center justify-between gap-4 min-h-[44px]">
             {t('faq.q3')}
             <span class="text-[--color-text-muted] group-open:rotate-180 transition-transform shrink-0">&#9662;</span>
           </summary>
           <div class="faq-body"><div><p class="px-6 pb-4 text-[--color-text-muted] text-base leading-relaxed">{t('faq.a3')}</p></div></div>
-        </details>
-        <details class="group border border-[--color-border] rounded-lg bg-[--color-bg-card] hover:border-[--color-accent]/30 transition-colors focus-within:ring-2 focus-within:ring-[--color-accent]/30">
-          <summary class="cursor-pointer px-6 py-4 font-semibold text-sm flex items-center justify-between gap-4 min-h-[44px]">
-            {t('faq.q4')}
-            <span class="text-[--color-text-muted] group-open:rotate-180 transition-transform shrink-0">&#9662;</span>
-          </summary>
-          <div class="faq-body"><div><p class="px-6 pb-4 text-[--color-text-muted] text-base leading-relaxed">{t('faq.a4')}</p></div></div>
-        </details>
-        <details class="group border border-[--color-border] rounded-lg bg-[--color-bg-card] hover:border-[--color-accent]/30 transition-colors focus-within:ring-2 focus-within:ring-[--color-accent]/30">
-          <summary class="cursor-pointer px-6 py-4 font-semibold text-sm flex items-center justify-between gap-4 min-h-[44px]">
-            {t('faq.q5')}
-            <span class="text-[--color-text-muted] group-open:rotate-180 transition-transform shrink-0">&#9662;</span>
-          </summary>
-          <div class="faq-body"><div><p class="px-6 pb-4 text-[--color-text-muted] text-base leading-relaxed">{t('faq.a5')}</p></div></div>
         </details>
       </div>
     </div>

@@ -109,6 +109,16 @@ const comparisons = [
         </table>
       </div>
 
+      <!-- Why These Numbers Matter -->
+      <div class="max-w-3xl mx-auto mt-10 mb-6">
+        <h3 class="text-lg font-bold mb-3">Why These Numbers Matter</h3>
+        <div class="space-y-4 text-sm text-[--color-text-muted] leading-relaxed">
+          <p><strong class="text-[--color-text]">Multi-coin testing</strong> — Most platforms test one coin at a time. PRUVIQ runs your strategy across 570+ coins simultaneously, revealing which markets it actually works in and which it doesn't. This eliminates cherry-picking bias.</p>
+          <p><strong class="text-[--color-text]">Failure transparency</strong> — We publish every strategy that failed, with full data. 87 out of 88 strategy combinations were eliminated. Other platforms show only winners, hiding the survivorship bias that inflates backtesting results.</p>
+          <p><strong class="text-[--color-text]">No account required</strong> — Test any strategy immediately. No email, no KYC, no credit card. Your data stays in your browser. This matters because signup walls create friction that prevents honest evaluation.</p>
+        </div>
+      </div>
+
       <!-- Primary CTA -->
       <div class="text-center mb-12">
         <a href="/simulate" class="btn btn-primary btn-lg">
@@ -144,6 +154,7 @@ const comparisons = [
           </a>
         ))}
       </div>
+      <p class="text-sm text-[--color-text-muted] mt-6">Learn more: <a href="/learn" class="text-[--color-accent] hover:underline">Trading Guides</a> · <a href="/fees" class="text-[--color-accent] hover:underline">Fee Comparison</a> · <a href="/strategies/ranking" class="text-[--color-accent] hover:underline">Strategy Rankings</a></p>
       <p class="mt-10 text-sm text-[--color-text-muted] font-mono">
         {t('compare_index.footer')} <a href="/simulate" class="text-[--color-accent] hover:underline">{t('compare_index.try_cta')}</a>
       </p>

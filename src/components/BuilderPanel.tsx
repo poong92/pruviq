@@ -596,6 +596,9 @@ export default function BuilderPanel(props: Props) {
           </div>
           {props.coinMode === "top" && (
             <div>
+              <label class="text-xs font-mono text-[--color-text-muted] mb-1 block">
+                {t.topCoinsPlaceholder || "Number of top coins"}
+              </label>
               <input
                 type="number"
                 value={localTopN}
@@ -606,7 +609,6 @@ export default function BuilderPanel(props: Props) {
                 }
                 onBlur={() => props.setTopN(parseInt(localTopN) || 50)}
                 class="w-full px-2 py-2 min-h-[44px] bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
-                placeholder={t.topCoinsPlaceholder || "Number of top coins"}
               />
               <p class="text-[10px] text-[--color-text-muted] mt-0.5 font-mono">
                 {props.t.topNCoinsHint ||
@@ -616,6 +618,9 @@ export default function BuilderPanel(props: Props) {
           )}
           {props.coinMode === "select" && (
             <div>
+              <label class="text-xs font-mono text-[--color-text-muted] mb-1 block">
+                {t.searchCoinsPlaceholder || "Search coins..."}
+              </label>
               <div class="flex items-center gap-1.5 mb-1.5">
                 <input
                   type="text"
@@ -623,7 +628,6 @@ export default function BuilderPanel(props: Props) {
                   onInput={(e: Event) =>
                     props.setCoinSearch((e.target as HTMLInputElement).value)
                   }
-                  placeholder={t.searchCoinsPlaceholder || "Search coins..."}
                   class="flex-1 px-2 py-2 min-h-[44px] bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs outline-none"
                 />
                 <button
