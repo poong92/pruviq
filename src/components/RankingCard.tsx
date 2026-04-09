@@ -168,7 +168,7 @@ export function RankingCard({
       )}
 
       {/* Stats row */}
-      <div class="grid grid-cols-3 gap-2 font-mono text-sm">
+      <div class="grid grid-cols-3 gap-2 font-mono text-sm ranking-metric-reveal">
         <div>
           <p
             class="text-[--color-text-muted] text-xs mb-0.5 cursor-help"

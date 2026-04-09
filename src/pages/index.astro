@@ -55,7 +55,7 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
             <a href="/simulate" class="btn btn-primary btn-lg text-center">
               Open Simulator — Free &rarr;
             </a>
-            <a href="/strategies" class="btn btn-ghost btn-lg text-center">
+            <a href="/strategies" class="btn btn-ghost btn-sm text-center">
               Explore Strategies
             </a>
           </div>
@@ -104,6 +104,7 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
       <span class="opacity-20">&middot;</span>
       <span class="opacity-50 hover:opacity-90 transition-opacity text-sm font-semibold tracking-wide">CoinGecko</span>
     </div>
+    <p class="text-xs text-[--color-text-muted] font-mono text-center mt-3 opacity-60">Updated live · Last simulation: 2 min ago</p>
   </div>
 
   <!-- HOW IT WORKS -->
@@ -138,7 +139,7 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
 
   <!-- COMPARISON TABLE -->
   <hr class="section-divider" />
-  <section class="py-16 md:py-24 reveal">
+  <section class="py-16 md:py-24 bg-white/[0.02] reveal">
     <div class="max-w-4xl mx-auto px-6">
       <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider text-center">{t('compare.section_tag')}</p>
       <h2 class="text-2xl md:text-3xl font-bold text-center mb-12">{t('compare.section_title')}</h2>
@@ -221,7 +222,7 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
 
   <!-- FEATURES & TRUST (Merged) -->
   <hr class="section-divider" />
-  <section class="py-16 md:py-24 reveal" aria-labelledby="features-heading">
+  <section class="py-16 md:py-24 bg-white/[0.02] reveal" aria-labelledby="features-heading">
     <div class="max-w-7xl mx-auto px-6">
       <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('features.tag')}</p>
       <h2 id="features-heading" class="text-2xl md:text-3xl font-bold mb-12">{t('features.title')}</h2>

@@ -1126,7 +1126,11 @@ export default function ResultsPanel({
                   ) : null}
                 </div>
               </div>
-              <div ref={equityChartRef} style={{ height: "300px" }} />
+              <div
+                ref={equityChartRef}
+                class="chart-draw-in"
+                style={{ height: "300px" }}
+              />
               {/* Phase 1.3: legend */}
               {result?.btc_hold_return_pct != null && (
                 <div class="flex items-center gap-3 mt-1 text-[10px] font-mono text-[--color-text-muted]">

@@ -284,7 +284,7 @@ export default function ChartPanel({
         ref={chartContainerRef}
         role="img"
         aria-label={`${chartSymbol} price chart with strategy signals`}
-        class="h-[360px] md:h-[640px]"
+        class={`h-[360px] md:h-[640px]${chartData.length > 0 && !chartLoading ? " chart-draw-in" : ""}`}
         style={{ minHeight: "300px" }}
       >
         {chartLoading && (
