@@ -308,9 +308,9 @@ export default function CoinListTable({ lang = "en" }: { lang?: "en" | "ko" }) {
         <div class="mb-4">
           <div class="skeleton h-10 w-80 max-w-full rounded-lg" />
         </div>
-        <div class="overflow-x-auto border border-[--color-border] rounded-xl bg-[--color-bg-card]">
+        <div class="relative overflow-x-auto border border-[--color-border] rounded-xl bg-[--color-bg-card]">
           <table
-            class="w-full border-collapse font-mono text-[0.8125rem]"
+            class="w-full min-w-[900px] border-collapse font-mono text-[0.8125rem]"
             aria-busy="true"
           >
             <caption class="sr-only">{t.tableCaption}</caption>
@@ -491,8 +491,8 @@ export default function CoinListTable({ lang = "en" }: { lang?: "en" | "ko" }) {
       )}
 
       {/* Table */}
-      <div class="overflow-x-auto border border-[--color-border] rounded-xl bg-[--color-bg-card]">
-        <table class="w-full border-collapse font-mono text-[0.8125rem]">
+      <div class="relative overflow-x-auto border border-[--color-border] rounded-xl bg-[--color-bg-card]">
+        <table class="w-full min-w-[900px] border-collapse font-mono text-[0.8125rem]">
           <caption class="sr-only">{t.tableCaption}</caption>
           <thead>
             <tr>

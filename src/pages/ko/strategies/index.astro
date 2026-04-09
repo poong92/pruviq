@@ -121,6 +121,17 @@ const difficultyColors: Record<string, string> = {
 };
 
 const isKorean = (id: string) => koIds.has(id);
+
+// Group presets by direction for visual separation
+const presetsByDirection: Record<string, typeof simulatorPresets> = { long: [], short: [], both: [] };
+for (const p of simulatorPresets) {
+  const dir = p.direction || 'both';
+  if (presetsByDirection[dir]) presetsByDirection[dir].push(p);
+  else presetsByDirection.both.push(p);
+}
+const presetDirOrder = ['long', 'short', 'both'].filter(d => presetsByDirection[d]?.length > 0);
+const presetDirLabels: Record<string, string> = { long: 'LONG', short: 'SHORT', both: 'BOTH' };
+const presetDirColors: Record<string, string> = { long: '--color-accent', short: '--color-red', both: '--color-yellow' };
 ---
 
 <Layout title={t('meta.strategies_title')} description={t('meta.strategies_desc')}>
@@ -319,53 +330,62 @@ const isKorean = (id: string) => koIds.has(id);
           <p class="text-[--color-text-muted] text-sm mb-6">
             {t('strategies.presets_desc')}
           </p>
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {simulatorPresets.map((preset) => {
-              const stats = lookupPresetStats(preset.id, preset.direction);
-              const isTodaysPick = preset.id.includes(todaysPickStrategy) && preset.direction === todaysPickDirection;
-              const glowClass = preset.direction === 'long'
-                ? 'preset-glow-long'
-                : preset.direction === 'short'
-                ? 'preset-glow-short'
-                : '';
-              return (
-              <a
-                href={`/ko/simulate?preset=${preset.id}`}
-                class={`relative flex flex-col border border-[--color-border] rounded-lg px-4 py-3 bg-[--color-bg-card] hover:border-[--color-accent] transition-colors group card-glow preset-card ${glowClass}`}
-              >
-                {isTodaysPick && (
-                  <span class="absolute -top-2.5 left-3 font-mono text-[10px] tracking-wider px-2 py-0.5 rounded-full bg-[--color-accent] text-black font-bold z-10">
-                    {t('strategies.todays_pick')}
-                  </span>
-                )}
-                <div class="flex items-center justify-between">
-                  <div class="min-w-0">
-                    <p class="font-semibold text-sm truncate">{preset.name_ko ?? preset.name}</p>
-                    {stats && (
-                      <p class="text-xs font-mono text-[--color-text-muted] mt-0.5">
-                        WR <span class={stats.win_rate >= 55 ? 'stat-positive' : stats.win_rate < 45 ? 'stat-negative' : 'stat-warning'}>{stats.win_rate.toFixed(1)}%</span> · PF <span class={stats.profit_factor >= 1.5 ? 'stat-positive' : stats.profit_factor < 1.0 ? 'stat-negative' : 'stat-warning'}>{stats.profit_factor.toFixed(2)}</span>
-                        {stats.total_return !== undefined && (
-                          <span class={stats.total_return >= 0 ? 'text-[--color-up]' : 'text-[--color-red]'}> · {stats.total_return >= 0 ? '+' : ''}{stats.total_return.toFixed(1)}%</span>
-                        )}
-                      </p>
-                    )}
-                  </div>
-                  <div class="flex items-center gap-2 shrink-0 ml-3">
-                    {preset.direction && (
-                      <span class={`font-mono text-xs px-1.5 py-0.5 rounded border ${preset.direction === 'long' ? 'text-[--color-accent] border-[--color-accent]/30' : preset.direction === 'short' ? 'text-[--color-red] border-[--color-red]/30' : 'text-[--color-yellow] border-[--color-yellow]/30'}`}>
-                        {preset.direction.toUpperCase()}
+          {presetDirOrder.map((dir, idx) => (
+            <div class={idx > 0 ? 'mt-6' : ''}>
+              <div class="flex items-center gap-2 mb-3">
+                <span class="font-mono text-xs font-bold tracking-wider" style={`color: var(${presetDirColors[dir]})`}>{presetDirLabels[dir]}</span>
+                <div class="flex-1 border-t border-[--color-border]"></div>
+                <span class="font-mono text-[10px] text-[--color-text-disabled]">{presetsByDirection[dir].length}</span>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {presetsByDirection[dir].map((preset) => {
+                  const stats = lookupPresetStats(preset.id, preset.direction);
+                  const isTodaysPick = preset.id.includes(todaysPickStrategy) && preset.direction === todaysPickDirection;
+                  const glowClass = preset.direction === 'long'
+                    ? 'preset-glow-long'
+                    : preset.direction === 'short'
+                    ? 'preset-glow-short'
+                    : '';
+                  return (
+                  <a
+                    href={`/ko/simulate?preset=${preset.id}`}
+                    class={`relative flex flex-col border border-[--color-border] rounded-lg px-4 py-3 bg-[--color-bg-card] hover:border-[--color-accent] transition-colors group card-glow preset-card ${glowClass}`}
+                  >
+                    {isTodaysPick && (
+                      <span class="absolute -top-2.5 left-3 font-mono text-[10px] tracking-wider px-2 py-0.5 rounded-full bg-[--color-accent] text-black font-bold z-10">
+                        {t('strategies.todays_pick')}
                       </span>
                     )}
-                    <span class="text-[--color-text-muted] text-xs group-hover:text-[--color-accent]">&rarr;</span>
-                  </div>
-                </div>
-                <p class="text-[10px] font-mono text-[--color-text-muted] mt-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                  {t('strategies.click_to_simulate')} &rarr;
-                </p>
-              </a>
-              );
-            })}
-          </div>
+                    <div class="flex items-center justify-between">
+                      <div class="min-w-0">
+                        <p class="font-semibold text-sm truncate">{preset.name_ko ?? preset.name}</p>
+                        {stats && (
+                          <p class="text-xs font-mono text-[--color-text-muted] mt-0.5">
+                            WR <span class={stats.win_rate >= 55 ? 'stat-positive' : stats.win_rate < 45 ? 'stat-negative' : 'stat-warning'}>{stats.win_rate.toFixed(1)}%</span> · PF <span class={stats.profit_factor >= 1.5 ? 'stat-positive' : stats.profit_factor < 1.0 ? 'stat-negative' : 'stat-warning'}>{stats.profit_factor.toFixed(2)}</span>
+                            {stats.total_return !== undefined && (
+                              <span class={stats.total_return >= 0 ? 'text-[--color-up]' : 'text-[--color-red]'}> · {stats.total_return >= 0 ? '+' : ''}{stats.total_return.toFixed(1)}%</span>
+                            )}
+                          </p>
+                        )}
+                      </div>
+                      <div class="flex items-center gap-2 shrink-0 ml-3">
+                        {preset.direction && (
+                          <span class={`font-mono text-xs px-1.5 py-0.5 rounded border ${preset.direction === 'long' ? 'text-[--color-accent] border-[--color-accent]/30' : preset.direction === 'short' ? 'text-[--color-red] border-[--color-red]/30' : 'text-[--color-yellow] border-[--color-yellow]/30'}`}>
+                            {preset.direction.toUpperCase()}
+                          </span>
+                        )}
+                        <span class="text-[--color-text-muted] text-xs group-hover:text-[--color-accent]">&rarr;</span>
+                      </div>
+                    </div>
+                    <p class="text-[10px] font-mono text-[--color-text-muted] mt-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                      {t('strategies.click_to_simulate')} &rarr;
+                    </p>
+                  </a>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
         </div>
       )}
 
