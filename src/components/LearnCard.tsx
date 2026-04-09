@@ -54,7 +54,7 @@ export default function LearnCard({
   return (
     <a
       href={href}
-      class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card] card-hover card-glow block group relative"
+      class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card] card-hover card-glow shadow-[var(--shadow-sm)] block group relative"
       onMouseMove={(e) => {
         const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
         (e.currentTarget as HTMLElement).style.setProperty(

@@ -53,9 +53,9 @@ const t = useTranslations('en');
         {t('fees.desc')}
       </p>
       <!-- Savings example callout -->
-      <div class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-[--color-up]/30 bg-[--color-up]/5 text-[--color-up] font-mono text-sm">
-        <span class="font-bold">&#9650;</span>
-        <span>{t('fees.savings_callout')}</span>
+      <div class="inline-flex items-center gap-2 px-5 py-3 rounded-xl border border-[--color-up]/30 bg-[--color-up]/5 text-[--color-up] font-mono shadow-[var(--shadow-md)]">
+        <span class="text-3xl font-extrabold">&#9650;</span>
+        <span class="text-base font-bold">{t('fees.savings_callout')}</span>
       </div>
     </div>
   </section>
@@ -73,9 +73,11 @@ const t = useTranslations('en');
   <hr class="section-divider" />
 
   <!-- INTERACTIVE FEE CALCULATOR -->
-  <section class="reveal pb-12 border-t border-[--color-border] pt-12">
+  <section class="reveal pb-12 border-t border-[--color-border] pt-12 section-elevated">
     <div class="max-w-5xl mx-auto px-4">
-      <FeeCalculator client:visible lang="en" />
+      <div class="shadow-[var(--shadow-lg)] rounded-2xl bg-[--color-bg-card] p-6 md:p-8">
+        <FeeCalculator client:visible lang="en" />
+      </div>
       <noscript><p class="text-[--color-text-muted] text-sm py-4">Enable JavaScript to use the fee calculator.</p></noscript>
       <p class="text-[--color-text-muted] text-xs mt-6">
         {t('fees.disclosure')}
@@ -87,14 +89,14 @@ const t = useTranslations('en');
   <hr class="section-divider" />
 
   <!-- EXCHANGE COMPARISON CARDS -->
-  <section class="reveal-child pb-12 border-t border-[--color-border] pt-12">
+  <section class="reveal-child pb-12 border-t border-[--color-border] pt-12 section-accent-glow">
     <div class="max-w-5xl mx-auto px-4">
       <h2 id="compare" class="text-2xl font-bold mb-2">{t('fees.compare_title')}</h2>
       <p class="text-[--color-text-muted] text-sm mb-8">{t('fees.compare_desc')}</p>
 
       <div class="reveal-child grid md:grid-cols-2 gap-6">
         <!-- Binance Card -->
-        <div class="border border-[--color-accent]/30 rounded-xl p-6 md:p-8 flex flex-col shadow-[var(--shadow-md)]">
+        <div class="border border-[--color-accent]/30 rounded-xl p-6 md:p-8 flex flex-col shadow-[var(--shadow-lg)]">
           <div class="flex items-center gap-3 mb-6">
             <h3 class="text-2xl font-bold">{binanceDisplay.name}</h3>
             <span class="font-mono text-[--color-accent] text-xs font-bold px-2 py-0.5 rounded border border-[--color-accent]/30 bg-[--color-accent]/5">{binanceDisplay.tag}</span>
@@ -149,7 +151,7 @@ const t = useTranslations('en');
         </div>
 
         <!-- OKX Card -->
-        <div class="border border-[--color-border] rounded-xl p-6 md:p-8 flex flex-col relative overflow-hidden shadow-[var(--shadow-md)]">
+        <div class="border border-[--color-border] rounded-xl p-6 md:p-8 flex flex-col relative overflow-hidden shadow-[var(--shadow-lg)]">
           <div class="flex items-center gap-3 mb-6">
             <h3 class="text-2xl font-bold">{okxDisplay.name}</h3>
             <span class="font-mono text-[--color-up] text-xs font-bold px-2 py-0.5 rounded border border-[--color-up]/30 bg-[--color-up]/5">Official Partner</span>
@@ -205,7 +207,7 @@ const t = useTranslations('en');
   <hr class="section-divider" />
 
   <!-- BLOCK 1: PROBLEM HOOK -->
-  <section class="reveal pb-12 border-t border-[--color-border] pt-12">
+  <section class="reveal pb-12 border-t border-[--color-border] pt-12 section-elevated">
     <div class="max-w-5xl mx-auto px-4">
       <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('fees.trust_tag')}</p>
       <h2 id="savings" class="text-2xl font-bold mb-2">{t('fees.referral.problem.headline')}</h2>
@@ -222,7 +224,7 @@ const t = useTranslations('en');
   <hr class="section-divider" />
 
   <!-- BLOCK 2: EDUCATION / COMPARISON TABLE -->
-  <section class="reveal pb-12 border-t border-[--color-border] pt-12">
+  <section class="reveal pb-12 border-t border-[--color-border] pt-12 section-accent-glow">
     <div class="max-w-5xl mx-auto px-4">
       <h2 id="how" class="text-2xl font-bold mb-2">{t('fees.referral.how.headline')}</h2>
       <p class="text-[--color-text-muted] text-sm mb-6 max-w-3xl">{t('fees.referral.how.body')}</p>
@@ -277,7 +279,7 @@ const t = useTranslations('en');
   <hr class="section-divider" />
 
   <!-- BLOCK 3: SCREENSHOT PROOF -->
-  <section class="reveal pb-12 border-t border-[--color-border] pt-12">
+  <section class="reveal pb-12 border-t border-[--color-border] pt-12 section-elevated">
     <div class="max-w-5xl mx-auto px-4">
       <h2 class="text-2xl font-bold mb-2">{t('fees.referral.proof.headline')}</h2>
       <p class="text-[--color-text-muted] text-sm mb-6">{t('fees.referral.proof.subheading')}</p>
@@ -305,7 +307,7 @@ const t = useTranslations('en');
   <hr class="section-divider" />
 
   <!-- BLOCK 4: HOW TO VERIFY -->
-  <section class="reveal-child pb-12 border-t border-[--color-border] pt-12">
+  <section class="reveal-child pb-12 border-t border-[--color-border] pt-12 section-accent-glow">
     <div class="max-w-5xl mx-auto px-4">
       <h2 id="verify" class="text-2xl font-bold mb-2">{t('fees.referral.verify.headline')}</h2>
       <p class="text-[--color-text-muted] text-sm mb-6 max-w-3xl">{t('fees.referral.verify.body')}</p>
@@ -340,12 +342,12 @@ const t = useTranslations('en');
   <hr class="section-divider" />
 
   <!-- BLOCK 5: REFERRAL FAQ -->
-  <section class="reveal pb-12 border-t border-[--color-border] pt-12">
+  <section class="reveal pb-12 border-t border-[--color-border] pt-12 section-elevated">
     <div class="max-w-5xl mx-auto px-4">
       <h2 class="text-2xl font-bold mb-6">{t('fees.referral.faq.headline')}</h2>
 
       <div class="space-y-4 max-w-3xl">
-        <details class="border border-[--color-border] rounded-lg bg-[--color-bg-card] group">
+        <details class="border border-[--color-border] rounded-lg bg-[--color-bg-card] shadow-[var(--shadow-sm)] group">
           <summary class="p-4 cursor-pointer font-medium flex justify-between items-center min-h-[44px]">
             {t('fees.referral.faq.q1')}
             <span class="text-[--color-text-muted] group-open:rotate-45 transition-transform text-xl leading-none">+</span>
@@ -353,7 +355,7 @@ const t = useTranslations('en');
           <p class="px-4 pb-4 text-[--color-text-muted] text-sm leading-relaxed">{t('fees.referral.faq.a1')}</p>
         </details>
 
-        <details class="border border-[--color-border] rounded-lg bg-[--color-bg-card] group">
+        <details class="border border-[--color-border] rounded-lg bg-[--color-bg-card] shadow-[var(--shadow-sm)] group">
           <summary class="p-4 cursor-pointer font-medium flex justify-between items-center min-h-[44px]">
             {t('fees.referral.faq.q2')}
             <span class="text-[--color-text-muted] group-open:rotate-45 transition-transform text-xl leading-none">+</span>
@@ -361,7 +363,7 @@ const t = useTranslations('en');
           <p class="px-4 pb-4 text-[--color-text-muted] text-sm leading-relaxed">{t('fees.referral.faq.a2')}</p>
         </details>
 
-        <details class="border border-[--color-border] rounded-lg bg-[--color-bg-card] group">
+        <details class="border border-[--color-border] rounded-lg bg-[--color-bg-card] shadow-[var(--shadow-sm)] group">
           <summary class="p-4 cursor-pointer font-medium flex justify-between items-center min-h-[44px]">
             {t('fees.referral.faq.q3')}
             <span class="text-[--color-text-muted] group-open:rotate-45 transition-transform text-xl leading-none">+</span>
@@ -369,7 +371,7 @@ const t = useTranslations('en');
           <p class="px-4 pb-4 text-[--color-text-muted] text-sm leading-relaxed">{t('fees.referral.faq.a3')}</p>
         </details>
 
-        <details class="border border-[--color-border] rounded-lg bg-[--color-bg-card] group">
+        <details class="border border-[--color-border] rounded-lg bg-[--color-bg-card] shadow-[var(--shadow-sm)] group">
           <summary class="p-4 cursor-pointer font-medium flex justify-between items-center min-h-[44px]">
             {t('fees.referral.faq.q4')}
             <span class="text-[--color-text-muted] group-open:rotate-45 transition-transform text-xl leading-none">+</span>
@@ -377,7 +379,7 @@ const t = useTranslations('en');
           <p class="px-4 pb-4 text-[--color-text-muted] text-sm leading-relaxed">{t('fees.referral.faq.a4')}</p>
         </details>
 
-        <details class="border border-[--color-border] rounded-lg bg-[--color-bg-card] group">
+        <details class="border border-[--color-border] rounded-lg bg-[--color-bg-card] shadow-[var(--shadow-sm)] group">
           <summary class="p-4 cursor-pointer font-medium flex justify-between items-center min-h-[44px]">
             {t('fees.referral.faq.q5')}
             <span class="text-[--color-text-muted] group-open:rotate-45 transition-transform text-xl leading-none">+</span>
@@ -391,7 +393,7 @@ const t = useTranslations('en');
   <hr class="section-divider" />
 
   <!-- BLOCK 6: FINAL CTA -->
-  <section class="reveal pb-12 border-t border-[--color-border] pt-12">
+  <section class="reveal pb-12 border-t border-[--color-border] pt-12 section-accent-glow">
     <div class="max-w-5xl mx-auto px-4 text-center">
       <p class="text-[--color-text-muted] text-sm mb-4">{t('fees.referral.cta.primary')}</p>
       <div class="flex flex-col sm:flex-row gap-4 justify-center mb-6">
@@ -412,12 +414,12 @@ const t = useTranslations('en');
   <hr class="section-divider" />
 
   <!-- EXISTING FAQ (compact) -->
-  <section class="reveal pb-16 border-t border-[--color-border] pt-12">
+  <section class="reveal pb-16 border-t border-[--color-border] pt-12 section-elevated">
     <div class="max-w-5xl mx-auto px-4">
       <h2 class="text-2xl font-bold mb-6">{t('fees.faq_title')}</h2>
 
       <div class="space-y-4 max-w-3xl">
-        <details class="border border-[--color-border] rounded-lg bg-[--color-bg-card] group">
+        <details class="border border-[--color-border] rounded-lg bg-[--color-bg-card] shadow-[var(--shadow-sm)] group">
           <summary class="p-4 cursor-pointer font-medium flex justify-between items-center min-h-[44px]">
             {t('fees.faq1_q')}
             <span class="text-[--color-text-muted] group-open:rotate-45 transition-transform text-xl leading-none">+</span>
@@ -427,7 +429,7 @@ const t = useTranslations('en');
           </p>
         </details>
 
-        <details class="border border-[--color-border] rounded-lg bg-[--color-bg-card] group">
+        <details class="border border-[--color-border] rounded-lg bg-[--color-bg-card] shadow-[var(--shadow-sm)] group">
           <summary class="p-4 cursor-pointer font-medium flex justify-between items-center min-h-[44px]">
             {t('fees.faq2_q')}
             <span class="text-[--color-text-muted] group-open:rotate-45 transition-transform text-xl leading-none">+</span>
@@ -437,7 +439,7 @@ const t = useTranslations('en');
           </p>
         </details>
 
-        <details class="border border-[--color-border] rounded-lg bg-[--color-bg-card] group">
+        <details class="border border-[--color-border] rounded-lg bg-[--color-bg-card] shadow-[var(--shadow-sm)] group">
           <summary class="p-4 cursor-pointer font-medium flex justify-between items-center min-h-[44px]">
             {t('fees.faq3_q')}
             <span class="text-[--color-text-muted] group-open:rotate-45 transition-transform text-xl leading-none">+</span>
