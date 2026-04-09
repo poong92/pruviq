@@ -29,15 +29,19 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
 <Layout title={t('meta.home_title')} description={t('meta.index_desc')}>
 
   <!-- HERO — 50/50 layout: text left, live demo right -->
-  <section id="hero-section" class="relative overflow-hidden hero-bg-depth bg-noise">
+  <section id="hero-section" class="relative overflow-hidden hero-bg-depth bg-noise section-glow-green">
     <HeroGlow />
+    <!-- Background: faded simulator preview for depth -->
+    <div class="absolute inset-0 hidden md:flex items-center justify-center pointer-events-none" aria-hidden="true">
+      <img src="/images/simulator-preview.png" alt="" class="w-[80%] max-w-4xl opacity-[0.04] blur-[1px] select-none" loading="eager" />
+    </div>
     <div class="relative max-w-7xl mx-auto px-6 pt-10 pb-16 md:pt-14 md:pb-20 hero-enter">
       <div class="grid md:grid-cols-2 gap-12 md:gap-16 items-center">
         <!-- Left: Text + CTA -->
         <div>
           <HeroBadge stat={simulationsRun} label="시뮬레이션 실행" cta="무료 체험 →" />
           <p class="font-mono text-[--color-accent] text-sm tracking-wider mb-4 opacity-80">검증하고. 실행하고. 수익내세요.</p>
-          <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold tracking-[-0.02em] leading-[1.2] word-break-keep text-balance">
+          <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold tracking-[-0.04em] leading-[1.2] word-break-keep text-balance">
             대부분의 백테스트는<br/>거짓말합니다.<br/><span class="gradient-text">우리는 증거를 공개합니다.</span>
           </h1>
           <p class="mt-6 text-lg text-[--color-text-secondary] leading-relaxed max-w-lg">
@@ -82,15 +86,15 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
   <!-- STATS BAR -->
   <div class="max-w-7xl mx-auto px-6 py-10 relative z-10">
     <div class="grid grid-cols-3 gap-3 md:gap-4 max-w-3xl mx-auto">
-      <div class="stat-glass text-center">
+      <div class="stat-glass card-frost text-center">
         <p class="text-2xl md:text-3xl font-bold font-mono text-[--color-accent]"><CountUp client:visible target={coinsAnalyzed} suffix="+" locale="ko-KR" /></p>
         <p class="text-sm text-[--color-text-secondary] mt-1.5 font-mono uppercase tracking-wider">코인 테스트</p>
       </div>
-      <div class="stat-glass text-center">
+      <div class="stat-glass card-frost text-center">
         <p class="text-2xl md:text-3xl font-bold font-mono text-[--color-accent]"><CountUp client:visible target={(siteStats as { simulations_run: number }).simulations_run} suffix="+" locale="ko-KR" /></p>
         <p class="text-sm text-[--color-text-secondary] mt-1.5 font-mono uppercase tracking-wider">시뮬레이션</p>
       </div>
-      <div class="stat-glass text-center">
+      <div class="stat-glass card-frost text-center">
         <p class="text-2xl md:text-3xl font-bold font-mono text-[--color-accent]"><CountUp client:visible target={simulatorPresetCount} suffix="+" /></p>
         <p class="text-sm text-[--color-text-secondary] mt-1.5 font-mono uppercase tracking-wider">전략</p>
       </div>
@@ -107,7 +111,7 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
 
   <!-- HOW IT WORKS -->
   <hr class="section-divider" />
-  <section class="max-w-7xl mx-auto px-6 py-16 md:py-24 bg-[var(--color-bg-subtle)]">
+  <section class="max-w-7xl mx-auto px-6 py-16 md:py-24 pb-20 md:pb-28 bg-[var(--color-bg-subtle)]">
     <h2 class="text-2xl md:text-3xl font-bold text-center mb-4">작동 방식</h2>
     <p class="text-[--color-text-secondary] text-center text-lg mb-16 max-w-xl mx-auto">전략 아이디어에서 검증된 결과까지 3단계.</p>
     <div class="grid md:grid-cols-3 gap-8">
@@ -180,7 +184,7 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
       <p class="text-[--color-text-muted] text-lg mb-12 max-w-3xl">{t('evidence.desc')}</p>
 
       <!-- Case Studies: Problem cards -->
-      <div class="grid md:grid-cols-3 gap-8 mb-12 reveal-child">
+      <div class="grid md:grid-cols-3 gap-4 mb-12 reveal-child">
         <div class="card-enterprise p-6 border-[--color-down]/20 card-hover">
           <div class="text-[--color-down] font-mono text-xs font-bold mb-3 flex items-center gap-2">
             <span class="inline-block w-2 h-2 rounded-full bg-[--color-down]"></span>
@@ -352,7 +356,7 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
 
   <!-- CTA -->
   <hr class="section-divider" />
-  <section class="relative py-16 md:py-24 overflow-hidden reveal" aria-labelledby="cta-heading-ko">
+  <section class="relative pt-24 py-16 md:pt-28 md:py-24 overflow-hidden reveal section-glow-cyan" aria-labelledby="cta-heading-ko">
     <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
       <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] rounded-full blur-[200px] bg-[--color-accent] opacity-[0.04]"></div>
     </div>
