@@ -43,7 +43,7 @@ function PresetButton({
       key={p.id}
       data-testid={`preset-${p.id}`}
       onClick={() => onSelectPreset(p.id)}
-      class={`px-2.5 py-1 text-xs font-mono rounded transition-colors border
+      class={`px-3 py-2 min-h-[44px] text-xs font-mono rounded transition-colors border
         ${
           isActive
             ? "font-bold"
@@ -92,11 +92,11 @@ export default function PresetBar({
           <span class="spinner" style={{ width: "10px", height: "10px" }} />
         )}
       </div>
-      <div class="flex flex-wrap gap-1 mb-1.5">
+      <div class="flex flex-wrap gap-1.5 mb-2">
         <button
           data-testid="preset-custom"
           onClick={() => onSelectPreset(null)}
-          class={`px-2.5 py-1 text-xs font-mono rounded transition-colors border
+          class={`px-3 py-2 min-h-[44px] text-xs font-mono rounded transition-colors border
             ${
               activePreset === null
                 ? "font-bold"
@@ -122,7 +122,7 @@ export default function PresetBar({
         <>
           <button
             onClick={() => setShowAll((v) => !v)}
-            class="text-[0.65rem] font-mono text-[--color-text-muted] hover:text-[--color-accent] transition-colors flex items-center gap-1 mb-1"
+            class="text-[0.65rem] font-mono text-[--color-text-muted] hover:text-[--color-accent] transition-colors flex items-center gap-1.5 mb-1.5 min-h-[44px] px-1"
           >
             <span
               style={{
@@ -136,7 +136,7 @@ export default function PresetBar({
             {showAll || activeInRest ? "Hide" : `All ${presets.length} presets`}
           </button>
           {(showAll || activeInRest) && (
-            <div class="flex flex-wrap gap-1">
+            <div class="flex flex-wrap gap-1.5">
               {rest.map((p) => (
                 <PresetButton
                   key={p.id}

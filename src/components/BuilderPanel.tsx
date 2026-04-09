@@ -205,11 +205,11 @@ export default function BuilderPanel(props: Props) {
         )}
 
         {/* Indicators */}
-        <div class="px-4 py-2 border-b border-[--color-border]">
-          <div class="text-xs font-mono text-[--color-text-muted] uppercase mb-1">
+        <div class="px-4 py-3 border-b border-[--color-border]">
+          <div class="text-xs font-mono text-[--color-text-muted] uppercase mb-2">
             {t.indicators}
           </div>
-          <div class="flex flex-wrap gap-1">
+          <div class="flex flex-wrap gap-1.5">
             {props.availableIndicators.map((ind) => (
               <button
                 key={ind.id}
@@ -221,7 +221,7 @@ export default function BuilderPanel(props: Props) {
                     return next;
                   });
                 }}
-                class={`px-2.5 py-0.5 text-xs font-mono rounded transition-colors border
+                class={`px-3 py-2 min-h-[44px] text-xs font-mono rounded transition-colors border
                   ${
                     props.selectedIndicators.has(ind.id)
                       ? "font-bold"
@@ -240,19 +240,19 @@ export default function BuilderPanel(props: Props) {
         </div>
 
         {/* Entry Conditions */}
-        <div class="px-4 py-2 border-b border-[--color-border]">
+        <div class="px-4 py-3 border-b border-[--color-border]">
           <div class="flex items-center justify-between mb-1">
             <span class="text-xs font-mono text-[--color-text-muted] uppercase">
               {t.conditions}
             </span>
             <button
               onClick={props.addCondition}
-              class="text-xs font-mono text-[--color-accent] hover:underline"
+              class="text-xs font-mono text-[--color-accent] hover:underline min-h-[44px] px-2"
             >
               {t.addCondition}
             </button>
           </div>
-          <div class="space-y-2 sm:space-y-1">
+          <div class="space-y-3 sm:space-y-2">
             {props.conditions.map((c) => (
               <ConditionRow
                 key={c.id}
@@ -278,22 +278,22 @@ export default function BuilderPanel(props: Props) {
         </div>
 
         {/* Parameters + Date Range (merged 3-column grid) */}
-        <div class="px-4 py-2 border-b border-[--color-border]">
-          <div class="text-xs font-mono text-[--color-text-muted] uppercase mb-1">
+        <div class="px-4 py-3 border-b border-[--color-border]">
+          <div class="text-xs font-mono text-[--color-text-muted] uppercase mb-2">
             {t.parameters}
           </div>
-          <div class="grid grid-cols-3 gap-x-2 gap-y-3 sm:gap-y-1.5">
+          <div class="grid grid-cols-3 gap-x-2 gap-y-3 sm:gap-y-2">
             {/* Timeframe - spans full width */}
             <div class="col-span-3 mb-1">
               <label class="text-[10px] text-[--color-text-muted]">
                 Timeframe
               </label>
-              <div class="flex gap-1 mt-0.5">
+              <div class="flex gap-1.5 mt-0.5">
                 {["1H", "2H", "4H", "6H", "12H", "1D", "1W"].map((tf) => (
                   <button
                     key={tf}
                     onClick={() => props.setTimeframe(tf)}
-                    class={`flex-1 py-1 text-xs font-mono rounded border transition-colors cursor-pointer
+                    class={`flex-1 min-h-[44px] text-xs font-mono rounded border transition-colors cursor-pointer
                       ${
                         props.timeframe === tf
                           ? ""
@@ -311,11 +311,11 @@ export default function BuilderPanel(props: Props) {
               <label class="text-[10px] text-[--color-text-muted]">
                 {t.direction}
               </label>
-              <div class="flex gap-1 mt-0.5">
+              <div class="flex gap-1.5 mt-0.5">
                 <button
                   data-testid="dir-short"
                   onClick={() => props.setDirection("short")}
-                  class={`flex-1 py-1 text-xs font-mono rounded transition-colors border ${props.direction === "short" ? "font-bold" : "bg-[--color-bg-tooltip] text-[--color-text-muted] border-[--color-border] hover:border-[--color-red]/30"}`}
+                  class={`flex-1 min-h-[44px] text-xs font-mono rounded transition-colors border ${props.direction === "short" ? "font-bold" : "bg-[--color-bg-tooltip] text-[--color-text-muted] border-[--color-border] hover:border-[--color-red]/30"}`}
                   style={
                     props.direction === "short" ? shortActiveStyle : undefined
                   }
@@ -325,7 +325,7 @@ export default function BuilderPanel(props: Props) {
                 <button
                   data-testid="dir-long"
                   onClick={() => props.setDirection("long")}
-                  class={`flex-1 py-1 text-xs font-mono rounded transition-colors border ${props.direction === "long" ? "font-bold" : "bg-[--color-bg-tooltip] text-[--color-text-muted] border-[--color-border] hover:border-[--color-accent]/30"}`}
+                  class={`flex-1 min-h-[44px] text-xs font-mono rounded transition-colors border ${props.direction === "long" ? "font-bold" : "bg-[--color-bg-tooltip] text-[--color-text-muted] border-[--color-border] hover:border-[--color-accent]/30"}`}
                   style={
                     props.direction === "long" ? longActiveStyle : undefined
                   }
@@ -335,7 +335,7 @@ export default function BuilderPanel(props: Props) {
                 <button
                   data-testid="dir-both"
                   onClick={() => props.setDirection("both")}
-                  class={`flex-1 py-1 text-xs font-mono rounded transition-colors border ${props.direction === "both" ? "font-bold" : "bg-[--color-bg-tooltip] text-[--color-text-muted] border-[--color-border] hover:border-[--color-accent]/30"}`}
+                  class={`flex-1 min-h-[44px] text-xs font-mono rounded transition-colors border ${props.direction === "both" ? "font-bold" : "bg-[--color-bg-tooltip] text-[--color-text-muted] border-[--color-border] hover:border-[--color-accent]/30"}`}
                   style={
                     props.direction === "both"
                       ? {
@@ -379,7 +379,7 @@ export default function BuilderPanel(props: Props) {
                   setLocalSl((e.target as HTMLInputElement).value)
                 }
                 onBlur={() => props.setSlPct(parseFloat(localSl) || 10)}
-                class="w-full mt-0.5 px-2 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
+                class="w-full mt-0.5 px-2 py-2 min-h-[44px] bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
               />
             </div>
             {/* TP */}
@@ -403,7 +403,7 @@ export default function BuilderPanel(props: Props) {
                   setLocalTp((e.target as HTMLInputElement).value)
                 }
                 onBlur={() => props.setTpPct(parseFloat(localTp) || 8)}
-                class="w-full mt-0.5 px-2 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
+                class="w-full mt-0.5 px-2 py-2 min-h-[44px] bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
               />
             </div>
             {/* Max bars */}
@@ -426,7 +426,7 @@ export default function BuilderPanel(props: Props) {
                   setLocalMaxBars((e.target as HTMLInputElement).value)
                 }
                 onBlur={() => props.setMaxBars(parseInt(localMaxBars) || 48)}
-                class="w-full mt-0.5 px-2 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
+                class="w-full mt-0.5 px-2 py-2 min-h-[44px] bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
               />
             </div>
             {/* Capital input — compound: total portfolio capital; simple: per-coin amount */}
@@ -450,7 +450,7 @@ export default function BuilderPanel(props: Props) {
                     parseFloat(localPerCoin) || (props.compounding ? 1000 : 60),
                   )
                 }
-                class="w-full mt-0.5 px-2 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
+                class="w-full mt-0.5 px-2 py-2 min-h-[44px] bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
               />
             </div>
             {/* Leverage */}
@@ -468,15 +468,15 @@ export default function BuilderPanel(props: Props) {
                   setLocalLeverage((e.target as HTMLInputElement).value)
                 }
                 onBlur={() => props.setLeverage(parseInt(localLeverage) || 5)}
-                class="w-full mt-0.5 px-2 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
+                class="w-full mt-0.5 px-2 py-2 min-h-[44px] bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
               />
             </div>
             {/* Compounding Toggle — fits in 3rd grid column */}
             <div class="flex flex-col justify-end">
-              <div class="flex items-center gap-1.5 h-[26px]">
+              <div class="flex items-center gap-2 min-h-[44px]">
                 <button
                   onClick={() => props.setCompounding(!props.compounding)}
-                  class="relative w-8 h-[18px] rounded-full transition-colors duration-200 shrink-0"
+                  class="relative w-11 h-6 rounded-full transition-colors duration-200 shrink-0"
                   style={{
                     background: props.compounding ? "#3182f6" : "#3a3a42",
                   }}
@@ -487,10 +487,10 @@ export default function BuilderPanel(props: Props) {
                   }
                 >
                   <span
-                    class="absolute top-[2px] left-[2px] w-[14px] h-[14px] rounded-full bg-white transition-transform duration-200"
+                    class="absolute top-[3px] left-[3px] w-[18px] h-[18px] rounded-full bg-white transition-transform duration-200"
                     style={{
                       transform: props.compounding
-                        ? "translateX(14px)"
+                        ? "translateX(20px)"
                         : "translateX(0)",
                     }}
                   />
@@ -542,7 +542,7 @@ export default function BuilderPanel(props: Props) {
                 onChange={(e: Event) =>
                   props.setStartDate((e.target as HTMLInputElement).value)
                 }
-                class="w-full mt-0.5 px-2 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
+                class="w-full mt-0.5 px-2 py-2 min-h-[44px] bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
               />
             </div>
             {/* End Date */}
@@ -556,18 +556,18 @@ export default function BuilderPanel(props: Props) {
                 onChange={(e: Event) =>
                   props.setEndDate((e.target as HTMLInputElement).value)
                 }
-                class="w-full mt-0.5 px-2 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
+                class="w-full mt-0.5 px-2 py-2 min-h-[44px] bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
               />
             </div>
           </div>
         </div>
 
         {/* Coin Selection */}
-        <div class="px-4 py-2 border-b border-[--color-border]">
-          <div class="text-xs font-mono text-[--color-text-muted] uppercase mb-1">
+        <div class="px-4 py-3 border-b border-[--color-border]">
+          <div class="text-xs font-mono text-[--color-text-muted] uppercase mb-2">
             {t.coins}
           </div>
-          <div class="flex gap-1 mb-1.5">
+          <div class="flex gap-1.5 mb-2">
             {[
               { mode: "all" as const, label: t.allCoins },
               { mode: "top" as const, label: `${t.topN} N` },
@@ -582,7 +582,7 @@ export default function BuilderPanel(props: Props) {
               <button
                 key={mode}
                 onClick={() => props.setCoinMode(mode)}
-                class={`px-2.5 py-0.5 text-xs font-mono rounded transition-colors border
+                class={`px-3 py-2 min-h-[44px] text-xs font-mono rounded transition-colors border
                   ${
                     props.coinMode === mode
                       ? "font-bold"
@@ -605,7 +605,7 @@ export default function BuilderPanel(props: Props) {
                   setLocalTopN((e.target as HTMLInputElement).value)
                 }
                 onBlur={() => props.setTopN(parseInt(localTopN) || 50)}
-                class="w-full px-2 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
+                class="w-full px-2 py-2 min-h-[44px] bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
                 placeholder={t.topCoinsPlaceholder || "Number of top coins"}
               />
               <p class="text-[10px] text-[--color-text-muted] mt-0.5 font-mono">
@@ -616,7 +616,7 @@ export default function BuilderPanel(props: Props) {
           )}
           {props.coinMode === "select" && (
             <div>
-              <div class="flex items-center gap-1 mb-1">
+              <div class="flex items-center gap-1.5 mb-1.5">
                 <input
                   type="text"
                   value={props.coinSearch}
@@ -624,7 +624,7 @@ export default function BuilderPanel(props: Props) {
                     props.setCoinSearch((e.target as HTMLInputElement).value)
                   }
                   placeholder={t.searchCoinsPlaceholder || "Search coins..."}
-                  class="flex-1 px-2 py-1 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs outline-none"
+                  class="flex-1 px-2 py-2 min-h-[44px] bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs outline-none"
                 />
                 <button
                   onClick={() => {
@@ -634,13 +634,13 @@ export default function BuilderPanel(props: Props) {
                       return Array.from(combined);
                     });
                   }}
-                  class="px-2 py-1 text-[10px] font-mono text-[--color-accent] border border-[--color-border] rounded hover:bg-[--color-bg-hover] transition-colors whitespace-nowrap"
+                  class="px-3 min-h-[44px] text-[10px] font-mono text-[--color-accent] border border-[--color-border] rounded hover:bg-[--color-bg-hover] transition-colors whitespace-nowrap"
                 >
                   All
                 </button>
                 <button
                   onClick={() => props.setSelectedCoins(() => [])}
-                  class="px-2 py-1 text-[10px] font-mono text-[--color-text-muted] border border-[--color-border] rounded hover:bg-[--color-bg-hover] transition-colors whitespace-nowrap"
+                  class="px-3 min-h-[44px] text-[10px] font-mono text-[--color-text-muted] border border-[--color-border] rounded hover:bg-[--color-bg-hover] transition-colors whitespace-nowrap"
                 >
                   None
                 </button>
@@ -682,7 +682,7 @@ export default function BuilderPanel(props: Props) {
                           : [...prev, c.symbol],
                       );
                     }}
-                    class={`block w-full text-left px-2 py-0.5 text-xs font-mono rounded hover:bg-[--color-bg-hover]
+                    class={`block w-full text-left px-2 py-2 min-h-[44px] text-xs font-mono rounded hover:bg-[--color-bg-hover] flex items-center
                       ${props.selectedCoins.includes(c.symbol) ? "text-[--color-accent]" : "text-[--color-text-muted]"}`}
                   >
                     {props.selectedCoins.includes(c.symbol) ? "\u2713 " : ""}
@@ -705,7 +705,7 @@ export default function BuilderPanel(props: Props) {
             </span>
           </summary>
           <div class="px-4 pb-2">
-            <div class="flex flex-wrap gap-1 sm:gap-0.5">
+            <div class="flex flex-wrap gap-1.5 sm:gap-1">
               {Array.from({ length: 24 }, (_, i) => (
                 <button
                   key={i}
@@ -717,7 +717,7 @@ export default function BuilderPanel(props: Props) {
                       return next;
                     });
                   }}
-                  class={`w-8 h-8 sm:w-[26px] sm:h-[22px] text-xs sm:text-[10px] font-mono rounded transition-colors border
+                  class={`w-[44px] h-[44px] sm:w-[30px] sm:h-[26px] text-xs sm:text-[10px] font-mono rounded transition-colors border
                     ${
                       props.avoidHours.has(i)
                         ? ""
@@ -743,7 +743,7 @@ export default function BuilderPanel(props: Props) {
             data-testid="run-backtest"
             onClick={props.onRun}
             disabled={props.isRunning || props.conditions.length === 0}
-            class={`w-full py-2 rounded-lg font-mono text-sm font-bold transition-colors
+            class={`w-full py-3 min-h-[44px] rounded-lg font-mono text-sm font-bold transition-colors
               ${props.isRunning || props.conditions.length === 0 ? "cursor-not-allowed" : "hover:opacity-90"}`}
             style={
               props.isRunning || props.conditions.length === 0
