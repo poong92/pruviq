@@ -418,7 +418,7 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
             <div class="relative group" role="navigation" aria-label="Strategy submenu">
               <a href={item.href} aria-current={isActive(item.match) ? "page" : undefined}
                  aria-haspopup="true" aria-expanded="false"
-                 class="transition-colors flex items-center gap-1 nav-dropdown-trigger"
+                 class="transition-colors flex items-center gap-1 nav-dropdown-trigger nav-slide-underline"
                  style={isActive(item.match) ? 'color:var(--color-accent);font-weight:500' : 'color:var(--color-text-muted)'}>
                 {item.label}
                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" class="opacity-50 transition-transform duration-200 group-hover:rotate-180" aria-hidden="true"><path d="M2.5 4.5l3.5 3 3.5-3"/></svg>
@@ -442,7 +442,7 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
               </div>
             </div>
           ) : (
-            <a href={item.href} aria-current={isActive(item.match) ? "page" : undefined} class="transition-colors" style={isActive(item.match) ? 'color:var(--color-accent);font-weight:500' : 'color:var(--color-text-muted)'}>{item.label}</a>
+            <a href={item.href} aria-current={isActive(item.match) ? "page" : undefined} class="transition-colors nav-slide-underline" style={isActive(item.match) ? 'color:var(--color-accent);font-weight:500' : 'color:var(--color-text-muted)'}>{item.label}</a>
           ))}
         </div>
         <!-- 3열: Lang + Mobile hamburger (우측) -->

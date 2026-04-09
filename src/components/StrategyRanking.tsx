@@ -352,13 +352,14 @@ export function StrategyRanking({ lang = "en" }: { lang?: Lang }) {
           {isFirstLoad
             ? [0, 1, 2].map((i) => <SkeletonCard key={i} />)
             : data?.top3.map((entry) => (
-                <RankingCard
-                  key={`top-${entry.rank}`}
-                  entry={entry}
-                  lang={lang}
-                  variant="best"
-                  period={period}
-                />
+                <div class="ranking-card-enter" key={`top-${entry.rank}`}>
+                  <RankingCard
+                    entry={entry}
+                    lang={lang}
+                    variant="best"
+                    period={period}
+                  />
+                </div>
               ))}
         </div>
       </section>
@@ -378,13 +379,14 @@ export function StrategyRanking({ lang = "en" }: { lang?: Lang }) {
             : (data?.worst3 ?? [])
                 .filter((e) => e.total_trades >= 30)
                 .map((entry) => (
-                  <RankingCard
-                    key={`worst-${entry.rank}`}
-                    entry={entry}
-                    variant="worst"
-                    lang={lang}
-                    period={period}
-                  />
+                  <div class="ranking-card-enter" key={`worst-${entry.rank}`}>
+                    <RankingCard
+                      entry={entry}
+                      variant="worst"
+                      lang={lang}
+                      period={period}
+                    />
+                  </div>
                 ))}
         </div>
       </section>
@@ -395,13 +397,14 @@ export function StrategyRanking({ lang = "en" }: { lang?: Lang }) {
           <SectionHeader title={lbl.weeklyTitle} subtitle={lbl.weeklySub} />
           <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             {data?.weekly_best3.map((entry) => (
-              <RankingCard
-                key={`weekly-${entry.rank}`}
-                entry={entry}
-                variant="weekly"
-                lang={lang}
-                period="7d"
-              />
+              <div class="ranking-card-enter" key={`weekly-${entry.rank}`}>
+                <RankingCard
+                  entry={entry}
+                  variant="weekly"
+                  lang={lang}
+                  period="7d"
+                />
+              </div>
             ))}
           </div>
         </section>
