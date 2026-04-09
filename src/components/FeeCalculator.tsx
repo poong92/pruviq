@@ -107,7 +107,7 @@ export default function FeeCalculator({ lang = "en" }: Props) {
           <div class="flex rounded-lg overflow-hidden border border-[--color-border]">
             <button
               onClick={() => setMarket("spot")}
-              class={`px-4 py-2 min-h-[44px] text-sm font-semibold transition-colors ${
+              class={`px-4 py-2 min-h-[44px] text-sm font-semibold transition-colors focus-visible:ring-2 focus-visible:ring-[--color-accent] focus-visible:ring-offset-1 focus-visible:ring-offset-[--color-bg] ${
                 market === "spot"
                   ? ""
                   : "bg-[--color-bg-card] text-[--color-text-muted] hover:text-[--color-text]"
@@ -122,7 +122,7 @@ export default function FeeCalculator({ lang = "en" }: Props) {
             </button>
             <button
               onClick={() => setMarket("futures")}
-              class={`px-4 py-2 min-h-[44px] text-sm font-semibold transition-colors ${
+              class={`px-4 py-2 min-h-[44px] text-sm font-semibold transition-colors focus-visible:ring-2 focus-visible:ring-[--color-accent] focus-visible:ring-offset-1 focus-visible:ring-offset-[--color-bg] ${
                 market === "futures"
                   ? ""
                   : "bg-[--color-bg-card] text-[--color-text-muted] hover:text-[--color-text]"

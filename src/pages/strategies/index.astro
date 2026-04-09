@@ -339,7 +339,7 @@ const difficultyColors: Record<string, string> = {
       {simulatorPresets.length > 0 && (
         <div class="mt-12">
           <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">SIMULATOR PRESETS</p>
-          <h2 class="text-xl font-bold mb-2">{t('strategies.presets_title').replace('{count}', String(simulatorPresets.length))}</h2>
+          <h2 class="text-xl font-bold mb-2">{t('strategies.presets_title').replace('{count}', String(simulatorPresets.length)).replace(/\(\d+\)/, '').trim()} <span class="px-2 py-0.5 rounded-full bg-[--color-accent]/10 text-[--color-accent] text-xs font-mono">{simulatorPresets.length}</span></h2>
           <p class="text-[--color-text-muted] text-sm mb-6">
             {t('strategies.presets_desc')}
           </p>
