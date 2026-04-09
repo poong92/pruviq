@@ -29,7 +29,7 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
 <Layout title={t('meta.home_title')} description={t('meta.index_desc')}>
 
   <!-- HERO — 50/50 layout: text left, live demo right -->
-  <section class="relative overflow-hidden hero-bg-depth bg-noise">
+  <section id="hero-section" class="relative overflow-hidden hero-bg-depth bg-noise">
     <HeroGlow />
     <div class="relative max-w-7xl mx-auto px-6 pt-10 pb-16 md:pt-14 md:pb-20 hero-enter">
       <div class="grid md:grid-cols-2 gap-12 md:gap-16 items-center">
