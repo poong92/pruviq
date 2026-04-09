@@ -208,6 +208,38 @@
   background: rgba(255,255,255,0.05);
 }
 
+/* ─── Stat card top gradient accent line ─── */
+.stat-glass {
+  position: relative;
+  overflow: hidden;
+}
+.stat-glass::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 20%;
+  right: 20%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--color-accent), transparent);
+}
+
+/* ─── Section glow backgrounds ─── */
+.section-glow-green {
+  background: radial-gradient(ellipse at 50% 0%, rgba(0,220,130,0.04) 0%, transparent 70%);
+}
+.section-glow-cyan {
+  background: radial-gradient(ellipse at 50% 100%, rgba(44,181,232,0.03) 0%, transparent 70%);
+}
+
+/* ─── Frosted glass enhancement ─── */
+.card-frost {
+  background: rgba(255,255,255,0.03);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.06);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.04);
+}
+
 /* ─── Premium card with gradient border ─── */
 .card-premium {
   position: relative;
@@ -507,7 +539,7 @@ a:not(.btn):not(.btn-primary):not(.btn-ghost):not(.btn-outline):not(.card-hover)
 }
 
 .gradient-text {
-  background: linear-gradient(135deg, #2CB5E8, #A855F7, #06B6D4, #2CB5E8);
+  background: linear-gradient(135deg, #00DC82 0%, #2CB5E8 30%, #06B6D4 55%, #E4E4E7 100%);
   background-size: 300% 300%;
   animation: gradient-shift 8s ease infinite;
   -webkit-background-clip: text;
