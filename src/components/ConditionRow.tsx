@@ -92,7 +92,7 @@ export default function ConditionRow({
 
   return (
     <div class="text-xs">
-      <div class="flex flex-wrap sm:flex-nowrap items-center gap-1.5">
+      <div class="flex flex-wrap sm:flex-nowrap items-center gap-2">
         {/* Field */}
         <select
           value={c.field}
@@ -105,7 +105,7 @@ export default function ConditionRow({
             }
             setShowInfo(false);
           }}
-          class="flex-1 min-w-0 px-1.5 py-1.5 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
+          class="flex-1 min-w-0 px-1.5 py-2 min-h-[44px] bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
           title={fieldDescriptions[c.field] || c.field}
           aria-label="Indicator field"
         >
@@ -119,7 +119,7 @@ export default function ConditionRow({
         <button
           type="button"
           onClick={() => setShowInfo(!showInfo)}
-          class="w-5 h-5 shrink-0 rounded-full border border-[--color-border] text-[--color-text-muted] hover:text-[--color-accent] hover:border-[--color-accent] flex items-center justify-center text-[10px] font-mono transition-colors"
+          class="w-[44px] h-[44px] sm:w-7 sm:h-7 shrink-0 rounded-full border border-[--color-border] text-[--color-text-muted] hover:text-[--color-accent] hover:border-[--color-accent] flex items-center justify-center text-xs sm:text-[10px] font-mono transition-colors"
           title={fieldDescriptions[c.field] || c.field}
           aria-label={`Info about ${c.field}`}
         >
@@ -131,7 +131,7 @@ export default function ConditionRow({
           onChange={(e: Event) =>
             onUpdate(c.id, "op", (e.target as HTMLSelectElement).value)
           }
-          class="w-12 px-1 py-1.5 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
+          class="w-14 px-1 py-2 min-h-[44px] bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
           aria-label="Comparison operator"
         >
           {OPS.map((o) => (
@@ -151,7 +151,7 @@ export default function ConditionRow({
                 (e.target as HTMLSelectElement).value === "true",
               )
             }
-            class="w-14 px-1 py-1.5 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
+            class="w-16 px-1 py-2 min-h-[44px] bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
             aria-label="Boolean value"
           >
             <option value="true">true</option>
@@ -169,7 +169,7 @@ export default function ConditionRow({
                 parseFloat((e.target as HTMLInputElement).value),
               )
             }
-            class="w-16 px-1.5 py-1.5 bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
+            class="w-20 px-1.5 py-2 min-h-[44px] bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
             aria-label="Comparison value"
           />
         )}
@@ -183,7 +183,7 @@ export default function ConditionRow({
               parseInt((e.target as HTMLSelectElement).value),
             )
           }
-          class={`w-12 px-1 py-1.5 bg-[--color-bg-tooltip] border rounded font-mono text-xs outline-none focus:border-[--color-accent] ${
+          class={`w-14 px-1 py-2 min-h-[44px] bg-[--color-bg-tooltip] border rounded font-mono text-xs outline-none focus:border-[--color-accent] ${
             c.shift === 0
               ? "border-[--color-yellow] text-[--color-yellow] font-bold"
               : "border-[--color-border] text-[--color-text]"
@@ -215,7 +215,7 @@ export default function ConditionRow({
         {/* Remove */}
         <button
           onClick={() => onRemove(c.id)}
-          class="text-[--color-text-muted] hover:text-[--color-red] px-1"
+          class="text-[--color-text-muted] hover:text-[--color-red] min-w-[44px] min-h-[44px] flex items-center justify-center shrink-0"
           title={removeLabel}
           aria-label={removeLabel}
         >
