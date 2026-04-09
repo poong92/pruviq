@@ -1646,3 +1646,103 @@ a:not(.btn):not(.card-hover):not(nav a):hover {
   border-color: rgba(44,181,232,0.15);
   background: rgba(44,181,232,0.04);
 }
+
+/* ─── Section warm glow (amber/gold tint for trust sections) ─── */
+.section-warm-glow {
+  background: linear-gradient(135deg, rgba(245,158,11,0.02) 0%, transparent 60%);
+}
+
+/* ─── Section dark (darker than canvas for contrast) ─── */
+.section-dark {
+  background: rgba(0,0,0,0.15);
+}
+
+/* ─── Level section header (Learn page, Strategy levels) ─── */
+.level-header {
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-md);
+  border-left: 3px solid currentColor;
+}
+.level-header-green {
+  background: rgba(34,171,148,0.06);
+  border-left-color: var(--color-up);
+}
+.level-header-yellow {
+  background: rgba(245,158,11,0.06);
+  border-left-color: var(--color-warning);
+}
+.level-header-red {
+  background: rgba(242,54,69,0.06);
+  border-left-color: var(--color-down);
+}
+
+/* ─── Enhanced preset card (Strategies page) ─── */
+.preset-card-enhanced {
+  position: relative;
+  background: linear-gradient(135deg, var(--color-bg-card), rgba(255,255,255,0.02));
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 1rem 1.25rem;
+  transition: border-color var(--duration-normal) var(--ease-smooth),
+              transform var(--duration-normal) var(--ease-default),
+              box-shadow var(--duration-normal) var(--ease-smooth),
+              background var(--duration-normal) var(--ease-smooth);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+.preset-card-enhanced::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--gradient-card-shine);
+  pointer-events: none;
+}
+.preset-card-enhanced:hover {
+  border-color: var(--color-border-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.08), 0 8px 24px rgba(0,0,0,0.3);
+  background: linear-gradient(135deg, var(--color-bg-elevated), rgba(255,255,255,0.03));
+}
+.preset-card-enhanced.preset-glow-long:hover {
+  border-color: rgba(44,181,232,0.25);
+  box-shadow: 0 0 0 1px rgba(44,181,232,0.12), 0 8px 24px rgba(0,0,0,0.3), 0 0 16px rgba(44,181,232,0.08);
+}
+.preset-card-enhanced.preset-glow-short:hover {
+  border-color: rgba(242,54,69,0.25);
+  box-shadow: 0 0 0 1px rgba(242,54,69,0.12), 0 8px 24px rgba(0,0,0,0.3), 0 0 16px rgba(242,54,69,0.08);
+}
+
+/* ─── Cross-sell banner ─── */
+.cross-sell-banner {
+  background: linear-gradient(135deg, rgba(44,181,232,0.06), rgba(44,181,232,0.02));
+  border: 1px solid rgba(44,181,232,0.12);
+  border-radius: var(--radius-lg);
+  padding: 1rem 1.5rem;
+}
+
+/* ─── Data table striped rows ─── */
+.table-striped tbody tr:nth-child(even) {
+  background: rgba(255,255,255,0.015);
+}
+.table-striped tbody tr {
+  transition: background-color var(--duration-instant) var(--ease-smooth);
+}
+.table-striped tbody tr:hover {
+  background: rgba(255,255,255,0.035);
+}
+
+/* ─── Page section count badge ─── */
+.section-count-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.75rem;
+  height: 1.75rem;
+  border-radius: var(--radius-full);
+  background: var(--color-accent-subtle);
+  color: var(--color-accent);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0 0.5rem;
+}
