@@ -351,6 +351,7 @@ export const en = {
     "Spot & futures fees at a glance. Sign up through PRUVIQ and get up to 19% off Binance trading fees.",
   "fees.disclosure":
     "Affiliate disclosure: PRUVIQ earns a commission when you sign up through our referral links. Your fee discount is not affected.",
+  "fees.ctaSimulate": "Start Free Simulation",
   "fees.compare_title": "Compare Exchanges",
   "fees.compare_desc":
     "Base tier (VIP 0). Referral discounts stack on top of VIP tiers.",

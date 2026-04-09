@@ -205,7 +205,7 @@ export default function BuilderPanel(props: Props) {
         )}
 
         {/* Indicators */}
-        <div class="px-4 py-3 border-b border-[--color-border]">
+        <div class="px-4 py-4 border-b border-[--color-border]">
           <div class="text-xs font-mono text-[--color-text-muted] uppercase mb-2">
             {t.indicators}
           </div>
@@ -240,7 +240,7 @@ export default function BuilderPanel(props: Props) {
         </div>
 
         {/* Entry Conditions */}
-        <div class="px-4 py-3 border-b border-[--color-border]">
+        <div class="px-4 py-4 border-b border-[--color-border]">
           <div class="flex items-center justify-between mb-1">
             <span class="text-xs font-mono text-[--color-text-muted] uppercase">
               {t.conditions}
@@ -252,7 +252,7 @@ export default function BuilderPanel(props: Props) {
               {t.addCondition}
             </button>
           </div>
-          <div class="space-y-3 sm:space-y-2">
+          <div class="space-y-4 sm:space-y-3">
             {props.conditions.map((c) => (
               <ConditionRow
                 key={c.id}
@@ -278,11 +278,11 @@ export default function BuilderPanel(props: Props) {
         </div>
 
         {/* Parameters + Date Range (merged 3-column grid) */}
-        <div class="px-4 py-3 border-b border-[--color-border]">
+        <div class="px-4 py-4 border-b border-[--color-border]">
           <div class="text-xs font-mono text-[--color-text-muted] uppercase mb-2">
             {t.parameters}
           </div>
-          <div class="grid grid-cols-3 gap-x-2 gap-y-3 sm:gap-y-2">
+          <div class="grid grid-cols-3 gap-x-2 gap-y-4 sm:gap-y-3">
             {/* Timeframe - spans full width */}
             <div class="col-span-3 mb-1">
               <label class="text-[10px] text-[--color-text-muted]">
@@ -563,7 +563,7 @@ export default function BuilderPanel(props: Props) {
         </div>
 
         {/* Coin Selection */}
-        <div class="px-4 py-3 border-b border-[--color-border]">
+        <div class="px-4 py-4 border-b border-[--color-border]">
           <div class="text-xs font-mono text-[--color-text-muted] uppercase mb-2">
             {t.coins}
           </div>

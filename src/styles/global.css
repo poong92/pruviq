@@ -58,7 +58,7 @@
   /* ─── TEXT (4-level hierarchy: text > secondary > muted > disabled) ─── */
   --color-text:          #E4E4E7;   /* Zinc-200 — headings, body */
   --color-text-secondary:#A1A1AA;   /* Zinc-400 — descriptions, subtitles */
-  --color-text-muted:    #898992;   /* Zinc-450 — labels, meta, captions (distinct from secondary) */
+  --color-text-muted:    #9A9AA3;   /* Zinc-450 bumped — WCAG AA 4.6:1 on #09090B */
   --color-text-disabled: #52525B;   /* Zinc-600 — inactive, placeholder */
 
   /* ─── ACCENT — unified with logo IQ cyan ─── */
@@ -650,17 +650,14 @@ textarea:focus-visible,
 
 /* ─── Card hover ─── */
 .card-hover {
-  transition: border-color var(--duration-normal) var(--ease-smooth),
-              transform var(--duration-normal) var(--ease-default),
-              box-shadow var(--duration-normal) var(--ease-smooth);
+  transition: border-color 0.2s ease,
+              transform 0.2s ease,
+              box-shadow 0.2s ease;
 }
 .card-hover:hover {
-  border-color: rgba(255,255,255,0.15);
-  transform: translateY(-2px);
-  box-shadow:
-    0 0 0 1px rgba(255,255,255,0.10),
-    0 8px 24px rgba(0,0,0,0.35),
-    0 20px 48px rgba(0,0,0,0.25);
+  border-color: rgba(0,220,130,0.2);
+  transform: translateY(-2px) scale(1.005);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
 }
 
 /* ─── Table row hover ─── */
@@ -1054,7 +1051,7 @@ textarea:focus-visible,
 
 /* ─── Section alternating backgrounds ─── */
 .section-alt {
-  background-color: var(--color-bg-subtle);
+  background: rgba(255,255,255,0.015);
 }
 .section-accent {
   background: var(--gradient-section);
@@ -1497,13 +1494,22 @@ textarea:focus-visible,
 :lang(ko) .flash-up { animation: flash-red 0.6s ease-out; }
 :lang(ko) .flash-down { animation: flash-green 0.6s ease-out; }
 
-/* ─── #5 CTA glow pulse ─── */
-@keyframes cta-glow {
-  0%, 100% { box-shadow: 0 0 16px rgba(44,181,232,0.2), 0 2px 8px rgba(0,0,0,0.3); }
-  50% { box-shadow: 0 0 24px rgba(44,181,232,0.35), 0 2px 8px rgba(0,0,0,0.3); }
+/* ─── #5 CTA subtle gradient sweep ─── */
+@keyframes cta-sweep {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
 }
 .btn-primary {
-  animation: cta-glow 3s ease-in-out infinite;
+  background-image: linear-gradient(
+    110deg,
+    var(--color-accent) 0%,
+    var(--color-accent) 40%,
+    rgba(92,200,237,0.5) 50%,
+    var(--color-accent) 60%,
+    var(--color-accent) 100%
+  );
+  background-size: 200% 100%;
+  animation: cta-sweep 4s var(--ease-smooth) infinite;
 }
 
 /* ─── #6 Tab switch fade ─── */
@@ -1511,7 +1517,7 @@ textarea:focus-visible,
   from { opacity: 0; transform: translateY(6px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-.tab-entering { animation: tab-enter 0.2s ease-out both; }
+.tab-entering { animation: tab-enter 0.3s var(--ease-smooth) both; }
 
 /* ─── #7 Nav active underline slide ─── */
 .nav-slide-underline {
@@ -1522,13 +1528,15 @@ textarea:focus-visible,
   position: absolute;
   bottom: -2px;
   left: 0;
-  width: 0;
+  width: 100%;
   height: 2px;
   background: var(--color-accent);
-  transition: width 0.2s ease;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.25s var(--ease-smooth);
 }
 .nav-slide-underline:hover::after {
-  width: 100%;
+  transform: scaleX(1);
 }
 
 /* ─── #1 Equity chart draw-in ─── */
@@ -1541,9 +1549,9 @@ textarea:focus-visible,
 }
 
 /* ─── #2 Ranking card number reveal (staggered) ─── */
-.ranking-metric-reveal > div:nth-child(1) { animation: number-reveal 0.35s ease-out both; animation-delay: 0ms; }
-.ranking-metric-reveal > div:nth-child(2) { animation: number-reveal 0.35s ease-out both; animation-delay: 60ms; }
-.ranking-metric-reveal > div:nth-child(3) { animation: number-reveal 0.35s ease-out both; animation-delay: 120ms; }
+.ranking-metric-reveal > div:nth-child(1) { animation: number-reveal 0.35s var(--ease-bounce) both; animation-delay: 0ms; }
+.ranking-metric-reveal > div:nth-child(2) { animation: number-reveal 0.35s var(--ease-bounce) both; animation-delay: 60ms; }
+.ranking-metric-reveal > div:nth-child(3) { animation: number-reveal 0.35s var(--ease-bounce) both; animation-delay: 120ms; }
 
 /* ─── #3 Skeleton→content crossfade (staggered card enter) ─── */
 .ranking-card-enter { animation: card-enter 0.3s ease-out both; }

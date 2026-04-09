@@ -52,17 +52,15 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
           </div>
           <!-- CTA -->
           <div class="flex flex-col sm:flex-row gap-3 mt-8">
-            <a href="/ko/simulate" class="btn btn-primary btn-lg text-center">
+            <a href="/ko/simulate" class="btn btn-primary btn-lg text-center w-full sm:w-auto">
               시뮬레이터 열기 — 무료 &rarr;
             </a>
-            <a href="/ko/strategies" class="btn btn-ghost btn-sm text-center">
+            <a href="/ko/strategies" class="btn btn-ghost btn-sm text-center w-full sm:w-auto">
               전략 탐색하기
             </a>
           </div>
-          <!-- Micro trust -->
-          <p class="mt-4 text-xs text-[--color-text-disabled] font-mono">
-            {coinsAnalyzed}+ 코인 · 2년+ 데이터 · 실제 수수료 · 신용카드 불필요
-          </p>
+          <!-- Trust strip -->
+          <p class="text-xs font-mono text-[--color-text-muted] mt-3">{simulatorPresetCount}개+ 전략 · {coinsAnalyzed}개+ 코인 · 영구 무료 · 가입 불필요</p>
         </div>
         <!-- Right: Live simulator demo -->
         <div class="relative">

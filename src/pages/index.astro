@@ -52,17 +52,15 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
           </div>
           <!-- CTA -->
           <div class="flex flex-col sm:flex-row gap-3 mt-8">
-            <a href="/simulate" class="btn btn-primary btn-lg text-center">
+            <a href="/simulate" class="btn btn-primary btn-lg text-center w-full sm:w-auto">
               Open Simulator — Free &rarr;
             </a>
-            <a href="/strategies" class="btn btn-ghost btn-sm text-center">
+            <a href="/strategies" class="btn btn-ghost btn-sm text-center w-full sm:w-auto">
               Explore Strategies
             </a>
           </div>
-          <!-- Micro trust -->
-          <p class="mt-4 text-xs text-[--color-text-disabled] font-mono">
-            {coinsAnalyzed}+ coins · 2Y+ data · Real fees · No credit card
-          </p>
+          <!-- Trust strip -->
+          <p class="text-xs font-mono text-[--color-text-muted] mt-3">{simulatorPresetCount}+ strategies · {coinsAnalyzed}+ coins · Free forever · No signup required</p>
         </div>
         <!-- Right: Live simulator demo -->
         <div class="relative">
