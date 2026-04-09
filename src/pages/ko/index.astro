@@ -40,7 +40,7 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
         <!-- Left: Text + CTA -->
         <div>
           <HeroBadge stat={simulationsRun} label="시뮬레이션 실행" cta="무료 체험 →" />
-          <p class="font-mono text-[--color-accent] text-sm tracking-wider mb-4 opacity-80">검증하고. 실행하고. 수익내세요.</p>
+          <p class="font-mono text-[--color-accent] text-sm tracking-wider mb-4 opacity-80">검증하고. 실행하고. 판단하세요.</p>
           <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold tracking-[-0.04em] leading-[1.2] word-break-keep text-balance">
             대부분의 백테스트는<br/>거짓말합니다.<br/><span class="gradient-text">우리는 증거를 공개합니다.</span>
           </h1>
@@ -65,6 +65,7 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
           </div>
           <!-- Trust strip -->
           <p class="text-xs font-mono text-[--color-text-muted] mt-3">{simulatorPresetCount}개+ 전략 · {coinsAnalyzed}개+ 코인 · $0 — 구독 없음 · 가입 불필요</p>
+          <p class="text-[10px] text-[--color-text-muted]/50 mt-2">시뮬레이션 전용. 과거 성과가 미래 수익을 보장하지 않습니다. 투자 조언이 아닙니다.</p>
         </div>
         <!-- Right: Live simulator demo -->
         <div class="relative">

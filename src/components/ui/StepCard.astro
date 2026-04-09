@@ -6,7 +6,7 @@ interface Props {
 }
 const { step, title, description } = Astro.props;
 ---
-<div class="rounded-xl border border-[--color-border] bg-[--color-bg-card] p-8 text-center hover:border-[--color-accent]/30 transition-colors card-glow">
+<div class="rounded-xl border border-white/5 bg-[--color-bg-card] p-8 text-center hover:border-[--color-accent]/30 hover:-translate-y-0.5 transition-all card-glow" style="box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), 0 4px 16px rgba(0,0,0,0.2)">
   <div class="w-10 h-10 rounded-full bg-[--color-accent]/10 text-[--color-accent] font-bold text-lg flex items-center justify-center mx-auto mb-4 font-mono">
     {step}
   </div>

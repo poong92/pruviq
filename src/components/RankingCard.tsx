@@ -45,6 +45,67 @@ const cardLabels = {
   },
 };
 
+/**
+ * Synthetic sparkline — generates a plausible equity curve from total_return.
+ * Uses strategy name as a simple hash seed so the same card always renders
+ * the same curve (no flickering on re-render). Visual hint only, not real data.
+ */
+function Sparkline({
+  totalReturn,
+  seed,
+}: {
+  totalReturn: number;
+  seed: string;
+}) {
+  // Simple hash from seed string for deterministic noise
+  let h = 0;
+  for (let i = 0; i < seed.length; i++) {
+    h = (h * 31 + seed.charCodeAt(i)) | 0;
+  }
+  const pseudoRandom = (i: number) => {
+    const x = Math.sin((h + i) * 9301 + 49297) * 49297;
+    return x - Math.floor(x);
+  };
+
+  const steps = 16;
+  const data: number[] = [0];
+  for (let i = 1; i <= steps; i++) {
+    const progress = i / steps;
+    const trend = totalReturn * progress;
+    const noise = (pseudoRandom(i) - 0.5) * Math.abs(totalReturn) * 0.3;
+    data.push(trend + noise);
+  }
+  // Ensure final point = totalReturn
+  data[steps] = totalReturn;
+
+  const min = Math.min(...data);
+  const max = Math.max(...data);
+  const range = max - min || 1;
+  const w = 64;
+  const hh = 20;
+  const points = data
+    .map(
+      (v, i) =>
+        `${(i / (data.length - 1)) * w},${hh - ((v - min) / range) * hh}`,
+    )
+    .join(" ");
+
+  const strokeColor = totalReturn >= 0 ? "var(--color-up)" : "var(--color-red)";
+
+  return (
+    <svg width={w} height={hh} class="opacity-60" aria-hidden="true" role="img">
+      <polyline
+        points={points}
+        fill="none"
+        stroke={strokeColor}
+        stroke-width="1.5"
+        stroke-linejoin="round"
+        stroke-linecap="round"
+      />
+    </svg>
+  );
+}
+
 const RANK_MEDALS = ["🥇", "🥈", "🥉"];
 
 function rankBadge(rank: number): string {
@@ -139,6 +200,16 @@ export function RankingCard({
           )}
         </div>
       </div>
+
+      {/* Mini equity sparkline — synthetic curve from total_return */}
+      {entry.total_return != null && (
+        <div class="mb-2">
+          <Sparkline
+            totalReturn={entry.total_return}
+            seed={entry.strategy + entry.direction + entry.timeframe}
+          />
+        </div>
+      )}
 
       {/* Low sample warning badge */}
       {entry.low_sample && (
