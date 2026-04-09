@@ -15,6 +15,8 @@ jobs:
   site-stats-contract:
     name: site-stats.json schema
     runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
       - uses: actions/checkout@v4
 
@@ -69,6 +71,8 @@ jobs:
   ranking-json-contract:
     name: Ranking JSON schema (if changed)
     runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
       - uses: actions/checkout@v4
         with:
@@ -125,19 +129,21 @@ jobs:
 
   api-response-contract:
     name: API endpoint contract (staging)
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, ops]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
       - uses: actions/checkout@v4
 
       - name: Test API contracts against production
         env:
-          API_BASE: https://api.pruviq.com
+          API_BASE: http://localhost:8080
         run: |
           python3 - <<'EOF'
-          import urllib.request, json, sys
+          import urllib.request, json, sys, os
 
-          API_BASE = "https://api.pruviq.com"
+          API_BASE = os.environ.get("API_BASE", "http://localhost:8080")
           errors = []
 
           # Contract 1: /health returns coins_loaded > 100
