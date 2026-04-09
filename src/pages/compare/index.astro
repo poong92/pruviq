@@ -15,7 +15,7 @@ const comparisons = [
 ---
 
 <Layout title={t('compare_index.meta_title')} description={t('compare_index.meta_desc')}>
-  <section class="pt-2 pb-16 md:pt-4 md:pb-24">
+  <section class="pt-2 pb-16 md:pt-4 md:pb-24 section-elevated">
     <div class="max-w-4xl mx-auto px-6">
       <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('compare_index.tag')}</p>
       <h1 class="text-4xl md:text-5xl font-extrabold mb-4">
@@ -27,17 +27,17 @@ const comparisons = [
 
       <!-- Why PRUVIQ: 3 strengths -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10 mb-10 reveal-child">
-        <div class="border border-[--color-up]/30 rounded-lg p-6 bg-[--color-bg-card] shadow-[var(--shadow-sm)]">
+        <div class="border border-[--color-up]/30 rounded-lg p-6 bg-[--color-bg-card] shadow-[var(--shadow-md)]">
           <p class="font-mono text-[--color-up] text-xs font-bold mb-2 tracking-wider">{t('compare_index.strength1_tag')}</p>
           <p class="font-bold text-lg mb-2">{t('compare_index.strength1_title')}</p>
           <p class="text-[--color-text-muted] text-sm leading-relaxed">{t('compare_index.strength1_desc')}</p>
         </div>
-        <div class="border border-[--color-accent]/30 rounded-lg p-6 bg-[--color-bg-card] shadow-[var(--shadow-sm)]">
+        <div class="border border-[--color-accent]/30 rounded-lg p-6 bg-[--color-bg-card] shadow-[var(--shadow-md)]">
           <p class="font-mono text-[--color-accent] text-xs font-bold mb-2 tracking-wider">{t('compare_index.strength2_tag')}</p>
           <p class="font-bold text-lg mb-2">{t('compare_index.strength2_title')}</p>
           <p class="text-[--color-text-muted] text-sm leading-relaxed">{t('compare_index.strength2_desc')}</p>
         </div>
-        <div class="border border-[--color-accent]/30 rounded-lg p-6 bg-[--color-bg-card] shadow-[var(--shadow-sm)]">
+        <div class="border border-[--color-accent]/30 rounded-lg p-6 bg-[--color-bg-card] shadow-[var(--shadow-md)]">
           <p class="font-mono text-[--color-accent] text-xs font-bold mb-2 tracking-wider">{t('compare_index.strength3_tag')}</p>
           <p class="font-bold text-lg mb-2">{t('compare_index.strength3_title')}</p>
           <p class="text-[--color-text-muted] text-sm leading-relaxed">{t('compare_index.strength3_desc')}</p>
@@ -45,7 +45,7 @@ const comparisons = [
       </div>
 
       <!-- Summary comparison table: 6 competitors -->
-      <div class="overflow-x-auto mb-10 table-scroll-hint shadow-[var(--shadow-md)] rounded-xl" role="region" aria-label="Platform comparison summary" tabindex="0">
+      <div class="overflow-x-auto mb-10 table-scroll-hint shadow-[var(--shadow-lg)] rounded-xl" role="region" aria-label="Platform comparison summary" tabindex="0">
         <table class="w-full min-w-[700px] text-sm border-collapse" role="table">
           <caption class="sr-only">Feature comparison: PRUVIQ vs TradingView, 3Commas, Cryptohopper, Coinrule, Gainium</caption>
           <thead>
@@ -120,7 +120,7 @@ const comparisons = [
       </div>
 
       <!-- Primary CTA -->
-      <div class="text-center mb-12">
+      <div class="text-center mb-12 section-accent-glow rounded-xl py-8">
         <a href="/simulate" class="btn btn-primary btn-lg">
           {t('compare_index.primary_cta')} &rarr;
         </a>
@@ -134,7 +134,7 @@ const comparisons = [
         {comparisons.map((c) => (
           <a
             href={`/compare/${c.slug}`}
-            class="group relative border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] card-hover shadow-[var(--shadow-sm)] overflow-hidden"
+            class="group relative border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] card-hover shadow-[var(--shadow-md)] overflow-hidden"
             style={`--card-accent: ${c.accent};`}
           >
             {/* Subtle accent line top */}

@@ -8,7 +8,7 @@ const marketDataJson = JSON.stringify(marketDataRaw);
 ---
 
 <Layout title={t('meta.market_title')} description={t('meta.market_desc')}>
-  <section class="pt-2 pb-16 md:pt-4 md:pb-24 reveal">
+  <section class="pt-2 pb-16 md:pt-4 md:pb-24 reveal section-elevated">
     <div class="max-w-7xl mx-auto px-6">
       <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('market.tag')}</p>
       <h1 class="text-4xl md:text-5xl font-extrabold mb-4">{t('market.title')}</h1>
@@ -66,7 +66,7 @@ const marketDataJson = JSON.stringify(marketDataRaw);
       </div>
     </div>
     <div class="max-w-5xl mx-auto px-4 mt-10">
-      <div class="border border-[--color-accent]/20 rounded-lg p-5 bg-[--color-accent]/5 card-enterprise">
+      <div class="border border-[--color-accent]/20 rounded-lg p-5 bg-[--color-accent]/5 card-enterprise shadow-[var(--shadow-md)]">
         <p class="font-mono text-[--color-accent] text-xs mb-2">WHAT TO DO</p>
         <p class="text-sm text-[--color-text-secondary] mb-3">
           See something interesting? Test how a strategy would perform in this market.
@@ -78,7 +78,7 @@ const marketDataJson = JSON.stringify(marketDataRaw);
       </div>
     </div>
     <hr class="section-divider" />
-    <div class="mt-6 pt-8 text-center max-w-5xl mx-auto px-4 reveal">
+    <div class="mt-6 pt-8 text-center max-w-5xl mx-auto px-4 reveal section-accent-glow rounded-xl">
       <div class="flex flex-wrap gap-3 justify-center">
         <a href="/simulate" class="btn btn-primary btn-md no-underline">
           {t('cross.simulate_cta')} &rarr;

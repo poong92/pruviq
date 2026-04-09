@@ -1,24 +1,24 @@
-import { useState, useEffect } from 'preact/hooks';
+import { useState, useEffect } from "preact/hooks";
 
 interface Props {
   postIds: string[];
-  lang?: 'en' | 'ko';
+  lang?: "en" | "ko";
 }
 
-const STORAGE_KEY = 'pruviq_learn_read';
+const STORAGE_KEY = "pruviq_learn_read";
 
 const L = {
   en: {
-    progress: 'Your Progress',
-    of: 'of',
-    articles: 'articles read',
-    complete: 'All complete!',
+    progress: "Your Progress",
+    of: "of",
+    articles: "articles read",
+    complete: "All complete!",
   },
   ko: {
-    progress: '학습 진행도',
-    of: '/',
-    articles: '개 읽음',
-    complete: '전부 완료!',
+    progress: "학습 진행도",
+    of: "/",
+    articles: "개 읽음",
+    complete: "전부 완료!",
   },
 };
 
@@ -31,7 +31,7 @@ function getRead(): Set<string> {
   }
 }
 
-export default function LearnProgress({ postIds, lang = 'en' }: Props) {
+export default function LearnProgress({ postIds, lang = "en" }: Props) {
   const t = L[lang] || L.en;
   const [read, setRead] = useState<Set<string>>(new Set());
 
@@ -40,15 +40,17 @@ export default function LearnProgress({ postIds, lang = 'en' }: Props) {
   }, []);
 
   const total = postIds.length;
-  const count = postIds.filter(id => read.has(id)).length;
+  const count = postIds.filter((id) => read.has(id)).length;
   const pct = total > 0 ? Math.round((count / total) * 100) : 0;
 
   if (total === 0) return null;
 
   return (
-    <div class="mb-8 p-4 rounded-lg bg-[--color-bg-card] border border-[--color-border]">
+    <div class="mb-8 p-4 rounded-xl bg-[--color-bg-card] border border-[--color-border] shadow-[var(--shadow-sm)]">
       <div class="flex items-center justify-between mb-2">
-        <span class="font-mono text-xs text-[--color-text-muted] uppercase tracking-wider">{t.progress}</span>
+        <span class="font-mono text-xs text-[--color-text-muted] uppercase tracking-wider">
+          {t.progress}
+        </span>
         <span class="font-mono text-xs text-[--color-text]">
           {count === total
             ? t.complete
@@ -60,7 +62,8 @@ export default function LearnProgress({ postIds, lang = 'en' }: Props) {
           class="h-full rounded-full transition-[width] duration-500"
           style={{
             width: `${pct}%`,
-            backgroundColor: pct === 100 ? 'var(--color-accent)' : 'var(--color-accent)',
+            backgroundColor:
+              pct === 100 ? "var(--color-accent)" : "var(--color-accent)",
             opacity: pct === 100 ? 1 : 0.8,
           }}
         />
@@ -77,5 +80,7 @@ export function markAsRead(postId: string) {
       read.add(postId);
       localStorage.setItem(STORAGE_KEY, JSON.stringify([...read]));
     }
-  } catch { /* ignore */ }
+  } catch {
+    /* ignore */
+  }
 }

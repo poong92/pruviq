@@ -142,7 +142,7 @@ const presetDirColors: Record<string, string> = { long: '--color-accent', short:
       "url": `https://pruviq.com/strategies/${s.id}`
     }))
   })} />
-  <section class="pt-2 pb-16 md:pt-4 md:pb-24">
+  <section class="pt-6 pb-20 md:pt-8 md:pb-28">
     <div class="max-w-5xl mx-auto px-4">
 
       <StrategyTabs active="strategies" lang="en" />
@@ -244,7 +244,7 @@ const presetDirColors: Record<string, string> = { long: '--color-accent', short:
           const cards = (
             <div class="space-y-4">
         {strategyGroups[statusKey].map((strategy) => (
-          <div class={`flex flex-col h-full block card-enterprise p-6 card-hover shadow-[var(--shadow-sm)] group ${strategy.data.status === 'verified' ? 'strategy-card-verified' : ''}`}
+          <div class={`flex flex-col h-full block card-enterprise p-6 card-hover shadow-[var(--shadow-sm)] group ${strategy.data.status === 'verified' ? 'strategy-card-verified shadow-[var(--shadow-lg)]' : ''}`}
                data-status={strategy.data.status}
                data-direction={strategy.data.direction.toLowerCase()}
                data-win-rate={strategy.data.winRate ?? 0}
@@ -350,18 +350,18 @@ const presetDirColors: Record<string, string> = { long: '--color-accent', short:
       {simulatorPresets.length > 0 && (
         <div class="mt-12">
           <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">SIMULATOR PRESETS</p>
-          <h2 class="text-xl font-bold mb-2">{t('strategies.presets_title').replace('{count}', String(simulatorPresets.length)).replace(/\(\d+\)/, '').trim()} <span class="px-2 py-0.5 rounded-full bg-[--color-accent]/10 text-[--color-accent] text-xs font-mono">{simulatorPresets.length}</span></h2>
+          <h2 class="text-2xl md:text-3xl font-bold mb-2">{t('strategies.presets_title').replace('{count}', String(simulatorPresets.length)).replace(/\(\d+\)/, '').trim()} <span class="px-2 py-0.5 rounded-full bg-[--color-accent]/10 text-[--color-accent] text-xs font-mono">{simulatorPresets.length}</span></h2>
           <p class="text-[--color-text-muted] text-sm mb-6">
             {t('strategies.presets_desc')}
           </p>
           {presetDirOrder.map((dir, idx) => (
             <div class={idx > 0 ? 'mt-6' : ''}>
               <div class="flex items-center gap-2 mb-3">
-                <span class="font-mono text-xs font-bold tracking-wider" style={`color: var(${presetDirColors[dir]})`}>{presetDirLabels[dir]}</span>
+                <span class={`font-mono text-sm font-bold tracking-wider py-1 px-3 rounded-md ${dir === 'long' ? 'bg-[--color-accent]/10' : dir === 'short' ? 'bg-[--color-red]/10' : 'bg-[--color-yellow]/10'}`} style={`color: var(${presetDirColors[dir]})`}>{presetDirLabels[dir]}</span>
                 <div class="flex-1 border-t border-[--color-border]"></div>
                 <span class="font-mono text-[10px] text-[--color-text-disabled]">{presetsByDirection[dir].length}</span>
               </div>
-              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {presetsByDirection[dir].map((preset) => {
                   const stats = lookupPresetStats(preset.id, preset.direction);
                   const isTodaysPick = preset.id.includes(todaysPickStrategy) && preset.direction === todaysPickDirection;
@@ -413,7 +413,7 @@ const presetDirColors: Record<string, string> = { long: '--color-accent', short:
         </div>
       )}
 
-      <div class="mt-12 border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] text-center">
+      <div class="mt-12 border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] text-center shadow-[var(--shadow-md)]">
         <p class="font-mono text-[--color-accent] text-sm mb-2">{t('strategies.more_tag')}</p>
         <p class="text-[--color-text-muted] text-sm mb-4">
           {t('strategies.more_desc')}

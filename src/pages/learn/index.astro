@@ -99,10 +99,10 @@ const levelConfig = [
   })} />
 
   <!-- HERO -->
-  <section class="pt-2 pb-8 md:pt-4 md:pb-12">
+  <section class="pt-2 pb-8 md:pt-4 md:pb-12 section-elevated">
     <div class="max-w-5xl mx-auto px-4">
       <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('learn.tag')}</p>
-      <h1 class="text-3xl md:text-5xl font-bold mb-4">
+      <h1 class="text-4xl md:text-5xl font-extrabold mb-4">
         {t('learn.title')}<br/>{t('learn.title2')}
       </h1>
       <p class="text-[--color-text-muted] text-lg mb-4 max-w-2xl">
@@ -116,7 +116,7 @@ const levelConfig = [
           type="search"
           placeholder="Search articles..."
           autocomplete="off"
-          class="w-full bg-[--color-bg-hover] border border-[--color-border] rounded-lg pl-9 pr-4 py-2 text-sm text-[--color-text] placeholder:text-[--color-text-muted] outline-none search-glow transition-all"
+          class="w-full bg-[--color-bg-hover] border border-[--color-border] rounded-lg pl-9 pr-4 py-2 text-sm text-[--color-text] placeholder:text-[--color-text-muted] outline-none search-glow shadow-[var(--shadow-sm)] transition-all"
         />
         <svg class="absolute left-2.5 top-2.5 w-4 h-4 text-[--color-text-muted] pointer-events-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
           <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
@@ -171,7 +171,7 @@ const levelConfig = [
 
   <!-- CTA -->
   <hr class="section-divider" />
-  <section class="reveal pb-16 border-t border-[--color-border] pt-12">
+  <section class="reveal pb-16 border-t border-[--color-border] pt-12 section-accent-glow">
     <div class="max-w-5xl mx-auto px-4 text-center">
       <h2 class="text-xl font-bold mb-3">{t('learn.cta_title')}</h2>
       <p class="text-[--color-text-muted] text-sm mb-6">{t('learn.cta_desc')}</p>
