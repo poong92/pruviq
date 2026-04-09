@@ -6,21 +6,8 @@ interface Props {
 const { color = 'var(--color-accent)', opacity = '0.06' } = Astro.props;
 ---
 <div class="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
-  <!-- Primary blue glow — top center -->
-  <div
-    class="aurora-blob absolute left-1/2 top-[30%] -translate-x-1/2 -translate-y-1/2 w-[900px] h-[600px] rounded-full blur-[200px]"
-    style={`background: ${color}; opacity: ${opacity}; animation: aurora-1 28s ease-in-out infinite;`}
-  ></div>
-  <!-- Secondary purple accent — right -->
-  <div
-    class="aurora-blob absolute left-[70%] top-[40%] -translate-x-1/2 -translate-y-1/2 w-[500px] h-[400px] rounded-full blur-[180px]"
-    style="background: var(--color-purple); animation: aurora-2 23s ease-in-out infinite;"
-  ></div>
-  <!-- Tertiary cyan accent — left -->
-  <div
-    class="aurora-blob absolute left-[25%] top-[60%] -translate-x-1/2 -translate-y-1/2 w-[400px] h-[300px] rounded-full blur-[160px]"
-    style="background: var(--color-cyan); animation: aurora-3 17s ease-in-out infinite;"
-  ></div>
+  <div class="absolute left-1/2 top-[20%] -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] rounded-full opacity-[0.08] blur-[120px]"
+    style={`background: ${color};`}></div>
   <!-- Grid pattern overlay -->
   <div class="absolute inset-0 hero-grid"></div>
 </div>
