@@ -182,8 +182,8 @@ test.describe("Mobile menu: touch target sizes", () => {
 
 // ─── Ranking Pulse Dot ────────────────────────────────────────
 
-test.describe("Mobile menu: ranking item pulse dot", () => {
-  test("Daily Strategy Ranking link contains pulse dot element", async ({
+test.describe("Mobile menu: ranking item chevron indicator", () => {
+  test("Daily Strategy Ranking link contains chevron indicator", async ({
     page,
   }) => {
     await page.goto("/", { waitUntil: "domcontentloaded" });
@@ -193,9 +193,12 @@ test.describe("Mobile menu: ranking item pulse dot", () => {
     const rankingLink = page
       .locator("#mobile-menu a[href='/strategies/ranking']")
       .first();
-    // The dot is a <span> with rounded-full class inside the link
-    const dot = rankingLink.locator("span.rounded-full");
-    await expect(dot, "Pulse dot missing from ranking menu item").toBeVisible();
+    // The chevron is a <span> with › text inside the link
+    const chevron = rankingLink.locator("span").first();
+    await expect(
+      chevron,
+      "Chevron missing from ranking menu item",
+    ).toBeVisible();
   });
 });
 
