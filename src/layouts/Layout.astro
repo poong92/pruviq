@@ -17,6 +17,7 @@ interface Props {
   ogImage?: string;
   canonicalOverride?: string;
   noAlternate?: boolean;
+  skipArticleLD?: boolean;
 }
 
 const lang = getLangFromUrl(Astro.url);
@@ -29,7 +30,7 @@ const cfToken = import.meta.env.PUBLIC_CF_ANALYTICS_TOKEN;
 const buildTime = new Date().toISOString();
 const currentYear = new Date().getFullYear();
 
-const { title, description = t('meta.home_desc'), type = 'website', date, updatedDate, category, keywords: customKeywords, canonicalOverride, noAlternate = false } = Astro.props;
+const { title, description = t('meta.home_desc'), type = 'website', date, updatedDate, category, keywords: customKeywords, canonicalOverride, noAlternate = false, skipArticleLD = false } = Astro.props;
 const lastModified = updatedDate || date || buildTime;
 const ogImage = new URL(Astro.props.ogImage || '/og-image.jpg', Astro.site || 'https://pruviq.com').href;
 // derive AVIF/WebP variants safely for jpg/png sources
@@ -325,7 +326,7 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
       })} />
     )}
     <!-- JSON-LD Article (for blog posts) -->
-    {type === 'article' && date && (
+    {type === 'article' && date && !skipArticleLD && (
       <script type="application/ld+json" set:html={JSON.stringify({
         "@context": "https://schema.org",
         "@type": "Article",
