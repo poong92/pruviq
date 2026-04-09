@@ -176,7 +176,7 @@ const presetDirColors: Record<string, string> = { long: '--color-accent', short:
       </div>
 
       <!-- Filter + Sort Bar -->
-      <div class="mb-6 flex flex-wrap gap-4 strategy-filter-bar" id="strategy-filters">
+      <div class="mb-6 flex flex-wrap gap-4 strategy-filter-bar bg-[--color-bg-surface] rounded-xl p-4" id="strategy-filters">
         <div class="flex items-center gap-1.5 flex-wrap">
           <span class="font-mono text-xs text-[--color-text-muted] mr-1">Status:</span>
           <button data-filter-group="status" data-filter-value="all" aria-label="Show all strategies"
@@ -244,7 +244,7 @@ const presetDirColors: Record<string, string> = { long: '--color-accent', short:
           const cards = (
             <div class="space-y-4">
         {strategyGroups[statusKey].map((strategy) => (
-          <div class={`flex flex-col h-full block card-enterprise p-6 card-hover group ${strategy.data.status === 'verified' ? 'strategy-card-verified' : ''}`}
+          <div class={`flex flex-col h-full block card-enterprise p-6 card-hover shadow-[var(--shadow-sm)] group ${strategy.data.status === 'verified' ? 'strategy-card-verified' : ''}`}
                data-status={strategy.data.status}
                data-direction={strategy.data.direction.toLowerCase()}
                data-win-rate={strategy.data.winRate ?? 0}
@@ -373,7 +373,7 @@ const presetDirColors: Record<string, string> = { long: '--color-accent', short:
                   return (
                   <a
                     href={`/simulate?preset=${preset.id}`}
-                    class={`relative flex flex-col border border-[--color-border] rounded-lg px-4 py-3 bg-[--color-bg-card] hover:border-[--color-accent] transition-colors group card-glow preset-card ${glowClass}`}
+                    class={`relative flex flex-col border border-[--color-border] rounded-lg px-4 py-3 bg-[--color-bg-card] hover:border-[--color-accent] transition-colors group shadow-[var(--shadow-sm)] preset-card ${glowClass}`}
                   >
                     {isTodaysPick && (
                       <span class="absolute -top-2.5 left-3 font-mono text-[10px] tracking-wider px-2 py-0.5 rounded-full bg-[--color-accent] text-black font-bold z-10">
