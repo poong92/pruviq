@@ -180,14 +180,11 @@ export const ko: Record<TranslationKey, string> = {
   "how.tag": "이렇게 작동합니다",
   "how.title": "3단계",
   "how.step1": "선택",
-  "how.step1_desc":
-    "지표를 선택하고 진입/청산 조건을 설정하세요. 프리셋을 쓰거나 처음부터 만드세요.",
+  "how.step1_desc": "36개 프리셋 또는 14개 지표로 직접 구성.",
   "how.step2": "시뮬레이션",
-  "how.step2_desc":
-    "570개 이상 코인, 2년 이상 데이터로 실행. 수수료, 슬리피지 포함.",
+  "how.step2_desc": "SL, TP, 레버리지, 시간 필터. 실제 수수료 포함.",
   "how.step3": "검증",
-  "how.step3_desc":
-    "승률, 수익 팩터, 최대 드로다운, 수익 곡선을 확인하고 판단하세요.",
+  "how.step3_desc": "570+ 코인, 2년+ 데이터. 수 초 만에 결과 확인.",
 
   // CTA
   "cta.tag": "지금 시작",

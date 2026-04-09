@@ -182,14 +182,11 @@ export const en = {
   "how.tag": "HOW IT WORKS",
   "how.title": "3 Steps",
   "how.step1": "Choose",
-  "how.step1_desc":
-    "Pick indicators and set entry/exit conditions. Use presets or build from scratch.",
+  "how.step1_desc": "36 presets or build your own with 14 indicators.",
   "how.step2": "Simulate",
-  "how.step2_desc":
-    "Run on 570+ coins with 2+ years of data. Fees and slippage included.",
+  "how.step2_desc": "SL, TP, leverage, time filters. Real fees included.",
   "how.step3": "Verify",
-  "how.step3_desc":
-    "See win rate, profit factor, max drawdown, and equity curve. Then decide.",
+  "how.step3_desc": "570+ coins, 2+ years of data. Results in seconds.",
 
   // CTA
   "cta.tag": "START NOW",
@@ -2057,7 +2054,8 @@ export const en = {
     "Learn the 5 most common reasons crypto backtests fail: look-ahead bias, survivorship bias, overfitting, ignoring fees, and market regime changes.",
   // 404
   "404.title": "404 - Page Not Found | PRUVIQ",
-  "404.desc": "Page not found. Explore PRUVIQ's free crypto strategy backtesting tools.",
+  "404.desc":
+    "Page not found. Explore PRUVIQ's free crypto strategy backtesting tools.",
   "404.heading": "This page doesn't exist",
   "404.subtext": "But unlike bad backtests, we won't pretend it does.",
   "404.tagline": "Don't Believe. Verify.",
