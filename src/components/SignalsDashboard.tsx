@@ -306,7 +306,11 @@ export default function SignalsDashboard({ lang = "en" }: Props) {
               {sigs.map((s, i) => (
                 <div
                   key={`${s.strategy}-${s.coin}-${i}`}
-                  class={`flex items-center justify-between p-4 rounded-lg border transition-colors group ${
+                  class={`flex items-center justify-between p-4 rounded-lg border transition-colors group border-l-4 ${
+                    s.status === "verified"
+                      ? "border-l-[--color-up]"
+                      : "border-l-[--color-border]"
+                  } ${
                     s.direction === "long"
                       ? "border-[--color-accent]/20 bg-[--color-accent]/5 hover:border-[--color-accent]/40"
                       : "border-[--color-down]/20 bg-[--color-down]/5 hover:border-[--color-down]/40"
