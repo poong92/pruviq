@@ -37,7 +37,7 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
         <div>
           <HeroBadge stat={simulationsRun} label="simulations run" />
           <p class="font-mono text-[--color-accent] text-sm tracking-wider mb-4 opacity-80">Verify. Execute. Profit.</p>
-          <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold tracking-[-0.04em] leading-[1.08]">
+          <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold tracking-[-0.04em] leading-[1.08] text-balance">
             Most Backtests Lie.<br/><span class="gradient-text">Ours Come with Proof.</span>
           </h1>
           <p class="mt-6 text-lg text-[--color-text-secondary] leading-relaxed max-w-lg">
@@ -85,16 +85,16 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
   <div class="max-w-7xl mx-auto px-6 py-10 relative z-10">
     <div class="grid grid-cols-3 gap-3 md:gap-4 max-w-3xl mx-auto">
       <div class="stat-glass text-center">
-        <p class="text-2xl md:text-3xl font-bold font-mono text-[--color-text]"><CountUp client:visible target={coinsAnalyzed} suffix="+" locale="en-US" /></p>
-        <p class="text-xs text-[--color-text-muted] mt-1.5 font-mono uppercase tracking-wider">Coins Tested</p>
+        <p class="text-2xl md:text-3xl font-bold font-mono text-[--color-accent]"><CountUp client:visible target={coinsAnalyzed} suffix="+" locale="en-US" /></p>
+        <p class="text-sm text-[--color-text-secondary] mt-1.5 font-mono uppercase tracking-wider">Coins Tested</p>
       </div>
       <div class="stat-glass text-center">
-        <p class="text-2xl md:text-3xl font-bold font-mono text-[--color-text]"><CountUp client:visible target={(siteStats as { simulations_run: number }).simulations_run} suffix="+" locale="en-US" /></p>
-        <p class="text-xs text-[--color-text-muted] mt-1.5 font-mono uppercase tracking-wider">Simulations</p>
+        <p class="text-2xl md:text-3xl font-bold font-mono text-[--color-accent]"><CountUp client:visible target={(siteStats as { simulations_run: number }).simulations_run} suffix="+" locale="en-US" /></p>
+        <p class="text-sm text-[--color-text-secondary] mt-1.5 font-mono uppercase tracking-wider">Simulations</p>
       </div>
       <div class="stat-glass text-center">
-        <p class="text-2xl md:text-3xl font-bold font-mono text-[--color-text]"><CountUp client:visible target={simulatorPresetCount} suffix="+" /></p>
-        <p class="text-xs text-[--color-text-muted] mt-1.5 font-mono uppercase tracking-wider">Strategies</p>
+        <p class="text-2xl md:text-3xl font-bold font-mono text-[--color-accent]"><CountUp client:visible target={simulatorPresetCount} suffix="+" /></p>
+        <p class="text-sm text-[--color-text-secondary] mt-1.5 font-mono uppercase tracking-wider">Strategies</p>
       </div>
     </div>
     <div class="flex items-center justify-center gap-3 md:gap-8 text-[--color-text-muted] text-xs font-mono mt-6">

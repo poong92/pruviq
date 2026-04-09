@@ -215,11 +215,11 @@ const isKorean = (id: string) => koIds.has(id);
           const cards = (
             <div class="space-y-4">
         {strategyGroups[statusKey].map((strategy) => (
-          <div class={`block card-enterprise p-6 card-hover group ${strategy.data.status === 'verified' ? 'strategy-card-verified' : ''}`}
+          <div class={`flex flex-col h-full block card-enterprise p-6 card-hover group ${strategy.data.status === 'verified' ? 'strategy-card-verified' : ''}`}
                data-status={strategy.data.status}
                data-win-rate={strategy.data.winRate ?? 0}
                data-profit-factor={strategy.data.profitFactor ?? 0}>
-            <a href={`/ko/strategies/${strategy.id}`} class="block">
+            <a href={`/ko/strategies/${strategy.id}`} class="block flex flex-col flex-grow">
               <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
                 <div class="flex items-center gap-3">
                   <span class={`font-mono text-xs tracking-wider rounded border ${strategy.data.status === 'verified' ? 'badge-verified' : 'px-2 py-0.5'}`}
@@ -242,7 +242,7 @@ const isKorean = (id: string) => koIds.has(id);
               <h2 class="text-xl font-bold mb-2 group-hover:text-[--color-accent] transition-colors">
                 {strategy.data.name}
               </h2>
-              <p class="text-[--color-text-muted] text-sm mb-4">{strategy.data.description}</p>
+              <p class="text-[--color-text-muted] text-sm mb-4 flex-grow">{strategy.data.description}</p>
 
               {(strategy.data.winRate || strategy.data.profitFactor || strategy.data.totalPnl) && (
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 font-mono text-sm">

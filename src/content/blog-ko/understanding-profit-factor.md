@@ -1,5 +1,5 @@
 ---
-title: "백테스팅에서 수익 팩터(Profit Factor) 이해하기"
+title: "수익 팩터(Profit Factor) 완전 정리 — 좋은 PF는 몇부터?"
 description: "수익 팩터는 백테스트 보고서에서 가장 유용한 단일 수치입니다. PF의 의미, 강함과 보통의 기준, PRUVIQ 랭킹에서의 활용법을 배웁니다."
 date: "2026-03-19"
 category: "quant"

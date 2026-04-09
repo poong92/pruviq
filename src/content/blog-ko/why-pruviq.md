@@ -1,5 +1,5 @@
 ---
-title: "왜 PRUVIQ인가? 철학 뒤의 이름"
+title: "왜 PRUVIQ인가? 이름에 담긴 철학"
 description: "PRUVIQ는 크립토의 '나를 믿어' 문화에 대한 좌절에서 탄생했습니다. 이름은 도전입니다: 증명해봐. 이렇게 시작되었습니다."
 date: "2026-02-14"
 category: "strategy"
