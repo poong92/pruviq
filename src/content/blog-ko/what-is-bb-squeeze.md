@@ -1,6 +1,6 @@
 ---
 title: "볼린저 밴드 스퀴즈란?"
-description: "암호화폐 선물에서 변동성 압축과 확장을 감지하는 실용적 가이드. 과장 없이, 메커니즘만."
+description: "크립토 선물에서 변동성 압축과 확장을 감지하는 실용적 가이드. 과장 없이, 메커니즘만."
 date: "2026-02-14"
 category: "education"
 tags: ["bollinger-bands", "squeeze", "volatility"]

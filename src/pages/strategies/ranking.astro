@@ -127,7 +127,7 @@ if (!ssrRanking) {
               const wrColor = entry.win_rate >= 55 ? 'text-[--color-up]' : entry.win_rate >= 50 ? 'text-[--color-yellow]' : 'text-[--color-red]';
               const pfColor = entry.profit_factor >= 1.5 ? 'text-[--color-up]' : entry.profit_factor >= 1.0 ? 'text-[--color-yellow]' : 'text-[--color-red]';
               return (
-                <div class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card]">
+                <div class="border border-[--color-up]/30 rounded-lg p-4 bg-[--color-bg-card]">
                   <div class="flex items-start justify-between gap-2 mb-3">
                     <div class="flex items-center gap-2 min-w-0">
                       <span class="text-xl shrink-0">{medal}</span>
@@ -181,7 +181,7 @@ if (!ssrRanking) {
               const wrColor = entry.win_rate >= 55 ? 'text-[--color-up]' : entry.win_rate >= 50 ? 'text-[--color-yellow]' : 'text-[--color-red]';
               const pfColor = entry.profit_factor >= 1.5 ? 'text-[--color-up]' : entry.profit_factor >= 1.0 ? 'text-[--color-yellow]' : 'text-[--color-red]';
               return (
-                <div class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card] opacity-70">
+                <div class="border border-[--color-down]/30 rounded-lg p-4 bg-[--color-bg-card] opacity-70">
                   <div class="flex items-center gap-2 mb-3">
                     <span class="text-xl shrink-0">{medal}</span>
                     <div class="min-w-0">

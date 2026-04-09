@@ -98,7 +98,7 @@ export function RankingCard({
 
   return (
     <div
-      class={`rounded-lg p-4 bg-[--color-bg-card] card-hover ${lowSampleBest ? "border border-[--color-yellow]/50 hover:border-[--color-yellow]" : "border border-[--color-border]"}`}
+      class={`rounded-lg p-4 bg-[--color-bg-card] card-hover ${lowSampleBest ? "border border-[--color-yellow]/50 hover:border-[--color-yellow]" : variant === "worst" ? "border border-[--color-down]/30 opacity-70" : "border border-[--color-up]/30"}`}
       style="box-shadow: var(--shadow-card);"
     >
       {/* Header row */}
