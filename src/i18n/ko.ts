@@ -1549,7 +1549,7 @@ export const ko: Record<TranslationKey, string> = {
   // CTA badges
   "cta.badge1": "신용카드 불필요",
   "cta.badge2": "계정 생성 불필요",
-  "cta.badge3": "영구 무료",
+  "cta.badge3": "$0 — 구독 없음",
   "cta.badge4": "3초 만에 결과",
 
   // Homepage comparison section
@@ -1575,7 +1575,7 @@ export const ko: Record<TranslationKey, string> = {
 
   // Homepage trust badges (below features)
   "trust_badges.no_signup": "가입 불필요",
-  "trust_badges.free": "영구 무료",
+  "trust_badges.free": "$0 — 구독 없음",
   "trust_badges.opensource": "투명한 방법론",
   "trust_badges.data_sources": "Binance + CoinGecko 데이터",
 
@@ -1649,7 +1649,7 @@ export const ko: Record<TranslationKey, string> = {
   "vs_3commas.pruviq": "PRUVIQ",
   "vs_3commas.other": "3Commas",
   "vs_3commas.row_price": "가격",
-  "vs_3commas.row_price_p": "영구 무료 — $0/월",
+  "vs_3commas.row_price_p": "$0 — 구독 없음 — $0/월",
   "vs_3commas.row_price_other": "$15–110/월 (Starter–Expert)",
   "vs_3commas.row_annual": "연간 비용",
   "vs_3commas.row_annual_p": "$0",
@@ -1733,7 +1733,7 @@ export const ko: Record<TranslationKey, string> = {
   "vs_coinrule.pruviq": "PRUVIQ",
   "vs_coinrule.other": "Coinrule",
   "vs_coinrule.row_price": "가격",
-  "vs_coinrule.row_price_p": "영구 무료",
+  "vs_coinrule.row_price_p": "$0 — 구독 없음",
   "vs_coinrule.row_price_other": "$29–449/월 (Starter–Unlimited)",
   "vs_coinrule.row_coding": "코딩 필요 여부",
   "vs_coinrule.row_coding_p": "코딩 불필요 — 시각적 빌더",
@@ -1796,7 +1796,7 @@ export const ko: Record<TranslationKey, string> = {
   "vs_cryptohopper.pruviq": "PRUVIQ",
   "vs_cryptohopper.other": "Cryptohopper",
   "vs_cryptohopper.row_price": "가격",
-  "vs_cryptohopper.row_price_p": "영구 무료 — $0/월",
+  "vs_cryptohopper.row_price_p": "$0 — 구독 없음 — $0/월",
   "vs_cryptohopper.row_price_other": "$24–107/월 (Explorer–Hero)",
   "vs_cryptohopper.row_annual": "연간 비용",
   "vs_cryptohopper.row_annual_p": "$0",
@@ -1885,7 +1885,7 @@ export const ko: Record<TranslationKey, string> = {
   "vs_gainium.pruviq": "PRUVIQ",
   "vs_gainium.other": "Gainium",
   "vs_gainium.row_price": "가격",
-  "vs_gainium.row_price_p": "영구 무료",
+  "vs_gainium.row_price_p": "$0 — 구독 없음",
   "vs_gainium.row_price_other": "$49+/월",
   "vs_gainium.row_coding": "코딩 필요 여부",
   "vs_gainium.row_coding_p": "코딩 불필요 — 시각적 빌더",
@@ -1946,7 +1946,7 @@ export const ko: Record<TranslationKey, string> = {
   "vs_streak.pruviq": "PRUVIQ",
   "vs_streak.other": "Streak",
   "vs_streak.row_price": "가격",
-  "vs_streak.row_price_p": "영구 무료",
+  "vs_streak.row_price_p": "$0 — 구독 없음",
   "vs_streak.row_price_other": "$79+/월",
   "vs_streak.row_coding": "코딩 필요 여부",
   "vs_streak.row_coding_p": "코딩 불필요 — 시각적 빌더",

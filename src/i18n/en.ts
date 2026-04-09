@@ -193,7 +193,7 @@ export const en = {
   "cta.title": "Ready to Test?",
   "cta.desc1":
     "Build a strategy, run a backtest, see the results. No account needed.",
-  "cta.desc2": "Free forever. No email required. No hidden fees.",
+  "cta.desc2": "$0 — no subscription, no email, no hidden fees.",
   "cta.button1": "Open Simulator Free",
   "cta.button2": "Join Community",
   "cta.button3": "Save on Fees",
@@ -606,7 +606,7 @@ export const en = {
   "meta.simulate_title":
     "Strategy Simulator \u2014 Build & Backtest Custom Strategies | PRUVIQ",
   "meta.simulate_desc":
-    "Build a custom crypto trading strategy and backtest it across 570+ coins in seconds. No code, no signup, free forever.",
+    "Build a custom crypto trading strategy and backtest it across 570+ coins in seconds. No code, no signup, $0 — no subscription.",
   "meta.index_desc":
     "Free crypto strategy backtesting — test strategies on 570+ coins with 2+ years of real market data, realistic fees, and published results, including failures.",
   "meta.strategies_title": "Strategy Library - PRUVIQ",
@@ -656,7 +656,7 @@ export const en = {
   "about.philosophy3_title": "Eat Our Own Cooking",
   "about.philosophy3_desc":
     "Every strategy is backtested on 570+ coins with 2+ years of data before publication. We verify with evidence before suggesting you act.",
-  "about.philosophy4_title": "Free Forever",
+  "about.philosophy4_title": "Zero Cost, Zero Catch",
   "about.philosophy4_desc":
     "Strategy verification should be accessible to everyone. Core features will always be free. We earn through exchange referrals only.",
   "about.stack_tag": "BUILT WITH",
@@ -737,7 +737,7 @@ export const en = {
   "home.stat_coins": "Coins Tested",
   "home.stat_trades": "Backtested Trades",
   "home.stat_datapoints": "Data Points",
-  "home.stat_free": "Forever Free",
+  "home.stat_free": "$0 Always",
 
   // Performance page static fallback
   "perf.tag": "BACKTEST RESULTS",
@@ -1293,7 +1293,7 @@ export const en = {
     "Crypto-native 570 coins vs stock-focused platform",
   "compare_index.footer": "All comparisons use real backtest data.",
   "compare_index.try_cta": "Try it yourself →",
-  "compare_index.strength1_tag": "FREE FOREVER",
+  "compare_index.strength1_tag": "$0 — NO SUBSCRIPTION",
   "compare_index.strength1_title": "$0 — No Credit Card",
   "compare_index.strength1_desc":
     "Competitors charge $19–$60/month. PRUVIQ is free, forever. No account required to run a simulation.",
@@ -1365,7 +1365,7 @@ export const en = {
   "meta.vs_tv_title":
     "PRUVIQ vs TradingView - Free Crypto Backtesting Comparison",
   "meta.vs_tv_desc":
-    "Compare PRUVIQ with TradingView for crypto strategy backtesting. No Pine Script needed. Free forever. 570+ coins. Full backtest transparency.",
+    "Compare PRUVIQ with TradingView for crypto strategy backtesting. No Pine Script needed. $0 — no subscription. 570+ coins. Full backtest transparency.",
   "vs.tag": "HONEST COMPARISON",
   "vs.title": "PRUVIQ vs TradingView",
   "vs.subtitle": "for crypto backtesting",
@@ -1378,7 +1378,7 @@ export const en = {
   "vs.pruviq": "PRUVIQ",
   "vs.tradingview": "TradingView",
   "vs.row_price": "Price",
-  "vs.row_price_p": "Free forever",
+  "vs.row_price_p": "$0 — no subscription",
   "vs.row_price_tv": "$14.95-59.95/mo (Essential-Premium)",
   "vs.row_coding": "Coding Required",
   "vs.row_coding_p": "No code — visual builder",
@@ -1585,7 +1585,7 @@ export const en = {
   // CTA badges
   "cta.badge1": "No credit card",
   "cta.badge2": "No account needed",
-  "cta.badge3": "100% free forever",
+  "cta.badge3": "100% $0 — no subscription",
   "cta.badge4": "Results in 3 seconds",
 
   // Homepage comparison section
@@ -1595,7 +1595,7 @@ export const en = {
   "compare.pruviq_label": "PRUVIQ",
   "compare.row1_label": "Cost",
   "compare.row1_other": "$15 - $200/month",
-  "compare.row1_pruviq": "Free forever",
+  "compare.row1_pruviq": "$0 — no subscription",
   "compare.row2_label": "Coding",
   "compare.row2_other": "Python / Pine Script required",
   "compare.row2_pruviq": "No code needed",
@@ -1611,7 +1611,7 @@ export const en = {
 
   // Homepage trust badges (below features)
   "trust_badges.no_signup": "No signup required",
-  "trust_badges.free": "Free forever",
+  "trust_badges.free": "$0 — no subscription",
   "trust_badges.opensource": "Transparent methodology",
   "trust_badges.data_sources": "Data from Binance + CoinGecko",
 
@@ -1672,7 +1672,7 @@ export const en = {
   "meta.vs_3commas_title":
     "PRUVIQ vs 3Commas — Free Crypto Backtesting Alternative",
   "meta.vs_3commas_desc":
-    "Compare PRUVIQ with 3Commas for crypto strategy backtesting. No subscription fees. Free forever. 570+ coins with real fee simulation.",
+    "Compare PRUVIQ with 3Commas for crypto strategy backtesting. No subscription fees. $0 — no subscription. 570+ coins with real fee simulation.",
   "vs_3commas.tag": "HONEST COMPARISON",
   "vs_3commas.title": "PRUVIQ vs 3Commas",
   "vs_3commas.subtitle": "Backtesting research vs. automated trading bots",
@@ -1685,7 +1685,7 @@ export const en = {
   "vs_3commas.pruviq": "PRUVIQ",
   "vs_3commas.other": "3Commas",
   "vs_3commas.row_price": "Price",
-  "vs_3commas.row_price_p": "Free forever — $0/mo",
+  "vs_3commas.row_price_p": "$0 — no subscription — $0/mo",
   "vs_3commas.row_price_other": "$15–110/mo (Starter–Expert)",
   "vs_3commas.row_annual": "Annual Cost",
   "vs_3commas.row_annual_p": "$0",
@@ -1753,13 +1753,13 @@ export const en = {
     "Use PRUVIQ to research and validate your strategy for free. Then deploy the winning strategy on 3Commas for automated execution. Research first, automate second.",
   "vs_3commas.cta_title": "Research First, Trade Later",
   "vs_3commas.cta_desc":
-    "Backtest your strategy on 570+ coins before paying for any bot subscription. Free forever, no signup required.",
+    "Backtest your strategy on 570+ coins before paying for any bot subscription. $0 — no subscription, no signup required.",
 
   // Comparison pages: Coinrule
   "meta.vs_coinrule_title":
     "PRUVIQ vs Coinrule — Free Crypto Backtesting Alternative",
   "meta.vs_coinrule_desc":
-    "Compare PRUVIQ with Coinrule for crypto strategy backtesting. Free forever, no IF-THEN limits, 570+ coins with real fee simulation.",
+    "Compare PRUVIQ with Coinrule for crypto strategy backtesting. $0 — no subscription, no IF-THEN limits, 570+ coins with real fee simulation.",
 
   "vs_coinrule.tag": "HONEST COMPARISON",
   "vs_coinrule.title": "PRUVIQ vs Coinrule",
@@ -1773,7 +1773,7 @@ export const en = {
   "vs_coinrule.pruviq": "PRUVIQ",
   "vs_coinrule.other": "Coinrule",
   "vs_coinrule.row_price": "Price",
-  "vs_coinrule.row_price_p": "Free forever",
+  "vs_coinrule.row_price_p": "$0 — no subscription",
   "vs_coinrule.row_price_other": "$29–449/mo (Starter–Unlimited)",
   "vs_coinrule.row_coding": "Coding Required",
   "vs_coinrule.row_coding_p": "No code — visual builder",
@@ -1822,7 +1822,7 @@ export const en = {
   "meta.vs_cryptohopper_title":
     "PRUVIQ vs Cryptohopper — Free Crypto Backtesting Alternative",
   "meta.vs_cryptohopper_desc":
-    "Compare PRUVIQ with Cryptohopper for crypto strategy backtesting. Free forever, no cloud subscription, 570+ coins with real fee and slippage simulation.",
+    "Compare PRUVIQ with Cryptohopper for crypto strategy backtesting. $0 — no subscription, no cloud subscription, 570+ coins with real fee and slippage simulation.",
   "vs_cryptohopper.tag": "HONEST COMPARISON",
   "vs_cryptohopper.title": "PRUVIQ vs Cryptohopper",
   "vs_cryptohopper.subtitle": "Backtesting research vs. cloud trading bots",
@@ -1835,7 +1835,7 @@ export const en = {
   "vs_cryptohopper.pruviq": "PRUVIQ",
   "vs_cryptohopper.other": "Cryptohopper",
   "vs_cryptohopper.row_price": "Price",
-  "vs_cryptohopper.row_price_p": "Free forever — $0/mo",
+  "vs_cryptohopper.row_price_p": "$0 — no subscription — $0/mo",
   "vs_cryptohopper.row_price_other": "$24–107/mo (Explorer–Hero)",
   "vs_cryptohopper.row_annual": "Annual Cost",
   "vs_cryptohopper.row_annual_p": "$0",
@@ -1921,7 +1921,7 @@ export const en = {
   "meta.vs_gainium_title":
     "PRUVIQ vs Gainium — Free Crypto Backtesting Alternative",
   "meta.vs_gainium_desc":
-    "Compare PRUVIQ with Gainium for crypto strategy backtesting. Free forever, no DCA-only limits, 570+ coins with real slippage and fee simulation.",
+    "Compare PRUVIQ with Gainium for crypto strategy backtesting. $0 — no subscription, no DCA-only limits, 570+ coins with real slippage and fee simulation.",
   "vs_gainium.tag": "HONEST COMPARISON",
   "vs_gainium.title": "PRUVIQ vs Gainium",
   "vs_gainium.subtitle": "for crypto backtesting",
@@ -1934,7 +1934,7 @@ export const en = {
   "vs_gainium.pruviq": "PRUVIQ",
   "vs_gainium.other": "Gainium",
   "vs_gainium.row_price": "Price",
-  "vs_gainium.row_price_p": "Free forever",
+  "vs_gainium.row_price_p": "$0 — no subscription",
   "vs_gainium.row_price_other": "$49+/mo",
   "vs_gainium.row_coding": "Coding Required",
   "vs_gainium.row_coding_p": "No code — visual builder",
@@ -1981,7 +1981,7 @@ export const en = {
   "meta.vs_streak_title":
     "PRUVIQ vs Streak — Free Crypto Backtesting Alternative",
   "meta.vs_streak_desc":
-    "Compare PRUVIQ with Streak for crypto strategy backtesting. Free forever, no Pine Script required, 570+ coins with real fee and slippage simulation.",
+    "Compare PRUVIQ with Streak for crypto strategy backtesting. $0 — no subscription, no Pine Script required, 570+ coins with real fee and slippage simulation.",
   "vs_streak.tag": "HONEST COMPARISON",
   "vs_streak.title": "PRUVIQ vs Streak",
   "vs_streak.subtitle": "for crypto backtesting",
@@ -1994,7 +1994,7 @@ export const en = {
   "vs_streak.pruviq": "PRUVIQ",
   "vs_streak.other": "Streak",
   "vs_streak.row_price": "Price",
-  "vs_streak.row_price_p": "Free forever",
+  "vs_streak.row_price_p": "$0 — no subscription",
   "vs_streak.row_price_other": "$79+/mo",
   "vs_streak.row_coding": "Coding Required",
   "vs_streak.row_coding_p": "No code — visual builder",
