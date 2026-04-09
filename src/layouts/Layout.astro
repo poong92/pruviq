@@ -406,7 +406,8 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
     </a>
     <div id="page-loader"></div>
     <header>
-    <nav class="fixed top-0 w-full z-50 border-b border-[--color-border] bg-[--color-bg]/80 backdrop-blur-md" role="navigation" aria-label="Main">
+    <!-- shadow-nav handles visual separation — no border-b needed -->
+    <nav class="fixed top-0 w-full z-50 bg-[--color-bg-surface]/92 backdrop-blur-md" role="navigation" aria-label="Main" style="box-shadow: var(--shadow-nav);">
       <div class="w-full px-6 lg:px-28 h-16 grid grid-cols-[auto_1fr_auto] items-center">
         <!-- 1열: Logo (좌측) -->
         <a href={lang === 'ko' ? '/ko/' : '/'} class="flex items-center gap-2">
@@ -488,7 +489,7 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
       <slot />
     </main>
 
-    <footer class="border-t border-[--color-border] mt-20" role="contentinfo" aria-label="Site footer">
+    <footer class="border-t border-[--color-border] mt-20 bg-[--color-bg-surface]" role="contentinfo" aria-label="Site footer">
       <div class="max-w-7xl mx-auto px-6 lg:px-10 py-12">
         <!-- Brand + 3-column links -->
         <div class="flex flex-col md:flex-row gap-10 mb-10">
