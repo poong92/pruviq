@@ -191,7 +191,7 @@ export const ko: Record<TranslationKey, string> = {
   "cta.title": "검증할 준비 되셨나요?",
   "cta.desc1":
     "전략을 만들고, 백테스트를 돌리고, 결과를 확인하세요. 계정 불필요.",
-  "cta.desc2": "영원히 무료. 이메일 불필요. 숨겨진 비용 없음.",
+  "cta.desc2": "$0 — 구독 없음, 이메일 불필요, 숨겨진 비용 없음.",
   "cta.button1": "시뮬레이터 열기 — 무료",
   "cta.button2": "커뮤니티 참여",
   "cta.button3": "수수료 절약하기",
@@ -651,7 +651,7 @@ export const ko: Record<TranslationKey, string> = {
   "about.philosophy3_title": "직접 검증, 직접 사용",
   "about.philosophy3_desc":
     "모든 전략은 570개 이상의 코인에서 2년 이상의 데이터로 백테스트한 후 공개합니다. 근거 없이 권하지 않습니다.",
-  "about.philosophy4_title": "영원히 무료",
+  "about.philosophy4_title": "비용 제로, 조건 제로",
   "about.philosophy4_desc":
     "전략 검증은 누구나 접근할 수 있어야 합니다. 핵심 기능은 항상 무료. 거래소 제휴를 통해서만 수익을 창출합니다.",
   "about.stack_tag": "기술 스택",
@@ -730,7 +730,7 @@ export const ko: Record<TranslationKey, string> = {
   "home.stat_coins": "테스트 코인",
   "home.stat_trades": "백테스트 거래",
   "home.stat_datapoints": "데이터 포인트",
-  "home.stat_free": "영원히 무료",
+  "home.stat_free": "$0 항상",
 
   // Performance page static fallback
   "perf.tag": "백테스트 결과",
@@ -1268,7 +1268,7 @@ export const ko: Record<TranslationKey, string> = {
   "compare_index.strength1_tag": "완전 무료",
   "compare_index.strength1_title": "$0 — 신용카드 불필요",
   "compare_index.strength1_desc":
-    "경쟁사는 월 $19–$60를 청구합니다. PRUVIQ는 영원히 무료. 계정 없이 시뮬레이션 실행 가능.",
+    "경쟁사는 월 $19–$60를 청구합니다. PRUVIQ는 $0 — 구독 없음. 계정 없이 시뮬레이션 실행 가능.",
   "compare_index.strength2_tag": "570개 코인 동시 테스트",
   "compare_index.strength2_title": "전체 시장을 한 번에",
   "compare_index.strength2_desc":
@@ -1328,13 +1328,13 @@ export const ko: Record<TranslationKey, string> = {
   "home.quotes_cta": "함께 해보세요 — 시뮬레이터 열기",
   "home.ranking_shortcut": "오늘의 상위 전략",
   "home.competitor_banner":
-    "TradingView는 백테스팅에 월 $14~240를 청구합니다. PRUVIQ는 영원히 무료입니다.",
+    "TradingView는 백테스팅에 월 $14~240를 청구합니다. PRUVIQ는 $0 — 구독 없음.",
   "home.social_proof_cta": "이번 달 4,200명 이상이 백테스트를 실행했습니다.",
 
   // TradingView comparison page
   "meta.vs_tv_title": "PRUVIQ vs 트레이딩뷰 - 무료 크립토 백테스팅 비교",
   "meta.vs_tv_desc":
-    "크립토 전략 백테스팅에서 PRUVIQ와 트레이딩뷰를 비교합니다. Pine Script 불필요. 영원히 무료. 570개+ 코인. 완전 백테스트 투명성.",
+    "크립토 전략 백테스팅에서 PRUVIQ와 트레이딩뷰를 비교합니다. Pine Script 불필요. $0 — 구독 없음. 570개+ 코인. 완전 백테스트 투명성.",
   "vs.tag": "솔직한 비교",
   "vs.title": "PRUVIQ vs 트레이딩뷰",
   "vs.subtitle": "크립토 백테스팅용",
@@ -1347,7 +1347,7 @@ export const ko: Record<TranslationKey, string> = {
   "vs.pruviq": "PRUVIQ",
   "vs.tradingview": "트레이딩뷰",
   "vs.row_price": "가격",
-  "vs.row_price_p": "영원히 무료",
+  "vs.row_price_p": "$0 — 구독 없음",
   "vs.row_price_tv": "월 $14.95-59.95 (Essential-Premium)",
   "vs.row_coding": "코딩 필요",
   "vs.row_coding_p": "코딩 불필요 — 비주얼 빌더",
@@ -1559,7 +1559,7 @@ export const ko: Record<TranslationKey, string> = {
   "compare.pruviq_label": "PRUVIQ",
   "compare.row1_label": "비용",
   "compare.row1_other": "월 $15 - $200",
-  "compare.row1_pruviq": "영원히 무료",
+  "compare.row1_pruviq": "$0 — 구독 없음",
   "compare.row2_label": "코딩",
   "compare.row2_other": "Python / Pine Script 필요",
   "compare.row2_pruviq": "코딩 불필요",

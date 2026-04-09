@@ -1585,7 +1585,7 @@ export const en = {
   // CTA badges
   "cta.badge1": "No credit card",
   "cta.badge2": "No account needed",
-  "cta.badge3": "100% $0 — no subscription",
+  "cta.badge3": "$0 — no subscription",
   "cta.badge4": "Results in 3 seconds",
 
   // Homepage comparison section
@@ -1685,7 +1685,7 @@ export const en = {
   "vs_3commas.pruviq": "PRUVIQ",
   "vs_3commas.other": "3Commas",
   "vs_3commas.row_price": "Price",
-  "vs_3commas.row_price_p": "$0 — no subscription — $0/mo",
+  "vs_3commas.row_price_p": "$0 — no subscription",
   "vs_3commas.row_price_other": "$15–110/mo (Starter–Expert)",
   "vs_3commas.row_annual": "Annual Cost",
   "vs_3commas.row_annual_p": "$0",
@@ -1835,7 +1835,7 @@ export const en = {
   "vs_cryptohopper.pruviq": "PRUVIQ",
   "vs_cryptohopper.other": "Cryptohopper",
   "vs_cryptohopper.row_price": "Price",
-  "vs_cryptohopper.row_price_p": "$0 — no subscription — $0/mo",
+  "vs_cryptohopper.row_price_p": "$0 — no subscription",
   "vs_cryptohopper.row_price_other": "$24–107/mo (Explorer–Hero)",
   "vs_cryptohopper.row_annual": "Annual Cost",
   "vs_cryptohopper.row_annual_p": "$0",
