@@ -51,7 +51,7 @@ const liveTrades = perf.summary.total_trades.toLocaleString();
 <Layout title={t('meta.performance_title')} description={t('meta.performance_desc')}>
 
   <!-- HERO -->
-  <section class="pt-2 pb-6 md:pt-4 md:pb-8">
+  <section class="pt-6 pb-6 md:pt-10 md:pb-8">
     <div class="max-w-5xl mx-auto px-4">
       <div class="flex items-center gap-2 mb-3">
         <p class="font-mono text-[--color-accent] text-sm tracking-wider">{t('perf.tag')}</p>
@@ -60,8 +60,8 @@ const liveTrades = perf.summary.total_trades.toLocaleString();
       <div class="mb-4 border border-[--color-yellow]/30 rounded-lg px-4 py-2.5 bg-[--color-yellow]/5">
         <p class="text-[--color-yellow] text-xs font-mono">⚠️ {t('perf.archived_notice')}</p>
       </div>
-      <h1 class="text-3xl md:text-5xl font-bold mb-4">{t('perf.title')}</h1>
-      <p class="text-[--color-text-muted] text-lg mb-4 max-w-2xl">{t('perf.desc')}</p>
+      <h1 class="text-3xl md:text-5xl lg:text-6xl font-extrabold mb-5">{t('perf.title')}</h1>
+      <p class="text-[--color-text-muted] text-lg md:text-xl leading-relaxed mb-5 max-w-2xl">{t('perf.desc')}</p>
       <p class="font-mono text-xs text-[--color-text-muted] mb-6">
         {t('perf.updated_label')}: <span class="text-[--color-text]">{perfUpdated}</span>
         &nbsp;&middot;&nbsp;
