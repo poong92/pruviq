@@ -349,6 +349,7 @@ export const ko: Record<TranslationKey, string> = {
     "현물 & 선물 수수료 한눈에. PRUVIQ 추천 링크로 바이낸스 가입 시 최대 19% 할인.",
   "fees.disclosure":
     "제휴 공개: PRUVIQ는 추천 링크로 가입 시 거래소로부터 수수료를 받습니다. 회원의 수수료 할인에는 영향이 없습니다.",
+  "fees.ctaSimulate": "무료 시뮬레이션 시작",
   "fees.compare_title": "거래소 비교",
   "fees.compare_desc":
     "기본 등급 (VIP 0). 추천 할인은 VIP 등급 할인 위에 추가 적용됩니다.",
