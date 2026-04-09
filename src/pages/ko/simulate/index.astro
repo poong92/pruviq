@@ -30,7 +30,7 @@ const quickStartPresets = (rankingsData.top3 || []).slice(0, 3);
         </div>
         <div class="flex items-center gap-3 shrink-0">
           <a href="/ko/simulate?preset=bb-squeeze-short"
-             class="btn btn-primary btn-sm inline-flex items-center gap-2"
+             class="btn btn-primary btn-sm inline-flex items-center gap-2 shadow-lg shadow-[--color-accent]/20"
              title={t('simulate.preset_verified_tooltip')}>
             {t('simulate.cta_preset')} &rarr;
           </a>
@@ -190,7 +190,7 @@ const quickStartPresets = (rankingsData.top3 || []).slice(0, 3);
         <div class="absolute inset-0 flex flex-col items-center justify-center gap-4">
           <p class="text-[--color-text-muted] text-sm font-mono">백테스트를 실행하여 결과를 확인하세요</p>
           <a href="/ko/simulate?preset=bb-squeeze-short"
-             class="btn btn-primary btn-md no-underline inline-flex items-center gap-2 animate-pulse"
+             class="btn btn-primary btn-md no-underline inline-flex items-center gap-2 animate-pulse shadow-lg shadow-[--color-accent]/20"
              style="animation-duration: 2s;">
             BB Squeeze로 시작하기 (검증됨) &rarr;
           </a>
