@@ -9,6 +9,73 @@ interface Props {
 }
 
 const API_BASE = "https://api.pruviq.com";
+const OKX_SDK_URL =
+  "https://static.okx.com/cdn/assets/okfe/libs/okxOAuth/index.js";
+
+declare global {
+  interface Window {
+    OKEXOAuthSDK?: {
+      init: (opts: { requestUrl: string; onInit?: () => void }) => void;
+      authorize: (params: Record<string, string>) => void;
+    };
+  }
+}
+
+let _sdkReady: Promise<void> | null = null;
+function loadOKXSDK(): Promise<void> {
+  if (_sdkReady) return _sdkReady;
+  _sdkReady = new Promise<void>((resolve, reject) => {
+    if (window.OKEXOAuthSDK) {
+      resolve();
+      return;
+    }
+    const script = document.createElement("script");
+    script.src = OKX_SDK_URL;
+    script.async = true;
+    script.onload = () => {
+      window.OKEXOAuthSDK?.init({ requestUrl: "https://www.okx.com" });
+      resolve();
+    };
+    script.onerror = () => reject(new Error("Failed to load OKX SDK"));
+    document.head.appendChild(script);
+  });
+  return _sdkReady;
+}
+
+function OKXSDKConnectButton({ lang, label }: { lang: string; label: string }) {
+  const [connecting, setConnecting] = useState(false);
+
+  const handleConnect = async () => {
+    setConnecting(true);
+    try {
+      const resp = await fetch(`${API_BASE}/auth/okx/init?lang=${lang}`);
+      if (!resp.ok) throw new Error("Failed to initialize OAuth");
+      const params = await resp.json();
+      await loadOKXSDK();
+      if (!window.OKEXOAuthSDK) throw new Error("OKX SDK unavailable");
+      window.OKEXOAuthSDK.authorize({
+        response_type: params.response_type,
+        access_type: params.access_type,
+        client_id: params.client_id,
+        redirect_uri: encodeURIComponent(params.redirect_uri),
+        scope: params.scope,
+        state: params.state,
+      });
+    } catch {
+      setConnecting(false);
+    }
+  };
+
+  return (
+    <button
+      class="btn btn-primary btn-md"
+      onClick={handleConnect}
+      disabled={connecting}
+    >
+      {connecting ? "Connecting..." : `${label} →`}
+    </button>
+  );
+}
 
 const STRATEGIES = [
   { id: "bb-squeeze-short", name: "BB Squeeze SHORT", status: "verified" },
@@ -312,12 +379,7 @@ export default function TradingSettings({ lang = "en" }: Props) {
     return (
       <div class="card-enterprise rounded-xl p-6 text-center">
         <p class="text-[--color-text-muted] mb-4">{t.notConnected}</p>
-        <a
-          href={`${API_BASE}/auth/okx/start?lang=${lang}`}
-          class="btn btn-primary btn-md"
-        >
-          {t.connect} →
-        </a>
+        <OKXSDKConnectButton lang={lang} label={t.connect} />
       </div>
     );
   }

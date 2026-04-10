@@ -25,6 +25,7 @@ from .oauth import (
     disconnect,
     exchange_code,
     generate_auth_url,
+    generate_oauth_params,
     get_valid_token,
     is_authenticated,
 )
@@ -61,12 +62,27 @@ def _clear_session_cookie(response: Response) -> None:
 
 # ── OAuth Flow ─────────────────────────────────────────────
 
+@router.get("/auth/okx/init")
+async def oauth_init(
+    redirect: str = Query("", description="Post-OAuth redirect URL"),
+    lang: str = Query("en", description="Language for redirect"),
+):
+    """
+    Step 1 (JS SDK flow): Returns OAuth params for OKEXOAuthSDK.authorize().
+    client_id is not secret — safe to return to frontend.
+    Generates and stores CSRF state for callback validation.
+    """
+    if not OKX_CLIENT_ID:
+        raise HTTPException(503, "OKX Broker not configured")
+    return generate_oauth_params(redirect_after=redirect, lang=lang)
+
+
 @router.get("/auth/okx/start")
 async def oauth_start(
     redirect: str = Query("", description="Post-OAuth redirect URL"),
     lang: str = Query("en", description="Language for redirect"),
 ):
-    """Step 1: Redirect user to OKX OAuth login page."""
+    """Step 1 (legacy redirect flow): Redirect user to OKX OAuth login page."""
     if not OKX_CLIENT_ID:
         raise HTTPException(503, "OKX Broker not configured")
     url = generate_auth_url(redirect_after=redirect, lang=lang)

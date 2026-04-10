@@ -53,6 +53,24 @@ def generate_auth_url(redirect_after: str = "", lang: str = "en") -> str:
     return f"{OKX_OAUTH_AUTHORIZE}?{urlencode(params)}"
 
 
+def generate_oauth_params(redirect_after: str = "", lang: str = "en") -> dict:
+    """
+    Generate OAuth params for frontend JS SDK call.
+    Saves CSRF state to DB, returns params dict for OKEXOAuthSDK.authorize().
+    client_id is not a secret — safe to return to frontend.
+    """
+    state = secrets.token_urlsafe(32)
+    save_csrf_state(state, redirect_after or "", lang)
+    return {
+        "state": state,
+        "client_id": OKX_CLIENT_ID,
+        "response_type": "code",
+        "access_type": "offline",
+        "scope": "read_only,trade",
+        "redirect_uri": OKX_REDIRECT_URI,
+    }
+
+
 async def exchange_code(code: str, state: str) -> tuple[str, str, str]:
     """
     Exchange authorization code for access + refresh tokens.

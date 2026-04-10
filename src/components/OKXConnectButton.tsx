@@ -1,6 +1,7 @@
 /**
  * OKX Connect/Disconnect button.
- * Checks OAuth status via cookie-based session, shows connect or connected state.
+ * Uses OKX JS SDK (OKEXOAuthSDK) for Authorization Code OAuth flow.
+ * Checks OAuth status via cookie-based session.
  */
 import { useState, useEffect } from "preact/hooks";
 
@@ -11,6 +12,17 @@ interface Props {
 }
 
 const API_BASE = "https://api.pruviq.com";
+const OKX_SDK_URL =
+  "https://static.okx.com/cdn/assets/okfe/libs/okxOAuth/index.js";
+
+declare global {
+  interface Window {
+    OKEXOAuthSDK?: {
+      init: (opts: { requestUrl: string; onInit?: () => void }) => void;
+      authorize: (params: Record<string, string>) => void;
+    };
+  }
+}
 
 const labels = {
   en: {
@@ -45,6 +57,31 @@ const sizeClasses = {
   lg: "btn-lg text-lg",
 };
 
+/** Load OKX SDK script once, resolve when ready */
+let _sdkReady: Promise<void> | null = null;
+
+function loadOKXSDK(): Promise<void> {
+  if (_sdkReady) return _sdkReady;
+  _sdkReady = new Promise<void>((resolve, reject) => {
+    if (window.OKEXOAuthSDK) {
+      resolve();
+      return;
+    }
+    const script = document.createElement("script");
+    script.src = OKX_SDK_URL;
+    script.async = true;
+    script.onload = () => {
+      if (window.OKEXOAuthSDK) {
+        window.OKEXOAuthSDK.init({ requestUrl: "https://www.okx.com" });
+      }
+      resolve();
+    };
+    script.onerror = () => reject(new Error("Failed to load OKX SDK"));
+    document.head.appendChild(script);
+  });
+  return _sdkReady;
+}
+
 export default function OKXConnectButton({
   lang = "en",
   size = "md",
@@ -53,8 +90,32 @@ export default function OKXConnectButton({
   const t = labels[lang];
   const [connected, setConnected] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [connecting, setConnecting] = useState(false);
 
   useEffect(() => {
+    // If this page loaded as OAuth callback popup/redirect, check for result
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("okx") === "success") {
+      setConnected(true);
+      setLoading(false);
+      const url = new URL(window.location.href);
+      url.searchParams.delete("okx");
+      window.history.replaceState({}, "", url.toString());
+      // If we're in a popup opened by SDK, notify parent and close
+      if (window.opener) {
+        try {
+          window.opener.postMessage(
+            { type: "okx:connected" },
+            window.location.origin,
+          );
+        } catch {
+          /* cross-origin guard */
+        }
+        window.close();
+      }
+      return;
+    }
+
     fetch(`${API_BASE}/auth/okx/status`, { credentials: "include" })
       .then((r) => r.json())
       .then((d) => {
@@ -62,18 +123,53 @@ export default function OKXConnectButton({
         setLoading(false);
       })
       .catch(() => setLoading(false));
-
-    // Check URL params for OAuth callback result
-    const params = new URLSearchParams(window.location.search);
-    if (params.get("okx") === "success") {
-      setConnected(true);
-      setLoading(false);
-      // Clean URL
-      const url = new URL(window.location.href);
-      url.searchParams.delete("okx");
-      window.history.replaceState({}, "", url.toString());
-    }
   }, []);
+
+  const handleConnect = async () => {
+    setConnecting(true);
+    try {
+      // Get CSRF state + OAuth params from backend
+      const resp = await fetch(`${API_BASE}/auth/okx/init?lang=${lang}`);
+      if (!resp.ok) throw new Error("Failed to initialize OAuth");
+      const params = await resp.json();
+
+      // Load OKX JS SDK
+      await loadOKXSDK();
+      if (!window.OKEXOAuthSDK) throw new Error("OKX SDK unavailable");
+
+      // Listen for popup-based callback result (if SDK uses popup)
+      const cleanup = () => window.removeEventListener("message", onMessage);
+      const onMessage = (e: MessageEvent) => {
+        if (e.origin !== window.location.origin) return;
+        if (e.data?.type === "okx:connected") {
+          setConnected(true);
+          setConnecting(false);
+          cleanup();
+        } else if (e.data?.type === "okx:error") {
+          setConnecting(false);
+          cleanup();
+        }
+      };
+      window.addEventListener("message", onMessage);
+      // Timeout cleanup in case SDK does full-page redirect (no popup message)
+      setTimeout(() => {
+        cleanup();
+        // Don't reset connecting — full-page redirect is in progress
+      }, 3000);
+
+      // Initiate OAuth via SDK (may do full-page redirect or popup)
+      window.OKEXOAuthSDK.authorize({
+        response_type: params.response_type,
+        access_type: params.access_type,
+        client_id: params.client_id,
+        redirect_uri: encodeURIComponent(params.redirect_uri),
+        scope: params.scope,
+        state: params.state,
+      });
+    } catch {
+      setConnecting(false);
+    }
+  };
 
   const handleDisconnect = async () => {
     await fetch(`${API_BASE}/auth/okx/disconnect`, {
@@ -135,23 +231,27 @@ export default function OKXConnectButton({
             </li>
           ))}
         </ul>
-        <a
-          href={`${API_BASE}/auth/okx/start?lang=${lang}`}
-          class={`btn btn-primary ${sizeClasses[size]} w-full text-center`}
+        <button
+          class={`btn btn-primary ${sizeClasses[size]} w-full`}
+          onClick={handleConnect}
+          disabled={connecting}
+          aria-label={connecting ? t.connecting : t.connect}
         >
-          {t.connect} →
-        </a>
+          {connecting ? t.connecting : `${t.connect} →`}
+        </button>
       </div>
     );
   }
 
   // Simple button
   return (
-    <a
-      href={`${API_BASE}/auth/okx/start?lang=${lang}`}
+    <button
       class={`btn btn-primary ${sizeClasses[size]}`}
+      onClick={handleConnect}
+      disabled={connecting}
+      aria-label={connecting ? t.connecting : t.connect}
     >
-      {t.connect} →
-    </a>
+      {connecting ? t.connecting : `${t.connect} →`}
+    </button>
   );
 }
