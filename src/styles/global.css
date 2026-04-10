@@ -176,10 +176,11 @@
 /* ─── Hero background depth ─── */
 .hero-bg-depth {
   background:
-    radial-gradient(ellipse at 50% -10%, rgba(44,181,232,0.18) 0%, transparent 55%),
-    radial-gradient(ellipse at 80% 40%, rgba(168,85,247,0.08) 0%, transparent 45%),
-    radial-gradient(ellipse at 20% 70%, rgba(6,182,212,0.06) 0%, transparent 45%),
-    linear-gradient(180deg, #09090B 0%, #0C1220 40%, #0A0F1A 70%, #09090B 100%);
+    radial-gradient(ellipse at 50% -15%, rgba(44,181,232,0.22) 0%, transparent 50%),
+    radial-gradient(ellipse at 75% 30%, rgba(168,85,247,0.10) 0%, transparent 40%),
+    radial-gradient(ellipse at 25% 60%, rgba(6,182,212,0.08) 0%, transparent 40%),
+    radial-gradient(ellipse at 50% 100%, rgba(0,0,0,0.4) 0%, transparent 50%),
+    linear-gradient(180deg, #08090E 0%, #0B1220 35%, #0A0F1A 65%, #09090B 100%);
 }
 
 /* ─── Subtle grid pattern for hero ─── */
@@ -194,34 +195,36 @@
 
 /* ─── Stats glass card ─── */
 .stat-glass {
-  background: rgba(255,255,255,0.03);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255,255,255,0.06);
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255,255,255,0.08);
   border-radius: var(--radius-lg);
-  padding: 1.25rem 1rem;
-  box-shadow: var(--shadow-sm);
+  padding: 1.5rem 1.25rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.05);
   transition: border-color var(--duration-normal) var(--ease-smooth),
-              background var(--duration-normal) var(--ease-smooth);
+              background var(--duration-normal) var(--ease-smooth),
+              transform var(--duration-normal) var(--ease-default),
+              box-shadow var(--duration-normal) var(--ease-smooth);
 }
 .stat-glass:hover {
-  border-color: rgba(255,255,255,0.12);
-  background: rgba(255,255,255,0.05);
+  border-color: rgba(44,181,232,0.2);
+  background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3), 0 0 12px rgba(44,181,232,0.06), inset 0 1px 0 rgba(255,255,255,0.06);
 }
 
 /* ─── Stat card top gradient accent line ─── */
-.stat-glass {
-  position: relative;
-  overflow: hidden;
-}
 .stat-glass::before {
   content: '';
   position: absolute;
   top: 0;
-  left: 20%;
-  right: 20%;
+  left: 10%;
+  right: 10%;
   height: 1px;
-  background: linear-gradient(90deg, transparent, var(--color-accent), transparent);
+  background: linear-gradient(90deg, transparent, rgba(44,181,232,0.5), transparent);
 }
 
 /* ─── Section glow backgrounds ─── */
@@ -270,11 +273,12 @@
 }
 .card-premium:hover {
   border-color: rgba(255,255,255,0.15);
-  transform: translateY(-3px);
+  transform: translateY(-4px);
   box-shadow:
-    0 0 0 1px rgba(255,255,255,0.08),
-    0 12px 32px rgba(0,0,0,0.4),
-    0 24px 56px rgba(0,0,0,0.25);
+    0 0 0 1px rgba(255,255,255,0.10),
+    0 8px 24px rgba(0,0,0,0.4),
+    0 20px 48px rgba(0,0,0,0.3),
+    0 0 20px rgba(44,181,232,0.04);
 }
 
 /* ─── Section accent glow (subtle top glow for sections) ─── */
@@ -517,7 +521,7 @@ a:not(.btn):not(.btn-primary):not(.btn-ghost):not(.btn-outline):not(.card-hover)
 }
 
 .gradient-text {
-  background: linear-gradient(135deg, #00DC82 0%, #2CB5E8 30%, #06B6D4 55%, #E4E4E7 100%);
+  background: linear-gradient(135deg, #00DC82 0%, #2CB5E8 35%, #5CC8ED 65%, #E4E4E7 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -812,7 +816,7 @@ textarea:focus-visible {
   .hero-enter { padding-top: 1.5rem; padding-bottom: 2rem; }
 
   /* Stack stats vertically if cramped */
-  .stat-glass { padding: 0.75rem; }
+  .stat-glass { padding: 1rem 0.875rem; }
   .stat-glass p:first-child { font-size: 1.25rem; }
 
   /* Full-width buttons on mobile */
@@ -820,6 +824,19 @@ textarea:focus-visible {
 
   /* Reduce section gaps on mobile */
   .section-gap { padding-top: 3rem; padding-bottom: 3rem; }
+
+  /* Mobile section padding */
+  .section-elevated, .section-accent-glow, .section-warm-glow {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+
+  /* Mobile card padding reduction */
+  .card-premium { padding: 1.25rem; }
+  .card-enterprise { padding: 1.25rem; }
+
+  /* Mobile FAQ touch targets */
+  details summary { min-height: 52px; }
 
   /* Prose: tighter margins */
   .prose h2 { margin-top: 1.75rem; font-size: 1.3rem; }
