@@ -177,13 +177,13 @@ function SkeletonRow() {
           <div class="skeleton h-4 w-20" />
         </div>
       </td>
-      <td class="px-2 py-3 text-right">
+      <td class="px-2 py-3 text-right hidden sm:table-cell">
         <div class="skeleton h-3 w-16 ml-auto" />
       </td>
       <td class="px-2 py-3 text-right hidden lg:table-cell">
         <div class="skeleton h-3 w-12 ml-auto" />
       </td>
-      <td class="px-2 py-3 text-right">
+      <td class="px-2 py-3 text-right hidden sm:table-cell">
         <div class="skeleton h-3 w-12 ml-auto" />
       </td>
       <td class="px-2 py-3 text-right hidden lg:table-cell">
@@ -516,7 +516,7 @@ export default function CoinListTable({ lang = "en" }: { lang?: "en" | "ko" }) {
                 currentSort={sortBy}
                 sortDesc={sortDesc}
                 onClick={handleSort}
-                className="text-right"
+                className="text-right hidden sm:table-cell"
               >
                 {t.price}
               </SortableHeader>
@@ -534,7 +534,7 @@ export default function CoinListTable({ lang = "en" }: { lang?: "en" | "ko" }) {
                 currentSort={sortBy}
                 sortDesc={sortDesc}
                 onClick={handleSort}
-                className="text-right"
+                className="text-right hidden sm:table-cell"
               >
                 {t.h24}
               </SortableHeader>
@@ -629,29 +629,46 @@ export default function CoinListTable({ lang = "en" }: { lang?: "en" | "ko" }) {
                       aria-hidden="true"
                     >
                       <CoinLogo image={coin.image} symbol={coin.symbol} />
-                      <div class="flex items-center gap-1.5">
-                        <span class="font-semibold">
-                          {coin.symbol.endsWith("USDT")
-                            ? coin.symbol.slice(0, -4)
-                            : coin.symbol}
-                        </span>
-                        {coin.name && (
-                          <span class="text-[--color-text-muted] text-[0.6875rem] hidden sm:inline">
-                            {coin.name}
+                      <div>
+                        <div class="flex items-center gap-1.5">
+                          <span class="font-semibold">
+                            {coin.symbol.endsWith("USDT")
+                              ? coin.symbol.slice(0, -4)
+                              : coin.symbol}
                           </span>
-                        )}
+                          {coin.name && (
+                            <span class="text-[--color-text-muted] text-[0.6875rem] hidden sm:inline">
+                              {coin.name}
+                            </span>
+                          )}
+                        </div>
+                        {/* Mobile: show price + 24h inline under name */}
+                        <div class="flex items-center gap-2 mt-0.5 sm:hidden">
+                          <span class="text-[0.6875rem] tabular-nums text-[--color-text-muted]">
+                            ${formatPrice(coin.price)}
+                          </span>
+                          <span
+                            class={`text-[0.6875rem] tabular-nums font-medium ${(coin.change_24h ?? 0) >= 0 ? "text-[--color-up]" : "text-[--color-down]"}`}
+                          >
+                            {(coin.change_24h ?? 0) >= 0 ? "▲" : "▼"}{" "}
+                            {Math.abs(coin.change_24h ?? 0).toFixed(1)}%
+                          </span>
+                        </div>
                       </div>
                     </a>
                   </td>
 
-                  <td class="px-2 py-2.5 text-right tabular-nums">
+                  <td class="px-2 py-2.5 text-right tabular-nums hidden sm:table-cell">
                     ${formatPrice(coin.price)}
                   </td>
                   <ChangeCell
                     value={coin.change_1h}
                     className="hidden lg:table-cell"
                   />
-                  <ChangeCell value={coin.change_24h} />
+                  <ChangeCell
+                    value={coin.change_24h}
+                    className="hidden sm:table-cell"
+                  />
                   <ChangeCell
                     value={coin.change_7d}
                     className="hidden lg:table-cell"
