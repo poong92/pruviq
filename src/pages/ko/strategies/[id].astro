@@ -2,6 +2,7 @@
 import { getCollection, render } from 'astro:content';
 import Layout from '../../../layouts/Layout.astro';
 import StrategyDemo from '../../../components/StrategyDemo';
+import OKXExecuteButton from '../../../components/OKXExecuteButton';
 import ReproBadge from '../../../components/ReproBadge';
 import Tooltip from '../../../components/ui/Tooltip.astro';
 import { useTranslations } from '../../../i18n/index';
@@ -189,6 +190,20 @@ const statusLabels: Record<string, string> = {
           defaultSl={demo.sl}
           defaultTp={demo.tp}
         />
+      )}
+
+      {demo && strategy.data.status === 'verified' && (
+        <div class="mt-6">
+          <OKXExecuteButton
+            client:visible
+            strategy={strategy.id}
+            direction={demo.direction}
+            symbol="BTCUSDT"
+            slPct={demo.sl}
+            tpPct={demo.tp}
+            lang="ko"
+          />
+        </div>
       )}
 
       <div id="exchange-cta-mount" data-strategy={strategy.id}></div>
