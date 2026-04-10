@@ -1509,6 +1509,7 @@ export const en = {
   "nav.daily_ranking": "Daily Ranking",
   "nav.weekly": "Weekly",
   "nav.signals": "Signals",
+  "nav.dashboard": "Dashboard",
 
   // Metric explanation tooltips
   "metric.sharpe_desc":

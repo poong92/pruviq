@@ -12,11 +12,10 @@ Register in main.py:
 from __future__ import annotations
 
 import logging
+import os
 
 from fastapi import APIRouter, HTTPException, Query, Request, Response
 from fastapi.responses import RedirectResponse
-
-import os
 
 from .config import COOKIE_DOMAIN, FRONTEND_URL, OKX_CLIENT_ID
 
@@ -111,10 +110,7 @@ async def oauth_status(request: Request):
     session_id = _get_session(request)
     admin_header = request.headers.get("x-admin-key", "")
     is_admin = bool(ADMIN_KEY and admin_header == ADMIN_KEY)
-    return {
-        "connected": is_authenticated(session_id),
-        "admin": is_admin,
-    }
+    return {"connected": is_authenticated(session_id), "admin": is_admin}
 
 
 @router.post("/auth/okx/disconnect")

@@ -71,6 +71,7 @@ const coinsPath = lp('/coins');
 const builderPath = lp('/builder');
 const performancePath = lp('/performance');
 const blogPath = lp('/blog');
+const dashboardPath = lp('/dashboard');
 
 // Active nav detection
 const navItems = [
@@ -82,6 +83,7 @@ const navItems = [
   { href: learnPath, match: '/learn', label: t('nav.learn') },
   { href: feesPath, match: '/fees', label: t('nav.fees') },
   { href: aboutPath, match: '/about', label: t('footer.about') },
+  { href: dashboardPath, match: '/dashboard', label: t('nav.dashboard') },
 ];
 const isActive = (match: string) => basePath.startsWith(match);
 
