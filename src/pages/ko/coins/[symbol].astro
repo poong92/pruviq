@@ -73,16 +73,16 @@ const canonicalOverride = symbol.endsWith('usdt') ? undefined : `/ko/coins/${sym
 <Layout title={`${fullName} (${displayName}) - 코인 탐색기 - PRUVIQ`} description={metaDesc} canonicalOverride={canonicalOverride}>
   <script type="application/ld+json" set:html={datasetJsonLd} />
   <script type="application/ld+json" set:html={faqJsonLd} />
-  <section class="py-8">
+  <section class="pt-6 pb-16 md:pt-8 md:pb-24">
     <div class="max-w-7xl mx-auto px-4">
-      <a href="/ko/coins" class="inline-flex items-center gap-1 text-[--color-text-muted] hover:text-[--color-accent] transition-colors text-sm font-mono mb-4">
+      <a href="/ko/coins" class="inline-flex items-center gap-1 text-[--color-text-muted] hover:text-[--color-accent] transition-colors text-sm font-mono mb-6">
         &larr; {t('coins.back')}
       </a>
 
       <!-- Header -->
-      <div class="mb-6">
-        <h1 class="text-2xl md:text-3xl font-bold mb-2">{fullName} <span class="text-[--color-text-muted] font-normal text-lg">({displayName})</span></h1>
-        <p class="text-[--color-text-muted] text-sm max-w-2xl">
+      <div class="mb-8">
+        <h1 class="text-3xl md:text-4xl lg:text-5xl font-extrabold mb-3">{fullName} <span class="text-[--color-text-muted] font-normal text-xl md:text-2xl">({displayName})</span></h1>
+        <p class="text-[--color-text-muted] text-base md:text-lg max-w-2xl leading-relaxed">
           {t('coin_detail.header_desc').replace('{name}', fullName)}
         </p>
       </div>
@@ -96,13 +96,13 @@ const canonicalOverride = symbol.endsWith('usdt') ? undefined : `/ko/coins/${sym
       </div>
 
       <!-- CTA -->
-      <div class="mt-6 flex flex-wrap items-center gap-3">
+      <div class="mt-8 flex flex-wrap items-center gap-3">
         <a href={`/ko/simulate?coin=${symbolUpper}&src=coin-page`}
-           class="inline-flex items-center gap-2 bg-[--color-accent] text-[--color-bg] px-5 py-2.5 rounded font-semibold text-sm hover:bg-[--color-accent-dim]">
+           class="btn btn-primary btn-md">
           {t('coin_detail.simulate_coin').replace('{coin}', coinName)} &rarr;
         </a>
-        <a href="/ko/strategies" class="text-sm text-[--color-text-muted] hover:text-[--color-accent]">{t('coin_detail.all_strategies')}</a>
-        <a href="/ko/coins" class="text-sm text-[--color-text-muted] hover:text-[--color-accent]">{t('coin_detail.all_coins')}</a>
+        <a href="/ko/strategies" class="btn btn-ghost btn-sm">{t('coin_detail.all_strategies')}</a>
+        <a href="/ko/coins" class="btn btn-ghost btn-sm">{t('coin_detail.all_coins')}</a>
       </div>
 
       <div id="exchange-cta-mount" data-coin={symbolUpper}></div>
@@ -110,27 +110,27 @@ const canonicalOverride = symbol.endsWith('usdt') ? undefined : `/ko/coins/${sym
       <hr class="section-divider" />
 
       <!-- Strategy overview -->
-      <div class="reveal mt-10 border-t border-[--color-border] pt-8">
-        <h2 class="text-lg font-bold mb-4">{t('coin_detail.strategy_overview')}</h2>
-        <div class="reveal-child grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-          <div class="card-enterprise p-3">
-            <p class="text-xs text-[--color-text-muted] font-mono mb-1">{t('coin_detail.direction')}</p>
+      <div class="mt-12 pt-10">
+        <h2 class="text-xl md:text-2xl font-bold mb-6">{t('coin_detail.strategy_overview')}</h2>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <div class="card-enterprise p-4 shadow-[var(--shadow-sm)]">
+            <p class="metric-label mb-1">{t('coin_detail.direction')}</p>
             <p class="font-bold text-[--color-accent]">{t('coin_detail.short_only')}</p>
           </div>
-          <div class="card-enterprise p-3">
-            <p class="text-xs text-[--color-text-muted] font-mono mb-1">{t('coin_detail.sl_tp')}</p>
+          <div class="card-enterprise p-4 shadow-[var(--shadow-sm)]">
+            <p class="metric-label mb-1">{t('coin_detail.sl_tp')}</p>
             <p class="font-bold font-mono">10% / 8%</p>
           </div>
-          <div class="card-enterprise p-3">
-            <p class="text-xs text-[--color-text-muted] font-mono mb-1">{t('coin_detail.max_hold')}</p>
+          <div class="card-enterprise p-4 shadow-[var(--shadow-sm)]">
+            <p class="metric-label mb-1">{t('coin_detail.max_hold')}</p>
             <p class="font-bold">{t('coin_detail.max_hold_val')}</p>
           </div>
-          <div class="card-enterprise p-3">
-            <p class="text-xs text-[--color-text-muted] font-mono mb-1">{t('coin_detail.data_period')}</p>
+          <div class="card-enterprise p-4 shadow-[var(--shadow-sm)]">
+            <p class="metric-label mb-1">{t('coin_detail.data_period')}</p>
             <p class="font-bold">{t('coin_detail.data_period_val')}</p>
           </div>
         </div>
-        <p class="text-sm text-[--color-text-muted] leading-relaxed max-w-3xl">
+        <p class="text-base text-[--color-text-muted] leading-relaxed max-w-3xl">
           {t('coin_detail.strategy_desc').replace('{name}', fullName)}
         </p>
       </div>
@@ -138,30 +138,31 @@ const canonicalOverride = symbol.endsWith('usdt') ? undefined : `/ko/coins/${sym
       <hr class="section-divider" />
 
       <!-- FAQ -->
-      <div class="reveal mt-10 border-t border-[--color-border] pt-8">
-        <h2 class="text-lg font-bold mb-4">{t('coin_detail.faq_title')}</h2>
-        <div class="space-y-4 max-w-3xl">
-          <details class="card-hover border border-[--color-border] rounded bg-[--color-bg-card]">
-            <summary class="px-4 py-3 cursor-pointer font-semibold text-sm hover:text-[--color-accent]">{t('coin_detail.faq_q1').replace('{name}', fullName)}</summary>
-            <p class="px-4 pb-3 text-sm text-[--color-text-muted]">{t('coin_detail.faq_a1').replace('{display}', displayName)}</p>
-          </details>
-          <details class="card-hover border border-[--color-border] rounded bg-[--color-bg-card]">
-            <summary class="px-4 py-3 cursor-pointer font-semibold text-sm hover:text-[--color-accent]">{t('coin_detail.faq_q2').replace('{name}', fullName)}</summary>
-            <p class="px-4 pb-3 text-sm text-[--color-text-muted]">{t('coin_detail.faq_a2')}</p>
-          </details>
-          <details class="card-hover border border-[--color-border] rounded bg-[--color-bg-card]">
-            <summary class="px-4 py-3 cursor-pointer font-semibold text-sm hover:text-[--color-accent]">{t('coin_detail.faq_q3').replace('{name}', fullName)}</summary>
-            <p class="px-4 pb-3 text-sm text-[--color-text-muted]">{t('coin_detail.faq_a3')}</p>
-          </details>
+      <div class="mt-12 pt-10">
+        <h2 class="text-xl md:text-2xl font-bold mb-6">{t('coin_detail.faq_title')}</h2>
+        <div class="space-y-3 max-w-3xl">
+          {[
+            { q: t('coin_detail.faq_q1').replace('{name}', fullName), a: t('coin_detail.faq_a1').replace('{display}', displayName) },
+            { q: t('coin_detail.faq_q2').replace('{name}', fullName), a: t('coin_detail.faq_a2') },
+            { q: t('coin_detail.faq_q3').replace('{name}', fullName), a: t('coin_detail.faq_a3') },
+          ].map(({ q, a }) => (
+            <details class="group border border-[--color-border] rounded-xl bg-[--color-bg-card] shadow-[var(--shadow-sm)] hover:border-[--color-accent]/30 transition-all">
+              <summary class="cursor-pointer px-5 py-4 font-semibold text-sm flex items-center justify-between gap-4 min-h-[48px]">
+                {q}
+                <span class="text-[--color-text-muted] group-open:rotate-180 transition-transform shrink-0">&#9662;</span>
+              </summary>
+              <div class="faq-body"><div><p class="px-5 pb-4 text-sm text-[--color-text-muted] leading-relaxed">{a}</p></div></div>
+            </details>
+          ))}
         </div>
       </div>
 
       <hr class="section-divider" />
 
       <!-- Bottom CTA -->
-      <div class="reveal mt-10 pt-8 border-t border-[--color-border] text-center">
+      <div class="mt-12 pt-10 text-center section-accent-glow rounded-2xl py-12">
         <a href={`/ko/simulate?coin=${symbolUpper}&src=coin-page`}
-           class="btn btn-primary btn-md
+           class="btn btn-primary btn-lg">
           {t('coin_detail.simulate_coin').replace('{coin}', coinName)} &rarr;
         </a>
         <div class="flex flex-wrap gap-3 justify-center mt-4">

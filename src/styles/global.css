@@ -819,6 +819,13 @@ textarea:focus-visible {
   .stat-glass { padding: 1rem 0.875rem; }
   .stat-glass p:first-child { font-size: 1.25rem; }
 
+  /* Mobile card padding */
+  .card-premium { padding: 1.25rem; }
+  .card-enterprise { padding: 1.25rem; }
+
+  /* Mobile FAQ touch targets */
+  details summary { min-height: 52px; }
+
   /* Full-width buttons on mobile */
   .btn-lg { width: 100%; justify-content: center; }
 
@@ -1168,11 +1175,12 @@ textarea:focus-visible {
   background: var(--color-bg-card);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
   transition: border-color 200ms, box-shadow 200ms, transform 200ms;
 }
 .card-enterprise:hover {
   border-color: var(--color-border-hover);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
   transform: translateY(-2px);
 }
 

@@ -2,9 +2,11 @@
 import Layout from '../../layouts/Layout.astro';
 import { useTranslations } from '../../i18n/index';
 import marketDataRaw from '../../../public/data/market.json';
+import siteStats from '../../../public/data/site-stats.json';
 
 const t = useTranslations('en');
 const marketDataJson = JSON.stringify(marketDataRaw);
+const coinsAnalyzed = (siteStats as Record<string, number>).coins_analyzed ?? 570;
 ---
 
 <Layout title={t('meta.market_title')} description={t('meta.market_desc')}>
@@ -57,7 +59,7 @@ const marketDataJson = JSON.stringify(marketDataRaw);
             </div>
             <p class="text-[--color-text-muted] text-sm mb-4">{t('market.noscript_desc')}</p>
             <div class="flex flex-wrap gap-3">
-              <a href="/coins" class="text-[--color-accent] text-sm font-semibold hover:underline">Browse 570+ Coins &rarr;</a>
+              <a href="/coins" class="text-[--color-accent] text-sm font-semibold hover:underline">Browse {coinsAnalyzed}+ Coins &rarr;</a>
               <a href="/simulate" class="text-[--color-accent] text-sm font-semibold hover:underline">Run Simulation &rarr;</a>
               <a href="/strategies" class="text-[--color-accent] text-sm font-semibold hover:underline">View Strategies &rarr;</a>
             </div>

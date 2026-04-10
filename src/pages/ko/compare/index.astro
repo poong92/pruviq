@@ -26,7 +26,7 @@ const comparisons = [
       </h1>
 
       <!-- Why PRUVIQ: 3 strengths -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10 mb-10 reveal-child">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10 mb-10 reveal">
         <div class="border border-[--color-up]/30 rounded-lg p-6 bg-[--color-bg-card]">
           <p class="font-mono text-[--color-up] text-xs font-bold mb-2 tracking-wider">{t('compare_index.strength1_tag')}</p>
           <p class="font-bold text-lg mb-2">{t('compare_index.strength1_title')}</p>
@@ -130,7 +130,7 @@ const comparisons = [
       <hr class="section-divider mb-10" />
 
       <p class="font-mono text-[--color-accent] text-sm mb-6 tracking-wider">{t('compare_index.detailed_label')}</p>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 reveal-child">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 reveal">
         {comparisons.map((c) => (
           <a
             href={`/ko/compare/${c.slug}`}
