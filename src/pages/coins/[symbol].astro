@@ -31,12 +31,23 @@ const { symbolUpper } = Astro.props;
 const displayName = symbolUpper.replace('USDT', '') + '/USDT';
 const coinName = symbolUpper.replace('USDT', '');
 const fullName = coinMeta[symbolUpper]?.name || coinName;
-const metaDesc = `${fullName} (${displayName}) trading strategy simulation — backtest BB Squeeze SHORT on ${displayName} with 2+ years of data. See entry/exit signals, win rate, and profit factor. Free on PRUVIQ.`;
+
+const majors = ['BTC', 'ETH', 'BNB', 'SOL', 'XRP', 'ADA', 'DOGE', 'AVAX', 'DOT', 'MATIC'];
+const memeCoins = ['PEPE', 'SHIB', 'FLOKI', 'BONK', 'WIF', 'MEME', 'DOGE'];
+const aiCoins = ['RNDR', 'FET', 'WLD', 'OCEAN', 'AGIX', 'TAO', 'AKT'];
+const coinHook = majors.includes(coinName)
+  ? `one of crypto's most-traded assets`
+  : memeCoins.includes(coinName)
+    ? `a high-volatility meme coin`
+    : aiCoins.includes(coinName)
+      ? `an AI-sector token`
+      : `a crypto futures asset`;
+const metaDesc = `${fullName} (${displayName}) — ${coinHook}. Backtest multiple strategies on ${displayName} with 2+ years of data. Entry/exit signals, win rate, profit factor. Free on PRUVIQ.`;
 const datasetJsonLd = JSON.stringify({
   "@context": "https://schema.org",
   "@type": "Dataset",
   "name": `${fullName} Trading Strategy Backtest`,
-  "description": `BB Squeeze SHORT strategy simulation results for ${displayName} with 2+ years of historical OHLCV data`,
+  "description": `Trading strategy simulation results for ${displayName} with 2+ years of historical OHLCV data`,
   "url": `https://pruviq.com/coins/${symbol}/`,
   "isAccessibleForFree": true,
   "temporalCoverage": "2024/2026",

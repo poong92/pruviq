@@ -12,6 +12,7 @@ timeframe: "1H"
 dataPoints: 8420
 coins: 577
 dateAdded: "2026-01-31"
+dateUpdated: "2026-04-10"
 dateKilled: "2026-02-05"
 tags: ["momentum", "breakout", "long", "killed"]
 ---

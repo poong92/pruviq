@@ -13,6 +13,7 @@ timeframe: "1H"
 dataPoints: 2898
 coins: 535
 dateAdded: "2026-01-10"
+dateUpdated: "2026-04-10"
 tags: ["bollinger-bands", "squeeze", "volatility", "verified"]
 ---
 

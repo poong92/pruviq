@@ -11,6 +11,7 @@ totalPnl: "-$26"
 timeframe: "1H"
 coins: 577
 dateAdded: "2026-01-10"
+dateUpdated: "2026-04-10"
 dateKilled: "2026-02-05"
 tags: ["bollinger-bands", "squeeze", "long", "killed"]
 ---
