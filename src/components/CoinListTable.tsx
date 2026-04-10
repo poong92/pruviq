@@ -177,13 +177,13 @@ function SkeletonRow() {
           <div class="skeleton h-4 w-20" />
         </div>
       </td>
-      <td class="px-2 py-3 text-right">
+      <td class="px-2 py-3 text-right hidden sm:table-cell">
         <div class="skeleton h-3 w-16 ml-auto" />
       </td>
       <td class="px-2 py-3 text-right hidden lg:table-cell">
         <div class="skeleton h-3 w-12 ml-auto" />
       </td>
-      <td class="px-2 py-3 text-right">
+      <td class="px-2 py-3 text-right hidden sm:table-cell">
         <div class="skeleton h-3 w-12 ml-auto" />
       </td>
       <td class="px-2 py-3 text-right hidden lg:table-cell">
@@ -498,7 +498,7 @@ export default function CoinListTable({ lang = "en" }: { lang?: "en" | "ko" }) {
             <tr>
               <th
                 scope="col"
-                class="px-2 py-2 text-center font-mono text-[0.6875rem] tracking-wider uppercase border-b border-[--color-border] text-[--color-text-muted] w-10 cursor-default select-none"
+                class="px-2 py-2 text-center font-mono text-[0.6875rem] tracking-wider uppercase border-b border-[--color-border] text-[--color-text-muted] w-10 cursor-default select-none hidden sm:table-cell"
               >
                 #
               </th>
@@ -516,7 +516,7 @@ export default function CoinListTable({ lang = "en" }: { lang?: "en" | "ko" }) {
                 currentSort={sortBy}
                 sortDesc={sortDesc}
                 onClick={handleSort}
-                className="text-right"
+                className="text-right hidden sm:table-cell"
               >
                 {t.price}
               </SortableHeader>
@@ -534,7 +534,7 @@ export default function CoinListTable({ lang = "en" }: { lang?: "en" | "ko" }) {
                 currentSort={sortBy}
                 sortDesc={sortDesc}
                 onClick={handleSort}
-                className="text-right"
+                className="text-right hidden sm:table-cell"
               >
                 {t.h24}
               </SortableHeader>
@@ -617,11 +617,11 @@ export default function CoinListTable({ lang = "en" }: { lang?: "en" | "ko" }) {
                   }}
                   class="cursor-pointer border-b border-[--color-border] row-hover"
                 >
-                  <td class="px-2 py-2.5 text-center text-[--color-text-muted] text-[0.6875rem]">
+                  <td class="px-2 py-2.5 text-center text-[--color-text-muted] text-[0.6875rem] hidden sm:table-cell">
                     {rank}
                   </td>
 
-                  <td class="px-2 py-2.5 whitespace-nowrap">
+                  <td class="px-2 py-3 sm:py-2.5 whitespace-nowrap">
                     <a
                       href={coinUrl}
                       class="flex items-center gap-2.5 hover:text-[--color-accent] transition-colors"
@@ -629,29 +629,52 @@ export default function CoinListTable({ lang = "en" }: { lang?: "en" | "ko" }) {
                       aria-hidden="true"
                     >
                       <CoinLogo image={coin.image} symbol={coin.symbol} />
-                      <div class="flex items-center gap-1.5">
-                        <span class="font-semibold">
-                          {coin.symbol.endsWith("USDT")
-                            ? coin.symbol.slice(0, -4)
-                            : coin.symbol}
-                        </span>
+                      <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-1.5">
+                          <span class="font-semibold">
+                            {coin.symbol.endsWith("USDT")
+                              ? coin.symbol.slice(0, -4)
+                              : coin.symbol}
+                          </span>
+                          {coin.name && (
+                            <span class="text-[--color-text-muted] text-[0.6875rem] hidden sm:inline">
+                              {coin.name}
+                            </span>
+                          )}
+                        </div>
+                        {/* Mobile: coin name subtitle */}
                         {coin.name && (
-                          <span class="text-[--color-text-muted] text-[0.6875rem] hidden sm:inline">
+                          <span class="text-[--color-text-muted] text-[0.625rem] sm:hidden block truncate">
                             {coin.name}
                           </span>
                         )}
                       </div>
+                      {/* Mobile: price + change badge on right side */}
+                      <div class="flex flex-col items-end gap-0.5 sm:hidden ml-auto">
+                        <span class="text-sm font-semibold tabular-nums">
+                          ${formatPrice(coin.price)}
+                        </span>
+                        <span
+                          class={`text-[0.625rem] tabular-nums font-bold px-1.5 py-0.5 rounded ${(coin.change_24h ?? 0) >= 0 ? "text-[--color-up] bg-[--color-up]/10" : "text-[--color-down] bg-[--color-down]/10"}`}
+                        >
+                          {(coin.change_24h ?? 0) >= 0 ? "+" : ""}
+                          {(coin.change_24h ?? 0).toFixed(1)}%
+                        </span>
+                      </div>
                     </a>
                   </td>
 
-                  <td class="px-2 py-2.5 text-right tabular-nums">
+                  <td class="px-2 py-2.5 text-right tabular-nums hidden sm:table-cell">
                     ${formatPrice(coin.price)}
                   </td>
                   <ChangeCell
                     value={coin.change_1h}
                     className="hidden lg:table-cell"
                   />
-                  <ChangeCell value={coin.change_24h} />
+                  <ChangeCell
+                    value={coin.change_24h}
+                    className="hidden sm:table-cell"
+                  />
                   <ChangeCell
                     value={coin.change_7d}
                     className="hidden lg:table-cell"
