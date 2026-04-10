@@ -22,7 +22,7 @@ export const en = {
   "hero.title2": "on {coins} Coins in 3 Seconds.",
   "hero.subtitle": "No code. No signup. No cost. Just data.",
   "hero.desc":
-    "We tested 5 strategies on 570+ coins. 4 lost money. We published them all. Because you deserve to know what actually works before risking real money.",
+    "We tested 5 strategies on 570+ coins. 2 killed. Every result published.",
   "hero.cta_primary": "Open Simulator Free",
   "hero.cta_builder": "Build Your Own Strategy",
   "hero.cta1": "Explore Strategies",
@@ -41,7 +41,7 @@ export const en = {
   "hero.tool_data": "2+ Years Historical Data",
   "hero.tool_free": "100% Free, No Signup",
   "hero.subcopy":
-    "We tested 88 strategy combinations. 4 failed — and we published every one.",
+    "We tested 88 strategy combinations. Most failed — and we published every one.",
   "hero.cta_secondary": "See Simulation Results",
   "hero.open_source": "Transparent",
   "hero.stat1_sub": "Including BTC, ETH, and altcoins",
@@ -77,9 +77,9 @@ export const en = {
   "problem.card1_desc":
     "We stress-tested 88 strategy combinations on 570+ coins across 2+ years of data so you don't have to. Look-ahead bias, overfitting, regime blindness — most strategies fail for the same reasons. We show you exactly which ones and why.",
   "problem.card1_source": "Source: PRUVIQ validation pipeline, 2024-2026",
-  "problem.card2_title": "4 Strategies Killed",
+  "problem.card2_title": "2 Strategies Killed",
   "problem.card2_desc":
-    "We tested 5 strategies on 570+ coins over 2+ years. 4 failed — and we published every one of those failures. Most platforms hide this. We made it the main feature.",
+    "We tested 5 strategies on 570+ coins over 2+ years. 2 killed, 1 verified, 2 shelved — and we published every result. Most platforms hide this. We made it the main feature.",
   "problem.card2_source":
     "Source: PRUVIQ strategy library — all results published",
   "problem.card3_title": "Experts Were Wrong",
@@ -97,22 +97,22 @@ export const en = {
   "evidence.title": "Prove Everything. Hide Nothing.",
   "evidence.desc":
     "PRUVIQ lets you test crypto strategies before risking real money. Every simulation uses realistic costs, and every result — including failures — is published. Not a signal service. A verification tool.",
-  "evidence.step1_title": "Backtest Before You Trade",
+  "evidence.step1_title": "Backtest on 570+ Coins",
   "evidence.step1_desc":
     "Every strategy is tested on 570+ coins across 2+ years of data before risking real capital. No exceptions.",
-  "evidence.step2_title": "Simulate Before You Trade",
+  "evidence.step2_title": "See the Real Costs",
   "evidence.step2_desc":
     "Test any strategy on historical data with real fees and slippage. See the drawdowns, the losing streaks, the actual risk. Then decide.",
   "evidence.step3_title": "Kill What Doesn't Work",
   "evidence.step3_desc":
-    "We've already killed 3 strategies that lost money in simulation. No ego. If the data says stop, we stop.",
+    "We've already killed 2 strategies that lost money in simulation. No ego. If the data says stop, we stop.",
   "evidence.step4_title": "Evolve With the Market",
   "evidence.step4_desc":
     "Markets change. Strategies must change too. PRUVIQ continuously tests, validates, and adapts. What runs today may be different tomorrow — and that's the point.",
   "evidence.lesson_tag": "88 VARIATIONS TESTED",
   "evidence.lesson1":
     "We started with 5 strategy types and 88 parameter combinations, tested across hundreds of coins and 2+ years of market data.",
-  "evidence.lesson_loss": "87 eliminated.",
+  "evidence.lesson_loss": "Most eliminated.",
   "evidence.lesson1_end": "1 survived.",
   "evidence.lesson2":
     "The failures? Look-ahead bias. Overfitting. Regime blindness. Every classic mistake in the book — caught before real money was at risk.",
@@ -201,7 +201,7 @@ export const en = {
     "Not financial advice. Crypto trading involves substantial risk of loss. Past performance does not guarantee future results. PRUVIQ is an educational and research project.",
 
   // Footer
-  "footer.tagline": "Verify. Execute. Profit.",
+  "footer.tagline": "Verify. Execute. Decide.",
   "footer.strategies": "Strategies",
   "footer.learn": "Learn",
   "footer.fees": "Save on Fees",
@@ -456,7 +456,7 @@ export const en = {
   "fees.referral.proof.timestamp":
     "Screenshot verified on March 21, 2026. Settings updated quarterly.",
   "fees.referral.proof.why":
-    "We keep only 1% because we're a free platform. We don't need the referral money — we're not trying to build a MLM pyramid. You get nearly everything Binance gives us.",
+    "We keep only 1% because PRUVIQ is a free research platform. The other 19% spot / 9% futures goes directly to you.",
   "fees.referral.proof.transparent":
     "We're showing you this because if we were like everyone else, we'd hide it and claim 20% while giving you 0%. That's the industry norm. We're not doing that.",
 
@@ -519,7 +519,7 @@ export const en = {
   "fees.referral.callout.warning":
     "Your referral code is locked forever at signup. You cannot change it.",
   "fees.referral.callout.fact":
-    "Fact: 89% of referral promoters give 0% commission while claiming 20%+",
+    "Most referral promoters keep 100% of the commission while claiming to offer you a discount",
   "fees.referral.callout.comparison":
     "1% PRUVIQ keeps | 19% you get (spot) | Binance gets the rest",
   "fees.referral.callout.industry":
@@ -620,7 +620,7 @@ export const en = {
     "Try PRUVIQ's strategy simulator instantly. Adjust stop-loss and take-profit to see real backtest results on 570+ coins.",
   "meta.fees_title": "Compare Exchange Fees - PRUVIQ",
   "meta.fees_desc":
-    "Compare Binance trading fees. Save 10% with PRUVIQ referral link. Transparent fee comparison for spot and futures.",
+    "Compare crypto exchange trading fees. Save up to 19% on spot with PRUVIQ's referral code. Transparent fee breakdown.",
   "meta.changelog_title": "Changelog - PRUVIQ",
   "meta.changelog_desc":
     "Complete version history of PRUVIQ's trading system. Every change, every reason, every date.",
@@ -693,7 +693,7 @@ export const en = {
   // About - Founder section
   "about.solo_tag": "FOUNDER",
   "about.solo_headline":
-    "Founded by a systematic trader and quantitative researcher.",
+    "Founded by a systematic trader with a quantitative research background.",
   "about.solo_background":
     "Background in algorithmic trading, quantitative research, and crypto markets since 2021.",
   "about.solo_why":
@@ -1021,7 +1021,7 @@ export const en = {
   "simulate.loading": "Loading strategy builder...",
   "simulate.strategies_title": "Tested Strategies",
   "simulate.strategies_desc":
-    "5 strategies tested. 4 killed. 1 verified. Full results published.",
+    "5 strategies tested. 2 killed. 1 verified. 2 shelved. Full results published.",
   "simulate.strategy_desc_bb_short":
     "Bollinger Band volatility expansion — short side",
   "simulate.strategy_desc_bb_long":
@@ -1339,7 +1339,7 @@ export const en = {
   "trust.stat_trades": "Trades Backtested",
   "trust.stat_datapoints": "Data Points Processed",
   "trust.stat_live_days": "Coins Backtested",
-  "trust.stat_strategies": "Strategies Tested (4 Failed)",
+  "trust.stat_strategies": "Strategies Tested (2 Killed)",
 
   // Homepage misc (hardcoded strings that need i18n)
   "home.social_simulations": "12,847 simulations run",
@@ -1358,8 +1358,8 @@ export const en = {
   "home.quotes_cta": "Join them — Open Simulator Free",
   "home.ranking_shortcut": "Today's top strategies",
   "home.competitor_banner":
-    "TradingView charges $14–240/mo for backtesting. PRUVIQ is free, forever.",
-  "home.social_proof_cta": "4,200+ traders have run backtests this month.",
+    "TradingView charges $14.95–59.95/mo for backtesting. PRUVIQ is free, forever.",
+  "home.social_proof_cta": "Thousands of traders run backtests every month.",
 
   // TradingView comparison page
   "meta.vs_tv_title":
@@ -1390,7 +1390,7 @@ export const en = {
   "vs.row_data_p": "2+ years hourly candles (free)",
   "vs.row_data_tv": "Limited on free plan, 20K bars max",
   "vs.row_fees": "Fee Modeling",
-  "vs.row_fees_p": "Built-in (0.08%/side futures)",
+  "vs.row_fees_p": "Built-in (0.04%/side, 0.08% round-trip)",
   "vs.row_fees_tv": "Manual setup in Pine Script",
   "vs.row_multi": "Multi-Coin Test",
   "vs.row_multi_p": "570 coins in one click",
@@ -1731,7 +1731,7 @@ export const en = {
     "PRUVIQ publishes failed strategies alongside successful ones. Seeing a strategy fail on 400 out of 570 coins is more valuable than cherry-picked wins.",
   "vs_3commas.why_3_title": "$0 Research Budget",
   "vs_3commas.why_3_desc":
-    "At $15-110/mo, 3Commas is worth it for live execution. But paying to discover your strategy does not work is expensive. PRUVIQ handles the research phase at zero cost.",
+    "At $15-110/mo, 3Commas is worth it for live execution. But paying to discover that your strategy does not work is expensive. PRUVIQ handles the research phase at zero cost.",
   "vs_3commas.when_pruviq": "Choose PRUVIQ when you want...",
   "vs_3commas.when_pruviq_1":
     "Free strategy validation before committing to a paid bot",
@@ -1986,7 +1986,7 @@ export const en = {
   "vs_streak.title": "PRUVIQ vs Streak",
   "vs_streak.subtitle": "for crypto backtesting",
   "vs_streak.desc":
-    "Streak is a TradingView-integrated backtesting tool that requires Pine Script and a premium subscription. If you want to test strategy ideas without writing code or paying monthly fees, PRUVIQ is the alternative.",
+    "Streak is an algo trading platform with visual strategy building and paper trading. It requires a subscription for advanced features.",
   "vs_streak.tldr": "TL;DR",
   "vs_streak.tldr_text":
     "Streak targets advanced users who already know Pine Script and TradingView. PRUVIQ is for anyone who wants rigorous backtesting without coding skills or a subscription.",

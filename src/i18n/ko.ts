@@ -21,9 +21,9 @@ export const ko: Record<TranslationKey, string> = {
   "hero.tag": "무료 백테스팅 도구",
   "hero.title1": "{coins}개 코인, 3초 만에",
   "hero.title2": "전략 검증 완료.",
-  "hero.subtitle": "코딩 없음. 가입 없음. 비용 없음. 오직 데이터.",
+  "hero.subtitle": "코딩 없음. 가입 없음. 비용 없음. 데이터만.",
   "hero.desc":
-    "570개 이상의 코인에서 5개 전략을 테스트했습니다. 4개는 손실. 모든 결과를 공개합니다. 실제 자금을 넣기 전에 어떤 전략이 진짜 통하는지 확인하세요.",
+    "570개 코인, 5개 전략 검증. 2개 폐기 — 모든 결과 공개. 실제 자금을 넣기 전에 어떤 전략이 진짜 통하는지 확인하세요.",
   "hero.cta_primary": "시뮬레이터 열기 — 무료",
   "hero.cta_builder": "나만의 전략 만들기",
   "hero.cta1": "전략 탐색하기",
@@ -41,8 +41,7 @@ export const ko: Record<TranslationKey, string> = {
   "hero.tool_strategies": "88+ 조합 백테스트",
   "hero.tool_data": "2년+ 과거 데이터",
   "hero.tool_free": "100% 무료, 가입 불필요",
-  "hero.subcopy":
-    "88가지 전략 조합을 검증했습니다. 4개가 실패했고 — 전부 공개했습니다.",
+  "hero.subcopy": "88가지 전략 조합 검증. 대부분 탈락 — 전부 공개했습니다.",
   "hero.cta_secondary": "시뮬레이션 결과 보기",
   "hero.open_source": "투명한 검증",
   "hero.stat1_sub": "BTC, ETH 포함 알트코인",
@@ -104,7 +103,7 @@ export const ko: Record<TranslationKey, string> = {
     "실제 수수료와 슬리피지를 반영한 과거 데이터로 전략을 테스트하세요. 드로다운, 연속 손실, 실제 리스크를 확인한 후 결정하세요.",
   "evidence.step3_title": "작동하지 않는 것은 제거",
   "evidence.step3_desc":
-    "이미 시뮬레이션에서 손실을 낸 3개 전략을 제거했습니다. 자존심 없이. 데이터가 멈추라고 하면 멈춥니다.",
+    "이미 시뮬레이션에서 손실을 낸 2개 전략을 폐기했습니다. 자존심 없이. 데이터가 멈추라고 하면 멈춥니다.",
   "evidence.step4_title": "시장과 함께 진화",
   "evidence.step4_desc":
     "시장이 변하면 전략도 변해야 합니다. PRUVIQ는 지속적으로 테스트, 검증, 적응합니다. 오늘 통하는 전략이 내일은 다를 수 있습니다 — 그게 핵심입니다.",
@@ -119,13 +118,13 @@ export const ko: Record<TranslationKey, string> = {
     "이 과정이 저희가 만드는 모든 것의 기반입니다. PRUVIQ의 모든 결정을 이끄는 하나의 원칙:",
   "evidence.lesson_rule":
     '"2년 이상의 데이터에서 생존을 증명할 수 없으면, 트레이딩하지 마라."',
-  "evidence.publish_tag": "우리가 공개하는 것",
+  "evidence.publish_tag": "공개 항목",
   "evidence.publish1": "모든 진입/청산 기록과 타임스탬프",
   "evidence.publish2": "승률, 패률, 순 손익",
   "evidence.publish3": "전략 변경 내역과 각 결정의 근거 데이터",
   "evidence.publish4": "실패한 실험과 중단 사유",
   "evidence.publish5": "리스크 파라미터와 포지션 사이징",
-  "evidence.nopromise_tag": "약속하지 않는 것",
+  "evidence.nopromise_tag": "하지 않는 약속",
   "evidence.nopromise1": "보장된 수익 (누구도 할 수 없음)",
   "evidence.nopromise2": '레버리지로 "빠른 부자 되기"',
   "evidence.nopromise3": '비밀 독점 "AI" 마법',
@@ -147,7 +146,7 @@ export const ko: Record<TranslationKey, string> = {
 
   // System
   "system.tag": "시스템",
-  "system.title": "코드로, 직감이 아닌.",
+  "system.title": "직감 대신, 코드로.",
   "system.desc":
     "추측 없이. 체리피킹 없이. 현실적인 시장 조건으로 전략을 시뮬레이션하는 Python 엔진.",
   "system.step1": "선택",
@@ -167,7 +166,7 @@ export const ko: Record<TranslationKey, string> = {
   "features.card1_tag": "전략 시뮬레이터",
   "features.card1_title": "만들고 시뮬레이션하기",
   "features.card1_desc":
-    "14개 지표, 노코드 빌더. 진입 조건, 손절, 익절 설정. 몇 초만에 시뮬레이션 실행.",
+    "14개 지표, 노코드 빌더. 진입 조건, 손절, 익절 설정. 몇 초 만에 시뮬레이션 실행.",
   "features.card2_tag": "전략 라이브러리",
   "features.card2_title": "검증된 전략들",
   "features.card2_desc":
@@ -188,7 +187,7 @@ export const ko: Record<TranslationKey, string> = {
 
   // CTA
   "cta.tag": "지금 시작",
-  "cta.title": "검증할 준비 되셨나요?",
+  "cta.title": "지금 바로 검증해 보세요",
   "cta.desc1":
     "전략을 만들고, 백테스트를 돌리고, 결과를 확인하세요. 계정 불필요.",
   "cta.desc2": "$0 — 구독 없음, 이메일 불필요, 숨겨진 비용 없음.",
@@ -238,9 +237,9 @@ export const ko: Record<TranslationKey, string> = {
     "직접 파라미터를 조정하여 시뮬레이션해 보시겠습니까?",
 
   // Strategy labels
-  "strategy.verified": "검증됨 — 모든 검증 통과",
+  "strategy.verified": "검증 완료 — 실전 배포 가능",
   "strategy.testing": "테스트 중",
-  "strategy.killed": "중단됨 — 수익성 기준 미달",
+  "strategy.killed": "폐기됨 — 수익성 기준 미달",
   "strategy.shelved": "검토 중 — 추가 테스트 필요",
   "strategy.beginner": "초급",
   "strategy.intermediate": "중급",
@@ -392,7 +391,7 @@ export const ko: Record<TranslationKey, string> = {
   "fees.faq3_a":
     "추천 할인은 계정 생성 시 적용됩니다. 기존 계정은 소급 적용이 안 될 수 있습니다.",
   "fees.trust_tag": "레퍼럴 코드의 실체",
-  "fees.trust_title": '"수수료 20% 할인!" — 근데 그 20%, 누가 받는 건데?',
+  "fees.trust_title": '"수수료 20% 할인!" — 그런데 그 20%, 누가 받는 걸까요?',
   "fees.trust_desc":
     "인플루언서, 제휴 사이트, '특별 링크' — 전부 같은 말을 합니다. 큰 할인. 그들이 말 안 하는 것? 당신 몫을 0%로 설정하고 전부 가져갈 수 있다는 겁니다. 할인받았다고 생각하며 가입하지만, 실제로 돌아온 건 없습니다. 당신이 누군가의 수익이 된 겁니다. 그리고 한 번 가입하면, 절대 바꿀 수 없습니다.",
   "fees.trust_col_user": "실제 받는 것",
@@ -414,7 +413,7 @@ export const ko: Record<TranslationKey, string> = {
   "fees.referral.problem.subheading":
     "99%의 추천인 프로모터들은 이 사실을 말하지 않습니다.",
   "fees.referral.problem.body":
-    '모든 인플루언서, 제휴 사이트, 무작위 유튜버가 바이낸스 추천 코드를 홍보할 때 당신에게 0% 수수료를 줄 수 있도록 법적으로 허용되어 있고, 대부분 그렇게 합니다. 그들은 "20% 캐시백"이라고 광고하면서 실제로는 당신에게 아무것도 주지 않습니다. 가입 순간 당신의 추천 코드는 고정됩니다. 절대 변경할 수 없습니다. 우리는 산업 표준이 이를 숨기기 때문에 우리의 코드를 공개합니다.',
+    '모든 인플루언서, 제휴 사이트, 무작위 유튜버가 바이낸스 추천 코드를 홍보할 때 당신에게 0% 수수료를 줄 수 있도록 법적으로 허용되어 있고, 대부분 그렇게 합니다. 그들은 "20% 캐시백"이라고 광고하면서 실제로는 당신에게 아무것도 주지 않습니다. 가입 순간 당신의 추천 코드는 고정됩니다. 절대 변경할 수 없습니다. 저희는 산업 표준이 이를 숨기기 때문에 코드를 공개합니다.',
 
   // Referral Transparency - Block 2: Education
   "fees.referral.how.headline": "광고와 현실의 차이를 보세요.",
@@ -446,7 +445,7 @@ export const ko: Record<TranslationKey, string> = {
     "바이낸스 계정에서 현재 배분을 확인할 수 있습니다 (계정 → 추천 프로그램 → 리베이트 상세).",
 
   // Referral Transparency - Block 3: Screenshot Proof
-  "fees.referral.proof.headline": "이것이 우리의 설정입니다.",
+  "fees.referral.proof.headline": "이것이 저희의 설정입니다.",
   "fees.referral.proof.subheading":
     "바이낸스 대시보드에서 직접 검증되었습니다.",
   "fees.referral.proof.imageCaption":
@@ -454,7 +453,7 @@ export const ko: Record<TranslationKey, string> = {
   "fees.referral.proof.timestamp":
     "스크린샷 검증일: 2026년 3월 21일. 설정은 분기별로 업데이트됩니다.",
   "fees.referral.proof.why":
-    "1%만 가져가는 이유? 무료 플랫폼이니까요. 추천 수익에 의존하지 않습니다 — MLM이 아닙니다. 바이낸스가 지급하는 금액의 거의 전부가 회원님에게 돌아갑니다.",
+    "PRUVIQ는 무료 리서치 플랫폼이라 1%만 유지합니다. 나머지 현물 19% / 선물 9%는 전부 회원에게 돌아갑니다.",
   "fees.referral.proof.transparent":
     "이걸 공개하는 이유는 간단합니다. 다른 곳처럼 했다면 20% 할인을 내걸고 실제로는 0%를 줬을 겁니다. 그게 업계 관행이고, 저희는 그러지 않습니다.",
 
@@ -516,7 +515,7 @@ export const ko: Record<TranslationKey, string> = {
   "fees.referral.callout.fact":
     "사실: 추천 프로모터의 89%는 20% 이상을 주장하면서 0% 수수료를 줍니다.",
   "fees.referral.callout.comparison":
-    "PRUVIQ가 챙김 1% | 당신이 받는 19%(현물) | 바이낸스가 나머지",
+    "PRUVIQ 1% | 회원 19%(현물) | 바이낸스 나머지",
   "fees.referral.callout.industry":
     "업계 표준: 프로모터 20% | 당신 0% | 당신은 알지 못함",
 
@@ -615,7 +614,7 @@ export const ko: Record<TranslationKey, string> = {
     "PRUVIQ 전략 시뮬레이터를 즉시 체험하세요. 손절/익절을 조정하여 570개+ 코인에 대한 실제 백테스트 결과를 확인하세요.",
   "meta.fees_title": "거래소 수수료 비교 - PRUVIQ",
   "meta.fees_desc":
-    "바이낸스 거래소 수수료 비교. PRUVIQ 추천 링크로 10% 절약. 투명한 수수료 비교.",
+    "바이낸스 거래소 수수료 비교. 현물 19%, 선물 9% 할인. PRUVIQ 추천 코드로 거래 수수료 절약.",
   "meta.changelog_title": "변경 이력 - PRUVIQ",
   "meta.changelog_desc":
     "PRUVIQ 트레이딩 시스템의 전체 버전 히스토리. 모든 변경, 모든 이유, 모든 날짜.",
@@ -624,13 +623,13 @@ export const ko: Record<TranslationKey, string> = {
     "BB Squeeze SHORT 전략 백테스트 결과. 570개 코인, 2년 이상 데이터, 2,898건 거래. 실패 포함 전체 공개.",
   "meta.about_title": "소개 - PRUVIQ",
   "meta.about_desc":
-    "PRUVIQ 프로젝트를 만나보세요. 우리의 미션: 크립토 전략 검증을 누구나 할 수 있게. 과대광고 없이. 데이터만.",
+    "PRUVIQ 프로젝트를 만나보세요. 미션: 크립토 전략 검증을 누구나 할 수 있게. 과대광고 없이. 데이터만.",
 
   // About page
   "about.tag": "PRUVIQ 소개",
   "about.title": "트레이더가 만든, 트레이더를 위한.",
   "about.mission":
-    "PRUVIQ는 거짓말하는 백테스트, 체리피킹하는 전략, 손실을 보여주지 않는 인플루언서에 질렸기 때문에 탄생했습니다. 실패를 포함한 모든 결과를 공개하는 플랫폼을 만들었습니다. 실제 자금을 투입하기 전에 검증할 수 있도록.",
+    "PRUVIQ는 거짓 백테스트, 체리피킹 전략, 손실을 숨기는 인플루언서를 더 이상 용납하지 않기 위해 탄생했습니다. 실패를 포함한 모든 결과를 공개하는 플랫폼을 만들었습니다. 실제 자금을 투입하기 전에 검증할 수 있도록.",
   "about.team_tag": "PRUVIQ 프로젝트",
   "about.team_desc":
     "PRUVIQ는 독립적인 트레이딩 리서치 프로젝트입니다. 과장 없이, 신호 없이, 약속 없이. 이 사이트에 공개되는 모든 전략은 실제 수수료와 슬리피지를 반영한 과거 데이터로 먼저 검증됩니다.",
@@ -640,8 +639,8 @@ export const ko: Record<TranslationKey, string> = {
   "about.team_stat2_val": "570",
   "about.team_stat3_label": "시뮬레이터 실행 수",
   "about.team_stat3_val": "100만+",
-  "about.philosophy_tag": "우리의 철학",
-  "about.philosophy_title": "증명하거나, 제거하거나.",
+  "about.philosophy_tag": "철학",
+  "about.philosophy_title": "증명 못 하면, 버린다.",
   "about.philosophy1_title": "모든 것을 공개",
   "about.philosophy1_desc":
     "모든 전략 결과, 모든 거래, 모든 실패. 보여줄 수 없으면 주장하지 않습니다.",
@@ -686,7 +685,7 @@ export const ko: Record<TranslationKey, string> = {
 
   // About - Founder section
   "about.solo_tag": "창업자",
-  "about.solo_headline": "시스템 트레이더이자 퀀트 리서처가 설립했습니다.",
+  "about.solo_headline": "시스템 트레이더 겸 퀀트 리서처가 만들었습니다.",
   "about.solo_background":
     "2021년부터 알고리즘 트레이딩, 퀀트 리서치, 크립토 시장 연구.",
   "about.solo_why":
@@ -1359,7 +1358,7 @@ export const ko: Record<TranslationKey, string> = {
   "vs.row_data_p": "2년+ 1시간 캔들 (무료)",
   "vs.row_data_tv": "무료 플랜 제한, 최대 20K 봉",
   "vs.row_fees": "수수료 모델링",
-  "vs.row_fees_p": "내장 (편도 0.08% 선물)",
+  "vs.row_fees_p": "내장 (편도 0.04%, 왕복 0.08%)",
   "vs.row_fees_tv": "Pine Script에서 수동 설정",
   "vs.row_multi": "멀티코인 테스트",
   "vs.row_multi_p": "570개 코인 원클릭 테스트",
@@ -1610,8 +1609,7 @@ export const ko: Record<TranslationKey, string> = {
   "ranking.card_trades": "거래 수",
   "ranking.card_days": "집계 일수",
   "ranking.card_days_unit": "일",
-  "ranking.card_low_sample":
-    "제한된 데이터 ({n}거래). 참고용으로만 활용하세요.",
+  "ranking.card_low_sample": "제한된 데이터 ({n}건). 참고용으로만 활용하세요.",
   "ranking.card_load_fail": "데이터 로드 실패",
   "ranking.section_best3_title": "상위 3개 전략",
   "ranking.section_best3_sub": "PF(수익팩터) 기준 상위 3개",
@@ -1649,7 +1647,7 @@ export const ko: Record<TranslationKey, string> = {
   "vs_3commas.pruviq": "PRUVIQ",
   "vs_3commas.other": "3Commas",
   "vs_3commas.row_price": "가격",
-  "vs_3commas.row_price_p": "$0 — 구독 없음 — $0/월",
+  "vs_3commas.row_price_p": "$0 — 구독 없음",
   "vs_3commas.row_price_other": "$15–110/월 (Starter–Expert)",
   "vs_3commas.row_annual": "연간 비용",
   "vs_3commas.row_annual_p": "$0",
@@ -1796,7 +1794,7 @@ export const ko: Record<TranslationKey, string> = {
   "vs_cryptohopper.pruviq": "PRUVIQ",
   "vs_cryptohopper.other": "Cryptohopper",
   "vs_cryptohopper.row_price": "가격",
-  "vs_cryptohopper.row_price_p": "$0 — 구독 없음 — $0/월",
+  "vs_cryptohopper.row_price_p": "$0 — 구독 없음",
   "vs_cryptohopper.row_price_other": "$24–107/월 (Explorer–Hero)",
   "vs_cryptohopper.row_annual": "연간 비용",
   "vs_cryptohopper.row_annual_p": "$0",
