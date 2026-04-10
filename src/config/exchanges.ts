@@ -9,8 +9,10 @@
  *   Spot:    PRUVIQ keeps 1%, User gets 19% → total pool 20%
  *   Futures: PRUVIQ keeps 1%, User gets 9%  → total pool 10%
  *
- * OKX affiliate dashboard (verified 2026-04-01):
- *   PRUVIQ rate: 30%, Invitee rate: 20% (max rebate to user)
+ * OKX Broker dashboard (verified 2026-04-10, Level 2):
+ *   Non-affiliate rebate: 30%, Affiliate rebate: 7.5%
+ *   Broker code: c12571e26a02OCDE
+ *   User discount: 20% (configurable in broker dashboard)
  */
 
 export interface ExchangeFeeConfig {
@@ -30,6 +32,8 @@ export interface ExchangeFeeConfig {
   marketingLabel: string;
   url: string;
   referralUrl: string;
+  /** Broker code for order tagging (OKX Broker) */
+  brokerCode?: string;
 }
 
 /**
@@ -69,9 +73,10 @@ export const EXCHANGES: ExchangeFeeConfig[] = [
     standardTakerFee: 0.05,
     spotDiscountPct: 20,
     futuresDiscountPct: 20,
-    platformCommissionPct: 30,
+    platformCommissionPct: 30, // Broker Level 2 non-affiliate rate
     marketingLabel: "20% off fees",
     url: "https://www.okx.com",
     referralUrl: "https://okx.com/join/PRUVIQ",
+    brokerCode: "c12571e26a02OCDE",
   },
 ];

@@ -355,9 +355,9 @@ export const ko: Record<TranslationKey, string> = {
   "fees.card_bitget_tag": "카피 트레이딩",
   "fees.card_bitget_desc":
     "카피 트레이딩 선두 플랫폼. 성공한 트레이더를 자동으로 따라하기.",
-  "fees.card_okx_tag": "120개국 이상",
+  "fees.card_okx_tag": "공식 브로커 파트너",
   "fees.card_okx_desc":
-    "120개국 이상 이용 가능. 바이낸스 제한 지역에서 좋은 대안.",
+    "OKX 공식 브로커 파트너. 120개국 이상 이용 가능, 수수료 20% 할인.",
   "fees.label_spot": "현물",
   "fees.label_futures": "선물",
   "fees.pruviq_discount": "PRUVIQ 할인",
@@ -365,7 +365,7 @@ export const ko: Record<TranslationKey, string> = {
   "fees.signup": "가입하기",
   "fees.coming_soon": "제휴 링크 — 준비 중",
   "fees.visit_okx": "OKX 방문",
-  "fees.okx_discount_pending": "20% 할인 코드 준비 중 — 제휴 승인 대기",
+  "fees.okx_discount_pending": "공식 브로커 파트너 — 수수료 20% 할인 활성",
   "fees.footnote":
     "메이커 / 테이커 수수료 기준. 거래량이 높으면 자동으로 낮은 등급이 적용됩니다. 최종 업데이트: 2026년 2월.",
   "fees.korean_title": "국내 거래소 (참고용)",

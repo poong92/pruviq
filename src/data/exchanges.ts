@@ -19,6 +19,7 @@ export interface Exchange {
   tag: string; // English tag, e.g. "#1 Volume"
   spotOnly?: boolean; // true for exchanges without futures (e.g. Korean exchanges)
   infoOnly?: boolean; // true for non-affiliate info-only exchanges
+  brokerCode?: string; // OKX Broker order tag for commission tracking
 }
 
 /** Spot fee rates per exchange (not in config — config only tracks futures) */
@@ -53,6 +54,7 @@ function configToExchange(cfg: (typeof EXCHANGES)[number]): Exchange {
     referralUrl: cfg.referralUrl,
     available: true,
     tag: EXCHANGE_TAGS[cfg.id] ?? "",
+    brokerCode: cfg.brokerCode,
   };
 }
 
