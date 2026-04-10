@@ -145,9 +145,10 @@ async def _okx_auto_trading_loop():
     while True:
         try:
             from okx.auto_executor import process_signals
-            signals = signal_scanner.scan()
-            if signals:
-                await process_signals(signals)
+            if _signal_scanner is not None:
+                signals = _signal_scanner.scan()
+                if signals:
+                    await process_signals(signals)
         except asyncio.CancelledError:
             raise
         except Exception as e:
