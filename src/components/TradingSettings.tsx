@@ -3,46 +3,17 @@
  * Fetches/saves settings from /settings/trading API.
  */
 import { useState, useEffect } from "preact/hooks";
+import { loadOKXSDK } from "./OKXConnectButton";
 
 interface Props {
   lang?: "en" | "ko";
 }
 
 const API_BASE = "https://api.pruviq.com";
-const OKX_SDK_URL =
-  "https://static.okx.com/cdn/assets/okfe/libs/okxOAuth/index.js";
 
-declare global {
-  interface Window {
-    OKEXOAuthSDK?: {
-      init: (opts: { requestUrl: string; onInit?: () => void }) => void;
-      authorize: (params: Record<string, string>) => void;
-    };
-  }
-}
+const connectingLabels = { en: "Connecting...", ko: "연결 중..." } as const;
 
-let _sdkReady: Promise<void> | null = null;
-function loadOKXSDK(): Promise<void> {
-  if (_sdkReady) return _sdkReady;
-  _sdkReady = new Promise<void>((resolve, reject) => {
-    if (window.OKEXOAuthSDK) {
-      resolve();
-      return;
-    }
-    const script = document.createElement("script");
-    script.src = OKX_SDK_URL;
-    script.async = true;
-    script.onload = () => {
-      window.OKEXOAuthSDK?.init({ requestUrl: "https://www.okx.com" });
-      resolve();
-    };
-    script.onerror = () => reject(new Error("Failed to load OKX SDK"));
-    document.head.appendChild(script);
-  });
-  return _sdkReady;
-}
-
-function OKXSDKConnectButton({ lang, label }: { lang: string; label: string }) {
+function OKXSDKConnectButton({ lang, label }: { lang: "en" | "ko"; label: string }) {
   const [connecting, setConnecting] = useState(false);
 
   const handleConnect = async () => {
@@ -72,7 +43,7 @@ function OKXSDKConnectButton({ lang, label }: { lang: string; label: string }) {
       onClick={handleConnect}
       disabled={connecting}
     >
-      {connecting ? "Connecting..." : `${label} →`}
+      {connecting ? connectingLabels[lang] : `${label} →`}
     </button>
   );
 }

@@ -60,7 +60,7 @@ const sizeClasses = {
 /** Load OKX SDK script once, resolve when ready */
 let _sdkReady: Promise<void> | null = null;
 
-function loadOKXSDK(): Promise<void> {
+export function loadOKXSDK(): Promise<void> {
   if (_sdkReady) return _sdkReady;
   _sdkReady = new Promise<void>((resolve, reject) => {
     if (window.OKEXOAuthSDK) {
