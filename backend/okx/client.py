@@ -104,6 +104,24 @@ class OKXClient:
 
     # ── Trading ─────────────────────────────────────
 
+    async def set_leverage(
+        self,
+        inst_id: str,
+        lever: int,
+        mgn_mode: str = "isolated",
+        pos_side: str = "",
+    ) -> dict[str, Any]:
+        """Set leverage for an instrument before placing orders."""
+        body: dict[str, Any] = {
+            "instId": inst_id,
+            "lever": str(lever),
+            "mgnMode": mgn_mode,
+        }
+        if pos_side:
+            body["posSide"] = pos_side
+        data = await self._post("/api/v5/account/set-leverage", body)
+        return data.get("data", [{}])[0]
+
     async def place_order(
         self,
         inst_id: str,

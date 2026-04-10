@@ -70,6 +70,13 @@ async def execute_from_simulation(
             side, inst_id, sz, req.leverage, req.strategy,
         )
 
+        # Set leverage before placing order
+        await client.set_leverage(
+            inst_id=inst_id,
+            lever=req.leverage,
+            mgn_mode="isolated",
+        )
+
         # Market order
         order = await client.place_order(
             inst_id=inst_id,
