@@ -1,9 +1,11 @@
 """
 OKX Broker FastAPI router.
-/auth/okx/* — OAuth 플로우
-/execute/*  — 주문 실행
 
-main.py에서 include:
+Endpoints:
+  /auth/okx/*    — OAuth flow (start, callback, status, disconnect)
+  /execute/*     — Trade execution (order, positions, balance)
+
+Register in main.py:
   from okx.router import router as okx_router
   app.include_router(okx_router)
 """
@@ -11,105 +13,148 @@ from __future__ import annotations
 
 import logging
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, Request, Response
 from fastapi.responses import RedirectResponse
 
+from .config import COOKIE_DOMAIN, FRONTEND_URL, OKX_CLIENT_ID
 from .models import SimToExecRequest
-from .oauth import exchange_code, generate_auth_url, is_authenticated
+from .oauth import (
+    disconnect,
+    exchange_code,
+    generate_auth_url,
+    get_valid_token,
+    is_authenticated,
+)
 from .orders import execute_from_simulation
 
 logger = logging.getLogger("okx_router")
 
 router = APIRouter(tags=["OKX Broker"])
 
+SESSION_COOKIE = "pruviq_okx_session"
+COOKIE_MAX_AGE = 3 * 24 * 3600  # 3 days (match refresh_token TTL)
 
-# ── OAuth Flow ─────────────────────────────────────────
+
+def _get_session(request: Request) -> str:
+    return request.cookies.get(SESSION_COOKIE, "")
+
+
+def _set_session_cookie(response: Response, session_id: str) -> None:
+    response.set_cookie(
+        key=SESSION_COOKIE,
+        value=session_id,
+        httponly=True,
+        secure=True,
+        samesite="lax",
+        max_age=COOKIE_MAX_AGE,
+        domain=COOKIE_DOMAIN,
+        path="/",
+    )
+
+
+def _clear_session_cookie(response: Response) -> None:
+    response.delete_cookie(key=SESSION_COOKIE, domain=COOKIE_DOMAIN, path="/")
+
+
+# ── OAuth Flow ─────────────────────────────────────────────
 
 @router.get("/auth/okx/start")
-async def oauth_start(user_id: str = Query(..., description="PRUVIQ user identifier")):
-    """
-    Step 1: OKX OAuth 시작.
-    유저를 OKX 로그인 페이지로 redirect.
-    """
-    url = generate_auth_url(user_id)
-    return RedirectResponse(url=url)
+async def oauth_start(
+    redirect: str = Query("", description="Post-OAuth redirect URL"),
+    lang: str = Query("en", description="Language for redirect"),
+):
+    """Step 1: Redirect user to OKX OAuth login page."""
+    if not OKX_CLIENT_ID:
+        raise HTTPException(503, "OKX Broker not configured")
+    url = generate_auth_url(redirect_after=redirect, lang=lang)
+    return RedirectResponse(url=url, status_code=302)
 
 
 @router.get("/auth/okx/callback")
 async def oauth_callback(
     code: str = Query(..., description="OKX authorization code"),
-    state: str = Query("", description="State containing user_id"),
+    state: str = Query(..., description="CSRF state token"),
 ):
-    """
-    Step 2: OKX에서 돌아온 callback.
-    authorization code → access token 교환.
-    """
-    # state format: "user_id:random_token"
-    user_id = state.split(":")[0] if ":" in state else state
-    if not user_id:
-        raise HTTPException(400, "Invalid state parameter")
-
+    """Step 2: Exchange code for tokens, set session cookie, redirect to frontend."""
     try:
-        token_state = await exchange_code(code, user_id)
-        return {
-            "status": "connected",
-            "user_id": user_id,
-            "scope": token_state.scope,
-            "message": "OKX account connected successfully. You can now execute trades.",
-        }
+        session_id, redirect_url, lang = await exchange_code(code, state)
+    except ValueError as e:
+        logger.warning("OAuth callback rejected: %s", e)
+        return RedirectResponse(
+            url=f"{FRONTEND_URL}/dashboard?okx=error", status_code=302
+        )
     except Exception as e:
         logger.error("OAuth callback failed: %s", e)
-        raise HTTPException(400, f"OAuth failed: {e}")
+        return RedirectResponse(
+            url=f"{FRONTEND_URL}/dashboard?okx=error", status_code=302
+        )
+
+    if redirect_url:
+        target = redirect_url
+    elif lang == "ko":
+        target = f"{FRONTEND_URL}/ko/dashboard?okx=success"
+    else:
+        target = f"{FRONTEND_URL}/dashboard?okx=success"
+
+    response = RedirectResponse(url=target, status_code=302)
+    _set_session_cookie(response, session_id)
+    return response
 
 
 @router.get("/auth/okx/status")
-async def oauth_status(user_id: str = Query(...)):
-    """유저의 OKX 연결 상태 확인."""
-    return {
-        "connected": is_authenticated(user_id),
-        "user_id": user_id,
-    }
+async def oauth_status(request: Request):
+    """Check if user has an active OKX connection."""
+    session_id = _get_session(request)
+    return {"connected": is_authenticated(session_id)}
 
 
-# ── Trade Execution ────────────────────────────────────
+@router.post("/auth/okx/disconnect")
+async def oauth_disconnect(request: Request):
+    """Disconnect OKX account, clear session."""
+    session_id = _get_session(request)
+    if session_id:
+        disconnect(session_id)
+    response = Response(
+        content='{"status":"disconnected"}', media_type="application/json"
+    )
+    _clear_session_cookie(response)
+    return response
+
+
+# ── Trade Execution ────────────────────────────────────────
 
 @router.post("/execute/order")
 async def execute_order(
     req: SimToExecRequest,
-    user_id: str = Query(...),
-    current_price: float = Query(..., description="현재 시장가"),
+    request: Request,
+    current_price: float = Query(..., description="Current market price"),
 ):
-    """
-    시뮬 결과 → OKX 실거래 실행.
-
-    1. OAuth 토큰 확인
-    2. 시장가 주문
-    3. SL/TP 알고 주문
-    """
-    if not is_authenticated(user_id):
-        raise HTTPException(401, "Not connected to OKX. Use /auth/okx/start first.")
+    """Execute trade from simulation results. Requires OKX connection."""
+    session_id = _get_session(request)
+    if not is_authenticated(session_id):
+        raise HTTPException(401, "Not connected to OKX. Connect first.")
 
     try:
-        result = await execute_from_simulation(user_id, req, current_price)
+        result = await execute_from_simulation(session_id, req, current_price)
         return {"status": "executed", **result}
     except ValueError as e:
         raise HTTPException(400, str(e))
     except Exception as e:
-        logger.error("Order execution failed: %s", e)
+        logger.error("Order execution failed for session %s: %s", session_id[:8], e)
         raise HTTPException(500, f"Execution failed: {e}")
 
 
 @router.get("/execute/positions")
-async def get_positions(user_id: str = Query(...), symbol: str = Query(None)):
-    """현재 포지션 조회."""
-    if not is_authenticated(user_id):
+async def get_positions(request: Request, symbol: str = Query(None)):
+    """Get current open positions."""
+    session_id = _get_session(request)
+    if not is_authenticated(session_id):
         raise HTTPException(401, "Not connected to OKX.")
 
     from .client import OKXClient
-    from .oauth import get_valid_token
     from .orders import _pruviq_to_okx_inst_id
 
-    token = await get_valid_token(user_id)
+    token = await get_valid_token(session_id)
     inst_id = _pruviq_to_okx_inst_id(symbol) if symbol else None
 
     async with OKXClient(token) as client:
@@ -118,15 +163,15 @@ async def get_positions(user_id: str = Query(...), symbol: str = Query(None)):
 
 
 @router.get("/execute/balance")
-async def get_balance(user_id: str = Query(...), ccy: str = Query("USDT")):
-    """잔고 조회."""
-    if not is_authenticated(user_id):
+async def get_balance(request: Request, ccy: str = Query("USDT")):
+    """Get account balance."""
+    session_id = _get_session(request)
+    if not is_authenticated(session_id):
         raise HTTPException(401, "Not connected to OKX.")
 
     from .client import OKXClient
-    from .oauth import get_valid_token
 
-    token = await get_valid_token(user_id)
+    token = await get_valid_token(session_id)
 
     async with OKXClient(token) as client:
         balances = await client.get_balance(ccy)

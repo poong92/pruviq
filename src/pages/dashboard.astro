@@ -1,0 +1,87 @@
+---
+import Layout from '../layouts/Layout.astro';
+import OKXConnectButton from '../components/OKXConnectButton';
+import { useTranslations } from '../i18n/index';
+
+const t = useTranslations('en');
+---
+
+<Layout title="Dashboard — PRUVIQ" description="Manage your OKX connection and trading activity.">
+
+  <main class="max-w-4xl mx-auto px-4 py-12 md:py-20">
+    <h1 class="text-3xl md:text-4xl font-bold mb-2">Dashboard</h1>
+    <p class="text-[--color-text-muted] mb-8">Manage your exchange connections and trading activity.</p>
+
+    <!-- OKX Connection Card -->
+    <section class="mb-8">
+      <div class="card-enterprise rounded-2xl p-6 md:p-8">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-xl bg-[--color-accent]/10 flex items-center justify-center">
+              <span class="text-2xl font-bold text-[--color-accent]">O</span>
+            </div>
+            <div>
+              <h2 class="text-xl font-bold">OKX Broker</h2>
+              <p class="text-sm text-[--color-text-muted]">Official Broker Partner — 20% fee discount</p>
+            </div>
+          </div>
+          <OKXConnectButton client:load lang="en" size="md" />
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+          <div class="bg-[--color-bg]/50 rounded-xl p-4 text-center">
+            <p class="text-xs text-[--color-text-muted] mb-1">Fee Discount</p>
+            <p class="text-2xl font-bold text-[--color-up]">20%</p>
+          </div>
+          <div class="bg-[--color-bg]/50 rounded-xl p-4 text-center">
+            <p class="text-xs text-[--color-text-muted] mb-1">Trade Execution</p>
+            <p class="text-2xl font-bold">1-Click</p>
+          </div>
+          <div class="bg-[--color-bg]/50 rounded-xl p-4 text-center">
+            <p class="text-xs text-[--color-text-muted] mb-1">API Key Sharing</p>
+            <p class="text-2xl font-bold text-[--color-up]">None</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="mb-8">
+      <h2 class="text-xl font-bold mb-4">How It Works</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="card-enterprise rounded-xl p-5">
+          <div class="w-8 h-8 rounded-lg bg-[--color-accent]/10 flex items-center justify-center mb-3">
+            <span class="text-sm font-bold text-[--color-accent]">1</span>
+          </div>
+          <h3 class="font-bold text-sm mb-1">Connect</h3>
+          <p class="text-xs text-[--color-text-muted]">Link your OKX account via secure OAuth. No API keys shared.</p>
+        </div>
+        <div class="card-enterprise rounded-xl p-5">
+          <div class="w-8 h-8 rounded-lg bg-[--color-accent]/10 flex items-center justify-center mb-3">
+            <span class="text-sm font-bold text-[--color-accent]">2</span>
+          </div>
+          <h3 class="font-bold text-sm mb-1">Simulate</h3>
+          <p class="text-xs text-[--color-text-muted]">Run strategy simulations and find winning setups.</p>
+        </div>
+        <div class="card-enterprise rounded-xl p-5">
+          <div class="w-8 h-8 rounded-lg bg-[--color-accent]/10 flex items-center justify-center mb-3">
+            <span class="text-sm font-bold text-[--color-accent]">3</span>
+          </div>
+          <h3 class="font-bold text-sm mb-1">Execute</h3>
+          <p class="text-xs text-[--color-text-muted]">One click to execute with automated SL/TP. 20% fee discount applied.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Recent Activity (placeholder) -->
+    <section>
+      <h2 class="text-xl font-bold mb-4">Recent Activity</h2>
+      <div class="card-enterprise rounded-xl p-8 text-center">
+        <p class="text-[--color-text-muted] text-sm">Connect your OKX account to see trading activity here.</p>
+        <a href="/simulate" class="btn btn-ghost btn-sm mt-4 inline-block">
+          Run a Simulation →
+        </a>
+      </div>
+    </section>
+  </main>
+
+</Layout>

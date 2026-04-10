@@ -262,6 +262,10 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+# OKX Broker router
+from okx.router import router as okx_router
+app.include_router(okx_router)
+
 app.add_middleware(GZipMiddleware, minimum_size=1000)
 
 app.add_middleware(
@@ -272,6 +276,7 @@ app.add_middleware(
         "http://localhost:4321",
         "http://localhost:3000",
     ],
+    allow_credentials=True,
     allow_methods=["GET", "POST"],
     allow_headers=["Content-Type", "Accept", "Origin"],
 )

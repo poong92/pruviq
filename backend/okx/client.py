@@ -1,22 +1,22 @@
 """
-OKX API client — OAuth token 기반.
-기존 okx_broker_prototype.py의 HMAC 인증 대신 Bearer token 사용.
+OKX API client — OAuth Bearer token based.
+All orders include broker tag for commission tracking.
 """
 from __future__ import annotations
 
 import logging
-from typing import Any, Optional
+from typing import Any
 
 import httpx
 
 from .config import OKX_BASE_URL, OKX_BROKER_CODE, OKX_DEMO_MODE
-from .models import BalanceInfo, PlaceOrderResponse, PositionInfo
+from .models import BalanceInfo, PositionInfo
 
 logger = logging.getLogger("okx_client")
 
 
 class OKXClient:
-    """OAuth 토큰 기반 OKX API 클라이언트."""
+    """OAuth token-based OKX API client."""
 
     def __init__(self, access_token: str):
         self.access_token = access_token
@@ -112,7 +112,7 @@ class OKXClient:
         ord_type: str = "market",
         px: str | None = None,
         td_mode: str = "isolated",
-    ) -> PlaceOrderResponse:
+    ) -> dict[str, str]:
         body: dict[str, Any] = {
             "instId": inst_id,
             "tdMode": td_mode,
@@ -125,14 +125,7 @@ class OKXClient:
             body["px"] = px
 
         data = await self._post("/api/v5/trade/order", body)
-        result = data.get("data", [{}])[0]
-        return PlaceOrderResponse(
-            ord_id=result.get("ordId", ""),
-            cl_ord_id=result.get("clOrdId", ""),
-            tag=self.broker_code,
-            s_code=result.get("sCode", ""),
-            s_msg=result.get("sMsg", ""),
-        )
+        return data.get("data", [{}])[0]
 
     async def place_algo_order(
         self,
@@ -145,7 +138,7 @@ class OKXClient:
         tp_ord_px: str = "-1",
         td_mode: str = "isolated",
     ) -> dict[str, Any]:
-        """SL/TP 알고 주문."""
+        """SL/TP conditional algo order."""
         body: dict[str, Any] = {
             "instId": inst_id,
             "tdMode": td_mode,

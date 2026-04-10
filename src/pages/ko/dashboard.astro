@@ -1,0 +1,87 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import OKXConnectButton from '../../components/OKXConnectButton';
+import { useTranslations } from '../../i18n/index';
+
+const t = useTranslations('ko');
+---
+
+<Layout title="대시보드 — PRUVIQ" description="OKX 연결 및 거래 활동을 관리하세요.">
+
+  <main class="max-w-4xl mx-auto px-4 py-12 md:py-20">
+    <h1 class="text-3xl md:text-4xl font-bold mb-2">대시보드</h1>
+    <p class="text-[--color-text-muted] mb-8">거래소 연결 및 거래 활동을 관리하세요.</p>
+
+    <!-- OKX Connection Card -->
+    <section class="mb-8">
+      <div class="card-enterprise rounded-2xl p-6 md:p-8">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-xl bg-[--color-accent]/10 flex items-center justify-center">
+              <span class="text-2xl font-bold text-[--color-accent]">O</span>
+            </div>
+            <div>
+              <h2 class="text-xl font-bold">OKX 브로커</h2>
+              <p class="text-sm text-[--color-text-muted]">공식 브로커 파트너 — 20% 수수료 할인</p>
+            </div>
+          </div>
+          <OKXConnectButton client:load lang="ko" size="md" />
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+          <div class="bg-[--color-bg]/50 rounded-xl p-4 text-center">
+            <p class="text-xs text-[--color-text-muted] mb-1">수수료 할인</p>
+            <p class="text-2xl font-bold text-[--color-up]">20%</p>
+          </div>
+          <div class="bg-[--color-bg]/50 rounded-xl p-4 text-center">
+            <p class="text-xs text-[--color-text-muted] mb-1">거래 실행</p>
+            <p class="text-2xl font-bold">원클릭</p>
+          </div>
+          <div class="bg-[--color-bg]/50 rounded-xl p-4 text-center">
+            <p class="text-xs text-[--color-text-muted] mb-1">API 키 공유</p>
+            <p class="text-2xl font-bold text-[--color-up]">불필요</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="mb-8">
+      <h2 class="text-xl font-bold mb-4">이용 방법</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="card-enterprise rounded-xl p-5">
+          <div class="w-8 h-8 rounded-lg bg-[--color-accent]/10 flex items-center justify-center mb-3">
+            <span class="text-sm font-bold text-[--color-accent]">1</span>
+          </div>
+          <h3 class="font-bold text-sm mb-1">연결</h3>
+          <p class="text-xs text-[--color-text-muted]">안전한 OAuth로 OKX 계정을 연결하세요. API 키 공유 불필요.</p>
+        </div>
+        <div class="card-enterprise rounded-xl p-5">
+          <div class="w-8 h-8 rounded-lg bg-[--color-accent]/10 flex items-center justify-center mb-3">
+            <span class="text-sm font-bold text-[--color-accent]">2</span>
+          </div>
+          <h3 class="font-bold text-sm mb-1">시뮬레이션</h3>
+          <p class="text-xs text-[--color-text-muted]">전략 시뮬레이션으로 최적의 셋업을 찾으세요.</p>
+        </div>
+        <div class="card-enterprise rounded-xl p-5">
+          <div class="w-8 h-8 rounded-lg bg-[--color-accent]/10 flex items-center justify-center mb-3">
+            <span class="text-sm font-bold text-[--color-accent]">3</span>
+          </div>
+          <h3 class="font-bold text-sm mb-1">실행</h3>
+          <p class="text-xs text-[--color-text-muted]">원클릭으로 자동 SL/TP 설정 실행. 20% 수수료 할인 적용.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Recent Activity -->
+    <section>
+      <h2 class="text-xl font-bold mb-4">최근 활동</h2>
+      <div class="card-enterprise rounded-xl p-8 text-center">
+        <p class="text-[--color-text-muted] text-sm">OKX 계정을 연결하면 거래 활동이 여기에 표시됩니다.</p>
+        <a href="/ko/simulate" class="btn btn-ghost btn-sm mt-4 inline-block">
+          시뮬레이션 실행 →
+        </a>
+      </div>
+    </section>
+  </main>
+
+</Layout>

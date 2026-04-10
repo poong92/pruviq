@@ -1,15 +1,14 @@
 """
-OKX OAuth 2.0 flow for FD Broker.
+OKX OAuth 2.0 flow for FD Broker (Authorization Code mode).
 
 Flow:
-  1. generate_auth_url() → 유저를 OKX 로그인으로 redirect
-  2. exchange_code(code) → authorization code → access + refresh token
-  3. refresh_token(refresh) → 만료된 access token 갱신
-  4. get_valid_token(user_id) → 유효한 토큰 반환 (자동 갱신)
+  1. generate_auth_url()  → user → OKX login page
+  2. exchange_code(code)  → authorization code → encrypted tokens
+  3. get_valid_token(sid)  → valid access_token (auto-refresh)
+  4. disconnect(sid)       → delete session
 """
 from __future__ import annotations
 
-import hashlib
 import logging
 import secrets
 import time
@@ -24,37 +23,47 @@ from .config import (
     OKX_OAUTH_TOKEN,
     OKX_REDIRECT_URI,
 )
-from .models import OAuthState, OAuthTokenResponse
+from .storage import (
+    delete_session,
+    get_session,
+    save_csrf_state,
+    save_session,
+    update_session,
+    validate_csrf_state,
+)
 
 logger = logging.getLogger("okx_oauth")
 
-# 유저별 토큰 저장 (메모리 — Phase 2에서 암호화 DB로 전환)
-_token_store: dict[str, OAuthState] = {}
 
+def generate_auth_url(redirect_after: str = "", lang: str = "en") -> str:
+    """
+    Generate OKX OAuth authorization URL.
+    Stores CSRF state token for validation on callback.
+    """
+    state = secrets.token_urlsafe(32)
+    save_csrf_state(state, redirect_after or "", lang)
 
-def generate_auth_url(user_id: str) -> str:
-    """
-    OKX OAuth 인증 URL 생성.
-    유저를 이 URL로 redirect하면 OKX 로그인 페이지가 나옴.
-    """
-    state = f"{user_id}:{secrets.token_urlsafe(16)}"
     params = {
         "client_id": OKX_CLIENT_ID,
         "response_type": "code",
         "redirect_uri": OKX_REDIRECT_URI,
-        "scope": "trade_read,trade_write",
+        "scope": "read_only,trade",
         "state": state,
     }
-    url = f"{OKX_OAUTH_AUTHORIZE}?{urlencode(params)}"
-    logger.info("OAuth URL generated for user %s", user_id)
-    return url
+    return f"{OKX_OAUTH_AUTHORIZE}?{urlencode(params)}"
 
 
-async def exchange_code(code: str, user_id: str) -> OAuthState:
+async def exchange_code(code: str, state: str) -> tuple[str, str, str]:
     """
-    Authorization code → access_token + refresh_token 교환.
-    OKX 로그인 후 callback에서 받은 code를 사용.
+    Exchange authorization code for access + refresh tokens.
+    Validates CSRF state, stores encrypted tokens in SQLite.
+    Returns (session_id, redirect_url, lang).
     """
+    csrf_result = validate_csrf_state(state)
+    if csrf_result is None:
+        raise ValueError("Invalid or expired CSRF state")
+    redirect_url, lang = csrf_result
+
     data = {
         "client_id": OKX_CLIENT_ID,
         "client_secret": OKX_CLIENT_SECRET,
@@ -64,80 +73,83 @@ async def exchange_code(code: str, user_id: str) -> OAuthState:
     }
 
     async with httpx.AsyncClient() as client:
-        resp = await client.post(OKX_OAUTH_TOKEN, json=data, timeout=10)
+        resp = await client.post(OKX_OAUTH_TOKEN, data=data, timeout=15)
         resp.raise_for_status()
-        token_data = OAuthTokenResponse(**resp.json())
+        token_data = resp.json()
 
-    state = OAuthState(
-        user_id=user_id,
-        access_token=token_data.access_token,
-        refresh_token=token_data.refresh_token,
-        expires_at=time.time() + token_data.expires_in,
-        scope=token_data.scope,
-    )
+    if "access_token" not in token_data:
+        raise ValueError(f"OKX token error: {token_data}")
 
-    _token_store[user_id] = state
-    logger.info("Token obtained for user %s (expires in %ds)", user_id, token_data.expires_in)
-    return state
+    session_id = secrets.token_urlsafe(32)
+    tokens = {
+        "access_token": token_data["access_token"],
+        "refresh_token": token_data["refresh_token"],
+        "expires_at": time.time() + token_data.get("expires_in", 3600),
+        "scope": token_data.get("scope", ""),
+    }
+    save_session(session_id, tokens)
+
+    logger.info("OAuth session created: %s", session_id[:8])
+    return session_id, redirect_url, lang
 
 
-async def refresh_access_token(user_id: str) -> OAuthState:
-    """
-    만료된 access_token을 refresh_token으로 갱신.
-    새 토큰 쌍 발급 — 이전 토큰은 즉시 무효.
-    """
-    current = _token_store.get(user_id)
-    if not current:
-        raise ValueError(f"No token found for user {user_id}")
+async def refresh_access_token(session_id: str) -> str:
+    """Refresh expired access_token using refresh_token."""
+    tokens = get_session(session_id)
+    if not tokens:
+        raise ValueError("Session not found")
 
     data = {
         "client_id": OKX_CLIENT_ID,
         "client_secret": OKX_CLIENT_SECRET,
-        "refresh_token": current.refresh_token,
+        "refresh_token": tokens["refresh_token"],
         "grant_type": "refresh_token",
     }
 
     async with httpx.AsyncClient() as client:
-        resp = await client.post(OKX_OAUTH_TOKEN, json=data, timeout=10)
+        resp = await client.post(OKX_OAUTH_TOKEN, data=data, timeout=15)
         resp.raise_for_status()
-        token_data = OAuthTokenResponse(**resp.json())
+        token_data = resp.json()
 
-    state = OAuthState(
-        user_id=user_id,
-        access_token=token_data.access_token,
-        refresh_token=token_data.refresh_token,
-        expires_at=time.time() + token_data.expires_in,
-        scope=token_data.scope,
-    )
+    if "access_token" not in token_data:
+        raise ValueError(f"OKX refresh error: {token_data}")
 
-    _token_store[user_id] = state
-    logger.info("Token refreshed for user %s", user_id)
-    return state
+    tokens["access_token"] = token_data["access_token"]
+    tokens["refresh_token"] = token_data["refresh_token"]
+    tokens["expires_at"] = time.time() + token_data.get("expires_in", 3600)
+    update_session(session_id, tokens)
 
-
-async def get_valid_token(user_id: str) -> str:
-    """
-    유효한 access_token 반환.
-    만료 5분 전이면 자동 갱신.
-    """
-    state = _token_store.get(user_id)
-    if not state:
-        raise ValueError(f"User {user_id} not authenticated. Redirect to OAuth first.")
-
-    # 만료 5분 전이면 갱신
-    if time.time() > state.expires_at - 300:
-        state = await refresh_access_token(user_id)
-
-    return state.access_token
+    logger.info("Token refreshed: session %s", session_id[:8])
+    return tokens["access_token"]
 
 
-def is_authenticated(user_id: str) -> bool:
-    """유저가 OKX OAuth 인증을 완료했는지 확인."""
-    state = _token_store.get(user_id)
-    if not state:
+async def get_valid_token(session_id: str) -> str:
+    """Get valid access_token, auto-refreshing 5 min before expiry."""
+    tokens = get_session(session_id)
+    if not tokens:
+        raise ValueError("Session not found. Connect OKX first.")
+
+    if time.time() > tokens["expires_at"] - 300:
+        return await refresh_access_token(session_id)
+
+    return tokens["access_token"]
+
+
+def is_authenticated(session_id: str) -> bool:
+    """Check if session has valid (or refreshable) tokens."""
+    if not session_id:
         return False
-    # refresh token 만료 (3일) 확인
-    if time.time() > state.expires_at + 259200:  # 3 days in seconds
-        del _token_store[user_id]
+    tokens = get_session(session_id)
+    if not tokens:
+        return False
+    # Refresh token expires after 3 days
+    if time.time() > tokens["expires_at"] + 259200:
+        delete_session(session_id)
         return False
     return True
+
+
+def disconnect(session_id: str) -> None:
+    """Delete session and all tokens."""
+    delete_session(session_id)
+    logger.info("Session disconnected: %s", session_id[:8])
