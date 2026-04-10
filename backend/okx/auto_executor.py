@@ -111,8 +111,19 @@ async def _try_execute(
         logger.warning("Session %s has 3 consecutive losses, pausing", session_id[:8])
         return None
 
-    # ── Execute ──
+    # ── Safety: max concurrent positions ──
     token = await get_valid_token(session_id)
+    async with OKXClient(token) as client:
+        positions = await client.get_positions()
+        open_count = sum(1 for p in positions if float(p.pos or 0) != 0)
+        if open_count >= settings["max_concurrent"]:
+            logger.warning(
+                "Session %s at max concurrent positions (%d/%d)",
+                session_id[:8], open_count, settings["max_concurrent"],
+            )
+            return None
+
+    # ── Execute ──
     inst_id = _pruviq_to_okx_inst_id(coin)
     side = "sell" if signal["direction"] == "short" else "buy"
     entry_price = signal.get("entry_price", 0)
@@ -123,21 +134,30 @@ async def _try_execute(
 
     position_size = settings["position_size_usdt"]
     leverage = settings["leverage"]
+    td_mode = settings.get("td_mode", "isolated")
     contract_size = (position_size * leverage) / entry_price
     sz = f"{contract_size:.4f}"
 
+    sl_pct = signal.get("sl_pct", 10)
+    tp_pct = signal.get("tp_pct", 8)
+
     async with OKXClient(token) as client:
+        # Set leverage before placing order
+        await client.set_leverage(
+            inst_id=inst_id,
+            lever=leverage,
+            mgn_mode=td_mode,
+        )
+
         # Market order
         order = await client.place_order(
             inst_id=inst_id,
             side=side,
             sz=sz,
-            td_mode=settings.get("td_mode", "isolated"),
+            td_mode=td_mode,
         )
 
         # SL/TP
-        sl_pct = signal.get("sl_pct", 10)
-        tp_pct = signal.get("tp_pct", 8)
         sl_price, tp_price = _calc_sl_tp_prices(
             entry_price, signal["direction"], sl_pct, tp_pct,
         )
@@ -149,7 +169,7 @@ async def _try_execute(
             sz=sz,
             sl_trigger_px=sl_price,
             tp_trigger_px=tp_price,
-            td_mode=settings.get("td_mode", "isolated"),
+            td_mode=td_mode,
         )
 
     result = {
@@ -165,8 +185,10 @@ async def _try_execute(
         "timestamp": time.time(),
     }
 
-    # Log trade
-    log_trade(session_id, signal, result)
+    # Log trade with estimated worst-case PnL (SL hit scenario)
+    # This ensures daily_loss_limit and consecutive_loss guards function
+    estimated_loss = -(position_size * sl_pct / 100)
+    log_trade(session_id, signal, result, pnl=estimated_loss)
     logger.info(
         "Auto-executed: %s %s %s sz=%s for session %s",
         side, inst_id, strategy_id, sz, session_id[:8],
