@@ -122,7 +122,7 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
   <section class="max-w-7xl mx-auto px-6 py-24 md:py-32 section-elevated">
     <p class="font-mono text-[--color-accent] text-sm tracking-wider text-center mb-4">HOW IT WORKS</p>
     <h2 class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-center mb-5">Three Steps to Verified Results</h2>
-    <p class="text-[--color-text-secondary] text-center text-xl mb-20 max-w-xl mx-auto">From strategy idea to data-backed decision.</p>
+    <p class="text-[--color-text-secondary] text-center text-xl mb-14 max-w-xl mx-auto">From strategy idea to data-backed decision.</p>
     <!-- Step cards with connecting arrows -->
     <div class="relative grid md:grid-cols-3 gap-8">
       <!-- Connecting lines (desktop only) -->
@@ -278,6 +278,7 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
       </div>
 
       <!-- Trust: Live stats + verification badges -->
+      <div class="border-t border-[--color-border] pt-14 mt-14"></div>
       <p class="font-mono text-[--color-accent] text-sm mb-3 tracking-wider">{t('trust.section_tag')}</p>
       <h3 class="text-3xl md:text-4xl font-bold mb-10">{t('trust.section_title')}</h3>
 
@@ -346,7 +347,7 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
 
   <!-- CTA -->
   <hr class="section-divider" />
-  <section class="relative pt-32 pb-28 md:pt-44 md:pb-36 overflow-hidden section-glow-cyan" aria-labelledby="cta-heading">
+  <section class="relative pt-24 pb-20 md:pt-32 md:pb-28 overflow-hidden section-glow-cyan" aria-labelledby="cta-heading">
     <!-- Background glow orb -->
     <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] rounded-full bg-[--color-accent]/[0.06] blur-[120px] pointer-events-none" aria-hidden="true"></div>
     <div class="relative max-w-7xl mx-auto px-6 text-center">
