@@ -310,7 +310,7 @@ export default function CoinListTable({ lang = "en" }: { lang?: "en" | "ko" }) {
         </div>
         <div class="relative overflow-x-auto border border-[--color-border] rounded-xl bg-[--color-bg-card]">
           <table
-            class="w-full min-w-[900px] border-collapse font-mono text-[0.8125rem]"
+            class="w-full md:min-w-[900px] border-collapse font-mono text-[0.8125rem]"
             aria-busy="true"
           >
             <caption class="sr-only">{t.tableCaption}</caption>
@@ -492,7 +492,7 @@ export default function CoinListTable({ lang = "en" }: { lang?: "en" | "ko" }) {
 
       {/* Table */}
       <div class="relative overflow-x-auto border border-[--color-border] rounded-xl bg-[--color-bg-card]">
-        <table class="w-full min-w-[900px] border-collapse font-mono text-[0.8125rem]">
+        <table class="w-full md:min-w-[900px] border-collapse font-mono text-[0.8125rem]">
           <caption class="sr-only">{t.tableCaption}</caption>
           <thead>
             <tr>
