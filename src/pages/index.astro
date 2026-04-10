@@ -35,8 +35,8 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
     <div class="absolute inset-0 hidden md:flex items-center justify-center pointer-events-none" aria-hidden="true">
       <img src="/images/simulator-preview.png" alt="" class="w-[80%] max-w-4xl opacity-[0.04] blur-[1px] select-none" loading="eager" />
     </div>
-    <div class="relative max-w-7xl mx-auto px-6 pt-20 pb-24 md:pt-28 md:pb-36 hero-enter">
-      <div class="grid md:grid-cols-2 gap-10 md:gap-14 items-center">
+    <div class="relative max-w-7xl mx-auto px-6 pt-24 pb-28 md:pt-36 md:pb-44 hero-enter">
+      <div class="grid md:grid-cols-2 gap-12 md:gap-16 items-center">
         <!-- Left: Text + CTA -->
         <div>
           <HeroBadge stat={simulationsRun} label="simulations run" />
@@ -44,7 +44,7 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
           <h1 class="text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-[-0.04em] leading-[1.05] text-balance">
             Most Backtests Lie.<br/><span class="gradient-text-shimmer">Ours Come with Proof.</span>
           </h1>
-          <p class="mt-8 text-xl text-[--color-text-secondary] leading-relaxed max-w-lg">
+          <p class="mt-10 text-xl md:text-2xl text-[--color-text-secondary] leading-relaxed max-w-lg">
             Test strategies on <strong class="text-[--color-text]">{coinsAnalyzed}+ coins</strong> with real fees. See what fails. Keep what survives. No code. No signup.
           </p>
           <!-- Differentiator — front and center -->
@@ -112,16 +112,20 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
 
   <!-- HOW IT WORKS -->
   <hr class="section-divider" />
-  <section class="max-w-7xl mx-auto px-6 py-20 md:py-28 section-elevated">
-    <h2 class="text-3xl md:text-4xl font-bold text-center mb-5">How It Works</h2>
-    <p class="text-[--color-text-secondary] text-center text-xl mb-16 max-w-xl mx-auto">From strategy idea to verified results in 3 steps.</p>
-    <div class="grid md:grid-cols-3 gap-8">
+  <section class="max-w-7xl mx-auto px-6 py-24 md:py-32 section-elevated">
+    <p class="font-mono text-[--color-accent] text-sm tracking-wider text-center mb-4">HOW IT WORKS</p>
+    <h2 class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-center mb-5">Three Steps to Verified Results</h2>
+    <p class="text-[--color-text-secondary] text-center text-xl mb-20 max-w-xl mx-auto">From strategy idea to data-backed decision.</p>
+    <!-- Step cards with connecting arrows -->
+    <div class="relative grid md:grid-cols-3 gap-8">
+      <!-- Connecting lines (desktop only) -->
+      <div class="hidden md:block absolute top-[2.75rem] left-[calc(33.33%+1rem)] right-[calc(33.33%+1rem)] h-px bg-gradient-to-r from-[--color-accent]/30 via-[--color-accent]/15 to-[--color-accent]/30" aria-hidden="true"></div>
       <StepCard step={1} title="Pick a Strategy" description="36 presets or build your own with 14 indicators." />
       <StepCard step={2} title="Set Your Risk" description="SL, TP, leverage, time filters. Real fees included." />
       <StepCard step={3} title="See Real Results" description={`${coinsAnalyzed}+ coins, 2+ years of data. Results in seconds.`} />
     </div>
-    <div class="text-center mt-10">
-      <a href="/simulate" class="btn btn-primary btn-md">Open Simulator — Free &rarr;</a>
+    <div class="text-center mt-14">
+      <a href="/simulate" class="btn btn-primary btn-lg">Open Simulator — Free &rarr;</a>
     </div>
     <!-- Persona entry points -->
     <div class="mt-14 grid sm:grid-cols-3 gap-5 max-w-3xl mx-auto">
@@ -142,17 +146,17 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
 
   <!-- COMPARISON TABLE -->
   <hr class="section-divider" />
-  <section class="py-20 md:py-28 section-accent-glow reveal">
+  <section class="py-24 md:py-32 section-accent-glow">
     <div class="max-w-4xl mx-auto px-6">
       <p class="font-mono text-[--color-accent] text-sm mb-3 tracking-wider text-center">{t('compare.section_tag')}</p>
-      <h2 class="text-3xl md:text-4xl font-bold text-center mb-14">{t('compare.section_title')}</h2>
+      <h2 class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-center mb-16">{t('compare.section_title')}</h2>
 
-      <div class="overflow-hidden rounded-xl border border-[--color-border] bg-[--color-bg-card] shadow-[var(--shadow-lg)]">
+      <div class="overflow-hidden rounded-2xl border border-[--color-border] bg-[--color-bg-card]" style="box-shadow: 0 0 0 1px rgba(44,181,232,0.08), 0 8px 32px rgba(0,0,0,0.4), 0 0 48px rgba(44,181,232,0.03);">
         <!-- Header -->
         <div class="grid grid-cols-3 text-sm font-mono">
           <div class="p-4 md:p-5"></div>
           <div class="p-4 md:p-5 text-center text-[--color-text-muted] border-l border-[--color-border] bg-[var(--color-bg-subtle)]">{t('compare.other_label')}</div>
-          <div class="p-4 md:p-5 text-center font-bold text-[--color-accent] border-l border-[--color-accent]/20 bg-[--color-accent]/5">{t('compare.pruviq_label')}</div>
+          <div class="p-4 md:p-6 text-center font-bold text-[--color-accent] border-l border-[--color-accent]/25 bg-gradient-to-b from-[--color-accent]/8 to-[--color-accent]/3">{t('compare.pruviq_label')}</div>
         </div>
         <!-- Rows -->
         {[
@@ -178,7 +182,7 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
 
   <!-- WHY PRUVIQ (Merged Problem + Evidence) -->
   <hr class="section-divider" />
-  <section class="py-20 md:py-28 section-warm-glow reveal" aria-labelledby="why-heading">
+  <section class="py-24 md:py-32 section-warm-glow" aria-labelledby="why-heading">
     <div class="max-w-7xl mx-auto px-6">
       <p class="font-mono text-[--color-down] text-sm mb-3 tracking-wider">{t('problem.tag')}</p>
       <h2 id="why-heading" class="text-3xl md:text-4xl font-bold mb-5">{t('problem.title')}</h2>
@@ -225,7 +229,7 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
 
   <!-- FEATURES & TRUST (Merged) -->
   <hr class="section-divider" />
-  <section class="py-20 md:py-28 section-elevated reveal" aria-labelledby="features-heading">
+  <section class="py-24 md:py-32 section-elevated" aria-labelledby="features-heading">
     <div class="max-w-7xl mx-auto px-6">
       <p class="font-mono text-[--color-accent] text-sm mb-3 tracking-wider">{t('features.tag')}</p>
       <h2 id="features-heading" class="text-3xl md:text-4xl font-bold mb-14">{t('features.title')}</h2>
@@ -309,7 +313,7 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
 
   <!-- FAQ (visible section matching JSON-LD) -->
   <hr class="section-divider" />
-  <section class="py-20 md:py-28 section-accent-glow reveal" aria-labelledby="faq-heading">
+  <section class="py-24 md:py-32 section-accent-glow" aria-labelledby="faq-heading">
     <div class="max-w-7xl mx-auto px-6">
       <p class="font-mono text-[--color-accent] text-sm mb-3 tracking-wider">FAQ</p>
       <h2 id="faq-heading" class="text-3xl md:text-4xl font-bold mb-14">{t('faq.title')}</h2>
@@ -335,14 +339,16 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
 
   <!-- CTA -->
   <hr class="section-divider" />
-  <section class="relative pt-28 pb-24 md:pt-36 md:pb-32 overflow-hidden reveal section-glow-cyan" aria-labelledby="cta-heading">
+  <section class="relative pt-32 pb-28 md:pt-44 md:pb-36 overflow-hidden section-glow-cyan" aria-labelledby="cta-heading">
+    <!-- Background glow orb -->
+    <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] rounded-full bg-[--color-accent]/[0.06] blur-[120px] pointer-events-none" aria-hidden="true"></div>
     <div class="relative max-w-7xl mx-auto px-6 text-center">
-      <p class="font-mono text-[--color-text-muted] text-sm mb-5 tracking-wider">{t('cta.tag')}</p>
-      <h2 id="cta-heading" class="text-3xl md:text-5xl font-extrabold mb-6">
-        <span class="gradient-text">{t('cta.title')}</span>
+      <p class="font-mono text-[--color-accent] text-sm mb-5 tracking-wider">{t('cta.tag')}</p>
+      <h2 id="cta-heading" class="text-4xl md:text-6xl font-extrabold mb-8">
+        <span class="gradient-text-shimmer">{t('cta.title')}</span>
       </h2>
-      <p class="text-[--color-text-muted] text-xl mb-5 max-w-xl mx-auto">{t('cta.desc1')}</p>
-      <p class="text-[--color-text-muted] text-sm mb-8 max-w-md mx-auto">{t('cta.desc2')}</p>
+      <p class="text-[--color-text-secondary] text-xl md:text-2xl mb-5 max-w-xl mx-auto">{t('cta.desc1')}</p>
+      <p class="text-[--color-text-muted] text-sm mb-10 max-w-md mx-auto">{t('cta.desc2')}</p>
 
       <!-- Risk reversal badges -->
       <div class="flex flex-wrap gap-3 justify-center mb-10 font-mono text-xs">
