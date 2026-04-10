@@ -139,6 +139,37 @@ def _refresh_data():
         logger.error(f"Data refresh failed: {e}")
 
 
+async def _okx_auto_trading_loop():
+    """Check signals and auto-execute for subscribed users every 5 minutes."""
+    await asyncio.sleep(30)  # Wait for data load
+    while True:
+        try:
+            from okx.auto_executor import process_signals
+            signals = signal_scanner.scan()
+            if signals:
+                await process_signals(signals)
+        except asyncio.CancelledError:
+            raise
+        except Exception as e:
+            logger.warning(f"OKX auto-trading loop error: {e}")
+        await asyncio.sleep(300)  # 5 minutes
+
+
+async def _okx_token_refresh_loop():
+    """Refresh all active OKX sessions every 12 hours."""
+    await asyncio.sleep(60)  # Wait for startup
+    while True:
+        try:
+            from okx.token_refresh import refresh_all_sessions
+            stats = await refresh_all_sessions()
+            logger.info(f"OKX token refresh: {stats}")
+        except asyncio.CancelledError:
+            raise
+        except Exception as e:
+            logger.warning(f"OKX token refresh error: {e}")
+        await asyncio.sleep(12 * 3600)  # 12 hours
+
+
 async def _background_refresh():
     """Periodically refresh data from Binance."""
     while True:
@@ -240,15 +271,20 @@ async def lifespan(app: FastAPI):
     # IMPORTANT: Deploy with --workers 1 (global cache not shared across processes)
     refresh_task = asyncio.create_task(_background_refresh())
     market_task = asyncio.create_task(_background_market_refresh())
+    okx_auto_task = asyncio.create_task(_okx_auto_trading_loop())
+    okx_token_task = asyncio.create_task(_okx_token_refresh_loop())
     print(f"Background data refresh scheduled every {REFRESH_INTERVAL}s")
     print(f"Background market refresh scheduled every {MARKET_REFRESH_INTERVAL}s")
+    print("OKX auto-trading loop started")
 
     yield
 
     indicator_task.cancel()
     refresh_task.cancel()
     market_task.cancel()
-    for t in (indicator_task, refresh_task, market_task):
+    okx_auto_task.cancel()
+    okx_token_task.cancel()
+    for t in (indicator_task, refresh_task, market_task, okx_auto_task, okx_token_task):
         try:
             await t
         except asyncio.CancelledError:

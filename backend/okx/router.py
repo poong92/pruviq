@@ -176,3 +176,46 @@ async def get_balance(request: Request, ccy: str = Query("USDT")):
     async with OKXClient(token) as client:
         balances = await client.get_balance(ccy)
         return {"balances": [b.model_dump() for b in balances]}
+
+
+# ── Trading Settings ───────────────────────────────────
+
+@router.get("/settings/trading")
+async def get_trading_settings(request: Request):
+    """Get user's auto-trading configuration."""
+    session_id = _get_session(request)
+    if not is_authenticated(session_id):
+        raise HTTPException(401, "Not connected to OKX.")
+
+    from .settings import get_settings, get_daily_stats
+
+    return {
+        "settings": get_settings(session_id),
+        "daily_stats": get_daily_stats(session_id),
+    }
+
+
+@router.post("/settings/trading")
+async def save_trading_settings(request: Request):
+    """Save user's auto-trading configuration."""
+    session_id = _get_session(request)
+    if not is_authenticated(session_id):
+        raise HTTPException(401, "Not connected to OKX.")
+
+    from .settings import save_settings
+
+    body = await request.json()
+    saved = save_settings(session_id, body)
+    return {"settings": saved, "status": "saved"}
+
+
+@router.get("/settings/trades")
+async def get_trade_history(request: Request, limit: int = Query(50, le=200)):
+    """Get user's trade execution history."""
+    session_id = _get_session(request)
+    if not is_authenticated(session_id):
+        raise HTTPException(401, "Not connected to OKX.")
+
+    from .settings import get_trade_log
+
+    return {"trades": get_trade_log(session_id, limit)}
