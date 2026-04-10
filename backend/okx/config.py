@@ -19,7 +19,7 @@ OKX_ENCRYPTION_KEY = os.environ.get("OKX_ENCRYPTION_KEY", "")
 
 # ── OKX API v5 URLs ──
 OKX_BASE_URL = "https://www.okx.com"
-OKX_OAUTH_AUTHORIZE = f"{OKX_BASE_URL}/api/v5/oauth/authorize"
+OKX_OAUTH_AUTHORIZE = f"{OKX_BASE_URL}/account/oauth/authorize"
 OKX_OAUTH_TOKEN = f"{OKX_BASE_URL}/api/v5/oauth/token"
 
 # ── Demo mode (testnet headers) ──
