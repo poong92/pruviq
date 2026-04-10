@@ -93,25 +93,7 @@ async def _try_execute(
     if settings["coins"] and coin not in settings["coins"]:
         return None
 
-    # ── Safety: daily trade limit ──
-    daily = get_daily_stats(session_id)
-    if daily["trades_today"] >= settings["max_daily_trades"]:
-        logger.warning("Session %s hit daily trade limit (%d)", session_id[:8], settings["max_daily_trades"])
-        return None
-
-    # ── Safety: daily loss limit ──
-    if daily["pnl_today"] <= -settings["daily_loss_limit_usdt"]:
-        logger.warning("Session %s hit daily loss limit ($%.2f)", session_id[:8], daily["pnl_today"])
-        return None
-
-    # ── Safety: consecutive losses check ──
-    recent = get_trade_log(session_id, limit=3)
-    consecutive_losses = sum(1 for t in recent if t["pnl_usdt"] < 0)
-    if consecutive_losses >= 3:
-        logger.warning("Session %s has 3 consecutive losses, pausing", session_id[:8])
-        return None
-
-    # ── Safety: max concurrent positions ──
+    # ── Execute ──
     token = await get_valid_token(session_id)
     async with OKXClient(token) as client:
         positions = await client.get_positions()

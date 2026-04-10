@@ -16,7 +16,11 @@ import logging
 from fastapi import APIRouter, HTTPException, Query, Request, Response
 from fastapi.responses import RedirectResponse
 
+import os
+
 from .config import COOKIE_DOMAIN, FRONTEND_URL, OKX_CLIENT_ID
+
+ADMIN_KEY = os.environ.get("ADMIN_API_KEY", "")
 from .models import SimToExecRequest
 from .oauth import (
     disconnect,
@@ -103,9 +107,14 @@ async def oauth_callback(
 
 @router.get("/auth/okx/status")
 async def oauth_status(request: Request):
-    """Check if user has an active OKX connection."""
+    """Check if user has an active OKX connection + admin status."""
     session_id = _get_session(request)
-    return {"connected": is_authenticated(session_id)}
+    admin_header = request.headers.get("x-admin-key", "")
+    is_admin = bool(ADMIN_KEY and admin_header == ADMIN_KEY)
+    return {
+        "connected": is_authenticated(session_id),
+        "admin": is_admin,
+    }
 
 
 @router.post("/auth/okx/disconnect")

@@ -127,6 +127,7 @@ interface Settings {
 export default function TradingSettings({ lang = "en" }: Props) {
   const t = labels[lang];
   const [connected, setConnected] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState<"idle" | "saving" | "saved">("idle");
   const [settings, setSettings] = useState<Settings>({
@@ -147,11 +148,27 @@ export default function TradingSettings({ lang = "en" }: Props) {
   });
 
   useEffect(() => {
-    fetch(`${API_BASE}/auth/okx/status`, { credentials: "include" })
+    // Check for admin key in localStorage or URL param
+    const params = new URLSearchParams(window.location.search);
+    const urlKey = params.get("admin_key");
+    if (urlKey) {
+      localStorage.setItem("pruviq_admin_key", urlKey);
+      // Clean URL
+      const url = new URL(window.location.href);
+      url.searchParams.delete("admin_key");
+      window.history.replaceState({}, "", url.toString());
+    }
+    const adminKey = localStorage.getItem("pruviq_admin_key") || "";
+
+    fetch(`${API_BASE}/auth/okx/status`, {
+      credentials: "include",
+      headers: adminKey ? { "x-admin-key": adminKey } : {},
+    })
       .then((r) => r.json())
       .then((d) => {
         setConnected(d.connected);
-        if (d.connected) {
+        setIsAdmin(d.admin || false);
+        if (d.connected && d.admin) {
           return fetch(`${API_BASE}/settings/trading`, {
             credentials: "include",
           });
@@ -211,6 +228,83 @@ export default function TradingSettings({ lang = "en" }: Props) {
   if (loading) {
     return (
       <div class="text-center py-8 text-[--color-text-muted]">Loading...</div>
+    );
+  }
+
+  // Non-admin: Coming Soon
+  if (!isAdmin) {
+    const comingSoon =
+      lang === "ko"
+        ? {
+            title: "자동매매 — 준비 중",
+            desc: "전략 선택, 포지션 설정, 원클릭 자동 실행 기능이 곧 출시됩니다.",
+            features: [
+              "7개 검증 전략 자동 실행",
+              "포지션 크기 + 레버리지 설정",
+              "실시간 포지션 모니터링",
+              "OAuth 보안 — API 키 불필요",
+            ],
+            notify: "출시 알림 받기",
+          }
+        : {
+            title: "Auto-Trading — Coming Soon",
+            desc: "Strategy selection, position configuration, and one-click auto-execution launching soon.",
+            features: [
+              "7 verified strategies auto-execution",
+              "Position size + leverage config",
+              "Real-time position monitoring",
+              "OAuth security — no API keys",
+            ],
+            notify: "Get notified at launch",
+          };
+    return (
+      <div class="card-enterprise rounded-xl p-8 text-center">
+        <div class="w-16 h-16 rounded-2xl bg-[--color-accent]/10 flex items-center justify-center mx-auto mb-4">
+          <svg
+            class="w-8 h-8 text-[--color-accent]"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M13 10V3L4 14h7v7l9-11h-7z"
+            />
+          </svg>
+        </div>
+        <h3 class="text-xl font-bold mb-2">{comingSoon.title}</h3>
+        <p class="text-sm text-[--color-text-muted] mb-4">{comingSoon.desc}</p>
+        <ul class="space-y-2 mb-6 text-left max-w-xs mx-auto">
+          {comingSoon.features.map((f) => (
+            <li class="flex items-center gap-2 text-sm text-[--color-text-secondary]">
+              <svg
+                class="w-4 h-4 text-[--color-up] shrink-0"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2.5"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
+              {f}
+            </li>
+          ))}
+        </ul>
+        <a
+          href="https://t.me/PRUVIQ"
+          target="_blank"
+          rel="noopener"
+          class="btn btn-primary btn-md"
+        >
+          {comingSoon.notify} →
+        </a>
+      </div>
     );
   }
 

@@ -76,7 +76,7 @@ def save_settings(session_id: str, settings: dict[str, Any]) -> dict[str, Any]:
         validated["coins"] = [c.upper() for c in settings["coins"]]
     if "position_size_usdt" in settings:
         val = float(settings["position_size_usdt"])
-        validated["position_size_usdt"] = max(10, min(500, val))  # $10-$500
+        validated["position_size_usdt"] = max(1, val)
     if "leverage" in settings:
         val = int(settings["leverage"])
         validated["leverage"] = max(1, min(125, val))
