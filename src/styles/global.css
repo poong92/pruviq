@@ -604,14 +604,25 @@ a:not(.btn):not(.btn-primary):not(.btn-ghost):not(.btn-outline):not(.card-hover)
 
 /* ─── Scroll reveal ─── */
 .reveal {
-  opacity: 1;
-  transform: none;
+  opacity: 0;
+  transform: translateY(20px);
   transition: opacity var(--duration-slow) var(--ease-default),
               transform var(--duration-slow) var(--ease-default);
 }
 .reveal.visible {
   opacity: 1;
   transform: translateY(0);
+}
+
+/* Step connecting line draw-in */
+.step-connect-line.reveal {
+  opacity: 1;
+  transform-origin: left;
+  transform: scaleX(0);
+  transition: transform 1s var(--ease-smooth) 0.3s;
+}
+.step-connect-line.reveal.visible {
+  transform: scaleX(1);
 }
 .reveal-child > * {
   opacity: 0;
@@ -640,7 +651,7 @@ a:not(.btn):not(.btn-primary):not(.btn-ghost):not(.btn-outline):not(.card-hover)
 .reveal-stagger > *:nth-child(4) { transition-delay: 240ms; }
 
 @media (prefers-reduced-motion: reduce) {
-  .reveal, .reveal-child > *, .reveal-stagger > * {
+  .reveal, .reveal-child > *, .reveal-stagger > *, .step-connect-line {
     opacity: 1; transform: none; transition: none;
   }
 }

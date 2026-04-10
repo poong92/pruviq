@@ -126,7 +126,7 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
     <!-- Step cards with connecting arrows -->
     <div class="relative grid md:grid-cols-3 gap-8">
       <!-- Connecting lines (desktop only) -->
-      <div class="hidden md:block absolute top-[2.75rem] left-[calc(33.33%+1rem)] right-[calc(33.33%+1rem)] h-px bg-gradient-to-r from-[--color-accent]/30 via-[--color-accent]/15 to-[--color-accent]/30" aria-hidden="true"></div>
+      <div class="hidden md:block absolute top-[2.75rem] left-[calc(33.33%+1rem)] right-[calc(33.33%+1rem)] h-px bg-gradient-to-r from-[--color-accent]/30 via-[--color-accent]/15 to-[--color-accent]/30 step-connect-line reveal" aria-hidden="true"></div>
       <StepCard step={1} title="Pick a Strategy" description="36 presets or build your own with 14 indicators." />
       <StepCard step={2} title="Set Your Risk" description="SL, TP, leverage, time filters. Real fees included." />
       <StepCard step={3} title="See Real Results" description={`${coinsAnalyzed}+ coins, 2+ years of data. Results in seconds.`} />
@@ -196,7 +196,7 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
       <p class="text-[--color-text-muted] text-xl mb-14 max-w-3xl">{t('evidence.desc')}</p>
 
       <!-- Case Studies: Problem cards -->
-      <div class="grid md:grid-cols-3 gap-5 mb-14">
+      <div class="grid md:grid-cols-3 gap-5 mb-14 reveal reveal-child">
         <div class="card-enterprise p-6 border-t-2 border-t-[--color-down]/30 card-hover shadow-[var(--shadow-md)]">
           <div class="text-[--color-down] font-mono text-xs font-bold mb-3 flex items-center gap-2">
             <span class="inline-block w-2 h-2 rounded-full bg-[--color-down]"></span>
@@ -242,7 +242,7 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
       <h2 id="features-heading" class="text-3xl md:text-4xl font-bold mb-14">{t('features.title')}</h2>
 
       <!-- Feature cards -->
-      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16 reveal reveal-child">
         <a href="/simulate" class="card-premium p-6 block group">
           <div class="w-14 h-14 rounded-2xl bg-[--color-accent]/15 flex items-center justify-center mb-5">
             <svg class="w-7 h-7 text-[--color-accent]" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5"/></svg>
@@ -286,7 +286,7 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
         <LiveStats client:visible lang="en" />
       </div>
 
-      <div class="grid md:grid-cols-2 gap-6">
+      <div class="grid md:grid-cols-2 gap-6 reveal reveal-child">
         <a href="/methodology" class="card-premium card-hover p-6 block group shadow-[var(--shadow-md)]">
           <div class="flex items-center gap-3 mb-3">
             <span class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-[--color-accent]/15 text-[--color-accent] font-mono text-sm font-bold shrink-0">MC</span>
