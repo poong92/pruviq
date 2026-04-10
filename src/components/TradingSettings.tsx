@@ -9,59 +9,34 @@ interface Props {
 }
 
 const API_BASE = "https://api.pruviq.com";
-const OKX_SDK_URL =
-  "https://static.okx.com/cdn/assets/okfe/libs/okxOAuth/index.js";
+const OKX_OAUTH_BASE = "https://www.okx.com/account/oauth";
 
-declare global {
-  interface Window {
-    OKEXOAuthSDK?: {
-      init: (opts: { requestUrl: string; onInit?: () => void }) => void;
-      authorize: (params: Record<string, string>) => void;
-    };
-  }
-}
-
-let _sdkReady: Promise<void> | null = null;
-function loadOKXSDK(): Promise<void> {
-  if (_sdkReady) return _sdkReady;
-  _sdkReady = new Promise<void>((resolve, reject) => {
-    if (window.OKEXOAuthSDK) {
-      resolve();
-      return;
-    }
-    const script = document.createElement("script");
-    script.src = OKX_SDK_URL;
-    script.async = true;
-    script.onload = () => {
-      window.OKEXOAuthSDK?.init({ requestUrl: "https://www.okx.com" });
-      resolve();
-    };
-    script.onerror = () => reject(new Error("Failed to load OKX SDK"));
-    document.head.appendChild(script);
-  });
-  return _sdkReady;
-}
-
-function OKXSDKConnectButton({ lang, label }: { lang: string; label: string }) {
+function OKXDirectConnectButton({
+  lang,
+  label,
+}: {
+  lang: string;
+  label: string;
+}) {
   const [connecting, setConnecting] = useState(false);
 
   const handleConnect = async () => {
     setConnecting(true);
     try {
       const resp = await fetch(`${API_BASE}/auth/okx/init?lang=${lang}`);
-      if (!resp.ok) throw new Error("Failed to initialize OAuth");
-      const params = await resp.json();
-      await loadOKXSDK();
-      if (!window.OKEXOAuthSDK) throw new Error("OKX SDK unavailable");
-      window.OKEXOAuthSDK.authorize({
-        response_type: params.response_type,
-        access_type: params.access_type,
-        client_id: params.client_id,
-        redirect_uri: encodeURIComponent(params.redirect_uri),
-        scope: params.scope,
-        state: params.state,
-      });
-    } catch {
+      if (!resp.ok) throw new Error(`init failed: ${resp.status}`);
+      const p = await resp.json();
+      const qs = new URLSearchParams({
+        client_id: p.client_id,
+        response_type: p.response_type,
+        access_type: p.access_type,
+        scope: p.scope,
+        redirect_uri: p.redirect_uri,
+        state: p.state,
+      }).toString();
+      window.location.assign(`${OKX_OAUTH_BASE}?${qs}`);
+    } catch (e) {
+      console.error("OKX OAuth init failed:", e);
       setConnecting(false);
     }
   };
@@ -379,7 +354,7 @@ export default function TradingSettings({ lang = "en" }: Props) {
     return (
       <div class="card-enterprise rounded-xl p-6 text-center">
         <p class="text-[--color-text-muted] mb-4">{t.notConnected}</p>
-        <OKXSDKConnectButton lang={lang} label={t.connect} />
+        <OKXDirectConnectButton lang={lang} label={t.connect} />
       </div>
     );
   }
