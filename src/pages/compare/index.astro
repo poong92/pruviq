@@ -1,8 +1,10 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { useTranslations } from '../../i18n/index';
+import siteStats from '../../../public/data/site-stats.json';
 
 const t = useTranslations('en');
+const coinsAnalyzed = (siteStats as Record<string, number>).coins_analyzed ?? 570;
 
 const comparisons = [
   { slug: 'tradingview', name: 'TradingView', desc: t('compare_index.tradingview_desc'), badge: t('compare_index.most_popular'), accent: '#2962FF', icon: '📈' },
@@ -26,7 +28,7 @@ const comparisons = [
       </h1>
 
       <!-- Why PRUVIQ: 3 strengths -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10 mb-10 reveal-child">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10 mb-10 reveal">
         <div class="border border-[--color-up]/30 rounded-lg p-6 bg-[--color-bg-card] shadow-[var(--shadow-md)]">
           <p class="font-mono text-[--color-up] text-xs font-bold mb-2 tracking-wider">{t('compare_index.strength1_tag')}</p>
           <p class="font-bold text-lg mb-2">{t('compare_index.strength1_title')}</p>
@@ -80,7 +82,7 @@ const comparisons = [
             </tr>
             <tr class="border-b border-[--color-border]/50">
               <td class="py-3 px-3 text-[--color-text-muted]">{t('compare_index.tbl_multicoin')}</td>
-              <td class="py-3 px-3 text-center text-[--color-up] font-semibold bg-[--color-accent]/10 border-x border-[--color-accent]/20">570+ coins</td>
+              <td class="py-3 px-3 text-center text-[--color-up] font-semibold bg-[--color-accent]/10 border-x border-[--color-accent]/20">{coinsAnalyzed}+ coins</td>
               <td class="py-3 px-3 text-center text-[--color-down]">1 at a time</td>
               <td class="py-3 px-3 text-center text-[--color-down]">Limited</td>
               <td class="py-3 px-3 text-center text-[--color-down]">Limited</td>
@@ -113,7 +115,7 @@ const comparisons = [
       <div class="max-w-3xl mx-auto mt-10 mb-6">
         <h3 class="text-lg font-bold mb-3">Why These Numbers Matter</h3>
         <div class="space-y-4 text-sm text-[--color-text-muted] leading-relaxed">
-          <p><strong class="text-[--color-text]">Multi-coin testing</strong> — Most platforms test one coin at a time. PRUVIQ runs your strategy across 570+ coins simultaneously, revealing which markets it actually works in and which it doesn't. This eliminates cherry-picking bias.</p>
+          <p><strong class="text-[--color-text]">Multi-coin testing</strong> — Most platforms test one coin at a time. PRUVIQ runs your strategy across {coinsAnalyzed}+ coins simultaneously, revealing which markets it actually works in and which it doesn't. This eliminates cherry-picking bias.</p>
           <p><strong class="text-[--color-text]">Failure transparency</strong> — We publish every strategy that failed, with full data. 87 out of 88 strategy combinations were eliminated. Other platforms show only winners, hiding the survivorship bias that inflates backtesting results.</p>
           <p><strong class="text-[--color-text]">No account required</strong> — Test any strategy immediately. No email, no KYC, no credit card. Your data stays in your browser. This matters because signup walls create friction that prevents honest evaluation.</p>
         </div>
@@ -130,7 +132,7 @@ const comparisons = [
       <hr class="section-divider mb-10" />
 
       <p class="font-mono text-[--color-accent] text-sm mb-6 tracking-wider">{t('compare_index.detailed_label')}</p>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 reveal-child">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 reveal">
         {comparisons.map((c) => (
           <a
             href={`/compare/${c.slug}`}
