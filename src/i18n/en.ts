@@ -2055,6 +2055,23 @@ export const en = {
     "Why Backtests Fail — And How to Avoid It | PRUVIQ",
   "meta.why_backtests_fail_desc":
     "Learn the 5 most common reasons crypto backtests fail: look-ahead bias, survivorship bias, overfitting, ignoring fees, and market regime changes.",
+  // Dashboard
+  "dashboard.tag": "TRADING DASHBOARD",
+  "dashboard.title": "Your Trading Hub",
+  "dashboard.desc":
+    "Connect your OKX account, execute strategies, track performance.",
+  "dashboard.orders_title": "Recent Orders",
+  "dashboard.positions_title": "Active Positions",
+  "dashboard.no_orders": "No orders yet. Connect OKX and execute a strategy.",
+  "dashboard.no_positions": "No active positions.",
+  "dashboard.savings_title": "Commission Savings",
+  "dashboard.savings_desc":
+    "Trade via PRUVIQ and save on every order with OKX Broker discounts.",
+  "dashboard.savings_label": "fee discount",
+  "dashboard.cta_text": "Run a backtest first, then execute with one click.",
+  "dashboard.cta_simulate": "Open Simulator",
+  "nav.dashboard": "Dashboard",
+
   // 404
   "404.title": "404 - Page Not Found | PRUVIQ",
   "404.desc":

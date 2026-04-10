@@ -1,0 +1,98 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { useTranslations } from '../i18n/index';
+import OKXConnectButton from '../components/OKXConnectButton';
+
+const t = useTranslations('en');
+---
+
+<Layout title={t('dashboard.title') + ' | PRUVIQ'} description={t('dashboard.desc')}>
+  <!-- Hero -->
+  <section class="pt-6 pb-16 md:pt-10 md:pb-24">
+    <div class="max-w-[1400px] mx-auto px-4">
+      <p class="font-mono text-[--color-accent] text-sm mb-3 tracking-wider">{t('dashboard.tag')}</p>
+      <h1 class="text-4xl md:text-5xl font-extrabold">
+        {t('dashboard.title')}
+      </h1>
+      <p class="text-[--color-text-muted] text-xl mt-3 max-w-2xl leading-relaxed">{t('dashboard.desc')}</p>
+    </div>
+  </section>
+
+  <!-- Section 1: OKX Connection Status -->
+  <hr class="section-divider" />
+  <section class="py-12 md:py-16 section-elevated">
+    <div class="max-w-[1400px] mx-auto px-4">
+      <h2 class="text-2xl font-bold mb-6">{t('dashboard.title')}</h2>
+      <div class="max-w-md">
+        <OKXConnectButton lang="en" client:visible />
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 2: Recent Orders -->
+  <hr class="section-divider" />
+  <section class="py-12 md:py-16 section-accent-glow">
+    <div class="max-w-[1400px] mx-auto px-4">
+      <h2 class="text-2xl font-bold mb-6">{t('dashboard.orders_title')}</h2>
+      <div id="recent-orders-mount">
+        <div class="card-enterprise p-6 text-center">
+          <p class="text-[--color-text-muted] text-sm">{t('dashboard.no_orders')}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 3: Active Positions -->
+  <hr class="section-divider" />
+  <section class="py-12 md:py-16 section-elevated">
+    <div class="max-w-[1400px] mx-auto px-4">
+      <h2 class="text-2xl font-bold mb-6">{t('dashboard.positions_title')}</h2>
+      <div id="active-positions-mount">
+        <div class="card-enterprise p-6 text-center">
+          <p class="text-[--color-text-muted] text-sm">{t('dashboard.no_positions')}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 4: Commission Savings -->
+  <hr class="section-divider" />
+  <section class="py-12 md:py-16 section-accent-glow">
+    <div class="max-w-[1400px] mx-auto px-4">
+      <div class="card-enterprise p-8 text-center">
+        <h2 class="text-2xl font-bold mb-3">{t('dashboard.savings_title')}</h2>
+        <p class="text-[--color-text-muted] text-sm mb-4">{t('dashboard.savings_desc')}</p>
+        <div class="inline-flex items-baseline gap-1">
+          <span class="text-4xl font-extrabold text-[--color-up]">20%</span>
+          <span class="text-[--color-text-muted] text-sm">{t('dashboard.savings_label')}</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA: Link to simulator -->
+  <hr class="section-divider" />
+  <section class="py-16 md:py-24">
+    <div class="max-w-[1400px] mx-auto px-4 text-center">
+      <p class="text-[--color-text-muted] text-sm mb-4">{t('dashboard.cta_text')}</p>
+      <a href="/simulate" class="btn btn-primary btn-lg inline-flex items-center gap-2">
+        {t('dashboard.cta_simulate')} &rarr;
+      </a>
+    </div>
+  </section>
+
+  <noscript>
+    <section class="max-w-2xl mx-auto px-4 py-12 text-center">
+      <h2 class="text-xl font-semibold mb-4">{t('dashboard.title')}</h2>
+      <p class="text-[--color-text-muted] mb-6">{t('dashboard.desc')}</p>
+      <a href="/simulate" class="text-[--color-accent] hover:underline">{t('dashboard.cta_simulate')} &rarr;</a>
+    </section>
+  </noscript>
+
+  <script>
+    // Future: mount Preact components for orders/positions when OKX Broker is approved
+    // import { h, render } from 'preact';
+    // const ordersMount = document.getElementById('recent-orders-mount');
+    // const positionsMount = document.getElementById('active-positions-mount');
+  </script>
+</Layout>

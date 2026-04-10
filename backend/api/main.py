@@ -64,6 +64,7 @@ from api.schemas import (
 from api.data_manager import DataManager
 from api.signal_scanner import SignalScanner
 from api.indicator_cache import IndicatorCache
+from api.okx_broker import router as okx_router
 from src.simulation.engine import CostModel
 from src.simulation.engine_fast import run_fast
 from src.simulation.monte_carlo import bootstrap_trades, compute_oos_metrics
@@ -262,6 +263,9 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+# OKX Broker router
+app.include_router(okx_router)
+
 app.add_middleware(GZipMiddleware, minimum_size=1000)
 
 app.add_middleware(
@@ -272,6 +276,7 @@ app.add_middleware(
         "http://localhost:4321",
         "http://localhost:3000",
     ],
+    allow_credentials=True,
     allow_methods=["GET", "POST"],
     allow_headers=["Content-Type", "Accept", "Origin"],
 )

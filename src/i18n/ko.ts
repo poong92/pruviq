@@ -2006,6 +2006,22 @@ export const ko: Record<TranslationKey, string> = {
     "백테스트가 실패하는 이유 — 그리고 피하는 방법 | PRUVIQ",
   "meta.why_backtests_fail_desc":
     "크립토 백테스트가 실패하는 5가지 이유: look-ahead bias, 생존자 편향, 과적합, 수수료 무시, 시장 레짐 변화. PRUVIQ가 각각을 어떻게 해결하는지 알아보세요.",
+  // Dashboard
+  "dashboard.tag": "트레이딩 대시보드",
+  "dashboard.title": "나의 트레이딩 허브",
+  "dashboard.desc": "OKX 계정 연결, 전략 실행, 성과 추적.",
+  "dashboard.orders_title": "최근 주문",
+  "dashboard.positions_title": "활성 포지션",
+  "dashboard.no_orders": "아직 주문이 없습니다. OKX 연결 후 전략을 실행하세요.",
+  "dashboard.no_positions": "활성 포지션이 없습니다.",
+  "dashboard.savings_title": "수수료 절감",
+  "dashboard.savings_desc":
+    "PRUVIQ를 통해 거래하고 OKX 브로커 할인으로 매 주문마다 절약하세요.",
+  "dashboard.savings_label": "수수료 할인",
+  "dashboard.cta_text": "먼저 백테스트를 실행한 후 원클릭으로 실행하세요.",
+  "dashboard.cta_simulate": "시뮬레이터 열기",
+  "nav.dashboard": "대시보드",
+
   // 404
   "404.title": "404 - 페이지를 찾을 수 없습니다 | PRUVIQ",
   "404.desc":
