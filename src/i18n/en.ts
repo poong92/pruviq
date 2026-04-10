@@ -240,10 +240,10 @@ export const en = {
     "Want to simulate this strategy with your own parameters?",
 
   // Strategy labels
-  "strategy.verified": "ACTIVE",
+  "strategy.verified": "VERIFIED",
   "strategy.testing": "TESTING",
   "strategy.killed": "RETIRED",
-  "strategy.shelved": "UNDER REVIEW",
+  "strategy.shelved": "SHELVED",
   "strategy.beginner": "BEGINNER",
   "strategy.intermediate": "INTERMEDIATE",
   "strategy.advanced": "ADVANCED",
