@@ -1,6 +1,8 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { useTranslations } from '../../i18n/index';
+import { COINS_ANALYZED } from '../../config/site-stats';
+const C = String(COINS_ANALYZED);
 import WeeklyLeaderboard from '../../components/WeeklyLeaderboard';
 import ErrorBoundary from '../../components/ErrorBoundary';
 import StaleBanner from '../../components/ui/StaleBanner.astro';
@@ -104,7 +106,7 @@ function formatDate(iso: string) {
             <p class="text-4xl mb-4">📊</p>
             <h3 class="text-xl font-semibold mb-3">주간 랭킹 준비 중</h3>
             <p class="text-[--color-text-muted] text-sm mb-6 max-w-md mx-auto">
-              매주 월요일 주간 전략 성과를 공개합니다. 570개 코인 기준 실제 백테스트 결과를 비교합니다.
+              매주 월요일 주간 전략 성과를 공개합니다. {C}개 코인 기준 실제 백테스트 결과를 비교합니다.
             </p>
             <div class="flex flex-col sm:flex-row gap-3 justify-center">
               <a href="/ko/strategies/ranking" class="inline-flex items-center justify-center bg-[--color-accent] text-[--color-bg] px-5 py-2.5 rounded font-semibold text-sm hover:bg-[--color-accent-dim] transition-colors no-underline">일일 랭킹 보기 &rarr;</a>

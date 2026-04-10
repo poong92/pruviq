@@ -1,6 +1,8 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { useTranslations } from '../i18n/index';
+import { COINS_ANALYZED } from '../config/site-stats';
+const C = String(COINS_ANALYZED);
 import WeeklyLeaderboard from '../components/WeeklyLeaderboard';
 import ErrorBoundary from '../components/ErrorBoundary';
 import StaleBanner from '../components/ui/StaleBanner.astro';
@@ -106,7 +108,7 @@ function formatDate(iso: string) {
             <p class="text-4xl mb-4">📊</p>
             <h3 class="text-xl font-semibold mb-3">Weekly Rankings Coming Soon</h3>
             <p class="text-[--color-text-muted] text-sm mb-6 max-w-md mx-auto">
-              We publish weekly strategy performance every Monday. Rankings compare real backtested results across 570 coins.
+              We publish weekly strategy performance every Monday. Rankings compare real backtested results across {C} coins.
             </p>
             <div class="flex flex-col sm:flex-row gap-3 justify-center">
               <a href="/strategies/ranking" class="inline-flex items-center justify-center bg-[--color-accent] text-[--color-bg] px-5 py-2.5 rounded font-semibold text-sm hover:bg-[--color-accent-dim] transition-colors no-underline">View Daily Rankings &rarr;</a>
