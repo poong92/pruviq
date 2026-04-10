@@ -24,10 +24,10 @@ export const ko: Record<TranslationKey, string> = {
   "hero.subtitle": "코딩 없음. 가입 없음. 비용 없음. 데이터만.",
   "hero.desc":
     "{coins}개 코인, 5개 전략 검증. 2개 폐기 — 모든 결과 공개. 실제 자금을 넣기 전에 어떤 전략이 진짜 통하는지 확인하세요.",
-  "hero.cta_primary": "시뮬레이터 열기 — 무료",
+  "hero.cta_primary": "첫 전략 무료 테스트",
   "hero.cta_builder": "나만의 전략 만들기",
-  "hero.cta1": "전략 탐색하기",
-  "hero.cta2": "트레이딩 IQ 높이기",
+  "hero.cta1": "생존한 전략 보기",
+  "hero.cta2": "백테스팅 기초 배우기",
   "hero.beginner_note":
     "백테스팅이 처음이라면? 실제 돈을 넣기 전에 과거 데이터로 전략을 테스트하는 것입니다.",
   "hero.stat1": "코인 시뮬레이션",
@@ -191,7 +191,7 @@ export const ko: Record<TranslationKey, string> = {
   "cta.desc1":
     "전략을 만들고, 백테스트를 돌리고, 결과를 확인하세요. 계정 불필요.",
   "cta.desc2": "$0 — 구독 없음, 이메일 불필요, 숨겨진 비용 없음.",
-  "cta.button1": "시뮬레이터 열기 — 무료",
+  "cta.button1": "지금 무료로 테스트",
   "cta.button2": "커뮤니티 참여",
   "cta.button3": "수수료 절약하기",
   "cta.disclaimer":

@@ -23,10 +23,10 @@ export const en = {
   "hero.subtitle": "No code. No signup. No cost. Just data.",
   "hero.desc":
     "We tested 5 strategies on {coins}+ coins. 2 killed. Every result published.",
-  "hero.cta_primary": "Open Simulator Free",
+  "hero.cta_primary": "Test Your First Strategy — Free",
   "hero.cta_builder": "Build Your Own Strategy",
-  "hero.cta1": "Explore Strategies",
-  "hero.cta2": "Raise Your Trading IQ",
+  "hero.cta1": "See What Survived",
+  "hero.cta2": "Learn Backtesting Basics",
   "hero.beginner_note":
     "New to backtesting? It means testing a strategy on past data before risking real money.",
   "hero.stat1": "Coins Simulated",
@@ -194,7 +194,7 @@ export const en = {
   "cta.desc1":
     "Build a strategy, run a backtest, see the results. No account needed.",
   "cta.desc2": "$0 — no subscription, no email, no hidden fees.",
-  "cta.button1": "Open Simulator Free",
+  "cta.button1": "Start Testing — It's Free",
   "cta.button2": "Join Community",
   "cta.button3": "Save on Fees",
   "cta.disclaimer":
