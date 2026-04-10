@@ -1,24 +1,35 @@
 """
 OKX Broker configuration.
-All values from environment variables — no hardcoded secrets.
+All secrets from environment variables — no hardcoded credentials.
 """
 from __future__ import annotations
 
 import os
 
-# OAuth (받으면 환경변수로 설정)
+# ── OAuth credentials ──
 OKX_CLIENT_ID = os.environ.get("OKX_CLIENT_ID", "")
 OKX_CLIENT_SECRET = os.environ.get("OKX_CLIENT_SECRET", "")
-OKX_REDIRECT_URI = os.environ.get("OKX_REDIRECT_URI", "https://pruviq.com/auth/okx/callback")
-OKX_BROKER_CODE = os.environ.get("OKX_BROKER_CODE", "PRUVIQ")
+OKX_REDIRECT_URI = os.environ.get(
+    "OKX_REDIRECT_URI", "https://api.pruviq.com/auth/okx/callback"
+)
+OKX_BROKER_CODE = os.environ.get("OKX_BROKER_CODE", "c12571e26a02OCDE")
 
-# API URLs
+# ── Encryption ──
+OKX_ENCRYPTION_KEY = os.environ.get("OKX_ENCRYPTION_KEY", "")
+
+# ── OKX API v5 URLs ──
 OKX_BASE_URL = "https://www.okx.com"
-OKX_OAUTH_AUTHORIZE = f"{OKX_BASE_URL}/v3/oauth/authorize"
-OKX_OAUTH_TOKEN = f"{OKX_BASE_URL}/v3/oauth/token"
+OKX_OAUTH_AUTHORIZE = f"{OKX_BASE_URL}/api/v5/oauth/authorize"
+OKX_OAUTH_TOKEN = f"{OKX_BASE_URL}/api/v5/oauth/token"
 
-# Demo mode (True = 테스트넷)
-OKX_DEMO_MODE = os.environ.get("OKX_DEMO_MODE", "true").lower() == "true"
+# ── Demo mode (testnet headers) ──
+OKX_DEMO_MODE = os.environ.get("OKX_DEMO_MODE", "false").lower() == "true"
 
-# Token storage path (암호화 저장 — Phase 2에서 구현)
-OKX_TOKEN_DIR = os.environ.get("OKX_TOKEN_DIR", "/tmp/pruviq-okx-tokens")
+# ── Database path (SQLite) ──
+OKX_DB_PATH = os.environ.get("OKX_DB_PATH", "")
+
+# ── Frontend URL for post-OAuth redirects ──
+FRONTEND_URL = os.environ.get("PRUVIQ_FRONTEND_URL", "https://pruviq.com")
+
+# ── Cookie domain (shared across subdomains) ──
+COOKIE_DOMAIN = os.environ.get("PRUVIQ_COOKIE_DOMAIN", ".pruviq.com")
