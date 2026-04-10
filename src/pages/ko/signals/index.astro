@@ -7,17 +7,17 @@ const t = useTranslations('ko');
 ---
 
 <Layout title={t('meta.signals_title')} description={t('meta.signals_desc')} lang="ko">
-  <section class="reveal pt-2 pb-16 md:pt-4 md:pb-24">
+  <section class="pt-6 pb-16 md:pt-10 md:pb-24">
     <div class="max-w-4xl mx-auto px-4">
 
       <!-- Header -->
-      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">실시간 시그널</p>
-      <div class="flex items-center gap-3 mb-4">
+      <p class="font-mono text-[--color-accent] text-sm mb-3 tracking-wider">실시간 시그널</p>
+      <div class="flex items-center gap-3 mb-5">
         <span class="relative flex h-3 w-3">
           <span class="animate-ping absolute inline-flex h-full w-full rounded-full live-dot-ping opacity-75"></span>
           <span class="relative inline-flex rounded-full h-3 w-3 bg-[--color-up]"></span>
         </span>
-        <h1 class="text-3xl md:text-5xl font-bold">{t('signals.title')}</h1>
+        <h1 class="text-3xl md:text-5xl lg:text-6xl font-extrabold">{t('signals.title')}</h1>
       </div>
       <p class="text-[--color-text-muted] text-lg mb-8 max-w-2xl">
         {t('signals.desc')}

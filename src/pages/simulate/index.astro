@@ -18,15 +18,15 @@ const quickStartPresets = (rankingsData.top3 || []).slice(0, 3);
 <Layout title={t('meta.simulate_title')} description={t('meta.simulate_desc')}>
   <!-- Onboarding header -->
   <!-- Compact Hero -->
-  <section id="simulator-onboarding" class="pt-2 pb-4 md:pt-4 md:pb-6">
+  <section id="simulator-onboarding" class="pt-6 pb-4 md:pt-8 md:pb-6">
     <div class="max-w-[1400px] mx-auto px-4">
       <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-4">
         <div>
-          <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('simulate.tag')}</p>
-          <h1 class="text-4xl md:text-5xl font-extrabold">
+          <p class="font-mono text-[--color-accent] text-sm mb-3 tracking-wider">{t('simulate.tag')}</p>
+          <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold">
             {t('simulate.title1')} <span class="text-[--color-accent]">{t('simulate.title2')}</span>
           </h1>
-          <p class="text-[--color-text-muted] text-xl mt-2 max-w-2xl">{t('simulate.desc')}</p>
+          <p class="text-[--color-text-muted] text-xl mt-3 max-w-2xl leading-relaxed">{t('simulate.desc')}</p>
         </div>
         <div class="flex items-center gap-3 shrink-0">
           <a href="/simulate?preset=bb-squeeze-short"

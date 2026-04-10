@@ -31,15 +31,15 @@ function formatDate(iso: string) {
 ---
 
 <Layout title={t('meta.leaderboard_title')} description={t('meta.leaderboard_desc')}>
-  <section class="pt-2 pb-12 reveal">
+  <section class="pt-6 pb-12 md:pt-10">
     <div class="max-w-4xl mx-auto px-4">
 
       <StrategyTabs active="leaderboard" lang="en" />
 
       <!-- Header -->
-      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('leaderboard.tag')}</p>
-      <h1 class="text-3xl md:text-5xl font-bold mb-4">{t('leaderboard.title')}</h1>
-      <p class="text-[--color-text-muted] text-lg mb-10 max-w-2xl leading-relaxed">
+      <p class="font-mono text-[--color-accent] text-sm mb-3 tracking-wider">{t('leaderboard.tag')}</p>
+      <h1 class="text-3xl md:text-5xl lg:text-6xl font-extrabold mb-5">{t('leaderboard.title')}</h1>
+      <p class="text-[--color-text-muted] text-lg md:text-xl mb-5 max-w-2xl leading-relaxed">
         {t('leaderboard.desc')}
       </p>
 

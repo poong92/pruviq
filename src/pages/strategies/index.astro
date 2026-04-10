@@ -348,18 +348,18 @@ const presetDirColors: Record<string, string> = { long: '--color-accent', short:
       </p>
 
       {simulatorPresets.length > 0 && (
-        <div class="mt-12">
-          <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">SIMULATOR PRESETS</p>
-          <h2 class="text-2xl md:text-3xl font-bold mb-2">{t('strategies.presets_title').replace('{count}', String(simulatorPresets.length)).replace(/\(\d+\)/, '').trim()} <span class="px-2 py-0.5 rounded-full bg-[--color-accent]/10 text-[--color-accent] text-xs font-mono">{simulatorPresets.length}</span></h2>
-          <p class="text-[--color-text-muted] text-sm mb-6">
+        <div class="mt-16 pt-12 border-t border-[--color-border]">
+          <p class="font-mono text-[--color-accent] text-sm mb-3 tracking-wider">SIMULATOR PRESETS</p>
+          <h2 class="text-2xl md:text-3xl font-bold mb-3">{t('strategies.presets_title').replace('{count}', String(simulatorPresets.length)).replace(/\(\d+\)/, '').trim()} <span class="section-count-badge">{simulatorPresets.length}</span></h2>
+          <p class="text-[--color-text-muted] text-sm mb-8 max-w-2xl">
             {t('strategies.presets_desc')}
           </p>
           {presetDirOrder.map((dir, idx) => (
-            <div class={idx > 0 ? 'mt-6' : ''}>
-              <div class="flex items-center gap-2 mb-3">
+            <div class={idx > 0 ? 'mt-8' : ''}>
+              <div class="flex items-center gap-2 mb-4">
                 <span class={`font-mono text-sm font-bold tracking-wider py-1 px-3 rounded-md ${dir === 'long' ? 'bg-[--color-accent]/10' : dir === 'short' ? 'bg-[--color-red]/10' : 'bg-[--color-yellow]/10'}`} style={`color: var(${presetDirColors[dir]})`}>{presetDirLabels[dir]}</span>
                 <div class="flex-1 border-t border-[--color-border]"></div>
-                <span class="font-mono text-[10px] text-[--color-text-disabled]">{presetsByDirection[dir].length}</span>
+                <span class="font-mono text-xs text-[--color-text-disabled]">{presetsByDirection[dir].length}</span>
               </div>
               <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {presetsByDirection[dir].map((preset) => {
@@ -373,18 +373,18 @@ const presetDirColors: Record<string, string> = { long: '--color-accent', short:
                   return (
                   <a
                     href={`/simulate?preset=${preset.id}`}
-                    class={`relative flex flex-col border border-[--color-border] rounded-lg px-4 py-3 bg-[--color-bg-card] hover:border-[--color-accent] transition-colors group shadow-[var(--shadow-sm)] preset-card ${glowClass}`}
+                    class={`relative flex flex-col group preset-card-enhanced ${glowClass}`}
                   >
                     {isTodaysPick && (
                       <span class="absolute -top-2.5 left-3 font-mono text-[10px] tracking-wider px-2 py-0.5 rounded-full bg-[--color-accent] text-black font-bold z-10">
                         {t('strategies.todays_pick')}
                       </span>
                     )}
-                    <div class="flex items-center justify-between">
+                    <div class="flex items-center justify-between relative z-[1]">
                       <div class="min-w-0">
-                        <p class="font-semibold text-sm truncate">{preset.name}</p>
+                        <p class="font-semibold text-sm truncate group-hover:text-[--color-accent] transition-colors">{preset.name}</p>
                         {stats && (
-                          <p class="text-xs font-mono text-[--color-text-muted] mt-0.5">
+                          <p class="text-xs font-mono text-[--color-text-muted] mt-1">
                             WR <span class={stats.win_rate >= 55 ? 'stat-positive' : stats.win_rate < 45 ? 'stat-negative' : 'stat-warning'}>{stats.win_rate.toFixed(1)}%</span> · PF <span class={stats.profit_factor >= 1.5 ? 'stat-positive' : stats.profit_factor < 1.0 ? 'stat-negative' : 'stat-warning'}>{stats.profit_factor.toFixed(2)}</span>
                             {stats.total_return !== undefined && (
                               <span class={stats.total_return >= 0 ? 'text-[--color-up]' : 'text-[--color-red]'}> · {stats.total_return >= 0 ? '+' : ''}{stats.total_return.toFixed(1)}%</span>
@@ -394,14 +394,14 @@ const presetDirColors: Record<string, string> = { long: '--color-accent', short:
                       </div>
                       <div class="flex items-center gap-2 shrink-0 ml-3">
                         {preset.direction && (
-                          <span class={`font-mono text-xs px-1.5 py-0.5 rounded border ${preset.direction === 'long' ? 'text-[--color-accent] border-[--color-accent]/30' : preset.direction === 'short' ? 'text-[--color-red] border-[--color-red]/30' : 'text-[--color-yellow] border-[--color-yellow]/30'}`}>
+                          <span class={`font-mono text-xs px-1.5 py-0.5 rounded border ${preset.direction === 'long' ? 'text-[--color-accent] border-[--color-accent]/30 bg-[--color-accent]/5' : preset.direction === 'short' ? 'text-[--color-red] border-[--color-red]/30 bg-[--color-red]/5' : 'text-[--color-yellow] border-[--color-yellow]/30 bg-[--color-yellow]/5'}`}>
                             {preset.direction.toUpperCase()}
                           </span>
                         )}
-                        <span class="text-[--color-text-muted] text-xs group-hover:text-[--color-accent]">&rarr;</span>
+                        <span class="text-[--color-text-muted] text-xs group-hover:text-[--color-accent] transition-colors">&rarr;</span>
                       </div>
                     </div>
-                    <p class="text-[10px] font-mono text-[--color-text-muted] mt-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <p class="text-[10px] font-mono text-[--color-text-muted] mt-2 opacity-0 group-hover:opacity-100 transition-opacity relative z-[1]">
                       {t('strategies.click_to_simulate')} &rarr;
                     </p>
                   </a>
@@ -413,9 +413,9 @@ const presetDirColors: Record<string, string> = { long: '--color-accent', short:
         </div>
       )}
 
-      <div class="mt-12 border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] text-center shadow-[var(--shadow-md)]">
-        <p class="font-mono text-[--color-accent] text-sm mb-2">{t('strategies.more_tag')}</p>
-        <p class="text-[--color-text-muted] text-sm mb-4">
+      <div class="mt-16 rounded-2xl p-8 md:p-10 text-center section-accent-glow border border-[--color-border] shadow-[var(--shadow-md)]">
+        <p class="font-mono text-[--color-accent] text-sm mb-3 tracking-wider">{t('strategies.more_tag')}</p>
+        <p class="text-[--color-text-muted] text-base mb-6 max-w-lg mx-auto">
           {t('strategies.more_desc')}
         </p>
         <div class="flex flex-wrap gap-3 justify-center">
