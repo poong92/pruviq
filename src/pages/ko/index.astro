@@ -51,7 +51,7 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
           <div class="mt-6 flex items-start gap-3 px-5 py-4 rounded-xl border border-[--color-verified-border] bg-[--color-verified-subtle] shadow-[0_2px_8px_rgba(245,158,11,0.08)]">
             <span class="text-[--color-verified] text-lg leading-none mt-0.5" aria-hidden="true">&#9888;</span>
             <p class="text-sm text-[--color-text-secondary]">
-              <strong class="text-[--color-verified]">88개 조합 검증. 2개 폐기, 2개 보류, 1개 검증 완료.</strong> 모든 결과 공개. <a href="/ko/strategies" class="text-[--color-accent] hover:underline">전부 보기 &rarr;</a>
+              <strong class="text-[--color-verified]">{allStrategies.length}개 전략 검증. {allStrategies.filter(s => s.data.status === 'killed').length}개 폐기, {allStrategies.filter(s => s.data.status === 'shelved').length}개 보류, {verifiedCount}개 검증 완료.</strong> 모든 결과 공개. <a href="/ko/strategies" class="text-[--color-accent] hover:underline">전부 보기 &rarr;</a>
             </p>
           </div>
           <!-- CTA -->

@@ -51,7 +51,7 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
           <div class="mt-8 flex items-start gap-3 px-5 py-4 rounded-xl border border-[--color-verified-border] bg-[--color-verified-subtle] shadow-[0_2px_8px_rgba(245,158,11,0.08)]">
             <span class="text-[--color-verified] text-lg leading-none mt-0.5" aria-hidden="true">&#9888;</span>
             <p class="text-sm text-[--color-text-secondary]">
-              <strong class="text-[--color-verified]">88 combinations tested. 2 killed, 2 shelved, 1 verified.</strong> Every result published. <a href="/strategies" class="text-[--color-accent] hover:underline">See them all &rarr;</a>
+              <strong class="text-[--color-verified]">{allStrategies.length} strategies tested. {allStrategies.filter(s => s.data.status === 'killed').length} killed, {allStrategies.filter(s => s.data.status === 'shelved').length} shelved, {verifiedCount} verified.</strong> Every result published. <a href="/strategies" class="text-[--color-accent] hover:underline">See them all &rarr;</a>
             </p>
           </div>
           <!-- CTA -->

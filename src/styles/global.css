@@ -819,6 +819,13 @@ textarea:focus-visible {
   .stat-glass { padding: 1rem 0.875rem; }
   .stat-glass p:first-child { font-size: 1.25rem; }
 
+  /* Mobile card padding */
+  .card-premium { padding: 1.25rem; }
+  .card-enterprise { padding: 1.25rem; }
+
+  /* Mobile FAQ touch targets */
+  details summary { min-height: 52px; }
+
   /* Full-width buttons on mobile */
   .btn-lg { width: 100%; justify-content: center; }
 
