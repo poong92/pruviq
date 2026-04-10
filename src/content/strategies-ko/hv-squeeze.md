@@ -10,6 +10,7 @@ profitFactor: 1.42
 timeframe: "1H"
 coins: 577
 dateAdded: "2026-01-15"
+dateUpdated: "2026-04-10"
 tags: ["historical-volatility", "squeeze", "shelved"]
 ---
 

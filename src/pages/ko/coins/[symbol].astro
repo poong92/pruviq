@@ -31,12 +31,23 @@ const { symbolUpper } = Astro.props;
 const displayName = symbolUpper.replace('USDT', '') + '/USDT';
 const coinName = symbolUpper.replace('USDT', '');
 const fullName = coinMeta[symbolUpper]?.name || coinName;
-const metaDesc = `${fullName} (${displayName}) 트레이딩 전략 시뮬레이션 — BB Squeeze SHORT 백테스트. 2년 이상 데이터로 진입/청산 신호, 승률, 수익 팩터 확인. PRUVIQ 무료 제공.`;
+
+const majors = ['BTC', 'ETH', 'BNB', 'SOL', 'XRP', 'ADA', 'DOGE', 'AVAX', 'DOT', 'MATIC'];
+const memeCoins = ['PEPE', 'SHIB', 'FLOKI', 'BONK', 'WIF', 'MEME', 'DOGE'];
+const aiCoins = ['RNDR', 'FET', 'WLD', 'OCEAN', 'AGIX', 'TAO', 'AKT'];
+const coinHook = majors.includes(coinName)
+  ? `대표 암호화폐`
+  : memeCoins.includes(coinName)
+    ? `고변동성 밈 코인`
+    : aiCoins.includes(coinName)
+      ? `AI 섹터 토큰`
+      : `암호화폐 선물 자산`;
+const metaDesc = `${fullName} (${displayName}) — ${coinHook}. 2년 이상 데이터로 다양한 전략 백테스트. 진입/청산 신호, 승률, 수익 팩터 확인. PRUVIQ 무료 제공.`;
 const datasetJsonLd = JSON.stringify({
   "@context": "https://schema.org",
   "@type": "Dataset",
   "name": `${fullName} 트레이딩 전략 백테스트`,
-  "description": `${displayName} BB Squeeze SHORT 전략 시뮬레이션 결과 — 2년 이상의 과거 OHLCV 데이터`,
+  "description": `${displayName} 트레이딩 전략 시뮬레이션 결과 — 2년 이상의 과거 OHLCV 데이터`,
   "url": `https://pruviq.com/ko/coins/${symbol}/`,
   "isAccessibleForFree": true,
   "temporalCoverage": "2024/2026",
