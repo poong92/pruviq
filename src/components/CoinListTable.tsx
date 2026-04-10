@@ -621,45 +621,73 @@ export default function CoinListTable({ lang = "en" }: { lang?: "en" | "ko" }) {
                     {rank}
                   </td>
 
-                  <td class="px-2 py-3 sm:py-2.5 whitespace-nowrap">
+                  <td class="px-3 py-3 sm:px-2 sm:py-2.5" colSpan={1}>
                     <a
                       href={coinUrl}
-                      class="flex items-center gap-2.5 hover:text-[--color-accent] transition-colors"
+                      class="block hover:text-[--color-accent] transition-colors"
                       tabIndex={-1}
                       aria-hidden="true"
                     >
-                      <CoinLogo image={coin.image} symbol={coin.symbol} />
-                      <div class="flex-1 min-w-0">
-                        <div class="flex items-center gap-1.5">
-                          <span class="font-semibold">
-                            {coin.symbol.endsWith("USDT")
-                              ? coin.symbol.slice(0, -4)
-                              : coin.symbol}
-                          </span>
-                          {coin.name && (
+                      {/* Row 1: Logo + Name + Price + Change */}
+                      <div class="flex items-center gap-2.5">
+                        <CoinLogo image={coin.image} symbol={coin.symbol} />
+                        <div class="flex-1 min-w-0">
+                          <div class="flex items-center gap-1.5">
+                            <span class="font-semibold whitespace-nowrap">
+                              {coin.symbol.endsWith("USDT")
+                                ? coin.symbol.slice(0, -4)
+                                : coin.symbol}
+                            </span>
                             <span class="text-[--color-text-muted] text-[0.6875rem] hidden sm:inline">
                               {coin.name}
                             </span>
-                          )}
+                            <span class="text-[--color-text-muted] text-[0.625rem] sm:hidden truncate">
+                              {coin.name}
+                            </span>
+                          </div>
                         </div>
-                        {/* Mobile: coin name subtitle */}
-                        {coin.name && (
-                          <span class="text-[--color-text-muted] text-[0.625rem] sm:hidden block truncate">
-                            {coin.name}
+                        {/* Mobile: price + change on right */}
+                        <div class="flex items-center gap-2 sm:hidden shrink-0">
+                          <span class="text-sm font-semibold tabular-nums">
+                            ${formatPrice(coin.price)}
+                          </span>
+                          <span
+                            class={`text-[0.625rem] tabular-nums font-bold px-1.5 py-0.5 rounded-md ${(coin.change_24h ?? 0) >= 0 ? "text-[--color-up] bg-[--color-up]/10" : "text-[--color-down] bg-[--color-down]/10"}`}
+                          >
+                            {(coin.change_24h ?? 0) >= 0 ? "+" : ""}
+                            {(coin.change_24h ?? 0).toFixed(1)}%
+                          </span>
+                        </div>
+                      </div>
+                      {/* Row 2 (mobile only): MCap, Vol, 7D */}
+                      <div class="flex items-center gap-3 mt-1 ml-[34px] text-[0.5625rem] text-[--color-text-muted] tabular-nums sm:hidden">
+                        {coin.market_cap != null && (
+                          <span>
+                            MCap{" "}
+                            <span class="text-[--color-text-secondary]">
+                              {formatMarketCap(coin.market_cap)}
+                            </span>
                           </span>
                         )}
-                      </div>
-                      {/* Mobile: price + change badge on right side */}
-                      <div class="flex flex-col items-end gap-0.5 sm:hidden ml-auto">
-                        <span class="text-sm font-semibold tabular-nums">
-                          ${formatPrice(coin.price)}
-                        </span>
-                        <span
-                          class={`text-[0.625rem] tabular-nums font-bold px-1.5 py-0.5 rounded ${(coin.change_24h ?? 0) >= 0 ? "text-[--color-up] bg-[--color-up]/10" : "text-[--color-down] bg-[--color-down]/10"}`}
-                        >
-                          {(coin.change_24h ?? 0) >= 0 ? "+" : ""}
-                          {(coin.change_24h ?? 0).toFixed(1)}%
-                        </span>
+                        {coin.volume_24h != null && (
+                          <span>
+                            Vol{" "}
+                            <span class="text-[--color-text-secondary]">
+                              {formatVolume(coin.volume_24h)}
+                            </span>
+                          </span>
+                        )}
+                        {coin.change_7d != null && (
+                          <span>
+                            7D{" "}
+                            <span
+                              class={`font-medium ${coin.change_7d >= 0 ? "text-[--color-up]" : "text-[--color-down]"}`}
+                            >
+                              {coin.change_7d >= 0 ? "+" : ""}
+                              {coin.change_7d.toFixed(1)}%
+                            </span>
+                          </span>
+                        )}
                       </div>
                     </a>
                   </td>
