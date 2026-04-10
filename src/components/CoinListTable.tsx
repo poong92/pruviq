@@ -492,7 +492,7 @@ export default function CoinListTable({ lang = "en" }: { lang?: "en" | "ko" }) {
 
       {/* Table */}
       <div class="relative overflow-x-auto border border-[--color-border] rounded-xl bg-[--color-bg-card]">
-        <table class="w-full min-w-[900px] border-collapse font-mono text-[0.8125rem]">
+        <table class="w-full sm:min-w-[900px] border-collapse font-mono text-[0.8125rem]">
           <caption class="sr-only">{t.tableCaption}</caption>
           <thead>
             <tr>
@@ -507,7 +507,7 @@ export default function CoinListTable({ lang = "en" }: { lang?: "en" | "ko" }) {
                 currentSort={sortBy}
                 sortDesc={sortDesc}
                 onClick={handleSort}
-                className="text-left min-w-[160px]"
+                className="text-left"
               >
                 {t.coin}
               </SortableHeader>
@@ -621,10 +621,10 @@ export default function CoinListTable({ lang = "en" }: { lang?: "en" | "ko" }) {
                     {rank}
                   </td>
 
-                  <td class="px-2 py-3 sm:py-2.5 whitespace-nowrap">
+                  <td class="px-3 py-3 sm:px-2 sm:py-2.5 whitespace-nowrap">
                     <a
                       href={coinUrl}
-                      class="flex items-center gap-2.5 hover:text-[--color-accent] transition-colors"
+                      class="flex items-center gap-3 sm:gap-2.5 hover:text-[--color-accent] transition-colors"
                       tabIndex={-1}
                       aria-hidden="true"
                     >
@@ -649,13 +649,13 @@ export default function CoinListTable({ lang = "en" }: { lang?: "en" | "ko" }) {
                           </span>
                         )}
                       </div>
-                      {/* Mobile: price + change badge on right side */}
-                      <div class="flex flex-col items-end gap-0.5 sm:hidden ml-auto">
+                      {/* Mobile: price + change on right */}
+                      <div class="flex flex-col items-end gap-0.5 sm:hidden shrink-0">
                         <span class="text-sm font-semibold tabular-nums">
                           ${formatPrice(coin.price)}
                         </span>
                         <span
-                          class={`text-[0.625rem] tabular-nums font-bold px-1.5 py-0.5 rounded ${(coin.change_24h ?? 0) >= 0 ? "text-[--color-up] bg-[--color-up]/10" : "text-[--color-down] bg-[--color-down]/10"}`}
+                          class={`text-[0.625rem] tabular-nums font-bold px-1.5 py-0.5 rounded-md ${(coin.change_24h ?? 0) >= 0 ? "text-[--color-up] bg-[--color-up]/10" : "text-[--color-down] bg-[--color-down]/10"}`}
                         >
                           {(coin.change_24h ?? 0) >= 0 ? "+" : ""}
                           {(coin.change_24h ?? 0).toFixed(1)}%
