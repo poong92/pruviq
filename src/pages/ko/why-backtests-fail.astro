@@ -1,8 +1,10 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { useTranslations } from '../../i18n/index';
+import siteStats from '../../../public/data/site-stats.json';
 
 const t = useTranslations('ko');
+const coinsAnalyzed = (siteStats as Record<string, number>).coins_analyzed ?? 570;
 
 const reasons = [
   {
@@ -18,7 +20,7 @@ const reasons = [
   {
     title: 'Overfitting (과적합)',
     desc: '과거 데이터에서 백테스트가 완벽해 보일 때까지 파라미터를 조정하지만, 새로운 데이터에서는 전략이 실패합니다. 20개의 최적화된 파라미터를 가진 전략은 다음 달에 작동하지 않을 가능성이 높습니다.',
-    fix: 'PRUVIQ는 570개 이상의 코인에서 동일한 전략을 실행할 수 있게 하여 표본 외 테스트를 장려합니다. 3개 코인에서만 작동하면 과적합입니다. 또한 몬테카를로 시뮬레이션을 보여주어 결과가 무작위성에 얼마나 민감한지 드러냅니다.'
+    fix: `PRUVIQ는 ${coinsAnalyzed}개 이상의 코인에서 동일한 전략을 실행할 수 있게 하여 표본 외 테스트를 장려합니다. 3개 코인에서만 작동하면 과적합입니다. 또한 몬테카를로 시뮬레이션을 보여주어 결과가 무작위성에 얼마나 민감한지 드러냅니다.`
   },
   {
     title: '수수료와 슬리피지 무시',
