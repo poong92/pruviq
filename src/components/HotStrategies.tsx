@@ -11,7 +11,7 @@ import { buildSimulatorUrl } from "../config/simulation-context";
 interface HotStrategy {
   strategy_id: string;
   strategy_name: string;
-  direction: string;
+  direction: "long" | "short" | "both";
   status: string;
   period: string;
   profit_factor: number;
