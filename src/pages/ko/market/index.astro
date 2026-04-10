@@ -2,8 +2,10 @@
 import Layout from '../../../layouts/Layout.astro';
 import { useTranslations } from '../../../i18n/index';
 import marketDataRaw from '../../../../public/data/market.json';
+import siteStats from '../../../../public/data/site-stats.json';
 
 const t = useTranslations('ko');
+const coinsAnalyzed = (siteStats as Record<string, number>).coins_analyzed ?? 570;
 const marketDataJson = JSON.stringify(marketDataRaw);
 ---
 
@@ -57,7 +59,7 @@ const marketDataJson = JSON.stringify(marketDataRaw);
             </div>
             <p class="text-[--color-text-muted] text-sm mb-4">{t('market.noscript_desc')}</p>
             <div class="flex flex-wrap gap-3">
-              <a href="/ko/coins" class="text-[--color-accent] text-sm font-semibold hover:underline">570+ 코인 탐색 &rarr;</a>
+              <a href="/ko/coins" class="text-[--color-accent] text-sm font-semibold hover:underline">{coinsAnalyzed}+ 코인 탐색 &rarr;</a>
               <a href="/ko/simulate" class="text-[--color-accent] text-sm font-semibold hover:underline">시뮬레이션 실행 &rarr;</a>
               <a href="/ko/strategies" class="text-[--color-accent] text-sm font-semibold hover:underline">전략 보기 &rarr;</a>
             </div>

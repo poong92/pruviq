@@ -1,11 +1,13 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { useTranslations } from '../i18n/index';
+import siteStats from '../../public/data/site-stats.json';
 
 const t = useTranslations('en');
+const coinsAnalyzed = (siteStats as Record<string, number>).coins_analyzed ?? 570;
 
 const criteria = [
-  { label: 'Multi-coin support', desc: '570+ coins across major exchanges — test any pair, not just BTC/ETH.', pruviq: true },
+  { label: 'Multi-coin support', desc: `${coinsAnalyzed}+ coins across major exchanges — test any pair, not just BTC/ETH.`, pruviq: true },
   { label: 'Real fees & slippage', desc: 'Every backtest includes maker/taker fees, funding rates, and slippage modeling.', pruviq: true },
   { label: 'Failure transparency', desc: 'We publicly show strategies we killed — not just winners.', pruviq: true },
   { label: 'No-code interface', desc: 'Pick indicators, set parameters, run. No Pine Script or Python required.', pruviq: true },
@@ -14,7 +16,7 @@ const criteria = [
 
 const comparisonRows = [
   { feature: 'Price', pruviq: '$0 — no subscription', tv: '$14.95–59.95/mo', c3: '$14.50–49.50/mo', win: 'p' },
-  { feature: 'Coins', pruviq: '570+', tv: '~50 crypto pairs', c3: '~20 supported', win: 'p' },
+  { feature: 'Coins', pruviq: `${coinsAnalyzed}+`, tv: '~50 crypto pairs', c3: '~20 supported', win: 'p' },
   { feature: 'Coding required', pruviq: 'No code', tv: 'Pine Script', c3: 'Template-based', win: 'p' },
   { feature: 'Real fees modeled', pruviq: 'Yes (maker/taker/funding)', tv: 'Basic commission only', c3: 'Partial', win: 'p' },
   { feature: 'Failed strategies shown', pruviq: 'Yes (88 killed)', tv: 'No', c3: 'No', win: 'p' },
@@ -26,7 +28,7 @@ const jsonLd = {
   "@context": "https://schema.org",
   "@type": "Article",
   "headline": "Best Free Crypto Backtesting Platform (2026)",
-  "description": "Compare the best crypto backtesting platforms in 2026. PRUVIQ offers free, no-code backtesting with 570+ coins, real fees, and transparent failure data.",
+  "description": `Compare the best crypto backtesting platforms in 2026. PRUVIQ offers free, no-code backtesting with ${coinsAnalyzed}+ coins, real fees, and transparent failure data.`,
   "datePublished": "2026-03-22",
   "dateModified": "2026-03-22",
   "author": { "@type": "Organization", "name": "PRUVIQ", "url": "https://pruviq.com" },
@@ -105,7 +107,7 @@ const jsonLd = {
       <h2 class="text-2xl md:text-3xl font-bold mb-8">How PRUVIQ Meets Every Criterion</h2>
       <div class="grid md:grid-cols-2 gap-6">
         <div class="card-enterprise card-hover p-6">
-          <h3 class="font-bold mb-2">570+ Coins, Real Data</h3>
+          <h3 class="font-bold mb-2">{coinsAnalyzed}+ Coins, Real Data</h3>
           <p class="text-sm text-[--color-text-muted]">Test on any Binance Futures pair with 2+ years of OHLCV data. Not just the top 10 — every listed coin.</p>
         </div>
         <div class="card-enterprise card-hover p-6">

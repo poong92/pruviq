@@ -1,8 +1,10 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { useTranslations } from '../i18n/index';
+import siteStats from '../../public/data/site-stats.json';
 
 const t = useTranslations('en');
+const coinsAnalyzed = (siteStats as Record<string, number>).coins_analyzed ?? 570;
 
 const steps = [
   { num: '01', title: t('how.step1'), desc: t('how.step1_desc') },
@@ -11,7 +13,7 @@ const steps = [
 ];
 
 const features = [
-  { stat: '570+', label: 'Coins', desc: 'Every Binance Futures pair — not just the top 10.' },
+  { stat: `${coinsAnalyzed}+`, label: 'Coins', desc: 'Every Binance Futures pair — not just the top 10.' },
   { stat: '36', label: 'Strategies', desc: 'Pre-built strategies you can test immediately, or customize your own.' },
   { stat: '2+ Years', label: 'Historical Data', desc: 'OHLCV candles with realistic fee and slippage modeling.' },
   { stat: 'Real Fees', label: 'Included', desc: 'Maker/taker fees, funding rates, and slippage in every simulation.' },
@@ -21,7 +23,7 @@ const jsonLd = {
   "@context": "https://schema.org",
   "@type": "Article",
   "headline": "Free Crypto Trading Simulator — No Account Needed",
-  "description": "Practice crypto trading with a free simulator. Test 570+ coins with real fees, 36 strategies, and 2+ years of historical data. No signup required.",
+  "description": `Practice crypto trading with a free simulator. Test ${coinsAnalyzed}+ coins with real fees, 36 strategies, and 2+ years of historical data. No signup required.`,
   "datePublished": "2026-03-22",
   "dateModified": "2026-03-22",
   "author": { "@type": "Organization", "name": "PRUVIQ", "url": "https://pruviq.com" },
@@ -42,7 +44,7 @@ const jsonLd = {
         <span class="block text-lg md:text-2xl font-normal text-[--color-text-muted] mt-2">Test strategies with real market data before risking real money.</span>
       </h1>
       <p class="text-[--color-text-muted] text-lg max-w-2xl mb-6">
-        PRUVIQ's trading simulator lets you backtest any strategy on 570+ cryptocurrencies
+        PRUVIQ's trading simulator lets you backtest any strategy on {coinsAnalyzed}+ cryptocurrencies
         with realistic fees — completely free, no signup required.
       </p>
     </div>
