@@ -110,8 +110,15 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
     <p class="text-xs text-[--color-text-muted] font-mono text-center mt-3 opacity-60">Updated live · Last simulation: 2 min ago</p>
   </div>
 
+  <!-- Decorative wave transition -->
+  <div class="relative h-16 md:h-24 -mb-1 overflow-hidden pointer-events-none" aria-hidden="true">
+    <svg viewBox="0 0 1440 96" class="absolute bottom-0 w-full" preserveAspectRatio="none">
+      <path d="M0,96 L0,40 C240,80 480,0 720,40 C960,80 1200,10 1440,50 L1440,96 Z" fill="rgba(255,255,255,0.015)" />
+      <path d="M0,96 L0,60 C360,20 720,80 1080,30 C1260,10 1380,40 1440,35 L1440,96 Z" fill="rgba(255,255,255,0.01)" />
+    </svg>
+  </div>
+
   <!-- HOW IT WORKS -->
-  <hr class="section-divider" />
   <section class="max-w-7xl mx-auto px-6 py-24 md:py-32 section-elevated">
     <p class="font-mono text-[--color-accent] text-sm tracking-wider text-center mb-4">HOW IT WORKS</p>
     <h2 class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-center mb-5">Three Steps to Verified Results</h2>
