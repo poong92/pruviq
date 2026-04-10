@@ -6,7 +6,11 @@ interface Props {
 const { color = 'var(--color-accent)', opacity = '0.06' } = Astro.props;
 ---
 <div class="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
-  <div class="absolute left-1/2 top-[20%] -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] rounded-full opacity-[0.08] blur-[120px]"
+  <!-- Animated ambient orbs -->
+  <div class="hero-orb hero-orb-cyan"></div>
+  <div class="hero-orb hero-orb-purple"></div>
+  <!-- Central glow -->
+  <div class="absolute left-1/2 top-[15%] -translate-x-1/2 -translate-y-1/2 w-[900px] h-[600px] rounded-full opacity-[0.10] blur-[140px]"
     style={`background: ${color};`}></div>
   <!-- Grid pattern overlay -->
   <div class="absolute inset-0 hero-grid"></div>

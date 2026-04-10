@@ -176,21 +176,54 @@
 /* ─── Hero background depth ─── */
 .hero-bg-depth {
   background:
-    radial-gradient(ellipse at 50% -15%, rgba(44,181,232,0.22) 0%, transparent 50%),
-    radial-gradient(ellipse at 75% 30%, rgba(168,85,247,0.10) 0%, transparent 40%),
-    radial-gradient(ellipse at 25% 60%, rgba(6,182,212,0.08) 0%, transparent 40%),
-    radial-gradient(ellipse at 50% 100%, rgba(0,0,0,0.4) 0%, transparent 50%),
-    linear-gradient(180deg, #08090E 0%, #0B1220 35%, #0A0F1A 65%, #09090B 100%);
+    radial-gradient(ellipse at 50% -20%, rgba(44,181,232,0.28) 0%, transparent 45%),
+    radial-gradient(ellipse at 80% 20%, rgba(168,85,247,0.12) 0%, transparent 35%),
+    radial-gradient(ellipse at 15% 50%, rgba(6,182,212,0.10) 0%, transparent 35%),
+    radial-gradient(ellipse at 50% 110%, rgba(0,0,0,0.5) 0%, transparent 45%),
+    linear-gradient(180deg, #060810 0%, #0A1225 30%, #0A0F1A 60%, #09090B 100%);
 }
 
 /* ─── Subtle grid pattern for hero ─── */
 .hero-grid {
   background-image:
-    linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
-  background-size: 64px 64px;
-  mask-image: radial-gradient(ellipse at 50% 50%, black 30%, transparent 70%);
-  -webkit-mask-image: radial-gradient(ellipse at 50% 50%, black 30%, transparent 70%);
+    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse at 50% 40%, black 20%, transparent 65%);
+  -webkit-mask-image: radial-gradient(ellipse at 50% 40%, black 20%, transparent 65%);
+}
+
+/* ─── Hero ambient glow orbs ─── */
+.hero-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+  will-change: transform;
+}
+.hero-orb-cyan {
+  width: 500px;
+  height: 500px;
+  background: rgba(44,181,232,0.15);
+  top: -10%;
+  left: 30%;
+  animation: orb-drift 20s ease-in-out infinite alternate;
+}
+.hero-orb-purple {
+  width: 400px;
+  height: 400px;
+  background: rgba(168,85,247,0.08);
+  top: 20%;
+  right: 10%;
+  animation: orb-drift 25s ease-in-out infinite alternate-reverse;
+}
+@keyframes orb-drift {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(30px, -20px) scale(1.05); }
+  100% { transform: translate(-20px, 15px) scale(0.95); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-orb { animation: none; }
 }
 
 /* ─── Stats glass card ─── */
@@ -232,7 +265,9 @@
   background: radial-gradient(ellipse at 50% 0%, rgba(0,220,130,0.06) 0%, transparent 60%);
 }
 .section-glow-cyan {
-  background: radial-gradient(ellipse at 50% 100%, rgba(44,181,232,0.05) 0%, transparent 60%);
+  background:
+    radial-gradient(ellipse at 50% 50%, rgba(44,181,232,0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 30% 80%, rgba(6,182,212,0.04) 0%, transparent 40%);
 }
 
 /* ─── Alternating section surfaces ─── */
@@ -525,6 +560,26 @@ a:not(.btn):not(.btn-primary):not(.btn-ghost):not(.btn-outline):not(.card-hover)
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+/* ─── Gradient text shimmer for hero ─── */
+.gradient-text-shimmer {
+  background: linear-gradient(
+    90deg,
+    #00DC82 0%, #2CB5E8 25%, #5CC8ED 50%, #E4E4E7 75%, #2CB5E8 100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: text-shimmer 4s ease-in-out infinite;
+}
+@keyframes text-shimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .gradient-text-shimmer { animation: none; background-position: 0% 50%; }
 }
 
 .live-dot {
@@ -1113,9 +1168,21 @@ textarea:focus-visible {
 /* ─── Divider line ─── */
 .section-divider {
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(44,181,232,0.25), transparent);
+  background: linear-gradient(90deg, transparent 5%, rgba(44,181,232,0.3) 30%, rgba(44,181,232,0.5) 50%, rgba(44,181,232,0.3) 70%, transparent 95%);
   border: none;
   margin: 0;
+  position: relative;
+}
+.section-divider::after {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 200px;
+  height: 16px;
+  background: radial-gradient(ellipse, rgba(44,181,232,0.12) 0%, transparent 70%);
+  pointer-events: none;
 }
 
 /* ─── Card accent variants (replace inline styles) ─── */
