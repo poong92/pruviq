@@ -458,8 +458,23 @@ export default function CoinChart({
   }
   if (error || !ohlcv) {
     return (
-      <div class="py-8 text-center">
-        <p class="font-mono text-sm text-[--color-red] mb-3">{t.error}</p>
+      <div class="py-12 text-center border border-[--color-border] rounded-xl bg-[--color-bg-card]">
+        <div class="w-12 h-12 mx-auto mb-4 rounded-full bg-[--color-red]/10 flex items-center justify-center">
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="var(--color-red)"
+            stroke-width="2"
+          >
+            <circle cx="12" cy="12" r="10" />
+            <path d="M12 8v4M12 16h.01" />
+          </svg>
+        </div>
+        <p class="font-mono text-sm text-[--color-text-muted] mb-4">
+          {t.error}
+        </p>
         <button
           onClick={() => {
             setError(null);
