@@ -1,8 +1,9 @@
 /**
- * SimulatorPreview.tsx — Animated simulator preview for homepage
- * Replaces static screenshot with a live-feeling demo.
+ * SimulatorPreview.tsx — Interactive simulator preview for homepage hero
+ * Animated equity curve with hover trade signals + animated stats.
  */
-import { useEffect, useState } from "preact/hooks";
+import { useEffect, useState, useRef } from "preact/hooks";
+import type { RefObject } from "preact";
 import { COINS_ANALYZED } from "../config/site-stats";
 
 const STATS = [
@@ -25,6 +26,20 @@ const STATS = [
   { label: "Sharpe", value: 1.82, suffix: "", color: "var(--color-up)" },
 ];
 
+// More realistic equity curve with drawdowns
+const EQUITY_POINTS = [
+  55, 53, 50, 52, 46, 42, 44, 38, 35, 37, 32, 28, 30, 25, 22, 26, 20, 18, 22,
+  16, 14, 18, 12, 10, 14, 8, 10, 6, 8, 5, 7, 4, 6, 3, 5, 2, 4, 2, 3, 2,
+];
+
+// Trade markers on the curve
+const TRADES = [
+  { x: 80, y: 42, type: "short", coin: "BTC", pnl: "+3.2%" },
+  { x: 160, y: 28, type: "short", coin: "ETH", pnl: "+5.1%" },
+  { x: 240, y: 20, type: "short", coin: "SOL", pnl: "+4.8%" },
+  { x: 320, y: 12, type: "short", coin: "DOGE", pnl: "+2.9%" },
+];
+
 function AnimatedNumber({
   target,
   decimals = 1,
@@ -37,14 +52,12 @@ function AnimatedNumber({
   prefix?: string;
 }) {
   const [current, setCurrent] = useState(0);
-
   useEffect(() => {
     const start = performance.now();
     let raf: number;
     function tick(now: number) {
       const elapsed = now - start;
       const progress = Math.min(elapsed / duration, 1);
-      // Ease out cubic
       const eased = 1 - Math.pow(1 - progress, 3);
       setCurrent(target * eased);
       if (progress < 1) raf = requestAnimationFrame(tick);
@@ -52,7 +65,6 @@ function AnimatedNumber({
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
   }, [target, duration]);
-
   return (
     <>
       {prefix}
@@ -61,22 +73,37 @@ function AnimatedNumber({
   );
 }
 
+function buildPath(pts: number[], width: number): string {
+  const step = width / (pts.length - 1);
+  return pts
+    .map((y, i) => `${i === 0 ? "M" : "L"}${(i * step).toFixed(1)},${y}`)
+    .join(" ");
+}
+
 export default function SimulatorPreview() {
   const [visible, setVisible] = useState(false);
+  const [hoveredTrade, setHoveredTrade] = useState<number | null>(null);
+  const svgRef = useRef<SVGSVGElement>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => setVisible(true), 300);
     return () => clearTimeout(timer);
   }, []);
 
+  const curvePath = buildPath(EQUITY_POINTS, 400);
+  const flatPath = EQUITY_POINTS.map(
+    (_, i) =>
+      `${i === 0 ? "M" : "L"}${((i * 400) / (EQUITY_POINTS.length - 1)).toFixed(1)},55`,
+  ).join(" ");
+
   return (
-    <div class="p-4 md:p-6 font-mono text-xs" style={{ minHeight: "280px" }}>
+    <div class="p-4 md:p-6 font-mono text-xs" style={{ minHeight: "320px" }}>
       {/* Strategy header */}
       <div class="flex items-center justify-between mb-4">
         <div class="flex items-center gap-2">
           <span
             class="px-2 py-0.5 rounded text-[10px] font-bold"
-            style={{ background: "var(--color-accent)", color: "#fff" }}
+            style={{ background: "var(--color-accent)", color: "#0A0E14" }}
           >
             BB Squeeze SHORT
           </span>
@@ -84,17 +111,20 @@ export default function SimulatorPreview() {
             {COINS_ANALYZED} coins · 2yr
           </span>
         </div>
-        <span class="text-[--color-text-muted] text-[10px]">
-          1H · Binance Futures
-        </span>
+        <div class="flex items-center gap-1.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-[--color-up] animate-pulse"></span>
+          <span class="text-[--color-text-muted] text-[10px]">
+            1H · Binance Futures
+          </span>
+        </div>
       </div>
 
       {/* Big number hero */}
       <div
-        class={`text-center mb-4 transition-opacity duration-700 ${visible ? "opacity-100" : "opacity-0"}`}
+        class={`text-center mb-5 transition-opacity duration-700 ${visible ? "opacity-100" : "opacity-0"}`}
       >
         <div
-          class="text-3xl md:text-4xl font-bold"
+          class="text-4xl md:text-5xl font-extrabold"
           style={{ color: "var(--color-up)" }}
         >
           {visible ? (
@@ -104,11 +134,11 @@ export default function SimulatorPreview() {
           )}
           %
         </div>
-        <div class="text-[--color-text-muted] text-sm mt-1">
+        <div class="text-[--color-text-muted] text-sm mt-1.5">
           $1,000 →{" "}
           {visible ? (
             <span style={{ color: "var(--color-up)" }}>
-              $<AnimatedNumber target={6693} decimals={0} duration={2000} />
+              $<AnimatedNumber target={6703} decimals={0} duration={2000} />
             </span>
           ) : (
             "$1,000"
@@ -116,19 +146,21 @@ export default function SimulatorPreview() {
         </div>
       </div>
 
-      {/* Animated equity curve (CSS) */}
-      <div class="relative h-16 mb-4 overflow-hidden rounded bg-[--color-bg]/50">
+      {/* Interactive equity curve */}
+      <div class="relative h-20 mb-5 overflow-visible rounded-lg bg-[--color-bg]/30 border border-white/[0.03]">
         <svg
+          ref={svgRef as RefObject<SVGSVGElement>}
           viewBox="0 0 400 60"
           class="w-full h-full"
           preserveAspectRatio="none"
+          onMouseLeave={() => setHoveredTrade(null)}
         >
           <defs>
             <linearGradient id="eq-grad" x1="0" x2="0" y1="0" y2="1">
               <stop
                 offset="0%"
                 stop-color="var(--color-up)"
-                stop-opacity="0.3"
+                stop-opacity="0.25"
               />
               <stop
                 offset="100%"
@@ -137,38 +169,87 @@ export default function SimulatorPreview() {
               />
             </linearGradient>
           </defs>
+          {/* Fill area */}
           <path
-            d="M0,55 L20,52 L40,48 L60,50 L80,42 L100,38 L120,40 L140,32 L160,28 L180,30 L200,22 L220,18 L240,20 L260,14 L280,16 L300,10 L320,12 L340,8 L360,6 L380,4 L400,3"
+            d={`${curvePath} L400,60 L0,60 Z`}
             fill="url(#eq-grad)"
             stroke="none"
           >
             {visible && (
               <animate
                 attributeName="d"
-                from="M0,55 L20,55 L40,55 L60,55 L80,55 L100,55 L120,55 L140,55 L160,55 L180,55 L200,55 L220,55 L240,55 L260,55 L280,55 L300,55 L320,55 L340,55 L360,55 L380,55 L400,55"
-                to="M0,55 L20,52 L40,48 L60,50 L80,42 L100,38 L120,40 L140,32 L160,28 L180,30 L200,22 L220,18 L240,20 L260,14 L280,16 L300,10 L320,12 L340,8 L360,6 L380,4 L400,3"
-                dur="1.5s"
+                from={`${flatPath} L400,60 L0,60 Z`}
+                to={`${curvePath} L400,60 L0,60 Z`}
+                dur="1.8s"
                 fill="freeze"
               />
             )}
           </path>
+          {/* Line */}
           <path
-            d="M0,55 L20,52 L40,48 L60,50 L80,42 L100,38 L120,40 L140,32 L160,28 L180,30 L200,22 L220,18 L240,20 L260,14 L280,16 L300,10 L320,12 L340,8 L360,6 L380,4 L400,3"
+            d={curvePath}
             fill="none"
             stroke="var(--color-up)"
             stroke-width="2"
+            stroke-linecap="round"
           >
             {visible && (
               <animate
                 attributeName="d"
-                from="M0,55 L20,55 L40,55 L60,55 L80,55 L100,55 L120,55 L140,55 L160,55 L180,55 L200,55 L220,55 L240,55 L260,55 L280,55 L300,55 L320,55 L340,55 L360,55 L380,55 L400,55"
-                to="M0,55 L20,52 L40,48 L60,50 L80,42 L100,38 L120,40 L140,32 L160,28 L180,30 L200,22 L220,18 L240,20 L260,14 L280,16 L300,10 L320,12 L340,8 L360,6 L380,4 L400,3"
-                dur="1.5s"
+                from={flatPath}
+                to={curvePath}
+                dur="1.8s"
                 fill="freeze"
               />
             )}
           </path>
+          {/* Trade markers */}
+          {visible &&
+            TRADES.map((t, i) => (
+              <g
+                key={i}
+                onMouseEnter={() => setHoveredTrade(i)}
+                style={{ cursor: "pointer" }}
+              >
+                <circle cx={t.x} cy={t.y} r="6" fill="transparent" />
+                <circle
+                  cx={t.x}
+                  cy={t.y}
+                  r={hoveredTrade === i ? 4 : 2.5}
+                  fill={
+                    t.type === "short"
+                      ? "var(--color-accent)"
+                      : "var(--color-up)"
+                  }
+                  stroke="var(--color-bg)"
+                  stroke-width="1"
+                  style={{ transition: "r 0.2s" }}
+                />
+              </g>
+            ))}
         </svg>
+        {/* Trade tooltip */}
+        {hoveredTrade !== null && (
+          <div
+            class="absolute pointer-events-none px-2.5 py-1.5 rounded-lg text-[10px] border border-[--color-accent]/30"
+            style={{
+              left: `${(TRADES[hoveredTrade].x / 400) * 100}%`,
+              top: `${(TRADES[hoveredTrade].y / 60) * 100 - 15}%`,
+              transform: "translateX(-50%) translateY(-100%)",
+              background: "rgba(20,20,24,0.95)",
+              backdropFilter: "blur(8px)",
+              boxShadow: "0 4px 12px rgba(0,0,0,0.4)",
+            }}
+          >
+            <span class="text-[--color-accent] font-bold">
+              {TRADES[hoveredTrade].coin}
+            </span>
+            <span class="text-[--color-text-muted] mx-1">SHORT</span>
+            <span class="text-[--color-up] font-bold">
+              {TRADES[hoveredTrade].pnl}
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Stats grid */}
@@ -178,9 +259,9 @@ export default function SimulatorPreview() {
         {STATS.map((s) => (
           <div
             key={s.label}
-            class="text-center p-1.5 rounded bg-[--color-bg-tooltip] border border-[--color-border]"
+            class="text-center p-2 rounded-lg bg-[--color-bg-tooltip] border border-white/[0.04]"
           >
-            <div class="text-[8px] text-[--color-text-muted] uppercase">
+            <div class="text-[8px] text-[--color-text-muted] uppercase tracking-wider">
               {s.label}
             </div>
             <div class="text-sm font-bold mt-0.5" style={{ color: s.color }}>

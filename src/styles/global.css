@@ -199,7 +199,7 @@
   border-radius: 50%;
   filter: blur(80px);
   pointer-events: none;
-  will-change: transform;
+  /* will-change removed — animation already triggers GPU compositing */
 }
 .hero-orb-cyan {
   width: 500px;
@@ -583,7 +583,7 @@ a:not(.btn):not(.btn-primary):not(.btn-ghost):not(.btn-outline):not(.card-hover)
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: text-shimmer 4s ease-in-out infinite;
+  animation: text-shimmer 6s ease-in-out infinite;
 }
 @keyframes text-shimmer {
   0%, 100% { background-position: 0% 50%; }
@@ -739,7 +739,7 @@ textarea:focus-visible,
               box-shadow 0.2s ease;
 }
 .card-hover:hover {
-  border-color: rgba(0,220,130,0.2);
+  border-color: rgba(255,255,255,0.15);
   transform: translateY(-2px) scale(1.005);
   box-shadow: 0 8px 24px rgba(0,0,0,0.3);
 }
@@ -905,8 +905,8 @@ textarea:focus-visible {
 
   /* Mobile section padding */
   .section-elevated, .section-accent-glow, .section-warm-glow {
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
 
   /* Mobile card padding reduction */

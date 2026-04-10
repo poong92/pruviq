@@ -22,7 +22,7 @@ export const en = {
   "hero.title2": "on {coins} Coins in 3 Seconds.",
   "hero.subtitle": "No code. No signup. No cost. Just data.",
   "hero.desc":
-    "We tested 5 strategies on 570+ coins. 2 killed. Every result published.",
+    "We tested 5 strategies on {coins}+ coins. 2 killed. Every result published.",
   "hero.cta_primary": "Open Simulator Free",
   "hero.cta_builder": "Build Your Own Strategy",
   "hero.cta1": "Explore Strategies",
@@ -36,7 +36,7 @@ export const en = {
   "hero.stat4": "Backtested Trades",
   "hero.stat5": "Data Points Processed",
   "hero.stat6": "No Credit Card",
-  "hero.tool_coins": "570+ Coins Tested",
+  "hero.tool_coins": "{coins}+ Coins Tested",
   "hero.tool_strategies": "88+ Variations Backtested",
   "hero.tool_data": "2+ Years Historical Data",
   "hero.tool_free": "100% Free, No Signup",
@@ -75,11 +75,11 @@ export const en = {
   "problem.title": "Crypto Trading is Broken.",
   "problem.card1_title": "Backtests Lie",
   "problem.card1_desc":
-    "We stress-tested 88 strategy combinations on 570+ coins across 2+ years of data so you don't have to. Look-ahead bias, overfitting, regime blindness — most strategies fail for the same reasons. We show you exactly which ones and why.",
+    "We stress-tested 88 strategy combinations on {coins}+ coins across 2+ years of data so you don't have to. Look-ahead bias, overfitting, regime blindness — most strategies fail for the same reasons. We show you exactly which ones and why.",
   "problem.card1_source": "Source: PRUVIQ validation pipeline, 2024-2026",
   "problem.card2_title": "2 Strategies Killed",
   "problem.card2_desc":
-    "We tested 5 strategies on 570+ coins over 2+ years. 2 killed, 1 verified, 2 shelved — and we published every result. Most platforms hide this. We made it the main feature.",
+    "We tested 5 strategies on {coins}+ coins over 2+ years. 2 killed, 1 verified, 2 shelved — and we published every result. Most platforms hide this. We made it the main feature.",
   "problem.card2_source":
     "Source: PRUVIQ strategy library — all results published",
   "problem.card3_title": "Experts Were Wrong",
@@ -97,9 +97,9 @@ export const en = {
   "evidence.title": "Prove Everything. Hide Nothing.",
   "evidence.desc":
     "PRUVIQ lets you test crypto strategies before risking real money. Every simulation uses realistic costs, and every result — including failures — is published. Not a signal service. A verification tool.",
-  "evidence.step1_title": "Backtest on 570+ Coins",
+  "evidence.step1_title": "Backtest on {coins}+ Coins",
   "evidence.step1_desc":
-    "Every strategy is tested on 570+ coins across 2+ years of data before risking real capital. No exceptions.",
+    "Every strategy is tested on {coins}+ coins across 2+ years of data before risking real capital. No exceptions.",
   "evidence.step2_title": "See the Real Costs",
   "evidence.step2_desc":
     "Test any strategy on historical data with real fees and slippage. See the drawdowns, the losing streaks, the actual risk. Then decide.",
@@ -156,7 +156,7 @@ export const en = {
     "Pick a strategy from our library. BB Squeeze, momentum, mean reversion — or bring your own.",
   "system.step2": "SIMULATE",
   "system.step2_desc":
-    "Run it on 570+ coins with 2+ years of data. Fees, slippage, and drawdowns included. No shortcuts.",
+    "Run it on {coins}+ coins with 2+ years of data. Fees, slippage, and drawdowns included. No shortcuts.",
   "system.step3": "VERIFY",
   "system.step3_desc":
     "See the full picture: win rate, max drawdown, losing streaks, and profit factor. Then decide.",
@@ -172,7 +172,7 @@ export const en = {
   "features.card2_tag": "STRATEGY LIBRARY",
   "features.card2_title": "Tested Strategies",
   "features.card2_desc":
-    "5 strategies backtested on 570+ coins. Full results published — verified and killed alike.",
+    "5 strategies backtested on {coins}+ coins. Full results published — verified and killed alike.",
   "features.card3_tag": "FEE CALCULATOR",
   "features.card3_title": "Compare & Save",
   "features.card3_desc":
@@ -186,7 +186,7 @@ export const en = {
   "how.step2": "Simulate",
   "how.step2_desc": "SL, TP, leverage, time filters. Real fees included.",
   "how.step3": "Verify",
-  "how.step3_desc": "570+ coins, 2+ years of data. Results in seconds.",
+  "how.step3_desc": "{coins}+ coins, 2+ years of data. Results in seconds.",
 
   // CTA
   "cta.tag": "START NOW",
@@ -276,7 +276,7 @@ export const en = {
     "Start with our educational guides before exploring strategies. Learn backtesting basics, risk management, and common pitfalls.",
   "strategies.beginner_cta": "Start Learning",
   "strategies.verified_explanation":
-    "Active = passed all validation tests on 570+ coins, 2+ years of data",
+    "Active = passed all validation tests on {coins}+ coins, 2+ years of data",
   "strategies.simulate_button": "Simulate This",
   "strategies.fees_cta": "Compare Exchange Fees",
   "strategies.performance_cta": "View Backtest Results",
@@ -284,7 +284,7 @@ export const en = {
   // Strategies: Simulator Presets section
   "strategies.presets_title": "All Simulator Presets ({count})",
   "strategies.presets_desc":
-    "Click any preset to load it directly in the simulator. Tests on 570+ coins simultaneously.",
+    "Click any preset to load it directly in the simulator. Tests on {coins}+ coins simultaneously.",
   "strategies.todays_pick": "Today's Pick",
   "strategies.click_to_simulate": "Click to simulate",
 
@@ -292,7 +292,7 @@ export const en = {
   "blog.tag": "TRADING IQ",
   "blog.title": "Raise Your Trading IQ.",
   "blog.desc":
-    "Learn what works. See what doesn't. Backtesting methodology, risk management, and lessons from 570 coins and 88 parameter variations.",
+    "Learn what works. See what doesn't. Backtesting methodology, risk management, and lessons from {coins} coins and 88 parameter variations.",
   "blog.coming_soon": "LATEST INSIGHTS",
   "blog.coming_desc":
     "Market analysis, quant education, and strategy simulation updates.",
@@ -332,7 +332,7 @@ export const en = {
   "demo.interactive_tag": "INTERACTIVE DEMO",
   "demo.hero_title": "See How It Works",
   "demo.hero_desc":
-    "Adjust the stop-loss and take-profit sliders below to see how they change strategy performance. Results are from real backtests on 570+ coins with fees included.",
+    "Adjust the stop-loss and take-profit sliders below to see how they change strategy performance. Results are from real backtests on {coins}+ coins with fees included.",
   "demo.want_more": "Want More Control?",
   "demo.want_more_desc":
     "The full simulator lets you build custom strategies with 20+ indicators, test on any coin selection, and validate with out-of-sample data.",
@@ -541,7 +541,7 @@ export const en = {
   "coins.tag": "COIN EXPLORER",
   "coins.title": "Browse All Coins",
   "coins.desc":
-    "Real-time market data for 570+ cryptocurrencies. Prices, market cap, volume, 7-day sparklines — updated every 15 minutes.",
+    "Real-time market data for {coins}+ cryptocurrencies. Prices, market cap, volume, 7-day sparklines — updated every 15 minutes.",
   "coins.search": "Search coins...",
   "coins.apply": "Apply Strategy",
   "coins.resim": "Re-simulate",
@@ -598,17 +598,17 @@ export const en = {
     "Real-time crypto market overview. Fear & Greed Index, BTC dominance, top gainers/losers, economic calendar, and aggregated crypto news.",
   "meta.coins_title": "Coin Explorer - PRUVIQ",
   "meta.coins_desc":
-    "Real-time cryptocurrency market data. Browse 570+ coins with prices, market cap, trading volume, and 7-day price charts. Updated every 15 minutes.",
+    "Real-time cryptocurrency market data. Browse {coins}+ coins with prices, market cap, trading volume, and 7-day price charts. Updated every 15 minutes.",
   "meta.home_title":
-    "PRUVIQ \u2014 Free Crypto Strategy Backtester | 570+ Coins, No Signup",
+    "PRUVIQ \u2014 Free Crypto Strategy Backtester | {coins}+ Coins, No Signup",
   "meta.home_desc":
-    "Backtest crypto trading strategies for free on 570+ coins with 2+ years of data. Realistic fees, slippage modeling, and full transparency \u2014 including published failures. No signup required.",
+    "Backtest crypto trading strategies for free on {coins}+ coins with 2+ years of data. Realistic fees, slippage modeling, and full transparency \u2014 including published failures. No signup required.",
   "meta.simulate_title":
     "Strategy Simulator \u2014 Build & Backtest Custom Strategies | PRUVIQ",
   "meta.simulate_desc":
-    "Build a custom crypto trading strategy and backtest it across 570+ coins in seconds. No code, no signup, $0 — no subscription.",
+    "Build a custom crypto trading strategy and backtest it across {coins}+ coins in seconds. No code, no signup, $0 — no subscription.",
   "meta.index_desc":
-    "Free crypto strategy backtesting — test strategies on 570+ coins with 2+ years of real market data, realistic fees, and published results, including failures.",
+    "Free crypto strategy backtesting — test strategies on {coins}+ coins with 2+ years of real market data, realistic fees, and published results, including failures.",
   "meta.strategies_title": "Strategy Library - PRUVIQ",
   "meta.strategies_desc":
     "Explore 37 backtested crypto strategies — 5 fully documented, 32 presets. See what survived 2+ years of real market data.",
@@ -617,7 +617,7 @@ export const en = {
     "Raise your trading IQ. Backtesting, risk management, algorithmic strategies, and lessons from real trades.",
   "meta.demo_title": "Interactive Demo - PRUVIQ",
   "meta.demo_desc":
-    "Try PRUVIQ's strategy simulator instantly. Adjust stop-loss and take-profit to see real backtest results on 570+ coins.",
+    "Try PRUVIQ's strategy simulator instantly. Adjust stop-loss and take-profit to see real backtest results on {coins}+ coins.",
   "meta.fees_title": "Compare Exchange Fees - PRUVIQ",
   "meta.fees_desc":
     "Compare crypto exchange trading fees. Save up to 19% on spot with PRUVIQ's referral code. Transparent fee breakdown.",
@@ -626,7 +626,7 @@ export const en = {
     "Complete version history of PRUVIQ's trading system. Every change, every reason, every date.",
   "meta.performance_title": "Backtest Performance - PRUVIQ",
   "meta.performance_desc":
-    "Backtest results for BB Squeeze SHORT strategy. 2,898 trades across 570 coins with 2+ years of data. Every result published including failures.",
+    "Backtest results for BB Squeeze SHORT strategy. 2,898 trades across {coins} coins with 2+ years of data. Every result published including failures.",
   "meta.about_title": "About - PRUVIQ",
   "meta.about_desc":
     "Meet the project behind PRUVIQ. Our mission: make crypto strategy verification accessible to everyone. No hype. Just data.",
@@ -642,7 +642,7 @@ export const en = {
   "about.team_stat1_label": "Strategies Backtested",
   "about.team_stat1_val": "88+",
   "about.team_stat2_label": "Coins Covered",
-  "about.team_stat2_val": "570",
+  "about.team_stat2_val": "{coins}",
   "about.team_stat3_label": "Simulator Sessions",
   "about.team_stat3_val": "1M+",
   "about.philosophy_tag": "OUR PHILOSOPHY",
@@ -655,7 +655,7 @@ export const en = {
     "6 experts recommended a BTC filter. Our backtest proved it wrong. We trust numbers, not opinions.",
   "about.philosophy3_title": "Eat Our Own Cooking",
   "about.philosophy3_desc":
-    "Every strategy is backtested on 570+ coins with 2+ years of data before publication. We verify with evidence before suggesting you act.",
+    "Every strategy is backtested on {coins}+ coins with 2+ years of data before publication. We verify with evidence before suggesting you act.",
   "about.philosophy4_title": "Zero Cost, Zero Catch",
   "about.philosophy4_desc":
     "Strategy verification should be accessible to everyone. Core features will always be free. We earn through exchange referrals only.",
@@ -674,7 +674,7 @@ export const en = {
   "about.roadmap_desc":
     "PRUVIQ is actively developed. Here's what we're working on:",
   "about.roadmap_done1": "Strategy simulator with 36 presets",
-  "about.roadmap_done2": "570+ coin backtesting engine",
+  "about.roadmap_done2": "{coins}+ coin backtesting engine",
   "about.roadmap_done3": "29 educational guides (EN + KO)",
   "about.roadmap_done4": "Daily strategy rankings",
   "about.roadmap_next1": "More strategy types and indicators",
@@ -746,12 +746,12 @@ export const en = {
     "Trading paused Mar 2026. Data below covers Jan 2024 – Feb 2026 backtests.",
   "perf.title": "Every Trade Published. Including Losses.",
   "perf.desc":
-    "Backtest results for BB Squeeze SHORT strategy on 570 coins. 2+ years of historical data. No cherry-picking.",
+    "Backtest results for BB Squeeze SHORT strategy on {coins} coins. 2+ years of historical data. No cherry-picking.",
   "perf.loading": "Loading backtest performance data...",
   "perf.stat1_label": "Strategy",
   "perf.stat1_val": "BB Squeeze SHORT",
   "perf.stat2_label": "Coins",
-  "perf.stat2_val": "570",
+  "perf.stat2_val": "{coins}",
   "perf.stat3_label": "Leverage",
   "perf.stat3_val": "5x",
   "perf.stat4_label": "Data Source",
@@ -764,11 +764,11 @@ export const en = {
     "Performance data is from backtests using 2+ years of historical data with realistic fees and slippage. If the dashboard is not loading, please enable JavaScript or try refreshing.",
   "perf.results_title": "Backtest Results",
   "perf.results_desc":
-    "2+ years, 570 coins, 2,898 trades. Includes 0.08%/side fees.",
+    "2+ years, {coins} coins, 2,898 trades. Includes 0.08%/side fees.",
   "perf.gap_title": "Backtest vs Reality",
   "perf.gap_desc":
     "Every backtest has a gap with live trading. We experienced it firsthand — and stopped trading when it exceeded our limits.",
-  "perf.gap_backtest": "Backtest (2yr, 570 coins)",
+  "perf.gap_backtest": "Backtest (2yr, {coins} coins)",
   "perf.gap_live": "Live Trading (52 days)",
   "perf.gap_pnl_label": "Total PnL",
   "perf.gap_mdd_label": "Max Drawdown",
@@ -861,7 +861,7 @@ export const en = {
   // Blog article CTA
   "blog.cta_title": "Ready to test strategies yourself?",
   "blog.cta_desc":
-    "Simulate trading strategies on 570 coins with 2+ years of data. Free.",
+    "Simulate trading strategies on {coins} coins with 2+ years of data. Free.",
   "blog.cta_button": "Try Live Demo",
   "blog.cta_fees": "Save on Fees",
   "blog.cta_community": "Join Community",
@@ -900,7 +900,7 @@ export const en = {
   // Builder
   "meta.builder_title": "Strategy Builder - PRUVIQ",
   "meta.builder_desc":
-    "Build your own trading strategy with no code. Select indicators, set conditions, and backtest on 570+ coins with 2+ years of real data.",
+    "Build your own trading strategy with no code. Select indicators, set conditions, and backtest on {coins}+ coins with 2+ years of real data.",
 
   // Learn page
   "meta.learn_title": "Learn — Crypto Trading Education | PRUVIQ",
@@ -926,7 +926,7 @@ export const en = {
   "learn.min_read": "min read",
   "learn.cta_title": "Ready to test what you've learned?",
   "learn.cta_desc":
-    "Build a strategy and run it on 570+ coins — free, no account needed.",
+    "Build a strategy and run it on {coins}+ coins — free, no account needed.",
   "learn.cta_button": "Open Simulator",
 
   // Learn page tag translations
@@ -1010,7 +1010,7 @@ export const en = {
   // Simulate page
   "simulate.tag": "STRATEGY SIMULATOR",
   "simulate.title1": "Build a Strategy.",
-  "simulate.title2": "Test It on 570+ Coins.",
+  "simulate.title2": "Test It on {coins}+ Coins.",
   "simulate.desc":
     "Pick indicators, set entry conditions, adjust risk parameters. Run a backtest on 2+ years of real data — or start from a preset.",
   "simulate.quick_start": "QUICK START",
@@ -1035,7 +1035,7 @@ export const en = {
   "simulate.step1_desc": "14 indicators, AND/OR logic",
   "simulate.step2_title": "Set entry conditions and risk",
   "simulate.step2_desc": "SL, TP, time filters, position size",
-  "simulate.step3_title": "Run backtest on 570+ coins",
+  "simulate.step3_title": "Run backtest on {coins}+ coins",
   "simulate.step3_desc": "Results in seconds, fees included",
   "simulate.risk_disclaimer":
     "Simulation only \u2014 not real trading. Past performance does not guarantee future results. Futures trading involves risk of loss.",
@@ -1065,7 +1065,7 @@ export const en = {
     "2+ years of 1-hour OHLCV candles sourced from Binance Futures. All candles are complete (closed) — no partial or in-progress data is used to avoid look-ahead bias.",
   "methodology.universe_label": "Universe",
   "methodology.universe_desc":
-    "570+ USDT perpetual futures pairs listed on Binance. Stablecoins, delisted, and illiquid pairs are excluded. Daily rankings use the top 50 coins by market cap. The exact count varies by strategy version.",
+    "{coins}+ USDT perpetual futures pairs listed on Binance. Stablecoins, delisted, and illiquid pairs are excluded. Daily rankings use the top 50 coins by market cap. The exact count varies by strategy version.",
   "methodology.execution_label": "Execution",
   "methodology.execution_desc":
     "Entry is assumed at the candle close price. This is conservative — real fills may differ by a small amount due to timing and order book depth.",
@@ -1143,7 +1143,7 @@ export const en = {
     "Past performance does not guarantee future results. Backtests are simulations — not predictions. Real trading involves risks not captured in any model, including emotional decision-making, connectivity issues, and market regime changes. Always test with capital you can afford to lose.",
   "methodology.cta_title": "See It in Action",
   "methodology.cta_desc":
-    "Run a backtest yourself — adjust parameters and see real results on 570+ coins.",
+    "Run a backtest yourself — adjust parameters and see real results on {coins}+ coins.",
   "methodology.cta_button": "Open Simulator",
   "methodology.sharpe_formula":
     "Formula: (Return - Risk-free Rate) / Volatility",
@@ -1185,7 +1185,7 @@ export const en = {
   // API Docs page
   "meta.api_title": "API Reference - PRUVIQ",
   "meta.api_desc":
-    "Free REST API for crypto strategy backtesting. Simulate strategies on 570+ coins, get OHLCV data, market overview, and more. Interactive docs included.",
+    "Free REST API for crypto strategy backtesting. Simulate strategies on {coins}+ coins, get OHLCV data, market overview, and more. Interactive docs included.",
   "api.tag": "API REFERENCE",
   "api.title": "Build with ",
   "api.title2": "PRUVIQ data.",
@@ -1273,34 +1273,34 @@ export const en = {
   "compare_index.tag": "COMPARISON",
   "compare_index.title": "PRUVIQ vs Alternatives",
   "compare_index.subtitle":
-    "Free backtesting. No signup. 570 coins. See how we compare.",
+    "Free backtesting. No signup. {coins} coins. See how we compare.",
   "compare_index.meta_title":
     "PRUVIQ vs Alternatives — Free Crypto Backtesting Comparison",
   "compare_index.meta_desc":
-    "Compare PRUVIQ with TradingView, Coinrule, 3Commas, Cryptohopper, Gainium, and Streak. Free, no signup, 570 coins.",
+    "Compare PRUVIQ with TradingView, Coinrule, 3Commas, Cryptohopper, Gainium, and Streak. Free, no signup, {coins} coins.",
   "compare_index.most_popular": "Most Popular",
   "compare_index.tradingview_desc":
     "Script-free backtesting vs paid Pine Script",
   "compare_index.coinrule_desc":
     "Free unlimited backtest vs $29+/mo rule builder",
   "compare_index.cryptohopper_desc":
-    "570 coins free vs limited bot subscription",
+    "{coins} coins free vs limited bot subscription",
   "compare_index.3commas_desc":
     "Transparent results vs closed strategy marketplace",
   "compare_index.gainium_desc":
     "No signup required vs mandatory account creation",
   "compare_index.streak_desc":
-    "Crypto-native 570 coins vs stock-focused platform",
+    "Crypto-native {coins} coins vs stock-focused platform",
   "compare_index.footer": "All comparisons use real backtest data.",
   "compare_index.try_cta": "Try it yourself →",
   "compare_index.strength1_tag": "$0 — NO SUBSCRIPTION",
   "compare_index.strength1_title": "$0 — No Credit Card",
   "compare_index.strength1_desc":
     "Competitors charge $19–$60/month. PRUVIQ is free, forever. No account required to run a simulation.",
-  "compare_index.strength2_tag": "570 COINS SIMULTANEOUSLY",
+  "compare_index.strength2_tag": "{coins} COINS SIMULTANEOUSLY",
   "compare_index.strength2_title": "Entire Market at Once",
   "compare_index.strength2_desc":
-    "Other platforms test one coin at a time. PRUVIQ scans all 570 coins in a single run — find what actually works.",
+    "Other platforms test one coin at a time. PRUVIQ scans all {coins} coins in a single run — find what actually works.",
   "compare_index.strength3_tag": "WE PUBLISH FAILURES",
   "compare_index.strength3_title": "Radical Transparency",
   "compare_index.strength3_desc":
@@ -1365,7 +1365,7 @@ export const en = {
   "meta.vs_tv_title":
     "PRUVIQ vs TradingView - Free Crypto Backtesting Comparison",
   "meta.vs_tv_desc":
-    "Compare PRUVIQ with TradingView for crypto strategy backtesting. No Pine Script needed. $0 — no subscription. 570+ coins. Full backtest transparency.",
+    "Compare PRUVIQ with TradingView for crypto strategy backtesting. No Pine Script needed. $0 — no subscription. {coins}+ coins. Full backtest transparency.",
   "vs.tag": "HONEST COMPARISON",
   "vs.title": "PRUVIQ vs TradingView",
   "vs.subtitle": "for crypto backtesting",
@@ -1384,7 +1384,7 @@ export const en = {
   "vs.row_coding_p": "No code — visual builder",
   "vs.row_coding_tv": "Pine Script (proprietary language)",
   "vs.row_coins": "Crypto Coins",
-  "vs.row_coins_p": "570+ USDT perpetual futures",
+  "vs.row_coins_p": "{coins}+ USDT perpetual futures",
   "vs.row_coins_tv": "Varies by exchange connection",
   "vs.row_data": "Historical Data",
   "vs.row_data_p": "2+ years hourly candles (free)",
@@ -1393,7 +1393,7 @@ export const en = {
   "vs.row_fees_p": "Built-in (0.04%/side, 0.08% round-trip)",
   "vs.row_fees_tv": "Manual setup in Pine Script",
   "vs.row_multi": "Multi-Coin Test",
-  "vs.row_multi_p": "570 coins in one click",
+  "vs.row_multi_p": "{coins} coins in one click",
   "vs.row_multi_tv": "One chart at a time",
   "vs.row_live": "Backtest Transparency",
   "vs.row_live_p": "All results published, including failures",
@@ -1409,7 +1409,7 @@ export const en = {
   "vs.row_community_tv": "50M+ users, social features",
   "vs.when_pruviq": "Choose PRUVIQ when you want...",
   "vs.when_pruviq_1": "Free crypto backtesting with zero coding",
-  "vs.when_pruviq_2": "Test a strategy on 570+ coins simultaneously",
+  "vs.when_pruviq_2": "Test a strategy on {coins}+ coins simultaneously",
   "vs.when_pruviq_3": "See realistic results with fees and slippage",
   "vs.when_pruviq_4": "Verify with transparent backtest results",
   "vs.when_tv": "Choose TradingView when you want...",
@@ -1424,20 +1424,20 @@ export const en = {
   "faq.title": "Frequently Asked Questions",
   "faq.q1": "What is PRUVIQ?",
   "faq.a1":
-    "PRUVIQ is a free crypto strategy backtesting platform. You can build custom trading strategies using 14 technical indicators, backtest them on 570+ coins with 2+ years of real market data, and see realistic results including fees and slippage. No coding required.",
+    "PRUVIQ is a free crypto strategy backtesting platform. You can build custom trading strategies using 14 technical indicators, backtest them on {coins}+ coins with 2+ years of real market data, and see realistic results including fees and slippage. No coding required.",
   "faq.q2": "How does the strategy builder work?",
   "faq.a2":
     "The no-code strategy builder lets you combine indicators (Bollinger Bands, RSI, MACD, EMA, Stochastic, ADX, ATR, Volume, etc.) with AND/OR logic and comparison operators. You set entry conditions, stop-loss, take-profit, and time filters, then run a full backtest across all coins in under 3 seconds.",
   "faq.q3": "Is PRUVIQ free?",
   "faq.a3":
-    "Yes, PRUVIQ's core backtesting features are completely free. You can build strategies, run backtests on 570+ coins, and access all education content without any payment or account creation.",
+    "Yes, PRUVIQ's core backtesting features are completely free. You can build strategies, run backtests on {coins}+ coins, and access all education content without any payment or account creation.",
   "faq.q4":
     "What makes PRUVIQ different from TradingView or other backtesting tools?",
   "faq.a4":
-    "PRUVIQ is specifically built for crypto futures with no coding required. Unlike TradingView (requires Pine Script) or QuantConnect (requires Python/C#), PRUVIQ offers a visual strategy builder. It also publishes real trading results including failures, tests on 570+ coins simultaneously, and includes realistic fees and slippage in all simulations.",
+    "PRUVIQ is specifically built for crypto futures with no coding required. Unlike TradingView (requires Pine Script) or QuantConnect (requires Python/C#), PRUVIQ offers a visual strategy builder. It also publishes real trading results including failures, tests on {coins}+ coins simultaneously, and includes realistic fees and slippage in all simulations.",
   "faq.q5": "How does PRUVIQ verify strategies?",
   "faq.a5":
-    "PRUVIQ backtests all strategies on 570+ coins with 2+ years of historical data. Every simulation includes realistic fees, slippage, and funding costs. Failed strategies are published alongside successful ones for full transparency.",
+    "PRUVIQ backtests all strategies on {coins}+ coins with 2+ years of historical data. Every simulation includes realistic fees, slippage, and funding costs. Failed strategies are published alongside successful ones for full transparency.",
 
   // Tooltips
   "tooltip.sl":
@@ -1476,7 +1476,7 @@ export const en = {
   "leaderboard.tag": "WEEKLY RANKINGS",
   "leaderboard.title": "This Week's Top Strategies",
   "leaderboard.desc":
-    "See which strategy configurations performed best this week across 570+ coins. Updated every Monday.",
+    "See which strategy configurations performed best this week across {coins}+ coins. Updated every Monday.",
   "leaderboard.best": "Top Performers",
   "leaderboard.worst": "Underperformers",
   "leaderboard.coming_soon":
@@ -1580,7 +1580,7 @@ export const en = {
   // Simulate Page
   "simulate.all_strategies": "All Strategies",
   "simulate.preset_verified_tooltip":
-    "Verified = backtested on 570+ coins with 2+ years of real market data",
+    "Verified = backtested on {coins}+ coins with 2+ years of real market data",
 
   // CTA badges
   "cta.badge1": "No credit card",
@@ -1753,7 +1753,7 @@ export const en = {
     "Use PRUVIQ to research and validate your strategy for free. Then deploy the winning strategy on 3Commas for automated execution. Research first, automate second.",
   "vs_3commas.cta_title": "Research First, Trade Later",
   "vs_3commas.cta_desc":
-    "Backtest your strategy on 570+ coins before paying for any bot subscription. $0 — no subscription, no signup required.",
+    "Backtest your strategy on {coins}+ coins before paying for any bot subscription. $0 — no subscription, no signup required.",
 
   // Comparison pages: Coinrule
   "meta.vs_coinrule_title":
@@ -1804,7 +1804,8 @@ export const en = {
   "vs_coinrule.row_community_other": "Template library and community rules",
   "vs_coinrule.when_pruviq": "Choose PRUVIQ when you want...",
   "vs_coinrule.when_pruviq_1": "Free crypto backtesting with zero coding",
-  "vs_coinrule.when_pruviq_2": "Test a strategy on 570+ coins simultaneously",
+  "vs_coinrule.when_pruviq_2":
+    "Test a strategy on {coins}+ coins simultaneously",
   "vs_coinrule.when_pruviq_3": "See realistic results with fees and slippage",
   "vs_coinrule.when_pruviq_4": "Verify with transparent backtest results",
   "vs_coinrule.when_other": "Choose Coinrule when you want...",
@@ -1816,7 +1817,7 @@ export const en = {
   "vs_coinrule.when_other_4": "Run live automated strategies around the clock",
   "vs_coinrule.cta_title": "Try PRUVIQ Free Today",
   "vs_coinrule.cta_desc":
-    "Backtest your strategy on 570+ coins before paying for any automation tool. No account required.",
+    "Backtest your strategy on {coins}+ coins before paying for any automation tool. No account required.",
 
   // Comparison pages: Cryptohopper
   "meta.vs_cryptohopper_title":
@@ -1915,7 +1916,7 @@ export const en = {
     "Use PRUVIQ to research and validate strategies for free. Then deploy proven strategies on Cryptohopper for automated cloud execution. Research first, automate second.",
   "vs_cryptohopper.cta_title": "Research First, Trade Later",
   "vs_cryptohopper.cta_desc":
-    "Test any strategy on 570+ coins for free before subscribing to a cloud bot. No account needed.",
+    "Test any strategy on {coins}+ coins for free before subscribing to a cloud bot. No account needed.",
 
   // Comparison pages: Gainium
   "meta.vs_gainium_title":
@@ -1965,7 +1966,8 @@ export const en = {
   "vs_gainium.row_community_other": "Community and shared bot configurations",
   "vs_gainium.when_pruviq": "Choose PRUVIQ when you want...",
   "vs_gainium.when_pruviq_1": "Free crypto backtesting with zero coding",
-  "vs_gainium.when_pruviq_2": "Test a strategy on 570+ coins simultaneously",
+  "vs_gainium.when_pruviq_2":
+    "Test a strategy on {coins}+ coins simultaneously",
   "vs_gainium.when_pruviq_3": "See realistic results with fees and slippage",
   "vs_gainium.when_pruviq_4": "Verify with transparent backtest results",
   "vs_gainium.when_other": "Choose Gainium when you want...",
@@ -2026,7 +2028,7 @@ export const en = {
   "vs_streak.row_community_other": "TradingView community scripts",
   "vs_streak.when_pruviq": "Choose PRUVIQ when you want...",
   "vs_streak.when_pruviq_1": "Free crypto backtesting with zero coding",
-  "vs_streak.when_pruviq_2": "Test a strategy on 570+ coins simultaneously",
+  "vs_streak.when_pruviq_2": "Test a strategy on {coins}+ coins simultaneously",
   "vs_streak.when_pruviq_3": "See realistic results with fees and slippage",
   "vs_streak.when_pruviq_4": "Verify with transparent backtest results",
   "vs_streak.when_other": "Choose Streak when you want...",
