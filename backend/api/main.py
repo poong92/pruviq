@@ -1703,7 +1703,7 @@ _news_cache: Optional[dict] = None
 BINANCE_SPOT_URL = "https://api.binance.com/api/v3/ticker/24hr"
 BINANCE_FUTURES_URL = "https://fapi.binance.com/fapi/v1/ticker/24hr"
 # DO server proxy via Tailscale for Korean IP bypass (fapi v1 geo-blocked from KR)
-BINANCE_PROXY_URL = "http://100.122.203.78:9090/fapi/v1/ticker/24hr"
+BINANCE_PROXY_URL = os.environ.get("BINANCE_PROXY_URL", "http://100.122.203.78:9090/fapi/v1/ticker/24hr")
 _binance_proxy_key = os.environ.get("BINANCE_PROXY_KEY", "")
 BINANCE_PROXY_HEADERS = {"X-Proxy-Key": _binance_proxy_key} if _binance_proxy_key else {}
 _live_spot_cache: Optional[dict] = None
@@ -3838,7 +3838,7 @@ async def generate_bot(req: GenerateBotRequest):
 # Email Subscription
 # ---------------------------------------------------------------------------
 
-SUBSCRIBERS_FILE = Path("/Users/jepo/pruviq-data/subscribers.json")
+SUBSCRIBERS_FILE = Path(os.environ.get("SUBSCRIBERS_FILE", "/Users/jepo/pruviq-data/subscribers.json"))
 
 
 @app.post("/api/subscribe")
