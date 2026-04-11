@@ -93,10 +93,11 @@ async def oauth_start(
 async def oauth_callback(
     code: str = Query(..., description="OKX authorization code"),
     state: str = Query(..., description="CSRF state token"),
+    domain: str = Query("", description="OKX SDK domain parameter"),
 ):
     """Step 2: Exchange code for tokens, set session cookie, redirect to frontend."""
     try:
-        session_id, redirect_url, lang = await exchange_code(code, state)
+        session_id, redirect_url, lang = await exchange_code(code, state, domain)
     except ValueError as e:
         logger.warning("OAuth callback rejected: %s", e)
         return RedirectResponse(

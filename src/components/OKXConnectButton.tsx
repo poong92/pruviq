@@ -12,7 +12,7 @@ interface Props {
 }
 
 const API_BASE = "https://api.pruviq.com";
-const OKX_OAUTH_BASE = "https://www.okx.com/account/oauth";
+const OKX_OAUTH_BASE = "https://www.okx.com/api/v5/oauth/authorize";
 
 const labels = {
   en: {
