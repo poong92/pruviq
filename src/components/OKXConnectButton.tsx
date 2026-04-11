@@ -56,17 +56,30 @@ export default function OKXConnectButton({
   const [connected, setConnected] = useState(false);
   const [loading, setLoading] = useState(true);
   const [connecting, setConnecting] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    // Handle OAuth callback result (?okx=success)
+    // Handle OAuth callback result (?okx=success|error)
     const params = new URLSearchParams(window.location.search);
-    if (params.get("okx") === "success") {
-      setConnected(true);
-      setLoading(false);
+    const okxParam = params.get("okx");
+    if (okxParam) {
       const url = new URL(window.location.href);
       url.searchParams.delete("okx");
       window.history.replaceState({}, "", url.toString());
-      return;
+      if (okxParam === "success") {
+        setConnected(true);
+        setLoading(false);
+        return;
+      }
+      if (okxParam === "error") {
+        setError(
+          lang === "ko"
+            ? "OKX 연결 실패. 다시 시도해주세요."
+            : "OKX connection failed. Please try again.",
+        );
+        setLoading(false);
+        return;
+      }
     }
 
     fetch(`${API_BASE}/auth/okx/status`, { credentials: "include" })
@@ -177,13 +190,20 @@ export default function OKXConnectButton({
 
   // Simple button
   return (
-    <button
-      class={`btn btn-primary ${sizeClasses[size]}`}
-      onClick={handleConnect}
-      disabled={connecting}
-      aria-label={connecting ? t.connecting : t.connect}
-    >
-      {connecting ? t.connecting : `${t.connect} →`}
-    </button>
+    <div class="flex flex-col gap-1">
+      {error && (
+        <p class="text-xs text-[--color-down]" role="alert">
+          {error}
+        </p>
+      )}
+      <button
+        class={`btn btn-primary ${sizeClasses[size]}`}
+        onClick={handleConnect}
+        disabled={connecting}
+        aria-label={connecting ? t.connecting : t.connect}
+      >
+        {connecting ? t.connecting : `${t.connect} →`}
+      </button>
+    </div>
   );
 }
