@@ -24,7 +24,6 @@ from .settings import (
     get_auto_sessions,
     get_daily_stats,
     get_settings,
-    get_trade_log,
     log_trade,
 )
 
@@ -112,14 +111,10 @@ async def _try_execute(
         )
         return None
 
-    # ── Safety: 3 consecutive losses → pause ──
-    recent_trades = get_trade_log(session_id, limit=3)
-    if len(recent_trades) >= 3 and all(t["pnl_usdt"] < 0 for t in recent_trades[:3]):
-        logger.warning(
-            "Session %s paused: 3 consecutive losses detected",
-            session_id[:8],
-        )
-        return None
+    # NOTE: consecutive-loss guard requires actual realized PnL from position
+    # close events (no OKX webhook yet). Currently all logged pnl_usdt values
+    # are worst-case estimates (always negative), so this check would fire
+    # after every 3rd trade. Deferred until position-close tracking is added.
 
     # ── Execute ──
     token = await get_valid_token(session_id)
