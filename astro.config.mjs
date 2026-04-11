@@ -49,20 +49,18 @@ export default defineConfig({
           { url: enUrl, lang: 'x-default' },
         ];
 
-        // lastmod — build date for all pages (SSG rebuilds everything)
-        item.lastmod = new Date().toISOString().slice(0, 10);
-
         // Priority + crawl frequency by page type
         // @ts-ignore — EnumChangefreq accepts these string values at runtime
         const p = basePath;
+        const today = new Date().toISOString().slice(0, 10);
         if (p === '/') {
-          item.priority = 1.0; item.changefreq = /** @type {any} */ ('daily');
+          item.priority = 1.0; item.changefreq = /** @type {any} */ ('daily'); item.lastmod = today;
         } else if (['/simulate', '/strategies', '/market', '/leaderboard'].includes(p)) {
-          item.priority = 0.9; item.changefreq = /** @type {any} */ ('daily');
+          item.priority = 0.9; item.changefreq = /** @type {any} */ ('daily'); item.lastmod = today;
         } else if (p === '/strategies/ranking') {
-          item.priority = 0.9; item.changefreq = /** @type {any} */ ('daily');
+          item.priority = 0.9; item.changefreq = /** @type {any} */ ('daily'); item.lastmod = today;
         } else if (p.startsWith('/strategies/') || p.startsWith('/coins/')) {
-          item.priority = 0.8; item.changefreq = /** @type {any} */ ('weekly');
+          item.priority = 0.8; item.changefreq = /** @type {any} */ ('weekly'); item.lastmod = today;
         } else if (p.startsWith('/compare/') || p.startsWith('/vs/') || p.startsWith('/vs-')) {
           item.priority = 0.7; item.changefreq = /** @type {any} */ ('monthly');
         } else if (p.startsWith('/blog/')) {
