@@ -71,7 +71,7 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
         <div class="relative">
           <BrowserFrame
             src="/images/simulator-preview.png"
-            alt="PRUVIQ Strategy Simulator — simulate {coinsAnalyzed} coins in seconds"
+            alt={`PRUVIQ Strategy Simulator — simulate ${coinsAnalyzed} coins in seconds`}
             url="pruviq.com/simulate"
           >
             <SimulatorPreview client:visible />
