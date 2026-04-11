@@ -32,7 +32,7 @@ jobs:
         with:
           script: |
             const labelName = 'automerge';
-            const restrictedPrefixes = [];
+            const restrictedPrefixes = ['backend/'];
             const restrictedExactFiles = [
               'astro.config.mjs',
               'wrangler.toml',
