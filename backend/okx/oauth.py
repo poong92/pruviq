@@ -96,10 +96,10 @@ async def exchange_code(code: str, state: str, domain: str = "") -> tuple[str, s
     async with httpx.AsyncClient() as client:
         resp = await client.post(
             OKX_OAUTH_TOKEN,
-            json=data,
+            data=data,  # RFC 6749: application/x-www-form-urlencoded
             timeout=15,
         )
-        logger.debug("OKX token response → status=%s", resp.status_code)
+        logger.warning("OKX token → status=%s body=%s", resp.status_code, resp.text[:300])
         resp.raise_for_status()
         token_data = resp.json()
 
