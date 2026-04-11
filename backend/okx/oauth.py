@@ -91,7 +91,7 @@ async def exchange_code(code: str, state: str, domain: str = "") -> tuple[str, s
         "redirect_uri": OKX_REDIRECT_URI,
     }
 
-    logger.warning("OKX token request → url=%s data=%s", OKX_OAUTH_TOKEN, {k: v for k, v in data.items() if k != "client_secret"})
+    logger.debug("OKX token request → url=%s", OKX_OAUTH_TOKEN)
 
     async with httpx.AsyncClient() as client:
         resp = await client.post(
@@ -99,7 +99,7 @@ async def exchange_code(code: str, state: str, domain: str = "") -> tuple[str, s
             json=data,
             timeout=15,
         )
-        logger.warning("OKX token response → status=%s body=%s", resp.status_code, resp.text[:500])
+        logger.debug("OKX token response → status=%s", resp.status_code)
         resp.raise_for_status()
         token_data = resp.json()
 
