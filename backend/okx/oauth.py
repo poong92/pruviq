@@ -82,16 +82,22 @@ async def exchange_code(code: str, state: str) -> tuple[str, str, str]:
         raise ValueError("Invalid or expired CSRF state")
     redirect_url, lang = csrf_result
 
+    # OKX SDK token endpoint requires JSON body + term_id (UUID)
     data = {
         "client_id": OKX_CLIENT_ID,
         "client_secret": OKX_CLIENT_SECRET,
         "code": code,
         "grant_type": "authorization_code",
         "redirect_uri": OKX_REDIRECT_URI,
+        "term_id": secrets.token_hex(16),  # UUID-like identifier required by OKX SDK API
     }
 
     async with httpx.AsyncClient() as client:
-        resp = await client.post(OKX_OAUTH_TOKEN, data=data, timeout=15)
+        resp = await client.post(
+            OKX_OAUTH_TOKEN,
+            json=data,  # OKX SDK endpoint requires Content-Type: application/json
+            timeout=15,
+        )
         resp.raise_for_status()
         token_data = resp.json()
 
