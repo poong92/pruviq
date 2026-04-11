@@ -71,7 +71,7 @@ def generate_oauth_params(redirect_after: str = "", lang: str = "en") -> dict:
     }
 
 
-async def exchange_code(code: str, state: str) -> tuple[str, str, str]:
+async def exchange_code(code: str, state: str, domain: str = "") -> tuple[str, str, str]:  # domain param kept for router compat
     """
     Exchange authorization code for access + refresh tokens.
     Validates CSRF state, stores encrypted tokens in SQLite.
@@ -82,22 +82,24 @@ async def exchange_code(code: str, state: str) -> tuple[str, str, str]:
         raise ValueError("Invalid or expired CSRF state")
     redirect_url, lang = csrf_result
 
-    # OKX SDK token endpoint requires JSON body + term_id (UUID)
+    # Standard FD Broker OAuth token exchange (RFC 6749)
     data = {
         "client_id": OKX_CLIENT_ID,
         "client_secret": OKX_CLIENT_SECRET,
         "code": code,
         "grant_type": "authorization_code",
         "redirect_uri": OKX_REDIRECT_URI,
-        "term_id": secrets.token_hex(16),  # UUID-like identifier required by OKX SDK API
     }
+
+    logger.debug("OKX token request → url=%s", OKX_OAUTH_TOKEN)
 
     async with httpx.AsyncClient() as client:
         resp = await client.post(
             OKX_OAUTH_TOKEN,
-            json=data,  # OKX SDK endpoint requires Content-Type: application/json
+            json=data,
             timeout=15,
         )
+        logger.debug("OKX token response → status=%s", resp.status_code)
         resp.raise_for_status()
         token_data = resp.json()
 
