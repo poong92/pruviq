@@ -134,10 +134,25 @@ async def refresh_access_token(session_id: str) -> str:
 
     async with httpx.AsyncClient() as client:
         resp = await client.post(OKX_OAUTH_TOKEN, data=data, timeout=15)
+        # Refresh token expired or revoked → delete session immediately
+        if resp.status_code in (400, 401, 403):
+            logger.warning(
+                "Refresh token rejected (status=%s) for session %s — deleting session",
+                resp.status_code, session_id[:8],
+            )
+            delete_session(session_id)
+            raise ValueError(f"Refresh token expired or revoked (status={resp.status_code})")
         resp.raise_for_status()
         token_data = resp.json()
 
     if "access_token" not in token_data:
+        # Handle OKX-level error codes indicating token invalidation
+        if token_data.get("error") in ("invalid_grant", "expired_token", "invalid_token"):
+            logger.warning(
+                "Refresh token invalidated (error=%s) for session %s — deleting session",
+                token_data.get("error"), session_id[:8],
+            )
+            delete_session(session_id)
         raise ValueError(f"OKX refresh error: {token_data}")
 
     tokens["access_token"] = token_data["access_token"]

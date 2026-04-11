@@ -3890,9 +3890,11 @@ async def unsubscribe_email(email: str, token: str):
     from fastapi.responses import HTMLResponse
 
     secret = os.environ.get("UNSUBSCRIBE_SECRET", "pruviq-unsub-2026")
-    expected = hmac.new(secret.encode(), email.lower().encode(), hashlib.sha256).hexdigest()[:16]
+    expected_full = hmac.new(secret.encode(), email.lower().encode(), hashlib.sha256).hexdigest()
+    # Accept legacy 16-char tokens (old emails) and new full 64-char tokens
+    expected_legacy = expected_full[:16]
 
-    if token != expected:
+    if token not in (expected_full, expected_legacy):
         raise HTTPException(403, detail="Invalid unsubscribe token")
 
     if SUBSCRIBERS_FILE.exists():
