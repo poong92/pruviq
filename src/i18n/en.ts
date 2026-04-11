@@ -1510,6 +1510,7 @@ export const en = {
   "nav.weekly": "Weekly",
   "nav.signals": "Signals",
   "nav.dashboard": "Dashboard",
+  "nav.autotrading": "Autotrading",
 
   // Metric explanation tooltips
   "metric.sharpe_desc":

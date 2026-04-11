@@ -1,17 +1,19 @@
 ---
-// TODO: Dashboard not ready — redirect until public launch
-return Astro.redirect('/', 302);
-
 import Layout from '../layouts/Layout.astro';
 import OKXConnectButton from '../components/OKXConnectButton';
 import TradingSettings from '../components/TradingSettings';
+import LivePositions from '../components/LivePositions';
+import LiveTradeHistory from '../components/LiveTradeHistory';
 ---
 
 <Layout title="Dashboard — PRUVIQ" description="Manage your OKX connection and auto-trading settings.">
 
   <main class="max-w-4xl mx-auto px-4 py-12 md:py-20">
-    <h1 class="text-3xl md:text-4xl font-bold mb-2">Dashboard</h1>
-    <p class="text-[--color-text-muted] mb-8">Manage your exchange connection and auto-trading.</p>
+    <div class="flex items-center justify-between mb-2 flex-wrap gap-3">
+      <h1 class="text-3xl md:text-4xl font-bold">Dashboard</h1>
+      <a href="/autotrading" class="text-sm text-[--color-text-muted] hover:text-[--color-accent] transition-colors">← About Autotrading</a>
+    </div>
+    <p class="text-[--color-text-muted] mb-8">Manage your OKX connection and auto-trading bots.</p>
 
     <!-- OKX Connection Card -->
     <section class="mb-8">
@@ -19,7 +21,9 @@ import TradingSettings from '../components/TradingSettings';
         <div class="flex items-center justify-between mb-4 flex-wrap gap-4">
           <div class="flex items-center gap-3">
             <div class="w-12 h-12 rounded-xl bg-[--color-accent]/10 flex items-center justify-center">
-              <span class="text-2xl font-bold text-[--color-accent]">O</span>
+              <svg class="w-7 h-7 text-[--color-accent]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
             </div>
             <div>
               <h2 class="text-xl font-bold">OKX Broker</h2>
@@ -45,9 +49,19 @@ import TradingSettings from '../components/TradingSettings';
       </div>
     </section>
 
-    <!-- Trading Settings -->
+    <!-- Auto-Trading Settings -->
     <section class="mb-8">
       <TradingSettings client:load lang="en" />
+    </section>
+
+    <!-- Live Positions -->
+    <section class="mb-8">
+      <LivePositions client:load lang="en" />
+    </section>
+
+    <!-- Trade History -->
+    <section class="mb-8">
+      <LiveTradeHistory client:load lang="en" />
     </section>
 
     <!-- Security Info -->
@@ -70,6 +84,11 @@ import TradingSettings from '../components/TradingSettings';
         </div>
       </div>
     </section>
+
+    <!-- Risk Disclaimer -->
+    <p class="text-xs text-[--color-text-disabled] text-center mt-8">
+      Auto-trading executes real trades with real money. Simulation results do not guarantee live trading performance.
+    </p>
   </main>
 
 </Layout>

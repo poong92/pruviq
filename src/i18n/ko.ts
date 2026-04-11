@@ -1476,6 +1476,7 @@ export const ko: Record<TranslationKey, string> = {
   "nav.weekly": "주간",
   "nav.signals": "시그널",
   "nav.dashboard": "대시보드",
+  "nav.autotrading": "자동매매",
 
   // Metric explanation tooltips
   "metric.sharpe_desc":
