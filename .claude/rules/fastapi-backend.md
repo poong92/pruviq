@@ -20,6 +20,18 @@
 - 단일 응답 1MB 초과 금지
 - equity curve 등 대용량 데이터는 downsample 후 반환
 
+## 외부 API 연동 로깅 (CRITICAL — 디버깅 필수)
+
+외부 API 호출 코드 작성 시 처음부터 요청/응답 로그 필수:
+```python
+logger.warning("→ %s %s body=%s", method, url, {k: v for k, v in data.items() if "secret" not in k})
+resp = await client.post(url, data=data)
+logger.warning("← status=%s body=%s", resp.status_code, resp.text[:500])
+```
+- 요청/응답 둘 다 `WARNING` 레벨 (INFO는 기본 필터링됨)
+- secret 키는 로그에서 제외
+- 근거: 로그 없으면 외부 API 오류 시 추측→수정→재테스트 무한루프 (OKX OAuth 53010 사건 2026-04-11)
+
 ## Rate Limit
 - 무거운 엔드포인트 (`/simulate`, `/backtest`)에 rate limit 적용
 - DoS 방지: IP 기반 제한 권장

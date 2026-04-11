@@ -16,9 +16,14 @@
 ## PR 생성 규칙 (CRITICAL)
 PR 생성 시 반드시 `automerge` 라벨 붙일 것:
 ```
-gh pr create ... && gh pr edit [번호] --add-label automerge
+gh pr create --title "..." --label automerge --body "..."
 ```
-라벨 없으면 자동 머지 안 됨.
+라벨 없으면 자동 머지 안 됨. `-l` 플래그로 생성 시 바로 붙임.
+
+## PR/배포 워크플로우
+- PR 생성 → CI 자동 통과 → 자동 머지 (오너가 수동 머지 안 함)
+- backend/ 변경 포함 PR도 자동 머지됨 (2026-04-11 backend/ 차단 제거)
+- backend/ 변경 후 머지되면: Mac Mini에서 `git pull` + `~/Desktop/start-backend.command` 실행 필수
 
 ## 응답 규칙
 
