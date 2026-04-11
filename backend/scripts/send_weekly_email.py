@@ -40,7 +40,7 @@ def make_unsubscribe_url(email: str) -> str:
     """Generate a signed unsubscribe URL."""
     token = hmac.new(
         UNSUBSCRIBE_SECRET.encode(), email.encode(), hashlib.sha256
-    ).hexdigest()[:16]
+    ).hexdigest()
     return f"https://api.pruviq.com/api/unsubscribe?email={quote(email)}&token={token}"
 
 
