@@ -110,7 +110,7 @@ def delete_session(session_id: str) -> None:
 
 # ── CSRF States ─────────────────────────────────────────────
 
-CSRF_TTL = 600  # 10 minutes
+CSRF_TTL = 1800  # 30 minutes
 
 
 def save_csrf_state(state: str, redirect_url: str, lang: str = "en") -> None:
