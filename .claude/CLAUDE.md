@@ -10,7 +10,15 @@
 - 선택지(A/B/C/D) 제시 — 바로 실행
 - MEMORY.md 자동 업데이트
 - GitHub 이슈에 자동 코멘트
-- git commit/push (PR만 생성, 머지는 오너가 함)
+- git commit/push (PR만 생성, 머지는 자동)
+- PR 생성 후 "머지해주세요" 언급 금지 — CI 통과 시 자동 머지됨
+
+## PR 생성 규칙 (CRITICAL)
+PR 생성 시 반드시 `automerge` 라벨 붙일 것:
+```
+gh pr create ... && gh pr edit [번호] --add-label automerge
+```
+라벨 없으면 자동 머지 안 됨.
 
 ## 응답 규칙
 
