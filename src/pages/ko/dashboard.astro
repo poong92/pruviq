@@ -2,25 +2,32 @@
 import Layout from '../../layouts/Layout.astro';
 import OKXConnectButton from '../../components/OKXConnectButton';
 import TradingSettings from '../../components/TradingSettings';
+import LivePositions from '../../components/LivePositions';
+import LiveTradeHistory from '../../components/LiveTradeHistory';
 ---
 
-<Layout title="대시보드 — PRUVIQ" description="OKX 연결 및 자동매매 설정을 관리하세요.">
+<Layout title="대시보드 — PRUVIQ" description="OKX 연결 및 자동매매 설정을 관리합니다." lang="ko">
 
   <main class="max-w-4xl mx-auto px-4 py-12 md:py-20">
-    <h1 class="text-3xl md:text-4xl font-bold mb-2">대시보드</h1>
-    <p class="text-[--color-text-muted] mb-8">거래소 연결 및 자동매매를 관리하세요.</p>
+    <div class="flex items-center justify-between mb-2 flex-wrap gap-3">
+      <h1 class="text-3xl md:text-4xl font-bold">대시보드</h1>
+      <a href="/ko/autotrading" class="text-sm text-[--color-text-muted] hover:text-[--color-accent] transition-colors">← 자동매매 소개</a>
+    </div>
+    <p class="text-[--color-text-muted] mb-8">OKX 연결 및 자동매매 봇을 관리합니다.</p>
 
-    <!-- OKX Connection Card -->
+    <!-- OKX 연결 카드 -->
     <section class="mb-8">
       <div class="card-enterprise rounded-2xl p-6 md:p-8">
         <div class="flex items-center justify-between mb-4 flex-wrap gap-4">
           <div class="flex items-center gap-3">
             <div class="w-12 h-12 rounded-xl bg-[--color-accent]/10 flex items-center justify-center">
-              <span class="text-2xl font-bold text-[--color-accent]">O</span>
+              <svg class="w-7 h-7 text-[--color-accent]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
             </div>
             <div>
               <h2 class="text-xl font-bold">OKX 브로커</h2>
-              <p class="text-sm text-[--color-text-muted]">공식 브로커 파트너 — 20% 수수료 할인</p>
+              <p class="text-sm text-[--color-text-muted]">공식 브로커 파트너 — 수수료 20% 할인</p>
             </div>
           </div>
           <OKXConnectButton client:load lang="ko" size="md" />
@@ -42,19 +49,29 @@ import TradingSettings from '../../components/TradingSettings';
       </div>
     </section>
 
-    <!-- Trading Settings -->
+    <!-- 자동매매 설정 -->
     <section class="mb-8">
       <TradingSettings client:load lang="ko" />
     </section>
 
-    <!-- Security Info -->
+    <!-- 오픈 포지션 -->
+    <section class="mb-8">
+      <LivePositions client:load lang="ko" />
+    </section>
+
+    <!-- 거래 내역 -->
+    <section class="mb-8">
+      <LiveTradeHistory client:load lang="ko" />
+    </section>
+
+    <!-- 보안 정보 -->
     <section>
       <div class="card-enterprise rounded-xl p-5">
         <h3 class="font-bold mb-3">보안</h3>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
           <div class="flex items-center gap-2 text-[--color-text-muted]">
             <span class="w-2 h-2 rounded-full bg-[--color-up]"></span>
-            OAuth — API 키 공유 없음
+            OAuth — API 키 미공유
           </div>
           <div class="flex items-center gap-2 text-[--color-text-muted]">
             <span class="w-2 h-2 rounded-full bg-[--color-up]"></span>
@@ -62,11 +79,16 @@ import TradingSettings from '../../components/TradingSettings';
           </div>
           <div class="flex items-center gap-2 text-[--color-text-muted]">
             <span class="w-2 h-2 rounded-full bg-[--color-up]"></span>
-            AES-256 암호화 토큰 저장
+            AES-256 암호화 토큰
           </div>
         </div>
       </div>
     </section>
+
+    <!-- 법적 고지 -->
+    <p class="text-xs text-[--color-text-disabled] text-center mt-8">
+      본 서비스는 투자 자문업이 아닙니다. 자동매매는 실제 자금으로 거래를 실행합니다. 시뮬레이션 성과는 실제 거래 수익을 보장하지 않습니다.
+    </p>
   </main>
 
 </Layout>

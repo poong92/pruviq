@@ -72,6 +72,7 @@ const builderPath = lp('/builder');
 const performancePath = lp('/performance');
 const blogPath = lp('/blog');
 const dashboardPath = lp('/dashboard');
+const autotradingPath = lp('/autotrading');
 
 // Active nav detection
 const navItems = [
@@ -83,6 +84,7 @@ const navItems = [
   { href: learnPath, match: '/learn', label: t('nav.learn') },
   { href: feesPath, match: '/fees', label: t('nav.fees') },
   { href: aboutPath, match: '/about', label: t('footer.about') },
+  { href: autotradingPath, match: '/autotrading', label: t('nav.autotrading'), badge: 'NEW' },
   { href: dashboardPath, match: '/dashboard', label: t('nav.dashboard') },
 ];
 const isActive = (match: string) => basePath.startsWith(match);
@@ -448,7 +450,7 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
               </div>
             </div>
           ) : (
-            <a href={item.href} aria-current={isActive(item.match) ? "page" : undefined} class="transition-colors nav-slide-underline" style={isActive(item.match) ? 'color:var(--color-accent);font-weight:500' : 'color:var(--color-text-muted)'}>{item.label}</a>
+            <a href={item.href} aria-current={isActive(item.match) ? "page" : undefined} class="transition-colors nav-slide-underline flex items-center gap-1.5" style={isActive(item.match) ? 'color:var(--color-accent);font-weight:500' : 'color:var(--color-text-muted)'}>{item.label}{item.badge && <span class="text-[9px] font-bold px-1 py-0.5 rounded bg-[--color-accent] text-white leading-none tracking-wide">{item.badge}</span>}</a>
           ))}
         </div>
         <!-- 3열: Lang + Mobile hamburger (우측) -->
