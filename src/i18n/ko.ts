@@ -594,11 +594,11 @@ export const ko: Record<TranslationKey, string> = {
   "meta.coins_desc":
     "프루빅(PRUVIQ)의 실시간 암호화폐 시장 데이터. {coins}개 이상 코인의 가격, 시가총액, 거래량, 7일 차트를 확인하세요. 15분마다 갱신됩니다.",
   "meta.home_title":
-    "PRUVIQ \u2014 무료 암호화폐 전략 백테스터 | {coins}+ 코인, 가입 불필요",
+    "프루빅(PRUVIQ) \u2014 무료 암호화폐 전략 백테스터 | {coins}+ 코인, 가입 불필요",
   "meta.home_desc":
     "{coins}개 이상의 코인에서 2년+ 데이터로 무료 백테스트. 수수료, 슬리피지 모델링, 실패 포함 전체 결과 공개. 가입 불필요.",
   "meta.simulate_title":
-    "전략 시뮬레이터 \u2014 커스텀 전략 빌드 & 백테스트 | PRUVIQ",
+    "전략 시뮬레이터 \u2014 커스텀 전략 빌드 & 백테스트 | 프루빅(PRUVIQ)",
   "meta.simulate_desc":
     "14개 지표로 커스텀 전략을 만들고 {coins}+ 코인에서 백테스트. 코딩 불필요. 무료, 즉시 결과.",
   "meta.index_desc":
@@ -606,22 +606,22 @@ export const ko: Record<TranslationKey, string> = {
   "meta.strategies_title": "전략 라이브러리 - 프루빅(PRUVIQ)",
   "meta.strategies_desc":
     "테스트한 모든 전략의 전체 시뮬레이션 결과 — 검증된 것, 중단된 것, 그 사이의 모든 것. 체리피킹 없음.",
-  "meta.blog_title": "트레이딩 IQ - PRUVIQ",
+  "meta.blog_title": "트레이딩 IQ - 프루빅(PRUVIQ)",
   "meta.blog_desc":
     "트레이딩 IQ를 높이세요. 백테스팅, 리스크 관리, 알고리즘 전략, 실제 트레이딩의 교훈.",
-  "meta.demo_title": "PRUVIQ 데모 — 인터랙티브 전략 시뮬레이터",
+  "meta.demo_title": "프루빅(PRUVIQ) 데모 — 인터랙티브 전략 시뮬레이터",
   "meta.demo_desc":
     "PRUVIQ 전략 시뮬레이터를 즉시 체험하세요. 손절/익절을 조정하여 {coins}개+ 코인에 대한 실제 백테스트 결과를 확인하세요.",
-  "meta.fees_title": "거래소 수수료 비교 - PRUVIQ",
+  "meta.fees_title": "거래소 수수료 비교 - 프루빅(PRUVIQ)",
   "meta.fees_desc":
     "바이낸스 거래소 수수료 비교. 현물 19%, 선물 9% 할인. PRUVIQ 추천 코드로 거래 수수료 절약.",
-  "meta.changelog_title": "변경 이력 - PRUVIQ",
+  "meta.changelog_title": "변경 이력 - 프루빅(PRUVIQ)",
   "meta.changelog_desc":
     "PRUVIQ 트레이딩 시스템의 전체 버전 히스토리. 모든 변경, 모든 이유, 모든 날짜.",
-  "meta.performance_title": "백테스트 성과 - PRUVIQ",
+  "meta.performance_title": "백테스트 성과 - 프루빅(PRUVIQ)",
   "meta.performance_desc":
     "BB Squeeze SHORT 전략 백테스트 결과. {coins}개 코인, 2년 이상 데이터, 2,898건 거래. 실패 포함 전체 공개.",
-  "meta.about_title": "소개 - PRUVIQ",
+  "meta.about_title": "소개 - 프루빅(PRUVIQ)",
   "meta.about_desc":
     "PRUVIQ 프로젝트를 만나보세요. 미션: 크립토 전략 검증을 누구나 할 수 있게. 과대광고 없이. 데이터만.",
 
@@ -878,7 +878,7 @@ export const ko: Record<TranslationKey, string> = {
   "compare.no_data": "데이터 없음",
   "compare.back": "전략 라이브러리로 돌아가기",
   "compare.view": "자세히 보기",
-  "meta.compare_title": "전략 비교 - PRUVIQ",
+  "meta.compare_title": "전략 비교 - 프루빅(PRUVIQ)",
   "meta.compare_desc":
     "5개 트레이딩 전략을 나란히 비교하세요. 동일 조건, 동일 데이터. SL/TP를 조정하고 승률, 수익 팩터, 드로다운을 한눈에 확인.",
   "strategies.compare": "전체 비교",
@@ -891,12 +891,12 @@ export const ko: Record<TranslationKey, string> = {
   "footer.col_legal": "법적 고지",
 
   // Builder
-  "meta.builder_title": "전략 빌더 - PRUVIQ",
+  "meta.builder_title": "전략 빌더 - 프루빅(PRUVIQ)",
   "meta.builder_desc":
     "코드 없이 나만의 트레이딩 전략을 설계하세요. 지표 선택, 조건 설정, {coins}+ 코인 2년+ 실제 데이터로 백테스트.",
 
   // Learn page
-  "meta.learn_title": "학습 — 크립토 트레이딩 교육 | PRUVIQ",
+  "meta.learn_title": "학습 — 크립토 트레이딩 교육 | 프루빅(PRUVIQ)",
   "meta.learn_desc":
     "초급부터 고급까지 무료 크립토 트레이딩 교육. 지표, 백테스팅, 리스크 관리, 퀀트 트레이딩을 실제 데이터로 배우세요.",
   "learn.tag": "교육",
@@ -1038,7 +1038,7 @@ export const ko: Record<TranslationKey, string> = {
   "blog.cat_short.education": "교육",
 
   // Methodology page
-  "meta.methodology_title": "방법론 - PRUVIQ",
+  "meta.methodology_title": "방법론 - 프루빅(PRUVIQ)",
   "meta.methodology_desc":
     "PRUVIQ가 트레이딩 전략을 백테스트하는 방법. 데이터 소스, 수수료 가정, 포지션 사이징, 평가 지표, 알려진 한계 — 완전히 투명하게 공개합니다.",
   "methodology.tag": "방법론",
@@ -1146,7 +1146,7 @@ export const ko: Record<TranslationKey, string> = {
   "csv.download": "CSV 다운로드",
 
   // Signals page
-  "meta.signals_title": "실시간 매매 시그널 - PRUVIQ",
+  "meta.signals_title": "실시간 매매 시그널 - 프루빅(PRUVIQ)",
   "meta.signals_desc":
     "17개 검증된 전략이 30개 코인을 매시간 스캔합니다. 실시간 시그널 확인 후 시뮬레이터에서 직접 검증하세요.",
   "signals.title": "실시간 시그널",
@@ -1166,7 +1166,7 @@ export const ko: Record<TranslationKey, string> = {
   "signals.cta_strategies": "전략 둘러보기",
 
   // API Docs page
-  "meta.api_title": "API 레퍼런스 - PRUVIQ",
+  "meta.api_title": "API 레퍼런스 - 프루빅(PRUVIQ)",
   "meta.api_desc":
     "무료 크립토 전략 백테스팅 REST API. {coins}개 이상 코인에서 전략 시뮬레이션, OHLCV 데이터, 시장 개요 등을 제공합니다.",
   "api.tag": "API 레퍼런스",
@@ -1248,11 +1248,11 @@ export const ko: Record<TranslationKey, string> = {
 
   // Compare index page (/ko/compare)
   "compare_index.tag": "비교",
-  "compare_index.title": "PRUVIQ vs 대안 플랫폼",
+  "compare_index.title": "프루빅(PRUVIQ) vs 대안 플랫폼",
   "compare_index.subtitle":
     "무료 백테스트. 가입 불필요. {coins}개 코인. 직접 비교해 보세요.",
   "compare_index.meta_title":
-    "PRUVIQ vs 대안 플랫폼 — 무료 크립토 백테스트 비교",
+    "프루빅(PRUVIQ) vs 대안 플랫폼 — 무료 크립토 백테스트 비교",
   "compare_index.meta_desc":
     "PRUVIQ를 TradingView, Coinrule, 3Commas, Cryptohopper, Gainium, Streak와 비교하세요. 무료, 가입 불필요, {coins}개 코인.",
   "compare_index.most_popular": "가장 인기",
@@ -1333,11 +1333,11 @@ export const ko: Record<TranslationKey, string> = {
   "home.social_proof_cta": "이번 달 4,200명 이상이 백테스트를 실행했습니다.",
 
   // TradingView comparison page
-  "meta.vs_tv_title": "PRUVIQ vs 트레이딩뷰 - 무료 크립토 백테스팅 비교",
+  "meta.vs_tv_title": "프루빅(PRUVIQ) vs 트레이딩뷰 - 무료 크립토 백테스팅 비교",
   "meta.vs_tv_desc":
     "크립토 전략 백테스팅에서 PRUVIQ와 트레이딩뷰를 비교합니다. Pine Script 불필요. $0 — 구독 없음. {coins}개+ 코인. 완전 백테스트 투명성.",
   "vs.tag": "솔직한 비교",
-  "vs.title": "PRUVIQ vs 트레이딩뷰",
+  "vs.title": "프루빅(PRUVIQ) vs 트레이딩뷰",
   "vs.subtitle": "크립토 백테스팅용",
   "vs.desc":
     "트레이딩뷰는 차트에 훌륭합니다. 하지만 코딩 없이 크립토 전략을 백테스트하고 싶다면, PRUVIQ가 그것을 위해 만들어졌습니다.",
@@ -1460,10 +1460,10 @@ export const ko: Record<TranslationKey, string> = {
   "leaderboard.noscript_title": "주간 전략 순위",
   "leaderboard.noscript_desc":
     "승률, 수익률 등 실시간 주간 전략 순위를 보려면 JavaScript를 활성화하세요.",
-  "meta.leaderboard_title": "주간 전략 순위 - PRUVIQ",
+  "meta.leaderboard_title": "주간 전략 순위 - 프루빅(PRUVIQ)",
   "meta.leaderboard_desc":
     "이번 주 최고 및 최악의 암호화폐 전략을 확인하세요. 실제 백테스트 데이터로 매주 업데이트.",
-  "meta.ranking_title": "일별 전략 랭킹 | PRUVIQ",
+  "meta.ranking_title": "일별 전략 랭킹 | 프루빅(PRUVIQ)",
   "meta.ranking_desc":
     "수익 팩터와 승률 기반 일별 전략 랭킹. {coins}개 코인 · 37개 전략 설정 백테스트 데이터로 매일 업데이트.",
   "fees.savings_callout":
@@ -1595,13 +1595,13 @@ export const ko: Record<TranslationKey, string> = {
     '이 변경 기록은 바이낸스 선물에서 실시간 운영 중인 <strong class="text-[--color-text]">BB Squeeze SHORT 매매 전략</strong>을 추적합니다. 플랫폼 버전(웹사이트, 시뮬레이터, API)은 별도로 관리됩니다.',
 
   // Meta: Privacy & Terms
-  "meta.privacy_title": "개인정보처리방침 - PRUVIQ",
+  "meta.privacy_title": "개인정보처리방침 - 프루빅(PRUVIQ)",
   "meta.privacy_desc":
     "PRUVIQ 개인정보처리방침. 데이터 수집, 쿠키, 분석 도구 사용에 대한 안내. GDPR 및 개인정보보호법 준수.",
   "meta.privacy_tag": "개인정보처리방침",
   "meta.privacy_heading": "개인정보처리방침",
   "meta.privacy_updated": "최종 수정일: 2026년 3월 1일",
-  "meta.terms_title": "이용약관 - PRUVIQ",
+  "meta.terms_title": "이용약관 - 프루빅(PRUVIQ)",
   "meta.terms_desc":
     "PRUVIQ 이용약관. 서비스 이용 조건, 금융 면책조항, 책임 제한, 제휴 링크 고지.",
   "meta.terms_tag": "이용약관",
@@ -1636,11 +1636,11 @@ export const ko: Record<TranslationKey, string> = {
   "ranking.confidence_low": "신호",
 
   // 비교 페이지: 3Commas
-  "meta.vs_3commas_title": "PRUVIQ vs 3Commas — 무료 암호화폐 백테스트 대안",
+  "meta.vs_3commas_title": "프루빅(PRUVIQ) vs 3Commas — 무료 암호화폐 백테스트 대안",
   "meta.vs_3commas_desc":
     "암호화폐 전략 백테스팅에서 PRUVIQ와 3Commas를 비교하세요. 구독료 없이 무료, {coins}개 코인, 실제 수수료 시뮬레이션.",
   "vs_3commas.tag": "솔직한 비교",
-  "vs_3commas.title": "PRUVIQ vs 3Commas",
+  "vs_3commas.title": "프루빅(PRUVIQ) vs 3Commas",
   "vs_3commas.subtitle": "백테스팅 연구 vs. 자동매매 봇",
   "vs_3commas.desc":
     "3Commas는 DCA·그리드 봇으로 자동매매를 실행하는 대표 플랫폼입니다. PRUVIQ는 전용 백테스팅 연구 도구입니다. 목적이 다릅니다 — 실제 자금을 투입하기 전에 전략을 검증할 때, 어떻게 다른지 비교합니다.",
@@ -1721,11 +1721,11 @@ export const ko: Record<TranslationKey, string> = {
     "봇 구독료를 내기 전에 {coins}개 코인으로 전략을 무료로 백테스트하세요. 회원가입 불필요.",
 
   // 비교 페이지: Coinrule
-  "meta.vs_coinrule_title": "PRUVIQ vs Coinrule — 무료 암호화폐 백테스트 대안",
+  "meta.vs_coinrule_title": "프루빅(PRUVIQ) vs Coinrule — 무료 암호화폐 백테스트 대안",
   "meta.vs_coinrule_desc":
     "암호화폐 전략 백테스팅에서 PRUVIQ와 Coinrule을 비교하세요. 무료, IF-THEN 제한 없음, {coins}개 코인 + 실제 수수료 시뮬레이션.",
   "vs_coinrule.tag": "솔직한 비교",
-  "vs_coinrule.title": "PRUVIQ vs Coinrule",
+  "vs_coinrule.title": "프루빅(PRUVIQ) vs Coinrule",
   "vs_coinrule.subtitle": "암호화폐 백테스팅 비교",
   "vs_coinrule.desc":
     "Coinrule은 IF-THEN 규칙으로 거래를 자동화하는 도구입니다. 전략을 실제로 배포하기 전에 수백 개 코인에 대해 엄격하게 백테스트하고 싶다면, PRUVIQ가 그 역할을 무료로 합니다.",
@@ -1785,11 +1785,11 @@ export const ko: Record<TranslationKey, string> = {
 
   // 비교 페이지: Cryptohopper
   "meta.vs_cryptohopper_title":
-    "PRUVIQ vs Cryptohopper — 무료 암호화폐 백테스트 대안",
+    "프루빅(PRUVIQ) vs Cryptohopper — 무료 암호화폐 백테스트 대안",
   "meta.vs_cryptohopper_desc":
     "암호화폐 전략 백테스팅에서 PRUVIQ와 Cryptohopper를 비교하세요. 무료, 클라우드 구독 불필요, {coins}개 코인 + 실제 수수료·슬리피지 시뮬레이션.",
   "vs_cryptohopper.tag": "솔직한 비교",
-  "vs_cryptohopper.title": "PRUVIQ vs Cryptohopper",
+  "vs_cryptohopper.title": "프루빅(PRUVIQ) vs Cryptohopper",
   "vs_cryptohopper.subtitle": "백테스팅 연구 vs. 클라우드 자동매매 봇",
   "vs_cryptohopper.desc":
     "Cryptohopper는 전략 마켓플레이스를 갖춘 클라우드 기반 자동매매 플랫폼입니다. PRUVIQ는 전용 백테스팅 연구 도구입니다. 두 서비스 모두 암호화폐 트레이더를 위한 것이지만, 워크플로의 다른 단계에 있습니다.",
@@ -1874,11 +1874,11 @@ export const ko: Record<TranslationKey, string> = {
     "클라우드 봇 구독 전에 {coins}개 코인으로 전략을 무료로 테스트하세요. 회원가입 불필요.",
 
   // 비교 페이지: Gainium
-  "meta.vs_gainium_title": "PRUVIQ vs Gainium — 무료 암호화폐 백테스트 대안",
+  "meta.vs_gainium_title": "프루빅(PRUVIQ) vs Gainium — 무료 암호화폐 백테스트 대안",
   "meta.vs_gainium_desc":
     "암호화폐 전략 백테스팅에서 PRUVIQ와 Gainium을 비교하세요. 무료, DCA 전용 제약 없음, {coins}개 코인 + 실제 슬리피지·수수료 시뮬레이션.",
   "vs_gainium.tag": "솔직한 비교",
-  "vs_gainium.title": "PRUVIQ vs Gainium",
+  "vs_gainium.title": "프루빅(PRUVIQ) vs Gainium",
   "vs_gainium.subtitle": "암호화폐 백테스팅 비교",
   "vs_gainium.desc":
     "Gainium은 바이낸스 중심의 DCA 봇과 포트폴리오 관리에 특화된 도구입니다. 자본을 투입하기 전에 수백 개 코인에서 전략을 엄밀하게 검증하고 싶다면, PRUVIQ가 그 연구 레이어를 무료로 제공합니다.",
@@ -1936,11 +1936,11 @@ export const ko: Record<TranslationKey, string> = {
     "DCA 봇을 배포하기 전에 {coins}개 코인으로 전략을 무료로 리서치하세요. 회원가입 불필요.",
 
   // 비교 페이지: Streak
-  "meta.vs_streak_title": "PRUVIQ vs Streak — 무료 암호화폐 백테스트 대안",
+  "meta.vs_streak_title": "프루빅(PRUVIQ) vs Streak — 무료 암호화폐 백테스트 대안",
   "meta.vs_streak_desc":
     "암호화폐 전략 백테스팅에서 PRUVIQ와 Streak을 비교하세요. 무료, Pine Script 불필요, {coins}개 코인 + 실제 수수료·슬리피지 시뮬레이션.",
   "vs_streak.tag": "솔직한 비교",
-  "vs_streak.title": "PRUVIQ vs Streak",
+  "vs_streak.title": "프루빅(PRUVIQ) vs Streak",
   "vs_streak.subtitle": "암호화폐 백테스팅 비교",
   "vs_streak.desc":
     "Streak은 TradingView와 연동되는 백테스팅 도구로, Pine Script 사용과 프리미엄 구독이 필요합니다. 코딩이나 월 구독료 없이 전략 아이디어를 검증하고 싶다면 PRUVIQ가 대안입니다.",
@@ -1998,19 +1998,19 @@ export const ko: Record<TranslationKey, string> = {
 
   // SEO landing pages
   "meta.best_backtesting_title":
-    "2026년 최고의 무료 크립토 백테스팅 플랫폼 | PRUVIQ",
+    "2026년 최고의 무료 크립토 백테스팅 플랫폼 | 프루빅(PRUVIQ)",
   "meta.best_backtesting_desc":
     "2026년 최고의 크립토 백테스팅 플랫폼을 비교하세요. PRUVIQ는 {coins}개 이상 코인, 실제 수수료, 투명한 실패 데이터를 갖춘 무료 노코드 백테스팅을 제공합니다.",
   "meta.crypto_simulator_title":
-    "무료 크립토 트레이딩 시뮬레이터 — 회원가입 불필요 | PRUVIQ",
+    "무료 크립토 트레이딩 시뮬레이터 — 회원가입 불필요 | 프루빅(PRUVIQ)",
   "meta.crypto_simulator_desc":
     "무료 시뮬레이터로 크립토 트레이딩을 연습하세요. {coins}개 이상 코인, 실제 수수료, 36개 전략, 2년 이상의 과거 데이터로 테스트할 수 있습니다.",
   "meta.why_backtests_fail_title":
-    "백테스트가 실패하는 이유 — 그리고 피하는 방법 | PRUVIQ",
+    "백테스트가 실패하는 이유 — 그리고 피하는 방법 | 프루빅(PRUVIQ)",
   "meta.why_backtests_fail_desc":
     "크립토 백테스트가 실패하는 5가지 이유: look-ahead bias, 생존자 편향, 과적합, 수수료 무시, 시장 레짐 변화. PRUVIQ가 각각을 어떻게 해결하는지 알아보세요.",
   // 404
-  "404.title": "404 - 페이지를 찾을 수 없습니다 | PRUVIQ",
+  "404.title": "404 - 페이지를 찾을 수 없습니다 | 프루빅(PRUVIQ)",
   "404.desc":
     "페이지를 찾을 수 없습니다. PRUVIQ의 무료 크립토 전략 백테스팅 도구를 살펴보세요.",
   "404.heading": "이 페이지는 존재하지 않습니다",

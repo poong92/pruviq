@@ -123,7 +123,7 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
     <meta name="yandex-verification" content="a20aa9b1eacf8e51" />
     <meta name="keywords" content={customKeywords || (() => {
       const base = lang === 'ko'
-        ? ['크립토 백테스팅', '무료 백테스팅 도구', 'PRUVIQ']
+        ? ['크립토 백테스팅', '무료 백테스팅 도구', '프루빅', 'PRUVIQ']
         : ['crypto backtesting', 'free backtesting tool', 'PRUVIQ'];
       const section = basePath.split('/').filter(Boolean)[0] || '';
       const pageSpecific: Record<string, Record<string, string[]>> = {
@@ -180,7 +180,7 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
     <meta property="og:description" content={description} />
     <meta property="og:type" content={type} />
     <meta property="og:url" content={canonicalURL.href} />
-    <meta property="og:site_name" content="PRUVIQ" />
+    <meta property="og:site_name" content={lang === 'ko' ? '프루빅(PRUVIQ)' : 'PRUVIQ'} />
     <meta property="og:locale" content={lang === 'ko' ? 'ko_KR' : 'en_US'} />
     {!noAlternate && <meta property="og:locale:alternate" content={lang === 'ko' ? 'en_US' : 'ko_KR'} />}
     <meta property="og:image" content={ogImage} />
@@ -207,7 +207,7 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
           "width": 180,
           "height": 180
         },
-        "alternateName": lang === 'ko' ? '크립토 전략 검증 플랫폼' : 'Crypto Strategy Lab',
+        "alternateName": lang === 'ko' ? ['프루빅', '크립토 전략 검증 플랫폼'] : ['Crypto Strategy Lab', 'Free Crypto Backtester'],
         "url": "https://pruviq.com",
         "description": lang === 'ko'
           ? `무료 크립토 전략 백테스팅 플랫폼. ${C}개 이상 코인에서 2년 이상의 실제 시장 데이터로 트레이딩 전략을 만들고 테스트하세요.`
