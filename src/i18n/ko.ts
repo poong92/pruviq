@@ -18,7 +18,7 @@ export const ko: Record<TranslationKey, string> = {
   "nav.lang": "English",
 
   // Hero
-  "hero.tag": "무료 백테스팅 도구",
+  "hero.tag": "무료 백테스트 도구",
   "hero.title1": "{coins}개 코인, 3초 만에",
   "hero.title2": "전략 검증 완료.",
   "hero.subtitle": "코딩 없음. 가입 없음. 비용 없음. 데이터만.",
@@ -27,9 +27,9 @@ export const ko: Record<TranslationKey, string> = {
   "hero.cta_primary": "첫 전략 무료 테스트",
   "hero.cta_builder": "나만의 전략 만들기",
   "hero.cta1": "생존한 전략 보기",
-  "hero.cta2": "백테스팅 기초 배우기",
+  "hero.cta2": "백테스트 기초 배우기",
   "hero.beginner_note":
-    "백테스팅이 처음이라면? 실제 돈을 넣기 전에 과거 데이터로 전략을 테스트하는 것입니다.",
+    "백테스트가 처음이라면? 실제 돈을 넣기 전에 과거 데이터로 전략을 테스트하는 것입니다.",
   "hero.stat1": "코인 시뮬레이션",
   "hero.stat2": "과거 데이터",
   "hero.stat2_val": "2년+",
@@ -71,7 +71,7 @@ export const ko: Record<TranslationKey, string> = {
 
   // Problem
   "problem.tag": "문제점",
-  "problem.title": "크립토 트레이딩, 뭐가 문제인가?",
+  "problem.title": "크립토 트레이딩, 무엇이 문제인가?",
   "problem.card1_title": "백테스트는 거짓말합니다",
   "problem.card1_desc":
     "{coins}개 이상의 코인에서 88개 전략 조합을 2년 이상 실전 데이터로 검증했습니다. 선행 편향, 과적합, 레짐 무시 — 대부분의 전략이 같은 이유로 실패합니다. 저희는 어떤 전략이 왜 탈락했는지 전부 공개합니다.",
@@ -270,7 +270,7 @@ export const ko: Record<TranslationKey, string> = {
   "strategy.mdd_desc": "최고점에서 최저점까지 최대 하락폭",
   "strategies.beginner_tag": "암호화폐 트레이딩이 처음이신가요?",
   "strategies.beginner_desc":
-    "전략을 탐색하기 전에 교육 가이드부터 시작하세요. 백테스팅 기초, 리스크 관리, 흔한 실수를 배우세요.",
+    "전략을 탐색하기 전에 교육 가이드부터 시작하세요. 백테스트 기초, 리스크 관리, 흔한 실수를 배우세요.",
   "strategies.beginner_cta": "학습 시작하기",
   "strategies.verified_explanation":
     "검증됨 = {coins}개+ 코인, 2년+ 데이터에서 모든 검증 통과",
@@ -289,7 +289,7 @@ export const ko: Record<TranslationKey, string> = {
   "blog.tag": "트레이딩 IQ",
   "blog.title": "트레이딩 IQ를 높이세요.",
   "blog.desc":
-    "무엇이 되고 안 되는지 확인하세요. {coins}개 코인, 88개 파라미터 조합에서 얻은 백테스팅 방법론, 리스크 관리, 교훈.",
+    "무엇이 되고 안 되는지 확인하세요. {coins}개 코인, 88개 파라미터 조합에서 얻은 백테스트 방법론, 리스크 관리, 교훈.",
   "blog.coming_soon": "최신 인사이트",
   "blog.coming_desc":
     "시장 분석, 퀀트 교육, 전략 시뮬레이션 업데이트를 확인하세요.",
@@ -1286,6 +1286,7 @@ export const ko: Record<TranslationKey, string> = {
   "compare_index.tbl_multicoin": "멀티코인 백테스트",
   "compare_index.tbl_transparency": "실패 투명성",
   "compare_index.tbl_no_code": "코딩 불필요",
+  "compare_index.tbl_autobot": "자동매매 봇",
 
   // Social proof / trust section
   "trust.badge_api": "CoinGecko 데이터",

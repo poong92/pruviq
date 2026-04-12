@@ -1315,6 +1315,7 @@ export const en = {
   "compare_index.tbl_multicoin": "Multi-coin Backtest",
   "compare_index.tbl_transparency": "Failure Transparency",
   "compare_index.tbl_no_code": "No Coding Required",
+  "compare_index.tbl_autobot": "Auto-Trading Bot",
 
   // Social proof / trust section
   "trust.badge_api": "CoinGecko Data",
