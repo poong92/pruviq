@@ -82,7 +82,10 @@ export default function OKXConnectButton({
       }
     }
 
-    fetch(`${API_BASE}/auth/okx/status`, { credentials: "include" })
+    fetch(`${API_BASE}/auth/okx/status`, {
+      credentials: "include",
+      signal: AbortSignal.timeout(8000),
+    })
       .then((r) => r.json())
       .then((d) => {
         setConnected(d.connected);
