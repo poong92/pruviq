@@ -460,11 +460,16 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
           </button>
         </div>
       </div>
-      <div id="mobile-menu" class="hidden md:hidden border-t border-[--color-border] bg-[--color-bg] backdrop-blur-sm" aria-hidden="true">
-        <div class="flex flex-col px-4 py-4 gap-1 text-sm">
+      <div id="mobile-menu" class="hidden md:hidden border-t border-[--color-border] bg-[--color-bg] backdrop-blur-sm overflow-y-auto" style="max-height:calc(100dvh - 3.5rem)" aria-hidden="true">
+        <div class="flex flex-col px-4 py-3 gap-1 text-sm">
+          <!-- Language switch — top of mobile menu for discoverability -->
+          <div class="flex items-center justify-between pb-3 mb-1 border-b border-[--color-border]">
+            <span class="text-xs text-[--color-text-muted] font-mono uppercase tracking-wider">Language</span>
+            <a href={altPath} hreflang={altHreflang} class="font-mono text-sm px-4 py-2 border border-[--color-accent]/40 rounded-lg text-[--color-accent] bg-[--color-accent]/5 min-h-[40px] flex items-center font-semibold hover:bg-[--color-accent]/10 transition-colors" aria-label={lang === 'ko' ? 'Switch to English' : '한국어로 전환'}>{t('nav.lang')}</a>
+          </div>
           {navItems.map(item => (
             <Fragment>
-              <a href={item.href} aria-current={isActive(item.match) ? "page" : undefined} class="min-h-[48px] flex items-center px-3 rounded-lg text-[15px] font-medium transition-colors hover:bg-[--color-bg-hover]" style={isActive(item.match) ? 'color:var(--color-accent);font-weight:500' : 'color:var(--color-text-muted)'}>{item.label}</a>
+              <a href={item.href} aria-current={isActive(item.match) ? "page" : undefined} class="min-h-[48px] flex items-center px-3 rounded-lg text-[15px] font-medium transition-colors hover:bg-[--color-bg-hover]" style={isActive(item.match) ? 'color:var(--color-accent);font-weight:500' : 'color:var(--color-text-muted)'}>{item.label}{item.badge && <span class="ml-1.5 text-[9px] font-bold px-1 py-0.5 rounded bg-[--color-accent] text-white leading-none tracking-wide">{item.badge}</span>}</a>
               {item.match === '/strategies' && (
                 <div class="flex flex-col ml-3 mb-1 rounded-lg bg-[--color-bg-surface] overflow-hidden">
                   <a href={rankingPath} aria-current={isActive('/strategies/ranking') ? "page" : undefined} class="min-h-[44px] flex items-center gap-2.5 px-4 text-sm transition-colors hover:bg-[--color-bg-hover]" style={isActive('/strategies/ranking') ? 'color:var(--color-accent);font-weight:500' : 'color:var(--color-text-secondary)'}>
@@ -479,9 +484,6 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
               )}
             </Fragment>
           ))}
-          <div class="border-t border-[--color-border] mt-2 pt-2">
-            <a href={altPath} hreflang={altHreflang} class="font-mono text-xs px-3 py-2 border border-[--color-border] rounded-lg text-[--color-text-muted] w-fit min-h-[44px] flex items-center hover:border-[--color-accent] hover:text-[--color-accent] transition-colors" aria-label={lang === 'ko' ? 'Switch to English' : '한국어로 전환'}>{t('nav.lang')}</a>
-          </div>
         </div>
       </div>
     </nav>

@@ -1197,7 +1197,7 @@ textarea:focus-visible {
   height: 1px;
   background: linear-gradient(90deg, transparent 5%, rgba(44,181,232,0.3) 30%, rgba(44,181,232,0.5) 50%, rgba(44,181,232,0.3) 70%, transparent 95%);
   border: none;
-  margin: 0;
+  margin: 2rem 0;
   position: relative;
 }
 .section-divider::after {
