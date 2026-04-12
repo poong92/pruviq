@@ -48,7 +48,6 @@
     menuBtn?.setAttribute("aria-expanded", "true");
     iconOpen?.classList.add("hidden");
     iconClose?.classList.remove("hidden");
-    document.body.style.overflow = "hidden";
   }
 
   function closeMenu() {
@@ -60,7 +59,6 @@
     menuBtn?.setAttribute("aria-expanded", "false");
     iconOpen?.classList.remove("hidden");
     iconClose?.classList.add("hidden");
-    document.body.style.overflow = "";
   }
 
   menuBtn?.addEventListener("click", () => {
