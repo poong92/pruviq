@@ -76,16 +76,15 @@ const autotradingPath = lp('/autotrading');
 
 // Active nav detection
 const navItems = [
-  { href: marketPath, match: '/market', label: t('nav.market') },
   { href: simulatePath, match: '/simulate', label: t('nav.simulate') },
   { href: strategiesPath, match: '/strategies', label: t('nav.strategies') },
   { href: signalsPath, match: '/signals', label: t('nav.signals') },
+  { href: autotradingPath, match: '/autotrading', label: t('nav.autotrading'), badge: 'NEW' },
+  { href: marketPath, match: '/market', label: t('nav.market') },
   { href: coinsPath, match: '/coins', label: t('nav.coins') },
   { href: learnPath, match: '/learn', label: t('nav.learn') },
   { href: feesPath, match: '/fees', label: t('nav.fees') },
   { href: aboutPath, match: '/about', label: t('footer.about') },
-  { href: autotradingPath, match: '/autotrading', label: t('nav.autotrading'), badge: 'NEW' },
-  { href: dashboardPath, match: '/dashboard', label: t('nav.dashboard') },
 ];
 const isActive = (match: string) => basePath.startsWith(match);
 

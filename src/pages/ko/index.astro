@@ -59,8 +59,8 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
             <a href="/ko/simulate" class="btn btn-primary btn-lg text-center w-full sm:w-auto">
               시뮬레이터 열기 — 무료 &rarr;
             </a>
-            <a href="/ko/strategies" class="btn btn-ghost btn-sm text-center w-full sm:w-auto">
-              전략 탐색하기
+            <a href="/ko/autotrading" class="btn btn-ghost btn-lg text-center w-full sm:w-auto border-[--color-accent]/30 hover:border-[--color-accent] hover:text-[--color-accent]">
+              자동매매 시작 &rarr;
             </a>
           </div>
           <!-- Trust strip -->
@@ -125,7 +125,7 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
       <a href="/ko/simulate" class="btn btn-primary btn-md">시뮬레이터 열기 — 무료 &rarr;</a>
     </div>
     <!-- 페르소나별 진입점 -->
-    <div class="mt-12 grid sm:grid-cols-3 gap-5 max-w-3xl mx-auto">
+    <div class="mt-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-5 max-w-4xl mx-auto">
       <a href="/ko/learn" class="card-premium card-hover p-6 text-center group">
         <p class="text-sm text-[--color-text-muted] mb-2 font-mono">처음이신가요?</p>
         <p class="text-base font-semibold group-hover:text-[--color-accent] transition-colors">학습 시작 →</p>
@@ -138,6 +138,28 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
         <p class="text-sm text-[--color-text-muted] mb-2 font-mono">둘러보는 중?</p>
         <p class="text-base font-semibold group-hover:text-[--color-accent] transition-colors">전략 탐색 →</p>
       </a>
+      <a href="/ko/autotrading" class="card-premium card-hover p-6 text-center group border border-[--color-accent]/20">
+        <p class="text-sm text-[--color-accent] mb-2 font-mono">자동화 준비됐나요?</p>
+        <p class="text-base font-semibold group-hover:text-[--color-accent] transition-colors">자동매매 시작 →</p>
+      </a>
+    </div>
+  </section>
+
+  <!-- HOW AUTOTRADING WORKS -->
+  <hr class="section-divider" />
+  <section class="max-w-7xl mx-auto px-6 py-24 md:py-32 section-elevated" aria-labelledby="autotrading-ko-heading">
+    <p class="font-mono text-[--color-accent] text-sm tracking-wider text-center mb-4">자동매매</p>
+    <h2 id="autotrading-ko-heading" class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-center mb-5">검증된 전략에서 실행 봇까지</h2>
+    <p class="text-[--color-text-secondary] text-center text-xl mb-14 max-w-xl mx-auto">백테스트 완료. 검증됨. OKX에서 24시간 실행.</p>
+    <div class="relative grid md:grid-cols-3 gap-8">
+      <div class="hidden md:block absolute top-[2.75rem] left-[calc(33.33%+1rem)] right-[calc(33.33%+1rem)] h-px bg-gradient-to-r from-[--color-accent]/30 via-[--color-accent]/15 to-[--color-accent]/30 reveal" aria-hidden="true"></div>
+      <StepCard step={1} title="OKX 연결" description="OAuth만 사용 — API 키 공유 없음, 출금 권한 없음. 보안 설계." />
+      <StepCard step={2} title="검증된 전략 선택" description="570개 이상 코인에서 엄격한 백테스트를 통과한 전략만 배포 가능합니다." />
+      <StepCard step={3} title="봇이 24시간 실행" description="5분마다 시그널 스캔. 설정한 리스크 한도 내에서 자동 실행됩니다." />
+    </div>
+    <div class="text-center mt-14">
+      <a href="/ko/autotrading" class="btn btn-primary btn-lg">자동매매 시작 — 무료 →</a>
+      <p class="text-xs text-[--color-text-muted] mt-3">시뮬레이션 성과는 실제 거래 수익을 보장하지 않습니다.</p>
     </div>
   </section>
 

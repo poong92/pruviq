@@ -59,8 +59,8 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
             <a href="/simulate" class="btn btn-primary btn-lg text-center w-full sm:w-auto">
               Open Simulator — Free &rarr;
             </a>
-            <a href="/strategies" class="btn btn-ghost btn-lg text-center w-full sm:w-auto">
-              Explore Strategies
+            <a href="/autotrading" class="btn btn-ghost btn-lg text-center w-full sm:w-auto border-[--color-accent]/30 hover:border-[--color-accent] hover:text-[--color-accent]">
+              Deploy a Bot &rarr;
             </a>
           </div>
           <!-- Trust strip -->
@@ -128,7 +128,7 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
       <a href="/simulate" class="btn btn-primary btn-lg">Open Simulator — Free &rarr;</a>
     </div>
     <!-- Persona entry points -->
-    <div class="mt-14 grid sm:grid-cols-3 gap-5 max-w-3xl mx-auto">
+    <div class="mt-14 grid sm:grid-cols-2 lg:grid-cols-4 gap-5 max-w-4xl mx-auto">
       <a href="/learn" class="card-premium card-hover p-6 text-center group">
         <p class="text-sm text-[--color-text-muted] mb-2 font-mono">New to trading?</p>
         <p class="text-base font-semibold group-hover:text-[--color-accent] transition-colors">Start Learning →</p>
@@ -141,6 +141,28 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
         <p class="text-sm text-[--color-text-muted] mb-2 font-mono">Just exploring?</p>
         <p class="text-base font-semibold group-hover:text-[--color-accent] transition-colors">Explore Strategies →</p>
       </a>
+      <a href="/autotrading" class="card-premium card-hover p-6 text-center group border border-[--color-accent]/20">
+        <p class="text-sm text-[--color-accent] mb-2 font-mono">Ready to automate?</p>
+        <p class="text-base font-semibold group-hover:text-[--color-accent] transition-colors">Deploy a Bot →</p>
+      </a>
+    </div>
+  </section>
+
+  <!-- HOW AUTOTRADING WORKS -->
+  <hr class="section-divider" />
+  <section class="max-w-7xl mx-auto px-6 py-24 md:py-32 section-elevated" aria-labelledby="autotrading-heading">
+    <p class="font-mono text-[--color-accent] text-sm tracking-wider text-center mb-4">AUTOTRADING</p>
+    <h2 id="autotrading-heading" class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-center mb-5">From Verified Strategy to Running Bot</h2>
+    <p class="text-[--color-text-secondary] text-center text-xl mb-14 max-w-xl mx-auto">Backtested. Verified. Executing 24/7 on OKX.</p>
+    <div class="relative grid md:grid-cols-3 gap-8">
+      <div class="hidden md:block absolute top-[2.75rem] left-[calc(33.33%+1rem)] right-[calc(33.33%+1rem)] h-px bg-gradient-to-r from-[--color-accent]/30 via-[--color-accent]/15 to-[--color-accent]/30 reveal" aria-hidden="true"></div>
+      <StepCard step={1} title="Connect OKX" description="OAuth only — no API keys shared, no withdrawal access. Secure by design." />
+      <StepCard step={2} title="Pick a Verified Strategy" description="Only strategies that passed rigorous backtests across 570+ coins are deployable." />
+      <StepCard step={3} title="Bot Trades 24/7" description="Scans signals every 5 minutes. Executes automatically with your risk limits." />
+    </div>
+    <div class="text-center mt-14">
+      <a href="/autotrading" class="btn btn-primary btn-lg">Start Autotrading — Free →</a>
+      <p class="text-xs text-[--color-text-muted] mt-3">Simulation results do not guarantee live trading performance.</p>
     </div>
   </section>
 
