@@ -105,6 +105,24 @@
     link.addEventListener("click", closeMenu);
   });
 
+  // ── Strategies submenu toggle ────────────────────────────────
+  const strategiesToggle = document.getElementById("strategies-toggle");
+  const strategiesSubmenu = document.getElementById("strategies-submenu");
+  const strategiesChevron = document.getElementById("strategies-chevron");
+
+  strategiesToggle?.addEventListener("click", () => {
+    const isHidden = strategiesSubmenu?.classList.contains("hidden");
+    if (isHidden) {
+      strategiesSubmenu?.classList.remove("hidden");
+      strategiesToggle.setAttribute("aria-expanded", "true");
+      strategiesChevron?.style.setProperty("transform", "rotate(180deg)");
+    } else {
+      strategiesSubmenu?.classList.add("hidden");
+      strategiesToggle.setAttribute("aria-expanded", "false");
+      strategiesChevron?.style.setProperty("transform", "rotate(0deg)");
+    }
+  });
+
   // ── Hide sticky banners when hero section is in viewport ─────
   const heroSection = document.getElementById("hero-section");
   if (heroSection && window.IntersectionObserver) {
