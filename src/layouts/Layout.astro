@@ -471,61 +471,60 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
           </button>
         </div>
       </div>
+
+      <!-- 모바일 메뉴 (nav 안 in-flow — 화면 좌우 딱 맞음) -->
+      <div id="mobile-menu" class="hidden md:hidden border-t border-[--color-border] overflow-y-auto" style="max-height:calc(100dvh - 3.5rem);" aria-hidden="true">
+        <div class="flex flex-col px-4 py-3 gap-1 text-sm">
+
+          <!-- 언어 전환 — 맨 위 -->
+          <div class="flex items-center justify-between pb-3 mb-1 border-b border-[--color-border]">
+            <span class="text-xs text-[--color-text-muted] font-mono uppercase tracking-wider">Language</span>
+            <a href={altPath} hreflang={altHreflang}
+               class="font-mono text-sm px-4 py-2 border border-[--color-accent]/40 rounded-lg text-[--color-accent] bg-[--color-accent]/5 min-h-[40px] flex items-center font-semibold hover:bg-[--color-accent]/10 transition-colors"
+               aria-label={lang === 'ko' ? 'Switch to English' : '한국어로 전환'}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-1.5" aria-hidden="true">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/>
+              </svg>
+              {t('nav.lang')}
+            </a>
+          </div>
+
+          <!-- 네비게이션 아이템 -->
+          {navItems.map(item => (
+            <Fragment>
+              <a href={item.href} aria-current={isActive(item.match) ? "page" : undefined}
+                 class="min-h-[48px] flex items-center px-3 rounded-lg text-[15px] font-medium transition-colors hover:bg-[--color-bg-hover]"
+                 style={isActive(item.match) ? 'color:var(--color-accent);font-weight:500' : 'color:var(--color-text-muted)'}>
+                {item.label}
+                {item.badge && <span class="ml-1.5 text-[9px] font-bold px-1 py-0.5 rounded bg-[--color-accent] text-white leading-none tracking-wide">{item.badge}</span>}
+              </a>
+              {item.match === '/strategies' && (
+                <div class="flex flex-col ml-3 mb-1 rounded-lg bg-[--color-bg-surface] overflow-hidden">
+                  <a href={rankingPath} aria-current={isActive('/strategies/ranking') ? "page" : undefined}
+                     class="min-h-[44px] flex items-center gap-2.5 px-4 text-sm transition-colors hover:bg-[--color-bg-hover]"
+                     style={isActive('/strategies/ranking') ? 'color:var(--color-accent);font-weight:500' : 'color:var(--color-text-secondary)'}>
+                    <span class="text-[--color-text-muted] text-xs shrink-0">›</span>
+                    {t('nav.ranking')}
+                  </a>
+                  <a href={leaderboardPath} aria-current={isActive('/leaderboard') ? "page" : undefined}
+                     class="min-h-[44px] flex items-center gap-2.5 px-4 text-sm transition-colors hover:bg-[--color-bg-hover]"
+                     style={isActive('/leaderboard') ? 'color:var(--color-accent);font-weight:500' : 'color:var(--color-text-secondary)'}>
+                    <span class="text-[--color-text-muted] text-xs shrink-0">›</span>
+                    {t('nav.leaderboard')}
+                  </a>
+                </div>
+              )}
+            </Fragment>
+          ))}
+
+          <div class="h-4"></div>
+        </div>
+      </div>
     </nav>
 
-    <!-- 모바일 backdrop (fixed overlay) -->
-    <div id="mobile-backdrop" class="fixed inset-0 z-40 bg-black/50 backdrop-blur-[2px] hidden md:hidden" aria-hidden="true"></div>
-
-    <!-- 모바일 메뉴 (fixed drawer, nav 바 아래부터 풀 높이) -->
-    <div id="mobile-menu" class="fixed left-0 right-0 bottom-0 z-50 overflow-y-auto hidden md:hidden" style="top:3.5rem; border-top: 1px solid var(--color-border);" aria-hidden="true">
-      <div class="flex flex-col px-4 py-4 gap-1 text-sm">
-
-        <!-- 언어 전환 — 맨 위 고정 -->
-        <a href={altPath} hreflang={altHreflang}
-           class="flex items-center gap-2.5 px-3 py-3 mb-2 rounded-xl border border-[--color-accent]/30 bg-[--color-accent]/5 text-[--color-accent] font-semibold hover:bg-[--color-accent]/10 transition-colors min-h-[48px]"
-           aria-label={lang === 'ko' ? 'Switch to English' : '한국어로 전환'}>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <circle cx="12" cy="12" r="10"/>
-            <path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/>
-          </svg>
-          <span class="font-mono text-sm">{lang === 'ko' ? 'English' : '한국어'}</span>
-          <span class="ml-auto font-mono text-xs opacity-60">{t('nav.lang')}</span>
-        </a>
-
-        <div class="h-px bg-[--color-border] mb-2"></div>
-
-        <!-- 네비게이션 아이템 -->
-        {navItems.map(item => (
-          <Fragment>
-            <a href={item.href} aria-current={isActive(item.match) ? "page" : undefined}
-               class="min-h-[48px] flex items-center px-3 rounded-lg text-[15px] font-medium transition-colors hover:bg-[--color-bg-hover]"
-               style={isActive(item.match) ? 'color:var(--color-accent);font-weight:500' : 'color:var(--color-text-muted)'}>
-              {item.label}
-              {item.badge && <span class="ml-1.5 text-[9px] font-bold px-1 py-0.5 rounded bg-[--color-accent] text-white leading-none tracking-wide">{item.badge}</span>}
-            </a>
-            {item.match === '/strategies' && (
-              <div class="flex flex-col ml-3 mb-1 rounded-lg bg-[--color-bg-surface] overflow-hidden">
-                <a href={rankingPath} aria-current={isActive('/strategies/ranking') ? "page" : undefined}
-                   class="min-h-[44px] flex items-center gap-2.5 px-4 text-sm transition-colors hover:bg-[--color-bg-hover]"
-                   style={isActive('/strategies/ranking') ? 'color:var(--color-accent);font-weight:500' : 'color:var(--color-text-secondary)'}>
-                  <span class="text-[--color-text-muted] text-xs shrink-0">›</span>
-                  {t('nav.ranking')}
-                </a>
-                <a href={leaderboardPath} aria-current={isActive('/leaderboard') ? "page" : undefined}
-                   class="min-h-[44px] flex items-center gap-2.5 px-4 text-sm transition-colors hover:bg-[--color-bg-hover]"
-                   style={isActive('/leaderboard') ? 'color:var(--color-accent);font-weight:500' : 'color:var(--color-text-secondary)'}>
-                  <span class="text-[--color-text-muted] text-xs shrink-0">›</span>
-                  {t('nav.leaderboard')}
-                </a>
-              </div>
-            )}
-          </Fragment>
-        ))}
-
-        <!-- 하단 여백 (safe area) -->
-        <div class="h-6"></div>
-      </div>
-    </div>
+    <!-- backdrop: 메뉴 열릴 때 페이지 내용 어둡게 -->
+    <div id="mobile-backdrop" class="fixed inset-0 z-[39] bg-black/40 hidden md:hidden" aria-hidden="true"></div>
 
     </header>
 
