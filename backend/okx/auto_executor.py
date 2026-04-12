@@ -176,6 +176,23 @@ async def _try_execute(
 
     token = await get_valid_token(session_id)
     async with OKXClient(token, session_id=session_id) as client:
+        # ── Percent-of-balance position sizing ──
+        if settings.get("position_size_mode") == "percent":
+            pct = settings.get("position_size_pct", 5)
+            balances = await client.get_balance("USDT")
+            avail = float(balances[0].avail_bal) if balances else 0
+            if avail <= 0:
+                logger.warning(
+                    "Session %s: zero USDT balance — skipping percent sizing",
+                    session_id[:8],
+                )
+                return None
+            position_size = avail * pct / 100
+            logger.info(
+                "Percent sizing: %.1f%% of $%.2f = $%.2f for session %s",
+                pct, avail, position_size, session_id[:8],
+            )
+
         # Check concurrent position limit
         positions = await client.get_positions()
         open_count = sum(1 for p in positions if float(p.pos or 0) != 0)
