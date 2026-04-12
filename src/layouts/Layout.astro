@@ -464,14 +464,15 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
             </svg>
             <span class="font-mono text-xs font-semibold">{t('nav.lang')}</span>
           </a>
-          <!-- 모바일: 지구본 (언어 전환) — 메뉴 밖에서 항상 접근 가능 -->
+          <!-- 모바일: 지구본 + 언어코드 (언어 전환) — 메뉴 밖에서 항상 접근 가능 -->
           <a href={altPath} hreflang={altHreflang}
-             class="md:hidden flex items-center justify-center w-10 h-10 rounded-lg text-[--color-text-muted] hover:bg-[--color-bg-hover] transition-colors"
+             class="md:hidden flex flex-col items-center justify-center gap-0.5 px-2 h-10 rounded-lg text-[--color-text-muted] hover:bg-[--color-bg-hover] transition-colors"
              aria-label={lang === 'ko' ? 'Switch to English' : '한국어로 전환'}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <circle cx="12" cy="12" r="10"/>
               <path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/>
             </svg>
+            <span class="font-mono text-[9px] font-bold leading-none">{t('nav.lang')}</span>
           </a>
           <!-- 모바일: 햄버거 -->
           <button id="mobile-menu-btn" class="md:hidden flex items-center justify-center w-10 h-10 rounded-lg text-[--color-text-muted] hover:bg-[--color-bg-hover] transition-colors" aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-menu">
