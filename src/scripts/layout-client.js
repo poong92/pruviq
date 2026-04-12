@@ -36,31 +36,35 @@
 
   const menuBtn = document.getElementById("mobile-menu-btn");
   const mobileMenu = document.getElementById("mobile-menu");
-  const mobileBackdrop = document.getElementById("mobile-backdrop");
   const iconOpen = document.getElementById("menu-icon-open");
   const iconClose = document.getElementById("menu-icon-close");
 
+  // backdrop은 header 파싱 후 접근 (lazy 참조)
+  function getBackdrop() {
+    return document.getElementById("mobile-backdrop");
+  }
+
   function openMenu() {
+    const backdrop = getBackdrop();
     mobileMenu?.classList.remove("hidden");
-    mobileBackdrop?.classList.remove("hidden");
+    backdrop?.classList.remove("hidden");
     mobileMenu?.setAttribute("aria-hidden", "false");
-    mobileBackdrop?.setAttribute("aria-hidden", "false");
+    backdrop?.setAttribute("aria-hidden", "false");
     menuBtn?.setAttribute("aria-expanded", "true");
     iconOpen?.classList.add("hidden");
     iconClose?.classList.remove("hidden");
-    // 배경 스크롤 잠금
     document.body.style.overflow = "hidden";
   }
 
   function closeMenu() {
+    const backdrop = getBackdrop();
     mobileMenu?.classList.add("hidden");
-    mobileBackdrop?.classList.add("hidden");
+    backdrop?.classList.add("hidden");
     mobileMenu?.setAttribute("aria-hidden", "true");
-    mobileBackdrop?.setAttribute("aria-hidden", "true");
+    backdrop?.setAttribute("aria-hidden", "true");
     menuBtn?.setAttribute("aria-expanded", "false");
     iconOpen?.classList.remove("hidden");
     iconClose?.classList.add("hidden");
-    // 배경 스크롤 복원
     document.body.style.overflow = "";
   }
 
@@ -71,7 +75,9 @@
   });
 
   // backdrop 클릭 시 닫기
-  mobileBackdrop?.addEventListener("click", closeMenu);
+  document.addEventListener("click", (e) => {
+    if (e.target === getBackdrop()) closeMenu();
+  });
 
   // Escape 키로 닫기
   document.addEventListener("keydown", (e) => {
