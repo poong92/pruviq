@@ -36,7 +36,7 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
       <img src="/images/simulator-preview.png" alt="" class="w-[80%] max-w-4xl opacity-[0.04] blur-[1px] select-none" loading="eager" />
     </div>
     <div class="relative max-w-7xl mx-auto px-6 pt-24 pb-28 md:pt-36 md:pb-44 hero-enter">
-      <div class="grid md:grid-cols-[3fr_2fr] gap-12 md:gap-16 items-center">
+      <div class="grid md:grid-cols-[3fr_2fr] gap-12 md:gap-16 items-start">
         <!-- Left: Text + CTA -->
         <div>
           <HeroBadge stat={simulationsRun} label="simulations run" />
