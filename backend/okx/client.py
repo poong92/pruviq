@@ -210,8 +210,11 @@ class OKXClient:
         }
         if pos_side:
             body["posSide"] = pos_side
+        logger.warning("→ set-leverage instId=%s lever=%s mgnMode=%s", inst_id, lever, mgn_mode)
         data = await self._post("/api/v5/account/set-leverage", body)
-        return data.get("data", [{}])[0]
+        result = data.get("data", [{}])[0]
+        logger.warning("← set-leverage OK lever=%s", result.get("lever", "?"))
+        return result
 
     async def place_order(
         self,
@@ -232,9 +235,13 @@ class OKXClient:
         }
         if px:
             body["px"] = px
-
+        logger.warning("→ place-order instId=%s side=%s sz=%s ordType=%s tdMode=%s",
+                       inst_id, side, sz, ord_type, td_mode)
         data = await self._post("/api/v5/trade/order", body)
-        return data.get("data", [{}])[0]
+        result = data.get("data", [{}])[0]
+        logger.warning("← place-order ordId=%s sCode=%s sMsg=%s",
+                       result.get("ordId", "?"), result.get("sCode", "?"), result.get("sMsg", ""))
+        return result
 
     async def place_algo_order(
         self,
@@ -262,18 +269,29 @@ class OKXClient:
         if tp_trigger_px:
             body["tpTriggerPx"] = tp_trigger_px
             body["tpOrdPx"] = tp_ord_px
-
-        return await self._post("/api/v5/trade/order-algo", body)
+        logger.warning("→ place-algo instId=%s side=%s sz=%s SL=%s TP=%s",
+                       inst_id, side, sz, sl_trigger_px, tp_trigger_px)
+        result = await self._post("/api/v5/trade/order-algo", body)
+        algo_data = result.get("data", [{}])
+        algo_id = algo_data[0].get("algoId", "?") if algo_data else "?"
+        logger.warning("← place-algo algoId=%s", algo_id)
+        return result
 
     async def cancel_order(self, inst_id: str, ord_id: str) -> dict[str, Any]:
-        return await self._post("/api/v5/trade/cancel-order", {
+        logger.warning("→ cancel-order instId=%s ordId=%s", inst_id, ord_id)
+        result = await self._post("/api/v5/trade/cancel-order", {
             "instId": inst_id,
             "ordId": ord_id,
         })
+        logger.warning("← cancel-order done")
+        return result
 
     async def close_position(self, inst_id: str, mgn_mode: str = "isolated") -> dict[str, Any]:
-        return await self._post("/api/v5/trade/close-position", {
+        logger.warning("→ close-position instId=%s mgnMode=%s", inst_id, mgn_mode)
+        result = await self._post("/api/v5/trade/close-position", {
             "instId": inst_id,
             "mgnMode": mgn_mode,
             "tag": self.broker_code,
         })
+        logger.warning("← close-position done instId=%s", inst_id)
+        return result
