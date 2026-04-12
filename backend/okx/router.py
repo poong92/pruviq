@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import logging
 import os
+import time
 
 from fastapi import APIRouter, HTTPException, Query, Request, Response
 from fastapi.responses import RedirectResponse
@@ -20,6 +21,11 @@ from fastapi.responses import RedirectResponse
 from .config import COOKIE_DOMAIN, FRONTEND_URL, OKX_CLIENT_ID
 
 ADMIN_KEY = os.environ.get("ADMIN_API_KEY", "")
+
+# ── Rate limiting for /execute/order ─────────────────────
+# {session_id: last_call_timestamp} — prevents accidental double-fire
+_order_rate_limit: dict[str, float] = {}
+ORDER_RATE_LIMIT_SECONDS = 10
 from .models import SimToExecRequest
 from .oauth import (
     disconnect,
@@ -149,26 +155,52 @@ async def oauth_disconnect(request: Request):
 async def execute_order(
     req: SimToExecRequest,
     request: Request,
-    current_price: float = Query(..., description="Current market price"),
+    current_price: float = Query(None, description="Current market price (auto-fetched if omitted)"),
 ):
     """Execute trade from simulation results. Requires OKX connection."""
     session_id = _get_session(request)
     if not is_authenticated(session_id):
         raise HTTPException(401, "Not connected to OKX. Connect first.")
 
+    # Rate limit: 10 seconds between orders per session
+    now = time.time()
+    last_call = _order_rate_limit.get(session_id, 0)
+    if now - last_call < ORDER_RATE_LIMIT_SECONDS:
+        wait = int(ORDER_RATE_LIMIT_SECONDS - (now - last_call))
+        raise HTTPException(429, f"Rate limit: wait {wait}s before next order")
+    _order_rate_limit[session_id] = now
+
     try:
         result = await execute_from_simulation(session_id, req, current_price)
         return {"status": "executed", **result}
     except ValueError as e:
+        _order_rate_limit.pop(session_id, None)  # release rate limit on error
         raise HTTPException(400, str(e))
     except Exception as e:
+        _order_rate_limit.pop(session_id, None)
         logger.error("Order execution failed for session %s: %s", session_id[:8], e)
         raise HTTPException(500, f"Execution failed: {e}")
 
 
+def _pos_to_camel(p) -> dict:
+    """Convert PositionInfo to camelCase dict matching LivePositions.tsx interface."""
+    return {
+        "instId": p.inst_id,
+        "pos": p.pos,
+        "avgPx": p.avg_px,
+        "markPx": p.mark_px,
+        "upl": p.pnl,
+        "uplRatio": p.upl_ratio,
+        "liqPx": p.liq_px,
+        "lever": p.lever,
+        "mgnMode": p.mgn_mode,
+        "posSide": p.pos_side,
+    }
+
+
 @router.get("/execute/positions")
 async def get_positions(request: Request, symbol: str = Query(None)):
-    """Get current open positions."""
+    """Get current open positions. Returns {data: [...]} matching LivePositions.tsx."""
     session_id = _get_session(request)
     if not is_authenticated(session_id):
         raise HTTPException(401, "Not connected to OKX.")
@@ -181,7 +213,72 @@ async def get_positions(request: Request, symbol: str = Query(None)):
 
     async with OKXClient(token) as client:
         positions = await client.get_positions(inst_id)
-        return {"positions": [p.model_dump() for p in positions]}
+        return {"data": [_pos_to_camel(p) for p in positions]}
+
+
+@router.get("/execute/bot-status")
+async def get_bot_status(request: Request):
+    """Bot status overview — running state, today's trades and PnL."""
+    session_id = _get_session(request)
+    if not is_authenticated(session_id):
+        raise HTTPException(401, "Not connected to OKX.")
+
+    from .settings import get_settings, get_daily_stats, get_trade_log
+
+    settings = get_settings(session_id)
+    daily_stats = get_daily_stats(session_id)
+    trades = get_trade_log(session_id, limit=1)
+
+    enabled = settings.get("enabled", False)
+    mode = settings.get("execution_mode", "manual")
+    loss_limit = settings.get("daily_loss_limit_usdt", 200)
+    pnl_today = daily_stats["pnl_today"]
+    limit_reached = pnl_today <= -loss_limit
+
+    if not enabled:
+        status = "stopped"
+    elif limit_reached:
+        status = "paused"
+    else:
+        status = "running"
+
+    return {
+        "status": status,               # running | stopped | paused
+        "execution_mode": mode,          # manual | alert | auto
+        "enabled": enabled,
+        "trades_today": daily_stats["trades_today"],
+        "pnl_today": pnl_today,
+        "daily_loss_limit": loss_limit,
+        "limit_reached": limit_reached,
+        "last_trade": trades[0] if trades else None,
+    }
+
+
+@router.get("/execute/positions-history")
+async def get_positions_history(request: Request, limit: int = Query(20, le=100)):
+    """Closed position history — realized PnL per trade."""
+    session_id = _get_session(request)
+    if not is_authenticated(session_id):
+        raise HTTPException(401, "Not connected to OKX.")
+
+    from .client import OKXClient
+
+    token = await get_valid_token(session_id)
+
+    async with OKXClient(token) as client:
+        raw = await client.get_positions_history(limit=str(limit))
+
+    return {"data": [
+        {
+            "instId": p.get("instId"),
+            "direction": p.get("direction"),
+            "realizedPnl": p.get("realizedPnl"),
+            "fee": p.get("fee"),
+            "fundingFee": p.get("fundingFee"),
+            "closingTime": p.get("uTime"),
+        }
+        for p in raw
+    ]}
 
 
 @router.get("/execute/balance")

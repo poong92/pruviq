@@ -22,8 +22,10 @@ class PositionInfo(BaseModel):
     inst_id: str
     pos: str
     avg_px: str
+    mark_px: str = "0"
     liq_px: str = ""
-    pnl: str = ""
+    pnl: str = ""        # upl
+    upl_ratio: str = "0"
     lever: str = ""
     mgn_mode: str = ""
     pos_side: str = ""
@@ -47,3 +49,4 @@ class SimToExecRequest(BaseModel):
     tp_pct: float = Field(..., description="Take-profit %")
     position_size_usdt: float = Field(..., ge=1, description="Position size in USDT")
     leverage: int = Field(1, ge=1, le=125)
+    td_mode: str = Field("isolated", description="isolated or cross")

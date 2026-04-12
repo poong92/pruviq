@@ -102,6 +102,9 @@ const labels = {
       alert: "Alert — Notify me, I click to execute",
       auto: "Auto — Execute automatically",
     },
+    alertChatId: "Telegram Chat ID",
+    alertChatIdDesc:
+      "Your personal Telegram chat ID (send /start to @userinfobot to find it)",
     masterSwitch: "Enable Auto-Trading",
     save: "Save Settings",
     saving: "Saving...",
@@ -137,6 +140,9 @@ const labels = {
       alert: "알림 — 알림 후 클릭으로 실행",
       auto: "자동 — 시그널 시 자동 실행",
     },
+    alertChatId: "텔레그램 채팅 ID",
+    alertChatIdDesc:
+      "개인 텔레그램 채팅 ID (@userinfobot에게 /start 전송 후 확인)",
     masterSwitch: "자동매매 활성화",
     save: "설정 저장",
     saving: "저장 중...",
@@ -164,6 +170,7 @@ interface Settings {
   daily_loss_limit_usdt: number;
   execution_mode: string;
   enabled: boolean;
+  alert_telegram_chat_id: string;
 }
 
 export default function TradingSettings({ lang = "en" }: Props) {
@@ -182,6 +189,7 @@ export default function TradingSettings({ lang = "en" }: Props) {
     daily_loss_limit_usdt: 200,
     execution_mode: "manual",
     enabled: false,
+    alert_telegram_chat_id: "",
   });
   const [dailyStats, setDailyStats] = useState({
     trades_today: 0,
@@ -333,6 +341,28 @@ export default function TradingSettings({ lang = "en" }: Props) {
             </label>
           ))}
         </div>
+        {/* Alert mode: Telegram chat ID */}
+        {settings.execution_mode === "alert" && (
+          <div class="mt-4 pt-4 border-t border-[--color-border]">
+            <label class="font-bold text-sm block mb-1">{t.alertChatId}</label>
+            <p class="text-xs text-[--color-text-muted] mb-2">
+              {t.alertChatIdDesc}
+            </p>
+            <input
+              type="text"
+              placeholder="e.g. 123456789"
+              value={settings.alert_telegram_chat_id}
+              onInput={(e) =>
+                setSettings((s) => ({
+                  ...s,
+                  alert_telegram_chat_id: (e.target as HTMLInputElement).value,
+                }))
+              }
+              class="w-full p-2 rounded-lg bg-[--color-bg] border border-[--color-border] text-sm font-mono"
+              aria-label={t.alertChatId}
+            />
+          </div>
+        )}
       </div>
 
       {/* Strategies */}

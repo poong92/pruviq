@@ -22,10 +22,15 @@ from .oauth import get_valid_token, is_authenticated
 from .orders import _pruviq_to_okx_inst_id, _calc_sl_tp_prices
 from .settings import (
     get_auto_sessions,
+    get_alert_sessions,
     get_daily_stats,
     get_settings,
+    get_trade_log,
     log_trade,
 )
+from .notifications import send_signal_alert
+from .pnl_sync import sync_realized_pnl
+from .orders import _pruviq_to_okx_inst_id as _to_inst_id
 
 logger = logging.getLogger("okx_auto_executor")
 
@@ -73,6 +78,28 @@ async def process_signals(signals: list[dict]) -> list[dict]:
     if executed:
         logger.info("Auto-executed %d trades from %d signals", len(executed), len(signals))
 
+    # ── Alert mode: notify subscribed users ──
+    alert_sessions = get_alert_sessions()
+    for session_id, chat_id in alert_sessions:
+        if not is_authenticated(session_id):
+            continue
+        if not chat_id:
+            continue
+        settings = get_settings(session_id)
+        for signal in signals:
+            # Apply same strategy/coin filters as auto mode
+            if settings["strategies"] and signal["strategy"] not in settings["strategies"]:
+                continue
+            if settings["coins"] and signal["coin"] not in settings["coins"]:
+                continue
+            try:
+                await send_signal_alert(chat_id, signal)
+            except Exception as e:
+                logger.error(
+                    "Alert send failed for session %s: %s",
+                    session_id[:8], e,
+                )
+
     return executed
 
 
@@ -111,10 +138,18 @@ async def _try_execute(
         )
         return None
 
-    # NOTE: consecutive-loss guard requires actual realized PnL from position
-    # close events (no OKX webhook yet). Currently all logged pnl_usdt values
-    # are worst-case estimates (always negative), so this check would fire
-    # after every 3rd trade. Deferred until position-close tracking is added.
+    # ── Safety: consecutive loss guard ──
+    # pnl_sync.py updates pnl_usdt to actual realized values after position close.
+    # Initial estimate is worst-case (SL scenario), so guard uses actual values
+    # once sync completes (typically within 30-120s of trade close).
+    recent_trades = get_trade_log(session_id, limit=3)
+    if len(recent_trades) >= 3:
+        if all(t["pnl_usdt"] < 0 for t in recent_trades[:3]):
+            logger.warning(
+                "Session %s: 3 consecutive losses — auto-pausing",
+                session_id[:8],
+            )
+            return None
 
     # ── Execute ──
     token = await get_valid_token(session_id)
@@ -191,12 +226,17 @@ async def _try_execute(
     }
 
     # Log trade with estimated worst-case PnL (SL hit scenario)
-    # This ensures daily_loss_limit and consecutive_loss guards function
+    # pnl_sync.py will update this to actual realized PnL once position closes
     estimated_loss = -(position_size * sl_pct / 100)
+    trade_created_at = result["timestamp"]
     log_trade(session_id, signal, result, pnl=estimated_loss)
-    logger.info(
-        "Auto-executed: %s %s %s sz=%s for session %s",
-        side, inst_id, strategy_id, sz, session_id[:8],
+    logger.warning(
+        "Auto-executed: %s %s %s sz=%s for session %s (est_pnl=%.2f)",
+        side, inst_id, strategy_id, sz, session_id[:8], estimated_loss,
     )
+
+    # Fire-and-forget: sync actual realized PnL once position closes
+    import asyncio
+    asyncio.create_task(sync_realized_pnl(session_id, inst_id, trade_created_at))
 
     return result

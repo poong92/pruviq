@@ -82,18 +82,43 @@ export default function OKXExecuteButton({
   const [status, setStatus] = useState<
     "idle" | "executing" | "success" | "failed"
   >("idle");
+  const [userSettings, setUserSettings] = useState<{
+    position_size_usdt: number;
+    leverage: number;
+    td_mode: string;
+  }>({ position_size_usdt: 100, leverage: 1, td_mode: "isolated" });
 
   useEffect(() => {
     fetch(`${API_BASE}/auth/okx/status`, { credentials: "include" })
       .then((r) => r.json())
-      .then((d) => setConnected(d.connected))
+      .then((d) => {
+        setConnected(d.connected);
+        if (d.connected) {
+          // Fetch user settings to use their configured position size and leverage
+          return fetch(`${API_BASE}/settings/trading`, {
+            credentials: "include",
+          });
+        }
+        return null;
+      })
+      .then((r) => r?.json())
+      .then((d) => {
+        if (d?.settings) {
+          setUserSettings({
+            position_size_usdt: d.settings.position_size_usdt ?? 100,
+            leverage: d.settings.leverage ?? 1,
+            td_mode: d.settings.td_mode ?? "isolated",
+          });
+        }
+      })
       .catch(() => setConnected(false));
   }, []);
 
   const handleExecute = async () => {
     setStatus("executing");
     try {
-      const resp = await fetch(`${API_BASE}/execute/order?current_price=0`, {
+      // current_price omitted — backend auto-fetches mark price from OKX
+      const resp = await fetch(`${API_BASE}/execute/order`, {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -103,8 +128,9 @@ export default function OKXExecuteButton({
           symbol,
           sl_pct: slPct,
           tp_pct: tpPct,
-          position_size_usdt: 100,
-          leverage: 1,
+          position_size_usdt: userSettings.position_size_usdt,
+          leverage: userSettings.leverage,
+          td_mode: userSettings.td_mode,
         }),
       });
       if (resp.ok) {
