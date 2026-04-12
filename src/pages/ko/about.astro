@@ -290,7 +290,7 @@ const simulationsRun = (siteStats as { simulations_run: number }).simulations_ru
 
     <!-- Contact + CTA -->
     <section class="reveal mb-8">
-      <div class="text-center py-8 border-t border-[--color-border]">
+      <div class="text-center py-8">
         <p class="font-mono text-[--color-accent] text-xs tracking-wider mb-2">{t('about.contact_tag')}</p>
         <p class="text-[--color-text-muted] text-sm mb-6">{t('about.contact_desc')}</p>
         <div class="flex flex-col sm:flex-row gap-3 justify-center">
@@ -304,10 +304,10 @@ const simulationsRun = (siteStats as { simulations_run: number }).simulations_ru
     <hr class="section-divider" />
 
     <!-- Explore CTAs -->
-    <section class="reveal pb-8">
+    <section class="reveal pb-8 pt-8">
       <div class="text-center">
-        <p class="text-[--color-text-muted] text-sm mb-4">{t('about.explore_desc')}</p>
-        <div class="flex flex-wrap gap-3 justify-center">
+        <p class="text-[--color-text-muted] text-sm mb-6">{t('about.explore_desc')}</p>
+        <div class="flex flex-wrap gap-4 justify-center">
           <a href="/ko/simulate" class="btn btn-primary btn-md">
             {t('cross.simulate_cta')} &rarr;
           </a>
