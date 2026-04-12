@@ -105,6 +105,49 @@
     link.addEventListener("click", closeMenu);
   });
 
+  // ── Mobile language dropdown ─────────────────────────────────
+  const langBtn = document.getElementById("mobile-lang-btn");
+  const langDropdown = document.getElementById("mobile-lang-dropdown");
+
+  function openLangDropdown() {
+    langDropdown?.classList.remove("hidden");
+    langBtn?.setAttribute("aria-expanded", "true");
+  }
+  function closeLangDropdown() {
+    langDropdown?.classList.add("hidden");
+    langBtn?.setAttribute("aria-expanded", "false");
+  }
+
+  langBtn?.addEventListener("click", (e) => {
+    e.stopPropagation();
+    langDropdown?.classList.contains("hidden")
+      ? openLangDropdown()
+      : closeLangDropdown();
+  });
+
+  // 외부 클릭 시 닫기
+  document.addEventListener("click", (e) => {
+    if (
+      langDropdown &&
+      !langDropdown.contains(e.target) &&
+      e.target !== langBtn
+    ) {
+      closeLangDropdown();
+    }
+  });
+
+  // ESC 키로 닫기
+  document.addEventListener("keydown", (e) => {
+    if (
+      e.key === "Escape" &&
+      langDropdown &&
+      !langDropdown.classList.contains("hidden")
+    ) {
+      closeLangDropdown();
+      langBtn?.focus();
+    }
+  });
+
   // ── Strategies submenu toggle ────────────────────────────────
   const strategiesToggle = document.getElementById("strategies-toggle");
   const strategiesSubmenu = document.getElementById("strategies-submenu");
