@@ -1193,6 +1193,22 @@ textarea:focus-visible {
 }
 
 /* ─── Divider line ─── */
+/* ─── Mobile menu slide-in animation ─── */
+#mobile-menu:not(.hidden) {
+  animation: mobileMenuIn 0.2s ease-out forwards;
+}
+@keyframes mobileMenuIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+#mobile-backdrop:not(.hidden) {
+  animation: backdropIn 0.2s ease-out forwards;
+}
+@keyframes backdropIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
 .section-divider {
   height: 1px;
   background: linear-gradient(90deg, transparent 5%, rgba(44,181,232,0.3) 30%, rgba(44,181,232,0.5) 50%, rgba(44,181,232,0.3) 70%, transparent 95%);

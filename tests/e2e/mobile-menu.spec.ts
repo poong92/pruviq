@@ -235,14 +235,13 @@ test.describe("Mobile menu: alignment consistency", () => {
 // ─── Language toggle in mobile menu ──────────────────────────
 
 test.describe("Mobile menu: language toggle", () => {
-  // lang toggle link is the only a.font-mono in #mobile-menu (unique class)
-  // Uses text "KO" on EN pages, "EN" on KO pages (from t('nav.lang'))
+  // lang toggle link uses hreflang attribute (globe icon + font-mono span inside)
   test("EN page: language link exists in menu", async ({ page }) => {
     await page.goto("/simulate", { waitUntil: "domcontentloaded" });
     await page.locator("#mobile-menu-btn").click({ force: true });
     await page.waitForSelector("#mobile-menu[aria-hidden='false']");
 
-    const langLink = page.locator("#mobile-menu a.font-mono");
+    const langLink = page.locator("#mobile-menu a[hreflang]");
     await expect(langLink.first()).toBeVisible();
     // Verify it links to the KO version
     await expect(langLink.first()).toHaveAttribute("href", /\/ko\//);
@@ -253,7 +252,7 @@ test.describe("Mobile menu: language toggle", () => {
     await page.locator("#mobile-menu-btn").click({ force: true });
     await page.waitForSelector("#mobile-menu[aria-hidden='false']");
 
-    const langLink = page.locator("#mobile-menu a.font-mono");
+    const langLink = page.locator("#mobile-menu a[hreflang]");
     await expect(langLink.first()).toBeVisible();
     // Verify it links to the EN version (no /ko/ prefix)
     const href = await langLink.first().getAttribute("href");

@@ -36,24 +36,44 @@
 
   const menuBtn = document.getElementById("mobile-menu-btn");
   const mobileMenu = document.getElementById("mobile-menu");
+  const mobileBackdrop = document.getElementById("mobile-backdrop");
+  const iconOpen = document.getElementById("menu-icon-open");
+  const iconClose = document.getElementById("menu-icon-close");
+
+  function openMenu() {
+    mobileMenu?.classList.remove("hidden");
+    mobileBackdrop?.classList.remove("hidden");
+    mobileMenu?.setAttribute("aria-hidden", "false");
+    mobileBackdrop?.setAttribute("aria-hidden", "false");
+    menuBtn?.setAttribute("aria-expanded", "true");
+    iconOpen?.classList.add("hidden");
+    iconClose?.classList.remove("hidden");
+    // 배경 스크롤 잠금
+    document.body.style.overflow = "hidden";
+  }
 
   function closeMenu() {
     mobileMenu?.classList.add("hidden");
+    mobileBackdrop?.classList.add("hidden");
     mobileMenu?.setAttribute("aria-hidden", "true");
+    mobileBackdrop?.setAttribute("aria-hidden", "true");
     menuBtn?.setAttribute("aria-expanded", "false");
+    iconOpen?.classList.remove("hidden");
+    iconClose?.classList.add("hidden");
+    // 배경 스크롤 복원
+    document.body.style.overflow = "";
   }
 
   menuBtn?.addEventListener("click", () => {
-    const isHidden = mobileMenu?.classList.toggle("hidden");
-    menuBtn.setAttribute("aria-expanded", String(!isHidden));
-    mobileMenu?.setAttribute("aria-hidden", String(!!isHidden));
-    // Scroll menu into view without stealing focus (avoids outline on first link)
-    if (!isHidden) {
-      mobileMenu?.scrollIntoView({ block: "nearest" });
-    }
+    const isHidden = mobileMenu?.classList.contains("hidden");
+    if (isHidden) openMenu();
+    else closeMenu();
   });
 
-  // Escape key closes menu
+  // backdrop 클릭 시 닫기
+  mobileBackdrop?.addEventListener("click", closeMenu);
+
+  // Escape 키로 닫기
   document.addEventListener("keydown", (e) => {
     if (
       e.key === "Escape" &&
@@ -65,7 +85,7 @@
     }
   });
 
-  // Focus trap when menu is open
+  // Focus trap
   mobileMenu?.addEventListener("keydown", (e) => {
     if (e.key !== "Tab") return;
     const focusable = mobileMenu.querySelectorAll("a, button");
@@ -81,11 +101,9 @@
     }
   });
 
-  // Close menu when clicking a link inside it
+  // 링크 클릭 시 닫기
   mobileMenu?.querySelectorAll("a").forEach((link) => {
-    link.addEventListener("click", () => {
-      closeMenu();
-    });
+    link.addEventListener("click", closeMenu);
   });
 
   // Hide sticky banners when hero section is in viewport (M3)
