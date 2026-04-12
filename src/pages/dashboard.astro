@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import OKXConnectButton from '../components/OKXConnectButton';
+import AutoTradingStatus from '../components/AutoTradingStatus';
 import TradingSettings from '../components/TradingSettings';
 import LivePositions from '../components/LivePositions';
 import LiveTradeHistory from '../components/LiveTradeHistory';
@@ -47,6 +48,11 @@ import LiveTradeHistory from '../components/LiveTradeHistory';
           </div>
         </div>
       </div>
+    </section>
+
+    <!-- Bot Status Widget -->
+    <section class="mb-8">
+      <AutoTradingStatus client:load lang="en" />
     </section>
 
     <!-- Auto-Trading Settings -->

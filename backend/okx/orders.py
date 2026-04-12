@@ -50,31 +50,37 @@ async def execute_from_simulation(
 
     1. Get valid OAuth token
     2. Convert symbol → OKX instId
-    3. Place market order (with broker tag)
-    4. Set SL/TP algo orders
+    3. If current_price not provided (or 0), fetch mark price from OKX
+    4. Place market order (with broker tag)
+    5. Set SL/TP algo orders
     """
-    if not current_price:
-        raise ValueError("current_price required for position sizing")
-
     token = await get_valid_token(session_id)
     inst_id = _pruviq_to_okx_inst_id(req.symbol)
     side = "sell" if req.direction == "short" else "buy"
-
-    # Position size: USDT × leverage / price
-    contract_size = (req.position_size_usdt * req.leverage) / current_price
-    sz = f"{contract_size:.4f}"
+    td_mode = req.td_mode if req.td_mode in ("isolated", "cross") else "isolated"
 
     async with OKXClient(token) as client:
-        logger.info(
-            "Execute %s %s sz=%s lever=%d strategy=%s",
-            side, inst_id, sz, req.leverage, req.strategy,
+        # Auto-fetch mark price if not supplied (or zero)
+        if not current_price or current_price <= 0:
+            logger.warning(
+                "current_price not supplied for %s — fetching mark price", inst_id
+            )
+            current_price = await client.get_mark_price(inst_id)
+
+        # Position size: USDT × leverage / price
+        contract_size = (req.position_size_usdt * req.leverage) / current_price
+        sz = f"{contract_size:.4f}"
+
+        logger.warning(
+            "→ Execute %s %s sz=%s lever=%d td_mode=%s strategy=%s price=%.4f",
+            side, inst_id, sz, req.leverage, td_mode, req.strategy, current_price,
         )
 
         # Set leverage before placing order
         await client.set_leverage(
             inst_id=inst_id,
             lever=req.leverage,
-            mgn_mode="isolated",
+            mgn_mode=td_mode,
         )
 
         # Market order
@@ -82,7 +88,7 @@ async def execute_from_simulation(
             inst_id=inst_id,
             side=side,
             sz=sz,
-            td_mode="isolated",
+            td_mode=td_mode,
         )
         logger.info("Order placed: %s", order.get("ordId", ""))
 
@@ -98,8 +104,9 @@ async def execute_from_simulation(
             sz=sz,
             sl_trigger_px=sl_price,
             tp_trigger_px=tp_price,
+            td_mode=td_mode,
         )
-        logger.info("SL/TP set: SL=%s TP=%s", sl_price, tp_price)
+        logger.warning("← Order placed ordId=%s SL=%s TP=%s", order.get("ordId"), sl_price, tp_price)
 
     return {
         "order": order,
@@ -108,9 +115,11 @@ async def execute_from_simulation(
             "inst_id": inst_id,
             "side": side,
             "size": sz,
+            "entry_price": current_price,
             "sl_price": sl_price,
             "tp_price": tp_price,
             "leverage": req.leverage,
+            "td_mode": td_mode,
             "strategy": req.strategy,
         },
     }

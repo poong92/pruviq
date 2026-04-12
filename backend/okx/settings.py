@@ -26,6 +26,7 @@ DEFAULT_SETTINGS: dict[str, Any] = {
     "daily_loss_limit_usdt": 200,  # stop trading if daily loss exceeds
     "execution_mode": "manual",    # manual | alert | auto
     "enabled": False,          # master switch
+    "alert_telegram_chat_id": "",  # personal Telegram chat ID for alert mode
 }
 
 
@@ -97,6 +98,12 @@ def save_settings(session_id: str, settings: dict[str, Any]) -> dict[str, Any]:
         validated["execution_mode"] = settings["execution_mode"]
     if "enabled" in settings:
         validated["enabled"] = bool(settings["enabled"])
+    if "alert_telegram_chat_id" in settings:
+        chat_id = str(settings["alert_telegram_chat_id"]).strip()
+        # Basic validation: must be numeric or start with @ (channel username)
+        if chat_id and not (chat_id.lstrip("-").isdigit() or chat_id.startswith("@")):
+            raise ValueError("alert_telegram_chat_id must be a numeric chat ID or @username")
+        validated["alert_telegram_chat_id"] = chat_id
 
     with _get_conn() as conn:
         conn.execute(
@@ -177,4 +184,23 @@ def get_auto_sessions() -> list[str]:
         settings = json.loads(settings_json)
         if settings.get("enabled") and settings.get("execution_mode") == "auto":
             result.append(session_id)
+    return result
+
+
+def get_alert_sessions() -> list[tuple[str, str]]:
+    """Get all session IDs with alert mode enabled. Returns [(session_id, chat_id), ...]."""
+    _ensure_table()
+    with _get_conn() as conn:
+        rows = conn.execute(
+            "SELECT session_id, settings FROM trading_settings"
+        ).fetchall()
+    result = []
+    for session_id, settings_json in rows:
+        settings = json.loads(settings_json)
+        if (
+            settings.get("enabled")
+            and settings.get("execution_mode") == "alert"
+        ):
+            chat_id = settings.get("alert_telegram_chat_id", "")
+            result.append((session_id, chat_id))
     return result

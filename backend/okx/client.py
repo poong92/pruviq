@@ -93,14 +93,36 @@ class OKXClient:
                 inst_id=p.get("instId", ""),
                 pos=p.get("pos", "0"),
                 avg_px=p.get("avgPx", "0"),
+                mark_px=p.get("markPx", "0"),
                 liq_px=p.get("liqPx", ""),
                 pnl=p.get("upl", "0"),
+                upl_ratio=p.get("uplRatio", "0"),
                 lever=p.get("lever", ""),
                 mgn_mode=p.get("mgnMode", ""),
                 pos_side=p.get("posSide", ""),
             )
             for p in data.get("data", [])
         ]
+
+    async def get_mark_price(self, inst_id: str) -> float:
+        """OKX public mark price — used for position sizing without user-supplied price."""
+        logger.warning("→ GET mark-price instId=%s", inst_id)
+        data = await self._get("/api/v5/public/mark-price", {
+            "instType": "SWAP", "instId": inst_id,
+        })
+        items = data.get("data", [])
+        if not items:
+            raise ValueError(f"No mark price data for {inst_id}")
+        px = float(items[0]["markPx"])
+        logger.warning("← mark-price %s = %.6f", inst_id, px)
+        return px
+
+    async def get_positions_history(self, inst_type: str = "SWAP", limit: str = "20") -> list[dict]:
+        """Closed position history — realized PnL source."""
+        data = await self._get("/api/v5/account/positions-history", {
+            "instType": inst_type, "limit": limit,
+        })
+        return data.get("data", [])
 
     # ── Trading ─────────────────────────────────────
 
