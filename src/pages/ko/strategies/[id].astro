@@ -193,7 +193,7 @@ const statusLabels: Record<string, string> = {
       )}
 
       {demo && strategy.data.status === 'verified' && (
-        <div class="mt-6">
+        <div class="mt-6 space-y-3">
           <OKXExecuteButton
             client:visible
             strategy={strategy.id}
@@ -203,6 +203,14 @@ const statusLabels: Record<string, string> = {
             tpPct={demo.tp}
             lang="ko"
           />
+          <a href="/ko/dashboard"
+             class="flex items-center justify-center gap-2 w-full px-5 py-3 rounded-lg border border-[--color-accent]/30 text-[--color-accent] hover:border-[--color-accent] hover:bg-[--color-accent]/5 transition-all text-sm font-semibold">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+            </svg>
+            자동매매 봇으로 실행 — 24시간 자동 →
+          </a>
+          <p class="text-xs text-[--color-text-muted] text-center">OKX 1회 연결 · 5분마다 시그널 스캔 · API 키 불필요</p>
         </div>
       )}
 
