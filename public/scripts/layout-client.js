@@ -33,23 +33,46 @@
     { passive: true },
   );
 
+  // ── Mobile menu overlay ──────────────────────────────────────
   const menuBtn = document.getElementById("mobile-menu-btn");
   const mobileMenu = document.getElementById("mobile-menu");
+  const iconOpen = document.getElementById("menu-icon-open");
+  const iconClose = document.getElementById("menu-icon-close");
+
+  function openMenu() {
+    const backdrop = document.getElementById("mobile-backdrop");
+    mobileMenu?.classList.remove("hidden");
+    backdrop?.classList.remove("hidden");
+    mobileMenu?.setAttribute("aria-hidden", "false");
+    backdrop?.setAttribute("aria-hidden", "false");
+    menuBtn?.setAttribute("aria-expanded", "true");
+    iconOpen?.classList.add("hidden");
+    iconClose?.classList.remove("hidden");
+    document.body.style.overflow = "hidden";
+  }
 
   function closeMenu() {
+    const backdrop = document.getElementById("mobile-backdrop");
     mobileMenu?.classList.add("hidden");
+    backdrop?.classList.add("hidden");
     mobileMenu?.setAttribute("aria-hidden", "true");
+    backdrop?.setAttribute("aria-hidden", "true");
     menuBtn?.setAttribute("aria-expanded", "false");
+    iconOpen?.classList.remove("hidden");
+    iconClose?.classList.add("hidden");
+    document.body.style.overflow = "";
   }
 
   menuBtn?.addEventListener("click", () => {
-    const isHidden = mobileMenu?.classList.toggle("hidden");
-    menuBtn.setAttribute("aria-expanded", String(!isHidden));
-    mobileMenu?.setAttribute("aria-hidden", String(!!isHidden));
-    if (!isHidden) {
-      mobileMenu?.scrollIntoView({ block: "nearest" });
-    }
+    const isHidden = mobileMenu?.classList.contains("hidden");
+    if (isHidden) openMenu();
+    else closeMenu();
   });
+
+  // backdrop 클릭 시 닫기
+  document
+    .getElementById("mobile-backdrop")
+    ?.addEventListener("click", closeMenu);
 
   // Escape key closes menu
   document.addEventListener("keydown", (e) => {
@@ -81,12 +104,31 @@
 
   // Close menu when clicking a link inside it
   mobileMenu?.querySelectorAll("a").forEach((link) => {
-    link.addEventListener("click", () => {
-      closeMenu();
-    });
+    link.addEventListener("click", closeMenu);
   });
 
-  // Card glow — mouse-tracking radial highlight
+  // ── Hide sticky banners when hero section is in viewport ─────
+  const heroSection = document.getElementById("hero-section");
+  if (heroSection && window.IntersectionObserver) {
+    const hideTargets = document.querySelectorAll("[data-hide-in-hero]");
+    if (hideTargets.length > 0) {
+      new IntersectionObserver(
+        (entries) => {
+          const heroVisible = entries[0].isIntersecting;
+          hideTargets.forEach((el) => {
+            if (heroVisible) {
+              el.classList.add("hidden");
+            } else {
+              el.classList.remove("hidden");
+            }
+          });
+        },
+        { threshold: 0.3 },
+      ).observe(heroSection);
+    }
+  }
+
+  // ── Card glow — mouse-tracking radial highlight ───────────────
   const prefersReduced = window.matchMedia(
     "(prefers-reduced-motion: reduce)",
   ).matches;
@@ -100,7 +142,7 @@
     });
   }
 
-  // Scroll-triggered reveal with auto-stagger
+  // ── Scroll-triggered reveal with auto-stagger ─────────────────
   const revealObserver = new IntersectionObserver(
     (entries) => {
       entries.forEach((e) => {
