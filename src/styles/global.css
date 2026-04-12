@@ -1200,6 +1200,12 @@ textarea:focus-visible {
   overflow-y: auto;
 }
 
+/* ─── Language dropdown ─── */
+#mobile-lang-dropdown {
+  background-color: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+}
+
 /* ─── Mobile menu slide-in animation ─── */
 #mobile-menu:not(.hidden) {
   animation: mobileMenuIn 0.2s ease-out forwards;
