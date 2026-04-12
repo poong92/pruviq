@@ -5,6 +5,7 @@ Converts simulation results to live OKX orders with broker tag.
 from __future__ import annotations
 
 import logging
+import math
 from typing import Optional
 
 from .client import OKXClient
@@ -22,6 +23,43 @@ def _pruviq_to_okx_inst_id(symbol: str) -> str:
         if symbol.endswith(quote):
             return f"{symbol[:-len(quote)]}-{quote}-SWAP"
     return symbol
+
+
+async def _calc_contract_sz(
+    client: OKXClient,
+    inst_id: str,
+    position_usdt: float,
+    leverage: int,
+    price: float,
+) -> str:
+    """
+    Calculate correct OKX SWAP contract size (integer contracts).
+
+    OKX SWAP sz = number of contracts (must be integer ≥ minSz).
+    Each contract = ctVal base currency.
+    Example: BTC-USDT-SWAP ctVal=0.01 BTC
+      $100 × 5x / (0.01 BTC × $85,000) = 0.58 → floor → 0 contracts → raise ValueError
+      $500 × 5x / (0.01 BTC × $85,000) = 2.94 → floor → 2 contracts ✓
+    """
+    info = await client.get_instrument_info(inst_id)
+    ct_val = info["ctVal"]
+    min_sz = info["minSz"]
+    lot_sz = info["lotSz"]
+
+    notional = position_usdt * leverage
+    raw_contracts = notional / (ct_val * price)
+    # Round down to lot_sz boundary
+    contracts = math.floor(raw_contracts / lot_sz) * lot_sz
+
+    if contracts < min_sz:
+        raise ValueError(
+            f"Position too small for {inst_id}: "
+            f"${position_usdt:.0f} × {leverage}x = ${notional:.0f} notional "
+            f"= {raw_contracts:.3f} contracts (min {min_sz}). "
+            f"Need at least ${ct_val * price * min_sz:.0f} notional."
+        )
+
+    return str(int(contracts))
 
 
 def _calc_sl_tp_prices(
@@ -59,7 +97,7 @@ async def execute_from_simulation(
     side = "sell" if req.direction == "short" else "buy"
     td_mode = req.td_mode if req.td_mode in ("isolated", "cross") else "isolated"
 
-    async with OKXClient(token) as client:
+    async with OKXClient(token, session_id=session_id) as client:
         # Auto-fetch mark price if not supplied (or zero)
         if not current_price or current_price <= 0:
             logger.warning(
@@ -67,9 +105,8 @@ async def execute_from_simulation(
             )
             current_price = await client.get_mark_price(inst_id)
 
-        # Position size: USDT × leverage / price
-        contract_size = (req.position_size_usdt * req.leverage) / current_price
-        sz = f"{contract_size:.4f}"
+        # Correct OKX SWAP contract size (integer, uses ctVal)
+        sz = await _calc_contract_sz(client, inst_id, req.position_size_usdt, req.leverage, current_price)
 
         logger.warning(
             "→ Execute %s %s sz=%s lever=%d td_mode=%s strategy=%s price=%.4f",
@@ -90,23 +127,39 @@ async def execute_from_simulation(
             sz=sz,
             td_mode=td_mode,
         )
-        logger.info("Order placed: %s", order.get("ordId", ""))
+        ord_id = order.get("ordId", "")
+        logger.warning("← Market order placed ordId=%s", ord_id)
 
-        # SL/TP algo order
+        # SL/TP algo order — if this fails, immediately close the naked position
         sl_price, tp_price = _calc_sl_tp_prices(
             current_price, req.direction, req.sl_pct, req.tp_pct,
         )
         close_side = "buy" if req.direction == "short" else "sell"
 
-        algo_result = await client.place_algo_order(
-            inst_id=inst_id,
-            side=close_side,
-            sz=sz,
-            sl_trigger_px=sl_price,
-            tp_trigger_px=tp_price,
-            td_mode=td_mode,
-        )
-        logger.warning("← Order placed ordId=%s SL=%s TP=%s", order.get("ordId"), sl_price, tp_price)
+        try:
+            algo_result = await client.place_algo_order(
+                inst_id=inst_id,
+                side=close_side,
+                sz=sz,
+                sl_trigger_px=sl_price,
+                tp_trigger_px=tp_price,
+                td_mode=td_mode,
+            )
+            logger.warning("← SL/TP set: SL=%s TP=%s ordId=%s", sl_price, tp_price, ord_id)
+        except Exception as algo_err:
+            logger.error(
+                "CRITICAL: SL/TP failed after order %s (%s) — closing naked position: %s",
+                ord_id, inst_id, algo_err,
+            )
+            try:
+                await client.close_position(inst_id, mgn_mode=td_mode)
+                logger.warning("Emergency close executed for %s", inst_id)
+            except Exception as close_err:
+                logger.error("EMERGENCY CLOSE FAILED for %s: %s", inst_id, close_err)
+            raise ValueError(
+                f"SL/TP placement failed for {inst_id} (ordId={ord_id}), "
+                f"position closed as safety measure. Error: {algo_err}"
+            )
 
     return {
         "order": order,

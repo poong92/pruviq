@@ -9,12 +9,16 @@ Flow:
 """
 from __future__ import annotations
 
+import asyncio
 import logging
 import secrets
 import time
 from urllib.parse import urlencode
 
 import httpx
+
+# Per-session lock to prevent concurrent token refresh (race condition)
+_refresh_locks: dict[str, asyncio.Lock] = {}
 
 from .config import (
     OKX_CLIENT_ID,
@@ -140,6 +144,7 @@ async def refresh_access_token(session_id: str) -> str:
                 "Refresh token rejected (status=%s) for session %s — deleting session",
                 resp.status_code, session_id[:8],
             )
+            await _notify_reauth(session_id)
             delete_session(session_id)
             raise ValueError(f"Refresh token expired or revoked (status={resp.status_code})")
         resp.raise_for_status()
@@ -152,6 +157,7 @@ async def refresh_access_token(session_id: str) -> str:
                 "Refresh token invalidated (error=%s) for session %s — deleting session",
                 token_data.get("error"), session_id[:8],
             )
+            await _notify_reauth(session_id)
             delete_session(session_id)
         raise ValueError(f"OKX refresh error: {token_data}")
 
@@ -164,14 +170,41 @@ async def refresh_access_token(session_id: str) -> str:
     return tokens["access_token"]
 
 
+async def _notify_reauth(session_id: str) -> None:
+    """Send Telegram alert when OKX re-authentication is needed."""
+    try:
+        from .settings import get_settings
+        settings = get_settings(session_id)
+        chat_id = settings.get("alert_telegram_chat_id", "")
+        if not chat_id:
+            return
+        from .notifications import send_reauth_alert
+        await send_reauth_alert(chat_id)
+    except Exception as e:
+        logger.warning("Failed to send reauth alert for session %s: %s", session_id[:8], e)
+
+
 async def get_valid_token(session_id: str) -> str:
-    """Get valid access_token, auto-refreshing 5 min before expiry."""
+    """
+    Get valid access_token, auto-refreshing 5 min before expiry.
+    Uses per-session lock to prevent concurrent refresh race conditions.
+    """
     tokens = get_session(session_id)
     if not tokens:
         raise ValueError("Session not found. Connect OKX first.")
 
     if time.time() > tokens["expires_at"] - 300:
-        return await refresh_access_token(session_id)
+        # Per-session lock: only one coroutine refreshes at a time
+        if session_id not in _refresh_locks:
+            _refresh_locks[session_id] = asyncio.Lock()
+        async with _refresh_locks[session_id]:
+            # Re-read after acquiring lock — another coroutine may have refreshed
+            tokens = get_session(session_id)
+            if not tokens:
+                raise ValueError("Session not found after refresh wait.")
+            if time.time() > tokens["expires_at"] - 300:
+                return await refresh_access_token(session_id)
+            return tokens["access_token"]
 
     return tokens["access_token"]
 

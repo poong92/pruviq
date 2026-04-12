@@ -268,6 +268,15 @@ async def lifespan(app: FastAPI):
     global _market_cache, _news_cache, _market_cache_ts
     global _macro_cache, _macro_cache_time
 
+    # Initialize SignalScanner eagerly so auto-trading loop works from first cycle
+    # (Previously lazy-init caused auto-trading to silently skip until first /signals/live call)
+    global _signal_scanner
+    if data_manager.coin_count > 0:
+        _signal_scanner = SignalScanner(data_manager, top_n=50)
+        print(f"SignalScanner initialized (top_n=50, {data_manager.coin_count} coins)")
+    else:
+        print("WARNING: SignalScanner NOT initialized — 0 coins loaded")
+
     # Start background refresh tasks
     # IMPORTANT: Deploy with --workers 1 (global cache not shared across processes)
     refresh_task = asyncio.create_task(_background_refresh())

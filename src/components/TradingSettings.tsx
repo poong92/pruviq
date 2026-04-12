@@ -87,8 +87,14 @@ const labels = {
     strategiesDesc: "Select which strategies to follow",
     coins: "Coins",
     coinsDesc: "Select which coins to trade",
-    positionSize: "Position Size (USDT)",
-    positionSizeDesc: "Amount per trade ($10 — $500)",
+    positionSize: "Position Size",
+    positionSizeDesc: "Amount per trade",
+    positionModeFixed: "Fixed USDT",
+    positionModePercent: "% of Balance",
+    positionSizeUSDT: "Amount (USDT)",
+    positionSizeUSDTDesc: "$10 — $500 per trade",
+    positionSizePct: "Balance %",
+    positionSizePctDesc: "1% — 20% of account balance per trade",
     leverage: "Leverage",
     leverageDesc: "1x — 125x (higher = more risk)",
     marginMode: "Margin Mode",
@@ -125,8 +131,14 @@ const labels = {
     strategiesDesc: "팔로우할 전략을 선택하세요",
     coins: "코인",
     coinsDesc: "거래할 코인을 선택하세요",
-    positionSize: "포지션 크기 (USDT)",
-    positionSizeDesc: "1회 거래 금액 ($10 — $500)",
+    positionSize: "포지션 크기",
+    positionSizeDesc: "1회 거래 금액",
+    positionModeFixed: "고정 USDT",
+    positionModePercent: "잔고 %",
+    positionSizeUSDT: "금액 (USDT)",
+    positionSizeUSDTDesc: "1회 거래당 $10 — $500",
+    positionSizePct: "잔고 비율 %",
+    positionSizePctDesc: "계좌 잔고의 1% — 20% 사용",
     leverage: "레버리지",
     leverageDesc: "1x — 125x (높을수록 위험)",
     marginMode: "마진 모드",
@@ -163,6 +175,8 @@ interface Settings {
   strategies: string[];
   coins: string[];
   position_size_usdt: number;
+  position_size_mode: "fixed" | "percent";
+  position_size_pct: number;
   leverage: number;
   td_mode: string;
   max_concurrent: number;
@@ -182,6 +196,8 @@ export default function TradingSettings({ lang = "en" }: Props) {
     strategies: [],
     coins: [],
     position_size_usdt: 100,
+    position_size_mode: "fixed" as const,
+    position_size_pct: 5,
     leverage: 1,
     td_mode: "isolated",
     max_concurrent: 3,
@@ -454,25 +470,77 @@ export default function TradingSettings({ lang = "en" }: Props) {
       {/* Position settings */}
       <div class="card-enterprise rounded-xl p-5 space-y-4">
         <div>
-          <label class="font-bold text-sm block mb-1">{t.positionSize}</label>
-          <p class="text-xs text-[--color-text-muted] mb-2">
-            {t.positionSizeDesc}
-          </p>
-          <input
-            type="number"
-            min={10}
-            max={500}
-            value={settings.position_size_usdt}
-            onInput={(e) =>
-              setSettings((s) => ({
-                ...s,
-                position_size_usdt: Number(
-                  (e.target as HTMLInputElement).value,
-                ),
-              }))
-            }
-            class="w-full p-2 rounded-lg bg-[--color-bg] border border-[--color-border] text-sm font-mono"
-          />
+          <div class="flex items-center justify-between mb-2">
+            <label class="font-bold text-sm">{t.positionSize}</label>
+            {/* Toggle: Fixed USDT vs % of balance */}
+            <div class="flex rounded-lg border border-[--color-border] overflow-hidden text-xs">
+              {(["fixed", "percent"] as const).map((mode) => (
+                <button
+                  key={mode}
+                  class={`px-3 py-1 transition-colors ${
+                    settings.position_size_mode === mode
+                      ? "bg-[--color-accent] text-white"
+                      : "text-[--color-text-muted] hover:bg-[--color-bg-elevated]"
+                  }`}
+                  onClick={() =>
+                    setSettings((s) => ({ ...s, position_size_mode: mode }))
+                  }
+                >
+                  {mode === "fixed"
+                    ? t.positionModeFixed
+                    : t.positionModePercent}
+                </button>
+              ))}
+            </div>
+          </div>
+          {settings.position_size_mode === "fixed" ? (
+            <div>
+              <p class="text-xs text-[--color-text-muted] mb-2">
+                {t.positionSizeUSDTDesc}
+              </p>
+              <input
+                type="number"
+                min={10}
+                max={500}
+                value={settings.position_size_usdt}
+                onInput={(e) =>
+                  setSettings((s) => ({
+                    ...s,
+                    position_size_usdt: Number(
+                      (e.target as HTMLInputElement).value,
+                    ),
+                  }))
+                }
+                class="w-full p-2 rounded-lg bg-[--color-bg] border border-[--color-border] text-sm font-mono"
+              />
+            </div>
+          ) : (
+            <div>
+              <p class="text-xs text-[--color-text-muted] mb-2">
+                {t.positionSizePctDesc}
+              </p>
+              <div class="flex items-center gap-3">
+                <input
+                  type="range"
+                  min={1}
+                  max={20}
+                  value={settings.position_size_pct}
+                  onInput={(e) =>
+                    setSettings((s) => ({
+                      ...s,
+                      position_size_pct: Number(
+                        (e.target as HTMLInputElement).value,
+                      ),
+                    }))
+                  }
+                  class="flex-1 accent-[--color-accent]"
+                />
+                <span class="font-mono font-bold text-lg w-14 text-right">
+                  {settings.position_size_pct}%
+                </span>
+              </div>
+            </div>
+          )}
         </div>
 
         <div>
