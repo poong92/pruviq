@@ -33,6 +33,10 @@ const labels = {
     direction: "Direction",
     symbol: "Symbol",
     slTp: "SL / TP",
+    positionSize: "Position Size",
+    leverage: "Leverage",
+    marginMode: "Margin Mode",
+    estFee: "Est. Fee (0.02%)",
     features: [
       "Automated SL/TP from simulation",
       "No API key sharing (OAuth)",
@@ -58,6 +62,10 @@ const labels = {
     direction: "방향",
     symbol: "심볼",
     slTp: "SL / TP",
+    positionSize: "포지션 크기",
+    leverage: "레버리지",
+    marginMode: "마진 모드",
+    estFee: "예상 수수료 (0.02%)",
     features: [
       "시뮬레이션 기반 자동 SL/TP",
       "API 키 공유 불필요 (OAuth)",
@@ -84,9 +92,24 @@ export default function OKXExecuteButton({
   >("idle");
   const [userSettings, setUserSettings] = useState<{
     position_size_usdt: number;
+    position_size_mode: "fixed" | "percent";
+    position_size_pct: number;
     leverage: number;
     td_mode: string;
-  }>({ position_size_usdt: 100, leverage: 1, td_mode: "isolated" });
+  }>({
+    position_size_usdt: 100,
+    position_size_mode: "fixed",
+    position_size_pct: 5,
+    leverage: 1,
+    td_mode: "isolated",
+  });
+  const [availBalance, setAvailBalance] = useState<number | null>(null);
+
+  // Effective position size in USDT (respects fixed vs percent mode)
+  const effectivePositionUsdt =
+    userSettings.position_size_mode === "percent" && availBalance !== null
+      ? Math.max(1, (availBalance * userSettings.position_size_pct) / 100)
+      : userSettings.position_size_usdt;
 
   useEffect(() => {
     fetch(`${API_BASE}/auth/okx/status`, { credentials: "include" })
@@ -94,21 +117,36 @@ export default function OKXExecuteButton({
       .then((d) => {
         setConnected(d.connected);
         if (d.connected) {
-          // Fetch user settings to use their configured position size and leverage
-          return fetch(`${API_BASE}/settings/trading`, {
-            credentials: "include",
-          });
-        }
-        return null;
-      })
-      .then((r) => r?.json())
-      .then((d) => {
-        if (d?.settings) {
-          setUserSettings({
-            position_size_usdt: d.settings.position_size_usdt ?? 100,
-            leverage: d.settings.leverage ?? 1,
-            td_mode: d.settings.td_mode ?? "isolated",
-          });
+          // Fetch settings + balance in parallel
+          Promise.all([
+            fetch(`${API_BASE}/settings/trading`, {
+              credentials: "include",
+            }).then((r) => r.json()),
+            fetch(`${API_BASE}/execute/balance`, {
+              credentials: "include",
+            }).then((r) => r.json()),
+          ])
+            .then(([settingsData, balanceData]) => {
+              if (settingsData?.settings) {
+                setUserSettings({
+                  position_size_usdt:
+                    settingsData.settings.position_size_usdt ?? 100,
+                  position_size_mode:
+                    settingsData.settings.position_size_mode ?? "fixed",
+                  position_size_pct:
+                    settingsData.settings.position_size_pct ?? 5,
+                  leverage: settingsData.settings.leverage ?? 1,
+                  td_mode: settingsData.settings.td_mode ?? "isolated",
+                });
+              }
+              const usdt = balanceData?.balances?.find(
+                (b: { ccy: string }) => b.ccy === "USDT",
+              );
+              if (usdt) {
+                setAvailBalance(parseFloat(usdt.avail_bal ?? "0"));
+              }
+            })
+            .catch(() => {});
         }
       })
       .catch(() => setConnected(false));
@@ -128,7 +166,7 @@ export default function OKXExecuteButton({
           symbol,
           sl_pct: slPct,
           tp_pct: tpPct,
-          position_size_usdt: userSettings.position_size_usdt,
+          position_size_usdt: effectivePositionUsdt,
           leverage: userSettings.leverage,
           td_mode: userSettings.td_mode,
         }),
@@ -242,6 +280,43 @@ export default function OKXExecuteButton({
                 <span class="font-mono">
                   {slPct}% / {tpPct}%
                 </span>
+              </div>
+              <div class="border-t border-[--color-border] pt-2 mt-2 space-y-2">
+                <div class="flex justify-between">
+                  <span class="text-[--color-text-muted]">
+                    {t.positionSize}
+                  </span>
+                  <span class="font-mono font-bold">
+                    ${effectivePositionUsdt.toFixed(0)} USDT
+                    {userSettings.position_size_mode === "percent" && (
+                      <span class="text-[--color-text-muted] font-normal ml-1">
+                        ({userSettings.position_size_pct}%)
+                      </span>
+                    )}
+                  </span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-[--color-text-muted]">{t.leverage}</span>
+                  <span class="font-mono font-bold">
+                    {userSettings.leverage}x
+                  </span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-[--color-text-muted]">{t.marginMode}</span>
+                  <span class="font-mono capitalize">
+                    {userSettings.td_mode}
+                  </span>
+                </div>
+                <div class="flex justify-between text-[--color-text-muted]">
+                  <span>{t.estFee}</span>
+                  <span class="font-mono">
+                    ~$
+                    {(
+                      (effectivePositionUsdt * userSettings.leverage * 0.0002) /
+                      1
+                    ).toFixed(3)}
+                  </span>
+                </div>
               </div>
             </div>
 
