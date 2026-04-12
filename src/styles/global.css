@@ -1196,6 +1196,8 @@ textarea:focus-visible {
 /* bg-color via CSS rule (inline style var() doesn't resolve in Tailwind v4 @layer theme context) */
 #mobile-menu {
   background-color: var(--color-bg);
+  max-height: calc(100dvh - 3.5rem);
+  overflow-y: auto;
 }
 
 /* ─── Mobile menu slide-in animation ─── */
