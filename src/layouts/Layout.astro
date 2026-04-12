@@ -467,18 +467,18 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
           <!-- 모바일: 지구본 버튼 + 언어 선택 드롭다운 -->
           <div class="md:hidden relative">
             <button id="mobile-lang-btn"
-                    class="flex flex-col items-center justify-center gap-0.5 px-2 h-10 rounded-lg text-[--color-text-muted] hover:bg-[--color-bg-hover] transition-colors"
+                    class="flex items-center justify-center w-10 h-10 rounded-lg text-[--color-text-muted] hover:bg-[--color-bg-hover] transition-colors"
                     aria-haspopup="true" aria-expanded="false" aria-controls="mobile-lang-dropdown"
                     aria-label="Select language">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <circle cx="12" cy="12" r="10"/>
                 <path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/>
               </svg>
-              <span class="font-mono text-[9px] font-bold leading-none">{lang === 'ko' ? 'KO' : 'EN'}</span>
             </button>
             <!-- 드롭다운: 현재 언어 표시 + 전환 옵션 -->
             <div id="mobile-lang-dropdown"
-                 class="hidden absolute right-0 top-full mt-1 w-32 rounded-xl border border-[--color-border] bg-[--color-bg-surface] shadow-lg z-[60] overflow-hidden"
+                 class="hidden absolute right-0 top-full mt-1 w-36 rounded-xl shadow-lg z-[60] overflow-hidden"
+                 style="background-color: var(--color-bg-surface); border: 1px solid var(--color-border);"
                  role="menu">
               <a href={enURL.href} hreflang="en" role="menuitem"
                  class="flex items-center justify-between px-4 py-3 text-sm transition-colors hover:bg-[--color-bg-hover]"
