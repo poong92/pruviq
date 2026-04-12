@@ -3,6 +3,35 @@ import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
 import preact from '@astrojs/preact';
+import fs from 'node:fs';
+import nodePath from 'node:path';
+
+/** Discover Korean path prefixes from src/pages/ko/ at build time */
+function discoverKoPathPrefixes() {
+  const koDir = nodePath.resolve('src/pages/ko');
+  if (!fs.existsSync(koDir)) return ['/'];
+  const prefixes = new Set();
+  /** @param {string} dir */
+  function walk(dir) {
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      const full = nodePath.join(dir, entry.name);
+      if (entry.isDirectory()) { walk(full); continue; }
+      if (!entry.name.endsWith('.astro')) continue;
+      const rel = nodePath.relative(koDir, full).replace(/\\/g, '/');
+      const name = nodePath.basename(rel, '.astro');
+      const dirPart = nodePath.dirname(rel);
+      if (name === 'index' || name.startsWith('[')) {
+        prefixes.add(dirPart === '.' ? '/' : `/${dirPart}/`);
+      } else {
+        prefixes.add(dirPart === '.' ? `/${name}` : `/${dirPart}/${name}`);
+      }
+    }
+  }
+  walk(koDir);
+  return [...prefixes];
+}
+
+const koPathPrefixes = discoverKoPathPrefixes();
 
 // https://astro.build/config
 export default defineConfig({
@@ -39,8 +68,6 @@ export default defineConfig({
         const enUrl = `https://pruviq.com${basePath}`;
         const koUrl = `https://pruviq.com/ko${basePath === '/' ? '/' : basePath}`;
 
-        // Only emit ko hreflang for paths known to have Korean versions
-        const koPathPrefixes = ['/', '/about', '/api', '/fees', '/simulate', '/strategies', '/coins/', '/blog/', '/market', '/compare/', '/leaderboard', '/changelog', '/privacy', '/terms', '/methodology', '/signals', '/learn', '/best-crypto-backtesting', '/crypto-trading-simulator', '/why-backtests-fail'];
         const hasKoVersion = koPathPrefixes.some(prefix => basePath === prefix || basePath.startsWith(prefix));
 
         item.links = [
