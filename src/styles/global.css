@@ -1192,7 +1192,12 @@ textarea:focus-visible {
   background: linear-gradient(135deg, rgba(44,181,232,0.03) 0%, transparent 60%);
 }
 
-/* ─── Divider line ─── */
+/* ─── Mobile menu overlay ─── */
+/* bg-color via CSS rule (inline style var() doesn't resolve in Tailwind v4 @layer theme context) */
+#mobile-menu {
+  background-color: var(--color-bg);
+}
+
 /* ─── Mobile menu slide-in animation ─── */
 #mobile-menu:not(.hidden) {
   animation: mobileMenuIn 0.2s ease-out forwards;
