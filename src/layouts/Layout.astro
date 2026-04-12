@@ -493,27 +493,51 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
           <!-- 네비게이션 아이템 -->
           {navItems.map(item => (
             <Fragment>
-              <a href={item.href} aria-current={isActive(item.match) ? "page" : undefined}
-                 class="min-h-[48px] flex items-center px-3 rounded-lg text-[15px] font-medium transition-colors hover:bg-[--color-bg-hover]"
-                 style={isActive(item.match) ? 'color:var(--color-accent);font-weight:500' : 'color:var(--color-text-muted)'}>
-                {item.label}
-                {item.badge && <span class="ml-1.5 text-[9px] font-bold px-1 py-0.5 rounded bg-[--color-accent] text-white leading-none tracking-wide">{item.badge}</span>}
-              </a>
-              {item.match === '/strategies' && (
-                <div class="flex flex-col ml-3 mb-1 rounded-lg bg-[--color-bg-surface] overflow-hidden">
-                  <a href={rankingPath} aria-current={isActive('/strategies/ranking') ? "page" : undefined}
-                     class="min-h-[44px] flex items-center gap-2.5 px-4 text-sm transition-colors hover:bg-[--color-bg-hover]"
-                     style={isActive('/strategies/ranking') ? 'color:var(--color-accent);font-weight:500' : 'color:var(--color-text-secondary)'}>
-                    <span class="text-[--color-text-muted] text-xs shrink-0">›</span>
-                    {t('nav.ranking')}
-                  </a>
-                  <a href={leaderboardPath} aria-current={isActive('/leaderboard') ? "page" : undefined}
-                     class="min-h-[44px] flex items-center gap-2.5 px-4 text-sm transition-colors hover:bg-[--color-bg-hover]"
-                     style={isActive('/leaderboard') ? 'color:var(--color-accent);font-weight:500' : 'color:var(--color-text-secondary)'}>
-                    <span class="text-[--color-text-muted] text-xs shrink-0">›</span>
-                    {t('nav.leaderboard')}
-                  </a>
+              {item.match === '/strategies' ? (
+                <div>
+                  <!-- Strategies: link + chevron toggle -->
+                  <div class="flex items-center rounded-lg hover:bg-[--color-bg-hover] transition-colors"
+                       style={isActive(item.match) ? 'color:var(--color-accent)' : 'color:var(--color-text-muted)'}>
+                    <a href={item.href} aria-current={isActive(item.match) ? "page" : undefined}
+                       class="flex-1 min-h-[48px] flex items-center px-3 text-[15px] font-medium">
+                      {item.label}
+                    </a>
+                    <button id="strategies-toggle"
+                            class="min-h-[48px] px-3 flex items-center justify-center transition-colors"
+                            aria-expanded={isActive('/strategies') ? "true" : "false"}
+                            aria-controls="strategies-submenu"
+                            aria-label="Toggle Strategies submenu">
+                      <svg id="strategies-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+                           class="transition-transform duration-200"
+                           style={isActive('/strategies') ? 'transform:rotate(180deg)' : ''}>
+                        <path d="M6 9l6 6 6-6"/>
+                      </svg>
+                    </button>
+                  </div>
+                  <!-- Strategies 서브메뉴 -->
+                  <div id="strategies-submenu"
+                       class={`flex flex-col ml-3 mb-1 rounded-lg bg-[--color-bg-surface] overflow-hidden${isActive('/strategies') ? '' : ' hidden'}`}>
+                    <a href={rankingPath} aria-current={isActive('/strategies/ranking') ? "page" : undefined}
+                       class="min-h-[44px] flex items-center gap-2.5 px-4 text-sm transition-colors hover:bg-[--color-bg-hover]"
+                       style={isActive('/strategies/ranking') ? 'color:var(--color-accent);font-weight:500' : 'color:var(--color-text-secondary)'}>
+                      <span class="text-[--color-text-muted] text-xs shrink-0">›</span>
+                      {t('nav.ranking')}
+                    </a>
+                    <a href={leaderboardPath} aria-current={isActive('/leaderboard') ? "page" : undefined}
+                       class="min-h-[44px] flex items-center gap-2.5 px-4 text-sm transition-colors hover:bg-[--color-bg-hover]"
+                       style={isActive('/leaderboard') ? 'color:var(--color-accent);font-weight:500' : 'color:var(--color-text-secondary)'}>
+                      <span class="text-[--color-text-muted] text-xs shrink-0">›</span>
+                      {t('nav.leaderboard')}
+                    </a>
+                  </div>
                 </div>
+              ) : (
+                <a href={item.href} aria-current={isActive(item.match) ? "page" : undefined}
+                   class="min-h-[48px] flex items-center px-3 rounded-lg text-[15px] font-medium transition-colors hover:bg-[--color-bg-hover]"
+                   style={isActive(item.match) ? 'color:var(--color-accent);font-weight:500' : 'color:var(--color-text-muted)'}>
+                  {item.label}
+                  {item.badge && <span class="ml-1.5 text-[9px] font-bold px-1 py-0.5 rounded bg-[--color-accent] text-white leading-none tracking-wide">{item.badge}</span>}
+                </a>
               )}
             </Fragment>
           ))}
