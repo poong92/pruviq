@@ -26,11 +26,13 @@ from .settings import (
     get_daily_stats,
     get_settings,
     get_trade_log,
+    is_signal_executed,
     log_trade,
+    mark_signal_executed,
 )
 from .notifications import send_signal_alert
 from .pnl_sync import sync_realized_pnl
-from .orders import _pruviq_to_okx_inst_id as _to_inst_id
+from .orders import _pruviq_to_okx_inst_id as _to_inst_id, _calc_contract_sz, _calc_sl_tp_prices
 
 logger = logging.getLogger("okx_auto_executor")
 
@@ -110,6 +112,7 @@ async def _try_execute(
 
     strategy_id = signal["strategy"]
     coin = signal["coin"]
+    signal_time = signal.get("signal_time", "")
 
     # ── Filter: strategy subscribed? ──
     if settings["strategies"] and strategy_id not in settings["strategies"]:
@@ -117,6 +120,11 @@ async def _try_execute(
 
     # ── Filter: coin subscribed? ──
     if settings["coins"] and coin not in settings["coins"]:
+        return None
+
+    # ── Deduplication: skip already-executed signals ──
+    if signal_time and is_signal_executed(session_id, strategy_id, coin, signal_time):
+        logger.debug("Signal already executed: %s/%s @ %s", strategy_id, coin, signal_time)
         return None
 
     # ── Safety: daily trade limit ──
@@ -152,18 +160,6 @@ async def _try_execute(
             return None
 
     # ── Execute ──
-    token = await get_valid_token(session_id)
-    async with OKXClient(token) as client:
-        positions = await client.get_positions()
-        open_count = sum(1 for p in positions if float(p.pos or 0) != 0)
-        if open_count >= settings["max_concurrent"]:
-            logger.warning(
-                "Session %s at max concurrent positions (%d/%d)",
-                session_id[:8], open_count, settings["max_concurrent"],
-            )
-            return None
-
-    # ── Execute ──
     inst_id = _pruviq_to_okx_inst_id(coin)
     side = "sell" if signal["direction"] == "short" else "buy"
     entry_price = signal.get("entry_price", 0)
@@ -175,42 +171,69 @@ async def _try_execute(
     position_size = settings["position_size_usdt"]
     leverage = settings["leverage"]
     td_mode = settings.get("td_mode", "isolated")
-    contract_size = (position_size * leverage) / entry_price
-    sz = f"{contract_size:.4f}"
-
     sl_pct = signal.get("sl_pct", 10)
     tp_pct = signal.get("tp_pct", 8)
 
-    async with OKXClient(token) as client:
+    token = await get_valid_token(session_id)
+    async with OKXClient(token, session_id=session_id) as client:
+        # Check concurrent position limit
+        positions = await client.get_positions()
+        open_count = sum(1 for p in positions if float(p.pos or 0) != 0)
+        if open_count >= settings["max_concurrent"]:
+            logger.warning(
+                "Session %s at max concurrent positions (%d/%d)",
+                session_id[:8], open_count, settings["max_concurrent"],
+            )
+            return None
+
+        # Correct OKX SWAP contract size (integer, uses ctVal)
+        try:
+            sz = await _calc_contract_sz(client, inst_id, position_size, leverage, entry_price)
+        except ValueError as e:
+            logger.warning("Position too small for auto-execute: %s", e)
+            return None
+
         # Set leverage before placing order
-        await client.set_leverage(
-            inst_id=inst_id,
-            lever=leverage,
-            mgn_mode=td_mode,
-        )
+        await client.set_leverage(inst_id=inst_id, lever=leverage, mgn_mode=td_mode)
 
         # Market order
-        order = await client.place_order(
-            inst_id=inst_id,
-            side=side,
-            sz=sz,
-            td_mode=td_mode,
-        )
+        order = await client.place_order(inst_id=inst_id, side=side, sz=sz, td_mode=td_mode)
+        ord_id = order.get("ordId", "")
+        logger.warning("← Auto order placed ordId=%s %s %s sz=%s", ord_id, side, inst_id, sz)
 
-        # SL/TP
-        sl_price, tp_price = _calc_sl_tp_prices(
-            entry_price, signal["direction"], sl_pct, tp_pct,
-        )
+        # SL/TP — if fails, close naked position immediately
+        sl_price, tp_price = _calc_sl_tp_prices(entry_price, signal["direction"], sl_pct, tp_pct)
         close_side = "buy" if signal["direction"] == "short" else "sell"
 
-        algo = await client.place_algo_order(
-            inst_id=inst_id,
-            side=close_side,
-            sz=sz,
-            sl_trigger_px=sl_price,
-            tp_trigger_px=tp_price,
-            td_mode=td_mode,
-        )
+        try:
+            algo = await client.place_algo_order(
+                inst_id=inst_id,
+                side=close_side,
+                sz=sz,
+                sl_trigger_px=sl_price,
+                tp_trigger_px=tp_price,
+                td_mode=td_mode,
+            )
+        except Exception as algo_err:
+            logger.error(
+                "CRITICAL: SL/TP failed after auto-order %s (%s) — closing: %s",
+                ord_id, inst_id, algo_err,
+            )
+            try:
+                await client.close_position(inst_id, mgn_mode=td_mode)
+                # Notify user via Telegram if alert_telegram_chat_id set
+                chat_id = settings.get("alert_telegram_chat_id", "")
+                if chat_id:
+                    await send_signal_alert(chat_id, {
+                        "strategy": strategy_id, "coin": coin,
+                        "direction": "CLOSED",
+                        "entry_price": entry_price,
+                        "sl_pct": sl_pct, "tp_pct": tp_pct,
+                        "strategy_name": f"⚠️ SL/TP FAILED — {strategy_id} position closed",
+                    })
+            except Exception as close_err:
+                logger.error("EMERGENCY CLOSE FAILED for %s: %s", inst_id, close_err)
+            return None
 
     result = {
         "session_id": session_id[:8],
@@ -230,6 +253,8 @@ async def _try_execute(
     estimated_loss = -(position_size * sl_pct / 100)
     trade_created_at = result["timestamp"]
     log_trade(session_id, signal, result, pnl=estimated_loss)
+    if signal_time:
+        mark_signal_executed(session_id, strategy_id, coin, signal_time)
     logger.warning(
         "Auto-executed: %s %s %s sz=%s for session %s (est_pnl=%.2f)",
         side, inst_id, strategy_id, sz, session_id[:8], estimated_loss,

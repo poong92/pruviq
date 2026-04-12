@@ -5,6 +5,7 @@ All orders include broker tag for commission tracking.
 from __future__ import annotations
 
 import logging
+import time
 from typing import Any
 
 import httpx
@@ -14,12 +15,18 @@ from .models import BalanceInfo, PositionInfo
 
 logger = logging.getLogger("okx_client")
 
+# ── Instrument spec cache (24h TTL, shared across all client instances) ──
+_instrument_cache: dict[str, dict] = {}
+_instrument_cache_ts: dict[str, float] = {}
+_INSTRUMENT_CACHE_TTL = 24 * 3600
+
 
 class OKXClient:
     """OAuth token-based OKX API client."""
 
-    def __init__(self, access_token: str):
+    def __init__(self, access_token: str, session_id: str = ""):
         self.access_token = access_token
+        self.session_id = session_id  # used for 53002 auto-retry
         self.base_url = OKX_BASE_URL
         self.broker_code = OKX_BROKER_CODE
         self._client = httpx.AsyncClient(
@@ -46,27 +53,55 @@ class OKXClient:
     async def __aexit__(self, *args):
         await self.close()
 
+    async def _refresh_token_and_update(self) -> bool:
+        """Refresh access token after 53002. Returns True if successful."""
+        if not self.session_id:
+            return False
+        try:
+            from .oauth import refresh_access_token
+            logger.warning("→ 53002 detected — refreshing token for session %s", self.session_id[:8])
+            new_token = await refresh_access_token(self.session_id)
+            self.access_token = new_token
+            self._client.headers["Authorization"] = f"Bearer {new_token}"
+            logger.warning("← Token refreshed successfully")
+            return True
+        except Exception as e:
+            logger.error("Token refresh after 53002 failed: %s", e)
+            return False
+
     # ── GET ─────────────────────────────────────────
 
     async def _get(self, path: str, params: dict | None = None) -> dict[str, Any]:
-        resp = await self._client.get(path, params=params)
-        resp.raise_for_status()
-        data = resp.json()
-        if data.get("code") != "0":
-            logger.error("OKX API error: %s %s", data.get("code"), data.get("msg"))
-            raise ValueError(f"OKX API error {data.get('code')}: {data.get('msg')}")
-        return data
+        for attempt in range(2):
+            resp = await self._client.get(path, params=params)
+            resp.raise_for_status()
+            data = resp.json()
+            code = data.get("code")
+            if code == "53002" and attempt == 0:
+                if await self._refresh_token_and_update():
+                    continue  # retry once with new token
+            if code != "0":
+                logger.error("OKX API error: %s %s", code, data.get("msg"))
+                raise ValueError(f"OKX API error {code}: {data.get('msg')}")
+            return data
+        raise ValueError("OKX API: max retries exceeded")
 
     # ── POST ────────────────────────────────────────
 
     async def _post(self, path: str, body: dict) -> dict[str, Any]:
-        resp = await self._client.post(path, json=body)
-        resp.raise_for_status()
-        data = resp.json()
-        if data.get("code") != "0":
-            logger.error("OKX API error: %s %s", data.get("code"), data.get("msg"))
-            raise ValueError(f"OKX API error {data.get('code')}: {data.get('msg')}")
-        return data
+        for attempt in range(2):
+            resp = await self._client.post(path, json=body)
+            resp.raise_for_status()
+            data = resp.json()
+            code = data.get("code")
+            if code == "53002" and attempt == 0:
+                if await self._refresh_token_and_update():
+                    continue
+            if code != "0":
+                logger.error("OKX API error: %s %s", code, data.get("msg"))
+                raise ValueError(f"OKX API error {code}: {data.get('msg')}")
+            return data
+        raise ValueError("OKX API: max retries exceeded")
 
     # ── Account ─────────────────────────────────────
 
@@ -103,6 +138,40 @@ class OKXClient:
             )
             for p in data.get("data", [])
         ]
+
+    async def get_instrument_info(self, inst_id: str) -> dict:
+        """
+        Fetch instrument spec (ctVal, minSz, lotSz) for OKX SWAP contracts.
+        Cached 24h — safe to call on every order.
+
+        ctVal: base currency per contract (e.g. BTC-USDT-SWAP → 0.01 BTC)
+        minSz: minimum order size in contracts (usually 1)
+        lotSz: lot size / tick (usually 1 for SWAP)
+        """
+        now = time.time()
+        if inst_id in _instrument_cache:
+            if now - _instrument_cache_ts.get(inst_id, 0) < _INSTRUMENT_CACHE_TTL:
+                return _instrument_cache[inst_id]
+
+        logger.warning("→ GET instrument info instId=%s", inst_id)
+        data = await self._get("/api/v5/public/instruments", {
+            "instType": "SWAP", "instId": inst_id,
+        })
+        items = data.get("data", [])
+        if not items:
+            raise ValueError(f"Instrument not found: {inst_id}")
+
+        item = items[0]
+        info = {
+            "ctVal": float(item.get("ctVal", "1")),    # base currency per contract
+            "minSz": float(item.get("minSz", "1")),    # minimum contracts
+            "lotSz": float(item.get("lotSz", "1")),    # lot size
+            "settleCcy": item.get("settleCcy", "USDT"),
+        }
+        _instrument_cache[inst_id] = info
+        _instrument_cache_ts[inst_id] = now
+        logger.warning("← instrument %s: ctVal=%s minSz=%s", inst_id, info["ctVal"], info["minSz"])
+        return info
 
     async def get_mark_price(self, inst_id: str) -> float:
         """OKX public mark price — used for position sizing without user-supplied price."""

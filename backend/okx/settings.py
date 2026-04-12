@@ -18,7 +18,9 @@ logger = logging.getLogger("okx_settings")
 DEFAULT_SETTINGS: dict[str, Any] = {
     "strategies": [],          # e.g. ["bb-squeeze-short", "momentum-long"]
     "coins": [],               # e.g. ["BTCUSDT", "ETHUSDT"]
-    "position_size_usdt": 100, # per trade
+    "position_size_usdt": 100,  # per trade (used when position_size_mode=fixed)
+    "position_size_mode": "fixed",  # fixed | percent
+    "position_size_pct": 5,    # % of account balance per trade (used when mode=percent)
     "leverage": 1,             # 1-125
     "td_mode": "isolated",     # isolated or cross
     "max_concurrent": 3,       # max open positions
@@ -49,6 +51,24 @@ def _ensure_table() -> None:
                 created_at REAL NOT NULL
             )
         """)
+        # Signal deduplication: prevents the same signal from executing twice
+        # across 5-minute auto-trading loop cycles
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS executed_signals (
+                id          INTEGER PRIMARY KEY AUTOINCREMENT,
+                session_id  TEXT NOT NULL,
+                strategy    TEXT NOT NULL,
+                coin        TEXT NOT NULL,
+                signal_time TEXT NOT NULL,
+                executed_at REAL NOT NULL,
+                UNIQUE(session_id, strategy, coin, signal_time)
+            )
+        """)
+        # Cleanup index for old executed_signals (>24h)
+        conn.execute("""
+            CREATE INDEX IF NOT EXISTS idx_executed_signals_ts
+            ON executed_signals(executed_at)
+        """)
 
 
 def get_settings(session_id: str) -> dict[str, Any]:
@@ -77,7 +97,12 @@ def save_settings(session_id: str, settings: dict[str, Any]) -> dict[str, Any]:
         validated["coins"] = [c.upper() for c in settings["coins"]]
     if "position_size_usdt" in settings:
         val = float(settings["position_size_usdt"])
-        validated["position_size_usdt"] = max(1, val)
+        validated["position_size_usdt"] = max(1, min(5000, val))
+    if "position_size_mode" in settings and settings["position_size_mode"] in ("fixed", "percent"):
+        validated["position_size_mode"] = settings["position_size_mode"]
+    if "position_size_pct" in settings:
+        val = float(settings["position_size_pct"])
+        validated["position_size_pct"] = max(1, min(20, val))
     if "leverage" in settings:
         val = int(settings["leverage"])
         validated["leverage"] = max(1, min(125, val))
@@ -185,6 +210,33 @@ def get_auto_sessions() -> list[str]:
         if settings.get("enabled") and settings.get("execution_mode") == "auto":
             result.append(session_id)
     return result
+
+
+def is_signal_executed(session_id: str, strategy: str, coin: str, signal_time: str) -> bool:
+    """Check if this exact signal has already been executed for this session."""
+    _ensure_table()
+    with _get_conn() as conn:
+        row = conn.execute(
+            "SELECT 1 FROM executed_signals "
+            "WHERE session_id=? AND strategy=? AND coin=? AND signal_time=?",
+            (session_id, strategy, coin, signal_time),
+        ).fetchone()
+    return row is not None
+
+
+def mark_signal_executed(session_id: str, strategy: str, coin: str, signal_time: str) -> None:
+    """Mark a signal as executed. Silently ignores duplicate (UNIQUE constraint)."""
+    _ensure_table()
+    with _get_conn() as conn:
+        conn.execute(
+            "INSERT OR IGNORE INTO executed_signals "
+            "(session_id, strategy, coin, signal_time, executed_at) VALUES (?,?,?,?,?)",
+            (session_id, strategy, coin, signal_time, time.time()),
+        )
+    # Prune records older than 24h to prevent unbounded growth
+    cutoff = time.time() - 86400
+    with _get_conn() as conn:
+        conn.execute("DELETE FROM executed_signals WHERE executed_at < ?", (cutoff,))
 
 
 def get_alert_sessions() -> list[tuple[str, str]]:
