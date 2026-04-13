@@ -3,6 +3,7 @@
  * Broker tag ensures commission tracking on every order.
  */
 import { useState, useEffect } from "preact/hooks";
+import { API_BASE_URL as API_BASE } from "../config/api";
 
 interface Props {
   strategy?: string;
@@ -12,8 +13,6 @@ interface Props {
   tpPct?: number;
   lang?: "en" | "ko";
 }
-
-const API_BASE = "https://api.pruviq.com";
 
 const labels = {
   en: {

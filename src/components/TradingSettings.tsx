@@ -9,12 +9,11 @@
  * - Empty strategies/coins → "all signals" warning shown
  */
 import { useState, useEffect, useMemo } from "preact/hooks";
+import { API_BASE_URL as API_BASE } from "../config/api";
 
 interface Props {
   lang?: "en" | "ko";
 }
-
-const API_BASE = "https://api.pruviq.com";
 // Must match backend okx/config.py OKX_OAUTH_AUTHORIZE
 const OKX_OAUTH_BASE = "https://www.okx.com/api/v5/oauth/authorize";
 

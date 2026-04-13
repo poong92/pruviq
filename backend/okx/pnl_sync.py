@@ -68,10 +68,12 @@ async def sync_realized_pnl(session_id: str, inst_id: str, trade_created_at: flo
         except Exception as e:
             logger.error("PnL sync attempt %d failed: %s", i + 1, e)
 
+    # Reset estimated PnL to 0 — consecutive-loss guard should not fire on stale estimates
     logger.warning(
-        "PnL sync: no closed position found for session=%s inst=%s after 3 attempts",
+        "PnL sync: no closed position found for session=%s inst=%s after 3 attempts — resetting pnl to 0",
         session_id[:8], inst_id,
     )
+    _update_trade_pnl(session_id, inst_id, trade_created_at, 0.0)
 
 
 def _update_trade_pnl(
