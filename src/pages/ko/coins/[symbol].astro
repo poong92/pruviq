@@ -81,7 +81,7 @@ const faqJsonLd = JSON.stringify({
 const canonicalOverride = symbol.endsWith('usdt') ? undefined : `/ko/coins/${symbol}usdt/`;
 ---
 
-<Layout title={`${fullName} (${displayName}) - 코인 탐색기 - PRUVIQ`} description={metaDesc} canonicalOverride={canonicalOverride}>
+<Layout title={`${fullName} (${displayName}) - 코인 탐색기 - PRUVIQ`} description={metaDesc} canonicalOverride={canonicalOverride} noAlternate={canonicalOverride !== undefined}>
   <script type="application/ld+json" set:html={datasetJsonLd} />
   <script type="application/ld+json" set:html={faqJsonLd} />
   <section class="pt-6 pb-16 md:pt-8 md:pb-24">
