@@ -30,6 +30,9 @@ from fastapi.responses import JSONResponse, Response
 
 _admin_key_raw = os.environ.get("ADMIN_API_KEY", "")
 ADMIN_API_KEY: Optional[str] = _admin_key_raw if len(_admin_key_raw) >= 32 else None
+_internal_key_raw = os.environ.get("INTERNAL_API_KEY", "")
+INTERNAL_API_KEY: Optional[str] = _internal_key_raw if len(_internal_key_raw) >= 32 else None
+OKX_AUTO_TRADE_LOCAL = os.environ.get("OKX_AUTO_TRADE_LOCAL", "true").lower() == "true"
 COINGECKO_API_KEY = os.environ.get("COINGECKO_API_KEY", "")
 CG_HEADERS = {"x-cg-demo-api-key": COINGECKO_API_KEY} if COINGECKO_API_KEY else {}
 
@@ -41,6 +44,9 @@ logger = logging.getLogger("pruviq")
 
 if ADMIN_API_KEY is None:
     logger.warning("ADMIN_API_KEY too short or missing — /admin/refresh disabled")
+
+if INTERNAL_API_KEY is None:
+    logger.warning("INTERNAL_API_KEY too short or missing — /internal/signals disabled")
 
 # Add backend to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -281,20 +287,28 @@ async def lifespan(app: FastAPI):
     # IMPORTANT: Deploy with --workers 1 (global cache not shared across processes)
     refresh_task = asyncio.create_task(_background_refresh())
     market_task = asyncio.create_task(_background_market_refresh())
-    okx_auto_task = asyncio.create_task(_okx_auto_trading_loop())
+    if OKX_AUTO_TRADE_LOCAL:
+        okx_auto_task = asyncio.create_task(_okx_auto_trading_loop())
+        print("OKX auto-trading loop started (local mode)")
+    else:
+        okx_auto_task = None
+        print("OKX auto-trading loop SKIPPED (OKX_AUTO_TRADE_LOCAL=false — DO server handles it)")
     okx_token_task = asyncio.create_task(_okx_token_refresh_loop())
     print(f"Background data refresh scheduled every {REFRESH_INTERVAL}s")
     print(f"Background market refresh scheduled every {MARKET_REFRESH_INTERVAL}s")
-    print("OKX auto-trading loop started")
 
     yield
 
     indicator_task.cancel()
     refresh_task.cancel()
     market_task.cancel()
-    okx_auto_task.cancel()
+    if okx_auto_task is not None:
+        okx_auto_task.cancel()
     okx_token_task.cancel()
-    for t in (indicator_task, refresh_task, market_task, okx_auto_task, okx_token_task):
+    _tasks = [indicator_task, refresh_task, market_task, okx_token_task]
+    if okx_auto_task is not None:
+        _tasks.append(okx_auto_task)
+    for t in _tasks:
         try:
             await t
         except asyncio.CancelledError:
@@ -641,6 +655,44 @@ async def signals_live(top_n: int = 30):
 
     signals = await asyncio.to_thread(_scan)
     return signals
+
+
+@app.get("/internal/signals")
+async def internal_signals(
+    x_internal_key: str = Header(default="", alias="X-Internal-Key"),
+):
+    """Internal endpoint exposing live scanner signals for the DO auto-trading worker.
+
+    Authentication: Requires `X-Internal-Key` header matching INTERNAL_API_KEY env var
+    (length >= 32). Returns 403 if key is missing, too short, or mismatched.
+
+    Response shape:
+        {"signals": [...], "ts": <unix seconds>}
+
+    When `_signal_scanner` is not yet initialized OR scan returns no signals,
+    `signals` is an empty list (ts still populated).
+
+    Consumed by: `backend/okx/server.py` polling loop (OKX_AUTO_TRADE_LOCAL=false mode).
+    """
+    if INTERNAL_API_KEY is None:
+        raise HTTPException(
+            status_code=403,
+            detail="INTERNAL_API_KEY not configured on server",
+        )
+    if not x_internal_key or not hmac.compare_digest(x_internal_key, INTERNAL_API_KEY):
+        raise HTTPException(status_code=403, detail="invalid X-Internal-Key")
+
+    ts = int(time.time())
+    if _signal_scanner is None:
+        return {"signals": [], "ts": ts}
+
+    try:
+        signals = await asyncio.to_thread(_signal_scanner.scan)
+    except Exception as e:
+        logger.warning(f"/internal/signals scan failed: {e}")
+        raise HTTPException(status_code=500, detail=f"scan failed: {e}")
+
+    return {"signals": signals or [], "ts": ts}
 
 
 @app.get("/signals/history")

@@ -1,0 +1,57 @@
+name: "Backend Deploy: Mac Mini Auto-Restart"
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "backend/**"
+
+concurrency:
+  group: backend-deploy
+  cancel-in-progress: false
+
+jobs:
+  restart:
+    name: Restart uvicorn on Mac Mini
+    runs-on: [self-hosted, mac-mini-m4]
+    timeout-minutes: 5
+
+    steps:
+      - name: Pull latest code
+        run: |
+          cd ~/pruviq
+          git fetch origin main
+          git reset --hard origin/main
+
+      - name: Install dependencies if requirements changed
+        run: |
+          cd ~/pruviq/backend
+          if git diff HEAD~1 --name-only 2>/dev/null | grep -q "requirements.txt"; then
+            echo "requirements.txt changed, installing..."
+            .venv/bin/pip install -q -r requirements.txt
+          else
+            echo "No dependency changes"
+          fi
+
+      - name: Restart uvicorn via launchd
+        run: |
+          launchctl bootout "gui/$(id -u)" ~/Library/LaunchAgents/com.pruviq.api.plist 2>/dev/null || true
+          pkill -9 -f "uvicorn api.main" 2>/dev/null || true
+          sleep 3
+          launchctl bootstrap "gui/$(id -u)" ~/Library/LaunchAgents/com.pruviq.api.plist
+          echo "uvicorn restart initiated"
+
+      - name: Wait for API to be ready
+        run: |
+          for i in 1 2 3 4 5; do
+            sleep 20
+            coins=$(curl -s -m 5 http://localhost:8080/health 2>/dev/null \
+              | python3 -c "import sys,json; print(json.load(sys.stdin).get('coins_loaded',0))" 2>/dev/null || echo "0")
+            echo "Attempt $i: coins=$coins"
+            if [ "$coins" -gt 400 ] 2>/dev/null; then
+              echo "Backend ready: $coins coins loaded"
+              exit 0
+            fi
+          done
+          echo "WARNING: Backend took longer than expected to load — check logs"
+          exit 0
