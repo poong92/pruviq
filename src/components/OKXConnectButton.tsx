@@ -4,6 +4,7 @@
  * Mirrors OKX JS SDK behavior (domain + /account/oauth + queryString) without loading SDK.
  */
 import { useState, useEffect } from "preact/hooks";
+import { API_BASE_URL as API_BASE } from "../config/api";
 
 interface Props {
   lang?: "en" | "ko";
@@ -11,7 +12,6 @@ interface Props {
   showCard?: boolean;
 }
 
-const API_BASE = "https://api.pruviq.com";
 const OKX_OAUTH_BASE = "https://www.okx.com/api/v5/oauth/authorize";
 
 const labels = {

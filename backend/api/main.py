@@ -411,6 +411,18 @@ async def rate_limit_middleware(request: Request, call_next):
                 content={"detail": f"Rate limit exceeded. Retry after {retry_after}s."},
                 headers={"Retry-After": str(retry_after)},
             )
+    # Light rate limit: /api/subscribe and /auth/okx/init (10 req/min per IP)
+    if request.url.path in ("/api/subscribe", "/auth/okx/init"):
+        client_ip = get_client_ip(request)
+        key = f"light:{client_ip}:{request.url.path}"
+        now = time.time()
+        if not hasattr(rate_limit_middleware, "_store"):
+            rate_limit_middleware._store = {}
+        timestamps = [t for t in rate_limit_middleware._store.get(key, []) if now - t < 60]
+        if len(timestamps) >= 10:
+            return JSONResponse(status_code=429, content={"detail": "Too many requests."})
+        timestamps.append(now)
+        rate_limit_middleware._store[key] = timestamps
     return await call_next(request)
 
 
@@ -617,9 +629,9 @@ async def signals_live(top_n: int = 30):
     """
     import asyncio
 
-    global _signal_scanner
     if _signal_scanner is None:
-        _signal_scanner = SignalScanner(data_manager, top_n=min(top_n, 50))
+        logger.warning("/signals/live: scanner not ready yet — startup still in progress")
+        return []
 
     def _scan():
         return _signal_scanner.scan()
@@ -631,9 +643,9 @@ async def signals_live(top_n: int = 30):
 @app.get("/signals/history")
 async def signals_history(hours: int = 24):
     """Return signal history for the last N hours (max 72)."""
-    global _signal_scanner
     if _signal_scanner is None:
-        _signal_scanner = SignalScanner(data_manager)
+        logger.warning("/signals/history: scanner not ready yet — startup still in progress")
+        return []
 
     return _signal_scanner.get_history(min(hours, 72))
 
@@ -3854,7 +3866,6 @@ SUBSCRIBERS_FILE = Path(os.environ.get("SUBSCRIBERS_FILE", "/Users/jepo/pruviq-d
 async def subscribe_email(req: SubscribeRequest):
     """Subscribe an email to weekly strategy alerts."""
     import re
-    import fcntl
 
     # Validate email format
     if not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', req.email):

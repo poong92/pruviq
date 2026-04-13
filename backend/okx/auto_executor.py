@@ -133,8 +133,10 @@ async def _try_execute(
         return None
 
     # ── Deduplication: skip already-executed signals ──
-    if signal_time and is_signal_executed(session_id, strategy_id, coin, signal_time):
-        logger.debug("Signal already executed: %s/%s @ %s", strategy_id, coin, signal_time)
+    # Fallback to hourly key when signal_time is missing (prevents double-execution)
+    dedup_time = signal_time or time.strftime("%Y-%m-%dT%H:00:00")
+    if is_signal_executed(session_id, strategy_id, coin, dedup_time):
+        logger.debug("Signal already executed: %s/%s @ %s", strategy_id, coin, dedup_time)
         return None
 
     # ── Safety: daily trade limit ──
@@ -319,8 +321,7 @@ async def _try_execute(
     estimated_loss = -(position_size * sl_pct / 100)
     trade_created_at = result["timestamp"]
     log_trade(session_id, signal, result, pnl=estimated_loss)
-    if signal_time:
-        mark_signal_executed(session_id, strategy_id, coin, signal_time)
+    mark_signal_executed(session_id, strategy_id, coin, dedup_time)
 
     logger.warning(
         "Auto-executed: %s %s %s sz=%s fillPx=%.6f SL=%s TP=%s session=%s",
