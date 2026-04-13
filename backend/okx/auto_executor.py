@@ -1,25 +1,28 @@
 """
 Auto-execution worker — monitors signals and executes trades for subscribed users.
 
+Industry standard architecture (3commas/Bybit/OKX bot benchmark):
+  - Mark price fetched at execution time (not signal time) for contract sizing
+  - SL/TP calculated from ACTUAL FILL PRICE (avgPx) after order confirmation
+  - All events notify user via Telegram: entry, SL/TP set, limit hits, failures
+
 Safety guards:
-  - Max $500 per trade (configurable per user)
+  - Max $5000 per trade (configurable per user)
   - Max 20 trades/day (configurable)
   - Daily loss limit (configurable, default $200)
   - Master switch per user
   - Anomaly detection: pauses if 3 consecutive losses
-
-Usage:
-  Called from main.py background task, runs every signal scan cycle.
 """
 from __future__ import annotations
 
+import asyncio
 import logging
 import time
 from typing import Optional
 
 from .client import OKXClient
 from .oauth import get_valid_token, is_authenticated
-from .orders import _pruviq_to_okx_inst_id, _calc_sl_tp_prices
+from .orders import _pruviq_to_okx_inst_id, _calc_sl_tp_prices, _calc_contract_sz
 from .settings import (
     get_auto_sessions,
     get_alert_sessions,
@@ -30,11 +33,18 @@ from .settings import (
     log_trade,
     mark_signal_executed,
 )
-from .notifications import send_signal_alert
+from .notifications import (
+    send_signal_alert,
+    send_trade_executed,
+    send_execution_failed,
+    send_safety_limit,
+)
 from .pnl_sync import sync_realized_pnl
-from .orders import _pruviq_to_okx_inst_id as _to_inst_id, _calc_contract_sz, _calc_sl_tp_prices
 
 logger = logging.getLogger("okx_auto_executor")
+
+# How long to wait for market order fill before querying avgPx (seconds)
+_FILL_WAIT_S = 1.5
 
 
 async def process_signals(signals: list[dict]) -> list[dict]:
@@ -89,7 +99,6 @@ async def process_signals(signals: list[dict]) -> list[dict]:
             continue
         settings = get_settings(session_id)
         for signal in signals:
-            # Apply same strategy/coin filters as auto mode
             if settings["strategies"] and signal["strategy"] not in settings["strategies"]:
                 continue
             if settings["coins"] and signal["coin"] not in settings["coins"]:
@@ -113,6 +122,7 @@ async def _try_execute(
     strategy_id = signal["strategy"]
     coin = signal["coin"]
     signal_time = signal.get("signal_time", "")
+    chat_id = settings.get("alert_telegram_chat_id", "")
 
     # ── Filter: strategy subscribed? ──
     if settings["strategies"] and strategy_id not in settings["strategies"]:
@@ -135,6 +145,12 @@ async def _try_execute(
             "Session %s daily trade limit reached (%d/%d)",
             session_id[:8], daily_stats["trades_today"], max_daily,
         )
+        if chat_id:
+            asyncio.create_task(send_safety_limit(chat_id, "daily_trades", {
+                "trades_today": daily_stats["trades_today"],
+                "max_daily": max_daily,
+                "coin": coin, "strategy": strategy_id,
+            }))
         return None
 
     # ── Safety: daily loss limit ──
@@ -144,12 +160,15 @@ async def _try_execute(
             "Session %s daily loss limit hit ($%.2f / limit $%.2f)",
             session_id[:8], daily_stats["pnl_today"], daily_loss_limit,
         )
+        if chat_id:
+            asyncio.create_task(send_safety_limit(chat_id, "daily_loss", {
+                "pnl_today": daily_stats["pnl_today"],
+                "limit": daily_loss_limit,
+                "coin": coin, "strategy": strategy_id,
+            }))
         return None
 
     # ── Safety: consecutive loss guard ──
-    # pnl_sync.py updates pnl_usdt to actual realized values after position close.
-    # Initial estimate is worst-case (SL scenario), so guard uses actual values
-    # once sync completes (typically within 30-120s of trade close).
     recent_trades = get_trade_log(session_id, limit=3)
     if len(recent_trades) >= 3:
         if all(t["pnl_usdt"] < 0 for t in recent_trades[:3]):
@@ -157,25 +176,34 @@ async def _try_execute(
                 "Session %s: 3 consecutive losses — auto-pausing",
                 session_id[:8],
             )
+            if chat_id:
+                asyncio.create_task(send_safety_limit(chat_id, "consecutive_loss", {
+                    "count": 3, "coin": coin, "strategy": strategy_id,
+                }))
             return None
 
     # ── Execute ──
     inst_id = _pruviq_to_okx_inst_id(coin)
     side = "sell" if signal["direction"] == "short" else "buy"
-    entry_price = signal.get("entry_price", 0)
-
-    if not entry_price or entry_price <= 0:
-        logger.warning("No entry price for signal %s/%s", strategy_id, coin)
-        return None
-
-    position_size = settings["position_size_usdt"]
-    leverage = settings["leverage"]
-    td_mode = settings.get("td_mode", "isolated")
     sl_pct = signal.get("sl_pct", 10)
     tp_pct = signal.get("tp_pct", 8)
+    leverage = settings["leverage"]
+    td_mode = settings.get("td_mode", "isolated")
 
     token = await get_valid_token(session_id)
     async with OKXClient(token, session_id=session_id) as client:
+
+        # ── Industry standard: fetch LIVE mark price at execution time ──
+        # Signal entry_price is from historical OHLCV (up to 5min stale).
+        # Mark price ensures correct contract sizing and SL/TP reference.
+        try:
+            mark_price = await client.get_mark_price(inst_id)
+        except Exception as e:
+            logger.error("Failed to get mark price for %s: %s — skipping", inst_id, e)
+            if chat_id:
+                asyncio.create_task(send_execution_failed(chat_id, signal, f"mark price fetch failed: {e}"))
+            return None
+
         # ── Percent-of-balance position sizing ──
         if settings.get("position_size_mode") == "percent":
             pct = settings.get("position_size_pct", 5)
@@ -186,14 +214,18 @@ async def _try_execute(
                     "Session %s: zero USDT balance — skipping percent sizing",
                     session_id[:8],
                 )
+                if chat_id:
+                    asyncio.create_task(send_execution_failed(chat_id, signal, "insufficient USDT balance"))
                 return None
             position_size = avail * pct / 100
             logger.info(
                 "Percent sizing: %.1f%% of $%.2f = $%.2f for session %s",
                 pct, avail, position_size, session_id[:8],
             )
+        else:
+            position_size = settings["position_size_usdt"]
 
-        # Check concurrent position limit
+        # ── Check concurrent position limit ──
         positions = await client.get_positions()
         open_count = sum(1 for p in positions if float(p.pos or 0) != 0)
         if open_count >= settings["max_concurrent"]:
@@ -203,23 +235,45 @@ async def _try_execute(
             )
             return None
 
-        # Correct OKX SWAP contract size (integer, uses ctVal)
+        # ── Contract size using live mark price ──
         try:
-            sz = await _calc_contract_sz(client, inst_id, position_size, leverage, entry_price)
+            sz = await _calc_contract_sz(client, inst_id, position_size, leverage, mark_price)
         except ValueError as e:
             logger.warning("Position too small for auto-execute: %s", e)
+            if chat_id:
+                asyncio.create_task(send_execution_failed(chat_id, signal, f"position too small: {e}"))
             return None
 
-        # Set leverage before placing order
+        # ── Set leverage ──
         await client.set_leverage(inst_id=inst_id, lever=leverage, mgn_mode=td_mode)
 
-        # Market order
+        # ── Market order ──
         order = await client.place_order(inst_id=inst_id, side=side, sz=sz, td_mode=td_mode)
         ord_id = order.get("ordId", "")
-        logger.warning("← Auto order placed ordId=%s %s %s sz=%s", ord_id, side, inst_id, sz)
+        if not ord_id:
+            logger.error("Auto order returned no ordId — signal %s/%s", strategy_id, coin)
+            if chat_id:
+                asyncio.create_task(send_execution_failed(chat_id, signal, "order returned no ordId"))
+            return None
 
-        # SL/TP — if fails, close naked position immediately
-        sl_price, tp_price = _calc_sl_tp_prices(entry_price, signal["direction"], sl_pct, tp_pct)
+        # ── Industry standard: wait for fill, then query actual avgPx ──
+        # Bybit/OKX bots wait ~1-2s then query fill price for SL/TP accuracy.
+        await asyncio.sleep(_FILL_WAIT_S)
+        fill_price = mark_price  # fallback
+        try:
+            fill_price = await client.get_order_fill_price(inst_id, ord_id)
+            logger.warning(
+                "← Fill confirmed: ordId=%s avgPx=%.6f (markPx was %.6f)",
+                ord_id, fill_price, mark_price,
+            )
+        except Exception as e:
+            logger.warning(
+                "Could not get fill price for %s — using mark price %.6f: %s",
+                ord_id, mark_price, e,
+            )
+
+        # ── SL/TP calculated from ACTUAL FILL PRICE (industry standard) ──
+        sl_price, tp_price = _calc_sl_tp_prices(fill_price, signal["direction"], sl_pct, tp_pct)
         close_side = "buy" if signal["direction"] == "short" else "sell"
 
         try:
@@ -231,6 +285,8 @@ async def _try_execute(
                 tp_trigger_px=tp_price,
                 td_mode=td_mode,
             )
+            algo_id = (algo.get("data") or [{}])[0].get("algoId", "")
+            logger.warning("← SL/TP set: SL=%s TP=%s algoId=%s", sl_price, tp_price, algo_id)
         except Exception as algo_err:
             logger.error(
                 "CRITICAL: SL/TP failed after auto-order %s (%s) — closing: %s",
@@ -238,16 +294,9 @@ async def _try_execute(
             )
             try:
                 await client.close_position(inst_id, mgn_mode=td_mode)
-                # Notify user via Telegram if alert_telegram_chat_id set
-                chat_id = settings.get("alert_telegram_chat_id", "")
                 if chat_id:
-                    await send_signal_alert(chat_id, {
-                        "strategy": strategy_id, "coin": coin,
-                        "direction": "CLOSED",
-                        "entry_price": entry_price,
-                        "sl_pct": sl_pct, "tp_pct": tp_pct,
-                        "strategy_name": f"⚠️ SL/TP FAILED — {strategy_id} position closed",
-                    })
+                    asyncio.create_task(send_execution_failed(chat_id, signal,
+                        f"⚠️ SL/TP FAILED — position closed. ordId={ord_id}"))
             except Exception as close_err:
                 logger.error("EMERGENCY CLOSE FAILED for %s: %s", inst_id, close_err)
             return None
@@ -258,6 +307,7 @@ async def _try_execute(
         "coin": coin,
         "direction": signal["direction"],
         "size": sz,
+        "fill_price": fill_price,
         "sl": sl_price,
         "tp": tp_price,
         "order": order,
@@ -265,20 +315,23 @@ async def _try_execute(
         "timestamp": time.time(),
     }
 
-    # Log trade with estimated worst-case PnL (SL hit scenario)
-    # pnl_sync.py will update this to actual realized PnL once position closes
+    # Log trade: estimated worst-case PnL (SL hit), pnl_sync updates to actual later
     estimated_loss = -(position_size * sl_pct / 100)
     trade_created_at = result["timestamp"]
     log_trade(session_id, signal, result, pnl=estimated_loss)
     if signal_time:
         mark_signal_executed(session_id, strategy_id, coin, signal_time)
+
     logger.warning(
-        "Auto-executed: %s %s %s sz=%s for session %s (est_pnl=%.2f)",
-        side, inst_id, strategy_id, sz, session_id[:8], estimated_loss,
+        "Auto-executed: %s %s %s sz=%s fillPx=%.6f SL=%s TP=%s session=%s",
+        side, inst_id, strategy_id, sz, fill_price, sl_price, tp_price, session_id[:8],
     )
 
+    # ── Telegram: trade entry confirmation (industry standard) ──
+    if chat_id:
+        asyncio.create_task(send_trade_executed(chat_id, signal, fill_price, sz, sl_price, tp_price))
+
     # Fire-and-forget: sync actual realized PnL once position closes
-    import asyncio
     asyncio.create_task(sync_realized_pnl(session_id, inst_id, trade_created_at))
 
     return result

@@ -295,3 +295,20 @@ class OKXClient:
         })
         logger.warning("← close-position done instId=%s", inst_id)
         return result
+
+    async def get_order_fill_price(self, inst_id: str, ord_id: str) -> float:
+        """
+        Query actual fill price (avgPx) for a completed market order.
+        Industry standard: SL/TP must be set relative to actual fill, not signal price.
+        Raises ValueError if order not yet filled or avgPx unavailable.
+        """
+        data = await self._get("/api/v5/trade/order", {"instId": inst_id, "ordId": ord_id})
+        orders = data.get("data", [])
+        if not orders:
+            raise ValueError(f"Order {ord_id} not found")
+        avg_px = orders[0].get("avgPx", "")
+        if not avg_px or float(avg_px) <= 0:
+            raise ValueError(f"Order {ord_id} avgPx not available yet (state={orders[0].get('state')})")
+        px = float(avg_px)
+        logger.warning("← order fill ordId=%s avgPx=%.6f state=%s", ord_id, px, orders[0].get("state"))
+        return px
