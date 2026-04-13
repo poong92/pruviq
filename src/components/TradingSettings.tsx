@@ -9,7 +9,8 @@ interface Props {
 }
 
 const API_BASE = "https://api.pruviq.com";
-const OKX_OAUTH_BASE = "https://www.okx.com/account/oauth";
+// Must match backend okx/config.py OKX_OAUTH_AUTHORIZE
+const OKX_OAUTH_BASE = "https://www.okx.com/api/v5/oauth/authorize";
 
 function OKXDirectConnectButton({
   lang,

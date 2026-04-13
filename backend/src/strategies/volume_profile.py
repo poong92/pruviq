@@ -123,3 +123,17 @@ class VolumeProfileStrategy:
             return True
 
         return False
+
+    def check_signal(self, df, idx: int):
+        """
+        Signal scanner interface — returns 'long', 'short', or None.
+        Wraps entry_signal() for both directions.
+        """
+        if idx < 0 or idx >= len(df):
+            return None
+        row = df.iloc[idx]
+        if self.entry_signal(row, "short"):
+            return "short"
+        if self.entry_signal(row, "long"):
+            return "long"
+        return None
