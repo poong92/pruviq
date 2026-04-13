@@ -368,7 +368,10 @@ def check_rate_limit(client_ip: str) -> bool:
         for ip in stale:
             del rate_limits[ip]
 
+    # Hard cap: if dict exceeds 10k IPs (DDoS scenario), reject new IPs
     if client_ip not in rate_limits:
+        if len(rate_limits) >= 10_000:
+            return False
         rate_limits[client_ip] = []
 
     rate_limits[client_ip] = [t for t in rate_limits[client_ip] if now - t < 60]
