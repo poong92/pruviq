@@ -28,9 +28,9 @@ fi
 log() { echo "$(date -u '+%Y-%m-%d %H:%M:%S UTC') — $*" | tee -a "$LOG_FILE"; }
 
 notify() {
-    if [ -n "${TELEGRAM_BOT_TOKEN:-}" ] && [ -n "${TELEGRAM_CHAT_ID:-}" ]; then
+    if [ -n "${TELEGRAM_TOKEN:-}" ] && [ -n "${TELEGRAM_CHAT_ID:-}" ]; then
         local msg="$1"
-        curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+        curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage" \
             -d chat_id="${TELEGRAM_CHAT_ID}" \
             -d text="${msg}" \
             -d parse_mode="Markdown" > /dev/null 2>&1 || true
