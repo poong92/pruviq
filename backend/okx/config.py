@@ -12,7 +12,10 @@ OKX_CLIENT_SECRET = os.environ.get("OKX_CLIENT_SECRET", "")
 OKX_REDIRECT_URI = os.environ.get(
     "OKX_REDIRECT_URI", "https://api.pruviq.com/auth/okx/callback"
 )
-OKX_BROKER_CODE = os.environ.get("OKX_BROKER_CODE", "c12571e26a02OCDE")
+OKX_BROKER_CODE = os.environ.get("OKX_BROKER_CODE", "")
+if not OKX_BROKER_CODE:
+    import logging as _logging
+    _logging.getLogger("pruviq").warning("OKX_BROKER_CODE env var not set — affiliate revenue tracking disabled")
 
 # ── Encryption ──
 OKX_ENCRYPTION_KEY = os.environ.get("OKX_ENCRYPTION_KEY", "")
