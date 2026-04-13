@@ -9,6 +9,7 @@ on:
       - "E2E Tests"
       - "Accessibility"
       - "Lighthouse Audit"
+      - "Visual Regression"
     types: [completed]
   workflow_dispatch: {}
 
