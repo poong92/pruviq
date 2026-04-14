@@ -28,7 +28,7 @@ export default function ConditionRow({
   currLabel = "Curr",
   lang = "en",
 }: Props) {
-  const fieldDescriptions: Record<string, Record<string, string>> = {
+  const fieldDescriptions: Record<"en" | "ko", Record<string, string>> = {
     en: {
       is_squeeze: "Bollinger Band Squeeze detected",
       recent_squeeze: "BB Squeeze in last 10 candles (rolling)",
@@ -97,7 +97,7 @@ export default function ConditionRow({
     },
   };
 
-  const fieldLabels: Record<string, Record<string, string>> = {
+  const fieldLabels: Record<"en" | "ko", Record<string, string>> = {
     en: {
       is_squeeze: "BB Squeeze (is_squeeze)",
       recent_squeeze: "Recent Squeeze (recent_squeeze)",
