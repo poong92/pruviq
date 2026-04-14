@@ -57,7 +57,8 @@ function AnimatedNumber({
     const duration = 1200;
     const steps = 30;
     let step = 0;
-    setDisplay(0);
+    // Don't reset to 0 if already showing the correct value — prevents CLS flash
+    if (display !== value) setDisplay(0);
 
     const timer = setInterval(() => {
       step++;

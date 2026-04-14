@@ -280,6 +280,18 @@ async def lifespan(app: FastAPI):
     if data_manager.coin_count > 0:
         _signal_scanner = SignalScanner(data_manager, top_n=50)
         print(f"SignalScanner initialized (top_n=50, {data_manager.coin_count} coins)")
+
+        # Pre-warm signal cache in background — first scan takes ~30s (CPU-bound).
+        # Without this, the first /signals/live request times out on the frontend.
+        async def _prewarm_signals():
+            try:
+                await asyncio.to_thread(_signal_scanner.scan)
+                n = len(_signal_scanner._cache)
+                print(f"Signal cache pre-warmed: {n} active signals")
+            except Exception as e:
+                print(f"WARNING: Signal cache pre-warm failed: {e}")
+
+        asyncio.create_task(_prewarm_signals())
     else:
         print("WARNING: SignalScanner NOT initialized — 0 coins loaded")
 
