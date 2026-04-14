@@ -176,7 +176,7 @@ export default function BuilderPanel(props: Props) {
           </span>
           {props.coinsLoaded > 0 && (
             <span class="text-[--color-text-muted] text-xs font-mono">
-              {props.coinsLoaded} coins
+              {props.coinsLoaded} {t.coinsUnit || "coins"}
             </span>
           )}
         </div>
@@ -192,6 +192,10 @@ export default function BuilderPanel(props: Props) {
           label={t.preset}
           loading={props.presetLoading}
           lang={props.lang}
+          customLabel={t.customPreset}
+          recommendedLabel={t.recommended}
+          allPresetsLabel={t.allPresetsLabel}
+          hideLabel={t.hidePresets}
         />
         {props.presetError && (
           <div
@@ -231,7 +235,7 @@ export default function BuilderPanel(props: Props) {
                     : undefined
                 }
               >
-                {ind.name}
+                {(t.indicatorNames && t.indicatorNames[ind.id]) || ind.name}
               </button>
             ))}
           </div>
@@ -250,21 +254,38 @@ export default function BuilderPanel(props: Props) {
               {t.addCondition}
             </button>
           </div>
-          <div class="space-y-4 sm:space-y-3">
-            {props.conditions.map((c) => (
-              <ConditionRow
-                key={c.id}
-                condition={c}
-                availableFields={props.availableFields}
-                onUpdate={props.updateCondition}
-                onRemove={props.removeCondition}
-                removeLabel={t.remove}
-                prevLabel={t.prev}
-                currLabel={t.curr}
-                lookAheadWarning={t.lookAheadWarn}
-              />
-            ))}
-          </div>
+          {props.conditions.length === 0 ? (
+            <div class="py-6 text-center">
+              <p class="text-[--color-text-muted] text-xs font-mono mb-1">
+                {props.lang === "ko"
+                  ? "위에서 지표를 선택한 뒤 조건을 추가하세요."
+                  : "Select indicators above, then add conditions."}
+              </p>
+              <button
+                onClick={props.addCondition}
+                class="mt-2 px-4 py-2 min-h-[44px] text-xs font-mono rounded border border-dashed border-[--color-accent]/40 text-[--color-accent] hover:border-[--color-accent] hover:bg-[--color-accent]/5 transition-colors"
+              >
+                {t.addCondition}
+              </button>
+            </div>
+          ) : (
+            <div class="space-y-4 sm:space-y-3">
+              {props.conditions.map((c) => (
+                <ConditionRow
+                  key={c.id}
+                  condition={c}
+                  availableFields={props.availableFields}
+                  onUpdate={props.updateCondition}
+                  onRemove={props.removeCondition}
+                  removeLabel={t.remove}
+                  prevLabel={t.prev}
+                  currLabel={t.curr}
+                  lookAheadWarning={t.lookAheadWarn}
+                  lang={props.lang}
+                />
+              ))}
+            </div>
+          )}
           {hasLookAhead && (
             <div class="mt-1.5 px-2.5 py-1 rounded bg-[--color-yellow]/10 border border-[--color-yellow]/20">
               <span class="text-[10px] font-mono text-[--color-yellow]">
@@ -284,7 +305,7 @@ export default function BuilderPanel(props: Props) {
             {/* Timeframe - spans full width */}
             <div class="col-span-3 mb-1">
               <label class="text-[10px] text-[--color-text-muted]">
-                Timeframe
+                {t.timeframe || "Timeframe"}
               </label>
               <div class="flex gap-1.5 mt-0.5">
                 {["1H", "2H", "4H", "6H", "12H", "1D", "1W"].map((tf) => (
@@ -345,7 +366,7 @@ export default function BuilderPanel(props: Props) {
                       : undefined
                   }
                 >
-                  BOTH
+                  {t.both || "BOTH"}
                 </button>
               </div>
               <p class="text-[9px] text-[--color-text-muted] mt-0.5 font-mono">
@@ -521,9 +542,9 @@ export default function BuilderPanel(props: Props) {
                     : props.coinMode === "all"
                       ? t.allCoinsLabel
                       : props.coinMode === "top"
-                        ? `Top ${props.topN}`
+                        ? `${t.topN || "Top"} ${props.topN}`
                         : props.selectedCoins.length > 0
-                          ? `${props.selectedCoins.length} coins`
+                          ? `${props.selectedCoins.length} ${t.coinsUnit || "coins"}`
                           : "?";
                   return t.compoundInfoTpl(coinLabel, capital, lev, exposure);
                 })()}
@@ -638,17 +659,22 @@ export default function BuilderPanel(props: Props) {
                   }}
                   class="px-3 min-h-[44px] text-[10px] font-mono text-[--color-accent] border border-[--color-border] rounded hover:bg-[--color-bg-hover] transition-colors whitespace-nowrap"
                 >
-                  All
+                  {t.selectAll || "All"}
                 </button>
                 <button
                   onClick={() => props.setSelectedCoins(() => [])}
                   class="px-3 min-h-[44px] text-[10px] font-mono text-[--color-text-muted] border border-[--color-border] rounded hover:bg-[--color-bg-hover] transition-colors whitespace-nowrap"
                 >
-                  None
+                  {t.selectNone || "None"}
                 </button>
               </div>
               <div class="text-[10px] text-[--color-text-muted] font-mono mb-1">
-                {props.selectedCoins.length} of {props.allCoinsCount} selected
+                {t.selectedOf
+                  ? t.selectedOf(
+                      props.selectedCoins.length,
+                      props.allCoinsCount,
+                    )
+                  : `${props.selectedCoins.length} of ${props.allCoinsCount} selected`}
               </div>
               {props.selectedCoins.length > 0 && (
                 <div class="flex flex-wrap gap-1 mb-1">
@@ -702,8 +728,10 @@ export default function BuilderPanel(props: Props) {
             <span>{t.avoidHours}</span>
             <span class="text-[10px] opacity-50">
               {props.avoidHours.size > 0
-                ? `${props.avoidHours.size}h selected`
-                : "none"}
+                ? t.hoursSelected
+                  ? t.hoursSelected(props.avoidHours.size)
+                  : `${props.avoidHours.size}h selected`
+                : t.noneSelected || "none"}
             </span>
           </summary>
           <div class="px-4 pb-2">
