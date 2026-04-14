@@ -13,6 +13,22 @@
 - git commit/push (PR만 생성, 머지는 자동)
 - PR 생성 후 "머지해주세요" 언급 금지 — CI 통과 시 자동 머지됨
 
+## Edit 후 즉시 검증 룰 (CRITICAL — 린터 역전 방지)
+
+> `post-edit.sh`가 모든 Edit 후 Prettier를 실행한다. Prettier는 로직을 바꾸지 않지만,
+> 이전 편집에서 잘못 제거된 코드(예: `setShowInfo`)가 있으면 이후 lint가 통과해도 버그가 남는다.
+
+**매 Edit 직후 반드시**:
+```bash
+# 수정한 핵심 심볼을 grep으로 확인
+grep -n "변경한_심볼" 파일경로
+```
+- 예: `useState(false)` 수정 시 → `grep -n "setShowInfo" src/components/ConditionRow.tsx`
+- 결과에 없으면 Edit 재시도 (절대 다음 단계로 넘어가지 않음)
+- "빌드 통과 = 코드 정상" 아님 — TypeScript가 못 잡는 논리 버그 존재 가능
+
+**근거**: `setShowInfo`가 `useState` destructuring에서 제거됐어도 빌드가 통과됐던 사건 (2026-04-14). 몇 달째 반복된 문제의 근본 원인.
+
 ## PR 생성 규칙 (CRITICAL)
 PR 생성 시 반드시 `automerge` 라벨 붙일 것:
 ```
