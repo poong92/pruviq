@@ -24,7 +24,7 @@ interface Props {
   // Indicators
   availableIndicators: IndicatorInfo[];
   selectedIndicators: Set<string>;
-  setSelectedIndicators: (fn: (prev: Set<string>) => Set<string>) => void;
+  setSelectedIndicators: (id: string, checked: boolean) => void;
   availableFields: string[];
   // Conditions
   conditions: Condition[];
@@ -214,12 +214,10 @@ export default function BuilderPanel(props: Props) {
               <button
                 key={ind.id}
                 onClick={() => {
-                  props.setSelectedIndicators((prev) => {
-                    const next = new Set(prev);
-                    if (next.has(ind.id)) next.delete(ind.id);
-                    else next.add(ind.id);
-                    return next;
-                  });
+                  props.setSelectedIndicators(
+                    ind.id,
+                    !props.selectedIndicators.has(ind.id),
+                  );
                 }}
                 class={`px-3 py-2 min-h-[44px] text-xs font-mono rounded transition-colors border
                   ${

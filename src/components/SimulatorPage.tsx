@@ -21,7 +21,7 @@ import type {
   PresetItem,
   CoinOption,
 } from "./simulator-types";
-import { nextCondId, COLORS } from "./simulator-types";
+import { nextCondId, COLORS, booleanFields } from "./simulator-types";
 import ChartPanel from "./ChartPanel";
 import BuilderPanel from "./BuilderPanel";
 import ResultsPanel from "./ResultsPanel";
@@ -581,9 +581,34 @@ export default function SimulatorPage({ lang = "en" }: Props) {
   const builderRef = useRef<HTMLDivElement>(null);
 
   // Available fields from selected indicators
-  const availableFields = availableIndicators
+  // Fallback order: selected → all loaded → hardcoded base fields
+  const BASE_FIELDS = [
+    "close",
+    "open",
+    "high",
+    "low",
+    "volume",
+    "rsi",
+    "bb_upper",
+    "bb_lower",
+    "bb_mid",
+    "ema_fast",
+    "ema_slow",
+    "vol_ratio",
+    "bearish",
+    "bullish",
+    "is_squeeze",
+  ];
+  const _selectedFields = availableIndicators
     .filter((ind) => selectedIndicators.has(ind.id))
     .flatMap((ind) => ind.fields);
+  const _allLoadedFields = availableIndicators.flatMap((ind) => ind.fields);
+  const availableFields =
+    _selectedFields.length > 0
+      ? _selectedFields
+      : _allLoadedFields.length > 0
+        ? _allLoadedFields
+        : BASE_FIELDS;
 
   // Dynamic coin count based on selection mode
   const currentCoinCount =
@@ -1249,15 +1274,38 @@ export default function SimulatorPage({ lang = "en" }: Props) {
     [loadPreset],
   );
 
+  // ─── Indicator toggle: auto-remove conditions that use deselected fields ───
+  const handleIndicatorToggle = (id: string, checked: boolean) => {
+    if (!checked) {
+      const removedFields = new Set(
+        availableIndicators.find((ind) => ind.id === id)?.fields ?? [],
+      );
+      setConditions((prev) =>
+        prev.filter(
+          (c) =>
+            !removedFields.has(c.field) && !removedFields.has(c.field2 ?? ""),
+        ),
+      );
+    }
+    setSelectedIndicators((prev) => {
+      const next = new Set(prev);
+      if (checked) next.add(id);
+      else next.delete(id);
+      return next;
+    });
+  };
+
   // ─── Condition helpers ───
   const addCondition = () => {
+    const firstField = availableFields[0] || "close";
+    const isBool = booleanFields.has(firstField);
     setConditions((prev) => [
       ...prev,
       {
         id: nextCondId(),
-        field: availableFields[0] || "close",
-        op: ">=",
-        value: 0,
+        field: firstField,
+        op: isBool ? "==" : ">=",
+        value: isBool ? true : 0,
         shift: 1,
       },
     ]);
@@ -1521,7 +1569,7 @@ export default function SimulatorPage({ lang = "en" }: Props) {
               demoMode={demoMode}
               availableIndicators={availableIndicators}
               selectedIndicators={selectedIndicators}
-              setSelectedIndicators={setSelectedIndicators}
+              setSelectedIndicators={handleIndicatorToggle}
               availableFields={availableFields}
               conditions={conditions}
               addCondition={addCondition}
