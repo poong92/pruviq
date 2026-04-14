@@ -53,6 +53,9 @@ export default defineConfig({
         }
       },
       filter(page) {
+        const pathname = new URL(page).pathname;
+        const coinMatch = pathname.match(/^(?:\/ko)?\/coins\/([^/]+)\/?$/);
+        if (coinMatch && !coinMatch[1].endsWith('usdt')) return false;
         return !(/\/learn\/.+/.test(page)) && !page.includes('/demo/') && !page.includes('/builder/') && !page.includes('/404');
       },
       serialize(item) {
