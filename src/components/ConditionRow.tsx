@@ -90,6 +90,11 @@ export default function ConditionRow({
 
   const [showInfo, setShowInfo] = useState(false);
 
+  // 현재 필드가 availableFields에 없으면 추가 (프리셋 로드 시 지표 미선택 상태)
+  const fields = availableFields.includes(c.field)
+    ? availableFields
+    : [c.field, ...availableFields];
+
   return (
     <div class="text-xs">
       <div class="flex flex-wrap sm:flex-nowrap items-center gap-2">
@@ -109,7 +114,7 @@ export default function ConditionRow({
           title={fieldDescriptions[c.field] || c.field}
           aria-label="Indicator field"
         >
-          {availableFields.map((f) => (
+          {fields.map((f) => (
             <option key={f} value={f} title={fieldDescriptions[f] || f}>
               {fieldLabels[f] || f}
             </option>
