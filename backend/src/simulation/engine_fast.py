@@ -1486,7 +1486,7 @@ def run_fast(
     sl_pct: float = 0.10,
     tp_pct: float = 0.08,
     max_bars: int = 48,
-    fee_pct: float = 0.0008,
+    fee_pct: float = 0.0005,
     slippage_pct: float = 0.0002,
     direction: str = "short",
     market_type: str = "futures",
@@ -1495,6 +1495,7 @@ def run_fast(
     timeframe: str = "1H",
     trailing_pct: float = 0.0,
     initial_sl_pct: float = 0.0,
+    leverage: float = 1.0,
 ) -> SimResult:
     """Complete fast simulation pipeline."""
 
@@ -1557,6 +1558,11 @@ def run_fast(
             max_drawdown_pct=0, max_consecutive_losses=0,
             total_fees_pct=0, total_funding_pct=0, tp_count=0, sl_count=0, timeout_count=0,
         )
+
+    # Apply leverage to PnL — multiply net return by leverage multiplier
+    if leverage != 1.0:
+        from dataclasses import replace as _dc_replace
+        trades = [_dc_replace(t, pnl_pct=round(t.pnl_pct * leverage, 4)) for t in trades]
 
     wins = [t for t in trades if t.pnl_pct > 0]
     losses = [t for t in trades if t.pnl_pct <= 0]

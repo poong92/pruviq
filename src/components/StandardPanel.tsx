@@ -33,6 +33,8 @@ interface Props {
   setTpPct: (v: number) => void;
   leverage: number;
   setLeverage: (v: number) => void;
+  feePct?: number;
+  setFeePct?: (v: number) => void;
   coinMode: "all" | "top" | "select";
   setCoinMode: (v: "all" | "top" | "select") => void;
   topN: number;
@@ -61,6 +63,9 @@ const L = {
     all: "All",
     period: "Test Period",
     months: "months",
+    fee: "Fee/Side",
+    survivorNote:
+      "Only currently-listed coins. Delisted excluded — results may be overstated.",
     run: "Run Backtest",
     running: "Running...",
     runOn: "Simulate on {n} Coins",
@@ -79,6 +84,9 @@ const L = {
     all: "전체",
     period: "테스트 기간",
     months: "개월",
+    fee: "거래 수수료",
+    survivorNote:
+      "현재 상장 코인만 포함. 상장폐지 코인 제외 — 실제보다 과대평가될 수 있음.",
     run: "백테스트 실행",
     running: "실행 중...",
     runOn: "{n}개 코인으로 시뮬레이션",
@@ -114,6 +122,8 @@ export default function StandardPanel({
   setTpPct,
   leverage,
   setLeverage,
+  feePct = 0.05,
+  setFeePct,
   coinMode,
   setCoinMode,
   topN,
@@ -387,9 +397,49 @@ export default function StandardPanel({
           />
           <div class="flex justify-between text-[9px] text-[--color-text-muted] mt-0.5">
             <span>3</span>
-            <span>12</span>
+            <span>12★</span>
             <span>24</span>
           </div>
+        </div>
+
+        {/* Fee Rate */}
+        {setFeePct && (
+          <div>
+            <label class="text-[11px] text-[--color-text-muted] font-mono mb-1 block">
+              {t.fee}:{" "}
+              <span class="font-bold text-[--color-text]">
+                {feePct.toFixed(2)}%
+              </span>
+            </label>
+            <input
+              type="range"
+              min="0.01"
+              max="0.20"
+              step="0.01"
+              value={feePct}
+              onInput={(e) =>
+                setFeePct(Number((e.target as HTMLInputElement).value))
+              }
+              class="w-full h-1.5"
+            />
+            <div class="flex justify-between text-[9px] text-[--color-text-muted] mt-0.5">
+              <span>0.01%</span>
+              <span>0.05%</span>
+              <span>0.20%</span>
+            </div>
+          </div>
+        )}
+
+        {/* Survivor Bias Disclaimer */}
+        <div
+          class="text-[10px] font-mono px-2 py-1.5 rounded border"
+          style={{
+            background: "rgba(245,158,11,0.06)",
+            borderColor: "rgba(245,158,11,0.25)",
+            color: "rgba(245,158,11,0.8)",
+          }}
+        >
+          ⚠ {t.survivorNote}
         </div>
       </div>
 
