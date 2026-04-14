@@ -161,8 +161,11 @@ class DataManager:
         return resampled
 
     def data_range(self) -> str:
-        """Overall data range."""
+        """Overall data range across all loaded coins."""
         if not self._coin_info:
             return "N/A"
-        first = self._coin_info[0]
-        return f"{first['date_from']} ~ {first['date_to']}"
+        dates_from = [c["date_from"] for c in self._coin_info if c.get("date_from")]
+        dates_to = [c["date_to"] for c in self._coin_info if c.get("date_to")]
+        if not dates_from:
+            return "N/A"
+        return f"{min(dates_from)} ~ {max(dates_to)}"

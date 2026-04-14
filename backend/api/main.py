@@ -765,7 +765,7 @@ async def hot_strategies():
                             sl_pct=float(defaults["sl"]) / 100,
                             tp_pct=float(defaults["tp"]) / 100,
                             max_bars=48,
-                            fee_pct=0.0008,
+                            fee_pct=0.0005,
                             slippage_pct=0.0002,
                             direction=direction,
                             market_type="futures",
@@ -917,18 +917,20 @@ async def simulate(req: SimulationRequest):
                     actual_date_max = df_max
 
             dyn_slip = _get_dynamic_slippage(sym)
+            effective_fee = req.fee_pct if req.fee_pct is not None else cost_model.fee_pct
             result = run_fast(
                 df, strategy, sym,
                 sl_pct=req.sl_pct / 100,
                 tp_pct=req.tp_pct / 100,
                 max_bars=req.max_bars,
-                fee_pct=cost_model.fee_pct,
+                fee_pct=effective_fee,
                 slippage_pct=dyn_slip,
                 direction=run_dir,
                 market_type=req.market_type,
                 strategy_id=strategy_id,
                 funding_rate_8h=getattr(cost_model, 'funding_rate_8h', 0.0001),
                 timeframe=timeframe,
+                leverage=float(req.leverage),
             )
 
             # Collect per-coin stats

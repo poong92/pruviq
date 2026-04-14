@@ -496,6 +496,9 @@ export default function SimulatorPage({ lang = "en" }: Props) {
   const [presetLoading, setPresetLoading] = useState(false);
   const [presetError, setPresetError] = useState<string | null>(null);
 
+  // Fee rate (user-configurable, default 0.05% Binance/OKX taker)
+  const [feePct, setFeePct] = useState(0.05);
+
   // Per-coin USDT + Leverage (compound mode uses total capital)
   const [perCoinUsdt, setPerCoinUsdt] = useState(60);
   const [leverage, setLeverage] = useState(5);
@@ -705,7 +708,14 @@ export default function SimulatorPage({ lang = "en" }: Props) {
         if (["1H", "2H", "4H", "6H", "12H", "1D", "1W"].includes(tf))
           setTimeframe(tf);
       }
-      if (params.has("start")) setStartDate(params.get("start")!);
+      if (params.has("start")) {
+        setStartDate(params.get("start")!);
+      } else {
+        // Default to 1-year lookback
+        const d = new Date();
+        d.setFullYear(d.getFullYear() - 1);
+        setStartDate(d.toISOString().slice(0, 10));
+      }
       if (params.has("end")) setEndDate(params.get("end")!);
       // Auto-select coin from URL (e.g., from /coins/[symbol] CTA)
       // Supports both ?symbol= and ?coin= for backwards compat
@@ -934,6 +944,7 @@ export default function SimulatorPage({ lang = "en" }: Props) {
       per_coin_usd: perCoinUsdt,
       leverage,
       compounding,
+      fee_pct: feePct / 100,
     };
 
     if (coinMode === "top") body.top_n = topN;
@@ -1180,6 +1191,8 @@ export default function SimulatorPage({ lang = "en" }: Props) {
         sl_pct: slPct,
         tp_pct: tpPct,
         top_n: topN,
+        fee_pct: feePct / 100,
+        leverage: leverage,
       };
       if (startDate) body.start_date = startDate;
       if (endDate) body.end_date = endDate;
@@ -1449,6 +1462,8 @@ export default function SimulatorPage({ lang = "en" }: Props) {
               setTpPct={setTpPct}
               leverage={leverage}
               setLeverage={setLeverage}
+              feePct={feePct}
+              setFeePct={setFeePct}
               coinMode={coinMode}
               setCoinMode={setCoinMode}
               topN={topN}

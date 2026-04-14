@@ -26,6 +26,8 @@ class SimulationRequest(BaseModel):
     avoid_hours: Optional[List[int]] = Field(default=None, description="UTC hours to avoid entering trades (0-23). null = use strategy default")
     avoid_months: Optional[List[int]] = Field(default=None, description="Months to avoid entering trades (1-12). null = no month filter")
     min_vol_regime: Optional[float] = Field(default=None, description="Minimum ATR ratio (current ATR / 14-period ATR MA) to allow entry. e.g., 0.7 = skip low-volatility periods. null = no filter")
+    fee_pct: Optional[float] = Field(default=None, ge=0.0, le=0.01, description="Fee per side (0.0005 = 0.05%). None = use market_type default")
+    leverage: float = Field(default=1.0, ge=1.0, le=125.0, description="Leverage multiplier for PnL calculation")
 
     @field_validator("avoid_hours")
     @classmethod
