@@ -347,7 +347,7 @@ const L = {
     mobileIcon: { chart: "📊", config: "⚙️", results: "📋" },
     quickStart: "백테스트가 처음이라면?",
     quickStartDesc:
-      "위의 'BB Squeeze (검증됨)' 프리셋을 선택하고 'Run Backtest'를 누르세요. 약 2초면 됩니다. 회원가입 불필요.",
+      "위의 'BB Squeeze (검증됨)' 프리셋을 선택하고 '백테스트 실행'을 누르세요. 약 2초면 됩니다. 회원가입 불필요.",
     quickStartCta: "BB Squeeze SHORT 실행",
     quickStartDismiss: "직접 만들기",
     lookAheadWarn:

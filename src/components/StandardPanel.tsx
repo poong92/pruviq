@@ -56,11 +56,13 @@ const L = {
     direction: "Direction",
     short: "SHORT",
     long: "LONG",
+    both: "BOTH",
     sl: "Stop Loss",
     tp: "Take Profit",
     leverage: "Leverage",
     coins: "Coins",
     all: "All",
+    top: "Top",
     period: "Test Period",
     months: "months",
     fee: "Fee/Side",
@@ -77,11 +79,13 @@ const L = {
     direction: "방향",
     short: "숏 (하락)",
     long: "롱 (상승)",
+    both: "BOTH",
     sl: "손절",
     tp: "익절",
     leverage: "레버리지",
     coins: "코인",
     all: "전체",
+    top: "상위",
     period: "테스트 기간",
     months: "개월",
     fee: "거래 수수료",
@@ -96,11 +100,7 @@ const L = {
 
 const LEVERAGE_OPTIONS = [1, 3, 5];
 
-const COIN_OPTIONS = [
-  { value: "all", labelKey: "all" },
-  { value: "top", topN: 100, label: "Top 100" },
-  { value: "top", topN: 50, label: "Top 50" },
-];
+const COIN_OPTION_TOP_VALUES = [100, 50];
 
 function getMonthsAgo(months: number): string {
   const d = new Date();
@@ -190,7 +190,9 @@ export default function StandardPanel({
                   : undefined
               }
             >
-              {p.name}
+              {lang === "ko" && p.friendlyName_ko
+                ? p.friendlyName_ko
+                : p.friendlyName_en || p.name}
             </button>
           ))}
         </div>
@@ -237,7 +239,7 @@ export default function StandardPanel({
                     : undefined
                 }
               >
-                {d === "short" ? t.short : d === "long" ? t.long : "BOTH"}
+                {d === "short" ? t.short : d === "long" ? t.long : t.both}
               </button>
             ))}
           </div>
@@ -339,21 +341,32 @@ export default function StandardPanel({
             {t.coins}
           </label>
           <div class="flex gap-1.5">
-            {COIN_OPTIONS.map((opt, i) => {
-              const isActive =
-                opt.value === "all"
-                  ? coinMode === "all"
-                  : coinMode === "top" && topN === opt.topN;
+            {/* All coins button */}
+            <button
+              onClick={() => setCoinMode("all")}
+              class={`flex-1 py-2 rounded-md text-xs font-mono font-bold transition-all border
+                ${coinMode === "all" ? "" : "text-[--color-text-muted] border-[--color-border] hover:text-[--color-text]"}`}
+              style={
+                coinMode === "all"
+                  ? {
+                      background: COLORS.accentBg,
+                      color: COLORS.accent,
+                      borderColor: COLORS.accent,
+                    }
+                  : undefined
+              }
+            >
+              {t.all} ({coinsLoaded})
+            </button>
+            {/* Top N buttons */}
+            {COIN_OPTION_TOP_VALUES.map((n) => {
+              const isActive = coinMode === "top" && topN === n;
               return (
                 <button
-                  key={i}
+                  key={n}
                   onClick={() => {
-                    if (opt.value === "all") {
-                      setCoinMode("all");
-                    } else {
-                      setCoinMode("top");
-                      setTopN(opt.topN!);
-                    }
+                    setCoinMode("top");
+                    setTopN(n);
                   }}
                   class={`flex-1 py-2 rounded-md text-xs font-mono font-bold transition-all border
                     ${isActive ? "" : "text-[--color-text-muted] border-[--color-border] hover:text-[--color-text]"}`}
@@ -367,9 +380,7 @@ export default function StandardPanel({
                       : undefined
                   }
                 >
-                  {opt.value === "all"
-                    ? `${t.all} (${coinsLoaded})`
-                    : opt.label}
+                  {t.top} {n}
                 </button>
               );
             })}

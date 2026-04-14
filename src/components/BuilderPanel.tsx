@@ -568,6 +568,11 @@ export default function BuilderPanel(props: Props) {
             <div>
               <label class="text-[10px] text-[--color-text-muted]">
                 {t.endDate}
+                {!props.endDate && (
+                  <span class="ml-1 opacity-50">
+                    ({props.lang === "ko" ? "현재까지" : "present"})
+                  </span>
+                )}
               </label>
               <input
                 type="date"
