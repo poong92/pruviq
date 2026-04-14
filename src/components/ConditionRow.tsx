@@ -28,6 +28,9 @@ export default function ConditionRow({
 }: Props) {
   const fieldDescriptions: Record<string, string> = {
     is_squeeze: "Bollinger Band Squeeze detected",
+    recent_squeeze: "BB Squeeze in last 10 candles (rolling)",
+    bb_expanding: "BB width expanding (curr > prev)",
+    bb_width_above_ma: "BB width above its moving average",
     bb_width_change: "BB width expansion rate (%)",
     vol_ratio: "Volume ratio vs average",
     bearish: "Bearish candle pattern",
@@ -59,6 +62,9 @@ export default function ConditionRow({
 
   const fieldLabels: Record<string, string> = {
     is_squeeze: "BB Squeeze (is_squeeze)",
+    recent_squeeze: "Recent Squeeze (recent_squeeze)",
+    bb_expanding: "BB Expanding (bb_expanding)",
+    bb_width_above_ma: "BB Width > MA (bb_width_above_ma)",
     bb_width_change: "BB Width \u0394% (bb_width_change)",
     vol_ratio: "Volume Ratio (vol_ratio)",
     bearish: "Bearish Pattern (bearish)",
@@ -144,7 +150,7 @@ export default function ConditionRow({
             </option>
           ))}
         </select>
-        {/* Value */}
+        {/* Value / Field2 */}
         {booleanFields.has(c.field) ? (
           <select
             value={String(c.value)}
@@ -160,6 +166,23 @@ export default function ConditionRow({
           >
             <option value="true">true</option>
             <option value="false">false</option>
+          </select>
+        ) : c.field2 !== undefined ? (
+          <select
+            value={c.field2}
+            onChange={(e: Event) =>
+              onUpdate(c.id, "field2", (e.target as HTMLSelectElement).value)
+            }
+            class="w-20 px-1 py-2 min-h-[44px] bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
+            aria-label="Comparison field"
+          >
+            {displayFields
+              .filter((f) => !booleanFields.has(f))
+              .map((f) => (
+                <option key={f} value={f} title={fieldDescriptions[f] || f}>
+                  {fieldLabels[f] || f}
+                </option>
+              ))}
           </select>
         ) : (
           <input
