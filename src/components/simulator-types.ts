@@ -184,6 +184,9 @@ export const OPS = [
 
 export const booleanFields = new Set([
   "is_squeeze",
+  "recent_squeeze",
+  "bb_expanding",
+  "bb_width_above_ma",
   "uptrend",
   "downtrend",
   "bullish",

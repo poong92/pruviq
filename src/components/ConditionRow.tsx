@@ -28,6 +28,9 @@ export default function ConditionRow({
 }: Props) {
   const fieldDescriptions: Record<string, string> = {
     is_squeeze: "Bollinger Band Squeeze detected",
+    recent_squeeze: "BB Squeeze in last 10 candles (rolling)",
+    bb_expanding: "BB width expanding (curr > prev)",
+    bb_width_above_ma: "BB width above its moving average",
     bb_width_change: "BB width expansion rate (%)",
     vol_ratio: "Volume ratio vs average",
     bearish: "Bearish candle pattern",
@@ -59,6 +62,9 @@ export default function ConditionRow({
 
   const fieldLabels: Record<string, string> = {
     is_squeeze: "BB Squeeze (is_squeeze)",
+    recent_squeeze: "Recent Squeeze (recent_squeeze)",
+    bb_expanding: "BB Expanding (bb_expanding)",
+    bb_width_above_ma: "BB Width > MA (bb_width_above_ma)",
     bb_width_change: "BB Width \u0394% (bb_width_change)",
     vol_ratio: "Volume Ratio (vol_ratio)",
     bearish: "Bearish Pattern (bearish)",
