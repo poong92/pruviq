@@ -338,3 +338,187 @@ async def get_trade_history(request: Request, limit: int = Query(50, le=200)):
     from .settings import get_trade_log
 
     return {"trades": get_trade_log(session_id, limit)}
+
+
+# ── User Strategies (saved auto-trading configs) ───────────
+
+@router.post("/strategies")
+async def create_user_strategy(request: Request):
+    """Create a new saved strategy for the current session."""
+    session_id = _get_session(request)
+    if not is_authenticated(session_id):
+        raise HTTPException(401, "Not connected to OKX.")
+
+    from .strategies import create_strategy
+
+    body = await request.json()
+    if not isinstance(body, dict):
+        raise HTTPException(400, "body must be a JSON object")
+    try:
+        strategy = create_strategy(session_id, body)
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+    return {"strategy": strategy}
+
+
+@router.get("/strategies")
+async def list_user_strategies(request: Request):
+    """List all strategies owned by the current session."""
+    session_id = _get_session(request)
+    if not is_authenticated(session_id):
+        raise HTTPException(401, "Not connected to OKX.")
+
+    from .strategies import get_strategies
+
+    return {"strategies": get_strategies(session_id)}
+
+
+@router.put("/strategies/{strategy_id}")
+async def update_user_strategy(strategy_id: str, request: Request):
+    """Update selected fields of a strategy (partial update)."""
+    session_id = _get_session(request)
+    if not is_authenticated(session_id):
+        raise HTTPException(401, "Not connected to OKX.")
+
+    from .strategies import update_strategy
+
+    body = await request.json()
+    if not isinstance(body, dict):
+        raise HTTPException(400, "body must be a JSON object")
+    try:
+        strategy = update_strategy(strategy_id, session_id, body)
+    except ValueError as e:
+        # "strategy not found" → 404, everything else → 400
+        if str(e) == "strategy not found":
+            raise HTTPException(404, str(e))
+        raise HTTPException(400, str(e))
+    return {"strategy": strategy}
+
+
+@router.delete("/strategies/{strategy_id}")
+async def delete_user_strategy(strategy_id: str, request: Request):
+    """Delete a strategy owned by the current session."""
+    session_id = _get_session(request)
+    if not is_authenticated(session_id):
+        raise HTTPException(401, "Not connected to OKX.")
+
+    from .strategies import delete_strategy
+
+    if not delete_strategy(strategy_id, session_id):
+        raise HTTPException(404, "strategy not found")
+    return {"status": "deleted", "id": strategy_id}
+
+
+@router.post("/strategies/{strategy_id}/activate")
+async def activate_user_strategy(strategy_id: str, request: Request):
+    """Activate a strategy (deactivates all others for this session)."""
+    session_id = _get_session(request)
+    if not is_authenticated(session_id):
+        raise HTTPException(401, "Not connected to OKX.")
+
+    from .strategies import activate_strategy
+
+    try:
+        strategy = activate_strategy(strategy_id, session_id)
+    except ValueError as e:
+        raise HTTPException(404, str(e))
+    return {"strategy": strategy}
+
+
+@router.post("/strategies/validate")
+async def validate_strategy_params(request: Request):
+    """
+    Run the constraint engine against proposed params + live context.
+    Body: {params: {...}, context: {available_margin, symbol_min_order, ...}}
+    Returns ConstraintResult (valid, hard_errors, warnings, disabled_fields, calculator).
+    """
+    session_id = _get_session(request)
+    if not is_authenticated(session_id):
+        raise HTTPException(401, "Not connected to OKX.")
+
+    from .constraints import validate as _validate
+
+    body = await request.json()
+    if not isinstance(body, dict):
+        raise HTTPException(400, "body must be a JSON object")
+    params = body.get("params") or {}
+    context = body.get("context") or {}
+    if not isinstance(params, dict) or not isinstance(context, dict):
+        raise HTTPException(400, "params and context must be JSON objects")
+
+    try:
+        result = _validate(params, context)
+    except (TypeError, ValueError) as e:
+        raise HTTPException(400, f"invalid input: {e}")
+
+    return {
+        "valid": result.valid,
+        "hard_errors": result.hard_errors,
+        "warnings": result.warnings,
+        "disabled_fields": result.disabled_fields,
+        "calculator": result.calculator,
+    }
+
+
+# ── Pending Signal Queue (manual approval) ─────────────────
+
+@router.get("/signals/pending")
+async def list_pending_signals(request: Request):
+    """Return all still-pending signals for the current session."""
+    session_id = _get_session(request)
+    if not is_authenticated(session_id):
+        raise HTTPException(401, "Not connected to OKX.")
+
+    from .strategies import get_pending_signals
+
+    return {"signals": get_pending_signals(session_id)}
+
+
+@router.post("/signals/{signal_id}/approve")
+async def approve_pending_signal(signal_id: str, request: Request):
+    """
+    Approve a pending signal. Optional body: {override_params: {...}}.
+    Approved signals become eligible for execution on the next auto-executor tick.
+    """
+    session_id = _get_session(request)
+    if not is_authenticated(session_id):
+        raise HTTPException(401, "Not connected to OKX.")
+
+    from .strategies import approve_signal
+
+    override = None
+    try:
+        body = await request.json()
+        if isinstance(body, dict):
+            override = body.get("override_params")
+            if override is not None and not isinstance(override, dict):
+                raise HTTPException(400, "override_params must be a JSON object")
+    except ValueError:
+        # No body is fine — approve without overrides
+        override = None
+
+    try:
+        signal = approve_signal(signal_id, session_id, user_override_params=override)
+    except ValueError as e:
+        if "not found" in str(e):
+            raise HTTPException(404, str(e))
+        raise HTTPException(400, str(e))
+    return {"signal": signal}
+
+
+@router.post("/signals/{signal_id}/reject")
+async def reject_pending_signal(signal_id: str, request: Request):
+    """Reject a pending signal — it will not be executed."""
+    session_id = _get_session(request)
+    if not is_authenticated(session_id):
+        raise HTTPException(401, "Not connected to OKX.")
+
+    from .strategies import reject_signal
+
+    try:
+        signal = reject_signal(signal_id, session_id)
+    except ValueError as e:
+        if "not found" in str(e):
+            raise HTTPException(404, str(e))
+        raise HTTPException(400, str(e))
+    return {"signal": signal}
