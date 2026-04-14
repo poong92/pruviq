@@ -27,7 +27,8 @@ export default function CountUp({
   duration = 1500,
   locale,
 }: CountUpProps) {
-  const [current, setCurrent] = useState(0);
+  // Start at target so SSR/initial render shows the correct value (prevents CLS)
+  const [current, setCurrent] = useState(target);
   const [started, setStarted] = useState(false);
   const ref = useRef<HTMLSpanElement>(null);
 
@@ -36,16 +37,23 @@ export default function CountUp({
     const el = ref.current;
     if (!el) return;
 
-    // Respect reduced motion
+    // Respect reduced motion — keep target value as-is
     const prefersReduced = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
     if (prefersReduced) {
       setCurrent(target);
-      setStarted(true);
       return;
     }
 
+    // If already visible (above-the-fold), skip animation to prevent CLS
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight && rect.bottom > 0) {
+      setCurrent(target);
+      return;
+    }
+
+    // Animate when scrolled into view
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {

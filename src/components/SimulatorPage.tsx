@@ -602,18 +602,30 @@ export default function SimulatorPage({ lang = "en" }: Props) {
     let cancelled = false;
 
     async function init() {
-      try {
-        const healthRes = await fetch(`${API_URL}/health`, {
-          signal: AbortSignal.timeout(5000),
-        });
-        if (healthRes.ok) {
-          const h = await healthRes.json();
-          setCoinsLoaded(h.coins_loaded || h.coin_count || 0);
-          setApiReady(true);
-        } else {
-          setDemoMode(true);
+      // Retry health check up to 3× — backend may still be warming up after restart
+      let healthOk = false;
+      for (let attempt = 0; attempt < 3 && !cancelled; attempt++) {
+        try {
+          const healthRes = await fetch(`${API_URL}/health`, {
+            signal: AbortSignal.timeout(8000),
+          });
+          if (healthRes.ok) {
+            const h = await healthRes.json();
+            if (!cancelled) {
+              setCoinsLoaded(h.coins_loaded || h.coin_count || 0);
+              setApiReady(true);
+            }
+            healthOk = true;
+            break;
+          }
+        } catch {
+          // retry
         }
-      } catch {
+        if (attempt < 2 && !cancelled) {
+          await new Promise((r) => setTimeout(r, 3000));
+        }
+      }
+      if (!healthOk && !cancelled) {
         setDemoMode(true);
       }
 
@@ -1150,6 +1162,8 @@ export default function SimulatorPage({ lang = "en" }: Props) {
     const pending = (window as any).__pruviq_pending_strategy;
     if (pending && apiReady && !isRunning && !result) {
       delete (window as any).__pruviq_pending_strategy;
+      // Mark strategy as active so preset bar reflects the current strategy
+      setActivePreset(pending);
 
       // Call /simulate with strategy ID directly (matching Standard mode behavior)
       setIsRunning(true);
@@ -1300,7 +1314,17 @@ export default function SimulatorPage({ lang = "en" }: Props) {
                   : undefined
               }
             >
-              {<><span class="block text-base leading-none mb-0.5" aria-hidden="true">{t.mobileIcon[tab]}</span><span class="block text-[10px]">{t.mobile[tab]}</span></>}
+              {
+                <>
+                  <span
+                    class="block text-base leading-none mb-0.5"
+                    aria-hidden="true"
+                  >
+                    {t.mobileIcon[tab]}
+                  </span>
+                  <span class="block text-[10px]">{t.mobile[tab]}</span>
+                </>
+              }
             </button>
           ))}
         </div>
