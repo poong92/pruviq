@@ -33,6 +33,10 @@ from .settings import (
     log_trade,
     mark_signal_executed,
 )
+from .strategies import (
+    create_pending_signal,
+    get_active_strategy,
+)
 from .notifications import (
     send_signal_alert,
     send_trade_executed,
@@ -76,9 +80,41 @@ async def process_signals(signals: list[dict]) -> list[dict]:
         if not settings.get("enabled"):
             continue
 
+        # Active strategy overrides (if any) take precedence over raw settings.
+        active_strategy = get_active_strategy(session_id)
+
         for signal in signals:
             try:
-                result = await _try_execute(session_id, signal, settings)
+                # Approval mode: enqueue, do not execute.
+                if active_strategy and active_strategy.get("exec_mode") == "approval":
+                    # Only enqueue if signal passes strategy/coin subscription filters
+                    # and matches the base_strategy configured on the active strategy.
+                    base = active_strategy.get("base_strategy", "")
+                    if base and signal.get("strategy") != base:
+                        continue
+                    suggested = _build_suggested_params(active_strategy, signal)
+                    try:
+                        create_pending_signal(
+                            strategy_id=active_strategy["id"],
+                            session_id=session_id,
+                            signal=signal,
+                            suggested_params=suggested,
+                            timeout_sec=int(active_strategy.get("approval_timeout_sec", 600)),
+                        )
+                    except Exception as enq_err:
+                        logger.error(
+                            "Failed to enqueue pending signal for session %s: %s",
+                            session_id[:8], enq_err,
+                        )
+                    continue
+
+                # Manual mode: skip silently (user executes via /execute/order).
+                if active_strategy and active_strategy.get("exec_mode") == "manual":
+                    continue
+
+                result = await _try_execute(
+                    session_id, signal, settings, strategy=active_strategy
+                )
                 if result:
                     executed.append(result)
             except Exception as e:
@@ -114,15 +150,47 @@ async def process_signals(signals: list[dict]) -> list[dict]:
     return executed
 
 
+def _build_suggested_params(strategy: dict, signal: dict) -> dict:
+    """
+    Project the active strategy + signal into the parameter dict consumed by
+    constraints.calculate(). Used when enqueueing pending signals so the UI
+    can render the real-time calculator immediately on load.
+    """
+    return {
+        "position_sizing_method": strategy.get("position_sizing_method", "fixed"),
+        "position_size_usdt": strategy.get("position_size_usdt", 100),
+        "multiplier": strategy.get("multiplier", 1.0),
+        "leverage_source": strategy.get("leverage_source", "custom"),
+        "leverage": strategy.get("leverage", 1),
+        "sl_source": strategy.get("sl_source", "follow_signal"),
+        "sl_pct": strategy.get("sl_pct", signal.get("sl_pct", 10)),
+        "tp_source": strategy.get("tp_source", "follow_signal"),
+        "tp_pct": strategy.get("tp_pct", signal.get("tp_pct", 8)),
+        "trail_pct": strategy.get("trail_pct", 3),
+    }
+
+
 async def _try_execute(
-    session_id: str, signal: dict, settings: dict
+    session_id: str, signal: dict, settings: dict, strategy: Optional[dict] = None
 ) -> Optional[dict]:
-    """Try to execute a single signal for a user. Returns result or None."""
+    """Try to execute a single signal for a user. Returns result or None.
+
+    If `strategy` is provided (user's active strategy), its overrides for
+    SL/TP source and leverage supersede the raw settings values.
+    """
 
     strategy_id = signal["strategy"]
     coin = signal["coin"]
     signal_time = signal.get("signal_time", "")
     chat_id = settings.get("alert_telegram_chat_id", "")
+
+    # ── Active-strategy base filter: when a strategy is active, only execute
+    #    signals matching its configured base_strategy. Settings filters still
+    #    apply on top for extra scoping.
+    if strategy:
+        base = strategy.get("base_strategy", "")
+        if base and strategy_id != base:
+            return None
 
     # ── Filter: strategy subscribed? ──
     if settings["strategies"] and strategy_id not in settings["strategies"]:
@@ -155,8 +223,11 @@ async def _try_execute(
             }))
         return None
 
-    # ── Safety: daily loss limit ──
+    # ── Safety: daily loss limit (strategy tightens but cannot loosen settings) ──
     daily_loss_limit = settings.get("daily_loss_limit_usdt", 200)
+    if strategy:
+        strat_limit = float(strategy.get("max_daily_loss_usdt", daily_loss_limit))
+        daily_loss_limit = min(daily_loss_limit, strat_limit)
     if daily_stats["pnl_today"] <= -daily_loss_limit:
         logger.warning(
             "Session %s daily loss limit hit ($%.2f / limit $%.2f)",
@@ -191,6 +262,20 @@ async def _try_execute(
     tp_pct = signal.get("tp_pct", 8)
     leverage = settings["leverage"]
     td_mode = settings.get("td_mode", "isolated")
+
+    # ── Strategy overrides (only apply fields the user explicitly detached
+    #    from the signal defaults). ──
+    if strategy:
+        if strategy.get("sl_source") == "custom_pct":
+            sl_pct = float(strategy.get("sl_pct", sl_pct))
+        if strategy.get("tp_source") == "custom_pct":
+            tp_pct = float(strategy.get("tp_pct", tp_pct))
+        elif strategy.get("tp_source") == "trailing":
+            # Trailing not supported in current execution path — fall back
+            # to trail_pct as a fixed TP until trailing stops are implemented.
+            tp_pct = float(strategy.get("trail_pct", tp_pct))
+        if strategy.get("leverage_source") == "custom":
+            leverage = int(strategy.get("leverage", leverage))
 
     token = await get_valid_token(session_id)
     async with OKXClient(token, session_id=session_id) as client:
@@ -227,13 +312,26 @@ async def _try_execute(
         else:
             position_size = settings["position_size_usdt"]
 
-        # ── Check concurrent position limit ──
+        # ── Strategy position sizing override ──
+        if strategy:
+            sizing = strategy.get("position_sizing_method", "fixed")
+            if sizing == "fixed":
+                position_size = float(strategy.get("position_size_usdt", position_size))
+            elif sizing == "multiplier":
+                mult = float(strategy.get("multiplier", 1.0))
+                signal_size = float(signal.get("position_size_usdt", position_size))
+                position_size = signal_size * mult
+
+        # ── Check concurrent position limit (strategy tightens but cannot loosen) ──
+        max_concurrent = settings["max_concurrent"]
+        if strategy:
+            max_concurrent = min(max_concurrent, int(strategy.get("max_concurrent_pos", max_concurrent)))
         positions = await client.get_positions()
         open_count = sum(1 for p in positions if float(p.pos or 0) != 0)
-        if open_count >= settings["max_concurrent"]:
+        if open_count >= max_concurrent:
             logger.warning(
                 "Session %s at max concurrent positions (%d/%d)",
-                session_id[:8], open_count, settings["max_concurrent"],
+                session_id[:8], open_count, max_concurrent,
             )
             return None
 
