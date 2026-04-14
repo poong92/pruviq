@@ -90,6 +90,11 @@ export default function ConditionRow({
 
   const [showInfo, setShowInfo] = useState(false);
 
+  // 현재 필드가 availableFields에 없으면(프리셋 로드 등) 앞에 추가
+  const displayFields = availableFields.includes(c.field)
+    ? availableFields
+    : [c.field, ...availableFields];
+
   return (
     <div class="text-xs">
       <div class="flex flex-wrap sm:flex-nowrap items-center gap-2">
@@ -103,13 +108,12 @@ export default function ConditionRow({
               onUpdate(c.id, "op", "==");
               onUpdate(c.id, "value", true);
             }
-            setShowInfo(false);
           }}
           class="flex-1 min-w-0 px-1.5 py-2 min-h-[44px] bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
           title={fieldDescriptions[c.field] || c.field}
           aria-label="Indicator field"
         >
-          {availableFields.map((f) => (
+          {displayFields.map((f) => (
             <option key={f} value={f} title={fieldDescriptions[f] || f}>
               {fieldLabels[f] || f}
             </option>
