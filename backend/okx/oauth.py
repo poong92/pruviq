@@ -110,15 +110,30 @@ async def exchange_code(code: str, state: str, domain: str = "") -> tuple[str, s
     if "access_token" not in token_data:
         raise ValueError(f"OKX token error: {token_data}")
 
-    session_id = secrets.token_urlsafe(32)
     tokens = {
         "access_token": token_data["access_token"],
         "refresh_token": token_data["refresh_token"],
         "expires_at": time.time() + token_data.get("expires_in", 3600),
         "scope": token_data.get("scope", ""),
     }
-    save_session(session_id, tokens)
 
+    # ── Stable session_id: tied to OKX account UID ──────────────────
+    # Critical: session_id must not change on re-authentication.
+    # Random token (old approach) caused all strategies/settings to be
+    # lost every time the user reconnected OKX after cookie expiry.
+    session_id = secrets.token_urlsafe(32)  # fallback if UID fetch fails
+    try:
+        from .client import OKXClient
+        async with OKXClient(tokens["access_token"]) as client:
+            uid = await client.get_user_uid()
+            session_id = f"okx_{uid}"
+            logger.info("UID-based session: okx_%s", uid[:6])
+    except Exception as e:
+        logger.warning(
+            "Could not fetch OKX UID — using random session_id (settings will not persist across reconnects): %s", e
+        )
+
+    save_session(session_id, tokens)
     logger.info("OAuth session created: %s", session_id[:8])
     return session_id, redirect_url, lang
 

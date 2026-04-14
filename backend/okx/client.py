@@ -186,6 +186,20 @@ class OKXClient:
         logger.warning("← mark-price %s = %.6f", inst_id, px)
         return px
 
+    async def get_user_uid(self) -> str:
+        """
+        Fetch OKX account UID — stable identifier across sessions.
+        Used to create a persistent session_id tied to the OKX account.
+        """
+        data = await self._get("/api/v5/account/config")
+        items = data.get("data", [])
+        if not items:
+            raise ValueError("OKX account/config returned no data")
+        uid = items[0].get("uid", "")
+        if not uid:
+            raise ValueError("OKX account/config: uid field missing")
+        return uid
+
     async def get_positions_history(self, inst_type: str = "SWAP", limit: str = "20") -> list[dict]:
         """Closed position history — realized PnL source."""
         data = await self._get("/api/v5/account/positions-history", {
