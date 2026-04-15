@@ -13,6 +13,10 @@ interface Props {
   label: string;
   loading?: boolean;
   lang?: "en" | "ko";
+  customLabel?: string;
+  recommendedLabel?: string;
+  allPresetsLabel?: (n: number) => string;
+  hideLabel?: string;
 }
 
 const RECOMMENDED_COUNT = 5;
@@ -64,6 +68,10 @@ export default function PresetBar({
   label,
   loading,
   lang,
+  customLabel = "Custom",
+  recommendedLabel = "Recommended",
+  allPresetsLabel = (n) => `All ${n} presets`,
+  hideLabel = "Hide",
 }: Props) {
   const [showAll, setShowAll] = useState(false);
 
@@ -87,7 +95,7 @@ export default function PresetBar({
         class="text-xs font-mono uppercase mb-1 flex items-center gap-1.5"
         style={{ color: COLORS.accent }}
       >
-        ★ Recommended
+        ★ {recommendedLabel}
         {loading && (
           <span class="spinner" style={{ width: "10px", height: "10px" }} />
         )}
@@ -104,7 +112,7 @@ export default function PresetBar({
             }`}
           style={activePreset === null ? activeStyle : undefined}
         >
-          Custom
+          {customLabel}
         </button>
         {recommended.map((p) => (
           <PresetButton
@@ -133,7 +141,9 @@ export default function PresetBar({
             >
               ▶
             </span>
-            {showAll || activeInRest ? "Hide" : `All ${presets.length} presets`}
+            {showAll || activeInRest
+              ? hideLabel
+              : allPresetsLabel(presets.length)}
           </button>
           {(showAll || activeInRest) && (
             <div class="flex flex-wrap gap-1.5">
