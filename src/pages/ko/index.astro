@@ -122,7 +122,7 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
       <StepCard step={3} title={t('how.step3')} description={t('how.step3_desc')} />
     </div>
     <div class="text-center mt-8">
-      <a href="/ko/simulate" class="btn btn-primary btn-md">시뮬레이터 열기 — 무료 &rarr;</a>
+      <a href="/ko/simulate" class="btn btn-primary btn-lg">시뮬레이터 열기 — 무료 &rarr;</a>
     </div>
     <!-- 페르소나별 진입점 -->
     <div class="mt-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-5 max-w-4xl mx-auto">
@@ -209,7 +209,7 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
 
       <!-- Case Studies: Problem cards -->
       <div class="grid md:grid-cols-3 gap-4 mb-12 reveal">
-        <div class="card-enterprise p-6 border-[--color-down]/20 card-hover shadow-[var(--shadow-sm)]">
+        <div class="card-enterprise p-6 border-t-2 border-t-[--color-down]/30 card-hover shadow-[var(--shadow-md)]">
           <div class="text-[--color-down] font-mono text-xs font-bold mb-3 flex items-center gap-2">
             <span class="inline-block w-2 h-2 rounded-full bg-[--color-down]"></span>
             {t('problem.case1_label')}
@@ -218,7 +218,7 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
           <p class="text-[--color-text-muted] text-base leading-relaxed mb-3">{t('problem.card1_desc')}</p>
           <p class="text-xs text-[--color-text-muted] opacity-60 italic">{t('problem.card1_source')}</p>
         </div>
-        <div class="card-enterprise p-6 border-[--color-down]/20 card-hover shadow-[var(--shadow-sm)]">
+        <div class="card-enterprise p-6 border-t-2 border-t-[--color-down]/30 card-hover shadow-[var(--shadow-md)]">
           <div class="text-[--color-down] font-mono text-xs font-bold mb-3 flex items-center gap-2">
             <span class="inline-block w-2 h-2 rounded-full bg-[--color-down]"></span>
             {t('problem.case2_label')}
@@ -227,7 +227,7 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
           <p class="text-[--color-text-muted] text-base leading-relaxed mb-3">{t('problem.card2_desc')}</p>
           <p class="text-xs text-[--color-text-muted] opacity-60 italic">{t('problem.card2_source')}</p>
         </div>
-        <div class="card-enterprise p-6 border-[--color-down]/20 card-hover shadow-[var(--shadow-sm)]">
+        <div class="card-enterprise p-6 border-t-2 border-t-[--color-down]/30 card-hover shadow-[var(--shadow-md)]">
           <div class="text-[--color-down] font-mono text-xs font-bold mb-3 flex items-center gap-2">
             <span class="inline-block w-2 h-2 rounded-full bg-[--color-down]"></span>
             {t('problem.case3_label')}
@@ -298,28 +298,28 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
       </div>
 
       <div class="grid md:grid-cols-2 gap-6">
-        <a href="/ko/methodology" class="card-premium card-hover p-5 block group">
+        <a href="/ko/methodology" class="card-premium card-hover p-6 block group shadow-[var(--shadow-md)]">
           <div class="flex items-center gap-3 mb-2">
             <span class="inline-flex items-center justify-center w-8 h-8 rounded bg-[--color-accent]/10 text-[--color-accent] font-mono text-sm font-bold shrink-0">MC</span>
             <h4 class="font-bold group-hover:text-[--color-accent] transition-colors">{t('trust.badge_mc')}</h4>
           </div>
           <p class="text-[--color-text-muted] text-sm">{t('trust.badge_mc_desc')}</p>
         </a>
-        <a href="/ko/methodology" class="card-premium card-hover p-5 block group">
+        <a href="/ko/methodology" class="card-premium card-hover p-6 block group shadow-[var(--shadow-md)]">
           <div class="flex items-center gap-3 mb-2">
             <span class="inline-flex items-center justify-center w-8 h-8 rounded bg-[--color-accent]/10 text-[--color-accent] font-mono text-sm font-bold shrink-0">OOS</span>
             <h4 class="font-bold group-hover:text-[--color-accent] transition-colors">{t('trust.badge_oos')}</h4>
           </div>
           <p class="text-[--color-text-muted] text-sm">{t('trust.badge_oos_desc')}</p>
         </a>
-        <a href="/ko/strategies/bb-squeeze-short" class="card-premium card-hover p-5 block group">
+        <a href="/ko/strategies/bb-squeeze-short" class="card-premium card-hover p-6 block group shadow-[var(--shadow-md)]">
           <div class="flex items-center gap-3 mb-2">
             <span class="inline-flex items-center justify-center w-8 h-8 rounded bg-[--color-verified-subtle] text-[--color-verified] font-mono text-xs font-bold shrink-0">LIVE</span>
             <h4 class="font-bold group-hover:text-[--color-accent] transition-colors">{t('trust.badge_live')}</h4>
           </div>
           <p class="text-[--color-text-muted] text-sm">{t('trust.badge_live_desc')}</p>
         </a>
-        <a href="/ko/api" class="card-premium card-hover p-5 block group">
+        <a href="/ko/api" class="card-premium card-hover p-6 block group shadow-[var(--shadow-md)]">
           <div class="flex items-center gap-3 mb-2">
             <span class="inline-flex items-center justify-center w-8 h-8 rounded bg-[--color-accent]/10 text-[--color-accent] font-mono text-xs font-bold shrink-0">&lt;/&gt;</span>
             <h4 class="font-bold group-hover:text-[--color-accent] transition-colors">{t('trust.badge_open')}</h4>
