@@ -177,8 +177,155 @@ export default function ConditionRow({
     : [c.field, ...availableFields];
 
   return (
-    <div class="text-xs">
-      <div class="flex flex-wrap sm:flex-nowrap items-center gap-2">
+    <div class="text-xs rounded border border-[--color-border] bg-[--color-bg-tooltip]/40 p-2">
+      {/* Row 1 (mobile): Field + info + remove */}
+      <div class="flex items-center gap-1.5 mb-1.5 sm:mb-0 sm:hidden">
+        <select
+          value={c.field}
+          onChange={(e: Event) => {
+            const newField = (e.target as HTMLSelectElement).value;
+            onUpdate(c.id, "field", newField);
+            if (booleanFields.has(newField)) {
+              onUpdate(c.id, "op", "==");
+              onUpdate(c.id, "value", true);
+            }
+          }}
+          class="flex-1 min-w-0 px-1.5 py-2 min-h-[44px] bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
+          title={desc[c.field] || c.field}
+          aria-label="Indicator field"
+        >
+          {displayFields.map((f) => (
+            <option key={f} value={f} title={desc[f] || f}>
+              {labels[f] || f}
+            </option>
+          ))}
+        </select>
+        <button
+          type="button"
+          onClick={() => setShowInfo(!showInfo)}
+          class="w-[44px] h-[44px] shrink-0 rounded-full border border-[--color-border] text-[--color-text-muted] hover:text-[--color-accent] hover:border-[--color-accent] flex items-center justify-center text-xs font-mono transition-colors"
+          title={desc[c.field] || c.field}
+          aria-label={`Info about ${c.field}`}
+        >
+          i
+        </button>
+        <button
+          onClick={() => onRemove(c.id)}
+          class="text-[--color-text-muted] hover:text-[--color-red] w-[44px] h-[44px] flex items-center justify-center shrink-0"
+          title={removeLabel}
+          aria-label={removeLabel}
+        >
+          ×
+        </button>
+      </div>
+
+      {/* Row 2 (mobile): Op + Value + Shift */}
+      <div class="flex items-center gap-1.5 sm:hidden">
+        <select
+          value={c.op}
+          onChange={(e: Event) =>
+            onUpdate(c.id, "op", (e.target as HTMLSelectElement).value)
+          }
+          class="w-14 px-1 py-2 min-h-[44px] bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
+          aria-label="Comparison operator"
+        >
+          {OPS.map((o) => (
+            <option key={o.value} value={o.value}>
+              {o.label}
+            </option>
+          ))}
+        </select>
+        {booleanFields.has(c.field) ? (
+          <select
+            value={String(c.value)}
+            onChange={(e: Event) =>
+              onUpdate(
+                c.id,
+                "value",
+                (e.target as HTMLSelectElement).value === "true",
+              )
+            }
+            class="flex-1 px-1 py-2 min-h-[44px] bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
+            aria-label="Boolean value"
+          >
+            <option value="true">true</option>
+            <option value="false">false</option>
+          </select>
+        ) : c.field2 !== undefined ? (
+          <select
+            value={c.field2}
+            onChange={(e: Event) =>
+              onUpdate(c.id, "field2", (e.target as HTMLSelectElement).value)
+            }
+            class="flex-1 px-1 py-2 min-h-[44px] bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
+            aria-label="Comparison field"
+          >
+            {displayFields
+              .filter((f) => !booleanFields.has(f))
+              .map((f) => (
+                <option key={f} value={f} title={desc[f] || f}>
+                  {labels[f] || f}
+                </option>
+              ))}
+          </select>
+        ) : (
+          <input
+            type="number"
+            step="any"
+            value={c.value as number}
+            onChange={(e: Event) =>
+              onUpdate(
+                c.id,
+                "value",
+                parseFloat((e.target as HTMLInputElement).value),
+              )
+            }
+            class="flex-1 px-1.5 py-2 min-h-[44px] bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
+            aria-label="Comparison value"
+          />
+        )}
+        <select
+          value={c.shift}
+          onChange={(e: Event) =>
+            onUpdate(
+              c.id,
+              "shift",
+              parseInt((e.target as HTMLSelectElement).value),
+            )
+          }
+          class={`w-16 px-1 py-2 min-h-[44px] bg-[--color-bg-tooltip] border rounded font-mono text-xs outline-none focus:border-[--color-accent] ${
+            c.shift === 0
+              ? "border-[--color-yellow] text-[--color-yellow] font-bold"
+              : "border-[--color-border] text-[--color-text]"
+          }`}
+          title={
+            c.shift === 1
+              ? "Previous candle (confirmed/safe for live trading)"
+              : "Current candle (incomplete in live) — look-ahead bias risk!"
+          }
+          aria-label={
+            c.shift === 1
+              ? "Candle: previous (confirmed)"
+              : "Candle: current (look-ahead bias risk)"
+          }
+        >
+          <option value="1">{prevLabel}</option>
+          <option value="0">{currLabel}</option>
+        </select>
+        {c.shift === 0 && (
+          <span
+            class="text-[--color-yellow] text-[10px] font-mono shrink-0 font-bold"
+            title={lookAheadWarning}
+            role="img"
+            aria-label={lookAheadWarning}
+          >
+            ⚠
+          </span>
+        )}
+      </div>
+
+      {/* Desktop: single row (sm+) */}
+      <div class="hidden sm:flex items-center gap-2">
         {/* Field */}
         <select
           value={c.field}
@@ -200,17 +347,15 @@ export default function ConditionRow({
             </option>
           ))}
         </select>
-        {/* Info toggle */}
         <button
           type="button"
           onClick={() => setShowInfo(!showInfo)}
-          class="w-[44px] h-[44px] sm:w-7 sm:h-7 shrink-0 rounded-full border border-[--color-border] text-[--color-text-muted] hover:text-[--color-accent] hover:border-[--color-accent] flex items-center justify-center text-xs sm:text-[10px] font-mono transition-colors"
+          class="w-7 h-7 shrink-0 rounded-full border border-[--color-border] text-[--color-text-muted] hover:text-[--color-accent] hover:border-[--color-accent] flex items-center justify-center text-[10px] font-mono transition-colors"
           title={desc[c.field] || c.field}
           aria-label={`Info about ${c.field}`}
         >
           i
         </button>
-        {/* Op */}
         <select
           value={c.op}
           onChange={(e: Event) =>
@@ -225,7 +370,6 @@ export default function ConditionRow({
             </option>
           ))}
         </select>
-        {/* Value / Field2 */}
         {booleanFields.has(c.field) ? (
           <select
             value={String(c.value)}
@@ -248,7 +392,7 @@ export default function ConditionRow({
             onChange={(e: Event) =>
               onUpdate(c.id, "field2", (e.target as HTMLSelectElement).value)
             }
-            class="w-20 px-1 py-2 min-h-[44px] bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
+            class="w-24 px-1 py-2 min-h-[44px] bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
             aria-label="Comparison field"
           >
             {displayFields
@@ -275,7 +419,6 @@ export default function ConditionRow({
             aria-label="Comparison value"
           />
         )}
-        {/* Shift */}
         <select
           value={c.shift}
           onChange={(e: Event) =>
@@ -311,22 +454,22 @@ export default function ConditionRow({
             role="img"
             aria-label={lookAheadWarning}
           >
-            !
+            ⚠
           </span>
         )}
-        {/* Remove */}
         <button
           onClick={() => onRemove(c.id)}
           class="text-[--color-text-muted] hover:text-[--color-red] min-w-[44px] min-h-[44px] flex items-center justify-center shrink-0"
           title={removeLabel}
           aria-label={removeLabel}
         >
-          x
+          ×
         </button>
       </div>
+
       {/* Info panel */}
       {showInfo && desc[c.field] && (
-        <div class="mt-1 ml-1 px-2 py-1.5 rounded bg-[--color-bg-tooltip] border border-[--color-border] text-[10px] text-[--color-text-muted] font-mono">
+        <div class="mt-1.5 px-2 py-1.5 rounded bg-[--color-bg-tooltip] border border-[--color-accent]/20 text-[10px] text-[--color-text-muted] font-mono">
           {desc[c.field]}
         </div>
       )}
