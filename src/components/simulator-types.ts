@@ -207,6 +207,21 @@ export const booleanFields = new Set([
   "strong_trend",
   "breakout_up",
   "breakout_down",
+  "above_cloud",
+  "below_cloud",
+  "in_cloud",
+  "tk_cross_bull",
+  "tk_cross_bear",
+  "cloud_green",
+  "cloud_red",
+  "psar_bull",
+  "psar_bear",
+  "psar_reversal_bull",
+  "psar_reversal_bear",
+  "wr_oversold",
+  "wr_overbought",
+  "wr_exit_oversold",
+  "wr_exit_overbought",
 ]);
 
 // Color constants (Toss Securities style)
