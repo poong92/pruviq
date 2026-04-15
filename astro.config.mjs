@@ -89,7 +89,9 @@ export default defineConfig({
           item.priority = 0.9; item.changefreq = /** @type {any} */ ('daily'); item.lastmod = today;
         } else if (p === '/strategies/ranking') {
           item.priority = 0.9; item.changefreq = /** @type {any} */ ('daily'); item.lastmod = today;
-        } else if (p.startsWith('/strategies/') || p.startsWith('/coins/')) {
+        } else if (p.startsWith('/coins/')) {
+          item.priority = 0.8; item.changefreq = /** @type {any} */ ('daily'); item.lastmod = today;
+        } else if (p.startsWith('/strategies/')) {
           item.priority = 0.8; item.changefreq = /** @type {any} */ ('weekly'); item.lastmod = today;
         } else if (p.startsWith('/compare/') || p.startsWith('/vs/') || p.startsWith('/vs-')) {
           item.priority = 0.7; item.changefreq = /** @type {any} */ ('monthly');
