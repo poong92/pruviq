@@ -762,6 +762,61 @@ export default function SimulatorPage({ lang = "en" }: Props) {
       if (params.has("preset") && !params.has("strategy")) {
         (window as any).__pruviq_pending_preset = params.get("preset")!;
       }
+      // ?c= = custom strategy (conditions + indicators encoded as base64 JSON)
+      if (params.has("c") && !params.has("strategy") && !params.has("preset")) {
+        try {
+          const decoded = JSON.parse(
+            decodeURIComponent(escape(atob(params.get("c")!))),
+          );
+          const validOps = new Set([
+            ">=",
+            "<=",
+            ">",
+            "<",
+            "==",
+            "cross_above",
+            "cross_below",
+          ]);
+          if (decoded.conds && Array.isArray(decoded.conds)) {
+            const restored = decoded.conds
+              .slice(0, 20) // max 20 conditions
+              .filter((c: unknown) => {
+                if (!c || typeof c !== "object") return false;
+                const cond = c as Record<string, unknown>;
+                return (
+                  typeof cond.field === "string" &&
+                  cond.field.length < 64 &&
+                  typeof cond.op === "string" &&
+                  validOps.has(cond.op as string)
+                );
+              })
+              .map((c: Record<string, unknown>) => ({
+                id: nextCondId(),
+                field: c.field as string,
+                op: c.op as string,
+                value:
+                  typeof c.value === "number" || typeof c.value === "boolean"
+                    ? c.value
+                    : undefined,
+                field2: typeof c.field2 === "string" ? c.field2 : undefined,
+                shift: typeof c.shift === "number" ? c.shift : 0,
+              }));
+            if (restored.length > 0) {
+              setConditions(restored);
+              setSimMode("expert");
+            }
+          }
+          if (decoded.inds && Array.isArray(decoded.inds)) {
+            setSelectedIndicators(
+              new Set(
+                decoded.inds.filter((s: unknown) => typeof s === "string"),
+              ),
+            );
+          }
+        } catch {
+          /* invalid base64 or JSON — ignore */
+        }
+      }
     } catch {}
   }, []);
 
@@ -784,6 +839,27 @@ export default function SimulatorPage({ lang = "en" }: Props) {
       url.searchParams.set("trades", String(result.total_trades));
       url.searchParams.set("mdd", String(result.max_drawdown_pct));
     }
+    // Custom strategy: encode conditions + indicators (skip id — will be regenerated)
+    if (!activePreset && conditions.length > 0) {
+      try {
+        const payload = {
+          inds: Array.from(selectedIndicators),
+          conds: conditions.map(({ field, op, value, field2, shift }) => ({
+            field,
+            op,
+            value,
+            field2,
+            shift,
+          })),
+        };
+        const encoded = btoa(
+          unescape(encodeURIComponent(JSON.stringify(payload))),
+        );
+        url.searchParams.set("c", encoded);
+      } catch {
+        /* ignore encoding errors */
+      }
+    }
     return url.toString();
   }, [
     slPct,
@@ -796,6 +872,8 @@ export default function SimulatorPage({ lang = "en" }: Props) {
     endDate,
     result,
     activePreset,
+    conditions,
+    selectedIndicators,
   ]);
 
   const copyLink = useCallback(() => {
