@@ -430,7 +430,7 @@ async def security_headers_middleware(request: Request, call_next):
 
 @app.middleware("http")
 async def rate_limit_middleware(request: Request, call_next):
-    if request.url.path in ("/simulate", "/simulate/coin", "/simulate/compare", "/simulate/validate", "/backtest", "/export/csv"):
+    if request.url.path in ("/simulate", "/simulate/coin", "/simulate/compare", "/simulate/validate", "/simulate/optimize", "/backtest", "/export/csv"):
         client_ip = get_client_ip(request)
         if not check_rate_limit(client_ip):
             oldest = rate_limits.get(client_ip, [0])[0]
@@ -1855,7 +1855,7 @@ async def simulate_optimize(req: OptimizeRequest):
         )
 
     # Run grid in thread pool
-    loop = asyncio.get_event_loop()
+    loop = asyncio.get_running_loop()
     pairs = [(sl, tp) for sl in req.sl_steps for tp in req.tp_steps]
     with ThreadPoolExecutor(max_workers=min(len(pairs), 8)) as pool:
         futures_list = [loop.run_in_executor(pool, _run_cell, sl, tp) for sl, tp in pairs]
