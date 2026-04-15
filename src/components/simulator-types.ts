@@ -142,6 +142,10 @@ export interface BacktestResult {
   positions_skipped?: number;
   pnl_distribution?: number[];
   pnl_buckets?: string[];
+  // risk-adjusted returns
+  sharpe_ratio?: number;
+  sortino_ratio?: number;
+  calmar_ratio?: number;
   // 9.5 phase 4 — overfitting detection + alpha
   deflated_sharpe?: number;
   dsr_haircut_pct?: number;
@@ -180,6 +184,8 @@ export const OPS = [
   { value: ">", label: ">" },
   { value: "<", label: "<" },
   { value: "==", label: "==" },
+  { value: "cross_above", label: "↑ cross" },
+  { value: "cross_below", label: "↓ cross" },
 ];
 
 export const booleanFields = new Set([
