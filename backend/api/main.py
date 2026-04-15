@@ -65,6 +65,9 @@ from api.schemas import (
     MonteCarloResult, MCEquityBand,
     TradeItem,
     SubscribeRequest,
+    OptimizeRequest,
+    OptimizeResponse,
+    OptimizeCell,
     VALID_TIMEFRAMES,
 )
 from api.data_manager import DataManager
@@ -1709,6 +1712,167 @@ async def simulate_validate(req: ValidateRequest):
             **{k: v for k, v in mc_result.items() if k != "equity_bands"},
             equity_bands=[MCEquityBand(**b) for b in mc_result["equity_bands"]],
         ),
+    )
+
+
+@app.post("/simulate/optimize", response_model=OptimizeResponse)
+async def simulate_optimize(req: OptimizeRequest):
+    """SL/TP grid search — runs up to 36 simulations with different SL/TP pairs."""
+    if data_manager.coin_count == 0:
+        raise HTTPException(503, "Data not loaded yet. Try again shortly.")
+
+    t_start = time.time()
+
+    if req.direction:
+        req.direction = req.direction.lower()
+
+    timeframe = _validate_timeframe(getattr(req, "timeframe", "1H") or "1H")
+    resampled = _is_resampled(timeframe)
+
+    strategy_id = req.strategy
+    is_both = req.direction == "both"
+    if strategy_id == "bb-squeeze":
+        strategy_id = f"bb-squeeze-{req.direction or 'short'}" if not is_both else "bb-squeeze-short"
+
+    if strategy_id not in STRATEGY_REGISTRY:
+        raise HTTPException(400, f"Unknown strategy: {req.strategy}")
+
+    strategy, default_direction, defaults = get_strategy(strategy_id)
+    direction = req.direction if req.direction is not None else default_direction
+    directions_to_run = ["short", "long"] if is_both else [direction]
+
+    cost_model = CostModel.futures() if req.market_type == "futures" else CostModel.spot()
+
+    # Load coins once — reuse across all grid cells
+    if resampled:
+        coins = _get_resampled_coins(req.symbols, req.top_n, timeframe)
+        if req.symbols and not coins:
+            raise HTTPException(404, "None of the requested symbols found.")
+        has_cache = False
+    else:
+        has_cache = indicator_cache.strategy_count(strategy_id) > 0
+        if req.symbols:
+            requested = [s.strip().upper() for s in req.symbols if s and s.strip()]
+            if has_cache:
+                coins = indicator_cache.get_symbols_for_strategy(strategy_id, requested)
+                cached_syms = {sym for sym, _ in coins}
+                missing = [s for s in requested if s not in cached_syms]
+                if missing:
+                    coins.extend(data_manager.get_symbols(missing))
+            else:
+                coins = data_manager.get_symbols(requested)
+            if not coins:
+                raise HTTPException(404, "None of the requested symbols found.")
+        else:
+            n = _resolve_top_n(req.top_n)
+            coins = indicator_cache.get_top_n_for_strategy(strategy_id, data_manager, n) if has_cache else data_manager.get_top_n(n)
+
+    _cached_syms = set()
+    if has_cache:
+        _cached_syms = {sym for sym, _ in indicator_cache.get_symbols_for_strategy(strategy_id, [s for s, _ in coins])}
+
+    # Pre-compute indicators + date filter once per coin
+    prepared = []
+    for sym, df in coins:
+        if sym not in _cached_syms:
+            df = strategy.calculate_indicators(df.copy())
+        df = filter_df_by_date(df, req.start_date, req.end_date)
+        prepared.append((sym, df))
+
+    data_range = data_manager.data_range()
+    coins_used = len(prepared)
+
+    valid_metrics = {"total_return_pct", "win_rate", "profit_factor", "sharpe_ratio"}
+    metric = req.metric if req.metric in valid_metrics else "total_return_pct"
+
+    def _run_cell(sl_pct: float, tp_pct: float) -> OptimizeCell:
+        all_trades = []
+        for sym, df in prepared:
+            dyn_slip = _get_dynamic_slippage(sym)
+            for run_dir in directions_to_run:
+                result = run_fast(
+                    df, strategy, sym,
+                    sl_pct=sl_pct / 100,
+                    tp_pct=tp_pct / 100,
+                    max_bars=req.max_bars,
+                    fee_pct=cost_model.fee_pct,
+                    slippage_pct=dyn_slip,
+                    direction=run_dir,
+                    market_type=req.market_type,
+                    strategy_id=strategy_id,
+                    funding_rate_8h=getattr(cost_model, "funding_rate_8h", 0.0001),
+                    timeframe=timeframe,
+                    leverage=1.0,
+                )
+                all_trades.extend(result.trades)
+
+        if not all_trades:
+            return OptimizeCell(sl_pct=sl_pct, tp_pct=tp_pct, total_trades=0,
+                                win_rate=0, profit_factor=0, total_return_pct=0,
+                                max_drawdown_pct=0, sharpe_ratio=0)
+
+        n_coins = len(prepared) or 1
+        wins = [t for t in all_trades if t["pnl_pct"] > 0]
+        losses = [t for t in all_trades if t["pnl_pct"] <= 0]
+        gross_profit = sum(t["pnl_pct"] for t in wins) if wins else 0
+        gross_loss = abs(sum(t["pnl_pct"] for t in losses)) if losses else 0
+        total_return = round(sum(t["pnl_pct"] for t in all_trades) / n_coins, 4)
+        win_rate = round(len(wins) / len(all_trades) * 100, 2) if all_trades else 0
+        pf = round(gross_profit / gross_loss, 2) if gross_loss > 0 else (999.99 if gross_profit > 0 else 0)
+
+        # MDD
+        equity = 100.0
+        peak = equity
+        max_dd = 0.0
+        for t in all_trades:
+            equity += t["pnl_pct"] / n_coins
+            peak = max(peak, equity)
+            dd = (peak - equity) / peak * 100 if peak > 0 else 0
+            max_dd = max(max_dd, min(dd, 100.0))
+
+        # Sharpe (daily)
+        from collections import defaultdict as _dd_opt
+        daily = _dd_opt(float)
+        for t in all_trades:
+            day = t.get("exit_time", t["time"])[:10]
+            if day and day != "NaT" and len(day) == 10:
+                daily[day] += t["pnl_pct"]
+        sharpe = 0.0
+        if len(daily) >= 5:
+            dr = np.array(list(daily.values())) / n_coins
+            std = float(np.std(dr, ddof=1))
+            if std > 0:
+                sharpe = round(float(np.mean(dr)) / std * np.sqrt(365), 2)
+
+        return OptimizeCell(
+            sl_pct=sl_pct, tp_pct=tp_pct,
+            total_trades=len(all_trades),
+            win_rate=win_rate,
+            profit_factor=pf,
+            total_return_pct=total_return,
+            max_drawdown_pct=round(max_dd, 2),
+            sharpe_ratio=sharpe,
+        )
+
+    # Run grid in thread pool
+    loop = asyncio.get_event_loop()
+    pairs = [(sl, tp) for sl in req.sl_steps for tp in req.tp_steps]
+    with ThreadPoolExecutor(max_workers=min(len(pairs), 8)) as pool:
+        futures_list = [loop.run_in_executor(pool, _run_cell, sl, tp) for sl, tp in pairs]
+        grid = await asyncio.gather(*futures_list)
+
+    compute_ms = int((time.time() - t_start) * 1000)
+
+    return OptimizeResponse(
+        strategy=req.strategy,
+        direction=direction if not is_both else "both",
+        metric=metric,
+        sl_steps=req.sl_steps,
+        tp_steps=req.tp_steps,
+        grid=list(grid),
+        coins_used=coins_used,
+        data_range=data_range,
+        compute_time_ms=compute_ms,
     )
 
 
