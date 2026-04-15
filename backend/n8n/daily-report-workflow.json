@@ -89,7 +89,7 @@
       "name": "Save Report",
       "type": "n8n-nodes-base.executeCommand",
       "parameters": {
-        "command": "=echo '{{ $node[\"Generate with Ollama\"].json.response }}' > /Users/jepo/pruviq-reports/$(date -u +%Y-%m-%d).md"
+        "command": "=echo '{{ $node[\"Generate with Ollama\"].json.response }}' > /tmp/pruviq-reports/$(date -u +%Y-%m-%d).md"
       },
       "position": [1300, 200]
     },
