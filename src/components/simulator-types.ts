@@ -153,6 +153,20 @@ export interface BacktestResult {
   mc_percentile?: number;
   jensens_alpha?: number;
   timeframe?: string;
+  // market regime performance
+  regime_performance?: {
+    bull: RegimeMetrics;
+    bear: RegimeMetrics;
+    sideways: RegimeMetrics;
+  };
+}
+
+export interface RegimeMetrics {
+  trades: number;
+  win_rate: number;
+  total_return: number;
+  profit_factor: number;
+  avg_pnl: number;
 }
 
 export interface PresetItem {
