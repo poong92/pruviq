@@ -300,20 +300,25 @@ test.describe("Simulator — Expert Parameter Controls", () => {
     await openSimulator(page, true);
     await switchToExpert(page);
 
-    const inputs = page.locator('input[type="number"]');
-    const count = await inputs.count();
+    // Use aria-labels to target specific parameter inputs (avoids hidden condition inputs)
+    const paramInputs = [
+      page.locator('input[aria-label="Stop Loss %"]'),
+      page.locator('input[aria-label="Take Profit %"]'),
+      page.locator('input[aria-label="Max Bars"]'),
+    ];
 
-    // Fill each input with a test value and verify
-    // Verify at least some number inputs are interactive (fill + read back)
-    const testCount = Math.min(count, 3);
-    for (let i = 0; i < testCount; i++) {
-      const input = inputs.nth(i);
+    for (const input of paramInputs) {
+      if ((await input.count()) === 0) continue;
       const min = await input.getAttribute("min");
       const testVal = min && Number(min) > 10 ? "15" : "10";
+      await input.waitFor({ state: "visible", timeout: 5000 });
       await input.click();
       await input.fill(testVal);
       const actual = await input.inputValue();
-      expect(actual, `Input ${i} should accept value`).toBe(testVal);
+      expect(
+        actual,
+        `${await input.getAttribute("aria-label")} should accept value`,
+      ).toBe(testVal);
     }
   });
 
