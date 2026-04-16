@@ -45,8 +45,8 @@ const STEPS: Record<"en" | "ko", Step[]> = {
     },
     {
       title: "백테스트 실행",
-      desc: 'SL, TP, 레버리지, 기간을 설정한 후 "Run Backtest"를 클릭하면 500개 이상 코인에 대한 시뮬레이션이 시작됩니다.',
-      target: "Run Backtest 버튼",
+      desc: 'SL, TP, 레버리지, 기간을 설정한 후 "백테스트 실행" 버튼을 누르면 500개 이상 코인에 대한 시뮬레이션이 시작됩니다.',
+      target: "백테스트 실행 버튼",
       icon: "2",
     },
     {

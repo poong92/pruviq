@@ -50,6 +50,29 @@ interface ResultsData {
   mc_percentile?: number;
   jensens_alpha?: number;
   compounding?: boolean;
+  regime_performance?: {
+    bull: {
+      trades: number;
+      win_rate: number;
+      total_return: number;
+      profit_factor: number;
+      avg_pnl: number;
+    };
+    bear: {
+      trades: number;
+      win_rate: number;
+      total_return: number;
+      profit_factor: number;
+      avg_pnl: number;
+    };
+    sideways: {
+      trades: number;
+      win_rate: number;
+      total_return: number;
+      profit_factor: number;
+      avg_pnl: number;
+    };
+  };
 }
 
 interface ResultsCardProps {
@@ -907,6 +930,111 @@ export default function ResultsCard({
         )}
 
       {/* ══════════════════════════════════════════════════════
+           Collapsible Section 2b: Market Regime Performance
+           ══════════════════════════════════════════════════════ */}
+      {!isQuick && data.regime_performance && (
+        <CollapsibleSection
+          title={
+            t.sectionRegime ??
+            (lang === "ko" ? "시장 환경별 성과" : "Market Regime Performance")
+          }
+          defaultOpen={false}
+          badge={
+            data.regime_performance.bear.trades > 0
+              ? `Bear ${data.regime_performance.bear.win_rate.toFixed(0)}% WR`
+              : undefined
+          }
+          badgeColor={
+            data.regime_performance.bear.win_rate >= 50
+              ? "var(--color-green)"
+              : "var(--color-red)"
+          }
+        >
+          <div class="text-[10px] font-mono text-[--color-text-muted] mb-2 opacity-70">
+            {lang === "ko"
+              ? "BTC SMA20/50 기준 시장 국면 분류 · 전략의 환경별 강점 파악"
+              : "Market phase by BTC SMA20/SMA50 · Identifies where your strategy thrives"}
+          </div>
+          <div class="grid grid-cols-3 gap-2">
+            {(["bull", "bear", "sideways"] as const).map((regime) => {
+              const rm = data.regime_performance![regime];
+              const label =
+                regime === "bull"
+                  ? lang === "ko"
+                    ? "🟢 상승장"
+                    : "🟢 Bull"
+                  : regime === "bear"
+                    ? lang === "ko"
+                      ? "🔴 하락장"
+                      : "🔴 Bear"
+                    : lang === "ko"
+                      ? "⚪ 횡보장"
+                      : "⚪ Sideways";
+              const wr = rm.win_rate;
+              const ret = rm.total_return;
+              const wrColor =
+                wr >= 60
+                  ? "var(--color-green)"
+                  : wr >= 45
+                    ? "var(--color-text)"
+                    : "var(--color-red)";
+              return (
+                <div
+                  key={regime}
+                  class="rounded-lg border border-[--color-border] p-2 text-center"
+                  style={{
+                    background:
+                      regime === "bull"
+                        ? "rgba(0,192,115,0.05)"
+                        : regime === "bear"
+                          ? "rgba(240,66,81,0.05)"
+                          : "rgba(255,255,255,0.02)",
+                  }}
+                >
+                  <div class="text-[10px] font-mono text-[--color-text-muted] mb-1">
+                    {label}
+                  </div>
+                  {rm.trades === 0 ? (
+                    <div class="text-[10px] text-[--color-text-muted] opacity-50">
+                      {lang === "ko" ? "거래 없음" : "No trades"}
+                    </div>
+                  ) : (
+                    <>
+                      <div
+                        class="text-sm font-bold font-mono"
+                        style={{ color: wrColor }}
+                      >
+                        {wr.toFixed(0)}%
+                      </div>
+                      <div class="text-[9px] text-[--color-text-muted] font-mono">
+                        {lang === "ko" ? "승률" : "WR"}
+                      </div>
+                      <div
+                        class="text-[10px] font-mono mt-1"
+                        style={{
+                          color:
+                            ret >= 0
+                              ? "var(--color-green)"
+                              : "var(--color-red)",
+                        }}
+                      >
+                        {ret >= 0 ? "+" : ""}
+                        {ret.toFixed(1)}%
+                      </div>
+                      <div class="text-[9px] text-[--color-text-muted] font-mono">
+                        {rm.trades}
+                        {lang === "ko" ? "건" : " trades"}
+                      </div>
+                    </>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </CollapsibleSection>
+      )}
+
+      {/* ══════════════════════════════════════════════════════
            Collapsible Section 3: Validation (expert only)
            ══════════════════════════════════════════════════════ */}
       {!isQuick &&
@@ -1047,6 +1175,14 @@ export default function ResultsCard({
         style={{ color: "var(--color-text-muted)", opacity: 0.6 }}
       >
         {t.survivorshipNote}
+      </p>
+      <p
+        class="text-[9px] mt-1"
+        style={{ color: "var(--color-text-muted)", opacity: 0.5 }}
+      >
+        {lang === "ko"
+          ? "과거 시뮬레이션 결과는 미래 수익을 보장하지 않습니다. 실제 거래 전 충분한 검토가 필요합니다."
+          : "Past simulation results do not guarantee future returns. This is not financial advice."}
       </p>
     </div>
   );

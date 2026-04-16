@@ -390,6 +390,7 @@ export default function BuilderPanel(props: Props) {
               </label>
               <input
                 type="number"
+                aria-label="Stop Loss %"
                 value={localSl}
                 min={1}
                 max={50}
@@ -414,6 +415,7 @@ export default function BuilderPanel(props: Props) {
               </label>
               <input
                 type="number"
+                aria-label="Take Profit %"
                 value={localTp}
                 min={1}
                 max={50}
@@ -438,6 +440,7 @@ export default function BuilderPanel(props: Props) {
               </label>
               <input
                 type="number"
+                aria-label="Max Bars"
                 value={localMaxBars}
                 min={1}
                 max={168}
@@ -457,6 +460,7 @@ export default function BuilderPanel(props: Props) {
               </label>
               <input
                 type="number"
+                aria-label="Per Coin USD"
                 value={localPerCoin}
                 min={props.compounding ? 100 : 1}
                 max={props.compounding ? 1000000 : 10000}
@@ -479,6 +483,7 @@ export default function BuilderPanel(props: Props) {
               </label>
               <input
                 type="number"
+                aria-label="Leverage"
                 value={localLeverage}
                 min={1}
                 max={125}

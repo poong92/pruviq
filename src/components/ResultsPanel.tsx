@@ -129,10 +129,13 @@ export default function ResultsPanel({
       ? activePreset.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())
       : `Custom ${dir}`;
     const tf = result.timeframe ?? "1H";
+    const strategyLabel = t.strategyLabel?.replace(/:$/, "") ?? "Strategy";
+    const timeframeLabel = t.timeframe ?? "Timeframe";
+    const coinsLabel = t.coins ?? "Coins";
     const lines = [
-      `Strategy: ${presetName}`,
+      `${strategyLabel}: ${presetName}`,
       `Direction: ${dir} | SL: ${result.sl_pct ?? slPct}% | TP: ${result.tp_pct ?? tpPct}%`,
-      `Coins: Top ${result.coins_used ?? topN} | Timeframe: ${tf}`,
+      `${coinsLabel}: Top ${result.coins_used ?? topN} | ${timeframeLabel}: ${tf}`,
       `Backtest via pruviq.com/simulate`,
     ];
     navigator.clipboard.writeText(lines.join("\n")).then(() => {

@@ -489,26 +489,8 @@ export default function SimulatorPage({ lang = "en" }: Props) {
     Record<string, Record<string, number>>
   >({});
 
-  // Conditions
-  const [conditions, setConditions] = useState<Condition[]>([
-    { id: nextCondId(), field: "is_squeeze", op: "==", value: true, shift: 1 },
-    {
-      id: nextCondId(),
-      field: "bb_width_change",
-      op: ">=",
-      value: 10,
-      shift: 1,
-    },
-    {
-      id: nextCondId(),
-      field: "ema_fast",
-      op: "<",
-      field2: "ema_slow",
-      shift: 1,
-    },
-    { id: nextCondId(), field: "vol_ratio", op: ">=", value: 2.0, shift: 1 },
-    { id: nextCondId(), field: "bearish", op: "==", value: true, shift: 1 },
-  ]);
+  // Conditions — start empty; hint UI in BuilderPanel guides user to add or load a preset
+  const [conditions, setConditions] = useState<Condition[]>([]);
 
   // Params
   const [direction, setDirection] = useState<"short" | "long" | "both">(

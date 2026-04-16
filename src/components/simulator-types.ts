@@ -142,6 +142,10 @@ export interface BacktestResult {
   positions_skipped?: number;
   pnl_distribution?: number[];
   pnl_buckets?: string[];
+  // risk-adjusted returns
+  sharpe_ratio?: number;
+  sortino_ratio?: number;
+  calmar_ratio?: number;
   // 9.5 phase 4 — overfitting detection + alpha
   deflated_sharpe?: number;
   dsr_haircut_pct?: number;
@@ -149,6 +153,20 @@ export interface BacktestResult {
   mc_percentile?: number;
   jensens_alpha?: number;
   timeframe?: string;
+  // market regime performance
+  regime_performance?: {
+    bull: RegimeMetrics;
+    bear: RegimeMetrics;
+    sideways: RegimeMetrics;
+  };
+}
+
+export interface RegimeMetrics {
+  trades: number;
+  win_rate: number;
+  total_return: number;
+  profit_factor: number;
+  avg_pnl: number;
 }
 
 export interface PresetItem {
@@ -180,6 +198,8 @@ export const OPS = [
   { value: ">", label: ">" },
   { value: "<", label: "<" },
   { value: "==", label: "==" },
+  { value: "cross_above", label: "↑ cross" },
+  { value: "cross_below", label: "↓ cross" },
 ];
 
 export const booleanFields = new Set([
@@ -201,6 +221,21 @@ export const booleanFields = new Set([
   "strong_trend",
   "breakout_up",
   "breakout_down",
+  "above_cloud",
+  "below_cloud",
+  "in_cloud",
+  "tk_cross_bull",
+  "tk_cross_bear",
+  "cloud_green",
+  "cloud_red",
+  "psar_bull",
+  "psar_bear",
+  "psar_reversal_bull",
+  "psar_reversal_bear",
+  "wr_oversold",
+  "wr_overbought",
+  "wr_exit_oversold",
+  "wr_exit_overbought",
 ]);
 
 // Color constants (Toss Securities style)
