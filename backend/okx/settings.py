@@ -25,6 +25,7 @@ DEFAULT_SETTINGS: dict[str, Any] = {
     "td_mode": "isolated",     # isolated or cross
     "max_concurrent": 3,       # max open positions
     "max_daily_trades": 20,    # safety limit
+    "max_per_trade_usdt": 200.0,  # hard cap per single trade (execution-time safety)
     "daily_loss_limit_usdt": 200,  # stop trading if daily loss exceeds
     "execution_mode": "manual",    # manual | alert | auto
     "enabled": False,          # master switch
@@ -114,6 +115,11 @@ def save_settings(session_id: str, settings: dict[str, Any]) -> dict[str, Any]:
     if "max_daily_trades" in settings:
         val = int(settings["max_daily_trades"])
         validated["max_daily_trades"] = max(1, min(50, val))
+    if "max_per_trade_usdt" in settings:
+        val = float(settings["max_per_trade_usdt"])
+        if val <= 0:
+            raise ValueError("max_per_trade_usdt must be > 0")
+        validated["max_per_trade_usdt"] = max(1.0, min(10000.0, val))
     if "daily_loss_limit_usdt" in settings:
         val = float(settings["daily_loss_limit_usdt"])
         validated["daily_loss_limit_usdt"] = max(50, min(5000, val))

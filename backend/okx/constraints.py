@@ -219,6 +219,19 @@ def validate(params: dict, context: dict) -> ConstraintResult:
     if leverage > 125:
         errors.append("OKX 최대 레버리지 125x 초과")
 
+    # 7. Per-trade USD cap (execution-time safety, separate from fixed-mode input cap)
+    if "max_per_trade_usdt" in params:
+        try:
+            max_per_trade = float(params["max_per_trade_usdt"])
+        except (TypeError, ValueError):
+            max_per_trade = 0.0
+        if max_per_trade <= 0:
+            errors.append("max_per_trade_usdt must be > 0")
+        elif max_per_trade > 10000:
+            warnings.append(
+                f"max_per_trade_usdt ${max_per_trade:,.0f} > $10,000 is very high for beta"
+            )
+
     # ── SOFT WARNINGS (allow but caution) ─────────────────────────────
 
     # R:R below 1
