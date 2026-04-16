@@ -522,3 +522,35 @@ async def reject_pending_signal(signal_id: str, request: Request):
             raise HTTPException(404, str(e))
         raise HTTPException(400, str(e))
     return {"signal": signal}
+
+
+# ── Emergency kill-switch (HTTP) ────────────────────────────
+# Callable by a Cloudflare Worker or operator script when Telegram is
+# unavailable. Disables every enabled trading session in one call.
+
+@router.post("/admin/halt")
+async def admin_halt(request: Request):
+    """
+    Emergency halt via HTTP. Requires X-Admin-Key header.
+
+    Disables every session with `enabled=True` (auto + alert modes).
+    Open positions are NOT closed — OKX SL/TP algo orders stay active.
+    Returns the same summary message used by the Telegram /halt command.
+    """
+    if not ADMIN_KEY:
+        raise HTTPException(503, "Admin kill-switch disabled (ADMIN_API_KEY unset)")
+
+    provided = request.headers.get("x-admin-key", "")
+    # Constant-time comparison; both strings known to be non-empty.
+    import hmac
+    if not provided or not hmac.compare_digest(provided, ADMIN_KEY):
+        raise HTTPException(403, "Invalid admin key")
+
+    from .telegram_halt import execute_halt
+    try:
+        message = await execute_halt()
+    except Exception as e:
+        logger.error("admin_halt execute_halt failed: %s", e)
+        raise HTTPException(500, f"halt execution failed: {e}")
+
+    return {"status": "halted", "message": message}
