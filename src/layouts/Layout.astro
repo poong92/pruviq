@@ -184,7 +184,7 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
     <meta property="og:locale" content={lang === 'ko' ? 'ko_KR' : 'en_US'} />
     {!noAlternate && <meta property="og:locale:alternate" content={lang === 'ko' ? 'en_US' : 'ko_KR'} />}
     <meta property="og:image" content={ogImage} />
-    <meta property="og:image:alt" content="PRUVIQ — Free Crypto Strategy Backtester" />
+    <meta property="og:image:alt" content={Astro.props.ogImage ? title : "PRUVIQ — Free Crypto Strategy Backtester"} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <!-- Twitter -->
@@ -192,7 +192,7 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
-    <meta name="twitter:image:alt" content="PRUVIQ — Free Crypto Strategy Backtester" />
+    <meta name="twitter:image:alt" content={Astro.props.ogImage ? title : "PRUVIQ — Free Crypto Strategy Backtester"} />
     <meta name="twitter:site" content="@pruviq" />
     <title>{title}</title>
     <!-- JSON-LD Organization -->
