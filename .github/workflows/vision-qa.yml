@@ -84,7 +84,7 @@ jobs:
         env:
           VISION_DIR: test-results/vision
           # Claude CLI 인증 사용 (ANTHROPIC_API_KEY 불필요 — Claude Code OAuth)
-          CLAUDE_MODEL: claude-sonnet-4-6
+          CLAUDE_MODEL: claude-opus-4-7
         timeout-minutes: 8
 
       - name: Step 2b — QA Score 산출
