@@ -335,6 +335,12 @@ async def lifespan(app: FastAPI):
         okx_pnl_retry_task = None
         print("OKX auto-trading loop SKIPPED (OKX_AUTO_TRADE_LOCAL=false — DO server handles it)")
     okx_token_task = asyncio.create_task(_okx_token_refresh_loop())
+
+    # Emergency kill-switch: Telegram /halt listener. Runs independently of
+    # the auto-trading loop so it remains responsive even under load.
+    from okx.telegram_halt import telegram_halt_loop
+    okx_halt_task = asyncio.create_task(telegram_halt_loop())
+    print("OKX Telegram halt listener scheduled")
     print(f"Background data refresh scheduled every {REFRESH_INTERVAL}s")
     print(f"Background market refresh scheduled every {MARKET_REFRESH_INTERVAL}s")
 
@@ -350,7 +356,8 @@ async def lifespan(app: FastAPI):
     if okx_pnl_retry_task is not None:
         okx_pnl_retry_task.cancel()
     okx_token_task.cancel()
-    _tasks = [indicator_task, refresh_task, market_task, okx_token_task]
+    okx_halt_task.cancel()
+    _tasks = [indicator_task, refresh_task, market_task, okx_token_task, okx_halt_task]
     if okx_auto_task is not None:
         _tasks.append(okx_auto_task)
     if okx_reconcile_task is not None:
