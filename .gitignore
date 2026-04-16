@@ -41,3 +41,7 @@ playwright-report/
 reports/
 .claude-active
 docs/design-audit-20260324/
+
+# Claude agents (contain internal infra details)
+.claude/agents/
+.claude/settings.local.json

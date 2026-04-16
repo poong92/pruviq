@@ -13,8 +13,8 @@ PRUVIQ is a crypto strategy backtesting platform.
 - Languages: English + Korean (i18n)
 
 ## Chain of Command
-- Owner: 이재풍 (Lee Jaepung)
-- Supervisor: JEPO (이재풍's AI partner)
+- Owner: PRUVIQ Team
+- Supervisor: JEPO (AI partner)
 - You report to JEPO. JEPO's instructions override your defaults.
 
 ## Core Principles
