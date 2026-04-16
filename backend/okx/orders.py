@@ -82,6 +82,7 @@ async def execute_from_simulation(
     session_id: str,
     req: SimToExecRequest,
     current_price: Optional[float] = None,
+    cl_ord_id: Optional[str] = None,
 ) -> dict:
     """
     Execute simulation result as live OKX trade.
@@ -89,8 +90,12 @@ async def execute_from_simulation(
     1. Get valid OAuth token
     2. Convert symbol → OKX instId
     3. If current_price not provided (or 0), fetch mark price from OKX
-    4. Place market order (with broker tag)
+    4. Place market order (with broker tag + optional clOrdId for idempotency)
     5. Set SL/TP algo orders
+
+    cl_ord_id: optional caller-supplied client order ID. When present, OKX
+    rejects duplicate submissions — use a deterministic hash of the source
+    signal to make retries safe.
     """
     token = await get_valid_token(session_id)
     inst_id = _pruviq_to_okx_inst_id(req.symbol)
@@ -126,6 +131,7 @@ async def execute_from_simulation(
             side=side,
             sz=sz,
             td_mode=td_mode,
+            cl_ord_id=cl_ord_id,
         )
         ord_id = order.get("ordId", "")
         logger.warning("← Market order placed ordId=%s", ord_id)

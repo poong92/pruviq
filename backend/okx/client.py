@@ -224,7 +224,16 @@ class OKXClient:
         ord_type: str = "market",
         px: str | None = None,
         td_mode: str = "isolated",
+        cl_ord_id: str | None = None,
     ) -> dict[str, str]:
+        """Place a trade order.
+
+        cl_ord_id: client-supplied order ID for idempotency. OKX v5
+        /api/v5/trade/order rejects duplicate clOrdId values — pass a
+        deterministic hash of the triggering signal to prevent double
+        submission across retries/restarts. Must match OKX format:
+        [A-Za-z0-9_]{1,32}.
+        """
         body: dict[str, Any] = {
             "instId": inst_id,
             "tdMode": td_mode,
@@ -235,8 +244,12 @@ class OKXClient:
         }
         if px:
             body["px"] = px
-        logger.warning("→ place-order instId=%s side=%s sz=%s ordType=%s tdMode=%s",
-                       inst_id, side, sz, ord_type, td_mode)
+        if cl_ord_id:
+            body["clOrdId"] = cl_ord_id
+        logger.warning(
+            "→ place-order instId=%s side=%s sz=%s ordType=%s tdMode=%s clOrdId=%s",
+            inst_id, side, sz, ord_type, td_mode, cl_ord_id or "-",
+        )
         data = await self._post("/api/v5/trade/order", body)
         result = data.get("data", [{}])[0]
         logger.warning("← place-order ordId=%s sCode=%s sMsg=%s",
