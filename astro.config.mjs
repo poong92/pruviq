@@ -96,7 +96,7 @@ export default defineConfig({
         } else if (p.startsWith('/compare/') || p.startsWith('/vs/') || p.startsWith('/vs-')) {
           item.priority = 0.7; item.changefreq = /** @type {any} */ ('monthly');
         } else if (p.startsWith('/blog/')) {
-          item.priority = 0.6; item.changefreq = /** @type {any} */ ('monthly');
+          item.priority = 0.6; item.changefreq = /** @type {any} */ ('monthly'); item.lastmod = today;
         } else if (['/fees', '/learn', '/about', '/api'].includes(p)) {
           item.priority = 0.6; item.changefreq = /** @type {any} */ ('monthly');
         } else {
