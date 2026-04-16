@@ -9,6 +9,7 @@ interface Props {
   title: string;
   description: string;
   date: string;
+  updatedDate?: string;
   category: string;
   author?: string;
   image?: string;
@@ -21,7 +22,7 @@ interface Props {
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
-const { title, description, date, category, author = 'PRUVIQ Research', image, body, tags = [], postId, noAlternate = false, isKorean } = Astro.props;
+const { title, description, date, updatedDate, category, author = 'PRUVIQ Research', image, body, tags = [], postId, noAlternate = false, isKorean } = Astro.props;
 
 const categoryLabels: Record<string, string> = {
   market: 'MARKET ANALYSIS',
@@ -57,6 +58,7 @@ const shareUrlEnc = encodeURIComponent(shareUrl);
     "headline": title,
     "description": description,
     "datePublished": date,
+    "dateModified": updatedDate || date,
     "author": {
       "@type": "Organization",
       "name": author,
