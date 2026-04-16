@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import json
 import logging
+import sqlite3
 import time
 from typing import Any
 
@@ -43,14 +44,23 @@ def _ensure_table() -> None:
         """)
         conn.execute("""
             CREATE TABLE IF NOT EXISTS trade_log (
-                id         INTEGER PRIMARY KEY AUTOINCREMENT,
-                session_id TEXT NOT NULL,
-                signal     TEXT NOT NULL,
-                result     TEXT NOT NULL,
-                pnl_usdt   REAL DEFAULT 0,
-                created_at REAL NOT NULL
+                id          INTEGER PRIMARY KEY AUTOINCREMENT,
+                session_id  TEXT NOT NULL,
+                signal      TEXT NOT NULL,
+                result      TEXT NOT NULL,
+                pnl_usdt    REAL DEFAULT 0,
+                created_at  REAL NOT NULL,
+                pnl_synced  INTEGER DEFAULT 1
             )
         """)
+        # Additive migration: add pnl_synced column for tables created before this field existed.
+        # SQLite does not support "IF NOT EXISTS" on ALTER TABLE ADD COLUMN, so we catch the
+        # OperationalError("duplicate column name") that is raised when the column already exists.
+        try:
+            conn.execute("ALTER TABLE trade_log ADD COLUMN pnl_synced INTEGER DEFAULT 1")
+        except sqlite3.OperationalError as e:
+            if "duplicate column" not in str(e).lower():
+                raise
         # Signal deduplication: prevents the same signal from executing twice
         # across 5-minute auto-trading loop cycles
         conn.execute("""

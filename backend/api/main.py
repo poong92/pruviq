@@ -180,6 +180,28 @@ async def _okx_token_refresh_loop():
         await asyncio.sleep(12 * 3600)  # 12 hours
 
 
+async def _okx_reconcile_loop():
+    """Reconcile OKX live positions vs DB trade_log every 5 minutes (P0-2)."""
+    try:
+        from okx.reconciler import reconcile_loop
+        await reconcile_loop()
+    except asyncio.CancelledError:
+        raise
+    except Exception as e:
+        logger.error(f"OKX reconcile loop terminated: {e}")
+
+
+async def _okx_pnl_retry_loop():
+    """Retry pnl_sync for trade_log rows flagged pnl_synced=0 every 30 min (P0-3)."""
+    try:
+        from okx.pnl_sync import retry_failed_pnl_sync_loop
+        await retry_failed_pnl_sync_loop()
+    except asyncio.CancelledError:
+        raise
+    except Exception as e:
+        logger.error(f"OKX pnl retry loop terminated: {e}")
+
+
 async def _background_refresh():
     """Periodically refresh data from Binance."""
     while True:
@@ -304,9 +326,13 @@ async def lifespan(app: FastAPI):
     market_task = asyncio.create_task(_background_market_refresh())
     if OKX_AUTO_TRADE_LOCAL:
         okx_auto_task = asyncio.create_task(_okx_auto_trading_loop())
-        print("OKX auto-trading loop started (local mode)")
+        okx_reconcile_task = asyncio.create_task(_okx_reconcile_loop())
+        okx_pnl_retry_task = asyncio.create_task(_okx_pnl_retry_loop())
+        print("OKX auto-trading + reconciler + pnl retry loops started (local mode)")
     else:
         okx_auto_task = None
+        okx_reconcile_task = None
+        okx_pnl_retry_task = None
         print("OKX auto-trading loop SKIPPED (OKX_AUTO_TRADE_LOCAL=false — DO server handles it)")
     okx_token_task = asyncio.create_task(_okx_token_refresh_loop())
     print(f"Background data refresh scheduled every {REFRESH_INTERVAL}s")
@@ -319,10 +345,18 @@ async def lifespan(app: FastAPI):
     market_task.cancel()
     if okx_auto_task is not None:
         okx_auto_task.cancel()
+    if okx_reconcile_task is not None:
+        okx_reconcile_task.cancel()
+    if okx_pnl_retry_task is not None:
+        okx_pnl_retry_task.cancel()
     okx_token_task.cancel()
     _tasks = [indicator_task, refresh_task, market_task, okx_token_task]
     if okx_auto_task is not None:
         _tasks.append(okx_auto_task)
+    if okx_reconcile_task is not None:
+        _tasks.append(okx_reconcile_task)
+    if okx_pnl_retry_task is not None:
+        _tasks.append(okx_pnl_retry_task)
     for t in _tasks:
         try:
             await t
