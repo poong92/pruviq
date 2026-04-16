@@ -7,7 +7,7 @@ Industry standard architecture (3commas/Bybit/OKX bot benchmark):
   - All events notify user via Telegram: entry, SL/TP set, limit hits, failures
 
 Safety guards:
-  - Max $5000 per trade (configurable per user)
+  - Max $200 per trade (configurable via settings.max_per_trade_usdt, default $200)
   - Max 20 trades/day (configurable)
   - Daily loss limit (configurable, default $200)
   - Master switch per user
@@ -321,6 +321,15 @@ async def _try_execute(
                 mult = float(strategy.get("multiplier", 1.0))
                 signal_size = float(signal.get("position_size_usdt", position_size))
                 position_size = signal_size * mult
+
+        # ── Execution-time safety cap (applies after all sizing paths) ──
+        max_per_trade = float(settings.get("max_per_trade_usdt", 200.0))
+        if position_size > max_per_trade:
+            logger.info(
+                "Position capped at max_per_trade_usdt=%.2f (was %.2f) session=%s",
+                max_per_trade, position_size, session_id[:8],
+            )
+            position_size = max_per_trade
 
         # ── Check concurrent position limit (strategy tightens but cannot loosen) ──
         max_concurrent = settings["max_concurrent"]
