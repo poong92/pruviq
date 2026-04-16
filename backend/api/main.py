@@ -1812,11 +1812,11 @@ async def simulate_optimize(req: OptimizeRequest):
                                 max_drawdown_pct=0, sharpe_ratio=0)
 
         n_coins = len(prepared) or 1
-        wins = [t for t in all_trades if t["pnl_pct"] > 0]
-        losses = [t for t in all_trades if t["pnl_pct"] <= 0]
-        gross_profit = sum(t["pnl_pct"] for t in wins) if wins else 0
-        gross_loss = abs(sum(t["pnl_pct"] for t in losses)) if losses else 0
-        total_return = round(sum(t["pnl_pct"] for t in all_trades) / n_coins, 4)
+        wins = [t for t in all_trades if t.pnl_pct > 0]
+        losses = [t for t in all_trades if t.pnl_pct <= 0]
+        gross_profit = sum(t.pnl_pct for t in wins) if wins else 0
+        gross_loss = abs(sum(t.pnl_pct for t in losses)) if losses else 0
+        total_return = round(sum(t.pnl_pct for t in all_trades) / n_coins, 4)
         win_rate = round(len(wins) / len(all_trades) * 100, 2) if all_trades else 0
         pf = round(gross_profit / gross_loss, 2) if gross_loss > 0 else (999.99 if gross_profit > 0 else 0)
 
@@ -1825,7 +1825,7 @@ async def simulate_optimize(req: OptimizeRequest):
         peak = equity
         max_dd = 0.0
         for t in all_trades:
-            equity += t["pnl_pct"] / n_coins
+            equity += t.pnl_pct / n_coins
             peak = max(peak, equity)
             dd = (peak - equity) / peak * 100 if peak > 0 else 0
             max_dd = max(max_dd, min(dd, 100.0))
@@ -1834,9 +1834,13 @@ async def simulate_optimize(req: OptimizeRequest):
         from collections import defaultdict as _dd_opt
         daily = _dd_opt(float)
         for t in all_trades:
-            day = t.get("exit_time", t["time"])[:10]
+            day = getattr(t, "exit_time", None) or getattr(t, "time", "")
+            if isinstance(day, str):
+                day = day[:10]
+            else:
+                day = str(day)[:10]
             if day and day != "NaT" and len(day) == 10:
-                daily[day] += t["pnl_pct"]
+                daily[day] += t.pnl_pct
         sharpe = 0.0
         if len(daily) >= 5:
             dr = np.array(list(daily.values())) / n_coins
