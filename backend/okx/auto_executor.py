@@ -16,8 +16,10 @@ Safety guards:
 from __future__ import annotations
 
 import asyncio
+import hashlib
 import logging
 import time
+from datetime import datetime, timezone
 from typing import Optional
 
 from .client import OKXClient
@@ -32,6 +34,8 @@ from .settings import (
     is_signal_executed,
     log_trade,
     mark_signal_executed,
+    remove_signal_execution,
+    update_signal_status,
 )
 from .strategies import (
     create_pending_signal,
@@ -49,6 +53,30 @@ logger = logging.getLogger("okx_auto_executor")
 
 # How long to wait for market order fill before querying avgPx (seconds)
 _FILL_WAIT_S = 1.5
+
+# Reject signals older than this many seconds. OKX mark price drifts ~0.1–0.5%
+# per minute on volatile pairs — executing a 5-minute-old signal means trading
+# against stale entry conditions. 60s is permissive enough for one scheduler
+# tick (5min) to be late without dropping everything.
+_MAX_SIGNAL_AGE_S = 60
+
+# Reject the trade (close immediately after fill) if actual fill price deviates
+# from signal-time mark price by more than this fraction. 0.5% covers routine
+# slippage on liquid SWAP pairs; beyond it indicates a thin book or bad timing.
+_MAX_SLIPPAGE = 0.005
+
+
+def _make_cl_ord_id(session_id: str, strategy: str, coin: str, signal_time: str) -> str:
+    """Deterministic client order ID for OKX idempotency.
+
+    OKX v5 /trade/order rejects a second submission with the same clOrdId —
+    this is our crash-safe guarantee that a retried signal cannot produce a
+    duplicate order even if mark_signal_executed was never persisted.
+
+    OKX format: [A-Za-z0-9_]{1,32}. sha1 hex is [0-9a-f] and we truncate to 32.
+    """
+    raw = f"{session_id}{strategy}{coin}{signal_time}".encode()
+    return hashlib.sha1(raw).hexdigest()[:32]
 
 
 async def process_signals(signals: list[dict]) -> list[dict]:
@@ -200,9 +228,45 @@ async def _try_execute(
     if settings["coins"] and coin not in settings["coins"]:
         return None
 
+    # ── Reject signals without a real timestamp ──
+    # Previously: fell back to hourly key time.strftime("%Y-%m-%dT%H:00:00").
+    # That silently aggregated every signal in the same hour into a single
+    # dedup key, which (a) blocked valid later signals and (b) broke the
+    # stale-signal guard below because we had no real age to compute.
+    if not signal_time:
+        logger.warning(
+            "Signal missing signal_time — rejecting: session=%s %s/%s",
+            session_id[:8], strategy_id, coin,
+        )
+        return None
+
+    dedup_time = signal_time
+
+    # ── Stale-signal guard ──
+    # Reject signals older than _MAX_SIGNAL_AGE_S. Mark price drifts during
+    # delays; executing late means trading against conditions that no longer
+    # hold. Isoformat tolerant of trailing 'Z' (UTC).
+    try:
+        signal_dt = datetime.fromisoformat(signal_time.replace("Z", "+00:00"))
+        if signal_dt.tzinfo is None:
+            signal_dt = signal_dt.replace(tzinfo=timezone.utc)
+        age_s = (datetime.now(timezone.utc) - signal_dt).total_seconds()
+    except ValueError as e:
+        logger.warning(
+            "Invalid signal_time %r (%s) — rejecting: session=%s %s/%s",
+            signal_time, e, session_id[:8], strategy_id, coin,
+        )
+        return None
+    if age_s > _MAX_SIGNAL_AGE_S:
+        logger.warning(
+            "Signal age %.1fs > %ds limit — rejecting: session=%s %s/%s @ %s",
+            age_s, _MAX_SIGNAL_AGE_S, session_id[:8], strategy_id, coin, signal_time,
+        )
+        return None
+
     # ── Deduplication: skip already-executed signals ──
-    # Fallback to hourly key when signal_time is missing (prevents double-execution)
-    dedup_time = signal_time or time.strftime("%Y-%m-%dT%H:00:00")
+    # Covers 'pending' (in-flight) and 'filled' (done); a 'failed' row allows
+    # retry so a transient error doesn't permanently block the signal.
     if is_signal_executed(session_id, strategy_id, coin, dedup_time):
         logger.debug("Signal already executed: %s/%s @ %s", strategy_id, coin, dedup_time)
         return None
@@ -356,11 +420,41 @@ async def _try_execute(
         # ── Set leverage ──
         await client.set_leverage(inst_id=inst_id, lever=leverage, mgn_mode=td_mode)
 
-        # ── Market order ──
-        order = await client.place_order(inst_id=inst_id, side=side, sz=sz, td_mode=td_mode)
+        # ── Reserve dedup row BEFORE place_order (crash-safe) ──
+        # If we crashed/restarted between place_order succeeding and
+        # mark_signal_executed persisting, the next scheduler tick would
+        # reissue the same order. By inserting 'pending' first, a restart
+        # sees the reservation and skips. The clOrdId idempotency below is
+        # the second line of defence at OKX itself.
+        cl_ord_id = _make_cl_ord_id(session_id, strategy_id, coin, dedup_time)
+        mark_signal_executed(session_id, strategy_id, coin, dedup_time, status="pending")
+
+        # ── Market order (idempotent via clOrdId) ──
+        try:
+            order = await client.place_order(
+                inst_id=inst_id, side=side, sz=sz, td_mode=td_mode,
+                cl_ord_id=cl_ord_id,
+            )
+        except Exception as place_err:
+            # Order placement never reached OKX (network, auth, etc.). Remove
+            # the reservation so the next tick can retry cleanly.
+            logger.error(
+                "place_order raised for %s/%s: %s — removing reservation",
+                strategy_id, coin, place_err,
+            )
+            remove_signal_execution(session_id, strategy_id, coin, dedup_time)
+            if chat_id:
+                asyncio.create_task(send_execution_failed(chat_id, signal,
+                    f"order placement failed: {place_err}"))
+            return None
+
         ord_id = order.get("ordId", "")
         if not ord_id:
+            # OKX rejected (bad params, duplicate clOrdId, risk, etc.). Mark
+            # failed — not pending — so retries are allowed on a fresh signal
+            # but this exact clOrdId stays reserved.
             logger.error("Auto order returned no ordId — signal %s/%s", strategy_id, coin)
+            update_signal_status(session_id, strategy_id, coin, dedup_time, "failed")
             if chat_id:
                 asyncio.create_task(send_execution_failed(chat_id, signal, "order returned no ordId"))
             return None
@@ -369,8 +463,10 @@ async def _try_execute(
         # Bybit/OKX bots wait ~1-2s then query fill price for SL/TP accuracy.
         await asyncio.sleep(_FILL_WAIT_S)
         fill_price = mark_price  # fallback
+        fill_confirmed = False
         try:
             fill_price = await client.get_order_fill_price(inst_id, ord_id)
+            fill_confirmed = True
             logger.warning(
                 "← Fill confirmed: ordId=%s avgPx=%.6f (markPx was %.6f)",
                 ord_id, fill_price, mark_price,
@@ -380,6 +476,34 @@ async def _try_execute(
                 "Could not get fill price for %s — using mark price %.6f: %s",
                 ord_id, mark_price, e,
             )
+
+        # ── Slippage guard ──
+        # Compare actual fill vs. signal-time mark price. Beyond _MAX_SLIPPAGE
+        # the position is off-thesis; close immediately rather than let it run
+        # with SL/TP anchored to a price we never intended to trade at.
+        if fill_confirmed and mark_price > 0:
+            slippage = abs(fill_price - mark_price) / mark_price
+            if slippage > _MAX_SLIPPAGE:
+                logger.error(
+                    "Slippage %.4f%% > %.4f%% limit — closing position "
+                    "(fill=%.6f mark=%.6f ordId=%s)",
+                    slippage * 100, _MAX_SLIPPAGE * 100,
+                    fill_price, mark_price, ord_id,
+                )
+                try:
+                    await client.close_position(inst_id, mgn_mode=td_mode)
+                except Exception as close_err:
+                    logger.error(
+                        "EMERGENCY CLOSE FAILED after slippage guard for %s: %s",
+                        inst_id, close_err,
+                    )
+                update_signal_status(session_id, strategy_id, coin, dedup_time, "failed")
+                if chat_id:
+                    asyncio.create_task(send_execution_failed(
+                        chat_id, signal,
+                        f"슬리피지 {slippage:.2%} > {_MAX_SLIPPAGE:.1%} 한도, 즉시 청산 (ordId={ord_id})",
+                    ))
+                return None
 
         # ── SL/TP calculated from ACTUAL FILL PRICE (industry standard) ──
         sl_price, tp_price = _calc_sl_tp_prices(fill_price, signal["direction"], sl_pct, tp_pct)
@@ -408,6 +532,7 @@ async def _try_execute(
                         f"⚠️ SL/TP FAILED — position closed. ordId={ord_id}"))
             except Exception as close_err:
                 logger.error("EMERGENCY CLOSE FAILED for %s: %s", inst_id, close_err)
+            update_signal_status(session_id, strategy_id, coin, dedup_time, "failed")
             return None
 
     result = {
@@ -421,6 +546,7 @@ async def _try_execute(
         "tp": tp_price,
         "order": order,
         "algo": algo,
+        "cl_ord_id": cl_ord_id,
         "timestamp": time.time(),
     }
 
@@ -428,11 +554,14 @@ async def _try_execute(
     estimated_loss = -(position_size * sl_pct / 100)
     trade_created_at = result["timestamp"]
     log_trade(session_id, signal, result, pnl=estimated_loss)
-    mark_signal_executed(session_id, strategy_id, coin, dedup_time)
+    # Promote the 'pending' reservation to 'filled'. The row was created
+    # before place_order; here we only update its status.
+    update_signal_status(session_id, strategy_id, coin, dedup_time, "filled")
 
     logger.warning(
-        "Auto-executed: %s %s %s sz=%s fillPx=%.6f SL=%s TP=%s session=%s",
-        side, inst_id, strategy_id, sz, fill_price, sl_price, tp_price, session_id[:8],
+        "Auto-executed: %s %s %s sz=%s fillPx=%.6f SL=%s TP=%s clOrdId=%s session=%s",
+        side, inst_id, strategy_id, sz, fill_price, sl_price, tp_price,
+        cl_ord_id, session_id[:8],
     )
 
     # ── Telegram: trade entry confirmation (industry standard) ──

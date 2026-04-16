@@ -72,9 +72,19 @@ def _ensure_table() -> None:
                 coin        TEXT NOT NULL,
                 signal_time TEXT NOT NULL,
                 executed_at REAL NOT NULL,
+                status      TEXT DEFAULT 'filled',
                 UNIQUE(session_id, strategy, coin, signal_time)
             )
         """)
+        # Schema migration: add status column to pre-existing tables.
+        # SQLite lacks IF NOT EXISTS for ADD COLUMN, so swallow "duplicate column" error.
+        try:
+            conn.execute(
+                "ALTER TABLE executed_signals ADD COLUMN status TEXT DEFAULT 'filled'"
+            )
+        except Exception:
+            # Column already exists — expected on subsequent calls
+            pass
         # Cleanup index for old executed_signals (>24h)
         conn.execute("""
             CREATE INDEX IF NOT EXISTS idx_executed_signals_ts
@@ -229,30 +239,92 @@ def get_auto_sessions() -> list[str]:
 
 
 def is_signal_executed(session_id: str, strategy: str, coin: str, signal_time: str) -> bool:
-    """Check if this exact signal has already been executed for this session."""
+    """Check if this exact signal has already been executed (pending or filled).
+
+    A signal marked 'failed' does NOT block retry — we excluded it so the next
+    scheduler tick can try again. 'pending' blocks retry to prevent duplicate
+    orders while a place_order() call is in flight (crash-safe).
+    """
     _ensure_table()
     with _get_conn() as conn:
         row = conn.execute(
             "SELECT 1 FROM executed_signals "
-            "WHERE session_id=? AND strategy=? AND coin=? AND signal_time=?",
+            "WHERE session_id=? AND strategy=? AND coin=? AND signal_time=? "
+            "AND (status IS NULL OR status != 'failed')",
             (session_id, strategy, coin, signal_time),
         ).fetchone()
     return row is not None
 
 
-def mark_signal_executed(session_id: str, strategy: str, coin: str, signal_time: str) -> None:
-    """Mark a signal as executed. Silently ignores duplicate (UNIQUE constraint)."""
+def mark_signal_executed(
+    session_id: str,
+    strategy: str,
+    coin: str,
+    signal_time: str,
+    status: str = "filled",
+) -> None:
+    """Mark a signal as executed. Silently ignores duplicate (UNIQUE constraint).
+
+    status: 'pending' (reserved before place_order), 'filled' (success),
+            'failed' (retryable — is_signal_executed excludes these).
+    """
+    _ensure_table()
+    now = time.time()
+    with _get_conn() as conn:
+        # UPSERT: if a previous row exists (e.g. status='failed' from a prior
+        # tick's slippage guard), overwrite so the new attempt starts clean
+        # at status='pending'. Without this, INSERT OR IGNORE silently keeps
+        # the stale 'failed' status while execution proceeds.
+        conn.execute(
+            "INSERT INTO executed_signals "
+            "(session_id, strategy, coin, signal_time, executed_at, status) "
+            "VALUES (?,?,?,?,?,?) "
+            "ON CONFLICT(session_id, strategy, coin, signal_time) "
+            "DO UPDATE SET status=excluded.status, executed_at=excluded.executed_at",
+            (session_id, strategy, coin, signal_time, now, status),
+        )
+    # Prune records older than 24h to prevent unbounded growth
+    cutoff = now - 86400
+    with _get_conn() as conn:
+        conn.execute("DELETE FROM executed_signals WHERE executed_at < ?", (cutoff,))
+
+
+def update_signal_status(
+    session_id: str,
+    strategy: str,
+    coin: str,
+    signal_time: str,
+    status: str,
+) -> None:
+    """Update status of a previously reserved executed_signals row.
+
+    Used to transition 'pending' → 'filled' (success) or 'pending' → 'failed'
+    (retryable). Called from auto_executor after place_order resolves.
+    """
     _ensure_table()
     with _get_conn() as conn:
         conn.execute(
-            "INSERT OR IGNORE INTO executed_signals "
-            "(session_id, strategy, coin, signal_time, executed_at) VALUES (?,?,?,?,?)",
-            (session_id, strategy, coin, signal_time, time.time()),
+            "UPDATE executed_signals SET status=?, executed_at=? "
+            "WHERE session_id=? AND strategy=? AND coin=? AND signal_time=?",
+            (status, time.time(), session_id, strategy, coin, signal_time),
         )
-    # Prune records older than 24h to prevent unbounded growth
-    cutoff = time.time() - 86400
+
+
+def remove_signal_execution(
+    session_id: str, strategy: str, coin: str, signal_time: str
+) -> None:
+    """Delete the executed_signals row entirely. Used when the pre-order
+    reservation must be rolled back (e.g. order placement raised before OKX
+    acknowledged the request). After removal, is_signal_executed() returns
+    False so the next tick can retry cleanly.
+    """
+    _ensure_table()
     with _get_conn() as conn:
-        conn.execute("DELETE FROM executed_signals WHERE executed_at < ?", (cutoff,))
+        conn.execute(
+            "DELETE FROM executed_signals "
+            "WHERE session_id=? AND strategy=? AND coin=? AND signal_time=?",
+            (session_id, strategy, coin, signal_time),
+        )
 
 
 def get_alert_sessions() -> list[tuple[str, str]]:
