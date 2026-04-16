@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "preact/hooks";
 import ResultsCard from "./ResultsCard";
 import ResultHero from "./ResultHero";
 import OOSValidation from "./OOSValidation";
+import OptimizePanel from "./OptimizePanel";
 import ExchangeCTA from "./ExchangeCTA";
 import EmailCapture from "./EmailCapture";
 import BotCodeSection from "./BotCodeSection";
@@ -28,7 +29,13 @@ interface HistoryEntry {
   result: BacktestResult;
 }
 
-type ResultTab = "summary" | "equity" | "trades" | "coins" | "validate";
+type ResultTab =
+  | "summary"
+  | "equity"
+  | "trades"
+  | "coins"
+  | "validate"
+  | "optimize";
 
 interface Props {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- i18n dict has mixed value types (string, string[], Record<string,string>)
@@ -91,7 +98,7 @@ export default function ResultsPanel({
       ? ["summary"]
       : simMode === "standard"
         ? ["summary", "equity", "trades", "coins"]
-        : ["summary", "equity", "trades", "coins", "validate"];
+        : ["summary", "equity", "trades", "coins", "validate", "optimize"];
   const [coinSort, setCoinSort] = useState<{ key: string; asc: boolean }>({
     key: "total_return_pct",
     asc: false,
@@ -523,7 +530,11 @@ export default function ResultsPanel({
                     ? t.coinsTab || t.coins || "Coins"
                     : tab === "validate"
                       ? t.validate || "Validate"
-                      : t[tab] || tab}
+                      : tab === "optimize"
+                        ? lang === "ko"
+                          ? "최적화"
+                          : "Optimize"
+                        : t[tab] || tab}
                 </button>
               ))}
             </div>
@@ -1352,6 +1363,24 @@ export default function ResultsPanel({
                 top_n={result.coins_used}
               />
             </div>
+          )}
+
+          {/* Optimize tab */}
+          {resultTab === "optimize" && (
+            <OptimizePanel
+              strategy={activePreset || result.name || "bb-squeeze"}
+              direction={result.direction}
+              max_bars={result.max_bars}
+              top_n={Math.min(result.coins_used || 20, 50)}
+              market_type={
+                ((result as unknown as Record<string, string>).market_type as
+                  | "futures"
+                  | "spot") || "futures"
+              }
+              timeframe={result.timeframe || "1H"}
+              lang={lang}
+              t={t}
+            />
           )}
 
           {/* Coins tab */}

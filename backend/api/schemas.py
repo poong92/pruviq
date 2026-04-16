@@ -680,7 +680,79 @@ class GenerateBotRequest(BaseModel):
     backtest_profit_factor: float = 0
 # --- Subscribe Schemas ---
 
+
 class SubscribeRequest(BaseModel):
     """Email subscription request."""
+
     email: str
     lang: str = "en"
+
+
+# --- Parameter Optimization Schemas ---
+
+
+class OptimizeRequest(BaseModel):
+    """SL/TP grid search request."""
+
+    strategy: str = Field(default="bb-squeeze", description="Strategy ID")
+    direction: Optional[str] = Field(default=None, description="long | short | both")
+    sl_steps: List[float] = Field(
+        default=[5.0, 8.0, 10.0, 15.0, 20.0],
+        description="Stop Loss values to sweep (max 6)",
+    )
+    tp_steps: List[float] = Field(
+        default=[5.0, 8.0, 10.0, 15.0, 20.0],
+        description="Take Profit values to sweep (max 6)",
+    )
+    max_bars: int = Field(default=48, ge=6, le=168)
+    market_type: Literal["futures", "spot"] = Field(default="futures")
+    symbols: Optional[List[str]] = Field(default=None)
+    top_n: Optional[int] = Field(
+        default=20,
+        ge=1,
+        le=100,
+        description="Limit coins for speed (default 20)",
+    )
+    start_date: Optional[str] = Field(default=None)
+    end_date: Optional[str] = Field(default=None)
+    timeframe: str = Field(default="1H")
+    metric: str = Field(
+        default="total_return_pct",
+        description="Primary metric: total_return_pct | win_rate | profit_factor | sharpe_ratio",
+    )
+
+    @field_validator("sl_steps", "tp_steps")
+    @classmethod
+    def _limit_steps(cls, v):
+        if len(v) > 6:
+            raise ValueError("Max 6 steps per axis (36 combinations max)")
+        if any(x < 1.0 or x > 30.0 for x in v):
+            raise ValueError("Steps must be between 1.0 and 30.0")
+        return sorted(set(v))
+
+
+class OptimizeCell(BaseModel):
+    """Single cell in the SL/TP optimization grid."""
+
+    sl_pct: float
+    tp_pct: float
+    total_trades: int
+    win_rate: float
+    profit_factor: float
+    total_return_pct: float
+    max_drawdown_pct: float
+    sharpe_ratio: float = 0.0
+
+
+class OptimizeResponse(BaseModel):
+    """SL/TP optimization grid results."""
+
+    strategy: str
+    direction: str
+    metric: str
+    sl_steps: List[float]
+    tp_steps: List[float]
+    grid: List[OptimizeCell]
+    coins_used: int
+    data_range: str
+    compute_time_ms: int
