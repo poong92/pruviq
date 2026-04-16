@@ -100,12 +100,12 @@ async def reconcile_positions(session_id: str) -> None:
     if not okx_inst_ids:
         return
 
-    expected = _expected_inst_ids(session_id)
+    expected = await asyncio.to_thread(_expected_inst_ids, session_id)
     orphans = okx_inst_ids - expected
     if not orphans:
         return
 
-    settings = get_settings(session_id)
+    settings = await asyncio.to_thread(get_settings, session_id)
     chat_id = settings.get("alert_telegram_chat_id", "")
     for inst_id in orphans:
         logger.error(
@@ -128,7 +128,7 @@ def _has_position(pos_str: str) -> bool:
 async def reconcile_all_sessions() -> None:
     """Reconcile every auto-enabled session in turn."""
     try:
-        sessions = get_auto_sessions()  # list[str] of session_ids
+        sessions = await asyncio.to_thread(get_auto_sessions)
     except Exception as e:
         logger.error("Reconcile: get_auto_sessions failed: %s", e)
         return
