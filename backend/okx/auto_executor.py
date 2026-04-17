@@ -49,6 +49,7 @@ from .notifications import (
     send_safety_limit,
 )
 from .pnl_sync import sync_realized_pnl
+from .filters import RegimeFilters, evaluate_filters
 
 logger = logging.getLogger("okx_auto_executor")
 
@@ -181,6 +182,29 @@ async def process_signals(signals: list[dict]) -> list[dict]:
 
         for signal in signals:
             try:
+                # Regime / time / funding filters (autotrader R4/R6/R15).
+                # Applied BEFORE approval-queue enqueue so the user isn't asked
+                # to approve signals the filter already rejected.
+                if active_strategy:
+                    rf_dict = active_strategy.get("regime_filters") or {}
+                    rf = RegimeFilters.from_json(rf_dict)
+                    if not rf.is_empty():
+                        try:
+                            inst_id = _pruviq_to_okx_inst_id(signal["coin"])
+                        except Exception:
+                            inst_id = signal["coin"]
+                        reason = await evaluate_filters(
+                            rf,
+                            direction=signal.get("direction", "long"),
+                            inst_id=inst_id,
+                        )
+                        if reason:
+                            logger.info(
+                                "filter reject session=%s strategy=%s coin=%s: %s",
+                                session_id[:8], signal["strategy"], signal["coin"], reason,
+                            )
+                            continue
+
                 # Approval mode: enqueue, do not execute.
                 if active_strategy and active_strategy.get("exec_mode") == "approval":
                     # Only enqueue if signal passes strategy/coin subscription filters
