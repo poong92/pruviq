@@ -1,0 +1,24 @@
+[Unit]
+Description=PRUVIQ Data Fetch (external sources → public/data/)
+After=network-online.target pruviq-api.service
+Wants=network-online.target
+# On success, trigger commit-data as a separate unit so its failures don't
+# block the next fetch cycle.
+Wants=pruviq-commit-data.service
+Before=pruviq-commit-data.service
+OnFailure=pruviq-alert@%n.service
+
+[Service]
+Type=oneshot
+User=pruviq
+Group=pruviq
+WorkingDirectory=/opt/pruviq/current
+EnvironmentFile=/opt/pruviq/shared/.env
+ExecStart=/opt/pruviq/bin/refresh-data.sh
+# When fetch succeeds, run commit-data. Using ExecStartPost keeps the
+# trigger atomic — if commit-data itself fails, only that unit's OnFailure
+# fires, we don't double-alert here.
+ExecStartPost=/bin/systemctl --no-block start pruviq-commit-data.service
+StandardOutput=journal
+StandardError=journal
+TimeoutStartSec=300
