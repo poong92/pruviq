@@ -1,15 +1,13 @@
-name: "Data Deploy: build + wrangler deploy on public/data/** push"
+name: "Data Deploy: build + wrangler deploy on public/data/** or src/** push"
 
-# Responsibility: when DO's pruviq-commit-data pushes a data refresh (or
-# any other push touches public/data/**), build the Astro site and deploy
-# to Cloudflare Workers. Single place that owns the build → deploy step,
+# Responsibility: when DO's pruviq-commit-data pushes a data refresh (or any
+# other push touches the committed frontend surface), build the Astro site
+# and deploy to Cloudflare Workers. Single place that owns build → deploy,
 # separate from data fetch (DO) and API restart (backend-deploy.yml).
 #
-# Design: GitHub Actions is the correct layer for this because
-#   - Cloudflare API token never leaves a CI secret (not stored on DO)
-#   - Build is hermetic (fresh npm ci, fresh worktree)
-#   - Failures are visible in the Actions UI, not lost in a timer log
-#   - DO has no Node / swap pressure from concurrent builds
+# Runs on ubuntu-latest — the self-hosted Mac runner queue pegged 2026-04-16
+# through 04-17 and kept every frontend-relevant PR un-deployed for 8+ hours.
+# Cloudflare API token + account ID are already stored as repo secrets.
 
 on:
   push:
@@ -29,9 +27,7 @@ concurrency:
 
 jobs:
   build-and-deploy:
-    # Use the Mac runner that already has node cached + network to CF.
-    # Switch to ubuntu-latest if the Mac runner becomes a bottleneck.
-    runs-on: [self-hosted, mac-mini-m4-ops]
+    runs-on: ubuntu-latest
     timeout-minutes: 15
 
     steps:
@@ -39,18 +35,27 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Verify Node version
-        run: node --version && npm --version
+      - name: Sanity-check Cloudflare secrets present
+        env:
+          CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CF_ACCOUNT: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          missing=()
+          [ -z "$CF_TOKEN" ] && missing+=("CLOUDFLARE_API_TOKEN")
+          [ -z "$CF_ACCOUNT" ] && missing+=("CLOUDFLARE_ACCOUNT_ID")
+          if [ ${#missing[@]} -gt 0 ]; then
+            echo "::error::Missing repo secrets: ${missing[*]}"
+            exit 1
+          fi
+          echo "secrets OK"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
 
       - name: Install dependencies
-        run: |
-          if [ -d node_modules ] && [ -f .node_modules.sha ] \
-             && [ "$(shasum package-lock.json | awk '{print $1}')" = "$(cat .node_modules.sha)" ]; then
-            echo "node_modules up-to-date, skipping npm ci"
-          else
-            npm ci --prefer-offline
-            shasum package-lock.json | awk '{print $1}' > .node_modules.sha
-          fi
+        run: npm ci --prefer-offline
 
       - name: Build Astro site
         run: npm run build 2>&1 | tail -20
