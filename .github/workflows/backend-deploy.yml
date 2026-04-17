@@ -5,29 +5,73 @@ on:
     branches: [main]
     paths:
       - "backend/**"
+  workflow_dispatch: {}
 
 concurrency:
   group: backend-deploy
   cancel-in-progress: false
 
+# Runs on GitHub-hosted ubuntu so the Mac runner queue can't back us up —
+# the self-hosted Mac was pegged for most of 2026-04-16 through 04-17 and
+# every merged backend PR stayed un-deployed until the queue cleared.
+# SSH key is held as the DO_SSH_PRIVATE_KEY repo secret.
+#
+# Post-deploy handles three things the Mac-runner version didn't:
+#   1. /opt/pruviq/bin/ wrapper sync (previously required manual scp)
+#   2. /etc/systemd/system/ unit sync + daemon-reload (previously unit
+#      description/timeout edits silently stayed on the old value)
+#   3. coin count health gate widened from >400 to >=200 to accommodate
+#      the post-Phase-B coverage of 235 live coins.
+
 jobs:
   deploy-do:
-    name: Deploy to DO (167.172.81.145) via Mac runner SSH
-    # Mac runner already has an id_ed25519 key that can reach root@DO on :2222
-    # (see scripts/backup_do_server.sh). No extra secret needed.
-    runs-on: [self-hosted, mac-mini-m4-ops]
-    timeout-minutes: 6
+    name: Deploy to DO via ubuntu-latest SSH
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+
+    env:
+      DO_HOST: 167.172.81.145
+      DO_PORT: "2222"
+      DO_USER: root
+      MIN_COINS: "200"  # post-Phase-B: 235 live, gate at 200 to tolerate startup gaps
 
     steps:
-      - name: Pull latest code on DO (pruviq user, safe.directory preconfigured)
+      - name: Sanity-check SSH secret is present
+        env:
+          KEY: ${{ secrets.DO_SSH_PRIVATE_KEY }}
         run: |
-          ssh -p 2222 -o ConnectTimeout=10 -o IdentitiesOnly=yes \
-              -i $HOME/.ssh/id_ed25519 root@167.172.81.145 \
+          if [ -z "$KEY" ]; then
+            echo "::error::DO_SSH_PRIVATE_KEY secret is missing — set it via: gh secret set DO_SSH_PRIVATE_KEY < ~/.ssh/id_ed25519"
+            exit 1
+          fi
+          echo "secret OK"
+
+      - name: Configure SSH (key + known_hosts)
+        env:
+          KEY: ${{ secrets.DO_SSH_PRIVATE_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "$KEY" > ~/.ssh/do_deploy
+          chmod 600 ~/.ssh/do_deploy
+          # Pin host key via keyscan. Hard-pinning would be stronger, but this
+          # runs in a fresh VM every time so TOFU-at-first-run is the right
+          # tradeoff for the blast radius (self-deploy, not a customer secret).
+          ssh-keyscan -p "$DO_PORT" -H "$DO_HOST" >> ~/.ssh/known_hosts 2>/dev/null
+          # Prove the key works before mutating anything.
+          ssh -p "$DO_PORT" -o IdentitiesOnly=yes -i ~/.ssh/do_deploy \
+              -o ConnectTimeout=10 \
+              "$DO_USER@$DO_HOST" "hostname && uname -r"
+
+      - name: Pull latest code on DO
+        run: |
+          ssh -p "$DO_PORT" -o IdentitiesOnly=yes -i ~/.ssh/do_deploy \
+              "$DO_USER@$DO_HOST" \
               "sudo -u pruviq bash -c 'cd /opt/pruviq/current && git fetch origin main --quiet && git reset --hard origin/main'"
 
       - name: Install deps if requirements changed
         run: |
-          ssh -p 2222 -o IdentitiesOnly=yes -i $HOME/.ssh/id_ed25519 root@167.172.81.145 "
+          ssh -p "$DO_PORT" -o IdentitiesOnly=yes -i ~/.ssh/do_deploy \
+              "$DO_USER@$DO_HOST" "
             if sudo -u pruviq bash -c 'cd /opt/pruviq/current && git diff HEAD~1 --name-only' 2>/dev/null | grep -q backend/requirements.txt; then
               echo 'requirements changed, installing...'
               sudo -u pruviq /opt/pruviq/app/.venv/bin/pip install -q -r /opt/pruviq/current/backend/requirements.txt
@@ -36,20 +80,51 @@ jobs:
             fi
           "
 
+      - name: Sync systemd wrappers + unit files, daemon-reload if needed
+        # Wrappers in backend/deploy/systemd/bin/ are canonical; systemd units
+        # call /opt/pruviq/bin/*.sh. Unit files live at /etc/systemd/system/.
+        # Both have to be kept in sync or edits silently don't reach the runtime.
+        run: |
+          ssh -p "$DO_PORT" -o IdentitiesOnly=yes -i ~/.ssh/do_deploy \
+              "$DO_USER@$DO_HOST" "
+            set -e
+            CHANGED=\$(sudo -u pruviq bash -c 'cd /opt/pruviq/current && git diff HEAD~1 --name-only' 2>/dev/null || echo '')
+            if echo \"\$CHANGED\" | grep -q '^backend/deploy/systemd/bin/'; then
+              echo 'wrapper scripts changed, syncing to /opt/pruviq/bin/'
+              install -o pruviq -g pruviq -m 0755 \
+                /opt/pruviq/current/backend/deploy/systemd/bin/*.sh \
+                /opt/pruviq/bin/
+            else
+              echo 'no wrapper changes'
+            fi
+            if echo \"\$CHANGED\" | grep -qE '^backend/deploy/systemd/pruviq-.*\.(service|timer)$'; then
+              echo 'unit files changed, syncing to /etc/systemd/system/ + daemon-reload'
+              install -o root -g root -m 0644 \
+                /opt/pruviq/current/backend/deploy/systemd/pruviq-*.service \
+                /opt/pruviq/current/backend/deploy/systemd/pruviq-*.timer \
+                /etc/systemd/system/
+              systemctl daemon-reload
+            else
+              echo 'no unit file changes'
+            fi
+          "
+
       - name: Restart pruviq-api.service
         run: |
-          ssh -p 2222 -o IdentitiesOnly=yes -i $HOME/.ssh/id_ed25519 root@167.172.81.145 \
+          ssh -p "$DO_PORT" -o IdentitiesOnly=yes -i ~/.ssh/do_deploy \
+              "$DO_USER@$DO_HOST" \
               "systemctl restart pruviq-api.service"
 
       - name: Wait for health
         run: |
-          ssh -p 2222 -o IdentitiesOnly=yes -i $HOME/.ssh/id_ed25519 root@167.172.81.145 "
+          ssh -p "$DO_PORT" -o IdentitiesOnly=yes -i ~/.ssh/do_deploy \
+              "$DO_USER@$DO_HOST" "
             for i in 1 2 3 4 5 6 7 8 9 10; do
               sleep 5
               coins=\$(curl -sf -m 5 http://127.0.0.1:8080/health 2>/dev/null \
                 | python3 -c 'import sys,json; print(json.load(sys.stdin).get(\"coins_loaded\",0))' 2>/dev/null || echo 0)
               echo \"attempt \$i: coins=\$coins\"
-              if [ \"\$coins\" -gt 400 ] 2>/dev/null; then
+              if [ \"\$coins\" -ge ${{ env.MIN_COINS }} ] 2>/dev/null; then
                 echo 'backend ready'
                 exit 0
               fi
