@@ -90,15 +90,24 @@ Mac crontab is implicit KST (macOS system timezone). DO systemd is UTC. Convert:
 | `0 5 1,15 * *` KST | refresh_tokens | (Mac 전용, SNS 토큰) |
 | `0 * * * *` KST | social/health_check | (Mac 전용, SNS) |
 
-## Migration status
+## Migration status (2026-04-17)
 
-| Unit | Status | Mac cron disabled? |
-|------|--------|--------------------|
-| pruviq-sim-audit | ⏳ first end-to-end | — |
-| pruviq-monitor | pending | — |
-| pruviq-staleness-watch | pending | — |
-| pruviq-refresh-static | pending (5-B: needs Node) | — |
-| pruviq-signal-telegram | pending | — |
-| pruviq-update-ohlcv | pending | — |
-| pruviq-full-pipeline | pending (5-B: needs git push key) | — |
-| pruviq-update-performance | pending (5-B: needs git push key) | — |
+| Unit | Timer | Verified | Mac cron disabled |
+|------|-------|----------|-------------------|
+| pruviq-monitor | ✅ every 5 min | ✅ | ✅ |
+| pruviq-monitor-full | ✅ hourly | ✅ | ✅ |
+| pruviq-staleness-watch | ✅ every 10 min | ✅ | ✅ |
+| pruviq-signal-telegram | ⏸ disabled (backend /signals/live hang, PR #1080 pending) | — | ✅ |
+| pruviq-update-ohlcv | ✅ every 4h :15 | pending first fire | ✅ |
+| pruviq-sim-audit | ⏸ disabled (PR #1078 env fix merged, re-enable after /signals/live stable) | — | — |
+| pruviq-refresh-static | ⏳ Phase 5-B (see PHASE5B_PLAN.md) | — | — |
+| pruviq-full-pipeline | ⏳ Phase 5-B | — | — |
+| pruviq-update-performance | ⏳ Phase 5-B | — | — |
+
+**Related PRs**:
+- #1075 requirements.txt (httpx, Pillow) — MERGED
+- #1078 Phase 5-A systemd timers + sim_audit env override — MERGED
+- #1079 backend-deploy.yml Mac→DO auto-restart — MERGED
+- #1080 signal_scanner.scan() single-flight lock (backend perf fix) — OPEN
+
+**Next session prerequisites**: See `PHASE5B_PLAN.md` for Node 22, swap, CF_TOKEN, deploy key.
