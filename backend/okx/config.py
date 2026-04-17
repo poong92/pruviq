@@ -22,10 +22,14 @@ OKX_ENCRYPTION_KEY = os.environ.get("OKX_ENCRYPTION_KEY", "")
 
 # ── OKX API v5 URLs ──
 OKX_BASE_URL = "https://www.okx.com"
-# OAuth endpoints moved from /api/v5/oauth/* to /account/oauth/* in OKX 2026.
-# Verified 2026-04-17: /account/oauth/authorize → 302, /api/v5/oauth/authorize → 404.
+# OAuth endpoint split (2026-04-17):
+#  - authorize is a browser-visible login/consent page on okx.com: /account/oauth/authorize
+#  - token is the server-to-server OAuth2 endpoint under /v5/users/oauth/ (NO /api/ segment).
+# Both verified live by HTTP probe. Anything under /api/v5/oauth/* is 404.
+# Token endpoint returns OAuth code 53010 ("client_id error") for invalid probes — that's
+# what confirms it's the right endpoint; it's listed in project_jepo_system memory.
 OKX_OAUTH_AUTHORIZE = f"{OKX_BASE_URL}/account/oauth/authorize"
-OKX_OAUTH_TOKEN = f"{OKX_BASE_URL}/account/oauth/token"
+OKX_OAUTH_TOKEN = f"{OKX_BASE_URL}/v5/users/oauth/token"
 
 # ── Demo mode (testnet headers) ──
 OKX_DEMO_MODE = os.environ.get("OKX_DEMO_MODE", "false").lower() == "true"

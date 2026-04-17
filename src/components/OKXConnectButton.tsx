@@ -104,15 +104,20 @@ export default function OKXConnectButton({
       if (!resp.ok) throw new Error(`init failed: ${resp.status}`);
       const p = await resp.json();
 
-      // Build OKX authorize URL (same as OKEXOAuthSDK.authorize() internally)
-      const qs = new URLSearchParams({
+      // Build OKX authorize URL (same as OKEXOAuthSDK.authorize() internally).
+      // channelId is the broker program identifier — without it, OKX silently
+      // drops the authorize request after login and sends the user to
+      // /account/users instead of the consent page (seen 2026-04-17).
+      const authParams: Record<string, string> = {
         client_id: p.client_id,
         response_type: p.response_type,
         access_type: p.access_type,
         scope: p.scope,
         redirect_uri: p.redirect_uri,
         state: p.state,
-      }).toString();
+      };
+      if (p.channelId) authParams.channelId = p.channelId;
+      const qs = new URLSearchParams(authParams).toString();
 
       window.location.assign(`${OKX_OAUTH_BASE}?${qs}`);
     } catch (e) {
