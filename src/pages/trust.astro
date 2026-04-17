@@ -1,0 +1,100 @@
+---
+// Trust Dashboard (Moat-1 of wondrous-weaving-galaxy plan).
+// Shows anonymized execution-quality metrics. No per-user attribution.
+// Backend: /trust/metrics on api.pruviq.com.
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout
+  title="Trust Dashboard — PRUVIQ"
+  description="PRUVIQ publishes anonymized execution-quality metrics for every auto-trade: slippage, SL/TP set-rate, 24h/7d trade counts. Evidence, not claims."
+>
+  <main class="max-w-4xl mx-auto px-4 py-16 md:py-24">
+    <header class="mb-12 text-center">
+      <p class="font-mono text-[--color-accent] text-xs tracking-widest uppercase mb-4">Moat #1</p>
+      <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight mb-4">Trust Dashboard</h1>
+      <p class="text-lg text-[--color-text-secondary] max-w-2xl mx-auto">
+        Every auto-execution logs the gap between its signal price and its actual fill price.
+        We publish the aggregate. No per-user attribution — just evidence.
+      </p>
+    </header>
+
+    <section id="metrics" class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+      <div class="card-enterprise rounded-2xl p-6">
+        <p class="text-xs font-mono text-[--color-text-muted] uppercase mb-2">Trades (24h)</p>
+        <p class="text-4xl font-extrabold" data-metric="trades_24h">—</p>
+      </div>
+      <div class="card-enterprise rounded-2xl p-6">
+        <p class="text-xs font-mono text-[--color-text-muted] uppercase mb-2">Trades (7d)</p>
+        <p class="text-4xl font-extrabold" data-metric="trades_7d">—</p>
+      </div>
+      <div class="card-enterprise rounded-2xl p-6">
+        <p class="text-xs font-mono text-[--color-text-muted] uppercase mb-2">Slippage median</p>
+        <p class="text-4xl font-extrabold" data-metric="slippage_median_pct">—</p>
+        <p class="text-xs text-[--color-text-muted] mt-2">|fill − signal| / signal</p>
+      </div>
+      <div class="card-enterprise rounded-2xl p-6">
+        <p class="text-xs font-mono text-[--color-text-muted] uppercase mb-2">Slippage p90</p>
+        <p class="text-4xl font-extrabold" data-metric="slippage_p90_pct">—</p>
+        <p class="text-xs text-[--color-text-muted] mt-2">worst 10% bound</p>
+      </div>
+      <div class="card-enterprise rounded-2xl p-6 md:col-span-2">
+        <p class="text-xs font-mono text-[--color-text-muted] uppercase mb-2">SL / TP set-rate</p>
+        <p class="text-4xl font-extrabold" data-metric="sl_tp_set_rate">—</p>
+        <p class="text-xs text-[--color-text-muted] mt-2">
+          % of logged trades where OKX accepted our stop-loss + take-profit algo order.
+          Misses trigger the emergency-close path (autotrader lesson L1+).
+        </p>
+      </div>
+    </section>
+
+    <p class="text-xs text-[--color-text-muted] text-center font-mono" data-metric="generated_at">
+      loading…
+    </p>
+
+    <footer class="mt-16 text-sm text-[--color-text-muted] space-y-3 max-w-3xl mx-auto">
+      <p>
+        <strong class="text-[--color-text]">Why we publish this.</strong>
+        Every crypto autotrade platform claims "precise execution." We let you check.
+        Slippage over 0.5% triggers an immediate position close by design
+        (<code class="text-xs px-1 bg-[--color-bg-muted] rounded">_MAX_SLIPPAGE</code> in our executor).
+        If that number walks up over time, you'll see it here first.
+      </p>
+      <p>
+        <strong class="text-[--color-text]">What this isn't.</strong>
+        Not a leaderboard. Not individual user returns. No clickbait.
+      </p>
+    </footer>
+  </main>
+
+  <script is:inline>
+    (async () => {
+      try {
+        const resp = await fetch('https://api.pruviq.com/trust/metrics', { cache: 'no-store' });
+        if (!resp.ok) throw new Error('HTTP ' + resp.status);
+        const data = await resp.json();
+        document.querySelectorAll('[data-metric]').forEach((el) => {
+          const key = el.getAttribute('data-metric');
+          if (!key) return;
+          const v = data[key];
+          if (v === null || v === undefined) {
+            el.textContent = 'N/A';
+            return;
+          }
+          if (key === 'slippage_median_pct' || key === 'slippage_p90_pct') {
+            el.textContent = Number(v).toFixed(3) + '%';
+          } else if (key === 'sl_tp_set_rate') {
+            el.textContent = Number(v).toFixed(1) + '%';
+          } else if (key === 'generated_at') {
+            el.textContent = 'updated ' + String(v).replace('T', ' ');
+          } else {
+            el.textContent = String(v);
+          }
+        });
+      } catch (e) {
+        const genEl = document.querySelector('[data-metric="generated_at"]');
+        if (genEl) genEl.textContent = 'metrics temporarily unavailable';
+      }
+    })();
+  </script>
+</Layout>
