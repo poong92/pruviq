@@ -21,6 +21,7 @@ import httpx
 _refresh_locks: dict[str, asyncio.Lock] = {}
 
 from .config import (
+    OKX_BROKER_CODE,
     OKX_CLIENT_ID,
     OKX_CLIENT_SECRET,
     OKX_OAUTH_AUTHORIZE,
@@ -50,10 +51,16 @@ def generate_auth_url(redirect_after: str = "", lang: str = "en") -> str:
     params = {
         "client_id": OKX_CLIENT_ID,
         "response_type": "code",
+        "access_type": "offline",
         "redirect_uri": OKX_REDIRECT_URI,
         "scope": "read_only,trade",
         "state": state,
     }
+    if OKX_BROKER_CODE:
+        # OKX silently sends users to /account/users (not the consent page)
+        # when channelId is missing on broker-program OAuth. See the
+        # 2026-04-17 investigation note in LESSONS_FROM_AUTOTRADER.md.
+        params["channelId"] = OKX_BROKER_CODE
     return f"{OKX_OAUTH_AUTHORIZE}?{urlencode(params)}"
 
 
@@ -65,7 +72,7 @@ def generate_oauth_params(redirect_after: str = "", lang: str = "en") -> dict:
     """
     state = secrets.token_urlsafe(32)
     save_csrf_state(state, redirect_after or "", lang)
-    return {
+    params = {
         "state": state,
         "client_id": OKX_CLIENT_ID,
         "response_type": "code",
@@ -73,6 +80,11 @@ def generate_oauth_params(redirect_after: str = "", lang: str = "en") -> dict:
         "scope": "read_only,trade",
         "redirect_uri": OKX_REDIRECT_URI,
     }
+    if OKX_BROKER_CODE:
+        # Broker channelId — required for OAuth broker flow, otherwise OKX
+        # drops the authorize request and lands on /account/users after login.
+        params["channelId"] = OKX_BROKER_CODE
+    return params
 
 
 async def exchange_code(code: str, state: str, domain: str = "") -> tuple[str, str, str]:  # domain param kept for router compat

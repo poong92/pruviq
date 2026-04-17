@@ -33,14 +33,18 @@ function OKXDirectConnectButton({
       const resp = await fetch(`${API_BASE}/auth/okx/init?lang=${lang}`);
       if (!resp.ok) throw new Error(`init failed: ${resp.status}`);
       const p = await resp.json();
-      const qs = new URLSearchParams({
+      // channelId (broker code) is required on OKX broker-program OAuth;
+      // without it, /account/oauth/authorize silently lands on /account/users.
+      const authParams: Record<string, string> = {
         client_id: p.client_id,
         response_type: p.response_type,
         access_type: p.access_type,
         scope: p.scope,
         redirect_uri: p.redirect_uri,
         state: p.state,
-      }).toString();
+      };
+      if (p.channelId) authParams.channelId = p.channelId;
+      const qs = new URLSearchParams(authParams).toString();
       window.location.assign(`${OKX_OAUTH_BASE}?${qs}`);
     } catch (e) {
       console.error("OKX OAuth init failed:", e);
