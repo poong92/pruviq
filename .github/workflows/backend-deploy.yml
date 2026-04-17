@@ -80,33 +80,26 @@ jobs:
             fi
           "
 
-      - name: Sync systemd wrappers + unit files, daemon-reload if needed
-        # Wrappers in backend/deploy/systemd/bin/ are canonical; systemd units
-        # call /opt/pruviq/bin/*.sh. Unit files live at /etc/systemd/system/.
-        # Both have to be kept in sync or edits silently don't reach the runtime.
+      - name: Sync systemd wrappers + unit files unconditionally
+        # Wrappers live at backend/deploy/systemd/bin/ (canonical) but systemd
+        # executes /opt/pruviq/bin/*.sh; unit files at /etc/systemd/system/.
+        # The earlier version of this step used `git diff HEAD~1` to decide
+        # whether to copy, which silently skipped everything on catch-up runs
+        # that merge several commits before dispatch. `install(1)` + daemon-reload
+        # are cheap and idempotent, so we just run them every time.
         run: |
           ssh -p "$DO_PORT" -o IdentitiesOnly=yes -i ~/.ssh/do_deploy \
               "$DO_USER@$DO_HOST" "
             set -e
-            CHANGED=\$(sudo -u pruviq bash -c 'cd /opt/pruviq/current && git diff HEAD~1 --name-only' 2>/dev/null || echo '')
-            if echo \"\$CHANGED\" | grep -q '^backend/deploy/systemd/bin/'; then
-              echo 'wrapper scripts changed, syncing to /opt/pruviq/bin/'
-              install -o pruviq -g pruviq -m 0755 \
-                /opt/pruviq/current/backend/deploy/systemd/bin/*.sh \
-                /opt/pruviq/bin/
-            else
-              echo 'no wrapper changes'
-            fi
-            if echo \"\$CHANGED\" | grep -qE '^backend/deploy/systemd/pruviq-.*\.(service|timer)$'; then
-              echo 'unit files changed, syncing to /etc/systemd/system/ + daemon-reload'
-              install -o root -g root -m 0644 \
-                /opt/pruviq/current/backend/deploy/systemd/pruviq-*.service \
-                /opt/pruviq/current/backend/deploy/systemd/pruviq-*.timer \
-                /etc/systemd/system/
-              systemctl daemon-reload
-            else
-              echo 'no unit file changes'
-            fi
+            install -o pruviq -g pruviq -m 0755 \
+              /opt/pruviq/current/backend/deploy/systemd/bin/*.sh \
+              /opt/pruviq/bin/
+            install -o root -g root -m 0644 \
+              /opt/pruviq/current/backend/deploy/systemd/pruviq-*.service \
+              /opt/pruviq/current/backend/deploy/systemd/pruviq-*.timer \
+              /etc/systemd/system/
+            systemctl daemon-reload
+            echo 'wrapper + unit sync + daemon-reload done'
           "
 
       - name: Restart pruviq-api.service
