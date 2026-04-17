@@ -10,7 +10,7 @@ from typing import Optional
 
 from .client import OKXClient
 from .models import SimToExecRequest
-from .oauth import get_valid_token
+from .oauth import get_api_credentials
 
 logger = logging.getLogger("okx_orders")
 
@@ -97,12 +97,12 @@ async def execute_from_simulation(
     rejects duplicate submissions — use a deterministic hash of the source
     signal to make retries safe.
     """
-    token = await get_valid_token(session_id)
+    creds = get_api_credentials(session_id)
     inst_id = _pruviq_to_okx_inst_id(req.symbol)
     side = "sell" if req.direction == "short" else "buy"
     td_mode = req.td_mode if req.td_mode in ("isolated", "cross") else "isolated"
 
-    async with OKXClient(token, session_id=session_id) as client:
+    async with OKXClient(**creds) as client:
         # Auto-fetch mark price if not supplied (or zero)
         if not current_price or current_price <= 0:
             logger.warning(

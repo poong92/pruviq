@@ -25,7 +25,7 @@ import time
 from typing import Optional
 
 from .client import OKXClient
-from .oauth import get_valid_token, is_authenticated
+from .oauth import get_api_credentials, is_authenticated
 from .orders import _pruviq_to_okx_inst_id
 from .settings import get_auto_sessions, get_settings, get_trade_log, save_settings
 from .storage import _get_conn
@@ -90,8 +90,8 @@ async def reconcile_positions(session_id: str) -> None:
         return
 
     try:
-        token = await get_valid_token(session_id)
-        async with OKXClient(token, session_id=session_id) as client:
+        creds = get_api_credentials(session_id)
+        async with OKXClient(**creds) as client:
             okx_positions = await client.get_positions()
     except Exception as e:
         logger.error("Reconcile: fetch positions failed for %s: %s", session_id[:8], e)

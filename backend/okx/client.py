@@ -1,12 +1,18 @@
 """
-OKX API client — OAuth Bearer token based.
+OKX API client — HMAC API key auth (Fast API flow).
 All orders include broker tag for commission tracking.
 """
 from __future__ import annotations
 
+import base64
+import hashlib
+import hmac
+import json
 import logging
 import time
+from datetime import datetime, timezone
 from typing import Any
+from urllib.parse import urlencode
 
 import httpx
 
@@ -15,37 +21,49 @@ from .models import BalanceInfo, PositionInfo
 
 logger = logging.getLogger("okx_client")
 
-# ── Instrument spec cache (24h TTL, shared across all client instances) ──
 _instrument_cache: dict[str, dict] = {}
 _instrument_cache_ts: dict[str, float] = {}
 _INSTRUMENT_CACHE_TTL = 24 * 3600
 
 
-class OKXClient:
-    """OAuth token-based OKX API client."""
+def _okx_timestamp() -> str:
+    return datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z'
 
-    def __init__(self, access_token: str, session_id: str = ""):
-        self.access_token = access_token
-        self.session_id = session_id  # used for 53002 auto-retry
+
+def _sign(secret_key: str, timestamp: str, method: str, request_path: str, body: str = "") -> str:
+    message = timestamp + method.upper() + request_path + body
+    mac = hmac.new(secret_key.encode(), message.encode(), hashlib.sha256)
+    return base64.b64encode(mac.digest()).decode()
+
+
+class OKXClient:
+    """HMAC API key-based OKX client (Fast API flow)."""
+
+    def __init__(self, api_key: str, secret_key: str, passphrase: str, demo: bool | None = None):
+        self.api_key = api_key
+        self.secret_key = secret_key
+        self.passphrase = passphrase
+        self.demo = OKX_DEMO_MODE if demo is None else demo
         self.base_url = OKX_BASE_URL
         self.broker_code = OKX_BROKER_CODE
-        self._client = httpx.AsyncClient(
-            base_url=self.base_url,
-            timeout=10,
-            headers=self._default_headers(),
-        )
+        self._http = httpx.AsyncClient(base_url=self.base_url, timeout=10)
 
-    def _default_headers(self) -> dict[str, str]:
+    def _auth_headers(self, method: str, path: str, body: str = "") -> dict[str, str]:
+        ts = _okx_timestamp()
+        sign = _sign(self.secret_key, ts, method, path, body)
         headers = {
-            "Authorization": f"Bearer {self.access_token}",
+            "OK-ACCESS-KEY": self.api_key,
+            "OK-ACCESS-SIGN": sign,
+            "OK-ACCESS-TIMESTAMP": ts,
+            "OK-ACCESS-PASSPHRASE": self.passphrase,
             "Content-Type": "application/json",
         }
-        if OKX_DEMO_MODE:
+        if self.demo:
             headers["x-simulated-trading"] = "1"
         return headers
 
     async def close(self):
-        await self._client.aclose()
+        await self._http.aclose()
 
     async def __aenter__(self):
         return self
@@ -53,55 +71,28 @@ class OKXClient:
     async def __aexit__(self, *args):
         await self.close()
 
-    async def _refresh_token_and_update(self) -> bool:
-        """Refresh access token after 53002. Returns True if successful."""
-        if not self.session_id:
-            return False
-        try:
-            from .oauth import refresh_access_token
-            logger.warning("→ 53002 detected — refreshing token for session %s", self.session_id[:8])
-            new_token = await refresh_access_token(self.session_id)
-            self.access_token = new_token
-            self._client.headers["Authorization"] = f"Bearer {new_token}"
-            logger.warning("← Token refreshed successfully")
-            return True
-        except Exception as e:
-            logger.error("Token refresh after 53002 failed: %s", e)
-            return False
-
-    # ── GET ─────────────────────────────────────────
-
     async def _get(self, path: str, params: dict | None = None) -> dict[str, Any]:
-        for attempt in range(2):
-            resp = await self._client.get(path, params=params)
-            resp.raise_for_status()
-            data = resp.json()
-            code = data.get("code")
-            if code == "53002" and attempt == 0:
-                if await self._refresh_token_and_update():
-                    continue  # retry once with new token
-            if code != "0":
-                logger.error("OKX API error: %s %s", code, data.get("msg"))
-                raise ValueError(f"OKX API error {code}: {data.get('msg')}")
-            return data
-        raise ValueError("OKX API: max retries exceeded")
+        qs = ("?" + urlencode(params)) if params else ""
+        full_path = path + qs
+        headers = self._auth_headers("GET", full_path)
+        resp = await self._http.get(path, params=params, headers=headers)
+        resp.raise_for_status()
+        data = resp.json()
+        if data.get("code") != "0":
+            logger.error("OKX API error: %s %s", data.get("code"), data.get("msg"))
+            raise ValueError(f"OKX API error {data.get('code')}: {data.get('msg')}")
+        return data
 
-    # ── POST ────────────────────────────────────────
-
-    async def _post(self, path: str, body: dict) -> dict[str, Any]:
-        for attempt in range(2):
-            resp = await self._client.post(path, json=body)
-            resp.raise_for_status()
-            data = resp.json()
-            code = data.get("code")
-            if code == "53002" and attempt == 0:
-                if await self._refresh_token_and_update():
-                    continue
-            if code != "0":
-                logger.error("OKX API error: %s %s", code, data.get("msg"))
-                raise ValueError(f"OKX API error {code}: {data.get('msg')}")
-            return data
-        raise ValueError("OKX API: max retries exceeded")
+    async def _post(self, path: str, body: dict | list) -> dict[str, Any]:
+        body_str = json.dumps(body)
+        headers = self._auth_headers("POST", path, body_str)
+        resp = await self._http.post(path, content=body_str, headers=headers)
+        resp.raise_for_status()
+        data = resp.json()
+        if data.get("code") != "0":
+            logger.error("OKX API error: %s %s", data.get("code"), data.get("msg"))
+            raise ValueError(f"OKX API error {data.get('code')}: {data.get('msg')}")
+        return data
 
     # ── Account ─────────────────────────────────────
 
@@ -140,14 +131,6 @@ class OKXClient:
         ]
 
     async def get_instrument_info(self, inst_id: str) -> dict:
-        """
-        Fetch instrument spec (ctVal, minSz, lotSz) for OKX SWAP contracts.
-        Cached 24h — safe to call on every order.
-
-        ctVal: base currency per contract (e.g. BTC-USDT-SWAP → 0.01 BTC)
-        minSz: minimum order size in contracts (usually 1)
-        lotSz: lot size / tick (usually 1 for SWAP)
-        """
         now = time.time()
         if inst_id in _instrument_cache:
             if now - _instrument_cache_ts.get(inst_id, 0) < _INSTRUMENT_CACHE_TTL:
@@ -163,9 +146,9 @@ class OKXClient:
 
         item = items[0]
         info = {
-            "ctVal": float(item.get("ctVal", "1")),    # base currency per contract
-            "minSz": float(item.get("minSz", "1")),    # minimum contracts
-            "lotSz": float(item.get("lotSz", "1")),    # lot size
+            "ctVal": float(item.get("ctVal", "1")),
+            "minSz": float(item.get("minSz", "1")),
+            "lotSz": float(item.get("lotSz", "1")),
             "settleCcy": item.get("settleCcy", "USDT"),
         }
         _instrument_cache[inst_id] = info
@@ -174,7 +157,6 @@ class OKXClient:
         return info
 
     async def get_mark_price(self, inst_id: str) -> float:
-        """OKX public mark price — used for position sizing without user-supplied price."""
         logger.warning("→ GET mark-price instId=%s", inst_id)
         data = await self._get("/api/v5/public/mark-price", {
             "instType": "SWAP", "instId": inst_id,
@@ -187,7 +169,6 @@ class OKXClient:
         return px
 
     async def get_positions_history(self, inst_type: str = "SWAP", limit: str = "20") -> list[dict]:
-        """Closed position history — realized PnL source."""
         data = await self._get("/api/v5/account/positions-history", {
             "instType": inst_type, "limit": limit,
         })
@@ -202,7 +183,6 @@ class OKXClient:
         mgn_mode: str = "isolated",
         pos_side: str = "",
     ) -> dict[str, Any]:
-        """Set leverage for an instrument before placing orders."""
         body: dict[str, Any] = {
             "instId": inst_id,
             "lever": str(lever),
@@ -226,14 +206,6 @@ class OKXClient:
         td_mode: str = "isolated",
         cl_ord_id: str | None = None,
     ) -> dict[str, str]:
-        """Place a trade order.
-
-        cl_ord_id: client-supplied order ID for idempotency. OKX v5
-        /api/v5/trade/order rejects duplicate clOrdId values — pass a
-        deterministic hash of the triggering signal to prevent double
-        submission across retries/restarts. Must match OKX format:
-        [A-Za-z0-9_]{1,32}.
-        """
         body: dict[str, Any] = {
             "instId": inst_id,
             "tdMode": td_mode,
@@ -267,7 +239,6 @@ class OKXClient:
         tp_ord_px: str = "-1",
         td_mode: str = "isolated",
     ) -> dict[str, Any]:
-        """SL/TP conditional algo order."""
         body: dict[str, Any] = {
             "instId": inst_id,
             "tdMode": td_mode,
@@ -302,14 +273,6 @@ class OKXClient:
     async def cancel_algo_orders(
         self, algo_ids: list[str], inst_id: str
     ) -> dict[str, Any]:
-        """Cancel one or more algo (SL/TP) orders. Used for cancel-first pattern
-        before user-initiated close to prevent double-fill: otherwise the market
-        close and a racing SL/TP trigger can both execute and open a reversed
-        position. autotrader lesson L6.
-
-        OKX batch endpoint: /api/v5/trade/cancel-algos takes list-of-dicts body.
-        Returns the raw response; callers should tolerate partial success.
-        """
         if not algo_ids:
             return {"code": "0", "data": []}
         body = [{"algoId": aid, "instId": inst_id} for aid in algo_ids if aid]
@@ -331,11 +294,6 @@ class OKXClient:
         return result
 
     async def get_order_fill_price(self, inst_id: str, ord_id: str) -> float:
-        """
-        Query actual fill price (avgPx) for a completed market order.
-        Industry standard: SL/TP must be set relative to actual fill, not signal price.
-        Raises ValueError if order not yet filled or avgPx unavailable.
-        """
         data = await self._get("/api/v5/trade/order", {"instId": inst_id, "ordId": ord_id})
         orders = data.get("data", [])
         if not orders:
