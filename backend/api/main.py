@@ -523,6 +523,43 @@ async def rate_limit_middleware(request: Request, call_next):
     return await call_next(request)
 
 
+# ── Data Freshness SLO (Moat-3) ──────────────────────────────────────
+# Advertise how old the canonical market snapshot is on every response. A
+# monitoring system can alert on max_over_time(data_age[10m]) > 900, and
+# the UI can show a staleness indicator so users never trust a frozen number.
+#
+# Single source: public/data/market.json mtime. refresh_static refreshes
+# this file every 20 minutes; anything > ~1h is almost certainly the refresh
+# pipeline being broken.
+
+_MARKET_FILE = Path(__file__).parent.parent.parent / "public" / "data" / "market.json"
+_freshness_cache: dict = {"mtime": 0.0, "ts": 0.0}
+_FRESHNESS_CACHE_TTL = 30.0  # stat() syscall throttle
+
+
+def _get_data_age_seconds() -> int | None:
+    now = time.time()
+    if (now - _freshness_cache["ts"]) < _FRESHNESS_CACHE_TTL and _freshness_cache["mtime"] > 0:
+        return max(0, int(now - _freshness_cache["mtime"]))
+    try:
+        mtime = _MARKET_FILE.stat().st_mtime
+    except OSError:
+        return None
+    _freshness_cache["mtime"] = mtime
+    _freshness_cache["ts"] = now
+    return max(0, int(now - mtime))
+
+
+@app.middleware("http")
+async def data_freshness_header_middleware(request: Request, call_next):
+    """Attach X-Data-Age-Seconds to every response (Moat-3)."""
+    response = await call_next(request)
+    age = _get_data_age_seconds()
+    if age is not None:
+        response.headers["X-Data-Age-Seconds"] = str(age)
+    return response
+
+
 # --- Cache ---
 
 def cache_key(req: SimulationRequest) -> str:
