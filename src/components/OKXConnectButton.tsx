@@ -12,7 +12,9 @@ interface Props {
   showCard?: boolean;
 }
 
-const OKX_OAUTH_BASE = "https://www.okx.com/api/v5/oauth/authorize";
+// OKX moved OAuth endpoint from /api/v5/oauth/* to /account/oauth/* in 2026.
+// Old path now returns 404.
+const OKX_OAUTH_BASE = "https://www.okx.com/account/oauth/authorize";
 
 const labels = {
   en: {
