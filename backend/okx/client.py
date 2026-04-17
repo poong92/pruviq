@@ -299,6 +299,27 @@ class OKXClient:
         logger.warning("← cancel-order done")
         return result
 
+    async def cancel_algo_orders(
+        self, algo_ids: list[str], inst_id: str
+    ) -> dict[str, Any]:
+        """Cancel one or more algo (SL/TP) orders. Used for cancel-first pattern
+        before user-initiated close to prevent double-fill: otherwise the market
+        close and a racing SL/TP trigger can both execute and open a reversed
+        position. autotrader lesson L6.
+
+        OKX batch endpoint: /api/v5/trade/cancel-algos takes list-of-dicts body.
+        Returns the raw response; callers should tolerate partial success.
+        """
+        if not algo_ids:
+            return {"code": "0", "data": []}
+        body = [{"algoId": aid, "instId": inst_id} for aid in algo_ids if aid]
+        if not body:
+            return {"code": "0", "data": []}
+        logger.warning("→ cancel-algos count=%d instId=%s", len(body), inst_id)
+        result = await self._post("/api/v5/trade/cancel-algos", body)
+        logger.warning("← cancel-algos done instId=%s", inst_id)
+        return result
+
     async def close_position(self, inst_id: str, mgn_mode: str = "isolated") -> dict[str, Any]:
         logger.warning("→ close-position instId=%s mgnMode=%s", inst_id, mgn_mode)
         result = await self._post("/api/v5/trade/close-position", {
