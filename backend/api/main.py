@@ -2068,13 +2068,53 @@ def _cg_get(url: str, timeout: int = 10, max_retries: int = 5, raise_on_fail: bo
 
 _news_cache: Optional[dict] = None
 
-# --- Binance Spot live ticker (30s TTL) + Futures fallback ---
+# --- Market tickers: OKX primary, Binance fallback, CoinGecko last resort ---
+# Binance fapi/v1 is geo-blocked from both Korean IPs and DO Singapore (HTTP 451).
+# We previously fronted it with a Mac/CF proxy; both became unreliable after
+# Binance started rejecting Cloudflare edge IPs too. The OKX /market/tickers
+# endpoint is reachable from DO and returns equivalent 24h snapshot data, so
+# it's now primary; Binance direct stays as a fallback for when OKX is down.
 BINANCE_SPOT_URL = "https://api.binance.com/api/v3/ticker/24hr"
 BINANCE_FUTURES_URL = "https://fapi.binance.com/fapi/v1/ticker/24hr"
-# DO server proxy via Tailscale for Korean IP bypass (fapi v1 geo-blocked from KR)
-BINANCE_PROXY_URL = os.environ.get("BINANCE_PROXY_URL", "http://100.122.203.78:9090/fapi/v1/ticker/24hr")
-_binance_proxy_key = os.environ.get("BINANCE_PROXY_KEY", "")
-BINANCE_PROXY_HEADERS = {"X-Proxy-Key": _binance_proxy_key} if _binance_proxy_key else {}
+OKX_TICKERS_URL = "https://www.okx.com/api/v5/market/tickers?instType=SWAP"
+
+
+def _fetch_okx_tickers_binance_shape() -> list[dict]:
+    """Fetch OKX USDT-SWAP tickers and reshape them to match the Binance
+    fapi/v1 24hr ticker schema that the rest of this module consumes.
+
+    Returned fields per entry: symbol (BTCUSDT), lastPrice, priceChangePercent,
+    quoteVolume. Empty list on any error — callers already fall back further.
+    """
+    try:
+        resp = http_requests.get(OKX_TICKERS_URL, timeout=8)
+        resp.raise_for_status()
+        data = resp.json()
+    except Exception as e:
+        logger.warning(f"OKX tickers fetch failed: {e}")
+        return []
+    if data.get("code") != "0":
+        logger.warning(f"OKX tickers error: {data.get('code')} {data.get('msg')}")
+        return []
+    out: list[dict] = []
+    for t in data.get("data", []):
+        inst_id = t.get("instId", "")
+        if not inst_id.endswith("-USDT-SWAP"):
+            continue
+        symbol = inst_id.removesuffix("-USDT-SWAP") + "USDT"
+        try:
+            last = float(t["last"])
+            open24h = float(t.get("open24h") or 0)
+            pct = ((last - open24h) / open24h * 100.0) if open24h else 0.0
+            out.append({
+                "symbol": symbol,
+                "lastPrice": str(last),
+                "priceChangePercent": f"{pct:.4f}",
+                "quoteVolume": t.get("volCcy24h") or "0",
+            })
+        except (TypeError, ValueError):
+            continue
+    return out
 _live_spot_cache: Optional[dict] = None
 _live_spot_ts: float = 0.0
 _live_spot_lock = asyncio.Lock()
@@ -2138,13 +2178,10 @@ def _fetch_binance_tickers() -> tuple:
     Falls back to CoinGecko if Binance fails.
     """
     try:
-        # Try direct first, fallback to DO proxy (Korean IP workaround)
-        try:
+        # OKX primary (reachable from DO), Binance direct as fallback
+        tickers = _fetch_okx_tickers_binance_shape()
+        if not tickers:
             resp = http_requests.get(BINANCE_FUTURES_URL, timeout=5)
-            resp.raise_for_status()
-            tickers = resp.json()
-        except Exception:
-            resp = http_requests.get(BINANCE_PROXY_URL, timeout=15, headers=BINANCE_PROXY_HEADERS)
             resp.raise_for_status()
             tickers = resp.json()
 
@@ -2451,18 +2488,17 @@ def _fetch_spot_tickers() -> list:
 
 
 def _fetch_futures_tickers() -> list:
-    """Fetch Futures tickers for Spot-missing coins. Weight 40 per call."""
+    """Fetch futures-style tickers for Spot-missing coins.
+    OKX primary (DO-reachable), Binance direct as fallback."""
+    tickers = _fetch_okx_tickers_binance_shape()
+    if tickers:
+        return tickers
     try:
-        try:
-            resp = http_requests.get(BINANCE_FUTURES_URL, timeout=5)
-            resp.raise_for_status()
-            return resp.json()
-        except Exception:
-            resp = http_requests.get(BINANCE_PROXY_URL, timeout=15, headers=BINANCE_PROXY_HEADERS)
-            resp.raise_for_status()
-            return resp.json()
+        resp = http_requests.get(BINANCE_FUTURES_URL, timeout=5)
+        resp.raise_for_status()
+        return resp.json()
     except Exception as e:
-        logger.warning(f"Binance Futures fallback fetch: {e}")
+        logger.warning(f"Futures ticker fallback (OKX+Binance both failed): {e}")
         return []
 
 
