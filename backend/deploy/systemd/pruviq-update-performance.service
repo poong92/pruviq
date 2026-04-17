@@ -1,0 +1,17 @@
+[Unit]
+Description=PRUVIQ Performance Snapshot (autotrader trades → performance.json → git push)
+After=network-online.target pruviq-api.service
+Wants=network-online.target
+OnFailure=pruviq-alert@%n.service
+
+[Service]
+Type=oneshot
+User=pruviq
+Group=pruviq
+WorkingDirectory=/opt/pruviq/current
+EnvironmentFile=/opt/pruviq/shared/.env
+Environment=GIT_SSH_COMMAND=ssh -i /opt/pruviq/.ssh/id_ed25519 -o IdentitiesOnly=yes -o UserKnownHostsFile=/opt/pruviq/.ssh/known_hosts
+ExecStart=/opt/pruviq/bin/update-performance.sh
+StandardOutput=journal
+StandardError=journal
+TimeoutStartSec=300
