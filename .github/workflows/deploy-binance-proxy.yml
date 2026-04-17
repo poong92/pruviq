@@ -1,17 +1,17 @@
 name: "Deploy binance-proxy Worker"
 
-# Manually dispatched — this is a one-time / occasional workflow, not
-# triggered on every push. Run it from the Actions tab:
-#   https://github.com/pruviq/pruviq/actions/workflows/deploy-binance-proxy.yml
+# Manually dispatched. Runs on ubuntu-latest (GitHub-hosted) so the
+# self-hosted Mac runner queue never blocks this — wrangler needs no
+# special env beyond CF_TOKEN + CF_ACCOUNT_ID, both already repo secrets.
 #
 # Required repo secrets:
 #   CLOUDFLARE_API_TOKEN   (already set)
 #   CLOUDFLARE_ACCOUNT_ID  (already set)
 #   PROXY_KEY              (owner action: create + add this before first run)
 #
-# After a successful run, the Mac runner will also push the same PROXY_KEY
-# to DO /opt/pruviq/shared/.env as BINANCE_PROXY_KEY so the backend can
-# authenticate to the Worker.
+# After a successful run, the workflow prints the .workers.dev URL. DO's
+# /opt/pruviq/shared/.env is updated by a separate step outside CI
+# (kept out of this workflow so it has no need for any SSH secret).
 
 on:
   workflow_dispatch: {}
@@ -22,9 +22,7 @@ concurrency:
 
 jobs:
   deploy:
-    # Mac runner is used so we can also ssh to DO with the existing
-    # id_ed25519 key and keep PROXY_KEY aligned across CF Worker and DO .env.
-    runs-on: [self-hosted, mac-mini-m4-ops]
+    runs-on: ubuntu-latest
     timeout-minutes: 10
 
     steps:
@@ -46,74 +44,41 @@ jobs:
           fi
           echo "secrets OK"
 
-      - name: Install wrangler (via existing repo node_modules)
-        run: |
-          cd workers/binance-proxy
-          # Use the repo-root wrangler already pinned by package-lock
-          ln -sf ../../node_modules ./node_modules || true
-          ../../node_modules/.bin/wrangler --version || {
-            echo "repo-root wrangler missing — installing locally"
-            npm install wrangler --no-save
-          }
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install wrangler (standalone — avoids full repo npm ci)
+        run: npm install -g wrangler@latest
 
       - name: Push PROXY_KEY to the Worker
+        working-directory: workers/binance-proxy
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           PROXY_KEY: ${{ secrets.PROXY_KEY }}
-        run: |
-          cd workers/binance-proxy
-          # `wrangler secret put` reads from stdin non-interactively when
-          # a value is piped in.
-          printf '%s' "$PROXY_KEY" | ../../node_modules/.bin/wrangler secret put PROXY_KEY
+        run: printf '%s' "$PROXY_KEY" | wrangler secret put PROXY_KEY
 
       - name: Deploy Worker
         id: deploy
+        working-directory: workers/binance-proxy
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
-          cd workers/binance-proxy
-          ../../node_modules/.bin/wrangler deploy 2>&1 | tee /tmp/wrangler-out.txt
-          # Pull out the deployed URL so subsequent steps/log readers have it
+          wrangler deploy 2>&1 | tee /tmp/wrangler-out.txt
           url=$(grep -Eo 'https://[A-Za-z0-9.-]+\.workers\.dev' /tmp/wrangler-out.txt | head -1)
           echo "worker_url=$url" >> "$GITHUB_OUTPUT"
+          echo "::notice::Worker deployed at $url"
           echo "worker URL: $url"
-
-      - name: Update DO .env with matching BINANCE_PROXY_KEY + _URL
-        env:
-          PROXY_KEY: ${{ secrets.PROXY_KEY }}
-          WORKER_URL: ${{ steps.deploy.outputs.worker_url }}
-        run: |
-          [ -z "$WORKER_URL" ] && { echo "::error::wrangler output did not include a workers.dev URL"; exit 1; }
-          ssh -p 2222 -o ConnectTimeout=10 -o IdentitiesOnly=yes \
-              -i "$HOME/.ssh/id_ed25519" root@167.172.81.145 "
-            set -e
-            ENV=/opt/pruviq/shared/.env
-            cp \$ENV \$ENV.bak.\$(date +%s)
-            # Replace or append BINANCE_PROXY_KEY
-            if grep -q '^BINANCE_PROXY_KEY=' \$ENV; then
-              sed -i 's|^BINANCE_PROXY_KEY=.*|BINANCE_PROXY_KEY=$PROXY_KEY|' \$ENV
-            else
-              echo 'BINANCE_PROXY_KEY=$PROXY_KEY' >> \$ENV
-            fi
-            # Replace or append BINANCE_PROXY_URL
-            if grep -q '^BINANCE_PROXY_URL=' \$ENV; then
-              sed -i 's|^BINANCE_PROXY_URL=.*|BINANCE_PROXY_URL=$WORKER_URL|' \$ENV
-            else
-              echo 'BINANCE_PROXY_URL=$WORKER_URL' >> \$ENV
-            fi
-            # Do NOT systemctl restart here — let the next backend/** push do
-            # it atomically so users don't see two restarts in a row.
-            echo '=== updated .env keys ==='
-            grep -E '^BINANCE_PROXY_(URL|KEY)=' \$ENV | sed 's|\(KEY=\).*|\1***|'
-          "
 
       - name: Smoke test Worker
         env:
           PROXY_KEY: ${{ secrets.PROXY_KEY }}
           WORKER_URL: ${{ steps.deploy.outputs.worker_url }}
         run: |
+          [ -z "$WORKER_URL" ] && { echo "::error::wrangler output did not include a workers.dev URL"; exit 1; }
           status=$(curl -s -o /tmp/proxy-smoke.json -w '%{http_code}' -m 10 \
                    -H "X-Proxy-Key: $PROXY_KEY" \
                    "$WORKER_URL/fapi/v1/premiumIndex?symbol=BTCUSDT")
