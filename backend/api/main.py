@@ -149,7 +149,16 @@ def _refresh_data():
 
 
 async def _okx_auto_trading_loop():
-    """Check signals and auto-execute for subscribed users every 5 minutes."""
+    """Check signals and auto-execute for subscribed users.
+
+    Interval defaults to 300s (Mac-era default) but can be lengthened on
+    constrained hosts via OKX_AUTO_TRADE_INTERVAL_SEC. On DO 2vCPU the
+    scan itself is CPU-heavy (see signal_scanner.scan); running it every
+    5 minutes starves the API event loop. 900s cuts that cost by 3× with
+    no change to signal quality (candles are hourly).
+    """
+    interval_sec = max(60, int(os.environ.get("OKX_AUTO_TRADE_INTERVAL_SEC", "300")))
+    logger.info("OKX auto-trading loop interval = %ds", interval_sec)
     await asyncio.sleep(30)  # Wait for data load
     while True:
         try:
@@ -162,7 +171,7 @@ async def _okx_auto_trading_loop():
             raise
         except Exception as e:
             logger.warning(f"OKX auto-trading loop error: {e}")
-        await asyncio.sleep(300)  # 5 minutes
+        await asyncio.sleep(interval_sec)
 
 
 async def _okx_token_refresh_loop():

@@ -6,6 +6,7 @@ Used by /signals/live API endpoint.
 """
 
 import logging
+import os
 import threading
 import time
 from datetime import datetime, timezone
@@ -17,6 +18,17 @@ from api.data_manager import DataManager
 from src.strategies.registry import STRATEGY_REGISTRY, get_strategy
 
 logger = logging.getLogger("pruviq")
+
+
+def _allowed_statuses() -> set[str]:
+    """SIGNAL_SCANNER_STATUSES env = comma-separated list.
+
+    Defaults to {'verified','research'} for backcompat. On DO set to
+    'verified' only — halves the scan cost without affecting live users who
+    care about proven strategies."""
+    raw = os.environ.get("SIGNAL_SCANNER_STATUSES", "verified,research")
+    statuses = {s.strip().lower() for s in raw.split(",") if s.strip()}
+    return statuses or {"verified", "research"}
 
 
 class SignalScanner:
@@ -64,10 +76,11 @@ class SignalScanner:
         scan_started = time.time()
         signals = []
         top_coins = self._get_top_coins()
+        allowed = _allowed_statuses()
 
         for strategy_id, entry in STRATEGY_REGISTRY.items():
             status = entry.get("status", "research")
-            if status not in ("verified", "research"):
+            if status not in allowed:
                 continue
 
             try:
