@@ -22,8 +22,10 @@ OKX_ENCRYPTION_KEY = os.environ.get("OKX_ENCRYPTION_KEY", "")
 
 # ── OKX API v5 URLs ──
 OKX_BASE_URL = "https://www.okx.com"
-OKX_OAUTH_AUTHORIZE = f"{OKX_BASE_URL}/api/v5/oauth/authorize"
-OKX_OAUTH_TOKEN = f"{OKX_BASE_URL}/api/v5/oauth/token"
+# OAuth endpoints moved from /api/v5/oauth/* to /account/oauth/* in OKX 2026.
+# Verified 2026-04-17: /account/oauth/authorize → 302, /api/v5/oauth/authorize → 404.
+OKX_OAUTH_AUTHORIZE = f"{OKX_BASE_URL}/account/oauth/authorize"
+OKX_OAUTH_TOKEN = f"{OKX_BASE_URL}/account/oauth/token"
 
 # ── Demo mode (testnet headers) ──
 OKX_DEMO_MODE = os.environ.get("OKX_DEMO_MODE", "false").lower() == "true"

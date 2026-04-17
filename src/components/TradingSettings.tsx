@@ -14,8 +14,9 @@ import { API_BASE_URL as API_BASE } from "../config/api";
 interface Props {
   lang?: "en" | "ko";
 }
-// Must match backend okx/config.py OKX_OAUTH_AUTHORIZE
-const OKX_OAUTH_BASE = "https://www.okx.com/api/v5/oauth/authorize";
+// Must match backend okx/config.py OKX_OAUTH_AUTHORIZE.
+// OKX moved OAuth endpoint from /api/v5/oauth/* to /account/oauth/* in 2026.
+const OKX_OAUTH_BASE = "https://www.okx.com/account/oauth/authorize";
 
 function OKXDirectConnectButton({
   lang,
