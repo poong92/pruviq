@@ -223,14 +223,27 @@ async def run(args: argparse.Namespace) -> int:
     seed_targets = [s for s in new_syms if s in okx_syms and s not in existing_syms]
     skipped_new = [s for s in new_syms if s not in okx_syms]
 
+    # Purge off-coverage CSVs. Default on — keeps DataManager's loaded set in
+    # sync with OKX coverage. Opt out with --keep-off-coverage if you need to
+    # preserve a legacy file for analysis.
+    purged = 0
+    if off_coverage and not args.keep_off_coverage and not args.dry_run:
+        for s in off_coverage:
+            csv_path = data_dir / f"{s.lower()}_1h.csv"
+            if csv_path.exists():
+                csv_path.unlink()
+                purged += 1
+
     print(
         f"update-plan: {len(targets_update)} existing, "
         f"{len(seed_targets)} new seeds, "
-        f"{len(off_coverage)} off-coverage (skip), "
+        f"{len(off_coverage)} off-coverage ({'purged' if purged else 'skip' if args.keep_off_coverage else 'dry'}), "
         f"{len(skipped_new)} requested-but-not-on-OKX"
     )
     if off_coverage:
         print(f"  off-coverage sample: {off_coverage[:10]}{'...' if len(off_coverage) > 10 else ''}")
+        if purged:
+            print(f"  purged {purged} off-coverage CSV(s)")
     if skipped_new:
         print(f"  skipped_new: {skipped_new}")
 
@@ -293,6 +306,12 @@ def main() -> int:
     parser.add_argument(
         "--seed-pages", type=int, default=200,
         help="Max /history-candles pages per new-seed symbol (100 bars each).",
+    )
+    parser.add_argument(
+        "--keep-off-coverage", action="store_true",
+        help="Don't delete *_1h.csv files for symbols that aren't live on OKX. "
+             "Default behaviour is to purge them so DataManager's scanner set "
+             "matches the committed coverage.",
     )
     args = parser.parse_args()
 
