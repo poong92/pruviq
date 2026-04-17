@@ -16,7 +16,7 @@ import path from "path";
 
 const VISION_DIR = process.env.VISION_DIR ?? "test-results/vision";
 const REPORT_PATH = path.join(VISION_DIR, "vision-report.json");
-const CLAUDE_MODEL = process.env.CLAUDE_MODEL ?? "claude-sonnet-4-6";
+const CLAUDE_MODEL = process.env.CLAUDE_MODEL ?? "claude-opus-4-7";
 
 // QA 지식 베이스 로드 (tests/harness/qa-knowledge.md)
 const QA_KNOWLEDGE_PATH = path.join(
