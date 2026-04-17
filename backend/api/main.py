@@ -306,9 +306,17 @@ async def lifespan(app: FastAPI):
         _signal_scanner = SignalScanner(data_manager, top_n=50)
         print(f"SignalScanner initialized (top_n=50, {data_manager.coin_count} coins)")
 
-        # Pre-warm signal cache in background — first scan takes ~30s (CPU-bound).
-        # Without this, the first /signals/live request times out on the frontend.
+        # Pre-warm signal cache — but ONLY after indicator_cache.build_multi
+        # finishes. On DO (2vCPU/4GB), running pre-warm concurrently with the
+        # indicator build caused 10min+ GIL contention and made /signals/live
+        # time out indefinitely. Awaiting the indicator task first serializes
+        # the CPU-bound work.
         async def _prewarm_signals():
+            try:
+                await indicator_task  # defined above; completes in ~30-60s
+            except Exception as e:
+                print(f"WARNING: indicator build failed before pre-warm: {e}")
+                return
             try:
                 await asyncio.to_thread(_signal_scanner.scan)
                 n = len(_signal_scanner._cache)
