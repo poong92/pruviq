@@ -6,13 +6,16 @@ Usage: python3 sim_audit.py [full|layer0|layer1|layer2|layer3|quick]
 
 import json
 import math
+import os
 import sys
 import time
 from pathlib import Path
 from urllib.request import Request, urlopen
 from urllib.error import URLError, HTTPError
 
-API_BASE = "https://api.pruviq.com"
+# PRUVIQ_API_URL overrides; useful when running on DO server to avoid
+# CF tunnel roundtrip (/market/live etc. are ~30s via tunnel, instant locally).
+API_BASE = os.getenv("PRUVIQ_API_URL", "https://api.pruviq.com")
 LOCAL_BASE = "http://localhost:8080"
 TOLERANCE = 0.01  # 0.01% tolerance
 GT_PATH = Path(__file__).parent / "ground_truth" / "formulas.json"

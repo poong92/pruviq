@@ -1,0 +1,12 @@
+[Unit]
+Description=PRUVIQ Simulator Audit timer (every 6h)
+Requires=pruviq-sim-audit.service
+
+[Timer]
+OnCalendar=*-*-* 00,06,12,18:00:00
+RandomizedDelaySec=30
+Persistent=true
+Unit=pruviq-sim-audit.service
+
+[Install]
+WantedBy=timers.target
