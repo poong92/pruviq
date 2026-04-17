@@ -25,6 +25,7 @@ from typing import Optional
 from .client import OKXClient
 from .oauth import get_valid_token, is_authenticated
 from .orders import _pruviq_to_okx_inst_id, _calc_sl_tp_prices, _calc_contract_sz
+from .retry import retry_async
 from .settings import (
     get_auto_sessions,
     get_alert_sessions,
@@ -48,6 +49,7 @@ from .notifications import (
     send_safety_limit,
 )
 from .pnl_sync import sync_realized_pnl
+from .filters import RegimeFilters, evaluate_filters
 
 logger = logging.getLogger("okx_auto_executor")
 
@@ -77,6 +79,73 @@ def _make_cl_ord_id(session_id: str, strategy: str, coin: str, signal_time: str)
     """
     raw = f"{session_id}{strategy}{coin}{signal_time}".encode()
     return hashlib.sha1(raw).hexdigest()[:32]
+
+
+async def _emergency_close_with_retry(
+    client: OKXClient,
+    inst_id: str,
+    td_mode: str,
+    *,
+    reason: str,
+    chat_id: Optional[str],
+    signal: dict,
+    algo_ids: Optional[list[str]] = None,
+) -> bool:
+    """Close a position that must not stay open (SL/TP failed, slippage over
+    limit). autotrader lesson L1+: the *close itself* can fail (network blip,
+    OKX 5xx), so a single try+log is not enough — retry with exponential
+    back-off and, if everything fails, escalate to a critical Telegram alert
+    so the user can close manually.
+
+    algo_ids: cancel-first before close (autotrader lesson L6). Partial failures
+    are tolerated — we'd rather over-cancel than leave a live SL racing with
+    our close. In the emergency path, we proceed to close even if cancel fails,
+    because an unprotected position is already bad.
+    """
+    # Cancel-first (L6). Best effort.
+    if algo_ids:
+        try:
+            await client.cancel_algo_orders(algo_ids, inst_id)
+        except Exception as cancel_err:
+            logger.warning(
+                "emergency-close: cancel-algos failed for %s (%s) — "
+                "proceeding with close anyway",
+                inst_id, cancel_err,
+            )
+
+    close_with_retry = retry_async(
+        max_attempts=3,
+        base_delay=1.0,
+        max_delay=8.0,
+        op_name=f"emergency_close[{inst_id}]",
+    )(client.close_position)
+
+    try:
+        await close_with_retry(inst_id, mgn_mode=td_mode)
+        if chat_id:
+            asyncio.create_task(send_execution_failed(
+                chat_id, signal, f"⚠️ 즉시 청산: {reason}",
+            ))
+        return True
+    except Exception as close_err:
+        # All retries failed. Position may still be open. This is the worst
+        # case — user MUST be told to close manually. Escalate with an alert
+        # that is visually distinct from the routine "execution failed" one.
+        logger.critical(
+            "EMERGENCY CLOSE FAILED after retries for %s: %s. "
+            "POSITION MAY STILL BE OPEN — user action required.",
+            inst_id, close_err,
+        )
+        if chat_id:
+            asyncio.create_task(send_execution_failed(
+                chat_id, signal,
+                (
+                    f"🚨 긴급 청산 실패 (재시도 3회). {reason}\n\n"
+                    f"**OKX 계정에서 {inst_id} 포지션을 직접 확인하세요.**\n"
+                    f"Error: {close_err}"
+                ),
+            ))
+        return False
 
 
 async def process_signals(signals: list[dict]) -> list[dict]:
@@ -113,6 +182,29 @@ async def process_signals(signals: list[dict]) -> list[dict]:
 
         for signal in signals:
             try:
+                # Regime / time / funding filters (autotrader R4/R6/R15).
+                # Applied BEFORE approval-queue enqueue so the user isn't asked
+                # to approve signals the filter already rejected.
+                if active_strategy:
+                    rf_dict = active_strategy.get("regime_filters") or {}
+                    rf = RegimeFilters.from_json(rf_dict)
+                    if not rf.is_empty():
+                        try:
+                            inst_id = _pruviq_to_okx_inst_id(signal["coin"])
+                        except Exception:
+                            inst_id = signal["coin"]
+                        reason = await evaluate_filters(
+                            rf,
+                            direction=signal.get("direction", "long"),
+                            inst_id=inst_id,
+                        )
+                        if reason:
+                            logger.info(
+                                "filter reject session=%s strategy=%s coin=%s: %s",
+                                session_id[:8], signal["strategy"], signal["coin"], reason,
+                            )
+                            continue
+
                 # Approval mode: enqueue, do not execute.
                 if active_strategy and active_strategy.get("exec_mode") == "approval":
                     # Only enqueue if signal passes strategy/coin subscription filters
@@ -490,19 +582,12 @@ async def _try_execute(
                     slippage * 100, _MAX_SLIPPAGE * 100,
                     fill_price, mark_price, ord_id,
                 )
-                try:
-                    await client.close_position(inst_id, mgn_mode=td_mode)
-                except Exception as close_err:
-                    logger.error(
-                        "EMERGENCY CLOSE FAILED after slippage guard for %s: %s",
-                        inst_id, close_err,
-                    )
+                await _emergency_close_with_retry(
+                    client, inst_id, td_mode,
+                    reason=f"슬리피지 {slippage:.2%} > {_MAX_SLIPPAGE:.1%} (ordId={ord_id})",
+                    chat_id=chat_id, signal=signal,
+                )
                 update_signal_status(session_id, strategy_id, coin, dedup_time, "failed")
-                if chat_id:
-                    asyncio.create_task(send_execution_failed(
-                        chat_id, signal,
-                        f"슬리피지 {slippage:.2%} > {_MAX_SLIPPAGE:.1%} 한도, 즉시 청산 (ordId={ord_id})",
-                    ))
                 return None
 
         # ── SL/TP calculated from ACTUAL FILL PRICE (industry standard) ──
@@ -525,13 +610,11 @@ async def _try_execute(
                 "CRITICAL: SL/TP failed after auto-order %s (%s) — closing: %s",
                 ord_id, inst_id, algo_err,
             )
-            try:
-                await client.close_position(inst_id, mgn_mode=td_mode)
-                if chat_id:
-                    asyncio.create_task(send_execution_failed(chat_id, signal,
-                        f"⚠️ SL/TP FAILED — position closed. ordId={ord_id}"))
-            except Exception as close_err:
-                logger.error("EMERGENCY CLOSE FAILED for %s: %s", inst_id, close_err)
+            await _emergency_close_with_retry(
+                client, inst_id, td_mode,
+                reason=f"SL/TP failed after auto-order (ordId={ord_id}): {algo_err}",
+                chat_id=chat_id, signal=signal,
+            )
             update_signal_status(session_id, strategy_id, coin, dedup_time, "failed")
             return None
 

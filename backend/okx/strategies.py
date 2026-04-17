@@ -45,6 +45,17 @@ DEFAULT_STRATEGY: dict[str, Any] = {
     "max_daily_loss_usdt": 200.0,
     "max_concurrent_pos": 3,
     "is_active": 0,
+    # Regime filters (autotrader R4/R6/R15 — opt-in per strategy).
+    # JSON-serialized bundle; keys match filters.RegimeFilters:
+    #   fng_min: int | null — skip entry when Fear & Greed < value
+    #   avoid_weekdays_utc: list[int 0-6] — 0=Mon..6=Sun, UTC
+    #   avoid_hours_utc: list[int 0-23] — UTC hour of day
+    #   require_positive_funding_for_short: bool — gate SHORT on FR>0
+    # Empty dict = filters disabled.
+    "regime_filters": {},
+    # Per-session max drawdown (autotrader R4 — 20% cap). When hit, the
+    # telegram_halt machinery auto-disables this strategy's session. 0 = off.
+    "max_drawdown_pct": 0.0,
 }
 
 
@@ -82,6 +93,16 @@ def _ensure_tables() -> None:
                 updated_at      REAL NOT NULL
             )
         """)
+        # Best-effort migrations for pre-existing deployments. SQLite ALTER TABLE
+        # ADD COLUMN is idempotent-ish via try/except on OperationalError.
+        for ddl in (
+            "ALTER TABLE user_strategies ADD COLUMN regime_filters TEXT DEFAULT '{}'",
+            "ALTER TABLE user_strategies ADD COLUMN max_drawdown_pct REAL DEFAULT 0",
+        ):
+            try:
+                conn.execute(ddl)
+            except Exception:
+                pass  # column already exists
         conn.execute("""
             CREATE INDEX IF NOT EXISTS idx_user_strategies_session
             ON user_strategies(session_id, is_active)
@@ -198,6 +219,22 @@ def _validate_strategy(data: dict[str, Any], partial: bool = False) -> dict[str,
     if "is_active" in data:
         out["is_active"] = 1 if bool(data["is_active"]) else 0
 
+    if "regime_filters" in data:
+        # Accept dict (from JSON body) or already-serialized JSON string.
+        from .filters import RegimeFilters
+        raw = data["regime_filters"]
+        if isinstance(raw, str):
+            try:
+                raw = json.loads(raw)
+            except Exception:
+                raw = {}
+        rf = RegimeFilters.from_json(raw if isinstance(raw, dict) else {})
+        out["regime_filters"] = json.dumps(rf.to_json())
+
+    if "max_drawdown_pct" in data:
+        v = float(data["max_drawdown_pct"])
+        out["max_drawdown_pct"] = max(0.0, min(100.0, v))
+
     return out
 
 
@@ -207,11 +244,22 @@ _STRATEGY_COLUMNS = [
     "multiplier", "leverage_source", "leverage", "sl_source", "sl_pct",
     "tp_source", "tp_pct", "trail_pct", "max_daily_loss_usdt",
     "max_concurrent_pos", "is_active", "created_at", "updated_at",
+    "regime_filters", "max_drawdown_pct",
 ]
 
 
 def _row_to_strategy(row: tuple) -> dict[str, Any]:
-    return dict(zip(_STRATEGY_COLUMNS, row))
+    d = dict(zip(_STRATEGY_COLUMNS, row))
+    # Decode JSON columns back to dicts for callers. Empty / malformed → {}.
+    raw = d.get("regime_filters")
+    if isinstance(raw, str):
+        try:
+            d["regime_filters"] = json.loads(raw) if raw else {}
+        except Exception:
+            d["regime_filters"] = {}
+    elif raw is None:
+        d["regime_filters"] = {}
+    return d
 
 
 # ── Strategy CRUD ──────────────────────────────────────────
@@ -224,6 +272,11 @@ def create_strategy(session_id: str, data: dict[str, Any]) -> dict[str, Any]:
     sid = uuid.uuid4().hex
     now = time.time()
 
+    # merged["regime_filters"] may be a dict (from DEFAULT) or a JSON string
+    # (from _validate_strategy when user passed a value). Normalize to TEXT.
+    rf_raw = merged.get("regime_filters", {})
+    rf_text = rf_raw if isinstance(rf_raw, str) else json.dumps(rf_raw or {})
+
     with _get_conn() as conn:
         conn.execute(
             """INSERT INTO user_strategies (
@@ -231,8 +284,9 @@ def create_strategy(session_id: str, data: dict[str, Any]) -> dict[str, Any]:
                 approval_timeout_sec, position_sizing_method, position_size_usdt,
                 multiplier, leverage_source, leverage, sl_source, sl_pct,
                 tp_source, tp_pct, trail_pct, max_daily_loss_usdt,
-                max_concurrent_pos, is_active, created_at, updated_at
-            ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+                max_concurrent_pos, is_active, created_at, updated_at,
+                regime_filters, max_drawdown_pct
+            ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
             (
                 sid, session_id, merged["name"], merged["base_strategy"],
                 merged["exec_mode"], merged["approval_timeout_sec"],
@@ -243,6 +297,8 @@ def create_strategy(session_id: str, data: dict[str, Any]) -> dict[str, Any]:
                 merged["max_daily_loss_usdt"], merged["max_concurrent_pos"],
                 0,  # creation never auto-activates — must call activate_strategy
                 now, now,
+                rf_text,
+                float(merged.get("max_drawdown_pct", 0.0)),
             ),
         )
 

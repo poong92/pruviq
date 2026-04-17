@@ -22,17 +22,20 @@ import asyncio
 import json
 import logging
 import time
+from typing import Optional
 
 from .client import OKXClient
 from .oauth import get_valid_token, is_authenticated
 from .orders import _pruviq_to_okx_inst_id
-from .settings import get_auto_sessions, get_settings
+from .settings import get_auto_sessions, get_settings, get_trade_log, save_settings
 from .storage import _get_conn
+from .strategies import get_active_strategy
 
 logger = logging.getLogger("okx_reconciler")
 
 RECONCILE_INTERVAL = 300  # 5 minutes
 _TRADE_LOOKBACK_S = 24 * 3600  # treat last 24h of trade_log as expected positions
+_TRADE_LOG_LIMIT = 10000  # pull enough history to cover the session's lifetime
 
 
 def _expected_inst_ids(session_id: str) -> set[str]:
@@ -125,6 +128,93 @@ def _has_position(pos_str: str) -> bool:
         return False
 
 
+async def _send_mdd_halt_alert(
+    chat_id: str, session_id: str, cum_loss: float, threshold: float, max_dd_pct: float
+) -> None:
+    """Notify the user that their session was auto-halted due to MDD breach.
+    Fire-and-forget; an alert failure must not stop the reconcile loop."""
+    from .notifications import _send  # lazy to avoid cycle
+    try:
+        await _send(
+            chat_id,
+            (
+                "🛑 <b>PRUVIQ MDD 한도 도달 — 세션 자동 중지</b>\n"
+                f"session: <code>{session_id[:8]}</code>\n"
+                f"누적 손실: <b>${cum_loss:.2f}</b> "
+                f"> 한도 <b>${threshold:.2f}</b> ({max_dd_pct:.1f}%)\n\n"
+                "자동매매가 꺼졌습니다. 원인 확인 후 다시 활성화하세요."
+            ),
+        )
+    except Exception as e:
+        logger.warning("MDD halt alert failed for session %s: %s", session_id[:8], e)
+
+
+async def check_mdd_and_halt(session_id: str) -> bool:
+    """autotrader lesson R4 (20% hard cap), adapted for PRUVIQ's per-user model.
+
+    Computes lifetime realized cum-PnL from trade_log and compares against the
+    active strategy's `max_drawdown_pct` threshold, expressed as a fraction of
+    the theoretical position budget (position_size × max_concurrent_pos). This
+    budget-relative sizing is an approximation — we don't own the user's OKX
+    equity number — but it's the most honest bound we can enforce without
+    reading their whole account.
+
+    On breach: disable the session's autotrade (settings.enabled=False), log at
+    CRITICAL, send a Telegram alert if configured. User must re-enable manually
+    after reviewing the loss cause.
+
+    Returns True if a halt was triggered, else False.
+    """
+    active = await asyncio.to_thread(get_active_strategy, session_id)
+    if not active:
+        return False
+    max_dd_pct = float(active.get("max_drawdown_pct") or 0)
+    if max_dd_pct <= 0:
+        return False
+
+    budget = float(active.get("position_size_usdt") or 0) * int(active.get("max_concurrent_pos") or 1)
+    if budget <= 0:
+        return False
+    threshold_usd = budget * max_dd_pct / 100.0
+
+    try:
+        trades = await asyncio.to_thread(get_trade_log, session_id, _TRADE_LOG_LIMIT)
+    except Exception as e:
+        logger.warning("MDD check: get_trade_log failed for %s: %s", session_id[:8], e)
+        return False
+    cum_pnl = sum(float(t.get("pnl") or 0) for t in trades)
+    cum_loss = max(0.0, -cum_pnl)
+    if cum_loss <= threshold_usd:
+        return False
+
+    logger.critical(
+        "MDD halt: session=%s cum_loss=$%.2f > threshold=$%.2f "
+        "(%.1f%% of budget=$%.0f, trades=%d)",
+        session_id[:8], cum_loss, threshold_usd, max_dd_pct, budget, len(trades),
+    )
+
+    def _disable() -> Optional[str]:
+        current = get_settings(session_id)
+        chat_id = current.get("alert_telegram_chat_id") or ""
+        current["enabled"] = False
+        save_settings(session_id, current)
+        return str(chat_id) if chat_id else None
+
+    chat_id = None
+    try:
+        chat_id = await asyncio.to_thread(_disable)
+    except Exception as e:
+        logger.error("MDD halt: failed to disable session %s: %s", session_id[:8], e)
+        # Not returning False — we still want to attempt the alert since the
+        # user should know their strategy crossed the threshold even if we
+        # couldn't flip the bit.
+
+    if chat_id:
+        await _send_mdd_halt_alert(chat_id, session_id, cum_loss, threshold_usd, max_dd_pct)
+
+    return True
+
+
 async def reconcile_all_sessions() -> None:
     """Reconcile every auto-enabled session in turn."""
     try:
@@ -138,6 +228,12 @@ async def reconcile_all_sessions() -> None:
             await reconcile_positions(session_id)
         except Exception as e:
             logger.error("Reconcile: session %s failed: %s", session_id[:8], e)
+        # MDD check runs even if reconcile raised — a loss threshold breach
+        # should not be silent just because OKX position-fetch had a blip.
+        try:
+            await check_mdd_and_halt(session_id)
+        except Exception as e:
+            logger.error("MDD check: session %s failed: %s", session_id[:8], e)
 
 
 async def reconcile_loop() -> None:
