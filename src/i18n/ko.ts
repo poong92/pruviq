@@ -2019,4 +2019,30 @@ export const ko: Record<TranslationKey, string> = {
   "404.back_home": "홈으로 돌아가기",
   "404.open_simulator": "시뮬레이터 열기",
   "404.or_try": "이것도 살펴보세요",
+  // Trust Dashboard
+  "trust.meta_title": "신뢰 대시보드 — 프루빅(PRUVIQ)",
+  "trust.meta_desc":
+    "PRUVIQ는 모든 자동매매의 익명화된 실행 품질 지표를 공개합니다: 슬리피지, SL/TP 설정률, 24시간/7일 거래 수. 주장이 아닌 증거.",
+  "trust.moat_label": "Moat #1",
+  "trust.heading": "신뢰 대시보드",
+  "trust.intro":
+    "모든 자동 실행은 신호 가격과 실제 체결 가격 사이의 차이를 기록합니다. 집계 데이터를 공개합니다. 개인별 귀속 없이 — 오직 증거만.",
+  "trust.trades_24h": "거래 수 (24시간)",
+  "trust.trades_7d": "거래 수 (7일)",
+  "trust.slippage_median": "슬리피지 중앙값",
+  "trust.slippage_p90": "슬리피지 p90",
+  "trust.slippage_formula": "|체결가 − 신호가| / 신호가",
+  "trust.slippage_p90_note": "상위 10% 경계",
+  "trust.sl_tp_rate": "SL / TP 설정률",
+  "trust.sl_tp_note":
+    "OKX가 손절/익절 알고 주문을 수락한 거래의 비율. 실패 시 긴급 청산 경로가 작동합니다 (오토트레이더 교훈 L1+).",
+  "trust.loading": "로딩 중…",
+  "trust.unavailable": "지표를 일시적으로 사용할 수 없습니다",
+  "trust.updated": "업데이트",
+  "trust.why_title": "왜 이것을 공개하는가.",
+  "trust.why_body":
+    "모든 크립토 자동매매 플랫폼이 \"정밀한 실행\"을 주장합니다. 우리는 직접 확인할 수 있게 합니다. 슬리피지가 0.5%를 초과하면 설계상 즉시 포지션을 청산합니다. 이 수치가 시간이 지나면서 올라간다면, 여기서 가장 먼저 확인할 수 있습니다.",
+  "trust.what_not_title": "이것은 무엇이 아닌가.",
+  "trust.what_not_body":
+    "리더보드가 아닙니다. 개인 수익률이 아닙니다. 낚시성 콘텐츠 없음.",
 };

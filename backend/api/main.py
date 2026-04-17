@@ -4236,3 +4236,93 @@ async def unsubscribe_email(email: str, token: str):
         "<a href=\"https://pruviq.com\">Back to PRUVIQ</a>"
         "</body></html>"
     )
+
+
+# ── Trust Dashboard (Moat-1) — anonymized execution quality metrics ─────────
+
+_trust_cache: dict = {"ts": 0.0, "data": None}
+_TRUST_CACHE_TTL = 60.0
+
+
+def _compute_trust_metrics_sync() -> dict:
+    """Aggregate trade_log across ALL sessions — no session_id in output."""
+    from okx.storage import _get_conn as _okx_get_conn
+    now = time.time()
+    cutoff_24h = now - 24 * 3600
+    cutoff_7d = now - 7 * 24 * 3600
+
+    try:
+        with _okx_get_conn() as conn:
+            rows = conn.execute(
+                "SELECT signal, result, created_at FROM trade_log "
+                "WHERE created_at >= ? ORDER BY created_at DESC LIMIT 500",
+                (cutoff_7d,),
+            ).fetchall()
+    except Exception as e:
+        logger.warning("trust metrics: trade_log fetch failed: %s", e)
+        return {"trades_24h": 0, "trades_7d": 0, "error": "no data"}
+
+    slippages: list[float] = []
+    with_sl_tp = 0
+    count_24h = 0
+    for signal_json, result_json, created_at in rows:
+        try:
+            signal = json.loads(signal_json) if signal_json else {}
+            result = json.loads(result_json) if result_json else {}
+        except Exception:
+            continue
+        if created_at >= cutoff_24h:
+            count_24h += 1
+        fill = result.get("fill_price")
+        entry = signal.get("entry_price") or signal.get("signal_price")
+        if fill and entry:
+            try:
+                slippages.append((float(fill) - float(entry)) / float(entry) * 100.0)
+            except (ValueError, ZeroDivisionError):
+                pass
+        if result.get("algo"):
+            with_sl_tp += 1
+
+    def _median(xs: list[float]) -> float | None:
+        if not xs:
+            return None
+        ys = sorted(xs)
+        n = len(ys)
+        mid = n // 2
+        return ys[mid] if n % 2 == 1 else (ys[mid - 1] + ys[mid]) / 2.0
+
+    def _p90(xs: list[float]) -> float | None:
+        if not xs:
+            return None
+        ys = sorted(abs(x) for x in xs)
+        idx = max(0, int(len(ys) * 0.9) - 1)
+        return ys[idx]
+
+    abs_slips = [abs(s) for s in slippages]
+    return {
+        "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "trades_7d": len(rows),
+        "trades_24h": count_24h,
+        "sample_with_fill_price": len(slippages),
+        "slippage_median_pct": round(_median(abs_slips), 4) if abs_slips else None,
+        "slippage_p90_pct": round(_p90(slippages), 4) if slippages else None,
+        "sl_tp_set_rate": round(with_sl_tp / len(rows) * 100, 2) if rows else None,
+        "notes": (
+            "Slippage = |fill − signal_price| / signal_price. "
+            "sl_tp_set_rate = % of logged trades where the OKX SL/TP algo order was accepted. "
+            "Sample excludes trades executed before fill-price logging was added."
+        ),
+    }
+
+
+@app.get("/trust/metrics")
+async def trust_metrics() -> dict:
+    """Public execution-quality metrics. Never exposes per-user data."""
+    now = time.time()
+    cached = _trust_cache.get("data")
+    if cached and (now - _trust_cache["ts"]) < _TRUST_CACHE_TTL:
+        return cached
+    data = await asyncio.to_thread(_compute_trust_metrics_sync)
+    _trust_cache["data"] = data
+    _trust_cache["ts"] = now
+    return data
