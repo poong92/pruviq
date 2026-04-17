@@ -1,0 +1,12 @@
+[Unit]
+Description=PRUVIQ Performance Snapshot timer (daily 19:00 UTC = 04:00 KST next day)
+Requires=pruviq-update-performance.service
+
+[Timer]
+OnCalendar=*-*-* 19:00:00
+RandomizedDelaySec=120
+Persistent=true
+Unit=pruviq-update-performance.service
+
+[Install]
+WantedBy=timers.target
