@@ -1,0 +1,12 @@
+[Unit]
+Description=PRUVIQ Data Fetch timer (every 20 min)
+Requires=pruviq-refresh-data.service
+
+[Timer]
+OnCalendar=*:0/20
+RandomizedDelaySec=60
+Persistent=true
+Unit=pruviq-refresh-data.service
+
+[Install]
+WantedBy=timers.target
