@@ -149,7 +149,16 @@ def _refresh_data():
 
 
 async def _okx_auto_trading_loop():
-    """Check signals and auto-execute for subscribed users every 5 minutes."""
+    """Check signals and auto-execute for subscribed users.
+
+    Interval defaults to 300s (Mac-era default) but can be lengthened on
+    constrained hosts via OKX_AUTO_TRADE_INTERVAL_SEC. On DO 2vCPU the
+    scan itself is CPU-heavy (see signal_scanner.scan); running it every
+    5 minutes starves the API event loop. 900s cuts that cost by 3× with
+    no change to signal quality (candles are hourly).
+    """
+    interval_sec = max(60, int(os.environ.get("OKX_AUTO_TRADE_INTERVAL_SEC", "300")))
+    logger.info("OKX auto-trading loop interval = %ds", interval_sec)
     await asyncio.sleep(30)  # Wait for data load
     while True:
         try:
@@ -162,7 +171,7 @@ async def _okx_auto_trading_loop():
             raise
         except Exception as e:
             logger.warning(f"OKX auto-trading loop error: {e}")
-        await asyncio.sleep(300)  # 5 minutes
+        await asyncio.sleep(interval_sec)
 
 
 async def _okx_token_refresh_loop():
@@ -4363,3 +4372,30 @@ async def trust_metrics() -> dict:
     _trust_cache["data"] = data
     _trust_cache["ts"] = now
     return data
+
+
+# ── Moat-2: Merkle audit root ──────────────────────────────────────────
+# Publish the sha256 Merkle root of every recorded order leaf for a given
+# UTC day. A user who keeps their own (session_id, ts, inst_id, side, sz,
+# fill_price, broker_code) tuple can recompute their leaf and verify
+# inclusion — evidence that PRUVIQ didn't quietly drop their order from
+# the ledger.
+#
+# Algorithm is pinned in backend/okx/merkle.py so users can reproduce it.
+
+@app.get("/trust/merkle/{date}")
+async def trust_merkle_root(date: str) -> dict:
+    """Return {date, leaf_count, root, algorithm} for YYYYMMDD UTC day.
+
+    Empty day returns root=null with leaf_count=0 — silence is not
+    omission here, it's evidence the day had no trades."""
+    if not date.isdigit() or len(date) != 8:
+        raise HTTPException(400, "date must be YYYYMMDD")
+    try:
+        from okx.merkle import compute_daily_root
+        return await asyncio.to_thread(compute_daily_root, date)
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+    except Exception as e:
+        logger.error("merkle root compute failed for %s: %s", date, e)
+        raise HTTPException(500, "failed to compute merkle root")
