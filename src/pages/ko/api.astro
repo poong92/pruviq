@@ -2,6 +2,7 @@
 import Layout from '../../layouts/Layout.astro';
 import ApiEndpoint from '../../components/ApiEndpoint.astro';
 import { useTranslations } from '../../i18n/index';
+import { COINS_ANALYZED } from '../../config/site-stats';
 
 const t = useTranslations('ko');
 const API_BASE = 'https://api.pruviq.com';
@@ -81,7 +82,7 @@ const API_BASE = 'https://api.pruviq.com';
           response={`{
   "status": "ok",
   "version": "0.3.0",
-  "coins_loaded": 235,
+  "coins_loaded": ${COINS_ANALYZED},
   "uptime_seconds": 415785.5
 }`}
         />
@@ -192,7 +193,7 @@ const API_BASE = 'https://api.pruviq.com';
     "date_from": "2023-12-30",
     "date_to": "2026-04-03"
   },
-  ... // 235개 코인 (OKX USDT-SWAP 라이브)
+  ... // ${COINS_ANALYZED}개 코인 (OKX USDT-SWAP 라이브)
 ]`}
         />
 

@@ -1605,7 +1605,7 @@ export const en = {
   "compare.row2_pruviq": "No code needed",
   "compare.row3_label": "Coins",
   "compare.row3_other": "1 coin at a time",
-  "compare.row3_pruviq": "235 coins at once",
+  "compare.row3_pruviq": "{coins} coins at once",
   "compare.row4_label": "Signup",
   "compare.row4_other": "Email + credit card",
   "compare.row4_pruviq": "No account needed",

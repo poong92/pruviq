@@ -17,9 +17,3 @@ export const STRATEGIES_COUNT: number = stats.strategies_tested ?? 16;
 
 /** Indicator count (not in site-stats.json, manually maintained) */
 export const INDICATORS_COUNT: number = 14;
-
-/** Data-source disclosure. Shown in trust/transparency copy so the coverage
- *  cut and the mid-period source change are visible to users without
- *  scattering the same sentence across a dozen pages. */
-export const DATA_SOURCE_NOTE =
-  "Binance historical ≤ 2026-04-17, OKX USDT-SWAP live from 2026-04-18";
