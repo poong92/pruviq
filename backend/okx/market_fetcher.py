@@ -23,10 +23,17 @@ OKX_PUBLIC_BASE = "https://www.okx.com"
 CANDLES_PATH = "/api/v5/market/candles"
 HISTORY_CANDLES_PATH = "/api/v5/market/history-candles"
 
-# OKX published limit on /market/candles is 20 req/2s. We target 18 to leave
-# headroom for any infra retry that sneaks a duplicate call inside the window.
-_DEFAULT_RATE_LIMIT = 18
+# OKX publishes 20 req/2s on both /market/candles AND /market/history-candles,
+# but empirically (2026-04-17 burn-in) the IP-level budget behaves as though
+# it is shared across these endpoints — running near 20/2s on one still
+# triggers 429 on the other. Cap at 12/2s so combined traffic stays inside.
+_DEFAULT_RATE_LIMIT = 12
 _DEFAULT_WINDOW_SEC = 2.0
+
+# When a 429 does slip through, back off exponentially. OKX rarely sends a
+# Retry-After header on these endpoints, so seed at one rate-window.
+_RETRY_BACKOFF_BASE_SEC = 2.0
+_RETRY_MAX_ATTEMPTS = 4
 
 logger = logging.getLogger("pruviq")
 
@@ -138,6 +145,29 @@ class OkxMarketFetcher:
             raise ValueError(f"unsupported interval: {interval}")
         return m[iv]
 
+    async def _get_with_backoff(self, path: str, params: dict) -> dict:
+        """GET with 429 exponential backoff. Raises the last exception on exhaustion."""
+        last_exc: Exception | None = None
+        for attempt in range(_RETRY_MAX_ATTEMPTS):
+            await self._throttle()
+            try:
+                resp = await self._client.get(path, params=params)
+            except httpx.RequestError as e:
+                last_exc = e
+                await asyncio.sleep(_RETRY_BACKOFF_BASE_SEC * (2 ** attempt))
+                continue
+            if resp.status_code == 429:
+                last_exc = httpx.HTTPStatusError("429 Too Many Requests", request=resp.request, response=resp)
+                wait = _RETRY_BACKOFF_BASE_SEC * (2 ** attempt)
+                logger.warning("OKX 429 on %s — backing off %.1fs (attempt %d/%d)",
+                               path, wait, attempt + 1, _RETRY_MAX_ATTEMPTS)
+                await asyncio.sleep(wait)
+                continue
+            resp.raise_for_status()
+            return resp.json()
+        assert last_exc is not None
+        raise last_exc
+
     # ── fetch ─────────────────────────────────────────────────────────
     async def fetch_candles(
         self,
@@ -152,13 +182,10 @@ class OkxMarketFetcher:
         """
         inst_id = self.to_okx_inst_id(symbol)
         bar = self.to_okx_bar(interval)
-        await self._throttle()
-        resp = await self._client.get(
+        data = await self._get_with_backoff(
             CANDLES_PATH,
-            params={"instId": inst_id, "bar": bar, "limit": str(limit)},
+            {"instId": inst_id, "bar": bar, "limit": str(limit)},
         )
-        resp.raise_for_status()
-        data = resp.json()
         if data.get("code") != "0":
             raise RuntimeError(
                 f"OKX market error {data.get('code')}: {data.get('msg')} (instId={inst_id})"
@@ -191,6 +218,32 @@ class OkxMarketFetcher:
                 "volume": [c.volume for c in candles],
             }
         )
+
+    async def fetch_history_page(
+        self,
+        symbol: str,
+        interval: str = "1h",
+        after_ms: str | None = None,
+        limit: int = 100,
+    ) -> list[OkxCandle]:
+        """Fetch one page from /history-candles (older data, paged by `after` cursor).
+
+        Returns the page old→new. An empty list means no more history.
+        """
+        inst_id = self.to_okx_inst_id(symbol)
+        bar = self.to_okx_bar(interval)
+        params: dict[str, str] = {"instId": inst_id, "bar": bar, "limit": str(limit)}
+        if after_ms:
+            params["after"] = after_ms
+        data = await self._get_with_backoff(HISTORY_CANDLES_PATH, params)
+        if data.get("code") != "0":
+            raise RuntimeError(
+                f"OKX history error {data.get('code')}: {data.get('msg')} (instId={inst_id})"
+            )
+        rows = data.get("data") or []
+        candles = [OkxCandle.from_row(r) for r in rows]
+        candles.reverse()
+        return candles
 
     async def fetch_many(
         self,
