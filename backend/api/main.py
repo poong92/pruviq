@@ -270,9 +270,20 @@ async def lifespan(app: FastAPI):
 
     # Indicator cache + coin stats: build in background to avoid startup timeout
     # HealthCheck fails if startup takes > 90s (LaunchAgent restart loop)
+    #
+    # SKIP_INDICATOR_PREBUILD=1 → skip startup pre-compute entirely; build
+    # lazily on first /backtest or /coins/stats hit. Required on DO
+    # (2vCPU/4GB) where 572 coins × N strategies saturates CPU for many
+    # minutes and starves /signals/live. On Mac M4 Pro the pre-compute
+    # finished quickly so this wasn't noticed pre-cutover.
     async def _deferred_indicator_build():
         """Build indicator cache after server is already accepting requests."""
         await asyncio.sleep(1)  # Let server start first
+        if os.environ.get("SKIP_INDICATOR_PREBUILD", "").lower() in ("1", "true", "yes"):
+            global _indicator_build_ready
+            _indicator_build_ready = True
+            print("SKIP_INDICATOR_PREBUILD set — indicator cache will build lazily on first use")
+            return
         if data_manager.coin_count > 0:
             def _build():
                 print("Pre-computing indicators for all strategies...")
@@ -303,12 +314,25 @@ async def lifespan(app: FastAPI):
     # (Previously lazy-init caused auto-trading to silently skip until first /signals/live call)
     global _signal_scanner
     if data_manager.coin_count > 0:
-        _signal_scanner = SignalScanner(data_manager, top_n=50)
-        print(f"SignalScanner initialized (top_n=50, {data_manager.coin_count} coins)")
+        # top_n governs scan cost: N coins × M strategies × calculate_indicators.
+        # Mac M4 Pro runs top_n=50 in ~30s; DO 2vCPU takes ~4min. Environment
+        # variable lets ops pick the value per host (DO sets
+        # SIGNAL_SCANNER_TOP_N=20 in /opt/pruviq/shared/.env).
+        scanner_top_n = int(os.environ.get("SIGNAL_SCANNER_TOP_N", "50"))
+        _signal_scanner = SignalScanner(data_manager, top_n=scanner_top_n)
+        print(f"SignalScanner initialized (top_n={scanner_top_n}, {data_manager.coin_count} coins)")
 
-        # Pre-warm signal cache in background — first scan takes ~30s (CPU-bound).
-        # Without this, the first /signals/live request times out on the frontend.
+        # Pre-warm signal cache — but ONLY after indicator_cache.build_multi
+        # finishes. On DO (2vCPU/4GB), running pre-warm concurrently with the
+        # indicator build caused 10min+ GIL contention and made /signals/live
+        # time out indefinitely. Awaiting the indicator task first serializes
+        # the CPU-bound work.
         async def _prewarm_signals():
+            try:
+                await indicator_task  # defined above; completes in ~30-60s
+            except Exception as e:
+                print(f"WARNING: indicator build failed before pre-warm: {e}")
+                return
             try:
                 await asyncio.to_thread(_signal_scanner.scan)
                 n = len(_signal_scanner._cache)
