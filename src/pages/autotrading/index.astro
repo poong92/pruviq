@@ -1,6 +1,8 @@
 ---
-// Autotrading is in beta — hidden from public until backend is validated
-return Astro.redirect('/', 302);
+// Phase 7 un-hide (2026-04-17): backend validated — P0 safety stack,
+// autotrader lessons (emergency-close retry / per-strategy filters / MDD halt)
+// and the /rankings/daily production bug all shipped. Redirect removed;
+// users can now reach the OKX autotrade setup directly.
 import Layout from '../../layouts/Layout.astro';
 ---
 
