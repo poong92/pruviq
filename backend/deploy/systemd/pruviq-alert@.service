@@ -1,0 +1,9 @@
+[Unit]
+Description=PRUVIQ Unit Failure Alert for %i
+
+[Service]
+Type=oneshot
+User=pruviq
+Group=pruviq
+EnvironmentFile=/opt/pruviq/shared/.env
+ExecStart=/opt/pruviq/bin/alert-failure.sh %i

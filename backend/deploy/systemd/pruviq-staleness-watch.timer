@@ -1,0 +1,12 @@
+[Unit]
+Description=PRUVIQ Staleness Watchdog timer (every 10 min)
+Requires=pruviq-staleness-watch.service
+
+[Timer]
+OnCalendar=*:0/10
+RandomizedDelaySec=30
+Persistent=true
+Unit=pruviq-staleness-watch.service
+
+[Install]
+WantedBy=timers.target

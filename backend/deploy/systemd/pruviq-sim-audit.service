@@ -1,0 +1,19 @@
+[Unit]
+Description=PRUVIQ Simulator Audit (6h QA check)
+After=network-online.target pruviq-api.service
+Wants=network-online.target
+OnFailure=pruviq-alert@%n.service
+
+[Service]
+Type=oneshot
+User=pruviq
+Group=pruviq
+WorkingDirectory=/opt/pruviq/current
+EnvironmentFile=/opt/pruviq/shared/.env
+ExecStart=/opt/pruviq/bin/sim_audit.sh
+StandardOutput=journal
+StandardError=journal
+TimeoutStartSec=300
+
+[Install]
+WantedBy=multi-user.target

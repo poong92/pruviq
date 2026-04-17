@@ -1,0 +1,19 @@
+[Unit]
+Description=PRUVIQ OHLCV Data Update (4h interval, 572 coins from Binance)
+After=network-online.target pruviq-api.service
+Wants=network-online.target
+OnFailure=pruviq-alert@%n.service
+
+[Service]
+Type=oneshot
+User=pruviq
+Group=pruviq
+WorkingDirectory=/opt/pruviq/current
+EnvironmentFile=/opt/pruviq/shared/.env
+ExecStart=/opt/pruviq/bin/update-ohlcv.sh
+StandardOutput=journal
+StandardError=journal
+TimeoutStartSec=1800
+Nice=10
+IOSchedulingClass=best-effort
+IOSchedulingPriority=5

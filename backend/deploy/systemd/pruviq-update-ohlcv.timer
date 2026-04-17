@@ -1,0 +1,12 @@
+[Unit]
+Description=PRUVIQ OHLCV Update timer (every 4h at :15)
+Requires=pruviq-update-ohlcv.service
+
+[Timer]
+OnCalendar=*-*-* 00/4:15:00
+RandomizedDelaySec=60
+Persistent=true
+Unit=pruviq-update-ohlcv.service
+
+[Install]
+WantedBy=timers.target
