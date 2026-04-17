@@ -314,8 +314,13 @@ async def lifespan(app: FastAPI):
     # (Previously lazy-init caused auto-trading to silently skip until first /signals/live call)
     global _signal_scanner
     if data_manager.coin_count > 0:
-        _signal_scanner = SignalScanner(data_manager, top_n=50)
-        print(f"SignalScanner initialized (top_n=50, {data_manager.coin_count} coins)")
+        # top_n governs scan cost: N coins × M strategies × calculate_indicators.
+        # Mac M4 Pro runs top_n=50 in ~30s; DO 2vCPU takes ~4min. Environment
+        # variable lets ops pick the value per host (DO sets
+        # SIGNAL_SCANNER_TOP_N=20 in /opt/pruviq/shared/.env).
+        scanner_top_n = int(os.environ.get("SIGNAL_SCANNER_TOP_N", "50"))
+        _signal_scanner = SignalScanner(data_manager, top_n=scanner_top_n)
+        print(f"SignalScanner initialized (top_n={scanner_top_n}, {data_manager.coin_count} coins)")
 
         # Pre-warm signal cache — but ONLY after indicator_cache.build_multi
         # finishes. On DO (2vCPU/4GB), running pre-warm concurrently with the
