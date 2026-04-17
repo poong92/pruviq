@@ -1,9 +1,0 @@
-name = "pruviq-binance-proxy"
-main = "src/index.js"
-compatibility_date = "2026-02-14"
-
-# No custom route by default — the .workers.dev URL is used by our backend.
-# Uncomment to bind to a subdomain on pruviq.com:
-# routes = [
-#   { pattern = "binance-proxy.pruviq.com/*", custom_domain = true }
-# ]
