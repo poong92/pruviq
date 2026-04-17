@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "preact/hooks";
 import { API_BASE_URL } from "../config/api";
+import { COINS_ANALYZED } from "../config/site-stats";
 
 interface Signal {
   strategy: string;
@@ -153,13 +154,17 @@ export default function SignalsDashboard({ lang = "en" }: Props) {
               {lang === "ko" ? (
                 <>
                   전략 조건을{" "}
-                  <span class="font-mono text-[--color-accent]">572</span>개
-                  코인에서 분석 중...
+                  <span class="font-mono text-[--color-accent]">
+                    {COINS_ANALYZED}
+                  </span>
+                  개 코인에서 분석 중...
                 </>
               ) : (
                 <>
                   Analyzing strategy conditions across{" "}
-                  <span class="font-mono text-[--color-accent]">572</span>{" "}
+                  <span class="font-mono text-[--color-accent]">
+                    {COINS_ANALYZED}
+                  </span>{" "}
                   coins...
                 </>
               )}
