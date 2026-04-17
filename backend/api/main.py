@@ -270,9 +270,20 @@ async def lifespan(app: FastAPI):
 
     # Indicator cache + coin stats: build in background to avoid startup timeout
     # HealthCheck fails if startup takes > 90s (LaunchAgent restart loop)
+    #
+    # SKIP_INDICATOR_PREBUILD=1 → skip startup pre-compute entirely; build
+    # lazily on first /backtest or /coins/stats hit. Required on DO
+    # (2vCPU/4GB) where 572 coins × N strategies saturates CPU for many
+    # minutes and starves /signals/live. On Mac M4 Pro the pre-compute
+    # finished quickly so this wasn't noticed pre-cutover.
     async def _deferred_indicator_build():
         """Build indicator cache after server is already accepting requests."""
         await asyncio.sleep(1)  # Let server start first
+        if os.environ.get("SKIP_INDICATOR_PREBUILD", "").lower() in ("1", "true", "yes"):
+            global _indicator_build_ready
+            _indicator_build_ready = True
+            print("SKIP_INDICATOR_PREBUILD set — indicator cache will build lazily on first use")
+            return
         if data_manager.coin_count > 0:
             def _build():
                 print("Pre-computing indicators for all strategies...")
