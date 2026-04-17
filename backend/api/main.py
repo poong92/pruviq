@@ -4372,3 +4372,30 @@ async def trust_metrics() -> dict:
     _trust_cache["data"] = data
     _trust_cache["ts"] = now
     return data
+
+
+# ── Moat-2: Merkle audit root ──────────────────────────────────────────
+# Publish the sha256 Merkle root of every recorded order leaf for a given
+# UTC day. A user who keeps their own (session_id, ts, inst_id, side, sz,
+# fill_price, broker_code) tuple can recompute their leaf and verify
+# inclusion — evidence that PRUVIQ didn't quietly drop their order from
+# the ledger.
+#
+# Algorithm is pinned in backend/okx/merkle.py so users can reproduce it.
+
+@app.get("/trust/merkle/{date}")
+async def trust_merkle_root(date: str) -> dict:
+    """Return {date, leaf_count, root, algorithm} for YYYYMMDD UTC day.
+
+    Empty day returns root=null with leaf_count=0 — silence is not
+    omission here, it's evidence the day had no trades."""
+    if not date.isdigit() or len(date) != 8:
+        raise HTTPException(400, "date must be YYYYMMDD")
+    try:
+        from okx.merkle import compute_daily_root
+        return await asyncio.to_thread(compute_daily_root, date)
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+    except Exception as e:
+        logger.error("merkle root compute failed for %s: %s", date, e)
+        raise HTTPException(500, "failed to compute merkle root")

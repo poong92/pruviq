@@ -641,6 +641,25 @@ async def _try_execute(
     # before place_order; here we only update its status.
     update_signal_status(session_id, strategy_id, coin, dedup_time, "filled")
 
+    # Moat-2: Merkle audit leaf. Canonical pre-image is stable forever so
+    # users can reproduce the hash off-line and verify inclusion in the
+    # daily root at /trust/merkle/{YYYYMMDD}. Fire-and-forget — an audit
+    # failure must never block the trading path.
+    try:
+        from .merkle import record_order as _merkle_record
+        from .config import OKX_BROKER_CODE as _BROKER
+        _merkle_record(
+            session_id=session_id,
+            ts_iso=datetime.fromtimestamp(trade_created_at, tz=timezone.utc).isoformat(timespec="seconds"),
+            inst_id=inst_id,
+            side=close_side,  # executed direction in OKX terminology
+            sz=sz,
+            fill_price=fill_price,
+            broker_code=_BROKER or "",
+        )
+    except Exception as audit_err:
+        logger.warning("merkle audit record failed (non-fatal): %s", audit_err)
+
     logger.warning(
         "Auto-executed: %s %s %s sz=%s fillPx=%.6f SL=%s TP=%s clOrdId=%s session=%s",
         side, inst_id, strategy_id, sz, fill_price, sl_price, tp_price,
