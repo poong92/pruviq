@@ -1,0 +1,10 @@
+{
+  "name": "pruviq-binance-proxy",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Cloudflare Worker that forwards a small allowlist of Binance public endpoints from CF edge.",
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev"
+  }
+}
