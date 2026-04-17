@@ -32,7 +32,7 @@ from .oauth import (
     exchange_code,
     generate_auth_url,
     generate_oauth_params,
-    get_valid_token,
+    get_api_credentials,
     is_authenticated,
 )
 from .orders import execute_from_simulation
@@ -208,10 +208,10 @@ async def get_positions(request: Request, symbol: str = Query(None)):
     from .client import OKXClient
     from .orders import _pruviq_to_okx_inst_id
 
-    token = await get_valid_token(session_id)
+    creds = get_api_credentials(session_id)
     inst_id = _pruviq_to_okx_inst_id(symbol) if symbol else None
 
-    async with OKXClient(token) as client:
+    async with OKXClient(**creds) as client:
         positions = await client.get_positions(inst_id)
         return {"data": [_pos_to_camel(p) for p in positions]}
 
@@ -263,9 +263,9 @@ async def get_positions_history(request: Request, limit: int = Query(20, le=100)
 
     from .client import OKXClient
 
-    token = await get_valid_token(session_id)
+    creds = get_api_credentials(session_id)
 
-    async with OKXClient(token) as client:
+    async with OKXClient(**creds) as client:
         raw = await client.get_positions_history(limit=str(limit))
 
     return {"data": [
@@ -290,9 +290,9 @@ async def get_balance(request: Request, ccy: str = Query("USDT")):
 
     from .client import OKXClient
 
-    token = await get_valid_token(session_id)
+    creds = get_api_credentials(session_id)
 
-    async with OKXClient(token) as client:
+    async with OKXClient(**creds) as client:
         balances = await client.get_balance(ccy)
         return {"balances": [b.model_dump() for b in balances]}
 

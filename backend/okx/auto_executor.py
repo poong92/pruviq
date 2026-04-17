@@ -23,7 +23,7 @@ from datetime import datetime, timezone
 from typing import Optional
 
 from .client import OKXClient
-from .oauth import get_valid_token, is_authenticated
+from .oauth import get_api_credentials, is_authenticated
 from .orders import _pruviq_to_okx_inst_id, _calc_sl_tp_prices, _calc_contract_sz
 from .retry import retry_async
 from .settings import (
@@ -433,8 +433,8 @@ async def _try_execute(
         if strategy.get("leverage_source") == "custom":
             leverage = int(strategy.get("leverage", leverage))
 
-    token = await get_valid_token(session_id)
-    async with OKXClient(token, session_id=session_id) as client:
+    creds = get_api_credentials(session_id)
+    async with OKXClient(**creds) as client:
 
         # ── Industry standard: fetch LIVE mark price at execution time ──
         # Signal entry_price is from historical OHLCV (up to 5min stale).

@@ -9,7 +9,7 @@ from __future__ import annotations
 import logging
 import time
 
-from .oauth import is_authenticated, refresh_access_token
+from .oauth import is_authenticated
 from .storage import _get_conn, delete_session, get_session
 
 logger = logging.getLogger("okx_token_refresh")
@@ -50,7 +50,7 @@ async def refresh_all_sessions() -> dict:
         # Proactively refresh if access token expires within window
         if time.time() > tokens["expires_at"] - REFRESH_WINDOW:
             try:
-                await refresh_access_token(session_id)
+                pass  # Fast API: API keys don't need token refresh
                 stats["refreshed"] += 1
             except Exception as e:
                 logger.error("Failed to refresh session %s: %s", session_id[:8], e)

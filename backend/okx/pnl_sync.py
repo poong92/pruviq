@@ -25,7 +25,7 @@ import logging
 import time
 
 from .client import OKXClient
-from .oauth import get_valid_token, is_authenticated
+from .oauth import get_api_credentials, is_authenticated
 from .storage import _get_conn
 
 logger = logging.getLogger("okx_pnl_sync")
@@ -59,8 +59,8 @@ async def sync_realized_pnl(session_id: str, inst_id: str, trade_created_at: flo
             if not is_authenticated(session_id):
                 return
 
-            token = await get_valid_token(session_id)
-            async with OKXClient(token, session_id=session_id) as client:
+            creds = get_api_credentials(session_id)
+            async with OKXClient(**creds) as client:
                 history = await client.get_positions_history(limit="20")
 
             # Find matching closed position by instId and close time after trade creation
@@ -216,8 +216,8 @@ async def retry_failed_pnl_sync() -> None:
         if not is_authenticated(session_id):
             continue
         try:
-            token = await get_valid_token(session_id)
-            async with OKXClient(token, session_id=session_id) as client:
+            creds = get_api_credentials(session_id)
+            async with OKXClient(**creds) as client:
                 history = await client.get_positions_history(limit=_RETRY_HISTORY_LIMIT)
         except Exception as e:
             logger.error("pnl_sync retry: fetch history failed for %s: %s", session_id[:8], e)
