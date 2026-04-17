@@ -6,6 +6,7 @@ Used by /signals/live API endpoint.
 """
 
 import logging
+import threading
 import time
 from datetime import datetime, timezone
 from typing import Dict, List, Optional
@@ -29,6 +30,13 @@ class SignalScanner:
         self._cache_ttl: float = 300  # 5 minutes
         self._history: List[dict] = []  # last 24h signals
         self._history_max: int = 500
+        # Single-flight lock: a cold scan of 572 coins × N strategies takes
+        # ~30s and is CPU-bound. Without this, concurrent /signals/live
+        # requests + the pre-warm task + the auto-trade loop all ran scan()
+        # in parallel on 6+ threads, fighting for the GIL and dragging every
+        # request to 60-90s. With the lock, only one scan runs at a time;
+        # concurrent callers wait and then hit the cache.
+        self._scan_lock = threading.Lock()
 
     def scan(self, force: bool = False) -> List[dict]:
         """
@@ -43,6 +51,17 @@ class SignalScanner:
         if not force and (now - self._cache_ts) < self._cache_ttl:
             return self._cache
 
+        with self._scan_lock:
+            # Re-check cache after acquiring lock — another thread may have
+            # finished scanning while we were waiting.
+            now = time.time()
+            if not force and (now - self._cache_ts) < self._cache_ttl:
+                return self._cache
+            return self._scan_locked()
+
+    def _scan_locked(self) -> List[dict]:
+        """Inner scan body, called with _scan_lock held."""
+        scan_started = time.time()
         signals = []
         top_coins = self._get_top_coins()
 
@@ -114,7 +133,11 @@ class SignalScanner:
 
         # Update cache
         self._cache = signals
-        self._cache_ts = now
+        self._cache_ts = scan_started
+        logger.info(
+            "signal scan complete: %d signals in %.1fs",
+            len(signals), time.time() - scan_started,
+        )
 
         # Add to history (dedup by strategy+coin)
         existing_keys = {(s["strategy"], s["coin"]) for s in self._history}
@@ -128,7 +151,6 @@ class SignalScanner:
         if len(self._history) > self._history_max:
             self._history = self._history[-self._history_max:]
 
-        logger.info(f"Signal scan: {len(signals)} active signals from {len(top_coins)} coins")
         return signals
 
     def get_history(self, hours: int = 24) -> List[dict]:
