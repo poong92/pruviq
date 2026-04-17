@@ -3694,7 +3694,10 @@ async def export_csv(hash: str):
 # Daily Rankings
 # ---------------------------------------------------------------------------
 
-RANKING_DIR = "/Users/jepo/Desktop/autotrader/data/daily_rankings"
+RANKING_DIR = os.environ.get(
+    "RANKING_DIR",
+    "/Users/jepo/Desktop/autotrader/data/daily_rankings",
+)
 
 _rankings_cache: dict = {}
 _RANKINGS_CACHE_TTL = 60
