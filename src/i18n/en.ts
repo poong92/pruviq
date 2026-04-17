@@ -2068,6 +2068,32 @@ export const en = {
   "404.back_home": "Back to Home",
   "404.open_simulator": "Open Simulator",
   "404.or_try": "Or try these",
+  // Trust Dashboard
+  "trust.meta_title": "Trust Dashboard — PRUVIQ",
+  "trust.meta_desc":
+    "PRUVIQ publishes anonymized execution-quality metrics for every auto-trade: slippage, SL/TP set-rate, 24h/7d trade counts. Evidence, not claims.",
+  "trust.moat_label": "Moat #1",
+  "trust.heading": "Trust Dashboard",
+  "trust.intro":
+    "Every auto-execution logs the gap between its signal price and its actual fill price. We publish the aggregate. No per-user attribution — just evidence.",
+  "trust.trades_24h": "Trades (24h)",
+  "trust.trades_7d": "Trades (7d)",
+  "trust.slippage_median": "Slippage median",
+  "trust.slippage_p90": "Slippage p90",
+  "trust.slippage_formula": "|fill − signal| / signal",
+  "trust.slippage_p90_note": "worst 10% bound",
+  "trust.sl_tp_rate": "SL / TP set-rate",
+  "trust.sl_tp_note":
+    "% of logged trades where OKX accepted our stop-loss + take-profit algo order. Misses trigger the emergency-close path (autotrader lesson L1+).",
+  "trust.loading": "loading…",
+  "trust.unavailable": "metrics temporarily unavailable",
+  "trust.updated": "updated",
+  "trust.why_title": "Why we publish this.",
+  "trust.why_body":
+    "Every crypto autotrade platform claims \"precise execution.\" We let you check. Slippage over 0.5% triggers an immediate position close by design. If that number walks up over time, you'll see it here first.",
+  "trust.what_not_title": "What this isn't.",
+  "trust.what_not_body":
+    "Not a leaderboard. Not individual user returns. No clickbait.",
 } as const;
 
 export type TranslationKey = keyof typeof en;
