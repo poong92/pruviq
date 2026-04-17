@@ -1605,7 +1605,7 @@ export const en = {
   "compare.row2_pruviq": "No code needed",
   "compare.row3_label": "Coins",
   "compare.row3_other": "1 coin at a time",
-  "compare.row3_pruviq": "572 coins at once",
+  "compare.row3_pruviq": "235 coins at once",
   "compare.row4_label": "Signup",
   "compare.row4_other": "Email + credit card",
   "compare.row4_pruviq": "No account needed",
@@ -2090,7 +2090,7 @@ export const en = {
   "trust.updated": "updated",
   "trust.why_title": "Why we publish this.",
   "trust.why_body":
-    "Every crypto autotrade platform claims \"precise execution.\" We let you check. Slippage over 0.5% triggers an immediate position close by design. If that number walks up over time, you'll see it here first.",
+    'Every crypto autotrade platform claims "precise execution." We let you check. Slippage over 0.5% triggers an immediate position close by design. If that number walks up over time, you\'ll see it here first.',
   "trust.what_not_title": "What this isn't.",
   "trust.what_not_body":
     "Not a leaderboard. Not individual user returns. No clickbait.",
