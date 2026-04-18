@@ -31,10 +31,18 @@ should_alert() {
     return 0
 }
 
-# 1. Local API health
-API_RESP=$(curl -s -m 10 http://127.0.0.1:8080/health 2>/dev/null || echo '{"error":true}')
-API_OK=$(echo "$API_RESP" | python3 -c 'import json,sys; d=json.load(sys.stdin); print("ok" if d.get("status")=="ok" else "fail")' 2>/dev/null || echo "fail")
-[ "$API_OK" != "ok" ] && ISSUES+=("API down: 127.0.0.1:8080")
+# 1. Local API health — retry once after 30s to avoid deploy-restart false alerts
+check_api() {
+    local resp
+    resp=$(curl -s -m 10 http://127.0.0.1:8080/health 2>/dev/null || echo '{"error":true}')
+    echo "$resp" | python3 -c 'import json,sys; d=json.load(sys.stdin); print("ok" if d.get("status")=="ok" else "fail")' 2>/dev/null || echo "fail"
+}
+API_OK=$(check_api)
+if [ "$API_OK" != "ok" ]; then
+    sleep 30
+    API_OK=$(check_api)
+    [ "$API_OK" != "ok" ] && ISSUES+=("API down: 127.0.0.1:8080")
+fi
 
 # 2. API response time
 if [ "$API_OK" = "ok" ]; then
