@@ -28,9 +28,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import JSONResponse, Response
 
-_admin_key_raw = os.environ.get("ADMIN_API_KEY", "")
+_admin_key_raw = os.environ.get("ADMIN_API_KEY", "").strip()
 ADMIN_API_KEY: Optional[str] = _admin_key_raw if len(_admin_key_raw) >= 32 else None
-_internal_key_raw = os.environ.get("INTERNAL_API_KEY", "")
+_internal_key_raw = os.environ.get("INTERNAL_API_KEY", "").strip()
 INTERNAL_API_KEY: Optional[str] = _internal_key_raw if len(_internal_key_raw) >= 32 else None
 OKX_AUTO_TRADE_LOCAL = os.environ.get("OKX_AUTO_TRADE_LOCAL", "true").lower() == "true"
 COINGECKO_API_KEY = os.environ.get("COINGECKO_API_KEY", "")

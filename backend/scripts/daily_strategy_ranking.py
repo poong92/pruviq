@@ -22,10 +22,10 @@ from datetime import datetime, timedelta
 from typing import Optional
 
 # === Configuration ===
-API_BASE = os.getenv("PRUVIQ_API_BASE", "http://localhost:8080")
-INTERNAL_API_KEY = os.getenv("INTERNAL_API_KEY", "")
-TELEGRAM_BOT_TOKEN = os.getenv("PRUVIQ_SNS_BOT_TOKEN", "")  # 8058630215 SNS 봇
-TELEGRAM_CHAT_ID = os.getenv("PRUVIQ_SNS_CHAT_ID", "")
+API_BASE = os.getenv("PRUVIQ_API_BASE", "http://localhost:8080").strip()
+INTERNAL_API_KEY = os.getenv("INTERNAL_API_KEY", "").strip()
+TELEGRAM_BOT_TOKEN = os.getenv("PRUVIQ_SNS_BOT_TOKEN", "").strip()  # 8058630215 SNS 봇
+TELEGRAM_CHAT_ID = os.getenv("PRUVIQ_SNS_CHAT_ID", "").strip()
 
 AVOID_HOURS_1H = [2, 3, 10, 20, 21, 22, 23]  # 1H 전략용 시간 필터
 
