@@ -10,7 +10,11 @@ Group=pruviq
 WorkingDirectory=/opt/pruviq/current
 EnvironmentFile=/opt/pruviq/shared/.env
 ExecStart=/opt/pruviq/bin/daily-strategy-ranking.sh
-TimeoutStartSec=3600
+TimeoutStartSec=7200
+# 2026-04-18: 3600 → 7200. strategy × direction × timeframe × group 조합이 많고
+# 무거운 조합(supertrend/top100)은 개별 60s timeout에 걸려 재시도까지 합치면 1h 초과.
+# 병렬화 전까지 제한 완화. 장기적으로는 daily_strategy_ranking.py의 requests를
+# async/concurrent.futures 로 전환 검토.
 StandardOutput=journal
 StandardError=journal
 SyslogIdentifier=pruviq-daily-ranking

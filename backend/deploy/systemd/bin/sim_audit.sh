@@ -12,9 +12,11 @@ LATEST="/tmp/pruviq-sim-audit-latest.txt"
 cd "$REPO_DIR"
 "$VENV" tests/sim_audit.py quick 2>&1 | tee "$LATEST"
 
-FAILS=$(grep -c FAIL "$LATEST" 2>/dev/null || echo 0)
+# 뿌리 수정: `grep -c FAIL`은 SUMMARY 줄의 "0 FAIL"까지 매칭해서 모든 실행이 FAILS=1로
+# 오판 → exit 1. 테스트 라벨 `[FAIL]` 만 정확히 집계한다.
+FAILS=$(grep -c "\[FAIL\]" "$LATEST" 2>/dev/null || echo 0)
 if [ "$FAILS" -gt 0 ]; then
-    SUMMARY=$(grep -E 'SUMMARY|FAIL' "$LATEST" | head -10)
+    SUMMARY=$(grep -E 'SUMMARY|\[FAIL\]' "$LATEST" | head -10)
     if [ -n "${TELEGRAM_TOKEN:-}" ] && [ -n "${TELEGRAM_CHAT_ID:-}" ]; then
         curl -sf -X POST "https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage" \
             -d chat_id="${TELEGRAM_CHAT_ID}" \
