@@ -2104,6 +2104,7 @@ export const en = {
   "trust.platform_uptime": "API uptime",
   "trust.platform_note": "Source: live api.pruviq.com/health",
   "trust.platform_down": "API unreachable",
+  "trust.platform_data_age": "Data age",
 } as const;
 
 export type TranslationKey = keyof typeof en;
