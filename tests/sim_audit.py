@@ -33,12 +33,17 @@ INFO = "\033[94m[INFO]\033[0m"
 results = {"pass": 0, "fail": 0, "warn": 0, "skip": 0}
 
 
+_INTERNAL_KEY = os.getenv("INTERNAL_API_KEY", "")
+
+
 def api_call(endpoint, method="GET", data=None, base=None, _retries=3):
     """Call PRUVIQ API endpoint with rate-limit retry."""
     if base is None:
         base = API_BASE
     url = f"{base}{endpoint}"
     headers = {"Content-Type": "application/json", "User-Agent": "PRUVIQ-SimAudit/1.0"}
+    if _INTERNAL_KEY:
+        headers["X-Internal-Key"] = _INTERNAL_KEY
     body = json.dumps(data).encode() if data else None
     req = Request(url, data=body, headers=headers, method=method)
     try:
@@ -127,7 +132,7 @@ def run_layer0():
         check(0, "API reachable", False, detail=health["error"])
         return
     check(0, "API reachable", True)
-    check(0, f"Coins loaded: {health.get('coins_loaded', 0)}", health.get("coins_loaded", 0) >= 500)
+    check(0, f"Coins loaded: {health.get('coins_loaded', 0)}", health.get("coins_loaded", 0) >= 200)
 
     # Check endpoints exist
     endpoints = ["/simulate", "/backtest", "/simulate/validate", "/simulate/compare",

@@ -11,7 +11,7 @@ Group=pruviq
 WorkingDirectory=/opt/pruviq/current
 EnvironmentFile=/opt/pruviq/shared/.env
 # Make the deploy key visible
-Environment=GIT_SSH_COMMAND=ssh -i /opt/pruviq/.ssh/id_ed25519 -o IdentitiesOnly=yes
+Environment="GIT_SSH_COMMAND=ssh -i /opt/pruviq/.ssh/id_ed25519 -o IdentitiesOnly=yes"
 ExecStart=/opt/pruviq/bin/commit-data.sh
 StandardOutput=journal
 StandardError=journal
