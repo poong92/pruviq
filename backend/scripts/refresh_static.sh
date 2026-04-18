@@ -141,14 +141,20 @@ import json, datetime, urllib.request
 path = '$REPO_DIR/$SITE_STATS'
 with open(path) as f:
     d = json.load(f)
+# 2026-04-19: silent `except: pass` 제거. health/strategies 응답 실패 시 명시적 경고
+# (stderr 로 올라가 refresh_static.sh 의 `2>/dev/null` 너머 log 에서 감지 가능).
+# fallback 기본값은 그대로 유지 (refresh 전체가 실패하지 않도록 non-blocking).
+import sys
 try:
     health = json.loads(urllib.request.urlopen('http://127.0.0.1:8080/health', timeout=5).read())
-    d['coins_analyzed'] = health.get('coins_loaded', d.get('coins_analyzed', 572))
-except: pass
+    d['coins_analyzed'] = health.get('coins_loaded', d.get('coins_analyzed', 240))
+except Exception as e:
+    print(f'WARN: /health fetch failed — coins_analyzed unchanged ({e.__class__.__name__})', file=sys.stderr)
 try:
     strats = json.loads(urllib.request.urlopen('http://127.0.0.1:8080/strategies', timeout=5).read())
     d['strategies_tested'] = len(strats) if isinstance(strats, list) else d.get('strategies_tested', 17)
-except: pass
+except Exception as e:
+    print(f'WARN: /strategies fetch failed — strategies_tested unchanged ({e.__class__.__name__})', file=sys.stderr)
 start = datetime.date(2023, 12, 30)
 d['trading_days'] = (datetime.date.today() - start).days
 d['last_updated'] = datetime.date.today().isoformat()
