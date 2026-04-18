@@ -1,15 +1,14 @@
 """
-OKX Fast API OAuth 2.0 flow for FD Broker.
+OKX OAuth 2.0 flow for Broker program.
 
-Flow (OKX Fast API — scope=fast_api):
+Flow:
   1. generate_oauth_params()   → frontend builds authorize URL
   2. exchange_code(code)       → code → access_token → create API key for user
   3. get_api_credentials(sid)  → returns {api_key, secret_key, passphrase}
   4. disconnect(sid)           → delete session
 
-Why fast_api scope: OKX broker OAuth requires scope="fast_api", NOT "read_only,trade".
-Using wrong scope silently routes to /account/users without consent page.
-Ref: OKX Fast API Integration Doc (2024).
+scope="read_only,trade" shows the OAuth consent page (user grants permissions).
+scope="fast_api" skips the consent page and routes to /account/users — do NOT use.
 """
 from __future__ import annotations
 
@@ -49,10 +48,7 @@ def _gen_passphrase() -> str:
 
 
 def generate_oauth_params(redirect_after: str = "", lang: str = "en") -> dict:
-    """
-    Generate OAuth params for frontend authorize URL.
-    scope=fast_api is required for OKX broker OAuth consent page to appear.
-    """
+    """Generate OAuth params for frontend authorize URL."""
     state = secrets.token_urlsafe(32)
     save_csrf_state(state, redirect_after or "", lang)
     params = {
@@ -60,7 +56,7 @@ def generate_oauth_params(redirect_after: str = "", lang: str = "en") -> dict:
         "client_id": OKX_CLIENT_ID,
         "response_type": "code",
         "access_type": "offline",
-        "scope": "fast_api",
+        "scope": "read_only,trade",
         "redirect_uri": OKX_REDIRECT_URI,
     }
     if OKX_BROKER_CODE:
@@ -78,7 +74,7 @@ def generate_auth_url(redirect_after: str = "", lang: str = "en") -> str:
         "response_type": "code",
         "access_type": "offline",
         "redirect_uri": OKX_REDIRECT_URI,
-        "scope": "fast_api",
+        "scope": "read_only,trade",
         "state": state,
     }
     if OKX_BROKER_CODE:
