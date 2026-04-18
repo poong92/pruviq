@@ -4,10 +4,10 @@ on:
   push:
     branches: [main]
   schedule:
-    # Drift detector: runs every 30 min as a safety net in case the push
+    # Drift detector: runs hourly as a safety net in case the push
     # event is silently dropped by GitHub (root cause of the 2026-04-18
     # PR #1122 incident where scope=fast_api ran for hours).
-    - cron: "*/30 * * * *"
+    - cron: "0 * * * *"
   workflow_dispatch: {}
 
 concurrency:
@@ -42,7 +42,7 @@ jobs:
       - name: Check out code (needed for git diff)
         uses: actions/checkout@v4
         with:
-          fetch-depth: 2
+          fetch-depth: 0
 
       - name: Guard — skip if push has no backend changes
         # Replaces the on.push.paths filter which GitHub silently drops ~1% of events.
