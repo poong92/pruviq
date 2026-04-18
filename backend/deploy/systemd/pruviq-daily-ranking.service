@@ -1,0 +1,16 @@
+[Unit]
+Description=PRUVIQ Daily Strategy Ranking
+After=pruviq-api.service
+OnFailure=pruviq-alert@%n.service
+
+[Service]
+Type=oneshot
+User=pruviq
+Group=pruviq
+WorkingDirectory=/opt/pruviq/current
+EnvironmentFile=/opt/pruviq/shared/.env
+ExecStart=/opt/pruviq/bin/daily-strategy-ranking.sh
+TimeoutStartSec=3600
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=pruviq-daily-ranking
