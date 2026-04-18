@@ -162,7 +162,10 @@ const liveTrades = perf.summary.total_trades.toLocaleString();
                   title="portfolio-level backtest; live trading stopped at 20% MDD per risk rules"
                 >&#9432;</span>
               </td>
-              <td class="p-3 text-right font-mono text-[--color-red]">33%</td>
+              <td class="p-3 text-right font-mono text-[--color-red]">
+                33%
+                <span class="block text-[10px] text-[--color-text-muted] font-sans font-normal mt-0.5">(backtest portfolio)</span>
+              </td>
             </tr>
             <tr class="border-b border-[--color-border]">
               <td class="p-3">{t('perf.tbl_breakeven')}</td>
@@ -314,7 +317,7 @@ const liveTrades = perf.summary.total_trades.toLocaleString();
               <span class="font-mono font-bold text-[--color-up]">+$794</span>
             </div>
             <div class="flex justify-between text-sm">
-              <span class="text-[--color-text-muted]">{t('perf.gap_mdd_label')}</span>
+              <span class="text-[--color-text-muted]">{t('perf.gap_mdd_label')} <span class="text-[10px] opacity-60">(backtest)</span></span>
               <span class="font-mono">33%</span>
             </div>
             <div class="flex justify-between text-sm">

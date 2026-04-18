@@ -17,6 +17,8 @@ test.describe("Interactive QA — 기능 클릭 테스트", () => {
   test("simulate: Breakout 시나리오 클릭 → 결과 표시", async ({ page }) => {
     await page.goto("/simulate/");
     await page.waitForLoadState("domcontentloaded");
+    // Preact islands hydration race 방지: networkidle 까지 대기 (flaky 재현 차단)
+    await page.waitForLoadState("networkidle");
 
     // data-testid 기반 Breakout 카드 찾기
     const breakoutCard = page.locator('[data-testid="quick-cat-breakout"]');

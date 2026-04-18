@@ -83,7 +83,9 @@ def send_telegram(text: str) -> bool:
 
 def main():
     try:
-        resp = requests.get(f"{API_URL}/signals/live?top_n=30", timeout=15)
+        # 2026-04-19: timeout 15→45. DO free RAM 140MB 압박으로 /signals/live 응답 간헐
+        # 15s 초과 → 매시간 systemd FAILURE 알림. top_n=30은 30 coin × multi-strategy 계산.
+        resp = requests.get(f"{API_URL}/signals/live?top_n=30", timeout=45)
         resp.raise_for_status()
         signals = resp.json()
     except Exception as e:

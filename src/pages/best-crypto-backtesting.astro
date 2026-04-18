@@ -4,7 +4,7 @@ import { useTranslations } from '../i18n/index';
 import siteStats from '../../public/data/site-stats.json';
 
 const t = useTranslations('en');
-const coinsAnalyzed = (siteStats as Record<string, number>).coins_analyzed ?? 570;
+const coinsAnalyzed = (siteStats as Record<string, number>).coins_analyzed ?? 240;
 
 const criteria = [
   { label: 'Multi-coin support', desc: `${coinsAnalyzed}+ coins across major exchanges — test any pair, not just BTC/ETH.`, pruviq: true },
@@ -108,7 +108,7 @@ const jsonLd = {
       <div class="grid md:grid-cols-2 gap-6">
         <div class="card-enterprise card-hover p-6">
           <h3 class="font-bold mb-2">{coinsAnalyzed}+ Coins, Real Data</h3>
-          <p class="text-sm text-[--color-text-muted]">Test on any Binance Futures pair with 2+ years of OHLCV data. Not just the top 10 — every listed coin.</p>
+          <p class="text-sm text-[--color-text-muted]">Test on any OKX Futures pair with 2+ years of OHLCV data. Not just the top 10 — every listed coin.</p>
         </div>
         <div class="card-enterprise card-hover p-6">
           <h3 class="font-bold mb-2">Realistic Fee Modeling</h3>

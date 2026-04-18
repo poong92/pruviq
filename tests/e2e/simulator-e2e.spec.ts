@@ -169,7 +169,11 @@ test.describe("Simulator — Expert Load & Defaults", () => {
     if ((await coinText.count()) > 0) {
       const text = (await coinText.first().textContent()) || "";
       const count = parseInt(text.match(/(\d+)/)?.[1] || "0");
-      expect(count, "Coin count should be > 400").toBeGreaterThan(400);
+      // Post Binance→OKX migration (2026-04-17): OKX SWAP 커버리지 ~240. 임계값 현실화.
+      expect(
+        count,
+        "Coin count should be > 200 (post-OKX migration)",
+      ).toBeGreaterThan(200);
       console.log(`Coins loaded: ${count}`);
     }
   });
@@ -994,7 +998,7 @@ test.describe("Simulator — API Validation", () => {
     }
   });
 
-  test("GET /health → coins > 400", async ({ request }) => {
+  test("GET /health → coins > 200", async ({ request }) => {
     test.skip(
       skipInCI,
       "Skipped in CI — production API unreachable from GitHub runners",
@@ -1002,7 +1006,10 @@ test.describe("Simulator — API Validation", () => {
     const res = await request.get(`${API_BASE}/health`);
     expect(res.ok()).toBeTruthy();
     const d = await res.json();
-    expect(d.coins_loaded, "coins > 400").toBeGreaterThan(400);
+    // Post Binance→OKX migration (2026-04-17): OKX coins_loaded ~238.
+    expect(d.coins_loaded, "coins > 200 (post-OKX migration)").toBeGreaterThan(
+      200,
+    );
     expect(d.status, "status ok").toBe("ok");
     console.log(`  Health: ${d.coins_loaded} coins, status: ${d.status}`);
   });
