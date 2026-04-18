@@ -76,16 +76,22 @@ if ! crontab -l 2>/dev/null | grep -qF "refresh_static.sh"; then
     send_alert "WARN" "Cron entry was missing — auto-installed"
 fi
 
-# Ensure we're on main and clean
+# Only proceed if already on main. Never hijack a developer's feature branch
+# (previous behavior: `git stash + git checkout main` mid-session wiped WIP and
+# caused merge conflicts with the dev's commits — see 2026-04-18 audit incident).
+# Dev work stays intact; cron simply skips this cycle and alerts owner.
 CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "unknown")
 if [[ "$CURRENT_BRANCH" != "main" ]]; then
-    log "Not on main (on $CURRENT_BRANCH), switching..."
-    git stash -q 2>/dev/null || true
-    git checkout main -q 2>/dev/null || true
+    log "Not on main (on $CURRENT_BRANCH) — skipping this cron cycle (dev session active)"
+    send_alert "WARN" "refresh_static cron skipped: repo on branch '$CURRENT_BRANCH' (dev session). Will retry in 20min. If persistent, check Mac Mini git state."
+    exit 0
 fi
 
-# Always pull latest code so pipeline fixes propagate automatically
-git pull --autostash -q origin main 2>/dev/null || true
+# Pull latest on main (no --autostash needed — we just confirmed clean branch state).
+# Any uncommitted tracked-file changes here would indicate a cron misfire anyway.
+git pull -q --ff-only origin main 2>/dev/null || {
+    log "git pull failed — continuing with current HEAD"
+}
 
 # Activate venv if exists
 if [ -f "$VENV_DIR/bin/activate" ]; then
