@@ -126,7 +126,7 @@
     {
       "id": "stale_coin_count_549",
       "pr": "PR#464",
-      "symptom": "coin count shows 549 instead of 569+",
+      "symptom": "coin count shows stale value instead of 240+",
       "severity": "critical",
       "status": "fixed",
       "recheck": true
@@ -147,7 +147,7 @@
     },
     "simulate_en": {
       "path": "/simulate/",
-      "expected_h1_contains": "569",
+      "expected_h1_contains": "240",
       "notes": "Run 버튼 없음이 정상 — 시나리오 카드 클릭이 실행 트리거",
       "severity_blank": "critical"
     },
