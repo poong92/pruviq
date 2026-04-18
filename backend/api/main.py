@@ -4300,7 +4300,11 @@ async def unsubscribe_email(email: str, token: str):
     """Unsubscribe via signed link in emails."""
     from fastapi.responses import HTMLResponse
 
-    secret = os.environ.get("UNSUBSCRIBE_SECRET", "pruviq-unsub-2026")
+    # 🔴 2026-04-19: 하드코딩 기본값 제거 (public GitHub repo에 노출돼 있었음).
+    # DO /opt/pruviq/shared/.env 에 32+ 랜덤 설정 필수.
+    secret = os.environ.get("UNSUBSCRIBE_SECRET", "")
+    if not secret:
+        raise HTTPException(503, detail="Unsubscribe service misconfigured")
     expected_full = hmac.new(secret.encode(), email.lower().encode(), hashlib.sha256).hexdigest()
     # Accept legacy 16-char tokens (old emails) and new full 64-char tokens
     expected_legacy = expected_full[:16]

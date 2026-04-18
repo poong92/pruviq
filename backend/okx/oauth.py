@@ -47,8 +47,29 @@ def _gen_passphrase() -> str:
     return f"Pr1!{rand}"  # guaranteed: upper(P), lower(r), digit(1), special(!)
 
 
+def _validate_redirect(url: str) -> str:
+    """Return url if it points to pruviq.com (or subdomain) or is empty; else "".
+    Defends `/auth/okx/*?redirect=evil.com` open-redirect phishing vector."""
+    if not url:
+        return ""
+    from urllib.parse import urlparse
+    try:
+        netloc = urlparse(url).netloc.lower()
+    except Exception:
+        return ""
+    if not netloc:
+        # Relative path — same origin, safe
+        return url
+    # Allow pruviq.com and *.pruviq.com only
+    if netloc == "pruviq.com" or netloc.endswith(".pruviq.com"):
+        return url
+    logger.warning("OAuth redirect blocked (not pruviq.com): %s", url[:100])
+    return ""
+
+
 def generate_oauth_params(redirect_after: str = "", lang: str = "en") -> dict:
     """Generate OAuth params for frontend authorize URL."""
+    redirect_after = _validate_redirect(redirect_after)
     state = secrets.token_urlsafe(32)
     save_csrf_state(state, redirect_after or "", lang)
     params = {
@@ -67,6 +88,7 @@ def generate_oauth_params(redirect_after: str = "", lang: str = "en") -> dict:
 def generate_auth_url(redirect_after: str = "", lang: str = "en") -> str:
     """Generate full OKX authorize URL (server-side redirect variant)."""
     from urllib.parse import urlencode
+    redirect_after = _validate_redirect(redirect_after)
     state = secrets.token_urlsafe(32)
     save_csrf_state(state, redirect_after or "", lang)
     params = {

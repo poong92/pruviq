@@ -182,7 +182,10 @@ async def check_mdd_and_halt(session_id: str) -> bool:
     except Exception as e:
         logger.warning("MDD check: get_trade_log failed for %s: %s", session_id[:8], e)
         return False
-    cum_pnl = sum(float(t.get("pnl") or 0) for t in trades)
+    # 🔴 MDD halt 버그 (2026-04-19): storage.get_trade_log 는 `pnl_usdt` 키로 반환하는데
+    # 이 함수가 `t.get("pnl")`로 읽으면 항상 None → cum_loss=0 → halt 영영 트리거 안 됨.
+    # 레거시 대비 두 키 모두 검사.
+    cum_pnl = sum(float(t.get("pnl_usdt") or t.get("pnl") or 0) for t in trades)
     cum_loss = max(0.0, -cum_pnl)
     if cum_loss <= threshold_usd:
         return False

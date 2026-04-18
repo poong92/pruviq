@@ -25,7 +25,10 @@ import httpx
 SUBSCRIBERS_FILE = Path("/Users/jepo/pruviq-data/subscribers.json")
 API_URL = "http://localhost:8080"
 SENDGRID_API_KEY = os.environ.get("SENDGRID_API_KEY", "")
-UNSUBSCRIBE_SECRET = os.environ.get("UNSUBSCRIBE_SECRET", "pruviq-unsub-2026")
+# 2026-04-19: 하드코딩 기본값 제거. UNSUBSCRIBE_SECRET 이 없으면 이메일 발송 차단.
+UNSUBSCRIBE_SECRET = os.environ.get("UNSUBSCRIBE_SECRET", "")
+if not UNSUBSCRIBE_SECRET:
+    raise RuntimeError("UNSUBSCRIBE_SECRET must be set in environment (see DO /opt/pruviq/shared/.env)")
 FROM_EMAIL = "alerts@pruviq.com"
 
 

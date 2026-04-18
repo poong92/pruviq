@@ -170,6 +170,19 @@ async def execute_order(
         raise HTTPException(429, f"Rate limit: wait {wait}s before next order")
     _order_rate_limit[session_id] = now
 
+    # 🔴 2026-04-19: 서버측 position cap. auto_executor 에는 있었으나 수동 POST 경로는 우회됨.
+    # settings.max_per_trade_usdt (default 200) 로 강제 캡.
+    from .settings import get_settings
+    _settings = get_settings(session_id)
+    _cap = float(_settings.get("max_per_trade_usdt", 200.0))
+    if req.position_size_usdt > _cap:
+        _order_rate_limit.pop(session_id, None)
+        raise HTTPException(
+            400,
+            f"Position size ${req.position_size_usdt:.2f} exceeds max_per_trade_usdt cap ${_cap:.2f}. "
+            f"Adjust in settings or reduce size.",
+        )
+
     try:
         result = await execute_from_simulation(session_id, req, current_price)
         return {"status": "executed", **result}

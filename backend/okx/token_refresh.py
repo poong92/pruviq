@@ -40,21 +40,17 @@ async def refresh_all_sessions() -> dict:
             stats["expired"] += 1
             continue
 
-        # Check if refresh token is too old
-        if time.time() > tokens["expires_at"] + REFRESH_TOKEN_MAX_AGE:
+        # 🔴 2026-04-19 버그 수정: `tokens["expires_at"]` 은 존재하지 않음 (save_session 은
+        # created_at / updated_at 만 기록). OKX Fast API는 API 키 방식이라 refresh 불필요 →
+        # stale 세션 제거만 수행. 과거 로직은 매 실행 KeyError 발생해 cleanup 정지.
+        created_at = float(tokens.get("created_at") or 0)
+        if created_at and time.time() > created_at + REFRESH_TOKEN_MAX_AGE:
             delete_session(session_id)
             stats["expired"] += 1
-            logger.info("Session %s expired (refresh token too old)", session_id[:8])
+            logger.info("Session %s expired (age > %ds)", session_id[:8], REFRESH_TOKEN_MAX_AGE)
             continue
-
-        # Proactively refresh if access token expires within window
-        if time.time() > tokens["expires_at"] - REFRESH_WINDOW:
-            try:
-                pass  # Fast API: API keys don't need token refresh
-                stats["refreshed"] += 1
-            except Exception as e:
-                logger.error("Failed to refresh session %s: %s", session_id[:8], e)
-                stats["errors"] += 1
+        # OKX Fast API (API keys): no refresh; just keep stats aligned.
+        stats["refreshed"] += 1
 
     logger.info(
         "Token refresh complete: %d refreshed, %d expired, %d errors (of %d total)",
