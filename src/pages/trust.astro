@@ -60,7 +60,7 @@ const t = useTranslations('en');
         <p class="text-sm text-[--color-text-secondary] max-w-xl mx-auto">{t('trust.platform_intro')}</p>
       </header>
 
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4" data-platform-health>
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4" data-platform-health>
         <div class="card-enterprise rounded-xl p-4">
           <p class="text-xs font-mono text-[--color-text-muted] uppercase mb-2">{t('trust.platform_api_status')}</p>
           <p class="text-xl font-bold" data-health="status">—</p>
@@ -76,6 +76,10 @@ const t = useTranslations('en');
         <div class="card-enterprise rounded-xl p-4">
           <p class="text-xs font-mono text-[--color-text-muted] uppercase mb-2">{t('trust.platform_uptime')}</p>
           <p class="text-xl font-bold" data-health="uptime_seconds">—</p>
+        </div>
+        <div class="card-enterprise rounded-xl p-4" data-data-age-cell>
+          <p class="text-xs font-mono text-[--color-text-muted] uppercase mb-2">{t('trust.platform_data_age')}</p>
+          <p class="text-xl font-bold" data-data-age>—</p>
         </div>
       </div>
 
@@ -128,9 +132,10 @@ const t = useTranslations('en');
       }
     })();
 
-    // Platform health — live /health probe. Shows system is up + honest about stale data.
+    // Platform health — live /health probe + X-Data-Age-Seconds header (Moat-3).
+    // Surfaces data freshness publicly — no PR spin when data goes stale.
     (async () => {
-      const fmtUptime = (sec) => {
+      const fmtDuration = (sec) => {
         if (!Number.isFinite(sec)) return 'N/A';
         const s = Math.floor(sec);
         if (s < 60) return s + 's';
@@ -142,19 +147,37 @@ const t = useTranslations('en');
         const resp = await fetch('https://api.pruviq.com/health', { cache: 'no-store' });
         if (!resp.ok) throw new Error('HTTP ' + resp.status);
         const data = await resp.json();
+        const dataAgeSec = Number(resp.headers.get('x-data-age-seconds'));
         document.querySelectorAll('[data-health]').forEach((el) => {
           const key = el.getAttribute('data-health');
           if (!key) return;
           const v = data[key];
           if (v === null || v === undefined) { el.textContent = 'N/A'; return; }
-          if (key === 'uptime_seconds') el.textContent = fmtUptime(Number(v));
+          if (key === 'uptime_seconds') el.textContent = fmtDuration(Number(v));
           else if (key === 'status') el.textContent = String(v).toUpperCase();
           else el.textContent = String(v);
         });
+        const ageEl = document.querySelector('[data-data-age]');
+        const ageCell = document.querySelector('[data-data-age-cell]');
+        if (ageEl) {
+          if (!Number.isFinite(dataAgeSec)) {
+            ageEl.textContent = 'N/A';
+          } else {
+            ageEl.textContent = fmtDuration(dataAgeSec);
+            // Green ≤1h, yellow ≤6h, red >6h — mirrors backend staleness thresholds.
+            if (ageCell) {
+              if (dataAgeSec <= 3600) ageCell.classList.add('ring-1', 'ring-green-500/40');
+              else if (dataAgeSec <= 21600) ageCell.classList.add('ring-1', 'ring-yellow-500/40');
+              else ageCell.classList.add('ring-1', 'ring-red-500/40');
+            }
+          }
+        }
       } catch (e) {
         document.querySelectorAll('[data-health]').forEach((el) => {
           el.textContent = 'N/A';
         });
+        const ageEl = document.querySelector('[data-data-age]');
+        if (ageEl) ageEl.textContent = 'N/A';
         const note = document.querySelector('[data-health-note]');
         if (note) note.textContent = document.documentElement.lang === 'ko'
           ? 'API 연결 불가 — 실제 다운 상태일 수 있음'

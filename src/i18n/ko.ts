@@ -2060,4 +2060,5 @@ export const ko: Record<TranslationKey, string> = {
   "trust.platform_uptime": "API 가동 시간",
   "trust.platform_note": "출처: api.pruviq.com/health 실시간",
   "trust.platform_down": "API 연결 불가",
+  "trust.platform_data_age": "데이터 신선도",
 };
