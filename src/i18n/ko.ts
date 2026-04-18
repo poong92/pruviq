@@ -1333,7 +1333,8 @@ export const ko: Record<TranslationKey, string> = {
   "home.social_proof_cta": "이번 달 4,200명 이상이 백테스트를 실행했습니다.",
 
   // TradingView comparison page
-  "meta.vs_tv_title": "프루빅(PRUVIQ) vs 트레이딩뷰 - 무료 크립토 백테스팅 비교",
+  "meta.vs_tv_title":
+    "프루빅(PRUVIQ) vs 트레이딩뷰 - 무료 크립토 백테스팅 비교",
   "meta.vs_tv_desc":
     "크립토 전략 백테스팅에서 PRUVIQ와 트레이딩뷰를 비교합니다. Pine Script 불필요. $0 — 구독 없음. {coins}개+ 코인. 완전 백테스트 투명성.",
   "vs.tag": "솔직한 비교",
@@ -1636,7 +1637,8 @@ export const ko: Record<TranslationKey, string> = {
   "ranking.confidence_low": "신호",
 
   // 비교 페이지: 3Commas
-  "meta.vs_3commas_title": "프루빅(PRUVIQ) vs 3Commas — 무료 암호화폐 백테스트 대안",
+  "meta.vs_3commas_title":
+    "프루빅(PRUVIQ) vs 3Commas — 무료 암호화폐 백테스트 대안",
   "meta.vs_3commas_desc":
     "암호화폐 전략 백테스팅에서 PRUVIQ와 3Commas를 비교하세요. 구독료 없이 무료, {coins}개 코인, 실제 수수료 시뮬레이션.",
   "vs_3commas.tag": "솔직한 비교",
@@ -1721,7 +1723,8 @@ export const ko: Record<TranslationKey, string> = {
     "봇 구독료를 내기 전에 {coins}개 코인으로 전략을 무료로 백테스트하세요. 회원가입 불필요.",
 
   // 비교 페이지: Coinrule
-  "meta.vs_coinrule_title": "프루빅(PRUVIQ) vs Coinrule — 무료 암호화폐 백테스트 대안",
+  "meta.vs_coinrule_title":
+    "프루빅(PRUVIQ) vs Coinrule — 무료 암호화폐 백테스트 대안",
   "meta.vs_coinrule_desc":
     "암호화폐 전략 백테스팅에서 PRUVIQ와 Coinrule을 비교하세요. 무료, IF-THEN 제한 없음, {coins}개 코인 + 실제 수수료 시뮬레이션.",
   "vs_coinrule.tag": "솔직한 비교",
@@ -1874,7 +1877,8 @@ export const ko: Record<TranslationKey, string> = {
     "클라우드 봇 구독 전에 {coins}개 코인으로 전략을 무료로 테스트하세요. 회원가입 불필요.",
 
   // 비교 페이지: Gainium
-  "meta.vs_gainium_title": "프루빅(PRUVIQ) vs Gainium — 무료 암호화폐 백테스트 대안",
+  "meta.vs_gainium_title":
+    "프루빅(PRUVIQ) vs Gainium — 무료 암호화폐 백테스트 대안",
   "meta.vs_gainium_desc":
     "암호화폐 전략 백테스팅에서 PRUVIQ와 Gainium을 비교하세요. 무료, DCA 전용 제약 없음, {coins}개 코인 + 실제 슬리피지·수수료 시뮬레이션.",
   "vs_gainium.tag": "솔직한 비교",
@@ -1936,7 +1940,8 @@ export const ko: Record<TranslationKey, string> = {
     "DCA 봇을 배포하기 전에 {coins}개 코인으로 전략을 무료로 리서치하세요. 회원가입 불필요.",
 
   // 비교 페이지: Streak
-  "meta.vs_streak_title": "프루빅(PRUVIQ) vs Streak — 무료 암호화폐 백테스트 대안",
+  "meta.vs_streak_title":
+    "프루빅(PRUVIQ) vs Streak — 무료 암호화폐 백테스트 대안",
   "meta.vs_streak_desc":
     "암호화폐 전략 백테스팅에서 PRUVIQ와 Streak을 비교하세요. 무료, Pine Script 불필요, {coins}개 코인 + 실제 수수료·슬리피지 시뮬레이션.",
   "vs_streak.tag": "솔직한 비교",
@@ -2041,8 +2046,18 @@ export const ko: Record<TranslationKey, string> = {
   "trust.updated": "업데이트",
   "trust.why_title": "왜 이것을 공개하는가.",
   "trust.why_body":
-    "모든 크립토 자동매매 플랫폼이 \"정밀한 실행\"을 주장합니다. 우리는 직접 확인할 수 있게 합니다. 슬리피지가 0.5%를 초과하면 설계상 즉시 포지션을 청산합니다. 이 수치가 시간이 지나면서 올라간다면, 여기서 가장 먼저 확인할 수 있습니다.",
+    '모든 크립토 자동매매 플랫폼이 "정밀한 실행"을 주장합니다. 우리는 직접 확인할 수 있게 합니다. 슬리피지가 0.5%를 초과하면 설계상 즉시 포지션을 청산합니다. 이 수치가 시간이 지나면서 올라간다면, 여기서 가장 먼저 확인할 수 있습니다.',
   "trust.what_not_title": "이것은 무엇이 아닌가.",
   "trust.what_not_body":
     "리더보드가 아닙니다. 개인 수익률이 아닙니다. 낚시성 콘텐츠 없음.",
+  "trust.platform_tag": "플랫폼 상태",
+  "trust.platform_heading": "실시간 시스템 상태",
+  "trust.platform_intro":
+    "API가 다운되거나 데이터가 오래되면 여기서 먼저 밝힙니다 — 홍보성 문구 없음.",
+  "trust.platform_api_status": "API 상태",
+  "trust.platform_api_version": "버전",
+  "trust.platform_coins": "로드된 코인",
+  "trust.platform_uptime": "API 가동 시간",
+  "trust.platform_note": "출처: api.pruviq.com/health 실시간",
+  "trust.platform_down": "API 연결 불가",
 };

@@ -2094,6 +2094,16 @@ export const en = {
   "trust.what_not_title": "What this isn't.",
   "trust.what_not_body":
     "Not a leaderboard. Not individual user returns. No clickbait.",
+  "trust.platform_tag": "PLATFORM HEALTH",
+  "trust.platform_heading": "Live system status",
+  "trust.platform_intro":
+    "If the API is down or data goes stale, we say so here — no PR spin.",
+  "trust.platform_api_status": "API status",
+  "trust.platform_api_version": "Version",
+  "trust.platform_coins": "Coins loaded",
+  "trust.platform_uptime": "API uptime",
+  "trust.platform_note": "Source: live api.pruviq.com/health",
+  "trust.platform_down": "API unreachable",
 } as const;
 
 export type TranslationKey = keyof typeof en;
