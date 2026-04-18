@@ -3,8 +3,11 @@ name: "Backend Deploy: DigitalOcean Auto-Restart"
 on:
   push:
     branches: [main]
-    paths:
-      - "backend/**"
+  schedule:
+    # Drift detector: runs every 30 min as a safety net in case the push
+    # event is silently dropped by GitHub (root cause of the 2026-04-18
+    # PR #1122 incident where scope=fast_api ran for hours).
+    - cron: "*/30 * * * *"
   workflow_dispatch: {}
 
 concurrency:
@@ -36,7 +39,32 @@ jobs:
       MIN_COINS: "200"  # post-Phase-B: 235 live, gate at 200 to tolerate startup gaps
 
     steps:
+      - name: Check out code (needed for git diff)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Guard — skip if push has no backend changes
+        # Replaces the on.push.paths filter which GitHub silently drops ~1% of events.
+        # On schedule/workflow_dispatch, always proceed (drift detection).
+        id: guard
+        run: |
+          if [ "${{ github.event_name }}" = "push" ]; then
+            changed=$(git diff --name-only HEAD~1 HEAD -- backend/ | head -1)
+            if [ -z "$changed" ]; then
+              echo "No backend/** changes in this push — skipping deploy"
+              echo "skip=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "Backend changes detected: $changed"
+              echo "skip=false" >> "$GITHUB_OUTPUT"
+            fi
+          else
+            echo "Event=${{ github.event_name }} — proceeding to drift check"
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Sanity-check SSH secret is present
+        if: steps.guard.outputs.skip != 'true'
         env:
           KEY: ${{ secrets.DO_SSH_PRIVATE_KEY }}
         run: |
@@ -47,6 +75,7 @@ jobs:
           echo "secret OK"
 
       - name: Configure SSH (key + known_hosts)
+        if: steps.guard.outputs.skip != 'true'
         env:
           KEY: ${{ secrets.DO_SSH_PRIVATE_KEY }}
         run: |
@@ -62,13 +91,42 @@ jobs:
               -o ConnectTimeout=10 \
               "$DO_USER@$DO_HOST" "hostname && uname -r"
 
+      - name: Drift check (schedule only — skip if DO is current)
+        if: steps.guard.outputs.skip != 'true' && github.event_name == 'schedule'
+        id: drift
+        run: |
+          do_sha=$(ssh -p "$DO_PORT" -o IdentitiesOnly=yes -i ~/.ssh/do_deploy \
+              -o ConnectTimeout=10 \
+              "$DO_USER@$DO_HOST" \
+              "git -C /opt/pruviq/current rev-parse HEAD 2>/dev/null || echo unknown")
+          main_sha=$(git rev-parse HEAD)
+          echo "DO=$do_sha  main=$main_sha"
+          if [ "$do_sha" = "$main_sha" ]; then
+            echo "DO is current — no drift, skipping deploy"
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            changed=$(git diff --name-only "$do_sha" "$main_sha" -- backend/ 2>/dev/null | head -1)
+            if [ -z "$changed" ]; then
+              echo "DO is behind but no backend changes — skipping deploy"
+              echo "skip=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "Backend drift detected ($do_sha → $main_sha): $changed"
+              echo "skip=false" >> "$GITHUB_OUTPUT"
+            fi
+          fi
+
       - name: Pull latest code on DO
+        if: steps.guard.outputs.skip != 'true' && steps.drift.outputs.skip != 'true'
         run: |
           ssh -p "$DO_PORT" -o IdentitiesOnly=yes -i ~/.ssh/do_deploy \
-              "$DO_USER@$DO_HOST" \
-              "sudo -u pruviq bash -c 'cd /opt/pruviq/current && git fetch origin main --quiet && git reset --hard origin/main'"
+              "$DO_USER@$DO_HOST" "
+            # Ensure git trusts the repo dir for root (root runs this command)
+            git config --global --add safe.directory /opt/pruviq/current 2>/dev/null || true
+            sudo -u pruviq bash -c 'cd /opt/pruviq/current && git fetch origin main --quiet && git reset --hard origin/main'
+          "
 
       - name: Install deps if requirements changed
+        if: steps.guard.outputs.skip != 'true' && steps.drift.outputs.skip != 'true'
         run: |
           ssh -p "$DO_PORT" -o IdentitiesOnly=yes -i ~/.ssh/do_deploy \
               "$DO_USER@$DO_HOST" "
@@ -81,6 +139,7 @@ jobs:
           "
 
       - name: Sync systemd wrappers + unit files unconditionally
+        if: steps.guard.outputs.skip != 'true' && steps.drift.outputs.skip != 'true'
         # Wrappers live at backend/deploy/systemd/bin/ (canonical) but systemd
         # executes /opt/pruviq/bin/*.sh; unit files at /etc/systemd/system/.
         # The earlier version of this step used `git diff HEAD~1` to decide
@@ -103,12 +162,14 @@ jobs:
           "
 
       - name: Restart pruviq-api.service
+        if: steps.guard.outputs.skip != 'true' && steps.drift.outputs.skip != 'true'
         run: |
           ssh -p "$DO_PORT" -o IdentitiesOnly=yes -i ~/.ssh/do_deploy \
               "$DO_USER@$DO_HOST" \
               "systemctl restart pruviq-api.service"
 
       - name: Wait for health
+        if: steps.guard.outputs.skip != 'true' && steps.drift.outputs.skip != 'true'
         run: |
           ssh -p "$DO_PORT" -o IdentitiesOnly=yes -i ~/.ssh/do_deploy \
               "$DO_USER@$DO_HOST" "
@@ -127,6 +188,7 @@ jobs:
           "
 
       - name: Post-deploy sanity via public endpoint
+        if: steps.guard.outputs.skip != 'true' && steps.drift.outputs.skip != 'true'
         run: |
           sleep 5
           status=$(curl -sf -m 10 -o /dev/null -w "%{http_code}" https://api.pruviq.com/health)
