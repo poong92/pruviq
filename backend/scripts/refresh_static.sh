@@ -183,49 +183,25 @@ if [[ "$HAS_CHANGES" == "false" && "$HAS_CODE_CHANGES" == "false" ]]; then
     exit 0
 fi
 
-# --- Step 2: Build + deploy in isolated worktree (prevent stale code deploy) ---
-# 2026-03-22 fix: ~/pruviq/ has local-only commits that caused repeated rollbacks.
-# Build from origin/main in a clean worktree to ensure deployed code matches GitHub.
-DEPLOY_WORKTREE="/tmp/pruviq-refresh-deploy-$$"
-cleanup_worktree() {
-    cd "$HOME" 2>/dev/null
-    if [[ -d "$DEPLOY_WORKTREE" ]]; then
-        git -C "$REPO_DIR" worktree remove "$DEPLOY_WORKTREE" --force 2>/dev/null || rm -rf "$DEPLOY_WORKTREE"
-    fi
-}
-trap 'cleanup_worktree' EXIT
-
-git fetch origin main -q 2>/dev/null
-git worktree add "$DEPLOY_WORKTREE" origin/main --detach -q 2>/dev/null || {
-    log "Failed to create deploy worktree, falling back to local build"
-    # Fallback: build locally if worktree fails
-    npm run build 2>&1 | tail -3
-    npx wrangler deploy 2>&1 | tail -5
-    exit $?
-}
-
-# Copy refreshed data files to worktree
-cp -f "$REPO_DIR/public/data/"*.json "$DEPLOY_WORKTREE/public/data/" 2>/dev/null
-
-cd "$DEPLOY_WORKTREE"
-npm ci --prefer-offline 2>/dev/null || npm ci 2>/dev/null || ln -s "$REPO_DIR/node_modules" "$DEPLOY_WORKTREE/node_modules"
-
-log "Building site (worktree)..."
+# --- Step 2: Build + deploy from local repo ---
+# Data refresh only needs fresh public/data/*.json in dist/ — no code changes.
+# Local repo includes all public/ assets (fonts, images, icons) that a worktree
+# created from git-tracked files alone would miss, causing wrangler to skip 800+
+# assets. Build directly here: code on this branch tracks origin/main.
+log "Building site (local)..."
 if npm run build 2>&1 | tail -3; then
     log "Deploying to Cloudflare..."
     if npx wrangler deploy 2>&1 | tail -5; then
-        log "Deployed to Cloudflare Workers (from origin/main worktree)"
+        log "Deployed to Cloudflare Workers (from local build)"
         echo "$ORIGIN_SHA" > "$DEPLOY_MARKER"
     else
         log "Wrangler deploy failed"
         send_alert "ERROR" "CF Workers deploy failed"
-        cd "$REPO_DIR"
         exit 1
     fi
 else
     log "Build failed"
     send_alert "ERROR" "npm build failed"
-    cd "$REPO_DIR"
     exit 1
 fi
 cd "$REPO_DIR"
