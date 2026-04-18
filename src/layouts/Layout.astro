@@ -224,6 +224,23 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
           : ['cryptocurrency trading', 'backtesting', 'algorithmic trading', 'quantitative finance']
       })} />
     )}
+    <!-- JSON-LD WebSite with SearchAction (homepage only) -->
+    {type === 'website' && basePath === '/' && (
+      <script type="application/ld+json" set:html={JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "PRUVIQ",
+        "url": "https://pruviq.com",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": {
+            "@type": "EntryPoint",
+            "urlTemplate": `https://pruviq.com${lang === 'ko' ? '/ko' : ''}/coins/{search_term_string}usdt`
+          },
+          "query-input": "required name=search_term_string"
+        }
+      })} />
+    )}
     <!-- JSON-LD WebApplication (homepage only) -->
     {type === 'website' && basePath === '/' && (
       <script type="application/ld+json" set:html={JSON.stringify({
@@ -351,9 +368,9 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
           "url": "https://pruviq.com",
           "logo": {
             "@type": "ImageObject",
-            "url": "https://pruviq.com/favicon-96.png",
-            "width": 96,
-            "height": 96
+            "url": "https://pruviq.com/logo.svg",
+            "width": 240,
+            "height": 40
           }
         },
         "image": {
