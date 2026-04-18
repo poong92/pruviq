@@ -4,7 +4,7 @@ import { useTranslations } from '../i18n/index';
 import siteStats from '../../public/data/site-stats.json';
 
 const t = useTranslations('en');
-const coinsAnalyzed = (siteStats as Record<string, number>).coins_analyzed ?? 570;
+const coinsAnalyzed = (siteStats as Record<string, number>).coins_analyzed ?? 240;
 
 const steps = [
   { num: '01', title: t('how.step1'), desc: t('how.step1_desc') },

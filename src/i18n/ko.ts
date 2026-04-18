@@ -1,5 +1,5 @@
 // ⚠ STATS CONSTANTS — en.ts와 동기 유지. coins_analyzed 변경 시 두 파일 모두 업데이트.
-// 현재 값: 570 (2026-03-17 기준). 출처: /public/data/site-stats.json
+// 현재 값: 240 (2026-03-17 기준). 출처: /public/data/site-stats.json
 
 import type { TranslationKey } from "./en";
 
@@ -655,7 +655,7 @@ export const ko: Record<TranslationKey, string> = {
     "전략 검증은 누구나 접근할 수 있어야 합니다. 핵심 기능은 항상 무료. 거래소 제휴를 통해서만 수익을 창출합니다.",
   "about.stack_tag": "기술 스택",
   "about.stack_desc":
-    "Python 백테스팅 엔진, Astro 정적 사이트, Cloudflare 엣지 배포, Binance Futures API. 독점 블랙박스 없음.",
+    "Python 백테스팅 엔진, Astro 정적 사이트, Cloudflare 엣지 배포, OKX Futures API. 독점 블랙박스 없음.",
   "about.contact_tag": "연락하기",
   "about.contact_desc": "질문, 피드백, 파트너십 문의:",
   "about.contact_email": "contact@pruviq.com",

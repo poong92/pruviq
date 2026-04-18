@@ -4,7 +4,7 @@ import { useTranslations } from '../../i18n/index';
 import siteStats from '../../../public/data/site-stats.json';
 
 const t = useTranslations('ko');
-const coinsAnalyzed = (siteStats as Record<string, number>).coins_analyzed ?? 570;
+const coinsAnalyzed = (siteStats as Record<string, number>).coins_analyzed ?? 240;
 
 const criteria = [
   { label: '멀티코인 지원', desc: `주요 거래소의 ${coinsAnalyzed}개 이상 코인 — BTC/ETH뿐만 아니라 모든 페어를 테스트할 수 있습니다.` },

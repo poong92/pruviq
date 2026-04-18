@@ -6,7 +6,7 @@ import siteStats from '../../../public/data/site-stats.json';
 
 const t = useTranslations('en');
 const marketDataJson = JSON.stringify(marketDataRaw);
-const coinsAnalyzed = (siteStats as Record<string, number>).coins_analyzed ?? 570;
+const coinsAnalyzed = (siteStats as Record<string, number>).coins_analyzed ?? 240;
 ---
 
 <Layout title={t('meta.market_title')} description={t('meta.market_desc')}>

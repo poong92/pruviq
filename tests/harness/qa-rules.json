@@ -3,25 +3,24 @@
   "_version": "1.0.0",
   "_last_updated": "2026-03-18",
   "_how_to_update": "이 파일만 수정하면 모든 QA 레이어에 자동 반영됨. 코드 변경 불필요.",
-
   "site": {
     "base_url": "https://pruviq.com",
     "api_base_url": "https://api.pruviq.com"
   },
-
   "coin_count": {
-    "current": 570,
+    "current": 238,
     "stale_value": 549,
-    "min_acceptable": 500,
+    "min_acceptable": 220,
     "description": "현재 코인 수. 새 코인 추가 시 여기만 수정."
   },
-
   "data_sources": {
     "expected": "CoinGecko",
-    "deprecated": ["Binance API", "Binance API Read-Only"],
+    "deprecated": [
+      "Binance API",
+      "Binance API Read-Only"
+    ],
     "description": "2025년 CoinGecko로 전환 완료. Binance 표시 = 오류"
   },
-
   "simulator_metrics": {
     "win_rate": {
       "min": 5,
@@ -75,7 +74,6 @@
       "severity_below_min": "critical"
     }
   },
-
   "known_bugs": [
     {
       "id": "calmar_27x",
@@ -134,7 +132,6 @@
       "recheck": true
     }
   ],
-
   "pages": {
     "home_en": {
       "path": "/",
@@ -169,30 +166,39 @@
       "severity_blank": "critical"
     }
   },
-
   "alerts": {
     "telegram": {
       "tiers": {
         "P0": {
           "trigger": "immediate",
           "description": "critical 이슈 — 즉시 발송",
-          "examples": ["BLANK_PAGE", "STALE_DATA", "COMPONENT_CRASH"]
+          "examples": [
+            "BLANK_PAGE",
+            "STALE_DATA",
+            "COMPONENT_CRASH"
+          ]
         },
         "P1": {
           "trigger": "daily_digest",
           "description": "warning 이슈 — 일일 요약에 포함",
-          "examples": ["DATA_MISSING", "LANGUAGE_WRONG", "UX_ISSUE"]
+          "examples": [
+            "DATA_MISSING",
+            "LANGUAGE_WRONG",
+            "UX_ISSUE"
+          ]
         },
         "P2": {
           "trigger": "weekly_digest",
           "description": "info 이슈 — 주간 요약에 포함",
-          "examples": ["performance", "design_consistency"]
+          "examples": [
+            "performance",
+            "design_consistency"
+          ]
         }
       },
       "rate_limit_note": "Telegram: 30msg/s global, 1msg/s per chat. P0 only for real-time."
     }
   },
-
   "interactive_tests": {
     "simulate_breakout": {
       "action": "click scenario card 'Breakout'",
@@ -206,7 +212,6 @@
       "pass_if_no_crash": true
     }
   },
-
   "flaky_tests": {
     "_description": "불안정 테스트를 여기에 추가하면 main pipeline에서 격리됨",
     "_format": "{ id, reason, quarantined_since, resolution_pr? }",
