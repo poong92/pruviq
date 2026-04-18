@@ -1,5 +1,5 @@
 // ⚠ STATS CONSTANTS — update here when site-stats.json changes (coins_analyzed)
-// Current value: 240 (as of 2026-03-17). Source: /public/data/site-stats.json
+// Current value: 240 (as of 2026-04-18). Source: /public/data/site-stats.json
 // Do NOT hardcode 238/240 anywhere else — always refer back to this file.
 
 export const en = {
@@ -1732,7 +1732,7 @@ export const en = {
     "Running a DCA bot on a coin that trends down loses money regardless of configuration. PRUVIQ lets you test your thesis across 240+ coins with real fee modeling before committing capital.",
   "vs_3commas.why_2_title": "See the Failures, Not Just the Wins",
   "vs_3commas.why_2_desc":
-    "PRUVIQ publishes failed strategies alongside successful ones. Seeing a strategy fail on 400 out of 240 coins is more valuable than cherry-picked wins.",
+    "PRUVIQ publishes failed strategies alongside successful ones. Seeing a strategy fail on 160 out of 240 coins is more valuable than cherry-picked wins.",
   "vs_3commas.why_3_title": "$0 Research Budget",
   "vs_3commas.why_3_desc":
     "At $15-110/mo, 3Commas is worth it for live execution. But paying to discover that your strategy does not work is expensive. PRUVIQ handles the research phase at zero cost.",
@@ -1783,7 +1783,7 @@ export const en = {
   "vs_coinrule.row_coding_p": "No code — visual builder",
   "vs_coinrule.row_coding_other": "No coding — IF-THEN rule builder",
   "vs_coinrule.row_coins": "Coins Supported",
-  "vs_coinrule.row_coins_p": "240+ coins (Binance Futures)",
+  "vs_coinrule.row_coins_p": "240+ coins (OKX USDT-SWAP)",
   "vs_coinrule.row_coins_other": "Multiple exchanges, plan-dependent limits",
   "vs_coinrule.row_data": "Backtest Data",
   "vs_coinrule.row_data_p": "Real OHLCV with fees & slippage",
@@ -1945,7 +1945,7 @@ export const en = {
   "vs_gainium.row_coding_p": "No code — visual builder",
   "vs_gainium.row_coding_other": "No coding — DCA bot configuration",
   "vs_gainium.row_coins": "Coins Supported",
-  "vs_gainium.row_coins_p": "240+ coins (Binance Futures)",
+  "vs_gainium.row_coins_p": "240+ coins (OKX USDT-SWAP)",
   "vs_gainium.row_coins_other": "Binance-focused, curated coin list",
   "vs_gainium.row_data": "Backtest Data",
   "vs_gainium.row_data_p": "Real OHLCV with fees & slippage",
@@ -2007,7 +2007,7 @@ export const en = {
   "vs_streak.row_coding_other":
     "Pine Script (TradingView integration required)",
   "vs_streak.row_coins": "Coins Supported",
-  "vs_streak.row_coins_p": "240+ coins (Binance Futures)",
+  "vs_streak.row_coins_p": "240+ coins (OKX USDT-SWAP)",
   "vs_streak.row_coins_other": "Depends on TradingView data connection",
   "vs_streak.row_data": "Backtest Data",
   "vs_streak.row_data_p": "Real OHLCV with fees & slippage",

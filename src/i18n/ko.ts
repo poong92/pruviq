@@ -1,5 +1,5 @@
 // ⚠ STATS CONSTANTS — en.ts와 동기 유지. coins_analyzed 변경 시 두 파일 모두 업데이트.
-// 현재 값: 240 (2026-03-17 기준). 출처: /public/data/site-stats.json
+// 현재 값: 240 (2026-04-18 기준). 출처: /public/data/site-stats.json
 
 import type { TranslationKey } from "./en";
 
@@ -1745,7 +1745,7 @@ export const ko: Record<TranslationKey, string> = {
   "vs_coinrule.row_coding_p": "코딩 불필요 — 시각적 빌더",
   "vs_coinrule.row_coding_other": "코딩 불필요 — IF-THEN 규칙 빌더",
   "vs_coinrule.row_coins": "지원 코인",
-  "vs_coinrule.row_coins_p": "{coins}개 코인 (바이낸스 선물)",
+  "vs_coinrule.row_coins_p": "{coins}개 코인 (OKX USDT-SWAP)",
   "vs_coinrule.row_coins_other": "여러 거래소, 플랜에 따라 한도 상이",
   "vs_coinrule.row_data": "백테스트 데이터",
   "vs_coinrule.row_data_p": "실제 OHLCV + 수수료·슬리피지 반영",
@@ -1899,7 +1899,7 @@ export const ko: Record<TranslationKey, string> = {
   "vs_gainium.row_coding_p": "코딩 불필요 — 시각적 빌더",
   "vs_gainium.row_coding_other": "코딩 불필요 — DCA 봇 설정",
   "vs_gainium.row_coins": "지원 코인",
-  "vs_gainium.row_coins_p": "{coins}개 코인 (바이낸스 선물)",
+  "vs_gainium.row_coins_p": "{coins}개 코인 (OKX USDT-SWAP)",
   "vs_gainium.row_coins_other": "바이낸스 중심, 선별된 코인 목록",
   "vs_gainium.row_data": "백테스트 데이터",
   "vs_gainium.row_data_p": "실제 OHLCV + 수수료·슬리피지 반영",
@@ -1962,7 +1962,7 @@ export const ko: Record<TranslationKey, string> = {
   "vs_streak.row_coding_p": "코딩 불필요 — 시각적 빌더",
   "vs_streak.row_coding_other": "Pine Script 필요 (TradingView 연동 필수)",
   "vs_streak.row_coins": "지원 코인",
-  "vs_streak.row_coins_p": "{coins}개 코인 (바이낸스 선물)",
+  "vs_streak.row_coins_p": "{coins}개 코인 (OKX USDT-SWAP)",
   "vs_streak.row_coins_other": "TradingView 데이터 연동에 따라 상이",
   "vs_streak.row_data": "백테스트 데이터",
   "vs_streak.row_data_p": "실제 OHLCV + 수수료·슬리피지 반영",
