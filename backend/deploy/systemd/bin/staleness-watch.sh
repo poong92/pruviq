@@ -76,7 +76,7 @@ if [ "$state" = "STALE" ]; then
         notify "🚨 PRUVIQ: Data STALE ${generated}h old (limit ${STALE_HOURS}h). Triggering refresh via systemd..."
         mark_alerted "market_stale"
         # Trigger refresh (systemd unit will exist once Phase 5-B deploys)
-        systemctl start pruviq-refresh-static.service 2>&1 || \
-            notify "⚠️ PRUVIQ: auto-refresh unit not yet installed (Phase 5-B pending)"
+        systemctl start pruviq-refresh-data.service 2>&1 || \
+            notify "⚠️ PRUVIQ: auto-refresh failed — check pruviq-refresh-data.service"
     fi
 fi

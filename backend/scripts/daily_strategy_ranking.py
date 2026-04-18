@@ -23,6 +23,7 @@ from typing import Optional
 
 # === Configuration ===
 API_BASE = os.getenv("PRUVIQ_API_BASE", "http://localhost:8080")
+INTERNAL_API_KEY = os.getenv("INTERNAL_API_KEY", "")
 TELEGRAM_BOT_TOKEN = os.getenv("PRUVIQ_SNS_BOT_TOKEN", "")  # 8058630215 SNS 봇
 TELEGRAM_CHAT_ID = os.getenv("PRUVIQ_SNS_CHAT_ID", "")
 
@@ -221,9 +222,11 @@ def run_simulation(
 
     for attempt in range(3):
         try:
+            hdrs = {"X-Internal-Key": INTERNAL_API_KEY} if INTERNAL_API_KEY else {}
             resp = requests.post(
                 f"{API_BASE}/simulate",
                 json=payload,
+                headers=hdrs,
                 timeout=timeout,
             )
             if resp.status_code == 200:
