@@ -206,5 +206,32 @@ else
 fi
 cd "$REPO_DIR"
 
-send_alert "OK" "Static data refreshed + deployed"
+# --- Step 3: Post-deploy verification ---
+# Root cause of 13h staleness (PR #1133): wrangler reported success but
+# uploaded 0 assets when invoked from a worktree missing public/* files.
+# A "deploy succeeded" log line is not proof CF is serving fresh data.
+# Close the loop: re-fetch market.json from pruviq.com and compare its
+# `generated` timestamp with the local file we just built.
+# CF propagation ceiling observed ~60s; 90s gives margin.
+log "Verifying CF propagation (90s)..."
+sleep 90
+
+LOCAL_GEN=$(python3 -c "import json; print(json.load(open('public/data/market.json')).get('generated',''))" 2>/dev/null || echo "")
+CF_GEN=$(curl -sf -m 15 "https://pruviq.com/data/market.json?cachebust=$(date +%s)" 2>/dev/null | \
+    python3 -c "import json,sys; print(json.load(sys.stdin).get('generated',''))" 2>/dev/null || echo "")
+
+if [[ -z "$LOCAL_GEN" || -z "$CF_GEN" ]]; then
+    log "Verify FAILED: could not parse timestamps (local='$LOCAL_GEN' cf='$CF_GEN')"
+    send_alert "ERROR" "Deploy verify: cannot parse market.json timestamps"
+    exit 1
+fi
+
+if [[ "$LOCAL_GEN" != "$CF_GEN" ]]; then
+    log "Verify FAILED: CF stale — local=$LOCAL_GEN cf=$CF_GEN"
+    send_alert "ERROR" "Deploy verify FAILED: CF serves stale data. local=$LOCAL_GEN cf=$CF_GEN — wrangler likely skipped assets"
+    exit 1
+fi
+
+log "Verify OK: CF serving fresh $CF_GEN"
+send_alert "OK" "Static data refreshed + deployed (verified: $CF_GEN)"
 exit 0
