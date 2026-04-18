@@ -1,6 +1,11 @@
 #!/bin/bash
 # PRUVIQ — Data Staleness Watchdog (DO-native, every 10 min)
-# Checks live API data freshness, auto-triggers refresh if stale.
+# Checks live API data freshness via CF-served market.json. On STALE,
+# alerts the owner via Telegram (once per UTC day, deduped via state file).
+# Does NOT attempt auto-remediation — the refresh owner is Mac cron, which
+# cannot be triggered from DO. Separating detection from remediation is
+# intentional: false self-healing claims (previous behavior) hid the real
+# architectural gap between Mac cron and DO systemd.
 set -uo pipefail
 
 STALE_HOURS="${STALE_HOURS:-1}"
@@ -73,10 +78,14 @@ print('STALE' if a>=t else ('WARN' if a>=t*0.75 else 'OK'))
 
 if [ "$state" = "STALE" ]; then
     if ! already_alerted "market_stale"; then
-        notify "🚨 PRUVIQ: Data STALE ${generated}h old (limit ${STALE_HOURS}h). Triggering refresh via systemd..."
+        # Architecture: refresh_static.sh runs on Mac cron (external-data fetch needs
+        # non-DO IP for Binance 451 workaround). Staleness-watch on DO cannot
+        # trigger Mac cron — alert the owner to investigate manually.
+        # Do NOT call `systemctl start` here: even though pruviq-refresh-data.service
+        # exists, it runs as user `pruviq` which cannot invoke systemctl without
+        # polkit auth, and the unit was designed for a Phase-5 full-DO migration
+        # that is intentionally on hold (Mac-cron stays authoritative for now).
+        notify "🚨 PRUVIQ: Data STALE ${generated}h old (limit ${STALE_HOURS}h). Mac refresh_static.sh cron may be stuck — check /tmp/pruviq-refresh.log on Mac Mini."
         mark_alerted "market_stale"
-        # Trigger refresh (systemd unit will exist once Phase 5-B deploys)
-        systemctl start pruviq-refresh-data.service 2>&1 || \
-            notify "⚠️ PRUVIQ: auto-refresh failed — check pruviq-refresh-data.service"
     fi
 fi
