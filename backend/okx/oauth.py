@@ -7,8 +7,9 @@ Flow:
   3. get_api_credentials(sid)  → returns {api_key, secret_key, passphrase}
   4. disconnect(sid)           → delete session
 
-scope="read_only,trade" shows the OAuth consent page (user grants permissions).
-scope="fast_api" skips the consent page and routes to /account/users — do NOT use.
+scope="fast_api" — REQUIRED for OKX Broker OAuth (OKX_API_SPECS.md §1).
+scope="read_only,trade" silently routes user to /account/users (OKX drop). Do NOT use.
+(Earlier comment had this reversed — corrected 2026-04-19 after /users drop confirmed live.)
 """
 from __future__ import annotations
 
@@ -77,7 +78,7 @@ def generate_oauth_params(redirect_after: str = "", lang: str = "en") -> dict:
         "client_id": OKX_CLIENT_ID,
         "response_type": "code",
         "access_type": "offline",
-        "scope": "read_only,trade",
+        "scope": "fast_api",
         "redirect_uri": OKX_REDIRECT_URI,
     }
     if OKX_BROKER_CODE:
@@ -96,7 +97,7 @@ def generate_auth_url(redirect_after: str = "", lang: str = "en") -> str:
         "response_type": "code",
         "access_type": "offline",
         "redirect_uri": OKX_REDIRECT_URI,
-        "scope": "read_only,trade",
+        "scope": "fast_api",
         "state": state,
     }
     if OKX_BROKER_CODE:
