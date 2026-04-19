@@ -58,18 +58,19 @@ import LiveTradeHistory from '../../components/LiveTradeHistory';
     </section>
 
     <!-- 자동매매 설정 -->
+    <!-- client:visible: below-fold, defer hydration until scrolled. -->
     <section class="mb-8">
-      <TradingSettings client:load lang="ko" />
+      <TradingSettings client:visible lang="ko" />
     </section>
 
     <!-- 오픈 포지션 -->
     <section class="mb-8">
-      <LivePositions client:load lang="ko" />
+      <LivePositions client:visible lang="ko" />
     </section>
 
     <!-- 거래 내역 -->
     <section class="mb-8">
-      <LiveTradeHistory client:load lang="ko" />
+      <LiveTradeHistory client:visible lang="ko" />
     </section>
 
     <!-- 보안 정보 -->
