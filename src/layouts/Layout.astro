@@ -589,7 +589,9 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
 
     </header>
 
-    <CommandPalette lang={lang} client:idle />
+    <!-- CommandPalette is hidden until Cmd+K — no SSR value. client:only
+         skips the SSR pass entirely, saving a tree walk on every page. -->
+    <CommandPalette lang={lang} client:only="preact" />
 
     <main id="main-content" role="main" aria-label="Page content" class="pt-14 pb-16">
       {!basePath.startsWith('/404') && <Breadcrumbs />}

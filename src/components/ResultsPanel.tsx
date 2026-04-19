@@ -801,7 +801,7 @@ export default function ResultsPanel({
                   </div>
                   <button
                     onClick={() => setShowResultsGuide(false)}
-                    class="text-[--color-text-muted] hover:text-[--color-text] transition-colors text-sm font-mono shrink-0 p-2 -m-1 min-w-[44px] min-h-[44px] flex items-center justify-center"
+                    class="text-[--color-text-muted] hover:text-[--color-text] transition-colors text-sm font-mono shrink-0 p-2 -m-1 min-w-12 min-h-12 flex items-center justify-center"
                     aria-label={t.closeGuideAria || "Close guide"}
                   >
                     &times;
