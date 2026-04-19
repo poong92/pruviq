@@ -45,7 +45,7 @@ Row 5 — **SQLite**:
 
 | Name | PromQL | Threshold | For | Severity |
 |------|--------|-----------|-----|----------|
-| `PruviqApiDown` | `up{job="pruviq_api"}` | `== 0` | 2m | critical |
+| `PruviqApiDown` | `up{job="pruviq-api"}` | `== 0` | 2m | critical |
 | `PruviqHttp5xxSpike` | `sum(rate(pruviq_http_request_duration_seconds_count{status_class="5xx"}[5m]))` | `> 0.05` (3 per min) | 5m | warning |
 | `PruviqScanSlow` | `histogram_quantile(0.95, sum(rate(pruviq_signal_scan_duration_seconds_bucket[5m])) by (le))` | `> 45s` | 10m | warning |
 | `PruviqOkxErrorRate` | `sum(rate(pruviq_okx_api_calls_total{status_class!="2xx"}[5m])) / sum(rate(pruviq_okx_api_calls_total[5m]))` | `> 0.1` (10%) | 5m | warning |

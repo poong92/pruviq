@@ -34,7 +34,12 @@ groups:
             relativeTimeRange: { from: 300, to: 0 }
             datasourceUid: ${DS_PROMETHEUS_UID}
             model:
-              expr: up{job="pruviq_api"}
+              # The `job` label is set by Alloy's scrape target to "pruviq-api"
+              # (hyphen) in /etc/alloy/config.alloy — NOT the component name
+              # `pruviq_api` (underscore). Mismatch here would permanently
+              # produce NoData — a critical alert that never fires is worse
+              # than no alert, because it looks like coverage you don't have.
+              expr: up{job="pruviq-api"}
               intervalMs: 60000
               maxDataPoints: 43200
               refId: A
