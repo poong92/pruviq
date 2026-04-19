@@ -4349,7 +4349,16 @@ async def generate_bot(req: GenerateBotRequest):
 # Email Subscription
 # ---------------------------------------------------------------------------
 
-SUBSCRIBERS_FILE = Path(os.environ.get("SUBSCRIBERS_FILE", "/Users/jepo/pruviq-data/subscribers.json"))
+# 2026-04-19: fallback 을 home-relative 로 변경. 과거 `/Users/jepo/pruviq-data`
+# Mac-only 하드코딩이 DO env 누락 시 mkdir 실패 → /api/subscribe 5xx.
+# pruviq-api.service 가 `Environment=SUBSCRIBERS_FILE=/opt/pruviq/shared/...`
+# 주입하므로 프로덕션 경로는 그대로, env 누락 시에만 이 fallback 사용.
+SUBSCRIBERS_FILE = Path(
+    os.environ.get(
+        "SUBSCRIBERS_FILE",
+        os.path.expanduser("~/pruviq-data/subscribers.json"),
+    )
+)
 
 
 @app.post("/api/subscribe")

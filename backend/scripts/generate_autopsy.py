@@ -4,10 +4,28 @@ import json, sys, os, httpx
 from pathlib import Path
 from datetime import datetime
 
-API = "http://localhost:8080"
-BLOG_DIR = Path("/Users/jepo/pruviq/src/content/blog")
-BLOG_KO_DIR = Path("/Users/jepo/pruviq/src/content/blog-ko")
-POSTED_FILE = Path("/Users/jepo/pruviq-data/posted_autopsies.json")
+# 2026-04-19: env-ify Mac-only hardcoded paths. Same treatment as the
+# send_weekly_email.py fix — DO systemd can now run this with
+# PRUVIQ_BLOG_DIR=... injected, while Mac ops still works via the
+# project-root fallback (repo layout preserves src/content/blog[-ko]).
+_PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+
+API = os.environ.get("PRUVIQ_API_URL", "http://localhost:8080").rstrip("/")
+BLOG_DIR = Path(
+    os.environ.get("PRUVIQ_BLOG_DIR", str(_PROJECT_ROOT / "src" / "content" / "blog"))
+)
+BLOG_KO_DIR = Path(
+    os.environ.get(
+        "PRUVIQ_BLOG_KO_DIR",
+        str(_PROJECT_ROOT / "src" / "content" / "blog-ko"),
+    )
+)
+POSTED_FILE = Path(
+    os.environ.get(
+        "POSTED_AUTOPSIES_FILE",
+        os.path.expanduser("~/pruviq-data/posted_autopsies.json"),
+    )
+)
 
 # 전략 우선순위: PF 가장 낮은 것부터
 STRATEGIES = [
