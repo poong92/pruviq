@@ -1048,3 +1048,11 @@ def main():
 
 if __name__ == "__main__":
     main()
+    # Exit code is the source of truth for systemd / CI.
+    # Previously we let Python return 0 and had the shell wrapper parse the
+    # SUMMARY line with grep, which got the counts wrong whenever the pattern
+    # failed to match (grep -c returns 1 + "0", the `|| echo 0` appends another
+    # "0", and the resulting `[ "0\n0" -gt 0 ]` error silently looked like a
+    # pass while systemd still recorded status=1/FAILURE). Make results["fail"]
+    # the authority.
+    sys.exit(1 if results["fail"] > 0 else 0)
