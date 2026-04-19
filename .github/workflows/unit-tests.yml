@@ -1,0 +1,40 @@
+name: Unit Tests
+
+# Vitest harness wasn't wired to CI — 6 tests in tests/unit/ ran locally but
+# every PR shipped without them. This job catches regressions that are too
+# small for e2e (i18n keys, site-stats SSoT, exchange list invariants, etc.)
+# on a cheap ubuntu runner so it stays off the Mac Mini self-hosted queue.
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: unit-tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  vitest:
+    name: Vitest
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Setup Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run vitest
+        run: npm run test:unit
