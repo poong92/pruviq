@@ -29,6 +29,9 @@ INTERNAL_API_KEY = os.environ.get("INTERNAL_API_KEY", "").strip()
 SIGNAL_POLL_INTERVAL = int(os.environ.get("OKX_SIGNAL_POLL_INTERVAL", "300"))  # 5 min default
 SIGNAL_POLL_TIMEOUT = float(os.environ.get("OKX_SIGNAL_POLL_TIMEOUT", "15"))
 
+# Hide Swagger/redoc/openapi when PRUVIQ_ENV=production.
+IS_PRODUCTION = os.environ.get("PRUVIQ_ENV", "development").strip().lower() == "production"
+
 
 async def _signal_polling_loop() -> None:
     """Poll Mac Mini `/internal/signals` every `SIGNAL_POLL_INTERVAL` seconds.
@@ -108,6 +111,9 @@ app = FastAPI(
     version="0.1.0",
     description="PRUVIQ → OKX trade execution via OAuth Broker",
     lifespan=lifespan,
+    docs_url=None if IS_PRODUCTION else "/docs",
+    redoc_url=None if IS_PRODUCTION else "/redoc",
+    openapi_url=None if IS_PRODUCTION else "/openapi.json",
 )
 
 app.add_middleware(
