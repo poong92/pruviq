@@ -164,13 +164,35 @@ async def _okx_auto_trading_loop():
     no change to signal quality (candles are hourly).
     """
     interval_sec = max(60, int(os.environ.get("OKX_AUTO_TRADE_INTERVAL_SEC", "300")))
-    logger.info("OKX auto-trading loop interval = %ds", interval_sec)
+    # Bound a single scan at < 1 interval so a hung thread cannot starve the
+    # next tick. 2026-04-19 incident: an unbounded scan pegged DO uvicorn
+    # --workers 1 at 100% CPU for 13 min and /health stopped responding.
+    # Pass OKX_SCAN_TIMEOUT_SEC to tune (default 90s < 300s interval default).
+    scan_timeout_sec = max(30, int(os.environ.get("OKX_SCAN_TIMEOUT_SEC", "90")))
+    logger.info(
+        "OKX auto-trading loop interval=%ds scan_timeout=%ds",
+        interval_sec, scan_timeout_sec,
+    )
     await asyncio.sleep(30)  # Wait for data load
     while True:
         try:
             from okx.auto_executor import process_signals
             if _signal_scanner is not None:
-                signals = await asyncio.to_thread(_signal_scanner.scan)
+                try:
+                    signals = await asyncio.wait_for(
+                        asyncio.to_thread(_signal_scanner.scan),
+                        timeout=scan_timeout_sec,
+                    )
+                except asyncio.TimeoutError:
+                    # The thread is still running in the background (Python
+                    # cannot cancel a sync function cleanly); we drop the
+                    # result and wait for the next tick. A chronic timeout
+                    # means scan.py needs optimization, not a longer budget.
+                    logger.error(
+                        "signal_scanner.scan exceeded %ds — skipping this tick",
+                        scan_timeout_sec,
+                    )
+                    signals = []
                 if signals:
                     await process_signals(signals)
         except asyncio.CancelledError:
@@ -349,9 +371,16 @@ async def lifespan(app: FastAPI):
                 print(f"WARNING: indicator build failed before pre-warm: {e}")
                 return
             try:
-                await asyncio.to_thread(_signal_scanner.scan)
+                # Cap pre-warm at 120s. If cold-cache scan is slow we'd rather
+                # let the first runtime scan populate signals than block startup.
+                await asyncio.wait_for(
+                    asyncio.to_thread(_signal_scanner.scan),
+                    timeout=120,
+                )
                 n = len(_signal_scanner._cache)
                 print(f"Signal cache pre-warmed: {n} active signals")
+            except asyncio.TimeoutError:
+                print("WARNING: Signal cache pre-warm timed out (>120s) — first runtime scan will fill cache")
             except Exception as e:
                 print(f"WARNING: Signal cache pre-warm failed: {e}")
 
@@ -800,7 +829,13 @@ async def signals_live(top_n: int = 30):
     def _scan():
         return _signal_scanner.scan()
 
-    signals = await asyncio.to_thread(_scan)
+    # 30s hard cap — this is a user-facing endpoint; better to return empty
+    # than to hold a request while the scanner thread is stuck.
+    try:
+        signals = await asyncio.wait_for(asyncio.to_thread(_scan), timeout=30)
+    except asyncio.TimeoutError:
+        logger.error("/signals/live scan exceeded 30s — returning empty")
+        return []
     return signals
 
 
@@ -834,7 +869,16 @@ async def internal_signals(
         return {"signals": [], "ts": ts}
 
     try:
-        signals = await asyncio.to_thread(_signal_scanner.scan)
+        # 60s cap for the internal poll path (called every 5 min by the
+        # DO auto-trading worker). Timeout → 500 so the worker skips this
+        # tick and retries — better than silently serving stale data.
+        signals = await asyncio.wait_for(
+            asyncio.to_thread(_signal_scanner.scan),
+            timeout=60,
+        )
+    except asyncio.TimeoutError:
+        logger.error("/internal/signals scan exceeded 60s")
+        raise HTTPException(status_code=504, detail="scan timeout")
     except Exception as e:
         logger.warning(f"/internal/signals scan failed: {e}")
         raise HTTPException(status_code=500, detail=f"scan failed: {e}")
