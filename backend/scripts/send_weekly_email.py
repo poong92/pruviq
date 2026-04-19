@@ -22,8 +22,19 @@ from urllib.parse import quote
 
 import httpx
 
-SUBSCRIBERS_FILE = Path("/Users/jepo/pruviq-data/subscribers.json")
-API_URL = "http://localhost:8080"
+# SSoT with api/main.py:4270 SUBSCRIBERS_FILE. On DO systemd this is
+# /opt/pruviq/shared/subscribers.json (set in pruviq-api.service env).
+# Mac ops runs fall back to ~/pruviq-data/subscribers.json.
+SUBSCRIBERS_FILE = Path(
+    os.environ.get(
+        "SUBSCRIBERS_FILE",
+        os.path.expanduser("~/pruviq-data/subscribers.json"),
+    )
+)
+# Default to the public CF-tunneled API so this script runs correctly from
+# either Mac (no local uvicorn after Phase 8) or DO (where localhost:8080
+# also works but CF tunnel is still reachable).
+API_URL = os.environ.get("PRUVIQ_API_URL", "https://api.pruviq.com").rstrip("/")
 SENDGRID_API_KEY = os.environ.get("SENDGRID_API_KEY", "")
 # 2026-04-19: 하드코딩 기본값 제거. UNSUBSCRIBE_SECRET 이 없으면 이메일 발송 차단.
 UNSUBSCRIBE_SECRET = os.environ.get("UNSUBSCRIBE_SECRET", "")
