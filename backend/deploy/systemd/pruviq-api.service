@@ -7,13 +7,15 @@ Wants=network-online.target
 User=pruviq
 WorkingDirectory=/opt/pruviq/current/backend
 EnvironmentFile=/opt/pruviq/shared/.env
-# Shared SSoT for Mac/DO split. api/main.py:3800 reads RANKING_DIR;
-# api/main.py:4270 reads SUBSCRIBERS_FILE. Without these injected here, the
-# fallback was /Users/jepo/... (Mac paths) — the /rankings/daily handler and
-# /api/subscribe endpoint silently hit PermissionError on DO and served
-# stale data or rejected writes. Values must stay in lockstep with
-# pruviq-daily-ranking.service (which also needs RANKING_DIR for save_results).
-Environment=RANKING_DIR=/opt/pruviq/shared/rankings
+# Mac/DO split SSoT:
+#   - RANKING_DIR: DO 의 `.env` 가 이미 `/opt/pruviq/data/rankings` 로 지정
+#     (실제 2026-03~04-15 archive 보유 경로). systemd `Environment=` 는
+#     `EnvironmentFile=` 을 override 하므로, 이 유닛에서 RANKING_DIR 을
+#     덮어쓰면 API 가 빈 shared/ 디렉토리를 읽어 /rankings/daily 가 빈
+#     응답을 서빙. PR #1173 에서 shared/ 로 덮어쓴 것이 회귀였음.
+#     `.env` 값을 SSoT 로 두고 여기서는 개입하지 않음.
+#   - SUBSCRIBERS_FILE: `.env` 미선언이므로 여기서 주입. `.env` 에 추가되면
+#     이 라인 제거 가능.
 Environment=SUBSCRIBERS_FILE=/opt/pruviq/shared/subscribers.json
 ExecStart=/opt/pruviq/app/.venv/bin/uvicorn api.main:app --host 127.0.0.1 --port 8080 --workers 1
 Restart=always

@@ -9,11 +9,11 @@ User=pruviq
 Group=pruviq
 WorkingDirectory=/opt/pruviq/current
 EnvironmentFile=/opt/pruviq/shared/.env
-# RANKING_DIR — shared SSoT read by both api/main.py:/rankings/daily handler
-# and daily_strategy_ranking.py save_results(). Without this, the ranker
-# defaulted to /Users/jepo/Desktop/autotrader/... (Mac archival path) and
-# failed with PermissionError under User=pruviq on DO every run.
-Environment=RANKING_DIR=/opt/pruviq/shared/rankings
+# RANKING_DIR: `.env` 가 이미 `/opt/pruviq/data/rankings` 로 지정 (archive
+# 2026-03~ 보유). systemd `Environment=` 는 `EnvironmentFile=` 을 override
+# 하므로 PR #1173 의 shared/ 덮어쓰기가 실제 데이터 경로를 누락시켰음.
+# 이제 `.env` 값을 단일 SSoT 로 사용 — 여기서는 주입하지 않음.
+# (pruviq-api.service 와 lockstep — 두 프로세스가 같은 .env 를 읽음.)
 ExecStart=/opt/pruviq/bin/daily-strategy-ranking.sh
 TimeoutStartSec=7200
 # 2026-04-18: 3600 → 7200. strategy × direction × timeframe × group 조합이 많고
