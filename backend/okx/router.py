@@ -222,10 +222,30 @@ async def execute_order(
     # request silently succeeded on OKX but failed to return to the client.
     # Format: [A-Za-z0-9_]{1,32}. We hash + truncate to stay in spec and
     # prefix with session_id[:4] to make debug logs traceable.
+    #
+    # 2026-04-19: reject header-present-but-empty rather than silently
+    # skipping. Empty header is a client bug (sent `Idempotency-Key:` with
+    # no value) — silently ignoring gives the caller NO replay protection
+    # when they thought they had it.
     cl_ord_id: Optional[str] = None
-    if idempotency_key:
+    if idempotency_key is not None:
+        stripped = idempotency_key.strip()
+        if not stripped:
+            _order_rate_limit.pop(session_id, None)
+            raise HTTPException(
+                400,
+                "Idempotency-Key header present but empty. Either omit the "
+                "header or supply a non-whitespace value (recommended: a "
+                "stable hash of the source signal).",
+            )
+        if len(stripped) > 256:
+            _order_rate_limit.pop(session_id, None)
+            raise HTTPException(
+                400,
+                f"Idempotency-Key too long ({len(stripped)}); max 256 chars.",
+            )
         import hashlib as _hashlib
-        raw = f"{session_id}:{idempotency_key}".encode()
+        raw = f"{session_id}:{stripped}".encode()
         cl_ord_id = _hashlib.sha1(raw).hexdigest()[:32]
 
     try:

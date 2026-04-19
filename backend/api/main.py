@@ -196,25 +196,43 @@ async def _okx_token_refresh_loop():
 
 
 async def _okx_reconcile_loop():
-    """Reconcile OKX live positions vs DB trade_log every 5 minutes (P0-2)."""
-    try:
-        from okx.reconciler import reconcile_loop
-        await reconcile_loop()
-    except asyncio.CancelledError:
-        raise
-    except Exception as e:
-        logger.error(f"OKX reconcile loop terminated: {e}")
+    """Reconcile OKX live positions vs DB trade_log every 5 minutes (P0-2).
+
+    2026-04-19: original version delegated entirely to the inner
+    `reconcile_loop()`; if that raised any non-CancelledError exception,
+    the outer task exited permanently — **silent death**, no alert, no
+    systemd visibility (task lives inside uvicorn). Now wrapped in an
+    outer while-True with per-iteration retry.
+    """
+    from okx.reconciler import reconcile_loop
+    while True:
+        try:
+            await reconcile_loop()
+        except asyncio.CancelledError:
+            raise
+        except Exception as e:
+            logger.error(
+                "OKX reconcile loop crashed (%s); restarting in 60s", e,
+            )
+            await asyncio.sleep(60)
 
 
 async def _okx_pnl_retry_loop():
-    """Retry pnl_sync for trade_log rows flagged pnl_synced=0 every 30 min (P0-3)."""
-    try:
-        from okx.pnl_sync import retry_failed_pnl_sync_loop
-        await retry_failed_pnl_sync_loop()
-    except asyncio.CancelledError:
-        raise
-    except Exception as e:
-        logger.error(f"OKX pnl retry loop terminated: {e}")
+    """Retry pnl_sync for trade_log rows flagged pnl_synced=0 every 30 min (P0-3).
+
+    Same silent-death fix as _okx_reconcile_loop (2026-04-19).
+    """
+    from okx.pnl_sync import retry_failed_pnl_sync_loop
+    while True:
+        try:
+            await retry_failed_pnl_sync_loop()
+        except asyncio.CancelledError:
+            raise
+        except Exception as e:
+            logger.error(
+                "OKX pnl retry loop crashed (%s); restarting in 60s", e,
+            )
+            await asyncio.sleep(60)
 
 
 async def _background_refresh():
