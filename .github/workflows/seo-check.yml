@@ -21,10 +21,17 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          # Bumped 18 → 22 to match the rest of CI (unit/e2e/visual) and
+          # avoid a long-standing npm optional-deps bug that left the
+          # @tailwindcss/oxide-linux-x64-gnu native binding uninstalled on
+          # Node 18 — every PR hit "Cannot find native binding" at build.
+          node-version: '22'
 
       - name: Install
-        run: npm ci
+        # --include=optional is a belt-and-suspenders guard so the native
+        # tailwind binding installs even if npm's optional-deps resolver
+        # regresses again (see npm/cli#4828).
+        run: npm ci --include=optional
 
       - name: Build
         run: npm run build
