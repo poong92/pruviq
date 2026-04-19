@@ -1,0 +1,31 @@
+[Unit]
+Description=PRUVIQ FastAPI Backend
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=pruviq
+WorkingDirectory=/opt/pruviq/current/backend
+EnvironmentFile=/opt/pruviq/shared/.env
+# Shared SSoT for Mac/DO split. api/main.py:3800 reads RANKING_DIR;
+# api/main.py:4270 reads SUBSCRIBERS_FILE. Without these injected here, the
+# fallback was /Users/jepo/... (Mac paths) — the /rankings/daily handler and
+# /api/subscribe endpoint silently hit PermissionError on DO and served
+# stale data or rejected writes. Values must stay in lockstep with
+# pruviq-daily-ranking.service (which also needs RANKING_DIR for save_results).
+Environment=RANKING_DIR=/opt/pruviq/shared/rankings
+Environment=SUBSCRIBERS_FILE=/opt/pruviq/shared/subscribers.json
+ExecStart=/opt/pruviq/app/.venv/bin/uvicorn api.main:app --host 127.0.0.1 --port 8080 --workers 1
+Restart=always
+RestartSec=5
+MemoryMax=2G
+LimitNOFILE=65536
+TimeoutStopSec=45
+KillMode=mixed
+RuntimeMaxSec=86400
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=pruviq-api
+
+[Install]
+WantedBy=multi-user.target

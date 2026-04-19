@@ -9,6 +9,11 @@ User=pruviq
 Group=pruviq
 WorkingDirectory=/opt/pruviq/current
 EnvironmentFile=/opt/pruviq/shared/.env
+# RANKING_DIR — shared SSoT read by both api/main.py:/rankings/daily handler
+# and daily_strategy_ranking.py save_results(). Without this, the ranker
+# defaulted to /Users/jepo/Desktop/autotrader/... (Mac archival path) and
+# failed with PermissionError under User=pruviq on DO every run.
+Environment=RANKING_DIR=/opt/pruviq/shared/rankings
 ExecStart=/opt/pruviq/bin/daily-strategy-ranking.sh
 TimeoutStartSec=7200
 # 2026-04-18: 3600 → 7200. strategy × direction × timeframe × group 조합이 많고
