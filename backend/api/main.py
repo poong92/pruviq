@@ -28,10 +28,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import JSONResponse, Response
 
-_admin_key_raw = os.environ.get("ADMIN_API_KEY", "").strip()
-ADMIN_API_KEY: Optional[str] = _admin_key_raw if len(_admin_key_raw) >= 32 else None
-_internal_key_raw = os.environ.get("INTERNAL_API_KEY", "").strip()
-INTERNAL_API_KEY: Optional[str] = _internal_key_raw if len(_internal_key_raw) >= 32 else None
 OKX_AUTO_TRADE_LOCAL = os.environ.get("OKX_AUTO_TRADE_LOCAL", "true").lower() == "true"
 COINGECKO_API_KEY = os.environ.get("COINGECKO_API_KEY", "")
 CG_HEADERS = {"x-cg-demo-api-key": COINGECKO_API_KEY} if COINGECKO_API_KEY else {}
@@ -42,11 +38,83 @@ from datetime import datetime, timedelta, timezone
 
 logger = logging.getLogger("pruviq")
 
-if ADMIN_API_KEY is None:
-    logger.warning("ADMIN_API_KEY too short or missing — /admin/refresh disabled")
 
-if INTERNAL_API_KEY is None:
-    logger.warning("INTERNAL_API_KEY too short or missing — /internal/signals disabled")
+def _parse_rotation_keys(plural_env: str, singular_env: str) -> tuple[str, ...]:
+    """Parse a rotation-capable API key env.
+
+    Mirrors the OKX_ENCRYPTION_KEYS / OKX_ENCRYPTION_KEY pattern shipped in
+    PR #1195 — an operator can rotate without downtime by setting
+    `{plural_env}=new,old` while both clients exist, then later shrinking
+    to `{plural_env}=new`.
+
+    Precedence: plural beats singular. Keys shorter than 32 chars are
+    dropped with a warning (matches the prior strength gate). Returns
+    newest-first; callers that care about "the active key for outbound
+    signing" should use tuple[0].
+    """
+    raw_plural = os.environ.get(plural_env, "").strip()
+    if raw_plural:
+        keys: list[str] = []
+        for idx, k in enumerate(raw_plural.split(",")):
+            k = k.strip()
+            if not k:
+                continue
+            if len(k) < 32:
+                logger.warning(
+                    "%s[%d] too short (<32 chars) — dropped", plural_env, idx,
+                )
+                continue
+            keys.append(k)
+        return tuple(keys)
+    raw_single = os.environ.get(singular_env, "").strip()
+    if raw_single and len(raw_single) >= 32:
+        return (raw_single,)
+    return ()
+
+
+def _admin_key_valid(presented: str, keys: tuple[str, ...]) -> bool:
+    """Constant-time membership check across a rotation tuple.
+
+    Iterates every key so timing leaks a single bit (not the prefix-match
+    length). Returns False on empty tuple so a missing-secret deploy
+    cannot be bypassed.
+    """
+    if not presented or not keys:
+        return False
+    ok = False
+    for k in keys:
+        # `|=` after compare_digest keeps the loop constant-time — we never
+        # early-exit on first match.
+        if hmac.compare_digest(presented, k):
+            ok = True
+    return ok
+
+
+# ADMIN_API_KEYS (plural, comma-separated, newest-first) = rotation mode.
+# ADMIN_API_KEY (singular) = legacy steady-state. Empty tuple → disabled.
+_ADMIN_API_KEYS: tuple[str, ...] = _parse_rotation_keys("ADMIN_API_KEYS", "ADMIN_API_KEY")
+_INTERNAL_API_KEYS: tuple[str, ...] = _parse_rotation_keys(
+    "INTERNAL_API_KEYS", "INTERNAL_API_KEY"
+)
+# Kept as the "primary" (newest) key for any legacy code path that still
+# reads the old Optional[str] constant. None when no valid key is present.
+ADMIN_API_KEY: Optional[str] = _ADMIN_API_KEYS[0] if _ADMIN_API_KEYS else None
+INTERNAL_API_KEY: Optional[str] = _INTERNAL_API_KEYS[0] if _INTERNAL_API_KEYS else None
+
+if not _ADMIN_API_KEYS:
+    logger.warning("ADMIN_API_KEY(S) too short or missing — /admin/refresh disabled")
+elif len(_ADMIN_API_KEYS) > 1:
+    logger.info(
+        "ADMIN_API_KEYS rotation active (%d keys) — accepting all", len(_ADMIN_API_KEYS),
+    )
+
+if not _INTERNAL_API_KEYS:
+    logger.warning("INTERNAL_API_KEY(S) too short or missing — /internal/signals disabled")
+elif len(_INTERNAL_API_KEYS) > 1:
+    logger.info(
+        "INTERNAL_API_KEYS rotation active (%d keys) — accepting all",
+        len(_INTERNAL_API_KEYS),
+    )
 
 # Add backend to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -631,7 +699,7 @@ async def rate_limit_middleware(request: Request, call_next):
     if request.url.path in ("/simulate", "/simulate/coin", "/simulate/compare", "/simulate/validate", "/simulate/optimize", "/backtest", "/export/csv"):
         # Bypass rate limit for internal callers (sim-audit, signal-telegram, etc.)
         req_key = request.headers.get("X-Internal-Key", "")
-        if INTERNAL_API_KEY and req_key and hmac.compare_digest(req_key, INTERNAL_API_KEY):
+        if _admin_key_valid(req_key, _INTERNAL_API_KEYS):
             return await call_next(request)
         client_ip = get_client_ip(request)
         if not check_rate_limit(client_ip):
@@ -946,12 +1014,12 @@ async def internal_signals(
 
     Consumed by: `backend/okx/server.py` polling loop (OKX_AUTO_TRADE_LOCAL=false mode).
     """
-    if INTERNAL_API_KEY is None:
+    if not _INTERNAL_API_KEYS:
         raise HTTPException(
             status_code=403,
             detail="INTERNAL_API_KEY not configured on server",
         )
-    if not x_internal_key or not hmac.compare_digest(x_internal_key, INTERNAL_API_KEY):
+    if not _admin_key_valid(x_internal_key, _INTERNAL_API_KEYS):
         raise HTTPException(status_code=403, detail="invalid X-Internal-Key")
 
     ts = int(time.time())
@@ -2157,7 +2225,7 @@ async def simulate_optimize(req: OptimizeRequest):
 @app.post("/admin/refresh")
 async def refresh_data(x_admin_key: str = Header(default="", alias="X-Admin-Key")):
     """Manually trigger data refresh from Binance."""
-    if ADMIN_API_KEY is None or not hmac.compare_digest(x_admin_key, ADMIN_API_KEY):
+    if not _admin_key_valid(x_admin_key, _ADMIN_API_KEYS):
         raise HTTPException(status_code=403, detail="Forbidden")
     await asyncio.to_thread(_refresh_data)
     return {"status": "ok", "coins": indicator_cache.count, "generated": coin_stats_cache["generated"] if coin_stats_cache else None}
