@@ -32,3 +32,5 @@
 # /ko/performance page exists — no redirect needed
 /ko/rankings /ko/strategies/ranking 301
 /ko/rankings/ /ko/strategies/ranking 301
+/ko/compare/binance-vs-okx /ko/fees 301
+/ko/compare/binance-vs-okx/ /ko/fees 301
