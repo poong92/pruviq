@@ -217,6 +217,7 @@ def test_sqlite_concurrent_writers_do_not_raise_busy():
         os.environ["OKX_DB_PATH"] = db_path
 
         import importlib
+        importlib.reload(importlib.import_module("okx.config"))
         import okx.storage as storage
         importlib.reload(storage)
 
@@ -256,5 +257,6 @@ def test_sqlite_concurrent_writers_do_not_raise_busy():
 
     os.environ.pop("OKX_DB_PATH", None)
     import importlib
+    importlib.reload(importlib.import_module("okx.config"))
     import okx.storage as storage
     importlib.reload(storage)
