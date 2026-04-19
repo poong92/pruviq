@@ -2,6 +2,10 @@
 Description=PRUVIQ FastAPI Backend
 After=network-online.target
 Wants=network-online.target
+# 2026-04-19 automation-audit HIGH: without OnFailure, an infinite
+# Restart=always loop (e.g., missing .env key) runs silently. pruviq-alert@
+# sends a Telegram ping so the operator knows to look.
+OnFailure=pruviq-alert@%n.service
 
 [Service]
 User=pruviq
