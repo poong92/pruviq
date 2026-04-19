@@ -18,6 +18,7 @@ from __future__ import annotations
 import asyncio
 import hashlib
 import logging
+import os
 import time
 from datetime import datetime, timezone
 from typing import Optional
@@ -57,10 +58,18 @@ logger = logging.getLogger("okx_auto_executor")
 _FILL_WAIT_S = 1.5
 
 # Reject signals older than this many seconds. OKX mark price drifts ~0.1–0.5%
-# per minute on volatile pairs — executing a 5-minute-old signal means trading
-# against stale entry conditions. 60s is permissive enough for one scheduler
-# tick (5min) to be late without dropping everything.
-_MAX_SIGNAL_AGE_S = 60
+# per minute on volatile pairs, so we cap at one poll cycle + slack: any
+# signal older than that was already in-flight when the next poll would pick
+# it up, meaning entry conditions are stale.
+#
+# Must be ≥ SIGNAL_POLL_INTERVAL (OKX_SIGNAL_POLL_INTERVAL, default 300s in
+# server.py). Hardcoded 60s previously silently skipped every signal because
+# DO poll runs at 5-min cadence → age_s ≈ 250s > 60s on every pickup.
+# Override via OKX_MAX_SIGNAL_AGE_S. Default = poll_interval + 60s slack.
+_SIGNAL_POLL_INTERVAL_S = int(os.environ.get("OKX_SIGNAL_POLL_INTERVAL", "300"))
+_MAX_SIGNAL_AGE_S = int(
+    os.environ.get("OKX_MAX_SIGNAL_AGE_S", str(_SIGNAL_POLL_INTERVAL_S + 60))
+)
 
 # Reject the trade (close immediately after fill) if actual fill price deviates
 # from signal-time mark price by more than this fraction. 0.5% covers routine
@@ -500,7 +509,7 @@ async def _try_execute(
             )
             return None
 
-        # ── Contract size using live mark price ──
+        # ── Contract size using live mark price + tickSz for SL/TP grid ──
         try:
             sz = await _calc_contract_sz(client, inst_id, position_size, leverage, mark_price)
         except ValueError as e:
@@ -508,6 +517,9 @@ async def _try_execute(
             if chat_id:
                 asyncio.create_task(send_execution_failed(chat_id, signal, f"position too small: {e}"))
             return None
+        # Same instrument-info call is cached inside OKXClient — O(0) after _calc_contract_sz.
+        _inst_info = await client.get_instrument_info(inst_id)
+        tick_sz = _inst_info.get("tickSz", 0.01)
 
         # ── Set leverage ──
         await client.set_leverage(inst_id=inst_id, lever=leverage, mgn_mode=td_mode)
@@ -591,7 +603,9 @@ async def _try_execute(
                 return None
 
         # ── SL/TP calculated from ACTUAL FILL PRICE (industry standard) ──
-        sl_price, tp_price = _calc_sl_tp_prices(fill_price, signal["direction"], sl_pct, tp_pct)
+        sl_price, tp_price = _calc_sl_tp_prices(
+            fill_price, signal["direction"], sl_pct, tp_pct, tick_sz=tick_sz,
+        )
         close_side = "buy" if signal["direction"] == "short" else "sell"
 
         try:
