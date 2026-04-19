@@ -8,10 +8,20 @@ const {
   detail = 'Rankings update daily. Try refreshing or check back shortly.'
 } = Astro.props;
 ---
-<div class="rounded-lg border border-[--color-warning]/20 p-6 bg-[--color-warning]/5 text-center my-4">
+<div class="rounded-lg border border-[--color-warning]/20 p-6 bg-[--color-warning]/5 text-center my-4" data-error-fallback>
   <p class="text-[--color-warning] font-medium mb-2">{message}</p>
   <p class="text-sm text-[--color-text-secondary] mb-4">{detail}</p>
-  <button onclick="location.reload()" class="btn btn-ghost btn-sm cursor-pointer">
+  <!-- Delegated event handler instead of inline onclick — CSP-strict friendly
+       (inline event attributes require 'unsafe-inline' which weakens XSS defense). -->
+  <button type="button" data-error-refresh class="btn btn-ghost btn-sm cursor-pointer">
     ↻ Refresh page
   </button>
 </div>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('[data-error-refresh]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      window.location.reload();
+    });
+  });
+</script>

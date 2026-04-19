@@ -57,18 +57,20 @@ import LiveTradeHistory from '../components/LiveTradeHistory';
     </section>
 
     <!-- Auto-Trading Settings -->
+    <!-- client:visible: below-the-fold on first paint, defer hydration
+         until scrolled into view. Cuts initial JS bundle cost. -->
     <section class="mb-8">
-      <TradingSettings client:load lang="en" />
+      <TradingSettings client:visible lang="en" />
     </section>
 
     <!-- Live Positions -->
     <section class="mb-8">
-      <LivePositions client:load lang="en" />
+      <LivePositions client:visible lang="en" />
     </section>
 
     <!-- Trade History -->
     <section class="mb-8">
-      <LiveTradeHistory client:load lang="en" />
+      <LiveTradeHistory client:visible lang="en" />
     </section>
 
     <!-- Security Info -->

@@ -60,20 +60,36 @@ export default function EmailCapture({ lang }: Props) {
     setSubmitting(true);
 
     // 1. Always save to localStorage first (guaranteed offline-safe)
+    // 2026-04-19: parse + validate without throwing. The old `throw new Error`
+    // on non-array sent us to the `catch` block which OVERWROTE any pre-existing
+    // entries with a single-element array — losing prior captures on corruption.
+    // Now: treat corruption as "start fresh with what we have", preserving any
+    // valid entries we can salvage.
     try {
-      const existing = JSON.parse(
-        localStorage.getItem("captured-emails") || "[]",
-      );
-      if (!Array.isArray(existing)) throw new Error("corrupt");
+      const raw = localStorage.getItem("captured-emails");
+      let existing: string[] = [];
+      if (raw) {
+        try {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed)) {
+            existing = parsed.filter((v) => typeof v === "string");
+          }
+        } catch {
+          // parsed value corrupt — existing stays []
+        }
+      }
       if (!existing.includes(email)) {
         existing.push(email);
-        localStorage.setItem("captured-emails", JSON.stringify(existing));
       }
+      localStorage.setItem("captured-emails", JSON.stringify(existing));
       localStorage.setItem("email-captured", "true");
     } catch {
-      // fallback: just set the flag
-      localStorage.setItem("captured-emails", JSON.stringify([email]));
-      localStorage.setItem("email-captured", "true");
+      // localStorage itself blocked (private mode, quota) — last-resort flag only
+      try {
+        localStorage.setItem("email-captured", "true");
+      } catch {
+        // nothing else we can do client-side
+      }
     }
 
     // 2. Send to backend (fire-and-forget, failure does not block UX)
