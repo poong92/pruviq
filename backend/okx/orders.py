@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import logging
 import math
+from datetime import datetime, timezone
 from typing import Optional
 
 from .client import OKXClient
@@ -211,6 +212,39 @@ async def execute_from_simulation(
                 f"SL/TP placement failed for {inst_id} (ordId={ord_id}), "
                 f"position closed as safety measure. Error: {algo_err}"
             )
+
+    # Moat-2: Merkle audit leaf for the manual /execute/order path.
+    # auto_executor records its own leaf (see auto_executor.py:677). Until
+    # this PR, manual orders went unrecorded — a gap users could point to
+    # to argue "the audit log is selective". Leaf pre-image here mirrors
+    # the auto-executor path exactly: session_id | ts_iso | inst_id |
+    # direction-in-OKX-terms | sz | entry_price | broker_code. Users can
+    # reproduce the hash off-line using the response dict below
+    # (`details.entry_price`, `details.inst_id`, etc.).
+    #
+    # NOTE: we use `current_price` (the mark price at order time) as the
+    # leaf's `fill_price`, NOT the actual OKX avgPx. That's a deliberate
+    # trade-off: avgPx requires a second OKX round-trip + a wait loop
+    # (auto_executor does it because it needs the number for SL/TP
+    # pricing; here we already set SL/TP from mark). Keeping it to
+    # mark-price keeps the manual path low-latency and the leaf pre-image
+    # is still derivable by the user from the response.
+    try:
+        from .merkle import record_order as _merkle_record
+        from .config import OKX_BROKER_CODE as _BROKER
+        _merkle_record(
+            session_id=session_id,
+            ts_iso=datetime.now(timezone.utc).isoformat(timespec="seconds"),
+            inst_id=inst_id,
+            side=side,
+            sz=sz,
+            fill_price=current_price,
+            broker_code=_BROKER or "",
+        )
+    except Exception as audit_err:
+        # Audit failure must not block the trading path — same invariant
+        # auto_executor honours. We log and move on.
+        logger.warning("merkle audit record failed (non-fatal): %s", audit_err)
 
     return {
         "order": order,
