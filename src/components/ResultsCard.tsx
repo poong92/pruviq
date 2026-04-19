@@ -3,6 +3,7 @@ import { winRateColor, profitFactorColor, signColor } from "../utils/format";
 import { COLORS } from "./simulator-types";
 import Term from "./ui/Term";
 import CollapsibleSection from "./ui/CollapsibleSection";
+import { OKX_DISCOUNT_PCT } from "../config/exchanges";
 
 interface ResultsData {
   win_rate: number;
@@ -105,7 +106,7 @@ const labels = {
     tradingFee: "Trading Fee",
     fundingFee: "Funding Fee",
     totalCost: "Total Cost",
-    feeSaveTip: "Save up to 20% on fees",
+    feeSaveTip: `Save up to ${OKX_DISCOUNT_PCT}% on fees`,
     portfolio: "Portfolio",
     initialCapital: "Initial Capital",
     totalPnlUsd: "Total PnL",
@@ -153,7 +154,7 @@ const labels = {
     sectionValidation: "Validation",
     gradePrefix: "Grade",
     mcBeats: (pct: number) => `Beats ${pct}% of random strategies`,
-    referralCta: "Ready to trade this strategy? Save up to 20% on trading fees",
+    referralCta: `Ready to trade this strategy? Save up to ${OKX_DISCOUNT_PCT}% on trading fees`,
     survivorshipNote:
       "Results based on currently listed assets only. Delisted coins excluded (survivorship bias).",
   },
@@ -179,7 +180,7 @@ const labels = {
     tradingFee: "\uAC70\uB798 \uC218\uC218\uB8CC",
     fundingFee: "\uD380\uB529 \uC218\uC218\uB8CC",
     totalCost: "\uCD1D \uBE44\uC6A9",
-    feeSaveTip: "\uC218\uC218\uB8CC \uCD5C\uB300 20% \uC808\uAC10",
+    feeSaveTip: `\uC218\uC218\uB8CC \uCD5C\uB300 ${OKX_DISCOUNT_PCT}% \uC808\uAC10`,
     portfolio: "\uD3EC\uD2B8\uD3F4\uB9AC\uC624",
     initialCapital: "\uCD08\uAE30 \uC790\uBCF8",
     totalPnlUsd: "\uCD1D \uC190\uC775",
@@ -232,8 +233,7 @@ const labels = {
     gradePrefix: "\uB4F1\uAE09",
     mcBeats: (pct: number) =>
       `\uB79C\uB364 \uC804\uB7B5 \uC911 \uC0C1\uC704 ${(100 - pct).toFixed(0)}%`,
-    referralCta:
-      "\uC774 \uC804\uB7B5\uC73C\uB85C \uAC70\uB798 \uC900\uBE44\uB410\uB098\uC694? \uAC70\uB798 \uC218\uC218\uB8CC \uCD5C\uB300 20% \uC808\uC57D",
+    referralCta: `\uC774 \uC804\uB7B5\uC73C\uB85C \uAC70\uB798 \uC900\uBE44\uB410\uB098\uC694? \uAC70\uB798 \uC218\uC218\uB8CC \uCD5C\uB300 ${OKX_DISCOUNT_PCT}% \uC808\uC57D`,
     survivorshipNote:
       "\uD604\uC7AC \uC0C1\uC7A5\uB41C \uC790\uC0B0\uB9CC \uD14C\uC2A4\uD2B8\uB429\uB2C8\uB2E4. \uC0C1\uD3D0 \uCF54\uC778 \uC81C\uC678 (\uC0DD\uC874 \uD3B8\uD5A5).",
   },

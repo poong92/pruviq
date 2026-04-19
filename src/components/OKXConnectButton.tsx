@@ -5,6 +5,7 @@
  */
 import { useState, useEffect } from "preact/hooks";
 import { API_BASE_URL as API_BASE } from "../config/api";
+import { OKX_DISCOUNT_PCT } from "../config/exchanges";
 
 interface Props {
   lang?: "en" | "ko";
@@ -22,10 +23,10 @@ const labels = {
     connected: "OKX Connected",
     disconnect: "Disconnect",
     connecting: "Connecting...",
-    desc: "Link your OKX account to execute trades directly from simulations. 20% fee discount included.",
+    desc: `Link your OKX account to execute trades directly from simulations. ${OKX_DISCOUNT_PCT}% fee discount included.`,
     benefits: [
       "One-click trade execution",
-      "20% fee discount",
+      `${OKX_DISCOUNT_PCT}% fee discount`,
       "Secure OAuth — no API keys shared",
     ],
   },
@@ -34,10 +35,10 @@ const labels = {
     connected: "OKX 연결됨",
     disconnect: "연결 해제",
     connecting: "연결 중...",
-    desc: "OKX 계정을 연결하면 시뮬레이션 결과를 바로 실행할 수 있습니다. 20% 수수료 할인 포함.",
+    desc: `OKX 계정을 연결하면 시뮬레이션 결과를 바로 실행할 수 있습니다. ${OKX_DISCOUNT_PCT}% 수수료 할인 포함.`,
     benefits: [
       "원클릭 거래 실행",
-      "20% 수수료 할인",
+      `${OKX_DISCOUNT_PCT}% 수수료 할인`,
       "안전한 OAuth — API 키 공유 불필요",
     ],
   },
