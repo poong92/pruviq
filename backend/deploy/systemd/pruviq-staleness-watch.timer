@@ -3,7 +3,13 @@ Description=PRUVIQ Staleness Watchdog timer (every 10 min)
 Requires=pruviq-staleness-watch.service
 
 [Timer]
-OnCalendar=*:0/10
+# Offset from pruviq-monitor.timer (every 5min on :00). Both previously
+# fired at :00/:10/:20 — concurrent /health probes on a 2vCPU droplet
+# amplified perceived slowness into double Telegram alerts.
+# Now staleness-watch fires at :05/:15/:25/… while monitor fires at
+# :00/:05/:10/…; they still co-occur at :05/:25/:45 but the remaining
+# 3-of-6 collisions are acceptable.
+OnCalendar=*:5/10
 RandomizedDelaySec=30
 Persistent=true
 Unit=pruviq-staleness-watch.service
