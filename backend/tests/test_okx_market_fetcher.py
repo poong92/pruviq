@@ -70,13 +70,81 @@ class TestOkxCandleParse:
         assert c.close == 102.0
         assert c.volume == 10.5
         assert c.volume_ccy == 1071.0  # from col-7 (volCcyQuote)
+        assert c.is_confirmed is True
 
     def test_7col_fallback(self):
-        # Legacy 7-column response — fall back to col-6
+        # Legacy 7-column response — fall back to col-6, and default
+        # is_confirmed=True since no confirm column is present.
         row = ["1700000000000", "100.0", "105.0", "95.0", "102.0",
                "10.5", "11.0"]
         c = OkxCandle.from_row(row)
         assert c.volume_ccy == 11.0
+        assert c.is_confirmed is True, "missing confirm col should default to True"
+
+    def test_unconfirmed_candle_flagged(self):
+        # OKX /market/candles returns the still-forming candle as the
+        # first row in its newest-first response, with confirm="0".
+        # Callers doing signal detection on the last row would otherwise
+        # eat an unfinished bar — is_confirmed must be False so they can
+        # skip it.
+        row = ["1700000000000", "100.0", "105.0", "95.0", "102.0",
+               "10.5", "11.0", "1071.0", "0"]
+        c = OkxCandle.from_row(row)
+        assert c.is_confirmed is False
+
+    def test_confirm_accepts_string_or_int(self):
+        # OKX sometimes serializes `confirm` as the string "1"/"0",
+        # sometimes as the raw int. Our parser coerces via str() so both
+        # forms collapse to the same boolean.
+        row_str = ["1700000000000", "1", "1", "1", "1", "1", "1", "1", "1"]
+        row_int = ["1700000000000", "1", "1", "1", "1", "1", "1", "1", 1]
+        assert OkxCandle.from_row(row_str).is_confirmed is True
+        assert OkxCandle.from_row(row_int).is_confirmed is True
+
+
+class TestFetchCandlesUnconfirmedFilter:
+    def test_include_unconfirmed_false_drops_forming_bar(self, monkeypatch):
+        """fetch_candles(include_unconfirmed=False) must strip the forming
+        bar so callers that use `df[-1]` don't read an in-progress candle."""
+        async def _run():
+            fetcher = OkxMarketFetcher()
+            try:
+                async def fake_get(path, params):
+                    return {
+                        "code": "0",
+                        "data": [
+                            # OKX returns newest-first; [0] is the still-forming
+                            # candle. Following rows are closed.
+                            ["1700000000000", "100", "105", "95", "102",
+                             "10", "11", "1020", "0"],
+                            ["1699999964000", "99", "101", "97", "100",
+                             "9",  "10", "900",  "1"],
+                            ["1699999928000", "98", "100", "96", "99",
+                             "8",  "9",  "800",  "1"],
+                        ],
+                    }
+
+                monkeypatch.setattr(fetcher, "_get_with_backoff", fake_get)
+
+                all_candles = await fetcher.fetch_candles(
+                    "BTCUSDT", "1h", 3, include_unconfirmed=True
+                )
+                confirmed_only = await fetcher.fetch_candles(
+                    "BTCUSDT", "1h", 3, include_unconfirmed=False
+                )
+                return all_candles, confirmed_only
+            finally:
+                await fetcher.close()
+
+        all_candles, confirmed_only = asyncio.run(_run())
+
+        assert len(all_candles) == 3
+        assert len(confirmed_only) == 2, (
+            "forming bar must be dropped when include_unconfirmed=False"
+        )
+        # Ordering guarantee preserved (old→new) in both cases.
+        assert all_candles[-1].is_confirmed is False
+        assert all(c.is_confirmed for c in confirmed_only)
 
 
 class TestThrottle:
