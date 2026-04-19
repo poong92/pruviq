@@ -1,0 +1,15 @@
+[Unit]
+Description=PRUVIQ API Watchdog timer (every 1 min)
+
+[Timer]
+# 1-minute cadence: 3 consecutive failures = 3-minute detection ceiling,
+# which is below the 5-min pruviq-monitor tick. Fast recovery matters
+# because OAuth callbacks time out at ~10s on the client side.
+OnBootSec=2min
+OnUnitActiveSec=1min
+AccuracySec=10s
+RandomizedDelaySec=0
+Unit=pruviq-api-watchdog.service
+
+[Install]
+WantedBy=timers.target

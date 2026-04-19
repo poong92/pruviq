@@ -1,0 +1,19 @@
+[Unit]
+Description=PRUVIQ API Watchdog — force-restart pruviq-api on /health hang
+After=network-online.target pruviq-api.service
+# No OnFailure= here — if the watchdog itself fails, we do NOT want to
+# chain into pruviq-alert since this runs as root every minute.
+
+[Service]
+Type=oneshot
+# Must be root: `systemctl restart pruviq-api.service` without polkit.
+# The script is minimal (curl + counter file + systemctl) to keep this
+# trust surface as small as possible.
+User=root
+Group=root
+EnvironmentFile=-/opt/pruviq/shared/.env
+ExecStart=/opt/pruviq/bin/api-watchdog.sh
+StandardOutput=journal
+StandardError=journal
+TimeoutStartSec=30
+SyslogIdentifier=pruviq-api-watchdog
