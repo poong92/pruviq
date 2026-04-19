@@ -81,6 +81,12 @@ from src.strategies.registry import STRATEGY_REGISTRY, get_strategy, get_all_str
 
 # Config
 VERSION = "0.3.0"
+
+# Production hardening toggle.
+# Set PRUVIQ_ENV=production on the Mac Mini .env to disable Swagger/redoc/openapi
+# and strip localhost origins from CORS. Defaults to development for safe local use.
+IS_PRODUCTION = os.getenv("PRUVIQ_ENV", "development").strip().lower() == "production"
+
 DATA_DIR = Path(os.getenv(
     "PRUVIQ_DATA_DIR",
     str(Path(__file__).resolve().parent.parent / "data" / "futures")
@@ -409,6 +415,9 @@ app = FastAPI(
     version=VERSION,
     description="Run crypto strategy simulations with realistic costs.",
     lifespan=lifespan,
+    docs_url=None if IS_PRODUCTION else "/docs",
+    redoc_url=None if IS_PRODUCTION else "/redoc",
+    openapi_url=None if IS_PRODUCTION else "/openapi.json",
 )
 
 # OKX Broker router
@@ -417,14 +426,22 @@ app.include_router(okx_router)
 
 app.add_middleware(GZipMiddleware, minimum_size=1000)
 
+_cors_prod_origins = [
+    "https://pruviq.com",
+    "https://www.pruviq.com",
+]
+_cors_dev_origins = [
+    "http://localhost:4321",
+    "http://localhost:3000",
+]
+# In production, allow_credentials=True + localhost origin enables DNS rebinding
+# and cookie-theft from any process that resolves localhost:4321. Only keep
+# localhost when explicitly running outside production.
+_cors_origins = _cors_prod_origins if IS_PRODUCTION else _cors_prod_origins + _cors_dev_origins
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "https://pruviq.com",
-        "https://www.pruviq.com",
-        "http://localhost:4321",
-        "http://localhost:3000",
-    ],
+    allow_origins=_cors_origins,
     allow_credentials=True,
     allow_methods=["GET", "POST"],
     allow_headers=["Content-Type", "Accept", "Origin"],
