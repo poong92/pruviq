@@ -19,7 +19,7 @@
     "@fontsource-variable/geist": "^5.2.8",
     "@fontsource-variable/geist-mono": "^5.2.7",
     "@tailwindcss/vite": "^4.2.2",
-    "astro": "^6.1.8",
+    "astro": "^5.17.1",
     "lightweight-charts": "^5.1.0",
     "preact": "^10.29.1",
     "tailwindcss": "^4.1.18"
