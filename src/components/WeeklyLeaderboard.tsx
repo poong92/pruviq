@@ -92,11 +92,14 @@ export default function WeeklyLeaderboard({ lang }: Props) {
 
   useEffect(() => {
     const controller = new AbortController();
+    // 10s timeout — same reason as StrategyRanking. Without it a stuck
+    // API hangs the widget forever.
+    const timeoutId = setTimeout(() => controller.abort(), 10_000);
     fetch(`${API_BASE_URL}/rankings/daily?period=7d&group=top50`, {
       signal: controller.signal,
     })
       .then((r) => {
-        if (!r.ok) throw new Error(`API ${r.status}`);
+        if (!r.ok) throw new Error("fetch_not_ok");
         return r.json() as Promise<WeeklyData>;
       })
       .then((d) => {
@@ -104,11 +107,20 @@ export default function WeeklyLeaderboard({ lang }: Props) {
         setLoading(false);
       })
       .catch((err) => {
-        if (err.name === "AbortError") return;
+        if (err.name === "AbortError") {
+          setLoading(false);
+          return;
+        }
         setError(l.error);
         setLoading(false);
+      })
+      .finally(() => {
+        clearTimeout(timeoutId);
       });
-    return () => controller.abort();
+    return () => {
+      clearTimeout(timeoutId);
+      controller.abort();
+    };
   }, []);
 
   // Filter out 0-trade sentinel entries (PF=99.99 cap artifacts) and capped PF entries
