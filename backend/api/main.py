@@ -4421,46 +4421,78 @@ SUBSCRIBERS_FILE = Path(
 )
 
 
+def _mutate_subscribers_atomic(mutator):
+    """Read → mutate → atomic write under fcntl.flock.
+
+    The previous read-modify-write sequence was safe only under a single-worker
+    uvicorn because the sections contain no `await` points. As soon as we
+    scale workers (or a sibling process — say a cron or migration script —
+    wants to write) two requests could interleave read/write and drop updates.
+
+    This helper:
+      1. opens a sibling `.lock` file for fcntl.LOCK_EX (advisory, but honored
+         by every writer that uses this helper — single-writer discipline).
+      2. reads the live JSON inside the lock,
+      3. invokes `mutator(data)` which may mutate in place and return
+         (data, result) where `data` is the new state and `result` is passed
+         back to the caller,
+      4. writes to `SUBSCRIBERS_FILE.with_suffix('.tmp')` + rename (POSIX
+         atomic so readers never see a torn write),
+      5. releases the lock via the context manager.
+
+    Python's `fcntl.flock` is advisory — a non-cooperating writer can bypass
+    it. That's fine here: all writers are in this repo and call this helper.
+    """
+    import fcntl
+
+    SUBSCRIBERS_FILE.parent.mkdir(parents=True, exist_ok=True)
+    lock_path = SUBSCRIBERS_FILE.with_suffix(".lock")
+    # Open in a+ so the lock file is created if missing but we don't truncate.
+    with open(lock_path, "a+") as lock_fh:
+        fcntl.flock(lock_fh.fileno(), fcntl.LOCK_EX)
+        try:
+            if SUBSCRIBERS_FILE.exists():
+                data = json.loads(SUBSCRIBERS_FILE.read_text())
+            else:
+                data = {"subscribers": []}
+
+            data, result = mutator(data)
+
+            tmp = SUBSCRIBERS_FILE.with_suffix(".tmp")
+            tmp.write_text(json.dumps(data, indent=2))
+            tmp.rename(SUBSCRIBERS_FILE)
+            return result
+        finally:
+            fcntl.flock(lock_fh.fileno(), fcntl.LOCK_UN)
+
+
 @app.post("/api/subscribe")
 async def subscribe_email(req: SubscribeRequest):
     """Subscribe an email to weekly strategy alerts."""
     import re
 
-    # Validate email format
     if not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', req.email):
         raise HTTPException(422, detail="Invalid email format")
 
     email = req.email.lower().strip()
 
-    # Read / write with file lock
-    SUBSCRIBERS_FILE.parent.mkdir(parents=True, exist_ok=True)
-    if SUBSCRIBERS_FILE.exists():
-        data = json.loads(SUBSCRIBERS_FILE.read_text())
-    else:
-        data = {"subscribers": []}
-
-    # Duplicate check
-    existing = [s for s in data["subscribers"] if s["email"] == email]
-    if existing:
-        if existing[0].get("active", True):
-            return {"ok": True, "message": "Already subscribed"}
-        else:
+    def _apply(data):
+        existing = [s for s in data["subscribers"] if s["email"] == email]
+        if existing:
+            if existing[0].get("active", True):
+                return data, {"ok": True, "message": "Already subscribed"}
             existing[0]["active"] = True
             existing[0]["resubscribed_at"] = datetime.utcnow().isoformat()
-    else:
-        data["subscribers"].append({
-            "email": email,
-            "lang": req.lang,
-            "subscribed_at": datetime.utcnow().isoformat(),
-            "active": True,
-        })
+        else:
+            data["subscribers"].append({
+                "email": email,
+                "lang": req.lang,
+                "subscribed_at": datetime.utcnow().isoformat(),
+                "active": True,
+            })
+        return data, {"ok": True, "message": "Subscribed successfully"}
 
-    # Atomic write
-    tmp = SUBSCRIBERS_FILE.with_suffix(".tmp")
-    tmp.write_text(json.dumps(data, indent=2))
-    tmp.rename(SUBSCRIBERS_FILE)
-
-    return {"ok": True, "message": "Subscribed successfully"}
+    return _mutate_subscribers_atomic(_apply)
 
 
 @app.get("/api/unsubscribe")
@@ -4474,18 +4506,22 @@ async def unsubscribe_email(email: str, token: str):
     if not secret:
         raise HTTPException(503, detail="Unsubscribe service misconfigured")
     expected_full = hmac.new(secret.encode(), email.lower().encode(), hashlib.sha256).hexdigest()
-    # Accept legacy 16-char tokens (old emails) and new full 64-char tokens
+    # Accept legacy 16-char tokens (old emails) and new full 64-char tokens.
+    # Use compare_digest to avoid early-exit timing leaks on mismatched prefixes.
     expected_legacy = expected_full[:16]
-
-    if token not in (expected_full, expected_legacy):
+    token_ok = hmac.compare_digest(token, expected_full) or hmac.compare_digest(
+        token, expected_legacy
+    )
+    if not token_ok:
         raise HTTPException(403, detail="Invalid unsubscribe token")
 
-    if SUBSCRIBERS_FILE.exists():
-        data = json.loads(SUBSCRIBERS_FILE.read_text())
+    def _apply(data):
         for s in data["subscribers"]:
             if s["email"] == email.lower():
                 s["active"] = False
-        SUBSCRIBERS_FILE.write_text(json.dumps(data, indent=2))
+        return data, None
+
+    _mutate_subscribers_atomic(_apply)
 
     return HTMLResponse(
         "<html><body style=\"font-family:sans-serif;text-align:center;padding:60px\">"
