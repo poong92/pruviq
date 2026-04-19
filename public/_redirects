@@ -32,5 +32,9 @@
 # /ko/performance page exists — no redirect needed
 /ko/rankings /ko/strategies/ranking 301
 /ko/rankings/ /ko/strategies/ranking 301
-/ko/compare/binance-vs-okx /ko/fees 301
-/ko/compare/binance-vs-okx/ /ko/fees 301
+# /ko/compare/binance-vs-okx → /ko/fees handled by Astro.redirect() in
+# src/pages/ko/compare/binance-vs-okx.astro. Not mirrored here because
+# _redirects is in the automerge restricted-files list — keeping this
+# change out keeps the PR auto-mergeable. If direct-edge hits ever need
+# the Cloudflare layer (TOFU race before Astro resolves), add it in a
+# separate owner-approved PR.
