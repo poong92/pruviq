@@ -20,6 +20,12 @@
 /rankings /strategies/ranking 301
 /rankings/ /strategies/ranking 301
 
+# /compare/binance-vs-okx → /fees (exchange comparison lives on fees page).
+# Handled by src/pages/compare/binance-vs-okx.astro at build time; this line
+# is a belt-and-suspenders for direct edge hits before the Astro route resolves.
+/compare/binance-vs-okx /fees 301
+/compare/binance-vs-okx/ /fees 301
+
 # KO equivalents
 /ko/builder /ko/simulate/ 301
 /ko/builder/* /ko/simulate/ 301

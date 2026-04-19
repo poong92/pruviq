@@ -153,7 +153,7 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
     <div class="relative grid md:grid-cols-3 gap-8">
       <div class="hidden md:block absolute top-[2.75rem] left-[calc(33.33%+1rem)] right-[calc(33.33%+1rem)] h-px bg-gradient-to-r from-[--color-accent]/30 via-[--color-accent]/15 to-[--color-accent]/30 reveal" aria-hidden="true"></div>
       <StepCard step={1} title="Connect OKX" description="OAuth only — no API keys shared, no withdrawal access. Secure by design." />
-      <StepCard step={2} title="Pick a Verified Strategy" description="Only strategies that passed rigorous backtests across 240+ coins are deployable." />
+      <StepCard step={2} title="Pick a Verified Strategy" description={`Only strategies that passed rigorous backtests across ${coinsAnalyzed}+ coins are deployable.`} />
       <StepCard step={3} title="Bot Trades 24/7" description="Scans signals every 5 minutes. Executes automatically with your risk limits." />
     </div>
     <div class="text-center mt-14">
