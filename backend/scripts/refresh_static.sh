@@ -146,12 +146,12 @@ with open(path) as f:
 # fallback 기본값은 그대로 유지 (refresh 전체가 실패하지 않도록 non-blocking).
 import sys
 try:
-    health = json.loads(urllib.request.urlopen('http://127.0.0.1:8080/health', timeout=5).read())
+    health = json.loads(urllib.request.urlopen('https://api.pruviq.com/health', timeout=5).read())
     d['coins_analyzed'] = health.get('coins_loaded', d.get('coins_analyzed', 240))
 except Exception as e:
     print(f'WARN: /health fetch failed — coins_analyzed unchanged ({e.__class__.__name__})', file=sys.stderr)
 try:
-    strats = json.loads(urllib.request.urlopen('http://127.0.0.1:8080/strategies', timeout=5).read())
+    strats = json.loads(urllib.request.urlopen('https://api.pruviq.com/strategies', timeout=5).read())
     d['strategies_tested'] = len(strats) if isinstance(strats, list) else d.get('strategies_tested', 17)
 except Exception as e:
     print(f'WARN: /strategies fetch failed — strategies_tested unchanged ({e.__class__.__name__})', file=sys.stderr)
