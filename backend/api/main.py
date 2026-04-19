@@ -566,6 +566,53 @@ async def security_headers_middleware(request: Request, call_next):
     return response
 
 
+# ── Prometheus instrumentation ─────────────────────────────────
+# Middleware records request duration + in-flight gauge. Endpoint label
+# is the route template (`/rankings/daily`) not the raw query, bounded
+# cardinality. /metrics itself is excluded to avoid self-referential
+# measurement on every scrape.
+try:
+    from api import metrics as _pm  # noqa: E402
+    _PROM_AVAILABLE = True
+except Exception:
+    _PROM_AVAILABLE = False
+
+
+@app.middleware("http")
+async def prometheus_instrumentation_middleware(request: Request, call_next):
+    if not _PROM_AVAILABLE or request.url.path == "/metrics":
+        return await call_next(request)
+    # Route-template extraction: FastAPI sets request.scope["route"].path
+    # after routing. Fallback to raw path prefix to keep cardinality low
+    # when no route matched (404).
+    _pm.HTTP_REQUESTS_IN_FLIGHT.inc()
+    import time as _t
+    start = _t.perf_counter()
+    try:
+        response = await call_next(request)
+        status_class = f"{response.status_code // 100}xx"
+    except Exception:
+        status_class = "5xx"
+        raise
+    finally:
+        elapsed = _t.perf_counter() - start
+        route = request.scope.get("route")
+        endpoint = getattr(route, "path", None) or request.url.path.split("?", 1)[0]
+        # Truncate very-long 404 paths to `/other` to keep label cardinality bounded.
+        if route is None and len(endpoint) > 40:
+            endpoint = "/other"
+        try:
+            _pm.HTTP_REQUEST_DURATION.labels(
+                method=request.method,
+                endpoint=endpoint,
+                status_class=status_class if 'status_class' in locals() else "5xx",
+            ).observe(elapsed)
+        except Exception:
+            pass
+        _pm.HTTP_REQUESTS_IN_FLIGHT.dec()
+    return response
+
+
 @app.middleware("http")
 async def rate_limit_middleware(request: Request, call_next):
     if request.url.path in ("/simulate", "/simulate/coin", "/simulate/compare", "/simulate/validate", "/simulate/optimize", "/backtest", "/export/csv"):
@@ -793,6 +840,19 @@ async def health():
         coins_loaded=data_manager.coin_count,
         uptime_seconds=round(time.time() - start_time, 1),
     )
+
+
+@app.get("/metrics")
+async def metrics_endpoint():
+    """Prometheus exposition. Safe to hit every 15-60s (Grafana Cloud
+    default 60s). No auth — label values are non-sensitive (counts +
+    durations, no session IDs or paths with PII). If this becomes a
+    concern later, add X-Metrics-Token header gate."""
+    if not _PROM_AVAILABLE:
+        raise HTTPException(503, "Prometheus instrumentation not available")
+    from fastapi.responses import Response as _Resp
+    body, content_type = _pm.render_exposition()
+    return _Resp(content=body, media_type=content_type)
 
 
 @app.get("/coins", response_model=List[CoinInfo])
