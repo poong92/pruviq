@@ -15,7 +15,9 @@ import logging
 import os
 import time
 
-from fastapi import APIRouter, HTTPException, Query, Request, Response
+from typing import Optional
+
+from fastapi import APIRouter, Header, HTTPException, Query, Request, Response
 from fastapi.responses import RedirectResponse
 
 from .config import COOKIE_DOMAIN, FRONTEND_URL, OKX_CLIENT_ID
@@ -178,6 +180,15 @@ async def execute_order(
     req: SimToExecRequest,
     request: Request,
     current_price: float = Query(None, description="Current market price (auto-fetched if omitted)"),
+    idempotency_key: Optional[str] = Header(
+        None,
+        alias="Idempotency-Key",
+        description=(
+            "Optional caller-supplied key (RFC-style) for safe retries. "
+            "If present, it is hashed into the OKX clOrdId so a retried POST "
+            "cannot place a duplicate order."
+        ),
+    ),
 ):
     """Execute trade from simulation results. Requires OKX connection."""
     session_id = _get_session(request)
@@ -205,8 +216,22 @@ async def execute_order(
             f"Adjust in settings or reduce size.",
         )
 
+    # Idempotency: if the caller supplied Idempotency-Key, derive a
+    # deterministic OKX clOrdId from it. OKX rejects a second POST with the
+    # same clOrdId (code 51020), so the retry is safe even if the first
+    # request silently succeeded on OKX but failed to return to the client.
+    # Format: [A-Za-z0-9_]{1,32}. We hash + truncate to stay in spec and
+    # prefix with session_id[:4] to make debug logs traceable.
+    cl_ord_id: Optional[str] = None
+    if idempotency_key:
+        import hashlib as _hashlib
+        raw = f"{session_id}:{idempotency_key}".encode()
+        cl_ord_id = _hashlib.sha1(raw).hexdigest()[:32]
+
     try:
-        result = await execute_from_simulation(session_id, req, current_price)
+        result = await execute_from_simulation(
+            session_id, req, current_price, cl_ord_id=cl_ord_id,
+        )
         return {"status": "executed", **result}
     except ValueError as e:
         _order_rate_limit.pop(session_id, None)  # release rate limit on error
