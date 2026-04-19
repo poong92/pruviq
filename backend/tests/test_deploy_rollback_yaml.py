@@ -17,7 +17,7 @@ import re
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent.parent
-WORKFLOW = REPO / ".github" / "workflows" / "backend-deploy.yml"
+WORKFLOW = REPO / ".github" / "workflows" / "deploy-backend.yml"
 
 
 def _yaml() -> str:

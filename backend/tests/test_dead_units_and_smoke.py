@@ -21,7 +21,7 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parent.parent
 SYSTEMD_DIR = REPO / "deploy" / "systemd"
 DISABLED_DIR = SYSTEMD_DIR / "disabled"
-BACKEND_DEPLOY = REPO.parent / ".github" / "workflows" / "backend-deploy.yml"
+BACKEND_DEPLOY = REPO.parent / ".github" / "workflows" / "deploy-backend.yml"
 
 
 def test_pruviq_commit_data_is_in_disabled():
