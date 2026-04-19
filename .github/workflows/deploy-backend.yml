@@ -298,11 +298,15 @@ jobs:
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           [ -z "$TG_TOKEN" ] || [ -z "$TG_CHAT" ] && exit 0
-          MSG="🔁 PRUVIQ backend-deploy health-gate FAILED — auto-rollback attempted.
-Run: ${RUN_URL}
-Check ssh DO 'journalctl -u pruviq-api -n 100' for root cause."
+          # Single-line MSG on purpose: the previous multi-line form had
+          # line 2-3 at column 1 which escaped YAML's `run: |` block
+          # scalar, producing "workflow file issue" parse failures on
+          # every main push + schedule + workflow_dispatch since PR #1194
+          # merged at 2026-04-19 12:52 UTC. Escape newlines inline with
+          # \n so Telegram still shows line breaks.
+          MSG=$'🔁 PRUVIQ backend-deploy health-gate FAILED — auto-rollback attempted.\nRun: '"${RUN_URL}"$'\nCheck ssh DO `journalctl -u pruviq-api -n 100` for root cause.'
           curl -sf -m 10 -X POST "https://api.telegram.org/bot${TG_TOKEN}/sendMessage" \
-            -d chat_id="${TG_CHAT}" -d text="${MSG}" || true
+            -d chat_id="${TG_CHAT}" --data-urlencode text="${MSG}" || true
 
       - name: Post-deploy sanity via public endpoint
         if: steps.guard.outputs.skip != 'true' && steps.drift.outputs.skip != 'true'
