@@ -574,7 +574,8 @@ async def security_headers_middleware(request: Request, call_next):
 try:
     from api import metrics as _pm  # noqa: E402
     _PROM_AVAILABLE = True
-except Exception:
+except Exception as e:
+    logger.debug("Prometheus instrumentation not available: %s", e)
     _PROM_AVAILABLE = False
 
 
@@ -586,8 +587,8 @@ async def prometheus_instrumentation_middleware(request: Request, call_next):
     # after routing. Fallback to raw path prefix to keep cardinality low
     # when no route matched (404).
     _pm.HTTP_REQUESTS_IN_FLIGHT.inc()
-    import time as _t
-    start = _t.perf_counter()
+    start = time.perf_counter()
+    status_class = "5xx"
     try:
         response = await call_next(request)
         status_class = f"{response.status_code // 100}xx"
@@ -595,7 +596,7 @@ async def prometheus_instrumentation_middleware(request: Request, call_next):
         status_class = "5xx"
         raise
     finally:
-        elapsed = _t.perf_counter() - start
+        elapsed = time.perf_counter() - start
         route = request.scope.get("route")
         endpoint = getattr(route, "path", None) or request.url.path.split("?", 1)[0]
         # Truncate very-long 404 paths to `/other` to keep label cardinality bounded.
@@ -605,10 +606,10 @@ async def prometheus_instrumentation_middleware(request: Request, call_next):
             _pm.HTTP_REQUEST_DURATION.labels(
                 method=request.method,
                 endpoint=endpoint,
-                status_class=status_class if 'status_class' in locals() else "5xx",
+                status_class=status_class,
             ).observe(elapsed)
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug("metrics observation failed: %s", e)
         _pm.HTTP_REQUESTS_IN_FLIGHT.dec()
     return response
 
@@ -850,9 +851,8 @@ async def metrics_endpoint():
     concern later, add X-Metrics-Token header gate."""
     if not _PROM_AVAILABLE:
         raise HTTPException(503, "Prometheus instrumentation not available")
-    from fastapi.responses import Response as _Resp
     body, content_type = _pm.render_exposition()
-    return _Resp(content=body, media_type=content_type)
+    return Response(content=body, media_type=content_type)
 
 
 @app.get("/coins", response_model=List[CoinInfo])
