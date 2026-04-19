@@ -19,6 +19,14 @@ if not OKX_BROKER_CODE:
 
 # ── Encryption ──
 OKX_ENCRYPTION_KEY = os.environ.get("OKX_ENCRYPTION_KEY", "")
+# Multi-key rotation support. Comma-separated Fernet keys, newest first.
+# When non-empty, takes precedence over OKX_ENCRYPTION_KEY. During rotation,
+# operator runs with `OKX_ENCRYPTION_KEYS=new_key,old_key` — MultiFernet
+# encrypts new writes with new_key and still decrypts rows written with
+# either. After `migrate_okx_encryption_keys.py` re-encrypts all rows under
+# new_key, operator removes old_key from env and restarts. Graceful rotation
+# with zero forced re-OAuth (architecture-audit HIGH #9).
+OKX_ENCRYPTION_KEYS = os.environ.get("OKX_ENCRYPTION_KEYS", "")
 
 # ── OKX API v5 URLs ──
 OKX_BASE_URL = "https://www.okx.com"

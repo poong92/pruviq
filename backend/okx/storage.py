@@ -10,18 +10,55 @@ import sqlite3
 import time
 from pathlib import Path
 
-from cryptography.fernet import Fernet, InvalidToken
+from cryptography.fernet import Fernet, InvalidToken, MultiFernet
 
-from .config import OKX_DB_PATH, OKX_ENCRYPTION_KEY
+from .config import OKX_DB_PATH, OKX_ENCRYPTION_KEY, OKX_ENCRYPTION_KEYS
 
 logger = logging.getLogger("okx_storage")
 
-_fernet: Fernet | None = None
-if OKX_ENCRYPTION_KEY:
-    try:
-        _fernet = Fernet(OKX_ENCRYPTION_KEY.encode())
-    except Exception:
-        logger.error("Invalid OKX_ENCRYPTION_KEY — token encryption disabled")
+
+def _build_fernet() -> MultiFernet | Fernet | None:
+    """Build the active Fernet (or MultiFernet) from env.
+
+    Precedence:
+      1. OKX_ENCRYPTION_KEYS (comma-separated, newest first) — rotation mode
+      2. OKX_ENCRYPTION_KEY (single key) — legacy / steady state
+
+    MultiFernet encrypts new data with the first key; decrypts by trying each
+    in order. Empty/whitespace keys are skipped so an operator can set
+    `OKX_ENCRYPTION_KEYS=new,` (trailing comma) without breakage during
+    phase-out.
+    """
+    if OKX_ENCRYPTION_KEYS:
+        raw_keys = [k.strip() for k in OKX_ENCRYPTION_KEYS.split(",") if k.strip()]
+        fernets: list[Fernet] = []
+        for idx, k in enumerate(raw_keys):
+            try:
+                fernets.append(Fernet(k.encode()))
+            except Exception as e:
+                # One bad key must not take down the rest — log and skip.
+                logger.error(
+                    "OKX_ENCRYPTION_KEYS[%d] is invalid (%s) — skipping",
+                    idx, e.__class__.__name__,
+                )
+        if not fernets:
+            logger.error(
+                "OKX_ENCRYPTION_KEYS set but all keys invalid — "
+                "token encryption disabled"
+            )
+            return None
+        if len(fernets) == 1:
+            return fernets[0]
+        return MultiFernet(fernets)
+    if OKX_ENCRYPTION_KEY:
+        try:
+            return Fernet(OKX_ENCRYPTION_KEY.encode())
+        except Exception:
+            logger.error("Invalid OKX_ENCRYPTION_KEY — token encryption disabled")
+    return None
+
+
+_fernet: MultiFernet | Fernet | None = _build_fernet()
 
 
 def _db_path() -> str:
