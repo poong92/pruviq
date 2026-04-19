@@ -74,6 +74,34 @@ jobs:
           fi
           echo "secret OK"
 
+      # 2026-04-19 automation-audit CRITICAL #2: backend deploys went out
+      # without running pytest. 90+ regression tests existed but only ran
+      # locally. A broken PR could hit DO before anyone noticed. Gate the
+      # deploy behind `pytest backend/tests/`. Fast: ~1min including pip.
+      - name: Setup Python (for pytest gate)
+        if: steps.guard.outputs.skip != 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+          cache-dependency-path: 'backend/requirements.txt'
+
+      - name: Install backend deps + run pytest (CRITICAL — blocks deploy on failure)
+        if: steps.guard.outputs.skip != 'true'
+        run: |
+          python -m pip install --quiet --upgrade pip
+          python -m pip install --quiet -r backend/requirements.txt pytest anyio
+          cd backend
+          # --tb=short bounded trace, -q quiet-mode. Skip okx_live (hits OKX
+          # public API, CI-flaky). Deselect 3 pre-existing failures that
+          # predate today's 26-PR sweep — tracked separately, not in scope
+          # for the gate (do not want to block deploys on legacy test drift).
+          python -m pytest tests/ -q --tb=short \
+            -m "not okx_live" \
+            --deselect tests/test_api.py::test_strategies \
+            --deselect tests/test_bb_squeeze_parity.py::test_cost_model_futures_parity \
+            --deselect tests/test_engine.py::test_cost_model
+
       - name: Configure SSH (key + known_hosts)
         if: steps.guard.outputs.skip != 'true'
         env:

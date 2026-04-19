@@ -1,0 +1,40 @@
+# CodeQL — SAST for JS/TS (frontend) + Python (backend).
+# Requires "Code scanning" enabled at repo Settings → Code security → Code scanning.
+# Report-only at first (no blocking) — architecture-audit CRITICAL #3 · automation-audit HIGH #5.
+name: "CodeQL"
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    # Weekly scan catches CVEs in deps that landed mid-week.
+    - cron: '0 3 * * 0'
+
+permissions:
+  actions: read
+  contents: read
+  security-events: write
+
+jobs:
+  analyze:
+    name: CodeQL (${{ matrix.language }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [javascript-typescript, python]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          # build-mode: none works for JS/TS and Python (default + interpreted).
+          build-mode: none
+
+      - uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:${{ matrix.language }}"

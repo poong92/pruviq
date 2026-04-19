@@ -1,0 +1,65 @@
+# Dependabot — weekly dependency security updates (architecture-audit + automation-audit CRITICAL).
+# Opens PRs with `automerge` label when CI passes, so the cascade handles them like any other PR.
+version: 2
+
+updates:
+  # Python backend
+  - package-ecosystem: "pip"
+    directory: "/backend"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "04:00"
+      timezone: "Asia/Seoul"
+    open-pull-requests-limit: 3
+    labels:
+      - "dependencies"
+      - "automerge"
+    commit-message:
+      prefix: "deps(backend)"
+    groups:
+      # Group minor/patch updates to reduce PR noise.
+      # Major version bumps stay separate for manual review.
+      backend-minor:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+
+  # Frontend JS
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "04:30"
+      timezone: "Asia/Seoul"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "automerge"
+    commit-message:
+      prefix: "deps(frontend)"
+    groups:
+      frontend-minor:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+      # Major frontend bumps (preact/astro/tailwind) — manual only; no group
+      # so they surface individually.
+    ignore:
+      # Playwright browser snapshots drift too fast; only test infra cares.
+      - dependency-name: "@playwright/test"
+        update-types: ["version-update:semver-patch"]
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "05:00"
+      timezone: "Asia/Seoul"
+    open-pull-requests-limit: 3
+    labels:
+      - "dependencies"
+      - "automerge"
+    commit-message:
+      prefix: "deps(actions)"
