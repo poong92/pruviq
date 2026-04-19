@@ -726,7 +726,16 @@ def save_results(
     else:
         now = datetime.utcnow()
         date_str = now.strftime("%Y%m%d")
-    out_dir = "/Users/jepo/Desktop/autotrader/data/daily_rankings"
+    # RANKING_DIR: shared env var with api/main.py:3800. On DO (systemd)
+    # it is set to /opt/pruviq/shared/rankings via pruviq-daily-ranking.service.
+    # On Mac ops runs it falls back to ~/pruviq-data/rankings (not autotrader-
+    # legacy). Hardcoded /Users path previously caused daily PermissionError
+    # when the service ran as user `pruviq` on DO, which skipped the save and
+    # cascaded into 4-day-stale rankings-daily.json → E2E fail.
+    out_dir = os.environ.get(
+        "RANKING_DIR",
+        os.path.expanduser("~/pruviq-data/rankings"),
+    )
     os.makedirs(out_dir, exist_ok=True)
 
     out_path = os.path.join(out_dir, f"ranking_{date_str}.json")

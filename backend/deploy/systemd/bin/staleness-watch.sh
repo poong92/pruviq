@@ -10,9 +10,18 @@ set -uo pipefail
 
 STALE_HOURS="${STALE_HOURS:-1}"
 # Check CF-served static data (fast, edge-cached).
-# /market/live on local API is too slow (572-coin live fetch, ~30s).
+# /market/live on local API is too slow (238-coin live fetch, ~30s).
 SITE_URL="${STALENESS_URL:-https://pruviq.com/data/market.json}"
-STATE_FILE="/tmp/pruviq-staleness-alerted-$(date -u +%Y%m%d).json"
+# Per-key daily lock dir. Previous JSON state file corrupted on concurrent
+# writes (observed 2026-04-19: `{"market_stale": true}{"market_stale": true}...`
+# — four concatenated objects). json.load() then raised, except-pass returned
+# "not alerted", and notify() fired every 10-min tick. Replacing mutable JSON
+# with immutable per-key lock files: existence = dedup, mtime reset daily.
+LOCK_DIR="/tmp/pruviq-staleness-alerts"
+LOCK_DATE="$(date -u +%Y%m%d)"
+mkdir -p "$LOCK_DIR"
+# GC any lock files older than 2 days (harmless remnants from prior runs).
+find "$LOCK_DIR" -type f -mtime +2 -delete 2>/dev/null || true
 
 notify() {
     [ -z "${TELEGRAM_TOKEN:-}" ] && return 0
@@ -22,26 +31,14 @@ notify() {
         -d text="$1" >/dev/null 2>&1 || true
 }
 
-[ ! -f "$STATE_FILE" ] && echo '{}' > "$STATE_FILE"
-
+# Returns 0 if already alerted today, non-zero otherwise.
 already_alerted() {
-    python3 -c "
-import json,sys
-try:
-    with open('$STATE_FILE') as f:
-        d=json.load(f)
-    sys.exit(0 if '$1' in d else 1)
-except: sys.exit(1)
-"
+    [ -f "$LOCK_DIR/$1-$LOCK_DATE" ]
 }
 
+# Records an alert; idempotent via file-create + touch.
 mark_alerted() {
-    python3 -c "
-import json
-with open('$STATE_FILE') as f: d=json.load(f)
-d['$1']=True
-with open('$STATE_FILE','w') as f: json.dump(d,f)
-" 2>/dev/null || true
+    : > "$LOCK_DIR/$1-$LOCK_DATE"
 }
 
 generated=$(curl -sf -m 15 "$SITE_URL" 2>/dev/null | python3 -c "
