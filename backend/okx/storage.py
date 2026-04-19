@@ -33,8 +33,14 @@ def _db_path() -> str:
 def _get_conn() -> sqlite3.Connection:
     path = _db_path()
     Path(path).parent.mkdir(parents=True, exist_ok=True)
-    conn = sqlite3.connect(path)
+    conn = sqlite3.connect(path, timeout=5.0)
     conn.execute("PRAGMA journal_mode=WAL")
+    # busy_timeout: if two connections race (uvicorn + reconciler + settings
+    # writer), SQLite returns SQLITE_BUSY immediately by default. With WAL
+    # this is rare but not impossible — the reconciler flush + a user-driven
+    # /execute/order in the same tick can both hold brief write locks.
+    # 5000ms covers typical contention without hanging the request.
+    conn.execute("PRAGMA busy_timeout = 5000")
     conn.execute("""
         CREATE TABLE IF NOT EXISTS okx_sessions (
             session_id TEXT PRIMARY KEY,
