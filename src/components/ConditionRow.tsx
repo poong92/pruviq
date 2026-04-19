@@ -619,7 +619,7 @@ export default function ConditionRow({
         )}
         <button
           onClick={() => onRemove(c.id)}
-          class="text-[--color-text-muted] hover:text-[--color-red] min-w-[44px] min-h-[44px] flex items-center justify-center shrink-0"
+          class="text-[--color-text-muted] hover:text-[--color-red] min-w-12 min-h-12 flex items-center justify-center shrink-0"
           title={removeLabel}
           aria-label={removeLabel}
         >

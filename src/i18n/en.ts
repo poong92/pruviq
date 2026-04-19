@@ -2,6 +2,8 @@
 // Current value: 240 (as of 2026-04-18). Source: /public/data/site-stats.json
 // Do NOT hardcode 238/240 anywhere else — always refer back to this file.
 
+import { OKX_DISCOUNT_PCT } from "../config/exchanges";
+
 export const en = {
   // NAV
   "nav.market": "Market",
@@ -359,8 +361,7 @@ export const en = {
   "fees.card_bitget_desc":
     "Leading copy trading platform. Follow successful traders automatically.",
   "fees.card_okx_tag": "BROKER PARTNER",
-  "fees.card_okx_desc":
-    "Official OKX Broker partner. Available in 120+ countries with 20% fee discount.",
+  "fees.card_okx_desc": `Official OKX Broker partner. Available in 120+ countries with ${OKX_DISCOUNT_PCT}% fee discount.`,
   "fees.label_spot": "Spot",
   "fees.label_futures": "Futures",
   "fees.pruviq_discount": "PRUVIQ Discount",
@@ -368,8 +369,7 @@ export const en = {
   "fees.signup": "Sign Up",
   "fees.coming_soon": "Affiliate link — coming soon",
   "fees.visit_okx": "Visit OKX",
-  "fees.okx_discount_pending":
-    "Official Broker Partner — 20% fee discount active",
+  "fees.okx_discount_pending": `Official Broker Partner — ${OKX_DISCOUNT_PCT}% fee discount active`,
   "fees.footnote":
     "Maker / Taker rates shown. Higher-volume traders unlock lower tiers automatically. Last updated: Feb 2026.",
   "fees.korean_title": "Korean Exchanges (Reference)",
