@@ -194,3 +194,24 @@ jobs:
           status=$(curl -sf -m 10 -o /dev/null -w "%{http_code}" https://api.pruviq.com/health)
           echo "api.pruviq.com/health → $status"
           [ "$status" = "200" ] || exit 1
+
+      - name: Smoke — /rankings/daily returns non-empty JSON
+        # 2026-04-19 lesson: `/rankings/daily` was silently serving 4-day-stale
+        # data because RANKING_DIR got pointed at an empty dir. The existing
+        # `coins_loaded >= 200` gate didn't catch it. This smoke checks the
+        # endpoint actually returns a parseable payload with a `date` field.
+        # `top3` may be empty (low-sample cohort), so we don't require that.
+        if: steps.guard.outputs.skip != 'true' && steps.drift.outputs.skip != 'true'
+        run: |
+          ssh -p "$DO_PORT" -o IdentitiesOnly=yes -i ~/.ssh/do_deploy \
+              "$DO_USER@$DO_HOST" "
+            body=\$(curl -sf -m 10 http://127.0.0.1:8080/rankings/daily)
+            if [ -z \"\$body\" ]; then
+              echo '::error::/rankings/daily returned empty'
+              exit 1
+            fi
+            python3 -c 'import sys,json; d=json.load(sys.stdin); \
+                date=d.get(\"date\",\"\"); \
+                assert date, \"missing date field\"; \
+                print(f\"rankings date={date}\")' <<<\"\$body\" || exit 1
+          "
