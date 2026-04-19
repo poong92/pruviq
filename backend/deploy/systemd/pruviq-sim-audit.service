@@ -13,7 +13,10 @@ EnvironmentFile=/opt/pruviq/shared/.env
 ExecStart=/opt/pruviq/bin/sim_audit.sh
 StandardOutput=journal
 StandardError=journal
-TimeoutStartSec=300
+TimeoutStartSec=600
+# 2026-04-19: 300 → 600. systemd 실행 환경(pruviq-api 재시작 시점 겹칠 때)에
+# 외부 API 호출이 느려지며 5분 초과 TERM 발생. 수동 실행은 80s 이지만
+# deploy 직후·negotiator 경합 시 조건부로 10분까지 여유 필요.
 
 [Install]
 WantedBy=multi-user.target

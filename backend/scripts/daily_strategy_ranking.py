@@ -242,6 +242,19 @@ def run_simulation(
         except requests.exceptions.Timeout:
             print(f"  ⚠ {strategy}/{direction}/{timeframe}/top{top_n}: Timeout", file=sys.stderr)
             return None
+        except requests.exceptions.ConnectionError as e:
+            # 2026-04-19: pruviq-api 재시작 시점(deploy 직후) Connection refused 감내.
+            # save_results 의 Layer 1 validation 이 6 errors 로 차단하던 뿌리.
+            # 지수 backoff 재시도로 일시적 재시작 창 (≤30s) 감내.
+            if attempt < 2:
+                wait = 5 * (2 ** attempt)  # 5s, 10s
+                print(f"  ⟳ {strategy}/{direction}/{timeframe}/top{top_n}: "
+                      f"ConnectionError, retry in {wait}s", file=sys.stderr)
+                time.sleep(wait)
+                continue
+            print(f"  ⚠ {strategy}/{direction}/{timeframe}/top{top_n}: "
+                  f"ConnectionError (3 attempts failed): {e}", file=sys.stderr)
+            return None
         except Exception as e:
             print(f"  ⚠ {strategy}/{direction}/{timeframe}/top{top_n}: {e}", file=sys.stderr)
             return None
