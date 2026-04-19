@@ -1558,7 +1558,15 @@ async def simulate_coin(req: CoinSimRequest):
             # Fallback to legacy flat cache
             df = indicator_cache.get(symbol)
         if df is None:
-            raise HTTPException(404, f"Symbol not found: {symbol}")
+            # 2026-04-19: on-the-fly fallback for coins outside top-50 cache.
+            # indicator_cache.build_multi 주석("/simulate computes on-the-fly
+            # for other coins") 의 실제 구현이 누락돼 있었음. BTCUSDT 등 top-50
+            # 정렬에서 빠진 coin 이 전부 404 되던 버그. DataManager 에 OHLCV 있으면
+            # 요청 시점에 지표 계산해서 사용.
+            raw_df = data_manager.get_df(symbol)
+            if raw_df is None:
+                raise HTTPException(404, f"Symbol not found: {symbol}")
+            df = strategy.calculate_indicators(raw_df.copy())
 
     df = filter_df_by_date(df, getattr(req, 'start_date', None), getattr(req, 'end_date', None))
     dyn_slip = _get_dynamic_slippage(symbol)
