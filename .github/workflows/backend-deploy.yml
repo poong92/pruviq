@@ -115,6 +115,22 @@ jobs:
             fi
           fi
 
+      - name: Capture pre-deploy SHA for rollback
+        if: steps.guard.outputs.skip != 'true' && steps.drift.outputs.skip != 'true'
+        # Saved BEFORE git reset so the "Rollback on failure" step has a
+        # known-good target. If this step fails, the deploy still proceeds —
+        # worst case we lose auto-rollback for this one run (operator can
+        # roll back manually via DO SSH).
+        run: |
+          ssh -p "$DO_PORT" -o IdentitiesOnly=yes -i ~/.ssh/do_deploy \
+              "$DO_USER@$DO_HOST" "
+            set -e
+            git config --global --add safe.directory /opt/pruviq/current 2>/dev/null || true
+            mkdir -p /opt/pruviq/rollback
+            sudo -u pruviq bash -c 'cd /opt/pruviq/current && git rev-parse HEAD > /opt/pruviq/rollback/prev_sha'
+            echo \"pre-deploy SHA=\$(cat /opt/pruviq/rollback/prev_sha)\"
+          " || echo "::warning::could not capture prev SHA — rollback on failure will be skipped"
+
       - name: Pull latest code on DO
         if: steps.guard.outputs.skip != 'true' && steps.drift.outputs.skip != 'true'
         run: |
@@ -169,6 +185,7 @@ jobs:
               "systemctl restart pruviq-api.service"
 
       - name: Wait for health
+        id: wait_for_health
         if: steps.guard.outputs.skip != 'true' && steps.drift.outputs.skip != 'true'
         run: |
           ssh -p "$DO_PORT" -o IdentitiesOnly=yes -i ~/.ssh/do_deploy \
@@ -186,6 +203,71 @@ jobs:
             echo 'WARNING: backend slow to load — check journalctl -u pruviq-api'
             exit 1
           "
+
+      - name: Rollback on health failure
+        # Triggers only when the health gate failed — restores the pre-deploy
+        # SHA and restarts. If /opt/pruviq/rollback/prev_sha is absent
+        # (first run, or Capture step was skipped) this step no-ops and
+        # leaves the failed deploy in place for operator inspection.
+        if: failure() && steps.wait_for_health.outcome == 'failure' && steps.guard.outputs.skip != 'true' && steps.drift.outputs.skip != 'true'
+        run: |
+          ssh -p "$DO_PORT" -o IdentitiesOnly=yes -i ~/.ssh/do_deploy \
+              "$DO_USER@$DO_HOST" "
+            set -e
+            PREV_SHA_FILE=/opt/pruviq/rollback/prev_sha
+            if [ ! -s \"\$PREV_SHA_FILE\" ]; then
+              echo '::error::rollback skipped — prev_sha missing'
+              exit 1
+            fi
+            PREV=\$(cat \"\$PREV_SHA_FILE\")
+            CUR=\$(sudo -u pruviq bash -c 'cd /opt/pruviq/current && git rev-parse HEAD')
+            if [ \"\$PREV\" = \"\$CUR\" ]; then
+              echo 'rollback skipped — already on prev SHA (rollback-of-rollback loop guard)'
+              exit 1
+            fi
+            echo \"ROLLBACK: \$CUR → \$PREV\"
+            sudo -u pruviq bash -c \"cd /opt/pruviq/current && git reset --hard \$PREV\"
+            # Re-sync systemd units/wrappers from the prev commit so any
+            # post-reset state is consistent.
+            install -o pruviq -g pruviq -m 0755 \
+              /opt/pruviq/current/backend/deploy/systemd/bin/*.sh \
+              /opt/pruviq/bin/ 2>/dev/null || true
+            install -o root -g root -m 0644 \
+              /opt/pruviq/current/backend/deploy/systemd/pruviq-*.service \
+              /opt/pruviq/current/backend/deploy/systemd/pruviq-*.timer \
+              /etc/systemd/system/ 2>/dev/null || true
+            systemctl daemon-reload
+            systemctl restart pruviq-api.service
+            # Re-verify health after rollback — if this ALSO fails, alert
+            # with exit 1 so the operator intervenes.
+            sleep 10
+            for i in 1 2 3 4 5; do
+              coins=\$(curl -sf -m 5 http://127.0.0.1:8080/health 2>/dev/null \
+                | python3 -c 'import sys,json; print(json.load(sys.stdin).get(\"coins_loaded\",0))' 2>/dev/null || echo 0)
+              echo \"rollback health attempt \$i: coins=\$coins\"
+              if [ \"\$coins\" -ge ${{ env.MIN_COINS }} ] 2>/dev/null; then
+                echo '::notice::rolled back successfully'
+                exit 0
+              fi
+              sleep 5
+            done
+            echo '::error::rollback restart ALSO failed — manual SSH required'
+            exit 1
+          "
+
+      - name: Telegram alert on rollback
+        if: failure() && steps.wait_for_health.outcome == 'failure' && steps.guard.outputs.skip != 'true' && steps.drift.outputs.skip != 'true'
+        env:
+          TG_TOKEN: ${{ secrets.PRUVIQ_TELEGRAM_TOKEN }}
+          TG_CHAT:  ${{ secrets.PRUVIQ_TELEGRAM_CHAT_ID }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          [ -z "$TG_TOKEN" ] || [ -z "$TG_CHAT" ] && exit 0
+          MSG="🔁 PRUVIQ backend-deploy health-gate FAILED — auto-rollback attempted.
+Run: ${RUN_URL}
+Check ssh DO 'journalctl -u pruviq-api -n 100' for root cause."
+          curl -sf -m 10 -X POST "https://api.telegram.org/bot${TG_TOKEN}/sendMessage" \
+            -d chat_id="${TG_CHAT}" -d text="${MSG}" || true
 
       - name: Post-deploy sanity via public endpoint
         if: steps.guard.outputs.skip != 'true' && steps.drift.outputs.skip != 'true'
