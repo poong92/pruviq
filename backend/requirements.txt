@@ -8,3 +8,6 @@ defusedxml>=0.7.0
 cryptography>=41.0.0
 httpx>=0.27.0
 Pillow>=10.0.0
+# Prometheus instrumentation for /metrics endpoint (architecture-audit HIGH #8).
+# Pure Python, no C extensions — safe for DO 2vCPU without rebuild pain.
+prometheus-client>=0.20.0
