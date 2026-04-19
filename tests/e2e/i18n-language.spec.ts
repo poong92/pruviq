@@ -1,4 +1,9 @@
-import { test, expect, type Page } from "@playwright/test";
+import {
+  test,
+  expect,
+  type Page,
+  type APIRequestContext,
+} from "@playwright/test";
 
 /**
  * I18N / Language Consistency Tests
@@ -158,19 +163,63 @@ test.describe("API: language-neutral responses", () => {
 test.describe("Ranking page: EN component language", () => {
   const API_BASE = process.env.API_URL || "https://api.pruviq.com";
 
-  test("EN ranking page — no Korean in RankingCard content", async ({
-    page,
-    request,
-  }) => {
-    // Skip if API is down — component shows error state with no ranking headers
+  // Ranking UI test preconditions:
+  //   1. API reachable (status < 500)
+  //   2. top3 has entries (non-empty data)
+  //   3. First entry is NOT low_sample — the "Best 3 Strategies" header is
+  //      only rendered when there is a real top-tier cohort. `low_sample:true`
+  //      swaps the UI for a yellow-warning variant without the section title.
+  //   4. Data is not stale beyond 2 days — when the daily-ranking cron is
+  //      broken (as during the 2026-04-19 Mac-path regression), the UI falls
+  //      back to skeleton/empty state and the header disappears.
+  //
+  // Returning `null` means the test can run. Any string is the skip reason.
+  async function shouldSkipRankingTest(
+    request: APIRequestContext,
+  ): Promise<string | null> {
     const probe = await request
       .get(`${API_BASE}/rankings/daily`, { timeout: 10000 })
       .catch(() => null);
     if (!probe || probe.status() >= 500) {
-      test.skip(
-        true,
-        `API returned ${probe?.status() ?? "unreachable"} — skipping`,
-      );
+      return `API returned ${probe?.status() ?? "unreachable"}`;
+    }
+    let data: {
+      top3?: { low_sample?: boolean }[];
+      generated_at?: string;
+    } | null = null;
+    try {
+      data = await probe.json();
+    } catch {
+      return "ranking data: invalid JSON";
+    }
+    const top3 = data?.top3 ?? [];
+    if (top3.length === 0) {
+      return "ranking data: empty top3";
+    }
+    if (top3[0]?.low_sample === true) {
+      // Not a bug: the UI intentionally swaps the section when sample is
+      // thin. The i18n test needs the normal-render path to assert strings.
+      return "ranking data: low_sample=true (UI shows warning state, not Best 3 header)";
+    }
+    const generatedAt = data?.generated_at;
+    if (generatedAt) {
+      const ageMs = Date.now() - new Date(generatedAt).getTime();
+      const MAX_AGE_MS = 2 * 24 * 60 * 60 * 1000;
+      if (Number.isFinite(ageMs) && ageMs > MAX_AGE_MS) {
+        const ageH = (ageMs / 3_600_000).toFixed(1);
+        return `ranking data: stale ${ageH}h (>48h) — daily-ranking cron likely broken`;
+      }
+    }
+    return null;
+  }
+
+  test("EN ranking page — no Korean in RankingCard content", async ({
+    page,
+    request,
+  }) => {
+    const skipReason = await shouldSkipRankingTest(request);
+    if (skipReason) {
+      test.skip(true, skipReason);
       return;
     }
 
@@ -196,14 +245,9 @@ test.describe("Ranking page: EN component language", () => {
     page,
     request,
   }) => {
-    const probe = await request
-      .get(`${API_BASE}/rankings/daily`, { timeout: 10000 })
-      .catch(() => null);
-    if (!probe || probe.status() >= 500) {
-      test.skip(
-        true,
-        `API returned ${probe?.status() ?? "unreachable"} — skipping`,
-      );
+    const skipReason = await shouldSkipRankingTest(request);
+    if (skipReason) {
+      test.skip(true, skipReason);
       return;
     }
 
