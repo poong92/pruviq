@@ -148,6 +148,10 @@ export function StrategyRanking({ lang = "en" }: { lang?: Lang }) {
       setLoading(true);
       setError(null);
       const controller = new AbortController();
+      // 10s hard timeout so a hung API doesn't leave the UI spinning
+      // forever (LivePositions/OptimizePanel use the same 15s; ranking
+      // endpoint is fast-served from static JSON → 10s is enough).
+      const timeoutId = setTimeout(() => controller.abort(), 10_000);
 
       fetch(
         `${API_BASE_URL}/rankings/daily?period=${encodeURIComponent(p)}&group=${encodeURIComponent(g)}`,
@@ -156,7 +160,13 @@ export function StrategyRanking({ lang = "en" }: { lang?: Lang }) {
         },
       )
         .then((res) => {
-          if (!res.ok) throw new Error(`API ${res.status}: ${res.statusText}`);
+          if (!res.ok) {
+            // Tag the error with the status code but never expose raw
+            // statusText / upstream error bodies to the user.
+            const err = new Error("fetch_not_ok");
+            (err as Error & { status?: number }).status = res.status;
+            throw err;
+          }
           return res.json() as Promise<RankingData>;
         })
         .then((json) => {
@@ -164,12 +174,25 @@ export function StrategyRanking({ lang = "en" }: { lang?: Lang }) {
           setLoading(false);
         })
         .catch((err) => {
-          if (err.name === "AbortError") return;
-          setError(err.message ?? lbl.loadFail);
+          if (err.name === "AbortError") {
+            // Either the caller switched period/group (normal) or the
+            // 10s timeout fired. In both cases reset loading to avoid
+            // a stuck skeleton.
+            setLoading(false);
+            return;
+          }
+          // Map HTTP status → user-facing i18n, never expose raw message.
+          setError(lbl.loadFail);
           setLoading(false);
+        })
+        .finally(() => {
+          clearTimeout(timeoutId);
         });
 
-      return () => controller.abort();
+      return () => {
+        clearTimeout(timeoutId);
+        controller.abort();
+      };
     },
     [lbl.loadFail],
   );
