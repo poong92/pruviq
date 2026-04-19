@@ -48,6 +48,21 @@ updates:
       # Playwright browser snapshots drift too fast; only test infra cares.
       - dependency-name: "@playwright/test"
         update-types: ["version-update:semver-patch"]
+      # astro ecosystem major bumps need coordinated upgrades (astro +
+      # @astrojs/preact + @astrojs/sitemap must move together, each major
+      # has codemod-level breaking changes). Dependabot doesn't group these
+      # so major PRs ship one-at-a-time and break the build. 2026-04-20
+      # @astrojs/preact 4→5 alone broke main for 1h (incompatible with
+      # astro 5.x). Block auto-opened major bumps; handle astro majors as
+      # a dedicated feature PR.
+      - dependency-name: "astro"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@astrojs/preact"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@astrojs/sitemap"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@astrojs/rss"
+        update-types: ["version-update:semver-major"]
 
   # GitHub Actions
   - package-ecosystem: "github-actions"
