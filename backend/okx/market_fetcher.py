@@ -47,6 +47,7 @@ class OkxCandle:
     close: float
     volume: float
     volume_ccy: float  # quote-currency volume (USDT for USDT-SWAP)
+    is_confirmed: bool  # OKX `confirm` == "1" → closed candle. False = still forming.
 
     @classmethod
     def from_row(cls, row: list) -> "OkxCandle":
@@ -54,6 +55,12 @@ class OkxCandle:
         # vol     = base currency volume (BTC for BTC-USDT-SWAP)
         # volCcy  = contract count
         # volCcyQuote = quote currency volume (USDT)
+        # confirm = "1" when the candle has closed (confirmed, immutable),
+        #           "0" when still forming. /market/candles returns the
+        #           forming candle as the first row in its newest-first
+        #           response — callers doing signal detection on the
+        #           final row would otherwise eat an unfinished bar.
+        confirm_str = str(row[8]) if len(row) > 8 else "1"
         return cls(
             ts_ms=int(row[0]),
             open=float(row[1]),
@@ -62,6 +69,7 @@ class OkxCandle:
             close=float(row[4]),
             volume=float(row[5]),
             volume_ccy=float(row[7]) if len(row) > 7 else float(row[6]),
+            is_confirmed=(confirm_str == "1"),
         )
 
 
@@ -174,11 +182,18 @@ class OkxMarketFetcher:
         symbol: str,
         interval: str = "1h",
         limit: int = 300,
+        include_unconfirmed: bool = True,
     ) -> list[OkxCandle]:
         """Fetch recent candles. Returned old→new (sorted).
 
         OKX /market/candles gives newest-first; we reverse before returning so
         strategy code can iterate chronologically.
+
+        `include_unconfirmed=True` (default) keeps the still-forming last
+        bar. Signal-detection code must either skip it (e.g. `idx = len(df)
+        - 2`) or pass `include_unconfirmed=False` so only closed candles
+        come back. Default stays True because we don't want to silently
+        drop the most-recent data for callers that handle it correctly.
         """
         inst_id = self.to_okx_inst_id(symbol)
         bar = self.to_okx_bar(interval)
@@ -192,6 +207,8 @@ class OkxMarketFetcher:
             )
         rows = data.get("data") or []
         candles = [OkxCandle.from_row(r) for r in rows]
+        if not include_unconfirmed:
+            candles = [c for c in candles if c.is_confirmed]
         candles.reverse()
         return candles
 
@@ -200,12 +217,17 @@ class OkxMarketFetcher:
         symbol: str,
         interval: str = "1h",
         limit: int = 300,
+        include_unconfirmed: bool = True,
     ) -> pd.DataFrame:
         """Return a DataFrame matching the Binance CSV schema used by
         DataManager/signal_scanner:
           columns: timestamp (UTC tz-aware), open, high, low, close, volume
+
+        See `fetch_candles` for the `include_unconfirmed` semantics.
         """
-        candles = await self.fetch_candles(symbol, interval, limit)
+        candles = await self.fetch_candles(
+            symbol, interval, limit, include_unconfirmed=include_unconfirmed
+        )
         if not candles:
             return pd.DataFrame(columns=["timestamp", "open", "high", "low", "close", "volume"])
         return pd.DataFrame(
