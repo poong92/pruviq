@@ -7,6 +7,13 @@ on:
     # Drift detector: runs every 30 min as a safety net in case the push
     # event is silently dropped by GitHub (root cause of the 2026-04-18
     # PR #1122 incident where scope=fast_api ran for hours).
+    #
+    # 2026-04-19: after PR #1194 (auto-rollback) merged, GitHub's workflow
+    # registry got stuck on a stale SHA — neither push nor schedule fired
+    # for 2h+, and workflow_dispatch API returned 422 "no workflow_dispatch
+    # trigger" despite the file having one. Had to manually SSH-deploy 5
+    # merged PRs (#1195/1197/1200/1201/1202). Touching this file in a new
+    # PR forces re-registration. If it recurs, repeat the same fix.
     - cron: "*/30 * * * *"
   workflow_dispatch: {}
 
