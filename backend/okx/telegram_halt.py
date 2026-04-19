@@ -135,10 +135,14 @@ async def execute_halt() -> str:
                     str(session_id)[:8], parse_err,
                 )
     except Exception as db_err:
+        # Log full error server-side, but don't leak DB internals (file paths,
+        # SQL fragments, column names) to Telegram. Also f-string + HTML
+        # parse_mode would break if the exception text contains `<` or `&`.
         logger.error("HALT: DB enumeration failed: %s", db_err)
         return (
             "\u26a0\ufe0f <b>HALT FAILED</b>\n"
-            f"Could not enumerate sessions: <code>{db_err}</code>"
+            "Could not enumerate sessions — check server logs "
+            "(<code>journalctl -u pruviq-api</code>)."
         )
 
     halted: list[str] = []

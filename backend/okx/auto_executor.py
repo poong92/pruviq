@@ -179,15 +179,29 @@ async def process_signals(signals: list[dict]) -> list[dict]:
     executed = []
 
     for session_id in auto_sessions:
-        if not is_authenticated(session_id):
-            continue
+        # Per-session isolation (2026-04-19 code-reviewer finding): a
+        # malformed settings row (schema drift, truncated JSON, storage hiccup)
+        # used to raise here and kill the entire loop — dropping ALL other
+        # sessions' signals for this tick. Wrap pre-signal setup too, not
+        # just the per-signal `try:` below.
+        try:
+            if not is_authenticated(session_id):
+                continue
 
-        settings = get_settings(session_id)
-        if not settings.get("enabled"):
-            continue
+            settings = get_settings(session_id)
+            if not settings.get("enabled"):
+                continue
 
-        # Active strategy overrides (if any) take precedence over raw settings.
-        active_strategy = get_active_strategy(session_id)
+            # Active strategy overrides (if any) take precedence over raw settings.
+            active_strategy = get_active_strategy(session_id)
+        except Exception as session_setup_err:
+            logger.error(
+                "process_signals: session %s setup failed (%s) — skipping this "
+                "session, continuing with remaining %d sessions",
+                str(session_id)[:8], session_setup_err,
+                len(auto_sessions) - 1,
+            )
+            continue
 
         for signal in signals:
             try:
