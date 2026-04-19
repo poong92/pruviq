@@ -4442,6 +4442,13 @@ def _mutate_subscribers_atomic(mutator):
 
     Python's `fcntl.flock` is advisory — a non-cooperating writer can bypass
     it. That's fine here: all writers are in this repo and call this helper.
+
+    Trade-off: the blocking `flock()` + `write_text()` calls here serialize
+    subscribe/unsubscribe across async workers by momentarily blocking the
+    event loop. Acceptable at current traffic (a few subscribes/day). If
+    traffic ever justifies `workers >= 2` at scale, move this to a
+    threadpool (`anyio.to_thread.run_sync`) or a proper DB row — otherwise
+    every worker will pile up on the same lock file.
     """
     import fcntl
 
