@@ -53,6 +53,17 @@ export function discountTooltip(ex: ExchangeFeeConfig): string {
   return `Futures: ${ex.futuresDiscountPct}% off (${from} → ${to}) · Spot: ${ex.spotDiscountPct}% off`;
 }
 
+/**
+ * Look up a configured exchange by id. Throws at module init time if the
+ * caller's id is not registered — this is intentional so downstream files
+ * can `import { OKX } from "../config/exchanges"` without null-checking.
+ */
+export function getExchange(id: string): ExchangeFeeConfig {
+  const e = EXCHANGES.find((x) => x.id === id);
+  if (!e) throw new Error(`Unknown exchange id: ${id}`);
+  return e;
+}
+
 export const EXCHANGES: ExchangeFeeConfig[] = [
   {
     id: "binance",
@@ -80,3 +91,12 @@ export const EXCHANGES: ExchangeFeeConfig[] = [
     brokerCode: "c12571e26a02OCDE",
   },
 ];
+
+/**
+ * OKX-specific shortcuts. Components previously hardcoded `20%` in five+
+ * places (ResultsCard, OKXConnectButton, OKXExecuteButton, i18n); switching
+ * the discount would have required a multi-file search-and-replace and was
+ * documented as an audit risk. These exports centralise the value.
+ */
+export const OKX = getExchange("okx");
+export const OKX_DISCOUNT_PCT: number = OKX.futuresDiscountPct;

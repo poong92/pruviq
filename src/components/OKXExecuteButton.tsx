@@ -4,6 +4,7 @@
  */
 import { useState, useEffect } from "preact/hooks";
 import { API_BASE_URL as API_BASE } from "../config/api";
+import { OKX_DISCOUNT_PCT } from "../config/exchanges";
 
 interface Props {
   strategy?: string;
@@ -39,7 +40,7 @@ const labels = {
     features: [
       "Automated SL/TP from simulation",
       "No API key sharing (OAuth)",
-      "20% fee discount",
+      `${OKX_DISCOUNT_PCT}% fee discount`,
     ],
     featureTitle: "One-Click Execution",
     featureDesc: "Execute simulation results directly on OKX",
@@ -68,7 +69,7 @@ const labels = {
     features: [
       "시뮬레이션 기반 자동 SL/TP",
       "API 키 공유 불필요 (OAuth)",
-      "20% 수수료 할인",
+      `${OKX_DISCOUNT_PCT}% 수수료 할인`,
     ],
     featureTitle: "원클릭 실행",
     featureDesc: "시뮬레이션 결과를 OKX에서 바로 실행",
