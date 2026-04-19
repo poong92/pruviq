@@ -180,13 +180,33 @@ class SignalScanner:
         return result
 
     def _get_top_coins(self) -> List[str]:
-        """Get top N coins by market cap (from loaded data)."""
-        symbols = list(self.dm._data.keys())
-        # Prioritize major coins first
+        """Get top N coins in **market-cap** order.
+
+        2026-04-19 CRITICAL fix (data-pipeline audit):
+        Previous version used `list(self.dm._data.keys())` — that dict is
+        populated in file-size desc order (data_manager.py:52 sorts CSVs by
+        `st_size`). After migration away from Binance we shipped 238 coins,
+        so "top 30" silently meant "30 largest CSV files" not "30 largest
+        by market cap". Downstream `/signals/live` + auto-trading loop
+        therefore scanned a drifted universe ever since.
+
+        Also fixed: the `priority` list was lowercase (`"btcusdt"`) while
+        `_data` keys are uppercase (`"BTCUSDT"`), so no priority coin ever
+        matched — the allegedly-prioritised BTC/ETH were NOT actually first.
+
+        New path: use `self.dm.coins` (= `_coin_info`) which
+        `data_manager.sort_by_market_cap()` sorts by CoinGecko market-cap
+        rank. Returns uppercase symbols (matches `_data` key casing; callers
+        `self.dm.get_df(symbol)` already upper-case internally).
+        """
+        # After DataManager.sort_by_market_cap() runs (called by
+        # main.py:_background_market_refresh on startup + every 20 min),
+        # _coin_info is in market-cap order. `coins` is the property alias.
+        all_symbols = [c["symbol"] for c in self.dm.coins]  # uppercase
         priority = [
-            "btcusdt", "ethusdt", "bnbusdt", "solusdt", "xrpusdt",
-            "adausdt", "dotusdt", "linkusdt", "avaxusdt", "ltcusdt",
+            "BTCUSDT", "ETHUSDT", "BNBUSDT", "SOLUSDT", "XRPUSDT",
+            "ADAUSDT", "DOTUSDT", "LINKUSDT", "AVAXUSDT", "LTCUSDT",
         ]
-        ordered = [s for s in priority if s in symbols]
-        remaining = [s for s in symbols if s not in ordered]
+        ordered = [s for s in priority if s in all_symbols]
+        remaining = [s for s in all_symbols if s not in ordered]
         return (ordered + remaining)[:self.top_n]
