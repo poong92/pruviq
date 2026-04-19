@@ -17,18 +17,23 @@ test.describe("Interactive QA — 기능 클릭 테스트", () => {
   test("simulate: Breakout 시나리오 클릭 → 결과 표시", async ({ page }) => {
     await page.goto("/simulate/");
     await page.waitForLoadState("domcontentloaded");
-    // Preact islands hydration race 방지: networkidle 까지 대기 (flaky 재현 차단)
     await page.waitForLoadState("networkidle");
+
+    // 2026-04-19: QuickTestPanel 이 client:visible 로 hydrate → viewport 진입
+    // 전엔 data-testid 렌더 안 됨. 하단 스크롤해서 hydration 강제.
+    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+    await page.waitForTimeout(1000); // hydrate 틈
 
     // data-testid 기반 Breakout 카드 찾기
     const breakoutCard = page.locator('[data-testid="quick-cat-breakout"]');
-    // fallback: 텍스트 기반
     const cardLocator =
       (await breakoutCard.count()) > 0
         ? breakoutCard
         : page.locator("button:has-text('Breakout')").first();
 
-    await expect(cardLocator).toBeVisible({ timeout: 15000 });
+    // 30s timeout (client:visible + island hydration + slower CI runner 감내)
+    await expect(cardLocator).toBeVisible({ timeout: 30000 });
+    await cardLocator.scrollIntoViewIfNeeded();
     await cardLocator.click();
 
     // 결과가 나타날 때까지 최대 60초 대기 (API 응답 포함)
