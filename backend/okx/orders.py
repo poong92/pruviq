@@ -62,20 +62,62 @@ async def _calc_contract_sz(
     return str(int(contracts))
 
 
+def _round_to_tick(price: float, tick_sz: float, *, round_down: bool) -> str:
+    """Snap `price` to the tickSz grid and format without scientific notation.
+
+    OKX rejects algo-order trigger prices that are off-grid. tickSz varies
+    per instrument: BTC-USDT-SWAP=0.1, DOGE-USDT-SWAP=0.00001, SHIB-1e-9.
+    For SL we round conservatively (towards-stop — below entry on longs, above
+    on shorts); for TP, towards-goal. The caller chooses via round_down.
+
+    Format: %.Nf where N = decimal places implied by tickSz (no 'e-notation').
+    Python's `repr(1e-9)` gives '1e-09' which OKX rejects.
+    """
+    if tick_sz <= 0:
+        tick_sz = 0.01
+    ticks = price / tick_sz
+    snapped = (math.floor(ticks) if round_down else math.ceil(ticks)) * tick_sz
+    # Derive decimals from tickSz (e.g. 0.00001 → 5). Guard log10 of int/float.
+    try:
+        decimals = max(0, -int(math.floor(math.log10(tick_sz))))
+    except (ValueError, OverflowError):
+        decimals = 8
+    # Cap at 10 — OKX price precision ceiling.
+    decimals = min(decimals, 10)
+    return f"{snapped:.{decimals}f}"
+
+
 def _calc_sl_tp_prices(
     entry_price: float,
     direction: str,
     sl_pct: float,
     tp_pct: float,
+    tick_sz: float = 0.01,
 ) -> tuple[str, str]:
-    """Convert simulation SL/TP percentages to absolute prices."""
+    """Convert simulation SL/TP percentages to absolute prices, snapped to
+    OKX tickSz grid.
+
+    tick_sz MUST come from client.get_instrument_info(inst_id)["tickSz"] for
+    low-price coins (DOGE/SHIB/PEPE). Default 0.01 is BTC-ish and rounds
+    sub-cent coins to "0.00" — guaranteed OKX reject → naked position.
+    """
     if direction == "short":
         sl_price = entry_price * (1 + sl_pct / 100)
         tp_price = entry_price * (1 - tp_pct / 100)
-    else:
-        sl_price = entry_price * (1 - sl_pct / 100)
-        tp_price = entry_price * (1 + tp_pct / 100)
-    return f"{sl_price:.2f}", f"{tp_price:.2f}"
+        # short: SL above entry (round up = conservative toward-stop),
+        # TP below entry (round up = less aggressive goal).
+        return (
+            _round_to_tick(sl_price, tick_sz, round_down=False),
+            _round_to_tick(tp_price, tick_sz, round_down=False),
+        )
+    sl_price = entry_price * (1 - sl_pct / 100)
+    tp_price = entry_price * (1 + tp_pct / 100)
+    # long: SL below entry (round down = conservative toward-stop),
+    # TP above entry (round down = less aggressive goal).
+    return (
+        _round_to_tick(sl_price, tick_sz, round_down=True),
+        _round_to_tick(tp_price, tick_sz, round_down=True),
+    )
 
 
 async def execute_from_simulation(
@@ -110,7 +152,10 @@ async def execute_from_simulation(
             )
             current_price = await client.get_mark_price(inst_id)
 
-        # Correct OKX SWAP contract size (integer, uses ctVal)
+        # Correct OKX SWAP contract size (integer, uses ctVal). Fetch tickSz
+        # in the same call (cached) so SL/TP can snap to grid below.
+        info = await client.get_instrument_info(inst_id)
+        tick_sz = info.get("tickSz", 0.01)
         sz = await _calc_contract_sz(client, inst_id, req.position_size_usdt, req.leverage, current_price)
 
         logger.warning(
@@ -138,7 +183,7 @@ async def execute_from_simulation(
 
         # SL/TP algo order — if this fails, immediately close the naked position
         sl_price, tp_price = _calc_sl_tp_prices(
-            current_price, req.direction, req.sl_pct, req.tp_pct,
+            current_price, req.direction, req.sl_pct, req.tp_pct, tick_sz=tick_sz,
         )
         close_side = "buy" if req.direction == "short" else "sell"
 

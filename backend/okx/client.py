@@ -149,11 +149,19 @@ class OKXClient:
             "ctVal": float(item.get("ctVal", "1")),
             "minSz": float(item.get("minSz", "1")),
             "lotSz": float(item.get("lotSz", "1")),
+            # tickSz = minimum price increment (grid). OKX rejects algo-order
+            # trigger prices that are not a multiple of tickSz. DOGE=0.00001,
+            # SHIB=1e-9 — naive `.2f` formatting yields "0.00" and the trade
+            # fills but SL/TP never registers → emergency-close loop.
+            "tickSz": float(item.get("tickSz", "0.01")),
             "settleCcy": item.get("settleCcy", "USDT"),
         }
         _instrument_cache[inst_id] = info
         _instrument_cache_ts[inst_id] = now
-        logger.warning("← instrument %s: ctVal=%s minSz=%s", inst_id, info["ctVal"], info["minSz"])
+        logger.warning(
+            "← instrument %s: ctVal=%s minSz=%s tickSz=%s",
+            inst_id, info["ctVal"], info["minSz"], info["tickSz"],
+        )
         return info
 
     async def get_mark_price(self, inst_id: str) -> float:
