@@ -169,6 +169,18 @@ async def _okx_auto_trading_loop():
     # --workers 1 at 100% CPU for 13 min and /health stopped responding.
     # Pass OKX_SCAN_TIMEOUT_SEC to tune (default 90s < 300s interval default).
     scan_timeout_sec = max(30, int(os.environ.get("OKX_SCAN_TIMEOUT_SEC", "90")))
+    # Safety: if operator tunes interval down (e.g. 60s for 1-min latency) but
+    # forgets to adjust the timeout, successive ticks could overlap. Clamp
+    # timeout to interval - 15s (minimum 20s). This prevents the double-scan
+    # pathology where tick N+1 starts while tick N is still running.
+    if scan_timeout_sec >= interval_sec:
+        adjusted = max(20, interval_sec - 15)
+        logger.warning(
+            "OKX_SCAN_TIMEOUT_SEC (%ds) >= interval (%ds); clamping to %ds "
+            "to prevent overlapping scans",
+            scan_timeout_sec, interval_sec, adjusted,
+        )
+        scan_timeout_sec = adjusted
     logger.info(
         "OKX auto-trading loop interval=%ds scan_timeout=%ds",
         interval_sec, scan_timeout_sec,
