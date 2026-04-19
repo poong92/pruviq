@@ -73,8 +73,14 @@ def _validate_redirect(url: str) -> str:
     except Exception:
         return ""
     scheme = (parsed.scheme or "").lower()
-    netloc = (parsed.netloc or "").lower()
-    if not scheme and not netloc:
+    # 2026-04-19: use `.hostname` (stripped userinfo, lower-cased) instead
+    # of `.netloc`. Input like `https://pruviq.com@evil.pruviq.com/` has
+    # netloc=`pruviq.com@evil.pruviq.com` which endswith `.pruviq.com`
+    # and would pass the host check, but the effective destination host
+    # is `evil.pruviq.com` (attacker-controlled). .hostname returns only
+    # the host part and drops `user:pass@`.
+    host = (parsed.hostname or "").lower()
+    if not scheme and not host:
         # Relative path. Require leading "/" to avoid ambiguous inputs.
         if url.startswith("/"):
             return url
@@ -83,7 +89,12 @@ def _validate_redirect(url: str) -> str:
     if scheme not in ("http", "https"):
         logger.warning("OAuth redirect blocked (bad scheme=%s): %s", scheme, url[:100])
         return ""
-    if netloc == "pruviq.com" or netloc.endswith(".pruviq.com"):
+    # Reject any userinfo in the URL — it has no legitimate use here and
+    # confuses downstream parsers.
+    if "@" in (parsed.netloc or ""):
+        logger.warning("OAuth redirect blocked (userinfo in URL): %s", url[:100])
+        return ""
+    if host == "pruviq.com" or host.endswith(".pruviq.com"):
         return url
     logger.warning("OAuth redirect blocked (not pruviq.com): %s", url[:100])
     return ""

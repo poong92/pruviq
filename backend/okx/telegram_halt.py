@@ -54,9 +54,16 @@ async def _send_telegram(text: str) -> None:
                     "disable_web_page_preview": True,
                 },
             )
+            # Telegram error bodies can echo the bot token in `description`
+            # on some misconfig (401/404). Log status + narrow description only.
+            desc = ""
+            try:
+                desc = str(resp.json().get("description", ""))[:120]
+            except Exception:
+                pass
             logger.warning(
-                "\u2190 Telegram halt notify status=%s body=%s",
-                resp.status_code, resp.text[:300],
+                "\u2190 Telegram halt notify status=%s desc=%s",
+                resp.status_code, desc,
             )
     except Exception as e:
         logger.error("Telegram halt notify failed: %s", e)
@@ -78,9 +85,16 @@ async def _get_updates(offset: int) -> list[dict[str, Any]]:
             )
             if resp.status_code == 200:
                 return resp.json().get("result", []) or []
+            # Drop raw body — Telegram error `description` on auth failures
+            # can echo bot token fragments.
+            desc = ""
+            try:
+                desc = str(resp.json().get("description", ""))[:120]
+            except Exception:
+                pass
             logger.warning(
-                "Telegram getUpdates non-200 status=%s body=%s",
-                resp.status_code, resp.text[:300],
+                "Telegram getUpdates non-200 status=%s desc=%s",
+                resp.status_code, desc,
             )
     except Exception as e:
         logger.warning("Telegram getUpdates failed: %s", e)

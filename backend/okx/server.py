@@ -59,10 +59,12 @@ async def _signal_polling_loop() -> None:
             try:
                 resp = await client.get(OKX_SIGNAL_SOURCE_URL, headers=headers)
                 if resp.status_code != 200:
+                    # Do NOT log resp.text. The signal source authenticates
+                    # via X-Internal-Key; some upstream error pages echo
+                    # request headers (nginx default error_page templates),
+                    # which would leak INTERNAL_API_KEY to journalctl.
                     logger.warning(
-                        "Signal poll non-200: status=%s body=%s",
-                        resp.status_code,
-                        resp.text[:300],
+                        "Signal poll non-200: status=%s", resp.status_code,
                     )
                 else:
                     data = resp.json()
