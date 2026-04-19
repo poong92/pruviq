@@ -13,9 +13,37 @@ const coinsAnalyzed = (siteStats as { coins_analyzed: number }).coins_analyzed;
 // Quick Start: top 3 from rankings
 const rankingsData = rankingsJson as { top3?: Array<{rank: number; name_ko: string; strategy: string; direction: string; win_rate: number; profit_factor: number; total_return: number; timeframe: string}> };
 const quickStartPresets = (rankingsData.top3 || []).slice(0, 3);
+
+// SEO: SoftwareApplication JSON-LD (ko). See EN variant for rationale.
+const simulateJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "PRUVIQ — 크립토 전략 시뮬레이터",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Web",
+  "url": "https://pruviq.com/ko/simulate",
+  "description": t('meta.simulate_desc'),
+  "softwareVersion": "0.3.0",
+  "inLanguage": ["ko", "en"],
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD",
+    "availability": "https://schema.org/InStock"
+  },
+  "featureList": [
+    `${coinsAnalyzed}+ 코인`,
+    `${presetCount}개 사전 구축 전략`,
+    "2년+ 과거 OHLCV 데이터",
+    "실거래 수수료 + 펀딩비 반영",
+    "회원가입 불필요"
+  ],
+  "publisher": { "@type": "Organization", "name": "PRUVIQ", "url": "https://pruviq.com" }
+};
 ---
 
 <Layout title={t('meta.simulate_title')} description={t('meta.simulate_desc')}>
+  <script type="application/ld+json" set:html={JSON.stringify(simulateJsonLd)} />
   <!-- Onboarding header -->
   <!-- Compact Hero -->
   <section id="simulator-onboarding" class="pt-6 pb-4 md:pt-8 md:pb-6">
