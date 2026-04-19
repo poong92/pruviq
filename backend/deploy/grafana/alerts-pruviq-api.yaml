@@ -1,0 +1,242 @@
+# PRUVIQ API — Grafana Cloud alert rules
+#
+# Import path: Grafana → Alerting → Alert rules → Import file
+# Contact point: separate (wire in UI to Telegram webhook)
+#
+# Design notes:
+#   - 5 rules covering: API down, HTTP 5xx, scan slow, OKX error rate,
+#     SQLite contention. All driven off `/metrics` exposed by the
+#     prometheus_client instrumentation shipped in PR #1197.
+#   - "for" durations are tuned to absorb single scrape misses (Alloy
+#     scrape_interval=60s → 2m minimum to dedupe a single drop).
+#   - Only PruviqApiDown is "critical"; the rest are "warning" because
+#     they're degradations, not outages.
+
+apiVersion: 1
+
+groups:
+  - orgId: 1
+    name: pruviq-api-core
+    folder: PRUVIQ
+    interval: 1m
+    rules:
+      # ─────────────────────────────────────────────────────────
+      # 1. API Down — the scrape target itself is unreachable.
+      # Triggers when Alloy's prometheus.scrape component can't reach
+      # :8080/metrics for 2 consecutive minutes (i.e., 2+ failed scrapes).
+      # ─────────────────────────────────────────────────────────
+      - uid: pruviq_api_down
+        title: PruviqApiDown
+        condition: C
+        data:
+          - refId: A
+            queryType: ""
+            relativeTimeRange: { from: 300, to: 0 }
+            datasourceUid: ${DS_PROMETHEUS_UID}
+            model:
+              expr: up{job="pruviq_api"}
+              intervalMs: 60000
+              maxDataPoints: 43200
+              refId: A
+          - refId: C
+            queryType: ""
+            relativeTimeRange: { from: 0, to: 0 }
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator: { params: [1], type: lt }
+                  operator: { type: and }
+                  query: { params: [C] }
+                  reducer: { params: [], type: last }
+                  type: query
+              datasource: { type: __expr__, uid: __expr__ }
+              expression: A
+              refId: C
+              type: threshold
+        noDataState: Alerting
+        execErrState: Error
+        for: 2m
+        annotations:
+          summary: "pruviq-api :8080 unreachable"
+          description: "Alloy cannot scrape http://127.0.0.1:8080/metrics for 2 minutes. Check `systemctl status pruviq-api`."
+          runbook_url: "https://github.com/pruviq/pruviq/blob/main/backend/deploy/grafana/README.md#pruviqapidown"
+        labels:
+          severity: critical
+          service: pruviq-api
+
+      # ─────────────────────────────────────────────────────────
+      # 2. HTTP 5xx spike — server errors > 3 per minute for 5 minutes.
+      # Detects regressions faster than the user-facing /health probe.
+      # ─────────────────────────────────────────────────────────
+      - uid: pruviq_http_5xx_spike
+        title: PruviqHttp5xxSpike
+        condition: C
+        data:
+          - refId: A
+            queryType: ""
+            relativeTimeRange: { from: 600, to: 0 }
+            datasourceUid: ${DS_PROMETHEUS_UID}
+            model:
+              expr: sum(rate(pruviq_http_request_duration_seconds_count{status_class="5xx"}[5m]))
+              intervalMs: 60000
+              maxDataPoints: 43200
+              refId: A
+          - refId: C
+            queryType: ""
+            relativeTimeRange: { from: 0, to: 0 }
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator: { params: [0.05], type: gt }
+                  operator: { type: and }
+                  query: { params: [C] }
+                  reducer: { params: [], type: last }
+                  type: query
+              datasource: { type: __expr__, uid: __expr__ }
+              expression: A
+              refId: C
+              type: threshold
+        noDataState: OK
+        execErrState: Error
+        for: 5m
+        annotations:
+          summary: "Server 5xx error rate > 3/min"
+          description: "pruviq-api is serving 5xx responses at > 0.05 req/s for 5+ minutes. Check journalctl -u pruviq-api and recent deploys."
+        labels:
+          severity: warning
+          service: pruviq-api
+
+      # ─────────────────────────────────────────────────────────
+      # 3. Signal scan slow — p95 > 45s for 10 minutes.
+      # Scanner has a 60s wait_for budget in the auto-trade loop.
+      # 45s p95 = eating 75% of the budget, one bad scan pushes timeout.
+      # ─────────────────────────────────────────────────────────
+      - uid: pruviq_scan_slow
+        title: PruviqScanSlow
+        condition: C
+        data:
+          - refId: A
+            queryType: ""
+            relativeTimeRange: { from: 600, to: 0 }
+            datasourceUid: ${DS_PROMETHEUS_UID}
+            model:
+              expr: histogram_quantile(0.95, sum(rate(pruviq_signal_scan_duration_seconds_bucket[5m])) by (le))
+              intervalMs: 60000
+              maxDataPoints: 43200
+              refId: A
+          - refId: C
+            queryType: ""
+            relativeTimeRange: { from: 0, to: 0 }
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator: { params: [45], type: gt }
+                  operator: { type: and }
+                  query: { params: [C] }
+                  reducer: { params: [], type: last }
+                  type: query
+              datasource: { type: __expr__, uid: __expr__ }
+              expression: A
+              refId: C
+              type: threshold
+        noDataState: OK
+        execErrState: Error
+        for: 10m
+        annotations:
+          summary: "Signal scan p95 > 45s"
+          description: "signal_scanner.scan() p95 is > 45s for 10+ minutes — approaching the 60s auto-trade wait_for timeout. Check OHLCV freshness and GIL contention (top coins × strategies = CPU-bound)."
+        labels:
+          severity: warning
+          service: pruviq-api
+          component: signal-scanner
+
+      # ─────────────────────────────────────────────────────────
+      # 4. OKX error rate — non-2xx OKX API calls > 10% for 5 minutes.
+      # OKX transient errors are normal; sustained 10%+ = broken auth,
+      # rate limit burn, or a broken endpoint assumption.
+      # ─────────────────────────────────────────────────────────
+      - uid: pruviq_okx_error_rate
+        title: PruviqOkxErrorRate
+        condition: C
+        data:
+          - refId: A
+            queryType: ""
+            relativeTimeRange: { from: 600, to: 0 }
+            datasourceUid: ${DS_PROMETHEUS_UID}
+            model:
+              expr: |
+                sum(rate(pruviq_okx_api_calls_total{status_class!="2xx"}[5m]))
+                /
+                (sum(rate(pruviq_okx_api_calls_total[5m])) > 0)
+              intervalMs: 60000
+              maxDataPoints: 43200
+              refId: A
+          - refId: C
+            queryType: ""
+            relativeTimeRange: { from: 0, to: 0 }
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator: { params: [0.1], type: gt }
+                  operator: { type: and }
+                  query: { params: [C] }
+                  reducer: { params: [], type: last }
+                  type: query
+              datasource: { type: __expr__, uid: __expr__ }
+              expression: A
+              refId: C
+              type: threshold
+        noDataState: OK
+        execErrState: Error
+        for: 5m
+        annotations:
+          summary: "OKX API error rate > 10%"
+          description: "More than 10% of OKX v5 API calls are returning non-2xx for 5+ minutes. Check OAuth token, rate limits, or recent OKX endpoint changes."
+        labels:
+          severity: warning
+          service: pruviq-api
+          component: okx
+
+      # ─────────────────────────────────────────────────────────
+      # 5. SQLite contention — busy_retries > 1/s for 5 minutes.
+      # Steady non-zero means we're hitting the busy_timeout ceiling —
+      # time to consider uvicorn workers>=2 tuning or async storage.
+      # ─────────────────────────────────────────────────────────
+      - uid: pruviq_sqlite_contention
+        title: PruviqSqliteContention
+        condition: C
+        data:
+          - refId: A
+            queryType: ""
+            relativeTimeRange: { from: 600, to: 0 }
+            datasourceUid: ${DS_PROMETHEUS_UID}
+            model:
+              expr: rate(pruviq_sqlite_busy_retries_total[5m])
+              intervalMs: 60000
+              maxDataPoints: 43200
+              refId: A
+          - refId: C
+            queryType: ""
+            relativeTimeRange: { from: 0, to: 0 }
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator: { params: [1.0], type: gt }
+                  operator: { type: and }
+                  query: { params: [C] }
+                  reducer: { params: [], type: last }
+                  type: query
+              datasource: { type: __expr__, uid: __expr__ }
+              expression: A
+              refId: C
+              type: threshold
+        noDataState: OK
+        execErrState: Error
+        for: 5m
+        annotations:
+          summary: "SQLite busy_retries > 1/s"
+          description: "SQLite writer lock contention is persistent. Check autotrade_live.db usage; consider tuning busy_timeout or moving to a single writer pattern."
+        labels:
+          severity: warning
+          service: pruviq-api
+          component: sqlite
