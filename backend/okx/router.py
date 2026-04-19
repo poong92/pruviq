@@ -68,7 +68,10 @@ def _clear_session_cookie(response: Response) -> None:
 
 # ── OAuth Flow ─────────────────────────────────────────────
 
-@router.get("/auth/okx/init")
+# 2026-04-19: GET + HEAD 둘 다 허용 — 브라우저 prefetch, SNS 크롤러(Twitter/OG),
+# Cloudflare 헬스체크가 HEAD 먼저 보내는데 FastAPI @router.get 은 HEAD 자동 허용
+# 안 해서 405 반환 → 일부 client가 "링크 깨짐"으로 판단. OAuth 유입 손실 원인.
+@router.api_route("/auth/okx/init", methods=["GET", "HEAD"])
 async def oauth_init(
     redirect: str = Query("", description="Post-OAuth redirect URL"),
     lang: str = Query("en", description="Language for redirect"),
@@ -83,7 +86,7 @@ async def oauth_init(
     return generate_oauth_params(redirect_after=redirect, lang=lang)
 
 
-@router.get("/auth/okx/start")
+@router.api_route("/auth/okx/start", methods=["GET", "HEAD"])
 async def oauth_start(
     redirect: str = Query("", description="Post-OAuth redirect URL"),
     lang: str = Query("en", description="Language for redirect"),
@@ -97,22 +100,41 @@ async def oauth_start(
 
 @router.get("/auth/okx/callback")
 async def oauth_callback(
-    code: str = Query(..., description="OKX authorization code"),
-    state: str = Query(..., description="CSRF state token"),
+    request: Request,
+    code: str = Query("", description="OKX authorization code"),
+    state: str = Query("", description="CSRF state token"),
     domain: str = Query("", description="OKX SDK domain parameter"),
+    error: str = Query("", description="OKX returned error code"),
+    error_description: str = Query("", description="OKX returned error description"),
 ):
-    """Step 2: Exchange code for tokens, set session cookie, redirect to frontend."""
+    """Step 2: Exchange code for tokens, set session cookie, redirect to frontend.
+    2026-04-19: OAuth flow 디버깅용 에러 파라미터 로깅 추가 (OKX가 error query로
+    돌려보내는 경우 callback 0 호출 원인 추적 가능)."""
+    # OKX가 에러를 쿼리로 돌려보내는 경로 (scope 거부, redirect_uri mismatch 등)
+    if error or not code:
+        logger.warning(
+            "OAuth callback error-return: error=%s desc=%s code_present=%s state_present=%s qs=%s",
+            error[:100], error_description[:200], bool(code), bool(state),
+            str(request.url.query)[:300],
+        )
+        err_param = error or "no_code"
+        return RedirectResponse(
+            url=f"{FRONTEND_URL}/dashboard?okx=error&reason={err_param[:50]}",
+            status_code=302,
+        )
     try:
         session_id, redirect_url, lang = await exchange_code(code, state, domain)
     except ValueError as e:
         logger.warning("OAuth callback rejected: %s", e)
         return RedirectResponse(
-            url=f"{FRONTEND_URL}/dashboard?okx=error", status_code=302
+            url=f"{FRONTEND_URL}/dashboard?okx=error&reason=invalid_state",
+            status_code=302,
         )
     except Exception as e:
-        logger.error("OAuth callback failed: %s", e)
+        logger.error("OAuth callback failed: %s: %s", e.__class__.__name__, e)
         return RedirectResponse(
-            url=f"{FRONTEND_URL}/dashboard?okx=error", status_code=302
+            url=f"{FRONTEND_URL}/dashboard?okx=error&reason=exchange_failed",
+            status_code=302,
         )
 
     if redirect_url:
@@ -127,7 +149,7 @@ async def oauth_callback(
     return response
 
 
-@router.get("/auth/okx/status")
+@router.api_route("/auth/okx/status", methods=["GET", "HEAD"])
 async def oauth_status(request: Request):
     """Check if user has an active OKX connection + admin status."""
     session_id = _get_session(request)
