@@ -49,19 +49,40 @@ def _gen_passphrase() -> str:
 
 
 def _validate_redirect(url: str) -> str:
-    """Return url if it points to pruviq.com (or subdomain) or is empty; else "".
-    Defends `/auth/okx/*?redirect=evil.com` open-redirect phishing vector."""
+    """Return url if safe; else "". Blocks open-redirect phishing on
+    `/auth/okx/*?redirect=...`.
+
+    Allowed:
+      - empty
+      - relative path starting with "/" (same origin)
+      - absolute http(s) url on pruviq.com or *.pruviq.com
+
+    Explicitly rejected: javascript:, data:, vbscript:, file:, protocol-relative
+    (//evil.com), and any non-pruviq host. urlparse("javascript:x").netloc == ""
+    so a naive netloc check fails open — enforce scheme allowlist too.
+    """
     if not url:
         return ""
     from urllib.parse import urlparse
+    # Protocol-relative ("//evil.com/…") is not same-origin — reject before parse.
+    if url.startswith("//"):
+        logger.warning("OAuth redirect blocked (protocol-relative): %s", url[:100])
+        return ""
     try:
-        netloc = urlparse(url).netloc.lower()
+        parsed = urlparse(url)
     except Exception:
         return ""
-    if not netloc:
-        # Relative path — same origin, safe
-        return url
-    # Allow pruviq.com and *.pruviq.com only
+    scheme = (parsed.scheme or "").lower()
+    netloc = (parsed.netloc or "").lower()
+    if not scheme and not netloc:
+        # Relative path. Require leading "/" to avoid ambiguous inputs.
+        if url.startswith("/"):
+            return url
+        logger.warning("OAuth redirect blocked (ambiguous relative): %s", url[:100])
+        return ""
+    if scheme not in ("http", "https"):
+        logger.warning("OAuth redirect blocked (bad scheme=%s): %s", scheme, url[:100])
+        return ""
     if netloc == "pruviq.com" or netloc.endswith(".pruviq.com"):
         return url
     logger.warning("OAuth redirect blocked (not pruviq.com): %s", url[:100])
@@ -132,9 +153,13 @@ async def _create_user_apikey(access_token: str) -> dict:
             json=body,
             timeout=15,
         )
-        logger.warning("← apikey status=%s body=%s", resp.status_code, resp.text[:300])
+        # Body contains apiKey/secretKey/passphrase — never log raw.
         resp.raise_for_status()
         result = resp.json()
+        logger.warning(
+            "← apikey status=%s code=%s msg=%s",
+            resp.status_code, result.get("code"), str(result.get("msg", ""))[:120],
+        )
 
     if result.get("code") != "0":
         raise ValueError(f"OKX API key creation failed: {result}")
@@ -169,9 +194,15 @@ async def exchange_code(code: str, state: str, domain: str = "") -> tuple[str, s
     logger.warning("→ OKX token request url=%s", OKX_OAUTH_TOKEN)
     async with httpx.AsyncClient() as client:
         resp = await client.post(OKX_OAUTH_TOKEN, data=data, timeout=15)
-        logger.warning("← token status=%s body=%s", resp.status_code, resp.text[:300])
+        # Body contains access_token/refresh_token — never log raw.
         resp.raise_for_status()
         token_data = resp.json()
+        logger.warning(
+            "← token status=%s has_access=%s has_refresh=%s",
+            resp.status_code,
+            "access_token" in token_data,
+            "refresh_token" in token_data,
+        )
 
     if "access_token" not in token_data:
         raise ValueError(f"OKX token error: {token_data}")
