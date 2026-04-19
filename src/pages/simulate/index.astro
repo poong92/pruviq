@@ -13,9 +13,40 @@ const coinsAnalyzed = (siteStats as { coins_analyzed: number }).coins_analyzed;
 // Quick Start: top 3 from rankings
 const rankingsData = rankingsJson as { top3?: Array<{rank: number; name_en: string; strategy: string; direction: string; win_rate: number; profit_factor: number; total_return: number; timeframe: string}> };
 const quickStartPresets = (rankingsData.top3 || []).slice(0, 3);
+
+// SEO: SoftwareApplication JSON-LD. /simulate IS the tool — Google uses
+// this to surface it in rich-result carousels (SaaS/app listings) vs.
+// treating it as a generic article. "offers: Free" is key for
+// discoverability against the paid-simulator competitors.
+const simulateJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "PRUVIQ — Crypto Strategy Simulator",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Web",
+  "url": "https://pruviq.com/simulate",
+  "description": t('meta.simulate_desc'),
+  "softwareVersion": "0.3.0",
+  "inLanguage": ["en", "ko"],
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD",
+    "availability": "https://schema.org/InStock"
+  },
+  "featureList": [
+    `${coinsAnalyzed}+ crypto pairs`,
+    `${presetCount} pre-built strategies`,
+    "2+ years historical OHLCV data",
+    "Realistic fees + funding rates",
+    "No signup required"
+  ],
+  "publisher": { "@type": "Organization", "name": "PRUVIQ", "url": "https://pruviq.com" }
+};
 ---
 
 <Layout title={t('meta.simulate_title')} description={t('meta.simulate_desc')}>
+  <script type="application/ld+json" set:html={JSON.stringify(simulateJsonLd)} />
   <!-- Onboarding header -->
   <!-- Compact Hero -->
   <section id="simulator-onboarding" class="pt-6 pb-4 md:pt-8 md:pb-6">
