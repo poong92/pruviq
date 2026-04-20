@@ -1,0 +1,59 @@
+[Unit]
+Description=PRUVIQ FastAPI Backend (Staging)
+# Staging runs beside prod on the same droplet. Deliberately independent
+# from pruviq-api.service so a staging crash never page-loops a prod alert,
+# and a prod restart never knocks staging offline mid-test.
+#
+# Architecture decision (2026-04-20): staging uses an OKX sub-account of
+# the owner's main account (not a simulated-trading demo account). Creds
+# are staged with Read + Trade permissions, Withdraw OFF, IP allowlisted
+# to this droplet. Worst-case key leak is bounded at the sub-account's
+# funded balance (~$10-20). Details in memory/project_infra_checklist_home.md.
+After=network-online.target
+Wants=network-online.target
+# Same OnFailure alert mechanism as prod — if staging wedges, we want to
+# know (not because it's critical, but because a wedged staging typically
+# signals a latent prod bug).
+OnFailure=pruviq-alert@%n.service
+
+[Service]
+User=pruviq
+WorkingDirectory=/opt/pruviq/current/backend
+# Staging has its own .env:
+#   /opt/pruviq/staging/.env
+# Expected keys at minimum:
+#   OKX_API_KEY=<sub-account apiKey>         (stored via GitHub Secrets, deploy step writes file)
+#   OKX_SECRET_KEY=<sub-account secret>
+#   OKX_PASSPHRASE=<sub-account passphrase>
+#   SUBSCRIBERS_FILE=/opt/pruviq/staging/subscribers.json
+#   RANKING_DIR=/opt/pruviq/staging/rankings
+#   SQLITE_DB_PATH=/opt/pruviq/staging/autotrade_live.db
+#   ENVIRONMENT=staging   # code paths can branch on this if needed
+#
+# We deliberately do NOT reuse /opt/pruviq/shared/.env — mixing prod OKX
+# keys into a staging process is exactly the accident this split prevents.
+EnvironmentFile=/opt/pruviq/staging/.env
+# Defensive fallbacks: the SUBSCRIBERS_FILE and RANKING_DIR lines in .env
+# are authoritative, but if an operator forgets to add them we want the
+# staging process to land in the staging tree, not accidentally on shared/.
+Environment=SUBSCRIBERS_FILE=/opt/pruviq/staging/subscribers.json
+Environment=RANKING_DIR=/opt/pruviq/staging/rankings
+# Port split: prod :8080, staging :8081. CF Tunnel will add an ingress
+# rule for staging-api.pruviq.com → 127.0.0.1:8081 (separate PR).
+ExecStart=/opt/pruviq/app/.venv/bin/uvicorn api.main:app --host 127.0.0.1 --port 8081 --workers 1
+Restart=always
+RestartSec=5
+# Smaller memory cap — staging gets no real traffic, 1G is plenty.
+MemoryMax=1G
+LimitNOFILE=65536
+TimeoutStopSec=45
+KillMode=mixed
+# Shorter RuntimeMaxSec (12h vs prod 24h) — forces a daily restart so any
+# accumulating state issue surfaces here first before we discover it in prod.
+RuntimeMaxSec=43200
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=pruviq-api-staging
+
+[Install]
+WantedBy=multi-user.target
