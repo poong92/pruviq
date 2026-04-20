@@ -327,7 +327,7 @@ export const en = {
   "demo.error": "Failed to load demo data.",
   "demo.no_data": "No data for this combination.",
   "demo.disclaimer":
-    "* Default parameter (SL=10%, TP=8%) is the current verified live setting. Simulation includes 0.04% futures fees + 0.02% slippage per trade. Past performance does not guarantee future results.",
+    "* Default parameter (SL=10%, TP=8%) is the current verified live setting. Simulation includes 0.05% futures fees + 0.02% slippage per trade. Past performance does not guarantee future results.",
   "demo.live_badge": "CURRENT LIVE SETTINGS",
   "demo.total_return": "Total Return",
   "demo.trades_simulated": "trades simulated",
@@ -765,7 +765,7 @@ export const en = {
     "Performance data is from backtests using 2+ years of historical data with realistic fees and slippage. If the dashboard is not loading, please enable JavaScript or try refreshing.",
   "perf.results_title": "Backtest Results",
   "perf.results_desc":
-    "2+ years, {coins} coins, 2,898 trades. Includes 0.08%/side fees.",
+    "2+ years, {coins} coins, 2,898 trades. Includes 0.05%/side fees.",
   "perf.gap_title": "Backtest vs Reality",
   "perf.gap_desc":
     "Every backtest has a gap with live trading. We experienced it firsthand — and stopped trading when it exceeded our limits.",
@@ -857,7 +857,7 @@ export const en = {
   "compare.noscript_desc":
     "Compare 5 backtested strategies (BB Squeeze SHORT, BB Squeeze LONG, RSI Reversal, MACD Momentum, and more) across 50 coins with identical conditions. Adjust SL/TP parameters and see win rate, profit factor, max drawdown, and return side by side.",
   "compare.noscript_strategies":
-    "Available strategies: BB Squeeze SHORT (verified, live trading), BB Squeeze LONG, RSI Reversal LONG, MACD Momentum LONG, and ATR Breakout LONG. All simulated with 0.04% fee + 0.02% slippage on 2+ years of data.",
+    "Available strategies: BB Squeeze SHORT (verified, live trading), BB Squeeze LONG, RSI Reversal LONG, MACD Momentum LONG, and ATR Breakout LONG. All simulated with 0.05% fee + 0.02% slippage on 2+ years of data.",
 
   // Blog article CTA
   "blog.cta_title": "Ready to test strategies yourself?",
@@ -876,7 +876,7 @@ export const en = {
   "compare.desc":
     "Same conditions, same data. See which strategy fits your style. Adjust SL/TP and watch all 5 strategies respond in real time.",
   "compare.disclaimer":
-    "* All strategies simulated on 50 coins with identical fees (0.04% + 0.02% slippage). Past performance does not guarantee future results.",
+    "* All strategies simulated on 50 coins with identical fees (0.05% + 0.02% slippage). Past performance does not guarantee future results.",
   "compare.loading": "Loading comparison data...",
   "compare.error": "Failed to load comparison data.",
   "compare.name": "Strategy",
@@ -1031,7 +1031,7 @@ export const en = {
     "20-candle high breakout — catastrophic loss",
   "simulate.view_all": "View all 5 strategies",
   "simulate.disclaimer":
-    "Simulations include 0.04% futures fees + 0.02% slippage per trade. Past performance does not guarantee future results. Not financial advice.",
+    "Simulations include 0.05% futures fees + 0.02% slippage per trade. Past performance does not guarantee future results. Not financial advice.",
   "simulate.step1_title": "Choose a preset or pick indicators",
   "simulate.step1_desc": "14 indicators, AND/OR logic",
   "simulate.step2_title": "Set entry conditions and risk",
@@ -1063,19 +1063,19 @@ export const en = {
   "methodology.backtest_title": "How We Backtest",
   "methodology.data_label": "Data",
   "methodology.data_desc":
-    "2+ years of 1-hour OHLCV candles sourced from Binance Futures. All candles are complete (closed) — no partial or in-progress data is used to avoid look-ahead bias.",
+    "2+ years of 1-hour OHLCV candles sourced from OKX USDT-SWAP. All candles are complete (closed) — no partial or in-progress data is used to avoid look-ahead bias.",
   "methodology.universe_label": "Universe",
   "methodology.universe_desc":
-    "{coins}+ USDT perpetual futures pairs listed on Binance. Stablecoins, delisted, and illiquid pairs are excluded. Daily rankings use the top 50 coins by market cap. The exact count varies by strategy version.",
+    "{coins}+ USDT perpetual futures pairs listed on OKX. Stablecoins, delisted, and illiquid pairs are excluded. Daily rankings use the top 50 coins by market cap. The exact count varies by strategy version.",
   "methodology.execution_label": "Execution",
   "methodology.execution_desc":
     "Entry is assumed at the candle close price. This is conservative — real fills may differ by a small amount due to timing and order book depth.",
   "methodology.fees_label": "Fees",
   "methodology.fees_desc":
-    "0.04% taker fee per side (0.08% round-trip). This is the Binance Futures default for VIP 0 tier.",
+    "0.05% taker fee per side (0.10% round-trip). This is the OKX USDT-SWAP default for VIP 0 tier.",
   "methodology.slippage_label": "Slippage",
   "methodology.slippage_desc":
-    "Not modeled by default. Limit orders are assumed. In practice, entry slippage is typically under 0.05% for most trades on Binance Futures.",
+    "Not modeled by default. Limit orders are assumed. In practice, entry slippage is typically under 0.05% for most trades on OKX USDT-SWAP.",
   "methodology.position_label": "Position Sizing",
   "methodology.position_desc":
     "Fixed $60 per trade with 5x leverage ($300 notional). No compounding — each trade uses the same dollar amount regardless of account equity.",
@@ -1572,7 +1572,7 @@ export const en = {
     "The BB Squeeze SHORT strategy detects Bollinger Band compression on {display} and enters a short position when a downward breakout occurs. It uses a 10% stop-loss and 8% take-profit with up to 48-hour holding periods.",
   "coin_detail.faq_q2": "How reliable is the {name} backtest?",
   "coin_detail.faq_a2":
-    "PRUVIQ backtests use 2+ years of 1-hour OHLCV data from Binance Futures. All results are out-of-sample tested with Monte Carlo validation (10,000 iterations). No look-ahead bias — only completed candles are used for signals.",
+    "PRUVIQ backtests use 2+ years of 1-hour OHLCV data from OKX USDT-SWAP. All results are out-of-sample tested with Monte Carlo validation (10,000 iterations). No look-ahead bias — only completed candles are used for signals.",
   "coin_detail.faq_q3": "Is it free to simulate {name}?",
   "coin_detail.faq_a3":
     "Yes. PRUVIQ is 100% free. You can simulate the BB Squeeze strategy on any supported coin, adjust parameters, and view detailed equity curves and trade logs — no account required.",
@@ -1628,7 +1628,7 @@ export const en = {
   // Changelog context callout
   "changelog.context_title": "What\u2019s versioned here?",
   "changelog.context_desc":
-    'This changelog tracks the <strong class="text-[--color-text]">BB Squeeze SHORT trading strategy</strong> running live on Binance Futures. Platform version (website, simulator, API) is managed separately.',
+    'This changelog tracks the <strong class="text-[--color-text]">BB Squeeze SHORT trading strategy</strong> running live on OKX USDT-SWAP. Platform version (website, simulator, API) is managed separately.',
 
   // Meta: Privacy & Terms
   "meta.privacy_title": "Privacy Policy - PRUVIQ",
