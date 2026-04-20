@@ -40,7 +40,14 @@ jobs:
     timeout-minutes: 8
 
     env:
-      DO_HOST: 167.172.81.145
+      # 2026-04-20: DO host IP moved to repo secret (public repo hygiene).
+      # Same IP as before — api.pruviq.com DNS still resolves to it, so
+      # obscurity isn't the point. The benefit is removing the literal
+      # from the checked-in workflow: future edits / workflow forks /
+      # searches on "167.172." don't surface our prod target address.
+      # If `DO_HOST` is unset, the workflow fails fast at `ssh -p "$DO_PORT"`
+      # step instead of silently targeting something else — safe default.
+      DO_HOST: ${{ secrets.DO_HOST }}
       DO_PORT: "2222"
       DO_USER: root
       MIN_COINS: "200"  # post-Phase-B: 235 live, gate at 200 to tolerate startup gaps
