@@ -245,3 +245,97 @@ groups:
           severity: warning
           service: pruviq-api
           component: sqlite
+
+      # ─────────────────────────────────────────────────────────
+      # 6. OHLCV refresh stale — last successful run older than 5h.
+      # Timer is every 4h, so >5h = one full cycle missed. Stronger
+      # signal than counting errors (catches "script stopped running
+      # entirely", which no error counter would detect).
+      # ─────────────────────────────────────────────────────────
+      - uid: pruviq_ohlcv_stale
+        title: PruviqOhlcvStale
+        condition: C
+        data:
+          - refId: A
+            queryType: ""
+            relativeTimeRange: { from: 600, to: 0 }
+            datasourceUid: ${DS_PROMETHEUS_UID}
+            model:
+              # time() is seconds since epoch; timestamp gauge is also
+              # epoch seconds. Difference > 18000 = 5 hours.
+              expr: (time() - pruviq_ohlcv_last_run_timestamp_seconds)
+              intervalMs: 60000
+              maxDataPoints: 43200
+              refId: A
+          - refId: C
+            queryType: ""
+            relativeTimeRange: { from: 0, to: 0 }
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator: { params: [18000], type: gt }
+                  operator: { type: and }
+                  query: { params: [C] }
+                  reducer: { params: [], type: last }
+                  type: query
+              datasource: { type: __expr__, uid: __expr__ }
+              expression: A
+              refId: C
+              type: threshold
+        noDataState: Alerting
+        execErrState: Error
+        for: 10m
+        annotations:
+          summary: "OHLCV refresh hasn't run for 5+ hours"
+          description: "pruviq-update-ohlcv timer (every 4h) appears stopped. Check `ssh DO 'systemctl status pruviq-update-ohlcv.timer'` and the status file at /opt/pruviq/shared/ohlcv_last_run.json."
+        labels:
+          severity: warning
+          service: pruviq-api
+          component: ohlcv
+
+      # ─────────────────────────────────────────────────────────
+      # 7. OHLCV per-symbol failure surge — rate_limit spike.
+      # The script tolerates per-symbol failures (keeps going), but a
+      # sustained rate_limit count means we're hitting OKX budget
+      # ceiling or the window_sec in market_fetcher needs tuning.
+      # Threshold 20 = ~10% of 238 symbols, tuned to detect systemic
+      # 429 vs 1-2 transient ones.
+      # ─────────────────────────────────────────────────────────
+      - uid: pruviq_ohlcv_rate_limit_surge
+        title: PruviqOhlcvRateLimitSurge
+        condition: C
+        data:
+          - refId: A
+            queryType: ""
+            relativeTimeRange: { from: 600, to: 0 }
+            datasourceUid: ${DS_PROMETHEUS_UID}
+            model:
+              expr: pruviq_ohlcv_last_run_failures{reason="rate_limit"}
+              intervalMs: 60000
+              maxDataPoints: 43200
+              refId: A
+          - refId: C
+            queryType: ""
+            relativeTimeRange: { from: 0, to: 0 }
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator: { params: [20], type: gt }
+                  operator: { type: and }
+                  query: { params: [C] }
+                  reducer: { params: [], type: last }
+                  type: query
+              datasource: { type: __expr__, uid: __expr__ }
+              expression: A
+              refId: C
+              type: threshold
+        noDataState: OK
+        execErrState: Error
+        for: 5m
+        annotations:
+          summary: "OHLCV refresh: >20 symbols hit rate_limit last run"
+          description: "OKX 429s dominated the last OHLCV refresh — either OKX tightened their budget or our window_sec in okx/market_fetcher.py is too aggressive."
+        labels:
+          severity: warning
+          service: pruviq-api
+          component: ohlcv
