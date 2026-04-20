@@ -23,6 +23,7 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import json
 import logging
 import os
 import sys
@@ -31,6 +32,7 @@ import urllib.request
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
+import httpx
 import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
@@ -40,6 +42,38 @@ logger = logging.getLogger("pruviq.update_ohlcv_okx")
 
 CSV_HEADER = "timestamp,open,high,low,close,volume"
 OKX_INSTRUMENTS_URL = f"{OKX_PUBLIC_BASE}/api/v5/public/instruments?instType=SWAP"
+
+# 2026-04-20: per-symbol failure observability.
+# See api/main.py:_refresh_ohlcv_metrics_from_status_file for the consumer.
+OHLCV_STATUS_FILE = Path(
+    os.environ.get(
+        "PRUVIQ_OHLCV_STATUS_FILE",
+        "/opt/pruviq/shared/ohlcv_last_run.json",
+    )
+)
+
+
+def _classify_failure(exc: Exception) -> str:
+    """Map an exception to one of 5 bounded reasons for Prometheus.
+
+    Keep cardinality tight — adding a new bucket means updating the
+    zero-fill list in api/main.py too (test_ohlcv_failure_classification
+    ::test_bounded_cardinality enforces this).
+    """
+    if isinstance(exc, httpx.HTTPStatusError):
+        status = getattr(exc.response, "status_code", 0) if exc.response is not None else 0
+        if status == 429:
+            return "rate_limit"
+        if 400 <= status < 600:
+            return "http_error"
+    if isinstance(exc, (httpx.ConnectError, httpx.ReadError, httpx.RemoteProtocolError,
+                        httpx.TimeoutException, asyncio.TimeoutError, ConnectionError)):
+        return "network"
+    if isinstance(exc, RuntimeError):
+        msg = str(exc).lower()
+        if "code" in msg and ("51000" in msg or "delisted" in msg or "not exist" in msg):
+            return "delisted"
+    return "other"
 
 
 def fetch_okx_usdt_swap_symbols(timeout: float = 15.0) -> set[str]:
@@ -251,6 +285,20 @@ async def run(args: argparse.Namespace) -> int:
     total_new_bars = 0
     total_seeded = 0
     errors = 0
+    failures_by_reason: dict[str, int] = {}
+    failed_symbols: list[dict] = []
+
+    def _record_failure(symbol: str, exc: Exception) -> None:
+        nonlocal errors
+        errors += 1
+        reason = _classify_failure(exc)
+        failures_by_reason[reason] = failures_by_reason.get(reason, 0) + 1
+        failed_symbols.append({
+            "symbol": symbol,
+            "reason": reason,
+            "error_type": type(exc).__name__,
+        })
+        print(f"  {symbol}: ERROR[{reason}] {type(exc).__name__}: {exc}")
 
     async with OkxMarketFetcher() as fetcher:
         for csv_path, symbol in targets_update:
@@ -261,8 +309,7 @@ async def run(args: argparse.Namespace) -> int:
                     total_new_bars += n
                     print(f"  update {symbol}: +{n} bars")
             except Exception as e:
-                errors += 1
-                print(f"  update {symbol}: ERROR {type(e).__name__}: {e}")
+                _record_failure(symbol, e)
 
         for symbol in seed_targets:
             try:
@@ -276,12 +323,37 @@ async def run(args: argparse.Namespace) -> int:
                 else:
                     print(f"  seed {symbol}: (no data returned)")
             except Exception as e:
-                errors += 1
-                print(f"  seed {symbol}: ERROR {type(e).__name__}: {e}")
+                _record_failure(symbol, e)
 
+    # Write summary JSON so api/main.py /metrics can re-emit as gauges.
+    # Swallow IO errors — the data (CSVs) is already on disk; observability
+    # is secondary and must never fail the run.
+    status = {
+        "timestamp": time.time(),
+        "iso": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "targets_update": len(targets_update),
+        "targets_seed": len(seed_targets),
+        "total_updated": total_updated,
+        "total_seeded": total_seeded,
+        "total_new_bars": total_new_bars,
+        "errors": errors,
+        "failures_by_reason": failures_by_reason,
+        "failed_symbols": failed_symbols[:50],
+        "dry_run": bool(args.dry_run),
+    }
+    if not args.dry_run:
+        try:
+            OHLCV_STATUS_FILE.parent.mkdir(parents=True, exist_ok=True)
+            OHLCV_STATUS_FILE.write_text(json.dumps(status, indent=2))
+            print(f"  status → {OHLCV_STATUS_FILE}")
+        except OSError as e:
+            print(f"  WARN: could not write status file: {e}")
+
+    summary_failures = " ".join(f"{k}={v}" for k, v in sorted(failures_by_reason.items()))
     print(
         f"\nDone: updated={total_updated}, seeded={total_seeded}, "
         f"new_bars={total_new_bars}, errors={errors}"
+        + (f" [{summary_failures}]" if summary_failures else "")
     )
     if args.dry_run:
         print("(dry run — no files modified)")
