@@ -1,0 +1,48 @@
+name: "Secrets: gitleaks"
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  schedule:
+    # Weekly baseline scan — catches anything that slipped through PRs
+    # (e.g., if an automerge PR was force-pushed between CI runs).
+    - cron: "0 3 * * 1"  # Monday 03:00 UTC
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  # `security-events: write` would be needed if we ever forward to Security
+  # tab; leaving read-only keeps scope tight. GitHub's built-in secret
+  # scanning (auto-enabled on public repos) is the primary alerting channel;
+  # gitleaks is a supplemental pattern engine.
+
+jobs:
+  gitleaks:
+    name: gitleaks scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+        with:
+          # fetch-depth 0 so gitleaks can scan history, not just the diff.
+          # For PRs this lets the tool flag a secret that was introduced
+          # earlier in the branch (before the PR diff).
+          fetch-depth: 0
+
+      - name: Run gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          # Required since gitleaks-action v2 to scan pull_request events
+          # (github-script uses the token to post a status comment).
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Fail the job on any finding. Public repo = any leak is
+          # immediately public; a blocking CI is the right default.
+          GITLEAKS_ENABLE_UPLOAD_ARTIFACT: true
+          GITLEAKS_ENABLE_SUMMARY: true
+          # Supplemental to GitHub's built-in secret scanning (which catches
+          # AWS keys, Google API keys, etc. automatically on public repos).
+          # gitleaks adds its own rule pack + supports custom patterns in
+          # a `.gitleaks.toml` at repo root if we later want to add PRUVIQ-
+          # specific patterns (e.g., `OKX_CLIENT_SECRET=<value>` in commits).
