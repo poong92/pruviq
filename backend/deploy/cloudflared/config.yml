@@ -1,0 +1,55 @@
+# PRUVIQ — Cloudflared Tunnel ingress config (source-of-truth for DO).
+#
+# Deploy to: /etc/cloudflared/config.yml on DO (167.172.81.145:2222).
+#
+# What this does:
+#   - Routes api.pruviq.com       → http://localhost:8080 (pruviq-api.service, prod)
+#   - Routes staging-api.pruviq.com → http://localhost:8081 (pruviq-api-staging.service, staging)
+#
+# Cloudflare Access protects staging-api.pruviq.com with an email allowlist
+# (configured via CF Zero Trust dashboard, Application: "staging-api").
+# The Access auth wall sits between the internet and this tunnel — users
+# must authenticate before traffic reaches :8081.
+#
+# Credentials file (on DO, NOT in repo):
+#   /etc/cloudflared/a3a723e9-be50-49d8-899b-f8ff41df5104.json
+# The tunnel UUID is not secret (visible in CF dashboard); the JSON file's
+# contents ARE secret and managed outside version control.
+#
+# Deploy (on DO):
+#   sudo cp /opt/pruviq/current/backend/deploy/cloudflared/config.yml /etc/cloudflared/config.yml
+#   sudo systemctl restart pruviq-cloudflared.service
+#   sudo journalctl -u pruviq-cloudflared -n 30 --no-pager  # verify "Registered tunnel connection"
+#
+# DNS (Cloudflare dashboard or CLI):
+#   Before staging-api starts resolving, a CNAME record must exist:
+#     staging-api.pruviq.com → a3a723e9-be50-49d8-899b-f8ff41df5104.cfargotunnel.com
+#   Easiest: run on DO: `cloudflared tunnel route dns a3a723e9-be50-49d8-899b-f8ff41df5104 staging-api.pruviq.com`
+#   (Idempotent — safe to re-run if already set.)
+
+tunnel: a3a723e9-be50-49d8-899b-f8ff41df5104
+credentials-file: /etc/cloudflared/a3a723e9-be50-49d8-899b-f8ff41df5104.json
+
+# Match order matters. Cloudflared evaluates ingress rules top-to-bottom
+# and picks the first hostname that matches. The catchall `service:
+# http_status:404` at the end returns 404 for any hostname we don't
+# explicitly route — safer than a permissive default.
+ingress:
+  # Production API (shipped 2026-03, never touched by staging changes)
+  - hostname: api.pruviq.com
+    service: http://localhost:8080
+    originRequest:
+      connectTimeout: 10s
+
+  # Staging API (added 2026-04-21 with PR <this>).
+  # Behind Cloudflare Access (Application: staging-api, Policy:
+  # staging-allowlist, Emails: jaepoong92@gmail.com). Anyone else hitting
+  # this hostname lands on the Zero Trust login page and gets denied.
+  - hostname: staging-api.pruviq.com
+    service: http://localhost:8081
+    originRequest:
+      connectTimeout: 10s
+
+  # Catchall — any unmapped hostname gets a clean 404 from the tunnel
+  # edge, not a leaked default service.
+  - service: http_status:404
