@@ -73,6 +73,13 @@ OKX_PASSPHRASE=${STAGING_OKX_PASSPHRASE}
 SUBSCRIBERS_FILE=${STAGING_DIR}/subscribers.json
 RANKING_DIR=${STAGING_DIR}/rankings
 SQLITE_DB_PATH=${STAGING_DIR}/autotrade_live.db
+# OHLCV CSV directory — shared with prod (read-only on staging side).
+# Without this, DataManager falls back to the relative-path default
+# (backend/data/futures next to the code checkout), which on DO is an
+# empty dir → coins_loaded=0 → /simulate and /backtest return empty.
+# Setting the absolute path matches what prod /opt/pruviq/shared/.env
+# uses and costs zero additional disk (staging just reads the same CSVs).
+PRUVIQ_DATA_DIR=/opt/pruviq/data/futures
 ENVIRONMENT=staging
 EOF
   chown pruviq:pruviq "${STAGING_DIR}/.env"
