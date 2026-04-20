@@ -54,7 +54,7 @@ Loki bills on active series; high-cardinality labels explode cost fast.
 We keep the label set to **4 labels max** per stream:
 
 - `host` (1 value: `app-server-01`)
-- `unit` (~11 values: pruviq-api, pruviq-update-ohlcv, ... alloy, litestream)
+- `unit` (~12 values: pruviq-api, pruviq-cloudflared, pruviq-update-ohlcv, ... alloy, litestream)
 - `service_name` (derived from unit)
 - `level` (7 values: emerg/alert/crit/err/warning/notice/info/debug)
 
@@ -82,7 +82,18 @@ In Grafana Cloud Explore:
 
 ## Current coverage (2026-04-20)
 
-11 units tailed — matches current `systemctl list-timers pruviq-*` +
-always-on services. If a new timer/service is added to
-`backend/deploy/systemd/`, update the `matches` field in `config.alloy`
+12 units tailed — verified against `journalctl --since 24h` on DO: every
+unit listed produced log lines in the last day. Always-on services
+(pruviq-api, pruviq-cloudflared, litestream, alloy) plus all active
+timers (ohlcv, monitor, monitor-full, daily-ranking, staleness-watch,
+signal-telegram, sim-audit, api-watchdog).
+
+Intentionally omitted (currently dormant):
+- `pruviq-update-performance.service` — timer `disabled` as of 2026-04-20
+- `pruviq-okx-reconciler.service` — `inactive`, no timer
+- `pruviq-alert@*.service` — OnFailure handler template, all instances
+  dormant; if a failure storm occurs, add explicit instances then
+
+If a new timer/service is added to `backend/deploy/systemd/` **or** a
+dormant unit is re-enabled, update the `matches` field in `config.alloy`
 and redeploy.

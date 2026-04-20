@@ -63,7 +63,11 @@ loki.source.journal "pruviq_units" {
   relabel_rules = loki.relabel.pruviq.rules
   // journald matchers — only pruviq-* units + alloy self + litestream (we
   // want to see the backup loop too). All other host noise is dropped.
-  matches       = "_SYSTEMD_UNIT=pruviq-api.service _SYSTEMD_UNIT=pruviq-update-ohlcv.service _SYSTEMD_UNIT=pruviq-monitor.service _SYSTEMD_UNIT=pruviq-monitor-full.service _SYSTEMD_UNIT=pruviq-daily-ranking.service _SYSTEMD_UNIT=pruviq-staleness-watch.service _SYSTEMD_UNIT=pruviq-signal-telegram.service _SYSTEMD_UNIT=pruviq-sim-audit.service _SYSTEMD_UNIT=pruviq-api-watchdog.service _SYSTEMD_UNIT=alloy.service _SYSTEMD_UNIT=litestream.service"
+  // Unit list verified 2026-04-20 against `journalctl --since 24h` — every
+  // unit here produced log lines in the last day. Inactive units (okx-
+  // reconciler, update-performance timer disabled, alert@ template handlers
+  // currently dormant) are intentionally omitted to keep Loki ingest tight.
+  matches       = "_SYSTEMD_UNIT=pruviq-api.service _SYSTEMD_UNIT=pruviq-cloudflared.service _SYSTEMD_UNIT=pruviq-update-ohlcv.service _SYSTEMD_UNIT=pruviq-monitor.service _SYSTEMD_UNIT=pruviq-monitor-full.service _SYSTEMD_UNIT=pruviq-daily-ranking.service _SYSTEMD_UNIT=pruviq-staleness-watch.service _SYSTEMD_UNIT=pruviq-signal-telegram.service _SYSTEMD_UNIT=pruviq-sim-audit.service _SYSTEMD_UNIT=pruviq-api-watchdog.service _SYSTEMD_UNIT=alloy.service _SYSTEMD_UNIT=litestream.service"
   labels = {
     host = "app-server-01",
   }
