@@ -753,7 +753,7 @@ export const ko: Record<TranslationKey, string> = {
   "perf.period_label": "기간",
   "perf.period_val": "2024년 1월 — 2026년 2월",
   "perf.note":
-    "성과 데이터는 2년 이상의 과거 데이터를 사용한 백테스트에서 수집되며, 수수료와 슬리피지를 포함합니다. 대시보드가 로딩되지 않으면 JavaScript를 활성화하거나 새로고침해 주세요.",
+    "성과 데이터는 OKX USDT-SWAP 2년 이상의 과거 데이터를 사용한 백테스트에서 수집되며, 수수료와 슬리피지를 포함합니다. 백테스트 유니버스에는 상장 폐지된 페어도 포함되어 있어 생존자 편향(survivorship bias)이 결과에 숨어 있지 않습니다. 대시보드가 로딩되지 않으면 JavaScript를 활성화하거나 새로고침해 주세요.",
   "perf.results_title": "백테스트 결과",
   "perf.results_desc":
     "2년+, {coins}개 코인, 2,898건 거래. 0.05%/side 수수료 포함.",
@@ -835,7 +835,7 @@ export const ko: Record<TranslationKey, string> = {
   "ranking.leaderboard": "리더보드",
   "ranking.disclaimer_note": "참고:",
   "ranking.disclaimer_text":
-    "이 랭킹은 과거 데이터 백테스트 기반입니다. 미래 수익을 보장하지 않으며, 샘플 수 부족(< 100건) 전략은 과적합 가능성이 높습니다.",
+    "이 랭킹은 OKX USDT-SWAP 1시간 과거 데이터 백테스트 기반입니다. 유니버스에는 상장 폐지된 페어도 포함 (생존자 편향 없음). 미래 수익을 보장하지 않으며, 샘플 수 부족(< 100건) 전략은 과적합 가능성이 높습니다.",
   "ranking.footer_text":
     "마음에 드는 전략을 시뮬레이터에서 직접 파라미터 조정해보세요.",
   "ranking.try_sim": "시뮬레이터에서 직접 확인",
@@ -1018,7 +1018,7 @@ export const ko: Record<TranslationKey, string> = {
   "simulate.strategy_desc_momentum": "20캔들 최고가 돌파 — 대규모 손실",
   "simulate.view_all": "전체 5개 전략 보기",
   "simulate.disclaimer":
-    "시뮬레이션에는 거래당 0.05% 선물 수수료 + 0.02% 슬리피지가 포함됩니다. 과거 성과가 미래 수익을 보장하지 않습니다. 투자 조언이 아닙니다.",
+    "시뮬레이션은 OKX USDT-SWAP 1시간 캔들 데이터를 사용하며 거래당 0.05% 선물 수수료 + 0.02% 슬리피지를 포함합니다. 백테스트 유니버스에는 상장 폐지된 페어도 포함되어 있어 생존자 편향이 없습니다. 과거 성과가 미래 수익을 보장하지 않습니다. 투자 조언이 아닙니다.",
   "simulate.step1_title": "프리셋을 선택하거나 지표를 고르세요",
   "simulate.step1_desc": "14개 지표, AND/OR 로직",
   "simulate.step2_title": "진입 조건과 리스크를 설정하세요",
