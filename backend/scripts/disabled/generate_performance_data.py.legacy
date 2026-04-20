@@ -1,5 +1,22 @@
 #!/usr/bin/env python3
 """
+ARCHIVED 2026-04-20 — see backend/scripts/disabled/README.md
+
+Historical generate_performance_data.py. Archived because:
+  - AutoTrader was decommissioned 2026-04-18 (OP-4 in that day's audit)
+  - public/data/performance.json is now produced by
+    `backend/deploy/systemd/bin/update-performance.sh` via inline Python
+    (does NOT call this script)
+  - No caller (systemd / crontab / GitHub Actions) referenced this file
+    at the time of archiving — verified 2026-04-20
+
+Kept (not deleted) for:
+  - Historical reference if the AutoTrader data pipeline is ever revived
+  - Forensic value (hard-coded paths here reflect the original author's
+    development environment, which is documented context)
+
+--- original docstring below ---
+
 generate_performance_data.py
 
 AutoTrader 실거래 데이터에서 PRUVIQ 사이트용 performance.json을 생성한다.
