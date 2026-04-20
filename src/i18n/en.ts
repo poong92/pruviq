@@ -542,7 +542,7 @@ export const en = {
   "coins.tag": "COIN EXPLORER",
   "coins.title": "Browse All Coins",
   "coins.desc":
-    "Real-time market data for {coins}+ cryptocurrencies. Prices, market cap, volume, 7-day sparklines — updated every 15 minutes.",
+    "Real-time market data for {coins}+ cryptocurrencies from OKX USDT-SWAP. Prices, market cap, volume, 7-day sparklines — updated every 15 minutes.",
   "coins.search": "Search coins...",
   "coins.apply": "Apply Strategy",
   "coins.resim": "Re-simulate",
@@ -1622,9 +1622,11 @@ export const en = {
 
   // Coins page
   "coins.explore_next": "Found interesting coins? Test them in a strategy.",
-  "coins.noscript_title": "JavaScript required to browse coins.",
+  "coins.noscript_title": "Browse coins (JavaScript enables search + filter).",
   "coins.noscript_desc":
-    "Enable JavaScript to search and filter 240+ coins. Popular coins:",
+    "Full interactive search, sort, and filter for {coins}+ coins requires JavaScript. Without JS you can still follow these popular coin links:",
+  "coins.source_label": "Data: OKX USDT-SWAP",
+  "coins.last_refreshed": "Last refresh",
 
   // Changelog context callout
   "changelog.context_title": "What\u2019s versioned here?",
