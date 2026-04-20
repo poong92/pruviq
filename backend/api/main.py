@@ -923,6 +923,47 @@ async def health():
     )
 
 
+_OHLCV_STATUS_FILE = Path(
+    os.environ.get(
+        "PRUVIQ_OHLCV_STATUS_FILE",
+        "/opt/pruviq/shared/ohlcv_last_run.json",
+    )
+)
+
+
+def _refresh_ohlcv_metrics_from_status_file() -> None:
+    """Pull the OHLCV refresh summary written by update_ohlcv_okx.py and
+    expose it as Prometheus gauges. Called lazily from /metrics so the
+    data is at most one scrape interval stale.
+
+    Swallows all errors — this is an observability channel, not a
+    critical path. If the file is missing or corrupt the metrics just
+    stay at whatever they were previously (Grafana's staleness check on
+    `pruviq_ohlcv_last_run_timestamp_seconds` catches that)."""
+    if not _PROM_AVAILABLE:
+        return
+    try:
+        if not _OHLCV_STATUS_FILE.exists():
+            return
+        raw = json.loads(_OHLCV_STATUS_FILE.read_text())
+    except Exception:
+        return
+
+    ts = raw.get("timestamp")
+    if isinstance(ts, (int, float)):
+        _pm.OHLCV_LAST_RUN_TIMESTAMP.set(float(ts))
+    updated = raw.get("total_updated")
+    if isinstance(updated, int):
+        _pm.OHLCV_LAST_RUN_UPDATED.set(updated)
+
+    failures = raw.get("failures_by_reason") or {}
+    if isinstance(failures, dict):
+        # Zero-out known buckets first so a reason that went 5→0 in the
+        # latest run is reflected instead of leaving the old label at 5.
+        for reason in ("rate_limit", "network", "http_error", "delisted", "other"):
+            _pm.OHLCV_LAST_RUN_ERRORS.labels(reason=reason).set(float(failures.get(reason, 0)))
+
+
 @app.get("/metrics")
 async def metrics_endpoint():
     """Prometheus exposition. Safe to hit every 15-60s (Grafana Cloud
@@ -931,6 +972,9 @@ async def metrics_endpoint():
     concern later, add X-Metrics-Token header gate."""
     if not _PROM_AVAILABLE:
         raise HTTPException(503, "Prometheus instrumentation not available")
+    # Pull OHLCV status right before rendering so the gauge reflects the
+    # most recent one-shot run, not process-startup state.
+    _refresh_ohlcv_metrics_from_status_file()
     body, content_type = _pm.render_exposition()
     return Response(content=body, media_type=content_type)
 

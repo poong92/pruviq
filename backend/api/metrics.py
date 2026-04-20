@@ -106,6 +106,33 @@ AUTO_SESSIONS_ENABLED = Gauge(
 )
 
 
+# ── OHLCV refresh observability (2026-04-20) ──────────────────
+#
+# The OHLCV update script (update_ohlcv_okx.py) runs every 4h as a
+# one-shot systemd oneshot. Because it isn't a long-lived process, it
+# can't host a /metrics endpoint of its own. Instead it writes a status
+# JSON at PRUVIQ_OHLCV_STATUS_FILE; /metrics on this API process reads
+# it (via _refresh_ohlcv_metrics_from_status_file below) and re-emits
+# as gauges so Alloy/Prometheus/Grafana can alert on staleness or
+# per-reason failure surges.
+
+OHLCV_LAST_RUN_TIMESTAMP = Gauge(
+    "pruviq_ohlcv_last_run_timestamp_seconds",
+    "Unix timestamp of the last completed OHLCV refresh run",
+)
+
+OHLCV_LAST_RUN_ERRORS = Gauge(
+    "pruviq_ohlcv_last_run_failures",
+    "Per-symbol failures from the last OHLCV refresh run, labeled by reason",
+    ["reason"],
+)
+
+OHLCV_LAST_RUN_UPDATED = Gauge(
+    "pruviq_ohlcv_last_run_updated_symbols",
+    "How many symbol CSVs actually grew in the last refresh (progress signal)",
+)
+
+
 def render_exposition() -> tuple[bytes, str]:
     """Return (body, content_type) for the /metrics endpoint."""
     return generate_latest(), CONTENT_TYPE_LATEST
