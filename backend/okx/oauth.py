@@ -202,6 +202,10 @@ async def exchange_code(code: str, state: str, domain: str = "") -> tuple[str, s
         "grant_type": "authorization_code",
         "redirect_uri": OKX_REDIRECT_URI,
     }
+    # CodeQL py/clear-text-logging-sensitive-data: false positive. `OKX_OAUTH_TOKEN`
+    # is the public endpoint URL (`https://www.okx.com/api/v5/users/oauth/...`),
+    # not a token/secret. The `data` dict below is NEVER logged — only the URL
+    # and response shape flags (has_access, has_refresh) are emitted.
     logger.warning("→ OKX token request url=%s", OKX_OAUTH_TOKEN)
     async with httpx.AsyncClient() as client:
         resp = await client.post(OKX_OAUTH_TOKEN, data=data, timeout=15)

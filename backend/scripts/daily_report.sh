@@ -2,7 +2,7 @@
 # PRUVIQ — Daily Market Report Generator
 # Uses Ollama qwen2.5:32b to generate a daily market report.
 #
-# Crontab: 0 6 * * * /Users/jepo/pruviq/backend/scripts/daily_report.sh
+# Crontab: 0 6 * * * $PRUVIQ_REPO/backend/scripts/daily_report.sh
 # Output: ~/pruviq-reports/YYYY-MM-DD.md (for human review)
 
 set -euo pipefail

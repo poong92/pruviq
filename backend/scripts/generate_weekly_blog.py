@@ -9,7 +9,7 @@ Usage:
 
 Cron:
     # Monday 06:00 UTC (15:00 KST)
-    0 6 * * 1 cd /Users/jepo/pruviq && /usr/bin/python3 backend/scripts/generate_weekly_blog.py >> /Users/jepo/logs/weekly-blog.log 2>&1
+    0 6 * * 1 cd $PRUVIQ_REPO && /usr/bin/python3 backend/scripts/generate_weekly_blog.py >> $HOME/logs/weekly-blog.log 2>&1
 """
 
 from __future__ import annotations

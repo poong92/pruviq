@@ -1,0 +1,21 @@
+# .mailmap — map legacy author/committer emails to GitHub's anonymized form.
+#
+# Effect: every past commit shown in the GitHub web UI, `git log --use-mailmap`,
+# `git shortlog`, and GitHub's contributor graph will display the canonical
+# entry (first column) instead of the original (second column).
+#
+# This does NOT rewrite history. Raw `git log` still shows the original
+# emails; the mapping only affects tools that honour .mailmap. That's a
+# deliberate trade-off: rewriting 3,080 commits would invalidate every
+# existing PR / merge commit / Merkle-2 audit timeline reference.
+#
+# Format: <canonical-name> <canonical-email> <legacy-email>
+
+# Main author — collapse three personal emails onto the GitHub-noreply form
+poong92 <112241374+poong92@users.noreply.github.com> <poong92@gmail.com>
+poong92 <112241374+poong92@users.noreply.github.com> <jplee@cafe24corpai.com>
+poong92 <112241374+poong92@users.noreply.github.com> <jplee@jpleeui-MacBookPro.local>
+
+# Automation bot — collapse variants onto the public contact
+PRUVIQ Bot <pruviq-bot@pruviq.com> <pruviq-bot@local>
+PRUVIQ Bot <pruviq-bot@pruviq.com> <pruviq-bot@example.com>
