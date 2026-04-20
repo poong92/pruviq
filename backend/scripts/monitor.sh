@@ -3,9 +3,9 @@
 # Checks API and site availability, sends Telegram alerts on failure.
 #
 # Crontab (every 5 min):
-#   */5 * * * * /Users/jepo/pruviq/backend/scripts/monitor.sh >> ~/pruviq-monitor.log 2>&1
+#   */5 * * * * $PRUVIQ_REPO/backend/scripts/monitor.sh >> ~/pruviq-monitor.log 2>&1
 # Crontab (hourly full check):
-#   0 * * * * /Users/jepo/pruviq/backend/scripts/monitor.sh --full >> ~/pruviq-monitor.log 2>&1
+#   0 * * * * $PRUVIQ_REPO/backend/scripts/monitor.sh --full >> ~/pruviq-monitor.log 2>&1
 
 set -euo pipefail
 
