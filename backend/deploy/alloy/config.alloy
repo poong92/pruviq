@@ -1,0 +1,114 @@
+// PRUVIQ — Grafana Alloy config (source of truth; deploy to /etc/alloy/config.alloy on DO).
+//
+// What this does:
+//   1. Scrape /metrics on pruviq-api (:8080) every 60s → Grafana Cloud Prometheus
+//   2. Tail pruviq-api journald logs → Grafana Cloud Loki (NEW 2026-04-20)
+//
+// Deploy (on DO):
+//   sudo cp backend/deploy/alloy/config.alloy /etc/alloy/config.alloy
+//   sudo systemctl restart alloy
+//   sudo journalctl -u alloy -n 30 --no-pager  # verify "Done replaying WAL"
+//
+// Required env (in /etc/alloy/env.conf — see README.md):
+//   GRAFANA_REMOTE_WRITE_URL  — Prometheus push endpoint (ap-northeast-0)
+//   GRAFANA_USERNAME          — Prometheus instance ID (numeric)
+//   GRAFANA_API_TOKEN         — cloud-access policy token
+//   GRAFANA_LOKI_URL          — Loki push endpoint (NEW)
+//   GRAFANA_LOKI_USERNAME     — Loki instance ID (NEW; often different from Prometheus)
+
+
+// ── Prometheus metrics (existing) ────────────────────────────────────────────
+
+// Scrape our local pruviq-api /metrics endpoint (127.0.0.1:8080).
+// Private — no public exposure of /metrics required.
+prometheus.scrape "pruviq_api" {
+  targets = [{
+    __address__     = "127.0.0.1:8080",
+    __metrics_path__ = "/metrics",
+    job              = "pruviq-api",
+    instance         = "app-server-01",
+  }]
+  scrape_interval = "60s"
+  scrape_timeout  = "10s"
+  forward_to = [prometheus.remote_write.grafana_cloud.receiver]
+}
+
+// Push to Grafana Cloud Hosted Prometheus. Credentials from env file.
+prometheus.remote_write "grafana_cloud" {
+  endpoint {
+    url = sys.env("GRAFANA_REMOTE_WRITE_URL")
+    basic_auth {
+      username = sys.env("GRAFANA_USERNAME")
+      password = sys.env("GRAFANA_API_TOKEN")
+    }
+  }
+}
+
+
+// ── Loki log aggregation (NEW 2026-04-20) ────────────────────────────────────
+//
+// Tails systemd-journald for pruviq-* units + alloy itself, labels each line
+// with the unit name, forwards to Grafana Cloud Loki. Cardinality kept tight:
+// only 4 labels (unit, host, service_name, level) — don't add per-request IDs
+// or other high-cardinality fields here; they belong in the log body, not labels.
+//
+// Why: `/metrics` tells us "request latency p95 is 45s" but not WHICH symbol
+// caused the scan to hang. Logs do. Previously we'd SSH to DO and grep
+// journalctl; Loki makes that queryable from Grafana Cloud.
+
+loki.source.journal "pruviq_units" {
+  max_age       = "12h"          // bound catch-up on Alloy restart
+  path          = "/var/log/journal"
+  forward_to    = [loki.process.pruviq.receiver]
+  relabel_rules = loki.relabel.pruviq.rules
+  // journald matchers — only pruviq-* units + alloy self + litestream (we
+  // want to see the backup loop too). All other host noise is dropped.
+  // Unit list verified 2026-04-20 against `journalctl --since 24h` — every
+  // unit here produced log lines in the last day. Inactive units (okx-
+  // reconciler, update-performance timer disabled, alert@ template handlers
+  // currently dormant) are intentionally omitted to keep Loki ingest tight.
+  matches       = "_SYSTEMD_UNIT=pruviq-api.service _SYSTEMD_UNIT=pruviq-cloudflared.service _SYSTEMD_UNIT=pruviq-update-ohlcv.service _SYSTEMD_UNIT=pruviq-monitor.service _SYSTEMD_UNIT=pruviq-monitor-full.service _SYSTEMD_UNIT=pruviq-daily-ranking.service _SYSTEMD_UNIT=pruviq-staleness-watch.service _SYSTEMD_UNIT=pruviq-signal-telegram.service _SYSTEMD_UNIT=pruviq-sim-audit.service _SYSTEMD_UNIT=pruviq-api-watchdog.service _SYSTEMD_UNIT=alloy.service _SYSTEMD_UNIT=litestream.service"
+  labels = {
+    host = "app-server-01",
+  }
+}
+
+// Promote selected journald fields into Loki labels; drop the rest to keep
+// cardinality low. `__journal__systemd_unit` is the native field name.
+loki.relabel "pruviq" {
+  forward_to = []  // required field for loki.relabel; we don't forward here
+  rule {
+    source_labels = ["__journal__systemd_unit"]
+    target_label  = "unit"
+  }
+  rule {
+    source_labels = ["__journal_priority_keyword"]
+    target_label  = "level"
+  }
+}
+
+// Parse JSON-ish log lines (FastAPI + our custom warning logs). Any non-JSON
+// line passes through with the default labels; we don't crash on malformed.
+loki.process "pruviq" {
+  forward_to = [loki.write.grafana_cloud.receiver]
+
+  // Normalise priority keyword -> lowercase 5-char category, so Grafana
+  // filters work with `{level="error"}` etc.
+  stage.regex {
+    expression = "(?P<lvl>emerg|alert|crit|err|warning|notice|info|debug)"
+    source     = "level"
+  }
+  stage.labels {
+    values = { level = "lvl" }
+  }
+}
+
+loki.write "grafana_cloud" {
+  endpoint {
+    url = sys.env("GRAFANA_LOKI_URL")
+    basic_auth {
+      username = sys.env("GRAFANA_LOKI_USERNAME")
+      password = sys.env("GRAFANA_API_TOKEN")  // same token as Prometheus
+    }
+  }
+}
