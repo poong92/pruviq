@@ -26,13 +26,23 @@ interface RankingEntry {
   timeframe: string;
   low_sample: boolean;
   total_return?: number;
+  // See EN variant for why max_drawdown is optional + what scope it represents.
+  max_drawdown?: number;
   sl_pct: number;
   tp_pct: number;
 }
 interface RankingData {
   date: string;
+  generated_at?: string;
   top3: RankingEntry[];
   worst3: RankingEntry[];
+}
+
+function formatRankingTimestamp(iso?: string): string | null {
+  if (!iso) return null;
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return null;
+  return d.toISOString().replace('T', ' ').slice(0, 16) + ' UTC';
 }
 
 let ssrRanking: RankingData | null = null;
@@ -74,6 +84,11 @@ if (!ssrRanking) {
       <p class="text-[--color-text-muted] text-sm mb-1">
         {t('ranking.date_label').replace('{date}', today)}
       </p>
+      {ssrRanking?.generated_at && formatRankingTimestamp(ssrRanking.generated_at) && (
+        <p class="font-mono text-[11px] text-[--color-text-muted] opacity-70 mb-1">
+          {t('ranking.last_refreshed')}: {formatRankingTimestamp(ssrRanking.generated_at)}
+        </p>
+      )}
       <p class="text-[--color-text-muted] text-sm mb-8 max-w-2xl">
         {t('ranking.desc')}
       </p>
@@ -139,7 +154,7 @@ if (!ssrRanking) {
                       $1,000 &rarr; <span class={entry.total_return >= 0 ? 'text-[--color-up]' : 'text-[--color-red]'}>${Math.round(1000 * (1 + entry.total_return / 100)).toLocaleString()}</span>
                     </div>
                   )}
-                  <div class="grid grid-cols-3 gap-2 font-mono text-sm">
+                  <div class="grid grid-cols-4 gap-2 font-mono text-sm">
                     <div>
                       <p class="text-[--color-text-muted] text-xs mb-0.5">승률</p>
                       <p class={`font-bold text-base ${wrColor}`}>{entry.win_rate.toFixed(1)}%</p>
@@ -151,6 +166,12 @@ if (!ssrRanking) {
                       ) : (
                         <p class={`font-bold text-base ${pfColor}`}>{entry.profit_factor.toFixed(2)}</p>
                       )}
+                    </div>
+                    <div>
+                      <p class="text-[--color-text-muted] text-xs mb-0.5" title="최대 손실폭 — 개별 전략 기준">MDD</p>
+                      <p class="font-bold text-base text-[--color-text]">
+                        {entry.max_drawdown != null ? `${entry.max_drawdown.toFixed(1)}%` : '—'}
+                      </p>
                     </div>
                     <div>
                       <p class="text-[--color-text-muted] text-xs mb-0.5">거래 수</p>
@@ -178,9 +199,10 @@ if (!ssrRanking) {
                       <p class="text-[--color-text-muted] text-xs font-mono">{entry.timeframe}</p>
                     </div>
                   </div>
-                  <div class="grid grid-cols-3 gap-2 font-mono text-sm">
+                  <div class="grid grid-cols-4 gap-2 font-mono text-sm">
                     <div><p class="text-[--color-text-muted] text-xs mb-0.5">승률</p><p class={`font-bold ${wrColor}`}>{entry.win_rate.toFixed(1)}%</p></div>
                     <div><p class="text-[--color-text-muted] text-xs mb-0.5">PF</p>{entry.profit_factor >= 50 ? (<p class={`font-bold ${pfColor} cursor-help underline decoration-dotted`} title="PF 99.99로 제한됨 (거래 샘플 부족)">{entry.profit_factor.toFixed(2)} <span class="text-[0.6rem] font-normal text-[--color-text-muted]">(cap)</span></p>) : (<p class={`font-bold ${pfColor}`}>{entry.profit_factor.toFixed(2)}</p>)}</div>
+                    <div><p class="text-[--color-text-muted] text-xs mb-0.5" title="최대 손실폭 — 개별 전략 기준">MDD</p><p class="font-bold text-[--color-text]">{entry.max_drawdown != null ? `${entry.max_drawdown.toFixed(1)}%` : '—'}</p></div>
                     <div><p class="text-[--color-text-muted] text-xs mb-0.5">거래 수</p><p class="font-bold text-[--color-text]">{entry.total_trades}</p></div>
                   </div>
                 </div>

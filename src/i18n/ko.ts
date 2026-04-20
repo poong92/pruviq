@@ -833,6 +833,7 @@ export const ko: Record<TranslationKey, string> = {
   "ranking.open_sim": "시뮬레이터 열기",
   "ranking.strategy_lib": "전략 라이브러리",
   "ranking.leaderboard": "리더보드",
+  "ranking.last_refreshed": "최근 갱신",
   "ranking.disclaimer_note": "참고:",
   "ranking.disclaimer_text":
     "이 랭킹은 과거 데이터 백테스트 기반입니다. 미래 수익을 보장하지 않으며, 샘플 수 부족(< 100건) 전략은 과적합 가능성이 높습니다.",
