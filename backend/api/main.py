@@ -1031,12 +1031,38 @@ async def signals_live(top_n: int = 30):
     def _scan():
         return _signal_scanner.scan()
 
-    # 30s hard cap — this is a user-facing endpoint; better to return empty
-    # than to hold a request while the scanner thread is stuck.
+    # 30s hard cap — this is a user-facing endpoint; better to return stale
+    # cache (or empty) than hold a request while the scanner thread is stuck.
     try:
         signals = await asyncio.wait_for(asyncio.to_thread(_scan), timeout=30)
     except asyncio.TimeoutError:
-        logger.error("/signals/live scan exceeded 30s — returning empty")
+        # Scanner thread still running in background; its _cache holds the
+        # last successful scan result. Serve that rather than an empty array
+        # so the /signals page doesn't flip to "no signals right now" UX
+        # every time a scan briefly exceeds 30s. Cap at 1h — older than that
+        # is more misleading than honest-empty.
+        #
+        # NOTE (tactical fix): the root cause is signal_scanner running inside
+        # the uvicorn worker (CPU-bound). Architectural fix — moving the scanner
+        # to a dedicated systemd timer like daily-ranking — is tracked in
+        # memory/project_audit_sweep_20260419.md alongside #4 daily-ranking
+        # parallelization. Do NOT generalize this helper to auto-trade: that
+        # loop already handles its own timeout at main.py:266 and must NOT
+        # execute on stale cached signals (money loss).
+        cache = _signal_scanner._cache
+        cache_age = time.time() - _signal_scanner._cache_ts
+        if cache and cache_age < 3600:  # 1h staleness cap
+            logger.error(
+                "/signals/live scan exceeded 30s — serving stale cache "
+                "(count=%d, age=%ds)",
+                len(cache), int(cache_age),
+            )
+            return cache
+        logger.error(
+            "/signals/live scan exceeded 30s — cache empty or older than 1h "
+            "(cache_count=%d, cache_age=%ds) — returning []",
+            len(cache), int(cache_age),
+        )
         return []
     return signals
 
