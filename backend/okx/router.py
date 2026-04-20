@@ -14,6 +14,7 @@ from __future__ import annotations
 import logging
 import os
 import time
+from urllib.parse import quote as urlquote
 
 from typing import Optional
 
@@ -119,9 +120,15 @@ async def oauth_callback(
             error[:100], error_description[:200], bool(code), bool(state),
             str(request.url.query)[:300],
         )
+        # CodeQL js/incomplete-url-substring-sanitization / py/url-redirection:
+        # `error` comes from OKX-returned querystring — treat as user input.
+        # urllib.parse.quote() percent-encodes characters outside [A-Za-z0-9_.-~]
+        # so any control char / CRLF / angle-bracket in the value cannot break
+        # out of the querystring (prevents header injection + XSS in any
+        # downstream component that happens to render ?reason= unescaped).
         err_param = error or "no_code"
         return RedirectResponse(
-            url=f"{FRONTEND_URL}/dashboard?okx=error&reason={err_param[:50]}",
+            url=f"{FRONTEND_URL}/dashboard?okx=error&reason={urlquote(err_param[:50], safe='')}",
             status_code=302,
         )
     try:
@@ -630,7 +637,16 @@ async def admin_halt(request: Request):
     try:
         message = await execute_halt()
     except Exception as e:
-        logger.error("admin_halt execute_halt failed: %s", e)
-        raise HTTPException(500, f"halt execution failed: {e}")
+        # CodeQL py/stack-trace-exposure: previously the exception message
+        # was surfaced directly in the HTTP 500 body. Endpoint is
+        # admin-only so the immediate risk is low, but leaking exception
+        # type + internal path would still help an attacker who'd
+        # compromised the admin key. Log full detail server-side, return
+        # generic message — operator checks journalctl for root cause.
+        logger.error(
+            "admin_halt execute_halt failed: %s: %s",
+            e.__class__.__name__, e,
+        )
+        raise HTTPException(500, "halt execution failed — see server logs")
 
     return {"status": "halted", "message": message}
