@@ -1,8 +1,20 @@
 ---
 import Layout from '../../../layouts/Layout.astro';
 import { useTranslations } from '../../../i18n/index';
+import coinsStats from '../../../../public/data/coins-stats.json';
 
 const t = useTranslations('ko');
+
+// Same SSR data-freshness render pattern as /coins/index.astro — see that
+// file for the design note. Same source file, same format, identical on
+// both language variants so crawlers see consistent freshness signals.
+const generatedAt: string | null = (() => {
+  const iso = (coinsStats as { generated?: string }).generated;
+  if (!iso) return null;
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return null;
+  return d.toISOString().replace('T', ' ').slice(0, 16) + ' UTC';
+})();
 
 // Static top coins for noscript/Googlebot crawlability (85 coins)
 const TOP_COINS = [
@@ -40,8 +52,12 @@ const TOP_COINS = [
     <div class="max-w-7xl mx-auto px-6">
       <p class="font-mono text-[--color-accent] text-sm mb-3 tracking-wider">{t('coins.tag')}</p>
       <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-5">{t('coins.title')}</h1>
-      <p class="text-[--color-text-muted] text-lg md:text-xl mb-10 max-w-2xl leading-relaxed">
+      <p class="text-[--color-text-muted] text-lg md:text-xl mb-3 max-w-2xl leading-relaxed">
         {t('coins.desc')}
+      </p>
+      <p class="font-mono text-[11px] text-[--color-text-muted] opacity-70 mb-10">
+        {t('coins.source_label')}
+        {generatedAt && <> · {t('coins.last_refreshed')}: {generatedAt}</>}
       </p>
       <div id="coins-mount">
         <div class="animate-pulse space-y-4">

@@ -535,7 +535,7 @@ export const ko: Record<TranslationKey, string> = {
   "coins.tag": "코인 탐색기",
   "coins.title": "전체 코인 탐색",
   "coins.desc":
-    "{coins}개 이상 암호화폐의 실시간 시장 데이터. 가격, 시가총액, 거래량, 7일 차트 — 15분마다 갱신.",
+    "OKX USDT-SWAP 의 {coins}개 이상 암호화폐 실시간 시장 데이터. 가격, 시가총액, 거래량, 7일 차트 — 15분마다 갱신.",
   "coins.search": "코인 검색...",
   "coins.apply": "전략 적용",
   "coins.resim": "재시뮬레이션",
@@ -1586,9 +1586,12 @@ export const ko: Record<TranslationKey, string> = {
   // Coins page
   "coins.explore_next":
     "관심 있는 코인을 찾으셨나요? 전략에서 테스트해 보세요.",
-  "coins.noscript_title": "코인 목록을 보려면 JavaScript가 필요합니다.",
+  "coins.noscript_title":
+    "코인 둘러보기 (검색·필터는 JavaScript 로 활성화됩니다)",
   "coins.noscript_desc":
-    "{coins}개 이상의 코인을 탐색하려면 JavaScript를 활성화하세요. 인기 코인:",
+    "{coins}개 이상 코인의 전체 검색·정렬·필터 기능은 JavaScript 가 필요합니다. JS 없이도 아래 인기 코인 링크는 열 수 있습니다:",
+  "coins.source_label": "데이터: OKX USDT-SWAP",
+  "coins.last_refreshed": "최근 갱신",
 
   // Changelog context callout
   "changelog.context_title": "여기서 추적하는 버전은?",
