@@ -1,0 +1,185 @@
+# Disaster-Recovery Restore Drill — Litestream → Backblaze B2
+#
+# Why this exists:
+#   The Litestream replica to B2 (bucket: pruviq-backup, path: okx_sessions)
+#   has been running since 2026-03. It has NEVER been validated by an actual
+#   restore. "Backup exists" ≠ "restore works" — many production outages turn
+#   lethal because the first real restore attempt is during the incident.
+#   This drill forces a cold restore weekly on a clean Ubuntu runner, proves
+#   the data comes back parseable, and alerts on failure.
+#
+# What this does (no effect on production DB):
+#   1. Installs Litestream CLI on a disposable Ubuntu runner.
+#   2. Writes a read-only Litestream config pointing at the B2 replica using
+#      a separate Read-Only Application Key (secrets.B2_RESTORE_*) — NOT the
+#      write key DO uses for live backups.
+#   3. Restores okx_sessions.db into /tmp on the runner.
+#   4. Validates the restored DB with `PRAGMA integrity_check` and a
+#      row-count sanity check on the sessions table.
+#   5. On failure: posts a concise Telegram alert with the run URL.
+#
+# What this does NOT do:
+#   - Touch the live DB on DO.
+#   - Touch the live B2 replica (Read-Only key).
+#   - Replace the need for the architectural follow-ups (staging env,
+#     multi-region backup) tracked in memory/project_audit_sweep_20260419.md.
+#
+# Required secrets (added 2026-04-20):
+#   B2_RESTORE_KEY_ID     — Backblaze B2 Application Key ID (Read Only)
+#   B2_RESTORE_APP_KEY    — Backblaze B2 Application Key value
+#   B2_BUCKET_NAME        — "pruviq-backup" (as a secret for portability)
+#
+# Optional secrets (already present from other workflows):
+#   TG_BOT_TOKEN + TG_CHAT_ID — if absent, workflow still succeeds/fails
+#                                on its own merit; the alert step is skipped.
+
+name: DR Restore Drill
+
+on:
+  schedule:
+    # Every Sunday at 03:00 UTC (= 12:00 KST Sunday). Off-peak for DO;
+    # gives ops a predictable window to notice a failure alert.
+    - cron: "0 3 * * 0"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  # One drill at a time; a second dispatch while one is running overwrites.
+  group: dr-restore-drill
+  cancel-in-progress: true
+
+jobs:
+  restore-and-verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    env:
+      # Litestream 0.3.13 installs to /usr/local/bin/litestream. Pinning a
+      # version so a breaking release can't silently regress the drill.
+      LITESTREAM_VERSION: "0.3.13"
+      # Match DO's replica config exactly — any drift here means the drill
+      # tests a different backup path than prod actually writes to.
+      B2_REGION: "us-west-004"
+      B2_ENDPOINT: "s3.us-west-004.backblazeb2.com"
+      B2_PATH: "okx_sessions"
+
+    steps:
+      - name: Install Litestream
+        run: |
+          set -euo pipefail
+          cd /tmp
+          curl -fsSL -o litestream.tar.gz \
+            "https://github.com/benbjohnson/litestream/releases/download/v${LITESTREAM_VERSION}/litestream-v${LITESTREAM_VERSION}-linux-amd64.tar.gz"
+          tar -xzf litestream.tar.gz
+          sudo mv litestream /usr/local/bin/litestream
+          litestream version
+
+      - name: Write restore config
+        env:
+          B2_KEY_ID: ${{ secrets.B2_RESTORE_KEY_ID }}
+          B2_APP_KEY: ${{ secrets.B2_RESTORE_APP_KEY }}
+          B2_BUCKET: ${{ secrets.B2_BUCKET_NAME }}
+        run: |
+          set -euo pipefail
+          # A missing secret here = silent wrong-value misconfig. Fail loud.
+          : "${B2_KEY_ID:?B2_RESTORE_KEY_ID not set}"
+          : "${B2_APP_KEY:?B2_RESTORE_APP_KEY not set}"
+          : "${B2_BUCKET:?B2_BUCKET_NAME not set}"
+
+          # The `dbs.path` here is a placeholder — Litestream needs it to
+          # resolve the replica but we never write to it. The real restore
+          # destination is the -o flag in the next step.
+          cat > /tmp/litestream-restore.yml <<YAML
+          dbs:
+            - path: /tmp/placeholder.db
+              replicas:
+                - type: s3
+                  bucket: ${B2_BUCKET}
+                  path: ${B2_PATH}
+                  region: ${B2_REGION}
+                  endpoint: ${B2_ENDPOINT}
+                  access-key-id: ${B2_KEY_ID}
+                  secret-access-key: ${B2_APP_KEY}
+          YAML
+          # Sanity-check the YAML is well-formed without leaking secrets.
+          python3 -c "import yaml; yaml.safe_load(open('/tmp/litestream-restore.yml'))"
+          echo "Config written (${B2_BUCKET}/${B2_PATH} @ ${B2_REGION})."
+
+      - name: Restore DB from B2
+        id: restore
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/restored
+          # -o: output path on local disk. The replica URL mirrors the YAML
+          # we just wrote; Litestream picks up credentials from the config.
+          litestream restore \
+            -config /tmp/litestream-restore.yml \
+            -o /tmp/restored/okx_sessions.db \
+            /tmp/placeholder.db
+          ls -la /tmp/restored/
+          SIZE=$(stat -c %s /tmp/restored/okx_sessions.db)
+          echo "size=${SIZE}" >> "$GITHUB_OUTPUT"
+          echo "Restored DB size: ${SIZE} bytes"
+          # Empty DB = restore ran but produced nothing useful. Fail loud.
+          if [ "${SIZE}" -lt 1024 ]; then
+            echo "::error::Restored DB is < 1KB — restore likely failed silently."
+            exit 1
+          fi
+
+      - name: Verify SQLite integrity
+        run: |
+          set -euo pipefail
+          sudo apt-get install -y --no-install-recommends sqlite3 >/dev/null
+          DB=/tmp/restored/okx_sessions.db
+
+          # PRAGMA integrity_check: walks every B-tree page, every index
+          # entry. Returns "ok" if the file is consistent. A corrupt backup
+          # would return a list of errors here instead.
+          RESULT=$(sqlite3 "${DB}" "PRAGMA integrity_check;" | head -1)
+          echo "integrity_check: ${RESULT}"
+          if [ "${RESULT}" != "ok" ]; then
+            echo "::error::SQLite integrity_check failed: ${RESULT}"
+            exit 1
+          fi
+
+          # Sanity: the schema we expect must exist. Without this, a restore
+          # could produce a syntactically-valid but semantically-empty file
+          # (e.g. a stale zero-row snapshot) and the drill would pass anyway.
+          TABLES=$(sqlite3 "${DB}" ".tables")
+          echo "tables: ${TABLES}"
+          if ! echo "${TABLES}" | grep -qw "sessions"; then
+            echo "::error::Expected 'sessions' table not present. Tables found: ${TABLES}"
+            exit 1
+          fi
+
+          # Row count: the production DB has active OKX sessions. A zero-row
+          # restore would silently pass integrity_check + schema test but
+          # represent a broken backup. Require at least one row — well below
+          # prod (~5-10 active sessions) but above the empty-file case.
+          COUNT=$(sqlite3 "${DB}" "SELECT COUNT(*) FROM sessions;")
+          echo "sessions row count: ${COUNT}"
+          if [ "${COUNT}" -lt 1 ]; then
+            echo "::error::Zero rows in sessions table — backup looks empty."
+            exit 1
+          fi
+
+          echo "✅ Restore drill passed: integrity ok, schema ok, ${COUNT} sessions."
+
+      - name: Telegram alert on failure
+        # Only runs if a previous step failed. Uses the same pattern as
+        # deploy-backend.yml so ops recognise the format.
+        if: ${{ failure() }}
+        env:
+          TG_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
+          TG_CHAT: ${{ secrets.TG_CHAT_ID }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          if [ -z "${TG_TOKEN:-}" ] || [ -z "${TG_CHAT:-}" ]; then
+            echo "Telegram secrets not configured — skipping alert."
+            exit 0
+          fi
+          MSG=$'🚨 PRUVIQ DR restore drill FAILED.\nA Litestream → B2 restore did not produce a valid okx_sessions.db on a clean runner. This means the backup chain is broken — fix BEFORE the next real incident.\nRun: '"${RUN_URL}"
+          curl -sf -m 10 -X POST "https://api.telegram.org/bot${TG_TOKEN}/sendMessage" \
+            -d chat_id="${TG_CHAT}" --data-urlencode text="${MSG}" || true
