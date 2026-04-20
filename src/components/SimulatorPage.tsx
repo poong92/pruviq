@@ -122,7 +122,7 @@ const L = {
       "Past performance does not guarantee future results. This is not financial advice.",
     simNotes: [
       "No duplicate entries — if a coin already has an open position, new signals for that coin are skipped until it closes.",
-      "Fees included — results are net of trading fees (0.04%/side) and funding (0.01%/8h).",
+      "Fees included — results are net of trading fees (0.05%/side) and funding (0.01%/8h).",
       "Slippage 0.02% per side included — real fills may still differ from simulated prices.",
     ],
     simNotesTitle: "How it works",
@@ -339,7 +339,7 @@ const L = {
       "과거 성과가 미래 수익을 보장하지 않습니다. 이것은 투자 조언이 아닙니다.",
     simNotes: [
       "중복 진입 불가 — 코인에 열린 포지션이 있으면 청산될 때까지 새 신호는 무시됩니다.",
-      "수수료 포함 — 결과는 거래 수수료(0.04%/편도) + 펀딩(0.01%/8h) 차감 후 순수익입니다.",
+      "수수료 포함 — 결과는 거래 수수료(0.05%/편도) + 펀딩(0.01%/8h) 차감 후 순수익입니다.",
       "슬리피지 0.02%/편도 포함 — 실제 체결가는 시뮬레이션과 다를 수 있습니다.",
     ],
     simNotesTitle: "시뮬레이션 안내",

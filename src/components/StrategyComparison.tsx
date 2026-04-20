@@ -81,7 +81,7 @@ const labels = {
     noData: "Run comparison to see results.",
     error: "Failed to load strategies.",
     disclaimer:
-      "* All strategies simulated on 50 coins with identical fees (0.04% + 0.02% slippage). Past performance does not guarantee future results.",
+      "* All strategies simulated on 50 coins with identical fees (0.05% + 0.02% slippage). Past performance does not guarantee future results.",
     computeTime: "Computed in",
     useDefault: "Use each strategy's default SL/TP",
     view: "Details",
@@ -108,7 +108,7 @@ const labels = {
     noData: "비교를 실행하면 결과가 표시됩니다.",
     error: "전략 데이터 로딩 실패.",
     disclaimer:
-      "* 모든 전략은 50개 코인, 동일한 수수료(0.04% + 0.02% 슬리피지)로 시뮬레이션됩니다. 과거 성과는 미래 결과를 보장하지 않습니다.",
+      "* 모든 전략은 50개 코인, 동일한 수수료(0.05% + 0.02% 슬리피지)로 시뮬레이션됩니다. 과거 성과는 미래 결과를 보장하지 않습니다.",
     computeTime: "계산 시간",
     useDefault: "각 전략의 기본 SL/TP 사용",
     view: "자세히 보기",

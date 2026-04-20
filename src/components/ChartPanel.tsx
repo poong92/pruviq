@@ -238,7 +238,7 @@ export default function ChartPanel({
           <span class="font-mono text-sm font-bold">{chartSymbol}</span>
           <span class="text-[--color-text-muted] text-xs">{timeframe}</span>
           <span class="text-[--color-text-muted] text-[9px] font-mono opacity-50 hidden sm:inline">
-            Binance Futures
+            OKX USDT-SWAP
           </span>
         </div>
         <div class="flex items-center gap-1.5">

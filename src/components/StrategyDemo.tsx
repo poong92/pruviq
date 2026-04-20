@@ -57,7 +57,7 @@ const labels = {
     retry: "Retry",
     noData: "No data for this combination.",
     disclaimer:
-      "* Simulation includes 0.04% futures fees + 0.02% slippage per trade. Past performance does not guarantee future results.",
+      "* Simulation includes 0.05% futures fees + 0.02% slippage per trade. Past performance does not guarantee future results.",
     ctaTitle: "Run this strategy live?",
     ctaDesc:
       "You'll need an exchange account. Sign up through PRUVIQ to save on fees.",
@@ -78,7 +78,7 @@ const labels = {
     retry: "다시 시도",
     noData: "이 조합에 대한 데이터가 없습니다.",
     disclaimer:
-      "* 시뮬레이션은 0.04% 선물 수수료 + 0.02% 슬리피지를 포함합니다. 과거 성과는 미래 결과를 보장하지 않습니다.",
+      "* 시뮬레이션은 0.05% 선물 수수료 + 0.02% 슬리피지를 포함합니다. 과거 성과는 미래 결과를 보장하지 않습니다.",
     ctaTitle: "이 전략을 실제로 실행하려면?",
     ctaDesc:
       "거래소 계정이 필요합니다. PRUVIQ를 통해 가입하면 수수료를 절약할 수 있습니다.",

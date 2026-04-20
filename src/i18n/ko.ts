@@ -323,7 +323,7 @@ export const ko: Record<TranslationKey, string> = {
   "demo.error": "데모 데이터 로딩 실패.",
   "demo.no_data": "이 조합에 대한 데이터가 없습니다.",
   "demo.disclaimer":
-    "* 기본 파라미터 (SL=10%, TP=8%)는 현재 검증된 라이브 설정입니다. 시뮬레이션은 0.04% 선물 수수료 + 0.02% 슬리피지를 포함합니다. 과거 성과는 미래 결과를 보장하지 않습니다.",
+    "* 기본 파라미터 (SL=10%, TP=8%)는 현재 검증된 라이브 설정입니다. 시뮬레이션은 0.05% 선물 수수료 + 0.02% 슬리피지를 포함합니다. 과거 성과는 미래 결과를 보장하지 않습니다.",
   "demo.live_badge": "현재 라이브 설정",
   "demo.total_return": "총 수익률",
   "demo.trades_simulated": "건 시뮬레이션됨",
@@ -756,7 +756,7 @@ export const ko: Record<TranslationKey, string> = {
     "성과 데이터는 2년 이상의 과거 데이터를 사용한 백테스트에서 수집되며, 수수료와 슬리피지를 포함합니다. 대시보드가 로딩되지 않으면 JavaScript를 활성화하거나 새로고침해 주세요.",
   "perf.results_title": "백테스트 결과",
   "perf.results_desc":
-    "2년+, {coins}개 코인, 2,898건 거래. 0.08%/side 수수료 포함.",
+    "2년+, {coins}개 코인, 2,898건 거래. 0.05%/side 수수료 포함.",
   "perf.gap_title": "백테스트 vs 현실",
   "perf.gap_desc":
     "모든 백테스트에는 실거래와의 괴리가 있습니다. 직접 경험했고 — 한계를 초과했을 때 즉시 중단했습니다.",
@@ -849,7 +849,7 @@ export const ko: Record<TranslationKey, string> = {
   "compare.noscript_desc":
     "BB Squeeze SHORT, BB Squeeze LONG, RSI Reversal, MACD Momentum 등 5개 백테스트된 전략을 50개 코인에서 동일 조건으로 비교합니다. SL/TP 파라미터를 조정하고 승률, 수익 팩터, 최대 드로다운, 수익률을 나란히 확인하세요.",
   "compare.noscript_strategies":
-    "제공 전략: BB Squeeze SHORT (검증 완료, 실거래 중), BB Squeeze LONG, RSI Reversal LONG, MACD Momentum LONG, ATR Breakout LONG. 모두 0.04% 수수료 + 0.02% 슬리피지, 2년 이상 데이터로 시뮬레이션.",
+    "제공 전략: BB Squeeze SHORT (검증 완료, 실거래 중), BB Squeeze LONG, RSI Reversal LONG, MACD Momentum LONG, ATR Breakout LONG. 모두 0.05% 수수료 + 0.02% 슬리피지, 2년 이상 데이터로 시뮬레이션.",
 
   // Blog article CTA
   "blog.cta_title": "직접 전략을 테스트해 보시겠습니까?",
@@ -868,7 +868,7 @@ export const ko: Record<TranslationKey, string> = {
   "compare.desc":
     "동일한 조건, 동일한 데이터. 어떤 전략이 나에게 맞는지 확인하세요. SL/TP를 조정하면 5개 전략이 실시간으로 변합니다.",
   "compare.disclaimer":
-    "* 모든 전략은 50개 코인, 동일한 수수료(0.04% + 0.02% 슬리피지)로 시뮬레이션됩니다. 과거 성과는 미래 결과를 보장하지 않습니다.",
+    "* 모든 전략은 50개 코인, 동일한 수수료(0.05% + 0.02% 슬리피지)로 시뮬레이션됩니다. 과거 성과는 미래 결과를 보장하지 않습니다.",
   "compare.loading": "비교 데이터 로딩 중...",
   "compare.error": "비교 데이터 로딩 실패.",
   "compare.name": "전략",
@@ -1018,7 +1018,7 @@ export const ko: Record<TranslationKey, string> = {
   "simulate.strategy_desc_momentum": "20캔들 최고가 돌파 — 대규모 손실",
   "simulate.view_all": "전체 5개 전략 보기",
   "simulate.disclaimer":
-    "시뮬레이션에는 거래당 0.04% 선물 수수료 + 0.02% 슬리피지가 포함됩니다. 과거 성과가 미래 수익을 보장하지 않습니다. 투자 조언이 아닙니다.",
+    "시뮬레이션에는 거래당 0.05% 선물 수수료 + 0.02% 슬리피지가 포함됩니다. 과거 성과가 미래 수익을 보장하지 않습니다. 투자 조언이 아닙니다.",
   "simulate.step1_title": "프리셋을 선택하거나 지표를 고르세요",
   "simulate.step1_desc": "14개 지표, AND/OR 로직",
   "simulate.step2_title": "진입 조건과 리스크를 설정하세요",
@@ -1050,19 +1050,19 @@ export const ko: Record<TranslationKey, string> = {
   "methodology.backtest_title": "백테스트 방법",
   "methodology.data_label": "데이터",
   "methodology.data_desc":
-    "바이낸스 선물에서 수집한 2년 이상의 1시간 OHLCV 캔들 데이터. 모든 캔들은 완성된(종료된) 데이터만 사용하며, 선행 편향(look-ahead bias)을 방지하기 위해 미완성 데이터는 사용하지 않습니다.",
+    "OKX USDT-SWAP에서 수집한 2년 이상의 1시간 OHLCV 캔들 데이터. 모든 캔들은 완성된(종료된) 데이터만 사용하며, 선행 편향(look-ahead bias)을 방지하기 위해 미완성 데이터는 사용하지 않습니다.",
   "methodology.universe_label": "유니버스",
   "methodology.universe_desc":
-    "바이낸스에 상장된 {coins}개 이상의 USDT 무기한 선물 페어. 스테이블코인, 상장 폐지 코인, 유동성이 낮은 페어는 제외됩니다. 데일리 랭킹은 시가총액 상위 50개 코인 기준으로 산출됩니다. 정확한 수는 전략 버전에 따라 다릅니다.",
+    "OKX에 상장된 {coins}개 이상의 USDT 무기한 선물 페어. 스테이블코인, 상장 폐지 코인, 유동성이 낮은 페어는 제외됩니다. 데일리 랭킹은 시가총액 상위 50개 코인 기준으로 산출됩니다. 정확한 수는 전략 버전에 따라 다릅니다.",
   "methodology.execution_label": "체결",
   "methodology.execution_desc":
     "진입은 캔들 종가에서 체결되는 것으로 가정합니다. 이는 보수적인 가정입니다 — 실제 체결가는 타이밍과 호가창 깊이에 따라 소폭 차이가 날 수 있습니다.",
   "methodology.fees_label": "수수료",
   "methodology.fees_desc":
-    "편도 0.04% 테이커 수수료 (왕복 0.08%). 바이낸스 선물 VIP 0 등급 기본 수수료입니다.",
+    "편도 0.05% 테이커 수수료 (왕복 0.10%). OKX USDT-SWAP VIP 0 등급 기본 수수료입니다.",
   "methodology.slippage_label": "슬리피지",
   "methodology.slippage_desc":
-    "기본적으로 모델링하지 않습니다. 지정가 주문을 가정합니다. 바이낸스 선물에서 대부분의 거래의 진입 슬리피지는 일반적으로 0.05% 미만입니다.",
+    "기본적으로 모델링하지 않습니다. 지정가 주문을 가정합니다. OKX USDT-SWAP에서 대부분의 거래의 진입 슬리피지는 일반적으로 0.05% 미만입니다.",
   "methodology.position_label": "포지션 사이징",
   "methodology.position_desc":
     "거래당 고정 $60, 5배 레버리지 (명목가 $300). 복리 없음 — 계좌 잔고와 관계없이 매 거래마다 동일한 금액을 사용합니다.",
@@ -1536,7 +1536,7 @@ export const ko: Record<TranslationKey, string> = {
     "BB Squeeze SHORT 전략은 {display}에서 볼린저밴드 압축을 감지하고, 하향 돌파 시 숏 포지션에 진입합니다. 손절 10%, 익절 8%, 최대 48시간 보유합니다.",
   "coin_detail.faq_q2": "{name} 백테스트는 신뢰할 수 있나요?",
   "coin_detail.faq_a2":
-    "PRUVIQ 백테스트는 바이낸스 선물 2년 이상의 1시간 OHLCV 데이터를 사용합니다. 모든 결과는 Out-of-Sample 테스트와 몬테카를로 시뮬레이션(10,000회)으로 검증됩니다. Look-ahead bias 없이 완성된 캔들만 신호에 사용합니다.",
+    "PRUVIQ 백테스트는 OKX USDT-SWAP 2년 이상의 1시간 OHLCV 데이터를 사용합니다. 모든 결과는 Out-of-Sample 테스트와 몬테카를로 시뮬레이션(10,000회)으로 검증됩니다. Look-ahead bias 없이 완성된 캔들만 신호에 사용합니다.",
   "coin_detail.faq_q3": "{name} 시뮬레이션은 무료인가요?",
   "coin_detail.faq_a3":
     "네. PRUVIQ는 100% 무료입니다. 모든 지원 코인에서 BB Squeeze 전략을 시뮬레이션하고, 파라미터를 조정하고, 상세 에퀴티 커브와 거래 로그를 확인할 수 있습니다. 가입 불필요.",
@@ -1593,7 +1593,7 @@ export const ko: Record<TranslationKey, string> = {
   // Changelog context callout
   "changelog.context_title": "여기서 추적하는 버전은?",
   "changelog.context_desc":
-    '이 변경 기록은 바이낸스 선물에서 실시간 운영 중인 <strong class="text-[--color-text]">BB Squeeze SHORT 매매 전략</strong>을 추적합니다. 플랫폼 버전(웹사이트, 시뮬레이터, API)은 별도로 관리됩니다.',
+    '이 변경 기록은 OKX USDT-SWAP에서 실시간 운영 중인 <strong class="text-[--color-text]">BB Squeeze SHORT 매매 전략</strong>을 추적합니다. 플랫폼 버전(웹사이트, 시뮬레이터, API)은 별도로 관리됩니다.',
 
   // Meta: Privacy & Terms
   "meta.privacy_title": "개인정보처리방침 - 프루빅(PRUVIQ)",
