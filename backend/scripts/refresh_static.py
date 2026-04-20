@@ -13,7 +13,7 @@ Binance ticker: unlimited free API (no key needed, PUBLIC endpoint, weight 40)
 CoinGecko Free API: ~2,160 calls/month (3 calls x 1/hr x 24hr x 30d)
 
 NOTE: Binance Futures PUBLIC API does NOT affect AutoTrader bot.
-  - Different IPs: Mac Mini (172.30.1.16) vs DO server (167.172.81.145)
+  - Different hosts: Mac Mini (internal LAN) vs DO server (public)
   - AutoTrader uses Private API (different endpoints, different rate limits)
   - Weight budget: 40/2400 per minute = 1.7% (negligible)
 
