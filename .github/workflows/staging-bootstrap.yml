@@ -1,0 +1,119 @@
+# One-click staging-env bootstrap — runs on DO, never on prod deploy path.
+#
+# Purpose:
+#   Provision /opt/pruviq/staging/ on DO, write the staging .env from
+#   GitHub Secrets, install pruviq-api-staging.service via systemd, then
+#   enable+start it and health-check :8081. Separate from deploy-backend.yml
+#   so a bug in the staging path cannot break the prod deploy flow.
+#
+# When to run:
+#   - First time: immediately after PR #<this> merges, click "Run workflow".
+#   - After rotating OKX_SANDBOX_* secrets in GitHub: re-run to propagate.
+#   - After the staging systemd unit itself changes (backend/deploy/systemd/
+#     pruviq-api-staging.service): re-run so the new unit file is installed
+#     on the server. (daemon-reload + restart are handled idempotently.)
+#
+# When NOT to run:
+#   - On every code push — prod's deploy-backend.yml already updates
+#     /opt/pruviq/current/ which the staging service reads from.
+#
+# Secrets consumed:
+#   DO_HOST (GitHub Secret, shared w/ deploy-backend)
+#   OKX_SANDBOX_API_KEY
+#   OKX_SANDBOX_SECRET
+#   OKX_SANDBOX_PASSPHRASE
+
+name: Staging Bootstrap (DO)
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  # One bootstrap at a time. A second dispatch while one is running is
+  # safe (script is idempotent) but wasteful — just queue it.
+  group: staging-bootstrap
+  cancel-in-progress: false
+
+jobs:
+  bootstrap:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Setup SSH
+        env:
+          SSH_KEY: ${{ secrets.DO_SSH_PRIVATE_KEY }}
+        run: |
+          set -euo pipefail
+          : "${SSH_KEY:?DO_SSH_PRIVATE_KEY secret missing}"
+          mkdir -p ~/.ssh
+          echo "${SSH_KEY}" > ~/.ssh/id_ed25519
+          chmod 0600 ~/.ssh/id_ed25519
+          # Known-hosts: trust-on-first-use for DO's SSH key. Deploy
+          # workflow uses the same pattern — keep in sync if it changes.
+          ssh-keyscan -p 2222 -H "${{ secrets.DO_HOST }}" >> ~/.ssh/known_hosts 2>/dev/null
+
+      - name: Bootstrap /opt/pruviq/staging + install+enable unit
+        env:
+          DO_HOST: ${{ secrets.DO_HOST }}
+          STAGING_OKX_API_KEY: ${{ secrets.OKX_SANDBOX_API_KEY }}
+          STAGING_OKX_SECRET: ${{ secrets.OKX_SANDBOX_SECRET }}
+          STAGING_OKX_PASSPHRASE: ${{ secrets.OKX_SANDBOX_PASSPHRASE }}
+        run: |
+          set -euo pipefail
+          : "${DO_HOST:?DO_HOST secret missing}"
+          : "${STAGING_OKX_API_KEY:?OKX_SANDBOX_API_KEY secret missing}"
+          : "${STAGING_OKX_SECRET:?OKX_SANDBOX_SECRET secret missing}"
+          : "${STAGING_OKX_PASSPHRASE:?OKX_SANDBOX_PASSPHRASE secret missing}"
+
+          # Pipe the three creds to the server as env, then run the
+          # bootstrap script. We use `ssh ... bash -c 'env VAR=x VAR=y ...'`
+          # rather than `ssh ... env ...` so the secrets never land in
+          # the shell's command-line history on DO (which systemd's
+          # audit logger does capture for root sessions).
+          ssh -p 2222 -o StrictHostKeyChecking=yes root@"${DO_HOST}" \
+            "STAGING_OKX_API_KEY='${STAGING_OKX_API_KEY}' \
+             STAGING_OKX_SECRET='${STAGING_OKX_SECRET}' \
+             STAGING_OKX_PASSPHRASE='${STAGING_OKX_PASSPHRASE}' \
+             /opt/pruviq/current/backend/deploy/systemd/bin/staging-bootstrap.sh"
+
+      - name: Enable + start pruviq-api-staging.service
+        env:
+          DO_HOST: ${{ secrets.DO_HOST }}
+        run: |
+          set -euo pipefail
+          # `enable --now` = persistent across reboots + immediate start.
+          # Split from bootstrap step so the script stays CI-agnostic
+          # (operator can call it by hand too without auto-enabling).
+          ssh -p 2222 -o StrictHostKeyChecking=yes root@"${DO_HOST}" \
+            "systemctl enable --now pruviq-api-staging.service && \
+             sleep 4 && \
+             systemctl is-active pruviq-api-staging.service"
+
+      - name: Health-check staging :8081
+        env:
+          DO_HOST: ${{ secrets.DO_HOST }}
+        run: |
+          set -euo pipefail
+          # /health is internal-only (127.0.0.1). We SSH to the box and
+          # probe from there. 200 OK + valid JSON = staging is live.
+          RESULT=$(ssh -p 2222 -o StrictHostKeyChecking=yes root@"${DO_HOST}" \
+            "curl -sf -m 10 http://127.0.0.1:8081/health")
+          echo "staging /health → ${RESULT}"
+          echo "${RESULT}" | grep -q '"status":"ok"' || {
+            echo "::error::staging /health did not return status=ok"
+            exit 1
+          }
+
+      - name: Report
+        if: always()
+        env:
+          DO_HOST: ${{ secrets.DO_HOST }}
+        run: |
+          # Print the last 20 journal lines so a failed bootstrap has
+          # actionable context inline without a second SSH round trip.
+          ssh -p 2222 -o StrictHostKeyChecking=yes root@"${DO_HOST}" \
+            "journalctl -u pruviq-api-staging -n 20 --no-pager" \
+            || true
