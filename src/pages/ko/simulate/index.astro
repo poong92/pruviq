@@ -252,89 +252,19 @@ const simulateJsonLd = {
     </section>
   </noscript>
 
-  <div id="onboarding-tour-mount"></div>
-
   <script>
+    // Phase 2 swap: /ko/simulate now renders SimulatorV1 (new Quick Start UI).
+    // Legacy SimulatorPage kept at /simulate/legacy/ for preference access.
     import { h, render } from 'preact';
-    import SimulatorPage from '../../../components/SimulatorPage';
+    import SimulatorV1 from '../../../components/simulator/v1/SimulatorV1';
     import ErrorBoundary from '../../../components/ErrorBoundary';
-    import OnboardingTour from '../../../components/OnboardingTour';
 
     const mount = document.getElementById('simulator-mount');
     if (mount) {
-      render(h(ErrorBoundary, { name: 'Simulator', lang: 'ko' }, h(SimulatorPage, { lang: 'ko' })), mount);
-    }
-
-    const tourMount = document.getElementById('onboarding-tour-mount');
-    if (tourMount) {
-      render(h(OnboardingTour, { lang: 'ko' }), tourMount);
-    }
-
-    // ─── First-run guided experience ───
-    if (!localStorage.getItem('has-run-backtest')) {
-      // Auto-select first preset via URL if not already set
-      const url = new URL(window.location.href);
-      if (!url.searchParams.get('preset')) {
-        url.searchParams.set('preset', 'bb-squeeze-short');
-        window.history.replaceState(null, '', url.toString());
-        window.location.replace(url.toString());
-      } else {
-        // Show pulsing tooltip near the simulator
-        const tooltip = document.createElement('div');
-        tooltip.id = 'first-run-tooltip';
-        tooltip.innerHTML = `
-          <div style="position:fixed;bottom:24px;right:24px;z-index:9999;max-width:320px;
-            background:var(--color-accent);color:#fff;padding:12px 16px;border-radius:12px;
-            box-shadow:0 4px 24px rgba(0,0,0,0.3);font-size:14px;line-height:1.5;
-            animation:firstRunPulse 2s ease-in-out infinite;cursor:pointer;"
-            onclick="this.parentElement.remove()">
-            <p style="margin:0 0 4px;font-weight:bold;">여기를 클릭하면 몇 초 안에 첫 결과를 볼 수 있습니다</p>
-            <p style="margin:0;opacity:0.85;font-size:12px;">백테스트 실행 버튼을 누르면 몇 초 안에 첫 결과가 나옵니다</p>
-            <p style="margin:4px 0 0;opacity:0.6;font-size:11px;">닫기</p>
-          </div>
-        `;
-        document.body.appendChild(tooltip);
-
-        // Add pulse animation
-        const style = document.createElement('style');
-        style.textContent = `
-          @keyframes firstRunPulse {
-            0%, 100% { transform: scale(1); box-shadow: 0 4px 24px rgba(0,0,0,0.3); }
-            50% { transform: scale(1.03); box-shadow: 0 4px 32px rgba(0,0,0,0.4); }
-          }
-        `;
-        document.head.appendChild(style);
-
-        // Watch for backtest completion
-        const observer = new MutationObserver(() => {
-          const resultsEl = mount?.querySelector('[class*="results"]') ||
-            mount?.querySelector('[data-tab="summary"]') ||
-            mount?.querySelector('table');
-          if (resultsEl) {
-            localStorage.setItem('has-run-backtest', 'true');
-            tooltip.remove();
-            style.remove();
-            observer.disconnect();
-          }
-        });
-        if (mount) {
-          observer.observe(mount, { childList: true, subtree: true });
-        }
-
-        // Also listen for any successful fetch to /backtest endpoint
-        const origFetch = window.fetch;
-        window.fetch = async function(...args: Parameters<typeof fetch>) {
-          const res = await origFetch.apply(this, args);
-          const urlArg = typeof args[0] === 'string' ? args[0] : (args[0] as Request)?.url || '';
-          if (urlArg.includes('/backtest') && res.ok) {
-            localStorage.setItem('has-run-backtest', 'true');
-            const tip = document.getElementById('first-run-tooltip');
-            if (tip) tip.remove();
-            window.fetch = origFetch; // restore
-          }
-          return res;
-        };
-      }
+      render(
+        h(ErrorBoundary, { name: 'SimulatorV1', lang: 'ko' }, h(SimulatorV1, { lang: 'ko' })),
+        mount,
+      );
     }
   </script>
 </Layout>
