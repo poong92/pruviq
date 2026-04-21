@@ -1894,3 +1894,33 @@ a:not(.btn):not(.card-hover):not(nav a):hover {
   font-weight: 700;
   padding: 0 0.5rem;
 }
+
+/* ─── Reduced-motion global override ─────────────────────────────────
+ * Respects user's OS-level `prefers-reduced-motion: reduce` setting.
+ * Disables Tailwind animate-*, transitions, and scroll-triggered fades.
+ * Flagged by P4 accessibility audit (2026-04-22): animate-pulse/ping
+ * still running on landing + dashboard + signals under reduce mode.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .animate-pulse,
+  .animate-ping,
+  .animate-bounce,
+  .animate-spin {
+    animation: none !important;
+  }
+  /* Reveal sections — make them instantly visible instead of animating in */
+  .reveal,
+  .reveal-child > * {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}

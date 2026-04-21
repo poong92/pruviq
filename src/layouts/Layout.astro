@@ -472,7 +472,7 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
               </div>
             </div>
           ) : (
-            <a href={item.href} aria-current={isActive(item.match) ? "page" : undefined} class="transition-colors nav-slide-underline flex items-center gap-1.5" style={isActive(item.match) ? 'color:var(--color-accent);font-weight:500' : 'color:var(--color-text-muted)'}>{item.label}{item.badge && <span class="text-[9px] font-bold px-1 py-0.5 rounded bg-[--color-accent] text-white leading-none tracking-wide">{item.badge}</span>}</a>
+            <a href={item.href} aria-current={isActive(item.match) ? "page" : undefined} class="transition-colors nav-slide-underline inline-flex items-center gap-1.5 min-h-11" style={isActive(item.match) ? 'color:var(--color-accent);font-weight:500' : 'color:var(--color-text-muted)'}>{item.label}{item.badge && <span class="text-[9px] font-bold px-1 py-0.5 rounded bg-[--color-accent] text-white leading-none tracking-wide">{item.badge}</span>}</a>
           ))}
         </div>
         <!-- 3열: Lang (지구본) + Mobile hamburger (우측) -->
