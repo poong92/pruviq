@@ -6,23 +6,29 @@ import { useEffect, useState, useRef } from "preact/hooks";
 import type { RefObject } from "preact";
 import { COINS_ANALYZED } from "../config/site-stats";
 
+// 2026-04-22 QA sweep P3: previous mock numbers (WR 61.2 · PF 2.14 ·
+// 847 trades) did not match /performance/ (WR 68.6 · PF 2.22 · 2898
+// trades). Hero now mirrors the /performance SSoT verbatim so the
+// "Verify" headline is not undermined by the card below it.
+// Headline card is still labeled "Illustrative" because the equity
+// curve here is a hand-drawn schematic, not the real curve.
 const STATS = [
-  { label: "Win Rate", value: 61.2, suffix: "%", color: "var(--color-up)" },
-  { label: "Profit Factor", value: 2.14, suffix: "", color: "var(--color-up)" },
+  { label: "Win Rate", value: 68.6, suffix: "%", color: "var(--color-up)" },
+  { label: "Profit Factor", value: 2.22, suffix: "", color: "var(--color-up)" },
   {
     label: "Total Return",
-    value: 570.3,
+    value: 25.6,
     suffix: "%",
     color: "var(--color-up)",
     prefix: "+",
   },
   {
     label: "Max Drawdown",
-    value: 18.7,
+    value: 16.5,
     suffix: "%",
     color: "var(--color-red)",
   },
-  { label: "Trades", value: 847, suffix: "", color: "var(--color-text)" },
+  { label: "Trades", value: 2898, suffix: "", color: "var(--color-text)" },
   { label: "Sharpe", value: 1.82, suffix: "", color: "var(--color-up)" },
 ];
 
@@ -108,7 +114,7 @@ export default function SimulatorPreview() {
             BB Squeeze SHORT
           </span>
           <span class="text-[--color-text-muted] text-[10px]">
-            {COINS_ANALYZED} coins · 2yr
+            {COINS_ANALYZED} coins · 2yr · illustrative
           </span>
         </div>
         <div class="flex items-center gap-1.5">
