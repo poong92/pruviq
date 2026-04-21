@@ -102,6 +102,7 @@ export default function PresetGrid({ activePresetId, lang, onSelect }: Props) {
                   direction={p.direction}
                   label={label}
                   compact
+                  lang={lang}
                 />
               </div>
               <p class="hidden text-xs leading-snug text-zinc-400 sm:block">

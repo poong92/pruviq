@@ -2067,7 +2067,8 @@ export const ko: Record<TranslationKey, string> = {
   "trust.platform_data_age": "데이터 신선도",
 
   // /simulate 리디자인 Phase 1 — 퀵 스타트 온보딩
-  "simV2.hero.title": "대부분의 백테스트는 거짓말. 우리는 증거와 함께.",
+  "simV2.hero.title":
+    "대부분의 백테스트는 거짓말입니다. 우리는 증거를 공개합니다.",
   "simV2.hero.subtitle":
     "프리셋 하나 클릭. 실제 시뮬레이션. 실 OKX 계정 결과와 비교.",
   "simV2.hero.cta_quick": "프리셋 실행",
