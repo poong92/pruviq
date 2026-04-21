@@ -23,13 +23,14 @@ const skipInCI = !!process.env.CI;
 
 // ─── Helpers ──────────────────────────────────────────────────
 
-/** Opens simulator and waits for Preact hydration (lands on Quick Test by default).
- *  Uses event-based waits instead of hardcoded timeouts — reliable on slow CI runners.
+/** Opens the legacy builder (SimulatorPage) and waits for Preact hydration.
+ *  Phase 2 moved the legacy UI to /simulate/builder/ so the Quick Start
+ *  redesign could own /simulate/. These tests target the legacy surface.
  *  @param mock — when true, intercept all API + static data requests with fixtures */
 async function openSimulator(page: Page, mock = false) {
   if (mock) await mockPruviqApi(page);
-  // domcontentloaded + waitForFunction: production pages poll APIs → networkidle never resolves → 60s timeout
-  await page.goto("/simulate/", { waitUntil: "domcontentloaded" });
+  // Phase 2 routes: legacy SimulatorPage now lives at /simulate/builder/
+  await page.goto("/simulate/builder/", { waitUntil: "domcontentloaded" });
 
   // Wait for ModeSwitcher to fully hydrate: tablist exists AND all 3 tabs are visible.
   // waitForTimeout(1500) was too short on slow GitHub runners (hydration takes 3-5s).
@@ -1025,7 +1026,9 @@ test.describe("Simulator — Mobile UX", () => {
     isMobile,
   }) => {
     test.skip(!isMobile, "mobile only");
-    await page.goto("/simulate/", { waitUntil: "networkidle" });
+    // Legacy Chart/Config/Results mobile tabs belong to the legacy SimulatorPage
+    // which now lives at /simulate/builder/ post Phase 2 swap.
+    await page.goto("/simulate/builder/", { waitUntil: "networkidle" });
     await page.waitForTimeout(3000);
 
     // Mobile should have tab buttons

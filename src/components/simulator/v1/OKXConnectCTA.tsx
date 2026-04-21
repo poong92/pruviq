@@ -7,6 +7,7 @@ import {
   useTranslations,
   type Lang,
 } from "../../../i18n/index";
+import { emit } from "../../../lib/events";
 
 interface Props {
   lang: Lang;
@@ -32,17 +33,19 @@ export default function OKXConnectCTA({ lang, presetId }: Props) {
       <p class="mx-auto mb-5 max-w-xl text-sm leading-relaxed text-zinc-300">
         {t("simV2.cta.connect_body")}
       </p>
-      <div class="flex flex-wrap items-center justify-center gap-3">
+      <div class="flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
         <a
           href={href}
+          onClick={() => emit("cta.connect_clicked", { preset: presetId })}
           data-testid="sim-v1-cta-connect-btn"
-          class="inline-flex min-h-[44px] items-center rounded-lg bg-emerald-500 px-6 py-3 text-sm font-semibold text-zinc-950 transition hover:bg-emerald-400"
+          class="inline-flex min-h-[44px] items-center justify-center rounded-lg bg-emerald-500 px-6 py-3 text-sm font-semibold text-zinc-950 transition hover:bg-emerald-400"
         >
           {t("simV2.cta.connect_button")} →
         </a>
         <a
           href={trustHref}
-          class="inline-flex min-h-[44px] items-center rounded-lg border border-zinc-700 px-5 py-3 text-sm font-medium text-zinc-300 hover:border-zinc-500"
+          onClick={() => emit("cta.learn_more_clicked", { preset: presetId })}
+          class="inline-flex min-h-[44px] items-center justify-center rounded-lg border border-zinc-700 px-5 py-3 text-sm font-medium text-zinc-300 hover:border-zinc-500"
         >
           {t("simV2.cta.learn_more")}
         </a>

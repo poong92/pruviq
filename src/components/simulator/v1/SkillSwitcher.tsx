@@ -1,7 +1,8 @@
 // 3-mode pill switcher (Quick / Standard / Expert).
-// Phase 1 ships Quick fully; Standard/Expert show "Coming soon" tooltip
-// and link hint but don't enable to stay within scope.
+// Phase 3: Quick + Standard are tabs on this page; Expert is a link to
+// /simulate/builder/ (a separate route with indicator-level control).
 
+import { getLocalizedPath } from "../../../i18n/index";
 import {
   SIMULATOR_SKILL_MODES,
   SKILL_MODE_META,
@@ -17,6 +18,7 @@ interface Props {
 
 export default function SkillSwitcher({ mode, lang, onChange }: Props) {
   const t = useTranslations(lang);
+  const builderHref = getLocalizedPath("/simulate/builder/", lang);
 
   return (
     <div
@@ -28,7 +30,30 @@ export default function SkillSwitcher({ mode, lang, onChange }: Props) {
       {SIMULATOR_SKILL_MODES.map((m) => {
         const meta = SKILL_MODE_META[m];
         const active = mode === m;
-        const comingSoon = m !== "quick";
+        const baseClass = `relative min-h-[44px] rounded-md px-4 py-2 text-sm font-medium transition ${
+          active
+            ? "bg-emerald-500/15 text-emerald-300 ring-1 ring-emerald-400/40"
+            : "text-zinc-300 hover:bg-zinc-800"
+        }`;
+        const label = lang === "ko" ? meta.label.ko : meta.label.en;
+
+        if (m === "expert") {
+          return (
+            <a
+              key={m}
+              href={builderHref}
+              role="tab"
+              aria-selected={false}
+              data-testid={`sim-v1-skill-${m}`}
+              class={`${baseClass} inline-flex items-center gap-1`}
+            >
+              {label}
+              <span aria-hidden="true" class="text-xs text-zinc-400">
+                ↗
+              </span>
+            </a>
+          );
+        }
         return (
           <button
             key={m}
@@ -37,28 +62,9 @@ export default function SkillSwitcher({ mode, lang, onChange }: Props) {
             aria-selected={active}
             onClick={() => onChange(m)}
             data-testid={`sim-v1-skill-${m}`}
-            disabled={comingSoon}
-            title={
-              comingSoon
-                ? lang === "ko"
-                  ? "준비 중"
-                  : "Coming soon"
-                : undefined
-            }
-            class={`relative min-h-[44px] rounded-md px-4 py-2 text-sm font-medium transition ${
-              active
-                ? "bg-emerald-500/15 text-emerald-300 ring-1 ring-emerald-400/40"
-                : comingSoon
-                  ? "cursor-not-allowed text-zinc-500"
-                  : "text-zinc-300 hover:bg-zinc-800"
-            }`}
+            class={baseClass}
           >
-            {lang === "ko" ? meta.label.ko : meta.label.en}
-            {comingSoon && (
-              <span class="ml-1.5 align-middle text-[10px] text-zinc-500">
-                ·soon
-              </span>
-            )}
+            {label}
           </button>
         );
       })}
