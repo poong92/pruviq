@@ -356,7 +356,7 @@ export const en = {
     "Base tier (VIP 0). Referral discounts stack on top of VIP tiers.",
   "fees.card_binance_tag": "#1 VOLUME",
   "fees.card_binance_desc":
-    "Deepest order books. Lowest slippage. PRUVIQ simulations use Binance data.",
+    "Deepest order books. Lowest slippage. (PRUVIQ simulations now run on OKX USDT-SWAP data; Binance remains a popular venue for spot.)",
   "fees.card_bitget_tag": "COPY TRADING",
   "fees.card_bitget_desc":
     "Leading copy trading platform. Follow successful traders automatically.",
@@ -717,7 +717,7 @@ export const en = {
     "Every strategy on PRUVIQ goes through a rigorous backtesting pipeline before publication. No cherry-picked results — just transparent data.",
   "about.method1_title": "Historical Backtesting",
   "about.method1_desc":
-    "Test strategies against 2+ years of real market data across 500+ coins with realistic fee modeling.",
+    "Test strategies against 2+ years of real market data across {coins}+ coins with realistic fee modeling.",
   "about.method2_title": "Walk-Forward Validation",
   "about.method2_desc":
     "Out-of-sample testing to detect overfitting. If a strategy only works on past data, we kill it.",
@@ -1076,7 +1076,7 @@ export const en = {
     "0.05% taker fee per side (0.10% round-trip). This is the OKX USDT-SWAP default for VIP 0 tier.",
   "methodology.slippage_label": "Slippage",
   "methodology.slippage_desc":
-    "Not modeled by default. Limit orders are assumed. In practice, entry slippage is typically under 0.05% for most trades on OKX USDT-SWAP.",
+    "Modeled at a conservative 0.02% per fill (entry + exit). OKX USDT-SWAP real-world fills on liquid pairs run below this; the 0.02% buffer absorbs occasional wide books without inflating results.",
   "methodology.position_label": "Position Sizing",
   "methodology.position_desc":
     "Fixed $60 per trade with 5x leverage ($300 notional). No compounding — each trade uses the same dollar amount regardless of account equity.",
@@ -1606,7 +1606,7 @@ export const en = {
   "compare.row2_pruviq": "No code needed",
   "compare.row3_label": "Coins",
   "compare.row3_other": "1 coin at a time",
-  "compare.row3_pruviq": "235 coins at once",
+  "compare.row3_pruviq": "{coins} coins at once",
   "compare.row4_label": "Signup",
   "compare.row4_other": "Email + credit card",
   "compare.row4_pruviq": "No account needed",

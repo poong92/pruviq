@@ -352,7 +352,7 @@ export const ko: Record<TranslationKey, string> = {
     "기본 등급 (VIP 0). 추천 할인은 VIP 등급 할인 위에 추가 적용됩니다.",
   "fees.card_binance_tag": "거래량 1위",
   "fees.card_binance_desc":
-    "최대 유동성, 최저 슬리피지. PRUVIQ 시뮬레이션은 바이낸스 데이터 사용.",
+    "최대 유동성, 최저 슬리피지. (PRUVIQ 시뮬레이션은 OKX USDT-SWAP 데이터로 실행되며, 바이낸스는 여전히 스팟 거래에 많이 쓰입니다.)",
   "fees.card_bitget_tag": "카피 트레이딩",
   "fees.card_bitget_desc":
     "카피 트레이딩 선두 플랫폼. 성공한 트레이더를 자동으로 따라하기.",
@@ -708,7 +708,7 @@ export const ko: Record<TranslationKey, string> = {
     "PRUVIQ의 모든 전략은 공개 전 엄격한 백테스팅 파이프라인을 거칩니다. 체리피킹 없이 투명한 데이터만 제공합니다.",
   "about.method1_title": "히스토리컬 백테스팅",
   "about.method1_desc":
-    "500+ 코인의 2년 이상 실제 시장 데이터로 전략을 검증합니다. 현실적인 수수료 모델링 포함.",
+    "{coins}+ 코인의 2년 이상 실제 시장 데이터로 전략을 검증합니다. 현실적인 수수료 모델링 포함.",
   "about.method2_title": "워크포워드 검증",
   "about.method2_desc":
     "과적합을 감지하기 위한 표본 외 테스트. 과거 데이터에서만 작동하는 전략은 제거합니다.",
@@ -1063,7 +1063,7 @@ export const ko: Record<TranslationKey, string> = {
     "편도 0.05% 테이커 수수료 (왕복 0.10%). OKX USDT-SWAP VIP 0 등급 기본 수수료입니다.",
   "methodology.slippage_label": "슬리피지",
   "methodology.slippage_desc":
-    "기본적으로 모델링하지 않습니다. 지정가 주문을 가정합니다. OKX USDT-SWAP에서 대부분의 거래의 진입 슬리피지는 일반적으로 0.05% 미만입니다.",
+    "체결 건당 0.02% 보수적 모델링 (진입 + 청산). OKX USDT-SWAP 유동성 상위 페어의 실 체결은 대부분 이보다 낮지만, 0.02% 버퍼로 간헐적인 호가 스프레드 확대를 흡수해 결과를 부풀리지 않습니다.",
   "methodology.position_label": "포지션 사이징",
   "methodology.position_desc":
     "거래당 고정 $60, 5배 레버리지 (명목가 $300). 복리 없음 — 계좌 잔고와 관계없이 매 거래마다 동일한 금액을 사용합니다.",
