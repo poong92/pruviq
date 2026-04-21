@@ -247,10 +247,13 @@ groups:
           component: sqlite
 
       # ─────────────────────────────────────────────────────────
-      # 6. OHLCV refresh stale — last successful run older than 5h.
-      # Timer is every 4h, so >5h = one full cycle missed. Stronger
-      # signal than counting errors (catches "script stopped running
-      # entirely", which no error counter would detect).
+      # 6. OHLCV refresh stale — last successful run older than 2h.
+      # Timer is hourly (changed from 4h on 2026-04-21). >2h = at least
+      # one full cycle missed plus buffer. Stronger signal than counting
+      # errors (catches "script stopped running entirely", which no error
+      # counter would detect). Threshold tightened from 5h to 2h to match
+      # the new hourly cadence — otherwise we'd silently tolerate 3-4
+      # consecutive missed refreshes.
       # ─────────────────────────────────────────────────────────
       - uid: pruviq_ohlcv_stale
         title: PruviqOhlcvStale
@@ -262,7 +265,7 @@ groups:
             datasourceUid: ${DS_PROMETHEUS_UID}
             model:
               # time() is seconds since epoch; timestamp gauge is also
-              # epoch seconds. Difference > 18000 = 5 hours.
+              # epoch seconds. Difference > 7200 = 2 hours.
               expr: (time() - pruviq_ohlcv_last_run_timestamp_seconds)
               intervalMs: 60000
               maxDataPoints: 43200
@@ -273,7 +276,7 @@ groups:
             datasourceUid: __expr__
             model:
               conditions:
-                - evaluator: { params: [18000], type: gt }
+                - evaluator: { params: [7200], type: gt }
                   operator: { type: and }
                   query: { params: [C] }
                   reducer: { params: [], type: last }
@@ -286,7 +289,7 @@ groups:
         execErrState: Error
         for: 10m
         annotations:
-          summary: "OHLCV refresh hasn't run for 5+ hours"
+          summary: "OHLCV refresh hasn't run for 2+ hours"
           description: "pruviq-update-ohlcv timer (every 4h) appears stopped. Check `ssh DO 'systemctl status pruviq-update-ohlcv.timer'` and the status file at /opt/pruviq/shared/ohlcv_last_run.json."
         labels:
           severity: warning

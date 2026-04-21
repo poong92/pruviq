@@ -762,7 +762,7 @@ export const en = {
   "perf.period_label": "Period",
   "perf.period_val": "Jan 2024 — Feb 2026",
   "perf.note":
-    "Performance data is from backtests using 2+ years of historical data with realistic fees and slippage. If the dashboard is not loading, please enable JavaScript or try refreshing.",
+    "Performance data is from backtests using 2+ years of OKX USDT-SWAP historical data with realistic fees and slippage. The backtest universe includes delisted and once-listed pairs — we do not drop them after the fact, so survivorship bias is not hiding in these numbers. If the dashboard is not loading, please enable JavaScript or try refreshing.",
   "perf.results_title": "Backtest Results",
   "perf.results_desc":
     "2+ years, {coins} coins, 2,898 trades. Includes 0.05%/side fees.",
@@ -844,7 +844,7 @@ export const en = {
   "ranking.last_refreshed": "Last refresh",
   "ranking.disclaimer_note": "Note:",
   "ranking.disclaimer_text":
-    "This ranking is based on historical backtests. Past performance does not guarantee future returns. Strategies with fewer than 100 trades (< 100) may be overfitted.",
+    "This ranking is based on historical backtests on OKX USDT-SWAP 1-hour data. The universe includes delisted pairs (no survivorship bias). Past performance does not guarantee future returns. Strategies with fewer than 100 trades (< 100) may be overfitted.",
   "ranking.footer_text":
     "Adjust parameters for any strategy directly in the simulator.",
   "ranking.try_sim": "Try in Simulator",
@@ -1032,7 +1032,7 @@ export const en = {
     "20-candle high breakout — catastrophic loss",
   "simulate.view_all": "View all 5 strategies",
   "simulate.disclaimer":
-    "Simulations include 0.05% futures fees + 0.02% slippage per trade. Past performance does not guarantee future results. Not financial advice.",
+    "Simulations use OKX USDT-SWAP 1-hour candle data and include 0.05% futures fees + 0.02% slippage per trade. The backtest universe includes delisted and once-listed pairs to avoid survivorship bias. Past performance does not guarantee future results. Not financial advice.",
   "simulate.step1_title": "Choose a preset or pick indicators",
   "simulate.step1_desc": "14 indicators, AND/OR logic",
   "simulate.step2_title": "Set entry conditions and risk",
