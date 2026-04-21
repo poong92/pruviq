@@ -23,7 +23,7 @@ export default function SkillSwitcher({ mode, lang, onChange }: Props) {
       role="tablist"
       aria-label={t("simV2.skill.label")}
       class="inline-flex rounded-lg border border-zinc-800 bg-zinc-900/60 p-1"
-      data-testid="sim-v2-skill-switcher"
+      data-testid="sim-v1-skill-switcher"
     >
       {SIMULATOR_SKILL_MODES.map((m) => {
         const meta = SKILL_MODE_META[m];
@@ -36,7 +36,7 @@ export default function SkillSwitcher({ mode, lang, onChange }: Props) {
             type="button"
             aria-selected={active}
             onClick={() => onChange(m)}
-            data-testid={`sim-v2-skill-${m}`}
+            data-testid={`sim-v1-skill-${m}`}
             disabled={comingSoon}
             title={
               comingSoon

@@ -27,7 +27,7 @@ export default function PresetGrid({ activePresetId, lang, onSelect }: Props) {
       </div>
       <div
         class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
-        data-testid="sim-v2-preset-grid"
+        data-testid="sim-v1-preset-grid"
       >
         {SIMULATOR_PRESETS.map((p) => {
           const risk = RISK_TOKENS[p.risk];
@@ -41,7 +41,7 @@ export default function PresetGrid({ activePresetId, lang, onSelect }: Props) {
               type="button"
               aria-pressed={isActive}
               onClick={() => onSelect(p.id)}
-              data-testid={`sim-v2-preset-${p.id}`}
+              data-testid={`sim-v1-preset-${p.id}`}
               class={`group relative flex min-h-[168px] flex-col gap-3 rounded-xl border p-4 text-left transition ${
                 isActive
                   ? "border-emerald-400 bg-emerald-400/5 ring-2 ring-emerald-400/40"

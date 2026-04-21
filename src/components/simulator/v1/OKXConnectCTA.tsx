@@ -24,7 +24,7 @@ export default function OKXConnectCTA({ lang, presetId }: Props) {
     <section
       aria-label={t("simV2.cta.connect_heading")}
       class="rounded-xl border border-emerald-500/30 bg-emerald-500/5 p-6 text-center"
-      data-testid="sim-v2-okx-cta"
+      data-testid="sim-v1-okx-cta"
     >
       <h3 class="mb-2 text-xl font-bold text-zinc-100">
         {t("simV2.cta.connect_heading")}
@@ -35,7 +35,7 @@ export default function OKXConnectCTA({ lang, presetId }: Props) {
       <div class="flex flex-wrap items-center justify-center gap-3">
         <a
           href={href}
-          data-testid="sim-v2-cta-connect-btn"
+          data-testid="sim-v1-cta-connect-btn"
           class="inline-flex min-h-[44px] items-center rounded-lg bg-emerald-500 px-6 py-3 text-sm font-semibold text-zinc-950 transition hover:bg-emerald-400"
         >
           {t("simV2.cta.connect_button")} →

@@ -82,7 +82,7 @@ export default function ResultsPanel({ config, lang }: Props) {
   if (!config.presetId || state.kind === "idle") {
     return (
       <div
-        data-testid="sim-v2-results-empty"
+        data-testid="sim-v1-results-empty"
         class="rounded-lg border border-zinc-800 bg-zinc-900/40 p-6 text-center text-sm text-zinc-500"
       >
         {t("simV2.empty.pick_first")}
@@ -93,7 +93,7 @@ export default function ResultsPanel({ config, lang }: Props) {
   if (state.kind === "loading") {
     return (
       <div
-        data-testid="sim-v2-results-loading"
+        data-testid="sim-v1-results-loading"
         class="rounded-lg border border-zinc-800 bg-zinc-900/40 p-6 text-center text-sm text-zinc-400"
       >
         <span class="inline-block h-3 w-3 animate-pulse rounded-full bg-emerald-400" />
@@ -107,7 +107,7 @@ export default function ResultsPanel({ config, lang }: Props) {
       <div
         role="alert"
         aria-live="assertive"
-        data-testid="sim-v2-results-error"
+        data-testid="sim-v1-results-error"
         class="rounded-lg border border-rose-500/30 bg-rose-500/10 p-6 text-center text-sm text-rose-300"
       >
         {t("simV2.empty.error")}
@@ -122,7 +122,7 @@ export default function ResultsPanel({ config, lang }: Props) {
   const returnPositive = d.total_return_pct >= 0;
   return (
     <div
-      data-testid="sim-v2-results-ok"
+      data-testid="sim-v1-results-ok"
       class="rounded-lg border border-zinc-800 bg-zinc-900/60 p-5"
     >
       <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
@@ -130,25 +130,25 @@ export default function ResultsPanel({ config, lang }: Props) {
           label={lang === "ko" ? "총 수익률" : "Total return"}
           value={signed(d.total_return_pct)}
           tone={returnPositive ? "good" : "bad"}
-          testId="sim-v2-metric-return"
+          testId="sim-v1-metric-return"
         />
         <Metric
           label={lang === "ko" ? "승률" : "Win rate"}
           value={`${abbrev(d.win_rate, 1)}%`}
           tone="neutral"
-          testId="sim-v2-metric-winrate"
+          testId="sim-v1-metric-winrate"
         />
         <Metric
           label={lang === "ko" ? "수익 팩터" : "Profit factor"}
           value={abbrev(d.profit_factor, 2)}
           tone={d.profit_factor >= 1 ? "good" : "bad"}
-          testId="sim-v2-metric-pf"
+          testId="sim-v1-metric-pf"
         />
         <Metric
           label={lang === "ko" ? "최대 낙폭 (MDD)" : "Max drawdown"}
           value={`${abbrev(d.max_drawdown_pct, 1)}%`}
           tone="bad"
-          testId="sim-v2-metric-mdd"
+          testId="sim-v1-metric-mdd"
         />
       </div>
       <div class="mt-4 flex flex-wrap gap-4 border-t border-zinc-800 pt-3 font-mono text-[11px] text-zinc-400">

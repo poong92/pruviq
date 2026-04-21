@@ -9,7 +9,7 @@ interface Props {
 }
 
 // Source: /performance page live-vs-backtest summary block (owner approval
-// to display these aggregate numbers on /simulate/v2 per §21 decision 4).
+// to display these aggregate numbers on /simulate/v1 per §21 decision 4).
 // When the live feed is instrumented in Phase 2 this component will read
 // from /data/performance.json instead of constants.
 const SUMMARY = {
@@ -24,7 +24,7 @@ export default function TrustGapPanel({ lang }: Props) {
     <section
       aria-label={t("simV2.trust.gap_heading")}
       class="rounded-xl border border-emerald-500/20 bg-gradient-to-br from-emerald-500/5 to-zinc-900/60 p-5"
-      data-testid="sim-v2-trust-gap"
+      data-testid="sim-v1-trust-gap"
     >
       <h3 class="mb-3 text-sm font-semibold uppercase tracking-wide text-emerald-300">
         {t("simV2.trust.gap_heading")}
