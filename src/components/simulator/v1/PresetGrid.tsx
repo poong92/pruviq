@@ -79,7 +79,7 @@ export default function PresetGrid({ activePresetId, lang, onSelect }: Props) {
                     ✓ {t("simV2.presets.verified")}
                   </span>
                 ) : (
-                  <span class="inline-flex items-center rounded px-2 py-0.5 text-xs font-mono text-zinc-500">
+                  <span class="inline-flex items-center rounded px-2 py-0.5 text-xs font-mono text-zinc-400">
                     {lang === "ko" ? "백테스트만" : "Backtest only"}
                   </span>
                 )}
@@ -116,7 +116,7 @@ export default function PresetGrid({ activePresetId, lang, onSelect }: Props) {
                   {t("simV2.defaults.tp_label")}{" "}
                   <span class="text-emerald-400">{p.defaults.tp}%</span>
                 </span>
-                <span class="text-zinc-500">{p.defaults.coin}</span>
+                <span class="text-zinc-400">{p.defaults.coin}</span>
               </div>
             </button>
           );

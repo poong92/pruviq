@@ -53,7 +53,7 @@ export default function SimulatorV1({ lang }: Props) {
 
       <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <SkillSwitcher mode={config.mode} lang={lang} onChange={setMode} />
-        <div class="flex items-center gap-3 text-xs text-zinc-500">
+        <div class="flex items-center gap-3 text-xs text-zinc-400">
           <details class="group relative">
             <summary
               class="cursor-pointer select-none rounded border border-zinc-800 px-2 py-1 font-mono text-xs text-zinc-400 hover:border-zinc-600 hover:text-zinc-200"

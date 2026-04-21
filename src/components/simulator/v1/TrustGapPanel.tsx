@@ -49,7 +49,7 @@ export default function TrustGapPanel({ lang }: Props) {
         <h3 class="mb-2 text-sm font-semibold uppercase tracking-wide text-zinc-300">
           {t("simV2.trust.gap_heading")}
         </h3>
-        <p class="text-xs text-zinc-500">
+        <p class="text-xs text-zinc-400">
           {error
             ? isKo
               ? "실 성과 데이터 일시적으로 불가"
@@ -79,7 +79,7 @@ export default function TrustGapPanel({ lang }: Props) {
         <h3 class="text-sm font-semibold uppercase tracking-wide text-emerald-300">
           {isKo ? "실 OKX 성과 (라이브)" : "Live OKX performance"}
         </h3>
-        <span class="font-mono text-xs text-zinc-500">
+        <span class="font-mono text-xs text-zinc-400">
           {isKo ? "업데이트" : "updated"} {generated}
         </span>
       </div>
@@ -152,7 +152,7 @@ function Figure({
       data-testid={testId}
       class={`rounded-lg p-3 ${highlight ? "bg-emerald-500/10 ring-1 ring-emerald-400/30" : ""}`}
     >
-      <div class="mb-1 text-xs uppercase tracking-wide text-zinc-500">
+      <div class="mb-1 text-xs uppercase tracking-wide text-zinc-400">
         {label}
       </div>
       <div class={`font-mono text-xl font-semibold ${toneClass}`}>{value}</div>

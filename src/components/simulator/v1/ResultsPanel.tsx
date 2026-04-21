@@ -177,7 +177,7 @@ export default function ResultsPanel({ config, lang }: Props) {
     return (
       <SkeletonFrame testId="sim-v1-results-empty">
         <MetricGridSkeleton />
-        <div class="mt-4 border-t border-zinc-800 pt-3 text-center text-xs text-zinc-500">
+        <div class="mt-4 border-t border-zinc-800 pt-3 text-center text-xs text-zinc-400">
           {t("simV2.empty.pick_first")}
         </div>
       </SkeletonFrame>
@@ -209,7 +209,7 @@ export default function ResultsPanel({ config, lang }: Props) {
             <p class="text-sm font-semibold text-rose-200">
               {t("simV2.empty.error")}
             </p>
-            <details class="mt-1 text-xs text-rose-400/70">
+            <details class="mt-1 text-xs text-rose-300">
               <summary class="cursor-pointer font-mono text-xs">
                 {lang === "ko" ? "기술 상세" : "technical details"}
               </summary>
@@ -366,7 +366,7 @@ function Metric({
         : "text-zinc-100";
   return (
     <div data-testid={testId}>
-      <div class="mb-1 text-xs uppercase tracking-wide text-zinc-500">
+      <div class="mb-1 text-xs uppercase tracking-wide text-zinc-400">
         {label}
       </div>
       <div class={`font-mono text-2xl font-semibold tabular-nums ${toneClass}`}>
