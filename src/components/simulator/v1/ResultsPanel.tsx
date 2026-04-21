@@ -62,6 +62,11 @@ function buildVerdict(
   const pfMarginal = d.profit_factor >= 1 && d.profit_factor < 1.3;
   const mddSevere = d.max_drawdown_pct >= 30;
   const tradesLow = d.total_trades < 50;
+  // 2026-04-22 QA P2: thresholds tightened.
+  // - N<500 = statistically under-powered for crypto 4h backtests
+  // - Sharpe < 0.5 with profitable = marginal noise, not a real edge
+  const tradesUnderpowered = d.total_trades >= 50 && d.total_trades < 500;
+  const sharpeNoisy = d.sharpe_ratio < 0.5;
 
   if (!profitable || d.profit_factor < 1) {
     return {
@@ -77,8 +82,26 @@ function buildVerdict(
       tone: "neutral",
       text:
         lang === "ko"
-          ? `표본 부족 (${d.total_trades}건). 통계적 신뢰 제한적.`
-          : `Low sample (${d.total_trades} trades). Limited confidence.`,
+          ? `표본 극소 (${d.total_trades}건). 통계적 신뢰 거의 없음.`
+          : `Very low sample (${d.total_trades} trades). Almost no confidence.`,
+    };
+  }
+  if (tradesUnderpowered) {
+    return {
+      tone: "neutral",
+      text:
+        lang === "ko"
+          ? `표본 부족 (${d.total_trades}건, 500 미만). 워크포워드 검증 필요.`
+          : `Underpowered sample (${d.total_trades} trades, <500). Needs walk-forward validation.`,
+    };
+  }
+  if (sharpeNoisy) {
+    return {
+      tone: "neutral",
+      text:
+        lang === "ko"
+          ? `Sharpe ${d.sharpe_ratio.toFixed(2)} — 수익은 있지만 노이즈 수준. 실거래 권장 불가.`
+          : `Sharpe ${d.sharpe_ratio.toFixed(2)} — profitable but within noise. Not yet live-grade.`,
     };
   }
   if (pfMarginal) {
