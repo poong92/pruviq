@@ -32,13 +32,28 @@ export interface SimConfig {
   sl: number;
   tp: number;
   coin: string;
+  topN: number;
+  leverage: number;
+  feePct: number;
+  startDate: string;
+  endDate: string;
 }
 
 const SL_MIN = 1;
 const SL_MAX = 30;
 const TP_MIN = 1;
 const TP_MAX = 50;
+const TOPN_MIN = 1;
+const TOPN_MAX = 100;
+const LEV_MIN = 1;
+const LEV_MAX = 20;
+const FEE_MIN = 0;
+const FEE_MAX = 1;
 const DIRECTIONS: readonly PresetDirection[] = ["long", "short", "both"];
+
+const DEFAULT_TOP_N = 10;
+const DEFAULT_LEVERAGE = 5;
+const DEFAULT_FEE_PCT = 0.05;
 
 function clamp(value: number, min: number, max: number): number {
   if (!Number.isFinite(value)) return min;
@@ -68,7 +83,18 @@ function parseNum(raw: string | null, min: number, max: number): number | null {
   return clamp(n, min, max);
 }
 
-function defaultsFromPreset(presetId: string | null): Omit<SimConfig, "mode"> {
+// Accept YYYY-MM-DD only; anything else rejects.
+function parseDate(raw: string | null): string {
+  if (!raw) return "";
+  return /^\d{4}-\d{2}-\d{2}$/.test(raw) ? raw : "";
+}
+
+type PresetDefaults = Pick<
+  SimConfig,
+  "presetId" | "direction" | "sl" | "tp" | "coin"
+>;
+
+function defaultsFromPreset(presetId: string | null): PresetDefaults {
   const preset = presetId ? findPreset(presetId) : undefined;
   if (preset) {
     return {
@@ -89,9 +115,21 @@ function defaultsFromPreset(presetId: string | null): Omit<SimConfig, "mode"> {
   };
 }
 
+function buildDefaults(presetId: string | null): SimConfig {
+  return {
+    mode: DEFAULT_SKILL_MODE,
+    ...defaultsFromPreset(presetId),
+    topN: DEFAULT_TOP_N,
+    leverage: DEFAULT_LEVERAGE,
+    feePct: DEFAULT_FEE_PCT,
+    startDate: "",
+    endDate: "",
+  };
+}
+
 function readFromURL(): SimConfig {
   if (typeof window === "undefined") {
-    return { mode: DEFAULT_SKILL_MODE, ...defaultsFromPreset(null) };
+    return buildDefaults(null);
   }
   const params = new URLSearchParams(window.location.search);
   const rawPreset = params.get("preset");
@@ -104,14 +142,39 @@ function readFromURL(): SimConfig {
   const tp = parseNum(params.get("tp"), TP_MIN, TP_MAX) ?? base.tp;
   const coinRaw = params.get("coin");
   const coin = coinRaw ? coinRaw.toUpperCase().slice(0, 12) : base.coin;
+  const topN =
+    parseNum(params.get("topN"), TOPN_MIN, TOPN_MAX) ?? DEFAULT_TOP_N;
+  const leverage =
+    parseNum(params.get("lev"), LEV_MIN, LEV_MAX) ?? DEFAULT_LEVERAGE;
+  const feePct =
+    parseNum(params.get("fee"), FEE_MIN, FEE_MAX) ?? DEFAULT_FEE_PCT;
+  const startDate = parseDate(params.get("from"));
+  const endDate = parseDate(params.get("to"));
 
-  return { mode, presetId: base.presetId, direction, sl, tp, coin };
+  return {
+    mode,
+    presetId: base.presetId,
+    direction,
+    sl,
+    tp,
+    coin,
+    topN,
+    leverage,
+    feePct,
+    startDate,
+    endDate,
+  };
 }
 
 function writeToURL(next: SimConfig): void {
   if (typeof window === "undefined") return;
   const url = new URL(window.location.href);
   const p = url.searchParams;
+  const setOrDefault = (key: string, value: string, def: string) => {
+    if (value === def) p.delete(key);
+    else p.set(key, value);
+  };
+
   if (next.presetId) p.set("preset", next.presetId);
   else p.delete("preset");
   p.set("dir", next.direction);
@@ -120,9 +183,25 @@ function writeToURL(next: SimConfig): void {
   p.set("coin", next.coin);
   if (next.mode !== DEFAULT_SKILL_MODE) p.set("mode", next.mode);
   else p.delete("mode");
+  setOrDefault("topN", String(next.topN), String(DEFAULT_TOP_N));
+  setOrDefault("lev", String(next.leverage), String(DEFAULT_LEVERAGE));
+  setOrDefault("fee", String(next.feePct), String(DEFAULT_FEE_PCT));
+  if (next.startDate) p.set("from", next.startDate);
+  else p.delete("from");
+  if (next.endDate) p.set("to", next.endDate);
+  else p.delete("to");
+
   const qs = p.toString();
   const newPath = `${url.pathname}${qs ? `?${qs}` : ""}${url.hash}`;
   window.history.replaceState(null, "", newPath);
+}
+
+export interface StandardPatch {
+  topN?: number;
+  leverage?: number;
+  feePct?: number;
+  startDate?: string;
+  endDate?: string;
 }
 
 export interface UseSimConfig {
@@ -133,6 +212,7 @@ export interface UseSimConfig {
   setSL: (sl: number) => void;
   setTP: (tp: number) => void;
   setCoin: (coin: string) => void;
+  setStandard: (patch: StandardPatch) => void;
   reset: () => void;
 }
 
@@ -178,12 +258,24 @@ export function useSimConfig(): UseSimConfig {
     setConfig((prev) => ({ ...prev, coin: clean }));
   }, []);
 
+  const setStandard = useCallback((patch: StandardPatch) => {
+    setConfig((prev) => {
+      const next = { ...prev };
+      if (patch.topN !== undefined)
+        next.topN = clamp(patch.topN, TOPN_MIN, TOPN_MAX);
+      if (patch.leverage !== undefined)
+        next.leverage = clamp(patch.leverage, LEV_MIN, LEV_MAX);
+      if (patch.feePct !== undefined)
+        next.feePct = clamp(patch.feePct, FEE_MIN, FEE_MAX);
+      if (patch.startDate !== undefined)
+        next.startDate = parseDate(patch.startDate);
+      if (patch.endDate !== undefined) next.endDate = parseDate(patch.endDate);
+      return next;
+    });
+  }, []);
+
   const reset = useCallback(() => {
-    const defaults = {
-      mode: DEFAULT_SKILL_MODE,
-      ...defaultsFromPreset(QUICK_START_DEFAULT_PRESET_ID),
-    };
-    setConfig(defaults);
+    setConfig(buildDefaults(QUICK_START_DEFAULT_PRESET_ID));
   }, []);
 
   return {
@@ -194,6 +286,7 @@ export function useSimConfig(): UseSimConfig {
     setSL,
     setTP,
     setCoin,
+    setStandard,
     reset,
   };
 }

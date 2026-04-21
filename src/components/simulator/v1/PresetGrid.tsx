@@ -7,6 +7,7 @@ import {
   DIRECTION_TOKENS,
 } from "../../../config/simulator-tokens";
 import { useTranslations, type Lang } from "../../../i18n/index";
+import EntryVisualizer from "./EntryVisualizer";
 
 interface Props {
   activePresetId: string | null;
@@ -42,7 +43,7 @@ export default function PresetGrid({ activePresetId, lang, onSelect }: Props) {
               aria-pressed={isActive}
               onClick={() => onSelect(p.id)}
               data-testid={`sim-v1-preset-${p.id}`}
-              class={`group relative flex min-h-[168px] flex-col gap-3 rounded-xl border p-4 text-left transition ${
+              class={`group relative flex min-h-[280px] flex-col gap-2 rounded-xl border p-4 text-left transition ${
                 isActive
                   ? "border-emerald-400 bg-emerald-400/5 ring-2 ring-emerald-400/40"
                   : "border-zinc-800 bg-zinc-900/60 hover:border-zinc-600 hover:bg-zinc-900"
@@ -75,6 +76,14 @@ export default function PresetGrid({ activePresetId, lang, onSelect }: Props) {
                 <span class="text-base font-semibold leading-tight">
                   {label}
                 </span>
+              </div>
+              <div class="overflow-hidden rounded-md">
+                <EntryVisualizer
+                  presetId={p.id}
+                  direction={p.direction}
+                  label={label}
+                  compact
+                />
               </div>
               <p class="text-xs leading-snug text-zinc-400">{tagline}</p>
               <div class="mt-auto flex gap-3 border-t border-zinc-800 pt-2 font-mono text-[11px] text-zinc-400">

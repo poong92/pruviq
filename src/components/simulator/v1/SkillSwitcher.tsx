@@ -1,6 +1,6 @@
 // 3-mode pill switcher (Quick / Standard / Expert).
-// Phase 1 ships Quick fully; Standard/Expert show "Coming soon" tooltip
-// and link hint but don't enable to stay within scope.
+// Phase 2: Quick + Standard both live. Expert still "Coming soon" —
+// it lives on its own /simulate/builder page (Phase 3).
 
 import {
   SIMULATOR_SKILL_MODES,
@@ -28,7 +28,7 @@ export default function SkillSwitcher({ mode, lang, onChange }: Props) {
       {SIMULATOR_SKILL_MODES.map((m) => {
         const meta = SKILL_MODE_META[m];
         const active = mode === m;
-        const comingSoon = m !== "quick";
+        const comingSoon = m === "expert";
         return (
           <button
             key={m}

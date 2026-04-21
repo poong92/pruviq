@@ -48,15 +48,18 @@ export default function ResultsPanel({ config, lang }: Props) {
     const strategy_id = config.presetId
       .replace(/-(long|short)$/, "")
       .replace(/^both-/, "");
-    const body = {
+    const body: Record<string, unknown> = {
       strategy_id,
       direction: config.direction,
       sl_pct: config.sl,
       tp_pct: config.tp,
-      top_n: 10,
-      fee_pct: 0.0005,
-      leverage: 5,
+      top_n: config.topN,
+      fee_pct: config.feePct / 100,
+      leverage: config.leverage,
     };
+    if (config.startDate) body.start_date = config.startDate;
+    if (config.endDate) body.end_date = config.endDate;
+
     setState({ kind: "loading" });
     const controller = new AbortController();
     fetch(`${API_BASE_URL}/simulate`, {
@@ -77,7 +80,17 @@ export default function ResultsPanel({ config, lang }: Props) {
         setState({ kind: "error", message: String(err.message || err) });
       });
     return () => controller.abort();
-  }, [config.presetId, config.direction, config.sl, config.tp]);
+  }, [
+    config.presetId,
+    config.direction,
+    config.sl,
+    config.tp,
+    config.topN,
+    config.leverage,
+    config.feePct,
+    config.startDate,
+    config.endDate,
+  ]);
 
   if (!config.presetId || state.kind === "idle") {
     return (
