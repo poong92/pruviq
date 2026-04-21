@@ -37,10 +37,10 @@ export default function SimulatorV1({ lang }: Props) {
   });
 
   return (
-    <div class="mx-auto max-w-6xl px-4 py-10" data-testid="sim-v1-root">
-      <header class="mb-8 text-center">
+    <div class="mx-auto max-w-6xl px-4 py-8 sm:py-10" data-testid="sim-v1-root">
+      <header class="mb-6 text-center sm:mb-8">
         <h1
-          class="mx-auto max-w-3xl text-balance text-3xl font-bold leading-tight text-zinc-100 sm:text-4xl md:text-5xl"
+          class="mx-auto max-w-3xl text-balance text-2xl font-bold leading-tight tracking-tight text-zinc-100 sm:text-4xl md:text-5xl"
           data-testid="sim-v1-hero-title"
         >
           {t("simV2.hero.title")}
@@ -50,17 +50,17 @@ export default function SimulatorV1({ lang }: Props) {
         </p>
       </header>
 
-      <div class="mb-6 flex flex-wrap items-center justify-between gap-3">
+      <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <SkillSwitcher mode={config.mode} lang={lang} onChange={setMode} />
         <div class="flex items-center gap-3 text-xs text-zinc-500">
           <details class="group relative">
             <summary
-              class="cursor-pointer select-none rounded border border-zinc-800 px-2 py-1 font-mono text-[11px] text-zinc-400 hover:border-zinc-600 hover:text-zinc-200"
+              class="cursor-pointer select-none rounded border border-zinc-800 px-2 py-1 font-mono text-xs text-zinc-400 hover:border-zinc-600 hover:text-zinc-200"
               data-testid="sim-v1-shortcuts-toggle"
             >
               ⌨ {lang === "ko" ? "단축키" : "Shortcuts"}
             </summary>
-            <div class="absolute right-0 z-10 mt-2 w-64 rounded-lg border border-zinc-700 bg-zinc-900 p-3 font-mono text-[11px] text-zinc-300 shadow-xl">
+            <div class="absolute right-0 z-10 mt-2 w-64 rounded-lg border border-zinc-700 bg-zinc-900 p-3 font-mono text-xs text-zinc-300 shadow-xl">
               <Shortcut
                 keys="← / →"
                 label={lang === "ko" ? "프리셋 이동" : "cycle presets"}
@@ -80,10 +80,15 @@ export default function SimulatorV1({ lang }: Props) {
               <Shortcut keys="R" label={lang === "ko" ? "리셋" : "reset"} />
             </div>
           </details>
-          <span class="hidden sm:inline">
-            {lang === "ko"
-              ? "URL이 저장됩니다 — 공유 가능"
-              : "URL preserves state — shareable"}
+          <span
+            class="hidden sm:inline"
+            title={
+              lang === "ko"
+                ? "URL이 저장됩니다 — 공유 가능"
+                : "URL preserves state — shareable"
+            }
+          >
+            {lang === "ko" ? "URL 공유 가능" : "URL shareable"}
           </span>
         </div>
       </div>
@@ -134,7 +139,7 @@ export default function SimulatorV1({ lang }: Props) {
 function Shortcut({ keys, label }: { keys: string; label: string }) {
   return (
     <div class="flex items-center justify-between py-1">
-      <kbd class="rounded border border-zinc-700 bg-zinc-950 px-1.5 py-0.5 text-[10px] text-zinc-200">
+      <kbd class="rounded border border-zinc-700 bg-zinc-950 px-1.5 py-0.5 text-xs text-zinc-200">
         {keys}
       </kbd>
       <span class="ml-3 text-zinc-400">{label}</span>

@@ -75,11 +75,11 @@ export default function TrustGapPanel({ lang }: Props) {
       class="rounded-xl border border-emerald-500/20 bg-gradient-to-br from-emerald-500/5 to-zinc-900/60 p-5"
       data-testid="sim-v1-trust-gap"
     >
-      <div class="mb-3 flex items-baseline justify-between gap-3">
+      <div class="mb-3 flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between sm:gap-3">
         <h3 class="text-sm font-semibold uppercase tracking-wide text-emerald-300">
           {isKo ? "실 OKX 성과 (라이브)" : "Live OKX performance"}
         </h3>
-        <span class="font-mono text-[11px] text-zinc-500">
+        <span class="font-mono text-xs text-zinc-500">
           {isKo ? "업데이트" : "updated"} {generated}
         </span>
       </div>
@@ -109,14 +109,14 @@ export default function TrustGapPanel({ lang }: Props) {
         />
       </div>
 
-      <div class="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-emerald-500/10 pt-3 text-[11px] text-zinc-400">
-        <span class="font-mono">
+      <div class="mt-4 grid grid-cols-1 gap-1 border-t border-emerald-500/10 pt-3 font-mono text-xs text-zinc-400 sm:flex sm:flex-wrap sm:items-center sm:justify-between sm:gap-2">
+        <span>
           {isKo ? "전략" : "Strategy"}: {data.strategy}
         </span>
-        <span class="font-mono">
+        <span>
           {isKo ? "기간" : "Period"}: {period}
         </span>
-        <span class="font-mono">
+        <span>
           {isKo ? "거래" : "Trades"}: {s.total_trades.toLocaleString()}
         </span>
       </div>
@@ -152,7 +152,7 @@ function Figure({
       data-testid={testId}
       class={`rounded-lg p-3 ${highlight ? "bg-emerald-500/10 ring-1 ring-emerald-400/30" : ""}`}
     >
-      <div class="mb-1 text-[11px] uppercase tracking-wide text-zinc-500">
+      <div class="mb-1 text-xs uppercase tracking-wide text-zinc-500">
         {label}
       </div>
       <div class={`font-mono text-xl font-semibold ${toneClass}`}>{value}</div>

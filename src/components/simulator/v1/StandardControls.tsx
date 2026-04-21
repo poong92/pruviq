@@ -45,7 +45,7 @@ export default function StandardControls({
         <h3 class="text-sm font-semibold uppercase tracking-wide text-zinc-200">
           {isKo ? "상세 설정" : "Standard"}
         </h3>
-        <span class="ml-auto text-[11px] text-zinc-500">
+        <span class="ml-auto text-xs text-zinc-500">
           {isKo ? "모든 변경 URL 자동 저장" : "Changes saved in URL"}
         </span>
       </div>

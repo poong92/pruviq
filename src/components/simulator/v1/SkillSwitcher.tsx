@@ -48,7 +48,7 @@ export default function SkillSwitcher({ mode, lang, onChange }: Props) {
               class={`${baseClass} inline-flex items-center gap-1`}
             >
               {label}
-              <span aria-hidden="true" class="text-[10px] text-zinc-500">
+              <span aria-hidden="true" class="text-xs text-zinc-500">
                 ↗
               </span>
             </a>

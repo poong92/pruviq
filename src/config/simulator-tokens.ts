@@ -48,11 +48,13 @@ export const RISK_TOKENS: Record<PresetRisk, RiskToken> = {
     dot: "bg-amber-500",
   },
   high: {
+    // fuchsia, not rose — rose is reserved for loss/error metrics so they
+    // don't collide visually with risk badges.
     label: { en: "High risk", ko: "고위험" },
-    hex: "#ef4444",
-    badge: "bg-rose-500/10 text-rose-400 border border-rose-500/30",
-    ring: "ring-1 ring-rose-500/40",
-    dot: "bg-rose-500",
+    hex: "#d946ef",
+    badge: "bg-fuchsia-500/10 text-fuchsia-400 border border-fuchsia-500/30",
+    ring: "ring-1 ring-fuchsia-500/40",
+    dot: "bg-fuchsia-500",
   },
 };
 
@@ -69,6 +71,10 @@ export const DIRECTION_TOKENS = {
     hex: "#10b981",
   },
   short: {
+    // rose is the trading convention for short/bearish — keeping it.
+    // Collision with "loss" text color is resolved by UI context:
+    // risk badges use fuchsia (distinct), loss metrics use bold numeric
+    // treatment, direction arrows are small icons next to labels.
     label: { en: "Short", ko: "숏" },
     arrow: "↓",
     hex: "#ef4444",
