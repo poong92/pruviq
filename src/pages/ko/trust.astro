@@ -1,0 +1,189 @@
+---
+// KO mirror of src/pages/trust.astro — Trust Dashboard (Moat-1).
+// Identical structure; only the i18n lang passed to useTranslations differs.
+// All strings come from src/i18n/ko.ts trust.* keys (confirmed present).
+//
+// Site audit 2026-04-21 flagged /ko/trust as 404 — the EN variant shipped
+// but the KO mirror was never created. This file closes that gap.
+import Layout from '../../layouts/Layout.astro';
+import { useTranslations } from '../../i18n/index';
+
+const t = useTranslations('ko');
+---
+
+<Layout
+  title={t('trust.meta_title')}
+  description={t('trust.meta_desc')}
+>
+  <main class="max-w-4xl mx-auto px-4 py-16 md:py-24">
+    <header class="mb-12 text-center">
+      <p class="font-mono text-[--color-accent] text-xs tracking-widest uppercase mb-4">{t('trust.moat_label')}</p>
+      <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight mb-4">{t('trust.heading')}</h1>
+      <p class="text-lg text-[--color-text-secondary] max-w-2xl mx-auto">
+        {t('trust.intro')}
+      </p>
+    </header>
+
+    <section id="metrics" class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+      <div class="card-enterprise rounded-2xl p-6">
+        <p class="text-xs font-mono text-[--color-text-muted] uppercase mb-2">{t('trust.trades_24h')}</p>
+        <p class="text-4xl font-extrabold" data-metric="trades_24h">—</p>
+      </div>
+      <div class="card-enterprise rounded-2xl p-6">
+        <p class="text-xs font-mono text-[--color-text-muted] uppercase mb-2">{t('trust.trades_7d')}</p>
+        <p class="text-4xl font-extrabold" data-metric="trades_7d">—</p>
+      </div>
+      <div class="card-enterprise rounded-2xl p-6">
+        <p class="text-xs font-mono text-[--color-text-muted] uppercase mb-2">{t('trust.slippage_median')}</p>
+        <p class="text-4xl font-extrabold" data-metric="slippage_median_pct">—</p>
+        <p class="text-xs text-[--color-text-muted] mt-2">{t('trust.slippage_formula')}</p>
+      </div>
+      <div class="card-enterprise rounded-2xl p-6">
+        <p class="text-xs font-mono text-[--color-text-muted] uppercase mb-2">{t('trust.slippage_p90')}</p>
+        <p class="text-4xl font-extrabold" data-metric="slippage_p90_pct">—</p>
+        <p class="text-xs text-[--color-text-muted] mt-2">{t('trust.slippage_p90_note')}</p>
+      </div>
+      <div class="card-enterprise rounded-2xl p-6 md:col-span-2">
+        <p class="text-xs font-mono text-[--color-text-muted] uppercase mb-2">{t('trust.sl_tp_rate')}</p>
+        <p class="text-4xl font-extrabold" data-metric="sl_tp_set_rate">—</p>
+        <p class="text-xs text-[--color-text-muted] mt-2">
+          {t('trust.sl_tp_note')}
+        </p>
+      </div>
+    </section>
+
+    <p class="text-xs text-[--color-text-muted] text-center font-mono" data-metric="generated_at">
+      {t('trust.loading')}
+    </p>
+
+    <section id="platform-health" class="mt-16 border-t border-[--color-border] pt-12">
+      <header class="mb-6 text-center">
+        <p class="font-mono text-[--color-accent] text-xs tracking-widest uppercase mb-3">{t('trust.platform_tag')}</p>
+        <h2 class="text-2xl md:text-3xl font-bold mb-2">{t('trust.platform_heading')}</h2>
+        <p class="text-sm text-[--color-text-secondary] max-w-xl mx-auto">{t('trust.platform_intro')}</p>
+      </header>
+
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4" data-platform-health>
+        <div class="card-enterprise rounded-xl p-4">
+          <p class="text-xs font-mono text-[--color-text-muted] uppercase mb-2">{t('trust.platform_api_status')}</p>
+          <p class="text-xl font-bold" data-health="status">—</p>
+        </div>
+        <div class="card-enterprise rounded-xl p-4">
+          <p class="text-xs font-mono text-[--color-text-muted] uppercase mb-2">{t('trust.platform_api_version')}</p>
+          <p class="text-xl font-bold font-mono" data-health="version">—</p>
+        </div>
+        <div class="card-enterprise rounded-xl p-4">
+          <p class="text-xs font-mono text-[--color-text-muted] uppercase mb-2">{t('trust.platform_coins')}</p>
+          <p class="text-xl font-bold" data-health="coins_loaded">—</p>
+        </div>
+        <div class="card-enterprise rounded-xl p-4">
+          <p class="text-xs font-mono text-[--color-text-muted] uppercase mb-2">{t('trust.platform_uptime')}</p>
+          <p class="text-xl font-bold" data-health="uptime_seconds">—</p>
+        </div>
+        <div class="card-enterprise rounded-xl p-4" data-data-age-cell>
+          <p class="text-xs font-mono text-[--color-text-muted] uppercase mb-2">{t('trust.platform_data_age')}</p>
+          <p class="text-xl font-bold" data-data-age>—</p>
+        </div>
+      </div>
+
+      <p class="text-xs text-[--color-text-muted] text-center font-mono mt-4" data-health-note>
+        {t('trust.platform_note')}
+      </p>
+    </section>
+
+    <footer class="mt-16 text-sm text-[--color-text-muted] space-y-3 max-w-3xl mx-auto">
+      <p>
+        <strong class="text-[--color-text]">{t('trust.why_title')}</strong>
+        {t('trust.why_body')}
+      </p>
+      <p>
+        <strong class="text-[--color-text]">{t('trust.what_not_title')}</strong>
+        {t('trust.what_not_body')}
+      </p>
+    </footer>
+  </main>
+
+  <script is:inline>
+    (async () => {
+      try {
+        const resp = await fetch('https://api.pruviq.com/trust/metrics', { cache: 'no-store' });
+        if (!resp.ok) throw new Error('HTTP ' + resp.status);
+        const data = await resp.json();
+        document.querySelectorAll('[data-metric]').forEach((el) => {
+          const key = el.getAttribute('data-metric');
+          if (!key) return;
+          const v = data[key];
+          if (v === null || v === undefined) {
+            el.textContent = 'N/A';
+            return;
+          }
+          if (key === 'slippage_median_pct' || key === 'slippage_p90_pct') {
+            el.textContent = Number(v).toFixed(3) + '%';
+          } else if (key === 'sl_tp_set_rate') {
+            el.textContent = Number(v).toFixed(1) + '%';
+          } else if (key === 'generated_at') {
+            el.textContent = String(v).replace('T', ' ');
+          } else {
+            el.textContent = String(v);
+          }
+        });
+      } catch (e) {
+        const genEl = document.querySelector('[data-metric="generated_at"]');
+        if (genEl) genEl.textContent = document.documentElement.lang === 'ko'
+          ? '\uc9c0\ud45c\ub97c \uc77c\uc2dc\uc801\uc73c\ub85c \uc0ac\uc6a9\ud560 \uc218 \uc5c6\uc2b5\ub2c8\ub2e4'
+          : 'metrics temporarily unavailable';
+      }
+    })();
+
+    // Platform health — same /health + x-data-age-seconds probe as EN.
+    (async () => {
+      const fmtDuration = (sec) => {
+        if (!Number.isFinite(sec)) return 'N/A';
+        const s = Math.floor(sec);
+        if (s < 60) return s + 's';
+        if (s < 3600) return Math.floor(s / 60) + 'm';
+        if (s < 86400) return (s / 3600).toFixed(1) + 'h';
+        return (s / 86400).toFixed(1) + 'd';
+      };
+      try {
+        const resp = await fetch('https://api.pruviq.com/health', { cache: 'no-store' });
+        if (!resp.ok) throw new Error('HTTP ' + resp.status);
+        const data = await resp.json();
+        const dataAgeSec = Number(resp.headers.get('x-data-age-seconds'));
+        document.querySelectorAll('[data-health]').forEach((el) => {
+          const key = el.getAttribute('data-health');
+          if (!key) return;
+          const v = data[key];
+          if (v === null || v === undefined) { el.textContent = 'N/A'; return; }
+          if (key === 'uptime_seconds') el.textContent = fmtDuration(Number(v));
+          else if (key === 'status') el.textContent = String(v).toUpperCase();
+          else el.textContent = String(v);
+        });
+        const ageEl = document.querySelector('[data-data-age]');
+        const ageCell = document.querySelector('[data-data-age-cell]');
+        if (ageEl) {
+          if (!Number.isFinite(dataAgeSec)) {
+            ageEl.textContent = 'N/A';
+          } else {
+            ageEl.textContent = fmtDuration(dataAgeSec);
+            if (ageCell) {
+              if (dataAgeSec <= 3600) ageCell.classList.add('ring-1', 'ring-green-500/40');
+              else if (dataAgeSec <= 21600) ageCell.classList.add('ring-1', 'ring-yellow-500/40');
+              else ageCell.classList.add('ring-1', 'ring-red-500/40');
+            }
+          }
+        }
+      } catch (e) {
+        document.querySelectorAll('[data-health]').forEach((el) => {
+          el.textContent = 'N/A';
+        });
+        const ageEl = document.querySelector('[data-data-age]');
+        if (ageEl) ageEl.textContent = 'N/A';
+        const note = document.querySelector('[data-health-note]');
+        if (note) note.textContent = document.documentElement.lang === 'ko'
+          ? 'API 연결 불가 — 실제 다운 상태일 수 있음'
+          : 'API unreachable — may actually be down';
+      }
+    })();
+  </script>
+</Layout>
