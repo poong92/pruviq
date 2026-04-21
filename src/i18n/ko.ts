@@ -2096,7 +2096,7 @@ export const ko: Record<TranslationKey, string> = {
   "simV2.trust.gap_live": "실거래",
   "simV2.trust.gap_delta": "갭",
   "simV2.trust.gap_note":
-    "중요한 건 갭 수치입니다. 작을수록 백테스트가 정직하다는 뜻.",
+    "갭은 우리 백테스트가 현실에서 얼마나 벗어났는지를 보여줍니다. 5% 이내면 예측이 맞은 것, 15% 넘으면 이 기간 우리 모델이 너무 낙관적이었다는 뜻 — 숨기지 않고 공개합니다. 이게 모델을 정직하게 유지하는 방식입니다.",
   "simV2.cta.connect_heading": "실제로 돌려볼 준비 됐나요?",
   "simV2.cta.connect_body":
     "OKX 계정 한 번의 연결. 자금 이동·전략 실행은 승인 전까지 일어나지 않습니다.",
