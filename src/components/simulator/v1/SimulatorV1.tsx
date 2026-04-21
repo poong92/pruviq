@@ -11,6 +11,7 @@
 //   OKXConnectCTA (funnel to /dashboard)
 
 import { useSimConfig } from "../../../hooks/useSimConfig";
+import { useSimShortcuts } from "../../../hooks/useSimShortcuts";
 import { useTranslations, type Lang } from "../../../i18n/index";
 import OKXConnectCTA from "./OKXConnectCTA";
 import PresetGrid from "./PresetGrid";
@@ -25,8 +26,15 @@ interface Props {
 
 export default function SimulatorV1({ lang }: Props) {
   const t = useTranslations(lang);
-  const { config, setMode, setPreset, setSL, setTP, setStandard } =
+  const { config, setMode, setPreset, setSL, setTP, setStandard, reset } =
     useSimConfig();
+
+  useSimShortcuts({
+    currentPresetId: config.presetId,
+    setPreset,
+    setMode,
+    reset,
+  });
 
   return (
     <div class="mx-auto max-w-6xl px-4 py-10" data-testid="sim-v1-root">
@@ -44,10 +52,39 @@ export default function SimulatorV1({ lang }: Props) {
 
       <div class="mb-6 flex flex-wrap items-center justify-between gap-3">
         <SkillSwitcher mode={config.mode} lang={lang} onChange={setMode} />
-        <div class="text-xs text-zinc-500">
-          {lang === "ko"
-            ? "URL이 저장됩니다 — 공유 가능"
-            : "URL preserves state — shareable"}
+        <div class="flex items-center gap-3 text-xs text-zinc-500">
+          <details class="group relative">
+            <summary
+              class="cursor-pointer select-none rounded border border-zinc-800 px-2 py-1 font-mono text-[11px] text-zinc-400 hover:border-zinc-600 hover:text-zinc-200"
+              data-testid="sim-v1-shortcuts-toggle"
+            >
+              ⌨ {lang === "ko" ? "단축키" : "Shortcuts"}
+            </summary>
+            <div class="absolute right-0 z-10 mt-2 w-64 rounded-lg border border-zinc-700 bg-zinc-900 p-3 font-mono text-[11px] text-zinc-300 shadow-xl">
+              <Shortcut
+                keys="← / →"
+                label={lang === "ko" ? "프리셋 이동" : "cycle presets"}
+              />
+              <Shortcut
+                keys="1-7"
+                label={lang === "ko" ? "N번 프리셋" : "jump to Nth preset"}
+              />
+              <Shortcut
+                keys="Q / S"
+                label={lang === "ko" ? "퀵 / 스탠다드" : "Quick / Standard"}
+              />
+              <Shortcut
+                keys="E"
+                label={lang === "ko" ? "엑스퍼트 빌더" : "Expert builder"}
+              />
+              <Shortcut keys="R" label={lang === "ko" ? "리셋" : "reset"} />
+            </div>
+          </details>
+          <span class="hidden sm:inline">
+            {lang === "ko"
+              ? "URL이 저장됩니다 — 공유 가능"
+              : "URL preserves state — shareable"}
+          </span>
         </div>
       </div>
 
@@ -90,6 +127,17 @@ export default function SimulatorV1({ lang }: Props) {
       <div class="mb-4">
         <OKXConnectCTA lang={lang} presetId={config.presetId} />
       </div>
+    </div>
+  );
+}
+
+function Shortcut({ keys, label }: { keys: string; label: string }) {
+  return (
+    <div class="flex items-center justify-between py-1">
+      <kbd class="rounded border border-zinc-700 bg-zinc-950 px-1.5 py-0.5 text-[10px] text-zinc-200">
+        {keys}
+      </kbd>
+      <span class="ml-3 text-zinc-400">{label}</span>
     </div>
   );
 }

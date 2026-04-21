@@ -1,0 +1,69 @@
+---
+// Phase 3: Expert Builder — full condition/indicator/preset control.
+// Reuses the legacy SimulatorPage component as the Expert surface so
+// users who need indicator-level config can still reach it without the
+// new Quick Start onboarding getting in the way.
+//
+// noindex for now — linked from SkillSwitcher Expert tab after feature
+// flag flip. Legacy deep-link compatibility left unchanged.
+import Layout from "../../../layouts/Layout.astro";
+---
+
+<Layout
+  title="PRUVIQ Simulator — Expert Builder"
+  description="Full condition builder with indicator-level control: custom entry rules, multi-indicator strategies, backtest with real OKX data."
+>
+  <meta slot="head" name="robots" content="noindex, nofollow" />
+  <main class="min-h-screen bg-zinc-950">
+    <div class="mx-auto max-w-6xl px-4 pt-8">
+      <nav class="mb-6 flex items-center gap-3 text-sm" aria-label="breadcrumb">
+        <a
+          href="/simulate/"
+          class="text-zinc-400 hover:text-zinc-100"
+          data-testid="builder-back-quick"
+        >
+          ← Quick Start
+        </a>
+        <span class="text-zinc-600">/</span>
+        <span class="text-zinc-300">Expert Builder</span>
+      </nav>
+      <header class="mb-8">
+        <h1 class="text-3xl font-bold text-zinc-100 sm:text-4xl">
+          Expert Builder
+        </h1>
+        <p class="mt-2 max-w-2xl text-sm text-zinc-400">
+          Indicator-level control: build strategies from scratch with MACD,
+          RSI, Stochastic, BB, ADX, Ichimoku, and more. For users who want
+          full parameter control beyond the curated Quick Start presets.
+        </p>
+      </header>
+    </div>
+    <div id="expert-builder-mount">
+      <div class="mx-auto max-w-6xl px-4 pb-12">
+        <div class="rounded-xl border border-zinc-800 bg-zinc-900/40 p-8">
+          <div class="animate-pulse space-y-3">
+            <div class="h-6 w-1/3 rounded bg-zinc-800"></div>
+            <div class="h-40 rounded bg-zinc-800"></div>
+            <div class="h-24 rounded bg-zinc-800"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <script>
+    import { h, render } from "preact";
+    import SimulatorPage from "../../../components/SimulatorPage";
+    import ErrorBoundary from "../../../components/ErrorBoundary";
+    const mount = document.getElementById("expert-builder-mount");
+    if (mount) {
+      render(
+        h(
+          ErrorBoundary,
+          { name: "ExpertBuilder" },
+          h(SimulatorPage, { lang: "en" }),
+        ),
+        mount,
+      );
+    }
+  </script>
+</Layout>

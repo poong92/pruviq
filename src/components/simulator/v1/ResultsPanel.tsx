@@ -164,25 +164,64 @@ export default function ResultsPanel({ config, lang }: Props) {
           testId="sim-v1-metric-mdd"
         />
       </div>
-      <div class="mt-4 flex flex-wrap gap-4 border-t border-zinc-800 pt-3 font-mono text-[11px] text-zinc-400">
-        <span>
-          {lang === "ko" ? "거래" : "Trades"}:{" "}
-          <span class="text-zinc-200">{d.total_trades.toLocaleString()}</span>
-        </span>
-        <span>
-          {lang === "ko" ? "코인" : "Coins"}:{" "}
-          <span class="text-zinc-200">{d.coins_used}</span>
-        </span>
-        <span>
-          {lang === "ko" ? "기간" : "Range"}:{" "}
-          <span class="text-zinc-200">{d.data_range}</span>
-        </span>
-        <span>
-          Sharpe: <span class="text-zinc-200">{abbrev(d.sharpe_ratio, 2)}</span>
-        </span>
+      <div class="mt-4 flex flex-wrap items-center justify-between gap-4 border-t border-zinc-800 pt-3 font-mono text-[11px] text-zinc-400">
+        <div class="flex flex-wrap gap-4">
+          <span>
+            {lang === "ko" ? "거래" : "Trades"}:{" "}
+            <span class="text-zinc-200">{d.total_trades.toLocaleString()}</span>
+          </span>
+          <span>
+            {lang === "ko" ? "코인" : "Coins"}:{" "}
+            <span class="text-zinc-200">{d.coins_used}</span>
+          </span>
+          <span>
+            {lang === "ko" ? "기간" : "Range"}:{" "}
+            <span class="text-zinc-200">{d.data_range}</span>
+          </span>
+          <span>
+            Sharpe:{" "}
+            <span class="text-zinc-200">{abbrev(d.sharpe_ratio, 2)}</span>
+          </span>
+        </div>
+        <button
+          type="button"
+          onClick={() => downloadCSV(d, config.presetId ?? "preset")}
+          data-testid="sim-v1-csv-download"
+          class="inline-flex min-h-[32px] items-center gap-1 rounded border border-zinc-700 px-3 py-1 text-xs text-zinc-300 hover:border-emerald-400 hover:text-emerald-300"
+        >
+          {lang === "ko" ? "CSV 다운로드" : "Download CSV"} ↓
+        </button>
       </div>
     </div>
   );
+}
+
+// Convert the SimResult to a two-column CSV (metric, value) + download.
+function downloadCSV(d: SimResult, presetId: string) {
+  const rows: [string, string | number][] = [
+    ["preset", presetId],
+    ["win_rate_pct", d.win_rate],
+    ["total_return_pct", d.total_return_pct],
+    ["profit_factor", d.profit_factor],
+    ["max_drawdown_pct", d.max_drawdown_pct],
+    ["total_trades", d.total_trades],
+    ["sharpe_ratio", d.sharpe_ratio],
+    ["coins_used", d.coins_used],
+    ["data_range", d.data_range],
+    ["exported_at", new Date().toISOString()],
+  ];
+  const csv = rows
+    .map(([k, v]) => `${k},${typeof v === "string" ? `"${v}"` : v}`)
+    .join("\n");
+  const blob = new Blob([`metric,value\n${csv}`], { type: "text/csv" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `pruviq-${presetId}-${Date.now()}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 }
 
 function Metric({
