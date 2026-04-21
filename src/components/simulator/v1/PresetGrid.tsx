@@ -44,9 +44,9 @@ export default function PresetGrid({ activePresetId, lang, onSelect }: Props) {
           const isActive = activePresetId === p.id;
 
           const borderClass = isActive
-            ? "border-emerald-400 bg-emerald-400/5 ring-2 ring-emerald-400/40"
+            ? "border-[--color-accent] bg-[--color-accent]/5 ring-2 ring-[--color-accent]/40"
             : p.verified
-              ? "border-emerald-500/40 bg-zinc-900/60 hover:border-emerald-400 hover:bg-emerald-500/5"
+              ? "border-[--color-accent]/40 bg-zinc-900/60 hover:border-[--color-accent] hover:bg-[--color-accent]/5"
               : "border-zinc-800 bg-zinc-900/60 hover:border-zinc-600 hover:bg-zinc-900";
 
           return (
@@ -56,12 +56,12 @@ export default function PresetGrid({ activePresetId, lang, onSelect }: Props) {
               aria-pressed={isActive}
               onClick={() => onSelect(p.id)}
               data-testid={`sim-v1-preset-${p.id}`}
-              class={`group relative flex min-h-[240px] flex-col gap-2 rounded-xl border p-4 text-left shadow-sm transition hover:shadow-lg hover:shadow-emerald-500/5 ${borderClass}`}
+              class={`group relative flex min-h-[240px] flex-col gap-2 rounded-xl border p-4 text-left shadow-sm transition hover:shadow-lg hover:shadow-[--color-accent]/10 ${borderClass}`}
             >
               {p.verified && (
                 <span
                   aria-hidden="true"
-                  class="absolute -top-[1px] left-4 right-4 h-[2px] bg-gradient-to-r from-transparent via-emerald-400 to-transparent"
+                  class="absolute -top-[1px] left-4 right-4 h-[2px] bg-gradient-to-r from-transparent via-[--color-accent] to-transparent"
                 />
               )}
               <div class="flex items-start justify-between gap-2">
@@ -73,7 +73,7 @@ export default function PresetGrid({ activePresetId, lang, onSelect }: Props) {
                 </span>
                 {p.verified ? (
                   <span
-                    class="inline-flex items-center gap-1 rounded bg-emerald-500/20 px-2 py-0.5 text-xs font-semibold uppercase tracking-wide text-emerald-300 ring-1 ring-emerald-400/40"
+                    class="inline-flex items-center gap-1 rounded bg-[--color-accent]/20 px-2 py-0.5 text-xs font-semibold uppercase tracking-wide text-[--color-accent-bright] ring-1 ring-[--color-accent]/40"
                     title={t("simV2.presets.verified_tooltip")}
                   >
                     ✓ {t("simV2.presets.verified")}

@@ -32,7 +32,7 @@ export default function SkillSwitcher({ mode, lang, onChange }: Props) {
         const active = mode === m;
         const baseClass = `relative min-h-[44px] rounded-md px-4 py-2 text-sm font-medium transition ${
           active
-            ? "bg-emerald-500/15 text-emerald-300 ring-1 ring-emerald-400/40"
+            ? "bg-[--color-accent]/15 text-[--color-accent-bright] ring-1 ring-[--color-accent]/40"
             : "text-zinc-300 hover:bg-zinc-800"
         }`;
         const label = lang === "ko" ? meta.label.ko : meta.label.en;

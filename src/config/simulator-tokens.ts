@@ -66,23 +66,26 @@ export interface DirectionToken {
 
 export const DIRECTION_TOKENS = {
   long: {
+    // PRUVIQ brand palette — --color-up (TradingView teal-green, not
+    // Tailwind emerald). Keeps the trading "green=long" convention while
+    // staying inside the brand system defined in global.css.
     label: { en: "Long", ko: "롱" },
     arrow: "↑",
-    hex: "#10b981",
+    hex: "#22AB94",
   },
   short: {
-    // rose is the trading convention for short/bearish — keeping it.
-    // Collision with "loss" text color is resolved by UI context:
-    // risk badges use fuchsia (distinct), loss metrics use bold numeric
-    // treatment, direction arrows are small icons next to labels.
+    // --color-down (TradingView warm-red). Ditto: trader-conventional
+    // red-for-short without importing Tailwind rose.
     label: { en: "Short", ko: "숏" },
     arrow: "↓",
-    hex: "#ef4444",
+    hex: "#F23645",
   },
   both: {
+    // brand accent cyan — signals "bidirectional" without competing with
+    // the two color-primed direction tokens above.
     label: { en: "Long/Short", ko: "롱/숏" },
     arrow: "↕",
-    hex: "#a78bfa",
+    hex: "#2CB5E8",
   },
 } as const satisfies Record<"long" | "short" | "both", DirectionToken>;
 
