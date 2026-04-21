@@ -2141,7 +2141,7 @@ export const en = {
   "simV2.trust.gap_live": "Live",
   "simV2.trust.gap_delta": "Gap",
   "simV2.trust.gap_note":
-    "The gap is the number that matters. A tight gap means the backtest is honest.",
+    "Gap = how far our backtest drifted from reality. Under 5% = we called it. 15%+ = we were too optimistic this window — shown on purpose. This is how we keep the model honest.",
   "simV2.cta.connect_heading": "Ready to run this live?",
   "simV2.cta.connect_body":
     "Connect your OKX account in one step. No funds moved, no strategies run, until you say go.",
