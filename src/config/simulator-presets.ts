@@ -33,10 +33,17 @@ export interface SimulatorPreset {
 
 export const SIMULATOR_PRESETS: readonly SimulatorPreset[] = [
   {
+    // 2026-04-21: verified flag pulled — live OKX performance over
+    // 2026-01 … 2026-03 window shows PF 0.88 (losing). Historical 2-year
+    // backtest is still strong (PF 2.22) but labeling a currently-
+    // underperforming strategy "Verified" contradicts the brand promise
+    // "ours come with proof". Flipping to false until either: (a) live
+    // recovers above PF 1.3 for ≥30d, or (b) we split the badge into
+    // "Backtest Verified" vs "Live Verified" with different thresholds.
     id: "bb-squeeze-short",
     direction: "short",
     risk: "medium",
-    verified: true,
+    verified: false,
     labels: {
       en: "Volatility Squeeze ↓",
       ko: "변동성 스퀴즈 ↓",
