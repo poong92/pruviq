@@ -134,7 +134,7 @@ export default function SimulatorPreview() {
           style={{ color: "var(--color-up)" }}
         >
           {visible ? (
-            <AnimatedNumber target={570.3} prefix="+" duration={2000} />
+            <AnimatedNumber target={25.6} prefix="+" duration={2000} />
           ) : (
             "0.0"
           )}
@@ -144,7 +144,7 @@ export default function SimulatorPreview() {
           $1,000 →{" "}
           {visible ? (
             <span style={{ color: "var(--color-up)" }}>
-              $<AnimatedNumber target={6703} decimals={0} duration={2000} />
+              $<AnimatedNumber target={1256} decimals={0} duration={2000} />
             </span>
           ) : (
             "$1,000"
