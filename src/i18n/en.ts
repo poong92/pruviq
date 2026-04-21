@@ -841,6 +841,7 @@ export const en = {
   "ranking.open_sim": "Open Simulator",
   "ranking.strategy_lib": "Strategy Library",
   "ranking.leaderboard": "Leaderboard",
+  "ranking.last_refreshed": "Last refresh",
   "ranking.disclaimer_note": "Note:",
   "ranking.disclaimer_text":
     "This ranking is based on historical backtests on OKX USDT-SWAP 1-hour data. The universe includes delisted pairs (no survivorship bias). Past performance does not guarantee future returns. Strategies with fewer than 100 trades (< 100) may be overfitted.",

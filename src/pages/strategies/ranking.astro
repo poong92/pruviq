@@ -36,13 +36,31 @@ interface RankingEntry {
   timeframe: string;
   low_sample: boolean;
   total_return?: number;
+  // max_drawdown is stored as a raw percentage (e.g. 0.27 means 0.27%).
+  // Optional because older fallback snapshots predate the backend field.
+  max_drawdown?: number;
   sl_pct: number;
   tp_pct: number;
 }
 interface RankingData {
   date: string;
+  // ISO timestamp of when the daily_strategy_ranking.py run produced this
+  // file. Rendered as a small mono line so a visitor can tell how fresh
+  // the numbers are — H7 in the site audit. Optional for legacy fallbacks.
+  generated_at?: string;
   top3: RankingEntry[];
   worst3: RankingEntry[];
+}
+
+// Format the generated_at ISO string as "YYYY-MM-DD HH:MM UTC" for SSR.
+// Not showing ago-relative because that would require client-side
+// re-render every few seconds and drift. Absolute UTC is honest and
+// crawler-friendly.
+function formatRankingTimestamp(iso?: string): string | null {
+  if (!iso) return null;
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return null;
+  return d.toISOString().replace('T', ' ').slice(0, 16) + ' UTC';
 }
 
 let ssrRanking: RankingData | null = null;
@@ -84,6 +102,11 @@ if (!ssrRanking) {
       <p class="text-[--color-text-muted] text-sm mb-1">
         {t('ranking.date_label').replace('{date}', today)}
       </p>
+      {ssrRanking?.generated_at && formatRankingTimestamp(ssrRanking.generated_at) && (
+        <p class="font-mono text-[11px] text-[--color-text-muted] opacity-70 mb-1">
+          {t('ranking.last_refreshed')}: {formatRankingTimestamp(ssrRanking.generated_at)}
+        </p>
+      )}
       <p class="text-[--color-text-muted] text-sm mb-8 max-w-2xl">
         {t('ranking.desc')}
       </p>
@@ -150,7 +173,7 @@ if (!ssrRanking) {
                       $1,000 &rarr; <span class={entry.total_return >= 0 ? 'text-[--color-up]' : 'text-[--color-red]'}>${Math.round(1000 * (1 + entry.total_return / 100)).toLocaleString()}</span>
                     </div>
                   )}
-                  <div class="grid grid-cols-3 gap-2 font-mono text-sm">
+                  <div class="grid grid-cols-4 gap-2 font-mono text-sm">
                     <div>
                       <p class="text-[--color-text-muted] text-xs mb-0.5">Win Rate</p>
                       <p class={`font-bold text-base ${wrColor}`}>{entry.win_rate.toFixed(1)}%</p>
@@ -162,6 +185,14 @@ if (!ssrRanking) {
                       ) : (
                         <p class={`font-bold text-base ${pfColor}`}>{entry.profit_factor.toFixed(2)}</p>
                       )}
+                    </div>
+                    {/* H6: MDD column added 2026-04-21. Scope is per-strategy,
+                        not portfolio — same as the other metrics on this card. */}
+                    <div>
+                      <p class="text-[--color-text-muted] text-xs mb-0.5" title="Max drawdown — per strategy">MDD</p>
+                      <p class="font-bold text-base text-[--color-text]">
+                        {entry.max_drawdown != null ? `${entry.max_drawdown.toFixed(1)}%` : '—'}
+                      </p>
                     </div>
                     <div>
                       <p class="text-[--color-text-muted] text-xs mb-0.5">Trades</p>
@@ -196,9 +227,10 @@ if (!ssrRanking) {
                       </span>
                     </div>
                   )}
-                  <div class="grid grid-cols-3 gap-2 font-mono text-sm">
+                  <div class="grid grid-cols-4 gap-2 font-mono text-sm">
                     <div><p class="text-[--color-text-muted] text-xs mb-0.5">Win Rate</p><p class={`font-bold ${wrColor}`}>{entry.win_rate.toFixed(1)}%</p></div>
                     <div><p class="text-[--color-text-muted] text-xs mb-0.5">PF</p>{entry.profit_factor >= 50 ? (<p class={`font-bold ${pfColor} cursor-help underline decoration-dotted`} title="Profit Factor capped at 99.99 (limited trade data)">{entry.profit_factor.toFixed(2)} <span class="text-[0.6rem] font-normal text-[--color-text-muted]">(cap)</span></p>) : (<p class={`font-bold ${pfColor}`}>{entry.profit_factor.toFixed(2)}</p>)}</div>
+                    <div><p class="text-[--color-text-muted] text-xs mb-0.5" title="Max drawdown — per strategy">MDD</p><p class="font-bold text-[--color-text]">{entry.max_drawdown != null ? `${entry.max_drawdown.toFixed(1)}%` : '—'}</p></div>
                     <div><p class="text-[--color-text-muted] text-xs mb-0.5">Trades</p><p class="font-bold text-[--color-text]">{entry.total_trades}</p></div>
                   </div>
                 </div>
