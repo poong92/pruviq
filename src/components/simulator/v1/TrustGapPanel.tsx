@@ -174,11 +174,11 @@ export default function TrustGapPanel({ lang }: Props) {
   return (
     <section
       aria-label={t("simV2.trust.gap_heading")}
-      class="rounded-xl border border-emerald-500/20 bg-gradient-to-br from-emerald-500/5 to-zinc-900/60 p-5"
+      class="rounded-xl border border-[--color-accent]/20 bg-gradient-to-br from-[--color-accent]/5 to-zinc-900/60 p-5"
       data-testid="sim-v1-trust-gap"
     >
       <div class="mb-3 flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between sm:gap-3">
-        <h3 class="text-sm font-semibold uppercase tracking-wide text-emerald-300">
+        <h3 class="text-sm font-semibold uppercase tracking-wide text-[--color-accent-bright]">
           {t("simV2.trust.gap_heading")}
         </h3>
         <span class="font-mono text-xs text-zinc-400">
@@ -216,7 +216,7 @@ export default function TrustGapPanel({ lang }: Props) {
         />
       </div>
 
-      <div class="mt-4 grid grid-cols-1 gap-1 border-t border-emerald-500/10 pt-3 font-mono text-xs text-zinc-400 sm:flex sm:flex-wrap sm:items-center sm:justify-between sm:gap-2">
+      <div class="mt-4 grid grid-cols-1 gap-1 border-t border-[--color-accent]/10 pt-3 font-mono text-xs text-zinc-400 sm:flex sm:flex-wrap sm:items-center sm:justify-between sm:gap-2">
         <span>
           {isKo ? "전략" : "Strategy"}: {data.strategy}
         </span>
@@ -260,7 +260,7 @@ function Figure({
   return (
     <div
       data-testid={testId}
-      class={`rounded-lg p-3 ${highlight ? "bg-emerald-500/10 ring-1 ring-emerald-400/30" : ""}`}
+      class={`rounded-lg p-3 ${highlight ? "bg-[--color-accent]/10 ring-1 ring-[--color-accent]/30" : ""}`}
     >
       <div class="mb-1 text-xs uppercase tracking-wide text-zinc-400">
         {label}

@@ -66,7 +66,7 @@ export default function MobileStickyCTA({ lang, presetId }: Props) {
         href={href}
         tabIndex={visible ? 0 : -1}
         onClick={() => emit("cta.sticky_clicked", { preset: presetId })}
-        class="pointer-events-auto inline-flex min-h-[48px] w-full max-w-sm items-center justify-center gap-2 rounded-xl bg-emerald-500 px-6 py-3 text-sm font-semibold text-zinc-950 shadow-xl shadow-emerald-500/30 transition hover:bg-emerald-400"
+        class="pointer-events-auto inline-flex min-h-[48px] w-full max-w-sm items-center justify-center gap-2 rounded-xl bg-[--color-accent] px-6 py-3 text-sm font-semibold text-white shadow-xl shadow-[--color-accent]/30 transition hover:bg-[--color-accent-bright]"
         data-testid="sim-v1-sticky-cta-btn"
       >
         {t("simV2.cta.connect_button")} →

@@ -187,7 +187,7 @@ function FeeInput({
           if (Number.isFinite(n)) onInput(n);
         }}
         data-testid={testId}
-        class="w-full rounded border border-zinc-700 bg-zinc-950 px-3 py-2 font-mono text-sm text-zinc-100 focus:border-emerald-400 focus:outline-none"
+        class="w-full rounded border border-zinc-700 bg-zinc-950 px-3 py-2 font-mono text-sm text-zinc-100 focus:border-[--color-accent] focus:outline-none"
       />
     </label>
   );
@@ -212,7 +212,7 @@ function DateInput({
         value={value}
         onInput={(e) => onInput((e.target as HTMLInputElement).value)}
         data-testid={testId}
-        class="w-full rounded border border-zinc-700 bg-zinc-950 px-3 py-2 font-mono text-sm text-zinc-100 focus:border-emerald-400 focus:outline-none"
+        class="w-full rounded border border-zinc-700 bg-zinc-950 px-3 py-2 font-mono text-sm text-zinc-100 focus:border-[--color-accent] focus:outline-none"
       />
     </label>
   );
