@@ -1,10 +1,19 @@
-// Live performance panel.
-// Phase 2: pulls real numbers from /data/performance.json instead of
-// hard-coded 54/38/3. Honesty first — we show live P&L with period,
-// no fake backtest comparison numbers. Proper backtest-vs-live gap
-// calculation lands in Phase 2.5 (requires same-period re-simulation).
+// Backtest vs Live OKX trust panel.
+//
+// Phase 2.7 (2026-04-21): the "gap" column now renders a real backtest
+// over the same period as live, computed client-side. Before this it
+// showed live only. The gap (|backtest − live|) is the core trust
+// signal — a tight gap proves the backtest is honest.
+//
+// Flow on mount:
+//   1. Fetch /data/performance.json → live summary + period
+//   2. POST /simulate with strategy_id + same date range
+//   3. When both resolve, show 3-column grid: Backtest / Live / Gap
+//   4. If backtest fails or exceeds 8s timeout → render live-only fallback
+//      (degrades gracefully rather than blocking the page)
 
 import { useEffect, useState } from "preact/hooks";
+import { API_BASE_URL } from "../../../config/api";
 import { useTranslations, type Lang } from "../../../i18n/index";
 
 interface Props {
@@ -26,16 +35,91 @@ interface LiveSummary {
   generated: string;
 }
 
+interface BacktestResult {
+  total_return_pct: number;
+  win_rate: number;
+  profit_factor: number;
+  max_drawdown_pct: number;
+  total_trades: number;
+}
+
+const BACKTEST_TIMEOUT_MS = 8000;
+
+// Map the strategy label from performance.json → backend /simulate
+// strategy_id. If we ever add more live strategies, extend this map.
+function strategyToId(label: string): { id: string; direction: string } {
+  const lower = label.toLowerCase();
+  if (lower.includes("bb squeeze short"))
+    return { id: "bb-squeeze", direction: "short" };
+  if (lower.includes("bb squeeze long"))
+    return { id: "bb-squeeze", direction: "long" };
+  if (lower.includes("rsi reversal"))
+    return { id: "rsi-reversal", direction: "long" };
+  return { id: "bb-squeeze", direction: "short" };
+}
+
+async function fetchBacktest(
+  live: LiveSummary,
+  signal: AbortSignal,
+): Promise<BacktestResult | null> {
+  const { id, direction } = strategyToId(live.strategy);
+  const body = {
+    strategy_id: id,
+    direction,
+    sl_pct: 10,
+    tp_pct: 8,
+    top_n: 10,
+    fee_pct: 0.0005,
+    leverage: 5,
+    start_date: live.period.from,
+    end_date: live.period.to,
+  };
+  try {
+    const res = await fetch(`${API_BASE_URL}/simulate`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+      signal,
+    });
+    if (!res.ok) return null;
+    return (await res.json()) as BacktestResult;
+  } catch {
+    return null;
+  }
+}
+
 export default function TrustGapPanel({ lang }: Props) {
   const t = useTranslations(lang);
   const [data, setData] = useState<LiveSummary | null>(null);
   const [error, setError] = useState(false);
+  const [backtest, setBacktest] = useState<BacktestResult | null>(null);
+  const [backtestDone, setBacktestDone] = useState(false);
 
   useEffect(() => {
+    let cancelled = false;
     fetch("/data/performance.json")
       .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
-      .then(setData)
+      .then((json: LiveSummary) => {
+        if (cancelled) return;
+        setData(json);
+
+        const controller = new AbortController();
+        const timeout = setTimeout(
+          () => controller.abort(),
+          BACKTEST_TIMEOUT_MS,
+        );
+        fetchBacktest(json, controller.signal)
+          .then((bt) => {
+            if (cancelled) return;
+            setBacktest(bt);
+            setBacktestDone(true);
+          })
+          .finally(() => clearTimeout(timeout));
+      })
       .catch(() => setError(true));
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const isKo = lang === "ko";
@@ -63,11 +147,29 @@ export default function TrustGapPanel({ lang }: Props) {
   }
 
   const s = data.summary;
-  const returnPct = (s.total_pnl / s.starting_balance) * 100;
-  const returnPositive = returnPct >= 0;
-  const signed = `${returnPositive ? "+" : ""}${returnPct.toFixed(1)}%`;
+  const liveReturnPct = (s.total_pnl / s.starting_balance) * 100;
+  const livePositive = liveReturnPct >= 0;
+  const liveSigned = `${livePositive ? "+" : ""}${liveReturnPct.toFixed(1)}%`;
+
   const period = `${data.period.from} → ${data.period.to}`;
   const generated = data.generated.slice(0, 10);
+
+  const hasBacktest = backtest != null;
+  const backtestSigned = hasBacktest
+    ? `${backtest!.total_return_pct >= 0 ? "+" : ""}${backtest!.total_return_pct.toFixed(1)}%`
+    : "—";
+  const gapPct = hasBacktest
+    ? Math.abs(backtest!.total_return_pct - liveReturnPct)
+    : null;
+  const gapSigned = gapPct != null ? `${gapPct.toFixed(1)}%` : "—";
+  const gapTone: "good" | "bad" | "neutral" =
+    gapPct == null
+      ? "neutral"
+      : gapPct < 5
+        ? "good"
+        : gapPct < 15
+          ? "neutral"
+          : "bad";
 
   return (
     <section
@@ -77,35 +179,40 @@ export default function TrustGapPanel({ lang }: Props) {
     >
       <div class="mb-3 flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between sm:gap-3">
         <h3 class="text-sm font-semibold uppercase tracking-wide text-emerald-300">
-          {isKo ? "실 OKX 성과 (라이브)" : "Live OKX performance"}
+          {t("simV2.trust.gap_heading")}
         </h3>
         <span class="font-mono text-xs text-zinc-400">
           {isKo ? "업데이트" : "updated"} {generated}
         </span>
       </div>
 
-      <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <div class="grid grid-cols-3 gap-3">
         <Figure
-          label={isKo ? "실 수익률" : "Live return"}
-          value={signed}
-          tone={returnPositive ? "good" : "bad"}
-          highlight
+          label={t("simV2.trust.gap_backtest")}
+          value={backtestSigned}
+          tone={
+            !backtestDone
+              ? "neutral"
+              : hasBacktest && backtest!.total_return_pct >= 0
+                ? "good"
+                : "bad"
+          }
+          loading={!backtestDone}
+          testId="sim-v1-gap-backtest"
+        />
+        <Figure
+          label={t("simV2.trust.gap_live")}
+          value={liveSigned}
+          tone={livePositive ? "good" : "bad"}
           testId="sim-v1-live-return"
         />
         <Figure
-          label={isKo ? "승률" : "Win rate"}
-          value={`${s.win_rate.toFixed(1)}%`}
-          tone="neutral"
-        />
-        <Figure
-          label={isKo ? "PF" : "Profit factor"}
-          value={s.profit_factor.toFixed(2)}
-          tone={s.profit_factor >= 1 ? "good" : "bad"}
-        />
-        <Figure
-          label={isKo ? "최대 낙폭" : "Max DD"}
-          value={`${s.max_drawdown_pct.toFixed(1)}%`}
-          tone="bad"
+          label={t("simV2.trust.gap_delta")}
+          value={gapSigned}
+          tone={gapTone}
+          highlight
+          loading={!backtestDone}
+          testId="sim-v1-gap-delta"
         />
       </div>
 
@@ -117,7 +224,8 @@ export default function TrustGapPanel({ lang }: Props) {
           {isKo ? "기간" : "Period"}: {period}
         </span>
         <span>
-          {isKo ? "거래" : "Trades"}: {s.total_trades.toLocaleString()}
+          {isKo ? "승률" : "Win rate"}: {s.win_rate.toFixed(1)}% · PF{" "}
+          {s.profit_factor.toFixed(2)} · MDD {s.max_drawdown_pct.toFixed(1)}%
         </span>
       </div>
 
@@ -133,12 +241,14 @@ function Figure({
   value,
   tone,
   highlight,
+  loading,
   testId,
 }: {
   label: string;
   value: string;
   tone: "good" | "bad" | "neutral";
   highlight?: boolean;
+  loading?: boolean;
   testId?: string;
 }) {
   const toneClass =
@@ -155,7 +265,11 @@ function Figure({
       <div class="mb-1 text-xs uppercase tracking-wide text-zinc-400">
         {label}
       </div>
-      <div class={`font-mono text-xl font-semibold ${toneClass}`}>{value}</div>
+      <div
+        class={`font-mono text-xl font-semibold tabular-nums ${loading ? "animate-pulse text-zinc-600" : toneClass}`}
+      >
+        {loading ? "—" : value}
+      </div>
     </div>
   );
 }

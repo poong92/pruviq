@@ -15,6 +15,7 @@ import { useCallback, useEffect, useState } from "preact/hooks";
 import { API_BASE_URL } from "../../../config/api";
 import type { SimConfig } from "../../../hooks/useSimConfig";
 import { useTranslations, type Lang } from "../../../i18n/index";
+import { emit } from "../../../lib/events";
 
 interface Props {
   config: SimConfig;
@@ -152,10 +153,17 @@ export default function ResultsPanel({ config, lang }: Props) {
       })
       .then((data: SimResult) => {
         setState({ kind: "ok", data });
+        emit("sim.run_succeeded", {
+          preset: config.presetId,
+          pf: data.profit_factor,
+          ret: data.total_return_pct,
+        });
       })
       .catch((err) => {
         if (controller.signal.aborted) return;
-        setState({ kind: "error", message: String(err.message || err) });
+        const message = String(err.message || err);
+        setState({ kind: "error", message });
+        emit("sim.run_failed", { preset: config.presetId, error: message });
       });
     return () => controller.abort();
   }, [
@@ -301,7 +309,10 @@ export default function ResultsPanel({ config, lang }: Props) {
         </div>
         <button
           type="button"
-          onClick={() => downloadCSV(d, config.presetId ?? "preset")}
+          onClick={() => {
+            emit("sim.csv_download", { preset: config.presetId });
+            downloadCSV(d, config.presetId ?? "preset");
+          }}
           data-testid="sim-v1-csv-download"
           class="inline-flex min-h-[40px] items-center justify-center gap-1 rounded-lg border border-zinc-700 px-3 py-2 text-xs text-zinc-300 hover:border-emerald-400 hover:text-emerald-300"
         >

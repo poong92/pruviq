@@ -77,21 +77,77 @@ export default function EntryVisualizer({
 // ── Strategy-specific renderers ─────────────────────────────────────────
 
 function renderStrategy(presetId: string, direction: PresetDirection) {
-  switch (presetId) {
+  // Both-direction BB squeeze (bidirectional) reuses the long diagram:
+  // the entry marker is the breakout, not the direction.
+  const id = presetId.replace(/^both-/, "");
+  switch (id) {
     case "bb-squeeze-short":
       return <BBSqueeze dir="short" />;
     case "bb-squeeze-long":
+    case "bb-squeeze":
       return <BBSqueeze dir="long" />;
     case "rsi-reversal-long":
+    case "rsi-reversal":
       return <RSIReversal dir="long" />;
     case "macd-momentum-long":
+    case "macd-momentum":
       return <MACDMomentum dir="long" />;
+    case "macd-crossover-short":
+      return <MACDMomentum dir="short" />;
     case "stochastic-overbought-short":
       return <StochasticOverbought dir="short" />;
+    case "stoch-rsi-overbought-short":
+      return <StochasticOverbought dir="short" />;
     case "ema-crossover-long":
+    case "ema-crossover":
       return <EMACrossover dir="long" />;
+    case "ema-crossover-short":
+      return <EMACrossover dir="short" />;
     case "turtle-breakout-long":
       return <TurtleBreakout dir="long" />;
+    case "turtle-breakout-short":
+      return <TurtleBreakout dir="short" />;
+    case "adx-trend-long":
+    case "adx-trend":
+      return <ADXTrend dir="long" />;
+    case "adx-trend-short":
+      return <ADXTrend dir="short" />;
+    case "ichimoku-cloud-long":
+    case "ichimoku":
+      return <Ichimoku dir="long" />;
+    case "ichimoku-cloud-short":
+      return <Ichimoku dir="short" />;
+    case "psar-reversal-long":
+      return <PsarReversal dir="long" />;
+    case "psar-reversal-short":
+      return <PsarReversal dir="short" />;
+    case "williams-r-oversold-long":
+      return <WilliamsR dir="long" />;
+    case "williams-r-overbought-short":
+      return <WilliamsR dir="short" />;
+    case "rsi-bb-overbought-short":
+      return <RSIBB dir="short" />;
+    case "rsi-bb-oversold-long":
+      return <RSIBB dir="long" />;
+    case "hv-squeeze-breakout-long":
+      return <BBSqueeze dir="long" />;
+    case "hv-squeeze-breakout-short":
+      return <BBSqueeze dir="short" />;
+    case "grid-mean-reversion-long":
+    case "dca-oversold-long":
+      return <RSIReversal dir="long" />;
+    case "bb-band-bounce-long":
+      return <BBBounce dir="long" />;
+    case "rsi-divergence-long":
+      return <RSIReversal dir="long" />;
+    case "supertrend-long":
+      return <Supertrend dir="long" />;
+    case "macd-zero-cross":
+      return <MACDMomentum dir="long" />;
+    case "stoch-rsi-reversal-both":
+      return <StochasticOverbought dir="short" />;
+    case "stoch-rsi-overbought":
+      return <StochasticOverbought dir="short" />;
     default:
       return <GenericViz direction={direction} />;
   }
@@ -532,6 +588,372 @@ function TurtleBreakout({ dir }: { dir: "long" | "short" }) {
       />
       <text x={10} y={14} fill="#a1a1aa" font-size="9" font-family="monospace">
         Donchian 20
+      </text>
+    </g>
+  );
+}
+
+// ── ADX Trend ───────────────────────────────────────────────────────────
+
+function ADXTrend({ dir }: { dir: "long" | "short" }) {
+  const price =
+    dir === "long"
+      ? "M0,90 L30,85 L60,75 L90,68 L120,58 L150,48 L180,38 L210,30 L240,22"
+      : "M0,30 L30,35 L60,45 L90,55 L120,68 L150,80 L180,95 L210,108 L240,120";
+  const adx = "M0,120 L40,115 L80,105 L120,90 L160,72 L200,55 L240,45";
+  const entryX = 160;
+  const entryY = dir === "long" ? 48 : 80;
+  return (
+    <g>
+      <AxisBase />
+      <rect
+        x={0}
+        y={60}
+        width={VIEW_W}
+        height={2}
+        fill="#a1a1aa"
+        opacity="0.4"
+      />
+      <text
+        x={4}
+        y={58}
+        fill="#a1a1aa"
+        font-size="7"
+        font-family="monospace"
+        opacity="0.7"
+      >
+        ADX 25
+      </text>
+      <path d={price} fill="none" stroke="#e4e4e7" stroke-width="1.4" />
+      <path
+        d={adx}
+        fill="none"
+        stroke="#a78bfa"
+        stroke-width="1.2"
+        stroke-dasharray="2,2"
+      />
+      <EntryMarker
+        x={entryX}
+        y={entryY}
+        dir={dir}
+        labelX={entryX - 30}
+        labelY={dir === "long" ? entryY + 30 : entryY - 20}
+        labelText={dir === "long" ? "TREND ↑" : "TREND ↓"}
+      />
+      <text x={10} y={14} fill="#a1a1aa" font-size="9" font-family="monospace">
+        Price · ADX
+      </text>
+    </g>
+  );
+}
+
+// ── Ichimoku Cloud ──────────────────────────────────────────────────────
+
+function Ichimoku({ dir }: { dir: "long" | "short" }) {
+  const price =
+    dir === "long"
+      ? "M0,95 L30,90 L60,82 L90,72 L120,62 L150,52 L180,42 L210,32 L240,25"
+      : "M0,25 L30,32 L60,45 L90,58 L120,72 L180,90 L240,105";
+  // Kumo cloud (shaded region)
+  const cloudTop = "M0,60 L60,55 L120,50 L180,55 L240,60";
+  const cloudBot = "M0,75 L60,72 L120,70 L180,72 L240,75";
+  const entryX = 150;
+  const entryY = dir === "long" ? 52 : 72;
+  return (
+    <g>
+      <AxisBase />
+      <path
+        d={`${cloudTop} L240,75 L180,72 L120,70 L60,72 L0,75 Z`}
+        fill="#a78bfa"
+        opacity="0.15"
+      />
+      <path
+        d={cloudTop}
+        fill="none"
+        stroke="#a78bfa"
+        stroke-width="0.6"
+        opacity="0.6"
+      />
+      <path
+        d={cloudBot}
+        fill="none"
+        stroke="#a78bfa"
+        stroke-width="0.6"
+        opacity="0.6"
+      />
+      <path d={price} fill="none" stroke="#e4e4e7" stroke-width="1.4" />
+      <EntryMarker
+        x={entryX}
+        y={entryY}
+        dir={dir}
+        labelX={entryX - 30}
+        labelY={dir === "long" ? entryY + 30 : entryY - 20}
+        labelText={dir === "long" ? "ABOVE CLOUD" : "BELOW CLOUD"}
+      />
+      <text x={10} y={14} fill="#a1a1aa" font-size="9" font-family="monospace">
+        Ichimoku Kumo
+      </text>
+    </g>
+  );
+}
+
+// ── Parabolic SAR Reversal ──────────────────────────────────────────────
+
+function PsarReversal({ dir }: { dir: "long" | "short" }) {
+  const price =
+    dir === "long"
+      ? "M0,75 L30,78 L60,72 L90,60 L120,48 L150,40 L180,32 L210,28 L240,22"
+      : "M0,40 L30,35 L60,45 L90,60 L120,75 L150,88 L180,100 L210,112 L240,120";
+  // PSAR dots alternating sides
+  const psarPoints: Array<[number, number]> =
+    dir === "long"
+      ? [
+          [20, 90],
+          [40, 85],
+          [60, 78],
+          [80, 75],
+          [100, 55],
+          [120, 50],
+          [150, 45],
+          [180, 40],
+          [210, 36],
+        ]
+      : [
+          [20, 30],
+          [40, 32],
+          [60, 35],
+          [80, 40],
+          [100, 60],
+          [120, 72],
+          [150, 85],
+          [180, 95],
+          [210, 108],
+        ];
+  const entryX = 90;
+  const entryY = dir === "long" ? 60 : 60;
+  return (
+    <g>
+      <AxisBase />
+      <path d={price} fill="none" stroke="#e4e4e7" stroke-width="1.4" />
+      {psarPoints.map(([x, y]) => (
+        <circle
+          key={`${x},${y}`}
+          cx={x}
+          cy={y}
+          r="2"
+          fill={dir === "long" ? "#10b981" : "#ef4444"}
+          opacity="0.8"
+        />
+      ))}
+      <EntryMarker
+        x={entryX}
+        y={entryY}
+        dir={dir}
+        labelX={entryX - 25}
+        labelY={dir === "long" ? entryY + 28 : entryY - 18}
+        labelText={dir === "long" ? "SAR FLIP ↑" : "SAR FLIP ↓"}
+      />
+      <text x={10} y={14} fill="#a1a1aa" font-size="9" font-family="monospace">
+        Parabolic SAR
+      </text>
+    </g>
+  );
+}
+
+// ── Williams %R Oversold/Overbought ─────────────────────────────────────
+
+function WilliamsR({ dir }: { dir: "long" | "short" }) {
+  // Price path (top half) and Williams %R (bottom, scale -100..0)
+  const price =
+    dir === "long"
+      ? "M0,55 L30,60 L60,65 L90,68 L120,60 L150,50 L180,40 L210,30 L240,22"
+      : "M0,22 L30,30 L60,40 L90,50 L120,58 L150,68 L180,80 L210,95 L240,105";
+  const willr =
+    dir === "long"
+      ? "M0,118 L30,120 L60,118 L90,108 L120,100 L150,85 L180,75 L210,60 L240,50"
+      : "M0,50 L30,55 L60,65 L90,75 L120,88 L150,100 L180,115 L210,120 L240,118";
+  const entryX = 130;
+  const entryY = dir === "long" ? 60 : 62;
+  return (
+    <g>
+      <AxisBase />
+      {/* Oversold band Williams %R < -80 ≈ y 115..125 */}
+      <rect
+        x={0}
+        y={dir === "long" ? 115 : 30}
+        width={VIEW_W}
+        height={10}
+        fill={dir === "long" ? "#10b981" : "#ef4444"}
+        opacity="0.1"
+      />
+      <text
+        x={4}
+        y={dir === "long" ? 112 : 40}
+        fill={dir === "long" ? "#10b981" : "#ef4444"}
+        font-size="7"
+        font-family="monospace"
+      >
+        %R {dir === "long" ? "−80" : "−20"}
+      </text>
+      <path d={price} fill="none" stroke="#e4e4e7" stroke-width="1.4" />
+      <path d={willr} fill="none" stroke="#f59e0b" stroke-width="1.2" />
+      <EntryMarker
+        x={entryX}
+        y={entryY}
+        dir={dir}
+        labelX={entryX - 35}
+        labelY={dir === "long" ? entryY + 30 : entryY - 18}
+        labelText={dir === "long" ? "%R OVERSOLD" : "%R OVERBOUGHT"}
+      />
+      <text x={10} y={14} fill="#a1a1aa" font-size="9" font-family="monospace">
+        Price · Williams
+      </text>
+    </g>
+  );
+}
+
+// ── RSI + BB combo ──────────────────────────────────────────────────────
+
+function RSIBB({ dir }: { dir: "long" | "short" }) {
+  const price =
+    dir === "long"
+      ? "M0,80 L30,85 L60,90 L90,95 L120,90 L150,78 L180,65 L210,52 L240,40"
+      : "M0,40 L30,45 L60,52 L90,60 L120,68 L150,80 L180,95 L210,108 L240,115";
+  const upperBB = "M0,35 L60,42 L120,38 L180,35 L240,30";
+  const lowerBB = "M0,105 L60,98 L120,100 L180,108 L240,115";
+  const entryX = 140;
+  const entryY = dir === "long" ? 85 : 72;
+  return (
+    <g>
+      <AxisBase />
+      <path
+        d={upperBB}
+        fill="none"
+        stroke="#60a5fa"
+        stroke-width="0.8"
+        stroke-dasharray="3,2"
+        opacity="0.5"
+      />
+      <path
+        d={lowerBB}
+        fill="none"
+        stroke="#60a5fa"
+        stroke-width="0.8"
+        stroke-dasharray="3,2"
+        opacity="0.5"
+      />
+      <path d={price} fill="none" stroke="#e4e4e7" stroke-width="1.4" />
+      <EntryMarker
+        x={entryX}
+        y={entryY}
+        dir={dir}
+        labelX={entryX - 40}
+        labelY={dir === "long" ? entryY + 30 : entryY - 20}
+        labelText={dir === "long" ? "DOUBLE OVERSOLD" : "DOUBLE OVERBOUGHT"}
+      />
+      <text x={10} y={14} fill="#a1a1aa" font-size="9" font-family="monospace">
+        BB + RSI
+      </text>
+    </g>
+  );
+}
+
+// ── BB Band Bounce ──────────────────────────────────────────────────────
+
+function BBBounce({ dir }: { dir: "long" | "short" }) {
+  const upper = "M0,35 L60,40 L120,38 L180,40 L240,35";
+  const lower = "M0,105 L60,102 L120,100 L180,102 L240,105";
+  const mid = "M0,70 L240,70";
+  // Price touches lower band, bounces up
+  const price =
+    dir === "long"
+      ? "M0,70 L30,82 L60,95 L90,102 L120,100 L150,88 L180,72 L210,55 L240,40"
+      : "M0,70 L30,58 L60,45 L90,38 L120,40 L150,52 L180,68 L210,85 L240,102";
+  const entryX = 110;
+  const entryY = dir === "long" ? 100 : 40;
+  return (
+    <g>
+      <AxisBase />
+      <path
+        d={upper}
+        fill="none"
+        stroke="#60a5fa"
+        stroke-width="0.8"
+        stroke-dasharray="3,2"
+        opacity="0.6"
+      />
+      <path
+        d={lower}
+        fill="none"
+        stroke="#60a5fa"
+        stroke-width="0.8"
+        stroke-dasharray="3,2"
+        opacity="0.6"
+      />
+      <path
+        d={mid}
+        fill="none"
+        stroke="#60a5fa"
+        stroke-width="0.4"
+        stroke-dasharray="1,2"
+        opacity="0.4"
+      />
+      <path d={price} fill="none" stroke="#e4e4e7" stroke-width="1.4" />
+      <EntryMarker
+        x={entryX}
+        y={entryY}
+        dir={dir}
+        labelX={entryX - 25}
+        labelY={dir === "long" ? entryY - 18 : entryY + 28}
+        labelText={dir === "long" ? "BAND BOUNCE ↑" : "BAND REJECT ↓"}
+      />
+      <text x={10} y={14} fill="#a1a1aa" font-size="9" font-family="monospace">
+        BB Band Bounce
+      </text>
+    </g>
+  );
+}
+
+// ── Supertrend ──────────────────────────────────────────────────────────
+
+function Supertrend({ dir }: { dir: "long" | "short" }) {
+  const price =
+    dir === "long"
+      ? "M0,80 L30,75 L60,70 L90,65 L120,55 L150,45 L180,38 L210,30 L240,22"
+      : "M0,30 L30,35 L60,45 L90,58 L120,70 L180,90 L240,108";
+  // Supertrend line: follows price with bands flipping at entry
+  const supertrendBefore = "M0,100 L30,95 L60,88 L90,82 L120,72 L150,62";
+  const supertrendAfter = "M150,50 L180,42 L210,36 L240,28";
+  const entryX = 150;
+  const entryY = dir === "long" ? 55 : 75;
+  return (
+    <g>
+      <AxisBase />
+      <path
+        d={supertrendBefore}
+        fill="none"
+        stroke={dir === "long" ? "#ef4444" : "#10b981"}
+        stroke-width="1.2"
+        opacity="0.6"
+      />
+      <path
+        d={supertrendAfter}
+        fill="none"
+        stroke={dir === "long" ? "#10b981" : "#ef4444"}
+        stroke-width="1.2"
+        opacity="0.9"
+      />
+      <path d={price} fill="none" stroke="#e4e4e7" stroke-width="1.4" />
+      <EntryMarker
+        x={entryX}
+        y={entryY}
+        dir={dir}
+        labelX={entryX - 30}
+        labelY={dir === "long" ? entryY + 30 : entryY - 20}
+        labelText={dir === "long" ? "ST FLIP ↑" : "ST FLIP ↓"}
+      />
+      <text x={10} y={14} fill="#a1a1aa" font-size="9" font-family="monospace">
+        Supertrend
       </text>
     </g>
   );

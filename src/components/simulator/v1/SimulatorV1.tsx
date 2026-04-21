@@ -10,9 +10,11 @@
 //   ResultsPanel (live /simulate fetch, metrics summary)
 //   OKXConnectCTA (funnel to /dashboard)
 
+import { useEffect } from "preact/hooks";
 import { useSimConfig } from "../../../hooks/useSimConfig";
 import { useSimShortcuts } from "../../../hooks/useSimShortcuts";
 import { useTranslations, type Lang } from "../../../i18n/index";
+import { emit } from "../../../lib/events";
 import MobileStickyCTA from "./MobileStickyCTA";
 import OKXConnectCTA from "./OKXConnectCTA";
 import PresetGrid from "./PresetGrid";
@@ -37,6 +39,20 @@ export default function SimulatorV1({ lang }: Props) {
     reset,
   });
 
+  useEffect(() => {
+    emit("sim.view", { lang });
+  }, [lang]);
+
+  const handlePresetSelect = (id: string) => {
+    emit("sim.preset_click", { preset: id });
+    setPreset(id);
+  };
+
+  const handleSkillChange = (mode: typeof config.mode) => {
+    emit("sim.skill_switch", { mode });
+    setMode(mode);
+  };
+
   return (
     <div class="mx-auto max-w-6xl px-4 py-8 sm:py-10" data-testid="sim-v1-root">
       <header class="mb-6 text-center sm:mb-8">
@@ -52,7 +68,11 @@ export default function SimulatorV1({ lang }: Props) {
       </header>
 
       <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <SkillSwitcher mode={config.mode} lang={lang} onChange={setMode} />
+        <SkillSwitcher
+          mode={config.mode}
+          lang={lang}
+          onChange={handleSkillChange}
+        />
         <div class="flex items-center gap-3 text-xs text-zinc-400">
           <details class="group relative">
             <summary
@@ -102,7 +122,7 @@ export default function SimulatorV1({ lang }: Props) {
         <PresetGrid
           activePresetId={config.presetId}
           lang={lang}
-          onSelect={setPreset}
+          onSelect={handlePresetSelect}
         />
       </div>
 

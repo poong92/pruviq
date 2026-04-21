@@ -14,6 +14,7 @@ import {
   useTranslations,
   type Lang,
 } from "../../../i18n/index";
+import { emit } from "../../../lib/events";
 
 interface Props {
   lang: Lang;
@@ -64,6 +65,7 @@ export default function MobileStickyCTA({ lang, presetId }: Props) {
       <a
         href={href}
         tabIndex={visible ? 0 : -1}
+        onClick={() => emit("cta.sticky_clicked", { preset: presetId })}
         class="pointer-events-auto inline-flex min-h-[48px] w-full max-w-sm items-center justify-center gap-2 rounded-xl bg-emerald-500 px-6 py-3 text-sm font-semibold text-zinc-950 shadow-xl shadow-emerald-500/30 transition hover:bg-emerald-400"
         data-testid="sim-v1-sticky-cta-btn"
       >

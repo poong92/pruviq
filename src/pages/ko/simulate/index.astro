@@ -43,6 +43,8 @@ const simulateJsonLd = {
 ---
 
 <Layout title={t('meta.simulate_title')} description={t('meta.simulate_desc')}>
+  <link slot="head" rel="preload" as="fetch" href="/data/performance.json" crossorigin="anonymous" fetchpriority="high" />
+  <link slot="head" rel="preload" as="fetch" href="/data/builder-presets.json" crossorigin="anonymous" />
   <script type="application/ld+json" set:html={JSON.stringify(simulateJsonLd)} />
   <!-- Onboarding header -->
   <!-- Compact Hero -->
