@@ -13,6 +13,7 @@
 import { useSimConfig } from "../../../hooks/useSimConfig";
 import { useSimShortcuts } from "../../../hooks/useSimShortcuts";
 import { useTranslations, type Lang } from "../../../i18n/index";
+import MobileStickyCTA from "./MobileStickyCTA";
 import OKXConnectCTA from "./OKXConnectCTA";
 import PresetGrid from "./PresetGrid";
 import ResultsPanel from "./ResultsPanel";
@@ -132,6 +133,7 @@ export default function SimulatorV1({ lang }: Props) {
       <div class="mb-4">
         <OKXConnectCTA lang={lang} presetId={config.presetId} />
       </div>
+      <MobileStickyCTA lang={lang} presetId={config.presetId} />
     </div>
   );
 }
