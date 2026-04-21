@@ -2108,6 +2108,48 @@ export const en = {
   "trust.platform_note": "Source: live api.pruviq.com/health",
   "trust.platform_down": "API unreachable",
   "trust.platform_data_age": "Data age",
+
+  // /simulate redesign Phase 1 — Quick Start onboarding
+  "simV2.hero.title": "Most Backtests Lie. Ours Come With Proof.",
+  "simV2.hero.subtitle":
+    "Click a preset. See a real simulation. Compare it to our live OKX results.",
+  "simV2.hero.cta_quick": "Run a preset",
+  "simV2.hero.cta_expert": "Build your own",
+  "simV2.skill.label": "Mode",
+  "simV2.skill.quick": "Quick Start",
+  "simV2.skill.standard": "Standard",
+  "simV2.skill.expert": "Expert Builder",
+  "simV2.skill.quick_summary": "Pick a preset, see proof. No setup.",
+  "simV2.skill.standard_summary": "Tune risk, date range, coins.",
+  "simV2.skill.expert_summary":
+    "Full condition builder — indicators and logic.",
+  "simV2.presets.heading": "Curated presets",
+  "simV2.presets.sub": "Click any preset to load it into the builder.",
+  "simV2.presets.verified": "Verified",
+  "simV2.presets.verified_tooltip":
+    "Passed out-of-sample + walk-forward validation.",
+  "simV2.risk.low": "Low risk",
+  "simV2.risk.medium": "Medium risk",
+  "simV2.risk.high": "High risk",
+  "simV2.direction.long": "Long",
+  "simV2.direction.short": "Short",
+  "simV2.direction.both": "Long/Short",
+  "simV2.defaults.sl_label": "Stop-loss",
+  "simV2.defaults.tp_label": "Take-profit",
+  "simV2.trust.gap_heading": "Backtest vs Live OKX",
+  "simV2.trust.gap_backtest": "Backtest",
+  "simV2.trust.gap_live": "Live",
+  "simV2.trust.gap_delta": "Gap",
+  "simV2.trust.gap_note":
+    "The gap is the number that matters. A tight gap means the backtest is honest.",
+  "simV2.cta.connect_heading": "Ready to run this live?",
+  "simV2.cta.connect_body":
+    "Connect your OKX account in one step. No funds moved, no strategies run, until you say go.",
+  "simV2.cta.connect_button": "Connect OKX",
+  "simV2.cta.learn_more": "How it works",
+  "simV2.empty.loading": "Running simulation…",
+  "simV2.empty.pick_first": "Pick a preset above to see results.",
+  "simV2.empty.error": "Couldn't run that simulation. Try another preset.",
 } as const;
 
 export type TranslationKey = keyof typeof en;
