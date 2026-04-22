@@ -16,6 +16,16 @@ const IS_PROD = (process.env.BASE_URL ?? "").includes("pruviq.com");
 
 test.describe("Interactive QA Extra", () => {
   test.skip(!IS_PROD, "Prod only (BASE_URL=https://pruviq.com)");
+  // 2026-04-22: entire file gated behind `legacy` grep. These 3 tests
+  // target the pre-V1 simulator (`quick-cat-breakout`, `copy-link`,
+  // `tab-summary` testids, Optimize tab, /ko labels at "승률"). The new
+  // /simulate (SimulatorV1) doesn't expose any of these affordances.
+  // Coverage is now provided by `tests/e2e/simulator-real-usage.spec.ts`
+  // (prod P1–P10) — which replaces these tests with V1-native equivalents.
+  test.skip(
+    true,
+    "Legacy simulator selectors removed in V1 redesign — covered by simulator-real-usage.spec.ts",
+  );
 
   // ── 1. URL Share: preset run → ?strategy= (not ?c=) ───────────────────────
 
