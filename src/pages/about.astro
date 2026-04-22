@@ -59,8 +59,8 @@ const simulationsRun = (siteStats as { simulations_run: number }).simulations_ru
         <p class="text-xs text-[--color-text-muted] mt-2 font-mono uppercase tracking-wider">{t('about.num_data')}</p>
       </div>
       <div class="stat-glass text-center">
-        <p class="font-mono text-3xl md:text-4xl font-bold gradient-text">{simulationsRun}+</p>
-        <p class="text-xs text-[--color-text-muted] mt-2 font-mono uppercase tracking-wider">{t('about.num_sims')}</p>
+        <p class="font-mono text-3xl md:text-4xl font-bold gradient-text">{(siteStats as { strategies_tested: number }).strategies_tested}+</p>
+        <p class="text-xs text-[--color-text-muted] mt-2 font-mono uppercase tracking-wider">Strategies Tested</p>
       </div>
     </div>
   </section>
