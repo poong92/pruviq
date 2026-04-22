@@ -97,14 +97,13 @@ test.describe("Real usability — clicks, scroll, nav", () => {
     await open(page);
     // Click preset
     await page.click("[data-testid=sim-v1-preset-ichimoku]");
-    // Results panel either enters loading state or ok state. Wait for
-    // EITHER before checking scroll (the scroll target resolves to the
-    // anchor fallback if neither is in DOM yet).
-    await page.waitForSelector(
-      "[data-testid=sim-v1-results-loading], [data-testid=sim-v1-results-ok], #sim-v1-results-anchor",
-      { timeout: 15000 },
-    );
-    await page.waitForTimeout(400);
+    // Wait for results-ok to appear (meaning fetch completed) — this is
+    // the actual target the scroll handler tries to reach. Then give
+    // smooth-scroll up to 2s to complete over ~2000px at mobile width.
+    await page.waitForSelector("[data-testid=sim-v1-results-ok]", {
+      timeout: 20000,
+    });
+    await page.waitForTimeout(2000);
     // Results panel should be in viewport. Definition: any part of it
     // overlaps with the visible viewport (not strictly "top in viewport")
     // — scrollIntoView({block:'start'}) may put the element just above
