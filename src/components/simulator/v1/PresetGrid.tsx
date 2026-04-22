@@ -105,9 +105,10 @@ export default function PresetGrid({ activePresetId, lang, onSelect }: Props) {
                   lang={lang}
                 />
               </div>
-              <p class="hidden text-xs leading-snug text-zinc-400 sm:block">
-                {tagline}
-              </p>
+              {/* 2026-04-22: tagline shown on mobile too — the exact persona
+                  (first-time retail on phone) that needed the one-line
+                  explanation the most was being silenced by hidden sm:block. */}
+              <p class="text-xs leading-snug text-zinc-400">{tagline}</p>
               {/* 2026-04-22: honest per-preset metrics row. Numbers here
                   are measured against api.pruviq.com/simulate at registry
                   default SL/TP, so a card click reproduces these exactly.

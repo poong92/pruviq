@@ -43,23 +43,26 @@ export default function SimulatorV1({ lang }: Props) {
     emit("sim.view", { lang });
   }, [lang]);
 
-  // 2026-04-22: scroll the results card into view on preset click. Mobile
-  // users previously clicked a card and saw nothing change (results lived
-  // ~1000px below the fold). Also fires for Standard-mode slider commit
-  // via a separate handler in StandardControls.
-  const scrollResultsIntoView = () => {
-    if (typeof document === "undefined") return;
-    const el =
+  // 2026-04-22: scroll the results card into view on preset click AND on
+  // Standard-mode slider commit (onChange). Mobile users previously saw
+  // no feedback because results lived ~1000px below the fold. Now every
+  // action that changes the result scrolls the result into view.
+  const getResultsElement = (): HTMLElement | null => {
+    if (typeof document === "undefined") return null;
+    return (
       document.querySelector<HTMLElement>(
         "[data-testid='sim-v1-results-ok']",
       ) ||
       document.querySelector<HTMLElement>(
         "[data-testid='sim-v1-results-loading']",
       ) ||
-      document.getElementById("sim-v1-results-anchor");
+      document.getElementById("sim-v1-results-anchor")
+    );
+  };
+
+  const scrollResultsIntoView = () => {
+    const el = getResultsElement();
     if (!el) return;
-    // Respect reduced-motion — users with vestibular disorders see auto
-    // instead of smooth (same behavior as our other scroll handlers).
     const prefersReduced =
       typeof window !== "undefined" &&
       window.matchMedia &&
@@ -68,6 +71,19 @@ export default function SimulatorV1({ lang }: Props) {
       behavior: prefersReduced ? "auto" : "smooth",
       block: "start",
     });
+  };
+
+  // Only scroll if the results card is currently offscreen. Used for
+  // Standard-mode slider commits — repeatedly auto-scrolling while the
+  // user is reading the results would be hostile.
+  const scrollResultsIntoViewIfOffscreen = () => {
+    const el = getResultsElement();
+    if (!el || typeof window === "undefined") return;
+    const rect = el.getBoundingClientRect();
+    const inView =
+      rect.top >= 0 && rect.bottom <= (window.innerHeight || 0) + 100;
+    if (inView) return;
+    scrollResultsIntoView();
   };
 
   const handlePresetSelect = (id: string) => {
@@ -172,9 +188,21 @@ export default function SimulatorV1({ lang }: Props) {
               startDate: config.startDate,
               endDate: config.endDate,
             }}
-            onSL={setSL}
-            onTP={setTP}
-            onChange={setStandard}
+            onSL={(n) => {
+              setSL(n);
+              // Slider drag fires rapid updates; debounce the scroll by
+              // deferring to after the React commit. Only scroll if the
+              // results card is NOT already visible in the viewport.
+              setTimeout(scrollResultsIntoViewIfOffscreen, 250);
+            }}
+            onTP={(n) => {
+              setTP(n);
+              setTimeout(scrollResultsIntoViewIfOffscreen, 250);
+            }}
+            onChange={(patch) => {
+              setStandard(patch);
+              setTimeout(scrollResultsIntoViewIfOffscreen, 250);
+            }}
           />
         </div>
       )}

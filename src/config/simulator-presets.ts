@@ -171,8 +171,8 @@ export const SIMULATOR_PRESETS: readonly SimulatorPreset[] = [
       ko: "이평 교차 ↕",
     },
     tagline: {
-      en: "Classic 50/200 EMA cross. Stable in bull and bear.",
-      ko: "50/200 EMA 교차. 상승·하락장 모두 안정.",
+      en: "50/200 EMA cross — lowest MDD (33%) of the 5 verified set.",
+      ko: "50/200 EMA 교차 — 5개 검증 전략 중 MDD 최저 (33%).",
     },
     defaults: { sl: 5, tp: 10, coin: "BTC" },
     metrics: {

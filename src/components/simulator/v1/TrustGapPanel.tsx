@@ -7,7 +7,7 @@
 //
 // Flow on mount:
 //   1. Fetch /data/performance.json → live summary + period
-//   2. POST /simulate with strategy_id + same date range
+//   2. POST /simulate with `strategy` + same date range
 //   3. When both resolve, show 3-column grid: Backtest / Live / Gap
 //   4. If backtest fails or exceeds 8s timeout → render live-only fallback
 //      (degrades gracefully rather than blocking the page)
@@ -302,7 +302,9 @@ function EquitySparkline({
   const finalE = equities[equities.length - 1] ?? 0;
   const finalPositive = finalE >= 0;
   const strokeColor = finalPositive ? "#10b981" : "#f43f5e";
-  const fillColor = finalPositive ? "#10b98122" : "#f4365622";
+  // 2026-04-22 fix: fillColor hex previously had a typo (#f4365622) that
+  // didn't match the stroke hue. Same base hue + 22 alpha for the fill.
+  const fillColor = finalPositive ? "#10b98122" : "#f43f5e22";
 
   const path = equities
     .map(
@@ -313,10 +315,18 @@ function EquitySparkline({
   const areaPath = `${path} L${((equities.length - 1) * xStep).toFixed(1)},${zeroY.toFixed(1)} L0,${zeroY.toFixed(1)} Z`;
   const finalPct = startingBalance > 0 ? (finalE / startingBalance) * 100 : 0;
 
+  // 2026-04-22 a11y fix: aria-label now includes the actual final % + day
+  // count so screen-reader users get the meaningful data, not just a label.
+  // Previously role="img" + aria-hidden="true" on <svg> were contradictory;
+  // dropping aria-hidden so <title>/<desc> inside can announce, and
+  // letting the figure's aria-label remain as the primary name.
+  const srLabel = `Live cumulative P&L: ${
+    finalPositive ? "+" : ""
+  }${finalPct.toFixed(1)}% over ${daily.length} days`;
   return (
     <figure
       class="relative"
-      aria-label="Live cumulative P&L"
+      aria-label={srLabel}
       data-testid="sim-v1-equity-sparkline"
     >
       <svg
@@ -324,8 +334,9 @@ function EquitySparkline({
         width="100%"
         height={H}
         role="img"
-        aria-hidden="true"
+        aria-label={srLabel}
       >
+        <title>{srLabel}</title>
         {/* zero line */}
         <line
           x1={0}
