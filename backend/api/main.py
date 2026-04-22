@@ -160,7 +160,11 @@ DATA_DIR = Path(os.getenv(
     str(Path(__file__).resolve().parent.parent / "data" / "futures")
 ))
 MAX_CACHE_SIZE = 500
-RATE_LIMIT_PER_MIN = 30
+# 2026-04-22: raised 30 → 120. Real users cycling through 5 presets + Standard
+# sliders easily send 20+ POSTs/min; full-suite E2E bursts send 40-60/min. At
+# 30, both tripped 429. 120 still blocks true abuse (requires 2 req/s
+# sustained) and per-IP LRU caps at 10k entries for DDoS isolation.
+RATE_LIMIT_PER_MIN = 120
 AVOID_HOURS = [2, 3, 10, 20, 21, 22, 23]
 
 # Globals
