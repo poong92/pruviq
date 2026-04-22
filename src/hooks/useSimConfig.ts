@@ -51,9 +51,11 @@ const FEE_MIN = 0;
 const FEE_MAX = 1;
 const DIRECTIONS: readonly PresetDirection[] = ["long", "short", "both"];
 
-const DEFAULT_TOP_N = 10;
-const DEFAULT_LEVERAGE = 5;
-const DEFAULT_FEE_PCT = 0.05;
+// Exported so consumers (e.g. SimulatorV1.buildExpertQuery) can avoid
+// duplicating magic numbers — single source of truth for defaults.
+export const DEFAULT_TOP_N = 10;
+export const DEFAULT_LEVERAGE = 5;
+export const DEFAULT_FEE_PCT = 0.05;
 
 function clamp(value: number, min: number, max: number): number {
   if (!Number.isFinite(value)) return min;
@@ -133,7 +135,32 @@ function readFromURL(): SimConfig {
   }
   const params = new URLSearchParams(window.location.search);
   const rawPreset = params.get("preset");
-  const preset = rawPreset && findPreset(rawPreset) ? rawPreset : null;
+  // 2026-04-22: if URL has `?preset=xxx` but xxx is not in SIMULATOR_PRESETS
+  // (e.g. a stale link from when presets were fake, or the rankings Top 3
+  // slugs that used to point at fabricated ids), we used to silently fall
+  // back to the default preset while keeping the misleading `?preset=xxx`
+  // in the URL. Now we warn + force-clean the URL so the user sees what's
+  // actually active.
+  let preset: string | null = null;
+  if (rawPreset) {
+    if (findPreset(rawPreset)) {
+      preset = rawPreset;
+    } else if (typeof console !== "undefined") {
+      console.warn(
+        `[useSimConfig] Unknown preset id in URL: "${rawPreset}". ` +
+          `Falling back to "${QUICK_START_DEFAULT_PRESET_ID}". ` +
+          `Valid ids: see src/config/simulator-presets.ts`,
+      );
+      // Clean the misleading param so re-share doesn't propagate confusion.
+      try {
+        const clean = new URL(window.location.href);
+        clean.searchParams.delete("preset");
+        window.history.replaceState({}, "", clean.toString());
+      } catch {
+        /* URL api unavailable — leave as-is */
+      }
+    }
+  }
   const base = defaultsFromPreset(preset);
 
   const mode = parseMode(params.get("mode")) ?? DEFAULT_SKILL_MODE;

@@ -147,11 +147,13 @@ export default function ResultsPanel({ config, lang }: Props) {
 
   useEffect(() => {
     if (!config.presetId) return;
-    const strategy_id = config.presetId
-      .replace(/-(long|short)$/, "")
-      .replace(/^both-/, "");
+    // 2026-04-22: backend Pydantic field is `strategy` (not `strategy_id`).
+    // Previously the mismatch caused every request to silently fall back to
+    // the default ("bb-squeeze") — 7 presets returned only 2 results.
+    // Also, SIMULATOR_PRESETS now use backend registry IDs directly
+    // (e.g. "ichimoku", "atr-breakout"), so no suffix stripping needed.
     const body: Record<string, unknown> = {
-      strategy_id,
+      strategy: config.presetId,
       direction: config.direction,
       sl_pct: config.sl,
       tp_pct: config.tp,
@@ -276,24 +278,44 @@ export default function ResultsPanel({ config, lang }: Props) {
           value={signed(d.total_return_pct)}
           tone={returnPositive ? "good" : "bad"}
           testId="sim-v1-metric-return"
+          tooltip={
+            lang === "ko"
+              ? "전략 기간 전체의 순 수익률 (수수료·슬리피지 포함)"
+              : "Cumulative net return over the full backtest period (after fees & slippage)"
+          }
         />
         <Metric
           label={lang === "ko" ? "승률" : "Win rate"}
           value={`${abbrev(d.win_rate, 1)}%`}
           tone="neutral"
           testId="sim-v1-metric-winrate"
+          tooltip={
+            lang === "ko"
+              ? "승률 자체는 좋은 지표가 아닙니다. 40% 승률이라도 PF > 1이면 수익성 있음"
+              : "Win rate alone is misleading — 40% WR with PF > 1 is still profitable"
+          }
         />
         <Metric
           label={lang === "ko" ? "수익 팩터" : "Profit factor"}
           value={abbrev(d.profit_factor, 2)}
           tone={d.profit_factor >= 1 ? "good" : "bad"}
           testId="sim-v1-metric-pf"
+          tooltip={
+            lang === "ko"
+              ? "총 수익 ÷ 총 손실. 1.0 = 본전, 1.3+ = 견고, 2.0+ = 예외적"
+              : "Gross profit ÷ gross loss. 1.0 = break-even, 1.3+ = solid, 2.0+ = exceptional"
+          }
         />
         <Metric
           label={lang === "ko" ? "최대 낙폭" : "Max drawdown"}
           value={`${abbrev(d.max_drawdown_pct, 1)}%`}
           tone="bad"
           testId="sim-v1-metric-mdd"
+          tooltip={
+            lang === "ko"
+              ? "기간 중 자본 고점 대비 최대 손실 비율. 낮을수록 좋음"
+              : "Largest peak-to-trough equity loss during the period. Lower = better"
+          }
         />
       </div>
 
@@ -386,11 +408,13 @@ function Metric({
   value,
   tone,
   testId,
+  tooltip,
 }: {
   label: string;
   value: string;
   tone: "good" | "bad" | "neutral";
   testId: string;
+  tooltip?: string;
 }) {
   const toneClass =
     tone === "good"
@@ -398,6 +422,14 @@ function Metric({
       : tone === "bad"
         ? "text-rose-400"
         : "text-zinc-100";
+  // 2026-04-22 (a11y final): abandoned the hidden-until-interacted tooltip
+  // pattern entirely. The prior <details>/<summary> disclosure fixed the
+  // keyboard/touch reachability issue but introduced popover-dismissal,
+  // viewport-overflow, and announcement-duplication problems.
+  // The cleanest solution: show the explanation inline, always. Zero
+  // interaction required, perfect for AT users + mouse + touch + keyboard,
+  // no JS, no viewport math, no state. Costs ~10px vertical per metric;
+  // worth it to remove the last a11y gap.
   return (
     <div data-testid={testId}>
       <div class="mb-1 text-xs uppercase tracking-wide text-zinc-400">
@@ -406,6 +438,11 @@ function Metric({
       <div class={`font-mono text-2xl font-semibold tabular-nums ${toneClass}`}>
         {value}
       </div>
+      {tooltip && (
+        <p class="mt-1 text-[11px] normal-case leading-snug text-zinc-500">
+          {tooltip}
+        </p>
+      )}
     </div>
   );
 }

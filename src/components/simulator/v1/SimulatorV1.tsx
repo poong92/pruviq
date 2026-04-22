@@ -11,7 +11,7 @@
 //   OKXConnectCTA (funnel to /dashboard)
 
 import { useEffect } from "preact/hooks";
-import { useSimConfig } from "../../../hooks/useSimConfig";
+import { useSimConfig, DEFAULT_TOP_N } from "../../../hooks/useSimConfig";
 import { useSimShortcuts } from "../../../hooks/useSimShortcuts";
 import { useTranslations, type Lang } from "../../../i18n/index";
 import { emit } from "../../../lib/events";
@@ -43,9 +43,56 @@ export default function SimulatorV1({ lang }: Props) {
     emit("sim.view", { lang });
   }, [lang]);
 
+  // 2026-04-22: scroll the results card into view on preset click AND on
+  // Standard-mode slider commit (onChange). Mobile users previously saw
+  // no feedback because results lived ~1000px below the fold. Now every
+  // action that changes the result scrolls the result into view.
+  const getResultsElement = (): HTMLElement | null => {
+    if (typeof document === "undefined") return null;
+    return (
+      document.querySelector<HTMLElement>(
+        "[data-testid='sim-v1-results-ok']",
+      ) ||
+      document.querySelector<HTMLElement>(
+        "[data-testid='sim-v1-results-loading']",
+      ) ||
+      document.getElementById("sim-v1-results-anchor")
+    );
+  };
+
+  const scrollResultsIntoView = () => {
+    const el = getResultsElement();
+    if (!el) return;
+    const prefersReduced =
+      typeof window !== "undefined" &&
+      window.matchMedia &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    el.scrollIntoView({
+      behavior: prefersReduced ? "auto" : "smooth",
+      block: "start",
+    });
+  };
+
+  // Only scroll if the results card is currently offscreen. Used for
+  // Standard-mode slider commits — repeatedly auto-scrolling while the
+  // user is reading the results would be hostile.
+  const scrollResultsIntoViewIfOffscreen = () => {
+    const el = getResultsElement();
+    if (!el || typeof window === "undefined") return;
+    const rect = el.getBoundingClientRect();
+    const inView =
+      rect.top >= 0 && rect.bottom <= (window.innerHeight || 0) + 100;
+    if (inView) return;
+    scrollResultsIntoView();
+  };
+
   const handlePresetSelect = (id: string) => {
     emit("sim.preset_click", { preset: id });
     setPreset(id);
+    // Delay so results-loading state paints first, THEN scroll. 150ms is
+    // short enough that users don't perceive lag but long enough for
+    // Preact to commit the state transition.
+    setTimeout(scrollResultsIntoView, 150);
   };
 
   const handleSkillChange = (mode: typeof config.mode) => {
@@ -55,23 +102,20 @@ export default function SimulatorV1({ lang }: Props) {
 
   return (
     <div class="mx-auto max-w-6xl px-4 py-8 sm:py-10" data-testid="sim-v1-root">
-      <header class="mb-6 text-center sm:mb-8">
-        <h1
-          class="mx-auto max-w-3xl text-balance text-2xl font-bold leading-tight tracking-tight text-zinc-100 sm:text-4xl md:text-5xl"
-          data-testid="sim-v1-hero-title"
-        >
-          {t("simV2.hero.title")}
-        </h1>
-        <p class="mx-auto mt-3 max-w-2xl text-balance text-sm leading-relaxed text-zinc-400 sm:text-base">
-          {t("simV2.hero.subtitle")}
-        </p>
-      </header>
+      {/* 2026-04-22: internal <header> h1 removed. The Astro page already
+          renders an h1 above this mount; the second h1 was confusing and
+          broke heading hierarchy. Subtitle text preserved as a lede para
+          so context isn't lost.                                          */}
+      <p class="mx-auto mb-6 max-w-2xl text-balance text-center text-sm leading-relaxed text-zinc-400 sm:mb-8 sm:text-base">
+        {t("simV2.hero.subtitle")}
+      </p>
 
       <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <SkillSwitcher
           mode={config.mode}
           lang={lang}
           onChange={handleSkillChange}
+          expertQuery={buildExpertQuery(config)}
         />
         <div class="flex items-center gap-3 text-xs text-zinc-400">
           <details class="group relative">
@@ -114,16 +158,21 @@ export default function SimulatorV1({ lang }: Props) {
         </div>
       </div>
 
-      <div class="mb-8">
-        <TrustGapPanel lang={lang} />
-      </div>
-
+      {/* 2026-04-22: PresetGrid moved ABOVE TrustGapPanel. Trust gap is
+          the brand signature, but a user needs to DO something first. The
+          previous order (TrustGap → PresetGrid) buried the actionable
+          clickable cards under a 3-column chart. The new order:
+          PresetGrid (action) → TrustGap (context) → Results (outcome).   */}
       <div class="mb-8">
         <PresetGrid
           activePresetId={config.presetId}
           lang={lang}
           onSelect={handlePresetSelect}
         />
+      </div>
+
+      <div class="mb-8">
+        <TrustGapPanel lang={lang} />
       </div>
 
       {config.mode === "standard" && (
@@ -139,14 +188,29 @@ export default function SimulatorV1({ lang }: Props) {
               startDate: config.startDate,
               endDate: config.endDate,
             }}
-            onSL={setSL}
-            onTP={setTP}
-            onChange={setStandard}
+            onSL={(n) => {
+              setSL(n);
+              // Slider drag fires rapid updates; debounce the scroll by
+              // deferring to after the React commit. Only scroll if the
+              // results card is NOT already visible in the viewport.
+              setTimeout(scrollResultsIntoViewIfOffscreen, 250);
+            }}
+            onTP={(n) => {
+              setTP(n);
+              setTimeout(scrollResultsIntoViewIfOffscreen, 250);
+            }}
+            onChange={(patch) => {
+              setStandard(patch);
+              setTimeout(scrollResultsIntoViewIfOffscreen, 250);
+            }}
           />
         </div>
       )}
 
-      <div class="mb-8">
+      {/* Scroll anchor — placed right ABOVE ResultsPanel so the scroll
+          handler can target the whole results region, including loading
+          skeletons before the ok card is rendered.                       */}
+      <div id="sim-v1-results-anchor" class="mb-8">
         <ResultsPanel config={config} lang={lang} />
       </div>
 
@@ -167,4 +231,28 @@ function Shortcut({ keys, label }: { keys: string; label: string }) {
       <span class="ml-3 text-zinc-400">{label}</span>
     </div>
   );
+}
+
+// 2026-04-22 (fix after UX re-review): serialize sim state using the
+// EXACT keys that SimulatorPage.tsx (the Expert builder) reads on mount:
+//   sl, tp, dir, preset, coins (NOT topN), start (NOT from), end (NOT to),
+//   coin. The previous implementation used useSimConfig's internal
+//   persistence keys (topN/from/to/lev/fee), which don't match the
+//   builder reader — so 4 of 8 handed-off fields silently dropped.
+// Leverage + fee are NOT read by the Expert builder (it has its own
+// defaults), so we intentionally omit them to avoid false-preservation
+// claims. Default values also omitted to keep URLs short.
+function buildExpertQuery(
+  config: ReturnType<typeof useSimConfig>["config"],
+): string {
+  const p = new URLSearchParams();
+  if (config.presetId) p.set("preset", config.presetId);
+  if (config.direction) p.set("dir", config.direction);
+  if (config.sl) p.set("sl", String(config.sl));
+  if (config.tp) p.set("tp", String(config.tp));
+  if (config.topN !== DEFAULT_TOP_N) p.set("coins", String(config.topN));
+  if (config.coin && config.coin !== "BTC") p.set("coin", config.coin);
+  if (config.startDate) p.set("start", config.startDate);
+  if (config.endDate) p.set("end", config.endDate);
+  return p.toString();
 }

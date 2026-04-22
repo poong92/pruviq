@@ -105,10 +105,47 @@ export default function PresetGrid({ activePresetId, lang, onSelect }: Props) {
                   lang={lang}
                 />
               </div>
-              <p class="hidden text-xs leading-snug text-zinc-400 sm:block">
-                {tagline}
-              </p>
-              <div class="mt-auto flex flex-wrap gap-x-3 gap-y-1 border-t border-zinc-800 pt-2 font-mono text-xs text-zinc-400 tabular-nums">
+              {/* 2026-04-22: tagline shown on mobile too — the exact persona
+                  (first-time retail on phone) that needed the one-line
+                  explanation the most was being silenced by hidden sm:block. */}
+              <p class="text-xs leading-snug text-zinc-400">{tagline}</p>
+              {/* 2026-04-22: honest per-preset metrics row. Numbers here
+                  are measured against api.pruviq.com/simulate at registry
+                  default SL/TP, so a card click reproduces these exactly.
+                  Keeping metrics ON the card is the trust contract — users
+                  see what they'll get BEFORE clicking. */}
+              <dl class="mt-1 grid grid-cols-3 gap-x-2 gap-y-1 rounded-md bg-zinc-950/40 px-2 py-1.5 text-center font-mono text-[11px] tabular-nums">
+                <div>
+                  <dt class="text-[10px] uppercase tracking-wide text-zinc-500">
+                    PF
+                  </dt>
+                  <dd
+                    class={`font-semibold ${p.metrics.pf >= 1.2 ? "text-emerald-400" : p.metrics.pf >= 1.05 ? "text-[--color-accent-bright]" : "text-zinc-300"}`}
+                  >
+                    {p.metrics.pf.toFixed(2)}
+                  </dd>
+                </div>
+                <div>
+                  <dt class="text-[10px] uppercase tracking-wide text-zinc-500">
+                    {lang === "ko" ? "수익률" : "Return"}
+                  </dt>
+                  <dd
+                    class={`font-semibold ${p.metrics.totalReturn >= 0 ? "text-emerald-400" : "text-rose-400"}`}
+                  >
+                    {p.metrics.totalReturn >= 0 ? "+" : ""}
+                    {p.metrics.totalReturn.toFixed(0)}%
+                  </dd>
+                </div>
+                <div>
+                  <dt class="text-[10px] uppercase tracking-wide text-zinc-500">
+                    MDD
+                  </dt>
+                  <dd class="font-semibold text-rose-300">
+                    {p.metrics.mdd.toFixed(0)}%
+                  </dd>
+                </div>
+              </dl>
+              <div class="mt-auto flex flex-wrap items-center gap-x-3 gap-y-1 border-t border-zinc-800 pt-2 font-mono text-xs text-zinc-400 tabular-nums">
                 <span>
                   {t("simV2.defaults.sl_label")}{" "}
                   <span class="text-rose-400">{p.defaults.sl}%</span>
@@ -117,7 +154,22 @@ export default function PresetGrid({ activePresetId, lang, onSelect }: Props) {
                   {t("simV2.defaults.tp_label")}{" "}
                   <span class="text-emerald-400">{p.defaults.tp}%</span>
                 </span>
-                <span class="text-zinc-400">{p.defaults.coin}</span>
+                <span class="text-zinc-500">
+                  {p.metrics.trades.toLocaleString()}
+                  {lang === "ko" ? " 거래" : " trades"}
+                </span>
+                {p.liveTracked && (
+                  <span
+                    class="ml-auto inline-flex items-center gap-1 rounded bg-amber-500/10 px-1.5 py-0.5 text-[10px] font-mono font-medium text-amber-300 ring-1 ring-amber-500/30"
+                    title={
+                      lang === "ko"
+                        ? "실거래 진행 중 — TrustGap 패널에서 백테 vs 라이브 갭 확인"
+                        : "Currently live-tracked on OKX — see TrustGap panel for backtest vs live delta"
+                    }
+                  >
+                    ● {lang === "ko" ? "실거래" : "Live"}
+                  </span>
+                )}
               </div>
             </button>
           );
