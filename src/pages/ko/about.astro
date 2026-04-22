@@ -106,6 +106,40 @@ const simulationsRun = (siteStats as { simulations_run: number }).simulations_ru
 
     <hr class="section-divider" />
 
+    <!-- 기관 신뢰 시그널 (2026-04-22 QA 스윕 P3+P5). 오너 정책: 창업자
+         익명 유지. 대신 검증 가능한 공개 아티팩트를 명시. -->
+    <section class="reveal mb-12">
+      <p class="font-mono text-[--color-accent] text-xs tracking-wider mb-2">신뢰 근거</p>
+      <h2 class="text-2xl md:text-3xl font-bold mb-3">익명 팀을 믿어야 할 이유</h2>
+      <p class="text-[--color-text-muted] text-sm mb-6 leading-relaxed max-w-2xl">
+        신원은 선택. 증거는 필수. 여러분이 직접 검증할 수 있는 아티팩트입니다.
+      </p>
+      <div class="grid sm:grid-cols-2 gap-3">
+        <a href="/ko/performance/" class="card-enterprise p-5 hover:border-[--color-accent]/40 transition-colors">
+          <p class="font-mono text-xs text-[--color-accent] mb-2">실거래 손익 장부</p>
+          <p class="text-sm font-semibold mb-1">손실 포함, 모든 거래 공개</p>
+          <p class="text-xs text-[--color-text-muted]">2,898+건 기록 · 16.5% MDD · -$301 공개 · CSV/JSON 다운로드</p>
+        </a>
+        <a href="/ko/trust/" class="card-enterprise p-5 hover:border-[--color-accent]/40 transition-colors">
+          <p class="font-mono text-xs text-[--color-accent] mb-2">플랫폼 상태</p>
+          <p class="text-sm font-semibold mb-1">실시간 상태 + 가동률 (api.pruviq.com/health)</p>
+          <p class="text-xs text-[--color-text-muted]">데이터 지연 시 녹색 포장 없음 — 장애 그대로 표시</p>
+        </a>
+        <a href="/ko/methodology/" class="card-enterprise p-5 hover:border-[--color-accent]/40 transition-colors">
+          <p class="font-mono text-xs text-[--color-accent] mb-2">방법론 공개</p>
+          <p class="text-sm font-semibold mb-1">수수료·슬리피지·생존자 편향 모두 공개</p>
+          <p class="text-xs text-[--color-text-muted]">결과를 만드는 모든 파라미터 명시 — 숨기지 않음</p>
+        </a>
+        <a href="/ko/strategies/ranking/" class="card-enterprise p-5 hover:border-[--color-accent]/40 transition-colors">
+          <p class="font-mono text-xs text-[--color-accent] mb-2">폐기 전략 목록</p>
+          <p class="text-sm font-semibold mb-1">88+ 전략 폐기, 사유 공개</p>
+          <p class="text-xs text-[--color-text-muted]">실패를 보여야 성공도 판단할 수 있습니다</p>
+        </a>
+      </div>
+    </section>
+
+    <hr class="section-divider" />
+
     <!-- Methodology -->
     <section class="reveal mb-12">
       <p class="font-mono text-[--color-accent] text-xs tracking-wider mb-2">{t('about.method_tag')}</p>
