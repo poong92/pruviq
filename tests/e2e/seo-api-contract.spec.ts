@@ -70,8 +70,12 @@ test.describe("SEO Validation", () => {
 
   test("Homepage has og:image", async ({ page }) => {
     await page.goto("/");
+    // 2026-04-22: page now ships og:image twice (jpg + webp for modern
+    // clients). Strict locator would fail on duplicates — .first() is
+    // fine because both satisfy the contract (non-empty + http URL).
     const ogImage = await page
       .locator('meta[property="og:image"]')
+      .first()
       .getAttribute("content");
     expect(ogImage, "og:image must be set").toBeTruthy();
     expect(ogImage).toMatch(/^https?:\/\//);
@@ -160,13 +164,16 @@ test.describe("API Schema Contract", () => {
     expect(data).toHaveProperty("status");
     expect(data.status).toBe("ok");
     expect(data).toHaveProperty("coins_loaded");
-    expect(data.coins_loaded).toBeGreaterThan(500);
+    // 2026-04-22: bound relaxed after Binance→OKX migration (238 coins,
+    // previously 574). Canonical source: backend STRATEGY_REGISTRY +
+    // OKX perpetual listings. ~200 is safe floor for regressions.
+    expect(data.coins_loaded).toBeGreaterThanOrEqual(200);
     expect(data).toHaveProperty("version");
     expect(data).toHaveProperty("uptime_seconds");
     expect(data.uptime_seconds).toBeGreaterThan(0);
   });
 
-  test("GET /coins returns 500+ coins with required fields", async ({
+  test("GET /coins returns 200+ coins with required fields", async ({
     request,
   }) => {
     const resp = await request.get(`${API}/coins`);
@@ -174,7 +181,7 @@ test.describe("API Schema Contract", () => {
     const data = await resp.json();
 
     expect(Array.isArray(data)).toBe(true);
-    expect(data.length).toBeGreaterThan(500);
+    expect(data.length).toBeGreaterThanOrEqual(200);
 
     // Sample coin structure
     const coin = data[0];
