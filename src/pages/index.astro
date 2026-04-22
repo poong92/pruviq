@@ -35,10 +35,10 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
       <div class="grid md:grid-cols-[3fr_2fr] gap-12 md:gap-16 items-start">
         <!-- Left: Text + CTA -->
         <div>
-          <HeroBadge stat={simulationsRun} label="simulations run" />
-          <p class="font-mono text-[--color-accent] text-sm tracking-wider mb-5 opacity-90">Verify. Execute. Decide.</p>
+          <HeroBadge stat={`${coinsAnalyzed}+`} label="coins · 2yr data · 88 strategies tested" />
+          <p class="font-mono text-[--color-accent] text-sm tracking-wider mb-5 opacity-90">Verify. Execute. Profit.</p>
           <h1 class="text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-[-0.04em] leading-[1.05] text-balance">
-            Most Backtests Lie.<br/><span class="gradient-text-shimmer">Ours Come with Proof.</span>
+            Most Backtests Lie.<br/><span class="gradient-text-shimmer">Ours Come With Proof.</span>
           </h1>
           <p class="mt-10 text-xl md:text-2xl text-[--color-text-secondary] leading-relaxed max-w-lg">
             Test strategies on <strong class="text-[--color-text]">{coinsAnalyzed}+ coins</strong> with real fees. See what fails. Keep what survives. No code. No signup.
@@ -88,8 +88,8 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
         <p class="metric-label mt-2">Coins Tested</p>
       </div>
       <div class="stat-glass text-center">
-        <p class="metric-value-lg text-[--color-accent]"><CountUp client:visible target={(siteStats as { simulations_run: number }).simulations_run} suffix="+" locale="en-US" /></p>
-        <p class="metric-label mt-2">Simulations</p>
+        <p class="metric-value-lg text-[--color-accent]"><CountUp client:visible target={(siteStats as { strategies_tested: number }).strategies_tested} suffix="+" /></p>
+        <p class="metric-label mt-2">Strategies Tested</p>
       </div>
       <div class="stat-glass text-center">
         <p class="metric-value-lg text-[--color-accent]"><CountUp client:visible target={simulatorPresetCount} suffix="+" /></p>

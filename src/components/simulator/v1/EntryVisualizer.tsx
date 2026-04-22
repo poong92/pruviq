@@ -18,6 +18,33 @@ interface Props {
   direction: PresetDirection;
   label: string;
   compact?: boolean;
+  lang?: "en" | "ko";
+}
+
+// Bilingual glossary for SVG diagram labels. KO variants so /ko/simulate/
+// preset cards don't leak English phrases like BREAKOUT / OVERSOLD.
+const LBL = {
+  breakout: { en: "BREAKOUT", ko: "돌파" },
+  squeeze_expansion: { en: "squeeze → expansion", ko: "수축 → 확장" },
+  oversold_up: { en: "OVERSOLD → ↑", ko: "과매도 → ↑" },
+  macd_cross_zero: { en: "MACD ↑ 0", ko: "MACD ↑ 0" },
+  overbought_down: { en: "OVERBOUGHT → ↓", ko: "과매수 → ↓" },
+  golden_cross: { en: "GOLDEN CROSS", ko: "골든 크로스" },
+  trend: { en: "TREND", ko: "추세" },
+  above_cloud: { en: "ABOVE CLOUD", ko: "구름 위" },
+  below_cloud: { en: "BELOW CLOUD", ko: "구름 아래" },
+  sar_flip: { en: "SAR FLIP", ko: "SAR 반전" },
+  wr_oversold: { en: "%R OVERSOLD", ko: "%R 과매도" },
+  wr_overbought: { en: "%R OVERBOUGHT", ko: "%R 과매수" },
+  double_oversold: { en: "DOUBLE OVERSOLD", ko: "이중 과매도" },
+  double_overbought: { en: "DOUBLE OVERBOUGHT", ko: "이중 과매수" },
+  band_bounce_up: { en: "BAND BOUNCE ↑", ko: "밴드 반등 ↑" },
+  band_reject_down: { en: "BAND REJECT ↓", ko: "밴드 거절 ↓" },
+  st_flip: { en: "ST FLIP", ko: "ST 반전" },
+} as const;
+
+function L(key: keyof typeof LBL, lang: "en" | "ko"): string {
+  return LBL[key][lang];
 }
 
 const VIEW_W = 240;
@@ -28,6 +55,7 @@ export default function EntryVisualizer({
   direction,
   label,
   compact,
+  lang = "en",
 }: Props) {
   const height = compact ? 100 : VIEW_H;
   return (
@@ -67,7 +95,7 @@ export default function EntryVisualizer({
             <path d="M0,0 L10,5 L0,10 z" fill="#ef4444" />
           </marker>
         </defs>
-        {renderStrategy(presetId, direction)}
+        {renderStrategy(presetId, direction, lang)}
       </svg>
       <figcaption class="sr-only">{label}</figcaption>
     </figure>
@@ -76,80 +104,84 @@ export default function EntryVisualizer({
 
 // ── Strategy-specific renderers ─────────────────────────────────────────
 
-function renderStrategy(presetId: string, direction: PresetDirection) {
+function renderStrategy(
+  presetId: string,
+  direction: PresetDirection,
+  lang: "en" | "ko",
+) {
   // Both-direction BB squeeze (bidirectional) reuses the long diagram:
   // the entry marker is the breakout, not the direction.
   const id = presetId.replace(/^both-/, "");
   switch (id) {
     case "bb-squeeze-short":
-      return <BBSqueeze dir="short" />;
+      return <BBSqueeze dir="short" lang={lang} />;
     case "bb-squeeze-long":
     case "bb-squeeze":
-      return <BBSqueeze dir="long" />;
+      return <BBSqueeze dir="long" lang={lang} />;
     case "rsi-reversal-long":
     case "rsi-reversal":
-      return <RSIReversal dir="long" />;
+      return <RSIReversal dir="long" lang={lang} />;
     case "macd-momentum-long":
     case "macd-momentum":
-      return <MACDMomentum dir="long" />;
+      return <MACDMomentum dir="long" lang={lang} />;
     case "macd-crossover-short":
-      return <MACDMomentum dir="short" />;
+      return <MACDMomentum dir="short" lang={lang} />;
     case "stochastic-overbought-short":
-      return <StochasticOverbought dir="short" />;
+      return <StochasticOverbought dir="short" lang={lang} />;
     case "stoch-rsi-overbought-short":
-      return <StochasticOverbought dir="short" />;
+      return <StochasticOverbought dir="short" lang={lang} />;
     case "ema-crossover-long":
     case "ema-crossover":
-      return <EMACrossover dir="long" />;
+      return <EMACrossover dir="long" lang={lang} />;
     case "ema-crossover-short":
-      return <EMACrossover dir="short" />;
+      return <EMACrossover dir="short" lang={lang} />;
     case "turtle-breakout-long":
-      return <TurtleBreakout dir="long" />;
+      return <TurtleBreakout dir="long" lang={lang} />;
     case "turtle-breakout-short":
-      return <TurtleBreakout dir="short" />;
+      return <TurtleBreakout dir="short" lang={lang} />;
     case "adx-trend-long":
     case "adx-trend":
-      return <ADXTrend dir="long" />;
+      return <ADXTrend dir="long" lang={lang} />;
     case "adx-trend-short":
-      return <ADXTrend dir="short" />;
+      return <ADXTrend dir="short" lang={lang} />;
     case "ichimoku-cloud-long":
     case "ichimoku":
-      return <Ichimoku dir="long" />;
+      return <Ichimoku dir="long" lang={lang} />;
     case "ichimoku-cloud-short":
-      return <Ichimoku dir="short" />;
+      return <Ichimoku dir="short" lang={lang} />;
     case "psar-reversal-long":
-      return <PsarReversal dir="long" />;
+      return <PsarReversal dir="long" lang={lang} />;
     case "psar-reversal-short":
-      return <PsarReversal dir="short" />;
+      return <PsarReversal dir="short" lang={lang} />;
     case "williams-r-oversold-long":
-      return <WilliamsR dir="long" />;
+      return <WilliamsR dir="long" lang={lang} />;
     case "williams-r-overbought-short":
-      return <WilliamsR dir="short" />;
+      return <WilliamsR dir="short" lang={lang} />;
     case "rsi-bb-overbought-short":
-      return <RSIBB dir="short" />;
+      return <RSIBB dir="short" lang={lang} />;
     case "rsi-bb-oversold-long":
-      return <RSIBB dir="long" />;
+      return <RSIBB dir="long" lang={lang} />;
     case "hv-squeeze-breakout-long":
-      return <BBSqueeze dir="long" />;
+      return <BBSqueeze dir="long" lang={lang} />;
     case "hv-squeeze-breakout-short":
-      return <BBSqueeze dir="short" />;
+      return <BBSqueeze dir="short" lang={lang} />;
     case "grid-mean-reversion-long":
     case "dca-oversold-long":
-      return <RSIReversal dir="long" />;
+      return <RSIReversal dir="long" lang={lang} />;
     case "bb-band-bounce-long":
-      return <BBBounce dir="long" />;
+      return <BBBounce dir="long" lang={lang} />;
     case "rsi-divergence-long":
-      return <RSIReversal dir="long" />;
+      return <RSIReversal dir="long" lang={lang} />;
     case "supertrend-long":
-      return <Supertrend dir="long" />;
+      return <Supertrend dir="long" lang={lang} />;
     case "macd-zero-cross":
-      return <MACDMomentum dir="long" />;
+      return <MACDMomentum dir="long" lang={lang} />;
     case "stoch-rsi-reversal-both":
-      return <StochasticOverbought dir="short" />;
+      return <StochasticOverbought dir="short" lang={lang} />;
     case "stoch-rsi-overbought":
-      return <StochasticOverbought dir="short" />;
+      return <StochasticOverbought dir="short" lang={lang} />;
     default:
-      return <GenericViz direction={direction} />;
+      return <GenericViz direction={direction} lang={lang} />;
   }
 }
 
@@ -229,7 +261,7 @@ function EntryMarker({
 
 // ── Bollinger Band Squeeze ──────────────────────────────────────────────
 
-function BBSqueeze({ dir }: { dir: "long" | "short" }) {
+function BBSqueeze({ dir, lang }: { dir: "long" | "short"; lang: "en" | "ko" }) {
   const midline = "M0,70 L40,70 L80,70 L120,70 L160,70 L200,70 L240,70";
   // bands tight in middle (squeeze), widening at the right (breakout)
   const upperBand = "M0,40 Q60,55 120,60 Q160,62 200,30 L240,20";
@@ -282,7 +314,7 @@ function BBSqueeze({ dir }: { dir: "long" | "short" }) {
         dir={dir}
         labelX={dir === "long" ? entryX - 30 : entryX - 30}
         labelY={dir === "long" ? entryY + 38 : entryY - 26}
-        labelText={dir === "long" ? "BREAKOUT ↑" : "BREAKOUT ↓"}
+        labelText={`${L("breakout", lang)} ${dir === "long" ? "↑" : "↓"}`}
       />
       <text x={10} y={14} fill="#a1a1aa" font-size="9" font-family="monospace">
         BB (2σ)
@@ -303,7 +335,7 @@ function BBSqueeze({ dir }: { dir: "long" | "short" }) {
 
 // ── RSI Reversal ────────────────────────────────────────────────────────
 
-function RSIReversal({ dir }: { dir: "long" | "short" }) {
+function RSIReversal({ dir, lang }: { dir: "long" | "short"; lang: "en" | "ko" }) {
   // Split: top half = price, bottom half = RSI scale 0-100
   // For long: RSI dips below 30 then crosses back up → long
   const price =
@@ -361,7 +393,7 @@ function RSIReversal({ dir }: { dir: "long" | "short" }) {
         dir={dir}
         labelX={entryX - 40}
         labelY={entryY + 35}
-        labelText="OVERSOLD → ↑"
+        labelText={L("oversold_up", lang)}
       />
       <text x={10} y={14} fill="#a1a1aa" font-size="9" font-family="monospace">
         Price · RSI
@@ -372,7 +404,7 @@ function RSIReversal({ dir }: { dir: "long" | "short" }) {
 
 // ── MACD Momentum Long ──────────────────────────────────────────────────
 
-function MACDMomentum({ dir }: { dir: "long" | "short" }) {
+function MACDMomentum({ dir, lang }: { dir: "long" | "short"; lang: "en" | "ko" }) {
   const price =
     "M0,80 L30,82 L60,80 L90,78 L120,73 L150,65 L170,55 L200,42 L240,30";
   const entryX = 150;
@@ -429,7 +461,7 @@ function MACDMomentum({ dir }: { dir: "long" | "short" }) {
         dir={dir}
         labelX={entryX - 35}
         labelY={entryY - 18}
-        labelText="MACD ↑ 0"
+        labelText={L("macd_cross_zero", lang)}
       />
       <text x={10} y={14} fill="#a1a1aa" font-size="9" font-family="monospace">
         Price · MACD
@@ -440,7 +472,7 @@ function MACDMomentum({ dir }: { dir: "long" | "short" }) {
 
 // ── Stochastic Overbought ───────────────────────────────────────────────
 
-function StochasticOverbought({ dir }: { dir: "long" | "short" }) {
+function StochasticOverbought({ dir, lang }: { dir: "long" | "short"; lang: "en" | "ko" }) {
   const price =
     "M0,30 L30,32 L60,30 L90,35 L120,42 L150,55 L170,65 L200,82 L240,95";
   const stoch =
@@ -479,7 +511,7 @@ function StochasticOverbought({ dir }: { dir: "long" | "short" }) {
         dir={dir}
         labelX={150 - 50}
         labelY={55 - 15}
-        labelText="OVERBOUGHT → ↓"
+        labelText={L("overbought_down", lang)}
       />
       <text x={10} y={14} fill="#a1a1aa" font-size="9" font-family="monospace">
         Price · Stoch
@@ -490,7 +522,7 @@ function StochasticOverbought({ dir }: { dir: "long" | "short" }) {
 
 // ── EMA Crossover ───────────────────────────────────────────────────────
 
-function EMACrossover({ dir }: { dir: "long" | "short" }) {
+function EMACrossover({ dir, lang }: { dir: "long" | "short"; lang: "en" | "ko" }) {
   const price =
     "M0,80 L30,78 L60,75 L90,72 L120,68 L150,60 L180,52 L210,44 L240,38";
   const emaFast =
@@ -518,7 +550,7 @@ function EMACrossover({ dir }: { dir: "long" | "short" }) {
         dir={dir}
         labelX={entryX - 30}
         labelY={entryY + 30}
-        labelText="GOLDEN CROSS"
+        labelText={L("golden_cross", lang)}
       />
       <text x={10} y={14} fill="#a1a1aa" font-size="9" font-family="monospace">
         EMA20 × EMA50
@@ -537,7 +569,7 @@ function EMACrossover({ dir }: { dir: "long" | "short" }) {
 
 // ── Turtle Breakout ─────────────────────────────────────────────────────
 
-function TurtleBreakout({ dir }: { dir: "long" | "short" }) {
+function TurtleBreakout({ dir, lang }: { dir: "long" | "short"; lang: "en" | "ko" }) {
   const highLine = 40;
   const lowLine = 110;
   const price =
@@ -584,7 +616,7 @@ function TurtleBreakout({ dir }: { dir: "long" | "short" }) {
         dir={dir}
         labelX={entryX - 35}
         labelY={entryY + 28}
-        labelText="BREAKOUT ↑"
+        labelText={`${L("breakout", lang)} ↑`}
       />
       <text x={10} y={14} fill="#a1a1aa" font-size="9" font-family="monospace">
         Donchian 20
@@ -595,7 +627,7 @@ function TurtleBreakout({ dir }: { dir: "long" | "short" }) {
 
 // ── ADX Trend ───────────────────────────────────────────────────────────
 
-function ADXTrend({ dir }: { dir: "long" | "short" }) {
+function ADXTrend({ dir, lang }: { dir: "long" | "short"; lang: "en" | "ko" }) {
   const price =
     dir === "long"
       ? "M0,90 L30,85 L60,75 L90,68 L120,58 L150,48 L180,38 L210,30 L240,22"
@@ -638,7 +670,7 @@ function ADXTrend({ dir }: { dir: "long" | "short" }) {
         dir={dir}
         labelX={entryX - 30}
         labelY={dir === "long" ? entryY + 30 : entryY - 20}
-        labelText={dir === "long" ? "TREND ↑" : "TREND ↓"}
+        labelText={`${L("trend", lang)} ${dir === "long" ? "↑" : "↓"}`}
       />
       <text x={10} y={14} fill="#a1a1aa" font-size="9" font-family="monospace">
         Price · ADX
@@ -649,7 +681,7 @@ function ADXTrend({ dir }: { dir: "long" | "short" }) {
 
 // ── Ichimoku Cloud ──────────────────────────────────────────────────────
 
-function Ichimoku({ dir }: { dir: "long" | "short" }) {
+function Ichimoku({ dir, lang }: { dir: "long" | "short"; lang: "en" | "ko" }) {
   const price =
     dir === "long"
       ? "M0,95 L30,90 L60,82 L90,72 L120,62 L150,52 L180,42 L210,32 L240,25"
@@ -688,7 +720,7 @@ function Ichimoku({ dir }: { dir: "long" | "short" }) {
         dir={dir}
         labelX={entryX - 30}
         labelY={dir === "long" ? entryY + 30 : entryY - 20}
-        labelText={dir === "long" ? "ABOVE CLOUD" : "BELOW CLOUD"}
+        labelText={dir === "long" ? L("above_cloud", lang) : L("below_cloud", lang)}
       />
       <text x={10} y={14} fill="#a1a1aa" font-size="9" font-family="monospace">
         Ichimoku Kumo
@@ -699,7 +731,7 @@ function Ichimoku({ dir }: { dir: "long" | "short" }) {
 
 // ── Parabolic SAR Reversal ──────────────────────────────────────────────
 
-function PsarReversal({ dir }: { dir: "long" | "short" }) {
+function PsarReversal({ dir, lang }: { dir: "long" | "short"; lang: "en" | "ko" }) {
   const price =
     dir === "long"
       ? "M0,75 L30,78 L60,72 L90,60 L120,48 L150,40 L180,32 L210,28 L240,22"
@@ -751,7 +783,7 @@ function PsarReversal({ dir }: { dir: "long" | "short" }) {
         dir={dir}
         labelX={entryX - 25}
         labelY={dir === "long" ? entryY + 28 : entryY - 18}
-        labelText={dir === "long" ? "SAR FLIP ↑" : "SAR FLIP ↓"}
+        labelText={`${L("sar_flip", lang)} ${dir === "long" ? "↑" : "↓"}`}
       />
       <text x={10} y={14} fill="#a1a1aa" font-size="9" font-family="monospace">
         Parabolic SAR
@@ -762,7 +794,7 @@ function PsarReversal({ dir }: { dir: "long" | "short" }) {
 
 // ── Williams %R Oversold/Overbought ─────────────────────────────────────
 
-function WilliamsR({ dir }: { dir: "long" | "short" }) {
+function WilliamsR({ dir, lang }: { dir: "long" | "short"; lang: "en" | "ko" }) {
   // Price path (top half) and Williams %R (bottom, scale -100..0)
   const price =
     dir === "long"
@@ -803,7 +835,7 @@ function WilliamsR({ dir }: { dir: "long" | "short" }) {
         dir={dir}
         labelX={entryX - 35}
         labelY={dir === "long" ? entryY + 30 : entryY - 18}
-        labelText={dir === "long" ? "%R OVERSOLD" : "%R OVERBOUGHT"}
+        labelText={dir === "long" ? L("wr_oversold", lang) : L("wr_overbought", lang)}
       />
       <text x={10} y={14} fill="#a1a1aa" font-size="9" font-family="monospace">
         Price · Williams
@@ -814,7 +846,7 @@ function WilliamsR({ dir }: { dir: "long" | "short" }) {
 
 // ── RSI + BB combo ──────────────────────────────────────────────────────
 
-function RSIBB({ dir }: { dir: "long" | "short" }) {
+function RSIBB({ dir, lang }: { dir: "long" | "short"; lang: "en" | "ko" }) {
   const price =
     dir === "long"
       ? "M0,80 L30,85 L60,90 L90,95 L120,90 L150,78 L180,65 L210,52 L240,40"
@@ -849,7 +881,7 @@ function RSIBB({ dir }: { dir: "long" | "short" }) {
         dir={dir}
         labelX={entryX - 40}
         labelY={dir === "long" ? entryY + 30 : entryY - 20}
-        labelText={dir === "long" ? "DOUBLE OVERSOLD" : "DOUBLE OVERBOUGHT"}
+        labelText={dir === "long" ? L("double_oversold", lang) : L("double_overbought", lang)}
       />
       <text x={10} y={14} fill="#a1a1aa" font-size="9" font-family="monospace">
         BB + RSI
@@ -860,7 +892,7 @@ function RSIBB({ dir }: { dir: "long" | "short" }) {
 
 // ── BB Band Bounce ──────────────────────────────────────────────────────
 
-function BBBounce({ dir }: { dir: "long" | "short" }) {
+function BBBounce({ dir, lang }: { dir: "long" | "short"; lang: "en" | "ko" }) {
   const upper = "M0,35 L60,40 L120,38 L180,40 L240,35";
   const lower = "M0,105 L60,102 L120,100 L180,102 L240,105";
   const mid = "M0,70 L240,70";
@@ -905,7 +937,7 @@ function BBBounce({ dir }: { dir: "long" | "short" }) {
         dir={dir}
         labelX={entryX - 25}
         labelY={dir === "long" ? entryY - 18 : entryY + 28}
-        labelText={dir === "long" ? "BAND BOUNCE ↑" : "BAND REJECT ↓"}
+        labelText={dir === "long" ? L("band_bounce_up", lang) : L("band_reject_down", lang)}
       />
       <text x={10} y={14} fill="#a1a1aa" font-size="9" font-family="monospace">
         BB Band Bounce
@@ -916,7 +948,7 @@ function BBBounce({ dir }: { dir: "long" | "short" }) {
 
 // ── Supertrend ──────────────────────────────────────────────────────────
 
-function Supertrend({ dir }: { dir: "long" | "short" }) {
+function Supertrend({ dir, lang }: { dir: "long" | "short"; lang: "en" | "ko" }) {
   const price =
     dir === "long"
       ? "M0,80 L30,75 L60,70 L90,65 L120,55 L150,45 L180,38 L210,30 L240,22"
@@ -950,7 +982,7 @@ function Supertrend({ dir }: { dir: "long" | "short" }) {
         dir={dir}
         labelX={entryX - 30}
         labelY={dir === "long" ? entryY + 30 : entryY - 20}
-        labelText={dir === "long" ? "ST FLIP ↑" : "ST FLIP ↓"}
+        labelText={`${L("st_flip", lang)} ${dir === "long" ? "↑" : "↓"}`}
       />
       <text x={10} y={14} fill="#a1a1aa" font-size="9" font-family="monospace">
         Supertrend
@@ -961,7 +993,7 @@ function Supertrend({ dir }: { dir: "long" | "short" }) {
 
 // ── Fallback ────────────────────────────────────────────────────────────
 
-function GenericViz({ direction }: { direction: PresetDirection }) {
+function GenericViz({ direction, lang }: { direction: PresetDirection; lang: "en" | "ko" }) {
   const hex = DIRECTION_TOKENS[direction].hex;
   return (
     <g>
