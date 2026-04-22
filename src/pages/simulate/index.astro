@@ -62,8 +62,8 @@ const simulateJsonLd = {
           <p class="text-[--color-text-muted] text-xl mt-3 max-w-2xl leading-relaxed">{t('simulate.desc')}</p>
         </div>
         <div class="flex items-center gap-3 shrink-0">
-          <a href="/simulate?preset=bb-squeeze-short"
-             class="btn btn-primary btn-sm inline-flex items-center gap-2 shadow-lg shadow-[--color-accent]/20"
+          <a href="/simulate?preset=atr-breakout"
+             class="btn btn-primary btn-sm inline-flex items-center gap-2 shadow-lg shadow-[--color-accent]/20 min-h-[44px]"
              title={t('simulate.preset_verified_tooltip')}>
             {t('simulate.cta_preset')} &rarr;
           </a>
@@ -85,16 +85,10 @@ const simulateJsonLd = {
     </div>
   </section>
 
-  <!-- Quick Start Banner -->
-  <div class="max-w-[1400px] mx-auto px-4 mb-4">
-    <div class="border border-[--color-accent]/30 bg-[--color-bg-surface] rounded-2xl p-6 flex flex-col sm:flex-row items-start sm:items-center gap-3">
-      <span class="text-2xl shrink-0">&#9889;</span>
-      <div class="flex-1">
-        <p class="font-semibold text-sm">First time? Try a preset strategy</p>
-        <p class="text-xs text-[--color-text-muted]">Pick a strategy from Hot Strategies above, hit simulate — see results in 3 seconds. No setup needed.</p>
-      </div>
-    </div>
-  </div>
+  <!-- 2026-04-22: "First time? Try a preset strategy" banner removed.
+       It was text-only (not a CTA), pointed at "Hot Strategies above"
+       that don't exist, and added ~100px of friction above the actual
+       simulator for no user benefit. -->
 
   <!-- Simulator Mount (above fold) -->
   <section class="reveal pb-4 md:pb-6">
@@ -173,32 +167,12 @@ const simulateJsonLd = {
         </div>
       </div>
 
-      <!-- Quick Start: Top 3 performing strategies -->
-      {quickStartPresets.length > 0 && (
-        <div class="mb-4">
-          <p class="font-mono text-[--color-accent] text-xs mb-2 tracking-wider">{t('simulate.quick_start')}</p>
-          <p class="text-[--color-text-muted] text-xs mb-3">{t('simulate.quick_start_desc')}</p>
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            {quickStartPresets.map((preset, i) => (
-              <a
-                href={`/simulate?preset=${preset.strategy}-${preset.direction}`}
-                class="border border-[--color-accent]/30 rounded-lg px-4 py-3 bg-[--color-accent]/5 hover:bg-[--color-accent]/10 hover:border-[--color-accent] transition-all group shadow-[var(--shadow-sm)] flex items-center gap-3"
-              >
-                <span class="font-mono text-[--color-accent] text-lg font-bold shrink-0">#{i + 1}</span>
-                <div class="min-w-0">
-                  <p class="font-semibold text-sm truncate">{preset.name_en}</p>
-                  <p class="text-xs font-mono text-[--color-text-muted] mt-0.5">
-                    WR {preset.win_rate.toFixed(1)}% · PF {preset.profit_factor.toFixed(2)}
-                    <span class={preset.total_return >= 0 ? 'text-[--color-up]' : 'text-[--color-red]'}> · {preset.total_return >= 0 ? '+' : ''}{preset.total_return.toFixed(1)}%</span>
-                  </p>
-                </div>
-                <span class="text-[--color-text-muted] text-xs group-hover:text-[--color-accent] shrink-0 ml-auto">&rarr;</span>
-              </a>
-            ))}
-          </div>
-        </div>
-      )}
-
+      <!-- 2026-04-22: Removed rankings-daily Top 3 section. Those cards
+           claimed "RSI Divergence WR 65%, PF 2.62" but linked to
+           ?preset=rsi-divergence-both — a slug not in SIMULATOR_PRESETS.
+           useSimConfig silently fell back to bb-squeeze-short, so the user
+           clicked a card claiming one result and got a different one. The
+           PresetGrid above is now the canonical entry point. -->
       <p class="text-xs text-[--color-text-muted] opacity-70">{t('simulate.note')}</p>
     </div>
   </section>

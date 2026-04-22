@@ -1028,7 +1028,7 @@ export const ko: Record<TranslationKey, string> = {
   "simulate.step3_desc": "수초 내 결과, 수수료 포함",
   "simulate.risk_disclaimer":
     "시뮬레이션 전용 \u2014 실거래가 아닙니다. 과거 성과가 미래 수익을 보장하지 않습니다. 선물 거래는 손실 위험이 있습니다.",
-  "simulate.cta_preset": "BB Squeeze (검증됨)로 시작",
+  "simulate.cta_preset": "ATR Breakout (PF 1.31)로 시작",
   "simulate.fees_cta": "거래소 수수료 비교",
 
   // Blog category short labels

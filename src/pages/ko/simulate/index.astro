@@ -59,8 +59,8 @@ const simulateJsonLd = {
           <p class="text-[--color-text-muted] text-xl mt-3 max-w-2xl leading-relaxed">{t('simulate.desc')}</p>
         </div>
         <div class="flex items-center gap-3 shrink-0">
-          <a href="/ko/simulate?preset=bb-squeeze-short"
-             class="btn btn-primary btn-sm inline-flex items-center gap-2 shadow-lg shadow-[--color-accent]/20"
+          <a href="/ko/simulate?preset=atr-breakout"
+             class="btn btn-primary btn-sm inline-flex items-center gap-2 shadow-lg shadow-[--color-accent]/20 min-h-[44px]"
              title={t('simulate.preset_verified_tooltip')}>
             {t('simulate.cta_preset')} &rarr;
           </a>
@@ -82,16 +82,9 @@ const simulateJsonLd = {
     </div>
   </section>
 
-  <!-- Quick Start Banner -->
-  <div class="max-w-[1400px] mx-auto px-4 mb-4">
-    <div class="border border-[--color-accent]/30 bg-[--color-accent]/5 rounded-lg p-4 flex flex-col sm:flex-row items-start sm:items-center gap-3">
-      <span class="text-2xl shrink-0">&#9889;</span>
-      <div class="flex-1">
-        <p class="font-semibold text-sm">처음이세요? 프리셋 전략을 사용해보세요</p>
-        <p class="text-xs text-[--color-text-muted]">위에서 전략을 선택하고 시뮬레이션 버튼만 누르면 3초 안에 결과가 나옵니다.</p>
-      </div>
-    </div>
-  </div>
+  <!-- 2026-04-22: "처음이세요?" 배너 제거. 텍스트만 있고 CTA 아님,
+       "위에서 전략을 선택"이라 하지만 위에 전략 없음, 실 시뮬레이터
+       위에 ~100px 마찰만 추가. -->
 
   <!-- Simulator Mount (above fold) -->
   <section class="reveal pb-4 md:pb-6">
@@ -170,32 +163,11 @@ const simulateJsonLd = {
         </div>
       </div>
 
-      <!-- Quick Start: Top 3 performing strategies -->
-      {quickStartPresets.length > 0 && (
-        <div class="mb-4">
-          <p class="font-mono text-[--color-accent] text-xs mb-2 tracking-wider">{t('simulate.quick_start')}</p>
-          <p class="text-[--color-text-muted] text-xs mb-3">{t('simulate.quick_start_desc')}</p>
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            {quickStartPresets.map((preset, i) => (
-              <a
-                href={`/ko/simulate?preset=${preset.strategy}-${preset.direction}`}
-                class="border border-[--color-accent]/30 rounded-lg px-4 py-3 bg-[--color-accent]/5 hover:bg-[--color-accent]/10 hover:border-[--color-accent] transition-all group card-glow flex items-center gap-3"
-              >
-                <span class="font-mono text-[--color-accent] text-lg font-bold shrink-0">#{i + 1}</span>
-                <div class="min-w-0">
-                  <p class="font-semibold text-sm truncate">{preset.name_ko}</p>
-                  <p class="text-xs font-mono text-[--color-text-muted] mt-0.5">
-                    WR {preset.win_rate.toFixed(1)}% · PF {preset.profit_factor.toFixed(2)}
-                    <span class={preset.total_return >= 0 ? 'text-[--color-up]' : 'text-[--color-red]'}> · {preset.total_return >= 0 ? '+' : ''}{preset.total_return.toFixed(1)}%</span>
-                  </p>
-                </div>
-                <span class="text-[--color-text-muted] text-xs group-hover:text-[--color-accent] shrink-0 ml-auto">&rarr;</span>
-              </a>
-            ))}
-          </div>
-        </div>
-      )}
-
+      <!-- 2026-04-22: rankings-daily Top 3 섹션 제거. 카드가 "RSI Divergence
+           WR 65% PF 2.62" 주장하며 ?preset=rsi-divergence-both 로 링크했는데,
+           이 ID 는 SIMULATOR_PRESETS 에 없어서 useSimConfig 가 bb-squeeze-short
+           로 silent fallback — 광고 수치와 실결과 불일치. 이제 PresetGrid 가
+           유일한 진입점. -->
       <p class="text-xs text-[--color-text-muted] opacity-70">{t('simulate.note')}</p>
     </div>
   </section>

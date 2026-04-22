@@ -43,9 +43,40 @@ export default function SimulatorV1({ lang }: Props) {
     emit("sim.view", { lang });
   }, [lang]);
 
+  // 2026-04-22: scroll the results card into view on preset click. Mobile
+  // users previously clicked a card and saw nothing change (results lived
+  // ~1000px below the fold). Also fires for Standard-mode slider commit
+  // via a separate handler in StandardControls.
+  const scrollResultsIntoView = () => {
+    if (typeof document === "undefined") return;
+    const el =
+      document.querySelector<HTMLElement>(
+        "[data-testid='sim-v1-results-ok']",
+      ) ||
+      document.querySelector<HTMLElement>(
+        "[data-testid='sim-v1-results-loading']",
+      ) ||
+      document.getElementById("sim-v1-results-anchor");
+    if (!el) return;
+    // Respect reduced-motion — users with vestibular disorders see auto
+    // instead of smooth (same behavior as our other scroll handlers).
+    const prefersReduced =
+      typeof window !== "undefined" &&
+      window.matchMedia &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    el.scrollIntoView({
+      behavior: prefersReduced ? "auto" : "smooth",
+      block: "start",
+    });
+  };
+
   const handlePresetSelect = (id: string) => {
     emit("sim.preset_click", { preset: id });
     setPreset(id);
+    // Delay so results-loading state paints first, THEN scroll. 150ms is
+    // short enough that users don't perceive lag but long enough for
+    // Preact to commit the state transition.
+    setTimeout(scrollResultsIntoView, 150);
   };
 
   const handleSkillChange = (mode: typeof config.mode) => {
@@ -55,23 +86,20 @@ export default function SimulatorV1({ lang }: Props) {
 
   return (
     <div class="mx-auto max-w-6xl px-4 py-8 sm:py-10" data-testid="sim-v1-root">
-      <header class="mb-6 text-center sm:mb-8">
-        <h1
-          class="mx-auto max-w-3xl text-balance text-2xl font-bold leading-tight tracking-tight text-zinc-100 sm:text-4xl md:text-5xl"
-          data-testid="sim-v1-hero-title"
-        >
-          {t("simV2.hero.title")}
-        </h1>
-        <p class="mx-auto mt-3 max-w-2xl text-balance text-sm leading-relaxed text-zinc-400 sm:text-base">
-          {t("simV2.hero.subtitle")}
-        </p>
-      </header>
+      {/* 2026-04-22: internal <header> h1 removed. The Astro page already
+          renders an h1 above this mount; the second h1 was confusing and
+          broke heading hierarchy. Subtitle text preserved as a lede para
+          so context isn't lost.                                          */}
+      <p class="mx-auto mb-6 max-w-2xl text-balance text-center text-sm leading-relaxed text-zinc-400 sm:mb-8 sm:text-base">
+        {t("simV2.hero.subtitle")}
+      </p>
 
       <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <SkillSwitcher
           mode={config.mode}
           lang={lang}
           onChange={handleSkillChange}
+          expertQuery={buildExpertQuery(config)}
         />
         <div class="flex items-center gap-3 text-xs text-zinc-400">
           <details class="group relative">
@@ -114,16 +142,21 @@ export default function SimulatorV1({ lang }: Props) {
         </div>
       </div>
 
-      <div class="mb-8">
-        <TrustGapPanel lang={lang} />
-      </div>
-
+      {/* 2026-04-22: PresetGrid moved ABOVE TrustGapPanel. Trust gap is
+          the brand signature, but a user needs to DO something first. The
+          previous order (TrustGap → PresetGrid) buried the actionable
+          clickable cards under a 3-column chart. The new order:
+          PresetGrid (action) → TrustGap (context) → Results (outcome).   */}
       <div class="mb-8">
         <PresetGrid
           activePresetId={config.presetId}
           lang={lang}
           onSelect={handlePresetSelect}
         />
+      </div>
+
+      <div class="mb-8">
+        <TrustGapPanel lang={lang} />
       </div>
 
       {config.mode === "standard" && (
@@ -146,7 +179,10 @@ export default function SimulatorV1({ lang }: Props) {
         </div>
       )}
 
-      <div class="mb-8">
+      {/* Scroll anchor — placed right ABOVE ResultsPanel so the scroll
+          handler can target the whole results region, including loading
+          skeletons before the ok card is rendered.                       */}
+      <div id="sim-v1-results-anchor" class="mb-8">
         <ResultsPanel config={config} lang={lang} />
       </div>
 
@@ -167,4 +203,22 @@ function Shortcut({ keys, label }: { keys: string; label: string }) {
       <span class="ml-3 text-zinc-400">{label}</span>
     </div>
   );
+}
+
+// 2026-04-22: serialize the current sim state so the Expert builder link
+// can pre-fill instead of resetting. The builder reads these keys on
+// mount. Only emit non-default values to keep URLs short.
+function buildExpertQuery(
+  config: ReturnType<typeof useSimConfig>["config"],
+): string {
+  const p = new URLSearchParams();
+  if (config.presetId) p.set("preset", config.presetId);
+  if (config.direction) p.set("dir", config.direction);
+  if (config.sl) p.set("sl", String(config.sl));
+  if (config.tp) p.set("tp", String(config.tp));
+  if (config.topN !== 10) p.set("topN", String(config.topN));
+  if (config.leverage !== 5) p.set("lev", String(config.leverage));
+  if (config.startDate) p.set("from", config.startDate);
+  if (config.endDate) p.set("to", config.endDate);
+  return p.toString();
 }

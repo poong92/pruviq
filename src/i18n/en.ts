@@ -1041,7 +1041,7 @@ export const en = {
   "simulate.step3_desc": "Results in seconds, fees included",
   "simulate.risk_disclaimer":
     "Simulation only \u2014 not real trading. Past performance does not guarantee future results. Futures trading involves risk of loss.",
-  "simulate.cta_preset": "Start with BB Squeeze (Verified)",
+  "simulate.cta_preset": "Start with ATR Breakout (PF 1.31)",
   "simulate.fees_cta": "Compare Exchange Fees",
 
   // Blog category short labels

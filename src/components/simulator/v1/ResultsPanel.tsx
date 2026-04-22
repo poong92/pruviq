@@ -147,11 +147,13 @@ export default function ResultsPanel({ config, lang }: Props) {
 
   useEffect(() => {
     if (!config.presetId) return;
-    const strategy_id = config.presetId
-      .replace(/-(long|short)$/, "")
-      .replace(/^both-/, "");
+    // 2026-04-22: backend Pydantic field is `strategy` (not `strategy_id`).
+    // Previously the mismatch caused every request to silently fall back to
+    // the default ("bb-squeeze") — 7 presets returned only 2 results.
+    // Also, SIMULATOR_PRESETS now use backend registry IDs directly
+    // (e.g. "ichimoku", "atr-breakout"), so no suffix stripping needed.
     const body: Record<string, unknown> = {
-      strategy_id,
+      strategy: config.presetId,
       direction: config.direction,
       sl_pct: config.sl,
       tp_pct: config.tp,
@@ -276,24 +278,44 @@ export default function ResultsPanel({ config, lang }: Props) {
           value={signed(d.total_return_pct)}
           tone={returnPositive ? "good" : "bad"}
           testId="sim-v1-metric-return"
+          tooltip={
+            lang === "ko"
+              ? "전략 기간 전체의 순 수익률 (수수료·슬리피지 포함)"
+              : "Cumulative net return over the full backtest period (after fees & slippage)"
+          }
         />
         <Metric
           label={lang === "ko" ? "승률" : "Win rate"}
           value={`${abbrev(d.win_rate, 1)}%`}
           tone="neutral"
           testId="sim-v1-metric-winrate"
+          tooltip={
+            lang === "ko"
+              ? "승률 자체는 좋은 지표가 아닙니다. 40% 승률이라도 PF > 1이면 수익성 있음"
+              : "Win rate alone is misleading — 40% WR with PF > 1 is still profitable"
+          }
         />
         <Metric
           label={lang === "ko" ? "수익 팩터" : "Profit factor"}
           value={abbrev(d.profit_factor, 2)}
           tone={d.profit_factor >= 1 ? "good" : "bad"}
           testId="sim-v1-metric-pf"
+          tooltip={
+            lang === "ko"
+              ? "총 수익 ÷ 총 손실. 1.0 = 본전, 1.3+ = 견고, 2.0+ = 예외적"
+              : "Gross profit ÷ gross loss. 1.0 = break-even, 1.3+ = solid, 2.0+ = exceptional"
+          }
         />
         <Metric
           label={lang === "ko" ? "최대 낙폭" : "Max drawdown"}
           value={`${abbrev(d.max_drawdown_pct, 1)}%`}
           tone="bad"
           testId="sim-v1-metric-mdd"
+          tooltip={
+            lang === "ko"
+              ? "기간 중 자본 고점 대비 최대 손실 비율. 낮을수록 좋음"
+              : "Largest peak-to-trough equity loss during the period. Lower = better"
+          }
         />
       </div>
 
@@ -386,11 +408,13 @@ function Metric({
   value,
   tone,
   testId,
+  tooltip,
 }: {
   label: string;
   value: string;
   tone: "good" | "bad" | "neutral";
   testId: string;
+  tooltip?: string;
 }) {
   const toneClass =
     tone === "good"
@@ -400,8 +424,17 @@ function Metric({
         : "text-zinc-100";
   return (
     <div data-testid={testId}>
-      <div class="mb-1 text-xs uppercase tracking-wide text-zinc-400">
-        {label}
+      <div class="mb-1 flex items-center gap-1 text-xs uppercase tracking-wide text-zinc-400">
+        <span>{label}</span>
+        {tooltip && (
+          <span
+            class="inline-flex h-3.5 w-3.5 cursor-help items-center justify-center rounded-full border border-zinc-700 text-[9px] font-bold text-zinc-500 hover:border-[--color-accent] hover:text-[--color-accent-bright]"
+            title={tooltip}
+            aria-label={tooltip}
+          >
+            ?
+          </span>
+        )}
       </div>
       <div class={`font-mono text-2xl font-semibold tabular-nums ${toneClass}`}>
         {value}
