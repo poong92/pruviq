@@ -62,15 +62,26 @@ export default function SimulatorV1({ lang }: Props) {
 
   const scrollResultsIntoView = () => {
     const el = getResultsElement();
-    if (!el) return;
+    if (!el || typeof window === "undefined") return;
     const prefersReduced =
-      typeof window !== "undefined" &&
       window.matchMedia &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    el.scrollIntoView({
-      behavior: prefersReduced ? "auto" : "smooth",
-      block: "start",
-    });
+    // 2026-04-22: `el.scrollIntoView()` intermittently no-ops on mobile
+    // Safari + some Chromium builds when called during a click handler
+    // transition (likely an Astro/ViewTransition hiccup). Fall back to
+    // window.scrollTo using the measured absolute Y. Leaves a ~24px top
+    // padding so the element isn't flush against a sticky header.
+    const rect = el.getBoundingClientRect();
+    const targetY = rect.top + window.pageYOffset - 24;
+    try {
+      window.scrollTo({
+        top: Math.max(0, targetY),
+        behavior: prefersReduced ? "auto" : "smooth",
+      });
+    } catch {
+      // Older browsers without smooth support
+      window.scrollTo(0, Math.max(0, targetY));
+    }
   };
 
   // Only scroll if the results card is currently offscreen. Used for
