@@ -696,6 +696,16 @@ async def prometheus_instrumentation_middleware(request: Request, call_next):
 
 @app.middleware("http")
 async def rate_limit_middleware(request: Request, call_next):
+    # 2026-04-22: CORS preflight (OPTIONS) must NEVER be rate-limited or
+    # otherwise early-returned from middleware. When it is, the response
+    # lacks Access-Control-Allow-Origin headers (CORSMiddleware doesn't
+    # wrap early-returned JSONResponses), and the browser reports the
+    # request as CORS-blocked rather than 429. That broke every
+    # /simulate fetch from the production frontend because a page load
+    # can easily issue 5+ preflights (TrustGapPanel init + preset click
+    # + slider) and trip the per-IP limit.
+    if request.method == "OPTIONS":
+        return await call_next(request)
     if request.url.path in ("/simulate", "/simulate/coin", "/simulate/compare", "/simulate/validate", "/simulate/optimize", "/backtest", "/export/csv"):
         # Bypass rate limit for internal callers (sim-audit, signal-telegram, etc.)
         req_key = request.headers.get("X-Internal-Key", "")
@@ -708,10 +718,18 @@ async def rate_limit_middleware(request: Request, call_next):
             logger.warning(
                 f"Rate limit hit: {client_ip} on {request.url.path} — retry after {retry_after}s"
             )
+            # Include CORS headers manually so the browser sees 429 (and
+            # can surface "Rate limit exceeded") rather than CORS-blocked.
+            origin = request.headers.get("origin", "")
+            cors_headers: dict[str, str] = {"Retry-After": str(retry_after)}
+            if origin in _cors_origins:
+                cors_headers["Access-Control-Allow-Origin"] = origin
+                cors_headers["Access-Control-Allow-Credentials"] = "true"
+                cors_headers["Vary"] = "Origin"
             return JSONResponse(
                 status_code=429,
                 content={"detail": f"Rate limit exceeded. Retry after {retry_after}s."},
-                headers={"Retry-After": str(retry_after)},
+                headers=cors_headers,
             )
     # Light rate limit: /api/subscribe and /auth/okx/init (10 req/min per IP)
     if request.url.path in ("/api/subscribe", "/auth/okx/init"):
