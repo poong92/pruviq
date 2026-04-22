@@ -1,1 +1,1 @@
-{"simulations_run": 12847, "strategies_tested": 17, "coins_analyzed": 240, "trading_days": 844, "candles_processed": 9400000, "last_updated": "2026-04-22", "source": "OKX /api/v5/public/instruments?instType=SWAP (2026-04-18)"}
+{"simulations_run": 12847, "strategies_tested": 17, "coins_analyzed": 240, "trading_days": 845, "candles_processed": 9400000, "last_updated": "2026-04-23", "source": "OKX /api/v5/public/instruments?instType=SWAP (2026-04-18)"}
