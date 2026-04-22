@@ -422,36 +422,27 @@ function Metric({
       : tone === "bad"
         ? "text-rose-400"
         : "text-zinc-100";
-  // 2026-04-22 (a11y fix): <details>/<summary> disclosure pattern so the
-  // tooltip is reachable via keyboard + touch, not just mouse-hover.
-  // `<summary>` is natively focusable, gets a visible focus ring, has
-  // sufficient tap target (min-h-[24px] + min-w-[24px] per WCAG 2.5.8),
-  // and clicking/pressing Enter reveals the explanation below the metric.
-  // No JS needed.
+  // 2026-04-22 (a11y final): abandoned the hidden-until-interacted tooltip
+  // pattern entirely. The prior <details>/<summary> disclosure fixed the
+  // keyboard/touch reachability issue but introduced popover-dismissal,
+  // viewport-overflow, and announcement-duplication problems.
+  // The cleanest solution: show the explanation inline, always. Zero
+  // interaction required, perfect for AT users + mouse + touch + keyboard,
+  // no JS, no viewport math, no state. Costs ~10px vertical per metric;
+  // worth it to remove the last a11y gap.
   return (
     <div data-testid={testId}>
-      <div class="mb-1 flex items-center gap-1 text-xs uppercase tracking-wide text-zinc-400">
-        <span>{label}</span>
-        {tooltip && (
-          <details class="group relative inline-block">
-            <summary
-              class="inline-flex min-h-[24px] min-w-[24px] cursor-pointer items-center justify-center rounded-full border border-zinc-700 bg-zinc-900 text-[11px] font-bold text-zinc-400 hover:border-[--color-accent] hover:text-[--color-accent-bright] focus:outline-none focus:ring-2 focus:ring-[--color-accent]/60 list-none [&::-webkit-details-marker]:hidden"
-              aria-label={`${label} — ${tooltip}`}
-            >
-              <span aria-hidden="true">ⓘ</span>
-            </summary>
-            <span
-              role="tooltip"
-              class="absolute left-0 top-full z-20 mt-1 w-60 max-w-[80vw] rounded-lg border border-zinc-700 bg-zinc-900 p-2 text-[11px] font-normal normal-case tracking-normal text-zinc-200 shadow-xl"
-            >
-              {tooltip}
-            </span>
-          </details>
-        )}
+      <div class="mb-1 text-xs uppercase tracking-wide text-zinc-400">
+        {label}
       </div>
       <div class={`font-mono text-2xl font-semibold tabular-nums ${toneClass}`}>
         {value}
       </div>
+      {tooltip && (
+        <p class="mt-1 text-[11px] normal-case leading-snug text-zinc-500">
+          {tooltip}
+        </p>
+      )}
     </div>
   );
 }

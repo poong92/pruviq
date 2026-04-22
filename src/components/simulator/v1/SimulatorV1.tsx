@@ -11,7 +11,7 @@
 //   OKXConnectCTA (funnel to /dashboard)
 
 import { useEffect } from "preact/hooks";
-import { useSimConfig } from "../../../hooks/useSimConfig";
+import { useSimConfig, DEFAULT_TOP_N } from "../../../hooks/useSimConfig";
 import { useSimShortcuts } from "../../../hooks/useSimShortcuts";
 import { useTranslations, type Lang } from "../../../i18n/index";
 import { emit } from "../../../lib/events";
@@ -233,9 +233,15 @@ function Shortcut({ keys, label }: { keys: string; label: string }) {
   );
 }
 
-// 2026-04-22: serialize the current sim state so the Expert builder link
-// can pre-fill instead of resetting. The builder reads these keys on
-// mount. Only emit non-default values to keep URLs short.
+// 2026-04-22 (fix after UX re-review): serialize sim state using the
+// EXACT keys that SimulatorPage.tsx (the Expert builder) reads on mount:
+//   sl, tp, dir, preset, coins (NOT topN), start (NOT from), end (NOT to),
+//   coin. The previous implementation used useSimConfig's internal
+//   persistence keys (topN/from/to/lev/fee), which don't match the
+//   builder reader — so 4 of 8 handed-off fields silently dropped.
+// Leverage + fee are NOT read by the Expert builder (it has its own
+// defaults), so we intentionally omit them to avoid false-preservation
+// claims. Default values also omitted to keep URLs short.
 function buildExpertQuery(
   config: ReturnType<typeof useSimConfig>["config"],
 ): string {
@@ -244,9 +250,9 @@ function buildExpertQuery(
   if (config.direction) p.set("dir", config.direction);
   if (config.sl) p.set("sl", String(config.sl));
   if (config.tp) p.set("tp", String(config.tp));
-  if (config.topN !== 10) p.set("topN", String(config.topN));
-  if (config.leverage !== 5) p.set("lev", String(config.leverage));
-  if (config.startDate) p.set("from", config.startDate);
-  if (config.endDate) p.set("to", config.endDate);
+  if (config.topN !== DEFAULT_TOP_N) p.set("coins", String(config.topN));
+  if (config.coin && config.coin !== "BTC") p.set("coin", config.coin);
+  if (config.startDate) p.set("start", config.startDate);
+  if (config.endDate) p.set("end", config.endDate);
   return p.toString();
 }

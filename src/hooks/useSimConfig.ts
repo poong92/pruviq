@@ -51,9 +51,11 @@ const FEE_MIN = 0;
 const FEE_MAX = 1;
 const DIRECTIONS: readonly PresetDirection[] = ["long", "short", "both"];
 
-const DEFAULT_TOP_N = 10;
-const DEFAULT_LEVERAGE = 5;
-const DEFAULT_FEE_PCT = 0.05;
+// Exported so consumers (e.g. SimulatorV1.buildExpertQuery) can avoid
+// duplicating magic numbers — single source of truth for defaults.
+export const DEFAULT_TOP_N = 10;
+export const DEFAULT_LEVERAGE = 5;
+export const DEFAULT_FEE_PCT = 0.05;
 
 function clamp(value: number, min: number, max: number): number {
   if (!Number.isFinite(value)) return min;
