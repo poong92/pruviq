@@ -269,6 +269,46 @@ export default function TrustGapPanel({ lang }: Props) {
       <p class="mt-3 text-xs leading-relaxed text-zinc-400">
         {t("simV2.trust.gap_note")}
       </p>
+
+      {/* 2026-04-24: "Gap 59% — so what?" closure. Previous panel showed
+          the number + brand-promise copy but didn't tell users what to do
+          with it. Large gap with losing live PF is actionable information:
+          surface the diagnosis + recommended alternative instead of
+          leaving users in a dead-end "we're honest" loop. */}
+      {gapPct != null && gapPct >= 15 && (
+        <div
+          class="mt-3 rounded-lg border border-amber-500/30 bg-amber-500/5 p-3"
+          data-testid="sim-v1-gap-action"
+        >
+          <p class="text-xs font-semibold text-amber-200 mb-1.5">
+            {isKo
+              ? `⚠ 이 전략은 현재 추천 불가`
+              : "⚠ This strategy is currently off the recommended list"}
+          </p>
+          <p class="text-xs leading-relaxed text-zinc-300 mb-2">
+            {isKo
+              ? `${data.strategy} 는 ${period} 실거래에서 PF ${s.profit_factor.toFixed(2)} (손실 구간). 2년 백테스트가 이 기간의 변동성 레짐을 과소평가했습니다. 라이브 재개는 30일 이상 PF ≥ 1.0 회복 후 재검토.`
+              : `${data.strategy} ran at PF ${s.profit_factor.toFixed(2)} (losing) in ${period}. The 2yr backtest underweighted this volatility regime. We'll reconsider live deployment only after ≥30 days at PF ≥ 1.0.`}
+          </p>
+          <div class="flex flex-wrap items-center gap-2">
+            <a
+              href="/simulate/?preset=atr-breakout"
+              class="inline-flex items-center gap-1 rounded bg-[--color-accent] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[--color-accent-bright] min-h-[32px]"
+            >
+              {isKo
+                ? "대신 ATR Breakout (PF 1.31) 시도"
+                : "Try ATR Breakout (PF 1.31) instead"}{" "}
+              →
+            </a>
+            <a
+              href="/methodology"
+              class="inline-flex items-center gap-1 rounded border border-zinc-700 px-3 py-1.5 text-xs text-zinc-300 hover:border-zinc-500 min-h-[32px]"
+            >
+              {isKo ? "갭 측정 방식" : "How we measure gap"} →
+            </a>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
