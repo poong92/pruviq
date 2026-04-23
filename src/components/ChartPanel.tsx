@@ -237,7 +237,7 @@ export default function ChartPanel({
         <div class="flex items-center gap-2">
           <span class="font-mono text-sm font-bold">{chartSymbol}</span>
           <span class="text-[--color-text-muted] text-xs">{timeframe}</span>
-          <span class="text-[--color-text-muted] text-[9px] font-mono opacity-50 hidden sm:inline">
+          <span class="text-[--color-text-muted] text-xs font-mono hidden sm:inline">
             OKX USDT-SWAP
           </span>
         </div>
@@ -280,10 +280,14 @@ export default function ChartPanel({
           />
         </div>
       </div>
-      {/* Chart body — responsive height: 360px mobile, 640px desktop */}
+      {/* Chart body — responsive height: 360px mobile, 640px desktop.
+          2026-04-23 (a11y): role="img" removed because lightweight-charts
+          inserts focusable canvas/tooltip inside, which axe flags as
+          nested-interactive. role="region" + aria-label is the correct
+          pattern for a named landmark that contains interactive controls. */}
       <div
         ref={chartContainerRef}
-        role="img"
+        role="region"
         aria-label={`${chartSymbol} price chart with strategy signals`}
         class={`h-[360px] md:h-[640px]${chartData.length > 0 && !chartLoading ? " chart-draw-in" : ""}`}
         style={{ minHeight: "300px" }}
