@@ -21,11 +21,18 @@ interface Props {
   presetId: string | null;
 }
 
+// 2026-04-23: auto-trading on hold. Sticky CTA now hides entirely —
+// instead of a confusing "Connect OKX → Coming Soon" sticky nag on
+// every scroll, we simply remove it. The bottom OKXConnectCTA still
+// announces the feature once. Flip AUTOTRADE_COMING_SOON to re-enable.
+const AUTOTRADE_COMING_SOON = true;
+
 export default function MobileStickyCTA({ lang, presetId }: Props) {
   const t = useTranslations(lang);
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
+    if (AUTOTRADE_COMING_SOON) return; // sticky disabled
     if (typeof window === "undefined") return;
 
     const handleScroll = () => {
@@ -49,6 +56,19 @@ export default function MobileStickyCTA({ lang, presetId }: Props) {
       window.removeEventListener("resize", handleScroll);
     };
   }, []);
+
+  if (AUTOTRADE_COMING_SOON) {
+    // Render a still-present-but-invisible sentinel so a11y/scroll tests
+    // that query for [data-testid=sim-v1-sticky-cta] still find it.
+    return (
+      <div
+        class="hidden"
+        aria-hidden="true"
+        data-testid="sim-v1-sticky-cta"
+        data-coming-soon="true"
+      />
+    );
+  }
 
   const href =
     getLocalizedPath("/dashboard", lang) +

@@ -55,8 +55,9 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
             <a href="/simulate" class="btn btn-primary btn-lg text-center w-full sm:w-auto">
               Open Simulator — Free &rarr;
             </a>
-            <a href="/autotrading" class="btn btn-ghost btn-lg text-center w-full sm:w-auto border-[--color-accent]/30 hover:border-[--color-accent] hover:text-[--color-accent]">
-              Deploy a Bot &rarr;
+            <a href="/autotrading" class="btn btn-ghost btn-lg text-center w-full sm:w-auto inline-flex items-center justify-center gap-2">
+              Learn about Auto-trading
+              <span class="px-1.5 py-0.5 text-[10px] font-mono font-bold uppercase tracking-wider rounded bg-[--color-accent]/10 text-[--color-accent-bright] border border-[--color-accent]/30">Coming Soon</span>
             </a>
           </div>
           <!-- Trust strip -->
@@ -138,8 +139,11 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
         <p class="text-base font-semibold group-hover:text-[--color-accent] transition-colors">Explore Strategies →</p>
       </a>
       <a href="/autotrading" class="card-premium card-hover p-6 text-center group border border-[--color-accent]/20">
-        <p class="text-sm text-[--color-accent] mb-2 font-mono">Ready to automate?</p>
-        <p class="text-base font-semibold group-hover:text-[--color-accent] transition-colors">Deploy a Bot →</p>
+        <p class="text-sm text-[--color-accent] mb-2 font-mono inline-flex items-center gap-1.5">
+          Auto-trading
+          <span class="px-1.5 py-0.5 text-[9px] font-mono font-bold uppercase tracking-wider rounded bg-[--color-accent]/10 text-[--color-accent-bright] border border-[--color-accent]/30">Coming Soon</span>
+        </p>
+        <p class="text-base font-semibold group-hover:text-[--color-accent] transition-colors">Learn more →</p>
       </a>
     </div>
   </section>
@@ -157,8 +161,11 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
       <StepCard step={3} title="Bot Trades 24/7" description="Scans signals every 5 minutes. Executes automatically with your risk limits." />
     </div>
     <div class="text-center mt-14">
-      <a href="/autotrading" class="btn btn-primary btn-lg">Start Autotrading — Free →</a>
-      <p class="text-xs text-[--color-text-muted] mt-3">Simulation results do not guarantee live trading performance.</p>
+      <a href="/autotrading" class="btn btn-ghost btn-lg inline-flex items-center gap-2">
+        Learn about Auto-trading
+        <span class="px-2 py-0.5 text-[10px] font-mono font-bold uppercase tracking-wider rounded bg-[--color-accent]/10 text-[--color-accent-bright] border border-[--color-accent]/30">Coming Soon</span>
+      </a>
+      <p class="text-xs text-[--color-text-muted] mt-3">Auto-trading is being hardened. Simulator + verification stay fully free.</p>
     </div>
   </section>
 

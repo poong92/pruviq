@@ -1,14 +1,19 @@
 ---
 // Phase 7 un-hide (2026-04-17) — see src/pages/autotrading/index.astro header.
+// 2026-04-23: Auto-trading on hold. Dashboard surfaces a Coming Soon state
+// and hides the live connection widgets so users can't trigger broken
+// flows. Flip AUTOTRADE_COMING_SOON below to restore the active dashboard.
 import Layout from '../layouts/Layout.astro';
 import OKXConnectButton from '../components/OKXConnectButton';
 import AutoTradingStatus from '../components/AutoTradingStatus';
 import TradingSettings from '../components/TradingSettings';
 import LivePositions from '../components/LivePositions';
 import LiveTradeHistory from '../components/LiveTradeHistory';
+
+const AUTOTRADE_COMING_SOON = true;
 ---
 
-<Layout title="Dashboard — PRUVIQ" description="Manage your OKX connection and auto-trading settings.">
+<Layout title="Dashboard — PRUVIQ" description="Auto-trading dashboard (coming soon). Simulations remain fully free.">
 
   <main class="max-w-4xl mx-auto px-4 py-12 md:py-20">
     <div class="flex items-center justify-between mb-2 flex-wrap gap-3">
@@ -17,61 +22,79 @@ import LiveTradeHistory from '../components/LiveTradeHistory';
     </div>
     <p class="text-[--color-text-muted] mb-8">Manage your OKX connection and auto-trading bots.</p>
 
-    <!-- OKX Connection Card -->
-    <section class="mb-8">
-      <div class="card-enterprise rounded-2xl p-6 md:p-8">
-        <div class="flex items-center justify-between mb-4 flex-wrap gap-4">
-          <div class="flex items-center gap-3">
-            <div class="w-12 h-12 rounded-xl bg-[--color-accent]/10 flex items-center justify-center">
-              <svg class="w-7 h-7 text-[--color-accent]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
-            </div>
-            <div>
-              <h2 class="text-xl font-bold">OKX Broker</h2>
-              <p class="text-sm text-[--color-text-muted]">Official Broker Partner — 20% fee discount</p>
-            </div>
-          </div>
-          <OKXConnectButton client:load lang="en" size="md" />
+    {AUTOTRADE_COMING_SOON && (
+      <section class="mb-8 rounded-2xl border border-[--color-accent]/30 bg-[--color-accent]/5 p-6 md:p-8 text-center">
+        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 text-xs font-mono font-bold uppercase tracking-wider rounded bg-[--color-accent]/10 text-[--color-accent-bright] border border-[--color-accent]/30 mb-3">
+          ● Coming Soon
+        </span>
+        <h2 class="text-xl md:text-2xl font-bold mb-2">Auto-trading is being hardened.</h2>
+        <p class="text-sm text-[--color-text-muted] max-w-xl mx-auto mb-4 leading-relaxed">
+          The OKX integration is under fix. Backtesting + strategy verification stay fully free in the meantime — use the simulator to identify strategies worth running when execution re-opens.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-2 justify-center">
+          <a href="/simulate/" class="btn btn-primary btn-md min-h-[44px]">Try simulator →</a>
+          <a href="/performance/" class="btn btn-ghost btn-md min-h-[44px]">View live PRUVIQ track record</a>
         </div>
-        <div class="grid grid-cols-3 gap-4 mt-4">
-          <div class="bg-[--color-bg]/50 rounded-xl p-3 text-center">
-            <p class="text-xs text-[--color-text-muted] mb-1">Fee Discount</p>
-            <p class="text-xl font-bold text-[--color-up]">20%</p>
+      </section>
+    )}
+
+    {!AUTOTRADE_COMING_SOON && (
+      <>
+        <!-- OKX Connection Card -->
+        <section class="mb-8">
+          <div class="card-enterprise rounded-2xl p-6 md:p-8">
+            <div class="flex items-center justify-between mb-4 flex-wrap gap-4">
+              <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-xl bg-[--color-accent]/10 flex items-center justify-center">
+                  <svg class="w-7 h-7 text-[--color-accent]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                </div>
+                <div>
+                  <h2 class="text-xl font-bold">OKX Broker</h2>
+                  <p class="text-sm text-[--color-text-muted]">Official Broker Partner — 20% fee discount</p>
+                </div>
+              </div>
+              <OKXConnectButton client:load lang="en" size="md" />
+            </div>
+            <div class="grid grid-cols-3 gap-4 mt-4">
+              <div class="bg-[--color-bg]/50 rounded-xl p-3 text-center">
+                <p class="text-xs text-[--color-text-muted] mb-1">Fee Discount</p>
+                <p class="text-xl font-bold text-[--color-up]">20%</p>
+              </div>
+              <div class="bg-[--color-bg]/50 rounded-xl p-3 text-center">
+                <p class="text-xs text-[--color-text-muted] mb-1">Execution</p>
+                <p class="text-xl font-bold">Auto</p>
+              </div>
+              <div class="bg-[--color-bg]/50 rounded-xl p-3 text-center">
+                <p class="text-xs text-[--color-text-muted] mb-1">API Key Sharing</p>
+                <p class="text-xl font-bold text-[--color-up]">Not required</p>
+              </div>
+            </div>
           </div>
-          <div class="bg-[--color-bg]/50 rounded-xl p-3 text-center">
-            <p class="text-xs text-[--color-text-muted] mb-1">Execution</p>
-            <p class="text-xl font-bold">Auto</p>
-          </div>
-          <div class="bg-[--color-bg]/50 rounded-xl p-3 text-center">
-            <p class="text-xs text-[--color-text-muted] mb-1">API Key Sharing</p>
-            <p class="text-xl font-bold text-[--color-up]">Not required</p>
-          </div>
-        </div>
-      </div>
-    </section>
+        </section>
 
-    <!-- Bot Status Widget -->
-    <section class="mb-8">
-      <AutoTradingStatus client:load lang="en" />
-    </section>
+        <!-- Bot Status Widget -->
+        <section class="mb-8">
+          <AutoTradingStatus client:load lang="en" />
+        </section>
 
-    <!-- Auto-Trading Settings -->
-    <!-- client:visible: below-the-fold on first paint, defer hydration
-         until scrolled into view. Cuts initial JS bundle cost. -->
-    <section class="mb-8">
-      <TradingSettings client:visible lang="en" />
-    </section>
+        <!-- Auto-Trading Settings -->
+        <section class="mb-8">
+          <TradingSettings client:visible lang="en" />
+        </section>
 
-    <!-- Live Positions -->
-    <section class="mb-8">
-      <LivePositions client:visible lang="en" />
-    </section>
+        <!-- Live Positions -->
+        <section class="mb-8">
+          <LivePositions client:visible lang="en" />
+        </section>
 
-    <!-- Trade History -->
-    <section class="mb-8">
-      <LiveTradeHistory client:visible lang="en" />
-    </section>
+        <!-- Trade History -->
+        <section class="mb-8">
+          <LiveTradeHistory client:visible lang="en" />
+        </section>
+      </>
+    )}
 
     <!-- Security Info -->
     <section>

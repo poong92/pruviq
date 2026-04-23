@@ -844,6 +844,49 @@ export default function BuilderPanel(props: Props) {
               {t.apiDown}
             </div>
           )}
+          {/* 2026-04-23: Settings summary one-liner above RUN — gives users
+              explicit confirmation of what will execute. Prevents "I just
+              clicked RUN, but what's my current config?" confusion. */}
+          {props.conditions.length > 0 && (
+            <div
+              class="mb-2 px-3 py-2 rounded border border-[--color-border] bg-[--color-bg-tooltip] font-mono text-[11px] text-[--color-text-muted]"
+              data-testid="run-summary"
+            >
+              <span class="text-[--color-text]">
+                {props.activePreset ||
+                  (props.lang === "ko" ? "커스텀" : "Custom")}
+              </span>
+              <span class="mx-1.5">·</span>
+              <span
+                style={{
+                  color:
+                    props.direction === "short"
+                      ? COLORS.redBright || "#F87171"
+                      : props.direction === "long"
+                        ? COLORS.greenBright || "#4ADE80"
+                        : COLORS.accentBright || "#5CC8ED",
+                }}
+              >
+                {props.direction.toUpperCase()}
+              </span>
+              <span class="mx-1.5">·</span>
+              <span>SL {props.slPct}%</span>
+              <span class="mx-1.5">·</span>
+              <span>TP {props.tpPct}%</span>
+              <span class="mx-1.5">·</span>
+              <span>
+                {props.coinMode === "top"
+                  ? `Top ${props.topN}`
+                  : props.coinMode === "all"
+                    ? props.lang === "ko"
+                      ? "전체"
+                      : "All"
+                    : `${props.selectedCoins.length} ${props.lang === "ko" ? "선택" : "coin(s)"}`}
+              </span>
+              <span class="mx-1.5">·</span>
+              <span>{props.timeframe}</span>
+            </div>
+          )}
           <button
             data-testid="run-backtest"
             onClick={props.onRun}

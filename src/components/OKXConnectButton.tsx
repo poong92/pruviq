@@ -17,32 +17,42 @@ interface Props {
 // Old path now returns 404.
 const OKX_OAUTH_BASE = "https://www.okx.com/account/oauth/authorize";
 
+// 2026-04-23: Autotrading is on hold while the OKX-side integration is being
+// hardened. All CTAs that previously initiated OAuth / auto-execute now show
+// "Coming Soon" and do nothing. Labels tweaked accordingly; the
+// site-wide convention is to never advertise a feature we can't reliably
+// deliver today.
 const labels = {
   en: {
-    connect: "Connect OKX Account",
+    connect: "Auto-trading — Coming Soon",
     connected: "OKX Connected",
     disconnect: "Disconnect",
     connecting: "Connecting...",
-    desc: `Link your OKX account to execute trades directly from simulations. ${OKX_DISCOUNT_PCT}% fee discount included.`,
+    comingSoonBadge: "Coming Soon",
+    desc: `Auto-execute your simulations on OKX with ${OKX_DISCOUNT_PCT}% fee discount. Launching soon — simulations remain fully free now.`,
     benefits: [
-      "One-click trade execution",
+      "One-click trade execution (soon)",
       `${OKX_DISCOUNT_PCT}% fee discount`,
       "Secure OAuth — no API keys shared",
     ],
   },
   ko: {
-    connect: "OKX 계정 연결",
+    connect: "자동매매 — 곧 출시",
     connected: "OKX 연결됨",
     disconnect: "연결 해제",
     connecting: "연결 중...",
-    desc: `OKX 계정을 연결하면 시뮬레이션 결과를 바로 실행할 수 있습니다. ${OKX_DISCOUNT_PCT}% 수수료 할인 포함.`,
+    comingSoonBadge: "곧 출시",
+    desc: `OKX에서 시뮬레이션 자동 실행 + ${OKX_DISCOUNT_PCT}% 수수료 할인. 출시 예정 — 시뮬레이션은 현재도 무료입니다.`,
     benefits: [
-      "원클릭 거래 실행",
+      "원클릭 거래 실행 (예정)",
       `${OKX_DISCOUNT_PCT}% 수수료 할인`,
       "안전한 OAuth — API 키 공유 불필요",
     ],
   },
 };
+
+// 2026-04-23: feature flag. Flip to false once OKX integration is live.
+const AUTOTRADE_COMING_SOON = true;
 
 const sizeClasses = {
   sm: "btn-sm text-sm",
@@ -134,6 +144,70 @@ export default function OKXConnectButton({
     });
     setConnected(false);
   };
+
+  // 2026-04-23: while autotrading is on hold, short-circuit all connect
+  // flows. Render a disabled "Coming Soon" pill immediately — skip the
+  // loading/status fetches to /auth/okx/* entirely.
+  if (AUTOTRADE_COMING_SOON) {
+    if (showCard) {
+      return (
+        <div
+          class="border border-[--color-border] rounded-xl p-5 bg-[--color-bg-card]"
+          data-testid="okx-connect-coming-soon-card"
+        >
+          <div class="flex items-start justify-between gap-3 mb-2">
+            <h4 class="font-bold text-sm">{t.connect}</h4>
+            <span
+              class="shrink-0 inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-mono font-bold uppercase tracking-wider rounded bg-[--color-accent]/10 text-[--color-accent-bright] border border-[--color-accent]/30"
+              aria-label={t.comingSoonBadge}
+            >
+              ● {t.comingSoonBadge}
+            </span>
+          </div>
+          <p class="text-xs text-[--color-text-muted] mb-3">{t.desc}</p>
+          <ul class="space-y-1.5 mb-4">
+            {t.benefits.map((b) => (
+              <li class="flex items-center gap-2 text-xs text-[--color-text-secondary]">
+                <svg
+                  class="w-3.5 h-3.5 text-[--color-text-muted] shrink-0"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+                {b}
+              </li>
+            ))}
+          </ul>
+          <button
+            class={`btn btn-ghost ${sizeClasses[size]} w-full cursor-not-allowed`}
+            disabled
+            aria-disabled="true"
+            aria-label={t.connect}
+          >
+            {t.connect}
+          </button>
+        </div>
+      );
+    }
+    return (
+      <button
+        class={`btn btn-ghost ${sizeClasses[size]} cursor-not-allowed`}
+        disabled
+        aria-disabled="true"
+        aria-label={t.connect}
+        data-testid="okx-connect-coming-soon"
+      >
+        {t.connect}
+      </button>
+    );
+  }
 
   if (loading) {
     return (
