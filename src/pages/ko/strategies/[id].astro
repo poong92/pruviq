@@ -203,14 +203,15 @@ const statusLabels: Record<string, string> = {
             tpPct={demo.tp}
             lang="ko"
           />
-          <a href="/ko/dashboard"
-             class="flex items-center justify-center gap-2 w-full px-5 py-3 rounded-lg border border-[--color-accent]/30 text-[--color-accent] hover:border-[--color-accent] hover:bg-[--color-accent]/5 transition-all text-sm font-semibold">
+          <button disabled aria-disabled="true"
+             class="flex items-center justify-center gap-2 w-full px-5 py-3 min-h-[44px] rounded-lg border border-[--color-border] bg-[--color-bg-elevated] text-[--color-text-muted] text-sm font-semibold cursor-not-allowed">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/>
             </svg>
-            자동매매 봇으로 실행 — 24시간 자동 →
-          </a>
-          <p class="text-xs text-[--color-text-muted] text-center">OKX 1회 연결 · 5분마다 시그널 스캔 · API 키 불필요</p>
+            자동매매 봇으로 실행
+            <span class="ml-1 px-1.5 py-0.5 text-[10px] font-mono font-bold uppercase tracking-wider rounded bg-[--color-accent]/10 text-[--color-accent-bright] border border-[--color-accent]/30">곧 출시</span>
+          </button>
+          <p class="text-xs text-[--color-text-muted] text-center">자동매매는 안정화 작업 중입니다. 시뮬레이션 + 검증은 계속 무료로 사용 가능합니다.</p>
         </div>
       )}
 

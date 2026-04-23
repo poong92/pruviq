@@ -183,14 +183,15 @@ const statusLabels: Record<string, string> = {
             tpPct={demo.tp}
             lang="en"
           />
-          <a href="/dashboard"
-             class="flex items-center justify-center gap-2 w-full px-5 py-3 rounded-lg border border-[--color-accent]/30 text-[--color-accent] hover:border-[--color-accent] hover:bg-[--color-accent]/5 transition-all text-sm font-semibold">
+          <button disabled aria-disabled="true"
+             class="flex items-center justify-center gap-2 w-full px-5 py-3 min-h-[44px] rounded-lg border border-[--color-border] bg-[--color-bg-elevated] text-[--color-text-muted] text-sm font-semibold cursor-not-allowed">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/>
             </svg>
-            Deploy as Bot — Run 24/7 →
-          </a>
-          <p class="text-xs text-[--color-text-muted] text-center">Connect OKX once · bot scans signals every 5 min · no API keys needed</p>
+            Deploy as Bot
+            <span class="ml-1 px-1.5 py-0.5 text-[10px] font-mono font-bold uppercase tracking-wider rounded bg-[--color-accent]/10 text-[--color-accent-bright] border border-[--color-accent]/30">Coming Soon</span>
+          </button>
+          <p class="text-xs text-[--color-text-muted] text-center">Auto-trading is being hardened. Simulator + verification stay fully free.</p>
         </div>
       )}
 
