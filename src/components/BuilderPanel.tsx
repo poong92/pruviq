@@ -596,6 +596,10 @@ export default function BuilderPanel(props: Props) {
                 {t.startDate}
               </label>
               <input
+                aria-label={
+                  (props.lang === "ko" ? "시작일" : "Start date") +
+                  " (YYYY-MM-DD)"
+                }
                 type="date"
                 value={props.startDate}
                 onChange={(e: Event) =>
@@ -606,15 +610,19 @@ export default function BuilderPanel(props: Props) {
             </div>
             {/* End Date */}
             <div>
-              <label class="text-[10px] text-[--color-text-muted]">
+              <label class="text-xs text-[--color-text-muted]">
                 {t.endDate}
                 {!props.endDate && (
-                  <span class="ml-1 opacity-50">
+                  <span class="ml-1 text-[--color-text-muted]">
                     ({props.lang === "ko" ? "현재까지" : "present"})
                   </span>
                 )}
               </label>
               <input
+                aria-label={
+                  (props.lang === "ko" ? "종료일" : "End date") +
+                  " (YYYY-MM-DD)"
+                }
                 type="date"
                 value={props.endDate}
                 onChange={(e: Event) =>
@@ -771,7 +779,7 @@ export default function BuilderPanel(props: Props) {
         <details class="border-b border-[--color-border]" open>
           <summary class="px-4 py-2 text-xs font-mono text-[--color-text-muted] uppercase cursor-pointer select-none hover:text-[--color-text] transition-colors list-none flex items-center justify-between">
             <span>{t.avoidHours}</span>
-            <span class="text-[10px] opacity-50">
+            <span class="text-xs text-[--color-text-muted]">
               {props.avoidHours.size > 0
                 ? t.hoursSelected
                   ? t.hoursSelected(props.avoidHours.size)

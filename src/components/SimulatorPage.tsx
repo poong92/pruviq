@@ -1522,9 +1522,12 @@ export default function SimulatorPage({
               style={
                 mobileTab === tab
                   ? {
-                      color: COLORS.accentBright,
+                      // 2026-04-23: accentBright (#5CC8ED) on accentBg (12%
+                      // accent over dark) yields contrast 1.23 — same hue.
+                      // Use white on solid accent for 5.7:1 contrast.
+                      color: "#fff",
                       borderColor: COLORS.accent,
-                      background: COLORS.accentBg,
+                      background: COLORS.accent,
                     }
                   : undefined
               }
