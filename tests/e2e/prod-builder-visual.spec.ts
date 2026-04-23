@@ -119,7 +119,11 @@ test.describe("Builder visual audit", () => {
           };
         })
         .filter((b) => b.text && b.w > 0);
-      const smallTargets = btns.filter((b) => b.w < 44 || b.h < 44);
+      // 2026-04-23: WCAG 2.2 AA target size is 24×24 CSS px (SC 2.5.8).
+      // 44×44 is AAA (SC 2.5.5 Enhanced). Align audit to AA so "compliant"
+      // reflects spec. Tracked separately for AAA interest.
+      const smallTargets = btns.filter((b) => b.w < 24 || b.h < 24);
+      const aaaTargets = btns.filter((b) => b.w < 44 || b.h < 44);
       const inputs = Array.from(document.querySelectorAll("input,select")).map(
         (i) => {
           const r = (i as HTMLElement).getBoundingClientRect();
@@ -137,8 +141,9 @@ test.describe("Builder visual audit", () => {
         total_buttons: btns.length,
         small_targets: smallTargets.length,
         small_samples: smallTargets.slice(0, 8),
+        aaa_small_targets: aaaTargets.length,
         total_inputs: inputs.length,
-        narrow_inputs: inputs.filter((i) => i.w < 44 || i.h < 44).length,
+        narrow_inputs: inputs.filter((i) => i.w < 24 || i.h < 24).length,
         viewport: { w: window.innerWidth, h: window.innerHeight },
         scrollHeight: document.documentElement.scrollHeight,
       };
