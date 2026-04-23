@@ -1,0 +1,115 @@
+---
+// BB Squeeze SHORT 2026-Q1 live postmortem.
+// Preserves the full backtest-vs-live gap analysis that lived on the
+// homepage TrustGapPanel before 2026-04-24. Moved here because:
+//   1. Auto-trading integration is being hardened → live tracking paused.
+//   2. A 59.6% gap surfaced with no other live track to counter-balance
+//      was giving new visitors a misleading first impression ("the one
+//      live strategy they're running lost money").
+//   3. This page keeps the honesty — we don't delete the failure, we
+//      frame it as a lesson learned while the live layer rebuilds.
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout
+  title="BB Squeeze SHORT 2026-Q1 — Backtest vs Live Postmortem | PRUVIQ"
+  description="Our BB Squeeze SHORT backtest predicted +49.9% over 2 years but the 2026-01-13 to 03-09 live deployment returned -9.7%. Why the 59.6% gap, what we learned, what we changed."
+>
+  <main class="max-w-3xl mx-auto px-4 py-12 md:py-20">
+    <nav class="mb-6 text-sm text-[--color-text-muted]">
+      <a href="/blog/" class="hover:text-[--color-accent]">← Blog</a>
+    </nav>
+
+    <header class="mb-8">
+      <p class="font-mono text-xs uppercase tracking-widest text-[--color-accent] mb-3">Postmortem · 2026-04-24</p>
+      <h1 class="text-3xl md:text-4xl font-extrabold mb-3 tracking-[-0.02em]">
+        BB Squeeze SHORT — why our 2-year backtest was wrong by 59.6% in 2 months
+      </h1>
+      <p class="text-base text-[--color-text-muted] leading-relaxed">
+        Honesty-first report. We ran one strategy live on OKX for 55 days. The backtest said +49.9%; the live account returned -9.7%. Here's exactly what happened, what we changed, and what the current recommended list is.
+      </p>
+    </header>
+
+    <section class="mb-8 grid grid-cols-3 gap-3 not-prose">
+      <div class="rounded-lg border border-[--color-border] bg-[--color-bg-card] p-4 text-center">
+        <p class="text-xs text-[--color-text-muted] mb-1">Backtest (2 yr)</p>
+        <p class="text-2xl font-mono font-bold text-emerald-400">+49.9%</p>
+      </div>
+      <div class="rounded-lg border border-[--color-border] bg-[--color-bg-card] p-4 text-center">
+        <p class="text-xs text-[--color-text-muted] mb-1">Live (55 days)</p>
+        <p class="text-2xl font-mono font-bold text-rose-400">-9.7%</p>
+      </div>
+      <div class="rounded-lg border border-amber-500/30 bg-amber-500/5 p-4 text-center">
+        <p class="text-xs text-amber-200 mb-1">Gap</p>
+        <p class="text-2xl font-mono font-bold text-amber-300">59.6%</p>
+      </div>
+    </section>
+
+    <section class="mb-10 space-y-4 text-[--color-text]">
+      <h2 class="text-2xl font-bold mb-3">The raw numbers</h2>
+      <ul class="space-y-1 text-sm font-mono text-[--color-text-secondary]">
+        <li>Strategy: BB Squeeze SHORT</li>
+        <li>Live period: 2026-01-13 → 2026-03-09 (55 days, 1,914 trades)</li>
+        <li>Live win rate: 52.7% · Profit factor: 0.88 · Max drawdown: 16.5%</li>
+        <li>2yr backtest at same SL 10% / TP 8% / Top 10: PF 1.17 · +83% return</li>
+        <li>Live capital: $3,102 start → $2,800 end</li>
+      </ul>
+    </section>
+
+    <section class="mb-10 space-y-4 text-[--color-text] leading-relaxed">
+      <h2 class="text-2xl font-bold">What went wrong</h2>
+      <p>
+        BB Squeeze SHORT enters short after a Bollinger Band contraction + bearish breakout with volume confirmation. The 2-year backtest (2023–2025) had plenty of sustained down-trends where mean-reversion was rare — a good regime for a breakout-short.
+      </p>
+      <p>
+        2026-01 to 03 was different. Spot was choppy with frequent false-breakdown-then-reclaim. The strategy entered short on breakouts that reversed within 2–4 candles; TP never hit, SL frequently did. Win rate stayed near 53% (close to backtest), but <strong>the loser-to-winner magnitude ratio inverted</strong> — average loss (10%) exceeded average win (7%), dragging PF below 1.
+      </p>
+      <p>
+        In one sentence: the backtest underweighted the 2026-Q1 regime where volatility compressed without directional follow-through.
+      </p>
+    </section>
+
+    <section class="mb-10 space-y-4 text-[--color-text] leading-relaxed">
+      <h2 class="text-2xl font-bold">What we changed</h2>
+      <ul class="space-y-2 text-sm">
+        <li><strong>Removed BB Squeeze SHORT from the recommended Quick Start.</strong> Its 2yr backtest is still strong (PF 1.17), but with no currently-winning live data we don't promote it.</li>
+        <li><strong>Added walk-forward as a gate.</strong> Future promotions require at least one out-of-sample window passing, not just a flat 2yr total.</li>
+        <li><strong>Paused single-strategy live tracking.</strong> While auto-trading is being hardened, we're not running any one strategy live — so no gap chart on the homepage would be misleading in either direction.</li>
+        <li><strong>Kept the failure public.</strong> This page stays up. If we delete it, the pattern repeats.</li>
+      </ul>
+    </section>
+
+    <section class="mb-10 space-y-4 text-[--color-text]">
+      <h2 class="text-2xl font-bold mb-3">What we recommend now</h2>
+      <p class="text-sm leading-relaxed mb-4">
+        The Quick Start presets on <a href="/simulate/" class="text-[--color-accent] hover:underline">/simulate</a> show 5 backtest-verified strategies with honest metrics measured against the live backtest engine:
+      </p>
+      <ul class="space-y-1.5 font-mono text-sm text-[--color-text-secondary]">
+        <li>ATR Breakout (short) · PF 1.31 · Sharpe 0.98 · MDD 45.6%</li>
+        <li>Ichimoku Bearish (short) · PF 1.21 · Sharpe 0.85 · MDD 42.2%</li>
+        <li>BB Squeeze SHORT · PF 1.17 · (2yr backtest; live paused)</li>
+        <li>Keltner Fade (short) · PF 1.14 · Sharpe 0.71 · MDD 44.8%</li>
+        <li>MA Cross (both) · PF 1.09 · Sharpe 0.54 · MDD 33.5% (lowest)</li>
+      </ul>
+      <p class="text-xs text-[--color-text-muted] mt-4">
+        Every number is reproducible — clicking the card runs the backtest through the exact same engine and returns the same metrics (±2% from cache refresh).
+      </p>
+    </section>
+
+    <section class="mb-8 rounded-xl border border-[--color-accent]/30 bg-[--color-accent]/5 p-6">
+      <p class="text-sm font-semibold mb-2">Try the verified list</p>
+      <p class="text-xs text-[--color-text-muted] mb-4 leading-relaxed">
+        ATR Breakout is the strongest (PF 1.31) but MA Cross is the lowest-drawdown (33%) if you're protecting capital. Both click-to-run.
+      </p>
+      <div class="flex flex-wrap gap-2">
+        <a href="/simulate/?preset=atr-breakout" class="btn btn-primary btn-md min-h-[44px]">Try ATR Breakout →</a>
+        <a href="/simulate/?preset=ma-cross" class="btn btn-ghost btn-md min-h-[44px]">Try MA Cross →</a>
+        <a href="/methodology" class="btn btn-ghost btn-md min-h-[44px]">How we verify</a>
+      </div>
+    </section>
+
+    <p class="text-xs text-[--color-text-muted] font-mono mt-10 text-center">
+      Published 2026-04-24 · Updated as more live data accumulates
+    </p>
+  </main>
+</Layout>
