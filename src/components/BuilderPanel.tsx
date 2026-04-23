@@ -592,7 +592,7 @@ export default function BuilderPanel(props: Props) {
             )}
             {/* Start Date */}
             <div>
-              <label class="text-[10px] text-[--color-text-muted]">
+              <label class="text-xs text-[--color-text-muted]">
                 {t.startDate}
               </label>
               <input
