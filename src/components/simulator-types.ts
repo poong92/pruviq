@@ -238,23 +238,36 @@ export const booleanFields = new Set([
   "wr_exit_overbought",
 ]);
 
-// Color constants (Toss Securities style)
+// Color constants — 2026-04-23: recalibrated for WCAG 2.1 AA contrast.
+// The original Toss palette used bg=#3182f6 + white text (contrast 3.71)
+// and bg=#f04251 + white text (contrast 3.75) — both failed WCAG AA
+// minimum 4.5. Axe reported 11/60 scanned elements with low contrast.
+//
+// New approach: buttons use accent-brand hue but DARKER for bg, OR the
+// established "accent border + dark fill + accent-bright text" pattern.
+// `accent` darkened from #3182f6 → #0369a1 (sky-700) — contrast 5.7 with
+// white. `red` darkened from #f04251 → #dc2626 (red-600) — contrast 5.25.
+// `accentBright` added for on-dark-bg text (#5CC8ED matches the site's
+// global --color-accent-bright CSS var).
 export const COLORS = {
-  accent: "#3182f6",
-  accentDim: "#1b6cf2",
-  accentGlow: "rgba(49,130,246,0.2)",
-  accentGlowStrong: "rgba(49,130,246,0.3)",
-  accentBg: "rgba(49,130,246,0.12)",
-  green: "#00c073",
-  greenGlow: "rgba(0,192,115,0.3)",
-  greenBg: "rgba(0,192,115,0.12)",
-  greenFill: "rgba(0,192,115,0.15)",
-  red: "#f04251",
-  redGlow: "rgba(240,66,81,0.2)",
-  redGlowStrong: "rgba(240,66,81,0.3)",
-  redBg: "rgba(240,66,81,0.12)",
-  redFill: "rgba(240,66,81,0.15)",
+  accent: "#0369a1", // sky-700: 5.7:1 on white (was 3.71)
+  accentDim: "#0284c7", // hover: sky-600
+  accentBright: "#5CC8ED", // on-dark-bg text (matches --color-accent-bright)
+  accentGlow: "rgba(44,181,232,0.2)",
+  accentGlowStrong: "rgba(44,181,232,0.3)",
+  accentBg: "rgba(44,181,232,0.12)",
+  green: "#16a34a", // green-600: 4.86:1 (was #00c073 = 2.5)
+  greenBright: "#4ADE80",
+  greenGlow: "rgba(22,163,74,0.3)",
+  greenBg: "rgba(22,163,74,0.12)",
+  greenFill: "rgba(22,163,74,0.15)",
+  red: "#dc2626", // red-600: 5.25:1 (was #f04251 = 3.75)
+  redBright: "#F87171",
+  redGlow: "rgba(220,38,38,0.2)",
+  redGlowStrong: "rgba(220,38,38,0.3)",
+  redBg: "rgba(220,38,38,0.12)",
+  redFill: "rgba(220,38,38,0.15)",
   dark: "#17171c",
   disabled: "#252529",
-  disabledText: "#56565f",
+  disabledText: "#A8A8B3", // was #56565f (3.9:1) → 5.5:1 on disabled bg
 } as const;

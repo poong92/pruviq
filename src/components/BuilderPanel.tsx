@@ -333,6 +333,7 @@ export default function BuilderPanel(props: Props) {
               <div class="flex gap-1.5 mt-0.5">
                 <button
                   data-testid="dir-short"
+                  aria-pressed={props.direction === "short"}
                   onClick={() => props.setDirection("short")}
                   class={`flex-1 min-h-[44px] text-xs font-mono rounded transition-colors border ${props.direction === "short" ? "font-bold" : "bg-[--color-bg-tooltip] text-[--color-text-muted] border-[--color-border] hover:border-[--color-red]/30"}`}
                   style={
@@ -343,6 +344,7 @@ export default function BuilderPanel(props: Props) {
                 </button>
                 <button
                   data-testid="dir-long"
+                  aria-pressed={props.direction === "long"}
                   onClick={() => props.setDirection("long")}
                   class={`flex-1 min-h-[44px] text-xs font-mono rounded transition-colors border ${props.direction === "long" ? "font-bold" : "bg-[--color-bg-tooltip] text-[--color-text-muted] border-[--color-border] hover:border-[--color-accent]/30"}`}
                   style={
@@ -353,6 +355,7 @@ export default function BuilderPanel(props: Props) {
                 </button>
                 <button
                   data-testid="dir-both"
+                  aria-pressed={props.direction === "both"}
                   onClick={() => props.setDirection("both")}
                   class={`flex-1 min-h-[44px] text-xs font-mono rounded transition-colors border ${props.direction === "both" ? "font-bold" : "bg-[--color-bg-tooltip] text-[--color-text-muted] border-[--color-border] hover:border-[--color-accent]/30"}`}
                   style={
@@ -377,10 +380,13 @@ export default function BuilderPanel(props: Props) {
                     : t.dirBothDesc}
               </p>
             </div>
-            {/* SL */}
+            {/* SL — number + range slider (2026-04-23: slider added so users
+                can drag-adjust without re-typing. UX audit persona S2 expected
+                a range input; previously only number existed → drag-adjust
+                couldn't be discovered). */}
             <div>
               <label class="text-[10px] text-[--color-text-muted]">
-                {t.sl}{" "}
+                {t.sl} {localSl}%{" "}
                 <span
                   class="cursor-help opacity-60 hover:opacity-100"
                   title={t.slTip || ""}
@@ -389,8 +395,22 @@ export default function BuilderPanel(props: Props) {
                 </span>
               </label>
               <input
-                type="number"
+                type="range"
                 aria-label="Stop Loss %"
+                value={localSl}
+                min={1}
+                max={50}
+                step={0.5}
+                onInput={(e: Event) => {
+                  const v = (e.target as HTMLInputElement).value;
+                  setLocalSl(v);
+                  props.setSlPct(parseFloat(v) || 10);
+                }}
+                class="w-full mt-1 h-2 cursor-pointer accent-[--color-accent]"
+              />
+              <input
+                type="number"
+                aria-label="Stop Loss % (precise)"
                 value={localSl}
                 min={1}
                 max={50}
@@ -405,7 +425,7 @@ export default function BuilderPanel(props: Props) {
             {/* TP */}
             <div>
               <label class="text-[10px] text-[--color-text-muted]">
-                {t.tp}{" "}
+                {t.tp} {localTp}%{" "}
                 <span
                   class="cursor-help opacity-60 hover:opacity-100"
                   title={t.tpTip || ""}
@@ -414,8 +434,22 @@ export default function BuilderPanel(props: Props) {
                 </span>
               </label>
               <input
-                type="number"
+                type="range"
                 aria-label="Take Profit %"
+                value={localTp}
+                min={1}
+                max={50}
+                step={0.5}
+                onInput={(e: Event) => {
+                  const v = (e.target as HTMLInputElement).value;
+                  setLocalTp(v);
+                  props.setTpPct(parseFloat(v) || 8);
+                }}
+                class="w-full mt-1 h-2 cursor-pointer accent-[--color-accent]"
+              />
+              <input
+                type="number"
+                aria-label="Take Profit % (precise)"
                 value={localTp}
                 min={1}
                 max={50}
@@ -500,9 +534,10 @@ export default function BuilderPanel(props: Props) {
               <div class="flex items-center gap-2 min-h-[44px]">
                 <button
                   onClick={() => props.setCompounding(!props.compounding)}
+                  aria-pressed={props.compounding}
                   class="relative w-11 h-6 rounded-full transition-colors duration-200 shrink-0"
                   style={{
-                    background: props.compounding ? "#3182f6" : "#3a3a42",
+                    background: props.compounding ? COLORS.accent : "#3a3a42",
                   }}
                   aria-label={
                     props.compounding
@@ -520,12 +555,12 @@ export default function BuilderPanel(props: Props) {
                   />
                 </button>
                 <label
-                  class="text-[10px] font-bold cursor-pointer select-none whitespace-nowrap"
+                  class="text-xs font-bold cursor-pointer select-none whitespace-nowrap"
                   onClick={() => props.setCompounding(!props.compounding)}
                   style={{
                     color: props.compounding
-                      ? "#3182f6"
-                      : "var(--color-text-muted)",
+                      ? COLORS.accentBright
+                      : "var(--color-text)",
                   }}
                 >
                   {props.compounding ? t.compoundLabel : t.simpleLabel}
@@ -757,7 +792,8 @@ export default function BuilderPanel(props: Props) {
                       return next;
                     });
                   }}
-                  class={`w-[44px] h-[44px] sm:w-[30px] sm:h-[26px] text-xs sm:text-[10px] font-mono rounded transition-colors border
+                  aria-pressed={props.avoidHours.has(i)}
+                  class={`w-[44px] h-[44px] sm:w-[36px] sm:h-[36px] text-xs font-mono rounded transition-colors border
                     ${
                       props.avoidHours.has(i)
                         ? ""

@@ -21,6 +21,20 @@ const API_BASE = process.env.API_URL || "https://api.pruviq.com";
 // Skip slow backtest tests in CI — Preact hydration too slow on GitHub runners
 const skipInCI = !!process.env.CI;
 
+// 2026-04-23: /simulate/builder/ route now forces simMode="expert" and
+// hides the 3-card Quick/Standard/Expert mode picker + Hot Strategies
+// banner (user has already committed to Expert by being on /builder/).
+// This file's assertions (expect 3 tabs visible, expect Quick default)
+// no longer match reality. Gated en-masse pending rewrite to the new
+// Expert-only surface. Real Builder coverage now lives in:
+//   - tests/e2e/prod-builder-audit.spec.ts       (5 persona walks)
+//   - tests/e2e/prod-builder-visual.spec.ts      (a11y + contrast)
+//   - tests/e2e/prod-builder-scenarios.spec.ts   (task completion)
+test.skip(
+  true,
+  "Legacy pre-Expert-forced selectors — covered by prod-builder-*.spec.ts",
+);
+
 // ─── Helpers ──────────────────────────────────────────────────
 
 /** Opens the legacy builder (SimulatorPage) and waits for Preact hydration.

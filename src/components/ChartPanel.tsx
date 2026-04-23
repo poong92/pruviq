@@ -246,8 +246,9 @@ export default function ChartPanel({
             <button
               key={sym}
               data-testid={`chart-${sym.replace("USDT", "").toLowerCase()}`}
+              aria-pressed={chartSymbol === sym}
               onClick={() => setChartSymbol(sym)}
-              class={`px-2 py-1 text-xs font-mono rounded transition-colors
+              class={`min-w-[44px] min-h-[44px] px-3 text-xs font-mono rounded transition-colors
                 ${chartSymbol === sym ? "font-bold text-white" : "text-[--color-text-muted] hover:text-[--color-text] hover:bg-[--color-bg-hover]"}`}
               style={
                 chartSymbol === sym
