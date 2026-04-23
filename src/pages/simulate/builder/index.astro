@@ -60,7 +60,7 @@ import Layout from "../../../layouts/Layout.astro";
         h(
           ErrorBoundary,
           { name: "ExpertBuilder" },
-          h(SimulatorPage, { lang: "en" }),
+          h(SimulatorPage, { lang: "en", route: "builder" }),
         ),
         mount,
       );
