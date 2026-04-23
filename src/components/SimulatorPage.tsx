@@ -1258,53 +1258,77 @@ export default function SimulatorPage({
   ]);
 
   // ─── Load preset ───
-  const loadPreset = useCallback(async (presetId: string) => {
-    setActivePreset(presetId);
-    setPresetLoading(true);
-    setPresetError(null);
-    try {
-      const res = await fetch(
-        `${API_URL}/builder/presets/${encodeURIComponent(presetId)}`,
-      );
-      if (!res.ok) {
-        setPresetError(`Failed to load preset (HTTP ${res.status})`);
+  const loadPreset = useCallback(
+    async (presetId: string) => {
+      setActivePreset(presetId);
+      setPresetLoading(true);
+      setPresetError(null);
+      try {
+        let res = await fetch(
+          `${API_URL}/builder/presets/${encodeURIComponent(presetId)}`,
+        );
+        // 2026-04-23: Quick Start V1 uses preset IDs (atr-breakout, ichimoku,
+        // keltner-squeeze, ma-cross) that exist in backend STRATEGY_REGISTRY
+        // but NOT in the /builder/presets catalog (builder presets are
+        // condition-based; strategy classes don't have a condition JSON
+        // representation). When 404, fall back to bb-squeeze-short (the
+        // only live-tracked V1 preset that IS in the builder catalog) so
+        // users get a working starting template they can customize instead
+        // of a permanently-disabled RUN button. Map shown in banner.
+        let fallbackUsed = false;
+        if (!res.ok && res.status === 404 && presetId !== "bb-squeeze-short") {
+          fallbackUsed = true;
+          res = await fetch(`${API_URL}/builder/presets/bb-squeeze-short`);
+        }
+        if (!res.ok) {
+          setPresetError(`Failed to load preset (HTTP ${res.status})`);
+          setTimeout(() => setPresetError(null), 3000);
+          setPresetLoading(false);
+          return null;
+        }
+        if (fallbackUsed) {
+          setPresetError(
+            lang === "ko"
+              ? `'${presetId}'는 Quick Start 전용 — BB Squeeze 템플릿으로 로드. 조건을 수정하세요.`
+              : `'${presetId}' is Quick-Start only — loaded BB Squeeze as editable template. Customize conditions below.`,
+          );
+          setTimeout(() => setPresetError(null), 6000);
+        }
+        const p = await res.json();
+
+        if (p.indicators) {
+          setSelectedIndicators(new Set(Object.keys(p.indicators)));
+          setIndicatorParams(p.indicators);
+        }
+        if (p.entry?.conditions) {
+          setConditions(
+            p.entry.conditions.map((c: Omit<Condition, "id">) => ({
+              ...c,
+              id: nextCondId(),
+            })),
+          );
+        }
+        // URL params take priority over preset defaults (e.g., ranking → simulator
+        // passes &dir=long&sl=8&tp=6 which should NOT be overwritten by preset defaults)
+        const urlParams = new URLSearchParams(window.location.search);
+        if (p.direction && !urlParams.has("dir")) setDirection(p.direction);
+        if (p.sl_pct && !urlParams.has("sl")) setSlPct(p.sl_pct);
+        if (p.tp_pct && !urlParams.has("tp")) setTpPct(p.tp_pct);
+        if (p.max_bars && !urlParams.has("bars")) setMaxBars(p.max_bars);
+        if (p.avoid_hours) setAvoidHours(new Set(p.avoid_hours));
+        setPresetLoading(false);
+        return p;
+      } catch {
+        setPresetError("Failed to load preset. Check connection.");
         setTimeout(() => setPresetError(null), 3000);
         setPresetLoading(false);
         return null;
+      } finally {
+        /* presetLoading state handled above */
       }
-      const p = await res.json();
-
-      if (p.indicators) {
-        setSelectedIndicators(new Set(Object.keys(p.indicators)));
-        setIndicatorParams(p.indicators);
-      }
-      if (p.entry?.conditions) {
-        setConditions(
-          p.entry.conditions.map((c: Omit<Condition, "id">) => ({
-            ...c,
-            id: nextCondId(),
-          })),
-        );
-      }
-      // URL params take priority over preset defaults (e.g., ranking → simulator
-      // passes &dir=long&sl=8&tp=6 which should NOT be overwritten by preset defaults)
-      const urlParams = new URLSearchParams(window.location.search);
-      if (p.direction && !urlParams.has("dir")) setDirection(p.direction);
-      if (p.sl_pct && !urlParams.has("sl")) setSlPct(p.sl_pct);
-      if (p.tp_pct && !urlParams.has("tp")) setTpPct(p.tp_pct);
-      if (p.max_bars && !urlParams.has("bars")) setMaxBars(p.max_bars);
-      if (p.avoid_hours) setAvoidHours(new Set(p.avoid_hours));
-      setPresetLoading(false);
-      return p;
-    } catch {
-      setPresetError("Failed to load preset. Check connection.");
-      setTimeout(() => setPresetError(null), 3000);
-      setPresetLoading(false);
-      return null;
-    } finally {
-      /* presetLoading state handled above */
-    }
-  }, []);
+    },
+    [lang],
+  );
 
   // Apply pending preset from URL after presets are loaded
   useEffect(() => {
