@@ -208,15 +208,36 @@ export default function BuilderPanel(props: Props) {
           </div>
         )}
 
-        {/* Indicators */}
-        <div class="px-4 py-4 border-b border-[--color-border]">
-          <div class="text-xs font-mono text-[--color-text-muted] uppercase mb-2">
-            {t.indicators}
-          </div>
-          <div class="flex flex-wrap gap-1.5">
+        {/* Indicators — collapsed by default so cold-open has fewer items
+            above the fold. Auto-opens once user has any indicator selected
+            (i.e. preset loaded or user already customized). 2026-04-23:
+            progressive disclosure per UX audit (above-fold 27 → target <18). */}
+        <details
+          class="border-b border-[--color-border]"
+          open={props.selectedIndicators.size > 0}
+        >
+          <summary class="px-4 py-3 text-xs font-mono text-[--color-text-muted] uppercase cursor-pointer select-none hover:text-[--color-text] transition-colors list-none flex items-center justify-between">
+            <span>
+              {t.indicators}
+              {props.selectedIndicators.size > 0 && (
+                <span class="ml-2 text-[--color-accent-bright] font-bold normal-case">
+                  {props.selectedIndicators.size}{" "}
+                  {props.lang === "ko" ? "선택" : "selected"}
+                </span>
+              )}
+            </span>
+            <span
+              class="text-xs text-[--color-text-muted] group-open:rotate-90 inline-block transition-transform"
+              aria-hidden="true"
+            >
+              ▶
+            </span>
+          </summary>
+          <div class="px-4 pb-4 flex flex-wrap gap-1.5">
             {props.availableIndicators.map((ind) => (
               <button
                 key={ind.id}
+                aria-pressed={props.selectedIndicators.has(ind.id)}
                 onClick={() => {
                   props.setSelectedIndicators(
                     ind.id,
@@ -239,7 +260,7 @@ export default function BuilderPanel(props: Props) {
               </button>
             ))}
           </div>
-        </div>
+        </details>
 
         {/* Entry Conditions */}
         <div class="px-4 py-4 border-b border-[--color-border]">
