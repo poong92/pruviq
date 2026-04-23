@@ -83,14 +83,19 @@ test.describe("SimulatorV1 — Quick Start surface", () => {
     expect(href).toContain("preset=atr-breakout");
   });
 
-  test("OKXConnectCTA href includes active preset", async ({ page }) => {
+  test("OKXConnectCTA renders as Coming Soon (autotrading on hold)", async ({
+    page,
+  }) => {
+    // 2026-04-23: autotrading gated behind AUTOTRADE_COMING_SOON until the
+    // OKX integration is stable. The active href→/dashboard path is
+    // restored the moment the flag flips. For now the CTA is a disabled
+    // button announcing Coming Soon. This test guards the intentional
+    // state — a regression that re-enables the live link would fail here.
     await openSim(page, "/simulate/?preset=atr-breakout");
-    const href = await page.getAttribute(
-      "[data-testid=sim-v1-cta-connect-btn]",
-      "href",
-    );
-    expect(href).toContain("/dashboard");
-    expect(href).toContain("preset=atr-breakout");
+    const btn = page.locator("[data-testid=sim-v1-cta-connect-btn]");
+    await expect(btn).toBeVisible();
+    const disabled = await btn.getAttribute("disabled");
+    expect(disabled).not.toBeNull();
   });
 
   test("Keyboard: digit keys jump to Nth preset (1-5)", async ({ page }) => {
