@@ -468,9 +468,21 @@ const L = {
 // ─── Component ───
 interface Props {
   lang?: "en" | "ko";
+  // 2026-04-23: route-aware rendering. When mounted at /simulate/builder/,
+  // pass route="builder" to:
+  //   1. default simMode to "expert" (skip Quick landing)
+  //   2. hide the 3-card skill-mode picker (user is already in Expert)
+  //   3. hide the legacy "Hot Strategies" quick-test pre-render and show
+  //      a Builder-specific cold-open onboarding instead
+  // Default "simulate" preserves legacy behavior for any other mount points.
+  route?: "simulate" | "builder";
 }
 
-export default function SimulatorPage({ lang = "en" }: Props) {
+export default function SimulatorPage({
+  lang = "en",
+  route = "simulate",
+}: Props) {
+  const isBuilderRoute = route === "builder";
   const t = L[lang] || L.en;
 
   // API state
@@ -567,7 +579,11 @@ export default function SimulatorPage({ lang = "en" }: Props) {
   const scrollPositions = useRef<Record<string, number>>({});
 
   // 3-Tier Mode
+  // 2026-04-23: on /simulate/builder/ route the user has already opted into
+  // Expert — force that mode regardless of localStorage. Builder route
+  // should never render the Quick landing.
   const [simMode, setSimMode] = useState<SimMode>(() => {
+    if (isBuilderRoute) return "expert";
     try {
       const stored = localStorage.getItem(SIM_MODE_KEY);
       return isValidSimMode(stored) ? stored : "quick";
@@ -1466,17 +1482,23 @@ export default function SimulatorPage({ lang = "en" }: Props) {
     <div class="max-w-[1400px] mx-auto px-3 md:px-4">
       {/* Mobile tabs — only for Standard/Expert (Quick has no chart/config split) */}
       {simMode !== "quick" && (
-        <div class="md:hidden flex border-b border-[--color-border] mb-3 gap-0">
+        <div
+          class="md:hidden flex border-b border-[--color-border] mb-3 gap-0"
+          role="tablist"
+        >
           {(["chart", "config", "results"] as const).map((tab) => (
             <button
               key={tab}
+              role="tab"
+              aria-selected={mobileTab === tab}
+              aria-controls={`panel-${tab}`}
               onClick={() => handleMobileTabChange(tab)}
               class={`flex-1 py-2 min-h-[48px] text-xs font-mono uppercase tracking-wider transition-colors flex flex-col items-center justify-center
                 ${mobileTab === tab ? "font-bold border-b-2" : "text-[--color-text-muted] hover:text-[--color-text]"}`}
               style={
                 mobileTab === tab
                   ? {
-                      color: COLORS.accent,
+                      color: COLORS.accentBright,
                       borderColor: COLORS.accent,
                       background: COLORS.accentBg,
                     }
@@ -1499,16 +1521,23 @@ export default function SimulatorPage({ lang = "en" }: Props) {
         </div>
       )}
 
-      {/* Hot Strategies Banner — shows top performers */}
-      {!result && <HotStrategies lang={lang} />}
+      {/* Hot Strategies Banner — hidden on /builder/ route since users there
+          have already committed to Expert mode; showing legacy "Top Performers"
+          leaderboard before the actual builder interface adds scroll without
+          progressing the task. (2026-04-23) */}
+      {!result && !isBuilderRoute && <HotStrategies lang={lang} />}
 
-      {/* 3-Tier Mode Switcher */}
-      <ModeSwitcher
-        mode={simMode}
-        setMode={setSimMode}
-        lang={lang}
-        isFirstVisit={isFirstVisit}
-      />
+      {/* 3-Tier Mode Switcher — hidden on /builder/ route since the user is
+          already in Expert and a redundant "Quick / Standard / Expert" card
+          selector creates a decision-exit path out of the tool. */}
+      {!isBuilderRoute && (
+        <ModeSwitcher
+          mode={simMode}
+          setMode={setSimMode}
+          lang={lang}
+          isFirstVisit={isFirstVisit}
+        />
+      )}
 
       {/* Quick Start Banner — Expert mode only */}
       {simMode === "expert" && showQuickStart && !result && (
