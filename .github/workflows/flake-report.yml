@@ -1,0 +1,61 @@
+name: QA Layer 8 — Flake weekly summary
+
+on:
+  schedule:
+    - cron: "0 4 * * 1"   # every Monday 04:00 UTC
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  summarise:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Fetch recent flake logs from nightly-qa artifacts
+        id: fetch
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const since = new Date(Date.now() - 7 * 864e5).toISOString();
+            const runs = await github.rest.actions.listWorkflowRunsForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              per_page: 30,
+            });
+            const nightly = runs.data.workflow_runs.filter(
+              r => r.name?.includes('Nightly') && r.created_at > since,
+            );
+            core.setOutput('count', nightly.length);
+
+      - name: Post weekly summary issue if flake rate > 2%
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const nightlyRuns = parseInt('${{ steps.fetch.outputs.count }}', 10) || 0;
+            const title = `[FLAKE-REPORT] Week ending ${new Date().toISOString().slice(0, 10)}`;
+            const body = [
+              `Nightly QA runs this week: ${nightlyRuns}`,
+              ``,
+              `Flake classification: runs Layer 2/5 retries. Each "passed-after-retry" is`,
+              `logged to reports/flake-log.ndjson (in run artifact). Weekly digest looks`,
+              `at trend — this stub prints the count; extend with artifact download +`,
+              `flake-log aggregation once a real backlog exists.`,
+              ``,
+              `(Scaffold — will auto-expand once artifacts accumulate.)`,
+            ].join('\n');
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title,
+              body,
+              labels: ['flake-report', 'auto-generated'],
+            });
