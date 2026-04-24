@@ -1,0 +1,96 @@
+name: "QA: docs-lint (legacy drift prevention)"
+
+# PR-blocking 가드. 과거에 (1) 루트 `/Users/openclaw/` 경로 오염, (2) Mac Mini
+# 백엔드 오기록 드리프트, (3) OpenClaw 프로젝트 잔재 3종이 반복 재발. 이 워크
+# 플로우가 각각을 grep 레벨에서 차단.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - "**/*.md"
+      - "**/*.yml"
+      - "**/*.yaml"
+      - "**/*.json"
+      - "**/*.py"
+      - "**/*.ts"
+      - "**/*.tsx"
+      - "**/*.sh"
+      - "**/*.astro"
+      - ".github/workflows/docs-lint.yml"
+  workflow_dispatch: {}
+
+concurrency:
+  group: docs-lint-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+
+      # Guard 1 — /Users/openclaw/ 경로 오염 (2026-04-25 재발 사례 있음)
+      - name: "Guard 1: /Users/openclaw/ path pollution"
+        run: |
+          set +e
+          MATCHES=$(grep -rn '/Users/openclaw' \
+            --include='*.md' --include='*.yml' --include='*.yaml' \
+            --include='*.json' --include='*.py' --include='*.ts' --include='*.tsx' \
+            --include='*.sh' --include='*.astro' --include='*.mjs' \
+            --exclude-dir=node_modules --exclude-dir=.git --exclude-dir=.venv \
+            --exclude-dir=.claude --exclude-dir=playwright-report \
+            --exclude=docs-lint.yml \
+            .)
+          if [ -n "$MATCHES" ]; then
+            echo "::error::'/Users/openclaw/' path found — must be '/Users/jepo/pruviq/'"
+            echo "$MATCHES"
+            exit 1
+          fi
+          echo "✓ Guard 1 passed"
+
+      # Guard 2 — OpenClaw 프로젝트 재유입 방지 (archive/ 제외, worktrees 제외).
+      # PR1에서는 warn-only — PR2(OpenClaw 전수 scrub) + PR5(정책 승격)에서
+      # `::warning::` → `::error::` + exit 1 로 바꿔 차단 활성화.
+      - name: "Guard 2: OpenClaw references outside archive/ (warn-only)"
+        run: |
+          set +e
+          MATCHES=$(grep -rni 'openclaw' \
+            --include='*.md' --include='*.yml' --include='*.yaml' \
+            --include='*.json' --include='*.py' --include='*.ts' --include='*.tsx' \
+            --include='*.sh' --include='*.astro' --include='*.mjs' \
+            --exclude-dir=node_modules --exclude-dir=.git --exclude-dir=.venv \
+            --exclude-dir=.claude --exclude-dir=playwright-report \
+            --exclude=docs-lint.yml \
+            . | grep -v '^\./docs/archive/' || true)
+          if [ -n "$MATCHES" ]; then
+            echo "::warning::OpenClaw references found (will error after PR2 scrubs everything)"
+            echo "$MATCHES"
+          else
+            echo "✓ Guard 2 passed"
+          fi
+
+      # Guard 3 — Mac Mini 백엔드 오기록 (특정 드리프트 문자열만 차단,
+      # "Mac Mini is dev-only" 같은 올바른 기록은 허용). PR1에서는 warn-only —
+      # PR4(백엔드 호스트 전수 수정) + PR5(정책 승격)에서 차단 활성화.
+      - name: "Guard 3: stale Mac Mini backend claims (warn-only)"
+        run: |
+          set +e
+          MATCHES=$(grep -rnE '172\.30\.1\.16|port 8400|Mac Mini.*uvicorn|Mac Mini.*FastAPI' \
+            --include='*.md' --include='*.yml' --include='*.yaml' \
+            --include='*.json' --include='*.py' --include='*.ts' --include='*.tsx' \
+            --include='*.sh' --include='*.astro' --include='*.mjs' \
+            --exclude-dir=node_modules --exclude-dir=.git --exclude-dir=.venv \
+            --exclude-dir=.claude --exclude-dir=playwright-report \
+            --exclude=docs-lint.yml \
+            . | grep -v '^\./docs/archive/' || true)
+          if [ -n "$MATCHES" ]; then
+            echo "::warning::Stale Mac Mini backend claim (will error after PR4 fixes all files)"
+            echo "$MATCHES"
+          else
+            echo "✓ Guard 3 passed"
+          fi
+
+      - name: "Summary"
+        run: echo "All 3 drift-prevention guards passed."
