@@ -1,4 +1,4 @@
-import { useState, useEffect } from "preact/hooks";
+import { useState, useEffect, useRef } from "preact/hooks";
 import { COINS_ANALYZED } from "../config/site-stats";
 import { changeColor, timeAgo } from "../utils/format";
 import { useMarketLive } from "../hooks/useMarketLive";
@@ -331,6 +331,30 @@ export default function MarketDashboard({
   const [sourceFilter, setSourceFilter] = useState("");
   const [newsTab, setNewsTab] = useState<"crypto" | "macro">("crypto");
   const [newsExpanded, setNewsExpanded] = useState(false);
+
+  // TradingView calendar iframe: hold back the src attribute until the
+  // container is within 200 px of the viewport. Browser `loading="lazy"`
+  // alone still triggers preconnect + cookie init against TradingView as
+  // soon as the iframe mounts with a src — which is why /market/ scored
+  // Best Practices 59 (third-party cookies + deprecated APIs from the
+  // embed). Holding the src makes all of that wait for actual user
+  // intent. calRef is attached to the wrapper below.
+  const [calendarArmed, setCalendarArmed] = useState(false);
+  const calRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    if (!calRef.current || calendarArmed) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          setCalendarArmed(true);
+          io.disconnect();
+        }
+      },
+      { rootMargin: "200px 0px" },
+    );
+    io.observe(calRef.current);
+    return () => io.disconnect();
+  }, [calendarArmed]);
 
   // Live "updated X ago" counter (based on live price generated timestamp)
   const [refreshAgo, setRefreshAgo] = useState("");
@@ -694,30 +718,34 @@ export default function MarketDashboard({
                 {l.calendarNote}
               </span>
             </div>
-            <div class="w-full h-[400px] md:h-[500px] relative">
+            <div class="w-full h-[400px] md:h-[500px] relative" ref={calRef}>
               {/* Loading placeholder — shown until iframe paints */}
               <div
                 class="absolute inset-0 flex flex-col items-center justify-center gap-2 text-[--color-text-muted] text-xs font-mono pointer-events-none"
                 id="cal-placeholder"
               >
                 <span class="animate-spin inline-block w-5 h-5 border-2 border-[--color-accent] border-t-transparent rounded-full" />
-                Loading economic calendar...
+                {calendarArmed
+                  ? "Loading economic calendar..."
+                  : "Economic calendar will load when you scroll down"}
               </div>
-              <iframe
-                src={`https://s.tradingview.com/embed-widget/events/?locale=${lang === "ko" ? "kr" : "en"}#%7B%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Atrue%2C%22width%22%3A%22100%25%22%2C%22height%22%3A%22100%25%22%2C%22importanceFilter%22%3A%220%2C1%22%7D`}
-                title={l.economicCalendar}
-                class="w-full h-full border-0 relative z-10"
-                loading="lazy"
-                onLoad={() =>
-                  document.getElementById("cal-placeholder")?.remove()
-                }
-                onError={() => {
-                  const el = document.getElementById("cal-placeholder");
-                  if (el)
-                    el.innerHTML =
-                      '<p class="text-sm">Calendar unavailable. Check <a href="https://www.tradingview.com/economic-calendar/" target="_blank" rel="noopener" class="text-[--color-accent] hover:underline">TradingView</a> directly.</p>';
-                }}
-              />
+              {calendarArmed && (
+                <iframe
+                  src={`https://s.tradingview.com/embed-widget/events/?locale=${lang === "ko" ? "kr" : "en"}#%7B%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Atrue%2C%22width%22%3A%22100%25%22%2C%22height%22%3A%22100%25%22%2C%22importanceFilter%22%3A%220%2C1%22%7D`}
+                  title={l.economicCalendar}
+                  class="w-full h-full border-0 relative z-10"
+                  loading="lazy"
+                  onLoad={() =>
+                    document.getElementById("cal-placeholder")?.remove()
+                  }
+                  onError={() => {
+                    const el = document.getElementById("cal-placeholder");
+                    if (el)
+                      el.innerHTML =
+                        '<p class="text-sm">Calendar unavailable. Check <a href="https://www.tradingview.com/economic-calendar/" target="_blank" rel="noopener" class="text-[--color-accent] hover:underline">TradingView</a> directly.</p>';
+                  }}
+                />
+              )}
             </div>
           </div>
 
