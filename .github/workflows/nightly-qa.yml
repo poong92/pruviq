@@ -1,0 +1,143 @@
+name: QA Layer 7 — Nightly Sweep
+
+# Runs the full Layer 2/3/4/5/6 QA suite against production every night.
+# Opens a GitHub Issue on failure (labeled 'nightly-qa') with artifact links.
+# Complements per-PR CI — catches regressions that only show in prod.
+
+on:
+  schedule:
+    - cron: "0 2 * * *"       # 02:00 UTC daily
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: nightly-qa
+  cancel-in-progress: true
+
+jobs:
+  sweep:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      BASE_URL: https://pruviq.com
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - run: npm ci
+
+      - name: Layer 3 — unit contract tests against shipped static JSON
+        id: contract
+        continue-on-error: true
+        run: npx vitest run tests/unit/hook-contract.test.ts
+
+      - name: Layer 4 — freshness check against prod
+        id: freshness
+        continue-on-error: true
+        run: |
+          node scripts/check-freshness.mjs --verbose > freshness-events.ndjson
+          cat freshness-events.ndjson
+          # Fail if any event is not 'fresh'
+          if grep -q '"status":"stale"\|"status":"invariant_fail"\|"status":"error"' freshness-events.ndjson; then
+            echo "stale=true" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Layer 2 — click-everything crawl against prod
+        id: crawl
+        continue-on-error: true
+        run: npx playwright test tests/e2e/crawl/click-all.spec.ts --project=prod-smoke --reporter=html --reporter=list || npx playwright test tests/e2e/crawl/click-all.spec.ts --project=desktop --reporter=html --reporter=list
+
+      - name: Layer 5 — scenario flows against prod
+        id: scenarios
+        continue-on-error: true
+        run: npx playwright test tests/e2e/scenarios/user-flows.spec.ts --project=desktop --reporter=html --reporter=list
+
+      - name: Layer 6 — a11y on interactive states
+        id: a11y
+        continue-on-error: true
+        run: npx playwright test tests/accessibility/interactive-a11y.spec.ts --project=desktop --reporter=html --reporter=list
+
+      - name: Upload HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-nightly
+          path: playwright-report/
+          retention-days: 14
+
+      - name: Open/close issue based on overall outcome
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const failed = [
+              ['contract', '${{ steps.contract.outcome }}'],
+              ['freshness', '${{ steps.freshness.outcome }}'],
+              ['crawl', '${{ steps.crawl.outcome }}'],
+              ['scenarios', '${{ steps.scenarios.outcome }}'],
+              ['a11y', '${{ steps.a11y.outcome }}'],
+            ].filter(([, r]) => r !== 'success').map(([n]) => n);
+
+            const { data } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: 'nightly-qa',
+              per_page: 20,
+            });
+            const existing = data.find(i => i.title.startsWith('[NIGHTLY-QA]'));
+
+            if (failed.length === 0) {
+              if (existing) {
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: existing.number,
+                  body: `Auto-resolved: nightly sweep ${context.runId} all green.`,
+                });
+                await github.rest.issues.update({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: existing.number,
+                  state: 'closed',
+                });
+              }
+              return;
+            }
+
+            const title = `[NIGHTLY-QA] ${failed.join(', ')} failed`;
+            const body = [
+              `Run: https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+              `Failed layers: **${failed.join(', ')}**`,
+              ``,
+              `Each layer's logs are in the run artifact \`playwright-report-nightly\`.`,
+              `Will auto-close on the next fully-green run.`,
+            ].join('\n');
+
+            if (existing) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: existing.number,
+                body,
+              });
+            } else {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title,
+                body,
+                labels: ['nightly-qa', 'auto-generated'],
+              });
+            }
