@@ -237,3 +237,5 @@ git push                 git pull               Docker
 | docs/UX_DESIGN.md | UX/프론트엔드 설계 |
 | docs/BRAND_DESIGN.md | 브랜드 + 랜딩 페이지 |
 | docs/SIMULATION_QA.md | 시뮬레이션 품질 보증 |
+| **docs/QA_AUTOMATION.md** | **9-레이어 QA 자동화 아키텍처 (2026-04-24 추가)** |
+| **docs/DOC_INDEX.md** | **전체 문서 인덱스 (루트 + docs/ + archive/)** |

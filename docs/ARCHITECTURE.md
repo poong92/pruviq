@@ -1204,5 +1204,33 @@ from src.simulation.cost_models import CostModel
 
 ---
 
+## QA Assurance Layer (추가: 2026-04-24)
+
+Data/Simulation/Result/API Layer 위에 깔리는 **수직 관통 검증 인프라**.
+자세한 아키텍처: [QA_AUTOMATION.md](QA_AUTOMATION.md)
+
+핵심 레이어 (9):
+1. **Discovery** — 52 canonical 루트 인터랙티브 엘리먼트 인벤토리
+2. **Click-everything** — 클릭 후 populated 결과 검증
+3. **Hook contract** — static JSON shape + 비즈니스 invariant
+- **3.5** Live-API contract — api.pruviq.com 실시간 응답
+4. **Freshness monitor** — 15-min cron, stale 감지 + auto-issue
+5. **Scenario flows** — 4 핵심 유저 여정 step-by-step
+6. **A11y interactive** — 클릭 후 axe 0 신규 위반
+7. **Nightly sweep** — 매일 02:00 UTC prod 전수
+8. **Flake classifier** — passed-after-retry 격리
+
+**추가 검증**:
+- Lighthouse budget (5 URL × 4 카테고리 + Web Vitals)
+- Blog populated (78 포스트 h1+body 검증)
+- Broken-link crawler (dist/ 전수 href HEAD)
+- docs-lint (경로 오염/OpenClaw/Mac Mini 드리프트 grep 가드)
+
+**설계 원칙**: "페이지 로드됨"이 아닌 **"클릭 결과 populated"** 로 검증.
+정적 + 라이브 API 양쪽에서 같은 schema 모듈을 공유 — 한쪽만 통과 못 해도
+CI red.
+
+---
+
 *이 문서는 PRUVIQ 시뮬레이션 엔진의 설계 가이드입니다. Phase 진행에 따라 업데이트됩니다.*
-*최종 업데이트: 2026-02-15*
+*최종 업데이트: 2026-04-24 (QA Assurance Layer 추가)*
