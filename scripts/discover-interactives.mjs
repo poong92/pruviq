@@ -67,15 +67,42 @@ function uniq(arr) {
   return [...new Set(arr)];
 }
 
+// Character-scan script stripper. Used instead of a regex because CodeQL
+// flagged every regex-based variant under js/incomplete-multi-character-
+// sanitization (regex can't guarantee matched pairs across attributes,
+// whitespace, nesting). This is a dev-time inventory script that never
+// renders output to users — the goal is "remove obvious script bodies
+// before counting anchors/buttons" not true HTML sanitisation.
+function stripScripts(html) {
+  const lower = html.toLowerCase();
+  let out = "";
+  let i = 0;
+  while (i < html.length) {
+    const openIdx = lower.indexOf("<script", i);
+    if (openIdx < 0) {
+      out += html.slice(i);
+      break;
+    }
+    // Only accept <script followed by whitespace, `>` or `/` (word boundary)
+    const next = lower.charCodeAt(openIdx + 7);
+    if (next !== 0x20 && next !== 0x09 && next !== 0x0a && next !== 0x3e && next !== 0x2f) {
+      out += html.slice(i, openIdx + 7);
+      i = openIdx + 7;
+      continue;
+    }
+    out += html.slice(i, openIdx);
+    const openEnd = html.indexOf(">", openIdx);
+    if (openEnd < 0) break;
+    const closeIdx = lower.indexOf("</script", openEnd);
+    if (closeIdx < 0) break;
+    const closeEnd = html.indexOf(">", closeIdx);
+    i = closeEnd < 0 ? html.length : closeEnd + 1;
+  }
+  return out;
+}
+
 function extract(html) {
-  // Strip <script> blocks — they contain button text + hrefs that pollute
-  // the inventory. `</script\b[^>]*>` matches all valid + browser-tolerated
-  // closing variants (`</script >`, `</script\n\tbar>`); closes the
-  // CodeQL js/bad-tag-filter alert a narrower pattern wouldn't fix.
-  const noscript = html.replace(
-    /<script\b[^>]*>[\s\S]*?<\/script\b[^>]*>/gi,
-    "",
-  );
+  const noscript = stripScripts(html);
 
   const testids = uniq(
     Array.from(noscript.matchAll(/data-testid=["']([^"']+)["']/gi)).map(
