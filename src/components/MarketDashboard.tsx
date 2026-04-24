@@ -729,8 +729,15 @@ export default function MarketDashboard({
               </span>
 
               {/* Crypto / Macro tab toggle */}
-              <div class="flex rounded-md overflow-hidden border border-[--color-border]">
+              <div
+                class="flex rounded-md overflow-hidden border border-[--color-border]"
+                data-testid="news-tabs"
+                role="tablist"
+              >
                 <button
+                  data-testid="news-tab-crypto"
+                  role="tab"
+                  aria-selected={newsTab === "crypto"}
                   onClick={() => {
                     setNewsTab("crypto");
                     setSourceFilter("");
@@ -749,6 +756,9 @@ export default function MarketDashboard({
                   {l.cryptoNews}
                 </button>
                 <button
+                  data-testid="news-tab-macro"
+                  role="tab"
+                  aria-selected={newsTab === "macro"}
                   onClick={() => {
                     setNewsTab("macro");
                     setSourceFilter("");
@@ -833,7 +843,12 @@ export default function MarketDashboard({
               </div>
             )}
             {news && filteredNews.length > 0 && (
-              <div class="fade-in">
+              <div
+                class="fade-in"
+                data-testid="news-list"
+                data-news-tab={newsTab}
+                data-news-count={filteredNews.length}
+              >
                 {(newsExpanded ? filteredNews : filteredNews.slice(0, 5)).map(
                   (item, i) => (
                     <a
@@ -883,7 +898,11 @@ export default function MarketDashboard({
               </div>
             )}
             {news && filteredNews.length === 0 && (
-              <div class="text-center py-8 text-[--color-text-muted] text-[13px]">
+              <div
+                class="text-center py-8 text-[--color-text-muted] text-[13px]"
+                data-testid="news-list-empty"
+                data-news-tab={newsTab}
+              >
                 {l.noResults}
               </div>
             )}
