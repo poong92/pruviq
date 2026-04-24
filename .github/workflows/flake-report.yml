@@ -41,6 +41,7 @@ jobs:
             let totalFlakes = 0;
             let totalTests = 0;
             const flakeEntries = [];
+            const { execSync } = require('child_process');
             for (const run of nightly) {
               try {
                 const arts = await github.rest.actions.listWorkflowRunArtifacts({
@@ -59,7 +60,6 @@ jobs:
                 const tmpZip = `/tmp/flake-${run.id}.zip`;
                 const tmpDir = `/tmp/flake-${run.id}`;
                 fs.writeFileSync(tmpZip, Buffer.from(zip.data));
-                const { execSync } = require('child_process');
                 execSync(`unzip -o ${tmpZip} -d ${tmpDir}`);
                 const ndjson = fs.readFileSync(`${tmpDir}/flake-log.ndjson`, 'utf-8').trim();
                 if (ndjson) {
@@ -69,34 +69,24 @@ jobs:
                     totalFlakes++;
                   }
                 }
-              } catch {
-                // artifact missing or unparseable — skip this run
-              }
-              // parse classify-flake summary if available
-              try {
-                const arts = await github.rest.actions.listWorkflowRunArtifacts({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  run_id: run.id,
-                });
+                // parse classify-flake summary if available (reuse arts from above)
                 const summaryArt = arts.data.artifacts.find(a => a.name === 'flake-summary');
                 if (summaryArt) {
-                  const zip = await github.rest.actions.downloadArtifact({
+                  const szip = await github.rest.actions.downloadArtifact({
                     owner: context.repo.owner,
                     repo: context.repo.repo,
                     artifact_id: summaryArt.id,
                     archive_format: 'zip',
                   });
-                  const tmpZip = `/tmp/summary-${run.id}.zip`;
-                  const tmpDir = `/tmp/summary-${run.id}`;
-                  fs.writeFileSync(tmpZip, Buffer.from(zip.data));
-                  const { execSync } = require('child_process');
-                  execSync(`unzip -o ${tmpZip} -d ${tmpDir}`);
-                  const summary = JSON.parse(fs.readFileSync(`${tmpDir}/summary.json`, 'utf-8'));
+                  const sTmpZip = `/tmp/summary-${run.id}.zip`;
+                  const sTmpDir = `/tmp/summary-${run.id}`;
+                  fs.writeFileSync(sTmpZip, Buffer.from(szip.data));
+                  execSync(`unzip -o ${sTmpZip} -d ${sTmpDir}`);
+                  const summary = JSON.parse(fs.readFileSync(`${sTmpDir}/summary.json`, 'utf-8'));
                   totalTests += summary.total || 0;
                 }
-              } catch {
-                // summary artifact missing — skip
+              } catch (err) {
+                core.warning(`Skipping run ${run.id}: ${err.message}`);
               }
             }
 
@@ -109,13 +99,19 @@ jobs:
       - name: Post weekly summary issue if flake rate > 2%
         if: steps.fetch.outputs.total_flakes > 0
         uses: actions/github-script@v7
+        env:
+          NIGHTLY_COUNT: ${{ steps.fetch.outputs.count }}
+          TOTAL_FLAKES: ${{ steps.fetch.outputs.total_flakes }}
+          TOTAL_TESTS: ${{ steps.fetch.outputs.total_tests }}
+          FLAKE_RATE: ${{ steps.fetch.outputs.flake_rate }}
+          FLAKE_ENTRIES: ${{ steps.fetch.outputs.flake_entries }}
         with:
           script: |
-            const nightlyRuns = parseInt('${{ steps.fetch.outputs.count }}', 10) || 0;
-            const totalFlakes = parseInt('${{ steps.fetch.outputs.total_flakes }}', 10) || 0;
-            const totalTests = parseInt('${{ steps.fetch.outputs.total_tests }}', 10) || 0;
-            const flakeRate = '${{ steps.fetch.outputs.flake_rate }}';
-            const entries = JSON.parse('${{ steps.fetch.outputs.flake_entries }}' || '[]');
+            const nightlyRuns = parseInt(process.env.NIGHTLY_COUNT, 10) || 0;
+            const totalFlakes = parseInt(process.env.TOTAL_FLAKES, 10) || 0;
+            const totalTests = parseInt(process.env.TOTAL_TESTS, 10) || 0;
+            const flakeRate = process.env.FLAKE_RATE;
+            const entries = JSON.parse(process.env.FLAKE_ENTRIES || '[]');
 
             const topFlakes = Object.entries(
               entries.reduce((acc, e) => { acc[e.test] = (acc[e.test] || 0) + 1; return acc; }, {})
