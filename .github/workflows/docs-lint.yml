@@ -50,8 +50,10 @@ jobs:
           fi
           echo "✓ Guard 1 passed"
 
-      # Guard 2 — OpenClaw 프로젝트 재유입 방지 (archive/ 제외, worktrees 제외)
-      - name: "Guard 2: OpenClaw references outside archive/"
+      # Guard 2 — OpenClaw 프로젝트 재유입 방지 (archive/ 제외, worktrees 제외).
+      # PR1에서는 warn-only — PR2(OpenClaw 전수 scrub) + PR5(정책 승격)에서
+      # `::warning::` → `::error::` + exit 1 로 바꿔 차단 활성화.
+      - name: "Guard 2: OpenClaw references outside archive/ (warn-only)"
         run: |
           set +e
           MATCHES=$(grep -rni 'openclaw' \
@@ -63,21 +65,18 @@ jobs:
             --exclude=docs-lint.yml \
             . | grep -v '^\./docs/archive/' || true)
           if [ -n "$MATCHES" ]; then
-            echo "::error::OpenClaw references found outside docs/archive/"
+            echo "::warning::OpenClaw references found (will error after PR2 scrubs everything)"
             echo "$MATCHES"
-            exit 1
+          else
+            echo "✓ Guard 2 passed"
           fi
-          echo "✓ Guard 2 passed"
 
       # Guard 3 — Mac Mini 백엔드 오기록 (특정 드리프트 문자열만 차단,
-      # "Mac Mini is dev-only" 같은 올바른 기록은 허용)
-      - name: "Guard 3: stale Mac Mini backend claims"
+      # "Mac Mini is dev-only" 같은 올바른 기록은 허용). PR1에서는 warn-only —
+      # PR4(백엔드 호스트 전수 수정) + PR5(정책 승격)에서 차단 활성화.
+      - name: "Guard 3: stale Mac Mini backend claims (warn-only)"
         run: |
           set +e
-          # 명확히 틀린 조합만 체크:
-          #   - "port 8400" (과거 Mac Mini uvicorn 포트, 현재 DO는 :8080)
-          #   - "172.30.1.16" (Mac Mini LAN IP, docs에 하드코딩 금지)
-          #   - "jepo@172.30.1.16" (Mac Mini SSH 대상, 과거 운영 명령)
           MATCHES=$(grep -rnE '172\.30\.1\.16|port 8400|Mac Mini.*uvicorn|Mac Mini.*FastAPI' \
             --include='*.md' --include='*.yml' --include='*.yaml' \
             --include='*.json' --include='*.py' --include='*.ts' --include='*.tsx' \
@@ -87,11 +86,11 @@ jobs:
             --exclude=docs-lint.yml \
             . | grep -v '^\./docs/archive/' || true)
           if [ -n "$MATCHES" ]; then
-            echo "::error::Stale Mac Mini backend claim — current backend runs on DigitalOcean (host in DO_HOST secret, port 2222 SSH, :8080 app). Mac Mini is dev-only."
+            echo "::warning::Stale Mac Mini backend claim (will error after PR4 fixes all files)"
             echo "$MATCHES"
-            exit 1
+          else
+            echo "✓ Guard 3 passed"
           fi
-          echo "✓ Guard 3 passed"
 
       - name: "Summary"
         run: echo "All 3 drift-prevention guards passed."
