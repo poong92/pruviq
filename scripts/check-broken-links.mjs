@@ -65,7 +65,12 @@ function walkHtml(dir, out = []) {
 }
 
 function extractHrefs(html) {
-  const noscript = html.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, "");
+  // `</script\s*>` matches variants like `</script >` (trailing whitespace)
+  // that a strict `</script>` miss — CodeQL js/bad-tag-filter.
+  const noscript = html.replace(
+    /<script\b[^>]*>[\s\S]*?<\/script\s*>/gi,
+    "",
+  );
   return Array.from(noscript.matchAll(/<a[^>]+href=["']([^"']+)["']/gi))
     .map((m) => m[1])
     .filter((h) => h && !SKIP_HREF.some((re) => re.test(h)));
