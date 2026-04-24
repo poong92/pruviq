@@ -64,14 +64,44 @@ function walkHtml(dir, out = []) {
   return out;
 }
 
+// Character-scan script stripper — regex variants were flagged by
+// CodeQL js/incomplete-multi-character-sanitization. Same impl as in
+// scripts/discover-interactives.mjs.
+function stripScripts(html) {
+  const lower = html.toLowerCase();
+  let out = "";
+  let i = 0;
+  while (i < html.length) {
+    const openIdx = lower.indexOf("<script", i);
+    if (openIdx < 0) {
+      out += html.slice(i);
+      break;
+    }
+    const next = lower.charCodeAt(openIdx + 7);
+    if (
+      next !== 0x20 &&
+      next !== 0x09 &&
+      next !== 0x0a &&
+      next !== 0x3e &&
+      next !== 0x2f
+    ) {
+      out += html.slice(i, openIdx + 7);
+      i = openIdx + 7;
+      continue;
+    }
+    out += html.slice(i, openIdx);
+    const openEnd = html.indexOf(">", openIdx);
+    if (openEnd < 0) break;
+    const closeIdx = lower.indexOf("</script", openEnd);
+    if (closeIdx < 0) break;
+    const closeEnd = html.indexOf(">", closeIdx);
+    i = closeEnd < 0 ? html.length : closeEnd + 1;
+  }
+  return out;
+}
+
 function extractHrefs(html) {
-  // `</script[^>]*>` matches all valid-and-invalid-but-browser-tolerated
-  // closing variants (`</script >`, `</script\n\tbar>`, etc.). Closes the
-  // CodeQL js/bad-tag-filter alert that a narrower \s* wouldn't fix.
-  const noscript = html.replace(
-    /<script\b[^>]*>[\s\S]*?<\/script\b[^>]*>/gi,
-    "",
-  );
+  const noscript = stripScripts(html);
   return Array.from(noscript.matchAll(/<a[^>]+href=["']([^"']+)["']/gi))
     .map((m) => m[1])
     .filter((h) => h && !SKIP_HREF.some((re) => re.test(h)));
