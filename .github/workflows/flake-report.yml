@@ -6,6 +6,7 @@ on:
   workflow_dispatch: {}
 
 permissions:
+  actions: read
   contents: read
   issues: write
 
@@ -36,21 +37,104 @@ jobs:
             );
             core.setOutput('count', nightly.length);
 
+            // Download flake-log.ndjson from each nightly run's artifacts
+            let totalFlakes = 0;
+            let totalTests = 0;
+            const flakeEntries = [];
+            for (const run of nightly) {
+              try {
+                const arts = await github.rest.actions.listWorkflowRunArtifacts({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  run_id: run.id,
+                });
+                const flakeArt = arts.data.artifacts.find(a => a.name === 'flake-log');
+                if (!flakeArt) continue;
+                const zip = await github.rest.actions.downloadArtifact({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  artifact_id: flakeArt.id,
+                  archive_format: 'zip',
+                });
+                const tmpZip = `/tmp/flake-${run.id}.zip`;
+                const tmpDir = `/tmp/flake-${run.id}`;
+                fs.writeFileSync(tmpZip, Buffer.from(zip.data));
+                const { execSync } = require('child_process');
+                execSync(`unzip -o ${tmpZip} -d ${tmpDir}`);
+                const ndjson = fs.readFileSync(`${tmpDir}/flake-log.ndjson`, 'utf-8').trim();
+                if (ndjson) {
+                  for (const line of ndjson.split('\n')) {
+                    const entry = JSON.parse(line);
+                    flakeEntries.push(entry);
+                    totalFlakes++;
+                  }
+                }
+              } catch {
+                // artifact missing or unparseable — skip this run
+              }
+              // parse classify-flake summary if available
+              try {
+                const arts = await github.rest.actions.listWorkflowRunArtifacts({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  run_id: run.id,
+                });
+                const summaryArt = arts.data.artifacts.find(a => a.name === 'flake-summary');
+                if (summaryArt) {
+                  const zip = await github.rest.actions.downloadArtifact({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    artifact_id: summaryArt.id,
+                    archive_format: 'zip',
+                  });
+                  const tmpZip = `/tmp/summary-${run.id}.zip`;
+                  const tmpDir = `/tmp/summary-${run.id}`;
+                  fs.writeFileSync(tmpZip, Buffer.from(zip.data));
+                  const { execSync } = require('child_process');
+                  execSync(`unzip -o ${tmpZip} -d ${tmpDir}`);
+                  const summary = JSON.parse(fs.readFileSync(`${tmpDir}/summary.json`, 'utf-8'));
+                  totalTests += summary.total || 0;
+                }
+              } catch {
+                // summary artifact missing — skip
+              }
+            }
+
+            const flakeRate = totalTests > 0 ? ((totalFlakes / totalTests) * 100).toFixed(2) : '0.00';
+            core.setOutput('total_flakes', totalFlakes);
+            core.setOutput('total_tests', totalTests);
+            core.setOutput('flake_rate', flakeRate);
+            core.setOutput('flake_entries', JSON.stringify(flakeEntries));
+
       - name: Post weekly summary issue if flake rate > 2%
+        if: steps.fetch.outputs.total_flakes > 0
         uses: actions/github-script@v7
         with:
           script: |
             const nightlyRuns = parseInt('${{ steps.fetch.outputs.count }}', 10) || 0;
+            const totalFlakes = parseInt('${{ steps.fetch.outputs.total_flakes }}', 10) || 0;
+            const totalTests = parseInt('${{ steps.fetch.outputs.total_tests }}', 10) || 0;
+            const flakeRate = '${{ steps.fetch.outputs.flake_rate }}';
+            const entries = JSON.parse('${{ steps.fetch.outputs.flake_entries }}' || '[]');
+
+            const topFlakes = Object.entries(
+              entries.reduce((acc, e) => { acc[e.test] = (acc[e.test] || 0) + 1; return acc; }, {})
+            ).sort((a, b) => b[1] - a[1]).slice(0, 10)
+              .map(([name, count]) => `- \`${name}\` — ${count} flake(s)`)
+              .join('\n');
+
             const title = `[FLAKE-REPORT] Week ending ${new Date().toISOString().slice(0, 10)}`;
             const body = [
-              `Nightly QA runs this week: ${nightlyRuns}`,
+              `## Weekly Flake Summary`,
               ``,
-              `Flake classification: runs Layer 2/5 retries. Each "passed-after-retry" is`,
-              `logged to reports/flake-log.ndjson (in run artifact). Weekly digest looks`,
-              `at trend — this stub prints the count; extend with artifact download +`,
-              `flake-log aggregation once a real backlog exists.`,
+              `- Nightly QA runs: **${nightlyRuns}**`,
+              `- Total tests: **${totalTests}**`,
+              `- Total flakes: **${totalFlakes}**`,
+              `- Flake rate: **${flakeRate}%**`,
               ``,
-              `(Scaffold — will auto-expand once artifacts accumulate.)`,
+              `### Top flaky tests`,
+              ``,
+              topFlakes || '_No flakes detected._',
             ].join('\n');
             await github.rest.issues.create({
               owner: context.repo.owner,
