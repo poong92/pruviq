@@ -26,5 +26,5 @@ Check the status of the daily data pipeline or trigger a manual run.
 - Manual: Via this skill when needed
 
 ## Prerequisites
-- SSH access to Mac Mini (jepo@172.30.1.16)
+- SSH access to DigitalOcean droplet (host in `DO_HOST` secret, port 2222)
 - Tailscale VPN connection

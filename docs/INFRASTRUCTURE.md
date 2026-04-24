@@ -657,11 +657,13 @@ Phase 0 (현재):
   DO 서버: autotrader 실거래
   포트: n8n(5678), Ollama(11434)
 
-Phase 1 (웹 대시보드):
-  + Mac Mini: PRUVIQ API 서버 (FastAPI, :8400)
-  + Mac Mini: 정적 프론트엔드 서빙 (Caddy/Nginx)
-  + Tailscale Funnel 또는 Cloudflare Tunnel (외부 접근)
-  포트 추가: PRUVIQ API(8400), HTTP(80/443)
+Phase 1 (웹 대시보드 — 2026-02 초기 계획):
+  + (초기 가정) Mac Mini: PRUVIQ API 서버
+  ⚠️ 실제 이행: 2026-04 Phase 8 완료. PRUVIQ API는 DigitalOcean
+  droplet (host in `DO_HOST` secret, :8080, systemd `pruviq-api.service`)
+  로 이관됨. Mac Mini는 dev-only + autotrader 백업 + OHLCV 수집 크론만.
+  + 프론트엔드 서빙: Cloudflare Pages (pruviq.com)
+  + 외부 접근: Cloudflare Tunnel (api.pruviq.com → DO droplet)
 
 Phase 2 (퍼블릭 서비스):
   + 별도 VPS 또는 클라우드 (PRUVIQ 퍼블릭 서빙)

@@ -45,7 +45,7 @@ You are not maintaining code — you are building something that matters.
 
 Full-stack developer maintaining and improving pruviq.com:
 - Frontend: Astro 5, Preact, Tailwind CSS 4, TypeScript
-- Backend: Python FastAPI (READ only — runs as jepo user)
+- Backend: Python FastAPI on DigitalOcean (runs as `pruviq` user at `/opt/pruviq/current`; deploy via `.github/workflows/deploy-backend.yml`)
 - Deploy: git push triggers Cloudflare Pages auto-deploy
 
 ## Core Truths

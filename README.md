@@ -73,7 +73,7 @@ All education articles link to the Strategy Builder for hands-on practice.
 | Backend API | Python 3.12 + FastAPI + uvicorn |
 | Data | 613 CSV files (1H OHLCV), ccxt for collection |
 | Charts | lightweight-charts (TradingView) |
-| Hosting | Cloudflare Pages (frontend) + Mac Mini M4 Pro (API) |
+| Hosting | Cloudflare Pages (frontend) + DigitalOcean droplet (API, systemd-managed; Mac Mini = dev-only) |
 | Tunnel | Cloudflare Tunnel (api.pruviq.com) |
 | i18n | English + Korean (full bilingual) |
 
