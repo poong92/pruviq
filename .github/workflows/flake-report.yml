@@ -1,0 +1,141 @@
+name: QA Layer 8 — Flake weekly summary
+
+on:
+  schedule:
+    - cron: "0 4 * * 1"   # every Monday 04:00 UTC
+  workflow_dispatch: {}
+
+permissions:
+  actions: read
+  contents: read
+  issues: write
+
+jobs:
+  summarise:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Fetch recent flake logs from nightly-qa artifacts
+        id: fetch
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const since = new Date(Date.now() - 7 * 864e5).toISOString();
+            const runs = await github.rest.actions.listWorkflowRunsForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              per_page: 30,
+            });
+            const nightly = runs.data.workflow_runs.filter(
+              r => r.name?.includes('Nightly') && r.created_at > since,
+            );
+            core.setOutput('count', nightly.length);
+
+            // Download flake-log.ndjson from each nightly run's artifacts
+            let totalFlakes = 0;
+            let totalTests = 0;
+            const flakeEntries = [];
+            const { execSync } = require('child_process');
+            for (const run of nightly) {
+              try {
+                const arts = await github.rest.actions.listWorkflowRunArtifacts({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  run_id: run.id,
+                });
+                const flakeArt = arts.data.artifacts.find(a => a.name === 'flake-log');
+                if (!flakeArt) continue;
+                const zip = await github.rest.actions.downloadArtifact({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  artifact_id: flakeArt.id,
+                  archive_format: 'zip',
+                });
+                const tmpZip = `/tmp/flake-${run.id}.zip`;
+                const tmpDir = `/tmp/flake-${run.id}`;
+                fs.writeFileSync(tmpZip, Buffer.from(zip.data));
+                execSync(`unzip -o ${tmpZip} -d ${tmpDir}`);
+                const ndjson = fs.readFileSync(`${tmpDir}/flake-log.ndjson`, 'utf-8').trim();
+                if (ndjson) {
+                  for (const line of ndjson.split('\n')) {
+                    const entry = JSON.parse(line);
+                    flakeEntries.push(entry);
+                    totalFlakes++;
+                  }
+                }
+                // parse classify-flake summary if available (reuse arts from above)
+                const summaryArt = arts.data.artifacts.find(a => a.name === 'flake-summary');
+                if (summaryArt) {
+                  const szip = await github.rest.actions.downloadArtifact({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    artifact_id: summaryArt.id,
+                    archive_format: 'zip',
+                  });
+                  const sTmpZip = `/tmp/summary-${run.id}.zip`;
+                  const sTmpDir = `/tmp/summary-${run.id}`;
+                  fs.writeFileSync(sTmpZip, Buffer.from(szip.data));
+                  execSync(`unzip -o ${sTmpZip} -d ${sTmpDir}`);
+                  const summary = JSON.parse(fs.readFileSync(`${sTmpDir}/summary.json`, 'utf-8'));
+                  totalTests += summary.total || 0;
+                }
+              } catch (err) {
+                core.warning(`Skipping run ${run.id}: ${err.message}`);
+              }
+            }
+
+            const flakeRate = totalTests > 0 ? ((totalFlakes / totalTests) * 100).toFixed(2) : '0.00';
+            core.setOutput('total_flakes', totalFlakes);
+            core.setOutput('total_tests', totalTests);
+            core.setOutput('flake_rate', flakeRate);
+            core.setOutput('flake_entries', JSON.stringify(flakeEntries));
+
+      - name: Post weekly summary issue if flake rate > 2%
+        if: steps.fetch.outputs.total_flakes > 0
+        uses: actions/github-script@v7
+        env:
+          NIGHTLY_COUNT: ${{ steps.fetch.outputs.count }}
+          TOTAL_FLAKES: ${{ steps.fetch.outputs.total_flakes }}
+          TOTAL_TESTS: ${{ steps.fetch.outputs.total_tests }}
+          FLAKE_RATE: ${{ steps.fetch.outputs.flake_rate }}
+          FLAKE_ENTRIES: ${{ steps.fetch.outputs.flake_entries }}
+        with:
+          script: |
+            const nightlyRuns = parseInt(process.env.NIGHTLY_COUNT, 10) || 0;
+            const totalFlakes = parseInt(process.env.TOTAL_FLAKES, 10) || 0;
+            const totalTests = parseInt(process.env.TOTAL_TESTS, 10) || 0;
+            const flakeRate = process.env.FLAKE_RATE;
+            const entries = JSON.parse(process.env.FLAKE_ENTRIES || '[]');
+
+            const topFlakes = Object.entries(
+              entries.reduce((acc, e) => { acc[e.test] = (acc[e.test] || 0) + 1; return acc; }, {})
+            ).sort((a, b) => b[1] - a[1]).slice(0, 10)
+              .map(([name, count]) => `- \`${name}\` — ${count} flake(s)`)
+              .join('\n');
+
+            const title = `[FLAKE-REPORT] Week ending ${new Date().toISOString().slice(0, 10)}`;
+            const body = [
+              `## Weekly Flake Summary`,
+              ``,
+              `- Nightly QA runs: **${nightlyRuns}**`,
+              `- Total tests: **${totalTests}**`,
+              `- Total flakes: **${totalFlakes}**`,
+              `- Flake rate: **${flakeRate}%**`,
+              ``,
+              `### Top flaky tests`,
+              ``,
+              topFlakes || '_No flakes detected._',
+            ].join('\n');
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title,
+              body,
+              labels: ['flake-report', 'auto-generated'],
+            });
