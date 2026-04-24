@@ -19,6 +19,19 @@ on:
       - "wrangler.toml"
       - "package.json"
       - "package-lock.json"
+  schedule:
+    # Drift detector — same pattern as deploy-backend.yml. The push event
+    # can be silently dropped by GitHub when the workflow registry gets
+    # stuck on a stale SHA. This happened 2026-04-16~17 (deploy-backend)
+    # and again 2026-04-24 00:15~15:22 UTC on this workflow: 10 frontend
+    # PRs merged but none auto-deployed until someone ran
+    # `gh workflow run data-deploy.yml` manually.
+    #
+    # A */30 cron guarantees worst-case staleness of 30 min. The build is
+    # idempotent (wrangler deploy is a no-op if nothing changed on CF's
+    # side) so running against an unchanged main costs ~2 min of runner
+    # time and no user impact.
+    - cron: "*/30 * * * *"
   workflow_dispatch: {}
 
 concurrency:
