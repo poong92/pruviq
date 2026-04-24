@@ -1,9 +1,9 @@
 - cron: daily-seo-audit (autonomous run)
   - Time: 2026-03-07 00:00 KST
   - Actions performed (autonomous):
-    1. Read project metadata and memory (SOUL.md, MEMORY.md) to establish context (confirmed via file reads: /Users/openclaw/pruviq/SOUL.md, /Users/openclaw/pruviq/MEMORY.md).
+    1. Read project metadata and memory (SOUL.md, MEMORY.md) to establish context (confirmed via file reads: /Users/jepo/pruviq/SOUL.md, /Users/jepo/pruviq/MEMORY.md).
     2. Built the site locally to inspect generated HTML: `npm run build` → (build output) "[build] 2450 page(s) built in 3.09s" (confirmed in build output).
-    3. Scanned generated HTML files in dist/ for titles, meta descriptions, hreflang, and JSON-LD (local scan of /Users/openclaw/pruviq/dist):
+    3. Scanned generated HTML files in dist/ for titles, meta descriptions, hreflang, and JSON-LD (local scan of /Users/jepo/pruviq/dist):
        - Total .html files on disk: 2453 (confirmed via `find dist -name '*.html' | wc -l`).
        - Build reported: 2450 page(s) built (from `npm run build` output). Both values recorded.
        - Pages missing a non-empty <title>: 3 (these are site verification files)
@@ -31,7 +31,7 @@
     - `npm run build` → build output includes: "[@astrojs/sitemap] `sitemap-index.xml` created at `dist`" and "[build] 2450 page(s) built in 3.09s" (from build logs).
     - `find dist -name '*.html' | wc -l` → 2453 (confirmed local file count in dist/).
     - Counted sitemap entries: `grep -o "<loc>" dist/sitemap-0.xml | wc -l` → 2390 (confirmed in dist/sitemap-0.xml).
-    - Local HTML scan results (titles/meta/json-ld/hreflang) produced the lists above (scripts run against /Users/openclaw/pruviq/dist/).
+    - Local HTML scan results (titles/meta/json-ld/hreflang) produced the lists above (scripts run against /Users/jepo/pruviq/dist/).
     - `curl -s -o /dev/null -w "%{http_code}" https://pruviq.com/sitemap-index.xml` → 200
     - `curl -s -o /dev/null -w "%{http_code}" https://pruviq.com/robots.txt` → 200
     - `curl -s -o /dev/null -w "%{http_code}" https://pruviq.com/` → 200
