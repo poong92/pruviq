@@ -1,0 +1,7 @@
+---
+// Internal dev probe. No KO-specific content; redirect to EN so the
+// auto-generated hreflang alternate (emitted by Layout.astro) resolves
+// to a real page instead of 404. noindex on the EN target keeps it
+// out of search indexes either way.
+return Astro.redirect("/simulate/v2-probe/");
+---
