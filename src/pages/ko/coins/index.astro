@@ -2,6 +2,7 @@
 import Layout from '../../../layouts/Layout.astro';
 import { useTranslations } from '../../../i18n/index';
 import coinsStats from '../../../../public/data/coins-stats.json';
+import { COIN_SYMBOLS } from '../../../data/coin-symbols';
 
 const t = useTranslations('ko');
 
@@ -16,8 +17,11 @@ const generatedAt: string | null = (() => {
   return d.toISOString().replace('T', ' ').slice(0, 16) + ' UTC';
 })();
 
-// Static top coins for noscript/Googlebot crawlability (85 coins)
-const TOP_COINS = [
+// Static top coins for noscript/Googlebot crawlability. We filter this list
+// against COIN_SYMBOLS below so we never emit a noscript link to a detail
+// page that doesn't exist. Prior drift: 20 of these symbols (BEAMX, RNDR,
+// OCEAN, etc.) were listed here but missing from COIN_SYMBOLS → prod 404s.
+const TOP_COINS_RAW = [
   // Mega cap
   'BTCUSDT','ETHUSDT','BNBUSDT','SOLUSDT','XRPUSDT',
   // Large cap
@@ -45,6 +49,8 @@ const TOP_COINS = [
   'CKBUSDT','RSRUSDT','STORJUSDT','IOTAUSDT',
   'QNTUSDT','GRTUSDT','SXPUSDT','HIGHUSDT',
 ];
+const availableSet = new Set(COIN_SYMBOLS);
+const TOP_COINS = TOP_COINS_RAW.filter(s => availableSet.has(s));
 ---
 
 <Layout title={t('meta.coins_title')} description={t('meta.coins_desc')}>
