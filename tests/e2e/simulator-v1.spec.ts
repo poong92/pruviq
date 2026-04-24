@@ -137,15 +137,22 @@ test.describe("SimulatorV1 — Quick Start surface", () => {
     expect(page.url()).not.toContain("preset=rsi-divergence-both");
   });
 
-  test("Trust gap panel renders 3-column grid", async ({ page }) => {
+  test("Trust gap panel renders (paused state or live 3-column)", async ({
+    page,
+  }) => {
+    // 2026-04-24: LIVE_TRACKING_PAUSED=true — panel renders a paused
+    // card instead of the 3-column grid until auto-trading resumes.
+    // Guards against the panel disappearing entirely. Re-assert 3
+    // columns once LIVE_TRACKING_PAUSED=false.
     await openSim(page);
-    await expect(
-      page.locator("[data-testid=sim-v1-gap-backtest]"),
-    ).toBeVisible();
-    await expect(
-      page.locator("[data-testid=sim-v1-live-return]"),
-    ).toBeVisible();
-    await expect(page.locator("[data-testid=sim-v1-gap-delta]")).toBeVisible();
+    const panel = page.locator("[data-testid=sim-v1-trust-gap]");
+    await expect(panel).toBeVisible();
+    const text = (await panel.textContent()) ?? "";
+    // Either paused (current) OR live columns (future) — one must hold.
+    const isPaused = /Live tracking paused|라이브 검증 중단/i.test(text);
+    const isLive =
+      (await page.locator("[data-testid=sim-v1-gap-backtest]").count()) > 0;
+    expect(isPaused || isLive).toBe(true);
   });
 
   test("Mobile: preset grid single column, no horizontal scroll", async ({

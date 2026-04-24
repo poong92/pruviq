@@ -105,6 +105,15 @@ async function fetchBacktest(
   }
 }
 
+// 2026-04-24: Live tracking paused while auto-trading OKX integration
+// is being re-hardened. Without active live trades, the previous 3-column
+// backtest-vs-live grid was showing a 59.6% gap from the last run
+// (BB Squeeze SHORT, 2026-01 to 03) as if it were current — misleading
+// new visitors. Flip this back to `false` once auto-trading resumes and
+// ≥30 days of fresh live data accumulate. The previous in-depth gap
+// analysis is preserved at /blog/bb-squeeze-2026q1-postmortem.
+const LIVE_TRACKING_PAUSED = true;
+
 export default function TrustGapPanel({ lang }: Props) {
   const t = useTranslations(lang);
   const [data, setData] = useState<LiveSummary | null>(null);
@@ -113,6 +122,7 @@ export default function TrustGapPanel({ lang }: Props) {
   const [backtestDone, setBacktestDone] = useState(false);
 
   useEffect(() => {
+    if (LIVE_TRACKING_PAUSED) return; // skip fetch while paused
     let cancelled = false;
     fetch("/data/performance.json")
       .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
@@ -140,6 +150,50 @@ export default function TrustGapPanel({ lang }: Props) {
   }, []);
 
   const isKo = lang === "ko";
+
+  // 2026-04-24: paused panel — replaces the 3-column gap grid entirely.
+  // Gives context + links to the postmortem + points users to verified
+  // Quick-Start presets. Avoids stale negative live data staring at
+  // every new visitor.
+  if (LIVE_TRACKING_PAUSED) {
+    const postmortemHref = isKo
+      ? "/ko/blog/bb-squeeze-2026q1-postmortem"
+      : "/blog/bb-squeeze-2026q1-postmortem";
+    return (
+      <section
+        aria-label={t("simV2.trust.gap_heading")}
+        class="rounded-xl border border-[--color-accent]/20 bg-gradient-to-br from-[--color-accent]/5 to-zinc-900/60 p-5"
+        data-testid="sim-v1-trust-gap"
+      >
+        <div class="mb-3 flex items-center gap-2">
+          <span
+            class="inline-flex items-center gap-1 rounded px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wider text-amber-200 bg-amber-500/10 border border-amber-500/30"
+            aria-label="Coming Soon"
+          >
+            ⏸ {isKo ? "라이브 검증 중단" : "Live tracking paused"}
+          </span>
+        </div>
+        <h3 class="mb-1.5 text-sm font-semibold uppercase tracking-wide text-[--color-accent-bright]">
+          {t("simV2.trust.gap_heading")}
+        </h3>
+        <p class="text-xs text-zinc-300 leading-relaxed mb-3">
+          {isKo
+            ? "오토트레이딩 재안정화 중 — 단일 전략 실거래 추적을 일시 중단했습니다. 재개 + 30일 데이터 누적 시 백테스트 vs 실거래 갭이 여기 다시 표시됩니다. 그 동안은 백테스트 검증만 안내합니다."
+            : "Live tracking is paused while auto-trading is re-hardened. Backtest-vs-live gap will return here once ≥30 days of fresh live data accumulate. Until then we guide you with backtest-verified presets only."}
+        </p>
+        <div class="flex flex-wrap gap-2">
+          <a
+            href={postmortemHref}
+            class="inline-flex items-center rounded border border-[--color-border] bg-[--color-bg-card] px-3 py-1.5 text-xs text-zinc-200 hover:border-[--color-accent] hover:text-[--color-accent-bright] min-h-[32px]"
+          >
+            {isKo
+              ? "이전 실거래 결과 — BB Squeeze 59.6% 갭 포스트모템 →"
+              : "Previous live run — BB Squeeze 59.6% gap postmortem →"}
+          </a>
+        </div>
+      </section>
+    );
+  }
 
   if (error || !data) {
     return (
