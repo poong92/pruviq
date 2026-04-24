@@ -69,9 +69,13 @@ function uniq(arr) {
 
 function extract(html) {
   // Strip <script> blocks — they contain button text + hrefs that pollute
-  // the inventory (e.g., Astro compiled JSON strings). We only want what
-  // actually renders in the DOM.
-  const noscript = html.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, "");
+  // the inventory (e.g., Astro compiled JSON strings). The `\s*` before
+  // `>` in the closing tag matches variants like `</script >` that
+  // CodeQL's js/bad-tag-filter flagged otherwise.
+  const noscript = html.replace(
+    /<script\b[^>]*>[\s\S]*?<\/script\s*>/gi,
+    "",
+  );
 
   const testids = uniq(
     Array.from(noscript.matchAll(/data-testid=["']([^"']+)["']/gi)).map(
