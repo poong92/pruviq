@@ -40,7 +40,7 @@ jobs:
           node-version: "20"
 
       - name: Install Lighthouse CI
-        run: npm install -g @lhci/cli@0.14.x
+        run: npm install -g @lhci/cli@0.14.0
 
       - name: Run Lighthouse against prod
         id: lhci
