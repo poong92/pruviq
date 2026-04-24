@@ -2,7 +2,6 @@
 name: coins
 description: View PRUVIQ coin data - total count, top/bottom performers, search
 user-invocable: true
-metadata: { "openclaw": { "requires": { "bins": ["curl", "jq"] }, "emoji": "🪙", "os": ["darwin", "linux"] } }
 ---
 
 # /coins - Coin Data Explorer

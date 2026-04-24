@@ -74,7 +74,6 @@ jobs:
               `## 수정 지침`,
               ``,
               `아래 JEPO 리뷰의 모든 지적 사항을 수정하세요.`,
-              `\`.github/OPENCLAW_LESSONS.md\`를 반드시 읽고 동일한 패턴의 실수를 반복하지 마세요.`,
               ``,
               `## JEPO 원문 리뷰`,
               ``,
@@ -124,7 +123,7 @@ jobs:
             // --- Close the buggy PR (only after instructions are delivered) ---
             try {
               const closeMsg = linkedIssue
-                ? `수정 지침이 원본 이슈 #${linkedIssue}에 추가되었습니다. OpenClaw가 수정된 PR을 새로 생성할 예정입니다.`
+                ? `수정 지침이 원본 이슈 #${linkedIssue}에 추가되었습니다. 에이전트가 수정된 PR을 새로 생성할 예정입니다.`
                 : `수정 지침이 포함된 새 이슈가 생성되었습니다.`;
 
               await github.rest.issues.createComment({

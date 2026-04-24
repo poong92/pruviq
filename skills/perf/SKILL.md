@@ -2,7 +2,6 @@
 name: perf
 description: Performance benchmark for PRUVIQ API endpoints and frontend pages
 user-invocable: true
-metadata: { "openclaw": { "requires": { "bins": ["curl"] }, "emoji": "⚡", "os": ["darwin", "linux"] } }
 ---
 
 # /perf - Performance Benchmark

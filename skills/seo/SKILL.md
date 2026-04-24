@@ -2,7 +2,6 @@
 name: seo
 description: SEO health audit for pruviq.com - sitemap, robots, meta tags, structured data
 user-invocable: true
-metadata: { "openclaw": { "requires": { "bins": ["curl"] }, "emoji": "🔍", "os": ["darwin", "linux"] } }
 ---
 
 # /seo - SEO Audit
