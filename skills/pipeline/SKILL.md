@@ -2,7 +2,6 @@
 name: pipeline
 description: Monitor and manage the PRUVIQ data pipeline (OHLCV updates, demo data)
 user-invocable: true
-metadata: { "openclaw": { "requires": { "bins": ["ssh", "curl", "jq"] }, "emoji": "🔄", "os": ["darwin"] } }
 ---
 
 # /pipeline - Data Pipeline Management

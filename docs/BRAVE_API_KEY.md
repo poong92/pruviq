@@ -11,9 +11,9 @@ Where to provision
    - Name: BRAVE_API_KEY
    - Value: <your-brave-api-key>
 
-2) OpenClaw Gateway / deployment environment (for scheduled/cron runs or gateway agents):
-   - Add BRAVE_API_KEY to the gateway configuration or environment variables used by the agent runner.
-   - Keep the secret scoped to the gateway/agent and avoid exposing it in logs.
+2) Local / CI runtime environment (for scheduled cron jobs or research scripts):
+   - Add BRAVE_API_KEY to the environment variables used by the script runner.
+   - Keep the secret scoped to the runner and avoid exposing it in logs.
 
 How code expects it
 

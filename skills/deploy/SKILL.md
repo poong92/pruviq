@@ -2,7 +2,6 @@
 name: deploy
 description: PRUVIQ deployment status, pre-checks, and execution for frontend and backend
 user-invocable: true
-metadata: { "openclaw": { "requires": { "bins": ["npm", "curl", "ssh", "git"] }, "emoji": "🚀", "os": ["darwin"] } }
 ---
 
 # /deploy - Deployment Management

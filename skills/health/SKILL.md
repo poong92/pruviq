@@ -2,7 +2,6 @@
 name: health
 description: PRUVIQ full system health check - API, frontend, data freshness
 user-invocable: true
-metadata: { "openclaw": { "requires": { "bins": ["curl", "jq"] }, "emoji": "🔮", "os": ["darwin", "linux"] } }
 ---
 
 # /health - PRUVIQ System Health Check
