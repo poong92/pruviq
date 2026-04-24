@@ -1,0 +1,92 @@
+name: QA Layer 4 — Data Freshness Monitor
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"   # every 15 min
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: freshness-monitor
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Run freshness check
+        id: check
+        run: |
+          BASE_URL=https://pruviq.com node scripts/check-freshness.mjs > events.ndjson
+          cat events.ndjson
+
+      - name: Open / close issues based on events
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const lines = fs.readFileSync('events.ndjson', 'utf8')
+              .trim().split('\n').filter(Boolean);
+            const events = lines.map(l => JSON.parse(l));
+
+            async function findOpenIssue(source) {
+              const { data } = await github.rest.issues.listForRepo({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                state: 'open',
+                labels: 'freshness',
+                per_page: 100,
+              });
+              return data.find(i => i.title.includes(`[FRESHNESS] ${source}`));
+            }
+
+            for (const ev of events) {
+              const bad = ev.status === 'stale' || ev.status === 'invariant_fail' || ev.status === 'error';
+              const existing = await findOpenIssue(ev.source);
+
+              if (bad && !existing) {
+                const title = `[FRESHNESS] ${ev.source} ${ev.status}`;
+                const body = [
+                  `Source: \`${ev.source}\``,
+                  `Status: **${ev.status}**`,
+                  ev.age_s != null ? `Age: ${ev.age_s}s (budget ${ev.budget_s}s)` : '',
+                  ev.generated ? `Last generated: ${ev.generated}` : '',
+                  ev.invariant_fail ? `Invariant failure: **${ev.invariant_fail}**` : '',
+                  ev.error ? `Error: ${ev.error}` : '',
+                  '',
+                  `Auto-opened by freshness-monitor.yml. Will auto-close on recovery.`,
+                ].filter(Boolean).join('\n');
+
+                await github.rest.issues.create({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  title,
+                  body,
+                  labels: ['freshness', 'auto-generated'],
+                });
+                core.info(`Opened issue for ${ev.source}`);
+              } else if (!bad && existing) {
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: existing.number,
+                  body: `Auto-resolved: ${ev.source} is now \`${ev.status}\` (age ${ev.age_s}s ≤ budget ${ev.budget_s}s).`,
+                });
+                await github.rest.issues.update({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: existing.number,
+                  state: 'closed',
+                });
+                core.info(`Closed issue #${existing.number} for ${ev.source}`);
+              }
+            }
