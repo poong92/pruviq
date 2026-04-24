@@ -2679,11 +2679,20 @@ def _build_market_overview() -> dict:
     ).model_dump()
 
 
+# Matches refresh_static.py exactly so live API /news and the static
+# public/data/news.json JSON pipeline emit the same shape, including
+# the `category` field the frontend useNews hook + Layer 3 validator
+# both depend on. (2026-04-22 macro-news bug: this list previously had
+# only 4 crypto sources and no category, so the macro tab at /market/
+# fell through to empty whenever fetchWithFallback hit the API.)
 RSS_FEEDS = [
-    ("CoinDesk", "https://www.coindesk.com/arc/outboundfeeds/rss"),
-    ("CoinTelegraph", "https://cointelegraph.com/rss"),
-    ("Decrypt", "https://decrypt.co/feed"),
-    ("Bitcoin Magazine", "https://bitcoinmagazine.com/feed"),
+    ("CoinDesk", "https://www.coindesk.com/arc/outboundfeeds/rss", "crypto"),
+    ("CoinTelegraph", "https://cointelegraph.com/rss", "crypto"),
+    ("Decrypt", "https://decrypt.co/feed", "crypto"),
+    ("Bitcoin Magazine", "https://bitcoinmagazine.com/feed", "crypto"),
+    ("Bloomberg", "https://feeds.bloomberg.com/business/news.rss", "macro"),
+    ("CNBC Economy", "https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=20910258", "macro"),
+    ("MarketWatch", "https://feeds.marketwatch.com/marketwatch/topstories/", "macro"),
 ]
 
 
@@ -2709,8 +2718,10 @@ def _parse_pub_date(raw: str) -> str:
     return raw
 
 
-def _parse_rss(source: str, url: str) -> list:
-    """Parse a single RSS feed into NewsItem dicts."""
+def _parse_rss(source: str, url: str, category: str = "crypto") -> list:
+    """Parse a single RSS feed into NewsItem dicts. `category` is stamped
+    on every emitted item so the frontend can render crypto vs macro
+    tabs without heuristic source-name matching."""
     items = []
     MAX_FEED_BYTES = 2 * 1024 * 1024  # 2 MB hard cap
     try:
@@ -2747,6 +2758,7 @@ def _parse_rss(source: str, url: str) -> list:
                     "title": title.strip(),
                     "link": link.strip(),
                     "source": source,
+                    "category": category,
                     "published": published,
                     "summary": desc,
                 })
@@ -2758,8 +2770,8 @@ def _parse_rss(source: str, url: str) -> list:
 def _build_news() -> dict:
     """Build aggregated news from RSS feeds."""
     all_items = []
-    for source, url in RSS_FEEDS:
-        all_items.extend(_parse_rss(source, url))
+    for source, url, category in RSS_FEEDS:
+        all_items.extend(_parse_rss(source, url, category))
 
     # Sort by published date (most recent first)
     all_items.sort(key=lambda x: x.get("published", ""), reverse=True)

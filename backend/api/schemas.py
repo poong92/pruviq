@@ -264,6 +264,7 @@ class NewsItem(BaseModel):
     source: str
     published: str
     summary: str = ""
+    category: str = "crypto"  # "crypto" | "macro" — drives /market/ news tab
 
 
 class NewsResponse(BaseModel):
