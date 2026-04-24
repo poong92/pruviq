@@ -165,7 +165,17 @@ async function main() {
     }
   }
 
-  const urls = [...urlToSources.keys()].filter((u) => u.startsWith(BASE));
+  // Compare by parsed origin — `startsWith(BASE)` would let
+  // https://pruviq.com.evil.example slip through (CodeQL
+  // js/incomplete-url-substring-sanitization).
+  const baseOrigin = new URL(BASE).origin;
+  const urls = [...urlToSources.keys()].filter((u) => {
+    try {
+      return new URL(u).origin === baseOrigin;
+    } catch {
+      return false;
+    }
+  });
   const limited = LIMIT > 0 ? urls.slice(0, LIMIT) : urls;
 
   process.stderr.write(
