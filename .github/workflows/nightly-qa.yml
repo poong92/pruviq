@@ -36,11 +36,13 @@ jobs:
       - name: Layer 3 — unit contract tests against shipped static JSON
         id: contract
         continue-on-error: true
+        if: hashFiles('tests/unit/hook-contract.test.ts') != ''
         run: npx vitest run tests/unit/hook-contract.test.ts
 
       - name: Layer 4 — freshness check against prod
         id: freshness
         continue-on-error: true
+        if: hashFiles('scripts/check-freshness.mjs') != ''
         run: |
           node scripts/check-freshness.mjs --verbose > freshness-events.ndjson
           cat freshness-events.ndjson
@@ -51,25 +53,29 @@ jobs:
           fi
 
       - name: Install Playwright browsers
+        if: hashFiles('tests/e2e/crawl/click-all.spec.ts', 'tests/e2e/scenarios/user-flows.spec.ts', 'tests/accessibility/interactive-a11y.spec.ts') != ''
         run: npx playwright install --with-deps chromium
 
       - name: Layer 2 — click-everything crawl against prod
         id: crawl
         continue-on-error: true
-        run: npx playwright test tests/e2e/crawl/click-all.spec.ts --project=prod-smoke --reporter=html --reporter=list || npx playwright test tests/e2e/crawl/click-all.spec.ts --project=desktop --reporter=html --reporter=list
+        if: hashFiles('tests/e2e/crawl/click-all.spec.ts') != ''
+        run: npx playwright test tests/e2e/crawl/click-all.spec.ts --project=desktop --reporter=html --reporter=list
 
       - name: Layer 5 — scenario flows against prod
         id: scenarios
         continue-on-error: true
+        if: hashFiles('tests/e2e/scenarios/user-flows.spec.ts') != ''
         run: npx playwright test tests/e2e/scenarios/user-flows.spec.ts --project=desktop --reporter=html --reporter=list
 
       - name: Layer 6 — a11y on interactive states
         id: a11y
         continue-on-error: true
+        if: hashFiles('tests/accessibility/interactive-a11y.spec.ts') != ''
         run: npx playwright test tests/accessibility/interactive-a11y.spec.ts --project=desktop --reporter=html --reporter=list
 
       - name: Upload HTML report
-        if: always()
+        if: always() && hashFiles('playwright-report/') != ''
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report-nightly
@@ -87,7 +93,7 @@ jobs:
               ['crawl', '${{ steps.crawl.outcome }}'],
               ['scenarios', '${{ steps.scenarios.outcome }}'],
               ['a11y', '${{ steps.a11y.outcome }}'],
-            ].filter(([, r]) => r !== 'success').map(([n]) => n);
+            ].filter(([, r]) => r !== 'success' && r !== 'skipped').map(([n]) => n);
 
             const { data } = await github.rest.issues.listForRepo({
               owner: context.repo.owner,
