@@ -1,0 +1,115 @@
+name: QA — Lighthouse Budget
+
+# PR-blocking perf budget gate. Runs @lhci/cli against 5 canonical prod
+# URLs, asserts category + metric thresholds in lighthouserc.json. Fails
+# the PR if any assertion trips — stops silent perf regressions from
+# shipping (e.g., a new island blows LCP past 2.5s).
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - "src/**"
+      - "public/**"
+      - "astro.config.mjs"
+      - "package.json"
+      - "package-lock.json"
+      - "lighthouserc.json"
+      - ".github/workflows/lighthouse-budget.yml"
+  schedule:
+    - cron: "0 3 * * *"          # nightly backstop
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: lighthouse-budget-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lhci:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Lighthouse CI
+        run: npm install -g @lhci/cli@0.14.x
+
+      - name: Run Lighthouse against prod
+        id: lhci
+        continue-on-error: true
+        run: lhci autorun --config=./lighthouserc.json
+
+      - name: Post summary comment on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            const dir = '.lighthouseci';
+            if (!fs.existsSync(dir)) {
+              core.info('No .lighthouseci directory — skipping comment.');
+              return;
+            }
+            // Read all *.json reports (one per URL) and summarise scores
+            const files = fs.readdirSync(dir).filter(f => f.endsWith('.json') && f !== 'assertion-results.json' && f !== 'manifest.json');
+            const rows = [];
+            for (const f of files) {
+              try {
+                const j = JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8'));
+                const url = j.finalDisplayedUrl || j.finalUrl || f;
+                const cats = j.categories || {};
+                const audits = j.audits || {};
+                rows.push({
+                  url,
+                  perf: Math.round((cats.performance?.score ?? 0) * 100),
+                  a11y: Math.round((cats.accessibility?.score ?? 0) * 100),
+                  bp:   Math.round((cats['best-practices']?.score ?? 0) * 100),
+                  seo:  Math.round((cats.seo?.score ?? 0) * 100),
+                  lcp:  Math.round(audits['largest-contentful-paint']?.numericValue ?? 0),
+                  cls:  (audits['cumulative-layout-shift']?.numericValue ?? 0).toFixed(3),
+                  tbt:  Math.round(audits['total-blocking-time']?.numericValue ?? 0),
+                });
+              } catch (e) { core.warning(`parse fail: ${f} (${e})`); }
+            }
+            const assertPath = path.join(dir, 'assertion-results.json');
+            let failed = [];
+            if (fs.existsSync(assertPath)) {
+              failed = JSON.parse(fs.readFileSync(assertPath, 'utf8'))
+                .filter(a => !a.passed)
+                .map(a => `  - [${a.level}] ${a.url}: ${a.auditId} → ${a.actual} (budget: ${a.expected})`);
+            }
+
+            const body = [
+              `### Lighthouse Budget Report`,
+              ``,
+              `| URL | Perf | A11y | BP | SEO | LCP (ms) | CLS | TBT (ms) |`,
+              `|-----|------|------|----|----|----------|-----|----------|`,
+              ...rows.map(r =>
+                `| ${r.url} | ${r.perf} | ${r.a11y} | ${r.bp} | ${r.seo} | ${r.lcp} | ${r.cls} | ${r.tbt} |`),
+              ``,
+              failed.length === 0
+                ? `All assertions passed.`
+                : `**Budget violations (${failed.length}):**\n${failed.join('\n')}`,
+            ].join('\n');
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body,
+            });
+
+      - name: Fail job if lhci asserted broken budgets
+        if: steps.lhci.outcome == 'failure'
+        run: |
+          echo "Lighthouse budget assertions failed — see PR comment."
+          exit 1
