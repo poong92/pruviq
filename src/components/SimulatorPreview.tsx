@@ -6,30 +6,31 @@ import { useEffect, useState, useRef } from "preact/hooks";
 import type { RefObject } from "preact";
 import { COINS_ANALYZED } from "../config/site-stats";
 
-// 2026-04-22 QA sweep P3: previous mock numbers (WR 61.2 · PF 2.14 ·
-// 847 trades) did not match /performance/ (WR 68.6 · PF 2.22 · 2898
-// trades). Hero now mirrors the /performance SSoT verbatim so the
-// "Verify" headline is not undermined by the card below it.
-// Headline card is still labeled "Illustrative" because the equity
-// curve here is a hand-drawn schematic, not the real curve.
+// 2026-04-25: hero now mirrors `simulator-presets.ts` ATR Breakout SHORT
+// (the QUICK_START_DEFAULT_PRESET_ID) verbatim — same SSoT used by /strategies
+// grid + /simulate Quick Start. Previous mock (WR 68.6 · PF 2.22 · Sharpe
+// 1.82) was internally inconsistent: total return only +25.6% while metrics
+// implied a much stronger strategy → broke "We DID honest" brand voice.
+// MDD shown red as-is; Sharpe and WR shown muted because <1.0 / <50% are
+// honest signals for SHORT strategies.
 const STATS = [
-  { label: "Win Rate", value: 68.6, suffix: "%", color: "var(--color-up)" },
-  { label: "Profit Factor", value: 2.22, suffix: "", color: "var(--color-up)" },
+  { label: "Win Rate", value: 41.4, suffix: "%", color: "var(--color-text)" },
+  { label: "Profit Factor", value: 1.31, suffix: "", color: "var(--color-up)" },
   {
     label: "Total Return",
-    value: 25.6,
+    value: 157.7,
     suffix: "%",
     color: "var(--color-up)",
     prefix: "+",
   },
   {
     label: "Max Drawdown",
-    value: 16.5,
+    value: 45.6,
     suffix: "%",
     color: "var(--color-red)",
   },
-  { label: "Trades", value: 2898, suffix: "", color: "var(--color-text)" },
-  { label: "Sharpe", value: 1.82, suffix: "", color: "var(--color-up)" },
+  { label: "Trades", value: 655, suffix: "", color: "var(--color-text)" },
+  { label: "Sharpe", value: 0.98, suffix: "", color: "var(--color-text)" },
 ];
 
 // More realistic equity curve with drawdowns
@@ -111,10 +112,10 @@ export default function SimulatorPreview() {
             class="px-2 py-0.5 rounded text-[10px] font-bold"
             style={{ background: "var(--color-accent)", color: "#0A0E14" }}
           >
-            BB Squeeze SHORT
+            ATR Breakout SHORT
           </span>
           <span class="text-[--color-text-muted] text-[10px]">
-            {COINS_ANALYZED} coins · 2yr · illustrative
+            {COINS_ANALYZED} coins · 2yr · verified · schematic
           </span>
         </div>
         <div class="flex items-center gap-1.5">
@@ -134,7 +135,7 @@ export default function SimulatorPreview() {
           style={{ color: "var(--color-up)" }}
         >
           {visible ? (
-            <AnimatedNumber target={25.6} prefix="+" duration={2000} />
+            <AnimatedNumber target={157.7} prefix="+" duration={2000} />
           ) : (
             "0.0"
           )}
@@ -144,7 +145,7 @@ export default function SimulatorPreview() {
           $1,000 →{" "}
           {visible ? (
             <span style={{ color: "var(--color-up)" }}>
-              $<AnimatedNumber target={1256} decimals={0} duration={2000} />
+              $<AnimatedNumber target={2577} decimals={0} duration={2000} />
             </span>
           ) : (
             "$1,000"
