@@ -8,7 +8,7 @@
 ## Project
 PRUVIQ is a crypto strategy backtesting platform.
 - Frontend: Astro 5 + Preact + Tailwind CSS 4 (Cloudflare Pages)
-- Backend: Python FastAPI (Mac Mini, port 8400)
+- Backend: Python FastAPI on DigitalOcean (deploy via `.github/workflows/deploy-backend.yml`; host in `DO_HOST` secret; app `:8080`). Mac Mini = dev only.
 - Data: 535+ coins, BB Squeeze SHORT strategy
 - Languages: English + Korean (i18n)
 

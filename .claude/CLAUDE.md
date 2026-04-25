@@ -39,7 +39,7 @@ gh pr create --title "..." --label automerge --body "..."
 ## PR/배포 워크플로우
 - PR 생성 → CI 자동 통과 → 자동 머지 (오너가 수동 머지 안 함)
 - backend/ 변경 포함 PR도 자동 머지됨 (2026-04-11 backend/ 차단 제거)
-- backend/ 변경 후 머지되면: Mac Mini에서 `git pull` + `~/Desktop/start-backend.command` 실행 필수
+- backend/ 변경 후 머지되면: `.github/workflows/deploy-backend.yml` 가 DigitalOcean droplet 에 자동 SSH 배포 (push + */30 cron drift-detector). 수동 재기동: `gh workflow run deploy-backend.yml --ref main`
 
 ## 응답 규칙
 
@@ -53,7 +53,7 @@ gh pr create --title "..." --label automerge --body "..."
 # PRUVIQ v0.3.0
 
 "Verify. Execute. Profit." — 무료 크립토 전략 시뮬레이션 + 시장 컨텍스트 플랫폼
-- 배포: Cloudflare Pages (pruviq.com) / 백엔드: api.pruviq.com (Mac Mini, FastAPI)
+- 배포: Cloudflare Pages (pruviq.com) / 백엔드: api.pruviq.com (DigitalOcean droplet, host in `DO_HOST` secret, FastAPI :8080)
 - 수익: 거래소 레퍼럴 (모든 기능 무료)
 
 ## 아키텍처 원칙
@@ -65,12 +65,12 @@ gh pr create --title "..." --label automerge --body "..."
 ## 인프라
 
 ```
-개발: MacBook → git push → Cloudflare 자동 배포
-백엔드: Mac Mini jepo@172.30.1.16 (uvicorn --workers 1)
-Mac Mini 2계정:
-  - jepo: API 서버 전용. backend/ 변경 시 git pull + 서버 재시작 필요
-  - openclaw: 프론트엔드 전용. backend/ 직접 수정 금지
-  - 프론트엔드만 변경 시 jepo pull 불필요 (Cloudflare 배포)
+개발: MacBook → git push → Cloudflare Pages 자동 빌드+배포 (프론트)
+백엔드: DigitalOcean droplet (host in DO_HOST secret, port 2222 SSH,
+        app :8080, systemd pruviq-*.service). deploy-backend.yml 자동
+        + */30 cron drift-detector.
+Mac Mini M4: dev-only — 로컬 빌드 테스트, OHLCV 수집 cron,
+             autotrader 백업, AI 리서치. 프로덕션 요청 처리 안 함.
 ```
 
 ## 원론적 해결 원칙 (CRITICAL — 반복 방지 룰)
