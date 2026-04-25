@@ -50,6 +50,23 @@ OKX_MANUAL_PASTE_ENABLED = (
     os.environ.get("OKX_MANUAL_PASTE_ENABLED", "true").lower() == "true"
 )
 
+# ── OKX OAuth-issued API key IP binding ──
+# OKX docs (OKX_API_SPECS.md §1, L66-67): keys with trade perm + no IP
+# binding expire after 14 days of inactivity. Without this our owner's
+# OAuth-issued API key dies silently every 2 weeks if no trade fires.
+# Comma-separated, max 20 IPs per OKX broker docs.
+OKX_API_KEY_IP = os.environ.get("OKX_API_KEY_IP", "167.172.81.145")
+
+# ── PKCE flow toggle ──
+# OKX broker docs say OAuth 2.0 supports authorization code mode AND PKCE
+# mode. Sending code_challenge + code_challenge_method=S256 on authorize
+# and code_verifier on token-exchange. Hypothesis H for the consent-page
+# silent-drop: newer OAuth apps may require PKCE. Toggle ON by default
+# (extra params are typically ignored if PKCE not enforced — safe to ship).
+OKX_OAUTH_PKCE_ENABLED = (
+    os.environ.get("OKX_OAUTH_PKCE_ENABLED", "true").lower() == "true"
+)
+
 # ── Database path (SQLite) ──
 OKX_DB_PATH = os.environ.get("OKX_DB_PATH", "")
 

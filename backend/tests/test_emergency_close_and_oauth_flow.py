@@ -212,7 +212,7 @@ async def test_exchange_code_token_missing_raises():
     client_cm.__aexit__ = AsyncMock(return_value=False)
     with patch(
         "okx.oauth.validate_csrf_state",
-        return_value=("https://pruviq.com/dashboard", "en"),
+        return_value=("https://pruviq.com/dashboard", "en", ""),
     ), patch("okx.oauth.httpx.AsyncClient", return_value=client_cm):
         with pytest.raises(ValueError, match="OKX token error"):
             await exchange_code("expired-code", "ok-state", "")
@@ -232,7 +232,7 @@ async def test_exchange_code_5xx_raises_httpx_error():
     client_cm.__aexit__ = AsyncMock(return_value=False)
     with patch(
         "okx.oauth.validate_csrf_state",
-        return_value=("https://pruviq.com/dashboard", "en"),
+        return_value=("https://pruviq.com/dashboard", "en", ""),
     ), patch("okx.oauth.httpx.AsyncClient", return_value=client_cm):
         with pytest.raises(httpx.HTTPStatusError):
             await exchange_code("any-code", "ok-state", "")
@@ -274,7 +274,7 @@ async def test_exchange_code_happy_path_saves_session():
 
     with patch(
         "okx.oauth.validate_csrf_state",
-        return_value=("https://pruviq.com/dashboard", "en"),
+        return_value=("https://pruviq.com/dashboard", "en", ""),
     ), patch("okx.oauth.save_session") as mock_save, patch(
         "okx.oauth.httpx.AsyncClient", return_value=client_cm
     ):
@@ -312,7 +312,7 @@ async def test_exchange_code_apikey_failure_raises():
 
     with patch(
         "okx.oauth.validate_csrf_state",
-        return_value=("https://pruviq.com/dashboard", "en"),
+        return_value=("https://pruviq.com/dashboard", "en", ""),
     ), patch("okx.oauth.httpx.AsyncClient", return_value=client_cm):
         with pytest.raises(ValueError, match="OKX API key creation failed"):
             await exchange_code("ok-code", "ok-state", "")

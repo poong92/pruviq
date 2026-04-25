@@ -10,9 +10,22 @@ Flow:
 scope="fast_api" — REQUIRED for OKX Broker OAuth (OKX_API_SPECS.md §1).
 scope="read_only,trade" silently routes user to /account/users (OKX drop). Do NOT use.
 (Earlier comment had this reversed — corrected 2026-04-19 after /users drop confirmed live.)
+
+PKCE (2026-04-25):
+  Per OKX broker docs, OAuth 2.0 supports authorization code mode AND PKCE
+  mode. We send code_challenge + code_challenge_method=S256 on /authorize and
+  the matching code_verifier on token exchange. PKCE params are typically
+  ignored if a provider doesn't enforce them, so leaving the toggle on is
+  safe even when not strictly required. Toggle: OKX_OAUTH_PKCE_ENABLED.
+
+API key IP binding (2026-04-25):
+  OKX docs (§1, L66-67): keys with trade perm + no IP binding expire after
+  14 days inactivity. We now pass `ip` on POST /api/v5/users/oauth/apikey.
 """
 from __future__ import annotations
 
+import base64
+import hashlib
 import logging
 import secrets
 import string
@@ -21,12 +34,14 @@ import time
 import httpx
 
 from .config import (
+    OKX_API_KEY_IP,
     OKX_BASE_URL,
     OKX_BROKER_CODE,
     OKX_CLIENT_ID,
     OKX_CLIENT_SECRET,
     OKX_DEMO_MODE,
     OKX_OAUTH_AUTHORIZE,
+    OKX_OAUTH_PKCE_ENABLED,
     OKX_OAUTH_TOKEN,
     OKX_REDIRECT_URI,
 )
@@ -46,6 +61,19 @@ def _gen_passphrase() -> str:
     chars = string.ascii_letters + string.digits + "!@#$%"
     rand = "".join(secrets.choice(chars) for _ in range(12))
     return f"Pr1!{rand}"  # guaranteed: upper(P), lower(r), digit(1), special(!)
+
+
+def _gen_pkce_pair() -> tuple[str, str]:
+    """Generate (code_verifier, code_challenge) per RFC 7636.
+
+    code_verifier: 43-128 char URL-safe base64 of 32 random bytes (no padding).
+    code_challenge: base64url(SHA256(code_verifier)) (no padding) when
+    code_challenge_method=S256.
+    """
+    code_verifier = secrets.token_urlsafe(32)  # 43 chars URL-safe, no `=`
+    digest = hashlib.sha256(code_verifier.encode("ascii")).digest()
+    code_challenge = base64.urlsafe_b64encode(digest).decode("ascii").rstrip("=")
+    return code_verifier, code_challenge
 
 
 def _validate_redirect(url: str) -> str:
@@ -104,7 +132,7 @@ def generate_oauth_params(redirect_after: str = "", lang: str = "en") -> dict:
     """Generate OAuth params for frontend authorize URL."""
     redirect_after = _validate_redirect(redirect_after)
     state = secrets.token_urlsafe(32)
-    save_csrf_state(state, redirect_after or "", lang)
+    code_verifier = ""
     params = {
         "state": state,
         "client_id": OKX_CLIENT_ID,
@@ -113,8 +141,13 @@ def generate_oauth_params(redirect_after: str = "", lang: str = "en") -> dict:
         "scope": "fast_api",
         "redirect_uri": OKX_REDIRECT_URI,
     }
+    if OKX_OAUTH_PKCE_ENABLED:
+        code_verifier, code_challenge = _gen_pkce_pair()
+        params["code_challenge"] = code_challenge
+        params["code_challenge_method"] = "S256"
     if OKX_BROKER_CODE:
         params["channelId"] = OKX_BROKER_CODE
+    save_csrf_state(state, redirect_after or "", lang, code_verifier)
     return params
 
 
@@ -123,7 +156,7 @@ def generate_auth_url(redirect_after: str = "", lang: str = "en") -> str:
     from urllib.parse import urlencode
     redirect_after = _validate_redirect(redirect_after)
     state = secrets.token_urlsafe(32)
-    save_csrf_state(state, redirect_after or "", lang)
+    code_verifier = ""
     params = {
         "client_id": OKX_CLIENT_ID,
         "response_type": "code",
@@ -132,8 +165,13 @@ def generate_auth_url(redirect_after: str = "", lang: str = "en") -> str:
         "scope": "fast_api",
         "state": state,
     }
+    if OKX_OAUTH_PKCE_ENABLED:
+        code_verifier, code_challenge = _gen_pkce_pair()
+        params["code_challenge"] = code_challenge
+        params["code_challenge_method"] = "S256"
     if OKX_BROKER_CODE:
         params["channelId"] = OKX_BROKER_CODE
+    save_csrf_state(state, redirect_after or "", lang, code_verifier)
     return f"{OKX_OAUTH_AUTHORIZE}?{urlencode(params)}"
 
 
@@ -156,7 +194,15 @@ async def _create_user_apikey(access_token: str) -> dict:
         "passphrase": passphrase,
         "perm": "read_only,trade",
     }
-    logger.warning("→ POST /api/v5/users/oauth/apikey demo=%s", OKX_DEMO_MODE)
+    # IP binding: keys with trade perm + no IP expire after 14d inactivity
+    # (OKX_API_SPECS.md §1, L66-67). Always pass our backend IP so OAuth-issued
+    # keys persist across cold periods.
+    if OKX_API_KEY_IP:
+        body["ip"] = OKX_API_KEY_IP
+    logger.warning(
+        "→ POST /api/v5/users/oauth/apikey demo=%s ip_bound=%s",
+        OKX_DEMO_MODE, bool(OKX_API_KEY_IP),
+    )
     async with httpx.AsyncClient() as client:
         resp = await client.post(
             f"{OKX_BASE_URL}/api/v5/users/oauth/apikey",
@@ -193,7 +239,7 @@ async def exchange_code(code: str, state: str, domain: str = "") -> tuple[str, s
     csrf_result = validate_csrf_state(state)
     if csrf_result is None:
         raise ValueError("Invalid or expired CSRF state")
-    redirect_url, lang = csrf_result
+    redirect_url, lang, code_verifier = csrf_result
 
     data = {
         "client_id": OKX_CLIENT_ID,
@@ -202,6 +248,10 @@ async def exchange_code(code: str, state: str, domain: str = "") -> tuple[str, s
         "grant_type": "authorization_code",
         "redirect_uri": OKX_REDIRECT_URI,
     }
+    # PKCE: pass code_verifier on token exchange so OKX can verify
+    # SHA256(verifier) == code_challenge sent on /authorize.
+    if code_verifier:
+        data["code_verifier"] = code_verifier
     # CodeQL py/clear-text-logging-sensitive-data: false positive. `OKX_OAUTH_TOKEN`
     # is the public endpoint URL (`https://www.okx.com/api/v5/users/oauth/...`),
     # not a token/secret. The `data` dict below is NEVER logged — only the URL
