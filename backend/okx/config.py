@@ -67,6 +67,17 @@ OKX_OAUTH_PKCE_ENABLED = (
     os.environ.get("OKX_OAUTH_PKCE_ENABLED", "true").lower() == "true"
 )
 
+# ── Experimental OAuth debug endpoint toggle ──
+# Activates GET /auth/okx/start-experimental?variant=X for testing parameter
+# combinations against OKX silent-drop. Default false → 404 in prod. Owner
+# enables temporarily via DO .env + systemctl restart pruviq-api when
+# debugging, disables when done. Variants: baseline, read_only_trade,
+# no_channel, no_access_type, add_domain, add_platform,
+# read_only_trade_no_channel, no_pkce.
+OKX_OAUTH_EXPERIMENTAL_ENABLED = (
+    os.environ.get("OKX_OAUTH_EXPERIMENTAL_ENABLED", "false").lower() == "true"
+)
+
 # ── Database path (SQLite) ──
 OKX_DB_PATH = os.environ.get("OKX_DB_PATH", "")
 
