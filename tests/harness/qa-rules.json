@@ -8,10 +8,10 @@
     "api_base_url": "https://api.pruviq.com"
   },
   "coin_count": {
-    "current": 238,
+    "current": 240,
     "stale_value": 549,
     "min_acceptable": 220,
-    "description": "현재 코인 수. 새 코인 추가 시 여기만 수정."
+    "description": "현재 코인 수. site-stats.json.coins_analyzed 와 일치. 새 코인 추가 시 두 곳 같이 수정 (또는 site-stats를 SSoT로 일원화 — 별도 리팩토링)."
   },
   "data_sources": {
     "expected": "CoinGecko",

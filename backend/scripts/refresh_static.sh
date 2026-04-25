@@ -76,15 +76,52 @@ if ! crontab -l 2>/dev/null | grep -qF "refresh_static.sh"; then
     send_alert "WARN" "Cron entry was missing — auto-installed"
 fi
 
-# Only proceed if already on main. Never hijack a developer's feature branch
-# (previous behavior: `git stash + git checkout main` mid-session wiped WIP and
-# caused merge conflicts with the dev's commits — see 2026-04-18 audit incident).
-# Dev work stays intact; cron simply skips this cycle and alerts owner.
+# Auto-recovery from feature branch when safely idle.
+#
+# History:
+#   2026-04-18: blunt `git stash + git checkout main` mid-session wiped WIP
+#               and caused merge conflicts with the dev's commits → reverted
+#               to skip-only behavior with an alert.
+#   2026-04-25→26: skip-only behavior caused 18 alerts + 6h data staleness
+#               after a session ended on feature branch with all work pushed.
+#               Owner directive: alerts can flood (owner reads them) but
+#               recovery MUST be automatic when safe.
+#
+# This implementation re-enables auto main-checkout, but only when ALL three
+# conditions hold (any one missing = skip + WARN as before):
+#   1. uncommitted changes == 0 (working tree clean → no WIP to lose)
+#   2. local HEAD == origin/<branch> (every commit pushed → no commit to lose)
+#   3. last commit > 1h ago (active dev session would commit more often)
+# A push'd, clean, idle branch is exactly the post-PR-merge state where the
+# 2026-04-25 incident occurred.
 CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "unknown")
 if [[ "$CURRENT_BRANCH" != "main" ]]; then
-    log "Not on main (on $CURRENT_BRANCH) — skipping this cron cycle (dev session active)"
-    send_alert "WARN" "refresh_static cron skipped: repo on branch '$CURRENT_BRANCH' (dev session). Will retry in 20min. If persistent, check Mac Mini git state."
-    exit 0
+    UNCOMMITTED=$(git status --porcelain 2>/dev/null | wc -l | tr -d ' ')
+    LAST_COMMIT_TS=$(git log -1 --format=%ct 2>/dev/null || echo 0)
+    NOW_TS=$(date +%s)
+    IDLE_SEC=$(( NOW_TS - LAST_COMMIT_TS ))
+    LOCAL_HEAD=$(git rev-parse HEAD 2>/dev/null || echo "")
+    REMOTE_HEAD=$(git rev-parse "origin/$CURRENT_BRANCH" 2>/dev/null || echo "no-remote")
+    PUSHED=false
+    if [[ -n "$LOCAL_HEAD" && "$LOCAL_HEAD" == "$REMOTE_HEAD" ]]; then
+        PUSHED=true
+    fi
+
+    if [[ "$UNCOMMITTED" == "0" && "$PUSHED" == "true" && "$IDLE_SEC" -gt 3600 ]]; then
+        log "Feature branch '$CURRENT_BRANCH' safe-to-recover (clean=true, pushed=true, idle=${IDLE_SEC}s) — auto checkout main"
+        if git checkout main 2>&1 | while read l; do log "  $l"; done; then
+            send_alert "INFO" "refresh_static auto-recovered to main from '$CURRENT_BRANCH' (idle $((IDLE_SEC/60))min, all commits pushed). Your branch is preserved — \`git checkout $CURRENT_BRANCH\` to resume."
+        else
+            log "git checkout main failed during auto-recovery — skipping"
+            send_alert "ERROR" "refresh_static auto-recovery FAILED: git checkout main errored on '$CURRENT_BRANCH'. Manual intervention needed."
+            exit 1
+        fi
+    else
+        REASON="uncommitted=$UNCOMMITTED, pushed=$PUSHED, idle_min=$((IDLE_SEC/60))"
+        log "Not on main (on $CURRENT_BRANCH) — skip cycle (recovery blocked: $REASON)"
+        send_alert "WARN" "refresh_static cron skipped: branch '$CURRENT_BRANCH' ($REASON). Auto-recovery requires uncommitted=0 + pushed + idle>60min. Will retry in 20min."
+        exit 0
+    fi
 fi
 
 # Pull latest on main (no --autostash needed — we just confirmed clean branch state).
