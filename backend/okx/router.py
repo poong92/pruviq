@@ -21,7 +21,7 @@ from typing import Optional
 from fastapi import APIRouter, Header, HTTPException, Query, Request, Response
 from fastapi.responses import RedirectResponse
 
-from .config import COOKIE_DOMAIN, FRONTEND_URL, OKX_CLIENT_ID
+from .config import COOKIE_DOMAIN, FRONTEND_URL, OKX_CLIENT_ID, OKX_MANUAL_PASTE_ENABLED
 
 ADMIN_KEY = os.environ.get("ADMIN_API_KEY", "")
 
@@ -177,6 +177,39 @@ async def oauth_disconnect(request: Request):
         content='{"status":"disconnected"}', media_type="application/json"
     )
     _clear_session_cookie(response)
+    return response
+
+
+@router.post("/auth/okx/manual-connect")
+async def oauth_manual_connect(request: Request):
+    """Manual API key paste path — alternative to OAuth.
+
+    Body: {api_key, secret_key, passphrase}.
+    Validates by calling OKX /api/v5/account/balance with HMAC; on success
+    persists via save_session() with the same dict shape OAuth produces, so
+    every downstream /execute/* endpoint sees an identical session row.
+    """
+    if not OKX_MANUAL_PASTE_ENABLED:
+        raise HTTPException(503, "manual_paste_disabled")
+    try:
+        body = await request.json()
+    except ValueError:
+        raise HTTPException(400, "body must be JSON")
+    if not isinstance(body, dict):
+        raise HTTPException(400, "body must be JSON object")
+    from .manual_auth import validate_and_store
+    try:
+        session_id = await validate_and_store(
+            body.get("api_key", ""),
+            body.get("secret_key", ""),
+            body.get("passphrase", ""),
+        )
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+    response = Response(
+        content='{"status":"connected"}', media_type="application/json"
+    )
+    _set_session_cookie(response, session_id)
     return response
 
 
