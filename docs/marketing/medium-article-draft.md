@@ -88,7 +88,7 @@ Why the gap? Mostly one bad coin (GUNUSDT, -$378) and some timeout issues during
 
 The technical stack:
 
-- **Backend**: Python FastAPI on Mac Mini M4 Pro, 575 coin datasets pre-loaded into memory
+- **Backend**: Python FastAPI on DigitalOcean droplet, 575 coin datasets pre-loaded into memory
 - **Frontend**: Astro 5 + Preact (interactive strategy builder as islands)
 - **Data**: Binance 1H OHLCV candles, 2+ years per coin, updated daily
 - **Hosting**: Cloudflare Pages (frontend) + Cloudflare Tunnel (API)
