@@ -21,7 +21,13 @@ from typing import Optional
 from fastapi import APIRouter, Header, HTTPException, Query, Request, Response
 from fastapi.responses import RedirectResponse
 
-from .config import COOKIE_DOMAIN, FRONTEND_URL, OKX_CLIENT_ID, OKX_MANUAL_PASTE_ENABLED
+from .config import (
+    COOKIE_DOMAIN,
+    FRONTEND_URL,
+    OKX_CLIENT_ID,
+    OKX_MANUAL_PASTE_ENABLED,
+    OKX_OAUTH_EXPERIMENTAL_ENABLED,
+)
 
 ADMIN_KEY = os.environ.get("ADMIN_API_KEY", "")
 
@@ -34,6 +40,7 @@ from .oauth import (
     disconnect,
     exchange_code,
     generate_auth_url,
+    generate_auth_url_experimental,
     generate_oauth_params,
     get_api_credentials,
     is_authenticated,
@@ -98,6 +105,32 @@ async def oauth_start(
     if not OKX_CLIENT_ID:
         raise HTTPException(503, "OKX Broker not configured")
     url = generate_auth_url(redirect_after=redirect, lang=lang)
+    return RedirectResponse(url=url, status_code=302)
+
+
+@router.api_route("/auth/okx/start-experimental", methods=["GET", "HEAD"])
+async def oauth_start_experimental(
+    variant: str = Query("baseline", description="Param variant for silent-drop debugging"),
+    redirect: str = Query("", description="Post-OAuth redirect URL"),
+    lang: str = Query("en", description="Language for redirect"),
+):
+    """Experimental OAuth start — flips ONE parameter vs baseline so the
+    owner can A/B test which mutation lifts the /account/users silent drop.
+    Activates only when OKX_OAUTH_EXPERIMENTAL_ENABLED=true on DO. Returns
+    404 in normal prod state.
+
+    Variants: baseline, read_only_trade, no_channel, no_access_type,
+    add_domain, add_platform, read_only_trade_no_channel, no_pkce.
+    """
+    if not OKX_OAUTH_EXPERIMENTAL_ENABLED:
+        raise HTTPException(404, "experimental_disabled")
+    if not OKX_CLIENT_ID:
+        raise HTTPException(503, "OKX Broker not configured")
+    try:
+        url = generate_auth_url_experimental(variant, redirect_after=redirect, lang=lang)
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+    logger.warning("oauth-experimental: variant=%s", variant)
     return RedirectResponse(url=url, status_code=302)
 
 

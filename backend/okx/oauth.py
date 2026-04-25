@@ -175,6 +175,84 @@ def generate_auth_url(redirect_after: str = "", lang: str = "en") -> str:
     return f"{OKX_OAUTH_AUTHORIZE}?{urlencode(params)}"
 
 
+# Variants for OAuth silent-drop debugging. Baseline = current production.
+# Each variant flips ONE parameter so we can isolate which mutation lifts
+# the /account/users redirect. Browser-tested by owner.
+EXPERIMENTAL_VARIANTS = (
+    "baseline",
+    "read_only_trade",
+    "no_channel",
+    "no_access_type",
+    "add_domain",
+    "add_platform",
+    "read_only_trade_no_channel",
+    "no_pkce",
+)
+
+
+def generate_auth_url_experimental(
+    variant: str,
+    redirect_after: str = "",
+    lang: str = "en",
+) -> str:
+    """Generate authorize URL with parameter variants for silent-drop debug.
+
+    Variants applied AFTER baseline assembly:
+      baseline                    : current production (fast_api + PKCE + channelId)
+      read_only_trade             : scope=read_only,trade (PKCE on)
+      no_channel                  : remove channelId
+      no_access_type              : remove access_type
+      add_domain                  : add domain=okx.com
+      add_platform                : add platform=web
+      read_only_trade_no_channel  : combine read_only,trade + no channelId
+      no_pkce                     : strip PKCE params
+    """
+    from urllib.parse import urlencode
+
+    if variant not in EXPERIMENTAL_VARIANTS:
+        raise ValueError(f"unknown variant: {variant!r}")
+
+    redirect_after = _validate_redirect(redirect_after)
+    state = secrets.token_urlsafe(32)
+    code_verifier = ""
+
+    params: dict[str, str] = {
+        "client_id": OKX_CLIENT_ID,
+        "response_type": "code",
+        "access_type": "offline",
+        "redirect_uri": OKX_REDIRECT_URI,
+        "scope": "fast_api",
+        "state": state,
+    }
+    if OKX_OAUTH_PKCE_ENABLED:
+        code_verifier, code_challenge = _gen_pkce_pair()
+        params["code_challenge"] = code_challenge
+        params["code_challenge_method"] = "S256"
+    if OKX_BROKER_CODE:
+        params["channelId"] = OKX_BROKER_CODE
+
+    if variant == "read_only_trade":
+        params["scope"] = "read_only,trade"
+    elif variant == "no_channel":
+        params.pop("channelId", None)
+    elif variant == "no_access_type":
+        params.pop("access_type", None)
+    elif variant == "add_domain":
+        params["domain"] = "okx.com"
+    elif variant == "add_platform":
+        params["platform"] = "web"
+    elif variant == "read_only_trade_no_channel":
+        params["scope"] = "read_only,trade"
+        params.pop("channelId", None)
+    elif variant == "no_pkce":
+        params.pop("code_challenge", None)
+        params.pop("code_challenge_method", None)
+        code_verifier = ""
+
+    save_csrf_state(state, redirect_after or "", lang, code_verifier)
+    return f"{OKX_OAUTH_AUTHORIZE}?{urlencode(params)}"
+
+
 async def _create_user_apikey(access_token: str) -> dict:
     """
     Step 4 of Fast API flow: use one-time access_token to create API key for user.
