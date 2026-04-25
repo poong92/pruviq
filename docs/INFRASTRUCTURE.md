@@ -38,7 +38,7 @@
     │                     │    │  서비스:                           │       │
     │  Python venvs:      │    │   - n8n       :5678               │       │
     │   - .venv-at/       │    │   - Ollama    :11434              │       │
-    │   - .venv-pv/       │    │   - PRUVIQ API:8400 (Phase 1+)   │       │
+    │   - .venv-pv/       │    │   (PRUVIQ API는 DO :8080 — Mac Mini 호스팅 안 함)│       │ <!-- docs-lint-allow: 명시적 부정문 — Mac Mini가 호스팅 안 한다는 사실을 다이어그램에 못 박는 것이 의도 -->
     │                     │    │                                    │       │
     └──────────┬──────────┘    └────────────────────────────────────┘       │
                │                                                           │
@@ -187,7 +187,7 @@ pip install -r requirements.txt
 |--------|------|-----------|------|
 | n8n | 5678 | com.n8n.server.plist | 자동화 파이프라인 |
 | Ollama | 11434 | com.ollama.server.plist | AI 시황 요약 |
-| PRUVIQ API | 8400 | com.pruviq.api.plist (Phase 1+) | 웹 API 서빙 |
+| (구 계획) PRUVIQ API on Mac Mini 8400 | — | — | **이행 안 됨**. 실제 PRUVIQ API는 DigitalOcean :8080 (systemd `pruviq-api.service`) — 자세한 건 § 3.3 포트 표 참조 | <!-- docs-lint-allow: 의도적 역사 기록 — "이행 안 됨" 명시 -->
 
 #### Mac Mini에서 하지 않는 것
 - autotrader 실거래 봇 실행 (DO 서버 전용)
@@ -251,7 +251,7 @@ pip install -r requirements.txt
 | MacBook | DO 서버 | SSH | `ssh root@167.172.81.145` |
 | Mac Mini | DO 서버 | SSH | `ssh root@167.172.81.145` |
 | MacBook | n8n UI | 브라우저 | `http://100.93.138.124:5678` |
-| MacBook | PRUVIQ API | HTTP | `http://100.93.138.124:8400` (Phase 1+) |
+| MacBook | PRUVIQ API | HTTP | `https://api.pruviq.com/health` (DO via Cloudflare Tunnel) |
 
 ### 3.3 포트 할당표
 
@@ -476,9 +476,9 @@ OLLAMA_HOST=http://127.0.0.1:11434
 # n8n Webhook
 N8N_WEBHOOK_BASE=http://127.0.0.1:5678/webhook
 
-# PRUVIQ API (Phase 1+)
+# PRUVIQ API (DigitalOcean — host in DO_HOST secret)
 PRUVIQ_API_HOST=0.0.0.0
-PRUVIQ_API_PORT=8400
+PRUVIQ_API_PORT=8080
 ```
 
 ---
