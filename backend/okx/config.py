@@ -42,6 +42,14 @@ OKX_OAUTH_TOKEN = f"{OKX_BASE_URL}/v5/users/oauth/token"
 # ── Demo mode (testnet headers) ──
 OKX_DEMO_MODE = os.environ.get("OKX_DEMO_MODE", "false").lower() == "true"
 
+# ── Manual API key paste kill switch ──
+# Backend-only revert path independent of frontend AUTOTRADE_MANUAL_ENABLED
+# flag. Flip to "false" + restart pruviq-api to disable the manual-connect
+# endpoint without redeploying frontend. Default true (live).
+OKX_MANUAL_PASTE_ENABLED = (
+    os.environ.get("OKX_MANUAL_PASTE_ENABLED", "true").lower() == "true"
+)
+
 # ── Database path (SQLite) ──
 OKX_DB_PATH = os.environ.get("OKX_DB_PATH", "")
 
