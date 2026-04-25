@@ -30,7 +30,7 @@
 │  │                       │                                            │     │
 │  │                       ▼                                            │     │
 │  │  ┌─────────────────────────────────────────────────┐              │     │
-│  │  │             Storage (Parquet + Registry)         │              │     │
+│  │  │             Storage — 현재 CSV / 계획 Parquet         │              │     │
 │  │  │  data/                                           │              │     │
 │  │  │  ├── ohlcv/                                      │              │     │
 │  │  │  │   ├── binance/spot/BTCUSDT_1h.parquet        │              │     │
@@ -188,7 +188,7 @@ pruviq/
 │       └── schemas.py                 # Pydantic 모델
 │
 ├── data/                              # 데이터 저장소 (gitignore)
-│   ├── ohlcv/                         # OHLCV 데이터 (Parquet)
+│   ├── ohlcv/                         # OHLCV 데이터 (현재 CSV — Parquet 마이그레이션은 Phase 2 계획)
 │   │   ├── binance/
 │   │   │   ├── spot/                  # BTCUSDT_1h.parquet, ...
 │   │   │   └── futures/

@@ -18,7 +18,7 @@ PRUVIQ 사이트의 자동 검증 인프라. "65/65 tests PASS 인데 유저가 
 | **5** Scenario flows | `tests/e2e/scenarios/user-flows.spec.ts` | 매 PR | 4 핵심 유저 여정 step-by-step (preset→결과, macro 뉴스 탭, 등) |
 | **6** A11y interactive | `tests/accessibility/interactive-a11y.spec.ts` | 매 PR | 버튼 클릭 후 axe — 신규 위반 0 |
 | **7** Nightly sweep | `.github/workflows/nightly-qa.yml` | 매일 02:00 UTC | prod 전체 재실행 + auto-issue |
-| **8** Flake classifier | `scripts/classify-flake.mjs`, `.github/workflows/flake-report.yml` | 재시도 발생 시 | passed-after-retry 기록 + 주간 리포트 |
+| **8** Flake classifier | `scripts/classify-flake.mjs`, `.github/workflows/flake-report.yml` | 매주 월 04:00 UTC | passed-after-retry 기록 + 주간 리포트 (Issue 자동 생성) |
 
 **Lighthouse budget gate** (레이어 번호 외 독립):
 - `lighthouserc.json`, `.github/workflows/lighthouse-budget.yml`

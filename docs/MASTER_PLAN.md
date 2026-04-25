@@ -47,20 +47,19 @@
 ## 3. 인프라 (Infrastructure Architect)
 
 ```
-(2026-02 초기 계획 — 역사적 기록)
-MacBook (jplee)          Mac Mini (jepo)           DO Server
-~/Desktop/pruviq    →    ~/pruviq              167.172.81.145
-개발 전용                 운영/자동화/AI            autotrader ONLY
-git push                 git pull               Docker
-                         n8n (5678)
-                         Ollama (11434)
-                         PRUVIQ API (8400)
-                         크론: 매시 데이터수집
-
-⚠️ 이행 완료 (2026-04): PRUVIQ API는 별도 DigitalOcean droplet
-(host in DO_HOST secret)으로 이관. Mac Mini는 dev + OHLCV 수집 cron +
-autotrader 백업만. 현행 세부는 docs/INFRASTRUCTURE.md + QA_AUTOMATION.md.
+(현행 — 2026-04 이행 완료)
+MacBook (jplee)       Mac Mini (jepo)          DO PRUVIQ droplet           DO autotrader (별개)
+~/Desktop/pruviq  →   ~/pruviq                 host in DO_HOST secret      167.172.81.145
+개발 전용              dev + cron + 백업        PRUVIQ API :8080            autotrader ONLY
+git push              OHLCV 수집 (cron)        systemd pruviq-api.service  Docker
+                      autotrader 데이터 백업    cloudflared (api.pruviq.com)
+                      n8n (5678) · Ollama
+                                                cloudflared
 ```
+
+원래 2026-02 초기 계획에서는 Mac Mini 가 PRUVIQ API 까지 호스팅할 예정이었으나, <!-- docs-lint-allow: 의도적 역사 기록 — 초기 계획 vs 실제 이행 차이 명시 -->
+2026-04 운영 이슈 (안정성 + 격리)로 PRUVIQ API 만 별도 DigitalOcean droplet 으로
+이관. 자세한 인프라는 docs/INFRASTRUCTURE.md, QA 자동화는 docs/QA_AUTOMATION.md.
 
 **환경 분리:** Python venv 분리, API 키 분리, Git repo 분리
 **크론 스케줄:**

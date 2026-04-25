@@ -26,15 +26,7 @@ Test strategies on real historical data with realistic market conditions.
 - **Yearly Breakdown**: Performance metrics split by year to detect overfitting
 
 ### Strategy Library
-5 pre-built strategies with full transparency - including the ones that failed.
-
-| Strategy | Direction | Status | Win Rate | Profit Factor |
-|----------|-----------|--------|----------|---------------|
-| BB Squeeze SHORT | Short | **Verified** (live trading) | 70.4% | 2.55 |
-| BB Squeeze LONG | Long | Killed | 51.0% | 0.98 |
-| Momentum LONG | Long | Killed (-$14,115) | 37.5% | 0.71 |
-| ATR Breakout | Long | Shelved | - | - |
-| HV Squeeze | Short | Shelved | - | - |
+PRUVIQ ships transparency: verified strategies with fresh metrics + the ones that failed. Live numbers (Win Rate / PF / Sharpe / MDD) are tracked in [`src/config/simulator-presets.ts`](src/config/simulator-presets.ts) and surfaced on [pruviq.com/strategies](https://pruviq.com/strategies). Static snapshots in this README are intentionally omitted to avoid drift — see the live site for current values.
 
 ### Interactive Simulations
 - **Strategy Comparison**: Compare all strategies side-by-side under identical conditions
