@@ -2106,4 +2106,31 @@ export const ko: Record<TranslationKey, string> = {
   "simV2.empty.loading": "시뮬레이션 실행 중…",
   "simV2.empty.pick_first": "위 프리셋 선택 시 결과가 표시됩니다.",
   "simV2.empty.error": "시뮬레이션 실패. 다른 프리셋 시도.",
+  "okxManual.heading": "OKX API 키로 연결",
+  "okxManual.subtitle":
+    "OKX API 키 정보를 붙여넣으세요. 저장 전에 OKX 에서 직접 검증합니다.",
+  "okxManual.field.api_key": "API 키",
+  "okxManual.field.secret_key": "시크릿 키",
+  "okxManual.field.passphrase": "Passphrase",
+  "okxManual.placeholder.api_key": "OKX API 키 붙여넣기",
+  "okxManual.placeholder.secret_key": "OKX 시크릿 키 붙여넣기",
+  "okxManual.placeholder.passphrase": "OKX passphrase 붙여넣기",
+  "okxManual.perms.required":
+    "필수 권한: Read + Trade. 출금(Withdraw) 권한은 절대 부여하지 마세요.",
+  "okxManual.ip.recommend":
+    "최대 안전을 위해 API 키를 PRUVIQ 서버 IP 로 제한하세요:",
+  "okxManual.ip.warning":
+    "IP 화이트리스트 없이도 작동하지만 보안이 낮아집니다.",
+  "okxManual.submit": "검증 후 연결",
+  "okxManual.submitting": "OKX 에서 검증 중…",
+  "okxManual.success": "연결 완료 — 자동매매 페이지로 이동합니다…",
+  "okxManual.error.invalid_credentials":
+    "OKX 가 인증을 거부했습니다. API 키 / 시크릿 / passphrase 를 확인하세요.",
+  "okxManual.error.network": "서버에 연결하지 못했습니다. 다시 시도하세요.",
+  "okxManual.error.missing_field": "세 항목 모두 필수입니다.",
+  "okxManual.disclaimer":
+    "키를 외부에 공유하지 않습니다. Fernet/AES-128 암호화 저장, 언제든 연결 해제 가능합니다.",
+  "okxManual.help.docs": "OKX → API → 새 키 만들기",
+  "okxManual.show": "보기",
+  "okxManual.hide": "숨김",
 };

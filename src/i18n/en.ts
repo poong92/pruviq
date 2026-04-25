@@ -2150,6 +2150,33 @@ export const en = {
   "simV2.empty.loading": "Running simulation…",
   "simV2.empty.pick_first": "Pick a preset above to see results.",
   "simV2.empty.error": "Couldn't run that simulation. Try another preset.",
+  "okxManual.heading": "Connect via OKX API Key",
+  "okxManual.subtitle":
+    "Paste your OKX API credentials. We validate them with OKX before saving.",
+  "okxManual.field.api_key": "API Key",
+  "okxManual.field.secret_key": "Secret Key",
+  "okxManual.field.passphrase": "Passphrase",
+  "okxManual.placeholder.api_key": "Paste your OKX API key",
+  "okxManual.placeholder.secret_key": "Paste your OKX secret key",
+  "okxManual.placeholder.passphrase": "Paste your OKX passphrase",
+  "okxManual.perms.required":
+    "Required permissions: Read + Trade. Do NOT enable Withdraw.",
+  "okxManual.ip.recommend":
+    "For maximum safety, restrict your API key to PRUVIQ's server IP:",
+  "okxManual.ip.warning":
+    "An API key without IP whitelist still works but is less secure.",
+  "okxManual.submit": "Validate & Connect",
+  "okxManual.submitting": "Validating with OKX…",
+  "okxManual.success": "Connected — redirecting to autotrading…",
+  "okxManual.error.invalid_credentials":
+    "OKX rejected the credentials. Check API key, secret, and passphrase.",
+  "okxManual.error.network": "Couldn't reach the server. Try again.",
+  "okxManual.error.missing_field": "All three fields are required.",
+  "okxManual.disclaimer":
+    "We never share your keys. They are encrypted at rest (Fernet/AES-128). You can disconnect anytime.",
+  "okxManual.help.docs": "OKX → API → Create New Key",
+  "okxManual.show": "Show",
+  "okxManual.hide": "Hide",
 } as const;
 
 export type TranslationKey = keyof typeof en;

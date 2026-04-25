@@ -2,15 +2,29 @@
  * OKX Connect/Disconnect button.
  * OAuth flow: fetch /auth/okx/init → build URL → window.location.assign()
  * Mirrors OKX JS SDK behavior (domain + /account/oauth + queryString) without loading SDK.
+ *
+ * 2026-04-25: Added manual API key paste path as alternative to OAuth (which
+ * is still pending OKX Fast API approval). Industry standard — 3Commas /
+ * Cryptohopper / BitsGap / Altrady / WunderTrading all prioritize manual
+ * paste. Backend POST /auth/okx/manual-connect produces a session row
+ * identical to OAuth output, so all /execute/* endpoints work unchanged.
  */
 import { useState, useEffect } from "preact/hooks";
 import { API_BASE_URL as API_BASE } from "../config/api";
 import { OKX_DISCOUNT_PCT } from "../config/exchanges";
+import OKXManualPasteForm from "./OKXManualPasteForm";
 
 interface Props {
   lang?: "en" | "ko";
   size?: "sm" | "md" | "lg";
   showCard?: boolean;
+  /**
+   * "cta-only": always render the disabled "Coming Soon" pill regardless of
+   * AUTOTRADE_MANUAL_ENABLED. Used on marketing surfaces (e.g. /fees) where
+   * we don't want to advertise a credentials form. Default: standard variant
+   * which honors the manual-paste flag.
+   */
+  variant?: "default" | "cta-only";
 }
 
 // OKX moved OAuth endpoint from /api/v5/oauth/* to /account/oauth/* in 2026.
@@ -51,8 +65,14 @@ const labels = {
   },
 };
 
-// 2026-04-23: feature flag. Flip to false once OKX integration is live.
-const AUTOTRADE_COMING_SOON = true;
+// 2026-04-25: split flags. Manual paste ships first (industry standard);
+// OAuth Broker (Fast API) stays gated until OKX-side approval lands.
+//
+// To revert publicly, flip AUTOTRADE_MANUAL_ENABLED back to false (3-min
+// Cloudflare push). The backend endpoint stays live (harmless without UI)
+// or can be killed independently via OKX_MANUAL_PASTE_ENABLED=false on DO.
+const AUTOTRADE_OAUTH_COMING_SOON = true;
+const AUTOTRADE_MANUAL_ENABLED = false;
 
 const sizeClasses = {
   sm: "btn-sm text-sm",
@@ -64,12 +84,18 @@ export default function OKXConnectButton({
   lang = "en",
   size = "md",
   showCard = false,
+  variant = "default",
 }: Props) {
   const t = labels[lang];
   const [connected, setConnected] = useState(false);
   const [loading, setLoading] = useState(true);
   const [connecting, setConnecting] = useState(false);
   const [error, setError] = useState("");
+
+  // Marketing surface short-circuit: never advertise the form here.
+  // (Hooks below still need to be declared before any return — keep this
+  // gate inline at the rendering decisions, not before the hooks.)
+  const ctaOnly = variant === "cta-only";
 
   useEffect(() => {
     // Handle OAuth callback result (?okx=success|error)
@@ -145,10 +171,14 @@ export default function OKXConnectButton({
     setConnected(false);
   };
 
-  // 2026-04-23: while autotrading is on hold, short-circuit all connect
-  // flows. Render a disabled "Coming Soon" pill immediately — skip the
-  // loading/status fetches to /auth/okx/* entirely.
-  if (AUTOTRADE_COMING_SOON) {
+  // 2026-04-25: short-circuit to "Coming Soon" when:
+  //   - This is a marketing surface (variant=cta-only), OR
+  //   - Manual paste is gated AND OAuth is pending (current default).
+  // When AUTOTRADE_MANUAL_ENABLED flips to true, the disconnected branch
+  // below renders the paste form instead.
+  const showComingSoon =
+    ctaOnly || (!AUTOTRADE_MANUAL_ENABLED && AUTOTRADE_OAUTH_COMING_SOON);
+  if (showComingSoon) {
     if (showCard) {
       return (
         <div
@@ -232,6 +262,14 @@ export default function OKXConnectButton({
           {t.disconnect}
         </button>
       </div>
+    );
+  }
+
+  // 2026-04-25: when manual paste is enabled (and the user isn't connected),
+  // render the paste form inline. Replaces the OAuth-only Connect button.
+  if (AUTOTRADE_MANUAL_ENABLED) {
+    return (
+      <OKXManualPasteForm lang={lang} onSuccess={() => setConnected(true)} />
     );
   }
 

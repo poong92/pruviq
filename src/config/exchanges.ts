@@ -100,3 +100,11 @@ export const EXCHANGES: ExchangeFeeConfig[] = [
  */
 export const OKX = getExchange("okx");
 export const OKX_DISCOUNT_PCT: number = OKX.futuresDiscountPct;
+
+/**
+ * PRUVIQ DigitalOcean droplet IP — used as the recommended IP whitelist value
+ * shown to users when they create an OKX API key for the manual-paste auth
+ * flow. SSoT: never hardcode this string in components — import from here so
+ * a future IP change is a one-file edit.
+ */
+export const PRUVIQ_BACKEND_IP = "167.172.81.145";
