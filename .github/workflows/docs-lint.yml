@@ -111,10 +111,21 @@ jobs:
           echo "✓ Guard 3 passed"
 
       # Guard 4 — 내부 markdown 링크 깨짐 (lychee)
-      - name: "Setup lychee"
+      # `--base https://pruviq.com` 으로 root-relative 링크(`/ko/simulate` 등)를
+      # 사이트 URL로 해석. `--offline` 이라 실제 HTTP 미발송. 외부 도메인도 skip.
+      - name: "Guard 4: lychee internal link check"
         uses: lycheeverse/lychee-action@v2
         with:
-          args: --offline --no-progress --include-fragments --exclude-path=node_modules --exclude-path=playwright-report --exclude-path=.claude '**/*.md'
+          args: >-
+            --offline
+            --no-progress
+            --include-fragments
+            --base https://pruviq.com
+            --exclude-path node_modules
+            --exclude-path playwright-report
+            --exclude-path .claude
+            --exclude-path docs/archive
+            '**/*.md'
           fail: true
 
       # Guard 5 — DOC_INDEX.md 와 docs/ 실제 파일 mismatch (error)
