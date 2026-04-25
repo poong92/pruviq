@@ -5,6 +5,13 @@ on:
     types: [labeled]
   check_suite:
     types: [completed]   # fires on every check completion — no hardcoded workflow list needed
+  # 2026-04-26: schedule safety net. check_suite events are unreliable —
+  # GitHub sometimes does not fire check_suite.completed for the LAST workflow
+  # in a fan-out (observed in PR #1379 and #1393: all checks SUCCESS, mergeable
+  # CLEAN, but attempt-merge never re-triggered after Playwright finished).
+  # Cron catches these stale cases within 10 minutes.
+  schedule:
+    - cron: '*/10 * * * *'
   workflow_dispatch: {}
 
 permissions:
@@ -61,7 +68,12 @@ jobs:
               }
               pr = candidate;
 
-            } else if (context.eventName === 'workflow_dispatch') {
+            } else if (context.eventName === 'workflow_dispatch' || context.eventName === 'schedule') {
+              // schedule + workflow_dispatch share the same logic: paginate
+              // every open PR with the automerge label. Fan-out: when several
+              // PRs are simultaneously waiting, schedule processes the FIRST
+              // one each tick — subsequent ticks pick up the next ones, so
+              // a backlog of N stale PRs clears within N*10 minutes.
               const openPRs = await github.paginate(github.rest.pulls.list, {
                 owner: context.repo.owner,
                 repo: context.repo.repo,
@@ -72,7 +84,7 @@ jobs:
                 p.labels.some(l => l.name === labelName)
               );
               if (!candidate) {
-                core.info('No open PRs with automerge label found');
+                core.info(`No open PRs with automerge label found (event=${context.eventName})`);
                 return;
               }
               pr = candidate;
