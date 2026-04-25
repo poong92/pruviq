@@ -91,9 +91,20 @@ def _get_conn() -> sqlite3.Connection:
             state      TEXT PRIMARY KEY,
             redirect_url TEXT NOT NULL DEFAULT '',
             lang       TEXT NOT NULL DEFAULT 'en',
-            created_at REAL NOT NULL
+            created_at REAL NOT NULL,
+            code_verifier TEXT NOT NULL DEFAULT ''
         )
     """)
+    # Migration for pre-PKCE schemas (column added 2026-04-25). SQLite has no
+    # `IF NOT EXISTS` for ADD COLUMN — catch the duplicate-column error and
+    # let any other OperationalError bubble up.
+    try:
+        conn.execute(
+            "ALTER TABLE okx_csrf_states ADD COLUMN code_verifier TEXT NOT NULL DEFAULT ''"
+        )
+    except sqlite3.OperationalError as e:
+        if "duplicate column" not in str(e).lower():
+            raise
     return conn
 
 
@@ -156,7 +167,12 @@ def delete_session(session_id: str) -> None:
 CSRF_TTL = 1800  # 30 minutes
 
 
-def save_csrf_state(state: str, redirect_url: str, lang: str = "en") -> None:
+def save_csrf_state(
+    state: str,
+    redirect_url: str,
+    lang: str = "en",
+    code_verifier: str = "",
+) -> None:
     with _get_conn() as conn:
         # Cleanup expired states on write
         conn.execute(
@@ -164,17 +180,23 @@ def save_csrf_state(state: str, redirect_url: str, lang: str = "en") -> None:
             (time.time() - CSRF_TTL,),
         )
         conn.execute(
-            "INSERT INTO okx_csrf_states (state, redirect_url, lang, created_at) "
-            "VALUES (?, ?, ?, ?)",
-            (state, redirect_url, lang, time.time()),
+            "INSERT INTO okx_csrf_states "
+            "(state, redirect_url, lang, created_at, code_verifier) "
+            "VALUES (?, ?, ?, ?, ?)",
+            (state, redirect_url, lang, time.time(), code_verifier),
         )
 
 
-def validate_csrf_state(state: str) -> tuple[str, str] | None:
-    """Validate and consume CSRF state. Returns (redirect_url, lang) or None."""
+def validate_csrf_state(state: str) -> tuple[str, str, str] | None:
+    """Validate and consume CSRF state.
+
+    Returns (redirect_url, lang, code_verifier) or None.
+    code_verifier is "" for non-PKCE legacy rows.
+    """
     with _get_conn() as conn:
         row = conn.execute(
-            "SELECT redirect_url, lang, created_at FROM okx_csrf_states WHERE state = ?",
+            "SELECT redirect_url, lang, created_at, code_verifier "
+            "FROM okx_csrf_states WHERE state = ?",
             (state,),
         ).fetchone()
         if not row:
@@ -184,4 +206,4 @@ def validate_csrf_state(state: str) -> tuple[str, str] | None:
         # Check expiry
         if time.time() - row[2] > CSRF_TTL:
             return None
-        return row[0], row[1]
+        return row[0], row[1], row[3]

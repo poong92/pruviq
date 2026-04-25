@@ -66,11 +66,14 @@ async def test_validate_and_store_happy_path(monkeypatch):
         os.environ["OKX_ENCRYPTION_KEY"] = (
             "ZmDfcTF7_60GrrY167zsiPd67pEvs0aGOv2oasOM1Pg="
         )
-        # Reload modules to pick up env.
+        # Reload modules to pick up env. config first so storage/manual_auth
+        # re-capture OKX_ENCRYPTION_KEY etc. (other tests reload config too).
         import importlib
+        import okx.config as config_mod
         import okx.storage as storage
         import okx.manual_auth as manual_auth
         import okx.client as client_mod
+        importlib.reload(config_mod)
         importlib.reload(storage)
         importlib.reload(manual_auth)
 
@@ -114,9 +117,11 @@ async def test_validate_and_store_rejects_invalid_credentials(monkeypatch):
             "ZmDfcTF7_60GrrY167zsiPd67pEvs0aGOv2oasOM1Pg="
         )
         import importlib
+        import okx.config as config_mod
         import okx.storage as storage
         import okx.manual_auth as manual_auth
         import okx.client as client_mod
+        importlib.reload(config_mod)
         importlib.reload(storage)
         importlib.reload(manual_auth)
 
