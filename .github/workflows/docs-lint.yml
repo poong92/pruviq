@@ -1,8 +1,17 @@
 name: "QA: docs-lint (legacy drift prevention)"
 
-# PR-blocking 가드. 과거에 (1) 루트 `/Users/openclaw/` 경로 오염, (2) Mac Mini
-# 백엔드 오기록 드리프트, (3) OpenClaw 프로젝트 잔재 3종이 반복 재발. 이 워크
-# 플로우가 각각을 grep 레벨에서 차단.
+# PR-blocking 가드. 과거 재발 사례:
+#   (1) /Users/openclaw/ 경로 오염
+#   (2) Mac Mini 백엔드 오기록 드리프트
+#   (3) OpenClaw 프로젝트 잔재
+#   (4) 내부 markdown 링크 깨짐
+#   (5) DOC_INDEX.md 와 실제 docs/ 파일 mismatch
+#
+# 위 5개를 grep / lychee / diff 레벨에서 PR 머지 전 차단.
+#
+# 이스케이프 해치: 의도적 역사 기록이 필요한 라인은 줄 끝에
+#   <!-- docs-lint-allow: <reason> -->
+# 마커 추가 → 해당 라인은 가드에서 제외 (ESLint disable-line 패턴).
 
 on:
   pull_request:
@@ -27,15 +36,21 @@ concurrency:
 jobs:
   lint:
     runs-on: ubuntu-latest
-    timeout-minutes: 3
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
 
-      # Guard 1 — /Users/openclaw/ 경로 오염 (2026-04-25 재발 사례 있음)
-      - name: "Guard 1: /Users/openclaw/ path pollution"
+      # 공용 grep 옵션 + allow 마커 필터링 helper
+      - name: "Setup grep helper"
         run: |
+          mkdir -p /tmp/lint
+          cat > /tmp/lint/grep-with-allow.sh <<'BASH'
+          #!/bin/bash
+          # $1: regex pattern, $2: archive-exclude flag (yes/no)
+          PATTERN="$1"
+          EXCLUDE_ARCHIVE="${2:-no}"
           set +e
-          MATCHES=$(grep -rn '/Users/openclaw' \
+          RAW=$(grep -rnE "$PATTERN" \
             --include='*.md' --include='*.yml' --include='*.yaml' \
             --include='*.json' --include='*.py' --include='*.ts' --include='*.tsx' \
             --include='*.sh' --include='*.astro' --include='*.mjs' \
@@ -43,54 +58,95 @@ jobs:
             --exclude-dir=.claude --exclude-dir=playwright-report \
             --exclude=docs-lint.yml \
             .)
+          # allow 마커 필터링
+          FILTERED=$(echo "$RAW" | grep -v 'docs-lint-allow' || true)
+          if [ "$EXCLUDE_ARCHIVE" = "yes" ]; then
+            FILTERED=$(echo "$FILTERED" | grep -v '^\./docs/archive/' || true)
+          fi
+          echo "$FILTERED"
+          BASH
+          chmod +x /tmp/lint/grep-with-allow.sh
+
+      # Guard 1 — /Users/openclaw/ 경로 오염 (error)
+      - name: "Guard 1: /Users/openclaw/ path pollution"
+        run: |
+          MATCHES=$(/tmp/lint/grep-with-allow.sh '/Users/openclaw' no)
           if [ -n "$MATCHES" ]; then
             echo "::error::'/Users/openclaw/' path found — must be '/Users/jepo/pruviq/'"
             echo "$MATCHES"
+            echo ""
+            echo "의도적 역사 기록이면 줄 끝에 <!-- docs-lint-allow: <reason> --> 추가."
             exit 1
           fi
           echo "✓ Guard 1 passed"
 
-      # Guard 2 — OpenClaw 프로젝트 재유입 방지 (archive/ 제외, worktrees 제외).
-      # PR1에서는 warn-only — PR2(OpenClaw 전수 scrub) + PR5(정책 승격)에서
-      # `::warning::` → `::error::` + exit 1 로 바꿔 차단 활성화.
-      - name: "Guard 2: OpenClaw references outside archive/ (warn-only)"
+      # Guard 2 — OpenClaw 프로젝트 재유입 방지 (error, archive/ 제외)
+      - name: "Guard 2: OpenClaw references outside archive/"
         run: |
-          set +e
-          MATCHES=$(grep -rni 'openclaw' \
-            --include='*.md' --include='*.yml' --include='*.yaml' \
-            --include='*.json' --include='*.py' --include='*.ts' --include='*.tsx' \
-            --include='*.sh' --include='*.astro' --include='*.mjs' \
-            --exclude-dir=node_modules --exclude-dir=.git --exclude-dir=.venv \
-            --exclude-dir=.claude --exclude-dir=playwright-report \
-            --exclude=docs-lint.yml \
-            . | grep -v '^\./docs/archive/' || true)
+          MATCHES=$(/tmp/lint/grep-with-allow.sh '(?i)openclaw' yes)
           if [ -n "$MATCHES" ]; then
-            echo "::warning::OpenClaw references found (will error after PR2 scrubs everything)"
+            echo "::error::OpenClaw references found outside docs/archive/"
             echo "$MATCHES"
-          else
-            echo "✓ Guard 2 passed"
+            echo ""
+            echo "OpenClaw 프로젝트는 2026-04-25 archive 처리. 의도적 역사 기록은 docs/archive/ 또는 <!-- docs-lint-allow --> 마커 사용."
+            exit 1
           fi
+          echo "✓ Guard 2 passed"
 
-      # Guard 3 — Mac Mini 백엔드 오기록 (특정 드리프트 문자열만 차단,
-      # "Mac Mini is dev-only" 같은 올바른 기록은 허용). PR1에서는 warn-only —
-      # PR4(백엔드 호스트 전수 수정) + PR5(정책 승격)에서 차단 활성화.
-      - name: "Guard 3: stale Mac Mini backend claims (warn-only)"
+      # Guard 3 — Mac Mini 백엔드 오기록 (error, 컨텍스트 좁힘)
+      # "Mac Mini is dev-only" 같은 정상 기록은 허용. 'Mac Mini 가 PRUVIQ
+      # 백엔드/API/FastAPI/uvicorn 운영' 주장만 차단.
+      - name: "Guard 3: stale Mac Mini backend claims"
+        run: |
+          # 패턴: "port 8400" (절대 안 쓰는 포트) 또는
+          #       "Mac Mini" 가 같은 줄에 "PRUVIQ.*API|FastAPI|uvicorn|pruviq-api|운영"
+          MATCHES=$(/tmp/lint/grep-with-allow.sh 'port 8400|Mac Mini[^.]*(PRUVIQ.*API|FastAPI|uvicorn|pruviq-api)|(PRUVIQ.*API|FastAPI|uvicorn|pruviq-api)[^.]*Mac Mini' yes)
+          if [ -n "$MATCHES" ]; then
+            echo "::error::Stale Mac Mini backend claim — current backend runs on DigitalOcean (host in DO_HOST secret, port 2222 SSH, :8080 app). Mac Mini = dev-only."
+            echo "$MATCHES"
+            echo ""
+            echo "Mac Mini를 DEV 머신으로 언급하는 건 OK. PRUVIQ API/백엔드 호스트로 기록하면 fail."
+            exit 1
+          fi
+          echo "✓ Guard 3 passed"
+
+      # Guard 4 — 내부 markdown 링크 깨짐 (lychee)
+      # `--base https://pruviq.com` 으로 root-relative 링크(`/ko/simulate` 등)를
+      # 사이트 URL로 해석. `--offline` 이라 실제 HTTP 미발송. 외부 도메인도 skip.
+      - name: "Guard 4: lychee internal link check"
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: >-
+            --offline
+            --no-progress
+            --include-fragments
+            --base https://pruviq.com
+            --exclude-path node_modules
+            --exclude-path playwright-report
+            --exclude-path .claude
+            --exclude-path docs/archive
+            '**/*.md'
+          fail: true
+
+      # Guard 5 — DOC_INDEX.md 와 docs/ 실제 파일 mismatch (error)
+      # 새 .md 추가하면서 인덱스 업데이트 깜빡 방지. basename 기준.
+      - name: "Guard 5: DOC_INDEX.md coverage"
         run: |
           set +e
-          MATCHES=$(grep -rnE '172\.30\.1\.16|port 8400|Mac Mini.*uvicorn|Mac Mini.*FastAPI' \
-            --include='*.md' --include='*.yml' --include='*.yaml' \
-            --include='*.json' --include='*.py' --include='*.ts' --include='*.tsx' \
-            --include='*.sh' --include='*.astro' --include='*.mjs' \
-            --exclude-dir=node_modules --exclude-dir=.git --exclude-dir=.venv \
-            --exclude-dir=.claude --exclude-dir=playwright-report \
-            --exclude=docs-lint.yml \
-            . | grep -v '^\./docs/archive/' || true)
-          if [ -n "$MATCHES" ]; then
-            echo "::warning::Stale Mac Mini backend claim (will error after PR4 fixes all files)"
-            echo "$MATCHES"
-          else
-            echo "✓ Guard 3 passed"
+          # 실제 docs/ 파일 basename (archive/, README.md, DOC_INDEX.md 자체 제외)
+          ACTUAL=$(find docs -name '*.md' -not -path 'docs/archive/*' -not -name 'README.md' -not -name 'DOC_INDEX.md' -exec basename {} \; | sort -u)
+          # DOC_INDEX 본문에서 등장하는 모든 .md filename
+          INDEXED=$(grep -oE '[A-Za-z0-9_.-]+\.md' docs/DOC_INDEX.md | sort -u)
+          # 차집합 (실제 - 인덱스)
+          MISSING=$(comm -23 <(echo "$ACTUAL") <(echo "$INDEXED"))
+          if [ -n "$MISSING" ]; then
+            echo "::error::docs/DOC_INDEX.md 에 누락된 파일 (basename):"
+            echo "$MISSING"
+            echo ""
+            echo "새 .md 추가 시 docs/DOC_INDEX.md 카테고리에 등록 필수."
+            exit 1
           fi
+          echo "✓ Guard 5 passed"
 
       - name: "Summary"
-        run: echo "All 3 drift-prevention guards passed."
+        run: echo "All 5 drift-prevention guards passed."

@@ -1,0 +1,88 @@
+name: "QA: docs staleness (weekly)"
+
+# 매주 월 05:00 UTC. 60일 초과 + archive/ 밖 .md → warn, 180일 초과 → error.
+# Issue 자동 생성 (라벨 'docs-stale').
+
+on:
+  schedule:
+    - cron: "0 5 * * 1"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: docs-staleness
+  cancel-in-progress: true
+
+jobs:
+  staleness:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # git log 사용
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: "Run staleness check"
+        id: check
+        run: |
+          node scripts/check-docs-staleness.mjs > staleness.ndjson 2>&1 || true
+          # warn/error 만 추출
+          STALE=$(grep -E '"status":"(warn|error)"' staleness.ndjson || true)
+          echo "stale<<EOF" >> $GITHUB_OUTPUT
+          echo "$STALE" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: "Open or update issue"
+        if: steps.check.outputs.stale != ''
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const stale = `${{ steps.check.outputs.stale }}`.trim();
+            if (!stale) return;
+
+            const title = `[DOCS-STALE] Weekly check ${new Date().toISOString().slice(0,10)}`;
+            const body = [
+              `매주 staleness 자동 점검 결과. 60일 초과 = warn, 180일 초과 = error.`,
+              ``,
+              '```ndjson',
+              stale,
+              '```',
+              ``,
+              `조치:`,
+              `- error 항목: \`docs/archive/\` 로 이관 또는 갱신`,
+              `- warn 항목: 검토 후 archive 이관 또는 \`last-modified\` frontmatter 갱신`,
+              `- 영구 placeholder (HEARTBEAT.md 등): \`docs-lint-allow\` 마커는 영향 없음. 본 검사는 mtime 기반.`,
+            ].join('\n');
+
+            // 같은 주 issue 중복 방지
+            const { data } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: 'docs-stale',
+              per_page: 5,
+            });
+            const existing = data.find(i => i.title.startsWith('[DOCS-STALE]'));
+            if (existing) {
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: existing.number,
+                body,
+              });
+            } else {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title,
+                body,
+                labels: ['docs-stale', 'auto-generated'],
+              });
+            }

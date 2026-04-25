@@ -258,7 +258,7 @@ pip install -r requirements.txt
 | 포트 | 디바이스 | 서비스 | 바인딩 | 비고 |
 |------|---------|--------|--------|------|
 | 5678 | Mac Mini | n8n | 127.0.0.1 + Tailscale | 외부 노출 금지 |
-| 8400 | Mac Mini | PRUVIQ API | 0.0.0.0 (Phase 1+) | 퍼블릭 서빙 시 변경 |
+| 8080 | DigitalOcean | PRUVIQ API (FastAPI) | systemd `pruviq-api.service` | api.pruviq.com via Cloudflare Tunnel |
 | 11434 | Mac Mini | Ollama | 127.0.0.1 + Tailscale | 내부 전용 |
 | - | DO 서버 | autotrader Docker | 내부 전용 | 외부 포트 없음 |
 
@@ -658,7 +658,7 @@ Phase 0 (현재):
   포트: n8n(5678), Ollama(11434)
 
 Phase 1 (웹 대시보드 — 2026-02 초기 계획):
-  + (초기 가정) Mac Mini: PRUVIQ API 서버
+  + (초기 가정 — 이행 안 됨) Mac Mini가 PRUVIQ API 호스팅 예정이었음 <!-- docs-lint-allow: historical record of original plan, actual implementation went to DO -->
   ⚠️ 실제 이행: 2026-04 Phase 8 완료. PRUVIQ API는 DigitalOcean
   droplet (host in `DO_HOST` secret, :8080, systemd `pruviq-api.service`)
   로 이관됨. Mac Mini는 dev-only + autotrader 백업 + OHLCV 수집 크론만.

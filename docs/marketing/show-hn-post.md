@@ -19,7 +19,7 @@ What makes this different:
 
 Tech stack:
 - Frontend: Astro 5 + Preact (interactive islands), Tailwind CSS 4, deployed on Cloudflare Pages
-- Backend: Python FastAPI on Mac Mini M4 Pro, 575 coin datasets in memory, vectorized NumPy signal detection
+- Backend: Python FastAPI on DigitalOcean droplet, 575 coin datasets in memory, vectorized NumPy signal detection
 - Data: 1H OHLCV from Binance, updated daily via rsync
 
 The biggest insight from building this: 4/5 strategies I tested failed, and every LONG strategy I tried (88+ variations) lost money in crypto futures. The structural advantage lies in shorting.
