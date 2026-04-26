@@ -5,6 +5,7 @@
  */
 import { useState, useEffect } from "preact/hooks";
 import { API_BASE_URL } from "../config/api";
+import { formatLocalizedCount } from "../utils/format";
 
 interface RankingEntry {
   rank: number;
@@ -217,7 +218,7 @@ export function TopStrategyWidget({ lang = "en" }: { lang?: Lang }) {
               {t.trades}
             </p>
             <p class="font-mono text-lg font-bold text-[--color-text]">
-              {top.total_trades.toLocaleString()}
+              {formatLocalizedCount(top.total_trades, lang)}
             </p>
           </div>
         </div>
