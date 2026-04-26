@@ -111,6 +111,30 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
 <html lang={lang}>
   <head>
     <meta charset="UTF-8" />
+    <!-- FOUC-prevention theme bootstrap (PR-5 of light-mode rollout).
+         Must run BEFORE any stylesheet parses so the browser sees the right
+         CSS-variable values on the first paint. Reads localStorage; falls
+         back to OS prefers-color-scheme. Sets data-theme="light" only when
+         needed (dark is the default tokens defined in @theme). -->
+    <script is:inline>
+      (function () {
+        try {
+          var stored = localStorage.getItem("pruviq-theme");
+          var theme =
+            stored === "light" || stored === "dark"
+              ? stored
+              : window.matchMedia &&
+                  window.matchMedia("(prefers-color-scheme: light)").matches
+                ? "light"
+                : "dark";
+          if (theme === "light") {
+            document.documentElement.setAttribute("data-theme", "light");
+          }
+        } catch (_) {
+          /* localStorage blocked — silently fall back to dark default */
+        }
+      })();
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
     <link rel="canonical" href={canonicalURL.href} />
@@ -475,8 +499,24 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
             <a href={item.href} aria-current={isActive(item.match) ? "page" : undefined} class="transition-colors nav-slide-underline inline-flex items-center gap-1.5 min-h-11" style={isActive(item.match) ? 'color:var(--color-accent);font-weight:500' : 'color:var(--color-text-muted)'}>{item.label}{item.badge && <span class="text-[9px] font-bold px-1 py-0.5 rounded bg-[--color-accent] text-white leading-none tracking-wide">{item.badge}</span>}</a>
           ))}
         </div>
-        <!-- 3열: Lang (지구본) + Mobile hamburger (우측) -->
+        <!-- 3열: Theme toggle + Lang + Mobile hamburger (우측) -->
         <div class="flex items-center justify-end gap-2">
+          <!-- Theme toggle (light/dark) — PR-4 of light-mode rollout -->
+          <button id="theme-toggle" type="button"
+                  class="inline-flex items-center justify-center w-11 h-11 md:w-9 md:h-9 rounded-lg border border-[--color-border] hover:border-[--color-accent] hover:text-[--color-accent] hover:bg-[--color-accent]/5 text-[--color-text-muted] transition-colors"
+                  aria-label={t('theme.toggle_label')}
+                  aria-pressed="false"
+                  data-theme-toggle>
+            <!-- Sun icon (dark mode active → click to go light) -->
+            <svg class="theme-icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="4"/>
+              <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+            </svg>
+            <!-- Moon icon (light mode active → click to go dark) -->
+            <svg class="theme-icon-moon hidden" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+            </svg>
+          </button>
           <!-- 데스크톱: 지구본 아이콘 + 언어코드 -->
           <a href={altPath} hreflang={altHreflang}
              class="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[--color-border] hover:border-[--color-accent] hover:text-[--color-accent] hover:bg-[--color-accent]/5 text-[--color-text-muted] transition-colors"
@@ -694,6 +734,37 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
     </div>
 
     <script type="module" src="/scripts/layout-client.js" defer></script>
+    <script is:inline>
+      /* Theme toggle (PR-4 of light-mode rollout).
+         FOUC-prevention head script (PR-5) sets data-theme before paint;
+         this handler only owns user clicks + icon swap. */
+      (function() {
+        var btn = document.getElementById('theme-toggle');
+        if (!btn) return;
+        var sun = btn.querySelector('.theme-icon-sun');
+        var moon = btn.querySelector('.theme-icon-moon');
+        function syncIcon() {
+          var isLight = document.documentElement.getAttribute('data-theme') === 'light';
+          btn.setAttribute('aria-pressed', isLight ? 'true' : 'false');
+          if (sun && moon) {
+            sun.classList.toggle('hidden', isLight);
+            moon.classList.toggle('hidden', !isLight);
+          }
+        }
+        syncIcon();
+        btn.addEventListener('click', function() {
+          var isLight = document.documentElement.getAttribute('data-theme') === 'light';
+          if (isLight) {
+            document.documentElement.removeAttribute('data-theme');
+            try { localStorage.setItem('pruviq-theme', 'dark'); } catch (_) {}
+          } else {
+            document.documentElement.setAttribute('data-theme', 'light');
+            try { localStorage.setItem('pruviq-theme', 'light'); } catch (_) {}
+          }
+          syncIcon();
+        });
+      })();
+    </script>
     <script>
       /* Sticky CTA bar - show after scrolling past hero (mobile only) */
       (function() {
