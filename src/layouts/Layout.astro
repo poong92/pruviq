@@ -36,7 +36,14 @@ const currentYear = new Date().getFullYear();
 const { title, description = t('meta.home_desc'), type = 'website', date, updatedDate, category, keywords: customKeywords, canonicalOverride, noAlternate = false, skipArticleLD = false } = Astro.props;
 const lastModified = updatedDate || date || buildTime;
 const ogImage = new URL(Astro.props.ogImage || '/og-image.jpg', Astro.site || 'https://pruviq.com').href;
-const ogImageWebp = ogImage.replace(/\.(png|jpe?g)(\?.*)?$/i, '.webp$2');
+// Only emit webp variant for the default static og-image.jpg (which has a
+// pre-rendered .webp counterpart). Per-page dynamic OGs (W3-1) ship a
+// single PNG — the webp twin doesn't exist and would 404.
+const isDefaultStaticOg = ogImage.endsWith('/og-image.jpg');
+const ogImageWebp = isDefaultStaticOg ? ogImage.replace(/\.jpg$/, '.webp') : ogImage;
+const ogImageMime = ogImage.endsWith('.png') ? 'image/png' :
+                    ogImage.endsWith('.webp') ? 'image/webp' :
+                    ogImage.endsWith('.svg') ? 'image/svg+xml' : 'image/jpeg';
 const canonicalPath = canonicalOverride || Astro.url.pathname;
 const canonicalURL = new URL(canonicalPath, Astro.site || 'https://pruviq.com');
 const hreflangBase = canonicalPath.replace(/^\/ko(\/|$)/, '/');
@@ -207,11 +214,11 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
     <meta property="og:locale" content={lang === 'ko' ? 'ko_KR' : 'en_US'} />
     {!noAlternate && <meta property="og:locale:alternate" content={lang === 'ko' ? 'en_US' : 'ko_KR'} />}
     <meta property="og:image" content={ogImage} />
-    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:type" content={ogImageMime} />
     <meta property="og:image:alt" content={Astro.props.ogImage ? title : "PRUVIQ — Free Crypto Strategy Backtester"} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    {ogImageWebp !== ogImage && (
+    {isDefaultStaticOg && ogImageWebp !== ogImage && (
       <meta property="og:image" content={ogImageWebp} />
       <meta property="og:image:type" content="image/webp" />
       <meta property="og:image:width" content="1200" />
@@ -742,7 +749,7 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
     <script is:inline>
       /* Theme toggle (PR-4 of light-mode rollout).
          FOUC-prevention head script (PR-5) sets data-theme before paint;
-         this handler only owns user clicks + icon swap. */
+         this handler owns user clicks + T key shortcut + icon swap. */
       (function() {
         var btn = document.getElementById('theme-toggle');
         if (!btn) return;
@@ -756,8 +763,7 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
             moon.classList.toggle('hidden', !isLight);
           }
         }
-        syncIcon();
-        btn.addEventListener('click', function() {
+        function toggle() {
           var isLight = document.documentElement.getAttribute('data-theme') === 'light';
           if (isLight) {
             document.documentElement.removeAttribute('data-theme');
@@ -767,6 +773,24 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
             try { localStorage.setItem('pruviq-theme', 'light'); } catch (_) {}
           }
           syncIcon();
+        }
+        syncIcon();
+        btn.addEventListener('click', toggle);
+        /* W5-3.1: T key global shortcut. Promised by KeyboardShortcuts
+           overlay (? key), now wired. Ignored when typing in inputs,
+           textareas, or contenteditable to avoid hijacking text entry.
+           Modifier keys (Cmd/Ctrl/Alt/Shift) are excluded so it doesn't
+           collide with browser shortcuts (e.g., Cmd+T for new tab). */
+        document.addEventListener('keydown', function(e) {
+          if (e.key !== 't' && e.key !== 'T') return;
+          if (e.metaKey || e.ctrlKey || e.altKey || e.shiftKey) return;
+          var t = e.target;
+          if (!t) return;
+          var tag = t.tagName;
+          if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+          if (t.isContentEditable) return;
+          e.preventDefault();
+          toggle();
         });
       })();
     </script>
@@ -820,9 +844,15 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
         if (!bar) return;
         if (localStorage.getItem('visited-simulator') || localStorage.getItem('bottom-cta-dismissed')) return;
         var cookieNotice = document.getElementById('cookie-notice');
+        /* Track local shown state — was previously referenced from
+           the sibling sticky-cta IIFE (`shown`) which is a different
+           closure scope, throwing "shown is not defined" on /market
+           when the IntersectionObserver callback fires. */
+        var shown = false;
         function tryShow() {
           if (cookieNotice && cookieNotice.style.display !== 'none' && window.innerWidth < 640) return;
           bar.style.transform = 'translateY(0)';
+          shown = true;
         }
         setTimeout(tryShow, 1500);
         /* Hide near footer */
