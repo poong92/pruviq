@@ -837,9 +837,15 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
         if (!bar) return;
         if (localStorage.getItem('visited-simulator') || localStorage.getItem('bottom-cta-dismissed')) return;
         var cookieNotice = document.getElementById('cookie-notice');
+        /* Track local shown state — was previously referenced from
+           the sibling sticky-cta IIFE (`shown`) which is a different
+           closure scope, throwing "shown is not defined" on /market
+           when the IntersectionObserver callback fires. */
+        var shown = false;
         function tryShow() {
           if (cookieNotice && cookieNotice.style.display !== 'none' && window.innerWidth < 640) return;
           bar.style.transform = 'translateY(0)';
+          shown = true;
         }
         setTimeout(tryShow, 1500);
         /* Hide near footer */
