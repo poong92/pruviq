@@ -2,7 +2,7 @@
  * formatKoNum.test.ts — contract test for Korean idiomatic number formatting.
  */
 import { describe, expect, test } from "vitest";
-import { formatKoNum } from "../../src/utils/format";
+import { formatKoNum, formatLocalizedCount } from "../../src/utils/format";
 
 describe("formatKoNum (verbose)", () => {
   test("zero → '0'", () => {
@@ -82,5 +82,38 @@ describe("formatKoNum (compact)", () => {
   test("compact preserves negative sign", () => {
     expect(formatKoNum(-1_234_567_890, { compact: true })).toBe("-12억");
     expect(formatKoNum(-12_345, { compact: true })).toBe("-1.2만");
+  });
+});
+
+describe("formatLocalizedCount", () => {
+  test("EN — falls back to en-US locale grouping", () => {
+    expect(formatLocalizedCount(0, "en")).toBe("0");
+    expect(formatLocalizedCount(123, "en")).toBe("123");
+    expect(formatLocalizedCount(1_234, "en")).toBe("1,234");
+    expect(formatLocalizedCount(12_345, "en")).toBe("12,345");
+    expect(formatLocalizedCount(1_234_567, "en")).toBe("1,234,567");
+  });
+
+  test("KO — uses 만/억 idioms (matches formatKoNum verbose)", () => {
+    expect(formatLocalizedCount(0, "ko")).toBe("0");
+    expect(formatLocalizedCount(123, "ko")).toBe("123");
+    expect(formatLocalizedCount(12_345, "ko")).toBe("1만 2,345");
+    expect(formatLocalizedCount(1_234_567, "ko")).toBe("123만 4,567");
+    expect(formatLocalizedCount(123_456_789, "ko")).toBe("1억 2,345만 6,789");
+  });
+
+  test("EN and KO diverge above 만 threshold (10,000)", () => {
+    // Below threshold: EN/KO identical (no 만 idiom kicks in)
+    expect(formatLocalizedCount(9_999, "en")).toBe("9,999");
+    expect(formatLocalizedCount(9_999, "ko")).toBe("9,999");
+
+    // At threshold: KO inserts 만, EN sticks with comma grouping
+    expect(formatLocalizedCount(10_000, "en")).toBe("10,000");
+    expect(formatLocalizedCount(10_000, "ko")).toBe("1만");
+  });
+
+  test("negative numbers preserve sign in both locales", () => {
+    expect(formatLocalizedCount(-12_345, "en")).toBe("-12,345");
+    expect(formatLocalizedCount(-12_345, "ko")).toBe("-1만 2,345");
   });
 });
