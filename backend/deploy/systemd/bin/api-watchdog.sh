@@ -39,7 +39,12 @@ last_restart=${last_restart:-0}
 now=$(date +%s)
 
 # Probe /health. curl exit 0 only when HTTP 2xx and non-empty body.
-if curl -sf -m 5 "$HEALTH_URL" >/dev/null 2>&1; then
+# Timeout 15s (was 5s) — 2026-04-26 10:23 KST false-positive: API was
+# serving heavy /simulate traffic; /health queued behind big requests
+# and timed out at 5s, so 3 consecutive watchdog probes failed and
+# force-restarted a perfectly healthy API. 15s is still well under the
+# 60s probe interval and just lets /health drain the queue.
+if curl -sf -m 15 "$HEALTH_URL" >/dev/null 2>&1; then
     if [ "$fail_count" -gt 0 ]; then
         echo "recovery: reset fail_count from $fail_count to 0"
     fi
