@@ -61,7 +61,7 @@ jobs:
           check_url "https://api.pruviq.com/builder/presets" "API /presets" || API_OK=false
           echo "api_ok=$API_OK" >> "$GITHUB_OUTPUT"
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Run Simulator QA (sim_audit quick)
         if: steps.smoke.outputs.api_ok == 'true'
@@ -86,7 +86,7 @@ jobs:
     if: needs.verify.outputs.site_ok == 'true'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Find next improvement task
         id: next_task
