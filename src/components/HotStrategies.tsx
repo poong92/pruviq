@@ -7,6 +7,7 @@
 import { useState, useEffect } from "preact/hooks";
 import { API_BASE_URL as API_URL } from "../config/api";
 import { buildSimulatorUrl } from "../config/simulation-context";
+import Card from "./ui/Card";
 
 interface HotStrategy {
   strategy_id: string;
@@ -73,10 +74,15 @@ export default function HotStrategies({ lang = "en" }: { lang?: string }) {
           });
 
           return (
-            <a
+            <Card
               key={s.strategy_id + s.direction}
+              as="a"
               href={url}
-              class="block rounded-md border border-[--color-border] bg-[--color-bg-card] p-3 hover:border-[--color-warning]/40 transition-colors"
+              variant="default"
+              radius="sm"
+              padding="sm"
+              interactive
+              class="hover:border-[--color-warning]/40 no-underline"
             >
               <div class="flex items-center justify-between mb-1">
                 <span class="text-xs font-medium text-[--color-text]">
@@ -107,7 +113,7 @@ export default function HotStrategies({ lang = "en" }: { lang?: string }) {
                 <span>WR {s.win_rate.toFixed(0)}%</span>
                 <span>{s.total_trades}T</span>
               </div>
-            </a>
+            </Card>
           );
         })}
       </div>
