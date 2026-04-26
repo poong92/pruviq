@@ -41,14 +41,12 @@ const EMERGENCY_DISABLE = false;
 // rather than including them here.
 const PRECACHE_URLS = [
   "/favicon.svg",
-  "/sprites/indicators.svg",
-  "/og-image.svg",
+  "/og-image.jpg",
 ];
 
 // File extension matchers for the cache-first long-lived strategy.
 const STATIC_EXT_RE = /\.(woff2?|ttf|otf|svg|ico|png|jpe?g|webp|avif)$/i;
 const ASTRO_HASHED_RE = /^\/_astro\//;
-const HTML_NAV_RE = /^\/(?!.*\.[a-z0-9]+$)/i;
 
 self.addEventListener("install", (event) => {
   if (EMERGENCY_DISABLE) {
@@ -57,7 +55,11 @@ self.addEventListener("install", (event) => {
   event.waitUntil(
     caches
       .open(CACHE_NAME)
-      .then((cache) => cache.addAll(PRECACHE_URLS))
+      .then((cache) =>
+        Promise.all(
+          PRECACHE_URLS.map((url) => cache.add(url).catch(() => {})),
+        ),
+      )
       .then(() => self.skipWaiting()),
   );
 });
