@@ -267,7 +267,7 @@ export default function StandardPanel({
             onInput={(e) =>
               setSlPct(Number((e.target as HTMLInputElement).value))
             }
-            class="w-full accent-[#f04251] h-1.5"
+            class="w-full accent-[--color-down] h-1.5"
           />
           <div class="flex justify-between text-[9px] text-[--color-text-muted] mt-0.5">
             <span>3%</span>
@@ -298,7 +298,7 @@ export default function StandardPanel({
             onInput={(e) =>
               setTpPct(Number((e.target as HTMLInputElement).value))
             }
-            class="w-full accent-[#00c073] h-1.5"
+            class="w-full accent-[--color-up] h-1.5"
           />
           <div class="flex justify-between text-[9px] text-[--color-text-muted] mt-0.5">
             <span>2%</span>

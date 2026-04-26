@@ -558,7 +558,9 @@ export default function BuilderPanel(props: Props) {
                   aria-pressed={props.compounding}
                   class="relative w-11 h-6 rounded-full transition-colors duration-200 shrink-0"
                   style={{
-                    background: props.compounding ? COLORS.accent : "#3a3a42",
+                    background: props.compounding
+                      ? COLORS.accent
+                      : "var(--color-bg-elevated)",
                   }}
                   aria-label={
                     props.compounding

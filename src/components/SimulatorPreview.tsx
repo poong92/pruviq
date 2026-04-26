@@ -110,7 +110,10 @@ export default function SimulatorPreview() {
         <div class="flex items-center gap-2">
           <span
             class="px-2 py-0.5 rounded text-[10px] font-bold"
-            style={{ background: "var(--color-accent)", color: "#0A0E14" }}
+            style={{
+              background: "var(--color-accent)",
+              color: "var(--color-bg)",
+            }}
           >
             ATR Breakout SHORT
           </span>

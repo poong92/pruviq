@@ -249,6 +249,11 @@ export const booleanFields = new Set([
 // white. `red` darkened from #f04251 → #dc2626 (red-600) — contrast 5.25.
 // `accentBright` added for on-dark-bg text (#5CC8ED matches the site's
 // global --color-accent-bright CSS var).
+//
+// Note (2026-04-25): these stay literal hex — the simulator's button palette
+// is a separate semantic from the site's `--color-accent` cyan. Light-mode
+// theme adaptation for these buttons happens via the surrounding card colors,
+// not the button hue itself (the dark blue is universally readable).
 export const COLORS = {
   accent: "#0369a1", // sky-700: 5.7:1 on white (was 3.71)
   accentDim: "#0284c7", // hover: sky-600
