@@ -8,6 +8,7 @@ import {
   type Lang,
 } from "../../../i18n/index";
 import { emit } from "../../../lib/events";
+import Card from "../../ui/Card";
 
 interface Props {
   lang: Lang;
@@ -29,9 +30,13 @@ export default function OKXConnectCTA({ lang, presetId }: Props) {
         ? "시뮬레이션 결과를 OKX에서 자동으로 실행하는 기능을 준비 중입니다. 현재는 백테스트 + 검증만 무료로 사용 가능합니다."
         : "We're building a way to auto-execute your simulation on OKX. For now, backtesting + verification stay fully free.";
     return (
-      <section
+      <Card
+        as="section"
         aria-label={heading}
-        class="rounded-xl border border-[--color-border] bg-[--color-bg-card] p-6 text-center"
+        variant="default"
+        padding="lg"
+        radius="lg"
+        class="text-center"
         data-testid="sim-v1-okx-cta"
       >
         <div class="mb-3 flex items-center justify-center gap-2">
@@ -64,7 +69,7 @@ export default function OKXConnectCTA({ lang, presetId }: Props) {
             {t("simV2.cta.learn_more")}
           </a>
         </div>
-      </section>
+      </Card>
     );
   }
 
