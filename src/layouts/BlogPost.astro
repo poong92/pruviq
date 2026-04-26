@@ -28,6 +28,8 @@ const { title, description, date, updatedDate, category, author = 'PRUVIQ Resear
 // frontmatter — feeding those to /og/blog/<slug>.png (Inter only, no
 // Korean glyph coverage) renders 한글 as tofu. Route KO posts to
 // /og/ko/blog/<slug>.png which uses Pretendard for KR rendering.
+// (W3-1c established the EN /og/blog/[slug].png endpoint; this
+// extends it with the KR fallback.)
 const resolvedOgImage = image || (postId
   ? (lang === 'ko' ? `/og/ko/blog/${postId}.png` : `/og/blog/${postId}.png`)
   : undefined);
