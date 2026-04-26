@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import EmptyStateIllustration from '../components/ui/EmptyStateIllustration.astro';
 ---
 
 <Layout title="404 - Page Not Found | PRUVIQ" description="Page not found. Explore PRUVIQ's free crypto strategy backtesting tools.">
@@ -7,6 +8,11 @@ import Layout from '../layouts/Layout.astro';
     <!-- Background glow -->
     <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
       <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full" style="background: radial-gradient(circle, rgba(44,181,232,0.06) 0%, transparent 70%);"></div>
+    </div>
+
+    <!-- Brand illustration (W5-1): broken-chart visual that says "the path ended here" -->
+    <div class="relative mb-2 flex justify-center">
+      <EmptyStateIllustration variant="broken-chart" size={240} class="opacity-90" />
     </div>
 
     <!-- Glitch-style 404 -->
