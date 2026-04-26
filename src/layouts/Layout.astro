@@ -1022,5 +1022,19 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
         els.forEach(function(el) { observer.observe(el); });
       })();
     </script>
+    <!-- W4-3b: Service worker registration. Conservative caching strategy
+         (no HTML caching ever — see public/sw.js header). Registered after
+         window.load so it doesn't block first paint. Skipped on localhost
+         in case dev needs a clean reload loop. -->
+    <script>
+      if ('serviceWorker' in navigator && location.protocol === 'https:') {
+        window.addEventListener('load', function() {
+          navigator.serviceWorker.register('/sw.js').catch(function(err) {
+            // Silent — SW failure should never break the page
+            console.warn('[pruviq] sw register failed', err);
+          });
+        });
+      }
+    </script>
   </body>
 </html>

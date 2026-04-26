@@ -1,4 +1,5 @@
 import { exchanges, type Exchange } from "../data/exchanges";
+import Card from "./ui/Card";
 
 interface Props {
   /** Display mode: 'inline' for table rows, 'card' for full-width */
@@ -90,17 +91,22 @@ export default function ExchangeCTA({
 
   // Card mode (full-width)
   return (
-    <div class="border border-[--color-border] rounded-xl bg-[--color-bg-card] p-6 mt-6">
+    <Card variant="default" padding="lg" radius="lg" class="mt-6">
       <h3 class="text-sm font-bold mb-1">{t.heading}</h3>
       <p class="text-[0.75rem] text-[--color-text-muted] mb-4">{t.subtext}</p>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {available.map((ex) => (
-          <a
+          <Card
             key={ex.id}
+            as="a"
             href={buildUrl(ex, coin, strategy)}
             target="_blank"
             rel="noopener noreferrer sponsored"
-            class="flex items-center justify-between p-3 rounded-lg border border-[--color-border] hover:border-[--color-accent] transition-colors group"
+            variant="default"
+            padding="sm"
+            radius="md"
+            interactive
+            class="group flex items-center justify-between"
           >
             <div>
               <div class="font-semibold text-sm">{ex.name}</div>
@@ -117,12 +123,12 @@ export default function ExchangeCTA({
             >
               {t.signup} &rarr;
             </span>
-          </a>
+          </Card>
         ))}
       </div>
       <p class="text-[0.5625rem] text-[--color-text-muted] mt-3">
         {t.disclosure}
       </p>
-    </div>
+    </Card>
   );
 }
