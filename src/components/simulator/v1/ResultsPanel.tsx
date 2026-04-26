@@ -18,6 +18,7 @@ import { useTranslations, type Lang } from "../../../i18n/index";
 import { emit } from "../../../lib/events";
 import { findPreset } from "../../../config/simulator-presets";
 import ShareResultButton from "../../ui/ShareResultButton";
+import { formatLocalizedCount } from "../../../utils/format";
 
 interface Props {
   config: SimConfig;
@@ -129,8 +130,8 @@ function buildVerdict(
       tone: "good",
       text:
         lang === "ko"
-          ? `견고한 수익 곡선 — PF ${d.profit_factor.toFixed(2)}, ${d.total_trades.toLocaleString()}건 표본.`
-          : `Solid profit curve — PF ${d.profit_factor.toFixed(2)} across ${d.total_trades.toLocaleString()} trades.`,
+          ? `견고한 수익 곡선 — PF ${d.profit_factor.toFixed(2)}, ${formatLocalizedCount(d.total_trades, "ko")}건 표본.`
+          : `Solid profit curve — PF ${d.profit_factor.toFixed(2)} across ${formatLocalizedCount(d.total_trades, "en")} trades.`,
     };
   }
   return {
@@ -336,7 +337,7 @@ export default function ResultsPanel({ config, lang }: Props) {
           <span>
             {lang === "ko" ? "거래" : "Trades"}:{" "}
             <span class="text-(--color-text) tabular-nums">
-              {d.total_trades.toLocaleString()}
+              {formatLocalizedCount(d.total_trades, lang)}
             </span>
           </span>
           <span>
