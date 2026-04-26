@@ -207,8 +207,10 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
     <meta property="og:locale" content={lang === 'ko' ? 'ko_KR' : 'en_US'} />
     {!noAlternate && <meta property="og:locale:alternate" content={lang === 'ko' ? 'en_US' : 'ko_KR'} />}
     <meta property="og:image" content={ogImage} />
+    {/* W3-3: og:image:secure_url — Kakao + LinkedIn prefer explicit https URL */}
+    <meta property="og:image:secure_url" content={ogImage} />
     <meta property="og:image:type" content="image/jpeg" />
-    <meta property="og:image:alt" content={Astro.props.ogImage ? title : "PRUVIQ — Free Crypto Strategy Backtester"} />
+    <meta property="og:image:alt" content={Astro.props.ogImage ? title : (lang === 'ko' ? 'PRUVIQ — 무료 크립토 전략 백테스터' : 'PRUVIQ — Free Crypto Strategy Backtester')} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     {ogImageWebp !== ogImage && (
@@ -217,13 +219,20 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
       <meta property="og:image:width" content="1200" />
       <meta property="og:image:height" content="630" />
     )}
-    <!-- Twitter -->
+    {/* W3-3: Kakao-specific. KakaoTalk preview reads og:title/description/image
+        but also respects these article-style hints when present. og:article:author
+        + og:updated_time improve preview metadata for KO SNS shares. */}
+    <meta property="article:author" content="PRUVIQ" />
+    <meta property="og:updated_time" content={lastModified} />
+    <!-- Twitter (also read by Naver / KakaoTalk fallback) -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
-    <meta name="twitter:image:alt" content={Astro.props.ogImage ? title : "PRUVIQ — Free Crypto Strategy Backtester"} />
+    <meta name="twitter:image:alt" content={Astro.props.ogImage ? title : (lang === 'ko' ? 'PRUVIQ — 무료 크립토 전략 백테스터' : 'PRUVIQ — Free Crypto Strategy Backtester')} />
     <meta name="twitter:site" content="@pruviq" />
+    {/* W3-3: Naver SEO hint — searchadvisor likes explicit author */}
+    <meta name="author" content="PRUVIQ" />
     <title>{title}</title>
     <!-- JSON-LD Organization -->
     {type === 'website' && (
