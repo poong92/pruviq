@@ -2106,4 +2106,10 @@ export const ko: Record<TranslationKey, string> = {
   "simV2.empty.loading": "시뮬레이션 실행 중…",
   "simV2.empty.pick_first": "위 프리셋 선택 시 결과가 표시됩니다.",
   "simV2.empty.error": "시뮬레이션 실패. 다른 프리셋 시도.",
+
+  // 테마 토글 (light-mode 롤아웃 PR-4)
+  "theme.toggle_label": "테마",
+  "theme.light": "밝게",
+  "theme.dark": "어둡게",
+  "theme.system": "시스템",
 };

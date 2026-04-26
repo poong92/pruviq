@@ -2150,6 +2150,12 @@ export const en = {
   "simV2.empty.loading": "Running simulation…",
   "simV2.empty.pick_first": "Pick a preset above to see results.",
   "simV2.empty.error": "Couldn't run that simulation. Try another preset.",
+
+  // Theme toggle (PR-4 of light-mode rollout)
+  "theme.toggle_label": "Theme",
+  "theme.light": "Light",
+  "theme.dark": "Dark",
+  "theme.system": "System",
 } as const;
 
 export type TranslationKey = keyof typeof en;
