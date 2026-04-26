@@ -1547,6 +1547,26 @@ textarea:focus-visible {
   font-weight: 700;
   padding: 0.25rem 0.625rem;
   box-shadow: 0 0 8px var(--color-verified-subtle);
+  /* W2-4: 1회 entrance pulse — draws the eye to verified strategies on first paint */
+  animation: verified-pulse-once 1.6s var(--ease-default) 0.2s 1 both;
+}
+@keyframes verified-pulse-once {
+  0%   {
+    box-shadow:
+      0 0 0 0 var(--color-verified-border),
+      0 0 0 0 var(--color-verified-subtle);
+  }
+  60%  {
+    box-shadow:
+      0 0 0 4px transparent,
+      0 0 28px var(--color-verified-subtle);
+  }
+  100% {
+    box-shadow: 0 0 8px var(--color-verified-subtle);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .badge-verified { animation: none; }
 }
 
 /* ─── Strategy page: Filter bar scrollable on mobile ─── */
