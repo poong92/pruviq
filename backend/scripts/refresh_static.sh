@@ -227,17 +227,32 @@ if [[ "$ORIGIN_SHA" != "$LAST_DEPLOYED_SHA" ]]; then
     log "New code on origin/main: $LAST_DEPLOYED_SHA -> $ORIGIN_SHA"
 fi
 
-if [[ "$HAS_CHANGES" == "false" && "$HAS_CODE_CHANGES" == "false" ]]; then
-    log "No data or code changes"
+# 2026-04-26 outage root-cause: when this script raced .github/workflows/
+# data-deploy.yml on the same `npx wrangler deploy`, wrangler v4 [assets]
+# manifest queries interleaved → second deploy activated a version with
+# 51 dangling asset references → pruviq.com 51 pages 404. Three deploy
+# paths existed (this script + GH Actions + a third LaunchAgent now
+# disabled). Production deploy SSoT is now data-deploy.yml only; this
+# script defers code deploys to CI and only handles data refreshes.
+if [[ "$HAS_CODE_CHANGES" == "true" ]]; then
+    log "Code changed on origin/main ($LAST_DEPLOYED_SHA -> $ORIGIN_SHA) — deferring to CI (data-deploy.yml). Marker updated; no Mac deploy."
+    echo "$ORIGIN_SHA" > "$DEPLOY_MARKER"
     exit 0
 fi
 
-# --- Step 2: Build + deploy from local repo ---
-# Data refresh only needs fresh public/data/*.json in dist/ — no code changes.
-# Local repo includes all public/ assets (fonts, images, icons) that a worktree
-# created from git-tracked files alone would miss, causing wrangler to skip 800+
-# assets. Build directly here: code on this branch tracks origin/main.
-log "Building site (local)..."
+if [[ "$HAS_CHANGES" == "false" ]]; then
+    log "No data changes (and code already CI-deployed)"
+    exit 0
+fi
+
+# --- Step 2: Build + deploy data-only refresh from local repo ---
+# Reached here only when origin/main is unchanged since last deploy AND a
+# public/data/*.json file changed. CI deploys + Mac data refreshes cannot
+# race because they trigger on disjoint conditions (push event vs. data file
+# diff with same code SHA). Local repo includes public/ assets that a
+# worktree created from git-tracked files alone would miss, causing
+# wrangler to skip 800+ assets — build directly here.
+log "Building site (local) for data-only refresh..."
 if npm run build 2>&1 | tail -3; then
     log "Deploying to Cloudflare..."
     if npx wrangler deploy 2>&1 | tail -5; then
