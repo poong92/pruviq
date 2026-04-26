@@ -139,3 +139,74 @@ export function getCssVar(name: string): string {
     .getPropertyValue(name)
     .trim();
 }
+
+/**
+ * formatKoNum — Korean idiomatic number formatting.
+ *
+ * Korean numerals break at 만 (10,000) and 억 (10^8), not at thousands.
+ * `toLocaleString("ko-KR")` only inserts commas (Western grouping) — it
+ * doesn't compose the 만 / 억 idioms that feel native to Korean readers.
+ *
+ * Default (verbose) mode preserves precision but reads natively:
+ *   formatKoNum(123)          → "123"
+ *   formatKoNum(1_234)        → "1,234"
+ *   formatKoNum(12_345)       → "1만 2,345"
+ *   formatKoNum(1_234_567)    → "123만 4,567"
+ *   formatKoNum(12_345_678)   → "1,234만 5,678"
+ *   formatKoNum(123_456_789)  → "1억 2,345만 6,789"
+ *   formatKoNum(-12_345)      → "-1만 2,345"
+ *
+ * Compact mode rounds to one significant fraction:
+ *   formatKoNum(12_345,        { compact: true }) → "1.2만"
+ *   formatKoNum(1_234_567,     { compact: true }) → "123만"
+ *   formatKoNum(12_345_678,    { compact: true }) → "1,234만"
+ *   formatKoNum(123_456_789,   { compact: true }) → "1.2억"
+ *   formatKoNum(1_234_567_890, { compact: true }) → "12억"
+ *
+ * Use this in any user-facing numeric copy targeting Korean readers
+ * (KO `:lang(ko)` text, /ko/* pages, or trader-facing dollar/USDT amounts
+ * where a parallel KRW idiom feels more grounded).
+ */
+const EOK = 100_000_000;
+const MAN = 10_000;
+
+export function formatKoNum(
+  n: number,
+  opts: { compact?: boolean } = {},
+): string {
+  if (!Number.isFinite(n)) return String(n);
+  if (n === 0) return "0";
+  const sign = n < 0 ? "-" : "";
+  const v = Math.abs(n);
+
+  if (opts.compact) {
+    // Compact: round to 1 fraction. Drop fraction if >= 10 of the unit.
+    if (v >= EOK) {
+      const eok = v / EOK;
+      const formatted =
+        eok >= 10 ? Math.round(eok).toLocaleString("en-US") : eok.toFixed(1);
+      return `${sign}${formatted}억`;
+    }
+    if (v >= MAN) {
+      const man = v / MAN;
+      const formatted =
+        man >= 10 ? Math.round(man).toLocaleString("en-US") : man.toFixed(1);
+      return `${sign}${formatted}만`;
+    }
+    return `${sign}${Math.round(v).toLocaleString("en-US")}`;
+  }
+
+  // Verbose: preserve full precision, compose 억 / 만 / 단위 segments.
+  const eok = Math.floor(v / EOK);
+  const remAfterEok = v - eok * EOK;
+  const man = Math.floor(remAfterEok / MAN);
+  const ones = remAfterEok - man * MAN;
+
+  const parts: string[] = [];
+  if (eok > 0) parts.push(`${eok.toLocaleString("en-US")}억`);
+  if (man > 0) parts.push(`${man.toLocaleString("en-US")}만`);
+  if (ones > 0 || (eok === 0 && man === 0)) {
+    parts.push(ones.toLocaleString("en-US"));
+  }
+  return `${sign}${parts.join(" ")}`;
+}
