@@ -167,7 +167,34 @@ jobs:
               return;
             }
 
-            // All checks green — merge
+            // 2026-04-26: queue-drain root-cause fix.
+            // PRUVIQ ruleset has strict_required_status_checks_policy=true →
+            // PR must be up-to-date with main before merge. When the schedule
+            // cron picks up a BEHIND PR, the merge call below fails with 405
+            // "Base branch was modified" and the next cron retries the same
+            // stuck PR forever. Detect BEHIND state up front and trigger
+            // update-branch so the next cron tick can actually merge.
+            const prDetail = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber,
+            });
+            if (prDetail.data.mergeable_state === 'behind') {
+              core.info(`PR #${prNumber} is BEHIND main — triggering update-branch.`);
+              try {
+                await github.rest.pulls.updateBranch({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  pull_number: prNumber,
+                });
+                core.info(`update-branch dispatched for PR #${prNumber}; checks will rerun, next cron tick will retry merge.`);
+              } catch (err) {
+                core.warning(`update-branch failed for PR #${prNumber}: ${err.message}`);
+              }
+              return;
+            }
+
+            // All checks green + up-to-date with main — merge.
             try {
               await github.rest.pulls.merge({
                 owner: context.repo.owner,
@@ -177,7 +204,8 @@ jobs:
               });
               core.info(`Successfully merged PR #${prNumber}`);
             } catch (err) {
-              // Merge can fail when PR is behind main (data refresh commits).
-              // Next check_suite completion will retry automatically.
+              // Merge can still fail in race conditions (concurrent push to main
+              // between BEHIND check above and merge call). Next check_suite
+              // completion or cron tick retries.
               core.warning(`Merge attempt for PR #${prNumber} did not succeed: ${err.message}`);
             }
