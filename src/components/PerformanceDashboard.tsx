@@ -11,6 +11,7 @@ import {
   signColor,
   getCssVar,
   formatPF,
+  formatLocalizedCount,
 } from "../utils/format";
 import type { IChartApi, AreaData, Time } from "lightweight-charts";
 
@@ -424,7 +425,7 @@ export default function PerformanceDashboard({
       <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
         <MetricCard
           label={t.trades}
-          value={s.total_trades.toLocaleString()}
+          value={formatLocalizedCount(s.total_trades, lang)}
           color="var(--color-text)"
         />
         <MetricCard
