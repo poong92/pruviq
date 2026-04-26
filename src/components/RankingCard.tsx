@@ -1,6 +1,7 @@
 import { h } from "preact";
 import { buildSimulatorUrl } from "../config/simulation-context";
 import { getStrategyDescription } from "../config/strategy-descriptions";
+import EquitySparkline from "./ui/EquitySparkline";
 
 export interface RankingEntry {
   rank: number;
@@ -49,6 +50,12 @@ const cardLabels = {
  * Synthetic sparkline — generates a plausible equity curve from total_return.
  * Uses strategy name as a simple hash seed so the same card always renders
  * the same curve (no flickering on re-render). Visual hint only, not real data.
+ *
+ * 2026-04-26: rendering migrated to EquitySparkline primitive (#1423) for
+ * a single visual signature across the site. Synthetic data generation is
+ * unchanged. Animation disabled (16+ cards on /strategies/ranking — would
+ * thrash); endpoint dot disabled (too noisy at 64×20 thumbnail size); zero
+ * baseline disabled (preserves the original minimal aesthetic).
  */
 function Sparkline({
   totalReturn,
@@ -78,31 +85,18 @@ function Sparkline({
   // Ensure final point = totalReturn
   data[steps] = totalReturn;
 
-  const min = Math.min(...data);
-  const max = Math.max(...data);
-  const range = max - min || 1;
-  const w = 64;
-  const hh = 20;
-  const points = data
-    .map(
-      (v, i) =>
-        `${(i / (data.length - 1)) * w},${hh - ((v - min) / range) * hh}`,
-    )
-    .join(" ");
-
-  const strokeColor = totalReturn >= 0 ? "var(--color-up)" : "var(--color-red)";
-
   return (
-    <svg width={w} height={hh} class="opacity-60" aria-hidden="true" role="img">
-      <polyline
-        points={points}
-        fill="none"
-        stroke={strokeColor}
-        stroke-width="1.5"
-        stroke-linejoin="round"
-        stroke-linecap="round"
+    <div class="opacity-60">
+      <EquitySparkline
+        data={data}
+        ariaLabel=""
+        width={64}
+        height={20}
+        showEndpoint={false}
+        showZero={false}
+        animate={false}
       />
-    </svg>
+    </div>
   );
 }
 
