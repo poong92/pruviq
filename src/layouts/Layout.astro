@@ -111,6 +111,30 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
 <html lang={lang}>
   <head>
     <meta charset="UTF-8" />
+    <!-- FOUC-prevention theme bootstrap (PR-5 of light-mode rollout).
+         Must run BEFORE any stylesheet parses so the browser sees the right
+         CSS-variable values on the first paint. Reads localStorage; falls
+         back to OS prefers-color-scheme. Sets data-theme="light" only when
+         needed (dark is the default tokens defined in @theme). -->
+    <script is:inline>
+      (function () {
+        try {
+          var stored = localStorage.getItem("pruviq-theme");
+          var theme =
+            stored === "light" || stored === "dark"
+              ? stored
+              : window.matchMedia &&
+                  window.matchMedia("(prefers-color-scheme: light)").matches
+                ? "light"
+                : "dark";
+          if (theme === "light") {
+            document.documentElement.setAttribute("data-theme", "light");
+          }
+        } catch (_) {
+          /* localStorage blocked — silently fall back to dark default */
+        }
+      })();
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
     <link rel="canonical" href={canonicalURL.href} />
