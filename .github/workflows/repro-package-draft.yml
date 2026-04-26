@@ -23,7 +23,7 @@ jobs:
           mkdir -p artifacts/repro
           echo '{"manifest":"demo"}' > artifacts/repro/manifest.json
       - name: Upload artifact (for review)
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: reproducible-demo
           path: artifacts/repro

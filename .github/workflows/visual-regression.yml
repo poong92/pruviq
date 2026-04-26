@@ -68,7 +68,7 @@ jobs:
 
       - name: Upload diff artifacts (PR)
         if: github.event_name == 'pull_request'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: visual-regression-diff
           path: |
