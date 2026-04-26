@@ -211,91 +211,76 @@ for f in $DATA_FILES; do
     fi
 done
 
-# Check if origin/main has new code commits since last deploy
-# Deploy marker file stores the last deployed commit SHA
-DEPLOY_MARKER="$HOME/.pruviq-last-deploy-sha"
-git fetch origin main -q 2>/dev/null
-ORIGIN_SHA=$(git rev-parse origin/main 2>/dev/null)
-LAST_DEPLOYED_SHA=""
-if [[ -f "$DEPLOY_MARKER" ]]; then
-    LAST_DEPLOYED_SHA=$(cat "$DEPLOY_MARKER")
-fi
-
-HAS_CODE_CHANGES=false
-if [[ "$ORIGIN_SHA" != "$LAST_DEPLOYED_SHA" ]]; then
-    HAS_CODE_CHANGES=true
-    log "New code on origin/main: $LAST_DEPLOYED_SHA -> $ORIGIN_SHA"
-fi
-
-# 2026-04-26 outage root-cause: when this script raced .github/workflows/
-# data-deploy.yml on the same `npx wrangler deploy`, wrangler v4 [assets]
-# manifest queries interleaved → second deploy activated a version with
-# 51 dangling asset references → pruviq.com 51 pages 404. Three deploy
-# paths existed (this script + GH Actions + a third LaunchAgent now
-# disabled). Production deploy SSoT is now data-deploy.yml only; this
-# script defers code deploys to CI and only handles data refreshes.
-if [[ "$HAS_CODE_CHANGES" == "true" ]]; then
-    log "Code changed on origin/main ($LAST_DEPLOYED_SHA -> $ORIGIN_SHA) — deferring to CI (data-deploy.yml). Marker updated; no Mac deploy."
-    echo "$ORIGIN_SHA" > "$DEPLOY_MARKER"
-    exit 0
-fi
+# 2026-04-26 outage root cause: this script raced .github/workflows/
+# data-deploy.yml on `npx wrangler deploy` against the same Worker.
+# Wrangler v4 [assets] manifest queries interleaved → second deploy
+# activated a version with 51 dangling asset references → pruviq.com
+# 51 pages 404. Three deploy paths existed; production deploy SSoT
+# is now data-deploy.yml only. This script's job ends at git push;
+# CI owns the build+deploy. See ~/.claude/projects/-Users-jepo-pruviq/
+# memory/project_deploy_incident_20260426.md for full timeline.
 
 if [[ "$HAS_CHANGES" == "false" ]]; then
-    log "No data changes (and code already CI-deployed)"
+    log "No data changes — nothing to commit"
     exit 0
 fi
 
-# --- Step 2: Build + deploy data-only refresh from local repo ---
-# Reached here only when origin/main is unchanged since last deploy AND a
-# public/data/*.json file changed. CI deploys + Mac data refreshes cannot
-# race because they trigger on disjoint conditions (push event vs. data file
-# diff with same code SHA). Local repo includes public/ assets that a
-# worktree created from git-tracked files alone would miss, causing
-# wrangler to skip 800+ assets — build directly here.
-log "Building site (local) for data-only refresh..."
-if npm run build 2>&1 | tail -3; then
-    log "Deploying to Cloudflare..."
-    if npx wrangler deploy 2>&1 | tail -5; then
-        log "Deployed to Cloudflare Workers (from local build)"
-        echo "$ORIGIN_SHA" > "$DEPLOY_MARKER"
-    else
-        log "Wrangler deploy failed"
-        send_alert "ERROR" "CF Workers deploy failed"
-        exit 1
-    fi
-else
-    log "Build failed"
-    send_alert "ERROR" "npm build failed"
-    exit 1
-fi
-cd "$REPO_DIR"
+# --- Step 2: Commit data-only changes and push to main ---
+# Mac no longer calls wrangler. Pushing public/data/** to main triggers
+# .github/workflows/data-deploy.yml on the GH Actions side which holds the
+# only `npx wrangler deploy` call in the system. This eliminates concurrent
+# wrangler invocations as a possibility, not just by convention.
+DATA_FILES_LIST="public/data/market.json public/data/coins-stats.json public/data/macro.json public/data/news.json public/data/coin-metadata.json public/data/rankings-daily.json public/data/site-stats.json"
 
-# --- Step 3: Post-deploy verification ---
-# Root cause of 13h staleness (PR #1133): wrangler reported success but
-# uploaded 0 assets when invoked from a worktree missing public/* files.
-# A "deploy succeeded" log line is not proof CF is serving fresh data.
-# Close the loop: re-fetch market.json from pruviq.com and compare its
-# `generated` timestamp with the local file we just built.
-# CF propagation ceiling observed ~60s; 90s gives margin.
-log "Verifying CF propagation (90s)..."
-sleep 90
-
-LOCAL_GEN=$(python3 -c "import json; print(json.load(open('public/data/market.json')).get('generated',''))" 2>/dev/null || echo "")
-CF_GEN=$(curl -sf -m 15 "https://pruviq.com/data/market.json?cachebust=$(date +%s)" 2>/dev/null | \
-    python3 -c "import json,sys; print(json.load(sys.stdin).get('generated',''))" 2>/dev/null || echo "")
-
-if [[ -z "$LOCAL_GEN" || -z "$CF_GEN" ]]; then
-    log "Verify FAILED: could not parse timestamps (local='$LOCAL_GEN' cf='$CF_GEN')"
-    send_alert "ERROR" "Deploy verify: cannot parse market.json timestamps"
+# Re-fetch origin/main right before push to minimize race with CI. If
+# origin/main has new commits since we started, fast-forward our local
+# main first so the push is a true fast-forward (no merge commits).
+git fetch origin main -q 2>/dev/null
+if ! git merge --ff-only origin/main 2>/dev/null; then
+    log "Local main diverged from origin/main — manual fix required, skipping push"
+    send_alert "ERROR" "refresh_static: local main diverged from origin/main"
     exit 1
 fi
 
-if [[ "$LOCAL_GEN" != "$CF_GEN" ]]; then
-    log "Verify FAILED: CF stale — local=$LOCAL_GEN cf=$CF_GEN"
-    send_alert "ERROR" "Deploy verify FAILED: CF serves stale data. local=$LOCAL_GEN cf=$CF_GEN — wrangler likely skipped assets"
+# Stage only the data files we just refreshed — don't sweep up anything
+# else that may be dirty in the working tree.
+git add $DATA_FILES_LIST 2>/dev/null
+
+# Re-check after git add whether there's actually anything staged. The
+# HAS_CHANGES check above used `git diff` which compares to HEAD; if a
+# previous failed run already staged these files, the diff might be empty
+# now. Use `git diff --cached --quiet` for the staged state.
+if git diff --cached --quiet 2>/dev/null; then
+    log "Data refresh wrote files but nothing staged — likely already committed in a prior cycle"
+    exit 0
+fi
+
+# The push triggers data-deploy.yml (paths: public/data/** matches), which
+# is the only `npx wrangler deploy` call in the system. data-deploy.yml has
+# `concurrency: data-deploy / cancel-in-progress: false` so concurrent runs
+# serialize — no manifest race possible even if multiple pushes land back
+# to back. Don't use [skip ci]: we want the push trigger to fire
+# immediately for fast propagation (otherwise data is stale up to 30 min
+# until the cron drift-detector picks it up).
+TS=$(date -u '+%Y-%m-%d %H:%M UTC')
+if ! git -c user.email='pruviq-bot@pruviq.com' -c user.name='pruviq-bot' \
+        commit -m "chore(data): refresh [$TS]" >/dev/null 2>&1; then
+    log "git commit failed"
+    send_alert "ERROR" "refresh_static: git commit failed"
     exit 1
 fi
 
-log "Verify OK: CF serving fresh $CF_GEN"
-send_alert "OK" "Static data refreshed + deployed (verified: $CF_GEN)"
+PUSH_OUT=$(git push origin main 2>&1)
+PUSH_RC=$?
+if [[ $PUSH_RC -ne 0 ]]; then
+    # Roll back the local commit so the next cycle can retry cleanly without
+    # the fast-forward check tripping on the unpushed commit.
+    git reset --soft HEAD~1 2>/dev/null
+    log "git push failed: $PUSH_OUT"
+    send_alert "ERROR" "refresh_static: git push failed (deploy key? network?) — local commit rolled back"
+    exit 1
+fi
+
+log "Pushed data refresh to origin/main — data-deploy.yml will deploy via push trigger"
+send_alert "OK" "Static data refresh pushed to main ($TS); CI deploy in flight"
 exit 0
