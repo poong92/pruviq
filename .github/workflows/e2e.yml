@@ -21,7 +21,7 @@ jobs:
     runs-on: [self-hosted, e2e]
     timeout-minutes: 25
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
       with:
         fetch-depth: 1
 
@@ -85,7 +85,7 @@ jobs:
 
     - name: Upload test results
       if: always()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: playwright-report
         path: playwright-report/
@@ -93,7 +93,7 @@ jobs:
 
     - name: Upload visual snapshots
       if: always()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: visual-snapshots-${{ github.event.pull_request.number || github.run_id }}
         path: playwright-report/screenshots/
@@ -125,7 +125,7 @@ jobs:
 
     - name: Create or update e2e-fix issue
       if: failure() && github.event_name == 'pull_request'
-      uses: actions/github-script@v7
+      uses: actions/github-script@v9
       env:
         FAILING_TESTS: ${{ steps.failing_tests.outputs.FAILING_TESTS }}
       with:
