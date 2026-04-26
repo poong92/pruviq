@@ -13,7 +13,7 @@
  *                                  network is down — they match the
  *                                  HTML's hash references.)
  *   - Static long-lived assets:    CACHE-FIRST with network fallback
- *     (favicon, sprites, fonts, og-image.{jpg,png,webp,avif,svg})
+ *     (favicon, fonts, og-image.{jpg,png,webp,avif,svg})
  *
  * The "no HTML caching" rule is the load-bearing safety property. Any
  * deploy with breaking changes will be picked up immediately on the next
