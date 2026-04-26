@@ -190,7 +190,21 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
     <link rel="icon" sizes="48x48" href="/favicon.ico" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/manifest.json" />
+    <!-- theme-color is matched to --color-bg (dark) and --color-bg-light (light)
+         via the media-query variants below. Browsers (Safari/Chrome) tint browser
+         chrome to match site bg. The fallback comes first for old browsers. -->
     <meta name="theme-color" content="#09090B" />
+    <meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#09090B" media="(prefers-color-scheme: dark)" />
+    <!-- iOS app-style web view -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="PRUVIQ" />
+    <!-- Android Chrome app-style -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="application-name" content="PRUVIQ" />
+    <!-- Disable iOS phone number auto-link in trading copy -->
+    <meta name="format-detection" content="telephone=no" />
     <meta name="last-modified" content={lastModified} />
     {basePath.startsWith('/404') && <meta name="robots" content="noindex" />}
     <link rel="preconnect" href="https://api.pruviq.com" crossorigin />
