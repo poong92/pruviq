@@ -29,13 +29,8 @@
  * Single-child contract: caller passes ONE trigger element; tooltip
  * is rendered as a sibling positioned via wrapper.
  */
-import {
-  useEffect,
-  useId,
-  useRef,
-  useState,
-  type ComponentChildren,
-} from "preact/hooks";
+import type { ComponentChildren } from "preact";
+import { useEffect, useId, useRef, useState } from "preact/hooks";
 
 export type TooltipPlacement = "top" | "right" | "bottom" | "left";
 
@@ -157,7 +152,7 @@ export default function Tooltip({
         <span
           id={tooltipId}
           role="tooltip"
-          class={`absolute z-[120] pointer-events-none whitespace-nowrap rounded px-2 py-1 text-xs font-mono bg-[--color-bg-elevated] text-[--color-text] border border-[--color-border] shadow-[var(--shadow-md)] animate-[fadeIn_120ms_ease-out] ${placementClasses[placement]} ${tooltipClass}`.trim()}
+          class={`absolute z-[120] pointer-events-none max-w-xs text-wrap rounded px-2 py-1 text-xs font-mono bg-[--color-bg-elevated] text-[--color-text] border border-[--color-border] shadow-[var(--shadow-md)] animate-[fadeIn_120ms_ease-out] ${placementClasses[placement]} ${tooltipClass}`.trim()}
           data-placement={placement}
         >
           {content}
