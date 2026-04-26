@@ -16,6 +16,8 @@ import { API_BASE_URL } from "../../../config/api";
 import type { SimConfig } from "../../../hooks/useSimConfig";
 import { useTranslations, type Lang } from "../../../i18n/index";
 import { emit } from "../../../lib/events";
+import { findPreset } from "../../../config/simulator-presets";
+import ShareResultButton from "../../ui/ShareResultButton";
 import Reveal from "../../ui/Reveal";
 import { formatLocalizedCount } from "../../../utils/format";
 
@@ -363,17 +365,35 @@ export default function ResultsPanel({ config, lang }: Props) {
             </span>
           </span>
         </div>
-        <button
-          type="button"
-          onClick={() => {
-            emit("sim.csv_download", { preset: config.presetId });
-            downloadCSV(d, config.presetId ?? "preset");
-          }}
-          data-testid="sim-v1-csv-download"
-          class="inline-flex min-h-[40px] items-center justify-center gap-1 rounded-lg border border-(--color-border-hover) px-3 py-2 text-xs text-(--color-text-secondary) hover:border-[--color-accent] hover:text-[--color-accent-bright]"
-        >
-          {lang === "ko" ? "CSV 다운로드" : "Download CSV"} ↓
-        </button>
+        <div class="flex items-center gap-2">
+          <ShareResultButton
+            presetId={config.presetId}
+            strategyName={
+              (config.presetId
+                ? findPreset(config.presetId)?.labels[lang]
+                : null) ??
+              config.presetId ??
+              "PRUVIQ"
+            }
+            profitFactor={d.profit_factor}
+            winRate={d.win_rate}
+            totalTrades={d.total_trades}
+            totalReturnPct={d.total_return_pct}
+            lang={lang}
+            class="px-3 py-2 text-xs min-h-[40px]"
+          />
+          <button
+            type="button"
+            onClick={() => {
+              emit("sim.csv_download", { preset: config.presetId });
+              downloadCSV(d, config.presetId ?? "preset");
+            }}
+            data-testid="sim-v1-csv-download"
+            class="inline-flex min-h-[40px] items-center justify-center gap-1 rounded-lg border border-(--color-border-hover) px-3 py-2 text-xs text-(--color-text-secondary) hover:border-[--color-accent] hover:text-[--color-accent-bright]"
+          >
+            {lang === "ko" ? "CSV 다운로드" : "Download CSV"} ↓
+          </button>
+        </div>
       </div>
     </Reveal>
   );
