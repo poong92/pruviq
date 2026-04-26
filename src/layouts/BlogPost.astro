@@ -24,6 +24,12 @@ const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 const { title, description, date, updatedDate, category, author = 'PRUVIQ Research', image, body, tags = [], postId, noAlternate = false, isKorean } = Astro.props;
 
+// W3-1c: per-blog dynamic OG. Posts that ship a custom `image` in
+// frontmatter keep using it; posts without an image now get a
+// generated /og/blog/<postId>.png card with title/category/date
+// instead of falling back to the generic site-wide og-image.jpg.
+const resolvedOgImage = image || (postId ? `/og/blog/${postId}.png` : undefined);
+
 const categoryLabels: Record<string, string> = {
   market: 'MARKET ANALYSIS',
   quant: 'QUANT CONCEPTS',
@@ -51,7 +57,7 @@ const shareText = encodeURIComponent(`${title} — PRUVIQ`);
 const shareUrlEnc = encodeURIComponent(shareUrl);
 ---
 
-<Layout title={`${title} - PRUVIQ`} description={description} type="article" date={date} category={category} ogImage={image} noAlternate={noAlternate} skipArticleLD>
+<Layout title={`${title} - PRUVIQ`} description={description} type="article" date={date} category={category} ogImage={resolvedOgImage} noAlternate={noAlternate} skipArticleLD>
   <script type="application/ld+json" set:html={JSON.stringify({
     "@context": "https://schema.org",
     "@type": "Article",
