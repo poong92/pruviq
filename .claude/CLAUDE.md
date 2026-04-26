@@ -127,6 +127,20 @@ MDD, WR, PF 등 모든 성과 지표 표시 시:
 ```
 **근거**: 신규 전략 추가 후 일부 프리셋 0 trades 결과 (2026-03-15 감사).
 
+### 룰 7: 프로덕션 배포 경로 — 단일 SSoT (CRITICAL)
+```
+프로덕션(pruviq.com) 배포는 .github/workflows/data-deploy.yml 하나만 사용.
+Mac Mini / 로컬 / 다른 LaunchAgent / 다른 워크플로우에서 `wrangler deploy`
+실행 절대 금지 — 동일 Worker에 동시 deploy 시 wrangler v4 asset manifest
+race 발생 → 일부 페이지 dangling reference → 51 페이지 404 가능.
+```
+**근거**: 2026-04-26 PR #1400 머지 시 `com.pruviq.claude-auto-deploy`
+LaunchAgent + `data-deploy.yml`이 동시 실행 → asset manifest 충돌 →
+prod 51 페이지 404. 해당 LaunchAgent는 `disabled-` 접두사로 영구
+비활성화됨 (재로드 금지). 새로운 자동 배포 경로 추가 시 반드시
+선행 조건: CF-side concurrency lock(예: KV `cf-deploy.lock`) 먼저
+구현. CLAUDE.md 글로벌의 "Mac Mini M4: dev-only" 원칙과 정합.
+
 ---
 
 ## 커밋 전 필수 QA (CRITICAL)
