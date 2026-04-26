@@ -11,7 +11,8 @@
  * `prefers-reduced-motion: reduce` is honored by the global CSS rule
  * (line 753-757) — all children stay visible with no transition.
  */
-import { useEffect, useRef, useState, type ComponentChildren } from "preact";
+import type { ComponentChildren, JSX } from "preact";
+import { useEffect, useRef, useState } from "preact/hooks";
 
 interface StaggerProps {
   children: ComponentChildren;
@@ -23,6 +24,12 @@ interface StaggerProps {
   class?: string;
   /** Wrapper element type (default `div`) */
   as?: "div" | "section" | "ul" | "ol";
+  /** Pass-through ARIA / data attributes (parity with Reveal). */
+  "data-testid"?: string;
+  "aria-label"?: string;
+  "aria-live"?: JSX.HTMLAttributes["aria-live"];
+  role?: string;
+  id?: string;
 }
 
 export default function Stagger({
@@ -31,6 +38,7 @@ export default function Stagger({
   delay = 0,
   class: className = "",
   as = "div",
+  ...rest
 }: StaggerProps) {
   const ref = useRef<HTMLElement>(null);
   const [visible, setVisible] = useState(false);
@@ -70,6 +78,7 @@ export default function Stagger({
     <Tag
       ref={ref as never}
       class={`reveal-child ${visible ? "visible" : ""} ${className}`.trim()}
+      {...rest}
     >
       {children}
     </Tag>
