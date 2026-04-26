@@ -155,25 +155,17 @@ jobs:
             const runUrl = process.env.RUN_URL;
             const sha = process.env.SHA?.slice(0, 7);
 
-            // Check if there's already an open smoke-fail issue for this commit
-            const existing = await github.rest.issues.listForRepo({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              labels: 'smoke-fail',
-              state: 'open',
-            });
-            if (existing.data.length > 0) {
-              // Update existing issue with new failure
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: existing.data[0].number,
-                body: `New smoke failure on \`${sha}\`: ${commitMsg}\nRun: ${runUrl}`,
-              });
-              return;
-            }
+            // 2026-04-26 root cause: this step USED to early-return when an
+            // existing smoke-fail issue was found, skipping rollback. The
+            // 51-page-404 outage hit because issue #954 was already open
+            // from a prior unrelated failure → rollback never fired even
+            // though the site was 404. Rollback now runs UNCONDITIONALLY
+            // on every smoke failure; issue tracking is a separate concern
+            // handled afterwards.
 
-            // Auto-rollback: revert to previous Workers deployment
+            // ─── Step 1: Auto-rollback (always, regardless of issue state) ───
+            let rollbackOutcome = 'not-attempted';
+            let rollbackTarget = '';
             try {
               const acctId = '9314e06569c4da23e48fd088d45707dd';
               const scriptName = 'pruviq-website';
@@ -187,7 +179,7 @@ jobs:
                   if (match) cfToken = match[1];
                 } catch {}
               }
-              if (!cfToken) throw new Error('No CF token');
+              if (!cfToken) throw new Error('No CF token (secrets.CLOUDFLARE_API_TOKEN missing AND ~/.secrets.env unreadable on runner)');
               const depsResp = await fetch(
                 `https://api.cloudflare.com/client/v4/accounts/${acctId}/workers/scripts/${scriptName}/deployments`,
                 { headers: { 'Authorization': `Bearer ${cfToken}` } }
@@ -196,26 +188,50 @@ jobs:
               const deployments = depsData?.result?.deployments || [];
               if (deployments.length >= 2) {
                 const prevId = deployments[1].id;
+                rollbackTarget = prevId.slice(0, 12);
                 const rollResp = await fetch(
                   `https://api.cloudflare.com/client/v4/accounts/${acctId}/workers/deployments/by-script/${scriptName}/detail/${prevId}/rollback`,
                   { method: 'PUT', headers: { 'Authorization': `Bearer ${cfToken}` } }
                 );
                 const rollData = await rollResp.json();
-                core.info(`Auto-rollback: ${rollData.success ? 'SUCCESS' : 'FAILED'} → ${prevId.slice(0,12)}`);
+                rollbackOutcome = rollData.success ? 'SUCCESS' : 'FAILED';
+                core.info(`Auto-rollback: ${rollbackOutcome} → ${rollbackTarget} (response: ${JSON.stringify(rollData).slice(0, 200)})`);
+              } else {
+                rollbackOutcome = 'SKIPPED';
+                core.warning(`Auto-rollback: only ${deployments.length} prior deployments visible — cannot rollback`);
               }
             } catch (e) {
+              rollbackOutcome = 'ERRORED';
               core.warning(`Auto-rollback failed: ${e.message}`);
             }
 
+            // ─── Step 2: Issue tracking (comment if open, create if not) ───
+            const existing = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'smoke-fail',
+              state: 'open',
+            });
+            const rollbackLine = `Auto-rollback: ${rollbackOutcome}${rollbackTarget ? ` → ${rollbackTarget}` : ''}`;
+            if (existing.data.length > 0) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: existing.data[0].number,
+                body: `New smoke failure on \`${sha}\`: ${commitMsg}\n${rollbackLine}\nRun: ${runUrl}`,
+              });
+              return;
+            }
             await github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              title: `[smoke-fail] Production smoke failed on ${sha} (auto-rolled back)`,
+              title: `[smoke-fail] Production smoke failed on ${sha} (rollback: ${rollbackOutcome})`,
               body: [
                 '## Production Smoke Test Failure',
                 '',
                 `**Commit:** \`${sha}\` — ${commitMsg}`,
                 `**Run:** ${runUrl}`,
+                `**${rollbackLine}**`,
                 '',
                 '## What to check',
                 '- [ ] SSR blank page: `/strategies/ranking` or `/ko/strategies/ranking` has `#ranking-ssr-fallback` with data?',
@@ -223,6 +239,7 @@ jobs:
                 '- [ ] JS crash: component throws on real API data?',
                 '- [ ] KO/EN parity: KO pages have Korean text?',
                 '- [ ] HTTP 200: critical pages returning 4xx/5xx?',
+                '- [ ] Wrangler manifest race: did multiple `wrangler deploy` paths run within ~60s of each other? (See ~/.claude/projects/-Users-jepo-pruviq/memory/project_deploy_incident_20260426.md)',
                 '',
                 '## Reproduce locally',
                 '```bash',
