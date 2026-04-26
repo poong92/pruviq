@@ -1,5 +1,10 @@
 import { useState } from "preact/hooks";
-import { winRateColor, profitFactorColor, signColor } from "../utils/format";
+import {
+  winRateColor,
+  profitFactorColor,
+  signColor,
+  formatLocalizedCount,
+} from "../utils/format";
 import { COLORS } from "./simulator-types";
 import Term from "./ui/Term";
 import CollapsibleSection from "./ui/CollapsibleSection";
@@ -660,7 +665,7 @@ export default function ResultsCard({
       {/* ── Always visible: Trade summary (compact) ── */}
       <div class="flex items-center justify-between font-mono text-xs text-[--color-text-muted] mb-1">
         <span>
-          {data.total_trades.toLocaleString()} {t.trades}
+          {formatLocalizedCount(data.total_trades, lang)} {t.trades}
         </span>
         {data.avg_bars_held != null && data.avg_bars_held > 0 && (
           <span class="text-[10px]">
