@@ -26,7 +26,7 @@ const tradingDays = (stats.trading_days ?? 0).toLocaleString('ko-KR');
 const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1) + 'M';
 ---
 
-<Layout title={t('meta.home_title')} description={t('meta.index_desc')}>
+<Layout title={t('meta.home_title')} description={t('meta.index_desc')} ogImage="/og/home.png">
 
   <!-- HERO — 50/50 layout: text left, live demo right -->
   <section id="hero-section" class="relative overflow-hidden hero-bg-depth section-glow-green">
