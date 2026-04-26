@@ -166,7 +166,9 @@ export default function OnboardingTour({ lang = "en" }: Props) {
                 height: "8px",
                 borderRadius: "50%",
                 background:
-                  i === step ? "#3182f6" : "var(--color-border, #2a2a35)",
+                  i === step
+                    ? "var(--color-accent)"
+                    : "var(--color-border, #2a2a35)",
                 transition: "background 0.2s",
               }}
             />
@@ -189,15 +191,15 @@ export default function OnboardingTour({ lang = "en" }: Props) {
             width: "40px",
             height: "40px",
             borderRadius: "50%",
-            background: "rgba(49,130,246,0.15)",
-            border: "1.5px solid #3182f6",
+            background: "var(--color-accent-subtle)",
+            border: "1.5px solid var(--color-accent)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             fontSize: "18px",
             fontWeight: "bold",
             fontFamily: "monospace",
-            color: "#3182f6",
+            color: "var(--color-accent)",
             marginBottom: "12px",
           }}
         >
@@ -235,14 +237,14 @@ export default function OnboardingTour({ lang = "en" }: Props) {
             display: "inline-flex",
             alignItems: "center",
             gap: "6px",
-            background: "rgba(49,130,246,0.08)",
-            border: "1px solid rgba(49,130,246,0.2)",
+            background: "var(--color-accent-subtle)",
+            border: "1px solid var(--color-accent-glow)",
             borderRadius: "6px",
             padding: "4px 10px",
             marginBottom: "20px",
             fontSize: "11px",
             fontFamily: "monospace",
-            color: "#3182f6",
+            color: "var(--color-accent)",
           }}
         >
           <svg
@@ -252,8 +254,14 @@ export default function OnboardingTour({ lang = "en" }: Props) {
             fill="none"
             style={{ flexShrink: 0 }}
           >
-            <circle cx="5" cy="5" r="4" stroke="#3182f6" strokeWidth="1.5" />
-            <circle cx="5" cy="5" r="1.5" fill="#3182f6" />
+            <circle
+              cx="5"
+              cy="5"
+              r="4"
+              stroke="var(--color-accent)"
+              strokeWidth="1.5"
+            />
+            <circle cx="5" cy="5" r="1.5" fill="var(--color-accent)" />
           </svg>
           {current.target}
         </div>
@@ -282,15 +290,15 @@ export default function OnboardingTour({ lang = "en" }: Props) {
             style={{
               flex: 1,
               padding: "8px 16px",
-              background: "#3182f6",
+              background: "var(--color-accent)",
               border: "none",
               borderRadius: "6px",
               fontSize: "13px",
               fontWeight: "600",
               fontFamily: "monospace",
-              color: "#fff",
+              color: "var(--color-bg)",
               cursor: "pointer",
-              boxShadow: "0 0 16px rgba(49,130,246,0.3)",
+              boxShadow: "0 0 16px var(--color-accent-glow)",
             }}
           >
             {isLast ? t.done : t.next + " →"}
