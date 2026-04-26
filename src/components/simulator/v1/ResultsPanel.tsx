@@ -210,7 +210,7 @@ export default function ResultsPanel({ config, lang }: Props) {
     return (
       <SkeletonFrame testId="sim-v1-results-empty">
         <MetricGridSkeleton />
-        <div class="mt-4 border-t border-zinc-800 pt-3 text-center text-xs text-zinc-400">
+        <div class="mt-4 border-t border-(--color-border) pt-3 text-center text-xs text-(--color-text-muted)">
           {t("simV2.empty.pick_first")}
         </div>
       </SkeletonFrame>
@@ -221,7 +221,7 @@ export default function ResultsPanel({ config, lang }: Props) {
     return (
       <SkeletonFrame testId="sim-v1-results-loading" aria-busy="true">
         <MetricGridSkeleton shimmer />
-        <div class="mt-4 flex items-center justify-center gap-2 border-t border-zinc-800 pt-3 text-xs text-zinc-400">
+        <div class="mt-4 flex items-center justify-center gap-2 border-t border-(--color-border) pt-3 text-xs text-(--color-text-muted)">
           <span class="inline-block h-1.5 w-1.5 animate-ping rounded-full bg-[--color-accent]" />
           {t("simV2.empty.loading")}
         </div>
@@ -235,14 +235,14 @@ export default function ResultsPanel({ config, lang }: Props) {
         role="alert"
         aria-live="assertive"
         data-testid="sim-v1-results-error"
-        class="rounded-xl border border-rose-500/30 bg-rose-500/5 p-5"
+        class="rounded-xl border border-(--color-down)/30 bg-(--color-down)/10 p-5"
       >
         <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p class="text-sm font-semibold text-rose-200">
+            <p class="text-sm font-semibold text-(--color-down)">
               {t("simV2.empty.error")}
             </p>
-            <details class="mt-1 text-xs text-rose-300">
+            <details class="mt-1 text-xs text-(--color-down)">
               <summary class="cursor-pointer font-mono text-xs">
                 {lang === "ko" ? "기술 상세" : "technical details"}
               </summary>
@@ -255,7 +255,7 @@ export default function ResultsPanel({ config, lang }: Props) {
             type="button"
             onClick={retry}
             data-testid="sim-v1-results-retry"
-            class="inline-flex min-h-[40px] items-center justify-center rounded-lg border border-rose-500/40 bg-rose-500/10 px-4 py-2 text-sm font-medium text-rose-200 hover:bg-rose-500/20"
+            class="inline-flex min-h-[40px] items-center justify-center rounded-lg border border-(--color-down)/40 bg-(--color-down)/15 px-4 py-2 text-sm font-medium text-(--color-down) hover:bg-(--color-down)/20"
           >
             {lang === "ko" ? "다시 시도" : "Retry"} ↻
           </button>
@@ -270,7 +270,7 @@ export default function ResultsPanel({ config, lang }: Props) {
   return (
     <div
       data-testid="sim-v1-results-ok"
-      class="rounded-xl border border-zinc-800 bg-zinc-900/60 p-5 shadow-sm"
+      class="rounded-xl border border-(--color-border) bg-(--color-bg-card)/60 p-5 shadow-sm"
     >
       <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
         <Metric
@@ -329,25 +329,25 @@ export default function ResultsPanel({ config, lang }: Props) {
         <span class="leading-snug">{verdict.text}</span>
       </div>
 
-      <div class="mt-4 flex flex-col gap-3 border-t border-zinc-800 pt-3 font-mono text-xs text-zinc-400 sm:flex-row sm:items-center sm:justify-between">
+      <div class="mt-4 flex flex-col gap-3 border-t border-(--color-border) pt-3 font-mono text-xs text-(--color-text-muted) sm:flex-row sm:items-center sm:justify-between">
         <div class="grid grid-cols-2 gap-x-4 gap-y-1 sm:flex sm:flex-wrap sm:gap-4">
           <span>
             {lang === "ko" ? "거래" : "Trades"}:{" "}
-            <span class="text-zinc-200 tabular-nums">
+            <span class="text-(--color-text) tabular-nums">
               {d.total_trades.toLocaleString()}
             </span>
           </span>
           <span>
             {lang === "ko" ? "코인" : "Coins"}:{" "}
-            <span class="text-zinc-200 tabular-nums">{d.coins_used}</span>
+            <span class="text-(--color-text) tabular-nums">{d.coins_used}</span>
           </span>
           <span class="col-span-2 sm:col-auto">
             {lang === "ko" ? "기간" : "Range"}:{" "}
-            <span class="text-zinc-200">{d.data_range}</span>
+            <span class="text-(--color-text)">{d.data_range}</span>
           </span>
           <span>
             Sharpe:{" "}
-            <span class="text-zinc-200 tabular-nums">
+            <span class="text-(--color-text) tabular-nums">
               {abbrev(d.sharpe_ratio, 2)}
             </span>
           </span>
@@ -359,7 +359,7 @@ export default function ResultsPanel({ config, lang }: Props) {
             downloadCSV(d, config.presetId ?? "preset");
           }}
           data-testid="sim-v1-csv-download"
-          class="inline-flex min-h-[40px] items-center justify-center gap-1 rounded-lg border border-zinc-700 px-3 py-2 text-xs text-zinc-300 hover:border-[--color-accent] hover:text-[--color-accent-bright]"
+          class="inline-flex min-h-[40px] items-center justify-center gap-1 rounded-lg border border-(--color-border-hover) px-3 py-2 text-xs text-(--color-text-secondary) hover:border-[--color-accent] hover:text-[--color-accent-bright]"
         >
           {lang === "ko" ? "CSV 다운로드" : "Download CSV"} ↓
         </button>
@@ -370,9 +370,9 @@ export default function ResultsPanel({ config, lang }: Props) {
 
 function verdictTone(tone: "good" | "bad" | "neutral"): string {
   if (tone === "good")
-    return "border-emerald-500/30 bg-emerald-500/5 text-emerald-200";
-  if (tone === "bad") return "border-rose-500/30 bg-rose-500/5 text-rose-200";
-  return "border-amber-500/20 bg-amber-500/5 text-amber-100";
+    return "border-(--color-up)/30 bg-(--color-up)/10 text-(--color-up)";
+  if (tone === "bad") return "border-(--color-down)/30 bg-(--color-down)/10 text-(--color-down)";
+  return "border-(--color-verified)/20 bg-(--color-verified-subtle) text-(--color-verified)";
 }
 
 // Convert the SimResult to a two-column CSV (metric, value) + download.
@@ -418,10 +418,10 @@ function Metric({
 }) {
   const toneClass =
     tone === "good"
-      ? "text-emerald-400"
+      ? "text-(--color-up)"
       : tone === "bad"
-        ? "text-rose-400"
-        : "text-zinc-100";
+        ? "text-(--color-down)"
+        : "text-(--color-text)";
   // 2026-04-22 (a11y final): abandoned the hidden-until-interacted tooltip
   // pattern entirely. The prior <details>/<summary> disclosure fixed the
   // keyboard/touch reachability issue but introduced popover-dismissal,
@@ -432,14 +432,14 @@ function Metric({
   // worth it to remove the last a11y gap.
   return (
     <div data-testid={testId}>
-      <div class="mb-1 text-xs uppercase tracking-wide text-zinc-400">
+      <div class="mb-1 text-xs uppercase tracking-wide text-(--color-text-muted)">
         {label}
       </div>
       <div class={`font-mono text-2xl font-semibold tabular-nums ${toneClass}`}>
         {value}
       </div>
       {tooltip && (
-        <p class="mt-1 text-[11px] normal-case leading-snug text-zinc-500">
+        <p class="mt-1 text-[11px] normal-case leading-snug text-(--color-text-tertiary)">
           {tooltip}
         </p>
       )}
@@ -460,7 +460,7 @@ function SkeletonFrame({
     <div
       data-testid={testId}
       aria-busy={busy}
-      class="rounded-xl border border-zinc-800 bg-zinc-900/40 p-5"
+      class="rounded-xl border border-(--color-border) bg-(--color-bg-card)/40 p-5"
     >
       {children}
     </div>
@@ -470,14 +470,14 @@ function SkeletonFrame({
 function MetricGridSkeleton({ shimmer }: { shimmer?: boolean }) {
   const base =
     "h-10 rounded " +
-    (shimmer ? "animate-pulse bg-zinc-800" : "bg-zinc-800/60");
+    (shimmer ? "animate-pulse bg-(--color-bg-elevated)" : "bg-(--color-bg-elevated)/60");
   return (
     <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
       {[0, 1, 2, 3].map((i) => (
         <div key={i}>
           <div
             class={`mb-2 h-3 w-16 rounded ${
-              shimmer ? "animate-pulse bg-zinc-800" : "bg-zinc-800/60"
+              shimmer ? "animate-pulse bg-(--color-bg-elevated)" : "bg-(--color-bg-elevated)/60"
             }`}
           />
           <div class={base} />

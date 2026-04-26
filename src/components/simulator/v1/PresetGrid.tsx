@@ -27,10 +27,10 @@ export default function PresetGrid({ activePresetId, lang, onSelect }: Props) {
   return (
     <section aria-label={t("simV2.presets.heading")}>
       <div class="mb-4 flex flex-col items-start gap-1 sm:flex-row sm:items-baseline sm:justify-between sm:gap-3">
-        <h2 class="text-lg font-semibold text-zinc-100">
+        <h2 class="text-lg font-semibold text-(--color-text)">
           {t("simV2.presets.heading")}
         </h2>
-        <p class="text-xs text-zinc-400 sm:text-sm">{t("simV2.presets.sub")}</p>
+        <p class="text-xs text-(--color-text-muted) sm:text-sm">{t("simV2.presets.sub")}</p>
       </div>
       <div
         class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
@@ -46,8 +46,8 @@ export default function PresetGrid({ activePresetId, lang, onSelect }: Props) {
           const borderClass = isActive
             ? "border-[--color-accent] bg-[--color-accent]/5 ring-2 ring-[--color-accent]/40"
             : p.verified
-              ? "border-[--color-accent]/40 bg-zinc-900/60 hover:border-[--color-accent] hover:bg-[--color-accent]/5"
-              : "border-zinc-800 bg-zinc-900/60 hover:border-zinc-600 hover:bg-zinc-900";
+              ? "border-[--color-accent]/40 bg-(--color-bg-card)/60 hover:border-[--color-accent] hover:bg-[--color-accent]/5"
+              : "border-(--color-border) bg-(--color-bg-card)/60 hover:border-(--color-border-hover) hover:bg-(--color-bg-card)";
 
           return (
             <button
@@ -79,12 +79,12 @@ export default function PresetGrid({ activePresetId, lang, onSelect }: Props) {
                     ✓ {t("simV2.presets.verified")}
                   </span>
                 ) : (
-                  <span class="inline-flex items-center rounded px-2 py-0.5 text-xs font-mono text-zinc-400">
+                  <span class="inline-flex items-center rounded px-2 py-0.5 text-xs font-mono text-(--color-text-muted)">
                     {lang === "ko" ? "백테스트만" : "Backtest only"}
                   </span>
                 )}
               </div>
-              <div class="flex items-center gap-2 text-zinc-100">
+              <div class="flex items-center gap-2 text-(--color-text)">
                 <span
                   class="text-xl"
                   style={{ color: dir.hex }}
@@ -108,59 +108,59 @@ export default function PresetGrid({ activePresetId, lang, onSelect }: Props) {
               {/* 2026-04-22: tagline shown on mobile too — the exact persona
                   (first-time retail on phone) that needed the one-line
                   explanation the most was being silenced by hidden sm:block. */}
-              <p class="text-xs leading-snug text-zinc-400">{tagline}</p>
+              <p class="text-xs leading-snug text-(--color-text-muted)">{tagline}</p>
               {/* 2026-04-22: honest per-preset metrics row. Numbers here
                   are measured against api.pruviq.com/simulate at registry
                   default SL/TP, so a card click reproduces these exactly.
                   Keeping metrics ON the card is the trust contract — users
                   see what they'll get BEFORE clicking. */}
-              <dl class="mt-1 grid grid-cols-3 gap-x-2 gap-y-1 rounded-md bg-zinc-950/40 px-2 py-1.5 text-center font-mono text-[11px] tabular-nums">
+              <dl class="mt-1 grid grid-cols-3 gap-x-2 gap-y-1 rounded-md bg-(--color-bg)/40 px-2 py-1.5 text-center font-mono text-[11px] tabular-nums">
                 <div>
-                  <dt class="text-[10px] uppercase tracking-wide text-zinc-500">
+                  <dt class="text-[10px] uppercase tracking-wide text-(--color-text-tertiary)">
                     PF
                   </dt>
                   <dd
-                    class={`font-semibold ${p.metrics.pf >= 1.2 ? "text-emerald-400" : p.metrics.pf >= 1.05 ? "text-[--color-accent-bright]" : "text-zinc-300"}`}
+                    class={`font-semibold ${p.metrics.pf >= 1.2 ? "text-(--color-up)" : p.metrics.pf >= 1.05 ? "text-[--color-accent-bright]" : "text-(--color-text-secondary)"}`}
                   >
                     {p.metrics.pf.toFixed(2)}
                   </dd>
                 </div>
                 <div>
-                  <dt class="text-[10px] uppercase tracking-wide text-zinc-500">
+                  <dt class="text-[10px] uppercase tracking-wide text-(--color-text-tertiary)">
                     {lang === "ko" ? "수익률" : "Return"}
                   </dt>
                   <dd
-                    class={`font-semibold ${p.metrics.totalReturn >= 0 ? "text-emerald-400" : "text-rose-400"}`}
+                    class={`font-semibold ${p.metrics.totalReturn >= 0 ? "text-(--color-up)" : "text-(--color-down)"}`}
                   >
                     {p.metrics.totalReturn >= 0 ? "+" : ""}
                     {p.metrics.totalReturn.toFixed(0)}%
                   </dd>
                 </div>
                 <div>
-                  <dt class="text-[10px] uppercase tracking-wide text-zinc-500">
+                  <dt class="text-[10px] uppercase tracking-wide text-(--color-text-tertiary)">
                     MDD
                   </dt>
-                  <dd class="font-semibold text-rose-300">
+                  <dd class="font-semibold text-(--color-down)">
                     {p.metrics.mdd.toFixed(0)}%
                   </dd>
                 </div>
               </dl>
-              <div class="mt-auto flex flex-wrap items-center gap-x-3 gap-y-1 border-t border-zinc-800 pt-2 font-mono text-xs text-zinc-400 tabular-nums">
+              <div class="mt-auto flex flex-wrap items-center gap-x-3 gap-y-1 border-t border-(--color-border) pt-2 font-mono text-xs text-(--color-text-muted) tabular-nums">
                 <span>
                   {t("simV2.defaults.sl_label")}{" "}
-                  <span class="text-rose-400">{p.defaults.sl}%</span>
+                  <span class="text-(--color-down)">{p.defaults.sl}%</span>
                 </span>
                 <span>
                   {t("simV2.defaults.tp_label")}{" "}
-                  <span class="text-emerald-400">{p.defaults.tp}%</span>
+                  <span class="text-(--color-up)">{p.defaults.tp}%</span>
                 </span>
-                <span class="text-zinc-500">
+                <span class="text-(--color-text-tertiary)">
                   {p.metrics.trades.toLocaleString()}
                   {lang === "ko" ? " 거래" : " trades"}
                 </span>
                 {p.liveTracked && (
                   <span
-                    class="ml-auto inline-flex items-center gap-1 rounded bg-amber-500/10 px-1.5 py-0.5 text-[10px] font-mono font-medium text-amber-300 ring-1 ring-amber-500/30"
+                    class="ml-auto inline-flex items-center gap-1 rounded bg-(--color-verified-subtle) px-1.5 py-0.5 text-[10px] font-mono font-medium text-(--color-verified) ring-1 ring-(--color-verified-border)"
                     title={
                       lang === "ko"
                         ? "실거래 진행 중 — TrustGap 패널에서 백테 vs 라이브 갭 확인"

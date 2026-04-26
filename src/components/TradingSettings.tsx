@@ -236,7 +236,7 @@ interface Settings {
 
 function WarnBadge({ msg }: { msg: string }) {
   return (
-    <p class="text-xs text-yellow-500 flex items-center gap-1 mt-1">
+    <p class="text-xs text-[--color-warning] flex items-center gap-1 mt-1">
       <span aria-hidden="true">⚠</span> {msg}
     </p>
   );
@@ -468,7 +468,7 @@ export default function TradingSettings({ lang = "en" }: Props) {
               }
               class={`w-full p-2 mt-2 rounded-lg bg-[--color-bg] border text-sm font-mono ${
                 missingTelegram
-                  ? "border-yellow-500"
+                  ? "border-[--color-warning]"
                   : "border-[--color-border]"
               }`}
               aria-label={t.alertChatId}

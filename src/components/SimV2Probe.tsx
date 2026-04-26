@@ -31,13 +31,13 @@ export default function SimV2Probe() {
       <h1 class="mb-4 text-xl font-bold" data-testid="probe-title">
         /simulate v2 foundation probe
       </h1>
-      <p class="mb-4 text-zinc-400">
+      <p class="mb-4 text-(--color-text-muted)">
         Internal diagnostic — verifies D1 presets + D2 tokens + D4 useSimConfig
         work together. Not linked from nav.
       </p>
 
       <pre
-        class="mb-6 overflow-auto rounded border border-zinc-700 bg-zinc-900 p-4 text-emerald-300"
+        class="mb-6 overflow-auto rounded border border-(--color-border-hover) bg-(--color-bg-card) p-4 text-(--color-up)"
         data-testid="probe-config-json"
       >
         {JSON.stringify(config, null, 2)}
@@ -54,8 +54,8 @@ export default function SimV2Probe() {
               data-testid={`probe-mode-${m}`}
               class={`rounded border px-3 py-2 text-xs ${
                 config.mode === m
-                  ? "border-emerald-500 bg-emerald-500/10 text-emerald-300"
-                  : "border-zinc-700 text-zinc-300 hover:border-zinc-500"
+                  ? "border-(--color-up) bg-(--color-up)/15 text-(--color-up)"
+                  : "border-(--color-border-hover) text-(--color-text-secondary) hover:border-(--color-border-hover)"
               }`}
             >
               {SKILL_MODE_META[m].label.en}
@@ -77,8 +77,8 @@ export default function SimV2Probe() {
               data-testid={`probe-preset-${p.id}`}
               class={`rounded border px-3 py-2 text-xs ${
                 config.presetId === p.id
-                  ? "border-emerald-500 bg-emerald-500/10 text-emerald-300"
-                  : "border-zinc-700 text-zinc-300 hover:border-zinc-500"
+                  ? "border-(--color-up) bg-(--color-up)/15 text-(--color-up)"
+                  : "border-(--color-border-hover) text-(--color-text-secondary) hover:border-(--color-border-hover)"
               }`}
             >
               <span
@@ -98,7 +98,7 @@ export default function SimV2Probe() {
               type="button"
               data-testid="probe-sl-down"
               onClick={() => setSL(config.sl - 1)}
-              class="rounded border border-zinc-700 px-3 py-2 text-xs"
+              class="rounded border border-(--color-border-hover) px-3 py-2 text-xs"
             >
               −1
             </button>
@@ -106,7 +106,7 @@ export default function SimV2Probe() {
               type="button"
               data-testid="probe-sl-up"
               onClick={() => setSL(config.sl + 1)}
-              class="rounded border border-zinc-700 px-3 py-2 text-xs"
+              class="rounded border border-(--color-border-hover) px-3 py-2 text-xs"
             >
               +1
             </button>
@@ -119,7 +119,7 @@ export default function SimV2Probe() {
               type="button"
               data-testid="probe-tp-down"
               onClick={() => setTP(config.tp - 1)}
-              class="rounded border border-zinc-700 px-3 py-2 text-xs"
+              class="rounded border border-(--color-border-hover) px-3 py-2 text-xs"
             >
               −1
             </button>
@@ -127,7 +127,7 @@ export default function SimV2Probe() {
               type="button"
               data-testid="probe-tp-up"
               onClick={() => setTP(config.tp + 1)}
-              class="rounded border border-zinc-700 px-3 py-2 text-xs"
+              class="rounded border border-(--color-border-hover) px-3 py-2 text-xs"
             >
               +1
             </button>
@@ -139,7 +139,7 @@ export default function SimV2Probe() {
         type="button"
         data-testid="probe-reset"
         onClick={reset}
-        class="rounded border border-rose-500/50 bg-rose-500/10 px-3 py-2 text-xs text-rose-300"
+        class="rounded border border-(--color-down)/50 bg-(--color-down)/15 px-3 py-2 text-xs text-(--color-down)"
       >
         Reset to default
       </button>

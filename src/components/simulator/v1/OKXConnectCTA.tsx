@@ -42,8 +42,8 @@ export default function OKXConnectCTA({ lang, presetId }: Props) {
             ● {lang === "ko" ? "곧 출시" : "Coming Soon"}
           </span>
         </div>
-        <h3 class="mb-2 text-xl font-bold text-zinc-100">{heading}</h3>
-        <p class="mx-auto mb-5 max-w-xl text-sm leading-relaxed text-zinc-300">
+        <h3 class="mb-2 text-xl font-bold text-(--color-text)">{heading}</h3>
+        <p class="mx-auto mb-5 max-w-xl text-sm leading-relaxed text-(--color-text-secondary)">
           {body}
         </p>
         <div class="flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
@@ -59,7 +59,7 @@ export default function OKXConnectCTA({ lang, presetId }: Props) {
           <a
             href={trustHref}
             onClick={() => emit("cta.learn_more_clicked", { preset: presetId })}
-            class="inline-flex min-h-[44px] items-center justify-center rounded-lg border border-zinc-700 px-5 py-3 text-sm font-medium text-zinc-300 hover:border-zinc-500"
+            class="inline-flex min-h-[44px] items-center justify-center rounded-lg border border-(--color-border-hover) px-5 py-3 text-sm font-medium text-(--color-text-secondary) hover:border-(--color-border-hover)"
           >
             {t("simV2.cta.learn_more")}
           </a>
@@ -78,10 +78,10 @@ export default function OKXConnectCTA({ lang, presetId }: Props) {
       class="rounded-xl border border-[--color-accent]/30 bg-[--color-accent]/5 p-6 text-center"
       data-testid="sim-v1-okx-cta"
     >
-      <h3 class="mb-2 text-xl font-bold text-zinc-100">
+      <h3 class="mb-2 text-xl font-bold text-(--color-text)">
         {t("simV2.cta.connect_heading")}
       </h3>
-      <p class="mx-auto mb-5 max-w-xl text-sm leading-relaxed text-zinc-300">
+      <p class="mx-auto mb-5 max-w-xl text-sm leading-relaxed text-(--color-text-secondary)">
         {t("simV2.cta.connect_body")}
       </p>
       <div class="flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
@@ -96,7 +96,7 @@ export default function OKXConnectCTA({ lang, presetId }: Props) {
         <a
           href={trustHref}
           onClick={() => emit("cta.learn_more_clicked", { preset: presetId })}
-          class="inline-flex min-h-[44px] items-center justify-center rounded-lg border border-zinc-700 px-5 py-3 text-sm font-medium text-zinc-300 hover:border-zinc-500"
+          class="inline-flex min-h-[44px] items-center justify-center rounded-lg border border-(--color-border-hover) px-5 py-3 text-sm font-medium text-(--color-text-secondary) hover:border-(--color-border-hover)"
         >
           {t("simV2.cta.learn_more")}
         </a>

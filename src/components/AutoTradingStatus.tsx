@@ -68,7 +68,7 @@ function StatusLight({ status }: { status: BotStatus["status"] }) {
   const colors: Record<BotStatus["status"], string> = {
     running: "bg-[--color-up]",
     stopped: "bg-[--color-text-muted]",
-    paused: "bg-yellow-500",
+    paused: "bg-[--color-warning]",
   };
   const pulse = status === "running" ? "animate-pulse" : "";
   return (
