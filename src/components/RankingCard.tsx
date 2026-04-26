@@ -86,10 +86,10 @@ function Sparkline({
   data[steps] = totalReturn;
 
   return (
-    <div class="opacity-60">
+    <div class="opacity-60 w-16" aria-hidden="true">
       <EquitySparkline
         data={data}
-        ariaLabel=""
+        ariaLabel="Synthetic equity sparkline"
         width={64}
         height={20}
         showEndpoint={false}
