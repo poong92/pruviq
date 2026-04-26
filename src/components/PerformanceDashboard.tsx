@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "preact/hooks";
 import { COINS_ANALYZED } from "../config/site-stats";
+import Card from "./ui/Card";
 import {
   formatPrice,
   formatUsd,
@@ -148,7 +149,12 @@ function MetricCard({
   color: string;
 }) {
   return (
-    <div class="p-3 md:p-4 rounded-lg bg-[--color-bg-card] border border-[--color-border] text-center min-w-0">
+    <Card
+      variant="default"
+      padding="none"
+      radius="md"
+      class="p-3 md:p-4 text-center min-w-0"
+    >
       <div class="font-mono text-[0.6875rem] text-[--color-text-muted] uppercase tracking-wider mb-1.5 whitespace-nowrap overflow-hidden text-ellipsis">
         {label}
       </div>
@@ -158,7 +164,7 @@ function MetricCard({
       >
         {value}
       </div>
-    </div>
+    </Card>
   );
 }
 
@@ -166,13 +172,16 @@ function SkeletonMetrics() {
   return (
     <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
       {Array.from({ length: 5 }, (_, i) => (
-        <div
+        <Card
           key={i}
-          class="p-3 md:p-4 rounded-lg bg-[--color-bg-card] border border-[--color-border] text-center"
+          variant="default"
+          padding="none"
+          radius="md"
+          class="p-3 md:p-4 text-center"
         >
           <div class="skeleton h-2.5 w-16 mx-auto mb-3" />
           <div class="skeleton h-5 w-20 mx-auto" />
-        </div>
+        </Card>
       ))}
     </div>
   );
