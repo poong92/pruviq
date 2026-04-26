@@ -226,7 +226,7 @@ export default function StandardPanel({
                       ? {
                           background:
                             "linear-gradient(90deg, rgba(239,68,68,0.15), rgba(0,255,136,0.15))",
-                          borderColor: "#888",
+                          borderColor: "var(--color-border-hover)",
                           color: "#fff",
                         }
                       : {
