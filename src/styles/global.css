@@ -2024,3 +2024,98 @@ a:not(.btn):not(.card-hover):not(nav a):hover {
     transition: none !important;
   }
 }
+
+/* ─── Print stylesheet (W5-print) ───────────────────────────────────────
+   When users print or save as PDF (especially blog posts and strategy
+   detail pages), give them a clean reading layout: hide chrome, force
+   light, expand URLs after links, prevent unnecessary page breaks. */
+@media print {
+  :root,
+  :root[data-theme="light"] {
+    --color-bg:            #FFFFFF;
+    --color-bg-surface:    #FFFFFF;
+    --color-bg-card:       #FFFFFF;
+    --color-bg-elevated:   #FFFFFF;
+    --color-bg-hover:      #FFFFFF;
+    --color-text:          #000000;
+    --color-text-secondary:#222222;
+    --color-text-muted:    #444444;
+    --color-text-tertiary: #666666;
+    --color-text-disabled: #888888;
+    --color-border:        #CCCCCC;
+    --color-border-hover:  #999999;
+    --color-accent:        #0369a1;
+    --color-accent-bright: #0369a1;
+    --color-up:            #15803D;
+    --color-down:          #B91C1C;
+    --color-verified:      #B45309;
+  }
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    font-size: 11pt;
+    line-height: 1.45;
+  }
+  header,
+  footer,
+  nav,
+  aside,
+  #theme-toggle,
+  #cookie-notice,
+  #sticky-cta,
+  #bottom-cta-bar,
+  #page-loader,
+  [data-testid="kbd-shortcuts-overlay"],
+  [role="region"][aria-label="Notifications"],
+  .skip-link,
+  .breadcrumbs,
+  .btn-primary,
+  .btn-ghost,
+  .skeleton,
+  .spinner,
+  .live-dot {
+    display: none !important;
+  }
+  main,
+  article {
+    margin: 0 !important;
+    padding: 0 !important;
+    max-width: none !important;
+    width: 100% !important;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    color: #000000 !important;
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+  h1 { font-size: 22pt; }
+  h2 { font-size: 16pt; }
+  h3 { font-size: 13pt; }
+  p, li { orphans: 3; widows: 3; }
+  pre, blockquote, table, figure {
+    page-break-inside: avoid;
+    break-inside: avoid;
+    border: 1px solid #cccccc !important;
+  }
+  pre, code {
+    background: #f4f4f4 !important;
+    color: #000000 !important;
+  }
+  a[href^="http"]:after,
+  a[href^="/"]:after {
+    content: " (" attr(href) ")";
+    font-size: 0.85em;
+    color: #555555;
+  }
+  a[href^="#"]:after,
+  .no-print-url:after { content: ""; }
+  .card-enterprise,
+  .stat-glass,
+  .preset-card {
+    background: #ffffff !important;
+    border: 1px solid #cccccc !important;
+    box-shadow: none !important;
+  }
+  iframe, canvas { display: none !important; }
+  @page { margin: 1.6cm; size: A4; }
+}
