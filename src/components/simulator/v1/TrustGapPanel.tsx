@@ -395,10 +395,15 @@ function EquitySparkline({
   const zeroY = toY(0);
   const finalE = equities[equities.length - 1] ?? 0;
   const finalPositive = finalE >= 0;
-  const strokeColor = finalPositive ? "#10b981" : "#f43f5e";
-  // 2026-04-22 fix: fillColor hex previously had a typo (#f4365622) that
-  // didn't match the stroke hue. Same base hue + 22 alpha for the fill.
-  const fillColor = finalPositive ? "#10b98122" : "#f43f5e22";
+  const strokeStyle = {
+    stroke: `var(${finalPositive ? "--color-up" : "--color-down"})`,
+  };
+  const dotFillStyle = {
+    fill: `var(${finalPositive ? "--color-up" : "--color-down"})`,
+  };
+  const areaFillStyle = {
+    fill: `var(${finalPositive ? "--color-up-fill" : "--color-down-fill"})`,
+  };
 
   const path = equities
     .map(
@@ -437,15 +442,15 @@ function EquitySparkline({
           y1={zeroY}
           x2={W}
           y2={zeroY}
-          stroke="#52525b"
+          style={{ stroke: "var(--color-text-tertiary)" }}
           stroke-width="0.5"
           stroke-dasharray="2 3"
         />
-        <path d={areaPath} fill={fillColor} />
+        <path d={areaPath} style={areaFillStyle} />
         <path
           d={path}
           fill="none"
-          stroke={strokeColor}
+          style={strokeStyle}
           stroke-width="1.5"
           stroke-linejoin="round"
         />
@@ -454,8 +459,7 @@ function EquitySparkline({
           cx={(equities.length - 1) * xStep}
           cy={toY(finalE)}
           r={2.5}
-          fill={strokeColor}
-          stroke="#09090b"
+          style={{ ...dotFillStyle, stroke: "var(--color-bg)" }}
           stroke-width="1"
         />
       </svg>
@@ -463,7 +467,9 @@ function EquitySparkline({
         <span>
           {daily[0]?.date?.slice(5)} → {daily[daily.length - 1]?.date?.slice(5)}
         </span>
-        <span class={finalPositive ? "text-(--color-up)" : "text-(--color-down)"}>
+        <span
+          class={finalPositive ? "text-(--color-up)" : "text-(--color-down)"}
+        >
           {finalPositive ? "+" : ""}
           {finalPct.toFixed(1)}%
         </span>
