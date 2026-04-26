@@ -27,11 +27,13 @@ on:
     # PRs merged but none auto-deployed until someone ran
     # `gh workflow run data-deploy.yml` manually.
     #
-    # A */30 cron guarantees worst-case staleness of 30 min. The build is
-    # idempotent (wrangler deploy is a no-op if nothing changed on CF's
-    # side) so running against an unchanged main costs ~2 min of runner
-    # time and no user impact.
-    - cron: "*/30 * * * *"
+    # 2026-04-26: bumped from */30 to 0 */6 (every 6h). After PR #1408
+    # the data path is push-driven (refresh_static.sh now commits+pushes
+    # public/data/** instead of calling wrangler), so the push trigger
+    # above already covers data refreshes. The schedule is purely a
+    # safety net for the registry-stuck class of bug, which is rare.
+    # Cuts CI runner cost ~12× without sacrificing detection.
+    - cron: "0 */6 * * *"
   workflow_dispatch: {}
 
 concurrency:
