@@ -16,6 +16,8 @@ import { API_BASE_URL } from "../../../config/api";
 import type { SimConfig } from "../../../hooks/useSimConfig";
 import { useTranslations, type Lang } from "../../../i18n/index";
 import { emit } from "../../../lib/events";
+import { findPreset } from "../../../config/simulator-presets";
+import ShareResultButton from "../../ui/ShareResultButton";
 
 interface Props {
   config: SimConfig;
@@ -352,17 +354,35 @@ export default function ResultsPanel({ config, lang }: Props) {
             </span>
           </span>
         </div>
-        <button
-          type="button"
-          onClick={() => {
-            emit("sim.csv_download", { preset: config.presetId });
-            downloadCSV(d, config.presetId ?? "preset");
-          }}
-          data-testid="sim-v1-csv-download"
-          class="inline-flex min-h-[40px] items-center justify-center gap-1 rounded-lg border border-(--color-border-hover) px-3 py-2 text-xs text-(--color-text-secondary) hover:border-[--color-accent] hover:text-[--color-accent-bright]"
-        >
-          {lang === "ko" ? "CSV 다운로드" : "Download CSV"} ↓
-        </button>
+        <div class="flex items-center gap-2">
+          <ShareResultButton
+            presetId={config.presetId}
+            strategyName={
+              (config.presetId
+                ? findPreset(config.presetId)?.labels[lang]
+                : null) ??
+              config.presetId ??
+              "PRUVIQ"
+            }
+            profitFactor={d.profit_factor}
+            winRate={d.win_rate}
+            totalTrades={d.total_trades}
+            totalReturnPct={d.total_return_pct}
+            lang={lang}
+            class="px-3 py-2 text-xs min-h-[40px]"
+          />
+          <button
+            type="button"
+            onClick={() => {
+              emit("sim.csv_download", { preset: config.presetId });
+              downloadCSV(d, config.presetId ?? "preset");
+            }}
+            data-testid="sim-v1-csv-download"
+            class="inline-flex min-h-[40px] items-center justify-center gap-1 rounded-lg border border-(--color-border-hover) px-3 py-2 text-xs text-(--color-text-secondary) hover:border-[--color-accent] hover:text-[--color-accent-bright]"
+          >
+            {lang === "ko" ? "CSV 다운로드" : "Download CSV"} ↓
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -371,7 +391,8 @@ export default function ResultsPanel({ config, lang }: Props) {
 function verdictTone(tone: "good" | "bad" | "neutral"): string {
   if (tone === "good")
     return "border-(--color-up)/30 bg-(--color-up)/10 text-(--color-up)";
-  if (tone === "bad") return "border-(--color-down)/30 bg-(--color-down)/10 text-(--color-down)";
+  if (tone === "bad")
+    return "border-(--color-down)/30 bg-(--color-down)/10 text-(--color-down)";
   return "border-(--color-verified)/20 bg-(--color-verified-subtle) text-(--color-verified)";
 }
 
@@ -470,14 +491,18 @@ function SkeletonFrame({
 function MetricGridSkeleton({ shimmer }: { shimmer?: boolean }) {
   const base =
     "h-10 rounded " +
-    (shimmer ? "animate-pulse bg-(--color-bg-elevated)" : "bg-(--color-bg-elevated)/60");
+    (shimmer
+      ? "animate-pulse bg-(--color-bg-elevated)"
+      : "bg-(--color-bg-elevated)/60");
   return (
     <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
       {[0, 1, 2, 3].map((i) => (
         <div key={i}>
           <div
             class={`mb-2 h-3 w-16 rounded ${
-              shimmer ? "animate-pulse bg-(--color-bg-elevated)" : "bg-(--color-bg-elevated)/60"
+              shimmer
+                ? "animate-pulse bg-(--color-bg-elevated)"
+                : "bg-(--color-bg-elevated)/60"
             }`}
           />
           <div class={base} />
