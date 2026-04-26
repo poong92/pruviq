@@ -4,6 +4,7 @@ import { getLangFromUrl, useTranslations, getAlternatePath, getBasePath } from '
 import { COINS_ANALYZED } from '../config/site-stats';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
 import CommandPalette from '../components/CommandPalette';
+import Toaster from '../components/ui/Toaster';
 const C = String(COINS_ANALYZED);
 // ClientRouter removed — SSG + Islands + inline scripts are incompatible with View Transitions.
 // Each page has DOM-dependent scripts that break when ClientRouter swaps the DOM.
@@ -633,6 +634,10 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
     <!-- CommandPalette is hidden until Cmd+K — no SSR value. client:only
          skips the SSR pass entirely, saving a tree walk on every page. -->
     <CommandPalette lang={lang} client:only="preact" />
+
+    <!-- Toaster (W1-3) — singleton mount. Renders nothing until a toast
+         is queued via toast() from anywhere in the app. -->
+    <Toaster client:only="preact" />
 
     <main id="main-content" role="main" aria-label="Page content" class="pt-14 pb-16">
       {!basePath.startsWith('/404') && <Breadcrumbs />}

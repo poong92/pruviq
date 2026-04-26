@@ -2024,3 +2024,23 @@ a:not(.btn):not(.card-hover):not(nav a):hover {
     transition: none !important;
   }
 }
+
+/* ─── Toast (W1-3): slide-in from right ─── */
+@keyframes toast-enter {
+  0%   { opacity: 0; transform: translateX(100%); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+@keyframes toast-leave {
+  0%   { opacity: 1; transform: translateX(0); }
+  100% { opacity: 0; transform: translateX(100%); }
+}
+.toast-item {
+  animation: toast-enter 220ms var(--ease-default) both;
+}
+.toast-item[data-leaving="true"] {
+  animation: toast-leave 180ms var(--ease-default) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .toast-item,
+  .toast-item[data-leaving="true"] { animation: none; }
+}
