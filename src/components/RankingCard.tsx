@@ -89,7 +89,7 @@ function Sparkline({
     <div class="opacity-60 w-16" aria-hidden="true">
       <EquitySparkline
         data={data}
-        ariaLabel="Synthetic equity sparkline"
+        ariaLabel=""
         width={64}
         height={20}
         showEndpoint={false}
