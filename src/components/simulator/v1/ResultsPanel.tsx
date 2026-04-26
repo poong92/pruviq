@@ -16,6 +16,7 @@ import { API_BASE_URL } from "../../../config/api";
 import type { SimConfig } from "../../../hooks/useSimConfig";
 import { useTranslations, type Lang } from "../../../i18n/index";
 import { emit } from "../../../lib/events";
+import Reveal from "../../ui/Reveal";
 
 interface Props {
   config: SimConfig;
@@ -267,10 +268,19 @@ export default function ResultsPanel({ config, lang }: Props) {
   const d = state.data;
   const returnPositive = d.total_return_pct >= 0;
   const verdict = buildVerdict(d, lang);
+  // W2-2 reveal choreography: trigger fires when results land. The
+  // wrapper also carries `.reveal-child`, so when `.visible` is added
+  // its direct children fade up using the 80ms-staggered nth-child
+  // delays from global.css (line 727-745). Visual narrative is metric
+  // grid → verdict → footer-row (numbers first, interpretation second,
+  // actions last). `prefers-reduced-motion: reduce` is honored
+  // automatically (global.css line 752-756). data-testid passes through
+  // Reveal's rest spread so existing E2E selectors keep working.
   return (
-    <div
+    <Reveal
+      trigger={state.kind === "ok"}
+      class="reveal-child rounded-xl border border-(--color-border) bg-(--color-bg-card)/60 p-5 shadow-sm"
       data-testid="sim-v1-results-ok"
-      class="rounded-xl border border-(--color-border) bg-(--color-bg-card)/60 p-5 shadow-sm"
     >
       <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
         <Metric
@@ -364,14 +374,15 @@ export default function ResultsPanel({ config, lang }: Props) {
           {lang === "ko" ? "CSV 다운로드" : "Download CSV"} ↓
         </button>
       </div>
-    </div>
+    </Reveal>
   );
 }
 
 function verdictTone(tone: "good" | "bad" | "neutral"): string {
   if (tone === "good")
     return "border-(--color-up)/30 bg-(--color-up)/10 text-(--color-up)";
-  if (tone === "bad") return "border-(--color-down)/30 bg-(--color-down)/10 text-(--color-down)";
+  if (tone === "bad")
+    return "border-(--color-down)/30 bg-(--color-down)/10 text-(--color-down)";
   return "border-(--color-verified)/20 bg-(--color-verified-subtle) text-(--color-verified)";
 }
 
@@ -470,14 +481,18 @@ function SkeletonFrame({
 function MetricGridSkeleton({ shimmer }: { shimmer?: boolean }) {
   const base =
     "h-10 rounded " +
-    (shimmer ? "animate-pulse bg-(--color-bg-elevated)" : "bg-(--color-bg-elevated)/60");
+    (shimmer
+      ? "animate-pulse bg-(--color-bg-elevated)"
+      : "bg-(--color-bg-elevated)/60");
   return (
     <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
       {[0, 1, 2, 3].map((i) => (
         <div key={i}>
           <div
             class={`mb-2 h-3 w-16 rounded ${
-              shimmer ? "animate-pulse bg-(--color-bg-elevated)" : "bg-(--color-bg-elevated)/60"
+              shimmer
+                ? "animate-pulse bg-(--color-bg-elevated)"
+                : "bg-(--color-bg-elevated)/60"
             }`}
           />
           <div class={base} />

@@ -11,7 +11,8 @@
  * `prefers-reduced-motion: reduce` is honored by the global CSS rule
  * (line 753-757) — all children stay visible with no transition.
  */
-import { useEffect, useRef, useState, type ComponentChildren } from "preact";
+import type { ComponentChildren } from "preact";
+import { useEffect, useRef, useState } from "preact/hooks";
 
 interface StaggerProps {
   children: ComponentChildren;
