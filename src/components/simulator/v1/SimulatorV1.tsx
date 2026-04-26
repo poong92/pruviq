@@ -117,7 +117,7 @@ export default function SimulatorV1({ lang }: Props) {
           renders an h1 above this mount; the second h1 was confusing and
           broke heading hierarchy. Subtitle text preserved as a lede para
           so context isn't lost.                                          */}
-      <p class="mx-auto mb-6 max-w-2xl text-balance text-center text-sm leading-relaxed text-zinc-400 sm:mb-8 sm:text-base">
+      <p class="mx-auto mb-6 max-w-2xl text-balance text-center text-sm leading-relaxed text-(--color-text-muted) sm:mb-8 sm:text-base">
         {t("simV2.hero.subtitle")}
       </p>
 
@@ -128,15 +128,15 @@ export default function SimulatorV1({ lang }: Props) {
           onChange={handleSkillChange}
           expertQuery={buildExpertQuery(config)}
         />
-        <div class="flex items-center gap-3 text-xs text-zinc-400">
+        <div class="flex items-center gap-3 text-xs text-(--color-text-muted)">
           <details class="group relative">
             <summary
-              class="cursor-pointer select-none rounded border border-zinc-800 px-2 py-1 font-mono text-xs text-zinc-400 hover:border-zinc-600 hover:text-zinc-200"
+              class="cursor-pointer select-none rounded border border-(--color-border) px-2 py-1 font-mono text-xs text-(--color-text-muted) hover:border-(--color-border-hover) hover:text-(--color-text)"
               data-testid="sim-v1-shortcuts-toggle"
             >
               ⌨ {lang === "ko" ? "단축키" : "Shortcuts"}
             </summary>
-            <div class="absolute right-0 z-10 mt-2 w-64 rounded-lg border border-zinc-700 bg-zinc-900 p-3 font-mono text-xs text-zinc-300 shadow-xl">
+            <div class="absolute right-0 z-10 mt-2 w-64 rounded-lg border border-(--color-border-hover) bg-(--color-bg-card) p-3 font-mono text-xs text-(--color-text-secondary) shadow-xl">
               <Shortcut
                 keys="← / →"
                 label={lang === "ko" ? "프리셋 이동" : "cycle presets"}
@@ -236,10 +236,10 @@ export default function SimulatorV1({ lang }: Props) {
 function Shortcut({ keys, label }: { keys: string; label: string }) {
   return (
     <div class="flex items-center justify-between py-1">
-      <kbd class="rounded border border-zinc-700 bg-zinc-950 px-1.5 py-0.5 text-xs text-zinc-200">
+      <kbd class="rounded border border-(--color-border-hover) bg-(--color-bg) px-1.5 py-0.5 text-xs text-(--color-text)">
         {keys}
       </kbd>
-      <span class="ml-3 text-zinc-400">{label}</span>
+      <span class="ml-3 text-(--color-text-muted)">{label}</span>
     </div>
   );
 }

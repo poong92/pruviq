@@ -37,15 +37,15 @@ export default function StandardControls({
   return (
     <section
       aria-label={isKo ? "상세 설정" : "Standard controls"}
-      class="rounded-xl border border-zinc-800 bg-zinc-900/60 p-5"
+      class="rounded-xl border border-(--color-border) bg-(--color-bg-card)/60 p-5"
       data-testid="sim-v1-standard-controls"
     >
       <div class="mb-4 flex items-center gap-2">
-        <span class="h-1.5 w-1.5 rounded-full bg-amber-400" />
-        <h3 class="text-sm font-semibold uppercase tracking-wide text-zinc-200">
+        <span class="h-1.5 w-1.5 rounded-full bg-(--color-verified)" />
+        <h3 class="text-sm font-semibold uppercase tracking-wide text-(--color-text)">
           {isKo ? "상세 설정" : "Standard"}
         </h3>
-        <span class="ml-auto text-xs text-zinc-400">
+        <span class="ml-auto text-xs text-(--color-text-muted)">
           {isKo ? "모든 변경 URL 자동 저장" : "Changes saved in URL"}
         </span>
       </div>
@@ -146,7 +146,7 @@ function Slider({
           : "accent-zinc-400";
   return (
     <label class="block">
-      <span class="mb-2 block text-xs font-medium text-zinc-300">{label}</span>
+      <span class="mb-2 block text-xs font-medium text-(--color-text-secondary)">{label}</span>
       <input
         type="range"
         min={min}
@@ -175,7 +175,7 @@ function FeeInput({
 }) {
   return (
     <label class="block">
-      <span class="mb-1 block text-xs font-medium text-zinc-300">{label}</span>
+      <span class="mb-1 block text-xs font-medium text-(--color-text-secondary)">{label}</span>
       <input
         type="number"
         step="0.01"
@@ -187,7 +187,7 @@ function FeeInput({
           if (Number.isFinite(n)) onInput(n);
         }}
         data-testid={testId}
-        class="w-full rounded border border-zinc-700 bg-zinc-950 px-3 py-2 font-mono text-sm text-zinc-100 focus:border-[--color-accent] focus:outline-none"
+        class="w-full rounded border border-(--color-border-hover) bg-(--color-bg) px-3 py-2 font-mono text-sm text-(--color-text) focus:border-[--color-accent] focus:outline-none"
       />
     </label>
   );
@@ -206,13 +206,13 @@ function DateInput({
 }) {
   return (
     <label class="block">
-      <span class="mb-1 block text-xs font-medium text-zinc-300">{label}</span>
+      <span class="mb-1 block text-xs font-medium text-(--color-text-secondary)">{label}</span>
       <input
         type="date"
         value={value}
         onInput={(e) => onInput((e.target as HTMLInputElement).value)}
         data-testid={testId}
-        class="w-full rounded border border-zinc-700 bg-zinc-950 px-3 py-2 font-mono text-sm text-zinc-100 focus:border-[--color-accent] focus:outline-none"
+        class="w-full rounded border border-(--color-border-hover) bg-(--color-bg) px-3 py-2 font-mono text-sm text-(--color-text) focus:border-[--color-accent] focus:outline-none"
       />
     </label>
   );

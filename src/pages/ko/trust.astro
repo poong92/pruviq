@@ -167,9 +167,9 @@ const t = useTranslations('ko');
           } else {
             ageEl.textContent = fmtDuration(dataAgeSec);
             if (ageCell) {
-              if (dataAgeSec <= 3600) ageCell.classList.add('ring-1', 'ring-green-500/40');
-              else if (dataAgeSec <= 21600) ageCell.classList.add('ring-1', 'ring-yellow-500/40');
-              else ageCell.classList.add('ring-1', 'ring-red-500/40');
+              if (dataAgeSec <= 3600) ageCell.classList.add('ring-1', 'ring-(--color-up)/40');
+              else if (dataAgeSec <= 21600) ageCell.classList.add('ring-1', 'ring-(--color-warning)/40');
+              else ageCell.classList.add('ring-1', 'ring-(--color-down)/40');
             }
           }
         }

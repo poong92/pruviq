@@ -61,7 +61,7 @@ export default function EntryVisualizer({
   return (
     <figure
       aria-label={`Entry diagram: ${label}`}
-      class="relative rounded-lg bg-zinc-950/80 ring-1 ring-zinc-800"
+      class="relative rounded-lg bg-(--color-bg)/80 ring-1 ring-(--color-border)"
       data-testid={`entry-viz-${presetId}`}
     >
       <svg

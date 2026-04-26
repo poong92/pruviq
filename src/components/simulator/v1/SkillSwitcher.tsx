@@ -55,7 +55,7 @@ export default function SkillSwitcher({
       <div
         role="tablist"
         aria-label={t("simV2.skill.label")}
-        class="inline-flex rounded-lg border border-zinc-800 bg-zinc-900/60 p-1"
+        class="inline-flex rounded-lg border border-(--color-border) bg-(--color-bg-card)/60 p-1"
         data-testid="sim-v1-skill-switcher"
       >
         {SIMULATOR_SKILL_MODES.map((m) => {
@@ -64,7 +64,7 @@ export default function SkillSwitcher({
           const baseClass = `relative min-h-[44px] rounded-md px-4 py-2 text-sm font-medium transition ${
             active
               ? "bg-[--color-accent]/15 text-[--color-accent-bright] ring-1 ring-[--color-accent]/40"
-              : "text-zinc-300 hover:bg-zinc-800"
+              : "text-(--color-text-secondary) hover:bg-(--color-bg-elevated)"
           }`;
           const label = lang === "ko" ? meta.label.ko : meta.label.en;
 
@@ -79,7 +79,7 @@ export default function SkillSwitcher({
                 class={`${baseClass} inline-flex items-center gap-1`}
               >
                 {label}
-                <span aria-hidden="true" class="text-xs text-zinc-400">
+                <span aria-hidden="true" class="text-xs text-(--color-text-muted)">
                   ↗
                 </span>
               </a>
@@ -103,7 +103,7 @@ export default function SkillSwitcher({
       {/* 2026-04-22: one-line subtext for the active mode so users understand
           what clicking does. Previously Quick vs Standard toggle had zero
           explanation. */}
-      <p class="px-1 text-[11px] leading-snug text-zinc-500">
+      <p class="px-1 text-[11px] leading-snug text-(--color-text-tertiary)">
         {lang === "ko" ? MODE_SUBTEXT[mode].ko : MODE_SUBTEXT[mode].en}
       </p>
     </div>

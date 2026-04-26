@@ -167,7 +167,7 @@ export default function TrustGapPanel({ lang }: Props) {
       >
         <div class="mb-3 flex items-center gap-2">
           <span
-            class="inline-flex items-center gap-1 rounded px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wider text-amber-200 bg-amber-500/10 border border-amber-500/30"
+            class="inline-flex items-center gap-1 rounded px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wider text-(--color-verified) bg-(--color-verified-subtle) border border-(--color-verified-border)"
             aria-label="Coming Soon"
           >
             ⏸ {isKo ? "라이브 검증 중단" : "Live tracking paused"}
@@ -176,7 +176,7 @@ export default function TrustGapPanel({ lang }: Props) {
         <h3 class="mb-1.5 text-sm font-semibold uppercase tracking-wide text-[--color-accent-bright]">
           {t("simV2.trust.gap_heading")}
         </h3>
-        <p class="text-xs text-zinc-300 leading-relaxed mb-3">
+        <p class="text-xs text-(--color-text-secondary) leading-relaxed mb-3">
           {isKo
             ? "오토트레이딩 재안정화 중 — 단일 전략 실거래 추적을 일시 중단했습니다. 재개 + 30일 데이터 누적 시 백테스트 vs 실거래 갭이 여기 다시 표시됩니다. 그 동안은 백테스트 검증만 안내합니다."
             : "Live tracking is paused while auto-trading is re-hardened. Backtest-vs-live gap will return here once ≥30 days of fresh live data accumulate. Until then we guide you with backtest-verified presets only."}
@@ -184,7 +184,7 @@ export default function TrustGapPanel({ lang }: Props) {
         <div class="flex flex-wrap gap-2">
           <a
             href={postmortemHref}
-            class="inline-flex items-center rounded border border-[--color-border] bg-[--color-bg-card] px-3 py-1.5 text-xs text-zinc-200 hover:border-[--color-accent] hover:text-[--color-accent-bright] min-h-[32px]"
+            class="inline-flex items-center rounded border border-[--color-border] bg-[--color-bg-card] px-3 py-1.5 text-xs text-(--color-text) hover:border-[--color-accent] hover:text-[--color-accent-bright] min-h-[32px]"
           >
             {isKo
               ? "이전 실거래 결과 — BB Squeeze 59.6% 갭 포스트모템 →"
@@ -198,13 +198,13 @@ export default function TrustGapPanel({ lang }: Props) {
   if (error || !data) {
     return (
       <section
-        class="rounded-xl border border-zinc-800 bg-zinc-900/40 p-5"
+        class="rounded-xl border border-(--color-border) bg-(--color-bg-card)/40 p-5"
         data-testid="sim-v1-trust-gap"
       >
-        <h3 class="mb-2 text-sm font-semibold uppercase tracking-wide text-zinc-300">
+        <h3 class="mb-2 text-sm font-semibold uppercase tracking-wide text-(--color-text-secondary)">
           {t("simV2.trust.gap_heading")}
         </h3>
-        <p class="text-xs text-zinc-400">
+        <p class="text-xs text-(--color-text-muted)">
           {error
             ? isKo
               ? "실 성과 데이터 일시적으로 불가"
@@ -252,7 +252,7 @@ export default function TrustGapPanel({ lang }: Props) {
         <h3 class="text-sm font-semibold uppercase tracking-wide text-[--color-accent-bright]">
           {t("simV2.trust.gap_heading")}
         </h3>
-        <span class="font-mono text-xs text-zinc-400">
+        <span class="font-mono text-xs text-(--color-text-muted)">
           {isKo ? "업데이트" : "updated"} {generated}
         </span>
       </div>
@@ -291,12 +291,12 @@ export default function TrustGapPanel({ lang }: Props) {
           live daily series. Makes the gap visceral: users see not just a
           59.6% number but the SHAPE of the divergence. */}
       {data.daily && data.daily.length > 1 && (
-        <div class="mt-4 rounded-lg border border-zinc-800/80 bg-zinc-950/40 p-3">
+        <div class="mt-4 rounded-lg border border-(--color-border) bg-(--color-bg)/40 p-3">
           <div class="mb-2 flex items-center justify-between">
-            <span class="text-[10px] font-mono uppercase tracking-wider text-zinc-500">
+            <span class="text-[10px] font-mono uppercase tracking-wider text-(--color-text-tertiary)">
               {isKo ? "실거래 자본 곡선" : "Live equity curve"}
             </span>
-            <span class="font-mono text-[10px] text-zinc-500">
+            <span class="font-mono text-[10px] text-(--color-text-tertiary)">
               {data.daily.length} {isKo ? "일" : "days"}
             </span>
           </div>
@@ -307,7 +307,7 @@ export default function TrustGapPanel({ lang }: Props) {
         </div>
       )}
 
-      <div class="mt-4 grid grid-cols-1 gap-1 border-t border-[--color-accent]/10 pt-3 font-mono text-xs text-zinc-400 sm:flex sm:flex-wrap sm:items-center sm:justify-between sm:gap-2">
+      <div class="mt-4 grid grid-cols-1 gap-1 border-t border-[--color-accent]/10 pt-3 font-mono text-xs text-(--color-text-muted) sm:flex sm:flex-wrap sm:items-center sm:justify-between sm:gap-2">
         <span>
           {isKo ? "전략" : "Strategy"}: {data.strategy}
         </span>
@@ -320,7 +320,7 @@ export default function TrustGapPanel({ lang }: Props) {
         </span>
       </div>
 
-      <p class="mt-3 text-xs leading-relaxed text-zinc-400">
+      <p class="mt-3 text-xs leading-relaxed text-(--color-text-muted)">
         {t("simV2.trust.gap_note")}
       </p>
 
@@ -331,15 +331,15 @@ export default function TrustGapPanel({ lang }: Props) {
           leaving users in a dead-end "we're honest" loop. */}
       {gapPct != null && gapPct >= 15 && (
         <div
-          class="mt-3 rounded-lg border border-amber-500/30 bg-amber-500/5 p-3"
+          class="mt-3 rounded-lg border border-(--color-verified-border) bg-(--color-verified-subtle) p-3"
           data-testid="sim-v1-gap-action"
         >
-          <p class="text-xs font-semibold text-amber-200 mb-1.5">
+          <p class="text-xs font-semibold text-(--color-verified) mb-1.5">
             {isKo
               ? `⚠ 이 전략은 현재 추천 불가`
               : "⚠ This strategy is currently off the recommended list"}
           </p>
-          <p class="text-xs leading-relaxed text-zinc-300 mb-2">
+          <p class="text-xs leading-relaxed text-(--color-text-secondary) mb-2">
             {isKo
               ? `${data.strategy} 는 ${period} 실거래에서 PF ${s.profit_factor.toFixed(2)} (손실 구간). 2년 백테스트가 이 기간의 변동성 레짐을 과소평가했습니다. 라이브 재개는 30일 이상 PF ≥ 1.0 회복 후 재검토.`
               : `${data.strategy} ran at PF ${s.profit_factor.toFixed(2)} (losing) in ${period}. The 2yr backtest underweighted this volatility regime. We'll reconsider live deployment only after ≥30 days at PF ≥ 1.0.`}
@@ -356,7 +356,7 @@ export default function TrustGapPanel({ lang }: Props) {
             </a>
             <a
               href="/methodology"
-              class="inline-flex items-center gap-1 rounded border border-zinc-700 px-3 py-1.5 text-xs text-zinc-300 hover:border-zinc-500 min-h-[32px]"
+              class="inline-flex items-center gap-1 rounded border border-(--color-border-hover) px-3 py-1.5 text-xs text-(--color-text-secondary) hover:border-(--color-border-hover) min-h-[32px]"
             >
               {isKo ? "갭 측정 방식" : "How we measure gap"} →
             </a>
@@ -459,11 +459,11 @@ function EquitySparkline({
           stroke-width="1"
         />
       </svg>
-      <figcaption class="mt-1 flex items-center justify-between font-mono text-[10px] text-zinc-500">
+      <figcaption class="mt-1 flex items-center justify-between font-mono text-[10px] text-(--color-text-tertiary)">
         <span>
           {daily[0]?.date?.slice(5)} → {daily[daily.length - 1]?.date?.slice(5)}
         </span>
-        <span class={finalPositive ? "text-emerald-400" : "text-rose-400"}>
+        <span class={finalPositive ? "text-(--color-up)" : "text-(--color-down)"}>
           {finalPositive ? "+" : ""}
           {finalPct.toFixed(1)}%
         </span>
@@ -489,20 +489,20 @@ function Figure({
 }) {
   const toneClass =
     tone === "good"
-      ? "text-emerald-400"
+      ? "text-(--color-up)"
       : tone === "bad"
-        ? "text-rose-400"
-        : "text-zinc-100";
+        ? "text-(--color-down)"
+        : "text-(--color-text)";
   return (
     <div
       data-testid={testId}
       class={`rounded-lg p-3 ${highlight ? "bg-[--color-accent]/10 ring-1 ring-[--color-accent]/30" : ""}`}
     >
-      <div class="mb-1 text-xs uppercase tracking-wide text-zinc-400">
+      <div class="mb-1 text-xs uppercase tracking-wide text-(--color-text-muted)">
         {label}
       </div>
       <div
-        class={`font-mono text-xl font-semibold tabular-nums ${loading ? "animate-pulse text-zinc-600" : toneClass}`}
+        class={`font-mono text-xl font-semibold tabular-nums ${loading ? "animate-pulse text-(--color-text-disabled)" : toneClass}`}
       >
         {loading ? "—" : value}
       </div>

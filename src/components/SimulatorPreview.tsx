@@ -154,7 +154,7 @@ export default function SimulatorPreview() {
       </div>
 
       {/* Interactive equity curve */}
-      <div class="relative h-20 mb-5 overflow-visible rounded-lg bg-[--color-bg]/30 border border-white/[0.03]">
+      <div class="relative h-20 mb-5 overflow-visible rounded-lg bg-[--color-bg]/30 border border-(--color-border)">
         <svg
           ref={svgRef as RefObject<SVGSVGElement>}
           viewBox="0 0 400 60"
@@ -266,7 +266,7 @@ export default function SimulatorPreview() {
         {STATS.map((s) => (
           <div
             key={s.label}
-            class="text-center p-2 rounded-lg bg-[--color-bg-tooltip] border border-white/[0.04]"
+            class="text-center p-2 rounded-lg bg-[--color-bg-tooltip] border border-(--color-border)"
           >
             <div class="text-[8px] text-[--color-text-muted] uppercase tracking-wider">
               {s.label}
