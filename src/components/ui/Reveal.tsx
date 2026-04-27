@@ -10,7 +10,8 @@
  * `prefers-reduced-motion: reduce` is honored by the global CSS rule
  * (line 753-757) — children stay visible without transition.
  */
-import { useEffect, useRef, useState, type ComponentChildren } from "preact";
+import type { ComponentChildren, JSX } from "preact";
+import { useEffect, useRef, useState } from "preact/hooks";
 
 interface RevealProps {
   children: ComponentChildren;
@@ -22,6 +23,12 @@ interface RevealProps {
   class?: string;
   /** Wrapper element type (default `div`) */
   as?: "div" | "section" | "article" | "li" | "span";
+  /** Pass-through ARIA / data attributes for testing + a11y. */
+  "data-testid"?: string;
+  "aria-label"?: string;
+  "aria-live"?: JSX.HTMLAttributes["aria-live"];
+  role?: string;
+  id?: string;
 }
 
 export default function Reveal({
@@ -30,6 +37,7 @@ export default function Reveal({
   delay = 0,
   class: className = "",
   as = "div",
+  ...rest
 }: RevealProps) {
   const ref = useRef<HTMLElement>(null);
   const [visible, setVisible] = useState(false);
@@ -71,6 +79,7 @@ export default function Reveal({
     <Tag
       ref={ref as never}
       class={`reveal ${visible ? "visible" : ""} ${className}`.trim()}
+      {...rest}
     >
       {children}
     </Tag>
