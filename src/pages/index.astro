@@ -26,7 +26,7 @@ const tradingDays = (stats.trading_days ?? 0).toLocaleString('en-US');
 const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1) + 'M';
 ---
 
-<Layout title={t('meta.home_title')} description={t('meta.index_desc')}>
+<Layout title={t('meta.home_title')} description={t('meta.index_desc')} ogImage="/og/home.png">
 
   <!-- HERO — 50/50 layout: text left, live demo right -->
   <section id="hero-section" class="relative overflow-hidden hero-bg-depth section-glow-green">
@@ -112,7 +112,7 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
 
   <!-- HOW IT WORKS -->
   <hr class="section-divider" />
-  <section class="max-w-7xl mx-auto px-6 py-24 md:py-32 section-elevated">
+  <section class="reveal max-w-7xl mx-auto px-6 py-24 md:py-32 section-elevated">
     <p class="font-mono text-[--color-accent] text-sm tracking-wider text-center mb-4">HOW IT WORKS</p>
     <h2 class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-center mb-5">Three Steps to Verified Results</h2>
     <p class="text-[--color-text-secondary] text-center text-xl mb-14 max-w-xl mx-auto">From strategy idea to data-backed decision.</p>
@@ -153,7 +153,7 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
 
   <!-- HOW AUTOTRADING WORKS -->
   <hr class="section-divider" />
-  <section class="max-w-7xl mx-auto px-6 py-24 md:py-32 section-elevated" aria-labelledby="autotrading-heading">
+  <section class="reveal max-w-7xl mx-auto px-6 py-24 md:py-32 section-elevated" aria-labelledby="autotrading-heading">
     <p class="font-mono text-[--color-accent] text-sm tracking-wider text-center mb-4">AUTOTRADING</p>
     <h2 id="autotrading-heading" class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-center mb-5">From Verified Strategy to Running Bot</h2>
     <p class="text-[--color-text-secondary] text-center text-xl mb-14 max-w-xl mx-auto">Backtested. Verified. Executing 24/7 on OKX.</p>
@@ -174,7 +174,7 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
 
   <!-- COMPARISON TABLE -->
   <hr class="section-divider" />
-  <section class="py-24 md:py-32 section-accent-glow">
+  <section class="reveal py-24 md:py-32 section-accent-glow">
     <div class="max-w-4xl mx-auto px-6">
       <p class="font-mono text-[--color-accent] text-sm mb-3 tracking-wider text-center">{t('compare.section_tag')}</p>
       <h2 class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-center mb-16">{t('compare.section_title')}</h2>
@@ -210,7 +210,7 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
 
   <!-- WHY PRUVIQ (Merged Problem + Evidence) -->
   <hr class="section-divider" />
-  <section class="py-24 md:py-32 section-warm-glow" aria-labelledby="why-heading">
+  <section class="reveal py-24 md:py-32 section-warm-glow" aria-labelledby="why-heading">
     <div class="max-w-7xl mx-auto px-6">
       <p class="font-mono text-[--color-down] text-sm mb-3 tracking-wider">{t('problem.tag')}</p>
       <h2 id="why-heading" class="text-3xl md:text-4xl font-bold mb-5">{t('problem.title')}</h2>
@@ -257,7 +257,7 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
 
   <!-- FEATURES & TRUST (Merged) -->
   <hr class="section-divider" />
-  <section class="py-24 md:py-32 section-elevated" aria-labelledby="features-heading">
+  <section class="reveal py-24 md:py-32 section-elevated" aria-labelledby="features-heading">
     <div class="max-w-7xl mx-auto px-6">
       <p class="font-mono text-[--color-accent] text-sm mb-3 tracking-wider">{t('features.tag')}</p>
       <h2 id="features-heading" class="text-3xl md:text-4xl font-bold mb-14">{t('features.title')}</h2>
@@ -342,7 +342,7 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
 
   <!-- FAQ (visible section matching JSON-LD) -->
   <hr class="section-divider" />
-  <section class="py-24 md:py-32 section-accent-glow" aria-labelledby="faq-heading">
+  <section class="reveal py-24 md:py-32 section-accent-glow" aria-labelledby="faq-heading">
     <div class="max-w-7xl mx-auto px-6">
       <p class="font-mono text-[--color-accent] text-sm mb-3 tracking-wider">FAQ</p>
       <h2 id="faq-heading" class="text-3xl md:text-4xl font-bold mb-14">{t('faq.title')}</h2>
@@ -368,7 +368,7 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
 
   <!-- CTA -->
   <hr class="section-divider" />
-  <section class="relative pt-24 pb-20 md:pt-32 md:pb-28 overflow-hidden section-glow-cyan" aria-labelledby="cta-heading">
+  <section class="reveal relative pt-24 pb-20 md:pt-32 md:pb-28 overflow-hidden section-glow-cyan" aria-labelledby="cta-heading">
     <!-- Background glow orb -->
     <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] rounded-full bg-[--color-accent]/[0.06] blur-[120px] pointer-events-none" aria-hidden="true"></div>
     <div class="relative max-w-7xl mx-auto px-6 text-center">
