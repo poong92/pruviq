@@ -58,6 +58,57 @@ const GROUPS: ShortcutGroup[] = [
     ],
   },
   {
+    title_en: "Go to (G then…)",
+    title_ko: "이동 (G + …)",
+    items: [
+      {
+        keys: ["G", "H"],
+        label_en: "Home",
+        label_ko: "홈",
+      },
+      {
+        keys: ["G", "S"],
+        label_en: "Simulate",
+        label_ko: "시뮬레이터",
+      },
+      {
+        keys: ["G", "L"],
+        label_en: "Strategy library",
+        label_ko: "전략 라이브러리",
+      },
+      {
+        keys: ["G", "R"],
+        label_en: "Strategy ranking",
+        label_ko: "전략 순위",
+      },
+      {
+        keys: ["G", "C"],
+        label_en: "Coins",
+        label_ko: "코인",
+      },
+      {
+        keys: ["G", "M"],
+        label_en: "Market",
+        label_ko: "시장",
+      },
+      {
+        keys: ["G", "P"],
+        label_en: "Performance",
+        label_ko: "성과",
+      },
+      {
+        keys: ["G", "F"],
+        label_en: "Fees",
+        label_ko: "수수료",
+      },
+      {
+        keys: ["G", "B"],
+        label_en: "Blog",
+        label_ko: "블로그",
+      },
+    ],
+  },
+  {
     title_en: "Appearance",
     title_ko: "외관",
     items: [
