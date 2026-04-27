@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 
+// Baselines under -snapshots/ seeded by PR #1478 (8 PNG, darwin local-gen).
 /**
  * PR-6 of light-mode rollout — companion to visual-regression.spec.ts.
  *
