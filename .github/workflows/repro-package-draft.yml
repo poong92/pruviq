@@ -9,7 +9,7 @@ jobs:
   build-and-publish:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
@@ -23,7 +23,7 @@ jobs:
           mkdir -p artifacts/repro
           echo '{"manifest":"demo"}' > artifacts/repro/manifest.json
       - name: Upload artifact (for review)
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: reproducible-demo
           path: artifacts/repro

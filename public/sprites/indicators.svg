@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+  <!--
+    PRUVIQ indicator sprite (W2-3) — 14 trading-indicator glyphs.
+    24×24 viewBox. Stroke-based, currentColor-driven so consumers can
+    color via CSS (text-[--color-accent], text-[--color-up], etc.).
+    Each symbol expresses the indicator's mathematical signature in
+    a 1-glance-recognizable abstract pattern — no text labels needed.
+
+    Reference via <Icon name="bb"> (src/components/ui/Icon.tsx) which
+    renders <svg><use href="/sprites/indicators.svg#bb"/></svg>.
+  -->
+
+  <!-- Bollinger Bands — 3 bands expanding outward (volatility bow) -->
+  <symbol id="bb" viewBox="0 0 24 24">
+    <path d="M3,7 Q12,4 21,7" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M3,12 Q12,11 21,12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" opacity="0.5"/>
+    <path d="M3,17 Q12,20 21,17" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+  </symbol>
+
+  <!-- RSI — oscillator zig-zag with 70/30 threshold lines -->
+  <symbol id="rsi" viewBox="0 0 24 24">
+    <line x1="3" y1="7" x2="21" y2="7" stroke="currentColor" stroke-width="0.8" stroke-dasharray="2 2" opacity="0.5"/>
+    <line x1="3" y1="17" x2="21" y2="17" stroke="currentColor" stroke-width="0.8" stroke-dasharray="2 2" opacity="0.5"/>
+    <path d="M3,16 L7,9 L11,15 L15,6 L19,13 L21,11" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+
+  <!-- MACD — fast/slow line cross -->
+  <symbol id="macd" viewBox="0 0 24 24">
+    <line x1="3" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="0.8" opacity="0.3"/>
+    <path d="M3,16 L9,12 L15,8 L21,5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M3,8 L9,11 L15,11 L21,15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity="0.55"/>
+  </symbol>
+
+  <!-- ATR — volatility bars expanding then contracting -->
+  <symbol id="atr" viewBox="0 0 24 24">
+    <line x1="3" y1="20" x2="21" y2="20" stroke="currentColor" stroke-width="0.8" opacity="0.3"/>
+    <rect x="3" y="14" width="2.5" height="6" fill="currentColor" opacity="0.5"/>
+    <rect x="7" y="11" width="2.5" height="9" fill="currentColor" opacity="0.6"/>
+    <rect x="11" y="6" width="2.5" height="14" fill="currentColor" opacity="0.85"/>
+    <rect x="15" y="9" width="2.5" height="11" fill="currentColor" opacity="0.65"/>
+    <rect x="19" y="13" width="2.5" height="7" fill="currentColor" opacity="0.5"/>
+  </symbol>
+
+  <!-- EMA — smooth exponential curve -->
+  <symbol id="ema" viewBox="0 0 24 24">
+    <path d="M3,18 C8,10 12,8 21,4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    <circle cx="21" cy="4" r="1.6" fill="currentColor"/>
+  </symbol>
+
+  <!-- ADX — trend strength rising into upper region -->
+  <symbol id="adx" viewBox="0 0 24 24">
+    <line x1="3" y1="21" x2="21" y2="21" stroke="currentColor" stroke-width="0.8" opacity="0.3"/>
+    <line x1="3" y1="3" x2="21" y2="3" stroke="currentColor" stroke-width="0.8" opacity="0.3"/>
+    <path d="M3,18 L9,15 L15,9 L21,5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="3" y1="13" x2="21" y2="13" stroke="currentColor" stroke-width="0.6" stroke-dasharray="1.5 2" opacity="0.4"/>
+  </symbol>
+
+  <!-- Stochastic — %K %D smooth crossing curves -->
+  <symbol id="stoch" viewBox="0 0 24 24">
+    <line x1="3" y1="6" x2="21" y2="6" stroke="currentColor" stroke-width="0.6" stroke-dasharray="2 2" opacity="0.4"/>
+    <line x1="3" y1="18" x2="21" y2="18" stroke="currentColor" stroke-width="0.6" stroke-dasharray="2 2" opacity="0.4"/>
+    <path d="M3,9 Q8,17 12,12 T 21,9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M3,13 Q8,15 12,15 T 21,12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" opacity="0.55"/>
+  </symbol>
+
+  <!-- Volume — varying-height bars -->
+  <symbol id="vol" viewBox="0 0 24 24">
+    <line x1="3" y1="20" x2="21" y2="20" stroke="currentColor" stroke-width="0.8" opacity="0.3"/>
+    <rect x="3" y="14" width="2" height="6" fill="currentColor" opacity="0.6"/>
+    <rect x="6.5" y="10" width="2" height="10" fill="currentColor" opacity="0.7"/>
+    <rect x="10" y="6" width="2" height="14" fill="currentColor" opacity="0.9"/>
+    <rect x="13.5" y="11" width="2" height="9" fill="currentColor" opacity="0.7"/>
+    <rect x="17" y="8" width="2" height="12" fill="currentColor" opacity="0.8"/>
+    <rect x="20.5" y="13" width="1.5" height="7" fill="currentColor" opacity="0.6"/>
+  </symbol>
+
+  <!-- Ichimoku — kumo cloud + 2 lines -->
+  <symbol id="ichi" viewBox="0 0 24 24">
+    <path d="M3,8 L8,8 L12,12 L16,12 L21,8 L21,14 L16,14 L12,18 L8,18 L3,14 Z" fill="currentColor" opacity="0.18"/>
+    <path d="M3,11 L21,11" stroke="currentColor" stroke-width="1" opacity="0.6"/>
+    <path d="M3,15 L21,15" stroke="currentColor" stroke-width="1" opacity="0.4"/>
+  </symbol>
+
+  <!-- Keltner Channel — parallel bands without expansion -->
+  <symbol id="kelt" viewBox="0 0 24 24">
+    <path d="M3,7 L21,7" stroke="currentColor" stroke-width="1" opacity="0.7"/>
+    <path d="M3,12 L21,12" stroke="currentColor" stroke-width="0.8" stroke-dasharray="3 2" opacity="0.5"/>
+    <path d="M3,17 L21,17" stroke="currentColor" stroke-width="1" opacity="0.7"/>
+    <path d="M3,12 Q12,10 21,12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" opacity="0.7"/>
+  </symbol>
+
+  <!-- Donchian — rectangular high/low channel -->
+  <symbol id="dchan" viewBox="0 0 24 24">
+    <rect x="3" y="6" width="18" height="12" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.6"/>
+    <path d="M3,12 Q12,7 21,15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+  </symbol>
+
+  <!-- Aroon — opposing oscillating lines -->
+  <symbol id="aroon" viewBox="0 0 24 24">
+    <path d="M3,8 L7,18 L11,4 L15,16 L19,6 L21,12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M3,16 L7,6 L11,18 L15,8 L19,14 L21,9" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/>
+  </symbol>
+
+  <!-- CCI — oscillator with +100 / -100 thresholds -->
+  <symbol id="cci" viewBox="0 0 24 24">
+    <line x1="3" y1="6" x2="21" y2="6" stroke="currentColor" stroke-width="0.6" stroke-dasharray="2 2" opacity="0.4"/>
+    <line x1="3" y1="18" x2="21" y2="18" stroke="currentColor" stroke-width="0.6" stroke-dasharray="2 2" opacity="0.4"/>
+    <line x1="3" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="0.6" opacity="0.25"/>
+    <path d="M3,12 L7,5 L11,15 L15,8 L19,18 L21,12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+
+  <!-- Supertrend — stepped trend reversal staircase -->
+  <symbol id="supertrend" viewBox="0 0 24 24">
+    <path d="M3,18 L8,18 L8,12 L13,12 L13,6 L18,6 L18,4 L21,4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="8" cy="12" r="1.2" fill="currentColor" opacity="0.5"/>
+    <circle cx="13" cy="6" r="1.2" fill="currentColor" opacity="0.7"/>
+    <circle cx="18" cy="4" r="1.4" fill="currentColor"/>
+  </symbol>
+</svg>

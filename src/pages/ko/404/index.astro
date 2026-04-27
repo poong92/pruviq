@@ -1,5 +1,6 @@
 ---
 import Layout from '../../../layouts/Layout.astro';
+import EmptyStateIllustration from '../../../components/ui/EmptyStateIllustration.astro';
 import { useTranslations } from '../../../i18n/index';
 
 const t = useTranslations('ko');
@@ -8,6 +9,9 @@ const t = useTranslations('ko');
 <Layout title="404 - 페이지를 찾을 수 없습니다 | PRUVIQ" description="요청하신 페이지를 찾을 수 없습니다. PRUVIQ의 무료 크립토 전략 백테스팅 도구를 살펴보세요.">
   <section class="min-h-[60vh] flex items-center justify-center">
     <div class="text-center max-w-2xl px-6">
+      <div class="mb-4 flex justify-center">
+        <EmptyStateIllustration variant="broken-chart" size={220} class="opacity-90" />
+      </div>
       <p class="font-mono text-[--color-accent] text-sm tracking-widest mb-4">404</p>
       <h1 class="text-3xl md:text-4xl font-bold mb-4">페이지를 찾을 수 없습니다</h1>
       <p class="text-[--color-text-muted] mb-8">요청하신 페이지를 찾을 수 없습니다. URL을 확인하거나 아래 링크를 이용하세요.</p>

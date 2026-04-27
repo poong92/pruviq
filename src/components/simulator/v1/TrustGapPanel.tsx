@@ -15,6 +15,7 @@
 import { useEffect, useState } from "preact/hooks";
 import { API_BASE_URL } from "../../../config/api";
 import { useTranslations, type Lang } from "../../../i18n/index";
+import EquitySparkline from "../../ui/EquitySparkline";
 
 interface Props {
   lang: Lang;
@@ -300,7 +301,7 @@ export default function TrustGapPanel({ lang }: Props) {
               {data.daily.length} {isKo ? "일" : "days"}
             </span>
           </div>
-          <EquitySparkline
+          <EquitySparklineSection
             daily={data.daily}
             startingBalance={s.starting_balance}
           />
@@ -367,19 +368,20 @@ export default function TrustGapPanel({ lang }: Props) {
   );
 }
 
-// Pure-SVG equity sparkline. ~15 lines of rendering, zero deps. Draws
-// cumulative PnL trajectory with a zero-line reference so drawdowns are
-// immediately visible.
-function EquitySparkline({
+// W2-1 migration: replaced ~80-line inline SVG sparkline with the shared
+// EquitySparkline primitive (src/components/ui/EquitySparkline.tsx, #1423).
+// The primitive renders the same gradient-stroke + endpoint glow + zero
+// baseline visual treatment, but with the additional "fade-in stroke
+// gradient" sig (text-tertiary → up/down) and a halo around the endpoint
+// dot. Day-range and final-% caption stay local since they're TrustGap-
+// specific framing.
+function EquitySparklineSection({
   daily,
   startingBalance,
 }: {
   daily: DailyPoint[];
   startingBalance: number;
 }) {
-  const W = 320;
-  const H = 70;
-  const PAD_Y = 6;
   // Build equity series from cum_pnl (falling back to accumulator if missing)
   const equities: number[] = [];
   let acc = 0;
@@ -387,82 +389,23 @@ function EquitySparkline({
     const cum = typeof d.cum_pnl === "number" ? d.cum_pnl : (acc += d.pnl ?? 0);
     equities.push(cum);
   }
-  const minE = Math.min(0, ...equities);
-  const maxE = Math.max(0, ...equities);
-  const range = maxE - minE || 1;
-  const xStep = W / Math.max(1, equities.length - 1);
-  const toY = (e: number) => H - PAD_Y - ((e - minE) / range) * (H - 2 * PAD_Y);
-  const zeroY = toY(0);
   const finalE = equities[equities.length - 1] ?? 0;
   const finalPositive = finalE >= 0;
-  const strokeStyle = {
-    stroke: `var(${finalPositive ? "--color-up" : "--color-down"})`,
-  };
-  const dotFillStyle = {
-    fill: `var(${finalPositive ? "--color-up" : "--color-down"})`,
-  };
-  const areaFillStyle = {
-    fill: `var(${finalPositive ? "--color-up-fill" : "--color-down-fill"})`,
-  };
-
-  const path = equities
-    .map(
-      (e, i) =>
-        `${i === 0 ? "M" : "L"}${(i * xStep).toFixed(1)},${toY(e).toFixed(1)}`,
-    )
-    .join(" ");
-  const areaPath = `${path} L${((equities.length - 1) * xStep).toFixed(1)},${zeroY.toFixed(1)} L0,${zeroY.toFixed(1)} Z`;
   const finalPct = startingBalance > 0 ? (finalE / startingBalance) * 100 : 0;
-
-  // 2026-04-22 a11y fix: aria-label now includes the actual final % + day
-  // count so screen-reader users get the meaningful data, not just a label.
-  // Previously role="img" + aria-hidden="true" on <svg> were contradictory;
-  // dropping aria-hidden so <title>/<desc> inside can announce, and
-  // letting the figure's aria-label remain as the primary name.
   const srLabel = `Live cumulative P&L: ${
     finalPositive ? "+" : ""
   }${finalPct.toFixed(1)}% over ${daily.length} days`;
+
   return (
-    <figure
-      class="relative"
-      aria-label={srLabel}
-      data-testid="sim-v1-equity-sparkline"
-    >
-      <svg
-        viewBox={`0 0 ${W} ${H}`}
-        width="100%"
-        height={H}
-        role="img"
-        aria-label={srLabel}
-      >
-        <title>{srLabel}</title>
-        {/* zero line */}
-        <line
-          x1={0}
-          y1={zeroY}
-          x2={W}
-          y2={zeroY}
-          style={{ stroke: "var(--color-text-tertiary)" }}
-          stroke-width="0.5"
-          stroke-dasharray="2 3"
-        />
-        <path d={areaPath} style={areaFillStyle} />
-        <path
-          d={path}
-          fill="none"
-          style={strokeStyle}
-          stroke-width="1.5"
-          stroke-linejoin="round"
-        />
-        {/* final dot */}
-        <circle
-          cx={(equities.length - 1) * xStep}
-          cy={toY(finalE)}
-          r={2.5}
-          style={{ ...dotFillStyle, stroke: "var(--color-bg)" }}
-          stroke-width="1"
-        />
-      </svg>
+    <figure class="relative" data-testid="sim-v1-equity-sparkline">
+      <EquitySparkline
+        data={equities}
+        ariaLabel={srLabel}
+        width={320}
+        height={70}
+        showEndpoint
+        showZero
+      />
       <figcaption class="mt-1 flex items-center justify-between font-mono text-[10px] text-(--color-text-tertiary)">
         <span>
           {daily[0]?.date?.slice(5)} → {daily[daily.length - 1]?.date?.slice(5)}
