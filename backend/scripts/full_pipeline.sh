@@ -80,24 +80,78 @@ log "Step 3: Reloading API data..."
 RELOAD_RESULT=$(curl -s -X POST http://localhost:8080/admin/refresh -H "X-Admin-Key: ${ADMIN_API_KEY}" 2>/dev/null || echo '{"error": "API not responding"}')
 log "Reload result: $RELOAD_RESULT"
 
-# Step 4: Git commit + push (auto-deploy)
+# Step 4: Git commit + push (auto-deploy via data-deploy.yml on push)
+# Pattern: refresh_static.sh:236-285 (fetch → diverge check → commit → push with rollback)
+# Fixes 2026-04-26 incident where push rejection left local main divergent.
 log "Step 4: Git commit + push..."
 cd "$REPO_DIR"
 
-# Safety: only commit on main branch
+PUSH_FAIL_REASON=""
 CURRENT_BRANCH=$(git branch --show-current 2>/dev/null)
+
 if [ "$CURRENT_BRANCH" != "main" ]; then
     log "Step 4: WARN — on branch '$CURRENT_BRANCH', skipping git commit/push"
-elif git diff --quiet public/data/ 2>/dev/null; then
+elif git diff --quiet public/data/ 2>/dev/null && git diff --cached --quiet public/data/ 2>/dev/null; then
     log "Step 4: No data changes to commit"
 else
-    git add public/data/
-    git commit -m "chore: daily data update [$(date -u '+%Y-%m-%d')] [skip ci]" 2>&1 | tee -a "$LOG_FILE"
-    if git push origin main 2>&1 | tee -a "$LOG_FILE"; then
-        log "Step 4: Pushed to GitHub -> Cloudflare auto-deploy"
-    else
-        log "Step 4: Push FAILED"
+    # 4a. Sync with origin BEFORE staging — prevents diverge accumulation.
+    if ! git fetch origin main -q 2>&1 | tee -a "$LOG_FILE"; then
+        log "Step 4: fetch failed — aborting commit/push"
         ERRORS=$((ERRORS + 1))
+        PUSH_FAIL_REASON="fetch failed (network?)"
+    else
+        BEHIND=$(git rev-list --count HEAD..origin/main 2>/dev/null || echo 0)
+        AHEAD=$(git rev-list --count origin/main..HEAD 2>/dev/null || echo 0)
+
+        # 4b. Refuse to compound diverge — if local main already has unrelated
+        # commits AND origin moved, abort before adding another commit.
+        if [ "$BEHIND" -gt 0 ] && [ "$AHEAD" -gt 0 ]; then
+            log "Step 4: ABORT — local main diverged (ahead=$AHEAD, behind=$BEHIND). Refusing to commit on top of unsynced state."
+            ERRORS=$((ERRORS + 1))
+            PUSH_FAIL_REASON="local main diverged (ahead=$AHEAD, behind=$BEHIND) — manual reconciliation required"
+        elif [ "$BEHIND" -gt 0 ]; then
+            if ! git merge --ff-only origin/main 2>&1 | tee -a "$LOG_FILE"; then
+                log "Step 4: ff-merge failed despite ahead=0,behind=$BEHIND"
+                ERRORS=$((ERRORS + 1))
+                PUSH_FAIL_REASON="fast-forward to origin/main failed"
+            fi
+        fi
+
+        if [ -z "$PUSH_FAIL_REASON" ]; then
+            # 4c. Stage + commit only if there's actually something to commit.
+            git add public/data/
+            if git diff --cached --quiet 2>/dev/null; then
+                log "Step 4: refresh produced files but nothing staged (already up to date)"
+            else
+                git -c user.email='pruviq-bot@pruviq.com' -c user.name='pruviq-bot' \
+                    commit -m "chore: daily data update [$(date -u '+%Y-%m-%d')] [skip ci]" \
+                    2>&1 | tee -a "$LOG_FILE"
+
+                # 4d. Push with rollback on failure (refresh_static.sh:273-281 pattern)
+                PUSH_OUT=$(git push origin main 2>&1)
+                PUSH_RC=$?
+                echo "$PUSH_OUT" | tee -a "$LOG_FILE"
+                if [ $PUSH_RC -ne 0 ]; then
+                    # Capture reason BEFORE rollback (head sha changes)
+                    if echo "$PUSH_OUT" | grep -qi "non-fast-forward\|rejected"; then
+                        BEHIND_NOW=$(git rev-list --count HEAD..origin/main 2>/dev/null || echo "?")
+                        PUSH_FAIL_REASON="non-fast-forward ($BEHIND_NOW commits behind origin/main)"
+                    elif echo "$PUSH_OUT" | grep -qi "permission\|denied\|deploy key"; then
+                        PUSH_FAIL_REASON="auth/permission denied"
+                    elif echo "$PUSH_OUT" | grep -qi "could not resolve\|connection\|timeout"; then
+                        PUSH_FAIL_REASON="network failure"
+                    else
+                        PUSH_FAIL_REASON="push failed: $(echo "$PUSH_OUT" | tail -1 | head -c 120)"
+                    fi
+                    # Rollback to prevent diverge accumulation
+                    git reset --soft HEAD~1 2>/dev/null
+                    log "Step 4: Push FAILED — local commit rolled back. Reason: $PUSH_FAIL_REASON"
+                    ERRORS=$((ERRORS + 1))
+                else
+                    log "Step 4: Pushed to GitHub -> data-deploy.yml will auto-deploy"
+                fi
+            fi
+        fi
     fi
 fi
 
@@ -112,6 +166,10 @@ log "Site status: $SITE_STATUS"
 # Summary + notification
 if [ $ERRORS -gt 0 ]; then
     MSG="⚠️ *PRUVIQ Pipeline*: ${ERRORS} error(s)"
+    [ -n "$PUSH_FAIL_REASON" ] && MSG="$MSG
+• git: ${PUSH_FAIL_REASON}"
+    [ "${SITE_STATUS}" != "200" ] && MSG="$MSG
+• site: HTTP ${SITE_STATUS}"
     log "$MSG"
     notify "$MSG"
 else
