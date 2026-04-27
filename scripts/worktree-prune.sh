@@ -96,7 +96,7 @@ while IFS= read -r path && IFS= read -r branch; do
         log "KEEP-STALE: $branch_short (not merged, $age_days days idle) — $path"
         KEPT_STALE_LIST+=("$branch_short ($age_days days)")
     fi
-done < <(git worktree list --porcelain 2>/dev/null | awk '/^worktree /{print substr($0, 10)} /^branch /{print substr($0, 8)}')
+done < <(git worktree list --porcelain 2>/dev/null | awk '/^worktree /{if(path) print path "\t" branch; path=substr($0,10); branch=""} /^branch /{branch=substr($0,8)} END{if(path) print path "\t" branch}' | while IFS=$'\t' read -r wt_path wt_branch; do echo "$wt_path"; echo "$wt_branch"; done)
 
 # Optional: prune phantom worktree refs (if dir was rm'd manually)
 if [ "$DRY_RUN" != "1" ]; then
