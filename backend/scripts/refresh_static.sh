@@ -272,12 +272,42 @@ fi
 
 PUSH_OUT=$(git push origin main 2>&1)
 PUSH_RC=$?
+# 2026-04-28 silent-fail incident fix: log push result UNCONDITIONALLY.
+# Previous version only logged on PUSH_RC != 0, but ruleset rejection on
+# 4-20+ produced PUSH_RC behavior that we couldn't observe in cron logs.
+# Now every tick records exit code + output, regardless of outcome.
+log "git push origin main exit=$PUSH_RC"
+echo "$PUSH_OUT" | while IFS= read -r _line; do log "  push: $_line"; done
+
 if [[ $PUSH_RC -ne 0 ]]; then
-    # Roll back the local commit so the next cycle can retry cleanly without
-    # the fast-forward check tripping on the unpushed commit.
+    # Classify rejection reason for actionable alerts (ruleset is the
+    # 2026-04-20 root cause; auth/network are legacy classes).
+    REASON="unknown"
+    if echo "$PUSH_OUT" | grep -qiE "rule violations|status checks are expected|protected branch|merge queue"; then
+        REASON="ruleset (PR required — script bypass impossible)"
+    elif echo "$PUSH_OUT" | grep -qiE "non-fast-forward|rejected.*fetch first"; then
+        REASON="non-fast-forward (origin moved during run)"
+    elif echo "$PUSH_OUT" | grep -qiE "permission denied|auth|deploy key|publickey"; then
+        REASON="auth/permission denied"
+    elif echo "$PUSH_OUT" | grep -qiE "could not resolve|connection|timeout|network"; then
+        REASON="network failure"
+    fi
+    # Roll back the local commit so the next cycle can retry cleanly.
     git reset --soft HEAD~1 2>/dev/null
-    log "git push failed: $PUSH_OUT"
-    send_alert "ERROR" "refresh_static: git push failed (deploy key? network?) — local commit rolled back"
+    log "git push FAILED: $REASON"
+    send_alert "ERROR" "refresh_static: push failed [$REASON] — local commit rolled back"
+    exit 1
+fi
+
+# Silent-fail safety net: PUSH_RC=0 doesn't always mean origin received our
+# commit (rare git/network states). Verify head match before declaring success.
+git fetch origin main -q 2>/dev/null
+LOCAL_HEAD=$(git rev-parse HEAD)
+ORIGIN_HEAD=$(git rev-parse origin/main 2>/dev/null || echo "")
+if [[ -n "$ORIGIN_HEAD" && "$LOCAL_HEAD" != "$ORIGIN_HEAD" ]]; then
+    log "WARN: push exit=0 but origin/main ($ORIGIN_HEAD) != local HEAD ($LOCAL_HEAD) — silent fail"
+    send_alert "ERROR" "refresh_static: push reported success but origin still behind — silent fail. Check ruleset/permissions."
+    git reset --soft HEAD~1 2>/dev/null
     exit 1
 fi
 
