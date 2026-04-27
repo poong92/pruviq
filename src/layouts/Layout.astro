@@ -794,6 +794,107 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
         });
       })();
     </script>
+    <script is:inline define:vars={{ lang: lang }}>
+      /* W5-3.2: G-prefix vim-style navigation shortcuts (Linear/GitHub).
+         Press G, then within 1.5s press a destination key:
+           H=home · S=simulate · C=coins · L=strategies ·
+           R=ranking · P=performance · F=fees · B=blog · M=market
+         Lang-aware: ko paths get /ko prefix automatically.
+         Visual hint pill shows "Go to…" in upper-right while g-mode active.
+         Escape or timeout cancels. */
+      (function() {
+        var routes = {
+          h: '/',
+          s: '/simulate',
+          c: '/coins',
+          l: '/strategies',
+          r: '/strategies/ranking',
+          p: '/performance',
+          f: '/fees',
+          b: '/blog',
+          m: '/market',
+        };
+        var TIMEOUT_MS = 1500;
+        var gMode = false;
+        var timer = null;
+        var hint = null;
+
+        function localizedPath(path) {
+          if (lang === 'ko') {
+            return path === '/' ? '/ko/' : '/ko' + path;
+          }
+          return path;
+        }
+
+        function showHint() {
+          if (hint) return;
+          hint = document.createElement('div');
+          hint.setAttribute('role', 'status');
+          hint.setAttribute('aria-live', 'polite');
+          hint.style.cssText =
+            'position:fixed;top:1rem;right:1rem;z-index:130;' +
+            'padding:.5rem .75rem;border-radius:.5rem;' +
+            'background:var(--color-bg-elevated);' +
+            'border:1px solid var(--color-accent);' +
+            'color:var(--color-text);' +
+            'font-family:JetBrains Mono,ui-monospace,monospace;' +
+            'font-size:11px;font-weight:600;letter-spacing:.05em;' +
+            'text-transform:uppercase;' +
+            'box-shadow:var(--shadow-md);' +
+            'pointer-events:none;';
+          hint.textContent = lang === 'ko' ? '이동… (h s c l r p f b m)' : 'GO TO… (h s c l r p f b m)';
+          document.body.appendChild(hint);
+        }
+        function hideHint() {
+          if (!hint) return;
+          hint.parentNode && hint.parentNode.removeChild(hint);
+          hint = null;
+        }
+        function exitGMode() {
+          gMode = false;
+          if (timer) { clearTimeout(timer); timer = null; }
+          hideHint();
+        }
+        function isEditable(target) {
+          if (!target) return false;
+          var tag = target.tagName;
+          if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return true;
+          return !!target.isContentEditable;
+        }
+
+        document.addEventListener('keydown', function(e) {
+          if (e.metaKey || e.ctrlKey || e.altKey) return;
+          if (isEditable(e.target)) return;
+
+          if (gMode) {
+            if (e.key === 'Escape') {
+              e.preventDefault();
+              exitGMode();
+              return;
+            }
+            var k = (e.key || '').toLowerCase();
+            if (Object.prototype.hasOwnProperty.call(routes, k)) {
+              e.preventDefault();
+              var path = localizedPath(routes[k]);
+              exitGMode();
+              window.location.href = path;
+              return;
+            }
+            // Any other key cancels g-mode
+            exitGMode();
+            return;
+          }
+
+          // Enter g-mode on lowercase 'g' (Shift+G is reserved for browsers)
+          if (e.key === 'g' && !e.shiftKey) {
+            e.preventDefault();
+            gMode = true;
+            showHint();
+            timer = setTimeout(exitGMode, TIMEOUT_MS);
+          }
+        });
+      })();
+    </script>
     <script>
       /* Sticky CTA bar - show after scrolling past hero (mobile only) */
       (function() {
@@ -920,6 +1021,20 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
         }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
         els.forEach(function(el) { observer.observe(el); });
       })();
+    </script>
+    <!-- W4-3b: Service worker registration. Conservative caching strategy
+         (no HTML caching ever — see public/sw.js header). Registered after
+         window.load so it doesn't block first paint. Skipped on localhost
+         in case dev needs a clean reload loop. -->
+    <script>
+      if ('serviceWorker' in navigator && location.protocol === 'https:') {
+        window.addEventListener('load', function() {
+          navigator.serviceWorker.register('/sw.js').catch(function(err) {
+            // Silent — SW failure should never break the page
+            console.warn('[pruviq] sw register failed', err);
+          });
+        });
+      }
     </script>
   </body>
 </html>
