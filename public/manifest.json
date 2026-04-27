@@ -1,22 +1,84 @@
 {
-  "name": "PRUVIQ",
+  "name": "PRUVIQ — Crypto Strategy Verification",
   "short_name": "PRUVIQ",
   "id": "/",
-  "description": "Crypto strategy verification platform — backtest, simulate, verify",
+  "description": "Free crypto strategy backtester. Verify strategies on 240 OKX coins, share verified results, never trust unverified backtests again.",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
-  "background_color": "#0a0a0a",
-  "theme_color": "#0a0a0a",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "portrait-primary",
+  "background_color": "#09090B",
+  "theme_color": "#09090B",
+  "categories": ["finance", "productivity", "education"],
+  "lang": "en",
+  "dir": "ltr",
+  "prefer_related_applications": false,
   "icons": [
     {
       "src": "/favicon.svg",
       "sizes": "any",
-      "type": "image/svg+xml"
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/favicon-96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon-48.png",
+      "sizes": "48x48",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon-32.png",
+      "sizes": "32x32",
+      "type": "image/png",
+      "purpose": "any"
     },
     {
       "src": "/apple-touch-icon.png",
       "sizes": "180x180",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Run Simulator",
+      "short_name": "Simulate",
+      "description": "Backtest a strategy across 240 OKX coins",
+      "url": "/simulate",
+      "icons": [
+        { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }
+      ]
+    },
+    {
+      "name": "Strategy Library",
+      "short_name": "Strategies",
+      "description": "Verified, killed, and shelved strategies",
+      "url": "/strategies",
+      "icons": [
+        { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }
+      ]
+    },
+    {
+      "name": "Strategy Rankings",
+      "short_name": "Ranking",
+      "description": "Top-performing verified strategies",
+      "url": "/strategies/ranking",
+      "icons": [
+        { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }
+      ]
     }
   ]
 }

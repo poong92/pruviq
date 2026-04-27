@@ -24,7 +24,7 @@ jobs:
       contains(github.event.comment.body, 'Needs Changes')
     steps:
       - name: Extract review and create feedback
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             const prNumber = context.issue.number;
