@@ -210,3 +210,20 @@ export function formatKoNum(
   }
   return `${sign}${parts.join(" ")}`;
 }
+
+/**
+ * formatLocalizedCount — lang-aware integer formatter for trade counts /
+ * activity numbers / sample sizes. Always lossless (no compact mode here —
+ * call `formatKoNum(n, { compact: true })` directly when you need that).
+ *
+ *   formatLocalizedCount(12_345, "en") → "12,345"
+ *   formatLocalizedCount(12_345, "ko") → "1만 2,345"
+ *
+ * Single source for "render this integer for this user". Use this instead
+ * of `n.toLocaleString()` whenever the surrounding component already knows
+ * the lang prop, so KO readers see the idiom without per-site branching.
+ */
+export function formatLocalizedCount(n: number, lang: "en" | "ko"): string {
+  if (lang === "ko") return formatKoNum(n);
+  return n.toLocaleString("en-US");
+}

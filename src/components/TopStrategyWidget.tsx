@@ -5,6 +5,8 @@
  */
 import { useState, useEffect } from "preact/hooks";
 import { API_BASE_URL } from "../config/api";
+import { formatLocalizedCount } from "../utils/format";
+import Card from "./ui/Card";
 
 interface RankingEntry {
   rank: number;
@@ -89,9 +91,10 @@ export function TopStrategyWidget({ lang = "en" }: { lang?: Lang }) {
 
   if (loading) {
     return (
-      <div
-        class="rounded-xl p-5 border border-[--color-border] bg-[--color-bg-card]"
-        style="box-shadow: var(--shadow-card);"
+      <Card
+        radius="lg"
+        padding="md"
+        class="shadow-[var(--shadow-card)]"
         aria-busy="true"
         aria-label={t.loading}
       >
@@ -115,7 +118,7 @@ export function TopStrategyWidget({ lang = "en" }: { lang?: Lang }) {
             </div>
           ))}
         </div>
-      </div>
+      </Card>
     );
   }
 
@@ -127,9 +130,10 @@ export function TopStrategyWidget({ lang = "en" }: { lang?: Lang }) {
   const name = lang === "ko" ? top.name_ko : top.name_en;
 
   return (
-    <div
-      class="rounded-xl border border-[--color-border-accent] bg-[--color-bg-card] overflow-hidden"
-      style="box-shadow: var(--shadow-accent-glow);"
+    <Card
+      radius="lg"
+      padding="none"
+      class="border-[--color-border-accent] overflow-hidden shadow-[var(--shadow-accent-glow)]"
     >
       {/* Header bar */}
       <div class="flex items-center justify-between px-5 py-3 border-b border-[--color-border] bg-[--color-bg]">
@@ -217,7 +221,7 @@ export function TopStrategyWidget({ lang = "en" }: { lang?: Lang }) {
               {t.trades}
             </p>
             <p class="font-mono text-lg font-bold text-[--color-text]">
-              {top.total_trades.toLocaleString()}
+              {formatLocalizedCount(top.total_trades, lang)}
             </p>
           </div>
         </div>
@@ -246,6 +250,6 @@ export function TopStrategyWidget({ lang = "en" }: { lang?: Lang }) {
           {t.disclaimer}
         </p>
       </div>
-    </div>
+    </Card>
   );
 }
