@@ -32,6 +32,7 @@ import HotStrategies from "./HotStrategies";
 import StandardPanel from "./StandardPanel";
 import AchievementBadges from "./AchievementBadges";
 import LoadingEquityAnimation from "./LoadingEquityAnimation";
+import Card from "./ui/Card";
 
 // ─── i18n ───
 const L = {
@@ -1793,13 +1794,18 @@ export default function SimulatorPage({
       >
         {/* Phase 1.5: Loading animation replaces empty results area */}
         {isRunning && !result && (
-          <div class="rounded-xl border border-[--color-border] bg-[--color-bg-card] overflow-hidden">
+          <Card
+            variant="default"
+            padding="none"
+            radius="lg"
+            class="overflow-hidden"
+          >
             <LoadingEquityAnimation
               t={t}
               progressStep={progressStep}
               elapsedSec={elapsedSec}
             />
-          </div>
+          </Card>
         )}
         <ResultsPanel
           t={t}

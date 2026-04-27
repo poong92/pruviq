@@ -4,6 +4,7 @@
  * Keyboard navigation: ↑↓ to move, Enter to select, Esc to close.
  */
 import { useState, useEffect, useRef, useCallback } from "preact/hooks";
+import Card from "./ui/Card";
 
 interface SearchItem {
   label: string;
@@ -293,7 +294,12 @@ export default function CommandPalette({ lang = "en" }: Props) {
       <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" />
 
       {/* Palette */}
-      <div class="relative w-full max-w-lg mx-4 rounded-xl border border-[--color-border] bg-[--color-bg-card] shadow-2xl overflow-hidden">
+      <Card
+        variant="default"
+        padding="none"
+        radius="lg"
+        class="relative w-full max-w-lg mx-4 shadow-2xl overflow-hidden"
+      >
         {/* Search input */}
         <div class="flex items-center gap-3 px-4 py-3 border-b border-[--color-border]">
           <svg
@@ -390,7 +396,7 @@ export default function CommandPalette({ lang = "en" }: Props) {
           <span>↵ open</span>
           <span>esc close</span>
         </div>
-      </div>
+      </Card>
     </div>
   );
 }
