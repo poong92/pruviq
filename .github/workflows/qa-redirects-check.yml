@@ -17,7 +17,7 @@ jobs:
     runs-on: [self-hosted, ops]
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Use Node 22
         run: node --version
