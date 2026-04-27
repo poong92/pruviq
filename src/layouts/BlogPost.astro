@@ -24,11 +24,15 @@ const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 const { title, description, date, updatedDate, category, author = 'PRUVIQ Research', image, body, tags = [], postId, noAlternate = false, isKorean } = Astro.props;
 
-// W3-1c: per-blog dynamic OG. Posts that ship a custom `image` in
-// frontmatter keep using it; posts without an image now get a
-// generated /og/blog/<postId>.png card with title/category/date
-// instead of falling back to the generic site-wide og-image.jpg.
-const resolvedOgImage = image || (postId ? `/og/blog/${postId}.png` : undefined);
+// W3-1f: lang-aware dynamic OG. KO blog posts have Korean titles in
+// frontmatter — feeding those to /og/blog/<slug>.png (Inter only, no
+// Korean glyph coverage) renders 한글 as tofu. Route KO posts to
+// /og/ko/blog/<slug>.png which uses Pretendard for KR rendering.
+// (W3-1c established the EN /og/blog/[slug].png endpoint; this
+// extends it with the KR fallback.)
+const resolvedOgImage = image || (postId
+  ? (lang === 'ko' ? `/og/ko/blog/${postId}.png` : `/og/blog/${postId}.png`)
+  : undefined);
 
 const categoryLabels: Record<string, string> = {
   market: 'MARKET ANALYSIS',

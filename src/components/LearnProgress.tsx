@@ -1,4 +1,5 @@
 import { useState, useEffect } from "preact/hooks";
+import Card from "./ui/Card";
 
 interface Props {
   postIds: string[];
@@ -46,7 +47,12 @@ export default function LearnProgress({ postIds, lang = "en" }: Props) {
   if (total === 0) return null;
 
   return (
-    <div class="mb-8 p-4 rounded-xl bg-[--color-bg-card] border border-[--color-border] shadow-[var(--shadow-sm)]">
+    <Card
+      variant="default"
+      padding="md"
+      radius="lg"
+      class="mb-8 shadow-[var(--shadow-sm)]"
+    >
       <div class="flex items-center justify-between mb-2">
         <span class="font-mono text-xs text-[--color-text-muted] uppercase tracking-wider">
           {t.progress}
@@ -68,7 +74,7 @@ export default function LearnProgress({ postIds, lang = "en" }: Props) {
           }}
         />
       </div>
-    </div>
+    </Card>
   );
 }
 
