@@ -1238,6 +1238,15 @@ textarea:focus-visible {
   font-size: 0.8125rem;
   border-radius: var(--radius-sm);
   min-height: 36px;
+  position: relative;
+}
+/* WCAG AA 44px touch target — visual size 36px 유지하되 가상 클릭 영역
+   확장으로 a11y 표준 충족. 2026-04-28 P2 fix (QA Sweep). */
+.btn-sm::after {
+  content: "";
+  position: absolute;
+  inset: -4px 0;
+  pointer-events: auto;
 }
 
 /* ─── Ghost button — higher contrast ─── */
