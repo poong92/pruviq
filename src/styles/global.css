@@ -322,8 +322,28 @@
   50% { transform: translate(30px, -20px) scale(1.05); }
   100% { transform: translate(-20px, 15px) scale(0.95); }
 }
+/* WCAG 2.3.3 — Animation from Interactions: Motion-triggered animation 비활성.
+   2026-04-28 Sprint 3.2 확장: hero-orb뿐 아니라 모든 reveal/stagger/transition
+   을 즉시 visible로 (motion 민감 사용자 + 내부 메모리 권한 보호 동시).
+   transform + opacity는 GPU 합성 layer라 60fps는 이미 보장됨 — 이 룰은
+   *애니메이션 자체를 0duration*으로 만들어 cognitive load 차단. */
 @media (prefers-reduced-motion: reduce) {
-  .hero-orb { animation: none; }
+  .hero-orb,
+  .step-connect-line.reveal { animation: none; }
+  .reveal,
+  .reveal-child > * {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 /* ─── Stats glass card ─── */
