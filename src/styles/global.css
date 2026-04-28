@@ -517,7 +517,10 @@ body {
   font-family: var(--font-sans);
   font-size: 16px; /* base — components should use text-base (16px) not text-sm (14px) */
   line-height: 1.7;
-  font-feature-settings: 'kern' 1, 'liga' 1;
+  /* 'kern' 자간 + 'liga' 표준 합자 + 'calt' contextual alt + 'cv01'/'ss01' Geist 캐릭터 변형
+     2026-04-28 Sprint 4.2: Typography 정밀 — Linear/Vercel 수준 hand-tuning. */
+  font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1, 'cv01' 1, 'ss01' 1;
+  text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
