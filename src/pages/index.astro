@@ -35,7 +35,7 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
       <div class="grid md:grid-cols-[3fr_2fr] gap-12 md:gap-16 items-start">
         <!-- Left: Text + CTA -->
         <div>
-          <HeroBadge stat={`${coinsAnalyzed}+`} label="coins · 2yr data · 88 strategies tested" />
+          <HeroBadge stat={`${coinsAnalyzed}+`} label="coins · 2yr data · real fees" />
           <p class="font-mono text-[--color-accent] text-sm tracking-wider mb-5 opacity-90">Verify. Execute. Profit.</p>
           <h1 class="text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-[-0.04em] leading-[1.05] text-balance">
             Most Backtests Lie.<br/><span class="gradient-text-shimmer">Ours Come With Proof.</span>
@@ -61,7 +61,7 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
             </a>
           </div>
           <!-- Trust strip -->
-          <p class="text-xs font-mono text-[--color-text-muted] mt-4">{simulatorPresetCount}+ strategies · {coinsAnalyzed}+ coins · $0 — no subscription · No signup required</p>
+          <p class="text-xs font-mono text-[--color-text-muted] mt-4">$0 — no subscription · No signup · No code required</p>
           <p class="text-[10px] text-[--color-text-muted]/50 mt-2">Simulation only. Past performance does not guarantee future results. Not financial advice.</p>
         </div>
         <!-- Right: Live simulator demo -->
