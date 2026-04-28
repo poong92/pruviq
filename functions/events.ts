@@ -1,5 +1,11 @@
 /// <reference types="@cloudflare/workers-types" />
 //
+// ⚠️ DEAD CODE NOTICE (2026-04-28):
+// Cloudflare Pages Advanced Mode (public/_worker.js)이 활성화되어 있으므로
+// functions/ 디렉토리는 **bypass**됩니다. 이 파일의 핸들러는 production에서
+// 호출되지 않습니다. 실제 라우팅은 public/_worker.js의 handleEventsPost/Options.
+// 이 파일은 reference로만 보존됩니다 — 변경 시 _worker.js와 동기 필수.
+//
 // Minimal A/B + funnel event collector.
 // POST /events with JSON { type, payload?, ts? }
 //
