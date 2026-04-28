@@ -180,6 +180,36 @@ check_url "$BASE/ko/" "검증"
 check_optional "$BASE/" "class=\"reveal"
 
 echo ""
+echo "── /events telemetry endpoint (P1 fix verification, 2026-04-28) ──"
+# Valid event → 204 (Cloudflare Pages Advanced Mode bypasses functions/, so
+# routing must live in public/_worker.js).
+EVENTS_VALID_CODE=$(curl -sL -o /dev/null -w "%{http_code}" --max-time 10 \
+  -X POST "$BASE/events" \
+  -H "Content-Type: application/json" \
+  -d '{"type":"sim.view","ts":1}' || echo "000")
+if [ "$EVENTS_VALID_CODE" = "204" ]; then
+  echo "${GREEN}✓${RESET} POST $BASE/events {sim.view} → 204"
+  PASS=$((PASS + 1))
+else
+  echo "${RED}✗${RESET} POST $BASE/events {sim.view} → HTTP $EVENTS_VALID_CODE (expected 204) — telemetry funnel dropping data"
+  FAIL=$((FAIL + 1))
+  FAILED_URLS+=("POST /events sim.view (HTTP $EVENTS_VALID_CODE)")
+fi
+# Invalid event type → 400 (closed event set)
+EVENTS_INVALID_CODE=$(curl -sL -o /dev/null -w "%{http_code}" --max-time 10 \
+  -X POST "$BASE/events" \
+  -H "Content-Type: application/json" \
+  -d '{"type":"bogus.unknown"}' || echo "000")
+if [ "$EVENTS_INVALID_CODE" = "400" ]; then
+  echo "${GREEN}✓${RESET} POST $BASE/events {bogus.unknown} → 400 (closed event set enforced)"
+  PASS=$((PASS + 1))
+else
+  echo "${YELLOW}△${RESET} POST $BASE/events {bogus.unknown} → HTTP $EVENTS_INVALID_CODE (expected 400)"
+  FAIL=$((FAIL + 1))
+  FAILED_URLS+=("POST /events bogus (HTTP $EVENTS_INVALID_CODE)")
+fi
+
+echo ""
 echo "=== Result: ${GREEN}${PASS} pass${RESET} · ${RED}${FAIL} fail${RESET} ==="
 
 if [ "$FAIL" -gt 0 ]; then
