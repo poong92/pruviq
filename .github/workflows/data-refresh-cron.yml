@@ -106,11 +106,22 @@ jobs:
             git diff --stat public/data/
           fi
 
-      - name: Create or update PR
+      # GitHub의 documented 한계: GITHUB_TOKEN으로 만든 PR은 다른 workflow trigger
+      # 못 함. Vitest/Playwright 등 PR-trigger workflow가 안 돌아 → check runs 0 →
+      # ruleset의 7 required checks 충족 못함 → automerge 영원히 stuck.
+      # 해결: PRUVIQ_BOT_TOKEN (PAT 또는 GitHub App token) 사용.
+      # secret 없으면 fallback으로 GITHUB_TOKEN + workflow_dispatch 추가 발화로 우회.
+      - name: Create or update PR (with PAT for CI re-trigger)
         if: steps.changes.outputs.has_changes == 'true'
         uses: peter-evans/create-pull-request@v6
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          # PRUVIQ_BOT_TOKEN: contents:write + pull-requests:write + workflows:write
+          # 권한의 PAT 또는 fine-grained token. 사용자가 GitHub Settings → Developer
+          # settings → Personal access tokens → Fine-grained tokens 에서 발급 후
+          # repo Settings → Secrets → Actions에 PRUVIQ_BOT_TOKEN으로 저장.
+          # 미설정 시 fallback (GITHUB_TOKEN) — PR은 만들어지지만 CI 안 돌아 manual
+          # rekick 필요. 즉 마이그 효과 절반.
+          token: ${{ secrets.PRUVIQ_BOT_TOKEN || secrets.GITHUB_TOKEN }}
           branch: auto/data-refresh
           delete-branch: false
           base: main
@@ -121,6 +132,8 @@ jobs:
             This PR is **continuously updated** — last refresh embedded in commit message.
 
             **Replaces**: local Mac Mini `*/20 refresh_static.sh` cron (silent-failing since 2026-04-20 ruleset activation).
+
+            **CI trigger**: PRUVIQ_BOT_TOKEN (PAT) 사용 시 정상 trigger. GITHUB_TOKEN fallback 시 CI 안 돌아 manual rekick 필요.
           commit-message: |
             chore(data): cron refresh
           author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
