@@ -314,9 +314,15 @@ if ! git fetch origin main -q 2>/dev/null; then
     log "WARN: post-push fetch failed — cannot verify push landed, skipping verification"
 else
     if ! git merge-base --is-ancestor "$COMMITTED_SHA" origin/main 2>/dev/null; then
-        ORIGIN_HEAD=$(git rev-parse origin/main 2>/dev/null || echo "unknown")
-        log "WARN: push exit=0 but $COMMITTED_SHA not ancestor of origin/main ($ORIGIN_HEAD) — possible silent fail"
-        send_alert "WARN" "refresh_static: push exit=0 but commit not in origin/main — possible silent fail. Investigate."
+        # Retry once after 3s — GitHub may not have propagated the push yet
+        # (eventual consistency between push and fetch endpoints).
+        sleep 3
+        git fetch origin main -q 2>/dev/null
+        if ! git merge-base --is-ancestor "$COMMITTED_SHA" origin/main 2>/dev/null; then
+            ORIGIN_HEAD=$(git rev-parse origin/main 2>/dev/null || echo "unknown")
+            log "WARN: push exit=0 but $COMMITTED_SHA not ancestor of origin/main ($ORIGIN_HEAD) — possible silent fail"
+            send_alert "WARN" "refresh_static: push exit=0 but commit not in origin/main — possible silent fail. Investigate."
+        fi
     fi
 fi
 
