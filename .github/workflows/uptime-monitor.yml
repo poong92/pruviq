@@ -16,17 +16,45 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
+          # 2026-04-28 강화: 5xx만 감지하던 것을 200/301/302 외 모든 코드로 확장.
+          # 근거: 2026-04-26 51 페이지 404 사고가 5xx 검사로 잡히지 않았음.
+          # 4xx (특히 404/405/403)도 사용자 영향 동일하므로 alert 대상.
           endpoints=("https://api.pruviq.com/market" "https://api.pruviq.com/coins/stats" "https://pruviq.com")
+          # 추가: telemetry endpoint health check (POST /events 405 사고 재발 방지)
+          telemetry_post_status=$(curl -s -o /dev/null -w "%{http_code}" \
+            -X POST "https://pruviq.com/events" \
+            -H "Content-Type: application/json" \
+            -d '{"type":"sim.view","ts":1}' \
+            --max-time 10 || echo "000")
+          if [ "$telemetry_post_status" != "204" ]; then
+            timestamp=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+            title="Uptime alert: POST /events returning ${telemetry_post_status} (expected 204)"
+            body="Telemetry endpoint /events POST returned HTTP ${telemetry_post_status} at ${timestamp}. Expected 204. Funnel data likely dropping.\n\nThis indicates _worker.js routing regression (Cloudflare Pages Advanced Mode). Check public/_worker.js handleEventsPost handler."
+            echo "Creating issue: $title"
+            curl -s -X POST -H "Authorization: token ${GITHUB_TOKEN}" -H "Accept: application/vnd.github+json" \
+              https://api.github.com/repos/${REPO}/issues \
+              -d "$(printf '{"title":"%s","body":"%s","labels":["uptime-monitor","telemetry","bot"]}' "$title" "$body")"
+          fi
+          # 일반 endpoint: 200/301/302 외 모두 alert
           for url in "${endpoints[@]}"; do
-            status=$(curl -s -o /dev/null -w "%{http_code}" "$url" || echo "000")
-            if [ "$status" -ge 500 ] 2>/dev/null; then
-              timestamp=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-              body="Uptime monitor detected HTTP ${status} for ${url} at ${timestamp}\n\nThis issue was created automatically by the uptime-monitor workflow.\n\nPlease attach Cloudflare/origin logs and recent deploy IDs for further analysis."
-              title="Uptime alert: ${url} returning ${status}"
-              echo "Creating issue: $title"
-              # Create GitHub issue via REST API
-              curl -s -X POST -H "Authorization: token ${GITHUB_TOKEN}" -H "Accept: application/vnd.github+json" \
-                https://api.github.com/repos/${REPO}/issues \
-                -d "$(printf '{"title":"%s","body":"%s","labels":["uptime-monitor","bot"]}' "$title" "$body")"
-            fi
+            status=$(curl -sL -o /dev/null -w "%{http_code}" --max-time 15 "$url" || echo "000")
+            case "$status" in
+              200|301|302) continue ;;
+              *)
+                timestamp=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+                # 분류로 우선순위 명확
+                severity="P1"
+                case "$status" in
+                  5*) severity="P0" ;;
+                  4*) severity="P1" ;;
+                  000) severity="P0" ;;  # 네트워크/DNS 실패
+                esac
+                body="Uptime monitor detected HTTP ${status} for ${url} at ${timestamp} [${severity}]\n\nThis issue was created automatically by the uptime-monitor workflow.\n\nPlease attach Cloudflare/origin logs and recent deploy IDs for further analysis."
+                title="[${severity}] Uptime alert: ${url} returning ${status}"
+                echo "Creating issue: $title"
+                curl -s -X POST -H "Authorization: token ${GITHUB_TOKEN}" -H "Accept: application/vnd.github+json" \
+                  https://api.github.com/repos/${REPO}/issues \
+                  -d "$(printf '{"title":"%s","body":"%s","labels":["uptime-monitor","bot"]}' "$title" "$body")"
+                ;;
+            esac
           done
