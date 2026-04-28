@@ -587,10 +587,10 @@ export const ko: Record<TranslationKey, string> = {
     "시장 데이터는 정보 제공 목적으로만 제공됩니다. 투자 조언이 아닙니다. 데이터는 15분마다 갱신됩니다.",
 
   // Meta
-  "meta.market_title": "시장 대시보드 - 프루빅(PRUVIQ)",
+  "meta.market_title": "시장 대시보드 — 프루빅(PRUVIQ)",
   "meta.market_desc":
     "실시간 암호화폐 시장 현황. 공포/탐욕 지수, BTC 도미넌스, 상승/하락 순위, 경제 캘린더, 주요 뉴스.",
-  "meta.coins_title": "코인 탐색기 - 프루빅(PRUVIQ)",
+  "meta.coins_title": "코인 탐색기 — 프루빅(PRUVIQ)",
   "meta.coins_desc":
     "프루빅(PRUVIQ)의 실시간 암호화폐 시장 데이터. {coins}개 이상 코인의 가격, 시가총액, 거래량, 7일 차트를 확인하세요. 15분마다 갱신됩니다.",
   "meta.home_title":
@@ -603,25 +603,25 @@ export const ko: Record<TranslationKey, string> = {
     "14개 지표로 커스텀 전략을 만들고 {coins}+ 코인에서 백테스트. 코딩 불필요. 무료, 즉시 결과.",
   "meta.index_desc":
     "프루빅(PRUVIQ) — 무료 크립토 전략 백테스팅. {coins}개 이상 코인과 2년 이상의 실제 데이터로 전략을 검증하고, 실패 사례까지 투명하게 공개합니다.",
-  "meta.strategies_title": "전략 라이브러리 - 프루빅(PRUVIQ)",
+  "meta.strategies_title": "전략 라이브러리 — 프루빅(PRUVIQ)",
   "meta.strategies_desc":
     "테스트한 모든 전략의 전체 시뮬레이션 결과 — 검증된 것, 중단된 것, 그 사이의 모든 것. 체리피킹 없음.",
-  "meta.blog_title": "트레이딩 IQ - 프루빅(PRUVIQ)",
+  "meta.blog_title": "트레이딩 IQ — 프루빅(PRUVIQ)",
   "meta.blog_desc":
     "트레이딩 IQ를 높이세요. 백테스팅, 리스크 관리, 알고리즘 전략, 실제 트레이딩의 교훈.",
   "meta.demo_title": "프루빅(PRUVIQ) 데모 — 인터랙티브 전략 시뮬레이터",
   "meta.demo_desc":
     "PRUVIQ 전략 시뮬레이터를 즉시 체험하세요. 손절/익절을 조정하여 {coins}개+ 코인에 대한 실제 백테스트 결과를 확인하세요.",
-  "meta.fees_title": "거래소 수수료 비교 - 프루빅(PRUVIQ)",
+  "meta.fees_title": "거래소 수수료 비교 — 프루빅(PRUVIQ)",
   "meta.fees_desc":
     "바이낸스 거래소 수수료 비교. 현물 19%, 선물 9% 할인. PRUVIQ 추천 코드로 거래 수수료 절약.",
-  "meta.changelog_title": "변경 이력 - 프루빅(PRUVIQ)",
+  "meta.changelog_title": "변경 이력 — 프루빅(PRUVIQ)",
   "meta.changelog_desc":
     "PRUVIQ 트레이딩 시스템의 전체 버전 히스토리. 모든 변경, 모든 이유, 모든 날짜.",
-  "meta.performance_title": "백테스트 성과 - 프루빅(PRUVIQ)",
+  "meta.performance_title": "백테스트 성과 — 프루빅(PRUVIQ)",
   "meta.performance_desc":
     "BB Squeeze SHORT 전략 백테스트 결과. {coins}개 코인, 2년 이상 데이터, 2,898건 거래. 실패 포함 전체 공개.",
-  "meta.about_title": "소개 - 프루빅(PRUVIQ)",
+  "meta.about_title": "소개 — 프루빅(PRUVIQ)",
   "meta.about_desc":
     "PRUVIQ 프로젝트를 만나보세요. 미션: 크립토 전략 검증을 누구나 할 수 있게. 과대광고 없이. 데이터만.",
 
@@ -879,7 +879,7 @@ export const ko: Record<TranslationKey, string> = {
   "compare.no_data": "데이터 없음",
   "compare.back": "전략 라이브러리로 돌아가기",
   "compare.view": "자세히 보기",
-  "meta.compare_title": "전략 비교 - 프루빅(PRUVIQ)",
+  "meta.compare_title": "전략 비교 — 프루빅(PRUVIQ)",
   "meta.compare_desc":
     "5개 트레이딩 전략을 나란히 비교하세요. 동일 조건, 동일 데이터. SL/TP를 조정하고 승률, 수익 팩터, 드로다운을 한눈에 확인.",
   "strategies.compare": "전체 비교",
@@ -892,7 +892,7 @@ export const ko: Record<TranslationKey, string> = {
   "footer.col_legal": "법적 고지",
 
   // Builder
-  "meta.builder_title": "전략 빌더 - 프루빅(PRUVIQ)",
+  "meta.builder_title": "전략 빌더 — 프루빅(PRUVIQ)",
   "meta.builder_desc":
     "코드 없이 나만의 트레이딩 전략을 설계하세요. 지표 선택, 조건 설정, {coins}+ 코인 2년+ 실제 데이터로 백테스트.",
 
@@ -1039,7 +1039,7 @@ export const ko: Record<TranslationKey, string> = {
   "blog.cat_short.education": "교육",
 
   // Methodology page
-  "meta.methodology_title": "방법론 - 프루빅(PRUVIQ)",
+  "meta.methodology_title": "방법론 — 프루빅(PRUVIQ)",
   "meta.methodology_desc":
     "PRUVIQ가 트레이딩 전략을 백테스트하는 방법. 데이터 소스, 수수료 가정, 포지션 사이징, 평가 지표, 알려진 한계 — 완전히 투명하게 공개합니다.",
   "methodology.tag": "방법론",
@@ -1147,7 +1147,7 @@ export const ko: Record<TranslationKey, string> = {
   "csv.download": "CSV 다운로드",
 
   // Signals page
-  "meta.signals_title": "실시간 매매 시그널 - 프루빅(PRUVIQ)",
+  "meta.signals_title": "실시간 매매 시그널 — 프루빅(PRUVIQ)",
   "meta.signals_desc":
     "17개 검증된 전략이 30개 코인을 매시간 스캔합니다. 실시간 시그널 확인 후 시뮬레이터에서 직접 검증하세요.",
   "signals.title": "실시간 시그널",
@@ -1167,7 +1167,7 @@ export const ko: Record<TranslationKey, string> = {
   "signals.cta_strategies": "전략 둘러보기",
 
   // API Docs page
-  "meta.api_title": "API 레퍼런스 - 프루빅(PRUVIQ)",
+  "meta.api_title": "API 레퍼런스 — 프루빅(PRUVIQ)",
   "meta.api_desc":
     "무료 크립토 전략 백테스팅 REST API. {coins}개 이상 코인에서 전략 시뮬레이션, OHLCV 데이터, 시장 개요 등을 제공합니다.",
   "api.tag": "API 레퍼런스",
@@ -1462,7 +1462,7 @@ export const ko: Record<TranslationKey, string> = {
   "leaderboard.noscript_title": "주간 전략 순위",
   "leaderboard.noscript_desc":
     "승률, 수익률 등 실시간 주간 전략 순위를 보려면 JavaScript를 활성화하세요.",
-  "meta.leaderboard_title": "주간 전략 순위 - 프루빅(PRUVIQ)",
+  "meta.leaderboard_title": "주간 전략 순위 — 프루빅(PRUVIQ)",
   "meta.leaderboard_desc":
     "이번 주 최고 및 최악의 암호화폐 전략을 확인하세요. 실제 백테스트 데이터로 매주 업데이트.",
   "meta.ranking_title": "일별 전략 랭킹 | 프루빅(PRUVIQ)",
@@ -1600,13 +1600,13 @@ export const ko: Record<TranslationKey, string> = {
     '이 변경 기록은 OKX USDT-SWAP에서 실시간 운영 중인 <strong class="text-[--color-text]">BB Squeeze SHORT 매매 전략</strong>을 추적합니다. 플랫폼 버전(웹사이트, 시뮬레이터, API)은 별도로 관리됩니다.',
 
   // Meta: Privacy & Terms
-  "meta.privacy_title": "개인정보처리방침 - 프루빅(PRUVIQ)",
+  "meta.privacy_title": "개인정보처리방침 — 프루빅(PRUVIQ)",
   "meta.privacy_desc":
     "PRUVIQ 개인정보처리방침. 데이터 수집, 쿠키, 분석 도구 사용에 대한 안내. GDPR 및 개인정보보호법 준수.",
   "meta.privacy_tag": "개인정보처리방침",
   "meta.privacy_heading": "개인정보처리방침",
   "meta.privacy_updated": "최종 수정일: 2026년 3월 1일",
-  "meta.terms_title": "이용약관 - 프루빅(PRUVIQ)",
+  "meta.terms_title": "이용약관 — 프루빅(PRUVIQ)",
   "meta.terms_desc":
     "PRUVIQ 이용약관. 서비스 이용 조건, 금융 면책조항, 책임 제한, 제휴 링크 고지.",
   "meta.terms_tag": "이용약관",
