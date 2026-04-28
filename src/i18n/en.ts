@@ -594,10 +594,10 @@ export const en = {
     "Market data is provided for informational purposes only. Not financial advice. Data refreshed every 15 minutes.",
 
   // Meta
-  "meta.market_title": "Market Dashboard - PRUVIQ",
+  "meta.market_title": "Market Dashboard — PRUVIQ",
   "meta.market_desc":
     "Real-time crypto market overview. Fear & Greed Index, BTC dominance, top gainers/losers, economic calendar, and aggregated crypto news.",
-  "meta.coins_title": "Coin Explorer - PRUVIQ",
+  "meta.coins_title": "Coin Explorer — PRUVIQ",
   "meta.coins_desc":
     "Real-time cryptocurrency market data. Browse {coins}+ coins with prices, market cap, trading volume, and 7-day price charts. Updated every 15 minutes.",
   "meta.home_title":
@@ -610,25 +610,25 @@ export const en = {
     "Build a custom crypto trading strategy and backtest it across {coins}+ coins in seconds. No code, no signup, $0 — no subscription.",
   "meta.index_desc":
     "Free crypto strategy backtesting — test strategies on {coins}+ coins with 2+ years of real market data, realistic fees, and published results, including failures.",
-  "meta.strategies_title": "Strategy Library - PRUVIQ",
+  "meta.strategies_title": "Strategy Library — PRUVIQ",
   "meta.strategies_desc":
     "Explore 37 backtested crypto strategies — 5 fully documented, 32 presets. See what survived 2+ years of real market data.",
-  "meta.blog_title": "Trading IQ - PRUVIQ",
+  "meta.blog_title": "Trading IQ — PRUVIQ",
   "meta.blog_desc":
     "Raise your trading IQ. Backtesting, risk management, algorithmic strategies, and lessons from real trades.",
-  "meta.demo_title": "Interactive Demo - PRUVIQ",
+  "meta.demo_title": "Interactive Demo — PRUVIQ",
   "meta.demo_desc":
     "Try PRUVIQ's strategy simulator instantly. Adjust stop-loss and take-profit to see real backtest results on {coins}+ coins.",
-  "meta.fees_title": "Compare Exchange Fees - PRUVIQ",
+  "meta.fees_title": "Compare Exchange Fees — PRUVIQ",
   "meta.fees_desc":
     "Compare crypto exchange trading fees. Save up to 19% on spot with PRUVIQ's referral code. Transparent fee breakdown.",
-  "meta.changelog_title": "Changelog - PRUVIQ",
+  "meta.changelog_title": "Changelog — PRUVIQ",
   "meta.changelog_desc":
     "Complete version history of PRUVIQ's trading system. Every change, every reason, every date.",
-  "meta.performance_title": "Backtest Performance - PRUVIQ",
+  "meta.performance_title": "Backtest Performance — PRUVIQ",
   "meta.performance_desc":
     "Backtest results for BB Squeeze SHORT strategy. 2,898 trades across {coins} coins with 2+ years of data. Every result published including failures.",
-  "meta.about_title": "About - PRUVIQ",
+  "meta.about_title": "About — PRUVIQ",
   "meta.about_desc":
     "Meet the project behind PRUVIQ. Our mission: make crypto strategy verification accessible to everyone. No hype. Just data.",
 
@@ -887,7 +887,7 @@ export const en = {
   "compare.no_data": "No data",
   "compare.back": "Back to Strategy Library",
   "compare.view": "View Details",
-  "meta.compare_title": "Compare Strategies - PRUVIQ",
+  "meta.compare_title": "Compare Strategies — PRUVIQ",
   "meta.compare_desc":
     "Compare all 5 trading strategies side by side. Same conditions, same data. Adjust SL/TP and see win rate, profit factor, drawdown across all strategies.",
   "strategies.compare": "Compare All",
@@ -900,7 +900,7 @@ export const en = {
   "footer.col_legal": "Legal",
 
   // Builder
-  "meta.builder_title": "Strategy Builder - PRUVIQ",
+  "meta.builder_title": "Strategy Builder — PRUVIQ",
   "meta.builder_desc":
     "Build your own trading strategy with no code. Select indicators, set conditions, and backtest on {coins}+ coins with 2+ years of real data.",
 
@@ -1052,7 +1052,7 @@ export const en = {
   "blog.cat_short.education": "EDU",
 
   // Methodology page
-  "meta.methodology_title": "Methodology - PRUVIQ",
+  "meta.methodology_title": "Methodology — PRUVIQ",
   "meta.methodology_desc":
     "How PRUVIQ backtests trading strategies. Data sources, fee assumptions, position sizing, evaluation metrics, and known limitations — fully transparent.",
   "methodology.tag": "METHODOLOGY",
@@ -1165,7 +1165,7 @@ export const en = {
   "csv.download": "Download CSV",
 
   // Signals page
-  "meta.signals_title": "Live Trading Signals - PRUVIQ",
+  "meta.signals_title": "Live Trading Signals — PRUVIQ",
   "meta.signals_desc":
     "Real-time crypto trading signals from 17 verified strategies across 30+ coins. Updated every hour. Verify any signal with the simulator.",
   "signals.title": "Live Signals",
@@ -1185,7 +1185,7 @@ export const en = {
   "signals.cta_strategies": "Browse Strategies",
 
   // API Docs page
-  "meta.api_title": "API Reference - PRUVIQ",
+  "meta.api_title": "API Reference — PRUVIQ",
   "meta.api_desc":
     "Free REST API for crypto strategy backtesting. Simulate strategies on {coins}+ coins, get OHLCV data, market overview, and more. Interactive docs included.",
   "api.tag": "API REFERENCE",
@@ -1495,7 +1495,7 @@ export const en = {
   "leaderboard.noscript_title": "Weekly Strategy Rankings",
   "leaderboard.noscript_desc":
     "Enable JavaScript to view live weekly strategy performance rankings with win rate, profit factor, and return data.",
-  "meta.leaderboard_title": "Weekly Strategy Leaderboard - PRUVIQ",
+  "meta.leaderboard_title": "Weekly Strategy Leaderboard — PRUVIQ",
   "meta.leaderboard_desc":
     "See this week's best and worst performing crypto trading strategies. Updated weekly with real backtest data.",
   "meta.ranking_title": "Daily Strategy Ranking | PRUVIQ",
@@ -1634,13 +1634,13 @@ export const en = {
     'This changelog tracks the <strong class="text-[--color-text]">BB Squeeze SHORT trading strategy</strong> running live on OKX USDT-SWAP. Platform version (website, simulator, API) is managed separately.',
 
   // Meta: Privacy & Terms
-  "meta.privacy_title": "Privacy Policy - PRUVIQ",
+  "meta.privacy_title": "Privacy Policy — PRUVIQ",
   "meta.privacy_desc":
     "PRUVIQ Privacy Policy. How we handle your data, cookies, and analytics. GDPR and CCPA compliant.",
   "meta.privacy_tag": "PRIVACY POLICY",
   "meta.privacy_heading": "Privacy Policy",
   "meta.privacy_updated": "Last updated: March 1, 2026",
-  "meta.terms_title": "Terms of Service - PRUVIQ",
+  "meta.terms_title": "Terms of Service — PRUVIQ",
   "meta.terms_desc":
     "PRUVIQ Terms of Service. Usage conditions, financial disclaimers, liability limitations, and affiliate disclosure.",
   "meta.terms_tag": "TERMS OF SERVICE",
