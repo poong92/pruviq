@@ -270,6 +270,8 @@ if ! git -c user.email='pruviq-bot@pruviq.com' -c user.name='pruviq-bot' \
     exit 1
 fi
 
+# Capture the exact SHA we're about to push — used for post-push verification.
+COMMITTED_SHA=$(git rev-parse HEAD)
 PUSH_OUT=$(git push origin main 2>&1)
 PUSH_RC=$?
 # 2026-04-28 silent-fail incident fix: log push result UNCONDITIONALLY.
@@ -308,13 +310,12 @@ fi
 # be on origin. Rolling back a pushed commit creates local/origin divergence
 # (non-fast-forward on next cycle). Alert only; next cycle self-heals via
 # the ff-only merge above.
-if ! git fetch origin main -q 2>&1; then
+if ! git fetch origin main -q 2>/dev/null; then
     log "WARN: post-push fetch failed — cannot verify push landed, skipping verification"
 else
-    LOCAL_HEAD=$(git rev-parse HEAD)
-    if ! git merge-base --is-ancestor "$LOCAL_HEAD" origin/main 2>/dev/null; then
+    if ! git merge-base --is-ancestor "$COMMITTED_SHA" origin/main 2>/dev/null; then
         ORIGIN_HEAD=$(git rev-parse origin/main 2>/dev/null || echo "unknown")
-        log "WARN: push exit=0 but local HEAD ($LOCAL_HEAD) not ancestor of origin/main ($ORIGIN_HEAD) — possible silent fail"
+        log "WARN: push exit=0 but $COMMITTED_SHA not ancestor of origin/main ($ORIGIN_HEAD) — possible silent fail"
         send_alert "WARN" "refresh_static: push exit=0 but commit not in origin/main — possible silent fail. Investigate."
     fi
 fi
