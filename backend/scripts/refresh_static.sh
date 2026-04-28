@@ -300,13 +300,16 @@ if [[ $PUSH_RC -ne 0 ]]; then
 fi
 
 # Silent-fail safety net: PUSH_RC=0 doesn't always mean origin received our
-# commit (rare git/network states). Verify head match before declaring success.
+# commit (rare git/network states). Verify our commit is reachable from origin.
+# Use --is-ancestor instead of exact HEAD match: another push may land between
+# our push and this fetch, making origin/main ahead — that's fine as long as
+# our commit is in the history.
 git fetch origin main -q 2>/dev/null
 LOCAL_HEAD=$(git rev-parse HEAD)
-ORIGIN_HEAD=$(git rev-parse origin/main 2>/dev/null || echo "")
-if [[ -n "$ORIGIN_HEAD" && "$LOCAL_HEAD" != "$ORIGIN_HEAD" ]]; then
-    log "WARN: push exit=0 but origin/main ($ORIGIN_HEAD) != local HEAD ($LOCAL_HEAD) — silent fail"
-    send_alert "ERROR" "refresh_static: push reported success but origin still behind — silent fail. Check ruleset/permissions."
+if ! git merge-base --is-ancestor "$LOCAL_HEAD" origin/main 2>/dev/null; then
+    ORIGIN_HEAD=$(git rev-parse origin/main 2>/dev/null || echo "unknown")
+    log "WARN: push exit=0 but local HEAD ($LOCAL_HEAD) not ancestor of origin/main ($ORIGIN_HEAD) — silent fail"
+    send_alert "ERROR" "refresh_static: push reported success but commit not in origin — silent fail. Check ruleset/permissions."
     git reset --soft HEAD~1 2>/dev/null
     exit 1
 fi
