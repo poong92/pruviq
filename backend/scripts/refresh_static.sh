@@ -304,14 +304,19 @@ fi
 # Use --is-ancestor instead of exact HEAD match: another push may land between
 # our push and this fetch, making origin/main ahead — that's fine as long as
 # our commit is in the history.
-git fetch origin main -q 2>/dev/null
-LOCAL_HEAD=$(git rev-parse HEAD)
-if ! git merge-base --is-ancestor "$LOCAL_HEAD" origin/main 2>/dev/null; then
-    ORIGIN_HEAD=$(git rev-parse origin/main 2>/dev/null || echo "unknown")
-    log "WARN: push exit=0 but local HEAD ($LOCAL_HEAD) not ancestor of origin/main ($ORIGIN_HEAD) — silent fail"
-    send_alert "ERROR" "refresh_static: push reported success but commit not in origin — silent fail. Check ruleset/permissions."
-    git reset --soft HEAD~1 2>/dev/null
-    exit 1
+# IMPORTANT: Do NOT roll back on verification failure — the commit may already
+# be on origin. Rolling back a pushed commit creates local/origin divergence
+# (non-fast-forward on next cycle). Alert only; next cycle self-heals via
+# the ff-only merge above.
+if ! git fetch origin main -q 2>&1; then
+    log "WARN: post-push fetch failed — cannot verify push landed, skipping verification"
+else
+    LOCAL_HEAD=$(git rev-parse HEAD)
+    if ! git merge-base --is-ancestor "$LOCAL_HEAD" origin/main 2>/dev/null; then
+        ORIGIN_HEAD=$(git rev-parse origin/main 2>/dev/null || echo "unknown")
+        log "WARN: push exit=0 but local HEAD ($LOCAL_HEAD) not ancestor of origin/main ($ORIGIN_HEAD) — possible silent fail"
+        send_alert "WARN" "refresh_static: push exit=0 but commit not in origin/main — possible silent fail. Investigate."
+    fi
 fi
 
 log "Pushed data refresh to origin/main — data-deploy.yml will deploy via push trigger"
