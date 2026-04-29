@@ -1304,6 +1304,7 @@ textarea:focus-visible {
 .btn-ghost:hover {
   border-color: var(--color-text-muted);
   background: rgba(255,255,255,0.04);
+  transform: translateY(-1px);
 }
 
 /* ─── Outline button (accent border) ─── */
@@ -1317,6 +1318,7 @@ textarea:focus-visible {
 .btn-outline:hover {
   background: var(--color-accent-subtle);
   border-color: var(--color-accent);
+  transform: translateY(-1px);
 }
 
 /* ─── Danger button ─── */
