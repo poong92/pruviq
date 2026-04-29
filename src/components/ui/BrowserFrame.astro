@@ -22,7 +22,7 @@ const { src, alt, url = 'pruviq.com/simulate' } = Astro.props;
   <slot>
     <picture>
       <source type="image/webp" srcset={src.replace(/\.png$/, '.webp')} />
-      <img {src} {alt} class="w-full block" loading="eager" />
+      <img {src} {alt} class="w-full block" loading="eager" fetchpriority="high" />
     </picture>
   </slot>
 </div>
