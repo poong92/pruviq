@@ -1274,6 +1274,15 @@ textarea:focus-visible {
   font-size: 0.8125rem;
   border-radius: var(--radius-sm);
   min-height: 36px;
+  position: relative;
+}
+/* WCAG AA 2.5.5 — invisible hit-area expansion (visual height 36px 그대로, 클릭 가능 영역 44px+).
+ * #1510 e2e가 ::after inset 측정 시 effW/effH = rect + extra 합산 → 44px 통과. */
+.btn-sm::after {
+  content: '';
+  position: absolute;
+  inset: -4px -4px;
+  pointer-events: none;
 }
 
 /* ─── Ghost button — higher contrast ─── */
