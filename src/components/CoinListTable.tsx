@@ -602,6 +602,7 @@ export default function CoinListTable({ lang = "en" }: { lang?: "en" | "ko" }) {
                   key={coin.symbol}
                   tabIndex={0}
                   role="link"
+                  aria-label={`${coin.name} (${coin.symbol.replace("USDT", "")}) — view detail`}
                   onClick={(e: MouseEvent) => {
                     if (!(e.target as HTMLElement).closest("a"))
                       window.location.href = coinUrl;
