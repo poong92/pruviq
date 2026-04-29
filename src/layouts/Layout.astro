@@ -21,6 +21,10 @@ interface Props {
   canonicalOverride?: string;
   noAlternate?: boolean;
   skipArticleLD?: boolean;
+  /** Hero LCP candidate image — emit `<link rel="preload" as="image">` with
+   * `fetchpriority=high` for pages where this image is the LCP element.
+   * Sprint 3.1 — /ko/ LCP 2812ms fix (lhci 측정 기준). */
+  heroImagePreload?: string;
 }
 
 const lang = getLangFromUrl(Astro.url);
@@ -33,7 +37,7 @@ const cfToken = import.meta.env.PUBLIC_CF_ANALYTICS_TOKEN;
 const buildTime = new Date().toISOString();
 const currentYear = new Date().getFullYear();
 
-const { title, description = t('meta.home_desc'), type = 'website', date, updatedDate, category, keywords: customKeywords, canonicalOverride, noAlternate = false, skipArticleLD = false } = Astro.props;
+const { title, description = t('meta.home_desc'), type = 'website', date, updatedDate, category, keywords: customKeywords, canonicalOverride, noAlternate = false, skipArticleLD = false, heroImagePreload } = Astro.props;
 const lastModified = updatedDate || date || buildTime;
 const ogImage = new URL(Astro.props.ogImage || '/og-image.jpg', Astro.site || 'https://pruviq.com').href;
 // Only emit webp variant for the default static og-image.jpg (which has a
@@ -191,6 +195,9 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
     <meta name="application-name" content="PRUVIQ" />
     <link rel="preload" href="/fonts/geist.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/geist-mono.woff2" as="font" type="font/woff2" crossorigin />
+    {heroImagePreload && (
+      <link rel="preload" href={heroImagePreload} as="image" fetchpriority="high" />
+    )}
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96.png" />
     <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png" />
