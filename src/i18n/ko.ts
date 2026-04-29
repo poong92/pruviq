@@ -199,7 +199,7 @@ export const ko: Record<TranslationKey, string> = {
     "투자 조언이 아닙니다. 암호화폐 트레이딩은 상당한 손실 위험을 수반합니다. 과거 성과는 미래 결과를 보장하지 않습니다. PRUVIQ는 교육 및 연구 프로젝트입니다.",
 
   // Footer
-  "footer.tagline": "검증하고. 실행하고. 수익내고.",
+  "footer.tagline": "검증하고. 실행하고. 결정하고.",
   "footer.strategies": "전략",
   "footer.learn": "학습",
   "footer.fees": "수수료 절약",

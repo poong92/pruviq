@@ -141,6 +141,37 @@ prod 51 페이지 404. 해당 LaunchAgent는 `disabled-` 접두사로 영구
 선행 조건: CF-side concurrency lock(예: KV `cf-deploy.lock`) 먼저
 구현. CLAUDE.md 글로벌의 "Mac Mini M4: dev-only" 원칙과 정합.
 
+### 룰 8: Multi-session/Worktree 거버넌스 (CRITICAL — 2026-04-26 diverge 사고 재발 방지)
+```
+다중 세션/worktree 동시 작업 시 다음을 반드시 준수:
+
+(a) 같은 main 브랜치에 동시 commit 금지
+    - cron(full_pipeline.sh, refresh_static.sh)이 main에 commit/push함.
+    - 사용자 세션이 main에서 commit하면 cron과 race → diverge 누적.
+    - 작업은 PR 브랜치에서만, main은 자동화 전용.
+
+(b) PR rekick은 마지막 수단
+    - automerge-on-label.yml(PR #1461 이후)이 BEHIND PR 자동 update-branch.
+    - "chore: rekick CI (push event missed after update-branch)" 빈 commit은
+      automerge가 정상이면 불필요.
+    - 30분+ stuck인 경우만 manual rekick. 그 미만은 cron 다음 tick 대기.
+    - rekick 전 `gh pr view <N> --json mergeable_state`로 BEHIND 확인.
+
+(c) 머지된 worktree prune 의무
+    - 머지 완료 worktree는 weekly cron(scripts/worktree-prune.sh)이 정리.
+    - 14일+ idle 미머지 worktree는 alert → 작업 재개 또는 PR 머지 결정.
+
+(d) 같은 worktree 다중 세션 편집 금지
+    - pre-edit-stash.sh가 flock으로 직렬화하지만, 다른 worktree 사용 권장.
+    - 한 worktree에 두 Claude 인스턴스 띄우면 stash 손실 가능.
+```
+**근거**: 2026-04-26 사고 — ultraplan 모드로 디자인 PR 30개 동시 생성
+워크플로 + 19시간 동안 45 PR 머지 + 사용자가 PR마다 수동 rekick + 그 와중
+02:30 KST `full_pipeline.sh` cron이 origin behind 상태에서 commit + push →
+push 거부 → rollback 부재(Fix 1 이전) → 7-14h diverge → 5 데이터 파일
+conflict + 35 stash 누적. 자동화는 정상이었지만 사용자 패턴이 자동화의
+가정을 깸. 룰로 패턴 차단.
+
 ---
 
 ## 커밋 전 필수 QA (CRITICAL)
