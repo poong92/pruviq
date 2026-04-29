@@ -203,12 +203,14 @@
   --color-text-disabled: #A1A1AA;
   --color-text-tertiary: #71717A;   /* AA 4.8:1 */
 
-  /* Accent — IQ cyan tuned darker for light bg */
-  --color-accent:        #0891B2;   /* cyan-600 — AA 4.6:1 */
-  --color-accent-dim:    #0E7490;   /* cyan-700 hover */
-  --color-accent-bright: #06B6D4;   /* cyan-500 highlight */
-  --color-accent-subtle: rgba(8,145,178,0.10);
-  --color-accent-glow:   rgba(8,145,178,0.18);
+  /* Accent — IQ cyan tuned darker for light bg
+   * Evidence: lighthouse 측정 #0891B2+white = 3.68 ratio (AA fail).
+   * #0E7490(cyan-700)+white = 5.7 ratio (AA pass). 주석 정정 + 한 단계 진하게. */
+  --color-accent:        #0E7490;   /* cyan-700 — AA 5.7:1 vs white */
+  --color-accent-dim:    #155E75;   /* cyan-800 hover — AA 7.6:1 */
+  --color-accent-bright: #0891B2;   /* cyan-600 highlight (was --color-accent) */
+  --color-accent-subtle: rgba(14,116,144,0.10);
+  --color-accent-glow:   rgba(14,116,144,0.18);
 
   /* Verification (amber) tuned darker */
   --color-verified:        #B45309;   /* amber-700 */
