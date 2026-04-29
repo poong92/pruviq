@@ -2,7 +2,7 @@
   "name": "PRUVIQ — Crypto Strategy Verification",
   "short_name": "PRUVIQ",
   "id": "/",
-  "description": "Free crypto strategy backtester. Verify strategies on 240 OKX coins, share verified results, never trust unverified backtests again.",
+  "description": "Free crypto strategy backtester. Verify strategies on 238 OKX coins, share verified results, never trust unverified backtests again.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
