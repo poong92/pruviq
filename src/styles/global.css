@@ -990,6 +990,17 @@ button:focus-visible,
   outline-offset: 2px;
   border-radius: 2px;
 }
+
+/* ─── WCAG AA 2.5.5 — Touch target ≥ 44px (Sprint 3.1)
+ * Filter/sort 버튼군 (font: text-xs, padding: py-2.5 = 36px) 일괄 보강.
+ * 인라인 텍스트가 아닌 명시적 컨트롤은 모두 44px 보장. */
+button[data-filter-group],
+button[data-sort-value] {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
 /* Form inputs: override Tailwind outline-none to ensure keyboard focus ring */
 input:focus-visible,
 select:focus-visible,
