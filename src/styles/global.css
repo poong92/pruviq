@@ -1220,9 +1220,17 @@ textarea:focus-visible {
 .prose a {
   color: var(--color-accent);
   text-decoration: underline;
-  text-underline-offset: 2px;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1.5px;
+  text-decoration-color: color-mix(in srgb, var(--color-accent) 60%, transparent);
+  transition:
+    color var(--duration-fast) var(--ease-smooth),
+    text-decoration-color var(--duration-fast) var(--ease-smooth);
 }
-.prose a:hover { color: var(--color-accent-bright); }
+.prose a:hover {
+  color: var(--color-accent-bright);
+  text-decoration-color: var(--color-accent);
+}
 .prose hr {
   border-color: var(--color-border);
   margin: 2rem 0;
