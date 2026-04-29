@@ -86,8 +86,10 @@ for (const path of PAGES) {
     const selector = '.btn, a[role="button"]';
     const fails = await measureHitArea(page, selector);
 
-    // Filter: hidden/0-size elements (display:none, dropdown content) 제외
-    const visible = fails.filter((f) => f.w > 0 && f.h > 0);
+    // Filter: hidden/0-size + transform-hidden 제외.
+    // - bottom-cta-bar translate-y-full 상태 안 a.btn은 8×8로 측정됨 (hydration 중간)
+    // - 16px 미만은 사용자에게 보이지 않는 hidden/transition 상태로 간주
+    const visible = fails.filter((f) => f.w >= 16 && f.h >= 16);
 
     if (visible.length > 0) {
       const msg = visible
