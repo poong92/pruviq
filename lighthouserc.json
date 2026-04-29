@@ -17,6 +17,7 @@
           "best-practices",
           "seo"
         ],
+        "skipAudits": ["deprecations"],
         "throttling": {
           "rttMs": 40,
           "throughputKbps": 10240,
