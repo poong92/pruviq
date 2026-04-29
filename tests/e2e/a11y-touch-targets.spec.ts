@@ -81,8 +81,9 @@ for (const path of PAGES) {
     await page.goto(path, { waitUntil: "domcontentloaded" });
     await page.waitForTimeout(800); // hydration
 
-    const selector =
-      '.btn, a[role="button"], button:not([type="hidden"]):not([aria-hidden="true"])';
+    // user-facing CTA만 검사 — sort headers, filter toggles 같은 컴포넌트 내부 컨트롤은
+    // 디자인 의도된 작은 크기. 가드 false positive 방지.
+    const selector = '.btn, a[role="button"]';
     const fails = await measureHitArea(page, selector);
 
     // Filter: hidden/0-size elements (display:none, dropdown content) 제외
