@@ -29,10 +29,37 @@ TG_CHAT="${TELEGRAM_CHAT_ID:-}"
 
 log() { echo "$(date -u '+%Y-%m-%d %H:%M:%S UTC') — $*"; }
 
+# --- Alert dedup (prevents flood when same condition persists across cron ticks) ---
+# Key: level + origin/main SHA + reason hash. SHA changes on actual progress;
+# reason hash separates "diverged" from "stale" alerts. Stamp invalidates on either.
+ALERT_DEDUP_DIR="/tmp/pruviq-alert-dedup"
+ALERT_DEDUP_TTL_SEC=3600   # 1h: same (sha, reason) sends at most once per hour
+mkdir -p "$ALERT_DEDUP_DIR" 2>/dev/null
+
 send_alert() {
     local level="$1" msg="$2"
     log "$level: $msg"
     [[ -z "${TG_TOKEN}" || -z "${TG_CHAT}" ]] && return 0
+
+    # Dedup: skip if same key seen within TTL
+    local origin_sha reason_hash key stamp age
+    origin_sha=$(git rev-parse origin/main 2>/dev/null | head -c 8 || echo "no-sha")
+    reason_hash=$(echo "$msg" | shasum 2>/dev/null | head -c 8)
+    key="${level}-${origin_sha}-${reason_hash}"
+    stamp="$ALERT_DEDUP_DIR/$key"
+
+    if [ -f "$stamp" ]; then
+        age=$(( $(date +%s) - $(stat -f %m "$stamp" 2>/dev/null || echo 0) ))
+        if [ "$age" -lt "$ALERT_DEDUP_TTL_SEC" ]; then
+            log "  (alert deduped — same key seen ${age}s ago, TTL ${ALERT_DEDUP_TTL_SEC}s)"
+            return 0
+        fi
+    fi
+    date +%s > "$stamp"
+
+    # Cleanup: remove stamps older than 24h to prevent /tmp bloat
+    find "$ALERT_DEDUP_DIR" -type f -mmin +1440 -delete 2>/dev/null
+
     local icon="✅"
     [[ "$level" == "ERROR" ]] && icon="🚨"
     [[ "$level" == "WARN" ]] && icon="⚠️"

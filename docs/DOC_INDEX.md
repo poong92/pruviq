@@ -102,6 +102,12 @@
 
 ---
 
+## docs/internal/ (내부 작업 초안)
+
+- [okx-support-email-draft.md](internal/okx-support-email-draft.md) — OKX OAuth Silent Drop 보고용 이메일 초안
+
+---
+
 ## docs/archive/ (시점 스냅샷 — 편집 금지)
 
 [README](archive/README.md) 참조. docs-lint 가드는 archive/ 제외.
