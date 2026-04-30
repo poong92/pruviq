@@ -9,9 +9,16 @@ on:
   # GitHub sometimes does not fire check_suite.completed for the LAST workflow
   # in a fan-out (observed in PR #1379 and #1393: all checks SUCCESS, mergeable
   # CLEAN, but attempt-merge never re-triggered after Playwright finished).
-  # Cron catches these stale cases within 10 minutes.
+  #
+  # 2026-04-30: bumped from */10 to */3. Cron remains the *fallback* for
+  # webhook drops; happy path is still pull_request.labeled + check_suite.
+  # User-perceived "PR ready → live" window was dominated by ~5min average
+  # cron-wait when webhooks dropped. */3 cuts fallback latency by 3.3×
+  # while staying above GitHub's ~5min schedule coalesce/drop threshold
+  # (avoiding */1 reliability risk). SHA-keyed concurrency below serializes
+  # the higher trigger frequency safely.
   schedule:
-    - cron: '*/10 * * * *'
+    - cron: '*/3 * * * *'
   workflow_dispatch: {}
 
 permissions:
