@@ -22,16 +22,21 @@ async function checkButtonWrap(page: Page, path: string) {
   const failures = await page.$$eval(
     'section[id="hero-section"] a.btn, section[id="hero-section"] a.btn-primary, section[id="hero-section"] a.btn-ghost',
     (els: HTMLElement[]) => {
-      const fails: { text: string; height: number; lineHeight: number }[] = [];
+      const fails: { text: string; lines: number; lineHeight: number }[] = [];
       for (const el of els) {
         const cs = getComputedStyle(el);
         const lh = parseFloat(cs.lineHeight);
-        const h = el.offsetHeight;
-        // CTA 버튼이 line-height의 1.7배 이상이면 2줄 wrap (lineHeight * 1.7 ≈ 두 줄)
-        if (lh > 0 && h > lh * 1.7) {
+        const pT = parseFloat(cs.paddingTop) || 0;
+        const pB = parseFloat(cs.paddingBottom) || 0;
+        const bT = parseFloat(cs.borderTopWidth) || 0;
+        const bB = parseFloat(cs.borderBottomWidth) || 0;
+        // 정밀 측정: 텍스트 영역 = offsetHeight - padding - border. lines = textHeight / lineHeight.
+        const textHeight = el.offsetHeight - pT - pB - bT - bB;
+        const lines = lh > 0 ? Math.round(textHeight / lh) : 1;
+        if (lines > 1) {
           fails.push({
             text: (el.textContent || "").trim().slice(0, 40),
-            height: Math.round(h),
+            lines,
             lineHeight: Math.round(lh),
           });
         }
@@ -44,7 +49,7 @@ async function checkButtonWrap(page: Page, path: string) {
     const msg = failures
       .map(
         (f) =>
-          `  - "${f.text}" → height ${f.height}px (lineHeight ${f.lineHeight}px)`,
+          `  - "${f.text}" → ${f.lines} lines (lineHeight ${f.lineHeight}px)`,
       )
       .join("\n");
     throw new Error(
