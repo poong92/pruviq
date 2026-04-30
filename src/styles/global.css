@@ -572,6 +572,19 @@ body {
 :lang(ko) .btn, :lang(ko) .btn-primary, :lang(ko) .btn-ghost {
   letter-spacing: 0.01em;
 }
+/* Sprint 4.4-B 4차 — 본문 텍스트 한국어 친화 (Tailwind inline class 없는 element 자동 적용)
+ * - 본문 p line-height 1.7 (한국어 글자 압박 해소, 영문 leading-relaxed 1.625보다 약간 ↑)
+ * - 리스트 item 동일 leading
+ * - strong 굵기 — 영문 600은 한국어에 약함, 700이 명확한 강조 */
+:lang(ko) p:not([class*="text-"]):not([class*="font-mono"]) {
+  line-height: 1.7;
+}
+:lang(ko) li:not([class*="font-mono"]) {
+  line-height: 1.7;
+}
+:lang(ko) strong {
+  font-weight: 700;
+}
 
 /* Tabular numbers for all mono/data contexts */
 .font-mono,
