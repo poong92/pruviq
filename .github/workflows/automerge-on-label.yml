@@ -80,7 +80,7 @@ jobs:
               // every open PR with the automerge label. Fan-out: when several
               // PRs are simultaneously waiting, schedule processes the FIRST
               // one each tick — subsequent ticks pick up the next ones, so
-              // a backlog of N stale PRs clears within N*10 minutes.
+              // a backlog of N stale PRs clears within N*3 minutes.
               const openPRs = await github.paginate(github.rest.pulls.list, {
                 owner: context.repo.owner,
                 repo: context.repo.repo,
