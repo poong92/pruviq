@@ -1,0 +1,31 @@
+# gitleaks config — extends defaults + allowlists known-public OKX broker codes.
+#
+# Background (BD Jun Kim 2026-04-28):
+#   OKX broker code values are public identifiers, not secrets. They appear in
+#   OAuth URL `channelId` params and order POST `tag` fields by design — every
+#   client interacting with OKX through this app sees them. They were assigned
+#   to PRUVIQ via the OKX broker program and are documented in onboarding
+#   email threads. The values below are the OAuth + API broker codes plus the
+#   placeholder marker we use in .env.example.
+#
+# Why an allowlist instead of removing them from history:
+#   1. Force-push to public PRs is forbidden by /loop governance (multi-session
+#      race surface).
+#   2. The values are already public — both broker codes appear in the OKX
+#      partner registry and were emailed in BD onboarding (Jun Kim, 2026-04-28).
+#      "Hiding" them via history rewrite is theatre, not security.
+#   3. Documenting them here as known-public values is the honest signal to
+#      future operators: gitleaks generic-api-key entropy false-positives on
+#      OKX broker code format. If real secrets ever leak with similar entropy,
+#      the allowlist is intentionally narrow (exact strings) and won't mask
+#      them.
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "OKX broker codes — public identifiers, not secrets (BD Jun Kim 2026-04-28)"
+regexes = [
+    '''c12571e26a02OCDE''',
+    '''5f7403144b80BCDE''',
+]
