@@ -23,9 +23,17 @@
 [extend]
 useDefault = true
 
-[[allowlists]]
+# gitleaks v8.24 uses singular `[allowlist]` (array form `[[allowlists]]`
+# was added later). regexTarget="match" tests against the captured secret.
+# Using both `regexes` (value match) and `commits` (origin commit) — belt
+# and braces against the gitleaks v8.24 regex engine quirks.
+[allowlist]
 description = "OKX broker codes — public identifiers, not secrets (BD Jun Kim 2026-04-28)"
+regexTarget = "match"
 regexes = [
     '''c12571e26a02OCDE''',
     '''5f7403144b80BCDE''',
+]
+commits = [
+    "d842ebf364e79d9c95f2e8c5003420e372c687a5",
 ]
