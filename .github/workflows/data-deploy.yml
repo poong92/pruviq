@@ -10,30 +10,22 @@ name: "Data Deploy: build + wrangler deploy on public/data/** or src/** push"
 # Cloudflare API token + account ID are already stored as repo secrets.
 
 on:
+  # NO `paths:` filter. GitHub silently drops push events when the
+  # squash-merged HEAD only touches files that pass the filter on PR but
+  # not the resulting squash commit, or when the workflow registry stalls
+  # on a stale SHA. Same class of failure that hit deploy-backend.yml
+  # 2026-04-16~17 (8h frontend stall) and this workflow 2026-04-24 and
+  # again 2026-04-30. Pattern verified in deploy-backend.yml: trigger on
+  # every push to main, then short-circuit inside the job with a
+  # `git diff` gate so unrelated pushes still terminate in <1 minute.
   push:
     branches: [main]
-    paths:
-      - "public/data/**"
-      - "src/**"
-      - "astro.config.mjs"
-      - "wrangler.toml"
-      - "package.json"
-      - "package-lock.json"
   schedule:
-    # Drift detector — same pattern as deploy-backend.yml. The push event
-    # can be silently dropped by GitHub when the workflow registry gets
-    # stuck on a stale SHA. This happened 2026-04-16~17 (deploy-backend)
-    # and again 2026-04-24 00:15~15:22 UTC on this workflow: 10 frontend
-    # PRs merged but none auto-deployed until someone ran
-    # `gh workflow run data-deploy.yml` manually.
-    #
-    # 2026-04-26: bumped from */30 to 0 */6 (every 6h). After PR #1408
-    # the data path is push-driven (refresh_static.sh now commits+pushes
-    # public/data/** instead of calling wrangler), so the push trigger
-    # above already covers data refreshes. The schedule is purely a
-    # safety net for the registry-stuck class of bug, which is rare.
-    # Cuts CI runner cost ~12× without sacrificing detection.
-    - cron: "0 */6 * * *"
+    # Drift detector — primary deploy trigger is push above; this is a
+    # safety net for the registry-stuck class of bug. 1h cadence balances
+    # detection latency against runner cost (PUBLIC repo, ubuntu-latest
+    # has no minute cap, so 1h is virtually free).
+    - cron: "0 * * * *"
   workflow_dispatch: {}
 
 concurrency:
@@ -48,9 +40,29 @@ jobs:
     steps:
       - uses: actions/checkout@v6
         with:
-          fetch-depth: 1
+          fetch-depth: 2
+
+      - name: Skip if no deploy-relevant change
+        # Replaces the removed `paths:` filter. On push events, compare
+        # HEAD against its parent and bail if nothing under the deploy
+        # surface changed. Schedule and workflow_dispatch always proceed
+        # (drift detector / manual override).
+        id: gate
+        if: github.event_name == 'push'
+        run: |
+          set -euo pipefail
+          changed=$(git diff --name-only HEAD~1 HEAD | grep -E '^(public/data/|src/|astro\.config\.mjs|wrangler\.toml|package(-lock)?\.json)' || true)
+          if [ -z "$changed" ]; then
+            echo "no deploy-relevant files changed; skipping deploy"
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "deploy-relevant changes:"
+            echo "$changed"
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Sanity-check Cloudflare secrets present
+        if: steps.gate.outputs.skip != 'true'
         env:
           CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CF_ACCOUNT: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
@@ -65,23 +77,28 @@ jobs:
           echo "secrets OK"
 
       - uses: actions/setup-node@v4
+        if: steps.gate.outputs.skip != 'true'
         with:
           node-version: "22"
           cache: npm
 
       - name: Install dependencies
+        if: steps.gate.outputs.skip != 'true'
         run: npm ci --prefer-offline
 
       - name: Build Astro site
+        if: steps.gate.outputs.skip != 'true'
         run: npm run build 2>&1 | tail -20
 
       - name: Deploy to Cloudflare Workers
+        if: steps.gate.outputs.skip != 'true'
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: npx wrangler deploy 2>&1 | tail -10
 
       - name: Post-deploy smoke — production endpoint
+        if: steps.gate.outputs.skip != 'true'
         run: |
           sleep 10
           status=$(curl -sf -m 10 -o /dev/null -w "%{http_code}" https://pruviq.com/)
