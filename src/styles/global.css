@@ -531,6 +531,8 @@
 html {
   scroll-behavior: smooth;
   overflow-x: hidden;
+  /* sticky nav (h-14 = 56px) 위 여유. anchor link scroll 시 nav 가림 방지. */
+  scroll-padding-top: 5rem;
 }
 
 body {
