@@ -12,10 +12,40 @@ OKX_CLIENT_SECRET = os.environ.get("OKX_CLIENT_SECRET", "")
 OKX_REDIRECT_URI = os.environ.get(
     "OKX_REDIRECT_URI", "https://api.pruviq.com/auth/okx/callback"
 )
-OKX_BROKER_CODE = os.environ.get("OKX_BROKER_CODE", "")
-if not OKX_BROKER_CODE:
+# OAuth broker code (OKX 2026-04-28 confirmation from BD Jun Kim — OAuth and
+# API have *different* broker codes; channelId is a *separate* affiliate
+# referral code). Used in OAuth authorize URL `channelId` param for now —
+# kept as legacy behavior until OKX clarifies the correct slot for OAuth
+# broker code (likely server-side associated with client_id, in which case
+# channelId should hold the affiliate referral code instead).
+OKX_BROKER_CODE_OAUTH = os.environ.get(
+    "OKX_BROKER_CODE_OAUTH",
+    os.environ.get("OKX_BROKER_CODE", ""),  # backward-compat fallback
+)
+
+# API broker code (separate value per OKX BD). Sent as `tag` field on every
+# order POST body (orders.py / client.py) — required for commission tracking
+# on real trades.
+OKX_BROKER_CODE_API = os.environ.get(
+    "OKX_BROKER_CODE_API",
+    os.environ.get("OKX_BROKER_CODE", ""),  # backward-compat fallback
+)
+
+# Affiliate referral code (channelId). Per OKX BD: distinct from broker codes.
+# Empty by default — set when affiliate registration completes. Until then,
+# OAuth `channelId` param falls back to OKX_BROKER_CODE_OAUTH (legacy behavior).
+OKX_AFFILIATE_CHANNEL_ID = os.environ.get("OKX_AFFILIATE_CHANNEL_ID", "")
+
+# Legacy alias — still read by callers that haven't switched. Resolves to
+# OAuth broker code (closest to legacy semantics: original OKX_BROKER_CODE
+# was used in oauth.py as channelId, which we now know is OAuth-broker shaped).
+OKX_BROKER_CODE = OKX_BROKER_CODE_OAUTH
+
+if not OKX_BROKER_CODE_OAUTH and not OKX_BROKER_CODE_API:
     import logging as _logging
-    _logging.getLogger("pruviq").warning("OKX_BROKER_CODE env var not set — affiliate revenue tracking disabled")
+    _logging.getLogger("pruviq").warning(
+        "OKX broker codes not set (OKX_BROKER_CODE_OAUTH / OKX_BROKER_CODE_API both empty) — commission tracking disabled"
+    )
 
 # ── Encryption ──
 OKX_ENCRYPTION_KEY = os.environ.get("OKX_ENCRYPTION_KEY", "")

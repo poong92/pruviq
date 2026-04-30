@@ -675,7 +675,9 @@ async def _try_execute(
     # failure must never block the trading path.
     try:
         from .merkle import record_order as _merkle_record
-        from .config import OKX_BROKER_CODE as _BROKER
+        # Auto-executed trades are API orders → use API broker code per
+        # OKX BD 2026-04-28 split.
+        from .config import OKX_BROKER_CODE_API as _BROKER
         _merkle_record(
             session_id=session_id,
             ts_iso=datetime.fromtimestamp(trade_created_at, tz=timezone.utc).isoformat(timespec="seconds"),

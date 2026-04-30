@@ -16,7 +16,7 @@ from urllib.parse import urlencode
 
 import httpx
 
-from .config import OKX_BASE_URL, OKX_BROKER_CODE, OKX_DEMO_MODE
+from .config import OKX_BASE_URL, OKX_BROKER_CODE_API, OKX_DEMO_MODE
 from .models import BalanceInfo, PositionInfo
 
 logger = logging.getLogger("okx_client")
@@ -45,7 +45,9 @@ class OKXClient:
         self.passphrase = passphrase
         self.demo = OKX_DEMO_MODE if demo is None else demo
         self.base_url = OKX_BASE_URL
-        self.broker_code = OKX_BROKER_CODE
+        # API broker code (`tag` on order body) — separate from OAuth broker
+        # code per OKX BD 2026-04-28. See backend/okx/config.py for split.
+        self.broker_code = OKX_BROKER_CODE_API
         self._http = httpx.AsyncClient(base_url=self.base_url, timeout=10)
 
     def _auth_headers(self, method: str, path: str, body: str = "") -> dict[str, str]:
