@@ -25,6 +25,11 @@ permissions:
   contents: write
   pull-requests: write
   checks: read
+  # 2026-04-30: explicit data-deploy dispatch on successful merge — workaround
+  # for GitHub push-event silent drops observed on #1594, #1599 even after the
+  # paths-filter removal in #1586. Only `actions: write` is needed for
+  # workflow_dispatch via github.rest.actions.createWorkflowDispatch.
+  actions: write
 
 concurrency:
   # Per-SHA queue — different PRs don't cancel each other
@@ -202,6 +207,7 @@ jobs:
             }
 
             // All checks green + up-to-date with main — merge.
+            let mergeSucceeded = false;
             try {
               await github.rest.pulls.merge({
                 owner: context.repo.owner,
@@ -210,9 +216,41 @@ jobs:
                 merge_method: 'squash',
               });
               core.info(`Successfully merged PR #${prNumber}`);
+              mergeSucceeded = true;
             } catch (err) {
               // Merge can still fail in race conditions (concurrent push to main
               // between BEHIND check above and merge call). Next check_suite
               // completion or cron tick retries.
               core.warning(`Merge attempt for PR #${prNumber} did not succeed: ${err.message}`);
+            }
+
+            // 2026-04-30: explicit data-deploy dispatch after successful merge.
+            // Workaround (NOT root-cause fix) for GitHub push-event silent
+            // drops observed on #1594 and #1599 even after the paths-filter
+            // removal in #1586. The actual root cause is unknown GitHub
+            // workflow registry behavior. The 1h cron drift detector in
+            // data-deploy.yml remains the second backstop — this dispatch is
+            // the first, deterministic trigger.
+            //
+            // GITHUB_TOKEN is permitted to call workflow_dispatch (recursive
+            // workflow restriction does NOT apply to dispatch events).
+            //
+            // Concurrency in data-deploy.yml (group: data-deploy,
+            // cancel-in-progress: false) serializes any double-trigger that
+            // happens when push event ALSO fires. Cost on PUBLIC repo: zero.
+            //
+            // Failure here MUST NOT bubble — merge already succeeded and is
+            // irreversible. Log warning and rely on push event / 1h cron.
+            if (mergeSucceeded) {
+              try {
+                await github.rest.actions.createWorkflowDispatch({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  workflow_id: 'data-deploy.yml',
+                  ref: 'main',
+                });
+                core.info(`Dispatched data-deploy.yml on main for PR #${prNumber}`);
+              } catch (err) {
+                core.warning(`data-deploy dispatch failed (push event or 1h cron will backstop): ${err.message}`);
+              }
             }
