@@ -271,6 +271,88 @@ class OKXClient:
         logger.warning("← place-algo algoId=%s", algo_id)
         return result
 
+    async def place_trailing_stop(
+        self,
+        inst_id: str,
+        side: str,
+        sz: str,
+        callback_ratio: str | None = None,
+        callback_spread: str | None = None,
+        active_px: str | None = None,
+        td_mode: str = "isolated",
+        cl_ord_id: str | None = None,
+    ) -> dict[str, Any]:
+        """Place an OKX trailing-stop algo order (ordType=move_order_stop).
+
+        Phase 2.0 spike helper. Decisions encoded:
+          1. Use OKX-managed trailing (move_order_stop) — OKX watches mark
+             price and fires automatically when callback condition met. No
+             app-side polling loop needed (cadence question resolved at
+             API boundary).
+          2. Trailing is placed as a *separate* algo order (different
+             algoId from the conditional SL). This lets us keep a
+             fixed downside SL while letting the upside trail.
+          3. Idempotency via algoClOrdId (OKX rejects duplicate with
+             code 51020) — caller passes a deterministic hash of the
+             source signal.
+          4. State persistence: caller stores algoId; on restart, query
+             /api/v5/trade/orders-algo-pending (helper below) to verify
+             the trailing is still armed and re-place if OKX dropped it.
+
+        Exactly one of callback_ratio (decimal % e.g. "0.01" for 1%)
+        or callback_spread (absolute price units) must be provided —
+        OKX rejects the request if both or neither are set.
+        """
+        if (callback_ratio is None) == (callback_spread is None):
+            raise ValueError(
+                "place_trailing_stop: exactly one of callback_ratio or "
+                "callback_spread is required"
+            )
+        body: dict[str, Any] = {
+            "instId": inst_id,
+            "tdMode": td_mode,
+            "side": side,
+            "ordType": "move_order_stop",
+            "sz": sz,
+            "tag": self.broker_code,
+        }
+        if callback_ratio is not None:
+            body["callbackRatio"] = callback_ratio
+        if callback_spread is not None:
+            body["callbackSpread"] = callback_spread
+        if active_px is not None:
+            body["activePx"] = active_px
+        if cl_ord_id:
+            body["algoClOrdId"] = cl_ord_id
+        logger.warning(
+            "→ place-trailing instId=%s side=%s sz=%s ratio=%s spread=%s active=%s",
+            inst_id, side, sz, callback_ratio, callback_spread, active_px,
+        )
+        result = await self._post("/api/v5/trade/order-algo", body)
+        algo_data = result.get("data", [{}])
+        algo_id = algo_data[0].get("algoId", "?") if algo_data else "?"
+        logger.warning("← place-trailing algoId=%s", algo_id)
+        return result
+
+    async def get_algo_orders_pending(
+        self, algo_id: str | None = None, inst_id: str | None = None
+    ) -> list[dict[str, Any]]:
+        """Query active (not yet triggered) algo orders.
+
+        Phase 2.0 spike helper for restart-recovery: after a backend
+        restart the trailing-stop algoId persisted in our DB may or may
+        not still be armed on OKX (e.g. user manually cancelled, OKX
+        purged after position close). Caller cross-checks before
+        deciding to re-arm.
+        """
+        params: dict[str, str] = {"ordType": "move_order_stop"}
+        if algo_id:
+            params["algoId"] = algo_id
+        if inst_id:
+            params["instId"] = inst_id
+        result = await self._get("/api/v5/trade/orders-algo-pending", params)
+        return result.get("data", [])
+
     async def cancel_order(self, inst_id: str, ord_id: str) -> dict[str, Any]:
         logger.warning("→ cancel-order instId=%s ordId=%s", inst_id, ord_id)
         result = await self._post("/api/v5/trade/cancel-order", {
