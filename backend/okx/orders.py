@@ -231,7 +231,9 @@ async def execute_from_simulation(
     # is still derivable by the user from the response.
     try:
         from .merkle import record_order as _merkle_record
-        from .config import OKX_BROKER_CODE as _BROKER
+        # API broker code (this path is API order audit) — separate from OAuth
+        # broker code per OKX BD 2026-04-28.
+        from .config import OKX_BROKER_CODE_API as _BROKER
         _merkle_record(
             session_id=session_id,
             ts_iso=datetime.now(timezone.utc).isoformat(timespec="seconds"),
