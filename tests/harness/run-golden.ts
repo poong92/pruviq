@@ -300,9 +300,26 @@ async function runCase(c: GoldenCase): Promise<number> {
       ...(Array.isArray(d["worst3"]) ? d["worst3"] : []),
     ] as Record<string, unknown>[];
     for (const entry of entries) {
+      // Backend marks `low_sample: true` on entries with too few trades
+      // (e.g. BB Squeeze 6H short with 2 trades over 30d). Such entries
+      // emit *sentinel* values by design — PF=99.99 (no losses → ÷0 cap),
+      // win_rate=100 (2/2 wins). These are mathematically valid for the
+      // sample and the UI already shows a warning state via the same flag.
+      // Per-entry PF/WR range checks here are tuned for normal-sample
+      // entries; applying them to low_sample entries would be false-
+      // positive (Telegram smoke alerts on sentinel values, not regressions).
+      // total_trades and other fields remain enforced — those are useful
+      // even for low_sample entries (e.g. catching total_trades=0).
+      const isLowSample = entry["low_sample"] === true;
       for (const [field, range] of Object.entries(perEntry)) {
         const val = entry[field];
         if (typeof val !== "number") continue;
+        if (
+          isLowSample &&
+          (field === "win_rate" || field === "profit_factor")
+        ) {
+          continue;
+        }
         if (range.min !== undefined && val < range.min) {
           failures += fail(
             `entry ${JSON.stringify(entry["name_en"])} ${field} = ${val} < ${range.min}`,
