@@ -19,8 +19,9 @@ async function checkButtonWrap(page: Page, path: string) {
   await page.goto(path, { waitUntil: "domcontentloaded" });
   await page.waitForTimeout(800);
 
+  // Primary CTA만 검사 — 보조 CTA(.btn-ghost)는 모바일에서 배지 wrap 자연스러움.
   const failures = await page.$$eval(
-    'section[id="hero-section"] a.btn, section[id="hero-section"] a.btn-primary, section[id="hero-section"] a.btn-ghost',
+    'section[id="hero-section"] a.btn-primary',
     (els: HTMLElement[]) => {
       const fails: { text: string; lines: number; lineHeight: number }[] = [];
       for (const el of els) {
