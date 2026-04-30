@@ -977,6 +977,10 @@ select option {
 input[type="date"]::-webkit-calendar-picker-indicator {
   filter: invert(0.7);
 }
+/* Sprint 4.1 — focus border transition smoothing (Linear/Vercel pattern) */
+input, select, textarea {
+  transition: border-color var(--duration-fast) var(--ease-smooth);
+}
 select:focus,
 input:focus {
   border-color: var(--color-accent) !important;
