@@ -114,7 +114,10 @@ export default function FeeCalculator({ lang = "en" }: Props) {
               }`}
               style={
                 market === "spot"
-                  ? { background: "var(--color-accent)", color: "#fff" }
+                  ? {
+                      background: "var(--color-accent)",
+                      color: "var(--color-accent-text)",
+                    }
                   : undefined
               }
             >
@@ -129,7 +132,10 @@ export default function FeeCalculator({ lang = "en" }: Props) {
               }`}
               style={
                 market === "futures"
-                  ? { background: "var(--color-accent)", color: "#fff" }
+                  ? {
+                      background: "var(--color-accent)",
+                      color: "var(--color-accent-text)",
+                    }
                   : undefined
               }
             >
@@ -232,7 +238,7 @@ export default function FeeCalculator({ lang = "en" }: Props) {
                   target="_blank"
                   rel="noopener noreferrer"
                   class="inline-block w-full px-4 py-2 min-h-[44px] flex flex-col items-center justify-center rounded text-xs font-semibold hover:opacity-90 transition-opacity"
-                  style="background:var(--color-accent);color:#fff"
+                  style="background:var(--color-accent);color:var(--color-accent-text)"
                 >
                   <span>{t.signup} &rarr;</span>
                   {savingsYear > 0 && (

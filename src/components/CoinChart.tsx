@@ -658,7 +658,7 @@ export default function CoinChart({
             <a
               href={`${lang === "ko" ? "/ko/simulate" : "/simulate"}?symbol=${symbol}`}
               class="px-4 py-2 rounded-lg font-semibold text-xs no-underline hover:opacity-90 transition-opacity whitespace-nowrap"
-              style="background:var(--color-accent);color:#fff"
+              style="background:var(--color-accent);color:var(--color-accent-text)"
             >
               {t.ctaSimulate} &rarr;
             </a>
