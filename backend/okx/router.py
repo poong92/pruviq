@@ -723,6 +723,27 @@ async def reject_pending_signal(signal_id: str, request: Request):
     return {"signal": signal}
 
 
+# ── Admin: session overview ─────────────────────────────────
+
+@router.get("/admin/sessions")
+async def admin_sessions(request: Request):
+    """
+    Connected user count. Requires X-Admin-Key header.
+
+    Returns total OAuth sessions in DB and the most recent connect timestamp.
+    """
+    if not ADMIN_KEY:
+        raise HTTPException(503, "Admin endpoint disabled (ADMIN_API_KEY unset)")
+
+    import hmac
+    provided = request.headers.get("x-admin-key", "")
+    if not provided or not hmac.compare_digest(provided, ADMIN_KEY):
+        raise HTTPException(403, "Invalid admin key")
+
+    from .storage import count_sessions
+    return count_sessions()
+
+
 # ── Emergency kill-switch (HTTP) ────────────────────────────
 # Callable by a Cloudflare Worker or operator script when Telegram is
 # unavailable. Disables every enabled trading session in one call.

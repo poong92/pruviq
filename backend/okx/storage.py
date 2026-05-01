@@ -154,6 +154,7 @@ def save_session(session_id: str, tokens: dict) -> None:
             "(session_id, user_data, created_at, updated_at) VALUES (?, ?, ?, ?)",
             (session_id, encrypted, now, now),
         )
+    logger.info("OKX session saved: %s", session_id[:8])
 
 
 def get_session(session_id: str) -> dict | None:
@@ -183,6 +184,15 @@ def update_session(session_id: str, tokens: dict) -> None:
 def delete_session(session_id: str) -> None:
     with _get_conn() as conn:
         conn.execute("DELETE FROM okx_sessions WHERE session_id = ?", (session_id,))
+
+
+def count_sessions() -> dict:
+    """Return total connected user count and most recent connect time."""
+    with _get_conn() as conn:
+        row = conn.execute(
+            "SELECT COUNT(*), MAX(created_at) FROM okx_sessions"
+        ).fetchone()
+    return {"total": row[0], "last_connected_at": row[1]}
 
 
 # ── CSRF States ─────────────────────────────────────────────
