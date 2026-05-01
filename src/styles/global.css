@@ -273,6 +273,40 @@
   --gradient-section:    linear-gradient(180deg, rgba(8,145,178,0.04) 0%, transparent 100%);
   --gradient-card-shine: linear-gradient(135deg, rgba(0,0,0,0.03) 0%, transparent 50%);
   --gradient-text-accent: linear-gradient(135deg, #0891B2 0%, #06B6D4 100%);
+
+  /* Shadows re-tuned for light — dark-mode values use rgba(255,255,255,…) ring
+     borders that vanish on white bg + opacity levels calibrated for dark canvas */
+  --shadow-card:
+    0 0 0 1px rgba(0,0,0,0.06),
+    0 2px 8px rgba(0,0,0,0.06),
+    0 8px 24px rgba(0,0,0,0.04);
+
+  --shadow-card-hover:
+    0 0 0 1px rgba(0,0,0,0.10),
+    0 4px 16px rgba(0,0,0,0.10),
+    0 16px 40px rgba(0,0,0,0.06);
+
+  --shadow-accent-glow:
+    0 0 0 1px rgba(14,116,144,0.20),
+    0 0 20px rgba(14,116,144,0.08),
+    0 4px 16px rgba(0,0,0,0.06);
+
+  --shadow-up-glow:
+    0 0 0 1px rgba(21,128,61,0.25),
+    0 0 16px rgba(21,128,61,0.08);
+
+  --shadow-down-glow:
+    0 0 0 1px rgba(185,28,28,0.25),
+    0 0 16px rgba(185,28,28,0.08);
+
+  --shadow-elevated:
+    0 0 0 1px rgba(0,0,0,0.08),
+    0 8px 32px rgba(0,0,0,0.12),
+    0 32px 64px rgba(0,0,0,0.08);
+
+  --shadow-hero-glow:
+    0 0 120px 40px rgba(14,116,144,0.04),
+    0 0 40px 10px rgba(14,116,144,0.03);
 }
 
 /* ─── Hero background depth ─── */
@@ -283,6 +317,13 @@
     radial-gradient(ellipse at 15% 50%, rgba(6,182,212,0.10) 0%, transparent 35%),
     radial-gradient(ellipse at 50% 110%, rgba(0,0,0,0.5) 0%, transparent 45%),
     linear-gradient(180deg, #060810 0%, #0A1225 30%, #0A0F1A 60%, #09090B 100%);
+}
+[data-theme="light"] .hero-bg-depth {
+  background:
+    radial-gradient(ellipse at 50% -20%, rgba(14,116,144,0.12) 0%, transparent 45%),
+    radial-gradient(ellipse at 80% 20%, rgba(124,58,237,0.05) 0%, transparent 35%),
+    radial-gradient(ellipse at 15% 50%, rgba(8,145,178,0.05) 0%, transparent 35%),
+    linear-gradient(180deg, #F8FAFC 0%, #ECF4FB 50%, #F8FAFC 100%);
 }
 
 /* ─── Subtle grid pattern for hero ─── */
@@ -380,6 +421,21 @@
   right: 10%;
   height: 1px;
   background: linear-gradient(90deg, transparent, rgba(44,181,232,0.5), transparent);
+}
+
+/* Light mode: white-on-white glass effect → dark-on-white subtle card */
+[data-theme="light"] .stat-glass {
+  background: linear-gradient(135deg, rgba(0,0,0,0.02), rgba(0,0,0,0.01));
+  border: 1px solid rgba(0,0,0,0.08);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06), inset 0 1px 0 rgba(0,0,0,0.03);
+}
+[data-theme="light"] .stat-glass:hover {
+  border-color: rgba(14,116,144,0.25);
+  background: linear-gradient(135deg, rgba(14,116,144,0.04), rgba(14,116,144,0.02));
+  box-shadow: 0 4px 16px rgba(0,0,0,0.10), 0 0 12px rgba(14,116,144,0.06), inset 0 1px 0 rgba(14,116,144,0.04);
+}
+[data-theme="light"] .stat-glass::before {
+  background: linear-gradient(90deg, transparent, rgba(14,116,144,0.3), transparent);
 }
 
 /* ─── Section glow backgrounds ─── */
