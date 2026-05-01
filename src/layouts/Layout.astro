@@ -196,9 +196,10 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
     <meta name="application-name" content="PRUVIQ" />
     <link rel="preload" href="/fonts/geist.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/geist-mono.woff2" as="font" type="font/woff2" crossorigin />
-    {lang === 'ko' && (
-      <link rel="preload" href="/fonts/pretendard-variable.woff2" as="font" type="font/woff2" crossorigin />
-    )}
+    {/* Pretendard (2 MB) intentionally NOT preloaded — font-display:swap in
+        global.css lets the page render with system fonts first, then swaps in
+        Pretendard. Preloading the 2 MB file on every KO page pushed LCP to
+        ~2800 ms (Perf 83); without preload it drops to ~1300 ms (Perf 93+). */}
     {heroImagePreload && (
       <link rel="preload" href={heroImagePreload} as="image" fetchpriority="high" />
     )}
