@@ -294,10 +294,10 @@ export default function TrustGapPanel({ lang }: Props) {
       {data.daily && data.daily.length > 1 && (
         <div class="mt-4 rounded-lg border border-(--color-border) bg-(--color-bg)/40 p-3">
           <div class="mb-2 flex items-center justify-between">
-            <span class="text-[10px] font-mono uppercase tracking-wider text-(--color-text-tertiary)">
+            <span class="text-[10px] font-mono uppercase tracking-wider text-(--color-text-muted)">
               {isKo ? "실거래 자본 곡선" : "Live equity curve"}
             </span>
-            <span class="font-mono text-[10px] text-(--color-text-tertiary)">
+            <span class="font-mono text-[10px] text-(--color-text-muted)">
               {data.daily.length} {isKo ? "일" : "days"}
             </span>
           </div>
@@ -406,7 +406,7 @@ function EquitySparklineSection({
         showEndpoint
         showZero
       />
-      <figcaption class="mt-1 flex items-center justify-between font-mono text-[10px] text-(--color-text-tertiary)">
+      <figcaption class="mt-1 flex items-center justify-between font-mono text-[10px] text-(--color-text-muted)">
         <span>
           {daily[0]?.date?.slice(5)} → {daily[daily.length - 1]?.date?.slice(5)}
         </span>
