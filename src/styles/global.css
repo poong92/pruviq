@@ -344,6 +344,11 @@
   mask-image: radial-gradient(ellipse at 50% 40%, black 20%, transparent 65%);
   -webkit-mask-image: radial-gradient(ellipse at 50% 40%, black 20%, transparent 65%);
 }
+[data-theme="light"] .hero-grid {
+  background-image:
+    linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px);
+}
 
 /* ─── Hero ambient glow orbs ─── */
 .hero-orb {
@@ -505,13 +510,19 @@
   pointer-events: none;
 }
 .card-premium:hover {
-  border-color: rgba(255,255,255,0.15);
+  border-color: var(--color-border-hover);
   transform: translateY(-4px);
   box-shadow:
-    0 0 0 1px rgba(255,255,255,0.10),
-    0 8px 24px rgba(0,0,0,0.4),
-    0 20px 48px rgba(0,0,0,0.3),
+    0 0 0 1px var(--color-border-hover),
+    0 8px 24px rgba(0,0,0,0.25),
+    0 20px 48px rgba(0,0,0,0.15),
     0 0 20px rgba(44,181,232,0.04);
+}
+[data-theme="light"] .card-premium:hover {
+  box-shadow:
+    0 0 0 1px var(--color-border-hover),
+    0 4px 16px rgba(0,0,0,0.10),
+    0 8px 24px rgba(0,0,0,0.06);
 }
 
 /* ─── Section accent glow (subtle top glow for sections) ─── */
@@ -777,6 +788,12 @@ a:not(.btn):not(.btn-primary):not(.btn-ghost):not(.btn-outline):not(.card-hover)
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+[data-theme="light"] .gradient-text {
+  background-image: linear-gradient(135deg, #0E7490 0%, #0891B2 50%, #0E7490 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
 
 /* ─── Gradient text shimmer for hero ─── */
 .gradient-text-shimmer {
@@ -789,6 +806,16 @@ a:not(.btn):not(.btn-primary):not(.btn-ghost):not(.btn-outline):not(.card-hover)
   background-clip: text;
   -webkit-text-fill-color: transparent;
   animation: text-shimmer 6s ease-in-out infinite;
+}
+[data-theme="light"] .gradient-text-shimmer {
+  background-image: linear-gradient(
+    90deg,
+    #0E7490 0%, #0891B2 25%, #155E75 50%, #0891B2 75%, #0E7490 100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 @keyframes text-shimmer {
   0%, 100% { background-position: 0% 50%; }
@@ -972,9 +999,12 @@ textarea:focus-visible,
               box-shadow 0.2s ease;
 }
 .card-hover:hover {
-  border-color: rgba(255,255,255,0.15);
+  border-color: var(--color-border-hover);
   transform: translateY(-2px) scale(1.005);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+}
+[data-theme="light"] .card-hover:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.10);
 }
 
 /* ─── Table row hover ─── */
