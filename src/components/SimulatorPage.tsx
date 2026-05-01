@@ -1875,7 +1875,7 @@ export default function SimulatorPage({
                   <span class="spinner" />
                   {progressLabels[progressStep] || t.running}
                   {elapsedSec > 0 && (
-                    <span class="text-[10px] opacity-70 font-normal">
+                    <span class="text-[10px] font-normal text-[--color-text-muted]">
                       {(t.elapsed || "{n}s").replace("{n}", String(elapsedSec))}
                     </span>
                   )}
