@@ -1,163 +1,257 @@
 import { test, expect } from "@playwright/test";
+import { mkdirSync } from "fs";
 
-/**
- * Visual Snapshot Tests — EN + KO × Desktop + Mobile
- *
- * PR마다 주요 페이지 풀스크린샷 자동 캡처 → artifacts에서 확인.
- * 렌더링 문제(레이아웃 깨짐, 이모지, 텍스트 잘림, KO 누락 등)를
- * 코드 분석만으로 놓치는 것을 방지하기 위한 근본 해결책.
- *
- * 커버리지:
- * - EN desktop (1280×720): 10 pages
- * - KO desktop (1280×720): 4 pages
- * - EN mobile (375×812):   6 pages
- * - KO mobile (375×812):   3 pages
- */
+const SAVE_DIR = "tests/visual-baselines";
+mkdirSync(SAVE_DIR, { recursive: true });
 
-const DESKTOP_EN = [
+// ─── Page Lists ───────────────────────────────────────────────
+
+const EN_PAGES = [
+  { path: "/", name: "home" },
+  { path: "/about", name: "about" },
+  { path: "/autotrading", name: "autotrading" },
+  { path: "/best-crypto-backtesting", name: "best-crypto-backtesting" },
+  { path: "/blog", name: "blog" },
+  { path: "/blog/atr-volatility-guide", name: "blog-atr-volatility-guide" },
+  // /builder → 301 redirect to /simulate/ (skip: evaluate fails on redirected context)
+  { path: "/changelog", name: "changelog" },
+  { path: "/coins", name: "coins" },
+  { path: "/coins/btc", name: "coins-btc" },
+  { path: "/compare", name: "compare" },
+  { path: "/compare/3commas", name: "compare-3commas" },
+  // /compare/binance-vs-okx → 301 redirect to /fees (skip: same reason)
+  { path: "/compare/coinrule", name: "compare-coinrule" },
+  { path: "/compare/cryptohopper", name: "compare-cryptohopper" },
+  { path: "/compare/gainium", name: "compare-gainium" },
+  { path: "/compare/streak", name: "compare-streak" },
+  { path: "/compare/tradingview", name: "compare-tradingview" },
+  { path: "/crypto-trading-simulator", name: "crypto-trading-simulator" },
+  { path: "/dashboard", name: "dashboard" },
+  { path: "/fees", name: "fees" },
+  { path: "/leaderboard", name: "leaderboard" },
+  { path: "/market", name: "market" },
+  { path: "/methodology", name: "methodology" },
+  { path: "/performance", name: "performance" },
+  { path: "/privacy", name: "privacy" },
+  { path: "/signals", name: "signals" },
+  { path: "/simulate", name: "simulate" },
+  { path: "/simulate/builder", name: "simulate-builder" },
+  { path: "/strategies", name: "strategies" },
+  { path: "/strategies/bb-squeeze-long", name: "strategies-bb-squeeze-long" },
+  { path: "/strategies/compare", name: "strategies-compare" },
+  { path: "/strategies/ranking", name: "strategies-ranking" },
+  { path: "/terms", name: "terms" },
+  { path: "/trust", name: "trust" },
+  { path: "/why-backtests-fail", name: "why-backtests-fail" },
+];
+
+const KO_PAGES = EN_PAGES.map(({ path, name }) => ({
+  path: path === "/" ? "/ko/" : `/ko${path}`,
+  name: `ko-${name}`,
+}));
+
+// Light-mode inspection: key pages only (EN + KO)
+const LIGHT_PAGES_EN = [
   { path: "/", name: "home" },
   { path: "/simulate", name: "simulate" },
   { path: "/strategies", name: "strategies" },
-  { path: "/strategies/ranking", name: "strategies-ranking" },
   { path: "/compare", name: "compare" },
-  { path: "/compare/tradingview", name: "compare-tradingview" },
   { path: "/market", name: "market" },
   { path: "/fees", name: "fees" },
   { path: "/about", name: "about" },
-  { path: "/learn", name: "learn" },
+  { path: "/coins", name: "coins" },
+  { path: "/performance", name: "performance" },
+  { path: "/methodology", name: "methodology" },
 ];
 
-const DESKTOP_KO = [
-  { path: "/ko/", name: "ko-home" },
-  { path: "/ko/simulate", name: "ko-simulate" },
-  { path: "/ko/strategies/ranking", name: "ko-strategies-ranking" },
-  { path: "/ko/compare", name: "ko-compare" },
-];
-
-const MOBILE_EN = [
-  { path: "/", name: "home" },
-  { path: "/simulate", name: "simulate" },
-  { path: "/strategies", name: "strategies" },
-  { path: "/compare", name: "compare" },
-  { path: "/market", name: "market" },
-  { path: "/fees", name: "fees" },
-];
-
-const MOBILE_KO = [
-  { path: "/ko/", name: "ko-home" },
-  { path: "/ko/simulate", name: "ko-simulate" },
-  { path: "/ko/strategies/ranking", name: "ko-strategies-ranking" },
-];
+const LIGHT_PAGES_KO = LIGHT_PAGES_EN.map(({ path, name }) => ({
+  path: path === "/" ? "/ko/" : `/ko${path}`,
+  name: `ko-${name}`,
+}));
 
 // ─── Helpers ──────────────────────────────────────────────────
 
+async function gotoPage(page: any, path: string) {
+  const res = await page.goto(path, { waitUntil: "domcontentloaded" });
+  expect(res?.status() ?? 200).toBeLessThan(400);
+}
+
 async function capture(page: any, name: string, suffix: string) {
+  // Force all reveal/reveal-child elements visible so below-fold content
+  // isn't hidden by IntersectionObserver animations in full-page screenshots.
+  await page.evaluate(() => {
+    document
+      .querySelectorAll(".reveal, .reveal-child")
+      .forEach((el) => el.classList.add("visible"));
+  });
   await page.waitForTimeout(600);
   await page.screenshot({
-    path: `playwright-report/screenshots/${name}-${suffix}.png`,
+    path: `${SAVE_DIR}/${name}-${suffix}.png`,
     fullPage: true,
   });
 }
 
 async function basicSanity(page: any, path: string) {
-  // Page must have a title (catches blank/error pages)
   const title = await page.title();
   expect(title.length, `${path} has empty title`).toBeGreaterThan(0);
-  // Note: i18n key completeness is validated by the dedicated CI step (check-i18n-keys.ts)
 }
 
-// ─── Desktop EN ───────────────────────────────────────────────
+// ─── Dark Desktop EN ──────────────────────────────────────────
 
-test.describe("Desktop EN — full page snapshots", () => {
-  test.use({ viewport: { width: 1280, height: 720 } });
+test.describe("Dark Desktop EN", () => {
+  test.use({ viewport: { width: 1280, height: 720 }, colorScheme: "dark" });
 
-  for (const { path, name } of DESKTOP_EN) {
-    test(`en/desktop: ${name}`, async ({ page }) => {
-      const res = await page.goto(path, { waitUntil: "domcontentloaded" });
-      expect(res?.status() ?? 200).toBeLessThan(400);
+  for (const { path, name } of EN_PAGES) {
+    test(name, async ({ page }) => {
+      await gotoPage(page, path);
       await capture(page, name, "en-desktop");
       await basicSanity(page, path);
     });
   }
 });
 
-// ─── Desktop KO ───────────────────────────────────────────────
+// ─── Dark Desktop KO ──────────────────────────────────────────
 
-test.describe("Desktop KO — full page snapshots", () => {
-  test.use({ viewport: { width: 1280, height: 720 } });
+test.describe("Dark Desktop KO", () => {
+  test.use({ viewport: { width: 1280, height: 720 }, colorScheme: "dark" });
 
-  for (const { path, name } of DESKTOP_KO) {
-    test(`ko/desktop: ${name}`, async ({ page }) => {
-      const res = await page.goto(path, { waitUntil: "domcontentloaded" });
-      expect(res?.status() ?? 200).toBeLessThan(400);
+  for (const { path, name } of KO_PAGES) {
+    test(name, async ({ page }) => {
+      await gotoPage(page, path);
       await capture(page, name, "ko-desktop");
       await basicSanity(page, path);
     });
   }
 });
 
-// ─── Mobile EN ────────────────────────────────────────────────
+// ─── Dark Mobile EN ───────────────────────────────────────────
 
-test.describe("Mobile EN — full page snapshots", () => {
+test.describe("Dark Mobile EN", () => {
   test.use({
     viewport: { width: 375, height: 812 },
     isMobile: true,
     hasTouch: true,
+    colorScheme: "dark",
   });
 
-  for (const { path, name } of MOBILE_EN) {
-    test(`en/mobile: ${name}`, async ({ page }) => {
-      const res = await page.goto(path, { waitUntil: "domcontentloaded" });
-      expect(res?.status() ?? 200).toBeLessThan(400);
+  for (const { path, name } of EN_PAGES) {
+    test(name, async ({ page }) => {
+      await gotoPage(page, path);
       await capture(page, name, "en-mobile");
       await basicSanity(page, path);
     });
   }
 
-  test("en/mobile: hamburger menu open", async ({ page }) => {
-    await page.goto("/", { waitUntil: "domcontentloaded" });
+  test("home: hamburger menu open", async ({ page }) => {
+    await gotoPage(page, "/");
     await page.locator("#mobile-menu-btn").click();
     await page.locator("#mobile-menu").waitFor({ state: "visible" });
     await page.screenshot({
-      path: "playwright-report/screenshots/home-menu-open-en-mobile.png",
+      path: `${SAVE_DIR}/home-menu-open-en-mobile.png`,
       fullPage: false,
     });
   });
 });
 
-// ─── Mobile KO ────────────────────────────────────────────────
+// ─── Dark Mobile KO ───────────────────────────────────────────
 
-test.describe("Mobile KO — full page snapshots", () => {
+test.describe("Dark Mobile KO", () => {
   test.use({
     viewport: { width: 375, height: 812 },
     isMobile: true,
     hasTouch: true,
+    colorScheme: "dark",
   });
 
-  for (const { path, name } of MOBILE_KO) {
-    test(`ko/mobile: ${name}`, async ({ page }) => {
-      const res = await page.goto(path, { waitUntil: "domcontentloaded" });
-      expect(res?.status() ?? 200).toBeLessThan(400);
+  for (const { path, name } of KO_PAGES) {
+    test(name, async ({ page }) => {
+      await gotoPage(page, path);
       await capture(page, name, "ko-mobile");
       await basicSanity(page, path);
     });
   }
 
-  test("ko/mobile: hamburger menu open", async ({ page }) => {
-    await page.goto("/ko/", { waitUntil: "domcontentloaded" });
+  test("ko-home: hamburger menu open", async ({ page }) => {
+    await gotoPage(page, "/ko/");
     await page.locator("#mobile-menu-btn").click();
     await page.locator("#mobile-menu").waitFor({ state: "visible" });
     await page.screenshot({
-      path: "playwright-report/screenshots/home-menu-open-ko-mobile.png",
+      path: `${SAVE_DIR}/home-menu-open-ko-mobile.png`,
       fullPage: false,
     });
   });
 });
 
-// ─── GNB Interaction Snapshots ────────────────────────────────
+// ─── Light Desktop EN ─────────────────────────────────────────
+
+test.describe("Light Desktop EN", () => {
+  test.use({ viewport: { width: 1280, height: 720 }, colorScheme: "light" });
+
+  for (const { path, name } of LIGHT_PAGES_EN) {
+    test(name, async ({ page }) => {
+      await gotoPage(page, path);
+      await capture(page, name, "en-desktop-light");
+      await basicSanity(page, path);
+    });
+  }
+});
+
+// ─── Light Desktop KO ─────────────────────────────────────────
+
+test.describe("Light Desktop KO", () => {
+  test.use({ viewport: { width: 1280, height: 720 }, colorScheme: "light" });
+
+  for (const { path, name } of LIGHT_PAGES_KO) {
+    test(name, async ({ page }) => {
+      await gotoPage(page, path);
+      await capture(page, name, "ko-desktop-light");
+      await basicSanity(page, path);
+    });
+  }
+});
+
+// ─── Light Mobile EN ──────────────────────────────────────────
+
+test.describe("Light Mobile EN", () => {
+  test.use({
+    viewport: { width: 375, height: 812 },
+    isMobile: true,
+    hasTouch: true,
+    colorScheme: "light",
+  });
+
+  for (const { path, name } of LIGHT_PAGES_EN) {
+    test(name, async ({ page }) => {
+      await gotoPage(page, path);
+      await capture(page, name, "en-mobile-light");
+      await basicSanity(page, path);
+    });
+  }
+});
+
+// ─── Light Mobile KO ──────────────────────────────────────────
+
+test.describe("Light Mobile KO", () => {
+  test.use({
+    viewport: { width: 375, height: 812 },
+    isMobile: true,
+    hasTouch: true,
+    colorScheme: "light",
+  });
+
+  for (const { path, name } of LIGHT_PAGES_KO) {
+    test(name, async ({ page }) => {
+      await gotoPage(page, path);
+      await capture(page, name, "ko-mobile-light");
+      await basicSanity(page, path);
+    });
+  }
+});
+
+// ─── GNB Interactions ─────────────────────────────────────────
 
 test.describe("GNB interactions", () => {
-  test.use({ viewport: { width: 1280, height: 720 } });
+  test.use({ viewport: { width: 1280, height: 720 }, colorScheme: "dark" });
 
   test("desktop: Strategies dropdown visible on hover", async ({ page }) => {
     await page.goto("/", { waitUntil: "domcontentloaded" });
@@ -165,7 +259,7 @@ test.describe("GNB interactions", () => {
     await strategiesItem.hover();
     await page.waitForTimeout(200);
     await page.screenshot({
-      path: "playwright-report/screenshots/nav-strategies-dropdown-en-desktop.png",
+      path: `${SAVE_DIR}/nav-strategies-dropdown-en-desktop.png`,
       fullPage: false,
     });
   });
