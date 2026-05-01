@@ -785,6 +785,9 @@ a:not(.btn):not(.btn-primary):not(.btn-ghost):not(.btn-outline):not(.card-hover)
 }
 [data-theme="light"] .gradient-text {
   background: linear-gradient(135deg, #0E7490 0%, #0891B2 50%, #0E7490 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 /* ─── Gradient text shimmer for hero ─── */
@@ -805,6 +808,9 @@ a:not(.btn):not(.btn-primary):not(.btn-ghost):not(.btn-outline):not(.card-hover)
     #0E7490 0%, #0891B2 25%, #155E75 50%, #0891B2 75%, #0E7490 100%
   );
   background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 @keyframes text-shimmer {
   0%, 100% { background-position: 0% 50%; }
