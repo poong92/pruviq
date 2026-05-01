@@ -67,6 +67,8 @@
   --color-accent-bright: #5CC8ED;   /* highlight, selected */
   --color-accent-subtle: rgba(44,181,232,0.10);
   --color-accent-glow:   rgba(44,181,232,0.22);
+  /* Text ON accent bg — #000 in dark (light cyan bg), overridden to #fff in light mode (dark teal bg) */
+  --color-accent-text:   #000000;
 
   /* ─── VERIFICATION ACCENT — used for trust signals, verified badges, proven results ─── */
   --color-verified:        #f59e0b;          /* amber-500 */
@@ -211,6 +213,8 @@
   --color-accent-bright: #0891B2;   /* cyan-600 highlight (was --color-accent) */
   --color-accent-subtle: rgba(14,116,144,0.10);
   --color-accent-glow:   rgba(14,116,144,0.18);
+  /* Dark teal bg in light mode → white text for AA compliance (black = 3.6:1 FAIL) */
+  --color-accent-text:   #FFFFFF;
 
   /* Verification (amber) tuned darker */
   --color-verified:        #B45309;   /* amber-700 */
