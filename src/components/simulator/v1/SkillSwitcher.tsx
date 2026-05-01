@@ -79,7 +79,10 @@ export default function SkillSwitcher({
                 class={`${baseClass} inline-flex items-center gap-1`}
               >
                 {label}
-                <span aria-hidden="true" class="text-xs text-(--color-text-muted)">
+                <span
+                  aria-hidden="true"
+                  class="text-xs text-(--color-text-muted)"
+                >
                   ↗
                 </span>
               </a>
@@ -103,7 +106,7 @@ export default function SkillSwitcher({
       {/* 2026-04-22: one-line subtext for the active mode so users understand
           what clicking does. Previously Quick vs Standard toggle had zero
           explanation. */}
-      <p class="px-1 text-[11px] leading-snug text-(--color-text-tertiary)">
+      <p class="px-1 text-[11px] leading-snug text-(--color-text-muted)">
         {lang === "ko" ? MODE_SUBTEXT[mode].ko : MODE_SUBTEXT[mode].en}
       </p>
     </div>
