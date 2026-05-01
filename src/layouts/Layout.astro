@@ -539,7 +539,7 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
               </div>
             </div>
           ) : (
-            <a href={item.href} aria-current={isActive(item.match) ? "page" : undefined} class="transition-colors nav-slide-underline inline-flex items-center gap-1.5 min-h-11" style={isActive(item.match) ? 'color:var(--color-accent);font-weight:500' : 'color:var(--color-text-muted)'}>{item.label}{item.badge && <span class="text-[9px] font-bold px-1 py-0.5 rounded bg-[--color-accent] text-white leading-none tracking-wide">{item.badge}</span>}</a>
+            <a href={item.href} aria-current={isActive(item.match) ? "page" : undefined} class="transition-colors nav-slide-underline inline-flex items-center gap-1.5 min-h-11" style={isActive(item.match) ? 'color:var(--color-accent);font-weight:500' : 'color:var(--color-text-muted)'}>{item.label}{item.badge && <span class="text-[9px] font-bold px-1 py-0.5 rounded bg-[--color-accent] text-[--color-accent-text] leading-none tracking-wide">{item.badge}</span>}</a>
           ))}
         </div>
         <!-- 3열: Theme toggle + Lang + Mobile hamburger (우측) -->
@@ -658,7 +658,7 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
                    class="min-h-[48px] flex items-center px-3 rounded-lg text-[15px] font-medium transition-colors hover:bg-[--color-bg-hover]"
                    style={isActive(item.match) ? 'color:var(--color-accent);font-weight:500' : 'color:var(--color-text-muted)'}>
                   {item.label}
-                  {item.badge && <span class="ml-1.5 text-[9px] font-bold px-1 py-0.5 rounded bg-[--color-accent] text-white leading-none tracking-wide">{item.badge}</span>}
+                  {item.badge && <span class="ml-1.5 text-[9px] font-bold px-1 py-0.5 rounded bg-[--color-accent] text-[--color-accent-text] leading-none tracking-wide">{item.badge}</span>}
                 </a>
               )}
             </Fragment>
