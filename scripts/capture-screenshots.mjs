@@ -1,3 +1,9 @@
+// Manual baseline refresh flow:
+//   1. node scripts/capture-screenshots.mjs
+//      → output: playwright-report/screenshots/ (gitignored, transient)
+//   2. cp playwright-report/screenshots/*.png tests/visual-baselines/
+//   3. git add tests/visual-baselines/ && open PR
+// playwright-report/ is gitignored (.gitignore:45), so step 1 stays untracked.
 import { chromium } from 'playwright';
 import { mkdirSync } from 'fs';
 
