@@ -45,7 +45,7 @@ from .oauth import (
     get_api_credentials,
     is_authenticated,
 )
-from .orders import execute_from_simulation
+from .orders import build_dry_run_payload, execute_from_simulation
 
 logger = logging.getLogger("okx_router")
 
@@ -349,6 +349,52 @@ def _pos_to_camel(p) -> dict:
         "mgnMode": p.mgn_mode,
         "posSide": p.pos_side,
     }
+
+
+@router.post("/execute/dry-run")
+async def execute_dry_run(
+    req: SimToExecRequest,
+    request: Request,
+    current_price: float = Query(
+        None, description="Current market price (auto-fetched from OKX mark if omitted)"
+    ),
+):
+    """Phase 2.2 dry-run entrypoint — emits the OKX request bodies that
+    /execute/order *would* send for this signal, without firing any POST.
+    OKX read endpoints (mark price + instrument info) are still hit because
+    tickSz / ctVal are needed to compute the bodies, and they're cheap GETs.
+
+    Use case: 7-day continuous parity check. The Phase 2.2 monitor calls
+    this once per simulator-emitted signal and diffs the resulting
+    `sl_algo_request` / `trailing_algo_request` against the simulator's
+    own ledger. Any drift in callbackRatio mapping, sz rounding, or SL
+    price snapping surfaces before Phase 4 production rollout.
+
+    Read-only on OKX side; same auth + position-size cap as /execute/order.
+    """
+    session_id = _get_session(request)
+    if not is_authenticated(session_id):
+        raise HTTPException(401, "Not connected to OKX. Connect first.")
+
+    # Same server-side position cap as live order path. Dry-run has no money
+    # at risk but enforcing the cap keeps "what /execute/order would have
+    # done" honest — a signal that would be 400-rejected live should also
+    # be rejected here.
+    from .settings import get_settings
+    _settings = get_settings(session_id)
+    _cap = float(_settings.get("max_per_trade_usdt", 200.0))
+    if req.position_size_usdt > _cap:
+        raise HTTPException(
+            400,
+            f"Position size ${req.position_size_usdt:.2f} exceeds max_per_trade_usdt cap ${_cap:.2f}.",
+        )
+
+    try:
+        return await build_dry_run_payload(session_id, req, current_price=current_price)
+    except ValueError as ve:
+        # _calc_contract_sz raises ValueError when notional too small — same
+        # 400-shape as live path so the monitor can compare apples to apples.
+        raise HTTPException(400, str(ve))
 
 
 @router.get("/execute/positions")

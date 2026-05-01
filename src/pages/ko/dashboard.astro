@@ -1,12 +1,16 @@
 ---
-// Dashboard is in beta — hidden from public until backend is validated
-return Astro.redirect('/ko/', 302);
+// Phase 3a un-hide (autotrading redesign): EN dashboard un-hid 2026-04-17,
+// KO un-hid 2026-05-01. AUTOTRADE_COMING_SOON gates the page — shows a
+// Coming Soon banner and hides live widgets, matching the EN dashboard.
+// Flip AUTOTRADE_COMING_SOON below to restore the active dashboard.
 import Layout from '../../layouts/Layout.astro';
 import OKXConnectButton from '../../components/OKXConnectButton';
 import AutoTradingStatus from '../../components/AutoTradingStatus';
 import TradingSettings from '../../components/TradingSettings';
 import LivePositions from '../../components/LivePositions';
 import LiveTradeHistory from '../../components/LiveTradeHistory';
+
+const AUTOTRADE_COMING_SOON = true;
 ---
 
 <Layout title="대시보드 — PRUVIQ" description="OKX 연결 및 자동매매 설정을 관리합니다." lang="ko">
@@ -18,60 +22,80 @@ import LiveTradeHistory from '../../components/LiveTradeHistory';
     </div>
     <p class="text-[--color-text-muted] mb-8">OKX 연결 및 자동매매 봇을 관리합니다.</p>
 
-    <!-- OKX 연결 카드 -->
-    <section class="mb-8">
-      <div class="card-enterprise rounded-2xl p-6 md:p-8">
-        <div class="flex items-center justify-between mb-4 flex-wrap gap-4">
-          <div class="flex items-center gap-3">
-            <div class="w-12 h-12 rounded-xl bg-[--color-accent]/10 flex items-center justify-center">
-              <svg class="w-7 h-7 text-[--color-accent]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
-            </div>
-            <div>
-              <h2 class="text-xl font-bold">OKX 브로커</h2>
-              <p class="text-sm text-[--color-text-muted]">공식 브로커 파트너 — 수수료 20% 할인</p>
-            </div>
-          </div>
-          <OKXConnectButton client:load lang="ko" size="md" />
+    {AUTOTRADE_COMING_SOON && (
+      <section class="mb-8 rounded-2xl border border-[--color-accent]/30 bg-[--color-accent]/5 p-6 md:p-8 text-center">
+        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 text-xs font-mono font-bold uppercase tracking-wider rounded bg-[--color-accent]/10 text-[--color-accent-bright] border border-[--color-accent]/30 mb-3">
+          ● 출시 예정
+        </span>
+        <h2 class="text-xl md:text-2xl font-bold mb-2">자동매매 기능을 준비 중입니다.</h2>
+        <p class="text-sm text-[--color-text-muted] max-w-xl mx-auto mb-4 leading-relaxed">
+          OKX 연동 기능을 점검 중입니다. 그동안 백테스팅과 전략 검증은 완전 무료로 이용 가능합니다 — 시뮬레이터로 실행할 만한 전략을 미리 찾아보세요.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-2 justify-center">
+          <a href="/ko/simulate/" class="btn btn-primary btn-md min-h-[44px]">시뮬레이터 사용하기 →</a>
+          <a href="/ko/performance/" class="btn btn-ghost btn-md min-h-[44px]">PRUVIQ 실적 보기</a>
         </div>
-        <div class="grid grid-cols-3 gap-4 mt-4">
-          <div class="bg-[--color-bg]/50 rounded-xl p-3 text-center">
-            <p class="text-xs text-[--color-text-muted] mb-1">수수료 할인</p>
-            <p class="text-xl font-bold text-[--color-up]">20%</p>
+      </section>
+    )}
+
+    {!AUTOTRADE_COMING_SOON && (
+      <>
+        <!-- OKX 연결 카드 -->
+        <section class="mb-8">
+          <div class="card-enterprise rounded-2xl p-6 md:p-8">
+            <div class="flex items-center justify-between mb-4 flex-wrap gap-4">
+              <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-xl bg-[--color-accent]/10 flex items-center justify-center">
+                  <svg class="w-7 h-7 text-[--color-accent]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                </div>
+                <div>
+                  <h2 class="text-xl font-bold">OKX 브로커</h2>
+                  <p class="text-sm text-[--color-text-muted]">공식 브로커 파트너 — 수수료 20% 할인</p>
+                </div>
+              </div>
+              <OKXConnectButton client:load lang="ko" size="md" />
+            </div>
+            <div class="grid grid-cols-3 gap-4 mt-4">
+              <div class="bg-[--color-bg]/50 rounded-xl p-3 text-center">
+                <p class="text-xs text-[--color-text-muted] mb-1">수수료 할인</p>
+                <p class="text-xl font-bold text-[--color-up]">20%</p>
+              </div>
+              <div class="bg-[--color-bg]/50 rounded-xl p-3 text-center">
+                <p class="text-xs text-[--color-text-muted] mb-1">실행 방식</p>
+                <p class="text-xl font-bold">자동</p>
+              </div>
+              <div class="bg-[--color-bg]/50 rounded-xl p-3 text-center">
+                <p class="text-xs text-[--color-text-muted] mb-1">API 키</p>
+                <p class="text-xl font-bold text-[--color-up]">불필요</p>
+              </div>
+            </div>
           </div>
-          <div class="bg-[--color-bg]/50 rounded-xl p-3 text-center">
-            <p class="text-xs text-[--color-text-muted] mb-1">실행 방식</p>
-            <p class="text-xl font-bold">자동</p>
-          </div>
-          <div class="bg-[--color-bg]/50 rounded-xl p-3 text-center">
-            <p class="text-xs text-[--color-text-muted] mb-1">API 키</p>
-            <p class="text-xl font-bold text-[--color-up]">불필요</p>
-          </div>
-        </div>
-      </div>
-    </section>
+        </section>
 
-    <!-- 봇 상태 위젯 -->
-    <section class="mb-8">
-      <AutoTradingStatus client:load lang="ko" />
-    </section>
+        <!-- 봇 상태 위젯 -->
+        <section class="mb-8">
+          <AutoTradingStatus client:load lang="ko" />
+        </section>
 
-    <!-- 자동매매 설정 -->
-    <!-- client:visible: below-fold, defer hydration until scrolled. -->
-    <section class="mb-8">
-      <TradingSettings client:visible lang="ko" />
-    </section>
+        <!-- 자동매매 설정 -->
+        <!-- client:visible: below-fold, defer hydration until scrolled. -->
+        <section class="mb-8">
+          <TradingSettings client:visible lang="ko" />
+        </section>
 
-    <!-- 오픈 포지션 -->
-    <section class="mb-8">
-      <LivePositions client:visible lang="ko" />
-    </section>
+        <!-- 오픈 포지션 -->
+        <section class="mb-8">
+          <LivePositions client:visible lang="ko" />
+        </section>
 
-    <!-- 거래 내역 -->
-    <section class="mb-8">
-      <LiveTradeHistory client:visible lang="ko" />
-    </section>
+        <!-- 거래 내역 -->
+        <section class="mb-8">
+          <LiveTradeHistory client:visible lang="ko" />
+        </section>
+      </>
+    )}
 
     <!-- 보안 정보 -->
     <section>

@@ -3,7 +3,7 @@ OKX Broker Pydantic models — request/response schemas.
 """
 from __future__ import annotations
 
-from typing import Optional
+from typing import Literal, Optional
 
 from pydantic import BaseModel, Field
 
@@ -50,3 +50,17 @@ class SimToExecRequest(BaseModel):
     position_size_usdt: float = Field(..., ge=1, description="Position size in USDT")
     leverage: int = Field(1, ge=1, le=125)
     td_mode: str = Field("isolated", description="isolated or cross")
+    # Phase 2.1: trailing TP wire-up. Optional + default keeps every existing
+    # caller (Astro frontend, /execute/order, manual UI) on the conditional
+    # SL+TP path with no signature change. tp_source="trailing" + trail_pct
+    # routes through place_trailing_stop instead.
+    tp_source: Optional[Literal["follow_signal", "custom_pct", "trailing"]] = Field(
+        "follow_signal",
+        description="follow_signal=use signal's tp_pct; custom_pct=use user override; trailing=use trail_pct as OKX move_order_stop callbackRatio",
+    )
+    trail_pct: Optional[float] = Field(
+        None,
+        ge=0.01,
+        le=100.0,
+        description="Trailing distance %, only applied when tp_source='trailing'. Mapped to OKX callbackRatio as str(trail_pct/100) (e.g. 2.0 → '0.02').",
+    )
