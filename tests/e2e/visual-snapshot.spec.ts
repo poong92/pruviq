@@ -13,13 +13,13 @@ const EN_PAGES = [
   { path: "/best-crypto-backtesting", name: "best-crypto-backtesting" },
   { path: "/blog", name: "blog" },
   { path: "/blog/atr-volatility-guide", name: "blog-atr-volatility-guide" },
-  { path: "/builder", name: "builder" },
+  // /builder → 301 redirect to /simulate/ (skip: evaluate fails on redirected context)
   { path: "/changelog", name: "changelog" },
   { path: "/coins", name: "coins" },
   { path: "/coins/btc", name: "coins-btc" },
   { path: "/compare", name: "compare" },
   { path: "/compare/3commas", name: "compare-3commas" },
-  { path: "/compare/binance-vs-okx", name: "compare-binance-vs-okx" },
+  // /compare/binance-vs-okx → 301 redirect to /fees (skip: same reason)
   { path: "/compare/coinrule", name: "compare-coinrule" },
   { path: "/compare/cryptohopper", name: "compare-cryptohopper" },
   { path: "/compare/gainium", name: "compare-gainium" },
