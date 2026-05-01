@@ -2,15 +2,16 @@
 // Phase 7 un-hide (2026-04-17) — see src/pages/autotrading/index.astro header.
 // 2026-04-23: Auto-trading on hold. Dashboard surfaces a Coming Soon state
 // and hides the live connection widgets so users can't trigger broken
-// flows. Flip AUTOTRADE_COMING_SOON below to restore the active dashboard.
+// flows.
+// Phase 3b: AUTOTRADE_COMING_SOON SSoT-imported from src/config/feature-flags
+// (env-driven via PUBLIC_AUTOTRADE_LIVE). Phase 4 flip = single YAML change.
 import Layout from '../layouts/Layout.astro';
 import OKXConnectButton from '../components/OKXConnectButton';
 import AutoTradingStatus from '../components/AutoTradingStatus';
 import TradingSettings from '../components/TradingSettings';
 import LivePositions from '../components/LivePositions';
 import LiveTradeHistory from '../components/LiveTradeHistory';
-
-const AUTOTRADE_COMING_SOON = true;
+import { AUTOTRADE_COMING_SOON } from '../config/feature-flags';
 ---
 
 <Layout title="Dashboard — PRUVIQ" description="Auto-trading dashboard (coming soon). Simulations remain fully free.">

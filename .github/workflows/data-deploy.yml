@@ -88,6 +88,14 @@ jobs:
 
       - name: Build Astro site
         if: steps.gate.outputs.skip != 'true'
+        env:
+          # Phase 3b SSoT for autotrading visibility. Astro reads PUBLIC_*
+          # env vars at build time and exposes them via import.meta.env.
+          # 'false' (current) keeps every gated CTA in coming-soon mode.
+          # Phase 4 production rollout = single edit to 'true' here, then
+          # this workflow rebuilds + deploys, propagating the flag to
+          # every client bundle in one shot.
+          PUBLIC_AUTOTRADE_LIVE: 'false'
         run: npm run build 2>&1 | tail -20
 
       - name: Deploy to Cloudflare Workers

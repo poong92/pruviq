@@ -51,8 +51,10 @@ const labels = {
   },
 };
 
-// 2026-04-23: feature flag. Flip to false once OKX integration is live.
-const AUTOTRADE_COMING_SOON = true;
+// Phase 3b: AUTOTRADE_COMING_SOON is now SSoT-derived from
+// src/config/feature-flags.ts (env-driven via PUBLIC_AUTOTRADE_LIVE).
+// Flip to live by setting PUBLIC_AUTOTRADE_LIVE='true' in data-deploy.yml.
+import { AUTOTRADE_COMING_SOON } from "../config/feature-flags";
 
 const sizeClasses = {
   sm: "btn-sm text-sm",

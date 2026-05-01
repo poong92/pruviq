@@ -1,7 +1,8 @@
 // Bottom CTA block — 2026-04-23: auto-trading on hold. Render as an
 // informational "Coming Soon" panel instead of an active conversion CTA.
-// Feature flip at AUTOTRADE_COMING_SOON below.
+// Phase 3b: feature flag SSoT-imported from src/config/feature-flags.
 
+import { AUTOTRADE_COMING_SOON } from "../../../config/feature-flags";
 import {
   getLocalizedPath,
   useTranslations,
@@ -14,9 +15,6 @@ interface Props {
   lang: Lang;
   presetId: string | null;
 }
-
-// Flip to false once OKX integration is live.
-const AUTOTRADE_COMING_SOON = true;
 
 export default function OKXConnectCTA({ lang, presetId }: Props) {
   const t = useTranslations(lang);
