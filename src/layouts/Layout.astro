@@ -196,6 +196,9 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
     <meta name="application-name" content="PRUVIQ" />
     <link rel="preload" href="/fonts/geist.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/geist-mono.woff2" as="font" type="font/woff2" crossorigin />
+    {lang === 'ko' && (
+      <link rel="preload" href="/fonts/pretendard-variable.woff2" as="font" type="font/woff2" crossorigin />
+    )}
     {heroImagePreload && (
       <link rel="preload" href={heroImagePreload} as="image" fetchpriority="high" />
     )}
