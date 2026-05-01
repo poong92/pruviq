@@ -119,7 +119,7 @@ export default function ExchangeCTA({
             </div>
             <span
               class="px-3 py-1.5 rounded-md text-xs font-semibold transition-colors whitespace-nowrap"
-              style="background:var(--color-accent);color:#fff"
+              style="background:var(--color-accent);color:var(--color-accent-text)"
             >
               {t.signup} &rarr;
             </span>

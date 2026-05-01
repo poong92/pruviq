@@ -401,7 +401,10 @@ export default function StrategyComparison({ lang = "en" }: Props) {
                     background: "var(--color-bg-hover)",
                     color: "var(--color-text-muted)",
                   }
-                : { background: "var(--color-accent)", color: "#fff" }
+                : {
+                    background: "var(--color-accent)",
+                    color: "var(--color-accent-text)",
+                  }
             }
           >
             {isRunning ? t.running : t.run}
@@ -675,7 +678,7 @@ export default function StrategyComparison({ lang = "en" }: Props) {
           <a
             href={lang === "ko" ? "/ko/simulate" : "/simulate"}
             class="shrink-0 px-5 py-2.5 rounded-lg font-semibold text-sm no-underline hover:opacity-90 transition-opacity whitespace-nowrap"
-            style="background:var(--color-accent);color:#fff"
+            style="background:var(--color-accent);color:var(--color-accent-text)"
           >
             {t.ctaButton} &rarr;
           </a>

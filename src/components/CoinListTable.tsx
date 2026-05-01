@@ -468,7 +468,7 @@ export default function CoinListTable({ lang = "en" }: { lang?: "en" | "ko" }) {
         <a
           href={lang === "ko" ? "/ko/simulate" : "/simulate"}
           class="px-4 py-2.5 rounded-lg font-semibold text-sm no-underline hover:opacity-90 transition-opacity whitespace-nowrap min-h-[44px] inline-flex items-center"
-          style="background:var(--color-accent);color:#fff"
+          style="background:var(--color-accent);color:var(--color-accent-text)"
         >
           {t.simulateCta} &rarr;
         </a>

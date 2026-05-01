@@ -755,7 +755,10 @@ export default function MarketDashboard({
                   }`}
                   style={
                     newsTab === "crypto"
-                      ? { background: "var(--color-accent)", color: "#fff" }
+                      ? {
+                          background: "var(--color-accent)",
+                          color: "var(--color-accent-text)",
+                        }
                       : undefined
                   }
                 >
@@ -776,7 +779,10 @@ export default function MarketDashboard({
                   }`}
                   style={
                     newsTab === "macro"
-                      ? { background: "var(--color-accent)", color: "#fff" }
+                      ? {
+                          background: "var(--color-accent)",
+                          color: "var(--color-accent-text)",
+                        }
                       : undefined
                   }
                 >
@@ -804,7 +810,10 @@ export default function MarketDashboard({
                   }`}
                   style={
                     !sourceFilter
-                      ? { background: "var(--color-accent)", color: "#fff" }
+                      ? {
+                          background: "var(--color-accent)",
+                          color: "var(--color-accent-text)",
+                        }
                       : undefined
                   }
                 >
@@ -822,7 +831,10 @@ export default function MarketDashboard({
                     }`}
                     style={
                       sourceFilter === s
-                        ? { background: "var(--color-accent)", color: "#fff" }
+                        ? {
+                            background: "var(--color-accent)",
+                            color: "var(--color-accent-text)",
+                          }
                         : undefined
                     }
                   >

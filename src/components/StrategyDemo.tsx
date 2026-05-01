@@ -452,7 +452,7 @@ export default function StrategyDemo({
             target="_blank"
             rel="noopener noreferrer"
             class="inline-block px-5 py-2.5 rounded-lg font-semibold text-sm no-underline hover:opacity-90 transition-opacity"
-            style="background:var(--color-accent);color:#fff"
+            style="background:var(--color-accent);color:var(--color-accent-text)"
           >
             {t.ctaExchange} &rarr;
           </a>
