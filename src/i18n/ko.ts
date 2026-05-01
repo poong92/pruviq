@@ -174,7 +174,7 @@ export const ko: Record<TranslationKey, string> = {
     "{coins}개 이상의 코인에서 5개 전략 백테스트. 검증된 것과 중단된 것 모두 결과 공개.",
   "features.card3_tag": "수수료 계산기",
   "features.card3_title": "비교하고 절약하기",
-  "features.card3_desc": "거래소 수수료 비교. PRUVIQ 추천 링크로 할인 혜택.",
+  "features.card3_desc": "거래소 수수료 비교. PRUVIQ 추천 코드로 할인 혜택.",
 
   // How it works
   "how.tag": "이렇게 작동합니다",
