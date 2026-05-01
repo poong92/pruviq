@@ -105,6 +105,29 @@ def _get_conn() -> sqlite3.Connection:
     except sqlite3.OperationalError as e:
         if "duplicate column" not in str(e).lower():
             raise
+    # Phase 2.1: trailing-stop algo tracking. Mutable state separate from the
+    # immutable merkle audit leaf — leaf records the entry fill (one per
+    # position), this table records the trailing-leg lifecycle (arm → live →
+    # cancelled/triggered) so close detection can cancel the sibling and
+    # restart-recovery can reconcile against /api/v5/trade/orders-algo-pending.
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS okx_trailing_algos (
+            algo_id        TEXT PRIMARY KEY,
+            session_id     TEXT NOT NULL,
+            inst_id        TEXT NOT NULL,
+            signal_id      TEXT,
+            parent_ord_id  TEXT,
+            callback_ratio TEXT NOT NULL,
+            ts_iso         TEXT NOT NULL,
+            state          TEXT NOT NULL DEFAULT 'live'
+        )
+    """)
+    conn.execute(
+        "CREATE INDEX IF NOT EXISTS idx_trailing_session ON okx_trailing_algos(session_id)"
+    )
+    conn.execute(
+        "CREATE INDEX IF NOT EXISTS idx_trailing_parent ON okx_trailing_algos(parent_ord_id)"
+    )
     return conn
 
 
@@ -207,3 +230,101 @@ def validate_csrf_state(state: str) -> tuple[str, str, str] | None:
         if time.time() - row[2] > CSRF_TTL:
             return None
         return row[0], row[1], row[3]
+
+
+# ── Trailing-stop algo orders (Phase 2.1) ───────────────────
+
+
+def insert_trailing_algo(
+    *,
+    algo_id: str,
+    session_id: str,
+    inst_id: str,
+    callback_ratio: str,
+    ts_iso: str,
+    signal_id: str | None = None,
+    parent_ord_id: str | None = None,
+) -> None:
+    """Persist a freshly-armed trailing algo order so close-detection and
+    restart-recovery have something to reconcile against."""
+    with _get_conn() as conn:
+        conn.execute(
+            "INSERT OR REPLACE INTO okx_trailing_algos "
+            "(algo_id, session_id, inst_id, signal_id, parent_ord_id, "
+            " callback_ratio, ts_iso, state) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?, 'live')",
+            (
+                algo_id, session_id, inst_id, signal_id, parent_ord_id,
+                callback_ratio, ts_iso,
+            ),
+        )
+
+
+def find_trailing_by_parent(parent_ord_id: str) -> dict | None:
+    """Return the trailing algo armed against a given entry order, if any.
+
+    Used by close-detection to cancel the sibling — when the entry order's
+    position closes (SL hit, manual close, OKX-managed exit), the trailing
+    leg becomes orphaned on OKX. We cancel it to keep the user's algo-list
+    clean and to avoid a stale algo firing if OKX delays its own cleanup.
+    """
+    with _get_conn() as conn:
+        row = conn.execute(
+            "SELECT algo_id, session_id, inst_id, signal_id, parent_ord_id, "
+            " callback_ratio, ts_iso, state "
+            "FROM okx_trailing_algos WHERE parent_ord_id = ? AND state = 'live'",
+            (parent_ord_id,),
+        ).fetchone()
+    if not row:
+        return None
+    return {
+        "algo_id": row[0],
+        "session_id": row[1],
+        "inst_id": row[2],
+        "signal_id": row[3],
+        "parent_ord_id": row[4],
+        "callback_ratio": row[5],
+        "ts_iso": row[6],
+        "state": row[7],
+    }
+
+
+def update_trailing_state(algo_id: str, state: str) -> None:
+    """Mark a trailing algo as cancelled / triggered. State is intentionally
+    a free-form string — caller passes the OKX state verbatim ('cancelled',
+    'effective', 'order_failed', etc.) so the audit trail keeps the original
+    OKX vocabulary rather than our re-interpreted one."""
+    with _get_conn() as conn:
+        conn.execute(
+            "UPDATE okx_trailing_algos SET state = ? WHERE algo_id = ?",
+            (state, algo_id),
+        )
+
+
+def list_live_trailing_algos(session_id: str | None = None) -> list[dict]:
+    """Return all currently-live trailing algos. Used by restart-recovery
+    to sweep against /api/v5/trade/orders-algo-pending — any live row whose
+    algoId is no longer pending on OKX has been cleared by OKX (triggered or
+    cancelled) and we update our state to match."""
+    with _get_conn() as conn:
+        if session_id:
+            rows = conn.execute(
+                "SELECT algo_id, session_id, inst_id, parent_ord_id, callback_ratio "
+                "FROM okx_trailing_algos WHERE state = 'live' AND session_id = ?",
+                (session_id,),
+            ).fetchall()
+        else:
+            rows = conn.execute(
+                "SELECT algo_id, session_id, inst_id, parent_ord_id, callback_ratio "
+                "FROM okx_trailing_algos WHERE state = 'live'"
+            ).fetchall()
+    return [
+        {
+            "algo_id": r[0],
+            "session_id": r[1],
+            "inst_id": r[2],
+            "parent_ord_id": r[3],
+            "callback_ratio": r[4],
+        }
+        for r in rows
+    ]
