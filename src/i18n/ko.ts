@@ -152,7 +152,7 @@ export const ko: Record<TranslationKey, string> = {
     "추측 없이. 체리피킹 없이. 현실적인 시장 조건으로 전략을 시뮬레이션하는 Python 엔진.",
   "system.step1": "선택",
   "system.step1_desc":
-    "전략 라이브러리에서 선택하세요. BB Squeeze, 모멘텀, 평균회귀 — 또는 나만의 전략으로.",
+    "전략 라이브러리에서 선택하세요. BB Squeeze, 모멘텀, 평균회귀 — 또는 직접 만드세요.",
   "system.step2": "시뮬레이션",
   "system.step2_desc":
     "{coins}개 이상의 코인, 2년 이상의 데이터로 실행. 수수료, 슬리피지, 드로다운 포함. 빈틈 없이.",
@@ -174,7 +174,8 @@ export const ko: Record<TranslationKey, string> = {
     "{coins}개 이상의 코인에서 5개 전략 백테스트. 검증된 것과 중단된 것 모두 결과 공개.",
   "features.card3_tag": "수수료 계산기",
   "features.card3_title": "비교하고 절약하기",
-  "features.card3_desc": "거래소 수수료 비교. PRUVIQ 추천 링크로 할인 혜택.",
+  "features.card3_desc":
+    "거래소 수수료를 비교하고 PRUVIQ 추천 코드로 할인받으세요.",
 
   // How it works
   "how.tag": "이렇게 작동합니다",
@@ -190,7 +191,7 @@ export const ko: Record<TranslationKey, string> = {
   "cta.tag": "지금 시작",
   "cta.title": "지금 바로 검증해 보세요",
   "cta.desc1":
-    "전략을 만들고, 백테스트를 돌리고, 결과를 확인하세요. 계정 불필요.",
+    "전략을 만들고, 백테스트를 돌리고, 결과를 확인하세요. 가입 없이 바로.",
   "cta.desc2": "$0 — 구독 없음, 이메일 불필요, 숨겨진 비용 없음.",
   "cta.button1": "지금 무료로 테스트",
   "cta.button2": "커뮤니티 참여",
