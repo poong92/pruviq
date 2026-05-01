@@ -764,7 +764,7 @@ export const ko: Record<TranslationKey, string> = {
   "perf.gap_backtest": "백테스트 (2년, {coins}개 코인)",
   "perf.gap_live": "실거래 (52일)",
   "perf.gap_pnl_label": "총 손익",
-  "perf.gap_mdd_label": "최대 낙폭",
+  "perf.gap_mdd_label": "최대 드로다운",
   "perf.gap_status_label": "상태",
   "perf.gap_status_stopped": "MDD 한도 도달로 중단",
   "perf.gap_why_title": "왜 괴리가 발생하나?",
@@ -821,7 +821,7 @@ export const ko: Record<TranslationKey, string> = {
   "perf.tbl_sl_rate": "SL 비율",
   "perf.tbl_tp_rate": "TP 비율",
   "perf.tbl_timeout": "타임아웃 비율",
-  "perf.tbl_mdd": "최대 손실폭 (MDD)",
+  "perf.tbl_mdd": "최대 드로다운 (MDD)",
   "perf.tbl_breakeven": "손익분기 승률",
   "perf.tbl_safety": "안전 마진",
 
@@ -1134,7 +1134,7 @@ export const ko: Record<TranslationKey, string> = {
   "methodology.cta_button": "시뮬레이터 열기",
   "methodology.sharpe_formula": "공식: (수익률 - 무위험 수익률) / 변동성",
   "methodology.sortino_formula": "공식: (수익률 - 무위험 수익률) / 하방 편차",
-  "methodology.calmar_formula": "공식: 연간 수익률 / 최대 낙폭",
+  "methodology.calmar_formula": "공식: 연간 수익률 / 최대 드로다운",
   "methodology.term_oos":
     "Out-of-Sample(표본 외 검증) = 전략이 한 번도 보지 못한 데이터로 테스트하여, 실제로 작동하는지 패턴만 외웠는지 확인합니다.",
   "methodology.term_mc":
@@ -1421,10 +1421,11 @@ export const ko: Record<TranslationKey, string> = {
   "tooltip.sortino":
     "소르티노 비율 \u2014 샤프와 유사하나 하방 위험만 고려. 큰 수익이 가끔 나는 전략에 더 정직한 지표.",
   "tooltip.calmar":
-    "칼마 비율 \u2014 수익률 \u00f7 최대 낙폭. 높을수록 손실에서 빠르게 회복.",
+    "칼마 비율 \u2014 수익률 \u00f7 최대 드로다운. 높을수록 손실에서 빠르게 회복.",
   "tooltip.pf":
     "수익 팩터 \u2014 총 수익 \u00f7 총 손실. 1.5 이상 강함, 2.0 이상 우수.",
-  "tooltip.mdd": "최대 낙폭(MDD) \u2014 고점 대비 최대 하락. 낮을수록 좋음.",
+  "tooltip.mdd":
+    "최대 드로다운(MDD) \u2014 고점 대비 최대 하락. 낮을수록 좋음.",
   "tooltip.wr":
     "승률 \u2014 수익 거래 비율. 좋은 손익비와 함께 50% 이상이면 견고.",
   "tooltip.oos":
@@ -1491,7 +1492,7 @@ export const ko: Record<TranslationKey, string> = {
   "metric.wr_desc":
     "수익 거래 비율. 맥락이 중요 \u2014 높은 승률이라도 R:R이 낮으면 손실 가능.",
   "metric.calmar_desc":
-    "연간 수익률 / 최대 낙폭. 높을수록 위험 대비 수익이 좋음.",
+    "연간 수익률 / 최대 드로다운. 높을수록 위험 대비 수익이 좋음.",
 
   // Learn feature card
   "features.learn_tag": "교육",
