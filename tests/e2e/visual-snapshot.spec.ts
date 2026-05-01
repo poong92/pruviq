@@ -77,7 +77,14 @@ async function gotoPage(page: any, path: string) {
 }
 
 async function capture(page: any, name: string, suffix: string) {
-  await page.waitForTimeout(1000);
+  // Force all reveal/reveal-child elements visible so below-fold content
+  // isn't hidden by IntersectionObserver animations in full-page screenshots.
+  await page.evaluate(() => {
+    document
+      .querySelectorAll(".reveal, .reveal-child")
+      .forEach((el) => el.classList.add("visible"));
+  });
+  await page.waitForTimeout(600);
   await page.screenshot({
     path: `${SAVE_DIR}/${name}-${suffix}.png`,
     fullPage: true,
