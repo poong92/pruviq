@@ -1,6 +1,8 @@
 ---
-// Autotrading is in beta — hidden from public until backend is validated
-return Astro.redirect('/ko/', 302);
+// Phase 3a un-hide (autotrading redesign): EN equivalent un-hid 2026-04-17;
+// KO had stayed redirected. Body is fully translated; OAuth/connect flow
+// is still gated by AUTOTRADE_COMING_SOON in OKXConnectButton, so visitors
+// land on the coming-soon hero rather than a non-functional connect step.
 import Layout from '../../../layouts/Layout.astro';
 ---
 
