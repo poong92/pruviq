@@ -471,7 +471,7 @@ function Metric({
         {value}
       </div>
       {tooltip && (
-        <p class="mt-1 text-[11px] normal-case leading-snug text-(--color-text-tertiary)">
+        <p class="mt-1 text-[11px] normal-case leading-snug text-(--color-text-muted)">
           {tooltip}
         </p>
       )}

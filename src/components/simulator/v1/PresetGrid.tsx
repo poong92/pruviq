@@ -30,7 +30,9 @@ export default function PresetGrid({ activePresetId, lang, onSelect }: Props) {
         <h2 class="text-lg font-semibold text-(--color-text)">
           {t("simV2.presets.heading")}
         </h2>
-        <p class="text-xs text-(--color-text-muted) sm:text-sm">{t("simV2.presets.sub")}</p>
+        <p class="text-xs text-(--color-text-muted) sm:text-sm">
+          {t("simV2.presets.sub")}
+        </p>
       </div>
       <div
         class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
@@ -108,7 +110,9 @@ export default function PresetGrid({ activePresetId, lang, onSelect }: Props) {
               {/* 2026-04-22: tagline shown on mobile too — the exact persona
                   (first-time retail on phone) that needed the one-line
                   explanation the most was being silenced by hidden sm:block. */}
-              <p class="text-xs leading-snug text-(--color-text-muted)">{tagline}</p>
+              <p class="text-xs leading-snug text-(--color-text-muted)">
+                {tagline}
+              </p>
               {/* 2026-04-22: honest per-preset metrics row. Numbers here
                   are measured against api.pruviq.com/simulate at registry
                   default SL/TP, so a card click reproduces these exactly.
@@ -116,7 +120,7 @@ export default function PresetGrid({ activePresetId, lang, onSelect }: Props) {
                   see what they'll get BEFORE clicking. */}
               <dl class="mt-1 grid grid-cols-3 gap-x-2 gap-y-1 rounded-md bg-(--color-bg)/40 px-2 py-1.5 text-center font-mono text-[11px] tabular-nums">
                 <div>
-                  <dt class="text-[10px] uppercase tracking-wide text-(--color-text-tertiary)">
+                  <dt class="text-[10px] uppercase tracking-wide text-(--color-text-muted)">
                     PF
                   </dt>
                   <dd
@@ -126,7 +130,7 @@ export default function PresetGrid({ activePresetId, lang, onSelect }: Props) {
                   </dd>
                 </div>
                 <div>
-                  <dt class="text-[10px] uppercase tracking-wide text-(--color-text-tertiary)">
+                  <dt class="text-[10px] uppercase tracking-wide text-(--color-text-muted)">
                     {lang === "ko" ? "수익률" : "Return"}
                   </dt>
                   <dd
@@ -137,7 +141,7 @@ export default function PresetGrid({ activePresetId, lang, onSelect }: Props) {
                   </dd>
                 </div>
                 <div>
-                  <dt class="text-[10px] uppercase tracking-wide text-(--color-text-tertiary)">
+                  <dt class="text-[10px] uppercase tracking-wide text-(--color-text-muted)">
                     MDD
                   </dt>
                   <dd class="font-semibold text-(--color-down)">
@@ -154,7 +158,7 @@ export default function PresetGrid({ activePresetId, lang, onSelect }: Props) {
                   {t("simV2.defaults.tp_label")}{" "}
                   <span class="text-(--color-up)">{p.defaults.tp}%</span>
                 </span>
-                <span class="text-(--color-text-tertiary)">
+                <span class="text-(--color-text-muted)">
                   {p.metrics.trades.toLocaleString()}
                   {lang === "ko" ? " 거래" : " trades"}
                 </span>
