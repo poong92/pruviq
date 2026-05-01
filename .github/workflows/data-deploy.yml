@@ -91,11 +91,13 @@ jobs:
         env:
           # Phase 3b SSoT for autotrading visibility. Astro reads PUBLIC_*
           # env vars at build time and exposes them via import.meta.env.
-          # 'false' (current) keeps every gated CTA in coming-soon mode.
-          # Phase 4 production rollout = single edit to 'true' here, then
-          # this workflow rebuilds + deploys, propagating the flag to
-          # every client bundle in one shot.
-          PUBLIC_AUTOTRADE_LIVE: 'false'
+          # Phase 4 rollout (2026-05-01): flipped 'false' → 'true' after
+          # Phase 0/2.0/2.1/2.2/3a/3b code work merged.
+          # post-rollout 안전망: scripts/dry-run-monitor.sh가 7일 parity smoke
+          # daily 운영. drift 발견 시 즉시 'true' → 'false' revert PR.
+          # 자동 rollback 트리거: OAuth 5xx > 5% 15min, DO CPU > 80% 5min,
+          # smoke FAIL 1건이라도.
+          PUBLIC_AUTOTRADE_LIVE: 'true'
         run: npm run build 2>&1 | tail -20
 
       - name: Deploy to Cloudflare Workers
