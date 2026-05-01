@@ -243,11 +243,11 @@ export default function CoinChart({
             horzLines: { color: getCssVar("--color-chart-grid") },
           },
           rightPriceScale: {
-            borderColor: getCssVar("--color-bg-hover"),
+            borderColor: getCssVar("--color-border"),
             scaleMargins: { top: 0.05, bottom: 0.25 },
           },
           timeScale: {
-            borderColor: getCssVar("--color-bg-hover"),
+            borderColor: getCssVar("--color-border"),
             timeVisible: true,
             secondsVisible: false,
             rightOffset: 5,
