@@ -23,6 +23,7 @@ import asyncio
 import json
 import logging
 import time
+from typing import Optional
 
 from .client import OKXClient
 from .oauth import get_api_credentials, is_authenticated
@@ -37,7 +38,12 @@ _RETRY_LOOKBACK_S = 7 * 24 * 3600  # only retry rows from last 7 days
 _RETRY_HISTORY_LIMIT = "50"
 
 
-async def sync_realized_pnl(session_id: str, inst_id: str, trade_created_at: float) -> None:
+async def sync_realized_pnl(
+    session_id: str,
+    inst_id: str,
+    trade_created_at: float,
+    parent_ord_id: Optional[str] = None,
+) -> None:
     """
     Poll positions-history to find actual realized PnL for a recently closed trade.
     Updates trade_log.pnl_usdt with the real value and sets pnl_synced=1 on success.
@@ -45,6 +51,14 @@ async def sync_realized_pnl(session_id: str, inst_id: str, trade_created_at: flo
     Called asynchronously after a trade is logged (fire-and-forget).
     Polls up to 3 times (at 30s, 60s, 120s); on failure leaves pnl_usdt untouched
     and sets pnl_synced=0 for the retry loop to pick up.
+
+    Phase 2.1.4: when `parent_ord_id` is supplied (auto_executor passes it
+    after the entry order's ordId is known), the close-detection path also
+    cancels any sibling trailing algo armed against this entry. SL hit →
+    position closes → trailing leg becomes orphan on OKX without an explicit
+    cancel; reconciler would catch it eventually, but explicit cancel here
+    keeps the user's algo-list clean and removes any window where a stale
+    trailing could fire on a re-opened position.
     """
     if not is_authenticated(session_id):
         return
@@ -79,6 +93,24 @@ async def sync_realized_pnl(session_id: str, inst_id: str, trade_created_at: flo
                     session_id[:8], inst_id, realized_pnl,
                 )
                 _update_trade_pnl(session_id, inst_id, trade_created_at, realized_pnl)
+                # Phase 2.1.4 sibling cancel — non-fatal so PnL update sticks
+                # regardless of whether the cancel succeeded.
+                if parent_ord_id:
+                    try:
+                        from .orders import cancel_trailing_for_position
+                        cancel_result = await cancel_trailing_for_position(
+                            session_id, parent_ord_id,
+                        )
+                        if cancel_result.get("cancelled"):
+                            logger.warning(
+                                "trailing sibling cancelled: parent=%s algoId=%s",
+                                parent_ord_id, cancel_result.get("algo_id"),
+                            )
+                    except Exception as cancel_err:
+                        logger.warning(
+                            "trailing sibling cancel raised (non-fatal): %s",
+                            cancel_err,
+                        )
                 return
 
         except Exception as e:
