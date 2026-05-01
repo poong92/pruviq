@@ -177,7 +177,7 @@ export function RankingCard({
             {(() => {
               const desc = getStrategyDescription(entry.strategy, lang);
               return desc ? (
-                <p class="text-[--color-text-muted] text-[10px] mt-0.5 truncate opacity-70">
+                <p class="text-[--color-text-muted] text-[10px] mt-0.5 truncate">
                   {desc}
                 </p>
               ) : null;
@@ -243,7 +243,10 @@ export function RankingCard({
                 : "Win Rate = % of profitable trades. 55%+ is good."
             }
           >
-            {lbl.wr} <span class="opacity-50 text-[0.6rem]">?</span>
+            {lbl.wr}{" "}
+            <span class="opacity-50 text-[0.6rem]" aria-hidden="true">
+              ?
+            </span>
           </p>
           <p class={`font-bold text-base ${winRateColor(entry.win_rate)}`}>
             {entry.win_rate.toFixed(1)}%
@@ -258,7 +261,10 @@ export function RankingCard({
                 : "Profit Factor = avg win ÷ avg loss. 1.0 = breakeven, 1.5+ = good, 2.0+ = strong. Capped at 99.99 for low-sample results."
             }
           >
-            PF <span class="opacity-50 text-[0.6rem]">?</span>
+            PF{" "}
+            <span class="opacity-50 text-[0.6rem]" aria-hidden="true">
+              ?
+            </span>
           </p>
           {entry.profit_factor >= 50 ? (
             <p

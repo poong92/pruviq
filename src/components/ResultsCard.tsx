@@ -819,7 +819,7 @@ export default function ResultsCard({
                     }}
                   />
                 </div>
-                <div class="mt-1 text-[10px] font-mono text-[--color-text-muted] opacity-60">
+                <div class="mt-1 text-[10px] font-mono text-[--color-text-muted]">
                   {`${t.feeConsume} ${data.total_return_pct !== 0 ? Math.abs((totalCost / data.total_return_pct) * 100).toFixed(0) : "\u2014"}${t.feeConsumeOf}`}
                 </div>
               </div>
@@ -1000,7 +1000,7 @@ export default function ResultsCard({
                     {label}
                   </div>
                   {rm.trades === 0 ? (
-                    <div class="text-[10px] text-[--color-text-muted] opacity-50">
+                    <div class="text-[10px] text-[--color-text-muted]">
                       {lang === "ko" ? "거래 없음" : "No trades"}
                     </div>
                   ) : (

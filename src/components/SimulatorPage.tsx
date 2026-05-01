@@ -1912,7 +1912,7 @@ export default function SimulatorPage({
             </ul>
           </details>
         )}
-        <p class="text-[--color-text-muted] text-[10px] text-center opacity-60">
+        <p class="text-[--color-text-muted] text-[10px] text-center">
           {t.disclaimer}
         </p>
       </div>
