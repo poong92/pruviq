@@ -1,7 +1,6 @@
 /**
  * OKX Connect/Disconnect button.
- * OAuth flow: fetch /auth/okx/init → build URL → window.location.assign()
- * Mirrors OKX JS SDK behavior (domain + /account/oauth + queryString) without loading SDK.
+ * OAuth flow: /auth/okx/start → backend redirect → OKX consent → callback → session cookie.
  */
 import { useState, useEffect } from "preact/hooks";
 import { API_BASE_URL as API_BASE } from "../config/api";
@@ -12,10 +11,6 @@ interface Props {
   size?: "sm" | "md" | "lg";
   showCard?: boolean;
 }
-
-// OKX moved OAuth endpoint from /api/v5/oauth/* to /account/oauth/* in 2026.
-// Old path now returns 404.
-const OKX_OAUTH_BASE = "https://www.okx.com/account/oauth/authorize";
 
 // 2026-04-23: Autotrading is on hold while the OKX-side integration is being
 // hardened. All CTAs that previously initiated OAuth / auto-execute now show
@@ -109,34 +104,11 @@ export default function OKXConnectButton({
       .catch(() => setLoading(false));
   }, []);
 
-  const handleConnect = async () => {
+  const handleConnect = () => {
     setConnecting(true);
-    try {
-      // Get CSRF state + OAuth params from backend
-      const resp = await fetch(`${API_BASE}/auth/okx/init?lang=${lang}`);
-      if (!resp.ok) throw new Error(`init failed: ${resp.status}`);
-      const p = await resp.json();
-
-      // Build OKX authorize URL (same as OKEXOAuthSDK.authorize() internally).
-      // channelId is the broker program identifier — without it, OKX silently
-      // drops the authorize request after login and sends the user to
-      // /account/users instead of the consent page (seen 2026-04-17).
-      const authParams: Record<string, string> = {
-        client_id: p.client_id,
-        response_type: p.response_type,
-        access_type: p.access_type,
-        scope: p.scope,
-        redirect_uri: p.redirect_uri,
-        state: p.state,
-      };
-      if (p.channelId) authParams.channelId = p.channelId;
-      const qs = new URLSearchParams(authParams).toString();
-
-      window.location.assign(`${OKX_OAUTH_BASE}?${qs}`);
-    } catch (e) {
-      console.error("OKX OAuth init failed:", e);
-      setConnecting(false);
-    }
+    // Server-side redirect: backend generates full authorize URL with PKCE +
+    // CSRF state + correct scope. Avoids frontend URL-building drift.
+    window.location.assign(`${API_BASE}/auth/okx/start?lang=${lang}`);
   };
 
   const handleDisconnect = async () => {
