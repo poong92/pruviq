@@ -25,6 +25,7 @@ from typing import Optional
 
 from .client import OKXClient
 from .oauth import get_api_credentials, is_authenticated
+from . import storage
 from .orders import _pruviq_to_okx_inst_id, _calc_sl_tp_prices, _calc_contract_sz
 from .retry import retry_async
 from .settings import (
@@ -441,6 +442,12 @@ async def _try_execute(
     tp_pct = signal.get("tp_pct", 8)
     leverage = settings["leverage"]
     td_mode = settings.get("td_mode", "isolated")
+    # tp_source / trail_pct surface so the live-trade branch can route to
+    # OKX move_order_stop instead of conditional TP. Phase 2.1: replaces the
+    # pre-existing trail_pct → fixed TP downgrade. Defaults preserve legacy
+    # behaviour (tp_source falls through to follow_signal/custom_pct paths).
+    tp_source: str = "follow_signal"
+    trail_pct: Optional[float] = None
 
     # ── Strategy overrides (only apply fields the user explicitly detached
     #    from the signal defaults). ──
@@ -449,10 +456,14 @@ async def _try_execute(
             sl_pct = float(strategy.get("sl_pct", sl_pct))
         if strategy.get("tp_source") == "custom_pct":
             tp_pct = float(strategy.get("tp_pct", tp_pct))
+            tp_source = "custom_pct"
         elif strategy.get("tp_source") == "trailing":
-            # Trailing not supported in current execution path — fall back
-            # to trail_pct as a fixed TP until trailing stops are implemented.
-            tp_pct = float(strategy.get("trail_pct", tp_pct))
+            # Phase 2.1: trailing TP routed to OKX move_order_stop in the
+            # execute_from_simulation branch below (tp_source/trail_pct
+            # passed through SimToExecRequest). Pre-Phase 2.1 this branch
+            # downgraded trail_pct to a fixed TP — that fallback is gone.
+            tp_source = "trailing"
+            trail_pct = float(strategy.get("trail_pct", 3.0))
         if strategy.get("leverage_source") == "custom":
             leverage = int(strategy.get("leverage", leverage))
 
@@ -621,30 +632,90 @@ async def _try_execute(
             fill_price, signal["direction"], sl_pct, tp_pct, tick_sz=tick_sz,
         )
         close_side = "buy" if signal["direction"] == "short" else "sell"
+        # Phase 2.1: trailing strategies place SL conditional + separate
+        # move_order_stop. Non-trailing keeps the original SL+TP single-algo
+        # path. trail_algo_id is None when not used so result/persist
+        # branches are uniform.
+        use_trailing = tp_source == "trailing" and trail_pct
+        callback_ratio_str: Optional[str] = None
+        trail_algo_id: Optional[str] = None
+        trail_algo_raw: Optional[dict] = None
 
         try:
-            algo = await client.place_algo_order(
-                inst_id=inst_id,
-                side=close_side,
-                sz=sz,
-                sl_trigger_px=sl_price,
-                tp_trigger_px=tp_price,
-                td_mode=td_mode,
-            )
-            algo_id = (algo.get("data") or [{}])[0].get("algoId", "")
-            logger.warning("← SL/TP set: SL=%s TP=%s algoId=%s", sl_price, tp_price, algo_id)
+            if use_trailing:
+                from .orders import _trail_pct_to_callback_ratio  # local import to avoid cycle
+                algo = await client.place_algo_order(
+                    inst_id=inst_id,
+                    side=close_side,
+                    sz=sz,
+                    sl_trigger_px=sl_price,
+                    td_mode=td_mode,
+                )
+                algo_id = (algo.get("data") or [{}])[0].get("algoId", "")
+                logger.warning(
+                    "← SL set (trailing strategy): SL=%s algoId=%s", sl_price, algo_id,
+                )
+                callback_ratio_str = _trail_pct_to_callback_ratio(trail_pct)
+                trail_cl_ord_id = (
+                    f"{cl_ord_id}t" if cl_ord_id else None
+                )
+                trail_algo_raw = await client.place_trailing_stop(
+                    inst_id=inst_id,
+                    side=close_side,
+                    sz=sz,
+                    callback_ratio=callback_ratio_str,
+                    td_mode=td_mode,
+                    cl_ord_id=trail_cl_ord_id,
+                )
+                trail_algo_id = (
+                    (trail_algo_raw.get("data") or [{}])[0].get("algoId") or None
+                )
+                logger.warning(
+                    "← Trailing TP armed: callbackRatio=%s algoId=%s",
+                    callback_ratio_str, trail_algo_id,
+                )
+            else:
+                algo = await client.place_algo_order(
+                    inst_id=inst_id,
+                    side=close_side,
+                    sz=sz,
+                    sl_trigger_px=sl_price,
+                    tp_trigger_px=tp_price,
+                    td_mode=td_mode,
+                )
+                algo_id = (algo.get("data") or [{}])[0].get("algoId", "")
+                logger.warning("← SL/TP set: SL=%s TP=%s algoId=%s", sl_price, tp_price, algo_id)
         except Exception as algo_err:
             logger.error(
-                "CRITICAL: SL/TP failed after auto-order %s (%s) — closing: %s",
+                "CRITICAL: algo placement failed after auto-order %s (%s) — closing: %s",
                 ord_id, inst_id, algo_err,
             )
             await _emergency_close_with_retry(
                 client, inst_id, td_mode,
-                reason=f"SL/TP failed after auto-order (ordId={ord_id}): {algo_err}",
+                reason=f"Algo failed after auto-order (ordId={ord_id}): {algo_err}",
                 chat_id=chat_id, signal=signal,
             )
             update_signal_status(session_id, strategy_id, coin, dedup_time, "failed")
             return None
+
+    # Phase 2.1: persist the trailing algoId so close-detection can cancel
+    # the sibling and restart-recovery has a target to reconcile against.
+    # Failure non-fatal — same invariant as merkle audit further down.
+    if use_trailing and trail_algo_id:
+        try:
+            storage.insert_trailing_algo(
+                algo_id=trail_algo_id,
+                session_id=session_id,
+                inst_id=inst_id,
+                callback_ratio=callback_ratio_str or "",
+                ts_iso=datetime.now(timezone.utc).isoformat(timespec="seconds"),
+                signal_id=cl_ord_id,
+                parent_ord_id=ord_id,
+            )
+        except Exception as persist_err:
+            logger.warning(
+                "trailing algo persist failed (non-fatal): %s", persist_err
+            )
 
     result = {
         "session_id": session_id[:8],
@@ -654,9 +725,13 @@ async def _try_execute(
         "size": sz,
         "fill_price": fill_price,
         "sl": sl_price,
-        "tp": tp_price,
+        "tp": tp_price if not use_trailing else None,
+        "callback_ratio": callback_ratio_str,
         "order": order,
         "algo": algo,
+        "trailing_algo": trail_algo_raw,
+        "trailing_algo_id": trail_algo_id,
+        "tp_source": tp_source,
         "cl_ord_id": cl_ord_id,
         "timestamp": time.time(),
     }
@@ -700,7 +775,11 @@ async def _try_execute(
     if chat_id:
         asyncio.create_task(send_trade_executed(chat_id, signal, fill_price, sz, sl_price, tp_price))
 
-    # Fire-and-forget: sync actual realized PnL once position closes
-    asyncio.create_task(sync_realized_pnl(session_id, inst_id, trade_created_at))
+    # Fire-and-forget: sync actual realized PnL once position closes.
+    # Phase 2.1.4: passing ord_id so close detection also cancels the sibling
+    # trailing algo (no-op when the trade was non-trailing).
+    asyncio.create_task(
+        sync_realized_pnl(session_id, inst_id, trade_created_at, parent_ord_id=ord_id)
+    )
 
     return result

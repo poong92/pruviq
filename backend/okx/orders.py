@@ -9,6 +9,7 @@ import math
 from datetime import datetime, timezone
 from typing import Optional
 
+from . import storage
 from .client import OKXClient
 from .models import SimToExecRequest
 from .oauth import get_api_credentials
@@ -86,6 +87,22 @@ def _round_to_tick(price: float, tick_sz: float, *, round_down: bool) -> str:
     # Cap at 10 — OKX price precision ceiling.
     decimals = min(decimals, 10)
     return f"{snapped:.{decimals}f}"
+
+
+def _trail_pct_to_callback_ratio(trail_pct: float) -> str:
+    """Map PRUVIQ's percent-form trail_pct (e.g. 2.0 = 2%) to OKX
+    callbackRatio decimal-string (e.g. "0.02").
+
+    Parity anchor: simulator engine_fast.py:1372 uses decimal-form trailing_pct
+    in `best_price * (1 - trailing_pct)`. PRUVIQ's strategy schema stores
+    percent-form (strategies.py:88 `trail_pct REAL DEFAULT 3` = 3%).
+    OKX move_order_stop's callbackRatio is decimal-string per its API spec.
+
+    The /100 division happens here, in *one place only* — Phase 2.1 plan
+    advisor #1: params-correctness parity is the test target, and this
+    function is the single seam where the conversion lives.
+    """
+    return f"{trail_pct / 100:g}"
 
 
 def _calc_sl_tp_prices(
@@ -182,25 +199,66 @@ async def execute_from_simulation(
         ord_id = order.get("ordId", "")
         logger.warning("← Market order placed ordId=%s", ord_id)
 
-        # SL/TP algo order — if this fails, immediately close the naked position
+        # Algo legs — if any fail, immediately close the naked position.
+        # Branching on tp_source:
+        #   - "trailing" → conditional SL only + separate move_order_stop trailing TP
+        #   - else       → conditional SL+TP single algo (existing path)
         sl_price, tp_price = _calc_sl_tp_prices(
             current_price, req.direction, req.sl_pct, req.tp_pct, tick_sz=tick_sz,
         )
         close_side = "buy" if req.direction == "short" else "sell"
 
+        use_trailing = req.tp_source == "trailing" and req.trail_pct
+        callback_ratio: Optional[str] = None
+        trail_algo_id: Optional[str] = None
+
         try:
-            algo_result = await client.place_algo_order(
-                inst_id=inst_id,
-                side=close_side,
-                sz=sz,
-                sl_trigger_px=sl_price,
-                tp_trigger_px=tp_price,
-                td_mode=td_mode,
-            )
-            logger.warning("← SL/TP set: SL=%s TP=%s ordId=%s", sl_price, tp_price, ord_id)
+            if use_trailing:
+                # SL leg only — no TP on the conditional algo.
+                algo_result = await client.place_algo_order(
+                    inst_id=inst_id,
+                    side=close_side,
+                    sz=sz,
+                    sl_trigger_px=sl_price,
+                    td_mode=td_mode,
+                )
+                logger.warning("← SL set (trailing strategy): SL=%s ordId=%s", sl_price, ord_id)
+                # Trailing TP via OKX move_order_stop. Sim parity:
+                # engine_fast.py:1372 uses decimal-form trailing_pct (0.02);
+                # we convert PRUVIQ's percent-form trail_pct in one seam.
+                callback_ratio = _trail_pct_to_callback_ratio(req.trail_pct)
+                trail_cl_ord_id = (
+                    f"{cl_ord_id}t" if cl_ord_id else None
+                )  # OKX algoClOrdId limit ~32 chars; suffix narrows to keep len.
+                trail_result = await client.place_trailing_stop(
+                    inst_id=inst_id,
+                    side=close_side,
+                    sz=sz,
+                    callback_ratio=callback_ratio,
+                    td_mode=td_mode,
+                    cl_ord_id=trail_cl_ord_id,
+                )
+                trail_algo_data = trail_result.get("data", [{}])
+                trail_algo_id = (
+                    trail_algo_data[0].get("algoId") if trail_algo_data else None
+                )
+                logger.warning(
+                    "← Trailing TP armed: callbackRatio=%s algoId=%s",
+                    callback_ratio, trail_algo_id,
+                )
+            else:
+                algo_result = await client.place_algo_order(
+                    inst_id=inst_id,
+                    side=close_side,
+                    sz=sz,
+                    sl_trigger_px=sl_price,
+                    tp_trigger_px=tp_price,
+                    td_mode=td_mode,
+                )
+                logger.warning("← SL/TP set: SL=%s TP=%s ordId=%s", sl_price, tp_price, ord_id)
         except Exception as algo_err:
             logger.error(
-                "CRITICAL: SL/TP failed after order %s (%s) — closing naked position: %s",
+                "CRITICAL: algo placement failed after order %s (%s) — closing naked position: %s",
                 ord_id, inst_id, algo_err,
             )
             try:
@@ -209,8 +267,28 @@ async def execute_from_simulation(
             except Exception as close_err:
                 logger.error("EMERGENCY CLOSE FAILED for %s: %s", inst_id, close_err)
             raise ValueError(
-                f"SL/TP placement failed for {inst_id} (ordId={ord_id}), "
+                f"Algo placement failed for {inst_id} (ordId={ord_id}), "
                 f"position closed as safety measure. Error: {algo_err}"
+            )
+
+    # Persist the trailing algoId for close-detection sibling-cancel and
+    # restart-recovery. Outside the OKXClient ctx so the DB write doesn't
+    # contend with the OKX HTTP client's connection pool teardown.
+    # Failure here is non-fatal — same invariant the merkle audit honours.
+    if use_trailing and trail_algo_id:
+        try:
+            storage.insert_trailing_algo(
+                algo_id=trail_algo_id,
+                session_id=session_id,
+                inst_id=inst_id,
+                callback_ratio=callback_ratio or "",
+                ts_iso=datetime.now(timezone.utc).isoformat(timespec="seconds"),
+                signal_id=cl_ord_id,
+                parent_ord_id=ord_id,
+            )
+        except Exception as persist_err:
+            logger.warning(
+                "trailing algo persist failed (non-fatal): %s", persist_err
             )
 
     # Moat-2: Merkle audit leaf for the manual /execute/order path.
@@ -251,15 +329,153 @@ async def execute_from_simulation(
     return {
         "order": order,
         "algo": algo_result,
+        "trailing_algo_id": trail_algo_id,
         "details": {
             "inst_id": inst_id,
             "side": side,
             "size": sz,
             "entry_price": current_price,
             "sl_price": sl_price,
-            "tp_price": tp_price,
+            "tp_price": tp_price if not use_trailing else None,
+            "callback_ratio": callback_ratio,
             "leverage": req.leverage,
             "td_mode": td_mode,
             "strategy": req.strategy,
+            "tp_source": req.tp_source,
         },
     }
+
+
+async def build_dry_run_payload(
+    session_id: str,
+    req: SimToExecRequest,
+    current_price: Optional[float] = None,
+) -> dict:
+    """Phase 2.2 dry-run entrypoint. Computes the OKX request bodies that
+    `execute_from_simulation` *would* send for this signal — without firing
+    any POST. OKX read endpoints (mark price + instrument info) are still
+    called because tickSz/ctVal cannot be derived without them, and they're
+    cheap GETs.
+
+    Returns the three request bodies (`order_request`, `sl_algo_request`,
+    `trailing_algo_request`) and a `details` block mirroring the live path.
+    The Phase 2.2 monitor diffs these against the simulator ledger to flag
+    parity drift over a 7-day window.
+    """
+    creds = get_api_credentials(session_id)
+    inst_id = _pruviq_to_okx_inst_id(req.symbol)
+    side = "sell" if req.direction == "short" else "buy"
+    close_side = "buy" if req.direction == "short" else "sell"
+    td_mode = req.td_mode if req.td_mode in ("isolated", "cross") else "isolated"
+
+    async with OKXClient(**creds) as client:
+        if not current_price or current_price <= 0:
+            current_price = await client.get_mark_price(inst_id)
+        info = await client.get_instrument_info(inst_id)
+        tick_sz = info.get("tickSz", 0.01)
+        sz = await _calc_contract_sz(
+            client, inst_id, req.position_size_usdt, req.leverage, current_price,
+        )
+
+    sl_price, tp_price = _calc_sl_tp_prices(
+        current_price, req.direction, req.sl_pct, req.tp_pct, tick_sz=tick_sz,
+    )
+    use_trailing = req.tp_source == "trailing" and req.trail_pct
+    callback_ratio = (
+        _trail_pct_to_callback_ratio(req.trail_pct) if use_trailing else None
+    )
+
+    order_request = {
+        "instId": inst_id,
+        "tdMode": td_mode,
+        "side": side,
+        "ordType": "market",
+        "sz": sz,
+    }
+    if use_trailing:
+        sl_algo_request = {
+            "instId": inst_id,
+            "tdMode": td_mode,
+            "side": close_side,
+            "ordType": "conditional",
+            "sz": sz,
+            "slTriggerPx": sl_price,
+            "slOrdPx": "-1",
+        }
+        trailing_algo_request = {
+            "instId": inst_id,
+            "tdMode": td_mode,
+            "side": close_side,
+            "ordType": "move_order_stop",
+            "sz": sz,
+            "callbackRatio": callback_ratio,
+        }
+    else:
+        sl_algo_request = {
+            "instId": inst_id,
+            "tdMode": td_mode,
+            "side": close_side,
+            "ordType": "conditional",
+            "sz": sz,
+            "slTriggerPx": sl_price,
+            "slOrdPx": "-1",
+            "tpTriggerPx": tp_price,
+            "tpOrdPx": "-1",
+        }
+        trailing_algo_request = None
+
+    return {
+        "order_request": order_request,
+        "sl_algo_request": sl_algo_request,
+        "trailing_algo_request": trailing_algo_request,
+        "details": {
+            "inst_id": inst_id,
+            "side": side,
+            "size": sz,
+            "entry_price": current_price,
+            "sl_price": sl_price,
+            "tp_price": tp_price if not use_trailing else None,
+            "callback_ratio": callback_ratio,
+            "leverage": req.leverage,
+            "td_mode": td_mode,
+            "strategy": req.strategy,
+            "tp_source": req.tp_source,
+        },
+    }
+
+
+async def cancel_trailing_for_position(
+    session_id: str, parent_ord_id: str
+) -> dict:
+    """Phase 2.1.4: when a position closes (SL hit, manual close, OKX-managed
+    exit), cancel the sibling trailing algo so it doesn't leak as an orphan.
+
+    Looked-up via the entry order's ordId (parent_ord_id). If no trailing
+    was armed for this position (fixed SL+TP path), this is a no-op.
+
+    Failure to cancel is non-fatal here — reconciler.py sweeps orphan
+    positions on its next tick (Phase 2.2 monitor will surface algo orphans
+    similarly).
+    """
+    row = storage.find_trailing_by_parent(parent_ord_id)
+    if not row:
+        return {"cancelled": False, "reason": "no_trailing_for_position"}
+
+    creds = get_api_credentials(session_id)
+    async with OKXClient(**creds) as client:
+        try:
+            await client.cancel_algo_orders(
+                algo_ids=[row["algo_id"]], inst_id=row["inst_id"],
+            )
+            storage.update_trailing_state(row["algo_id"], "cancelled")
+            return {"cancelled": True, "algo_id": row["algo_id"]}
+        except Exception as cancel_err:
+            logger.warning(
+                "trailing cancel failed for algoId=%s (parent=%s): %s",
+                row["algo_id"], parent_ord_id, cancel_err,
+            )
+            return {
+                "cancelled": False,
+                "reason": "okx_cancel_error",
+                "error": str(cancel_err),
+            }
