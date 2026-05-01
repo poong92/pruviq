@@ -343,9 +343,9 @@ export const ko: Record<TranslationKey, string> = {
   "fees.title1": "수수료 비교.",
   "fees.title2": "매 거래마다 절약.",
   "fees.desc":
-    "현물 & 선물 수수료 한눈에. PRUVIQ 추천 링크로 바이낸스 가입 시 최대 19% 할인.",
+    "현물 & 선물 수수료 한눈에. PRUVIQ 추천 코드로 바이낸스 가입 시 최대 19% 할인.",
   "fees.disclosure":
-    "제휴 공개: PRUVIQ는 추천 링크로 가입 시 거래소로부터 수수료를 받습니다. 회원의 수수료 할인에는 영향이 없습니다.",
+    "제휴 공개: PRUVIQ는 추천 코드로 가입 시 거래소로부터 수수료를 받습니다. 회원의 수수료 할인에는 영향이 없습니다.",
   "fees.ctaSimulate": "무료 시뮬레이션 시작",
   "fees.compare_title": "거래소 비교",
   "fees.compare_desc":
@@ -520,7 +520,7 @@ export const ko: Record<TranslationKey, string> = {
     "업계 표준: 프로모터 20% | 당신 0% | 당신은 알지 못함",
 
   "fees.affiliate_disclosure":
-    "제휴 공개: PRUVIQ는 바이낸스 추천 링크로 가입 시 1% 커미션을 받습니다. 회원의 수수료 할인(현물 19%, 선물 9%)에는 영향이 없습니다. 투자 조언이 아닙니다. 암호화폐 거래는 상당한 손실 위험을 수반합니다.",
+    "제휴 공개: PRUVIQ는 바이낸스 추천 코드로 가입 시 1% 커미션을 받습니다. 회원의 수수료 할인(현물 19%, 선물 9%)에는 영향이 없습니다. 투자 조언이 아닙니다. 암호화폐 거래는 상당한 손실 위험을 수반합니다.",
 
   // Changelog
   "changelog.tag": "변경 이력",
