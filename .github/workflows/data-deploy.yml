@@ -51,7 +51,7 @@ jobs:
         if: github.event_name == 'push'
         run: |
           set -euo pipefail
-          changed=$(git diff --name-only HEAD~1 HEAD | grep -E '^(public/data/|src/|astro\.config\.mjs|wrangler\.toml|package(-lock)?\.json)' || true)
+          changed=$(git diff --name-only HEAD~1 HEAD | grep -E '^(public/data/|public/_worker\.js|src/|astro\.config\.mjs|wrangler\.toml|package(-lock)?\.json)' || true)
           if [ -z "$changed" ]; then
             echo "no deploy-relevant files changed; skipping deploy"
             echo "skip=true" >> "$GITHUB_OUTPUT"
