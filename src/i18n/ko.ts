@@ -48,7 +48,7 @@ export const ko: Record<TranslationKey, string> = {
   "hero.stat1_sub": "BTC, ETH 포함 알트코인",
   "hero.stat4_sub": "검증된 전략 전체",
   "hero.stat5_sub": "2024년 1월부터 1시간봉",
-  "hero.stat6_sub": "숨겨진 비용이나 프리미엄 없음",
+  "hero.stat6_sub": "숨겨진 비용도, 유료 기능도 없음",
 
   // Hero (centered layout)
   "hero.h1_line1": "모든 크립토 전략을 테스트하세요",
@@ -318,7 +318,7 @@ export const ko: Record<TranslationKey, string> = {
   "demo.desc":
     "손절과 익절을 조정하여 성과 변화를 확인하세요. {coins}개 코인, {range} 데이터, 수수료 포함 시뮬레이션.",
   "demo.sl": "손절",
-  "demo.tp": "익절 (TP)",
+  "demo.tp": "익절",
   "demo.chart_title": "누적 수익률 (%)",
   "demo.loading": "시뮬레이션 데이터 로딩 중...",
   "demo.error": "데모 데이터 로딩 실패.",
@@ -636,7 +636,7 @@ export const ko: Record<TranslationKey, string> = {
     "PRUVIQ는 독립적인 트레이딩 리서치 프로젝트입니다. 과장 없이, 신호 없이, 약속 없이. 이 사이트에 공개되는 모든 전략은 실제 수수료와 슬리피지를 반영한 과거 데이터로 먼저 검증됩니다.",
   "about.team_stat1_label": "백테스트 전략",
   "about.team_stat1_val": "88+",
-  "about.team_stat2_label": "커버 코인",
+  "about.team_stat2_label": "지원 코인",
   "about.team_stat2_val": "{coins}",
   "about.team_stat3_label": "시뮬레이터 실행 수",
   "about.team_stat3_val": "100만+",
@@ -1092,9 +1092,9 @@ export const ko: Record<TranslationKey, string> = {
   "methodology.label_return": "총 수익률 %",
   "methodology.label_mdd": "최대 드로다운",
   "methodology.label_trades": "거래 수",
-  "methodology.label_sharpe": "Sharpe Ratio",
-  "methodology.label_sortino": "Sortino Ratio",
-  "methodology.label_calmar": "Calmar Ratio",
+  "methodology.label_sharpe": "샤프 비율",
+  "methodology.label_sortino": "소르티노 비율",
+  "methodology.label_calmar": "칼마 비율",
   "methodology.advanced_title": "위험 조정 지표",
 
   "methodology.validation_title": "강건성 검증",
@@ -1504,7 +1504,7 @@ export const ko: Record<TranslationKey, string> = {
   "simulator.placeholder.searchCoins": "코인 검색...",
   "simulator.placeholder.symbol": "심볼...",
   "simulator.lookAheadWarning":
-    "현재(미완성) 캔들 데이터를 사용하면 실거래에서 look-ahead bias가 발생할 수 있습니다",
+    "현재 진행 중인 캔들(미완성)을 사용하면 선행 편향(look-ahead bias)이 발생할 수 있습니다",
   "simulator.label.inSample": "학습 구간",
   "simulator.label.outOfSample": "검증 구간",
   "simulator.aria.resetChartZoom": "차트 줌 초기화",
@@ -1587,7 +1587,7 @@ export const ko: Record<TranslationKey, string> = {
 
   // Coins page
   "coins.explore_next":
-    "관심 있는 코인을 찾으셨나요? 전략에서 테스트해 보세요.",
+    "마음에 드는 코인을 찾으셨나요? 시뮬레이터에서 바로 테스트해 보세요.",
   "coins.noscript_title":
     "코인 둘러보기 (검색·필터는 JavaScript 로 활성화됩니다)",
   "coins.noscript_desc":
@@ -1704,7 +1704,7 @@ export const ko: Record<TranslationKey, string> = {
   "vs_3commas.why_3_title": "연구 비용 $0",
   "vs_3commas.why_3_desc":
     "월 $15-110의 3Commas는 실거래 실행에 가치 있습니다. 하지만 전략이 통하지 않는다는 걸 확인하는 데 비용을 쓰는 건 비효율적입니다. PRUVIQ로 연구 단계를 무료로 처리하세요.",
-  "vs_3commas.when_pruviq": "PRUVIQ를 선택하세요, 만약...",
+  "vs_3commas.when_pruviq": "이런 경우 PRUVIQ를 선택하세요",
   "vs_3commas.when_pruviq_1":
     "유료 봇 구독 전에 무료로 전략을 검증하고 싶을 때",
   "vs_3commas.when_pruviq_2":
@@ -1773,7 +1773,7 @@ export const ko: Record<TranslationKey, string> = {
   "vs_coinrule.row_community": "커뮤니티",
   "vs_coinrule.row_community_p": "공개 랭킹 & 리더보드",
   "vs_coinrule.row_community_other": "규칙 템플릿 라이브러리 및 커뮤니티",
-  "vs_coinrule.when_pruviq": "PRUVIQ를 선택하세요, 만약...",
+  "vs_coinrule.when_pruviq": "이런 경우 PRUVIQ를 선택하세요",
   "vs_coinrule.when_pruviq_1": "코딩 없이 무료로 암호화폐 백테스트를 원할 때",
   "vs_coinrule.when_pruviq_2":
     "{coins}개 코인에 전략을 동시에 테스트하고 싶을 때",
@@ -1857,7 +1857,7 @@ export const ko: Record<TranslationKey, string> = {
   "vs_cryptohopper.why_3_title": "투명한 실패가 신뢰를 만듭니다",
   "vs_cryptohopper.why_3_desc":
     "PRUVIQ는 성공한 전략과 함께 실패한 전략도 공개합니다. 전략이 어디서 깨지는지 아는 것은 어디서 이기는지 아는 것만큼 가치 있습니다.",
-  "vs_cryptohopper.when_pruviq": "PRUVIQ를 선택하세요, 만약...",
+  "vs_cryptohopper.when_pruviq": "이런 경우 PRUVIQ를 선택하세요",
   "vs_cryptohopper.when_pruviq_1":
     "클라우드 봇 구독 전에 무료로 전략을 연구하고 싶을 때",
   "vs_cryptohopper.when_pruviq_2":
@@ -1927,7 +1927,7 @@ export const ko: Record<TranslationKey, string> = {
   "vs_gainium.row_community": "커뮤니티",
   "vs_gainium.row_community_p": "공개 랭킹 & 리더보드",
   "vs_gainium.row_community_other": "커뮤니티 및 봇 설정 공유",
-  "vs_gainium.when_pruviq": "PRUVIQ를 선택하세요, 만약...",
+  "vs_gainium.when_pruviq": "이런 경우 PRUVIQ를 선택하세요",
   "vs_gainium.when_pruviq_1": "코딩 없이 무료로 암호화폐 백테스트를 원할 때",
   "vs_gainium.when_pruviq_2":
     "{coins}개 코인에 전략을 동시에 테스트하고 싶을 때",
@@ -1990,7 +1990,7 @@ export const ko: Record<TranslationKey, string> = {
   "vs_streak.row_community": "커뮤니티",
   "vs_streak.row_community_p": "공개 랭킹 & 리더보드",
   "vs_streak.row_community_other": "TradingView 커뮤니티 스크립트",
-  "vs_streak.when_pruviq": "PRUVIQ를 선택하세요, 만약...",
+  "vs_streak.when_pruviq": "이런 경우 PRUVIQ를 선택하세요",
   "vs_streak.when_pruviq_1": "코딩 없이 무료로 암호화폐 백테스트를 원할 때",
   "vs_streak.when_pruviq_2":
     "{coins}개 코인에 전략을 동시에 테스트하고 싶을 때",
