@@ -191,8 +191,8 @@ export default function ResultsPanel({
             fontSize: 11,
           },
           grid: {
-            vertLines: { color: getCssVar("--color-bg-hover") },
-            horzLines: { color: getCssVar("--color-bg-hover") },
+            vertLines: { color: getCssVar("--color-chart-grid") },
+            horzLines: { color: getCssVar("--color-chart-grid") },
           },
         });
 
@@ -311,8 +311,8 @@ export default function ResultsPanel({
           fontSize: 10,
         },
         grid: {
-          vertLines: { color: getCssVar("--color-bg-hover") },
-          horzLines: { color: getCssVar("--color-bg-hover") },
+          vertLines: { color: getCssVar("--color-chart-grid") },
+          horzLines: { color: getCssVar("--color-chart-grid") },
         },
         rightPriceScale: { borderColor: getCssVar("--color-border") },
         timeScale: { visible: false },
