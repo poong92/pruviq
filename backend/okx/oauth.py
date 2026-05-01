@@ -146,14 +146,12 @@ def generate_oauth_params(redirect_after: str = "", lang: str = "en") -> dict:
         code_verifier, code_challenge = _gen_pkce_pair()
         params["code_challenge"] = code_challenge
         params["code_challenge_method"] = "S256"
-    # OAuth `channelId` — per OKX BD 2026-04-28 (Jun Kim) this is likely
-    # the affiliate referral code, separate from broker code. Two-stage:
-    # if OKX_AFFILIATE_CHANNEL_ID set → use it; else fallback to
-    # OKX_BROKER_CODE_OAUTH (legacy behavior, preserved until affiliate
-    # registration completes).
-    _channel_id = OKX_AFFILIATE_CHANNEL_ID or OKX_BROKER_CODE_OAUTH
-    if _channel_id:
-        params["channelId"] = _channel_id
+    # channelId 제거 (2026-05-01): Jun Kim(OKX BD) 확인 — channelId는 affiliate
+    # 레퍼럴 코드이며 broker code와 별개. 브로커 코드를 channelId로 넘기면
+    # OKX가 consent 화면 대신 /account/users로 silent redirect함.
+    # affiliate 등록 완료 후 OKX_AFFILIATE_CHANNEL_ID 발급받으면 그때 추가.
+    if OKX_AFFILIATE_CHANNEL_ID:
+        params["channelId"] = OKX_AFFILIATE_CHANNEL_ID
     save_csrf_state(state, redirect_after or "", lang, code_verifier)
     return params
 
@@ -176,14 +174,12 @@ def generate_auth_url(redirect_after: str = "", lang: str = "en") -> str:
         code_verifier, code_challenge = _gen_pkce_pair()
         params["code_challenge"] = code_challenge
         params["code_challenge_method"] = "S256"
-    # OAuth `channelId` — per OKX BD 2026-04-28 (Jun Kim) this is likely
-    # the affiliate referral code, separate from broker code. Two-stage:
-    # if OKX_AFFILIATE_CHANNEL_ID set → use it; else fallback to
-    # OKX_BROKER_CODE_OAUTH (legacy behavior, preserved until affiliate
-    # registration completes).
-    _channel_id = OKX_AFFILIATE_CHANNEL_ID or OKX_BROKER_CODE_OAUTH
-    if _channel_id:
-        params["channelId"] = _channel_id
+    # channelId 제거 (2026-05-01): Jun Kim(OKX BD) 확인 — channelId는 affiliate
+    # 레퍼럴 코드이며 broker code와 별개. 브로커 코드를 channelId로 넘기면
+    # OKX가 consent 화면 대신 /account/users로 silent redirect함.
+    # affiliate 등록 완료 후 OKX_AFFILIATE_CHANNEL_ID 발급받으면 그때 추가.
+    if OKX_AFFILIATE_CHANNEL_ID:
+        params["channelId"] = OKX_AFFILIATE_CHANNEL_ID
     save_csrf_state(state, redirect_after or "", lang, code_verifier)
     return f"{OKX_OAUTH_AUTHORIZE}?{urlencode(params)}"
 
@@ -241,14 +237,12 @@ def generate_auth_url_experimental(
         code_verifier, code_challenge = _gen_pkce_pair()
         params["code_challenge"] = code_challenge
         params["code_challenge_method"] = "S256"
-    # OAuth `channelId` — per OKX BD 2026-04-28 (Jun Kim) this is likely
-    # the affiliate referral code, separate from broker code. Two-stage:
-    # if OKX_AFFILIATE_CHANNEL_ID set → use it; else fallback to
-    # OKX_BROKER_CODE_OAUTH (legacy behavior, preserved until affiliate
-    # registration completes).
-    _channel_id = OKX_AFFILIATE_CHANNEL_ID or OKX_BROKER_CODE_OAUTH
-    if _channel_id:
-        params["channelId"] = _channel_id
+    # channelId 제거 (2026-05-01): Jun Kim(OKX BD) 확인 — channelId는 affiliate
+    # 레퍼럴 코드이며 broker code와 별개. 브로커 코드를 channelId로 넘기면
+    # /account/users drop 발생. affiliate 등록 완료 후 OKX_AFFILIATE_CHANNEL_ID
+    # 발급받으면 그때 추가.
+    if OKX_AFFILIATE_CHANNEL_ID:
+        params["channelId"] = OKX_AFFILIATE_CHANNEL_ID
 
     if variant == "read_only_trade":
         params["scope"] = "read_only,trade"
