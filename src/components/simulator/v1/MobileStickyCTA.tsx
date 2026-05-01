@@ -9,6 +9,7 @@
 // - Honors reduced-motion: fades rather than slides.
 
 import { useEffect, useState } from "preact/hooks";
+import { AUTOTRADE_COMING_SOON } from "../../../config/feature-flags";
 import {
   getLocalizedPath,
   useTranslations,
@@ -24,8 +25,9 @@ interface Props {
 // 2026-04-23: auto-trading on hold. Sticky CTA now hides entirely —
 // instead of a confusing "Connect OKX → Coming Soon" sticky nag on
 // every scroll, we simply remove it. The bottom OKXConnectCTA still
-// announces the feature once. Flip AUTOTRADE_COMING_SOON to re-enable.
-const AUTOTRADE_COMING_SOON = true;
+// announces the feature once.
+// Phase 3b: AUTOTRADE_COMING_SOON SSoT-imported (env-driven via
+// PUBLIC_AUTOTRADE_LIVE in data-deploy.yml).
 
 export default function MobileStickyCTA({ lang, presetId }: Props) {
   const t = useTranslations(lang);
