@@ -1014,6 +1014,9 @@ textarea:focus-visible,
 .row-hover:hover {
   background-color: rgba(255,255,255,0.02);
 }
+[data-theme="light"] .row-hover:hover {
+  background-color: rgba(0,0,0,0.04);
+}
 
 /* ─── Active press feedback — scoped to interactive elements only ─── */
 .btn, .btn-primary, .btn-ghost, .btn-lg, .btn-md, .btn-sm,
@@ -1473,6 +1476,9 @@ textarea:focus-visible {
 }
 .section-elevated {
   background: rgba(255,255,255,0.025);
+}
+[data-theme="light"] .section-elevated {
+  background: rgba(0,0,0,0.025);
 }
 .section-accent-glow {
   background: linear-gradient(135deg, rgba(44,181,232,0.03) 0%, transparent 60%);
@@ -2171,6 +2177,10 @@ a:not(.btn):not(.card-hover):not(nav a):hover {
   transform: translateY(-2px);
   box-shadow: 0 0 0 1px rgba(255,255,255,0.08), 0 8px 24px rgba(0,0,0,0.3);
   background: linear-gradient(135deg, var(--color-bg-elevated), rgba(255,255,255,0.03));
+}
+[data-theme="light"] .preset-card-enhanced:hover {
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.10);
+  background: linear-gradient(135deg, var(--color-bg-elevated), rgba(0,0,0,0.02));
 }
 .preset-card-enhanced.preset-glow-long:hover {
   border-color: rgba(44,181,232,0.25);
