@@ -906,7 +906,7 @@ export default function BuilderPanel(props: Props) {
                 <span class="spinner" />
                 {props.progressLabels[props.progressStep] || t.running}
                 {(props.elapsedSec ?? 0) > 0 && (
-                  <span class="text-[10px] opacity-70 font-normal">
+                  <span class="text-[10px] font-normal text-[--color-text-muted]">
                     {props.elapsedSec}s
                   </span>
                 )}
