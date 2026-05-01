@@ -1399,7 +1399,7 @@ textarea:focus-visible {
 }
 .btn-ghost:hover {
   border-color: var(--color-text-muted);
-  background: rgba(255,255,255,0.04);
+  background: var(--color-bg-subtle);
   transform: translateY(-1px);
 }
 
@@ -2047,6 +2047,9 @@ details[open] summary .faq-chevron {
 a:not(.btn):not(.card-hover):not(nav a):hover {
   text-shadow: 0 0 12px rgba(44,181,232,0.15);
 }
+[data-theme="light"] a:not(.btn):not(.card-hover):not(nav a):hover {
+  text-shadow: 0 0 10px rgba(14,116,144,0.20);
+}
 
 /* Button hover: micro-lift + glow intensify */
 .btn-ghost:hover {
@@ -2054,17 +2057,28 @@ a:not(.btn):not(.card-hover):not(nav a):hover {
   background: rgba(44,181,232,0.06);
   box-shadow: 0 0 12px rgba(44,181,232,0.08);
 }
+[data-theme="light"] .btn-ghost:hover {
+  background: var(--color-accent-subtle);
+  box-shadow: 0 0 10px rgba(14,116,144,0.10);
+}
 
 /* Card hover: border gradient sweep */
 .card-enterprise:hover {
   border-color: var(--color-accent);
   box-shadow: 0 0 0 1px rgba(44,181,232,0.15), 0 8px 24px rgba(0,0,0,0.15);
 }
+[data-theme="light"] .card-enterprise:hover {
+  box-shadow: 0 0 0 1px rgba(14,116,144,0.20), 0 4px 16px rgba(0,0,0,0.08);
+}
 
 /* Stat glass hover: accent tint */
 .stat-glass:hover {
   border-color: rgba(44,181,232,0.15);
   background: rgba(44,181,232,0.04);
+}
+[data-theme="light"] .stat-glass:hover {
+  border-color: rgba(14,116,144,0.25);
+  background: rgba(14,116,144,0.04);
 }
 
 /* ─── Section warm glow (amber/gold tint for trust sections) ─── */
