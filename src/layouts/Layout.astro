@@ -750,7 +750,7 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
           <p class="text-[--color-text-muted] text-xs mt-2 font-mono">
             {t('footer.legal_entity')}
           </p>
-          <p class="text-[--color-text-muted] text-xs opacity-60">
+          <p class="text-[--color-text-muted] text-xs">
             {t('footer.legal_entity_notice')}
           </p>
         </div>
@@ -758,8 +758,8 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
         <div class="border-t border-[--color-border] pt-6 flex flex-col md:flex-row justify-between items-center gap-3 text-xs text-[--color-text-muted]">
           <p>{t('footer.disclaimer')}</p>
           <div class="flex items-center gap-4 flex-wrap">
-            <span class="font-mono opacity-60">{lang === 'ko' ? '독립 리서치 플랫폼' : 'Independent Research'}</span>
-            <span class="font-mono opacity-70">v0.3.0</span>
+            <span class="font-mono">{lang === 'ko' ? '독립 리서치 플랫폼' : 'Independent Research'}</span>
+            <span class="font-mono">v0.3.0</span>
             {lang === 'ko' && <span>운영: PRUVIQ</span>}
             <p>{t('footer.affiliate')} <a href={feesPath} class="text-[--color-accent] hover:underline">{t('footer.details')}</a></p>
             <span>&copy; {currentYear} PRUVIQ</span>

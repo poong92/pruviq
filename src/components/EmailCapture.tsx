@@ -141,9 +141,7 @@ export default function EmailCapture({ lang }: Props) {
           {submitting ? "..." : t.subscribe}
         </button>
       </form>
-      <p class="text-xs text-[--color-text-muted] mt-2 opacity-60">
-        {t.disclaimer}
-      </p>
+      <p class="text-xs text-[--color-text-muted] mt-2">{t.disclaimer}</p>
     </div>
   );
 }

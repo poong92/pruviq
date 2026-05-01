@@ -433,7 +433,7 @@ export default function ResultsPanel({
                     if (!first || !last) return null;
                     const fmt = (t: string | number) => String(t).slice(0, 10);
                     return (
-                      <span class="font-mono text-[--color-text-muted] opacity-60">
+                      <span class="font-mono text-[--color-text-muted]">
                         {fmt(first)} → {fmt(last)}
                       </span>
                     );
@@ -1182,7 +1182,7 @@ export default function ResultsPanel({
                     {result.max_drawdown_pct.toFixed(1)}%
                   </span>
                   {result.max_drawdown_pct > 100 && (
-                    <span class="ml-1.5 text-[10px] opacity-70">
+                    <span class="ml-1.5 text-[10px] text-[--color-text-muted]">
                       ({t.cumulativePct})
                     </span>
                   )}
@@ -1562,7 +1562,7 @@ export default function ResultsPanel({
             <div class="text-[--color-text-muted] text-sm font-mono">
               {t.noResults}
             </div>
-            <div class="text-[--color-text-muted] text-xs font-mono opacity-60">
+            <div class="text-[--color-text-muted] text-xs font-mono">
               {t.noResultsHint ?? ""}
             </div>
           </div>
