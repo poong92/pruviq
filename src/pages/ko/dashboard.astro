@@ -1,6 +1,8 @@
 ---
-// Dashboard is in beta — hidden from public until backend is validated
-return Astro.redirect('/ko/', 302);
+// Phase 3a un-hide (autotrading redesign): EN dashboard un-hid 2026-04-17,
+// KO stayed redirected. AUTOTRADE_COMING_SOON in OKXConnectButton still
+// gates the OAuth widgets, so unconnected KO visitors see a coming-soon
+// state matching the EN dashboard rather than a 302 to /ko/.
 import Layout from '../../layouts/Layout.astro';
 import OKXConnectButton from '../../components/OKXConnectButton';
 import AutoTradingStatus from '../../components/AutoTradingStatus';
