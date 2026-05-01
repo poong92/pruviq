@@ -180,7 +180,7 @@ const presetDirColors: Record<string, string> = { long: '--color-accent', short:
         <div class="flex items-center gap-1.5 flex-wrap">
           <span class="font-mono text-xs text-[--color-text-muted] mr-1">Status:</span>
           <button data-filter-group="status" data-filter-value="all" aria-label="Show all strategies"
-            class="font-mono text-xs border rounded px-3 py-2.5 transition-colors bg-[--color-accent] text-black border-[--color-accent]">
+            class="font-mono text-xs border rounded px-3 py-2.5 transition-colors bg-[--color-accent] text-[--color-accent-text] border-[--color-accent]">
             All
           </button>
           <button data-filter-group="status" data-filter-value="verified" aria-label="Show verified strategies only"
@@ -195,7 +195,7 @@ const presetDirColors: Record<string, string> = { long: '--color-accent', short:
         <div class="flex items-center gap-1.5 flex-wrap">
           <span class="font-mono text-xs text-[--color-text-muted] mr-1">Direction:</span>
           <button data-filter-group="direction" data-filter-value="all" aria-label="Show all directions"
-            class="font-mono text-xs border rounded px-3 py-2.5 transition-colors bg-[--color-accent] text-black border-[--color-accent]">
+            class="font-mono text-xs border rounded px-3 py-2.5 transition-colors bg-[--color-accent] text-[--color-accent-text] border-[--color-accent]">
             All
           </button>
           <button data-filter-group="direction" data-filter-value="long" aria-label="Show long strategies only"
@@ -214,7 +214,7 @@ const presetDirColors: Record<string, string> = { long: '--color-accent', short:
         <div class="flex items-center gap-1.5 flex-wrap">
           <span class="font-mono text-xs text-[--color-text-muted] mr-1">Sort:</span>
           <button data-sort-value="default" aria-label="Sort by default order"
-            class="font-mono text-xs border rounded px-3 py-2.5 transition-colors bg-[--color-accent] text-black border-[--color-accent]" id="sort-default">
+            class="font-mono text-xs border rounded px-3 py-2.5 transition-colors bg-[--color-accent] text-[--color-accent-text] border-[--color-accent]" id="sort-default">
             Default
           </button>
           <button data-sort-value="winrate" aria-label="Sort by win rate descending"
@@ -376,7 +376,7 @@ const presetDirColors: Record<string, string> = { long: '--color-accent', short:
                     class={`relative flex flex-col group preset-card-enhanced ${glowClass}`}
                   >
                     {isTodaysPick && (
-                      <span class="absolute -top-2.5 left-3 font-mono text-[10px] tracking-wider px-2 py-0.5 rounded-full bg-[--color-accent] text-black font-bold z-10">
+                      <span class="absolute -top-2.5 left-3 font-mono text-[10px] tracking-wider px-2 py-0.5 rounded-full bg-[--color-accent] text-[--color-accent-text] font-bold z-10">
                         {t('strategies.todays_pick')}
                       </span>
                     )}

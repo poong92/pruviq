@@ -193,7 +193,7 @@ const presetDirColors: Record<string, string> = { long: '--color-accent', short:
         <div class="flex items-center gap-1.5 flex-wrap">
           <span class="font-mono text-xs text-[--color-text-muted] mr-1">상태:</span>
           <button data-filter-group="status" data-filter-value="all" aria-label="모든 전략 표시"
-            class="font-mono text-xs border rounded px-3 py-2.5 transition-colors bg-[--color-accent] text-black border-[--color-accent]">전체</button>
+            class="font-mono text-xs border rounded px-3 py-2.5 transition-colors bg-[--color-accent] text-[--color-accent-text] border-[--color-accent]">전체</button>
           <button data-filter-group="status" data-filter-value="verified" aria-label="검증된 전략만 표시"
             class="font-mono text-xs border border-[--color-border] rounded px-3 py-2.5 text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">검증됨</button>
           <button data-filter-group="status" data-filter-value="killed" aria-label="종료된 전략만 표시"
@@ -202,7 +202,7 @@ const presetDirColors: Record<string, string> = { long: '--color-accent', short:
         <div class="flex items-center gap-1.5 flex-wrap">
           <span class="font-mono text-xs text-[--color-text-muted] mr-1">정렬:</span>
           <button data-sort-value="default" aria-label="기본 정렬"
-            class="font-mono text-xs border rounded px-3 py-2.5 transition-colors bg-[--color-accent] text-black border-[--color-accent]">기본</button>
+            class="font-mono text-xs border rounded px-3 py-2.5 transition-colors bg-[--color-accent] text-[--color-accent-text] border-[--color-accent]">기본</button>
           <button data-sort-value="winrate" aria-label="승률 내림차순 정렬"
             class="font-mono text-xs border border-[--color-border] rounded px-3 py-2.5 text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">승률 ↓</button>
           <button data-sort-value="pf" aria-label="수익팩터 내림차순 정렬"
@@ -352,7 +352,7 @@ const presetDirColors: Record<string, string> = { long: '--color-accent', short:
                     class={`relative flex flex-col group preset-card-enhanced ${glowClass}`}
                   >
                     {isTodaysPick && (
-                      <span class="absolute -top-2.5 left-3 font-mono text-[10px] tracking-wider px-2 py-0.5 rounded-full bg-[--color-accent] text-black font-bold z-10">
+                      <span class="absolute -top-2.5 left-3 font-mono text-[10px] tracking-wider px-2 py-0.5 rounded-full bg-[--color-accent] text-[--color-accent-text] font-bold z-10">
                         {t('strategies.todays_pick')}
                       </span>
                     )}
