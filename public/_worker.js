@@ -99,7 +99,9 @@ export default {
     if (url.pathname === "/events") {
       if (request.method === "POST") return handleEventsPost(request);
       if (request.method === "OPTIONS") return handleEventsOptions();
-      return new Response("method not allowed", { status: 405 });
+      // Return 204 for GET/HEAD (Lighthouse crawler, beacon retries) to avoid
+      // console errors in errors-in-console BP audit.
+      return new Response(null, { status: 204 });
     }
 
     // Proxy /api/* (but do not proxy the docs page at /api or /api/)
