@@ -590,7 +590,7 @@ export default function MarketDashboard({
               <span class="text-xs font-semibold text-[--color-text-muted] uppercase tracking-wider">
                 {l.macroTitle}
               </span>
-              <span class="text-[0.6875rem] text-[--color-text-muted] opacity-60">
+              <span class="text-[0.6875rem] text-[--color-text-muted]">
                 {l.macroNote}
               </span>
             </div>
@@ -696,7 +696,7 @@ export default function MarketDashboard({
               <span class="text-xs font-semibold text-[--color-text-muted] uppercase tracking-wider">
                 {l.economicCalendar}
               </span>
-              <span class="text-[0.6875rem] text-[--color-text-muted] opacity-60">
+              <span class="text-[0.6875rem] text-[--color-text-muted]">
                 {l.calendarNote}
               </span>
             </div>
@@ -935,7 +935,7 @@ export default function MarketDashboard({
               {l.lastUpdated}: {refreshAgo} {l.ago}
             </p>
           )}
-          <p class="text-[11px] text-[--color-text-muted] text-center mt-1 opacity-60">
+          <p class="text-[11px] text-[--color-text-muted] text-center mt-1">
             {l.disclaimer}
           </p>
         </div>
