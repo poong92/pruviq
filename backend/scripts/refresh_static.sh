@@ -252,52 +252,85 @@ if [[ "$HAS_CHANGES" == "false" ]]; then
     exit 0
 fi
 
-# --- Step 2: Commit data-only changes to PR branch ---
-# Direct push to main blocked by branch ruleset (2026-04-20+). Fix: push to
-# auto/mac-data-refresh branch + keep a single automerge PR open.
-# GH Actions data-refresh-cron.yml handles news/macro (non-Binance) using
-# auto/data-refresh branch. This script handles Binance market data (Mac Mini
-# has non-US IP so Binance HTTP 451 doesn't apply).
+# --- Step 2: Commit data-only changes to PR branch via isolated worktree ---
+# Root cause of 2026-05-03 7.5h skip incident: `git checkout -B PR_BRANCH`
+# switched the main working tree to the PR branch. If the script was killed
+# mid-run (or even finished normally but Playwright later wrote visual-baseline
+# PNGs), UNCOMMITTED became non-zero → auto-recovery condition never met →
+# cron skipped every 20min for 7.5h.
+#
+# Fix: git worktree add to an isolated temp dir. Main working tree stays on
+# main at ALL times. Even if the script is killed, the worktree is cleaned up
+# on next run and main branch is unaffected.
 DATA_FILES_LIST="public/data/market.json public/data/coins-stats.json public/data/macro.json public/data/news.json public/data/coin-metadata.json public/data/rankings-daily.json public/data/site-stats.json"
 PR_BRANCH="auto/mac-data-refresh"
+WT_PATH="/tmp/pruviq-data-worktree"
 TS=$(date -u '+%Y-%m-%d %H:%M UTC')
 
-# Stage changed data files on current working tree (on main)
-git add $DATA_FILES_LIST 2>/dev/null
+# Collect changed data files (only those that exist and differ from HEAD)
+CHANGED_FILES=()
+for f in $DATA_FILES_LIST; do
+    if [[ -f "$REPO_DIR/$f" ]] && ! git diff --quiet "$f" 2>/dev/null; then
+        CHANGED_FILES+=("$f")
+    fi
+done
 
-if git diff --cached --quiet 2>/dev/null; then
+if [[ ${#CHANGED_FILES[@]} -eq 0 ]]; then
     log "No data changes — nothing to push"
     exit 0
 fi
 
-# Save staged changes as patch, then restore working tree to HEAD
-git diff --cached > /tmp/pruviq-data-refresh.patch
-git reset HEAD $DATA_FILES_LIST 2>/dev/null
+log "Changed data files: ${CHANGED_FILES[*]}"
 
-# Fetch latest main and create/reset PR branch from it
+# Clean up any stale worktree from a previous interrupted run
+if [[ -d "$WT_PATH" ]]; then
+    log "Removing stale worktree at $WT_PATH"
+    git worktree remove --force "$WT_PATH" 2>/dev/null || rm -rf "$WT_PATH"
+    git worktree prune 2>/dev/null
+fi
+
+# Fetch latest main, create/reset PR branch from origin/main
 git fetch origin main -q 2>/dev/null
-git checkout -B "$PR_BRANCH" origin/main 2>/dev/null
+if git show-ref --quiet "refs/heads/$PR_BRANCH"; then
+    git branch -f "$PR_BRANCH" origin/main 2>/dev/null
+else
+    git branch "$PR_BRANCH" origin/main 2>/dev/null
+fi
+
+git worktree add "$WT_PATH" "$PR_BRANCH" -q 2>/dev/null
 if [[ $? -ne 0 ]]; then
-    log "git checkout -B $PR_BRANCH failed"
-    git checkout main -q 2>/dev/null
-    send_alert "ERROR" "refresh_static: failed to create $PR_BRANCH"
+    log "git worktree add failed"
+    send_alert "ERROR" "refresh_static: failed to create worktree for $PR_BRANCH"
     exit 1
 fi
 
-# Apply the data changes to PR branch
-git apply /tmp/pruviq-data-refresh.patch 2>/dev/null
-git add $DATA_FILES_LIST 2>/dev/null
+# Guarantee worktree cleanup on any exit (overrides the release_lock trap)
+cleanup_worktree() {
+    git worktree remove --force "$WT_PATH" 2>/dev/null || true
+    git worktree prune 2>/dev/null || true
+    rm -f "$LOCK_FILE"
+}
+trap cleanup_worktree EXIT
 
-if git diff --cached --quiet 2>/dev/null; then
-    log "Patch applied but no staged changes — data already current"
-    git checkout main -q 2>/dev/null
-    exit 0
-fi
+# Copy changed data files into the worktree
+for f in "${CHANGED_FILES[@]}"; do
+    cp "$REPO_DIR/$f" "$WT_PATH/$f" 2>/dev/null && log "  copied: $f"
+done
 
-if ! git -c user.email='pruviq-bot@pruviq.com' -c user.name='pruviq-bot' \
-        commit -m "chore(data): mac-mini refresh [$TS]" >/dev/null 2>&1; then
-    log "git commit failed"
-    git checkout main -q 2>/dev/null
+# Commit from the worktree — main working tree stays on main throughout
+(
+    cd "$WT_PATH"
+    git add "${CHANGED_FILES[@]}" 2>/dev/null
+    if git diff --cached --quiet 2>/dev/null; then
+        log "No staged changes in worktree — data already current"
+        exit 0
+    fi
+    git -c user.email='pruviq-bot@pruviq.com' -c user.name='pruviq-bot' \
+        commit -m "chore(data): mac-mini refresh [$TS]" >/dev/null 2>&1
+)
+COMMIT_RC=$?
+if [[ $COMMIT_RC -ne 0 ]]; then
+    log "git commit failed in worktree (exit=$COMMIT_RC)"
     send_alert "ERROR" "refresh_static: git commit failed on $PR_BRANCH"
     exit 1
 fi
@@ -306,8 +339,6 @@ PUSH_OUT=$(git push -f origin "$PR_BRANCH" 2>&1)
 PUSH_RC=$?
 log "git push -f origin $PR_BRANCH exit=$PUSH_RC"
 echo "$PUSH_OUT" | while IFS= read -r _line; do log "  push: $_line"; done
-
-git checkout main -q 2>/dev/null
 
 if [[ $PUSH_RC -ne 0 ]]; then
     send_alert "ERROR" "refresh_static: push to $PR_BRANCH failed"
