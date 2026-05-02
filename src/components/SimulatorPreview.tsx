@@ -94,10 +94,6 @@ export default function SimulatorPreview() {
   const [hoveredTrade, setHoveredTrade] = useState<number | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
 
-  useEffect(() => {
-    setVisible(true);
-  }, []);
-
   const curvePath = buildPath(EQUITY_POINTS, 400);
   const flatPath = EQUITY_POINTS.map(
     (_, i) =>
