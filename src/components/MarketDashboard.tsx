@@ -248,29 +248,36 @@ const CRYPTO_SOURCES = [
 ];
 const MACRO_SOURCES = ["Bloomberg", "CNBC Economy", "MarketWatch"];
 
-// Fear & Greed gauge scale labels (i18n)
+// Fear & Greed gauge scale labels (i18n).
+// Colors use CSS variables so light/dark mode both pass WCAG AA contrast.
 const FG_SCALE = [
   {
     min: 0,
     max: 25,
     label: "Extreme Fear",
     labelKo: "극단적 공포",
-    color: "rgb(234,57,67)",
+    color: "var(--color-fg-extreme-fear)",
   },
-  { min: 25, max: 50, label: "Fear", labelKo: "공포", color: "rgb(255,140,0)" },
+  {
+    min: 25,
+    max: 50,
+    label: "Fear",
+    labelKo: "공포",
+    color: "var(--color-fg-fear)",
+  },
   {
     min: 50,
     max: 75,
     label: "Greed",
     labelKo: "탐욕",
-    color: "rgb(144,238,144)",
+    color: "var(--color-fg-greed)",
   },
   {
     min: 75,
     max: 100,
     label: "Extreme Greed",
     labelKo: "극단적 탐욕",
-    color: "rgb(22,163,74)",
+    color: "var(--color-fg-extreme-greed)",
   },
 ];
 

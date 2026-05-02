@@ -36,14 +36,16 @@ export const RISK_TOKENS: Record<PresetRisk, RiskToken> = {
   low: {
     label: { en: "Low risk", ko: "저위험" },
     hex: "#10b981",
-    badge: "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30",
+    badge:
+      "bg-emerald-500/10 text-(--badge-risk-low) border border-emerald-500/30",
     ring: "ring-1 ring-emerald-500/40",
     dot: "bg-emerald-500",
   },
   medium: {
     label: { en: "Medium risk", ko: "중위험" },
     hex: "#f59e0b",
-    badge: "bg-amber-500/10 text-amber-400 border border-amber-500/30",
+    badge:
+      "bg-amber-500/10 text-(--badge-risk-medium) border border-amber-500/30",
     ring: "ring-1 ring-amber-500/40",
     dot: "bg-amber-500",
   },
@@ -52,7 +54,8 @@ export const RISK_TOKENS: Record<PresetRisk, RiskToken> = {
     // don't collide visually with risk badges.
     label: { en: "High risk", ko: "고위험" },
     hex: "#d946ef",
-    badge: "bg-fuchsia-500/10 text-fuchsia-400 border border-fuchsia-500/30",
+    badge:
+      "bg-fuchsia-500/10 text-(--badge-risk-high) border border-fuchsia-500/30",
     ring: "ring-1 ring-fuchsia-500/40",
     dot: "bg-fuchsia-500",
   },

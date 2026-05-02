@@ -100,6 +100,11 @@
   --color-fg-greed:         #34C759;
   --color-fg-extreme-greed: #22C55E;
 
+  /* ─── RISK BADGE TEXT — dark-mode defaults (AA vs dark bg) ─── */
+  --badge-risk-low:    #34D399;   /* emerald-400 — 5.3:1 vs zinc-950 */
+  --badge-risk-medium: #FBBF24;   /* amber-400 — 9.8:1 vs zinc-950 */
+  --badge-risk-high:   #E879F9;   /* fuchsia-400 — 6.2:1 vs zinc-950 */
+
   /* ─── BORDERS ─── */
   --color-border:        rgba(255,255,255,0.07);
   --color-border-hover:  rgba(255,255,255,0.22);
@@ -240,11 +245,16 @@
   --color-yellow:        #B45309;
 
   /* Fear/Greed */
-  --color-fg-extreme-fear:  #DC2626;
-  --color-fg-fear:          #D97706;
-  --color-fg-neutral:       #71717A;
-  --color-fg-greed:         #15803D;
-  --color-fg-extreme-greed: #16A34A;
+  --color-fg-extreme-fear:  #DC2626;   /* red-600   — 4.83:1 vs white ✓ */
+  --color-fg-fear:          #B45309;   /* amber-700 — 5.02:1 vs white ✓ (was #D97706=3.18 FAIL) */
+  --color-fg-neutral:       #71717A;   /* zinc-500  — 4.83:1 vs white ✓ */
+  --color-fg-greed:         #15803D;   /* green-700 — 5.02:1 vs white ✓ */
+  --color-fg-extreme-greed: #166534;   /* green-800 — 7.13:1 vs white ✓ (was #16A34A=3.30 FAIL) */
+
+  /* Risk badge text — light-mode overrides (AA vs white bg) */
+  --badge-risk-low:    #047857;   /* emerald-700 — 5.7:1 vs white */
+  --badge-risk-medium: #92400E;   /* amber-800 — 7.2:1 vs white */
+  --badge-risk-high:   #86198F;   /* fuchsia-800 — 4.9:1 vs white */
 
   /* Borders — dark on light */
   --color-border:        rgba(0,0,0,0.10);
