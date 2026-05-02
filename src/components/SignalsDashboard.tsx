@@ -251,8 +251,8 @@ export default function SignalsDashboard({ lang = "en" }: Props) {
           aria-pressed={filter === "verified"}
           class={`text-center p-3 rounded-lg border transition-all cursor-pointer ${
             filter === "verified"
-              ? "border-[--color-up] bg-[--color-up]/10 shadow-[0_0_12px_rgba(34,171,148,0.3)]"
-              : "border-[--color-border] bg-[--color-bg-card] hover:border-[--color-up]/50"
+              ? "border-(--color-up) bg-(--color-up)/10 shadow-[0_0_12px_rgba(34,171,148,0.3)]"
+              : "border-[--color-border] bg-[--color-bg-card] hover:border-(--color-up)/50"
           }`}
         >
           <p class="text-2xl font-bold font-mono text-[--color-up]">
@@ -265,8 +265,8 @@ export default function SignalsDashboard({ lang = "en" }: Props) {
           aria-pressed={filter === "short"}
           class={`text-center p-3 rounded-lg border transition-all cursor-pointer ${
             filter === "short"
-              ? "border-[--color-down] bg-[--color-down]/10 shadow-[0_0_12px_rgba(242,54,69,0.3)]"
-              : "border-[--color-border] bg-[--color-bg-card] hover:border-[--color-down]/50"
+              ? "border-(--color-down) bg-(--color-down)/10 shadow-[0_0_12px_rgba(242,54,69,0.3)]"
+              : "border-[--color-border] bg-[--color-bg-card] hover:border-(--color-down)/50"
           }`}
         >
           <p class="text-2xl font-bold font-mono text-[--color-down]">
@@ -302,7 +302,7 @@ export default function SignalsDashboard({ lang = "en" }: Props) {
                 {sigs.length} {sigs.length > 1 ? t.signals : t.signal}
               </span>
               {sigs[0]?.status === "verified" && (
-                <span class="text-[10px] bg-[--color-up]/20 text-[--color-up] px-1.5 py-0.5 rounded">
+                <span class="text-[10px] bg-(--color-up)/20 text-[--color-up] px-1.5 py-0.5 rounded">
                   {t.verified.toLowerCase()}
                 </span>
               )}
@@ -318,14 +318,14 @@ export default function SignalsDashboard({ lang = "en" }: Props) {
                   } ${
                     s.direction === "long"
                       ? "border-[--color-accent]/20 bg-[--color-accent]/5 hover:border-[--color-accent]/40"
-                      : "border-[--color-down]/20 bg-[--color-down]/5 hover:border-[--color-down]/40"
+                      : "border-(--color-down)/20 bg-(--color-down)/5 hover:border-(--color-down)/40"
                   }`}
                 >
                   <div class="flex items-center gap-4">
                     <span
                       class={`text-xs font-mono font-bold px-2 py-1 rounded ${
                         s.direction === "short"
-                          ? "bg-[--color-down]/20 text-[--color-down]"
+                          ? "bg-(--color-down)/20 text-[--color-down]"
                           : "bg-[--color-accent]/20 text-[--color-accent]"
                       }`}
                     >

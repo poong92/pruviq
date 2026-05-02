@@ -357,7 +357,7 @@ const presetDirColors: Record<string, string> = { long: '--color-accent', short:
           {presetDirOrder.map((dir, idx) => (
             <div class={idx > 0 ? 'mt-8' : ''}>
               <div class="flex items-center gap-2 mb-4">
-                <span class={`font-mono text-sm font-bold tracking-wider py-1 px-3 rounded-md ${dir === 'long' ? 'bg-[--color-accent]/10' : dir === 'short' ? 'bg-[--color-red]/10' : 'bg-[--color-yellow]/10'}`} style={`color: var(${presetDirColors[dir]})`}>{presetDirLabels[dir]}</span>
+                <span class={`font-mono text-sm font-bold tracking-wider py-1 px-3 rounded-md ${dir === 'long' ? 'bg-[--color-accent]/10' : dir === 'short' ? 'bg-(--color-red)/10' : 'bg-[--color-yellow]/10'}`} style={`color: var(${presetDirColors[dir]})`}>{presetDirLabels[dir]}</span>
                 <div class="flex-1 border-t border-[--color-border]"></div>
                 <span class="font-mono text-xs text-[--color-text-disabled]">{presetsByDirection[dir].length}</span>
               </div>
@@ -394,7 +394,7 @@ const presetDirColors: Record<string, string> = { long: '--color-accent', short:
                       </div>
                       <div class="flex items-center gap-2 shrink-0 ml-3">
                         {preset.direction && (
-                          <span class={`font-mono text-xs px-1.5 py-0.5 rounded border ${preset.direction === 'long' ? 'text-[--color-accent] border-[--color-accent]/30 bg-[--color-accent]/5' : preset.direction === 'short' ? 'text-[--color-red] border-[--color-red]/30 bg-[--color-red]/5' : 'text-[--color-yellow] border-[--color-yellow]/30 bg-[--color-yellow]/5'}`}>
+                          <span class={`font-mono text-xs px-1.5 py-0.5 rounded border ${preset.direction === 'long' ? 'text-[--color-accent] border-[--color-accent]/30 bg-[--color-accent]/5' : preset.direction === 'short' ? 'text-[--color-red] border-(--color-red)/30 bg-(--color-red)/5' : 'text-[--color-yellow] border-[--color-yellow]/30 bg-[--color-yellow]/5'}`}>
                             {preset.direction.toUpperCase()}
                           </span>
                         )}

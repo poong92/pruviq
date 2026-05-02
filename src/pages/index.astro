@@ -220,7 +220,7 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
       <div class="grid md:grid-cols-3 gap-5 mb-14 reveal reveal-child">
         <div class="card-enterprise p-6 border-t-2 border-t-[--color-down]/30 card-hover shadow-[var(--shadow-md)]">
           <div class="text-[--color-down] font-mono text-xs font-bold mb-3 flex items-center gap-2">
-            <span class="inline-block w-2 h-2 rounded-full bg-[--color-down]"></span>
+            <span class="inline-block w-2 h-2 rounded-full bg-(--color-down)"></span>
             {t('problem.case1_label')}
           </div>
           <h3 class="font-bold text-lg mb-2">{t('problem.card1_title')}</h3>
@@ -229,7 +229,7 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
         </div>
         <div class="card-enterprise p-6 border-t-2 border-t-[--color-down]/30 card-hover shadow-[var(--shadow-md)]">
           <div class="text-[--color-down] font-mono text-xs font-bold mb-3 flex items-center gap-2">
-            <span class="inline-block w-2 h-2 rounded-full bg-[--color-down]"></span>
+            <span class="inline-block w-2 h-2 rounded-full bg-(--color-down)"></span>
             {t('problem.case2_label')}
           </div>
           <h3 class="font-bold text-lg mb-2">{t('problem.card2_title')}</h3>
@@ -238,7 +238,7 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
         </div>
         <div class="card-enterprise p-6 border-t-2 border-t-[--color-down]/30 card-hover shadow-[var(--shadow-md)]">
           <div class="text-[--color-down] font-mono text-xs font-bold mb-3 flex items-center gap-2">
-            <span class="inline-block w-2 h-2 rounded-full bg-[--color-down]"></span>
+            <span class="inline-block w-2 h-2 rounded-full bg-(--color-down)"></span>
             {t('problem.case3_label')}
           </div>
           <h3 class="font-bold text-lg mb-2">{t('problem.card3_title')}</h3>
@@ -381,10 +381,10 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
 
       <!-- Risk reversal badges -->
       <div class="flex flex-wrap gap-3 justify-center mb-10 font-mono text-xs">
-        <span class="px-4 py-2 rounded-full border border-[--color-up]/20 text-[--color-up] bg-[--color-up]/5 shadow-[var(--shadow-sm)]">{t('cta.badge1')}</span>
-        <span class="px-4 py-2 rounded-full border border-[--color-up]/20 text-[--color-up] bg-[--color-up]/5 shadow-[var(--shadow-sm)]">{t('cta.badge2')}</span>
-        <span class="px-4 py-2 rounded-full border border-[--color-up]/20 text-[--color-up] bg-[--color-up]/5 shadow-[var(--shadow-sm)]">{t('cta.badge3')}</span>
-        <span class="px-4 py-2 rounded-full border border-[--color-up]/20 text-[--color-up] bg-[--color-up]/5 shadow-[var(--shadow-sm)]">{t('cta.badge4')}</span>
+        <span class="px-4 py-2 rounded-full border border-(--color-up)/20 text-[--color-up] bg-(--color-up)/5 shadow-[var(--shadow-sm)]">{t('cta.badge1')}</span>
+        <span class="px-4 py-2 rounded-full border border-(--color-up)/20 text-[--color-up] bg-(--color-up)/5 shadow-[var(--shadow-sm)]">{t('cta.badge2')}</span>
+        <span class="px-4 py-2 rounded-full border border-(--color-up)/20 text-[--color-up] bg-(--color-up)/5 shadow-[var(--shadow-sm)]">{t('cta.badge3')}</span>
+        <span class="px-4 py-2 rounded-full border border-(--color-up)/20 text-[--color-up] bg-(--color-up)/5 shadow-[var(--shadow-sm)]">{t('cta.badge4')}</span>
       </div>
 
       <div class="flex flex-col sm:flex-row gap-4 justify-center mb-6">

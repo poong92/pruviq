@@ -413,7 +413,7 @@ export default function StrategyComparison({ lang = "en" }: Props) {
       </div>
 
       {error && (
-        <div class="border border-[--color-red]/40 rounded-xl p-4 bg-[--color-red]/5">
+        <div class="border border-(--color-red)/40 rounded-xl p-4 bg-(--color-red)/5">
           <p class="font-mono text-sm text-[--color-red]">{error}</p>
         </div>
       )}
@@ -639,7 +639,7 @@ export default function StrategyComparison({ lang = "en" }: Props) {
                       style={{ width: `${tpPctVal}%` }}
                     />
                     <div
-                      class="bg-[--color-red]"
+                      class="bg-(--color-red)"
                       style={{ width: `${slPctVal}%` }}
                     />
                     <div

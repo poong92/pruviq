@@ -461,7 +461,7 @@ export default function CoinChart({
   if (error || !ohlcv) {
     return (
       <div class="py-12 text-center border border-[--color-border] rounded-xl bg-[--color-bg-card]">
-        <div class="w-12 h-12 mx-auto mb-4 rounded-full bg-[--color-red]/10 flex items-center justify-center">
+        <div class="w-12 h-12 mx-auto mb-4 rounded-full bg-(--color-red)/10 flex items-center justify-center">
           <svg
             width="24"
             height="24"

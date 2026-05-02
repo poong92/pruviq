@@ -196,7 +196,7 @@ export default function OKXConnectButton({
     return (
       <div class="flex items-center gap-3">
         <span class="flex items-center gap-2 text-sm text-[--color-up] font-medium">
-          <span class="w-2 h-2 rounded-full bg-[--color-up] animate-pulse" />
+          <span class="w-2 h-2 rounded-full bg-(--color-up) animate-pulse" />
           {t.connected}
         </span>
         <button

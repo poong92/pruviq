@@ -456,7 +456,7 @@ export default function MarketDashboard({
           {/* Staleness warning */}
           {isDataStale && (
             <div
-              class={`mb-4 px-4 py-2.5 rounded-lg border text-center ${isDataVeryStale ? "border-[--color-down]/30 bg-[--color-down]/10" : "border-[--color-warning]/30 bg-[--color-warning]/10"}`}
+              class={`mb-4 px-4 py-2.5 rounded-lg border text-center ${isDataVeryStale ? "border-(--color-down)/30 bg-(--color-down)/10" : "border-[--color-warning]/30 bg-[--color-warning]/10"}`}
             >
               <span
                 class={`text-xs font-mono ${isDataVeryStale ? "text-[--color-down]" : "text-[--color-warning]"}`}

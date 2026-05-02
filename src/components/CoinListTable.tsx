@@ -656,7 +656,7 @@ export default function CoinListTable({ lang = "en" }: { lang?: "en" | "ko" }) {
                           ${formatPrice(coin.price)}
                         </span>
                         <span
-                          class={`text-[0.625rem] tabular-nums font-bold px-1.5 py-0.5 rounded ${(coin.change_24h ?? 0) >= 0 ? "text-[--color-up] bg-[--color-up]/10" : "text-[--color-down] bg-[--color-down]/10"}`}
+                          class={`text-[0.625rem] tabular-nums font-bold px-1.5 py-0.5 rounded ${(coin.change_24h ?? 0) >= 0 ? "text-[--color-up] bg-(--color-up)/10" : "text-[--color-down] bg-(--color-down)/10"}`}
                         >
                           {(coin.change_24h ?? 0) >= 0 ? "+" : ""}
                           {(coin.change_24h ?? 0).toFixed(1)}%

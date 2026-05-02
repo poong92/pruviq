@@ -89,7 +89,7 @@ export default function HotStrategies({ lang = "en" }: { lang?: string }) {
                   #{i + 1} {s.strategy_name}
                 </span>
                 {s.status === "verified" && (
-                  <span class="text-[10px] bg-[--color-up]/20 text-[--color-up] px-1.5 py-0.5 rounded">
+                  <span class="text-[10px] bg-(--color-up)/20 text-[--color-up] px-1.5 py-0.5 rounded">
                     verified
                   </span>
                 )}

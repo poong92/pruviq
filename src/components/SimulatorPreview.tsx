@@ -124,7 +124,7 @@ export default function SimulatorPreview() {
           </span>
         </div>
         <div class="flex items-center gap-1.5">
-          <span class="w-1.5 h-1.5 rounded-full bg-[--color-up] animate-pulse"></span>
+          <span class="w-1.5 h-1.5 rounded-full bg-(--color-up) animate-pulse"></span>
           <span class="text-[--color-text-muted] text-[10px]">
             1H · OKX USDT-SWAP
           </span>

@@ -199,7 +199,7 @@ export default function BuilderPanel(props: Props) {
         />
         {props.presetError && (
           <div
-            class="mx-4 mt-1 mb-0 px-2.5 py-1 rounded bg-[--color-red]/10 border border-[--color-red]/20"
+            class="mx-4 mt-1 mb-0 px-2.5 py-1 rounded bg-(--color-red)/10 border border-(--color-red)/20"
             role="alert"
           >
             <span class="text-[10px] font-mono text-[--color-red]">
@@ -356,7 +356,7 @@ export default function BuilderPanel(props: Props) {
                   data-testid="dir-short"
                   aria-pressed={props.direction === "short"}
                   onClick={() => props.setDirection("short")}
-                  class={`flex-1 min-h-[44px] text-xs font-mono rounded transition-colors border ${props.direction === "short" ? "font-bold" : "bg-[--color-bg-tooltip] text-[--color-text-muted] border-[--color-border] hover:border-[--color-red]/30"}`}
+                  class={`flex-1 min-h-[44px] text-xs font-mono rounded transition-colors border ${props.direction === "short" ? "font-bold" : "bg-[--color-bg-tooltip] text-[--color-text-muted] border-[--color-border] hover:border-(--color-red)/30"}`}
                   style={
                     props.direction === "short" ? shortActiveStyle : undefined
                   }
@@ -828,7 +828,7 @@ export default function BuilderPanel(props: Props) {
                     ${
                       props.avoidHours.has(i)
                         ? ""
-                        : "bg-[--color-bg-tooltip] text-[--color-text-muted] border-[--color-border] hover:border-[--color-red]/20"
+                        : "bg-[--color-bg-tooltip] text-[--color-text-muted] border-[--color-border] hover:border-(--color-red)/20"
                     }`}
                   style={props.avoidHours.has(i) ? avoidActiveStyle : undefined}
                 >

@@ -395,7 +395,7 @@ export default function TradingSettings({ lang = "en" }: Props) {
   return (
     <div class="space-y-6">
       {/* Warning banner */}
-      <div class="bg-[--color-down]/10 border border-[--color-down]/20 rounded-xl p-4 text-sm text-[--color-down]">
+      <div class="bg-(--color-down)/10 border border-(--color-down)/20 rounded-xl p-4 text-sm text-[--color-down]">
         {t.warning}
       </div>
 
@@ -503,7 +503,7 @@ export default function TradingSettings({ lang = "en" }: Props) {
             }
             class="sr-only peer"
           />
-          <div class="w-11 h-6 bg-[--color-border] peer-checked:bg-[--color-up] rounded-full peer-focus:ring-2 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full" />
+          <div class="w-11 h-6 bg-[--color-border] peer-checked:bg-(--color-up) rounded-full peer-focus:ring-2 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full" />
         </label>
       </div>
 
@@ -557,7 +557,7 @@ export default function TradingSettings({ lang = "en" }: Props) {
                   class="accent-[--color-accent]"
                 />
                 <span class="text-sm">{s.name}</span>
-                <span class="text-[10px] font-mono text-[--color-up] bg-[--color-up]/10 px-1.5 rounded ml-auto">
+                <span class="text-[10px] font-mono text-[--color-up] bg-(--color-up)/10 px-1.5 rounded ml-auto">
                   {s.status}
                 </span>
               </label>
@@ -829,7 +829,7 @@ export default function TradingSettings({ lang = "en" }: Props) {
 
       {/* Save */}
       <button
-        class={`btn btn-lg w-full ${saving === "saved" ? "bg-[--color-up] text-white" : "btn-primary"}`}
+        class={`btn btn-lg w-full ${saving === "saved" ? "bg-(--color-up) text-white" : "btn-primary"}`}
         onClick={handleSave}
         disabled={saving === "saving"}
       >

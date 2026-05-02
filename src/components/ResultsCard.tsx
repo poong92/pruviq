@@ -398,7 +398,7 @@ export default function ResultsCard({
           <span
             class={`inline-block px-2 py-0.5 rounded text-[10px] font-mono font-bold border ${
               data.direction === "short"
-                ? "text-[--color-red] border-[--color-red]/30 bg-[--color-red]/10"
+                ? "text-[--color-red] border-(--color-red)/30 bg-(--color-red)/10"
                 : data.direction === "long"
                   ? "text-[--color-green] border-[--color-green]/30 bg-[--color-green]/10"
                   : "border-[--color-accent]/30 bg-[--color-accent]/10"
@@ -431,7 +431,7 @@ export default function ResultsCard({
                 ? "border-[--color-accent]/30 bg-[--color-accent]/5"
                 : data.strategy_grade === "C"
                   ? "border-[--color-yellow]/30 bg-[--color-yellow]/5"
-                  : "border-[--color-red]/30 bg-[--color-red]/5"
+                  : "border-(--color-red)/30 bg-(--color-red)/5"
           }`}
         >
           <span
@@ -442,7 +442,7 @@ export default function ResultsCard({
                   ? "text-[--color-accent] border-[--color-accent]/40 bg-[--color-accent]/10"
                   : data.strategy_grade === "C"
                     ? "text-[--color-yellow] border-[--color-yellow]/40 bg-[--color-yellow]/10"
-                    : "text-[--color-red] border-[--color-red]/40 bg-[--color-red]/10"
+                    : "text-[--color-red] border-(--color-red)/40 bg-(--color-red)/10"
             }`}
           >
             {data.strategy_grade}
@@ -503,7 +503,7 @@ export default function ResultsCard({
                     ? "text-[--color-green] bg-[--color-green]/10"
                     : data.walk_forward_consistency >= 0.7
                       ? "text-[--color-accent] bg-[--color-accent]/10"
-                      : "text-[--color-red] bg-[--color-red]/10"
+                      : "text-[--color-red] bg-(--color-red)/10"
                 }`}
               >
                 {data.walk_forward_consistency.toFixed(2)}
@@ -683,7 +683,7 @@ export default function ResultsCard({
             style={{ width: `${tpPct}%` }}
           />
           <div
-            class="bg-[--color-red] transition-[width] duration-300"
+            class="bg-(--color-red) transition-[width] duration-300"
             style={{ width: `${slPct}%` }}
           />
           <div
@@ -813,7 +813,7 @@ export default function ResultsCard({
                 </div>
                 <div class="mt-1.5 h-1 rounded-full overflow-hidden bg-[--color-border]">
                   <div
-                    class="h-full bg-[--color-red]/60 transition-[width] duration-300"
+                    class="h-full bg-(--color-red)/60 transition-[width] duration-300"
                     style={{
                       width: `${Math.min((totalCost / Math.abs(data.total_return_pct || 1)) * 100, 100)}%`,
                     }}

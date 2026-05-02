@@ -374,7 +374,7 @@ export default function ResultsPanel({
     <div>
       {error && (
         <div
-          class="border border-[--color-red]/30 rounded-lg p-4 bg-[--color-red]/5 mb-3"
+          class="border border-(--color-red)/30 rounded-lg p-4 bg-(--color-red)/5 mb-3"
           role="alert"
           aria-live="assertive"
         >
@@ -1263,7 +1263,7 @@ export default function ResultsPanel({
                                     tr.exit_reason === "TP"
                                       ? "bg-[--color-green]/10 text-[--color-green]"
                                       : tr.exit_reason === "SL"
-                                        ? "bg-[--color-red]/10 text-[--color-red]"
+                                        ? "bg-(--color-red)/10 text-[--color-red]"
                                         : "bg-[--color-yellow]/10 text-[--color-yellow]"
                                   }`}
                                 >
@@ -1622,7 +1622,7 @@ export default function ResultsPanel({
                 }
                 class="flex items-center gap-3 p-3 rounded-lg border border-[--color-border] hover:border-[--color-accent]/30 hover:bg-[--color-accent]/5 transition-colors"
               >
-                <span class="w-8 h-8 rounded-lg bg-[--color-up]/10 flex items-center justify-center shrink-0">
+                <span class="w-8 h-8 rounded-lg bg-(--color-up)/10 flex items-center justify-center shrink-0">
                   <svg
                     width="16"
                     height="16"

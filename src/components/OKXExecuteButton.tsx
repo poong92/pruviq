@@ -333,7 +333,7 @@ export default function OKXExecuteButton({
                 {t.cancel}
               </button>
               <button
-                class={`btn btn-md flex-1 ${status === "success" ? "bg-[--color-up] text-white" : status === "failed" ? "bg-[--color-down] text-white" : "btn-primary"}`}
+                class={`btn btn-md flex-1 ${status === "success" ? "bg-(--color-up) text-white" : status === "failed" ? "bg-(--color-down) text-white" : "btn-primary"}`}
                 onClick={handleExecute}
                 disabled={status === "executing" || status === "success"}
               >

@@ -309,7 +309,7 @@ const liveTrades = perf.summary.total_trades.toLocaleString();
 
       <!-- Side-by-side comparison -->
       <div class="grid md:grid-cols-2 gap-6 mb-8">
-        <div class="border border-[--color-up]/30 rounded-lg p-6 bg-[--color-up]/5">
+        <div class="border border-(--color-up)/30 rounded-lg p-6 bg-(--color-up)/5">
           <p class="font-mono text-[--color-up] text-xs font-bold mb-4">{t('perf.gap_backtest')}</p>
           <div class="space-y-3">
             <div class="flex justify-between text-sm">
@@ -326,7 +326,7 @@ const liveTrades = perf.summary.total_trades.toLocaleString();
             </div>
           </div>
         </div>
-        <div class="border border-[--color-down]/30 rounded-lg p-6 bg-[--color-down]/5">
+        <div class="border border-(--color-down)/30 rounded-lg p-6 bg-(--color-down)/5">
           <p class="font-mono text-[--color-down] text-xs font-bold mb-4">{t('perf.gap_live')}</p>
           <div class="space-y-3">
             <div class="flex justify-between text-sm">
@@ -380,9 +380,9 @@ const liveTrades = perf.summary.total_trades.toLocaleString();
       </p>
 
       <div class="grid md:grid-cols-2 gap-4">
-        <div class="border border-[--color-red]/30 rounded-lg p-5 bg-[--color-red]/5 opacity-70">
+        <div class="border border-(--color-red)/30 rounded-lg p-5 bg-(--color-red)/5 opacity-70">
           <div class="flex items-center gap-2 mb-3">
-            <span class="text-xs font-mono px-2 py-0.5 rounded bg-[--color-red]/10 text-[--color-text] border border-[--color-red]/20">{t('strategy.killed')}</span>
+            <span class="text-xs font-mono px-2 py-0.5 rounded bg-(--color-red)/10 text-[--color-text] border border-(--color-red)/20">{t('strategy.killed')}</span>
           </div>
           <h3 class="font-bold mb-2">BB Squeeze LONG</h3>
           <p class="text-[--color-text-muted] text-xs mb-3">{t('perf.killed_bb_long')}</p>
@@ -397,14 +397,14 @@ const liveTrades = perf.summary.total_trades.toLocaleString();
             </div>
             <div>
               <span class="text-[--color-text-muted] text-xs block">PnL</span>
-              <span class="font-mono px-1 py-0.5 rounded bg-[--color-red]/10 text-[--color-text]">-$26</span>
+              <span class="font-mono px-1 py-0.5 rounded bg-(--color-red)/10 text-[--color-text]">-$26</span>
             </div>
           </div>
         </div>
 
-        <div class="border border-[--color-red]/30 rounded-lg p-5 bg-[--color-red]/5 opacity-70">
+        <div class="border border-(--color-red)/30 rounded-lg p-5 bg-(--color-red)/5 opacity-70">
           <div class="flex items-center gap-2 mb-3">
-            <span class="text-xs font-mono px-2 py-0.5 rounded bg-[--color-red]/10 text-[--color-text] border border-[--color-red]/20">{t('strategy.killed')}</span>
+            <span class="text-xs font-mono px-2 py-0.5 rounded bg-(--color-red)/10 text-[--color-text] border border-(--color-red)/20">{t('strategy.killed')}</span>
           </div>
           <h3 class="font-bold mb-2">Momentum Breakout LONG</h3>
           <p class="text-[--color-text-muted] text-xs mb-3">{t('perf.killed_momentum')}</p>
@@ -419,12 +419,12 @@ const liveTrades = perf.summary.total_trades.toLocaleString();
             </div>
             <div>
               <span class="text-[--color-text-muted] text-xs block">PnL</span>
-              <span class="font-mono px-1 py-0.5 rounded bg-[--color-red]/10 text-[--color-text]">Killed</span>
+              <span class="font-mono px-1 py-0.5 rounded bg-(--color-red)/10 text-[--color-text]">Killed</span>
             </div>
           </div>
         </div>
 
-        <div class="border border-[--color-red]/30 rounded-lg p-5 bg-[--color-red]/5 opacity-70">
+        <div class="border border-(--color-red)/30 rounded-lg p-5 bg-(--color-red)/5 opacity-70">
           <div class="flex items-center gap-2 mb-3">
             <span class="text-xs font-mono px-2 py-0.5 rounded bg-[--color-yellow]/10 text-[--color-yellow] border border-[--color-yellow]/20">88+ Variations</span>
           </div>
@@ -441,12 +441,12 @@ const liveTrades = perf.summary.total_trades.toLocaleString();
             </div>
             <div>
               <span class="text-[--color-text-muted] text-xs block">Verdict</span>
-              <span class="font-mono px-1 py-0.5 rounded bg-[--color-red]/10 text-[--color-text]">All Failed</span>
+              <span class="font-mono px-1 py-0.5 rounded bg-(--color-red)/10 text-[--color-text]">All Failed</span>
             </div>
           </div>
         </div>
 
-        <div class="border border-[--color-red]/30 rounded-lg p-5 bg-[--color-red]/5 opacity-70">
+        <div class="border border-(--color-red)/30 rounded-lg p-5 bg-(--color-red)/5 opacity-70">
           <div class="flex items-center gap-2 mb-3">
             <span class="text-xs font-mono px-2 py-0.5 rounded bg-[--color-yellow]/10 text-[--color-yellow] border border-[--color-yellow]/20">Rejected Filter</span>
           </div>

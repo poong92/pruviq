@@ -73,9 +73,9 @@ const variantClasses: Record<ButtonVariant, string> = {
   ghost:
     "bg-transparent border border-transparent text-[--color-text-muted] hover:text-[--color-text] hover:bg-[--color-bg-hover]",
   danger:
-    "bg-[--color-down]/10 border border-[--color-down]/30 text-[--color-down] hover:bg-[--color-down]/15 hover:border-[--color-down]/50",
+    "bg-(--color-down)/10 border border-(--color-down)/30 text-[--color-down] hover:bg-(--color-down)/15 hover:border-(--color-down)/50",
   success:
-    "bg-[--color-up]/10 border border-[--color-up]/30 text-[--color-up] hover:bg-[--color-up]/15 hover:border-[--color-up]/50",
+    "bg-(--color-up)/10 border border-(--color-up)/30 text-[--color-up] hover:bg-(--color-up)/15 hover:border-(--color-up)/50",
 };
 
 // Size — `md` meets 44px a11y minimum. `sm` (32px) for dense inline use only.

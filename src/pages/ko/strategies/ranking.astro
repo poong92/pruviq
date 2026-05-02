@@ -134,7 +134,7 @@ if (!ssrRanking) {
               const medals = ['🥇','🥈','🥉'];
               const medal = medals[entry.rank - 1] ?? `#${entry.rank}`;
               const dirLabel = isBoth ? 'BOTH↕' : isLong ? 'LONG↑' : 'SHORT↓';
-              const dirColor = isBoth ? 'text-[--color-yellow] border-[--color-yellow]/40' : isLong ? 'text-[--color-up] border-[--color-up]/40' : 'text-[--color-red] border-[--color-red]/40';
+              const dirColor = isBoth ? 'text-[--color-yellow] border-[--color-yellow]/40' : isLong ? 'text-[--color-up] border-(--color-up)/40' : 'text-[--color-red] border-(--color-red)/40';
               const wrColor = entry.win_rate >= 55 ? 'text-[--color-up]' : entry.win_rate >= 50 ? 'text-[--color-yellow]' : 'text-[--color-red]';
               const pfColor = entry.profit_factor >= 1.5 ? 'text-[--color-up]' : entry.profit_factor >= 1.0 ? 'text-[--color-yellow]' : 'text-[--color-red]';
               return (

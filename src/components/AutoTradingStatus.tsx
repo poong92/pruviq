@@ -66,7 +66,7 @@ const i18n = {
 
 function StatusLight({ status }: { status: BotStatus["status"] }) {
   const colors: Record<BotStatus["status"], string> = {
-    running: "bg-[--color-up]",
+    running: "bg-(--color-up)",
     stopped: "bg-[--color-text-muted]",
     paused: "bg-[--color-warning]",
   };
@@ -189,7 +189,7 @@ export default function AutoTradingStatus({ lang = "en" }: Props) {
       {/* Loss limit warning */}
       {botStatus.limit_reached && (
         <div
-          class="mb-4 px-3 py-2 rounded-lg bg-[--color-down]/10 border border-[--color-down]/20 text-xs text-[--color-down]"
+          class="mb-4 px-3 py-2 rounded-lg bg-(--color-down)/10 border border-(--color-down)/20 text-xs text-[--color-down]"
           role="alert"
           aria-live="assertive"
         >

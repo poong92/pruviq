@@ -113,8 +113,8 @@ function directionTag(direction: string) {
   const colorClass = isBoth
     ? "text-[--color-yellow] border-[--color-yellow]/40"
     : isLong
-      ? "text-[--color-up] border-[--color-up]/40"
-      : "text-[--color-red] border-[--color-red]/40";
+      ? "text-[--color-up] border-(--color-up)/40"
+      : "text-[--color-red] border-(--color-red)/40";
   return (
     <span class={`font-mono text-xs px-2 py-0.5 rounded border ${colorClass}`}>
       {label}
@@ -153,7 +153,7 @@ export function RankingCard({
 
   return (
     <div
-      class={`rounded-lg p-4 bg-[--color-bg-card] card-hover ${lowSampleBest ? "border border-[--color-yellow]/50 hover:border-[--color-yellow]" : variant === "worst" ? "border border-[--color-down]/30 opacity-70" : "border border-[--color-up]/30"}`}
+      class={`rounded-lg p-4 bg-[--color-bg-card] card-hover ${lowSampleBest ? "border border-[--color-yellow]/50 hover:border-[--color-yellow]" : variant === "worst" ? "border border-(--color-down)/30 opacity-70" : "border border-(--color-up)/30"}`}
       style="box-shadow: var(--shadow-card);"
     >
       {/* Header row */}

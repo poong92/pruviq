@@ -148,7 +148,7 @@ export default function LivePositions({ lang = "en" }: Props) {
       <div class="flex items-center justify-between mb-4">
         <div class="flex items-center gap-2">
           <span
-            class="w-2 h-2 rounded-full bg-[--color-up] animate-pulse"
+            class="w-2 h-2 rounded-full bg-(--color-up) animate-pulse"
             aria-hidden="true"
           />
           <h2 class="font-bold text-sm">{t.title}</h2>

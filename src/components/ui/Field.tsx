@@ -138,7 +138,7 @@ export default function Field({
     "read-only:bg-[--color-bg-hover] read-only:cursor-default";
 
   const inputStateCls = hasError
-    ? "border-[--color-down] focus:border-[--color-down] focus:ring-[--color-down]"
+    ? "border-(--color-down) focus:border-(--color-down) focus:ring-[--color-down]"
     : "border-[--color-border] focus:border-[--color-accent] focus:ring-[--color-accent]";
 
   const inputCls =

@@ -584,7 +584,7 @@ export default function PerformanceDashboard({
               </div>
               <div class="h-1.5 rounded-full bg-[--color-border] overflow-hidden">
                 <div
-                  class="h-full bg-[--color-red] rounded-full transition-[width] duration-500"
+                  class="h-full bg-(--color-red) rounded-full transition-[width] duration-500"
                   style={{ width: `${slPct}%` }}
                 />
               </div>
@@ -629,7 +629,7 @@ export default function PerformanceDashboard({
           {/* Combined bar */}
           <div class="flex flex-wrap h-1 rounded-sm overflow-hidden mt-3">
             <div class="bg-[--color-accent]" style={{ width: `${tpPct}%` }} />
-            <div class="bg-[--color-red]" style={{ width: `${slPct}%` }} />
+            <div class="bg-(--color-red)" style={{ width: `${slPct}%` }} />
             <div
               class="bg-[--color-text-muted]"
               style={{ width: `${toPct}%` }}

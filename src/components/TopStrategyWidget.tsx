@@ -142,7 +142,7 @@ export function TopStrategyWidget({ lang = "en" }: { lang?: Lang }) {
         </span>
         <span class="inline-flex items-center gap-1.5 font-mono text-[10px] text-[--color-up]">
           <span
-            class="w-1.5 h-1.5 rounded-full bg-[--color-up]"
+            class="w-1.5 h-1.5 rounded-full bg-(--color-up)"
             style="animation: live-pulse 2s ease-in-out infinite;"
           />
           {t.live}
