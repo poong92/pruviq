@@ -93,8 +93,10 @@ export default function SimulatorPreview() {
   const svgRef = useRef<SVGSVGElement>(null);
 
   useEffect(() => {
-    const timer = setTimeout(() => setVisible(true), 300);
-    return () => clearTimeout(timer);
+    // Start visible immediately — no artificial delay so the component renders
+    // as LCP candidate on first paint. AnimatedNumber still counts up via its
+    // own duration prop; the entrance opacity transition still runs.
+    setVisible(true);
   }, []);
 
   const curvePath = buildPath(EQUITY_POINTS, 400);

@@ -806,6 +806,11 @@ a:not(.btn):not(.btn-primary):not(.btn-ghost):not(.btn-outline):not(.card-hover)
   background-clip: text;
   -webkit-text-fill-color: transparent;
   animation: text-shimmer 6s ease-in-out infinite;
+  /* Isolate shimmer animation on compositor thread — prevents background-position
+     changes from triggering paint invalidation on the parent h1 (LCP element).
+     Measured KO home LCP: 2.8-3.0s without this; reduces compositing jank. */
+  will-change: background-position;
+  contain: style;
 }
 [data-theme="light"] .gradient-text-shimmer {
   background-image: linear-gradient(
