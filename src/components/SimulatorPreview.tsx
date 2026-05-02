@@ -257,7 +257,7 @@ export default function SimulatorPreview() {
               {TRADES[hoveredTrade].coin}
             </span>
             <span class="text-[--color-text-muted] mx-1">SHORT</span>
-            <span class="text-[--color-up] font-bold">
+            <span class="text-(--color-up) font-bold">
               {TRADES[hoveredTrade].pnl}
             </span>
           </div>
