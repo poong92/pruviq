@@ -78,6 +78,12 @@ jobs:
           CI: true
         timeout-minutes: 12
 
+      - name: Step 1b — Golden harness (API 계산 정확성)
+        run: npx tsx scripts/run-golden.ts
+        env:
+          API_BASE: https://api.pruviq.com
+        timeout-minutes: 2
+
       - name: Step 2 — Claude Vision analysis (실제 화면 보고 QA 판단)
         if: ${{ !inputs.skip_vision }}
         run: npx tsx scripts/vision-analyze.ts
