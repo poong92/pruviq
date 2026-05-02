@@ -113,8 +113,8 @@ function directionTag(direction: string) {
   const colorClass = isBoth
     ? "text-[--color-yellow] border-[--color-yellow]/40"
     : isLong
-      ? "text-[--color-up] border-[--color-up]/40"
-      : "text-[--color-red] border-[--color-red]/40";
+      ? "text-(--color-up) border-[--color-up]/40"
+      : "text-(--color-red) border-[--color-red]/40";
   return (
     <span class={`font-mono text-xs px-2 py-0.5 rounded border ${colorClass}`}>
       {label}
@@ -123,15 +123,15 @@ function directionTag(direction: string) {
 }
 
 function winRateColor(wr: number): string {
-  if (wr >= 55) return "text-[--color-up]";
+  if (wr >= 55) return "text-(--color-up)";
   if (wr >= 50) return "text-[--color-yellow]";
-  return "text-[--color-red]";
+  return "text-(--color-red)";
 }
 
 function pfColor(pf: number): string {
-  if (pf >= 1.5) return "text-[--color-up]";
+  if (pf >= 1.5) return "text-(--color-up)";
   if (pf >= 1.0) return "text-[--color-yellow]";
-  return "text-[--color-red]";
+  return "text-(--color-red)";
 }
 
 export function RankingCard({
