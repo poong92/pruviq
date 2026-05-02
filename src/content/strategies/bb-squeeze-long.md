@@ -9,7 +9,7 @@ winRate: 51.0
 profitFactor: 0.98
 totalPnl: "-$26"
 timeframe: "1H"
-coins: 577
+coins: 235
 dateAdded: "2026-01-10"
 dateUpdated: "2026-04-10"
 dateKilled: "2026-02-05"
