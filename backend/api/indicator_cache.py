@@ -10,7 +10,9 @@ Now stores only indicator columns per strategy (~2.5GB, 77% reduction).
 """
 
 import logging
+import pickle
 import time
+from pathlib import Path
 from typing import Dict, List, Tuple, Optional
 
 import pandas as pd
@@ -61,6 +63,49 @@ class IndicatorCache:
         self._data_manager: Optional[DataManager] = None
         self._build_time = 0.0
         self._primary_strategy = "bb-squeeze-short"
+
+    def load_from_file(self, cache_path, data_manager: DataManager, max_age_sec: int = 14400) -> bool:
+        """Load pre-built indicator cache from disk.
+
+        Returns True if loaded successfully and file is fresh enough.
+        Caller falls back to in-process build if this returns False.
+        """
+        path = Path(cache_path)
+        if not path.exists():
+            logger.info(f"[indicator_cache] No pre-built cache at {path}")
+            return False
+
+        file_age = time.time() - path.stat().st_mtime
+        if file_age > max_age_sec:
+            logger.warning(
+                f"[indicator_cache] Pre-built cache is {file_age / 3600:.1f}h old "
+                f"(limit {max_age_sec / 3600:.1f}h) — will rebuild in-process"
+            )
+            return False
+
+        try:
+            with open(path, "rb") as f:
+                data = pickle.load(f)
+
+            multi_cache = data.get("multi_cache", {})
+            if not multi_cache:
+                logger.warning("[indicator_cache] Pre-built cache is empty — will rebuild in-process")
+                return False
+
+            self._multi_cache = multi_cache
+            self._cache = multi_cache.get(self._primary_strategy, {})
+            self._data_manager = data_manager
+
+            coin_counts = {sid: len(c) for sid, c in multi_cache.items()}
+            logger.info(
+                f"[indicator_cache] Loaded from {path} "
+                f"(age {file_age / 60:.1f}min built_at={data.get('built_at', 0):.0f}): "
+                f"{coin_counts}"
+            )
+            return True
+        except Exception as e:
+            logger.warning(f"[indicator_cache] Failed to load pre-built cache: {e}")
+            return False
 
     def build(self, data_manager: DataManager, strategy):
         """Pre-compute indicators for single strategy (backwards compat)."""

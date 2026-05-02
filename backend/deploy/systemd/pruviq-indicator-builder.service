@@ -1,0 +1,16 @@
+[Unit]
+Description=PRUVIQ Indicator Pre-Builder (GIL-isolated offline computation)
+After=network.target
+OnFailure=pruviq-alert@%n.service
+
+[Service]
+Type=oneshot
+User=pruviq
+Group=pruviq
+WorkingDirectory=/opt/pruviq/current
+EnvironmentFile=/opt/pruviq/shared/.env
+ExecStart=/opt/pruviq/bin/indicator-builder.sh
+TimeoutStartSec=900
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=pruviq-indicator-builder

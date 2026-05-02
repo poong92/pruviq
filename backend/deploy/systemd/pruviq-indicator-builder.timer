@@ -1,0 +1,13 @@
+[Unit]
+Description=PRUVIQ Indicator Pre-Builder Timer (hourly)
+Requires=pruviq-indicator-builder.service
+
+[Timer]
+OnBootSec=3min
+OnUnitActiveSec=1h
+RandomizedDelaySec=30
+Persistent=true
+Unit=pruviq-indicator-builder.service
+
+[Install]
+WantedBy=timers.target

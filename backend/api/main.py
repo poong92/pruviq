@@ -417,15 +417,19 @@ async def lifespan(app: FastAPI):
     # startup. build_multi is now capped at max_coins=50 (was 572), so build
     # time is ~2-3 min on DO rather than 10+ min — watchdog tolerates it.
     async def _deferred_indicator_build():
-        """Build indicator cache after server is already accepting requests."""
+        """Load pre-built indicator cache from disk, or compute in-process as fallback.
+
+        True root-cause fix for GIL starvation:
+        - pruviq-indicator-builder.timer (systemd) runs offline_indicator_build.py
+          in a separate process with its own GIL, writing indicators to
+          PRUVIQ_INDICATOR_CACHE_PATH.
+        - This function simply loads the pre-built file — zero computation,
+          zero GIL impact on the asyncio event loop, /health always responsive.
+        - Fallback: if the cache file is missing or stale, builds in-process
+          with time.sleep(0.001) GIL yields per coin (workaround, not root fix).
+        """
         skip_delay = int(os.environ.get("SKIP_INDICATOR_PREBUILD_DELAY", "0"))
         if os.environ.get("SKIP_INDICATOR_PREBUILD", "").lower() in ("1", "true", "yes"):
-            # Delay (not skip) the build — server passes health checks first,
-            # then build runs with GIL yields in build_multi() so /health stays
-            # responsive throughout. Default 90s delay lets watchdog confirm
-            # startup before the CPU-intensive phase begins.
-            # Previously this was an early return which left coin_stats_cache=None
-            # permanently → /coins/stats always 503 while SKIP was set.
             delay = skip_delay if skip_delay > 0 else 90
             print(f"SKIP_INDICATOR_PREBUILD set — delaying indicator build {delay}s for health-check stability")
             await asyncio.sleep(delay)
@@ -434,23 +438,34 @@ async def lifespan(app: FastAPI):
         global _indicator_build_ready
         _indicator_build_ready = True  # Mark ready before build so /health stays fast
         if data_manager.coin_count > 0:
-            def _build():
-                print("Pre-computing indicators for all strategies...")
-                all_strategies = get_all_strategies()
-                indicator_cache.build_multi(data_manager, all_strategies)
-                for sid in all_strategies:
-                    cnt = indicator_cache.strategy_count(sid)
-                    print(f"  {sid}: {cnt} coins cached")
-                print(f"Total build time: {indicator_cache._build_time:.1f}s")
+            cache_path = Path(os.environ.get(
+                "PRUVIQ_INDICATOR_CACHE_PATH",
+                "/opt/pruviq/cache/indicators.pkl",
+            ))
+            max_cache_age = int(os.environ.get("PRUVIQ_INDICATOR_CACHE_MAX_AGE", str(4 * 3600)))
 
-                print("Pre-computing coin stats...")
-                strategy = BBSqueezeStrategy(avoid_hours=AVOID_HOURS)
-                global coin_stats_cache
-                coin_stats_cache = _build_coin_stats(strategy)
-                print(f"Coin stats cached for {len(coin_stats_cache['coins'])} coins")
-                global _indicator_build_ready
-                _indicator_build_ready = True
-            await asyncio.to_thread(_build)
+            if indicator_cache.load_from_file(cache_path, data_manager, max_age_sec=max_cache_age):
+                print(f"Indicator cache loaded from {cache_path} ({indicator_cache.count} primary-strategy coins)")
+            else:
+                # Fallback: compute in-process with GIL yields between coins.
+                # pruviq-indicator-builder.timer will populate the cache file
+                # so future restarts use the fast path.
+                print(f"No fresh indicator cache at {cache_path} — building in-process (GIL-yield fallback)...")
+                def _build():
+                    print("Pre-computing indicators for all strategies...")
+                    all_strategies = get_all_strategies()
+                    indicator_cache.build_multi(data_manager, all_strategies)
+                    for sid in all_strategies:
+                        cnt = indicator_cache.strategy_count(sid)
+                        print(f"  {sid}: {cnt} coins cached")
+                    print(f"Total build time: {indicator_cache._build_time:.1f}s")
+                await asyncio.to_thread(_build)
+
+            print("Pre-computing coin stats...")
+            strategy = BBSqueezeStrategy(avoid_hours=AVOID_HOURS)
+            global coin_stats_cache
+            coin_stats_cache = await asyncio.to_thread(_build_coin_stats, strategy)
+            print(f"Coin stats cached for {len(coin_stats_cache['coins'])} coins")
 
     indicator_task = asyncio.create_task(_deferred_indicator_build())
 
