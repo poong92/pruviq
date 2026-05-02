@@ -1,6 +1,6 @@
 ---
 name: "Momentum Breakout LONG"
-description: "Enters long when price breaks above the 20-candle high with volume confirmation. Killed after failing 2-year validation — negative expectancy across 549 coins."
+description: "Enters long when price breaks above the 20-candle high with volume confirmation. Killed after failing 2-year validation — negative expectancy across 235 coins."
 status: "killed"
 category: "momentum"
 direction: "long"

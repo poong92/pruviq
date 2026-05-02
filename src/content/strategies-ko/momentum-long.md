@@ -1,6 +1,6 @@
 ---
 name: "Momentum Breakout LONG"
-description: "가격이 20캔들 최고가를 돌파하고 거래량이 확인되면 롱 진입. 2년 검증 실패 — 549개 코인에서 음의 기대값으로 폐기."
+description: "가격이 20캔들 최고가를 돌파하고 거래량이 확인되면 롱 진입. 2년 검증 실패 — 235개 코인에서 음의 기대값으로 폐기."
 status: "killed"
 category: "momentum"
 direction: "long"
@@ -10,7 +10,7 @@ profitFactor: 0.42
 totalPnl: "음수"
 timeframe: "1H"
 dataPoints: 8420
-coins: 577
+coins: 235
 dateAdded: "2026-01-31"
 dateUpdated: "2026-04-10"
 dateKilled: "2026-02-05"
