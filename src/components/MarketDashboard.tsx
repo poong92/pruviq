@@ -339,11 +339,26 @@ export default function MarketDashboard({
   const [newsTab, setNewsTab] = useState<"crypto" | "macro">("crypto");
   const [newsExpanded, setNewsExpanded] = useState(false);
 
-  // TradingView calendar: click-to-load. IntersectionObserver fired too early
-  // on short viewports → TradingView set cookies → Lighthouse flagged
-  // third-party-cookies + inspector-issues → /market/ BP 73. Explicit user
-  // click guarantees zero TradingView network requests until opt-in.
-  const [calendarArmed, setCalendarArmed] = useState(false);
+  // TradingView calendar — default armed (user-requested UX).
+  // Note: TradingView sets third-party cookies immediately; /market/ BP may
+  // score slightly lower on lhci runs, but user-facing experience takes priority.
+  const [calendarArmed, setCalendarArmed] = useState(true);
+
+  // Track site theme so TradingView widget matches (dark hardcode = invisible in light mode)
+  const [tvTheme, setTvTheme] = useState<"dark" | "light">("dark");
+  useEffect(() => {
+    const get = () =>
+      document.documentElement.getAttribute("data-theme") === "light"
+        ? "light"
+        : "dark";
+    setTvTheme(get());
+    const obs = new MutationObserver(() => setTvTheme(get()));
+    obs.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-theme"],
+    });
+    return () => obs.disconnect();
+  }, []);
 
   // Live "updated X ago" counter (based on live price generated timestamp)
   const [refreshAgo, setRefreshAgo] = useState("");
@@ -467,7 +482,11 @@ export default function MarketDashboard({
             >
               <span
                 class="text-xs font-mono"
-                style={{ color: isDataVeryStale ? "var(--color-down)" : "var(--color-warning)" }}
+                style={{
+                  color: isDataVeryStale
+                    ? "var(--color-down)"
+                    : "var(--color-warning)",
+                }}
               >
                 ⚠ {isDataVeryStale ? l.staleWarningSevere : l.staleWarning} (
                 {refreshAgo})
@@ -625,7 +644,9 @@ export default function MarketDashboard({
                     (ind.previous != null ? ind.value - ind.previous : null);
                   const deltaColor =
                     delta != null
-                      ? (delta >= 0 ? "var(--color-up)" : "var(--color-down)")
+                      ? delta >= 0
+                        ? "var(--color-up)"
+                        : "var(--color-down)"
                       : "";
                   const arrow =
                     delta != null ? (delta >= 0 ? "\u25B2" : "\u25BC") : "";
@@ -710,7 +731,8 @@ export default function MarketDashboard({
             <div class="w-full h-[400px] md:h-[500px] relative">
               {calendarArmed ? (
                 <iframe
-                  src={`https://s.tradingview.com/embed-widget/events/?locale=${lang === "ko" ? "kr" : "en"}#%7B%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Atrue%2C%22width%22%3A%22100%25%22%2C%22height%22%3A%22100%25%22%2C%22importanceFilter%22%3A%220%2C1%22%7D`}
+                  key={tvTheme}
+                  src={`https://s.tradingview.com/embed-widget/events/?locale=${lang === "ko" ? "kr" : "en"}#${encodeURIComponent(JSON.stringify({ colorTheme: tvTheme, isTransparent: true, width: "100%", height: "100%", importanceFilter: "0,1" }))}`}
                   title={l.economicCalendar}
                   class="w-full h-full border-0"
                   loading="lazy"
