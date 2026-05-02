@@ -121,7 +121,7 @@ export const ko: Record<TranslationKey, string> = {
     '"2년 이상의 데이터에서 생존을 증명할 수 없으면, 트레이딩하지 마라."',
   "evidence.publish_tag": "공개 항목",
   "evidence.publish1": "모든 진입/청산 기록과 타임스탬프",
-  "evidence.publish2": "승률, 패률, 순 손익",
+  "evidence.publish2": "승률, 패율, 순 손익",
   "evidence.publish3": "전략 변경 내역과 각 결정의 근거 데이터",
   "evidence.publish4": "실패한 실험과 중단 사유",
   "evidence.publish5": "리스크 파라미터와 포지션 사이징",
@@ -630,7 +630,7 @@ export const ko: Record<TranslationKey, string> = {
   "about.tag": "PRUVIQ 소개",
   "about.title": "트레이더가 만든, 트레이더를 위한.",
   "about.mission":
-    "PRUVIQ는 거짓 백테스트, 체리피킹 전략, 손실을 숨기는 인플루언서를 더 이상 용납하지 않기 위해 탄생했습니다. 실패를 포함한 모든 결과를 공개하는 플랫폼을 만들었습니다. 실제 자금을 투입하기 전에 검증할 수 있도록.",
+    "PRUVIQ는 거짓 백테스트, 체리피킹 전략, 손실을 숨기는 인플루언서에 맞서 탄생했습니다. 실패를 포함한 모든 결과를 공개하는 플랫폼을 만들었습니다. 실제 자금을 투입하기 전에 검증할 수 있도록.",
   "about.team_tag": "PRUVIQ 프로젝트",
   "about.team_desc":
     "PRUVIQ는 독립적인 트레이딩 리서치 프로젝트입니다. 과장 없이, 신호 없이, 약속 없이. 이 사이트에 공개되는 모든 전략은 실제 수수료와 슬리피지를 반영한 과거 데이터로 먼저 검증됩니다.",
@@ -1084,7 +1084,7 @@ export const ko: Record<TranslationKey, string> = {
   "methodology.metric_sortino":
     "소르티노 비율 — 샤프와 유사하지만 하방 변동성만 고려합니다.",
   "methodology.metric_calmar":
-    "칼마 비율 — 총 수익률을 최대 드로다운으로 나눈 값. 위험 단위당 수익을 측정합니다.",
+    "칼마 비율 — 총 수익률을 최대 드로다운으로 나눈 값. 위험 대비 수익을 측정합니다.",
   "methodology.metrics_coming":
     "고급 지표(샤프, 소르티노, 칼마 비율)는 모든 시뮬레이션에서 계산되며, 시뮬레이터 결과에서 확인 가능합니다.",
   "methodology.label_wr": "승률",
@@ -1519,7 +1519,7 @@ export const ko: Record<TranslationKey, string> = {
 
   // Coin Detail Page
   "coin_detail.header_desc":
-    "{name} BB Squeeze SHORT 전략 시뮬레이션. 2년 이상 과거 데이터로 진입/청산 신호, 에퀴티 커브, 개별 거래 분석을 확인하세요.",
+    "{name} BB Squeeze SHORT 전략 시뮬레이션. 2년 이상 과거 데이터로 진입/청산 신호, 자산 곡선, 개별 거래 분석을 확인하세요.",
   "coin_detail.simulate_coin": "{coin} 시뮬레이션",
   "coin_detail.all_strategies": "전체 전략",
   "coin_detail.all_coins": "전체 코인",
@@ -1542,7 +1542,7 @@ export const ko: Record<TranslationKey, string> = {
     "PRUVIQ 백테스트는 OKX USDT-SWAP 2년 이상의 1시간 OHLCV 데이터를 사용합니다. 모든 결과는 Out-of-Sample 테스트와 몬테카를로 시뮬레이션(10,000회)으로 검증됩니다. Look-ahead bias 없이 완성된 캔들만 신호에 사용합니다.",
   "coin_detail.faq_q3": "{name} 시뮬레이션은 무료인가요?",
   "coin_detail.faq_a3":
-    "네. PRUVIQ는 100% 무료입니다. 모든 지원 코인에서 BB Squeeze 전략을 시뮬레이션하고, 파라미터를 조정하고, 상세 에퀴티 커브와 거래 로그를 확인할 수 있습니다. 가입 불필요.",
+    "네. PRUVIQ는 100% 무료입니다. 모든 지원 코인에서 BB Squeeze 전략을 시뮬레이션하고, 파라미터를 조정하고, 상세 자산 곡선과 거래 로그를 확인할 수 있습니다. 가입 불필요.",
 
   // Strategy Detail Page
   "strategy_detail.simulate_this": "이 전략 시뮬레이션",
