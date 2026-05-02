@@ -113,6 +113,10 @@ class IndicatorCache:
                 except Exception as e:
                     logger.warning(f"[indicator_cache] Failed to compute {strategy_id}/{symbol}: {type(e).__name__}: {e}")
                     continue
+                # Release GIL between coins so the asyncio event loop (main thread)
+                # can handle /health probes. Without this yield, numpy/pandas holds
+                # the GIL for 50-200ms per coin, starving health probes → watchdog restarts.
+                time.sleep(0.001)
             self._multi_cache[strategy_id] = cache
 
         # Set flat cache to primary strategy for backwards compat

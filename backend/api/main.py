@@ -410,19 +410,29 @@ async def lifespan(app: FastAPI):
     # Indicator cache + coin stats: build in background to avoid startup timeout
     # HealthCheck fails if startup takes > 90s (LaunchAgent restart loop)
     #
-    # SKIP_INDICATOR_PREBUILD=1 → skip startup pre-compute entirely; build
-    # lazily on first /backtest or /coins/stats hit. Required on DO
-    # (2vCPU/4GB) where 572 coins × N strategies saturates CPU for many
-    # minutes and starves /signals/live. On Mac M4 Pro the pre-compute
-    # finished quickly so this wasn't noticed pre-cutover.
+    # SKIP_INDICATOR_PREBUILD=1 → delay build 90s instead of running immediately.
+    # Server passes /health watchdog checks during delay; build then runs with
+    # GIL yields (time.sleep(0.001) per coin in build_multi) so /health stays
+    # responsive throughout. Required on DO (2vCPU/4GB) to avoid starvation at
+    # startup. build_multi is now capped at max_coins=50 (was 572), so build
+    # time is ~2-3 min on DO rather than 10+ min — watchdog tolerates it.
     async def _deferred_indicator_build():
         """Build indicator cache after server is already accepting requests."""
-        await asyncio.sleep(1)  # Let server start first
+        skip_delay = int(os.environ.get("SKIP_INDICATOR_PREBUILD_DELAY", "0"))
         if os.environ.get("SKIP_INDICATOR_PREBUILD", "").lower() in ("1", "true", "yes"):
-            global _indicator_build_ready
-            _indicator_build_ready = True
-            print("SKIP_INDICATOR_PREBUILD set — indicator cache will build lazily on first use")
-            return
+            # Delay (not skip) the build — server passes health checks first,
+            # then build runs with GIL yields in build_multi() so /health stays
+            # responsive throughout. Default 90s delay lets watchdog confirm
+            # startup before the CPU-intensive phase begins.
+            # Previously this was an early return which left coin_stats_cache=None
+            # permanently → /coins/stats always 503 while SKIP was set.
+            delay = skip_delay if skip_delay > 0 else 90
+            print(f"SKIP_INDICATOR_PREBUILD set — delaying indicator build {delay}s for health-check stability")
+            await asyncio.sleep(delay)
+        else:
+            await asyncio.sleep(1)  # Let server start first
+        global _indicator_build_ready
+        _indicator_build_ready = True  # Mark ready before build so /health stays fast
         if data_manager.coin_count > 0:
             def _build():
                 print("Pre-computing indicators for all strategies...")
