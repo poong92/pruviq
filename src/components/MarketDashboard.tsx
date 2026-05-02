@@ -732,7 +732,7 @@ export default function MarketDashboard({
               {calendarArmed ? (
                 <iframe
                   key={tvTheme}
-                  src={`https://s.tradingview.com/embed-widget/events/?locale=${lang === "ko" ? "kr" : "en"}#${encodeURIComponent(JSON.stringify({ colorTheme: tvTheme, isTransparent: true, width: "100%", height: "100%", importanceFilter: "0,1" }))}`}
+                  src={`https://s.tradingview.com/embed-widget/events/?locale=${lang === "ko" ? "kr" : "en"}#${encodeURIComponent(JSON.stringify({ colorTheme: tvTheme, isTransparent: tvTheme === "light", width: "100%", height: "100%", importanceFilter: "0,1" }))}`}
                   title={l.economicCalendar}
                   class="w-full h-full border-0"
                   loading="lazy"
