@@ -233,7 +233,7 @@ function SortableHeader({
       scope="col"
       aria-sort={ariaSortValue}
       title={title}
-      class={`px-2 py-2 font-mono text-[0.6875rem] tracking-wider uppercase whitespace-nowrap border-b border-[--color-border] ${className} ${isActive ? "text-[--color-accent]" : "text-(--color-text-muted)"}`}
+      class={`px-2 py-2 font-mono text-[0.6875rem] tracking-wider uppercase whitespace-nowrap border-b border-[--color-border] ${className} ${isActive ? "text-(--color-accent)" : "text-(--color-text-muted)"}`}
     >
       <button
         type="button"
@@ -356,7 +356,7 @@ export default function CoinListTable({ lang = "en" }: { lang?: "en" | "ko" }) {
   if (error) {
     return (
       <div class="py-8 text-center">
-        <p class="font-mono text-sm text-[--color-red] mb-3">{t.error}</p>
+        <p class="font-mono text-sm text-(--color-red) mb-3">{t.error}</p>
         <button
           onClick={() => {
             setError(null);
@@ -371,7 +371,7 @@ export default function CoinListTable({ lang = "en" }: { lang?: "en" | "ko" }) {
                 setLoading(false);
               });
           }}
-          class="px-4 py-2 rounded-lg border border-[--color-border] bg-[--color-bg-card] text-[--color-text] font-mono text-sm cursor-pointer hover:border-[--color-accent] transition-colors min-h-[44px]"
+          class="px-4 py-2 rounded-lg border border-[--color-border] bg-[--color-bg-card] text-(--color-text) font-mono text-sm cursor-pointer hover:border-[--color-accent] transition-colors min-h-[44px]"
         >
           {t.retry}
         </button>
@@ -465,7 +465,7 @@ export default function CoinListTable({ lang = "en" }: { lang?: "en" | "ko" }) {
             setSearch((e.target as HTMLInputElement).value);
             setPage(0);
           }}
-          class="w-full max-w-xs px-4 py-2.5 bg-[--color-bg-card] border border-[--color-border] rounded-lg text-[--color-text] font-mono text-sm outline-none focus:border-[--color-accent] transition-colors"
+          class="w-full max-w-xs px-4 py-2.5 bg-[--color-bg-card] border border-[--color-border] rounded-lg text-(--color-text) font-mono text-sm outline-none focus:border-[--color-accent] transition-colors"
         />
         <a
           href={lang === "ko" ? "/ko/simulate" : "/simulate"}
@@ -478,7 +478,7 @@ export default function CoinListTable({ lang = "en" }: { lang?: "en" | "ko" }) {
           <button
             type="button"
             onClick={handleDownloadCsv}
-            class="px-3 py-2.5 border border-[--color-border] rounded-lg bg-[--color-bg-card] text-[--color-text] font-mono text-sm cursor-pointer hover:border-[--color-accent] transition-colors min-h-[44px] whitespace-nowrap"
+            class="px-3 py-2.5 border border-[--color-border] rounded-lg bg-[--color-bg-card] text-(--color-text) font-mono text-sm cursor-pointer hover:border-[--color-accent] transition-colors min-h-[44px] whitespace-nowrap"
             title={t.downloadCsv}
           >
             {t.downloadCsv}
@@ -627,7 +627,7 @@ export default function CoinListTable({ lang = "en" }: { lang?: "en" | "ko" }) {
                   <td class="px-2 py-3 sm:py-2.5 whitespace-nowrap">
                     <a
                       href={coinUrl}
-                      class="flex items-center gap-2.5 hover:text-[--color-accent] transition-colors"
+                      class="flex items-center gap-2.5 hover:text-(--color-accent) transition-colors"
                       tabIndex={-1}
                       aria-hidden="true"
                     >
@@ -705,7 +705,7 @@ export default function CoinListTable({ lang = "en" }: { lang?: "en" | "ko" }) {
                     <a
                       href={`${lang === "ko" ? "/ko" : ""}/simulate?coin=${coin.symbol}`}
                       onClick={(e: MouseEvent) => e.stopPropagation()}
-                      class="text-xs font-mono text-[--color-accent] hover:underline"
+                      class="text-xs font-mono text-(--color-accent) hover:underline"
                     >
                       Test &rarr;
                     </a>
@@ -732,7 +732,7 @@ export default function CoinListTable({ lang = "en" }: { lang?: "en" | "ko" }) {
               disabled={page === 0}
               onClick={() => setPage((p) => p - 1)}
               aria-label={t.prevPage}
-              class={`px-3 py-1.5 border border-[--color-border] rounded-md bg-transparent font-mono text-xs transition-colors min-h-12 min-w-12 ${page === 0 ? "text-(--color-text-muted) cursor-default" : "text-[--color-text] hover:border-[--color-accent] cursor-pointer"}`}
+              class={`px-3 py-1.5 border border-[--color-border] rounded-md bg-transparent font-mono text-xs transition-colors min-h-12 min-w-12 ${page === 0 ? "text-(--color-text-muted) cursor-default" : "text-(--color-text) hover:border-[--color-accent] cursor-pointer"}`}
             >
               &lt;
             </button>
@@ -743,7 +743,7 @@ export default function CoinListTable({ lang = "en" }: { lang?: "en" | "ko" }) {
               disabled={page >= totalPages - 1}
               onClick={() => setPage((p) => p + 1)}
               aria-label={t.nextPage}
-              class={`px-3 py-1.5 border border-[--color-border] rounded-md bg-transparent font-mono text-xs transition-colors min-h-12 min-w-12 ${page >= totalPages - 1 ? "text-(--color-text-muted) cursor-default" : "text-[--color-text] hover:border-[--color-accent] cursor-pointer"}`}
+              class={`px-3 py-1.5 border border-[--color-border] rounded-md bg-transparent font-mono text-xs transition-colors min-h-12 min-w-12 ${page >= totalPages - 1 ? "text-(--color-text-muted) cursor-default" : "text-(--color-text) hover:border-[--color-accent] cursor-pointer"}`}
             >
               &gt;
             </button>
