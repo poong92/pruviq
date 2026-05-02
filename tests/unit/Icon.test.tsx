@@ -65,11 +65,11 @@ describe("Icon primitive", () => {
 
   test("custom class merges after base inline-block", () => {
     const { container } = render(
-      <Icon name="bb" class="text-[--color-accent] mr-2" />,
+      <Icon name="bb" class="text-(--color-accent) mr-2" />,
     );
     const svg = container.querySelector("svg")!;
     expect(svg.getAttribute("class")).toContain("inline-block");
-    expect(svg.getAttribute("class")).toContain("text-[--color-accent]");
+    expect(svg.getAttribute("class")).toContain("text-(--color-accent)");
     expect(svg.getAttribute("class")).toContain("mr-2");
   });
 

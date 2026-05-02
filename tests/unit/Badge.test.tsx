@@ -14,28 +14,28 @@ describe("Badge primitive", () => {
     expect(el).toBeTruthy();
     expect(el.tagName).toBe("SPAN");
     expect(el.textContent).toBe("NEW");
-    expect(el.className).toContain("border-[--color-border]");
-    expect(el.className).toContain("text-[--color-text-muted]");
+    expect(el.className).toContain("border-(--color-border)");
+    expect(el.className).toContain("text-(--color-text-muted)");
   });
 
   test("variant=success uses --color-up tokens", () => {
     const { container } = render(<Badge variant="success">UP</Badge>);
     const el = container.querySelector("span")!;
-    expect(el.className).toContain("text-[--color-up]");
-    expect(el.className).toContain("border-[--color-up]/30");
+    expect(el.className).toContain("text-(--color-up)");
+    expect(el.className).toContain("border-(--color-up)/30");
   });
 
   test("variant=danger uses --color-down tokens", () => {
     const { container } = render(<Badge variant="danger">KILLED</Badge>);
     const el = container.querySelector("span")!;
-    expect(el.className).toContain("text-[--color-down]");
+    expect(el.className).toContain("text-(--color-down)");
   });
 
   test("variant=warning uses --color-verified (amber) tokens", () => {
     const { container } = render(<Badge variant="warning">VERIFIED</Badge>);
     const el = container.querySelector("span")!;
-    expect(el.className).toContain("text-[--color-verified]");
-    expect(el.className).toContain("border-[--color-verified-border]");
+    expect(el.className).toContain("text-(--color-verified)");
+    expect(el.className).toContain("border-(--color-verified-border)");
   });
 
   test("size=sm uses 10px text", () => {
@@ -59,7 +59,7 @@ describe("Badge primitive", () => {
     const dot = container.querySelector('span[aria-hidden="true"]');
     expect(dot).toBeTruthy();
     expect(dot!.className).toContain("rounded-full");
-    expect(dot!.className).toContain("bg-[--color-up]");
+    expect(dot!.className).toContain("bg-(--color-up)");
   });
 
   test("pulse + dot adds animate-pulse on the dot only", () => {
@@ -98,6 +98,6 @@ describe("Badge primitive", () => {
     const el = container.querySelector("span")!;
     expect(el.className).toContain("ml-2");
     expect(el.className).toContain("shadow-md");
-    expect(el.className).toContain("text-[--color-up]");
+    expect(el.className).toContain("text-(--color-up)");
   });
 });
