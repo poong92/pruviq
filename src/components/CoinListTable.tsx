@@ -1,6 +1,6 @@
 import { useState, useEffect } from "preact/hooks";
 import type { ComponentChildren } from "preact";
-import { formatPrice, formatVolume } from "../utils/format";
+import { formatPrice, formatVolume, changeColor } from "../utils/format";
 import { generateCSV, downloadCSV } from "../utils/csv";
 import { STATIC_DATA, fetchWithFallback, fetchLiveFirst } from "../config/api";
 import MiniSparkline from "./MiniSparkline";
@@ -127,10 +127,12 @@ function ChangeCell({
         -
       </td>
     );
-  const color = value >= 0 ? "text-(--color-up)" : "text-(--color-down)";
   const arrow = value >= 0 ? "\u25B2" : "\u25BC";
   return (
-    <td class={`px-2 py-2.5 text-right ${color} ${className}`}>
+    <td
+      class={`px-2 py-2.5 text-right ${className}`}
+      style={{ color: changeColor(value) }}
+    >
       <span class="text-[0.625rem]" aria-hidden="true">
         {arrow}
       </span>{" "}
