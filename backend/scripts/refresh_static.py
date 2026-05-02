@@ -647,15 +647,18 @@ def main():
     # 2. Fetch Binance tickers (PRIMARY — unlimited, real-time)
     binance_tickers = fetch_binance_tickers()
     if not binance_tickers:
-        print("ERROR: Binance unavailable. market.json NOT updated.")
-        # Still refresh macro + news
+        print("ERROR: Binance unavailable (HTTP 451 from US/cloud IPs is expected). market.json NOT updated.")
+        print("  Partial refresh: writing macro + news only.")
+        # Still refresh macro + news — exit 0 so GH Actions creates the PR
+        # with whatever data we have. market.json stays stale until Mac Mini
+        # (non-US IP) refreshes it via the auto/mac-data-refresh PR branch.
         macro_json = build_macro_json()
         if macro_json:
             (OUTPUT_DIR / "macro.json").write_text(json.dumps(macro_json, ensure_ascii=False))
         news_json = build_news_json()
         if news_json:
             (OUTPUT_DIR / "news.json").write_text(json.dumps(news_json, ensure_ascii=False))
-        sys.exit(1)
+        sys.exit(0)
 
     # If no coin-symbols.ts, use all Binance USDT symbols
     if not our_symbols:
