@@ -330,7 +330,7 @@ function BBSqueeze({
         d={price}
         fill="none"
         stroke="var(--color-text)"
-        stroke-width="1.4"
+        stroke-width="1.5"
         stroke-linejoin="round"
       />
       <EntryMarker
@@ -385,7 +385,7 @@ function RSIReversal({
         d={price}
         fill="none"
         stroke="var(--color-text)"
-        stroke-width="1.4"
+        stroke-width="1.5"
         stroke-linejoin="round"
       />
       {/* RSI oversold band (below 30) */}
@@ -415,7 +415,7 @@ function RSIReversal({
         d={rsi}
         fill="none"
         stroke="var(--color-warning)"
-        stroke-width="1.2"
+        stroke-width="1.5"
         stroke-linejoin="round"
       />
       <EntryMarker
@@ -469,7 +469,7 @@ function MACDMomentum({
         d={price}
         fill="none"
         stroke="var(--color-text)"
-        stroke-width="1.4"
+        stroke-width="1.5"
         stroke-linejoin="round"
       />
       {/* MACD histogram zone */}
@@ -546,8 +546,8 @@ function StochasticOverbought({
       <text x={4} y={108} fill="var(--color-down)" font-size="7" font-family="monospace">
         STOCH 80
       </text>
-      <path d={price} fill="none" stroke="var(--color-text)" stroke-width="1.4" />
-      <path d={stoch} fill="none" stroke="var(--color-purple)" stroke-width="1.2" />
+      <path d={price} fill="none" stroke="var(--color-text)" stroke-width="1.5" />
+      <path d={stoch} fill="none" stroke="var(--color-purple)" stroke-width="1.5" />
       <EntryMarker
         x={150}
         y={55}
@@ -592,7 +592,7 @@ function EMACrossover({
         opacity="0.7"
       />
       <path d={emaFast} fill="none" stroke="var(--color-warning)" stroke-width="1.1" />
-      <path d={price} fill="none" stroke="var(--color-text)" stroke-width="1.4" />
+      <path d={price} fill="none" stroke="var(--color-text)" stroke-width="1.5" />
       <EntryMarker
         x={entryX}
         y={entryY}
@@ -664,7 +664,7 @@ function TurtleBreakout({
       >
         20-day HIGH
       </text>
-      <path d={price} fill="none" stroke="var(--color-text)" stroke-width="1.4" />
+      <path d={price} fill="none" stroke="var(--color-text)" stroke-width="1.5" />
       <EntryMarker
         x={entryX}
         y={entryY}
@@ -711,12 +711,12 @@ function ADXTrend({ dir, lang }: { dir: "long" | "short"; lang: "en" | "ko" }) {
       >
         ADX 25
       </text>
-      <path d={price} fill="none" stroke="var(--color-text)" stroke-width="1.4" />
+      <path d={price} fill="none" stroke="var(--color-text)" stroke-width="1.5" />
       <path
         d={adx}
         fill="none"
         stroke="var(--color-purple)"
-        stroke-width="1.2"
+        stroke-width="1.5"
         stroke-dasharray="2,2"
       />
       <EntryMarker
@@ -768,7 +768,7 @@ function Ichimoku({ dir, lang }: { dir: "long" | "short"; lang: "en" | "ko" }) {
         stroke-width="0.6"
         opacity="0.6"
       />
-      <path d={price} fill="none" stroke="var(--color-text)" stroke-width="1.4" />
+      <path d={price} fill="none" stroke="var(--color-text)" stroke-width="1.5" />
       <EntryMarker
         x={entryX}
         y={entryY}
@@ -829,7 +829,7 @@ function PsarReversal({
   return (
     <g>
       <AxisBase />
-      <path d={price} fill="none" stroke="var(--color-text)" stroke-width="1.4" />
+      <path d={price} fill="none" stroke="var(--color-text)" stroke-width="1.5" />
       {psarPoints.map(([x, y]) => (
         <circle
           key={`${x},${y}`}
@@ -896,8 +896,8 @@ function WilliamsR({
       >
         %R {dir === "long" ? "−80" : "−20"}
       </text>
-      <path d={price} fill="none" stroke="var(--color-text)" stroke-width="1.4" />
-      <path d={willr} fill="none" stroke="var(--color-warning)" stroke-width="1.2" />
+      <path d={price} fill="none" stroke="var(--color-text)" stroke-width="1.5" />
+      <path d={willr} fill="none" stroke="var(--color-warning)" stroke-width="1.5" />
       <EntryMarker
         x={entryX}
         y={entryY}
@@ -945,7 +945,7 @@ function RSIBB({ dir, lang }: { dir: "long" | "short"; lang: "en" | "ko" }) {
         stroke-dasharray="3,2"
         opacity="0.5"
       />
-      <path d={price} fill="none" stroke="var(--color-text)" stroke-width="1.4" />
+      <path d={price} fill="none" stroke="var(--color-text)" stroke-width="1.5" />
       <EntryMarker
         x={entryX}
         y={entryY}
@@ -1005,7 +1005,7 @@ function BBBounce({ dir, lang }: { dir: "long" | "short"; lang: "en" | "ko" }) {
         stroke-dasharray="1,2"
         opacity="0.4"
       />
-      <path d={price} fill="none" stroke="var(--color-text)" stroke-width="1.4" />
+      <path d={price} fill="none" stroke="var(--color-text)" stroke-width="1.5" />
       <EntryMarker
         x={entryX}
         y={entryY}
@@ -1050,17 +1050,17 @@ function Supertrend({
         d={supertrendBefore}
         fill="none"
         stroke={dir === "long" ? "var(--color-down)" : "var(--color-up)"}
-        stroke-width="1.2"
+        stroke-width="1.5"
         opacity="0.6"
       />
       <path
         d={supertrendAfter}
         fill="none"
         stroke={dir === "long" ? "var(--color-up)" : "var(--color-down)"}
-        stroke-width="1.2"
+        stroke-width="1.5"
         opacity="0.9"
       />
-      <path d={price} fill="none" stroke="var(--color-text)" stroke-width="1.4" />
+      <path d={price} fill="none" stroke="var(--color-text)" stroke-width="1.5" />
       <EntryMarker
         x={entryX}
         y={entryY}
@@ -1093,7 +1093,7 @@ function GenericViz({
         d="M0,80 L60,75 L120,70 L180,55 L240,45"
         fill="none"
         stroke="var(--color-text)"
-        stroke-width="1.4"
+        stroke-width="1.5"
       />
       <circle cx={180} cy={55} r="5" fill={hex} />
       <text x={10} y={14} fill="var(--color-text-muted)" font-size="9" font-family="monospace">

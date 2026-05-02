@@ -147,7 +147,7 @@ export default function OKXConnectButton({
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
-                  stroke-width="2.5"
+                  stroke-width="2"
                 >
                   <path
                     stroke-linecap="round"
@@ -223,7 +223,7 @@ export default function OKXConnectButton({
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
-                stroke-width="2.5"
+                stroke-width="2"
               >
                 <path
                   stroke-linecap="round"
