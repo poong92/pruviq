@@ -459,7 +459,8 @@ export default function MarketDashboard({
               class={`mb-4 px-4 py-2.5 rounded-lg border text-center ${isDataVeryStale ? "border-(--color-down)/30 bg-(--color-down)/10" : "border-(--color-warning)/30 bg-(--color-warning)/10"}`}
             >
               <span
-                class={`text-xs font-mono ${isDataVeryStale ? "text-(--color-down)" : "text-(--color-warning)"}`}
+                class="text-xs font-mono"
+                style={{ color: isDataVeryStale ? "var(--color-down)" : "var(--color-warning)" }}
               >
                 ⚠ {isDataVeryStale ? l.staleWarningSevere : l.staleWarning} (
                 {refreshAgo})
@@ -617,9 +618,7 @@ export default function MarketDashboard({
                     (ind.previous != null ? ind.value - ind.previous : null);
                   const deltaColor =
                     delta != null
-                      ? delta >= 0
-                        ? "text-(--color-up)"
-                        : "text-(--color-down)"
+                      ? (delta >= 0 ? "var(--color-up)" : "var(--color-down)")
                       : "";
                   const arrow =
                     delta != null ? (delta >= 0 ? "\u25B2" : "\u25BC") : "";
@@ -673,7 +672,8 @@ export default function MarketDashboard({
                         </span>
                         {delta != null && (
                           <span
-                            class={`text-[0.625rem] font-mono ${deltaColor}`}
+                            class="text-[0.625rem] font-mono"
+                            style={{ color: deltaColor || undefined }}
                           >
                             <span aria-hidden="true">{arrow}</span>{" "}
                             {Math.abs(delta).toFixed(2)}
