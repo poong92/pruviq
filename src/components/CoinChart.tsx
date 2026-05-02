@@ -529,7 +529,8 @@ export default function CoinChart({
             ${formatChartPrice(lastBar.c)}
           </span>
           <span
-            class={`font-mono text-[0.8125rem] font-semibold px-2 py-0.5 rounded ${change >= 0 ? "text-[--color-up] bg-[var(--color-up-fill)]" : "text-[--color-red] bg-[var(--color-down-fill)]"}`}
+            class={`font-mono text-[0.8125rem] font-semibold px-2 py-0.5 rounded ${change >= 0 ? "bg-[var(--color-up-fill)]" : "bg-[var(--color-down-fill)]"}`}
+            style={{ color: change >= 0 ? "var(--color-up)" : "var(--color-red)" }}
           >
             {change > 0 ? "+" : ""}
             {change.toFixed(2)}%
@@ -538,11 +539,11 @@ export default function CoinChart({
         <div class="flex gap-6 flex-wrap font-mono text-[0.6875rem] text-[--color-text-muted]">
           <span>
             {t.h24high}:{" "}
-            <span class="text-[--color-up]">${formatChartPrice(high24)}</span>
+            <span class="text-(--color-up)">${formatChartPrice(high24)}</span>
           </span>
           <span>
             {t.h24low}:{" "}
-            <span class="text-[--color-red]">${formatChartPrice(low24)}</span>
+            <span class="text-(--color-red)">${formatChartPrice(low24)}</span>
           </span>
           <span>
             {t.h24vol}:{" "}
@@ -566,13 +567,13 @@ export default function CoinChart({
           </span>
           <span class="text-[--color-text-muted]">
             {t.high}{" "}
-            <span class="text-[--color-up]">
+            <span class="text-(--color-up)">
               {formatChartPrice(displayBar.h)}
             </span>
           </span>
           <span class="text-[--color-text-muted]">
             {t.low}{" "}
-            <span class="text-[--color-red]">
+            <span class="text-(--color-red)">
               {formatChartPrice(displayBar.l)}
             </span>
           </span>
@@ -596,7 +597,8 @@ export default function CoinChart({
             </span>
           </span>
           <span
-            class={`font-semibold hidden sm:inline ${displayChange >= 0 ? "text-[--color-up]" : "text-[--color-red]"}`}
+            class="font-semibold hidden sm:inline"
+            style={{ color: displayChange >= 0 ? "var(--color-up)" : "var(--color-red)" }}
           >
             {displayChange > 0 ? "+" : ""}
             {displayChange.toFixed(2)}%

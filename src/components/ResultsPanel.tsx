@@ -378,7 +378,7 @@ export default function ResultsPanel({
           role="alert"
           aria-live="assertive"
         >
-          <span class="font-mono text-sm text-[--color-red]">
+          <span class="font-mono text-sm text-(--color-red)">
             {t.error}: {error}
           </span>
         </div>
@@ -691,7 +691,7 @@ export default function ResultsPanel({
                 </span>
                 <button
                   onClick={onClearHistory}
-                  class="text-[10px] font-mono text-[--color-text-muted] hover:text-[--color-red] transition-colors"
+                  class="text-[10px] font-mono text-[--color-text-muted] hover:text-(--color-red) transition-colors"
                 >
                   {t.clearHistory || "Clear"}
                 </button>
@@ -1261,9 +1261,9 @@ export default function ResultsPanel({
                                 <span
                                   class={`px-1.5 py-0.5 rounded text-[10px] ${
                                     tr.exit_reason === "TP"
-                                      ? "bg-[--color-green]/10 text-[--color-green]"
+                                      ? "bg-[--color-green]/10 text-(--color-green)"
                                       : tr.exit_reason === "SL"
-                                        ? "bg-[--color-red]/10 text-[--color-red]"
+                                        ? "bg-[--color-red]/10 text-(--color-red)"
                                         : "bg-[--color-yellow]/10 text-[--color-yellow]"
                                   }`}
                                 >
@@ -1286,7 +1286,7 @@ export default function ResultsPanel({
                                         {t.tradeDirection || "Direction"}
                                       </span>
                                       <div
-                                        class={`font-bold ${tr.direction === "SHORT" ? "text-[--color-red]" : "text-[--color-green]"}`}
+                                        class={`font-bold ${tr.direction === "SHORT" ? "text-(--color-red)" : "text-(--color-green)"}`}
                                       >
                                         {tr.direction}
                                       </div>
