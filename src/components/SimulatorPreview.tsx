@@ -232,9 +232,9 @@ export default function SimulatorPreview() {
               left: `${(TRADES[hoveredTrade].x / 400) * 100}%`,
               top: `${(TRADES[hoveredTrade].y / 60) * 100 - 15}%`,
               transform: "translateX(-50%) translateY(-100%)",
-              background: "rgba(20,20,24,0.95)",
+              background: "var(--color-bg-tooltip)",
               backdropFilter: "blur(8px)",
-              boxShadow: "0 4px 12px rgba(0,0,0,0.4)",
+              boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
             }}
           >
             <span class="text-(--color-accent) font-bold">
