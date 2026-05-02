@@ -398,9 +398,9 @@ export default function ResultsCard({
           <span
             class={`inline-block px-2 py-0.5 rounded text-[10px] font-mono font-bold border ${
               data.direction === "short"
-                ? "text-[--color-red] border-[--color-red]/30 bg-[--color-red]/10"
+                ? "text-(--color-red) border-[--color-red]/30 bg-[--color-red]/10"
                 : data.direction === "long"
-                  ? "text-[--color-green] border-[--color-green]/30 bg-[--color-green]/10"
+                  ? "text-(--color-green) border-[--color-green]/30 bg-[--color-green]/10"
                   : "border-[--color-accent]/30 bg-[--color-accent]/10"
             }`}
             style={
@@ -437,12 +437,12 @@ export default function ResultsCard({
           <span
             class={`inline-flex items-center justify-center w-10 h-10 rounded-xl font-mono text-xl font-black border-2 shadow-sm shrink-0 ${
               data.strategy_grade === "A"
-                ? "text-[--color-green] border-[--color-green]/40 bg-[--color-green]/10"
+                ? "text-(--color-green) border-[--color-green]/40 bg-[--color-green]/10"
                 : data.strategy_grade === "B"
                   ? "text-[--color-accent] border-[--color-accent]/40 bg-[--color-accent]/10"
                   : data.strategy_grade === "C"
                     ? "text-[--color-yellow] border-[--color-yellow]/40 bg-[--color-yellow]/10"
-                    : "text-[--color-red] border-[--color-red]/40 bg-[--color-red]/10"
+                    : "text-(--color-red) border-[--color-red]/40 bg-[--color-red]/10"
             }`}
           >
             {data.strategy_grade}
@@ -451,12 +451,12 @@ export default function ResultsCard({
             <span
               class={`font-mono text-xs font-bold ${
                 data.strategy_grade === "A"
-                  ? "text-[--color-green]"
+                  ? "text-(--color-green)"
                   : data.strategy_grade === "B"
                     ? "text-[--color-accent]"
                     : data.strategy_grade === "C"
                       ? "text-[--color-yellow]"
-                      : "text-[--color-red]"
+                      : "text-(--color-red)"
               }`}
             >
               {`${t.gradePrefix} ${data.strategy_grade}`}
@@ -500,10 +500,10 @@ export default function ResultsCard({
               <span
                 class={`inline-block px-1.5 py-0.5 rounded text-[10px] font-mono font-bold ${
                   data.walk_forward_consistency >= 0.85
-                    ? "text-[--color-green] bg-[--color-green]/10"
+                    ? "text-(--color-green) bg-[--color-green]/10"
                     : data.walk_forward_consistency >= 0.7
                       ? "text-[--color-accent] bg-[--color-accent]/10"
-                      : "text-[--color-red] bg-[--color-red]/10"
+                      : "text-(--color-red) bg-[--color-red]/10"
                 }`}
               >
                 {data.walk_forward_consistency.toFixed(2)}
@@ -697,7 +697,7 @@ export default function ResultsCard({
         <span class="text-[--color-accent]">
           <Term abbr="TP" lang={lang} /> {tpPct.toFixed(0)}%
         </span>
-        <span class="text-[--color-red]">
+        <span class="text-(--color-red)">
           <Term abbr="SL" lang={lang} /> {slPct.toFixed(0)}%
         </span>
         <span class="text-[--color-text-muted]">TO {toPct.toFixed(0)}%</span>
@@ -792,21 +792,21 @@ export default function ResultsCard({
                 <div class="flex gap-4 font-mono text-xs">
                   <span class="text-[--color-text-muted]">
                     {t.tradingFee}:{" "}
-                    <span class="text-[--color-red]">
+                    <span class="text-(--color-red)">
                       {tradingFee.toFixed(1)}%
                     </span>
                   </span>
                   {fundingFee > 0 && (
                     <span class="text-[--color-text-muted]">
                       {t.fundingFee}:{" "}
-                      <span class="text-[--color-red]">
+                      <span class="text-(--color-red)">
                         {fundingFee.toFixed(1)}%
                       </span>
                     </span>
                   )}
                   <span class="text-[--color-text-muted]">
                     {t.totalCost}:{" "}
-                    <span class="text-[--color-red] font-bold">
+                    <span class="text-(--color-red) font-bold">
                       {totalCost.toFixed(1)}%
                     </span>
                   </span>
