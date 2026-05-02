@@ -10,7 +10,7 @@ profitFactor: 0.42
 totalPnl: "Negative"
 timeframe: "1H"
 dataPoints: 8420
-coins: 577
+coins: 235
 dateAdded: "2026-01-31"
 dateUpdated: "2026-04-10"
 dateKilled: "2026-02-05"

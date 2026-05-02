@@ -11,7 +11,7 @@ maxDrawdown: 26.7
 totalPnl: "+$794"
 timeframe: "1H"
 dataPoints: 2898
-coins: 535
+coins: 235
 dateAdded: "2026-01-10"
 dateUpdated: "2026-04-10"
 tags: ["bollinger-bands", "squeeze", "volatility", "verified"]

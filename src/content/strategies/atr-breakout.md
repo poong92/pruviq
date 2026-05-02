@@ -8,7 +8,7 @@ difficulty: "intermediate"
 winRate: 48.7
 profitFactor: 0.91
 timeframe: "1H"
-coins: 577
+coins: 235
 dateAdded: "2026-01-18"
 dateUpdated: "2026-04-10"
 tags: ["atr", "breakout", "shelved"]
