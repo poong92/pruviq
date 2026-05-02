@@ -16,7 +16,7 @@ export const en = {
   "nav.blog": "Blog",
   "nav.performance": "Performance",
   "nav.ranking": "Daily Strategy Ranking",
-  "nav.lang": "KO",
+  "nav.lang": "한국어",
 
   // Hero
   "hero.tag": "FREE BACKTESTING TOOL",

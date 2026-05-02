@@ -16,7 +16,7 @@ export const ko: Record<TranslationKey, string> = {
   "nav.blog": "블로그",
   "nav.performance": "성과",
   "nav.ranking": "오늘의 전략 랭킹",
-  "nav.lang": "EN",
+  "nav.lang": "English",
 
   // Hero
   "hero.tag": "무료 백테스트 도구",
