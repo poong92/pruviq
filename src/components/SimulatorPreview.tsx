@@ -88,16 +88,11 @@ function buildPath(pts: number[], width: number): string {
 }
 
 export default function SimulatorPreview() {
-  const [visible, setVisible] = useState(false);
+  // SSR-visible: true so the big-number hero is the LCP candidate in initial HTML.
+  // AnimatedNumber animates from 0 client-side via requestAnimationFrame.
+  const [visible, setVisible] = useState(true);
   const [hoveredTrade, setHoveredTrade] = useState<number | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
-
-  useEffect(() => {
-    // Start visible immediately — no artificial delay so the component renders
-    // as LCP candidate on first paint. AnimatedNumber still counts up via its
-    // own duration prop; the entrance opacity transition still runs.
-    setVisible(true);
-  }, []);
 
   const curvePath = buildPath(EQUITY_POINTS, 400);
   const flatPath = EQUITY_POINTS.map(
@@ -132,9 +127,7 @@ export default function SimulatorPreview() {
       </div>
 
       {/* Big number hero */}
-      <div
-        class={`text-center mb-5 transition-opacity duration-700 ${visible ? "opacity-100" : "opacity-0"}`}
-      >
+      <div class="text-center mb-5">
         <div
           class="text-4xl md:text-5xl font-extrabold"
           style={{ color: "var(--color-up)" }}
@@ -265,9 +258,7 @@ export default function SimulatorPreview() {
       </div>
 
       {/* Stats grid */}
-      <div
-        class={`grid grid-cols-3 gap-2 transition-opacity duration-700 delay-500 ${visible ? "opacity-100" : "opacity-0"}`}
-      >
+      <div class="grid grid-cols-3 gap-2">
         {STATS.map((s) => (
           <div
             key={s.label}
