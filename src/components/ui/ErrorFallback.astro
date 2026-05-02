@@ -8,9 +8,9 @@ const {
   detail = 'Rankings update daily. Try refreshing or check back shortly.'
 } = Astro.props;
 ---
-<div class="rounded-lg border border-[--color-warning]/20 p-6 bg-[--color-warning]/5 text-center my-4" data-error-fallback>
-  <p class="text-[--color-warning] font-medium mb-2">{message}</p>
-  <p class="text-sm text-[--color-text-secondary] mb-4">{detail}</p>
+<div class="rounded-lg border border-(--color-warning)/20 p-6 bg-(--color-warning)/5 text-center my-4" data-error-fallback>
+  <p class="text-(--color-warning) font-medium mb-2">{message}</p>
+  <p class="text-sm text-(--color-text-secondary) mb-4">{detail}</p>
   <!-- Delegated event handler instead of inline onclick — CSP-strict friendly
        (inline event attributes require 'unsafe-inline' which weakens XSS defense). -->
   <button type="button" data-error-refresh class="btn btn-ghost btn-sm cursor-pointer">

@@ -62,9 +62,9 @@ export default function ExchangeCTA({
 
   if (mode === "inline") {
     return (
-      <div class="mt-3 pt-3 border-t border-[--color-border]/50">
+      <div class="mt-3 pt-3 border-t border-(--color-border)/50">
         <div class="flex flex-wrap items-center gap-2">
-          <span class="text-[0.625rem] text-[--color-text-muted] uppercase tracking-wider">
+          <span class="text-[0.625rem] text-(--color-text-muted) uppercase tracking-wider">
             {t.heading}:
           </span>
           {available.map((ex) => (
@@ -73,16 +73,16 @@ export default function ExchangeCTA({
               href={buildUrl(ex, coin, strategy)}
               target="_blank"
               rel="noopener noreferrer sponsored"
-              class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md border border-[--color-border] hover:border-[--color-accent] text-[0.6875rem] font-mono transition-colors"
+              class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md border border-(--color-border) hover:border-(--color-accent) text-[0.6875rem] font-mono transition-colors"
             >
-              <span class="font-semibold text-[--color-text]">{ex.name}</span>
-              <span class="text-[--color-accent] text-[0.625rem]">
+              <span class="font-semibold text-(--color-text)">{ex.name}</span>
+              <span class="text-(--color-accent) text-[0.625rem]">
                 {ex.discountLabel} {t.off}
               </span>
             </a>
           ))}
         </div>
-        <p class="text-[0.5rem] text-[--color-text-muted] mt-1">
+        <p class="text-[0.5rem] text-(--color-text-muted) mt-1">
           {t.disclosure}
         </p>
       </div>
@@ -93,7 +93,7 @@ export default function ExchangeCTA({
   return (
     <Card variant="default" padding="lg" radius="lg" class="mt-6">
       <h3 class="text-sm font-bold mb-1">{t.heading}</h3>
-      <p class="text-[0.75rem] text-[--color-text-muted] mb-4">{t.subtext}</p>
+      <p class="text-[0.75rem] text-(--color-text-muted) mb-4">{t.subtext}</p>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {available.map((ex) => (
           <Card
@@ -110,9 +110,9 @@ export default function ExchangeCTA({
           >
             <div>
               <div class="font-semibold text-sm">{ex.name}</div>
-              <div class="text-[0.6875rem] text-[--color-text-muted]">
+              <div class="text-[0.6875rem] text-(--color-text-muted)">
                 {ex.tag} &middot;{" "}
-                <span class="text-[--color-accent]">
+                <span class="text-(--color-accent)">
                   {ex.discountLabel} {t.discount}
                 </span>
               </div>
@@ -126,7 +126,7 @@ export default function ExchangeCTA({
           </Card>
         ))}
       </div>
-      <p class="text-[0.5625rem] text-[--color-text-muted] mt-3">
+      <p class="text-[0.5625rem] text-(--color-text-muted) mt-3">
         {t.disclosure}
       </p>
     </Card>

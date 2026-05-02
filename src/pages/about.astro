@@ -30,12 +30,12 @@ const simulationsRun = (siteStats as { simulations_run: number }).simulations_ru
   <!-- HERO — Full-width with glow -->
   <section class="relative overflow-hidden pt-8 pb-14 md:pt-12 md:pb-20">
     <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
-      <div class="absolute left-1/2 top-[40%] -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] rounded-full blur-[200px] bg-[--color-accent] opacity-[0.05]"></div>
+      <div class="absolute left-1/2 top-[40%] -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] rounded-full blur-[200px] bg-(--color-accent) opacity-[0.05]"></div>
     </div>
     <div class="relative max-w-4xl mx-auto px-6 text-center">
-      <p class="font-mono text-[--color-accent] text-sm mb-3 tracking-wider">{t('about.tag')}</p>
+      <p class="font-mono text-(--color-accent) text-sm mb-3 tracking-wider">{t('about.tag')}</p>
       <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-[-0.04em] leading-[1.08] mb-6">{t('about.title')}</h1>
-      <p class="text-[--color-text-muted] text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
+      <p class="text-(--color-text-muted) text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
         {t('about.mission')}
       </p>
     </div>
@@ -48,19 +48,19 @@ const simulationsRun = (siteStats as { simulations_run: number }).simulations_ru
     <div class="reveal grid grid-cols-2 md:grid-cols-4 gap-4">
       <div class="stat-glass text-center">
         <p class="font-mono text-3xl md:text-4xl font-bold gradient-text">{coinsAnalyzed}+</p>
-        <p class="text-xs text-[--color-text-muted] mt-2 font-mono uppercase tracking-wider">{t('about.num_coins')}</p>
+        <p class="text-xs text-(--color-text-muted) mt-2 font-mono uppercase tracking-wider">{t('about.num_coins')}</p>
       </div>
       <div class="stat-glass text-center">
         <p class="font-mono text-3xl md:text-4xl font-bold gradient-text">{t('about.num_presets_val')}</p>
-        <p class="text-xs text-[--color-text-muted] mt-2 font-mono uppercase tracking-wider">{t('about.num_presets')}</p>
+        <p class="text-xs text-(--color-text-muted) mt-2 font-mono uppercase tracking-wider">{t('about.num_presets')}</p>
       </div>
       <div class="stat-glass text-center">
         <p class="font-mono text-3xl md:text-4xl font-bold gradient-text">{t('about.num_data_val')}</p>
-        <p class="text-xs text-[--color-text-muted] mt-2 font-mono uppercase tracking-wider">{t('about.num_data')}</p>
+        <p class="text-xs text-(--color-text-muted) mt-2 font-mono uppercase tracking-wider">{t('about.num_data')}</p>
       </div>
       <div class="stat-glass text-center">
         <p class="font-mono text-3xl md:text-4xl font-bold gradient-text">{(siteStats as { strategies_tested: number }).strategies_tested}+</p>
-        <p class="text-xs text-[--color-text-muted] mt-2 font-mono uppercase tracking-wider">Strategies Tested</p>
+        <p class="text-xs text-(--color-text-muted) mt-2 font-mono uppercase tracking-wider">Strategies Tested</p>
       </div>
     </div>
   </section>
@@ -74,37 +74,37 @@ const simulationsRun = (siteStats as { simulations_run: number }).simulations_ru
       <div class="card-premium card-accent-gradient p-8 md:p-10">
         <div class="flex flex-col md:flex-row gap-8 items-start">
           <div class="shrink-0">
-            <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-[--color-accent]/20 to-[--color-purple]/20 flex items-center justify-center">
-              <svg class="w-8 h-8 text-[--color-accent]" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5"/></svg>
+            <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-(--color-accent)/20 to-(--color-purple)/20 flex items-center justify-center">
+              <svg class="w-8 h-8 text-(--color-accent)" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5"/></svg>
             </div>
           </div>
           <div class="flex-1">
-            <p class="font-mono text-[--color-accent] text-xs tracking-wider mb-3">{t('about.solo_tag')}</p>
+            <p class="font-mono text-(--color-accent) text-xs tracking-wider mb-3">{t('about.solo_tag')}</p>
             <p class="font-bold text-xl mb-4">{t('about.solo_headline')}</p>
-            <p class="text-[--color-text-muted] text-sm leading-relaxed mb-3">
+            <p class="text-(--color-text-muted) text-sm leading-relaxed mb-3">
               {t('about.solo_background')}
             </p>
-            <p class="text-[--color-text-muted] text-sm leading-relaxed mb-6">
+            <p class="text-(--color-text-muted) text-sm leading-relaxed mb-6">
               {t('about.solo_why')}
             </p>
             <div class="flex items-center gap-2 mb-4">
-              <span class="inline-block w-1.5 h-1.5 rounded-full bg-[--color-up] animate-pulse"></span>
-              <span class="text-[--color-text-muted] text-xs font-mono">Independent research platform</span>
+              <span class="inline-block w-1.5 h-1.5 rounded-full bg-(--color-up) animate-pulse"></span>
+              <span class="text-(--color-text-muted) text-xs font-mono">Independent research platform</span>
             </div>
             <div class="flex flex-wrap gap-3 text-sm">
-              <a href="mailto:contact@pruviq.com" class="inline-flex items-center gap-1.5 font-mono text-xs px-3 py-2 rounded-lg border border-[--color-border] text-[--color-accent] hover:border-[--color-accent] transition-colors">
+              <a href="mailto:contact@pruviq.com" class="inline-flex items-center gap-1.5 font-mono text-xs px-3 py-2 rounded-lg border border-(--color-border) text-(--color-accent) hover:border-(--color-accent) transition-colors">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>
                 contact@pruviq.com
               </a>
-              <a href="https://t.me/PRUVIQ" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 font-mono text-xs px-3 py-2 rounded-lg border border-[--color-border] text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
+              <a href="https://t.me/PRUVIQ" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 font-mono text-xs px-3 py-2 rounded-lg border border-(--color-border) text-(--color-text-muted) hover:border-(--color-accent) hover:text-(--color-accent) transition-colors">
                 <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
                 Telegram
               </a>
-              <a href="https://x.com/pruviq" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 font-mono text-xs px-3 py-2 rounded-lg border border-[--color-border] text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
+              <a href="https://x.com/pruviq" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 font-mono text-xs px-3 py-2 rounded-lg border border-(--color-border) text-(--color-text-muted) hover:border-(--color-accent) hover:text-(--color-accent) transition-colors">
                 <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
                 X
               </a>
-              <a href="https://www.threads.net/@pruviq" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 font-mono text-xs px-3 py-2 rounded-lg border border-[--color-border] text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
+              <a href="https://www.threads.net/@pruviq" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 font-mono text-xs px-3 py-2 rounded-lg border border-(--color-border) text-(--color-text-muted) hover:border-(--color-accent) hover:text-(--color-accent) transition-colors">
                 Threads
               </a>
             </div>
@@ -120,31 +120,31 @@ const simulationsRun = (siteStats as { simulations_run: number }).simulations_ru
          any institutional signal reads as fly-by-night. Adding what IS
          acceptable: open data links, uptime evidence, failure ledger. -->
     <section class="reveal mb-12">
-      <p class="font-mono text-[--color-accent] text-xs tracking-wider mb-2">TRUST SIGNALS</p>
+      <p class="font-mono text-(--color-accent) text-xs tracking-wider mb-2">TRUST SIGNALS</p>
       <h2 class="text-2xl md:text-3xl font-bold mb-3">Why trust an anonymous team</h2>
-      <p class="text-[--color-text-muted] text-sm mb-6 leading-relaxed max-w-2xl">
+      <p class="text-(--color-text-muted) text-sm mb-6 leading-relaxed max-w-2xl">
         Identity is optional; receipts aren't. Here are the artifacts you can verify independently.
       </p>
       <div class="grid sm:grid-cols-2 gap-3">
-        <a href="/performance/" class="card-enterprise p-5 hover:border-[--color-accent]/40 transition-colors">
-          <p class="font-mono text-xs text-[--color-accent] mb-2">LIVE P&amp;L LEDGER</p>
+        <a href="/performance/" class="card-enterprise p-5 hover:border-(--color-accent)/40 transition-colors">
+          <p class="font-mono text-xs text-(--color-accent) mb-2">LIVE P&amp;L LEDGER</p>
           <p class="text-sm font-semibold mb-1">Every trade published, including losses</p>
-          <p class="text-xs text-[--color-text-muted]">2,898+ logged trades · 16.5% MDD · -$301 admitted · CSV + JSON download</p>
+          <p class="text-xs text-(--color-text-muted)">2,898+ logged trades · 16.5% MDD · -$301 admitted · CSV + JSON download</p>
         </a>
-        <a href="/trust/" class="card-enterprise p-5 hover:border-[--color-accent]/40 transition-colors">
-          <p class="font-mono text-xs text-[--color-accent] mb-2">PLATFORM HEALTH</p>
+        <a href="/trust/" class="card-enterprise p-5 hover:border-(--color-accent)/40 transition-colors">
+          <p class="font-mono text-xs text-(--color-accent) mb-2">PLATFORM HEALTH</p>
           <p class="text-sm font-semibold mb-1">Live status + uptime (polls api.pruviq.com/health)</p>
-          <p class="text-xs text-[--color-text-muted]">No green spin when data is stale — outages show</p>
+          <p class="text-xs text-(--color-text-muted)">No green spin when data is stale — outages show</p>
         </a>
-        <a href="/methodology/" class="card-enterprise p-5 hover:border-[--color-accent]/40 transition-colors">
-          <p class="font-mono text-xs text-[--color-accent] mb-2">OPEN METHODOLOGY</p>
+        <a href="/methodology/" class="card-enterprise p-5 hover:border-(--color-accent)/40 transition-colors">
+          <p class="font-mono text-xs text-(--color-accent) mb-2">OPEN METHODOLOGY</p>
           <p class="text-sm font-semibold mb-1">Fees, slippage, survivorship disclosed</p>
-          <p class="text-xs text-[--color-text-muted]">Every parameter that shapes the result is named — not hidden</p>
+          <p class="text-xs text-(--color-text-muted)">Every parameter that shapes the result is named — not hidden</p>
         </a>
-        <a href="/strategies/ranking/" class="card-enterprise p-5 hover:border-[--color-accent]/40 transition-colors">
-          <p class="font-mono text-xs text-[--color-accent] mb-2">FAILURE LEDGER</p>
+        <a href="/strategies/ranking/" class="card-enterprise p-5 hover:border-(--color-accent)/40 transition-colors">
+          <p class="font-mono text-xs text-(--color-accent) mb-2">FAILURE LEDGER</p>
           <p class="text-sm font-semibold mb-1">88+ strategies killed, reasons published</p>
-          <p class="text-xs text-[--color-text-muted]">We show what didn't work so you can judge what did</p>
+          <p class="text-xs text-(--color-text-muted)">We show what didn't work so you can judge what did</p>
         </a>
       </div>
     </section>
@@ -153,34 +153,34 @@ const simulationsRun = (siteStats as { simulations_run: number }).simulations_ru
 
     <!-- Methodology -->
     <section class="reveal mb-12">
-      <p class="font-mono text-[--color-accent] text-xs tracking-wider mb-2">{t('about.method_tag')}</p>
+      <p class="font-mono text-(--color-accent) text-xs tracking-wider mb-2">{t('about.method_tag')}</p>
       <h2 class="text-2xl md:text-3xl font-bold mb-3">{t('about.method_title')}</h2>
-      <p class="text-[--color-text-muted] text-sm mb-8 leading-relaxed max-w-2xl">{t('about.method_desc')}</p>
+      <p class="text-(--color-text-muted) text-sm mb-8 leading-relaxed max-w-2xl">{t('about.method_desc')}</p>
       <div class="reveal grid sm:grid-cols-3 gap-4">
         <div class="card-enterprise p-6">
-          <div class="w-10 h-10 rounded-xl bg-[--color-accent]/10 flex items-center justify-center mb-4">
-            <svg class="w-5 h-5 text-[--color-accent]" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"/></svg>
+          <div class="w-10 h-10 rounded-xl bg-(--color-accent)/10 flex items-center justify-center mb-4">
+            <svg class="w-5 h-5 text-(--color-accent)" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"/></svg>
           </div>
           <h3 class="font-bold text-sm mb-2">{t('about.method1_title')}</h3>
-          <p class="text-[--color-text-muted] text-xs leading-relaxed">{t('about.method1_desc')}</p>
+          <p class="text-(--color-text-muted) text-xs leading-relaxed">{t('about.method1_desc')}</p>
         </div>
         <div class="card-enterprise p-6">
-          <div class="w-10 h-10 rounded-xl bg-[--color-up]/10 flex items-center justify-center mb-4">
-            <svg class="w-5 h-5 text-[--color-up]" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/></svg>
+          <div class="w-10 h-10 rounded-xl bg-(--color-up)/10 flex items-center justify-center mb-4">
+            <svg class="w-5 h-5 text-(--color-up)" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/></svg>
           </div>
           <h3 class="font-bold text-sm mb-2">{t('about.method2_title')}</h3>
-          <p class="text-[--color-text-muted] text-xs leading-relaxed">{t('about.method2_desc')}</p>
+          <p class="text-(--color-text-muted) text-xs leading-relaxed">{t('about.method2_desc')}</p>
         </div>
         <div class="card-enterprise p-6">
-          <div class="w-10 h-10 rounded-xl bg-[--color-verified]/10 flex items-center justify-center mb-4">
-            <svg class="w-5 h-5 text-[--color-verified]" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <div class="w-10 h-10 rounded-xl bg-(--color-verified)/10 flex items-center justify-center mb-4">
+            <svg class="w-5 h-5 text-(--color-verified)" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
           </div>
           <h3 class="font-bold text-sm mb-2">{t('about.method3_title')}</h3>
-          <p class="text-[--color-text-muted] text-xs leading-relaxed">{t('about.method3_desc')}</p>
+          <p class="text-(--color-text-muted) text-xs leading-relaxed">{t('about.method3_desc')}</p>
         </div>
       </div>
       <div class="mt-6 text-center">
-        <a href="/methodology" class="inline-flex items-center gap-1.5 font-mono text-xs text-[--color-accent] hover:underline">
+        <a href="/methodology" class="inline-flex items-center gap-1.5 font-mono text-xs text-(--color-accent) hover:underline">
           {t('about.method_cta')} &rarr;
         </a>
       </div>
@@ -190,24 +190,24 @@ const simulationsRun = (siteStats as { simulations_run: number }).simulations_ru
 
     <!-- Philosophy -->
     <section class="reveal mb-12">
-      <p class="font-mono text-[--color-accent] text-xs tracking-wider mb-2">{t('about.philosophy_tag')}</p>
+      <p class="font-mono text-(--color-accent) text-xs tracking-wider mb-2">{t('about.philosophy_tag')}</p>
       <h2 class="text-2xl md:text-3xl font-bold mb-8">{t('about.philosophy_title')}</h2>
       <div class="reveal grid sm:grid-cols-2 gap-4">
         <div class="card-enterprise p-6 group">
-          <h3 class="font-bold mb-2 group-hover:text-[--color-accent] transition-colors">{t('about.philosophy1_title')}</h3>
-          <p class="text-[--color-text-muted] text-sm leading-relaxed">{t('about.philosophy1_desc')}</p>
+          <h3 class="font-bold mb-2 group-hover:text-(--color-accent) transition-colors">{t('about.philosophy1_title')}</h3>
+          <p class="text-(--color-text-muted) text-sm leading-relaxed">{t('about.philosophy1_desc')}</p>
         </div>
         <div class="card-enterprise p-6 group">
-          <h3 class="font-bold mb-2 group-hover:text-[--color-accent] transition-colors">{t('about.philosophy2_title')}</h3>
-          <p class="text-[--color-text-muted] text-sm leading-relaxed">{t('about.philosophy2_desc')}</p>
+          <h3 class="font-bold mb-2 group-hover:text-(--color-accent) transition-colors">{t('about.philosophy2_title')}</h3>
+          <p class="text-(--color-text-muted) text-sm leading-relaxed">{t('about.philosophy2_desc')}</p>
         </div>
         <div class="card-enterprise p-6 group">
-          <h3 class="font-bold mb-2 group-hover:text-[--color-accent] transition-colors">{t('about.philosophy3_title')}</h3>
-          <p class="text-[--color-text-muted] text-sm leading-relaxed">{t('about.philosophy3_desc')}</p>
+          <h3 class="font-bold mb-2 group-hover:text-(--color-accent) transition-colors">{t('about.philosophy3_title')}</h3>
+          <p class="text-(--color-text-muted) text-sm leading-relaxed">{t('about.philosophy3_desc')}</p>
         </div>
         <div class="card-enterprise p-6 group">
-          <h3 class="font-bold mb-2 group-hover:text-[--color-accent] transition-colors">{t('about.philosophy4_title')}</h3>
-          <p class="text-[--color-text-muted] text-sm leading-relaxed">{t('about.philosophy4_desc')}</p>
+          <h3 class="font-bold mb-2 group-hover:text-(--color-accent) transition-colors">{t('about.philosophy4_title')}</h3>
+          <p class="text-(--color-text-muted) text-sm leading-relaxed">{t('about.philosophy4_desc')}</p>
         </div>
       </div>
     </section>
@@ -216,51 +216,51 @@ const simulationsRun = (siteStats as { simulations_run: number }).simulations_ru
 
     <!-- Roadmap — Timeline design -->
     <section class="reveal mb-12">
-      <p class="font-mono text-[--color-accent] text-xs tracking-wider mb-2">{t('about.roadmap_tag')}</p>
+      <p class="font-mono text-(--color-accent) text-xs tracking-wider mb-2">{t('about.roadmap_tag')}</p>
       <h2 class="text-2xl md:text-3xl font-bold mb-3">{t('about.roadmap_title')}</h2>
-      <p class="text-[--color-text-muted] text-sm mb-8">{t('about.roadmap_desc')}</p>
+      <p class="text-(--color-text-muted) text-sm mb-8">{t('about.roadmap_desc')}</p>
       <div class="reveal grid sm:grid-cols-2 gap-6">
         <div class="card-premium card-accent-up p-6">
-          <p class="font-mono text-xs text-[--color-up] font-bold mb-4 flex items-center gap-2">
-            <span class="w-2 h-2 rounded-full bg-[--color-up]"></span>
+          <p class="font-mono text-xs text-(--color-up) font-bold mb-4 flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-(--color-up)"></span>
             {t('about.roadmap_label_done')}
           </p>
           <div class="timeline-line space-y-4">
             <div class="relative">
               <div class="timeline-dot"></div>
-              <p class="text-sm text-[--color-text-muted]">{t('about.roadmap_done1')}</p>
+              <p class="text-sm text-(--color-text-muted)">{t('about.roadmap_done1')}</p>
             </div>
             <div class="relative">
               <div class="timeline-dot"></div>
-              <p class="text-sm text-[--color-text-muted]">{t('about.roadmap_done2')}</p>
+              <p class="text-sm text-(--color-text-muted)">{t('about.roadmap_done2')}</p>
             </div>
             <div class="relative">
               <div class="timeline-dot"></div>
-              <p class="text-sm text-[--color-text-muted]">{t('about.roadmap_done3')}</p>
+              <p class="text-sm text-(--color-text-muted)">{t('about.roadmap_done3')}</p>
             </div>
             <div class="relative">
               <div class="timeline-dot"></div>
-              <p class="text-sm text-[--color-text-muted]">{t('about.roadmap_done4')}</p>
+              <p class="text-sm text-(--color-text-muted)">{t('about.roadmap_done4')}</p>
             </div>
           </div>
         </div>
-        <div class="card-premium p-6 border-[--color-accent]/20">
-          <p class="font-mono text-xs text-[--color-accent] font-bold mb-4 flex items-center gap-2">
-            <span class="w-2 h-2 rounded-full bg-[--color-accent] animate-pulse"></span>
+        <div class="card-premium p-6 border-(--color-accent)/20">
+          <p class="font-mono text-xs text-(--color-accent) font-bold mb-4 flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-(--color-accent) animate-pulse"></span>
             {t('about.roadmap_label_next')}
           </p>
           <div class="timeline-line space-y-4">
             <div class="relative">
               <div class="timeline-dot"></div>
-              <p class="text-sm text-[--color-text-muted]">{t('about.roadmap_next1')}</p>
+              <p class="text-sm text-(--color-text-muted)">{t('about.roadmap_next1')}</p>
             </div>
             <div class="relative">
               <div class="timeline-dot timeline-dot-muted"></div>
-              <p class="text-sm text-[--color-text-muted]">{t('about.roadmap_next2')}</p>
+              <p class="text-sm text-(--color-text-muted)">{t('about.roadmap_next2')}</p>
             </div>
             <div class="relative">
               <div class="timeline-dot timeline-dot-muted"></div>
-              <p class="text-sm text-[--color-text-muted]">{t('about.roadmap_next3')}</p>
+              <p class="text-sm text-(--color-text-muted)">{t('about.roadmap_next3')}</p>
             </div>
           </div>
         </div>
@@ -271,25 +271,25 @@ const simulationsRun = (siteStats as { simulations_run: number }).simulations_ru
 
     <!-- Partners -->
     <section class="reveal mb-12">
-      <p class="font-mono text-[--color-accent] text-xs tracking-wider mb-2">{t('about.partners_tag')}</p>
-      <p class="text-[--color-text-muted] text-sm mb-6 leading-relaxed">{t('about.partners_desc')}</p>
+      <p class="font-mono text-(--color-accent) text-xs tracking-wider mb-2">{t('about.partners_tag')}</p>
+      <p class="text-(--color-text-muted) text-sm mb-6 leading-relaxed">{t('about.partners_desc')}</p>
       <div class="reveal grid sm:grid-cols-2 gap-4">
         <div class="card-premium p-5 flex items-center gap-4">
-          <div class="w-12 h-12 rounded-xl bg-[--color-bg-elevated] flex items-center justify-center shrink-0">
-            <span class="font-mono font-bold text-sm text-[--color-text]">OKX</span>
+          <div class="w-12 h-12 rounded-xl bg-(--color-bg-elevated) flex items-center justify-center shrink-0">
+            <span class="font-mono font-bold text-sm text-(--color-text)">OKX</span>
           </div>
           <div>
             <p class="font-bold text-sm">{t('about.partners_okx')}</p>
-            <a href="/fees" class="font-mono text-[--color-accent] text-xs hover:underline">{t('about.partners_detail')}</a>
+            <a href="/fees" class="font-mono text-(--color-accent) text-xs hover:underline">{t('about.partners_detail')}</a>
           </div>
         </div>
         <div class="card-premium p-5 flex items-center gap-4">
-          <div class="w-12 h-12 rounded-xl bg-[--color-bg-elevated] flex items-center justify-center shrink-0">
-            <span class="font-mono font-bold text-xs text-[--color-text]">BNC</span>
+          <div class="w-12 h-12 rounded-xl bg-(--color-bg-elevated) flex items-center justify-center shrink-0">
+            <span class="font-mono font-bold text-xs text-(--color-text)">BNC</span>
           </div>
           <div>
             <p class="font-bold text-sm">{t('about.partners_binance')}</p>
-            <a href="/fees" class="font-mono text-[--color-accent] text-xs hover:underline">{t('about.partners_detail')}</a>
+            <a href="/fees" class="font-mono text-(--color-accent) text-xs hover:underline">{t('about.partners_detail')}</a>
           </div>
         </div>
       </div>
@@ -300,20 +300,20 @@ const simulationsRun = (siteStats as { simulations_run: number }).simulations_ru
     <!-- Social Proof -->
     <section class="reveal mb-12">
       <div class="card-premium p-6 md:p-8">
-        <p class="font-mono text-[--color-accent] text-xs tracking-wider mb-3">{t('about.proof_tag')}</p>
-        <p class="text-[--color-text-muted] text-sm leading-relaxed mb-6">{t('about.proof_desc')}</p>
+        <p class="font-mono text-(--color-accent) text-xs tracking-wider mb-3">{t('about.proof_tag')}</p>
+        <p class="text-(--color-text-muted) text-sm leading-relaxed mb-6">{t('about.proof_desc')}</p>
         <div class="flex flex-wrap gap-3">
-          <span class="inline-flex items-center gap-2 font-mono text-xs px-4 py-2.5 rounded-lg border border-[--color-border] text-[--color-text-muted]">
+          <span class="inline-flex items-center gap-2 font-mono text-xs px-4 py-2.5 rounded-lg border border-(--color-border) text-(--color-text-muted)">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/>
             </svg>
             {t('about.proof_github')}
           </span>
-          <span class="inline-flex items-center gap-2 font-mono text-xs px-4 py-2.5 rounded-lg border border-[--color-border] text-[--color-text-muted]">
-            <span class="w-2 h-2 rounded-full bg-[--color-up] animate-pulse inline-block"></span>
+          <span class="inline-flex items-center gap-2 font-mono text-xs px-4 py-2.5 rounded-lg border border-(--color-border) text-(--color-text-muted)">
+            <span class="w-2 h-2 rounded-full bg-(--color-up) animate-pulse inline-block"></span>
             {t('about.proof_commits')}
           </span>
-          <span class="inline-flex items-center font-mono text-xs px-4 py-2.5 rounded-lg border border-[--color-border] text-[--color-text-muted]">
+          <span class="inline-flex items-center font-mono text-xs px-4 py-2.5 rounded-lg border border-(--color-border) text-(--color-text-muted)">
             {t('about.proof_since')}
           </span>
         </div>
@@ -327,12 +327,12 @@ const simulationsRun = (siteStats as { simulations_run: number }).simulations_ru
       <details class="card-premium group p-0">
         <summary class="p-6 cursor-pointer flex items-center justify-between list-none min-h-[44px]">
           <div>
-            <p class="font-mono text-[--color-accent] text-xs tracking-wider mb-1">{t('about.stack_tag')}</p>
-            <p class="text-[--color-text-muted] text-sm">{t('about.stack_desc')}</p>
+            <p class="font-mono text-(--color-accent) text-xs tracking-wider mb-1">{t('about.stack_tag')}</p>
+            <p class="text-(--color-text-muted) text-sm">{t('about.stack_desc')}</p>
           </div>
-          <span class="text-[--color-text-muted] group-open:rotate-180 transition-transform shrink-0 ml-4">&#9662;</span>
+          <span class="text-(--color-text-muted) group-open:rotate-180 transition-transform shrink-0 ml-4">&#9662;</span>
         </summary>
-        <div class="px-6 pb-6 border-t border-[--color-border]">
+        <div class="px-6 pb-6 border-t border-(--color-border)">
           <div class="flex flex-wrap gap-2 mt-4">
             {[
               { label: 'Python', note: 'Data engine & backtester' },
@@ -342,8 +342,8 @@ const simulationsRun = (siteStats as { simulations_run: number }).simulations_ru
               { label: 'Cloudflare Pages', note: 'Hosting & CDN' },
               { label: 'CoinGecko API', note: 'Coin metadata' },
             ].map(({ label, note }) => (
-              <div class="font-mono text-xs px-3 py-2 rounded-lg border border-[--color-border] text-[--color-text-muted] flex flex-col gap-0.5 hover:border-[--color-accent]/30 transition-colors">
-                <span class="text-[--color-text] font-semibold">{label}</span>
+              <div class="font-mono text-xs px-3 py-2 rounded-lg border border-(--color-border) text-(--color-text-muted) flex flex-col gap-0.5 hover:border-(--color-accent)/30 transition-colors">
+                <span class="text-(--color-text) font-semibold">{label}</span>
                 <span class="opacity-60">{note}</span>
               </div>
             ))}
@@ -357,8 +357,8 @@ const simulationsRun = (siteStats as { simulations_run: number }).simulations_ru
     <!-- Contact + CTA -->
     <section class="reveal mb-12">
       <div class="text-center py-8">
-        <p class="font-mono text-[--color-accent] text-xs tracking-wider mb-2">{t('about.contact_tag')}</p>
-        <p class="text-[--color-text-muted] text-sm mb-6">{t('about.contact_desc')}</p>
+        <p class="font-mono text-(--color-accent) text-xs tracking-wider mb-2">{t('about.contact_tag')}</p>
+        <p class="text-(--color-text-muted) text-sm mb-6">{t('about.contact_desc')}</p>
         <div class="flex flex-col sm:flex-row gap-3 justify-center">
           <a href="mailto:contact@pruviq.com" class="btn btn-primary btn-md">
             {t('about.contact_email')}
@@ -372,19 +372,19 @@ const simulationsRun = (siteStats as { simulations_run: number }).simulations_ru
     <!-- Explore CTAs -->
     <section class="reveal pb-8 pt-8">
       <div class="text-center">
-        <p class="text-[--color-text-muted] text-sm mb-6">{t('about.explore_desc')}</p>
+        <p class="text-(--color-text-muted) text-sm mb-6">{t('about.explore_desc')}</p>
         <div class="flex flex-wrap gap-4 justify-center">
           <a href="/simulate" class="btn btn-primary btn-md">
             {t('cross.simulate_cta')} &rarr;
           </a>
-          <a href="/strategies" class="btn btn-ghost btn-md hover:border-[--color-accent] transition-colors">
+          <a href="/strategies" class="btn btn-ghost btn-md hover:border-(--color-accent) transition-colors">
             {t('cross.strategies_cta')} &rarr;
           </a>
         </div>
       </div>
     </section>
 
-    <p class="text-[--color-text-muted] text-xs max-w-lg mx-auto text-center pb-8">
+    <p class="text-(--color-text-muted) text-xs max-w-lg mx-auto text-center pb-8">
       {t('fees.affiliate_disclosure')}
     </p>
 

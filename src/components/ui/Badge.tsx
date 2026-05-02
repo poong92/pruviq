@@ -52,15 +52,15 @@ interface BadgeProps {
 
 const variantClasses: Record<BadgeVariant, string> = {
   neutral:
-    "bg-transparent border border-[--color-border] text-[--color-text-muted]",
+    "bg-transparent border border-(--color-border) text-(--color-text-muted)",
   accent:
-    "bg-[--color-accent]/10 border border-[--color-accent]/30 text-[--color-accent-bright]",
-  success: "bg-[--color-up]/10 border border-[--color-up]/30 text-[--color-up]",
+    "bg-(--color-accent)/10 border border-(--color-accent)/30 text-(--color-accent-bright)",
+  success: "bg-(--color-up)/10 border border-(--color-up)/30 text-(--color-up)",
   danger:
-    "bg-[--color-down]/10 border border-[--color-down]/30 text-[--color-down]",
+    "bg-(--color-down)/10 border border-(--color-down)/30 text-(--color-down)",
   warning:
-    "bg-[--color-verified-subtle] border border-[--color-verified-border] text-[--color-verified]",
-  info: "bg-[--color-accent]/5 border border-[--color-accent]/20 text-[--color-accent]",
+    "bg-(--color-verified-subtle) border border-(--color-verified-border) text-(--color-verified)",
+  info: "bg-(--color-accent)/5 border border-(--color-accent)/20 text-(--color-accent)",
 };
 
 const sizeClasses: Record<BadgeSize, string> = {
@@ -76,12 +76,12 @@ const dotSize: Record<BadgeSize, string> = {
 };
 
 const dotColor: Record<BadgeVariant, string> = {
-  neutral: "bg-[--color-text-muted]",
-  accent: "bg-[--color-accent]",
-  success: "bg-[--color-up]",
-  danger: "bg-[--color-down]",
-  warning: "bg-[--color-verified]",
-  info: "bg-[--color-accent]",
+  neutral: "bg-(--color-text-muted)",
+  accent: "bg-(--color-accent)",
+  success: "bg-(--color-up)",
+  danger: "bg-(--color-down)",
+  warning: "bg-(--color-verified)",
+  info: "bg-(--color-accent)",
 };
 
 const baseClass =

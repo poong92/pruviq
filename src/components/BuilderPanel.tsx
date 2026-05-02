@@ -167,15 +167,15 @@ export default function BuilderPanel(props: Props) {
   }, [props.topN]);
 
   return (
-    <div class="border border-[--color-border] rounded-lg bg-[--color-bg-card] overflow-hidden flex flex-col">
+    <div class="border border-(--color-border) rounded-lg bg-(--color-bg-card) overflow-hidden flex flex-col">
       {/* Panel header */}
-      <div class="px-4 py-2 border-b border-[--color-border] flex-shrink-0">
+      <div class="px-4 py-2 border-b border-(--color-border) flex-shrink-0">
         <div class="flex items-center justify-between">
-          <span class="font-mono text-sm text-[--color-accent] tracking-wider font-bold">
+          <span class="font-mono text-sm text-(--color-accent) tracking-wider font-bold">
             {t.strategyBuilder}
           </span>
           {props.coinsLoaded > 0 && (
-            <span class="text-[--color-text-muted] text-xs font-mono">
+            <span class="text-(--color-text-muted) text-xs font-mono">
               {props.coinsLoaded} {t.coinsUnit || "coins"}
             </span>
           )}
@@ -199,10 +199,10 @@ export default function BuilderPanel(props: Props) {
         />
         {props.presetError && (
           <div
-            class="mx-4 mt-1 mb-0 px-2.5 py-1 rounded bg-[--color-red]/10 border border-[--color-red]/20"
+            class="mx-4 mt-1 mb-0 px-2.5 py-1 rounded bg-(--color-red)/10 border border-(--color-red)/20"
             role="alert"
           >
-            <span class="text-[10px] font-mono text-[--color-red]">
+            <span class="text-[10px] font-mono text-(--color-red)">
               {props.presetError}
             </span>
           </div>
@@ -213,21 +213,21 @@ export default function BuilderPanel(props: Props) {
             (i.e. preset loaded or user already customized). 2026-04-23:
             progressive disclosure per UX audit (above-fold 27 → target <18). */}
         <details
-          class="border-b border-[--color-border]"
+          class="border-b border-(--color-border)"
           open={props.selectedIndicators.size > 0}
         >
-          <summary class="px-4 py-3 text-xs font-mono text-[--color-text-muted] uppercase cursor-pointer select-none hover:text-[--color-text] transition-colors list-none flex items-center justify-between">
+          <summary class="px-4 py-3 text-xs font-mono text-(--color-text-muted) uppercase cursor-pointer select-none hover:text-(--color-text) transition-colors list-none flex items-center justify-between">
             <span>
               {t.indicators}
               {props.selectedIndicators.size > 0 && (
-                <span class="ml-2 text-[--color-accent-bright] font-bold normal-case">
+                <span class="ml-2 text-(--color-accent-bright) font-bold normal-case">
                   {props.selectedIndicators.size}{" "}
                   {props.lang === "ko" ? "선택" : "selected"}
                 </span>
               )}
             </span>
             <span
-              class="text-xs text-[--color-text-muted] group-open:rotate-90 inline-block transition-transform"
+              class="text-xs text-(--color-text-muted) group-open:rotate-90 inline-block transition-transform"
               aria-hidden="true"
             >
               ▶
@@ -248,7 +248,7 @@ export default function BuilderPanel(props: Props) {
                   ${
                     props.selectedIndicators.has(ind.id)
                       ? "font-bold"
-                      : "bg-[--color-bg-tooltip] text-[--color-text-muted] border-[--color-border] hover:border-[--color-accent]/20"
+                      : "bg-(--color-bg-tooltip) text-(--color-text-muted) border-(--color-border) hover:border-(--color-accent)/20"
                   }`}
                 style={
                   props.selectedIndicators.has(ind.id)
@@ -263,28 +263,28 @@ export default function BuilderPanel(props: Props) {
         </details>
 
         {/* Entry Conditions */}
-        <div class="px-4 py-4 border-b border-[--color-border]">
+        <div class="px-4 py-4 border-b border-(--color-border)">
           <div class="flex items-center justify-between mb-1">
-            <span class="text-xs font-mono text-[--color-text-muted] uppercase">
+            <span class="text-xs font-mono text-(--color-text-muted) uppercase">
               {t.conditions}
             </span>
             <button
               onClick={props.addCondition}
-              class="text-xs font-mono text-[--color-accent] hover:underline min-h-[44px] px-2"
+              class="text-xs font-mono text-(--color-accent) hover:underline min-h-[44px] px-2"
             >
               {t.addCondition}
             </button>
           </div>
           {props.conditions.length === 0 ? (
             <div class="py-6 text-center">
-              <p class="text-[--color-text-muted] text-xs font-mono mb-1">
+              <p class="text-(--color-text-muted) text-xs font-mono mb-1">
                 {props.lang === "ko"
                   ? "위에서 지표를 선택한 뒤 조건을 추가하세요."
                   : "Select indicators above, then add conditions."}
               </p>
               <button
                 onClick={props.addCondition}
-                class="mt-2 px-4 py-2 min-h-[44px] text-xs font-mono rounded border border-dashed border-[--color-accent]/40 text-[--color-accent] hover:border-[--color-accent] hover:bg-[--color-accent]/5 transition-colors"
+                class="mt-2 px-4 py-2 min-h-[44px] text-xs font-mono rounded border border-dashed border-(--color-accent)/40 text-(--color-accent) hover:border-(--color-accent) hover:bg-(--color-accent)/5 transition-colors"
               >
                 {t.addCondition}
               </button>
@@ -308,8 +308,8 @@ export default function BuilderPanel(props: Props) {
             </div>
           )}
           {hasLookAhead && (
-            <div class="mt-1.5 px-2.5 py-1 rounded bg-[--color-yellow]/10 border border-[--color-yellow]/20">
-              <span class="text-[10px] font-mono text-[--color-yellow]">
+            <div class="mt-1.5 px-2.5 py-1 rounded bg-(--color-yellow)/10 border border-(--color-yellow)/20">
+              <span class="text-[10px] font-mono text-(--color-yellow)">
                 {t.lookAheadWarn ||
                   "C = current candle (incomplete in live). P = previous candle (confirmed). Using C may cause look-ahead bias."}
               </span>
@@ -318,14 +318,14 @@ export default function BuilderPanel(props: Props) {
         </div>
 
         {/* Parameters + Date Range (merged 3-column grid) */}
-        <div class="px-4 py-4 border-b border-[--color-border]">
-          <div class="text-xs font-mono text-[--color-text-muted] uppercase mb-2">
+        <div class="px-4 py-4 border-b border-(--color-border)">
+          <div class="text-xs font-mono text-(--color-text-muted) uppercase mb-2">
             {t.parameters}
           </div>
           <div class="grid grid-cols-3 gap-x-2 gap-y-4 sm:gap-y-3">
             {/* Timeframe - spans full width */}
             <div class="col-span-3 mb-1">
-              <label class="text-[10px] text-[--color-text-muted]">
+              <label class="text-[10px] text-(--color-text-muted)">
                 {t.timeframe || "Timeframe"}
               </label>
               <div class="flex gap-1.5 mt-0.5">
@@ -337,7 +337,7 @@ export default function BuilderPanel(props: Props) {
                       ${
                         props.timeframe === tf
                           ? ""
-                          : "bg-[--color-bg-tooltip] text-[--color-text-muted] border-[--color-border] hover:text-[--color-text]"
+                          : "bg-(--color-bg-tooltip) text-(--color-text-muted) border-(--color-border) hover:text-(--color-text)"
                       }`}
                     style={props.timeframe === tf ? tfActiveStyle : undefined}
                   >
@@ -348,7 +348,7 @@ export default function BuilderPanel(props: Props) {
             </div>
             {/* Direction */}
             <div>
-              <label class="text-[10px] text-[--color-text-muted]">
+              <label class="text-[10px] text-(--color-text-muted)">
                 {t.direction}
               </label>
               <div class="flex gap-1.5 mt-0.5">
@@ -356,7 +356,7 @@ export default function BuilderPanel(props: Props) {
                   data-testid="dir-short"
                   aria-pressed={props.direction === "short"}
                   onClick={() => props.setDirection("short")}
-                  class={`flex-1 min-h-[44px] text-xs font-mono rounded transition-colors border ${props.direction === "short" ? "font-bold" : "bg-[--color-bg-tooltip] text-[--color-text-muted] border-[--color-border] hover:border-[--color-red]/30"}`}
+                  class={`flex-1 min-h-[44px] text-xs font-mono rounded transition-colors border ${props.direction === "short" ? "font-bold" : "bg-(--color-bg-tooltip) text-(--color-text-muted) border-(--color-border) hover:border-(--color-red)/30"}`}
                   style={
                     props.direction === "short" ? shortActiveStyle : undefined
                   }
@@ -367,7 +367,7 @@ export default function BuilderPanel(props: Props) {
                   data-testid="dir-long"
                   aria-pressed={props.direction === "long"}
                   onClick={() => props.setDirection("long")}
-                  class={`flex-1 min-h-[44px] text-xs font-mono rounded transition-colors border ${props.direction === "long" ? "font-bold" : "bg-[--color-bg-tooltip] text-[--color-text-muted] border-[--color-border] hover:border-[--color-accent]/30"}`}
+                  class={`flex-1 min-h-[44px] text-xs font-mono rounded transition-colors border ${props.direction === "long" ? "font-bold" : "bg-(--color-bg-tooltip) text-(--color-text-muted) border-(--color-border) hover:border-(--color-accent)/30"}`}
                   style={
                     props.direction === "long" ? longActiveStyle : undefined
                   }
@@ -378,7 +378,7 @@ export default function BuilderPanel(props: Props) {
                   data-testid="dir-both"
                   aria-pressed={props.direction === "both"}
                   onClick={() => props.setDirection("both")}
-                  class={`flex-1 min-h-[44px] text-xs font-mono rounded transition-colors border ${props.direction === "both" ? "font-bold" : "bg-[--color-bg-tooltip] text-[--color-text-muted] border-[--color-border] hover:border-[--color-accent]/30"}`}
+                  class={`flex-1 min-h-[44px] text-xs font-mono rounded transition-colors border ${props.direction === "both" ? "font-bold" : "bg-(--color-bg-tooltip) text-(--color-text-muted) border-(--color-border) hover:border-(--color-accent)/30"}`}
                   style={
                     props.direction === "both"
                       ? {
@@ -393,7 +393,7 @@ export default function BuilderPanel(props: Props) {
                   {t.both || "BOTH"}
                 </button>
               </div>
-              <p class="text-[9px] text-[--color-text-muted] mt-0.5 font-mono">
+              <p class="text-[9px] text-(--color-text-muted) mt-0.5 font-mono">
                 {props.direction === "short"
                   ? t.dirShortDesc
                   : props.direction === "long"
@@ -406,7 +406,7 @@ export default function BuilderPanel(props: Props) {
                 a range input; previously only number existed → drag-adjust
                 couldn't be discovered). */}
             <div>
-              <label class="text-[10px] text-[--color-text-muted]">
+              <label class="text-[10px] text-(--color-text-muted)">
                 {t.sl} {localSl}%{" "}
                 <span
                   class="cursor-help opacity-60 hover:opacity-100"
@@ -427,7 +427,7 @@ export default function BuilderPanel(props: Props) {
                   setLocalSl(v);
                   props.setSlPct(parseFloat(v) || 10);
                 }}
-                class="w-full mt-1 h-2 cursor-pointer accent-[--color-accent]"
+                class="w-full mt-1 h-2 cursor-pointer accent-(--color-accent)"
               />
               <input
                 type="number"
@@ -440,12 +440,12 @@ export default function BuilderPanel(props: Props) {
                   setLocalSl((e.target as HTMLInputElement).value)
                 }
                 onBlur={() => props.setSlPct(parseFloat(localSl) || 10)}
-                class="w-full mt-0.5 px-2 py-2 min-h-[44px] bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
+                class="w-full mt-0.5 px-2 py-2 min-h-[44px] bg-(--color-bg-tooltip) border border-(--color-border) rounded font-mono text-xs text-(--color-text) outline-none focus:border-(--color-accent)"
               />
             </div>
             {/* TP */}
             <div>
-              <label class="text-[10px] text-[--color-text-muted]">
+              <label class="text-[10px] text-(--color-text-muted)">
                 {t.tp} {localTp}%{" "}
                 <span
                   class="cursor-help opacity-60 hover:opacity-100"
@@ -466,7 +466,7 @@ export default function BuilderPanel(props: Props) {
                   setLocalTp(v);
                   props.setTpPct(parseFloat(v) || 8);
                 }}
-                class="w-full mt-1 h-2 cursor-pointer accent-[--color-accent]"
+                class="w-full mt-1 h-2 cursor-pointer accent-(--color-accent)"
               />
               <input
                 type="number"
@@ -479,12 +479,12 @@ export default function BuilderPanel(props: Props) {
                   setLocalTp((e.target as HTMLInputElement).value)
                 }
                 onBlur={() => props.setTpPct(parseFloat(localTp) || 8)}
-                class="w-full mt-0.5 px-2 py-2 min-h-[44px] bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
+                class="w-full mt-0.5 px-2 py-2 min-h-[44px] bg-(--color-bg-tooltip) border border-(--color-border) rounded font-mono text-xs text-(--color-text) outline-none focus:border-(--color-accent)"
               />
             </div>
             {/* Max bars */}
             <div>
-              <label class="text-[10px] text-[--color-text-muted]">
+              <label class="text-[10px] text-(--color-text-muted)">
                 {t.maxBars}{" "}
                 <span
                   class="cursor-help opacity-60 hover:opacity-100"
@@ -503,12 +503,12 @@ export default function BuilderPanel(props: Props) {
                   setLocalMaxBars((e.target as HTMLInputElement).value)
                 }
                 onBlur={() => props.setMaxBars(parseInt(localMaxBars) || 48)}
-                class="w-full mt-0.5 px-2 py-2 min-h-[44px] bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
+                class="w-full mt-0.5 px-2 py-2 min-h-[44px] bg-(--color-bg-tooltip) border border-(--color-border) rounded font-mono text-xs text-(--color-text) outline-none focus:border-(--color-accent)"
               />
             </div>
             {/* Capital input — compound: total portfolio capital; simple: per-coin amount */}
             <div>
-              <label class="text-[10px] text-[--color-text-muted]">
+              <label class="text-[10px] text-(--color-text-muted)">
                 {props.compounding
                   ? t.capitalLabel
                   : t.perCoinUsdt || "Per Coin $"}
@@ -528,12 +528,12 @@ export default function BuilderPanel(props: Props) {
                     parseFloat(localPerCoin) || (props.compounding ? 1000 : 60),
                   )
                 }
-                class="w-full mt-0.5 px-2 py-2 min-h-[44px] bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
+                class="w-full mt-0.5 px-2 py-2 min-h-[44px] bg-(--color-bg-tooltip) border border-(--color-border) rounded font-mono text-xs text-(--color-text) outline-none focus:border-(--color-accent)"
               />
             </div>
             {/* Leverage */}
             <div>
-              <label class="text-[10px] text-[--color-text-muted]">
+              <label class="text-[10px] text-(--color-text-muted)">
                 {t.leverage || "Leverage"}
               </label>
               <input
@@ -547,7 +547,7 @@ export default function BuilderPanel(props: Props) {
                   setLocalLeverage((e.target as HTMLInputElement).value)
                 }
                 onBlur={() => props.setLeverage(parseInt(localLeverage) || 5)}
-                class="w-full mt-0.5 px-2 py-2 min-h-[44px] bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
+                class="w-full mt-0.5 px-2 py-2 min-h-[44px] bg-(--color-bg-tooltip) border border-(--color-border) rounded font-mono text-xs text-(--color-text) outline-none focus:border-(--color-accent)"
               />
             </div>
             {/* Compounding Toggle — fits in 3rd grid column */}
@@ -592,7 +592,7 @@ export default function BuilderPanel(props: Props) {
             </div>
             {/* Compound info */}
             {props.compounding && (
-              <div class="col-span-3 text-[9px] font-mono text-[--color-accent] bg-[--color-accent]/5 border border-[--color-accent]/20 rounded px-2 py-1.5 -mt-0.5">
+              <div class="col-span-3 text-[9px] font-mono text-(--color-accent) bg-(--color-accent)/5 border border-(--color-accent)/20 rounded px-2 py-1.5 -mt-0.5">
                 {(() => {
                   const capital = parseFloat(localPerCoin) || 1000;
                   const lev = parseInt(localLeverage) || 5;
@@ -615,7 +615,7 @@ export default function BuilderPanel(props: Props) {
             )}
             {/* Start Date */}
             <div>
-              <label class="text-xs text-[--color-text-muted]">
+              <label class="text-xs text-(--color-text-muted)">
                 {t.startDate}
               </label>
               <input
@@ -628,15 +628,15 @@ export default function BuilderPanel(props: Props) {
                 onChange={(e: Event) =>
                   props.setStartDate((e.target as HTMLInputElement).value)
                 }
-                class="w-full mt-0.5 px-2 py-2 min-h-[44px] bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
+                class="w-full mt-0.5 px-2 py-2 min-h-[44px] bg-(--color-bg-tooltip) border border-(--color-border) rounded font-mono text-xs text-(--color-text) outline-none focus:border-(--color-accent)"
               />
             </div>
             {/* End Date */}
             <div>
-              <label class="text-xs text-[--color-text-muted]">
+              <label class="text-xs text-(--color-text-muted)">
                 {t.endDate}
                 {!props.endDate && (
-                  <span class="ml-1 text-[--color-text-muted]">
+                  <span class="ml-1 text-(--color-text-muted)">
                     ({props.lang === "ko" ? "현재까지" : "present"})
                   </span>
                 )}
@@ -651,15 +651,15 @@ export default function BuilderPanel(props: Props) {
                 onChange={(e: Event) =>
                   props.setEndDate((e.target as HTMLInputElement).value)
                 }
-                class="w-full mt-0.5 px-2 py-2 min-h-[44px] bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
+                class="w-full mt-0.5 px-2 py-2 min-h-[44px] bg-(--color-bg-tooltip) border border-(--color-border) rounded font-mono text-xs text-(--color-text) outline-none focus:border-(--color-accent)"
               />
             </div>
           </div>
         </div>
 
         {/* Coin Selection */}
-        <div class="px-4 py-4 border-b border-[--color-border]">
-          <div class="text-xs font-mono text-[--color-text-muted] uppercase mb-2">
+        <div class="px-4 py-4 border-b border-(--color-border)">
+          <div class="text-xs font-mono text-(--color-text-muted) uppercase mb-2">
             {t.coins}
           </div>
           <div class="flex gap-1.5 mb-2">
@@ -681,7 +681,7 @@ export default function BuilderPanel(props: Props) {
                   ${
                     props.coinMode === mode
                       ? "font-bold"
-                      : "bg-[--color-bg-tooltip] text-[--color-text-muted] border-[--color-border] hover:border-[--color-accent]/20"
+                      : "bg-(--color-bg-tooltip) text-(--color-text-muted) border-(--color-border) hover:border-(--color-accent)/20"
                   }`}
                 style={props.coinMode === mode ? coinActiveStyle : undefined}
               >
@@ -691,7 +691,7 @@ export default function BuilderPanel(props: Props) {
           </div>
           {props.coinMode === "top" && (
             <div>
-              <label class="text-xs font-mono text-[--color-text-muted] mb-1 block">
+              <label class="text-xs font-mono text-(--color-text-muted) mb-1 block">
                 {t.topCoinsPlaceholder || "Number of top coins"}
               </label>
               <input
@@ -703,9 +703,9 @@ export default function BuilderPanel(props: Props) {
                   setLocalTopN((e.target as HTMLInputElement).value)
                 }
                 onBlur={() => props.setTopN(parseInt(localTopN) || 50)}
-                class="w-full px-2 py-2 min-h-[44px] bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
+                class="w-full px-2 py-2 min-h-[44px] bg-(--color-bg-tooltip) border border-(--color-border) rounded font-mono text-xs text-(--color-text) outline-none focus:border-(--color-accent)"
               />
-              <p class="text-[10px] text-[--color-text-muted] mt-0.5 font-mono">
+              <p class="text-[10px] text-(--color-text-muted) mt-0.5 font-mono">
                 {props.t.topNCoinsHint ||
                   `Top ${localTopN} coins by data availability`}
               </p>
@@ -713,7 +713,7 @@ export default function BuilderPanel(props: Props) {
           )}
           {props.coinMode === "select" && (
             <div>
-              <label class="text-xs font-mono text-[--color-text-muted] mb-1 block">
+              <label class="text-xs font-mono text-(--color-text-muted) mb-1 block">
                 {t.searchCoinsPlaceholder || "Search coins..."}
               </label>
               <div class="flex items-center gap-1.5 mb-1.5">
@@ -723,7 +723,7 @@ export default function BuilderPanel(props: Props) {
                   onInput={(e: Event) =>
                     props.setCoinSearch((e.target as HTMLInputElement).value)
                   }
-                  class="flex-1 px-2 py-2 min-h-[44px] bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs outline-none"
+                  class="flex-1 px-2 py-2 min-h-[44px] bg-(--color-bg-tooltip) border border-(--color-border) rounded font-mono text-xs outline-none"
                 />
                 <button
                   onClick={() => {
@@ -733,18 +733,18 @@ export default function BuilderPanel(props: Props) {
                       return Array.from(combined);
                     });
                   }}
-                  class="px-3 min-h-[44px] text-[10px] font-mono text-[--color-accent] border border-[--color-border] rounded hover:bg-[--color-bg-hover] transition-colors whitespace-nowrap"
+                  class="px-3 min-h-[44px] text-[10px] font-mono text-(--color-accent) border border-(--color-border) rounded hover:bg-(--color-bg-hover) transition-colors whitespace-nowrap"
                 >
                   {t.selectAll || "All"}
                 </button>
                 <button
                   onClick={() => props.setSelectedCoins(() => [])}
-                  class="px-3 min-h-[44px] text-[10px] font-mono text-[--color-text-muted] border border-[--color-border] rounded hover:bg-[--color-bg-hover] transition-colors whitespace-nowrap"
+                  class="px-3 min-h-[44px] text-[10px] font-mono text-(--color-text-muted) border border-(--color-border) rounded hover:bg-(--color-bg-hover) transition-colors whitespace-nowrap"
                 >
                   {t.selectNone || "None"}
                 </button>
               </div>
-              <div class="text-[10px] text-[--color-text-muted] font-mono mb-1">
+              <div class="text-[10px] text-(--color-text-muted) font-mono mb-1">
                 {t.selectedOf
                   ? t.selectedOf(
                       props.selectedCoins.length,
@@ -757,7 +757,7 @@ export default function BuilderPanel(props: Props) {
                   {props.selectedCoins.map((s) => (
                     <span
                       key={s}
-                      class="px-2 py-0.5 text-[10px] font-mono bg-[--color-accent]/10 text-[--color-accent] rounded flex items-center gap-1"
+                      class="px-2 py-0.5 text-[10px] font-mono bg-(--color-accent)/10 text-(--color-accent) rounded flex items-center gap-1"
                     >
                       {s.replace("USDT", "")}
                       <button
@@ -766,7 +766,7 @@ export default function BuilderPanel(props: Props) {
                             p.filter((x) => x !== s),
                           )
                         }
-                        class="hover:text-[--color-red]"
+                        class="hover:text-(--color-red)"
                         aria-label={`Remove ${s}`}
                       >
                         x
@@ -786,8 +786,8 @@ export default function BuilderPanel(props: Props) {
                           : [...prev, c.symbol],
                       );
                     }}
-                    class={`block w-full text-left px-2 py-2 min-h-[44px] text-xs font-mono rounded hover:bg-[--color-bg-hover] flex items-center
-                      ${props.selectedCoins.includes(c.symbol) ? "text-[--color-accent]" : "text-[--color-text-muted]"}`}
+                    class={`block w-full text-left px-2 py-2 min-h-[44px] text-xs font-mono rounded hover:bg-(--color-bg-hover) flex items-center
+                      ${props.selectedCoins.includes(c.symbol) ? "text-(--color-accent)" : "text-(--color-text-muted)"}`}
                   >
                     {props.selectedCoins.includes(c.symbol) ? "\u2713 " : ""}
                     {c.symbol}
@@ -799,10 +799,10 @@ export default function BuilderPanel(props: Props) {
         </div>
 
         {/* Avoid Hours (collapsible) */}
-        <details class="border-b border-[--color-border]" open>
-          <summary class="px-4 py-2 text-xs font-mono text-[--color-text-muted] uppercase cursor-pointer select-none hover:text-[--color-text] transition-colors list-none flex items-center justify-between">
+        <details class="border-b border-(--color-border)" open>
+          <summary class="px-4 py-2 text-xs font-mono text-(--color-text-muted) uppercase cursor-pointer select-none hover:text-(--color-text) transition-colors list-none flex items-center justify-between">
             <span>{t.avoidHours}</span>
-            <span class="text-xs text-[--color-text-muted]">
+            <span class="text-xs text-(--color-text-muted)">
               {props.avoidHours.size > 0
                 ? t.hoursSelected
                   ? t.hoursSelected(props.avoidHours.size)
@@ -828,7 +828,7 @@ export default function BuilderPanel(props: Props) {
                     ${
                       props.avoidHours.has(i)
                         ? ""
-                        : "bg-[--color-bg-tooltip] text-[--color-text-muted] border-[--color-border] hover:border-[--color-red]/20"
+                        : "bg-(--color-bg-tooltip) text-(--color-text-muted) border-(--color-border) hover:border-(--color-red)/20"
                     }`}
                   style={props.avoidHours.has(i) ? avoidActiveStyle : undefined}
                 >
@@ -842,7 +842,7 @@ export default function BuilderPanel(props: Props) {
         {/* Run Button */}
         <div class="px-4 py-2">
           {props.demoMode && (
-            <div class="text-[10px] text-[--color-yellow] font-mono mb-1.5 px-2 py-1 bg-[--color-yellow]/10 rounded border border-[--color-yellow]/20">
+            <div class="text-[10px] text-(--color-yellow) font-mono mb-1.5 px-2 py-1 bg-(--color-yellow)/10 rounded border border-(--color-yellow)/20">
               {t.apiDown}
             </div>
           )}
@@ -851,10 +851,10 @@ export default function BuilderPanel(props: Props) {
               clicked RUN, but what's my current config?" confusion. */}
           {props.conditions.length > 0 && (
             <div
-              class="mb-2 px-3 py-2 rounded border border-[--color-border] bg-[--color-bg-tooltip] font-mono text-[11px] text-[--color-text-muted]"
+              class="mb-2 px-3 py-2 rounded border border-(--color-border) bg-(--color-bg-tooltip) font-mono text-[11px] text-(--color-text-muted)"
               data-testid="run-summary"
             >
-              <span class="text-[--color-text]">
+              <span class="text-(--color-text)">
                 {props.activePreset ||
                   (props.lang === "ko" ? "커스텀" : "Custom")}
               </span>
@@ -906,7 +906,7 @@ export default function BuilderPanel(props: Props) {
                 <span class="spinner" />
                 {props.progressLabels[props.progressStep] || t.running}
                 {(props.elapsedSec ?? 0) > 0 && (
-                  <span class="text-[10px] font-normal text-[--color-text-muted]">
+                  <span class="text-[10px] font-normal text-(--color-text-muted)">
                     {props.elapsedSec}s
                   </span>
                 )}

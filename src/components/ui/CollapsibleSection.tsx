@@ -21,12 +21,12 @@ export default function CollapsibleSection({
 }: Props) {
   return (
     <details
-      class="group mb-3 rounded-lg border border-[--color-border] overflow-hidden"
+      class="group mb-3 rounded-lg border border-(--color-border) overflow-hidden"
       open={defaultOpen}
     >
-      <summary class="flex items-center justify-between px-3 py-2 cursor-pointer select-none bg-[--color-bg-tooltip] hover:bg-[--color-bg-hover]/30 transition-colors list-none [&::-webkit-details-marker]:hidden">
+      <summary class="flex items-center justify-between px-3 py-2 cursor-pointer select-none bg-(--color-bg-tooltip) hover:bg-(--color-bg-hover)/30 transition-colors list-none [&::-webkit-details-marker]:hidden">
         <div class="flex items-center gap-2">
-          <span class="font-mono text-[10px] text-[--color-text-muted] uppercase tracking-wider">
+          <span class="font-mono text-[10px] text-(--color-text-muted) uppercase tracking-wider">
             {title}
           </span>
           {badge && (
@@ -42,7 +42,7 @@ export default function CollapsibleSection({
           )}
         </div>
         <svg
-          class="w-3 h-3 text-[--color-text-muted] transition-transform group-open:rotate-180"
+          class="w-3 h-3 text-(--color-text-muted) transition-transform group-open:rotate-180"
           viewBox="0 0 12 12"
           fill="none"
           stroke="currentColor"
@@ -51,7 +51,7 @@ export default function CollapsibleSection({
           <path d="M3 4.5l3 3 3-3" />
         </svg>
       </summary>
-      <div class="px-3 py-2.5 border-t border-[--color-border]">{children}</div>
+      <div class="px-3 py-2.5 border-t border-(--color-border)">{children}</div>
     </details>
   );
 }

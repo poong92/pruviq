@@ -226,7 +226,7 @@ export default function ResultsPanel({ config, lang }: Props) {
       <SkeletonFrame testId="sim-v1-results-loading" aria-busy="true">
         <MetricGridSkeleton shimmer />
         <div class="mt-4 flex items-center justify-center gap-2 border-t border-(--color-border) pt-3 text-xs text-(--color-text-muted)">
-          <span class="inline-block h-1.5 w-1.5 animate-ping rounded-full bg-[--color-accent]" />
+          <span class="inline-block h-1.5 w-1.5 animate-ping rounded-full bg-(--color-accent)" />
           {t("simV2.empty.loading")}
         </div>
       </SkeletonFrame>
@@ -389,7 +389,7 @@ export default function ResultsPanel({ config, lang }: Props) {
               downloadCSV(d, config.presetId ?? "preset");
             }}
             data-testid="sim-v1-csv-download"
-            class="inline-flex min-h-[40px] items-center justify-center gap-1 rounded-lg border border-(--color-border-hover) px-3 py-2 text-xs text-(--color-text-secondary) hover:border-[--color-accent] hover:text-[--color-accent-bright]"
+            class="inline-flex min-h-[40px] items-center justify-center gap-1 rounded-lg border border-(--color-border-hover) px-3 py-2 text-xs text-(--color-text-secondary) hover:border-(--color-accent) hover:text-(--color-accent-bright)"
           >
             {lang === "ko" ? "CSV 다운로드" : "Download CSV"} ↓
           </button>

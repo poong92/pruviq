@@ -162,21 +162,21 @@ export default function DataTable<T>({
   if (loading) {
     return (
       <div
-        class={`overflow-x-auto rounded-lg border border-[--color-border] bg-[--color-bg-card] ${className}`.trim()}
+        class={`overflow-x-auto rounded-lg border border-(--color-border) bg-(--color-bg-card) ${className}`.trim()}
         role="status"
         aria-label="Loading table data"
         {...rest}
       >
         <table class="w-full text-sm" role="table">
           <thead
-            class={`border-b border-[--color-border] ${stickyHeader ? "sticky top-0 z-[1] bg-[--color-bg-card]" : ""}`}
+            class={`border-b border-(--color-border) ${stickyHeader ? "sticky top-0 z-[1] bg-(--color-bg-card)" : ""}`}
           >
             <tr>
               {columns.map((c) => (
                 <th
                   key={c.key}
                   scope="col"
-                  class={`${cellPad} ${alignClass(c.align)} font-mono text-[10px] uppercase tracking-wider text-[--color-text-muted] ${c.headerClass ?? ""}`}
+                  class={`${cellPad} ${alignClass(c.align)} font-mono text-[10px] uppercase tracking-wider text-(--color-text-muted) ${c.headerClass ?? ""}`}
                 >
                   {c.label}
                 </th>
@@ -185,10 +185,10 @@ export default function DataTable<T>({
           </thead>
           <tbody>
             {Array.from({ length: loadingRows }).map((_, i) => (
-              <tr key={i} class="border-b border-[--color-border]/50">
+              <tr key={i} class="border-b border-(--color-border)/50">
                 {columns.map((c) => (
                   <td key={c.key} class={`${cellPad} ${alignClass(c.align)}`}>
-                    <span class="inline-block h-3 w-16 rounded bg-[--color-bg-hover] animate-pulse" />
+                    <span class="inline-block h-3 w-16 rounded bg-(--color-bg-hover) animate-pulse" />
                   </td>
                 ))}
               </tr>
@@ -202,13 +202,13 @@ export default function DataTable<T>({
   if (data.length === 0) {
     return (
       <div
-        class={`rounded-lg border border-[--color-border] bg-[--color-bg-card] ${className}`.trim()}
+        class={`rounded-lg border border-(--color-border) bg-(--color-bg-card) ${className}`.trim()}
         role="status"
         {...rest}
       >
         {emptyState ?? (
           <div class="px-6 py-12 text-center">
-            <p class="text-sm text-[--color-text-muted]">No data available.</p>
+            <p class="text-sm text-(--color-text-muted)">No data available.</p>
           </div>
         )}
       </div>
@@ -223,7 +223,7 @@ export default function DataTable<T>({
       aria-rowcount={sortedData.length + 1}
     >
       <thead
-        class={`border-b border-[--color-border] ${stickyHeader ? "sticky top-0 z-[1] bg-[--color-bg-card]" : ""}`}
+        class={`border-b border-(--color-border) ${stickyHeader ? "sticky top-0 z-[1] bg-(--color-bg-card)" : ""}`}
       >
         <tr>
           {columns.map((c, ci) => {
@@ -240,16 +240,16 @@ export default function DataTable<T>({
                 scope="col"
                 aria-colindex={ci + 1}
                 aria-sort={ariaSort}
-                class={`${cellPad} ${alignClass(c.align)} font-mono text-[10px] uppercase tracking-wider text-[--color-text-muted] ${c.width ?? ""} ${c.headerClass ?? ""}`}
+                class={`${cellPad} ${alignClass(c.align)} font-mono text-[10px] uppercase tracking-wider text-(--color-text-muted) ${c.width ?? ""} ${c.headerClass ?? ""}`}
               >
                 {c.sortable ? (
                   <button
                     type="button"
                     onClick={() => toggleSort(c.key)}
-                    class="inline-flex items-center gap-1 hover:text-[--color-text] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--color-accent] rounded"
+                    class="inline-flex items-center gap-1 hover:text-(--color-text) transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-accent) rounded"
                   >
                     {c.label}
-                    <span aria-hidden="true" class="text-[--color-accent]">
+                    <span aria-hidden="true" class="text-(--color-accent)">
                       {ariaSort === "ascending"
                         ? "▲"
                         : ariaSort === "descending"
@@ -272,7 +272,7 @@ export default function DataTable<T>({
             <tr
               key={key}
               onClick={onRowClick ? () => onRowClick(row, rowIdx) : undefined}
-              class={`border-b border-[--color-border]/50 ${onRowClick ? "cursor-pointer hover:bg-[--color-bg-hover]" : ""}`}
+              class={`border-b border-(--color-border)/50 ${onRowClick ? "cursor-pointer hover:bg-(--color-bg-hover)" : ""}`}
             >
               {columns.map((c, ci) => {
                 const value = c.render
@@ -286,7 +286,7 @@ export default function DataTable<T>({
                   <td
                     key={c.key}
                     aria-colindex={ci + 1}
-                    class={`${cellPad} ${alignClass(c.align)} text-[--color-text] ${c.cellClass ?? ""}`}
+                    class={`${cellPad} ${alignClass(c.align)} text-(--color-text) ${c.cellClass ?? ""}`}
                   >
                     {value}
                   </td>
@@ -311,7 +311,7 @@ export default function DataTable<T>({
               key={key}
               role="listitem"
               onClick={onRowClick ? () => onRowClick(row, rowIdx) : undefined}
-              class={`rounded border border-[--color-border]/50 bg-[--color-bg-card] p-3 ${onRowClick ? "cursor-pointer hover:border-[--color-accent]/40" : ""}`}
+              class={`rounded border border-(--color-border)/50 bg-(--color-bg-card) p-3 ${onRowClick ? "cursor-pointer hover:border-(--color-accent)/40" : ""}`}
             >
               {visibleCols.map((c) => {
                 const value = c.render
@@ -326,10 +326,10 @@ export default function DataTable<T>({
                     key={c.key}
                     class="flex items-center justify-between gap-3 py-1 first:pt-0 last:pb-0"
                   >
-                    <span class="text-[10px] font-mono uppercase tracking-wider text-[--color-text-muted]">
+                    <span class="text-[10px] font-mono uppercase tracking-wider text-(--color-text-muted)">
                       {c.label}
                     </span>
-                    <span class="text-sm text-[--color-text] text-right">
+                    <span class="text-sm text-(--color-text) text-right">
                       {value}
                     </span>
                   </div>
@@ -360,8 +360,8 @@ export default function DataTable<T>({
                 onClick={() => toggleSort(c.key)}
                 class={`inline-flex items-center gap-1 px-2 py-1 rounded border text-[11px] font-mono ${
                   isActive
-                    ? "border-[--color-accent] bg-[--color-accent]/10 text-[--color-accent]"
-                    : "border-[--color-border] text-[--color-text-muted]"
+                    ? "border-(--color-accent) bg-(--color-accent)/10 text-(--color-accent)"
+                    : "border-(--color-border) text-(--color-text-muted)"
                 }`}
               >
                 {c.label}
@@ -378,7 +378,7 @@ export default function DataTable<T>({
 
   return (
     <div
-      class={`overflow-x-auto rounded-lg border border-[--color-border] bg-[--color-bg-card] ${className}`.trim()}
+      class={`overflow-x-auto rounded-lg border border-(--color-border) bg-(--color-bg-card) ${className}`.trim()}
       {...rest}
     >
       {mobileSortRow}

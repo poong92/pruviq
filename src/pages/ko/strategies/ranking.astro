@@ -77,19 +77,19 @@ if (!ssrRanking) {
       <StrategyTabs active="ranking" lang="ko" />
 
       <!-- Page header -->
-      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('ranking.tag')}</p>
+      <p class="font-mono text-(--color-accent) text-sm mb-2 tracking-wider">{t('ranking.tag')}</p>
       <h1 class="text-3xl md:text-5xl font-bold mb-3">
         {t('ranking.title')}
       </h1>
-      <p class="text-[--color-text-muted] text-sm mb-1">
+      <p class="text-(--color-text-muted) text-sm mb-1">
         {t('ranking.date_label').replace('{date}', today)}
       </p>
       {ssrRanking?.generated_at && formatRankingTimestamp(ssrRanking.generated_at) && (
-        <p class="font-mono text-[11px] text-[--color-text-muted] opacity-70 mb-1">
+        <p class="font-mono text-[11px] text-(--color-text-muted) opacity-70 mb-1">
           {t('ranking.last_refreshed')}: {formatRankingTimestamp(ssrRanking.generated_at)}
         </p>
       )}
-      <p class="text-[--color-text-muted] text-sm mb-8 max-w-2xl">
+      <p class="text-(--color-text-muted) text-sm mb-8 max-w-2xl">
         {t('ranking.desc')}
       </p>
 
@@ -97,28 +97,28 @@ if (!ssrRanking) {
       <div class="mb-8 flex flex-wrap gap-3">
         <a
           href="/ko/simulate"
-          class="inline-flex items-center gap-2 bg-[--color-accent] text-[--color-bg] px-5 py-2.5 rounded-lg font-semibold text-sm hover:bg-[--color-accent-dim] transition-colors"
+          class="inline-flex items-center gap-2 bg-(--color-accent) text-(--color-bg) px-5 py-2.5 rounded-lg font-semibold text-sm hover:bg-(--color-accent-dim) transition-colors"
         >
           {t('ranking.open_sim')} &rarr;
         </a>
         <a
           href="/ko/strategies"
-          class="inline-flex items-center gap-2 border border-[--color-border] text-[--color-text-muted] px-5 py-2.5 rounded-lg font-semibold text-sm hover:border-[--color-accent] hover:text-[--color-accent] transition-colors"
+          class="inline-flex items-center gap-2 border border-(--color-border) text-(--color-text-muted) px-5 py-2.5 rounded-lg font-semibold text-sm hover:border-(--color-accent) hover:text-(--color-accent) transition-colors"
         >
           {t('ranking.strategy_lib')}
         </a>
         <a
           href="/ko/leaderboard"
-          class="hidden sm:inline-flex items-center gap-2 border border-[--color-border] text-[--color-text-muted] px-5 py-2.5 rounded-lg font-semibold text-sm hover:border-[--color-accent] hover:text-[--color-accent] transition-colors"
+          class="hidden sm:inline-flex items-center gap-2 border border-(--color-border) text-(--color-text-muted) px-5 py-2.5 rounded-lg font-semibold text-sm hover:border-(--color-accent) hover:text-(--color-accent) transition-colors"
         >
           {t('ranking.leaderboard')}
         </a>
       </div>
 
       <!-- Disclaimer notice -->
-      <div class="mb-8 border border-[--color-border] rounded-lg px-4 py-3 bg-[--color-bg-card]">
-        <p class="text-[--color-text-muted] text-xs font-mono leading-relaxed">
-          <span class="text-[--color-yellow] font-bold">{t('ranking.disclaimer_note')}</span>
+      <div class="mb-8 border border-(--color-border) rounded-lg px-4 py-3 bg-(--color-bg-card)">
+        <p class="text-(--color-text-muted) text-xs font-mono leading-relaxed">
+          <span class="text-(--color-yellow) font-bold">{t('ranking.disclaimer_note')}</span>
           {t('ranking.disclaimer_text')}
         </p>
       </div>
@@ -126,7 +126,7 @@ if (!ssrRanking) {
       <!-- SSR fallback: static top3/worst3 visible before JS loads -->
       {ssrRanking && (
         <div id="ranking-ssr-fallback" class="mb-8">
-          <p class="font-mono text-[--color-accent] text-xs mb-3 tracking-wider">상위 3개 — {ssrRanking.date} · 30일 · 시가총액 상위 50</p>
+          <p class="font-mono text-(--color-accent) text-xs mb-3 tracking-wider">상위 3개 — {ssrRanking.date} · 30일 · 시가총액 상위 50</p>
           <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
             {ssrRanking.top3.map((entry) => {
               const isLong = entry.direction === 'long';
@@ -134,76 +134,76 @@ if (!ssrRanking) {
               const medals = ['🥇','🥈','🥉'];
               const medal = medals[entry.rank - 1] ?? `#${entry.rank}`;
               const dirLabel = isBoth ? 'BOTH↕' : isLong ? 'LONG↑' : 'SHORT↓';
-              const dirColor = isBoth ? 'text-[--color-yellow] border-[--color-yellow]/40' : isLong ? 'text-[--color-up] border-[--color-up]/40' : 'text-[--color-red] border-[--color-red]/40';
-              const wrColor = entry.win_rate >= 55 ? 'text-[--color-up]' : entry.win_rate >= 50 ? 'text-[--color-yellow]' : 'text-[--color-red]';
-              const pfColor = entry.profit_factor >= 1.5 ? 'text-[--color-up]' : entry.profit_factor >= 1.0 ? 'text-[--color-yellow]' : 'text-[--color-red]';
+              const dirColor = isBoth ? 'text-(--color-yellow) border-(--color-yellow)/40' : isLong ? 'text-(--color-up) border-(--color-up)/40' : 'text-(--color-red) border-(--color-red)/40';
+              const wrColor = entry.win_rate >= 55 ? 'text-(--color-up)' : entry.win_rate >= 50 ? 'text-(--color-yellow)' : 'text-(--color-red)';
+              const pfColor = entry.profit_factor >= 1.5 ? 'text-(--color-up)' : entry.profit_factor >= 1.0 ? 'text-(--color-yellow)' : 'text-(--color-red)';
               return (
-                <div class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card]">
+                <div class="border border-(--color-border) rounded-lg p-4 bg-(--color-bg-card)">
                   <div class="flex items-start justify-between gap-2 mb-3">
                     <div class="flex items-center gap-2 min-w-0">
                       <span class="text-xl shrink-0">{medal}</span>
                       <div class="min-w-0">
-                        <p class="font-semibold text-[--color-text] text-sm leading-tight truncate" title={entry.name_en}>{entry.name_en}</p>
-                        <p class="text-[--color-text-muted] text-xs font-mono">{entry.timeframe} · {entry.direction}</p>
+                        <p class="font-semibold text-(--color-text) text-sm leading-tight truncate" title={entry.name_en}>{entry.name_en}</p>
+                        <p class="text-(--color-text-muted) text-xs font-mono">{entry.timeframe} · {entry.direction}</p>
                       </div>
                     </div>
                     <span class={`font-mono text-xs px-2 py-0.5 rounded border shrink-0 ${dirColor}`}>{dirLabel}</span>
                   </div>
                   {entry.total_return != null && (
-                    <div class="mb-2 font-mono text-xs text-[--color-text-muted]">
-                      $1,000 &rarr; <span class={entry.total_return >= 0 ? 'text-[--color-up]' : 'text-[--color-red]'}>${Math.round(1000 * (1 + entry.total_return / 100)).toLocaleString()}</span>
+                    <div class="mb-2 font-mono text-xs text-(--color-text-muted)">
+                      $1,000 &rarr; <span class={entry.total_return >= 0 ? 'text-(--color-up)' : 'text-(--color-red)'}>${Math.round(1000 * (1 + entry.total_return / 100)).toLocaleString()}</span>
                     </div>
                   )}
                   <div class="grid grid-cols-4 gap-2 font-mono text-sm">
                     <div>
-                      <p class="text-[--color-text-muted] text-xs mb-0.5">승률</p>
+                      <p class="text-(--color-text-muted) text-xs mb-0.5">승률</p>
                       <p class={`font-bold text-base ${wrColor}`}>{entry.win_rate.toFixed(1)}%</p>
                     </div>
                     <div>
-                      <p class="text-[--color-text-muted] text-xs mb-0.5">PF</p>
+                      <p class="text-(--color-text-muted) text-xs mb-0.5">PF</p>
                       {entry.profit_factor >= 50 ? (
-                        <p class={`font-bold text-base ${pfColor} cursor-help underline decoration-dotted`} title="PF 99.99로 제한됨 (거래 샘플 부족)">{entry.profit_factor.toFixed(2)} <span class="text-[0.6rem] font-normal text-[--color-text-muted]">(cap)</span></p>
+                        <p class={`font-bold text-base ${pfColor} cursor-help underline decoration-dotted`} title="PF 99.99로 제한됨 (거래 샘플 부족)">{entry.profit_factor.toFixed(2)} <span class="text-[0.6rem] font-normal text-(--color-text-muted)">(cap)</span></p>
                       ) : (
                         <p class={`font-bold text-base ${pfColor}`}>{entry.profit_factor.toFixed(2)}</p>
                       )}
                     </div>
                     <div>
-                      <p class="text-[--color-text-muted] text-xs mb-0.5" title="최대 손실폭 — 개별 전략 기준">MDD</p>
-                      <p class="font-bold text-base text-[--color-text]">
+                      <p class="text-(--color-text-muted) text-xs mb-0.5" title="최대 손실폭 — 개별 전략 기준">MDD</p>
+                      <p class="font-bold text-base text-(--color-text)">
                         {entry.max_drawdown != null ? `${entry.max_drawdown.toFixed(1)}%` : '—'}
                       </p>
                     </div>
                     <div>
-                      <p class="text-[--color-text-muted] text-xs mb-0.5">거래 수</p>
-                      <p class="font-bold text-base text-[--color-text]">{entry.total_trades}</p>
+                      <p class="text-(--color-text-muted) text-xs mb-0.5">거래 수</p>
+                      <p class="font-bold text-base text-(--color-text)">{entry.total_trades}</p>
                     </div>
                   </div>
-                  <a href={`/ko/simulate?strategy=${entry.strategy}&dir=${entry.direction}&sl=${entry.sl_pct}&tp=${entry.tp_pct}&start=${new Date(Date.now() - 30 * 86400000).toISOString().slice(0, 10)}&src=ranking&srcperiod=30d${entry.timeframe && entry.timeframe !== '1H' ? `&tf=${entry.timeframe}` : ''}`} class="mt-3 block text-center text-xs font-mono px-3 py-1.5 rounded border border-[--color-accent]/30 text-[--color-accent] hover:bg-[--color-accent]/10 transition-colors">시뮬레이션 &rarr;</a>
+                  <a href={`/ko/simulate?strategy=${entry.strategy}&dir=${entry.direction}&sl=${entry.sl_pct}&tp=${entry.tp_pct}&start=${new Date(Date.now() - 30 * 86400000).toISOString().slice(0, 10)}&src=ranking&srcperiod=30d${entry.timeframe && entry.timeframe !== '1H' ? `&tf=${entry.timeframe}` : ''}`} class="mt-3 block text-center text-xs font-mono px-3 py-1.5 rounded border border-(--color-accent)/30 text-(--color-accent) hover:bg-(--color-accent)/10 transition-colors">시뮬레이션 &rarr;</a>
                 </div>
               );
             })}
           </div>
-          <p class="font-mono text-[--color-red] text-xs mb-3 tracking-wider">하위 3개</p>
+          <p class="font-mono text-(--color-red) text-xs mb-3 tracking-wider">하위 3개</p>
           <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-2">
             {ssrRanking.worst3.filter(e => e.total_trades >= 30).map((entry) => {
               const medals = ['🥇','🥈','🥉'];
               const medal = medals[entry.rank - 1] ?? `#${entry.rank}`;
-              const wrColor = entry.win_rate >= 55 ? 'text-[--color-up]' : entry.win_rate >= 50 ? 'text-[--color-yellow]' : 'text-[--color-red]';
-              const pfColor = entry.profit_factor >= 1.5 ? 'text-[--color-up]' : entry.profit_factor >= 1.0 ? 'text-[--color-yellow]' : 'text-[--color-red]';
+              const wrColor = entry.win_rate >= 55 ? 'text-(--color-up)' : entry.win_rate >= 50 ? 'text-(--color-yellow)' : 'text-(--color-red)';
+              const pfColor = entry.profit_factor >= 1.5 ? 'text-(--color-up)' : entry.profit_factor >= 1.0 ? 'text-(--color-yellow)' : 'text-(--color-red)';
               return (
-                <div class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card] opacity-70">
+                <div class="border border-(--color-border) rounded-lg p-4 bg-(--color-bg-card) opacity-70">
                   <div class="flex items-center gap-2 mb-3">
                     <span class="text-xl shrink-0">{medal}</span>
                     <div class="min-w-0">
-                      <p class="font-semibold text-[--color-text] text-sm truncate" title={entry.name_en}>{entry.name_en}</p>
-                      <p class="text-[--color-text-muted] text-xs font-mono">{entry.timeframe}</p>
+                      <p class="font-semibold text-(--color-text) text-sm truncate" title={entry.name_en}>{entry.name_en}</p>
+                      <p class="text-(--color-text-muted) text-xs font-mono">{entry.timeframe}</p>
                     </div>
                   </div>
                   <div class="grid grid-cols-4 gap-2 font-mono text-sm">
-                    <div><p class="text-[--color-text-muted] text-xs mb-0.5">승률</p><p class={`font-bold ${wrColor}`}>{entry.win_rate.toFixed(1)}%</p></div>
-                    <div><p class="text-[--color-text-muted] text-xs mb-0.5">PF</p>{entry.profit_factor >= 50 ? (<p class={`font-bold ${pfColor} cursor-help underline decoration-dotted`} title="PF 99.99로 제한됨 (거래 샘플 부족)">{entry.profit_factor.toFixed(2)} <span class="text-[0.6rem] font-normal text-[--color-text-muted]">(cap)</span></p>) : (<p class={`font-bold ${pfColor}`}>{entry.profit_factor.toFixed(2)}</p>)}</div>
-                    <div><p class="text-[--color-text-muted] text-xs mb-0.5" title="최대 손실폭 — 개별 전략 기준">MDD</p><p class="font-bold text-[--color-text]">{entry.max_drawdown != null ? `${entry.max_drawdown.toFixed(1)}%` : '—'}</p></div>
-                    <div><p class="text-[--color-text-muted] text-xs mb-0.5">거래 수</p><p class="font-bold text-[--color-text]">{entry.total_trades}</p></div>
+                    <div><p class="text-(--color-text-muted) text-xs mb-0.5">승률</p><p class={`font-bold ${wrColor}`}>{entry.win_rate.toFixed(1)}%</p></div>
+                    <div><p class="text-(--color-text-muted) text-xs mb-0.5">PF</p>{entry.profit_factor >= 50 ? (<p class={`font-bold ${pfColor} cursor-help underline decoration-dotted`} title="PF 99.99로 제한됨 (거래 샘플 부족)">{entry.profit_factor.toFixed(2)} <span class="text-[0.6rem] font-normal text-(--color-text-muted)">(cap)</span></p>) : (<p class={`font-bold ${pfColor}`}>{entry.profit_factor.toFixed(2)}</p>)}</div>
+                    <div><p class="text-(--color-text-muted) text-xs mb-0.5" title="최대 손실폭 — 개별 전략 기준">MDD</p><p class="font-bold text-(--color-text)">{entry.max_drawdown != null ? `${entry.max_drawdown.toFixed(1)}%` : '—'}</p></div>
+                    <div><p class="text-(--color-text-muted) text-xs mb-0.5">거래 수</p><p class="font-bold text-(--color-text)">{entry.total_trades}</p></div>
                   </div>
                 </div>
               );
@@ -244,7 +244,7 @@ if (!ssrRanking) {
   <!-- Footer CTAs -->
   <section class="reveal pb-12 pt-8">
     <div class="max-w-5xl mx-auto px-4 text-center">
-      <p class="text-[--color-text-muted] text-sm mb-4">
+      <p class="text-(--color-text-muted) text-sm mb-4">
         {t('ranking.footer_text')}
       </p>
       <div class="flex flex-wrap gap-3 justify-center">
@@ -256,13 +256,13 @@ if (!ssrRanking) {
         </a>
         <a
           href="/ko/strategies"
-          class="btn btn-ghost btn-md hover:border-[--color-accent] transition-colors no-underline"
+          class="btn btn-ghost btn-md hover:border-(--color-accent) transition-colors no-underline"
         >
           {t('ranking.strategy_lib')} &rarr;
         </a>
         <a
           href="/ko/performance"
-          class="btn btn-ghost btn-md hover:border-[--color-accent] transition-colors no-underline"
+          class="btn btn-ghost btn-md hover:border-(--color-accent) transition-colors no-underline"
         >
           {t('ranking.live_perf')} &rarr;
         </a>

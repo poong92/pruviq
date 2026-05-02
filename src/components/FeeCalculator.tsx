@@ -90,27 +90,27 @@ export default function FeeCalculator({ lang = "en" }: Props) {
   const results = exchanges.map((ex) => ({ ex, ...calcFees(ex) }));
 
   return (
-    <div class="border border-[--color-border] rounded-lg bg-[--color-bg-card] p-6">
-      <div class="font-mono text-[--color-accent] text-xs tracking-wider mb-2">
+    <div class="border border-(--color-border) rounded-lg bg-(--color-bg-card) p-6">
+      <div class="font-mono text-(--color-accent) text-xs tracking-wider mb-2">
         {t.tag}
       </div>
       <h3 class="text-xl font-bold mb-1">{t.title}</h3>
-      <p class="text-[--color-text-muted] text-sm mb-6">{t.desc}</p>
+      <p class="text-(--color-text-muted) text-sm mb-6">{t.desc}</p>
 
       {/* Market Toggle + Volume */}
       <div class="flex flex-col sm:flex-row gap-4 mb-6">
         {/* Spot / Futures Toggle */}
         <div class="flex-shrink-0">
-          <label class="block font-mono text-xs text-[--color-text-muted] mb-2">
+          <label class="block font-mono text-xs text-(--color-text-muted) mb-2">
             {t.market}
           </label>
-          <div class="flex rounded-lg overflow-hidden border border-[--color-border]">
+          <div class="flex rounded-lg overflow-hidden border border-(--color-border)">
             <button
               onClick={() => setMarket("spot")}
-              class={`px-4 py-2 min-h-[44px] text-sm font-semibold transition-colors focus-visible:ring-2 focus-visible:ring-[--color-accent] focus-visible:ring-offset-1 focus-visible:ring-offset-[--color-bg] ${
+              class={`px-4 py-2 min-h-[44px] text-sm font-semibold transition-colors focus-visible:ring-2 focus-visible:ring-(--color-accent) focus-visible:ring-offset-1 focus-visible:ring-offset-(--color-bg) ${
                 market === "spot"
                   ? ""
-                  : "bg-[--color-bg-card] text-[--color-text-muted] hover:text-[--color-text]"
+                  : "bg-(--color-bg-card) text-(--color-text-muted) hover:text-(--color-text)"
               }`}
               style={
                 market === "spot"
@@ -125,10 +125,10 @@ export default function FeeCalculator({ lang = "en" }: Props) {
             </button>
             <button
               onClick={() => setMarket("futures")}
-              class={`px-4 py-2 min-h-[44px] text-sm font-semibold transition-colors focus-visible:ring-2 focus-visible:ring-[--color-accent] focus-visible:ring-offset-1 focus-visible:ring-offset-[--color-bg] ${
+              class={`px-4 py-2 min-h-[44px] text-sm font-semibold transition-colors focus-visible:ring-2 focus-visible:ring-(--color-accent) focus-visible:ring-offset-1 focus-visible:ring-offset-(--color-bg) ${
                 market === "futures"
                   ? ""
-                  : "bg-[--color-bg-card] text-[--color-text-muted] hover:text-[--color-text]"
+                  : "bg-(--color-bg-card) text-(--color-text-muted) hover:text-(--color-text)"
               }`}
               style={
                 market === "futures"
@@ -146,7 +146,7 @@ export default function FeeCalculator({ lang = "en" }: Props) {
 
         {/* Volume Slider */}
         <div class="flex-1">
-          <label class="block font-mono text-xs text-[--color-text-muted] mb-2">
+          <label class="block font-mono text-xs text-(--color-text-muted) mb-2">
             {t.volume}
           </label>
           <input
@@ -161,7 +161,7 @@ export default function FeeCalculator({ lang = "en" }: Props) {
                 volumeSteps[Number((e.target as HTMLInputElement).value)],
               )
             }
-            class="w-full accent-[--color-accent]"
+            class="w-full accent-(--color-accent)"
             aria-label={t.volume}
             aria-valuemin={volumeSteps[0]}
             aria-valuemax={volumeSteps[volumeSteps.length - 1]}
@@ -171,7 +171,7 @@ export default function FeeCalculator({ lang = "en" }: Props) {
           <div class="font-mono text-lg font-bold mt-1">
             {fmtFull(volume)}
             {lang === "ko" && (
-              <span class="text-sm text-[--color-text-muted] ml-2">
+              <span class="text-sm text-(--color-text-muted) ml-2">
                 ({fmtKrw(volume)})
               </span>
             )}
@@ -182,11 +182,11 @@ export default function FeeCalculator({ lang = "en" }: Props) {
       {/* Results — Simple Cards */}
       <div class="grid gap-4">
         {results.map(({ ex, standard, discounted, savingsYear, discPct }) => (
-          <div class="border border-[--color-border] rounded-lg p-4 flex flex-col sm:flex-row sm:items-center gap-3">
+          <div class="border border-(--color-border) rounded-lg p-4 flex flex-col sm:flex-row sm:items-center gap-3">
             {/* Exchange Name */}
             <div class="sm:w-36 flex-shrink-0">
               <span class="font-bold text-base">{ex.name}</span>
-              <span class="ml-2 text-[0.65rem] bg-[--color-accent]/10 text-[--color-accent] px-1.5 py-0.5 rounded font-mono">
+              <span class="ml-2 text-[0.65rem] bg-(--color-accent)/10 text-(--color-accent) px-1.5 py-0.5 rounded font-mono">
                 {ex.tag}
               </span>
             </div>
@@ -194,35 +194,35 @@ export default function FeeCalculator({ lang = "en" }: Props) {
             {/* Fees */}
             <div class="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-2 text-center">
               <div>
-                <div class="font-mono text-[0.625rem] sm:text-xs text-[--color-text-muted] mb-1">
+                <div class="font-mono text-[0.625rem] sm:text-xs text-(--color-text-muted) mb-1">
                   {t.standard}
                 </div>
-                <div class="font-mono text-xs sm:text-sm line-through text-[--color-text-muted]">
+                <div class="font-mono text-xs sm:text-sm line-through text-(--color-text-muted)">
                   {fmt(standard)}
                   <span class="text-[0.6rem]">/mo</span>
                 </div>
               </div>
               <div>
-                <div class="font-mono text-[0.625rem] sm:text-xs text-[--color-accent] mb-1">
+                <div class="font-mono text-[0.625rem] sm:text-xs text-(--color-accent) mb-1">
                   {t.withPruviq} ({Math.round(discPct * 100)}
                   {t.discountOff})
                 </div>
-                <div class="font-mono text-xs sm:text-sm font-bold text-[--color-accent]">
+                <div class="font-mono text-xs sm:text-sm font-bold text-(--color-accent)">
                   {fmt(discounted)}
                   <span class="text-[0.6rem]">/mo</span>
                 </div>
               </div>
               <div>
-                <div class="font-mono text-[0.625rem] sm:text-xs text-[--color-text-muted] mb-1">
+                <div class="font-mono text-[0.625rem] sm:text-xs text-(--color-text-muted) mb-1">
                   {t.savings}
                 </div>
-                <div class="font-mono text-xs sm:text-sm font-bold text-[--color-up]">
+                <div class="font-mono text-xs sm:text-sm font-bold text-(--color-up)">
                   {savingsYear > 0
                     ? `+${fmt(Math.round(savingsYear / 12))}/mo`
                     : "—"}
                 </div>
                 {savingsYear > 0 && (
-                  <div class="font-mono text-[0.6rem] text-[--color-text-muted] mt-0.5">
+                  <div class="font-mono text-[0.6rem] text-(--color-text-muted) mt-0.5">
                     {t.savingsYear} {fmtFull(Math.round(savingsYear))}
                     {lang === "ko" && ` (${fmtKrw(savingsYear)})`}
                   </div>
@@ -248,7 +248,7 @@ export default function FeeCalculator({ lang = "en" }: Props) {
                   )}
                 </a>
               ) : (
-                <span class="inline-block w-full bg-[--color-border] text-[--color-text-muted] px-4 py-2 min-h-[44px] flex items-center justify-center rounded text-xs font-semibold cursor-default">
+                <span class="inline-block w-full bg-(--color-border) text-(--color-text-muted) px-4 py-2 min-h-[44px] flex items-center justify-center rounded text-xs font-semibold cursor-default">
                   {t.coming}
                 </span>
               )}
@@ -257,7 +257,7 @@ export default function FeeCalculator({ lang = "en" }: Props) {
         ))}
       </div>
 
-      <p class="text-[--color-text-muted] text-xs mt-4">{t.disclaimer}</p>
+      <p class="text-(--color-text-muted) text-xs mt-4">{t.disclaimer}</p>
     </div>
   );
 }

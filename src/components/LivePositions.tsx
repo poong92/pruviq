@@ -89,10 +89,10 @@ function inferSide(pos: string): string {
 
 function SkeletonRow() {
   return (
-    <tr class="border-b border-[--color-border]">
+    <tr class="border-b border-(--color-border)">
       {[1, 2, 3, 4, 5, 6].map((i) => (
         <td key={i} class="px-4 py-3">
-          <div class="h-4 rounded bg-[--color-bg-elevated] animate-pulse w-20" />
+          <div class="h-4 rounded bg-(--color-bg-elevated) animate-pulse w-20" />
         </td>
       ))}
     </tr>
@@ -148,19 +148,19 @@ export default function LivePositions({ lang = "en" }: Props) {
       <div class="flex items-center justify-between mb-4">
         <div class="flex items-center gap-2">
           <span
-            class="w-2 h-2 rounded-full bg-[--color-up] animate-pulse"
+            class="w-2 h-2 rounded-full bg-(--color-up) animate-pulse"
             aria-hidden="true"
           />
           <h2 class="font-bold text-sm">{t.title}</h2>
         </div>
         {lastUpdated && (
-          <p class="text-xs text-[--color-text-muted]">{t.updated}</p>
+          <p class="text-xs text-(--color-text-muted)">{t.updated}</p>
         )}
       </div>
 
       {/* Unauthenticated */}
       {unauthed && (
-        <div class="flex items-center justify-center gap-2 py-10 text-[--color-text-muted]">
+        <div class="flex items-center justify-center gap-2 py-10 text-(--color-text-muted)">
           <svg
             width="16"
             height="16"
@@ -181,7 +181,7 @@ export default function LivePositions({ lang = "en" }: Props) {
       {!unauthed && error && (
         <div class="flex flex-col items-center gap-3 py-10">
           <p
-            class="text-sm text-[--color-down]"
+            class="text-sm text-(--color-down)"
             role="alert"
             aria-live="assertive"
           >
@@ -193,7 +193,7 @@ export default function LivePositions({ lang = "en" }: Props) {
               setError(null);
               fetchPositions();
             }}
-            class="text-xs text-[--color-accent] hover:underline cursor-pointer"
+            class="text-xs text-(--color-accent) hover:underline cursor-pointer"
           >
             {t.retry}
           </button>
@@ -205,7 +205,7 @@ export default function LivePositions({ lang = "en" }: Props) {
         <div class="overflow-x-auto">
           <table class="w-full text-sm" role="table" aria-label={t.title}>
             <thead>
-              <tr class="border-b border-[--color-border]">
+              <tr class="border-b border-(--color-border)">
                 {[
                   t.col_instrument,
                   t.col_side,
@@ -217,7 +217,7 @@ export default function LivePositions({ lang = "en" }: Props) {
                   <th
                     key={col}
                     scope="col"
-                    class="px-4 py-2 text-left text-xs font-semibold text-[--color-text-muted] whitespace-nowrap"
+                    class="px-4 py-2 text-left text-xs font-semibold text-(--color-text-muted) whitespace-nowrap"
                   >
                     {col}
                   </th>
@@ -237,7 +237,7 @@ export default function LivePositions({ lang = "en" }: Props) {
                 <tr>
                   <td
                     colSpan={6}
-                    class="px-4 py-10 text-center text-sm text-[--color-text-muted]"
+                    class="px-4 py-10 text-center text-sm text-(--color-text-muted)"
                   >
                     {t.no_positions}
                   </td>
@@ -249,22 +249,22 @@ export default function LivePositions({ lang = "en" }: Props) {
                   const uplNum = parseFloat(p.upl);
                   const isPositive = !isNaN(uplNum) && uplNum >= 0;
                   const uplColor = isNaN(uplNum)
-                    ? "text-[--color-text-secondary]"
+                    ? "text-(--color-text-secondary)"
                     : isPositive
-                      ? "text-[--color-up]"
-                      : "text-[--color-down]";
+                      ? "text-(--color-up)"
+                      : "text-(--color-down)";
                   const side = inferSide(p.pos);
                   const sideColor =
                     side === "LONG"
-                      ? "text-[--color-up]"
+                      ? "text-(--color-up)"
                       : side === "SHORT"
-                        ? "text-[--color-down]"
-                        : "text-[--color-text-muted]";
+                        ? "text-(--color-down)"
+                        : "text-(--color-text-muted)";
 
                   return (
                     <tr
                       key={`${p.instId}-${idx}`}
-                      class="border-b border-[--color-border] hover:bg-[--color-bg-elevated] transition-colors"
+                      class="border-b border-(--color-border) hover:bg-(--color-bg-elevated) transition-colors"
                     >
                       <td class="px-4 py-3 font-mono font-semibold whitespace-nowrap">
                         {p.instId}
@@ -274,13 +274,13 @@ export default function LivePositions({ lang = "en" }: Props) {
                       >
                         {side}
                       </td>
-                      <td class="px-4 py-3 font-mono text-[--color-text-secondary]">
+                      <td class="px-4 py-3 font-mono text-(--color-text-secondary)">
                         {p.pos}
                       </td>
-                      <td class="px-4 py-3 font-mono text-[--color-text-secondary]">
+                      <td class="px-4 py-3 font-mono text-(--color-text-secondary)">
                         ${formatPrice(p.avgPx)}
                       </td>
-                      <td class="px-4 py-3 font-mono text-[--color-text-secondary]">
+                      <td class="px-4 py-3 font-mono text-(--color-text-secondary)">
                         ${formatPrice(p.markPx)}
                       </td>
                       <td

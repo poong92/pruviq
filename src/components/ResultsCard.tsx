@@ -257,17 +257,17 @@ function MetricBox({
 }) {
   return (
     <div
-      class="p-3 rounded-lg bg-[--color-bg-card] relative"
+      class="p-3 rounded-lg bg-(--color-bg-card) relative"
       style="box-shadow: var(--shadow-card);"
     >
-      <div class="font-mono text-[0.625rem] text-[--color-text-muted] uppercase tracking-wider mb-1 flex items-center gap-1">
+      <div class="font-mono text-[0.625rem] text-(--color-text-muted) uppercase tracking-wider mb-1 flex items-center gap-1">
         {label}
         {description && (
           <span class="relative group/tip inline-flex">
-            <span class="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full border border-[--color-text-muted]/30 text-[8px] text-[--color-text-muted] cursor-help shrink-0 group-hover/tip:border-[--color-accent] group-hover/tip:text-[--color-accent] transition-colors">
+            <span class="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full border border-(--color-text-muted)/30 text-[8px] text-(--color-text-muted) cursor-help shrink-0 group-hover/tip:border-(--color-accent) group-hover/tip:text-(--color-accent) transition-colors">
               ?
             </span>
-            <span class="pointer-events-none absolute left-1/2 -translate-x-1/2 bottom-full mb-1.5 w-48 px-2.5 py-1.5 rounded bg-[--color-bg-card] border border-[--color-border] text-[9px] text-[--color-text-muted] normal-case tracking-normal leading-snug opacity-0 group-hover/tip:opacity-100 transition-opacity duration-150 z-50 shadow-lg">
+            <span class="pointer-events-none absolute left-1/2 -translate-x-1/2 bottom-full mb-1.5 w-48 px-2.5 py-1.5 rounded bg-(--color-bg-card) border border-(--color-border) text-[9px] text-(--color-text-muted) normal-case tracking-normal leading-snug opacity-0 group-hover/tip:opacity-100 transition-opacity duration-150 z-50 shadow-lg">
               {description}
             </span>
           </span>
@@ -379,14 +379,14 @@ export default function ResultsCard({
   return (
     <div>
       {isDefault && (
-        <div class="font-mono text-[0.625rem] text-[--color-accent] tracking-widest mb-3 uppercase">
+        <div class="font-mono text-[0.625rem] text-(--color-accent) tracking-widest mb-3 uppercase">
           {t.live}
         </div>
       )}
 
       {isDemo && (
-        <div class="mb-3 px-3 py-2 rounded-lg bg-[--color-yellow]/10 border border-[--color-yellow]/20">
-          <span class="font-mono text-xs text-[--color-yellow]">
+        <div class="mb-3 px-3 py-2 rounded-lg bg-(--color-yellow)/10 border border-(--color-yellow)/20">
+          <span class="font-mono text-xs text-(--color-yellow)">
             {t.demoNote}
           </span>
         </div>
@@ -398,10 +398,10 @@ export default function ResultsCard({
           <span
             class={`inline-block px-2 py-0.5 rounded text-[10px] font-mono font-bold border ${
               data.direction === "short"
-                ? "text-(--color-red) border-[--color-red]/30 bg-[--color-red]/10"
+                ? "text-(--color-red) border-(--color-red)/30 bg-(--color-red)/10"
                 : data.direction === "long"
-                  ? "text-(--color-green) border-[--color-green]/30 bg-[--color-green]/10"
-                  : "border-[--color-accent]/30 bg-[--color-accent]/10"
+                  ? "text-(--color-green) border-(--color-green)/30 bg-(--color-green)/10"
+                  : "border-(--color-accent)/30 bg-(--color-accent)/10"
             }`}
             style={
               data.direction === "both" ? { color: COLORS.accent } : undefined
@@ -411,7 +411,7 @@ export default function ResultsCard({
               ? "SHORT + LONG"
               : data.direction.toUpperCase()}
           </span>
-          <span class="text-[9px] text-[--color-text-muted] font-mono">
+          <span class="text-[9px] text-(--color-text-muted) font-mono">
             {data.direction === "short"
               ? t.dirShort
               : data.direction === "long"
@@ -426,23 +426,23 @@ export default function ResultsCard({
         <div
           class={`mb-3 flex items-center gap-3 px-3 py-2 rounded-lg border ${
             data.strategy_grade === "A"
-              ? "border-[--color-green]/30 bg-[--color-green]/5"
+              ? "border-(--color-green)/30 bg-(--color-green)/5"
               : data.strategy_grade === "B"
-                ? "border-[--color-accent]/30 bg-[--color-accent]/5"
+                ? "border-(--color-accent)/30 bg-(--color-accent)/5"
                 : data.strategy_grade === "C"
-                  ? "border-[--color-yellow]/30 bg-[--color-yellow]/5"
-                  : "border-[--color-red]/30 bg-[--color-red]/5"
+                  ? "border-(--color-yellow)/30 bg-(--color-yellow)/5"
+                  : "border-(--color-red)/30 bg-(--color-red)/5"
           }`}
         >
           <span
             class={`inline-flex items-center justify-center w-10 h-10 rounded-xl font-mono text-xl font-black border-2 shadow-sm shrink-0 ${
               data.strategy_grade === "A"
-                ? "text-(--color-green) border-[--color-green]/40 bg-[--color-green]/10"
+                ? "text-(--color-green) border-(--color-green)/40 bg-(--color-green)/10"
                 : data.strategy_grade === "B"
-                  ? "text-[--color-accent] border-[--color-accent]/40 bg-[--color-accent]/10"
+                  ? "text-(--color-accent) border-(--color-accent)/40 bg-(--color-accent)/10"
                   : data.strategy_grade === "C"
-                    ? "text-[--color-yellow] border-[--color-yellow]/40 bg-[--color-yellow]/10"
-                    : "text-(--color-red) border-[--color-red]/40 bg-[--color-red]/10"
+                    ? "text-(--color-yellow) border-(--color-yellow)/40 bg-(--color-yellow)/10"
+                    : "text-(--color-red) border-(--color-red)/40 bg-(--color-red)/10"
             }`}
           >
             {data.strategy_grade}
@@ -453,16 +453,16 @@ export default function ResultsCard({
                 data.strategy_grade === "A"
                   ? "text-(--color-green)"
                   : data.strategy_grade === "B"
-                    ? "text-[--color-accent]"
+                    ? "text-(--color-accent)"
                     : data.strategy_grade === "C"
-                      ? "text-[--color-yellow]"
+                      ? "text-(--color-yellow)"
                       : "text-(--color-red)"
               }`}
             >
               {`${t.gradePrefix} ${data.strategy_grade}`}
             </span>
             {data.grade_details && (
-              <span class="font-mono text-[10px] text-[--color-text-muted]">
+              <span class="font-mono text-[10px] text-(--color-text-muted)">
                 {data.grade_details}
               </span>
             )}
@@ -492,18 +492,18 @@ export default function ResultsCard({
       {/* Walk-Forward Consistency */}
       {data.walk_forward_consistency != null &&
         data.walk_forward_consistency > 0 && (
-          <div class="mb-3 px-3 py-2 rounded-lg bg-[--color-bg-tooltip] border border-[--color-border] flex items-center justify-between">
+          <div class="mb-3 px-3 py-2 rounded-lg bg-(--color-bg-tooltip) border border-(--color-border) flex items-center justify-between">
             <div class="flex items-center gap-2">
-              <span class="font-mono text-[10px] text-[--color-text-muted] uppercase">
+              <span class="font-mono text-[10px] text-(--color-text-muted) uppercase">
                 {t.walkForward}
               </span>
               <span
                 class={`inline-block px-1.5 py-0.5 rounded text-[10px] font-mono font-bold ${
                   data.walk_forward_consistency >= 0.85
-                    ? "text-(--color-green) bg-[--color-green]/10"
+                    ? "text-(--color-green) bg-(--color-green)/10"
                     : data.walk_forward_consistency >= 0.7
-                      ? "text-[--color-accent] bg-[--color-accent]/10"
-                      : "text-(--color-red) bg-[--color-red]/10"
+                      ? "text-(--color-accent) bg-(--color-accent)/10"
+                      : "text-(--color-red) bg-(--color-red)/10"
                 }`}
               >
                 {data.walk_forward_consistency.toFixed(2)}
@@ -527,7 +527,7 @@ export default function ResultsCard({
               </span>
             </div>
             {data.walk_forward_details && (
-              <span class="font-mono text-[9px] text-[--color-text-muted] hidden md:inline">
+              <span class="font-mono text-[9px] text-(--color-text-muted) hidden md:inline">
                 {data.walk_forward_details}
               </span>
             )}
@@ -540,7 +540,7 @@ export default function ResultsCard({
           {data.warnings.map((w, i) => (
             <div
               key={i}
-              class="px-3 py-2 rounded-lg bg-[--color-yellow]/8 border border-[--color-yellow]/20 font-mono text-[11px] text-[--color-yellow]"
+              class="px-3 py-2 rounded-lg bg-(--color-yellow)/8 border border-(--color-yellow)/20 font-mono text-[11px] text-(--color-yellow)"
             >
               {w}
             </div>
@@ -551,12 +551,12 @@ export default function ResultsCard({
       {/* ── Always visible: BTC Benchmark (compact inline) ── */}
       {data.btc_hold_return_pct !== undefined &&
         data.btc_hold_return_pct !== 0 && (
-          <div class="mb-3 px-3 py-2 rounded-lg bg-[--color-bg-tooltip] border border-[--color-border]">
+          <div class="mb-3 px-3 py-2 rounded-lg bg-(--color-bg-tooltip) border border-(--color-border)">
             <div class="flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-xs">
-              <span class="text-[10px] text-[--color-text-muted] uppercase">
+              <span class="text-[10px] text-(--color-text-muted) uppercase">
                 {t.btcBenchmark}:
               </span>
-              <span class="text-[--color-text-muted]">
+              <span class="text-(--color-text-muted)">
                 BTC:{" "}
                 <span style={{ color: signColor(data.btc_hold_return_pct) }}>
                   {data.btc_hold_return_pct > 0 ? "+" : ""}
@@ -565,7 +565,7 @@ export default function ResultsCard({
               </span>
               {data.eth_hold_return_pct !== undefined &&
                 data.eth_hold_return_pct !== 0 && (
-                  <span class="text-[--color-text-muted]">
+                  <span class="text-(--color-text-muted)">
                     ETH:{" "}
                     <span
                       style={{ color: signColor(data.eth_hold_return_pct) }}
@@ -599,18 +599,18 @@ export default function ResultsCard({
 
       {/* ── Always visible: Portfolio USD (compact) ── */}
       {data.initial_capital_usd != null && data.initial_capital_usd > 0 && (
-        <div class="mb-3 px-3 py-2.5 rounded-lg bg-[--color-bg-tooltip] border border-[--color-border]">
-          <div class="font-mono text-[0.625rem] text-[--color-text-muted] uppercase tracking-wider mb-1.5">
+        <div class="mb-3 px-3 py-2.5 rounded-lg bg-(--color-bg-tooltip) border border-(--color-border)">
+          <div class="font-mono text-[0.625rem] text-(--color-text-muted) uppercase tracking-wider mb-1.5">
             {t.portfolio} — ${data.per_coin_usd ?? 60} x {data.leverage ?? 5}x
             {data.compounding && (
-              <span class="ml-1.5 text-[--color-accent] font-bold normal-case">
+              <span class="ml-1.5 text-(--color-accent) font-bold normal-case">
                 COMPOUND
               </span>
             )}
           </div>
           <div class="grid grid-cols-2 md:grid-cols-4 gap-2 font-mono text-xs">
             <div>
-              <div class="text-[10px] text-[--color-text-muted]">
+              <div class="text-[10px] text-(--color-text-muted)">
                 {t.initialCapital}
               </div>
               <div class="font-bold">
@@ -618,7 +618,7 @@ export default function ResultsCard({
               </div>
             </div>
             <div>
-              <div class="text-[10px] text-[--color-text-muted]">
+              <div class="text-[10px] text-(--color-text-muted)">
                 {t.totalPnlUsd}
               </div>
               <div
@@ -633,7 +633,7 @@ export default function ResultsCard({
               </div>
             </div>
             <div>
-              <div class="text-[10px] text-[--color-text-muted]">
+              <div class="text-[10px] text-(--color-text-muted)">
                 {t.portfolioReturn}
               </div>
               <div
@@ -647,7 +647,7 @@ export default function ResultsCard({
               </div>
             </div>
             <div>
-              <div class="text-[10px] text-[--color-text-muted]">
+              <div class="text-[10px] text-(--color-text-muted)">
                 {t.maxDdUsd}
               </div>
               <div class="font-bold" style={{ color: "var(--color-red)" }}>
@@ -663,7 +663,7 @@ export default function ResultsCard({
       )}
 
       {/* ── Always visible: Trade summary (compact) ── */}
-      <div class="flex items-center justify-between font-mono text-xs text-[--color-text-muted] mb-1">
+      <div class="flex items-center justify-between font-mono text-xs text-(--color-text-muted) mb-1">
         <span>
           {formatLocalizedCount(data.total_trades, lang)} {t.trades}
         </span>
@@ -677,37 +677,37 @@ export default function ResultsCard({
 
       {/* Exit reason bar */}
       <div class="mb-1">
-        <div class="flex h-1.5 rounded-full overflow-hidden bg-[--color-border]">
+        <div class="flex h-1.5 rounded-full overflow-hidden bg-(--color-border)">
           <div
-            class="bg-[--color-accent] transition-[width] duration-300"
+            class="bg-(--color-accent) transition-[width] duration-300"
             style={{ width: `${tpPct}%` }}
           />
           <div
-            class="bg-[--color-red] transition-[width] duration-300"
+            class="bg-(--color-red) transition-[width] duration-300"
             style={{ width: `${slPct}%` }}
           />
           <div
-            class="bg-[--color-text-muted] transition-[width] duration-300"
+            class="bg-(--color-text-muted) transition-[width] duration-300"
             style={{ width: `${toPct}%` }}
           />
         </div>
       </div>
 
       <div class="flex gap-4 font-mono text-[0.625rem] mb-3">
-        <span class="text-[--color-accent]">
+        <span class="text-(--color-accent)">
           <Term abbr="TP" lang={lang} /> {tpPct.toFixed(0)}%
         </span>
         <span class="text-(--color-red)">
           <Term abbr="SL" lang={lang} /> {slPct.toFixed(0)}%
         </span>
-        <span class="text-[--color-text-muted]">TO {toPct.toFixed(0)}%</span>
+        <span class="text-(--color-text-muted)">TO {toPct.toFixed(0)}%</span>
       </div>
 
       {/* Quick / Standard mode: "Show advanced metrics" toggle */}
       {(simMode === "quick" || simMode === "standard") && !showAllMetrics && (
         <button
           onClick={() => setShowAllMetrics(true)}
-          class="w-full py-2 mb-3 rounded-lg border border-[--color-border] font-mono text-xs text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors"
+          class="w-full py-2 mb-3 rounded-lg border border-(--color-border) font-mono text-xs text-(--color-text-muted) hover:border-(--color-accent) hover:text-(--color-accent) transition-colors"
         >
           {t.showAdvanced}
         </button>
@@ -732,7 +732,7 @@ export default function ResultsCard({
           >
             {/* Break-even win rate */}
             {hasBreakeven && (
-              <div class="flex gap-3 text-[10px] font-mono text-[--color-text-muted] mb-2">
+              <div class="flex gap-3 text-[10px] font-mono text-(--color-text-muted) mb-2">
                 <span title={desc.breakeven}>
                   {t.breakeven}: {breakevenWR.toFixed(1)}%
                 </span>
@@ -777,49 +777,49 @@ export default function ResultsCard({
 
             {/* Fee breakdown */}
             {hasFees && (
-              <div class="mt-2 pt-2 border-t border-[--color-border]">
+              <div class="mt-2 pt-2 border-t border-(--color-border)">
                 <div class="flex items-center justify-between mb-1.5">
-                  <span class="font-mono text-[0.625rem] text-[--color-text-muted] uppercase tracking-wider">
+                  <span class="font-mono text-[0.625rem] text-(--color-text-muted) uppercase tracking-wider">
                     {t.totalCost}
                   </span>
                   <a
                     href="/fees"
-                    class="text-[10px] font-mono text-[--color-accent] hover:underline"
+                    class="text-[10px] font-mono text-(--color-accent) hover:underline"
                   >
                     {t.feeSaveTip} &rarr;
                   </a>
                 </div>
                 <div class="flex gap-4 font-mono text-xs">
-                  <span class="text-[--color-text-muted]">
+                  <span class="text-(--color-text-muted)">
                     {t.tradingFee}:{" "}
                     <span class="text-(--color-red)">
                       {tradingFee.toFixed(1)}%
                     </span>
                   </span>
                   {fundingFee > 0 && (
-                    <span class="text-[--color-text-muted]">
+                    <span class="text-(--color-text-muted)">
                       {t.fundingFee}:{" "}
                       <span class="text-(--color-red)">
                         {fundingFee.toFixed(1)}%
                       </span>
                     </span>
                   )}
-                  <span class="text-[--color-text-muted]">
+                  <span class="text-(--color-text-muted)">
                     {t.totalCost}:{" "}
                     <span class="text-(--color-red) font-bold">
                       {totalCost.toFixed(1)}%
                     </span>
                   </span>
                 </div>
-                <div class="mt-1.5 h-1 rounded-full overflow-hidden bg-[--color-border]">
+                <div class="mt-1.5 h-1 rounded-full overflow-hidden bg-(--color-border)">
                   <div
-                    class="h-full bg-[--color-red]/60 transition-[width] duration-300"
+                    class="h-full bg-(--color-red)/60 transition-[width] duration-300"
                     style={{
                       width: `${Math.min((totalCost / Math.abs(data.total_return_pct || 1)) * 100, 100)}%`,
                     }}
                   />
                 </div>
-                <div class="mt-1 text-[10px] font-mono text-[--color-text-muted]">
+                <div class="mt-1 text-[10px] font-mono text-(--color-text-muted)">
                   {`${t.feeConsume} ${data.total_return_pct !== 0 ? Math.abs((totalCost / data.total_return_pct) * 100).toFixed(0) : "\u2014"}${t.feeConsumeOf}`}
                 </div>
               </div>
@@ -955,7 +955,7 @@ export default function ResultsCard({
               : "var(--color-red)"
           }
         >
-          <div class="text-[10px] font-mono text-[--color-text-muted] mb-2 opacity-70">
+          <div class="text-[10px] font-mono text-(--color-text-muted) mb-2 opacity-70">
             {lang === "ko"
               ? "BTC SMA20/50 기준 시장 국면 분류 · 전략의 환경별 강점 파악"
               : "Market phase by BTC SMA20/SMA50 · Identifies where your strategy thrives"}
@@ -986,7 +986,7 @@ export default function ResultsCard({
               return (
                 <div
                   key={regime}
-                  class="rounded-lg border border-[--color-border] p-2 text-center"
+                  class="rounded-lg border border-(--color-border) p-2 text-center"
                   style={{
                     background:
                       regime === "bull"
@@ -996,11 +996,11 @@ export default function ResultsCard({
                           : "rgba(255,255,255,0.02)",
                   }}
                 >
-                  <div class="text-[10px] font-mono text-[--color-text-muted] mb-1">
+                  <div class="text-[10px] font-mono text-(--color-text-muted) mb-1">
                     {label}
                   </div>
                   {rm.trades === 0 ? (
-                    <div class="text-[10px] text-[--color-text-muted]">
+                    <div class="text-[10px] text-(--color-text-muted)">
                       {lang === "ko" ? "거래 없음" : "No trades"}
                     </div>
                   ) : (
@@ -1011,7 +1011,7 @@ export default function ResultsCard({
                       >
                         {wr.toFixed(0)}%
                       </div>
-                      <div class="text-[9px] text-[--color-text-muted] font-mono">
+                      <div class="text-[9px] text-(--color-text-muted) font-mono">
                         {lang === "ko" ? "승률" : "WR"}
                       </div>
                       <div
@@ -1026,7 +1026,7 @@ export default function ResultsCard({
                         {ret >= 0 ? "+" : ""}
                         {ret.toFixed(1)}%
                       </div>
-                      <div class="text-[9px] text-[--color-text-muted] font-mono">
+                      <div class="text-[9px] text-(--color-text-muted) font-mono">
                         {rm.trades}
                         {lang === "ko" ? "건" : " trades"}
                       </div>
@@ -1062,7 +1062,7 @@ export default function ResultsCard({
                   : "var(--color-text-muted)"
             }
           >
-            <div class="font-mono text-[10px] text-[--color-text-muted] uppercase mb-2">
+            <div class="font-mono text-[10px] text-(--color-text-muted) uppercase mb-2">
               {t.overfitDetect}
             </div>
             <div class="grid grid-cols-2 gap-2 mb-2">
@@ -1094,7 +1094,7 @@ export default function ResultsCard({
             {/* Monte Carlo percentile gauge */}
             {data.mc_percentile != null && (
               <div class="mt-2 mb-1">
-                <div class="flex items-center justify-between font-mono text-[10px] text-[--color-text-muted] mb-1">
+                <div class="flex items-center justify-between font-mono text-[10px] text-(--color-text-muted) mb-1">
                   <span>{t.mcBeats(data.mc_percentile)}</span>
                   <span
                     style={{
@@ -1131,7 +1131,7 @@ export default function ResultsCard({
             )}
             {data.jensens_alpha !== undefined && data.jensens_alpha !== 0 && (
               <div class="flex items-center gap-2 font-mono text-xs">
-                <span class="text-[--color-text-muted]">{t.jensensAlpha}:</span>
+                <span class="text-(--color-text-muted)">{t.jensensAlpha}:</span>
                 <span
                   style={{
                     color:
@@ -1144,7 +1144,7 @@ export default function ResultsCard({
                   {data.jensens_alpha > 0 ? "+" : ""}
                   {data.jensens_alpha.toFixed(2)}%
                 </span>
-                <span class="text-[9px] text-[--color-text-muted]">
+                <span class="text-[9px] text-(--color-text-muted)">
                   {t.jensensAlphaDesc}
                 </span>
               </div>
@@ -1156,7 +1156,7 @@ export default function ResultsCard({
       {(simMode === "quick" || simMode === "standard") && showAllMetrics && (
         <button
           onClick={() => setShowAllMetrics(false)}
-          class="w-full py-2 mb-3 rounded-lg border border-[--color-border] font-mono text-xs text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors"
+          class="w-full py-2 mb-3 rounded-lg border border-(--color-border) font-mono text-xs text-(--color-text-muted) hover:border-(--color-accent) hover:text-(--color-accent) transition-colors"
         >
           {t.hideAdvanced}
         </button>
@@ -1165,12 +1165,12 @@ export default function ResultsCard({
       {/* Referral CTA banner */}
       <a
         href="/fees"
-        class="mt-1 flex items-center justify-between gap-2 px-3 py-2.5 rounded-lg border border-[--color-yellow]/40 bg-[--color-yellow]/5 hover:border-[--color-yellow]/70 hover:bg-[--color-yellow]/10 transition-colors no-underline group"
+        class="mt-1 flex items-center justify-between gap-2 px-3 py-2.5 rounded-lg border border-(--color-yellow)/40 bg-(--color-yellow)/5 hover:border-(--color-yellow)/70 hover:bg-(--color-yellow)/10 transition-colors no-underline group"
       >
-        <span class="font-mono text-[11px] text-[--color-yellow] group-hover:text-[--color-yellow]">
+        <span class="font-mono text-[11px] text-(--color-yellow) group-hover:text-(--color-yellow)">
           {t.referralCta}
         </span>
-        <span class="font-mono text-[11px] text-[--color-yellow] shrink-0">
+        <span class="font-mono text-[11px] text-(--color-yellow) shrink-0">
           &rarr;
         </span>
       </a>

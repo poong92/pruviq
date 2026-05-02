@@ -22,7 +22,7 @@ describe("Button primitive", () => {
     const btn = container.querySelector("button")!;
     expect(btn).toBeTruthy();
     expect(btn.textContent).toBe("Run");
-    expect(btn.className).toContain("bg-[--color-accent]");
+    expect(btn.className).toContain("bg-(--color-accent)");
     expect(btn.className).toContain("min-h-[44px]");
     expect(btn.getAttribute("type")).toBe("button");
   });
@@ -30,11 +30,11 @@ describe("Button primitive", () => {
   test("variant=secondary swaps to bordered transparent style", () => {
     const { container } = render(<Button variant="secondary">Cancel</Button>);
     const btn = container.querySelector("button")!;
-    expect(btn.className).toContain("border-[--color-border]");
+    expect(btn.className).toContain("border-(--color-border)");
     expect(btn.className).toContain("bg-transparent");
-    // Should NOT have a non-prefixed `bg-[--color-accent]` rule
+    // Should NOT have a non-prefixed `bg-(--color-accent)` rule
     // (hover/focus prefixed ones are fine — they're state, not base).
-    const hasBaseAccentBg = / bg-\[--color-accent\](?!\S)/.test(
+    const hasBaseAccentBg = / bg-\(--color-accent\)(?!\S)/.test(
       ` ${btn.className} `,
     );
     expect(hasBaseAccentBg).toBe(false);
@@ -43,8 +43,8 @@ describe("Button primitive", () => {
   test("variant=danger uses --color-down tokens", () => {
     const { container } = render(<Button variant="danger">Delete</Button>);
     const btn = container.querySelector("button")!;
-    expect(btn.className).toContain("text-[--color-down]");
-    expect(btn.className).toContain("border-[--color-down]");
+    expect(btn.className).toContain("text-(--color-down)");
+    expect(btn.className).toContain("border-(--color-down)");
   });
 
   test("size=sm uses 32px min height (dense inline only)", () => {
@@ -131,6 +131,6 @@ describe("Button primitive", () => {
     const { container } = render(<Button>Focus</Button>);
     const btn = container.querySelector("button")!;
     expect(btn.className).toContain("focus-visible:ring-2");
-    expect(btn.className).toContain("focus-visible:ring-[--color-accent]");
+    expect(btn.className).toContain("focus-visible:ring-(--color-accent)");
   });
 });

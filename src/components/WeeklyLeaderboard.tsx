@@ -58,19 +58,19 @@ const labels = {
 
 function SkeletonCard() {
   return (
-    <div class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card] animate-pulse">
+    <div class="border border-(--color-border) rounded-lg p-4 bg-(--color-bg-card) animate-pulse">
       <div class="flex items-start gap-2 mb-3">
-        <div class="w-7 h-7 rounded bg-[--color-border]" />
+        <div class="w-7 h-7 rounded bg-(--color-border)" />
         <div class="flex-1 space-y-1.5">
-          <div class="h-3.5 rounded bg-[--color-border] w-3/4" />
-          <div class="h-3 rounded bg-[--color-border] w-1/2" />
+          <div class="h-3.5 rounded bg-(--color-border) w-3/4" />
+          <div class="h-3 rounded bg-(--color-border) w-1/2" />
         </div>
       </div>
       <div class="grid grid-cols-3 gap-2">
         {[0, 1, 2].map((i) => (
           <div key={i} class="space-y-1">
-            <div class="h-2.5 rounded bg-[--color-border] w-10" />
-            <div class="h-5 rounded bg-[--color-border] w-16" />
+            <div class="h-2.5 rounded bg-(--color-border) w-10" />
+            <div class="h-5 rounded bg-(--color-border) w-16" />
           </div>
         ))}
       </div>
@@ -141,8 +141,8 @@ export default function WeeklyLeaderboard({ lang }: Props) {
     <div class="space-y-8">
       {/* Low-data warning banner — shown when every entry is flagged low_sample */}
       {!loading && !error && allLowSample && (
-        <div class="border border-[--color-yellow]/40 rounded-lg px-4 py-3 bg-[--color-yellow]/5">
-          <p class="text-[--color-yellow] text-xs font-mono">
+        <div class="border border-(--color-yellow)/40 rounded-lg px-4 py-3 bg-(--color-yellow)/5">
+          <p class="text-(--color-yellow) text-xs font-mono">
             ⚠️ {l.allLowSampleWarning}
           </p>
         </div>
@@ -150,19 +150,19 @@ export default function WeeklyLeaderboard({ lang }: Props) {
       {/* Best 3 this week */}
       <section>
         <div class="mb-4">
-          <h2 class="text-lg font-bold text-[--color-text]">{l.weeklyBest}</h2>
-          <p class="text-xs text-[--color-text-muted] font-mono mt-0.5">
+          <h2 class="text-lg font-bold text-(--color-text)">{l.weeklyBest}</h2>
+          <p class="text-xs text-(--color-text-muted) font-mono mt-0.5">
             {l.weeklyBestSub}
           </p>
         </div>
         {error ? (
-          <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card] text-center">
-            <p class="text-[--color-text-muted] text-sm font-mono mb-2">
+          <div class="border border-(--color-border) rounded-lg p-5 bg-(--color-bg-card) text-center">
+            <p class="text-(--color-text-muted) text-sm font-mono mb-2">
               {l.error}
             </p>
             <a
               href={rankingPath}
-              class="inline-block text-[--color-accent] text-xs font-mono hover:underline"
+              class="inline-block text-(--color-accent) text-xs font-mono hover:underline"
             >
               {l.rankingLink}
             </a>
@@ -181,12 +181,12 @@ export default function WeeklyLeaderboard({ lang }: Props) {
                 />
               ))
             ) : (
-              <div class="col-span-3 text-center py-8 text-[--color-text-muted] text-sm font-mono">
+              <div class="col-span-3 text-center py-8 text-(--color-text-muted) text-sm font-mono">
                 {l.noDataWeekly}
                 <br />
                 <a
                   href={rankingPath}
-                  class="mt-2 inline-block text-[--color-accent] hover:underline text-xs"
+                  class="mt-2 inline-block text-(--color-accent) hover:underline text-xs"
                 >
                   {l.rankingLink}
                 </a>
@@ -200,10 +200,10 @@ export default function WeeklyLeaderboard({ lang }: Props) {
       {!loading && !error && worstEntries.length > 0 && (
         <section>
           <div class="mb-4">
-            <h2 class="text-lg font-bold text-[--color-text]">
+            <h2 class="text-lg font-bold text-(--color-text)">
               {l.worstTitle}
             </h2>
-            <p class="text-xs text-[--color-text-muted] font-mono mt-0.5">
+            <p class="text-xs text-(--color-text-muted) font-mono mt-0.5">
               {l.worstSub}
             </p>
           </div>
@@ -222,17 +222,17 @@ export default function WeeklyLeaderboard({ lang }: Props) {
 
       {/* Summary bar */}
       {!loading && !error && data && (
-        <div class="border border-[--color-border] rounded-lg px-5 py-4 bg-[--color-bg-card] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="border border-(--color-border) rounded-lg px-5 py-4 bg-(--color-bg-card) flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <p class="font-mono text-xs text-[--color-text-muted] mb-1">
+            <p class="font-mono text-xs text-(--color-text-muted) mb-1">
               {l.weeklyNote}
             </p>
             <p
-              class="font-mono text-sm text-[--color-text-muted] cursor-help"
+              class="font-mono text-sm text-(--color-text-muted) cursor-help"
               title={l.pfTip}
             >
               {l.wr50Label}{" "}
-              <span class="text-[--color-accent] font-bold">
+              <span class="text-(--color-accent) font-bold">
                 {data.summary.wr_50plus}
               </span>
               <span class="opacity-60"> / {data.summary.total}</span>
@@ -241,13 +241,13 @@ export default function WeeklyLeaderboard({ lang }: Props) {
           <div class="flex gap-3 flex-wrap">
             <a
               href={rankingPath}
-              class="shrink-0 inline-flex items-center gap-1.5 border border-[--color-border] text-[--color-text-muted] px-4 py-2 rounded font-semibold text-xs hover:border-[--color-accent] hover:text-[--color-accent] transition-colors"
+              class="shrink-0 inline-flex items-center gap-1.5 border border-(--color-border) text-(--color-text-muted) px-4 py-2 rounded font-semibold text-xs hover:border-(--color-accent) hover:text-(--color-accent) transition-colors"
             >
               {l.rankingLink}
             </a>
             <a
               href={simulatePath}
-              class="shrink-0 inline-flex items-center gap-2 bg-[--color-accent] text-[--color-bg] px-5 py-2 rounded font-semibold text-sm hover:bg-[--color-accent-dim] transition-colors"
+              class="shrink-0 inline-flex items-center gap-2 bg-(--color-accent) text-(--color-bg) px-5 py-2 rounded font-semibold text-sm hover:bg-(--color-accent-dim) transition-colors"
             >
               {l.simCta} &rarr;
             </a>

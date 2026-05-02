@@ -19,17 +19,17 @@ import { AUTOTRADE_COMING_SOON } from '../config/feature-flags';
   <main class="max-w-4xl mx-auto px-4 py-12 md:py-20">
     <div class="flex items-center justify-between mb-2 flex-wrap gap-3">
       <h1 class="text-3xl md:text-4xl font-bold">Dashboard</h1>
-      <a href="/autotrading" class="text-sm text-[--color-text-muted] hover:text-[--color-accent] transition-colors">← About Autotrading</a>
+      <a href="/autotrading" class="text-sm text-(--color-text-muted) hover:text-(--color-accent) transition-colors">← About Autotrading</a>
     </div>
-    <p class="text-[--color-text-muted] mb-8">Manage your OKX connection and auto-trading bots.</p>
+    <p class="text-(--color-text-muted) mb-8">Manage your OKX connection and auto-trading bots.</p>
 
     {AUTOTRADE_COMING_SOON && (
-      <section class="mb-8 rounded-2xl border border-[--color-accent]/30 bg-[--color-accent]/5 p-6 md:p-8 text-center">
-        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 text-xs font-mono font-bold uppercase tracking-wider rounded bg-[--color-accent]/10 text-[--color-accent-bright] border border-[--color-accent]/30 mb-3">
+      <section class="mb-8 rounded-2xl border border-(--color-accent)/30 bg-(--color-accent)/5 p-6 md:p-8 text-center">
+        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 text-xs font-mono font-bold uppercase tracking-wider rounded bg-(--color-accent)/10 text-(--color-accent-bright) border border-(--color-accent)/30 mb-3">
           ● Coming Soon
         </span>
         <h2 class="text-xl md:text-2xl font-bold mb-2">Auto-trading is being hardened.</h2>
-        <p class="text-sm text-[--color-text-muted] max-w-xl mx-auto mb-4 leading-relaxed">
+        <p class="text-sm text-(--color-text-muted) max-w-xl mx-auto mb-4 leading-relaxed">
           The OKX integration is under fix. Backtesting + strategy verification stay fully free in the meantime — use the simulator to identify strategies worth running when execution re-opens.
         </p>
         <div class="flex flex-col sm:flex-row gap-2 justify-center">
@@ -46,30 +46,30 @@ import { AUTOTRADE_COMING_SOON } from '../config/feature-flags';
           <div class="card-enterprise rounded-2xl p-6 md:p-8">
             <div class="flex items-center justify-between mb-4 flex-wrap gap-4">
               <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-xl bg-[--color-accent]/10 flex items-center justify-center">
-                  <svg class="w-7 h-7 text-[--color-accent]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <div class="w-12 h-12 rounded-xl bg-(--color-accent)/10 flex items-center justify-center">
+                  <svg class="w-7 h-7 text-(--color-accent)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
                   </svg>
                 </div>
                 <div>
                   <h2 class="text-xl font-bold">OKX Broker</h2>
-                  <p class="text-sm text-[--color-text-muted]">Official Broker Partner — 20% fee discount</p>
+                  <p class="text-sm text-(--color-text-muted)">Official Broker Partner — 20% fee discount</p>
                 </div>
               </div>
               <OKXConnectButton client:load lang="en" size="md" />
             </div>
             <div class="grid grid-cols-3 gap-4 mt-4">
-              <div class="bg-[--color-bg]/50 rounded-xl p-3 text-center">
-                <p class="text-xs text-[--color-text-muted] mb-1">Fee Discount</p>
-                <p class="text-xl font-bold text-[--color-up]">20%</p>
+              <div class="bg-(--color-bg)/50 rounded-xl p-3 text-center">
+                <p class="text-xs text-(--color-text-muted) mb-1">Fee Discount</p>
+                <p class="text-xl font-bold text-(--color-up)">20%</p>
               </div>
-              <div class="bg-[--color-bg]/50 rounded-xl p-3 text-center">
-                <p class="text-xs text-[--color-text-muted] mb-1">Execution</p>
+              <div class="bg-(--color-bg)/50 rounded-xl p-3 text-center">
+                <p class="text-xs text-(--color-text-muted) mb-1">Execution</p>
                 <p class="text-xl font-bold">Auto</p>
               </div>
-              <div class="bg-[--color-bg]/50 rounded-xl p-3 text-center">
-                <p class="text-xs text-[--color-text-muted] mb-1">API Key Sharing</p>
-                <p class="text-xl font-bold text-[--color-up]">Not required</p>
+              <div class="bg-(--color-bg)/50 rounded-xl p-3 text-center">
+                <p class="text-xs text-(--color-text-muted) mb-1">API Key Sharing</p>
+                <p class="text-xl font-bold text-(--color-up)">Not required</p>
               </div>
             </div>
           </div>
@@ -102,16 +102,16 @@ import { AUTOTRADE_COMING_SOON } from '../config/feature-flags';
       <div class="card-enterprise rounded-xl p-5">
         <h3 class="font-bold mb-3">Security</h3>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
-          <div class="flex items-center gap-2 text-[--color-text-muted]">
-            <span class="w-2 h-2 rounded-full bg-[--color-up]"></span>
+          <div class="flex items-center gap-2 text-(--color-text-muted)">
+            <span class="w-2 h-2 rounded-full bg-(--color-up)"></span>
             OAuth — no API keys shared
           </div>
-          <div class="flex items-center gap-2 text-[--color-text-muted]">
-            <span class="w-2 h-2 rounded-full bg-[--color-up]"></span>
+          <div class="flex items-center gap-2 text-(--color-text-muted)">
+            <span class="w-2 h-2 rounded-full bg-(--color-up)"></span>
             No withdrawal permission
           </div>
-          <div class="flex items-center gap-2 text-[--color-text-muted]">
-            <span class="w-2 h-2 rounded-full bg-[--color-up]"></span>
+          <div class="flex items-center gap-2 text-(--color-text-muted)">
+            <span class="w-2 h-2 rounded-full bg-(--color-up)"></span>
             AES-256 encrypted tokens
           </div>
         </div>
@@ -119,7 +119,7 @@ import { AUTOTRADE_COMING_SOON } from '../config/feature-flags';
     </section>
 
     <!-- Risk Disclaimer -->
-    <p class="text-xs text-[--color-text-disabled] text-center mt-8">
+    <p class="text-xs text-(--color-text-disabled) text-center mt-8">
       Auto-trading executes real trades with real money. Simulation results do not guarantee live trading performance.
     </p>
   </main>

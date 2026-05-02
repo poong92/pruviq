@@ -12,65 +12,65 @@ const coinsAnalyzed = (siteStats as Record<string, number>).coins_analyzed ?? 24
 <Layout title={t('meta.market_title')} description={t('meta.market_desc')}>
   <section class="pt-6 pb-16 md:pt-10 md:pb-24 section-elevated">
     <div class="max-w-7xl mx-auto px-6">
-      <p class="font-mono text-[--color-accent] text-sm mb-3 tracking-wider">{t('market.tag')}</p>
+      <p class="font-mono text-(--color-accent) text-sm mb-3 tracking-wider">{t('market.tag')}</p>
       <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-5">{t('market.title')}</h1>
-      <p class="text-[--color-text-muted] text-lg md:text-xl mb-5 max-w-2xl leading-relaxed">
+      <p class="text-(--color-text-muted) text-lg md:text-xl mb-5 max-w-2xl leading-relaxed">
         {t('market.desc')}
       </p>
-      <div class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-[--color-accent]/20 bg-[--color-accent]/5 text-sm mb-8">
-        <span class="text-[--color-accent] font-mono text-xs font-bold">TIP</span>
-        <span class="text-[--color-text-muted]">{t('market.context_tip')}</span>
-        <a href="/simulate" class="text-[--color-accent] font-semibold hover:underline whitespace-nowrap">{t('market.context_cta')} &rarr;</a>
+      <div class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-(--color-accent)/20 bg-(--color-accent)/5 text-sm mb-8">
+        <span class="text-(--color-accent) font-mono text-xs font-bold">TIP</span>
+        <span class="text-(--color-text-muted)">{t('market.context_tip')}</span>
+        <a href="/simulate" class="text-(--color-accent) font-semibold hover:underline whitespace-nowrap">{t('market.context_cta')} &rarr;</a>
       </div>
       <div id="market-mount" data-initial-market={marketDataJson}>
         <div class="animate-pulse space-y-4">
           <div class="flex gap-4 flex-wrap">
-            <div class="flex-1 min-w-[200px] h-16 bg-[--color-bg-hover] rounded-lg"></div>
-            <div class="flex-1 min-w-[200px] h-16 bg-[--color-bg-hover] rounded-lg"></div>
+            <div class="flex-1 min-w-[200px] h-16 bg-(--color-bg-hover) rounded-lg"></div>
+            <div class="flex-1 min-w-[200px] h-16 bg-(--color-bg-hover) rounded-lg"></div>
           </div>
           <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div class="h-24 bg-[--color-bg-hover] rounded-lg"></div>
-            <div class="h-24 bg-[--color-bg-hover] rounded-lg"></div>
-            <div class="h-24 bg-[--color-bg-hover] rounded-lg"></div>
-            <div class="h-24 bg-[--color-bg-hover] rounded-lg"></div>
+            <div class="h-24 bg-(--color-bg-hover) rounded-lg"></div>
+            <div class="h-24 bg-(--color-bg-hover) rounded-lg"></div>
+            <div class="h-24 bg-(--color-bg-hover) rounded-lg"></div>
+            <div class="h-24 bg-(--color-bg-hover) rounded-lg"></div>
           </div>
-          <div class="h-64 bg-[--color-bg-hover] rounded-lg"></div>
+          <div class="h-64 bg-(--color-bg-hover) rounded-lg"></div>
         </div>
         <noscript>
-          <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] mt-4">
+          <div class="border border-(--color-border) rounded-lg p-6 bg-(--color-bg-card) mt-4">
             <h2 class="text-lg font-bold mb-4">{t('market.noscript_title')}</h2>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-              <div class="p-3 rounded-lg bg-[--color-bg-hover] shadow-[var(--shadow-sm)]">
-                <p class="text-xs text-[--color-text-muted]">BTC Price</p>
+              <div class="p-3 rounded-lg bg-(--color-bg-hover) shadow-[var(--shadow-sm)]">
+                <p class="text-xs text-(--color-text-muted)">BTC Price</p>
                 <p class="font-bold font-mono">${marketDataRaw.btc_price?.toLocaleString('en-US', { maximumFractionDigits: 0 })}</p>
               </div>
-              <div class="p-3 rounded-lg bg-[--color-bg-hover] shadow-[var(--shadow-sm)]">
-                <p class="text-xs text-[--color-text-muted]">BTC Dominance</p>
+              <div class="p-3 rounded-lg bg-(--color-bg-hover) shadow-[var(--shadow-sm)]">
+                <p class="text-xs text-(--color-text-muted)">BTC Dominance</p>
                 <p class="font-bold font-mono">{marketDataRaw.btc_dominance}%</p>
               </div>
-              <div class="p-3 rounded-lg bg-[--color-bg-hover] shadow-[var(--shadow-sm)]">
-                <p class="text-xs text-[--color-text-muted]">Fear & Greed</p>
+              <div class="p-3 rounded-lg bg-(--color-bg-hover) shadow-[var(--shadow-sm)]">
+                <p class="text-xs text-(--color-text-muted)">Fear & Greed</p>
                 <p class="font-bold font-mono">{marketDataRaw.fear_greed_index} — {marketDataRaw.fear_greed_label}</p>
               </div>
-              <div class="p-3 rounded-lg bg-[--color-bg-hover] shadow-[var(--shadow-sm)]">
-                <p class="text-xs text-[--color-text-muted]">Total Market Cap</p>
+              <div class="p-3 rounded-lg bg-(--color-bg-hover) shadow-[var(--shadow-sm)]">
+                <p class="text-xs text-(--color-text-muted)">Total Market Cap</p>
                 <p class="font-bold font-mono">${marketDataRaw.total_market_cap_b}B</p>
               </div>
             </div>
-            <p class="text-[--color-text-muted] text-sm mb-4">{t('market.noscript_desc')}</p>
+            <p class="text-(--color-text-muted) text-sm mb-4">{t('market.noscript_desc')}</p>
             <div class="flex flex-wrap gap-3">
-              <a href="/coins" class="text-[--color-accent] text-sm font-semibold hover:underline">Browse {coinsAnalyzed}+ Coins &rarr;</a>
-              <a href="/simulate" class="text-[--color-accent] text-sm font-semibold hover:underline">Run Simulation &rarr;</a>
-              <a href="/strategies" class="text-[--color-accent] text-sm font-semibold hover:underline">View Strategies &rarr;</a>
+              <a href="/coins" class="text-(--color-accent) text-sm font-semibold hover:underline">Browse {coinsAnalyzed}+ Coins &rarr;</a>
+              <a href="/simulate" class="text-(--color-accent) text-sm font-semibold hover:underline">Run Simulation &rarr;</a>
+              <a href="/strategies" class="text-(--color-accent) text-sm font-semibold hover:underline">View Strategies &rarr;</a>
             </div>
           </div>
         </noscript>
       </div>
     </div>
     <div class="max-w-5xl mx-auto px-4 mt-10">
-      <div class="border border-[--color-accent]/20 rounded-lg p-5 bg-[--color-accent]/5 card-enterprise shadow-[var(--shadow-md)]">
-        <p class="font-mono text-[--color-accent] text-xs mb-2">WHAT TO DO</p>
-        <p class="text-sm text-[--color-text-secondary] mb-3">
+      <div class="border border-(--color-accent)/20 rounded-lg p-5 bg-(--color-accent)/5 card-enterprise shadow-[var(--shadow-md)]">
+        <p class="font-mono text-(--color-accent) text-xs mb-2">WHAT TO DO</p>
+        <p class="text-sm text-(--color-text-secondary) mb-3">
           See something interesting? Test how a strategy would perform in this market.
         </p>
         <div class="flex flex-wrap gap-3">
@@ -85,7 +85,7 @@ const coinsAnalyzed = (siteStats as Record<string, number>).coins_analyzed ?? 24
         <a href="/simulate" class="btn btn-primary btn-md no-underline">
           {t('cross.simulate_cta')} &rarr;
         </a>
-        <a href="/strategies" class="btn btn-ghost btn-md hover:border-[--color-accent] transition-colors no-underline">
+        <a href="/strategies" class="btn btn-ghost btn-md hover:border-(--color-accent) transition-colors no-underline">
           {t('cross.strategies_cta')} &rarr;
         </a>
       </div>

@@ -337,7 +337,7 @@ export default function ConditionRow({
     : [c.field, ...availableFields];
 
   return (
-    <div class="text-xs rounded border border-[--color-border] bg-[--color-bg-tooltip]/40 p-2">
+    <div class="text-xs rounded border border-(--color-border) bg-(--color-bg-tooltip)/40 p-2">
       {/* Row 1 (mobile): Field + info + remove */}
       <div class="flex items-center gap-1.5 mb-1.5 sm:mb-0 sm:hidden">
         <select
@@ -350,7 +350,7 @@ export default function ConditionRow({
               onUpdate(c.id, "value", true);
             }
           }}
-          class="flex-1 min-w-0 px-1.5 py-2 min-h-[44px] bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
+          class="flex-1 min-w-0 px-1.5 py-2 min-h-[44px] bg-(--color-bg-tooltip) border border-(--color-border) rounded font-mono text-xs text-(--color-text) outline-none focus:border-(--color-accent)"
           title={desc[c.field] || c.field}
           aria-label="Indicator field"
         >
@@ -363,7 +363,7 @@ export default function ConditionRow({
         <button
           type="button"
           onClick={() => setShowInfo(!showInfo)}
-          class="w-[44px] h-[44px] shrink-0 rounded-full border border-[--color-border] text-[--color-text-muted] hover:text-[--color-accent] hover:border-[--color-accent] flex items-center justify-center text-xs font-mono transition-colors"
+          class="w-[44px] h-[44px] shrink-0 rounded-full border border-(--color-border) text-(--color-text-muted) hover:text-(--color-accent) hover:border-(--color-accent) flex items-center justify-center text-xs font-mono transition-colors"
           title={desc[c.field] || c.field}
           aria-label={`Info about ${c.field}`}
         >
@@ -371,7 +371,7 @@ export default function ConditionRow({
         </button>
         <button
           onClick={() => onRemove(c.id)}
-          class="text-[--color-text-muted] hover:text-[--color-red] w-[44px] h-[44px] flex items-center justify-center shrink-0"
+          class="text-(--color-text-muted) hover:text-(--color-red) w-[44px] h-[44px] flex items-center justify-center shrink-0"
           title={removeLabel}
           aria-label={removeLabel}
         >
@@ -386,7 +386,7 @@ export default function ConditionRow({
           onChange={(e: Event) =>
             onUpdate(c.id, "op", (e.target as HTMLSelectElement).value)
           }
-          class="w-14 px-1 py-2 min-h-[44px] bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
+          class="w-14 px-1 py-2 min-h-[44px] bg-(--color-bg-tooltip) border border-(--color-border) rounded font-mono text-xs text-(--color-text) outline-none focus:border-(--color-accent)"
           aria-label="Comparison operator"
         >
           {OPS.map((o) => (
@@ -405,7 +405,7 @@ export default function ConditionRow({
                 (e.target as HTMLSelectElement).value === "true",
               )
             }
-            class="flex-1 px-1 py-2 min-h-[44px] bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
+            class="flex-1 px-1 py-2 min-h-[44px] bg-(--color-bg-tooltip) border border-(--color-border) rounded font-mono text-xs text-(--color-text) outline-none focus:border-(--color-accent)"
             aria-label="Boolean value"
           >
             <option value="true">true</option>
@@ -417,7 +417,7 @@ export default function ConditionRow({
             onChange={(e: Event) =>
               onUpdate(c.id, "field2", (e.target as HTMLSelectElement).value)
             }
-            class="flex-1 px-1 py-2 min-h-[44px] bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
+            class="flex-1 px-1 py-2 min-h-[44px] bg-(--color-bg-tooltip) border border-(--color-border) rounded font-mono text-xs text-(--color-text) outline-none focus:border-(--color-accent)"
             aria-label="Comparison field"
           >
             {displayFields
@@ -440,7 +440,7 @@ export default function ConditionRow({
                 parseFloat((e.target as HTMLInputElement).value),
               )
             }
-            class="flex-1 px-1.5 py-2 min-h-[44px] bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
+            class="flex-1 px-1.5 py-2 min-h-[44px] bg-(--color-bg-tooltip) border border-(--color-border) rounded font-mono text-xs text-(--color-text) outline-none focus:border-(--color-accent)"
             aria-label="Comparison value"
           />
         )}
@@ -453,10 +453,10 @@ export default function ConditionRow({
               parseInt((e.target as HTMLSelectElement).value),
             )
           }
-          class={`w-16 px-1 py-2 min-h-[44px] bg-[--color-bg-tooltip] border rounded font-mono text-xs outline-none focus:border-[--color-accent] ${
+          class={`w-16 px-1 py-2 min-h-[44px] bg-(--color-bg-tooltip) border rounded font-mono text-xs outline-none focus:border-(--color-accent) ${
             c.shift === 0
-              ? "border-[--color-yellow] text-[--color-yellow] font-bold"
-              : "border-[--color-border] text-[--color-text]"
+              ? "border-(--color-yellow) text-(--color-yellow) font-bold"
+              : "border-(--color-border) text-(--color-text)"
           }`}
           title={
             c.shift === 1
@@ -474,7 +474,7 @@ export default function ConditionRow({
         </select>
         {c.shift === 0 && (
           <span
-            class="text-[--color-yellow] text-[10px] font-mono shrink-0 font-bold"
+            class="text-(--color-yellow) text-[10px] font-mono shrink-0 font-bold"
             title={lookAheadWarning}
             role="img"
             aria-label={lookAheadWarning}
@@ -497,7 +497,7 @@ export default function ConditionRow({
               onUpdate(c.id, "value", true);
             }
           }}
-          class="flex-1 min-w-0 px-1.5 py-2 min-h-[44px] bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
+          class="flex-1 min-w-0 px-1.5 py-2 min-h-[44px] bg-(--color-bg-tooltip) border border-(--color-border) rounded font-mono text-xs text-(--color-text) outline-none focus:border-(--color-accent)"
           title={desc[c.field] || c.field}
           aria-label="Indicator field"
         >
@@ -510,7 +510,7 @@ export default function ConditionRow({
         <button
           type="button"
           onClick={() => setShowInfo(!showInfo)}
-          class="w-7 h-7 shrink-0 rounded-full border border-[--color-border] text-[--color-text-muted] hover:text-[--color-accent] hover:border-[--color-accent] flex items-center justify-center text-[10px] font-mono transition-colors"
+          class="w-7 h-7 shrink-0 rounded-full border border-(--color-border) text-(--color-text-muted) hover:text-(--color-accent) hover:border-(--color-accent) flex items-center justify-center text-[10px] font-mono transition-colors"
           title={desc[c.field] || c.field}
           aria-label={`Info about ${c.field}`}
         >
@@ -521,7 +521,7 @@ export default function ConditionRow({
           onChange={(e: Event) =>
             onUpdate(c.id, "op", (e.target as HTMLSelectElement).value)
           }
-          class="w-14 px-1 py-2 min-h-[44px] bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
+          class="w-14 px-1 py-2 min-h-[44px] bg-(--color-bg-tooltip) border border-(--color-border) rounded font-mono text-xs text-(--color-text) outline-none focus:border-(--color-accent)"
           aria-label="Comparison operator"
         >
           {OPS.map((o) => (
@@ -540,7 +540,7 @@ export default function ConditionRow({
                 (e.target as HTMLSelectElement).value === "true",
               )
             }
-            class="w-16 px-1 py-2 min-h-[44px] bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
+            class="w-16 px-1 py-2 min-h-[44px] bg-(--color-bg-tooltip) border border-(--color-border) rounded font-mono text-xs text-(--color-text) outline-none focus:border-(--color-accent)"
             aria-label="Boolean value"
           >
             <option value="true">true</option>
@@ -552,7 +552,7 @@ export default function ConditionRow({
             onChange={(e: Event) =>
               onUpdate(c.id, "field2", (e.target as HTMLSelectElement).value)
             }
-            class="w-24 px-1 py-2 min-h-[44px] bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
+            class="w-24 px-1 py-2 min-h-[44px] bg-(--color-bg-tooltip) border border-(--color-border) rounded font-mono text-xs text-(--color-text) outline-none focus:border-(--color-accent)"
             aria-label="Comparison field"
           >
             {displayFields
@@ -575,7 +575,7 @@ export default function ConditionRow({
                 parseFloat((e.target as HTMLInputElement).value),
               )
             }
-            class="w-20 px-1.5 py-2 min-h-[44px] bg-[--color-bg-tooltip] border border-[--color-border] rounded font-mono text-xs text-[--color-text] outline-none focus:border-[--color-accent]"
+            class="w-20 px-1.5 py-2 min-h-[44px] bg-(--color-bg-tooltip) border border-(--color-border) rounded font-mono text-xs text-(--color-text) outline-none focus:border-(--color-accent)"
             aria-label="Comparison value"
           />
         )}
@@ -588,10 +588,10 @@ export default function ConditionRow({
               parseInt((e.target as HTMLSelectElement).value),
             )
           }
-          class={`w-14 px-1 py-2 min-h-[44px] bg-[--color-bg-tooltip] border rounded font-mono text-xs outline-none focus:border-[--color-accent] ${
+          class={`w-14 px-1 py-2 min-h-[44px] bg-(--color-bg-tooltip) border rounded font-mono text-xs outline-none focus:border-(--color-accent) ${
             c.shift === 0
-              ? "border-[--color-yellow] text-[--color-yellow] font-bold"
-              : "border-[--color-border] text-[--color-text]"
+              ? "border-(--color-yellow) text-(--color-yellow) font-bold"
+              : "border-(--color-border) text-(--color-text)"
           }`}
           title={
             c.shift === 1
@@ -609,7 +609,7 @@ export default function ConditionRow({
         </select>
         {c.shift === 0 && (
           <span
-            class="text-[--color-yellow] text-[9px] font-mono shrink-0"
+            class="text-(--color-yellow) text-[9px] font-mono shrink-0"
             title={lookAheadWarning}
             role="img"
             aria-label={lookAheadWarning}
@@ -619,7 +619,7 @@ export default function ConditionRow({
         )}
         <button
           onClick={() => onRemove(c.id)}
-          class="text-[--color-text-muted] hover:text-[--color-red] min-w-12 min-h-12 flex items-center justify-center shrink-0"
+          class="text-(--color-text-muted) hover:text-(--color-red) min-w-12 min-h-12 flex items-center justify-center shrink-0"
           title={removeLabel}
           aria-label={removeLabel}
         >
@@ -629,7 +629,7 @@ export default function ConditionRow({
 
       {/* Info panel */}
       {showInfo && desc[c.field] && (
-        <div class="mt-1.5 px-2 py-1.5 rounded bg-[--color-bg-tooltip] border border-[--color-accent]/20 text-[10px] text-[--color-text-muted] font-mono">
+        <div class="mt-1.5 px-2 py-1.5 rounded bg-(--color-bg-tooltip) border border-(--color-accent)/20 text-[10px] text-(--color-text-muted) font-mono">
           {desc[c.field]}
         </div>
       )}

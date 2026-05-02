@@ -74,8 +74,8 @@ export default function DiscreteSlider({
   return (
     <div class="mb-5">
       <div class="flex justify-between items-center mb-2">
-        <span class="font-mono text-xs text-[--color-text-muted]">{label}</span>
-        <span class="font-mono text-lg font-bold text-[--color-accent]">{value}{unit}</span>
+        <span class="font-mono text-xs text-(--color-text-muted)">{label}</span>
+        <span class="font-mono text-lg font-bold text-(--color-accent)">{value}{unit}</span>
       </div>
 
       {/* Track */}
@@ -90,14 +90,14 @@ export default function DiscreteSlider({
         aria-valuetext={`${value}${unit}`}
         onPointerDown={handlePointerDown}
         onKeyDown={handleKeyDown}
-        class="relative h-10 cursor-pointer flex items-center touch-none outline-none focus:ring-1 focus:ring-[--color-accent] rounded"
+        class="relative h-10 cursor-pointer flex items-center touch-none outline-none focus:ring-1 focus:ring-(--color-accent) rounded"
       >
         {/* Background */}
-        <div class="absolute inset-x-0 h-1 bg-[--color-border] rounded-sm" />
+        <div class="absolute inset-x-0 h-1 bg-(--color-border) rounded-sm" />
 
         {/* Fill */}
         <div
-          class="absolute left-0 h-1 bg-[--color-accent] rounded-sm transition-[width] duration-100 ease-out"
+          class="absolute left-0 h-1 bg-(--color-accent) rounded-sm transition-[width] duration-100 ease-out"
           style={{ width: `${fillPct}%` }}
         />
 
@@ -106,7 +106,7 @@ export default function DiscreteSlider({
           const left = (i / (values.length - 1)) * 100;
           const isDefault = v === defaultValue;
           const isActive = i <= currentIndex;
-          const dotSize = isDefault ? 'w-2.5 h-2.5 border-2 border-[--color-accent]' : 'w-2 h-2';
+          const dotSize = isDefault ? 'w-2.5 h-2.5 border-2 border-(--color-accent)' : 'w-2 h-2';
           return (
             <div
               key={v}
@@ -114,9 +114,9 @@ export default function DiscreteSlider({
               style={{ left: `${left}%` }}
             >
               <div
-                class={`rounded-full transition-colors duration-100 ${dotSize} ${isActive ? 'bg-[--color-accent]' : 'bg-[--color-border]'}`}
+                class={`rounded-full transition-colors duration-100 ${dotSize} ${isActive ? 'bg-(--color-accent)' : 'bg-(--color-border)'}`}
               />
-              <span class={`font-mono text-[0.6875rem] mt-0.5 whitespace-nowrap ${isDefault ? 'text-[--color-accent]' : 'text-[--color-text-muted]'}`}>
+              <span class={`font-mono text-[0.6875rem] mt-0.5 whitespace-nowrap ${isDefault ? 'text-(--color-accent)' : 'text-(--color-text-muted)'}`}>
                 {v}{isDefault ? '*' : ''}
               </span>
             </div>
@@ -125,7 +125,7 @@ export default function DiscreteSlider({
 
         {/* Thumb */}
         <div
-          class="absolute w-5 h-5 rounded-full bg-[--color-accent] shadow-[0_1px_3px_rgba(0,0,0,0.3)] -translate-x-1/2 z-[2] transition-[left] duration-100 ease-out"
+          class="absolute w-5 h-5 rounded-full bg-(--color-accent) shadow-[0_1px_3px_rgba(0,0,0,0.3)] -translate-x-1/2 z-[2] transition-[left] duration-100 ease-out"
           style={{ left: `${fillPct}%` }}
         />
       </div>

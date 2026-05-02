@@ -65,21 +65,21 @@ const variantTabBase: Record<TabsVariant, string> = {
   subtle: "rounded",
 };
 const variantTabActive: Record<TabsVariant, string> = {
-  underline: "border-[--color-accent] text-[--color-accent]",
-  pills: "bg-[--color-accent] text-white",
-  subtle: "bg-[--color-bg-hover] text-[--color-text]",
+  underline: "border-(--color-accent) text-(--color-accent)",
+  pills: "bg-(--color-accent) text-white",
+  subtle: "bg-(--color-bg-hover) text-(--color-text)",
 };
 const variantTabIdle: Record<TabsVariant, string> = {
   underline:
-    "text-[--color-text-muted] hover:text-[--color-text] hover:border-[--color-border-hover]",
+    "text-(--color-text-muted) hover:text-(--color-text) hover:border-(--color-border-hover)",
   pills:
-    "text-[--color-text-muted] hover:text-[--color-text] hover:bg-[--color-bg-hover]",
+    "text-(--color-text-muted) hover:text-(--color-text) hover:bg-(--color-bg-hover)",
   subtle:
-    "text-[--color-text-muted] hover:text-[--color-text] hover:bg-[--color-bg-hover]",
+    "text-(--color-text-muted) hover:text-(--color-text) hover:bg-(--color-bg-hover)",
 };
 
 const variantList: Record<TabsVariant, string> = {
-  underline: "border-b border-[--color-border]",
+  underline: "border-b border-(--color-border)",
   pills: "gap-1.5",
   subtle: "gap-1",
 };
@@ -179,7 +179,7 @@ export default function Tabs<V extends string>({
         const selected = tab.value === value;
         const idle = !selected;
         const tabClasses = [
-          "inline-flex items-center justify-center gap-1.5 font-mono uppercase tracking-wider transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--color-accent] focus-visible:ring-offset-2 focus-visible:ring-offset-[--color-bg]",
+          "inline-flex items-center justify-center gap-1.5 font-mono uppercase tracking-wider transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-accent) focus-visible:ring-offset-2 focus-visible:ring-offset-(--color-bg)",
           sizeClasses[size],
           variantTabBase[variant],
           selected ? variantTabActive[variant] : variantTabIdle[variant],
@@ -213,7 +213,7 @@ export default function Tabs<V extends string>({
           >
             {tab.label}
             {tab.badge != null && (
-              <span class="text-[--color-accent-bright] font-bold">
+              <span class="text-(--color-accent-bright) font-bold">
                 {tab.badge}
               </span>
             )}

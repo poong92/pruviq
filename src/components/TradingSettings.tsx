@@ -236,7 +236,7 @@ interface Settings {
 
 function WarnBadge({ msg }: { msg: string }) {
   return (
-    <p class="text-xs text-[--color-warning] flex items-center gap-1 mt-1">
+    <p class="text-xs text-(--color-warning) flex items-center gap-1 mt-1">
       <span aria-hidden="true">⚠</span> {msg}
     </p>
   );
@@ -244,7 +244,7 @@ function WarnBadge({ msg }: { msg: string }) {
 
 function InfoBadge({ msg }: { msg: string }) {
   return (
-    <p class="text-xs text-[--color-text-muted] flex items-center gap-1 mt-1">
+    <p class="text-xs text-(--color-text-muted) flex items-center gap-1 mt-1">
       <span aria-hidden="true">ℹ</span> {msg}
     </p>
   );
@@ -379,14 +379,14 @@ export default function TradingSettings({ lang = "en" }: Props) {
 
   if (loading) {
     return (
-      <div class="text-center py-8 text-[--color-text-muted]">Loading...</div>
+      <div class="text-center py-8 text-(--color-text-muted)">Loading...</div>
     );
   }
 
   if (!connected) {
     return (
       <div class="card-enterprise rounded-xl p-6 text-center">
-        <p class="text-[--color-text-muted] mb-4">{t.notConnected}</p>
+        <p class="text-(--color-text-muted) mb-4">{t.notConnected}</p>
         <OKXDirectConnectButton lang={lang} label={t.connect} />
       </div>
     );
@@ -395,24 +395,24 @@ export default function TradingSettings({ lang = "en" }: Props) {
   return (
     <div class="space-y-6">
       {/* Warning banner */}
-      <div class="bg-[--color-down]/10 border border-[--color-down]/20 rounded-xl p-4 text-sm text-[--color-down]">
+      <div class="bg-(--color-down)/10 border border-(--color-down)/20 rounded-xl p-4 text-sm text-(--color-down)">
         {t.warning}
       </div>
 
       {/* Today's stats */}
       <div class="flex gap-4">
         <div class="card-enterprise rounded-xl p-4 flex-1 text-center">
-          <p class="text-xs text-[--color-text-muted]">
+          <p class="text-xs text-(--color-text-muted)">
             {t.todayStats} {t.trades}
           </p>
           <p class="text-2xl font-bold">{dailyStats.trades_today}</p>
         </div>
         <div class="card-enterprise rounded-xl p-4 flex-1 text-center">
-          <p class="text-xs text-[--color-text-muted]">
+          <p class="text-xs text-(--color-text-muted)">
             {t.todayStats} {t.pnl}
           </p>
           <p
-            class={`text-2xl font-bold ${dailyStats.pnl_today >= 0 ? "text-[--color-up]" : "text-[--color-down]"}`}
+            class={`text-2xl font-bold ${dailyStats.pnl_today >= 0 ? "text-(--color-up)" : "text-(--color-down)"}`}
           >
             ${dailyStats.pnl_today.toFixed(2)}
           </p>
@@ -428,8 +428,8 @@ export default function TradingSettings({ lang = "en" }: Props) {
               key={mode}
               class={`flex items-start gap-3 p-3 rounded-lg cursor-pointer transition-colors ${
                 settings.execution_mode === mode
-                  ? "bg-[--color-accent]/10 border border-[--color-accent]/30"
-                  : "hover:bg-[--color-bg]/50 border border-transparent"
+                  ? "bg-(--color-accent)/10 border border-(--color-accent)/30"
+                  : "hover:bg-(--color-bg)/50 border border-transparent"
               }`}
             >
               <input
@@ -439,7 +439,7 @@ export default function TradingSettings({ lang = "en" }: Props) {
                 onChange={() =>
                   setSettings((s) => ({ ...s, execution_mode: mode }))
                 }
-                class="accent-[--color-accent] mt-0.5"
+                class="accent-(--color-accent) mt-0.5"
               />
               <span class="text-sm">{t.modes[mode]}</span>
             </label>
@@ -448,9 +448,9 @@ export default function TradingSettings({ lang = "en" }: Props) {
 
         {/* Telegram Chat ID — shown for alert AND auto */}
         {needsTelegram && (
-          <div class="mt-4 pt-4 border-t border-[--color-border]">
+          <div class="mt-4 pt-4 border-t border-(--color-border)">
             <label class="font-bold text-sm block mb-1">{t.alertChatId}</label>
-            <p class="text-xs text-[--color-text-muted] mb-1">
+            <p class="text-xs text-(--color-text-muted) mb-1">
               {t.alertChatIdDesc}
             </p>
             {settings.execution_mode === "auto" && (
@@ -466,10 +466,10 @@ export default function TradingSettings({ lang = "en" }: Props) {
                   alert_telegram_chat_id: (e.target as HTMLInputElement).value,
                 }))
               }
-              class={`w-full p-2 mt-2 rounded-lg bg-[--color-bg] border text-sm font-mono ${
+              class={`w-full p-2 mt-2 rounded-lg bg-(--color-bg) border text-sm font-mono ${
                 missingTelegram
-                  ? "border-[--color-warning]"
-                  : "border-[--color-border]"
+                  ? "border-(--color-warning)"
+                  : "border-(--color-border)"
               }`}
               aria-label={t.alertChatId}
             />
@@ -484,7 +484,7 @@ export default function TradingSettings({ lang = "en" }: Props) {
       >
         <div>
           <h3 class="font-bold">{t.masterSwitch}</h3>
-          <p class="text-xs text-[--color-text-muted]">
+          <p class="text-xs text-(--color-text-muted)">
             {isManualMode ? t.manualModeNote : t.masterSwitchDesc}
           </p>
         </div>
@@ -503,7 +503,7 @@ export default function TradingSettings({ lang = "en" }: Props) {
             }
             class="sr-only peer"
           />
-          <div class="w-11 h-6 bg-[--color-border] peer-checked:bg-[--color-up] rounded-full peer-focus:ring-2 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full" />
+          <div class="w-11 h-6 bg-(--color-border) peer-checked:bg-(--color-up) rounded-full peer-focus:ring-2 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full" />
         </label>
       </div>
 
@@ -516,12 +516,12 @@ export default function TradingSettings({ lang = "en" }: Props) {
           <div class="flex items-center justify-between mb-3">
             <div>
               <h3 class="font-bold">{t.strategies}</h3>
-              <p class="text-xs text-[--color-text-muted]">
+              <p class="text-xs text-(--color-text-muted)">
                 {t.strategiesDesc}
               </p>
             </div>
             <button
-              class="text-xs text-[--color-accent] underline"
+              class="text-xs text-(--color-accent) underline"
               onClick={() =>
                 setSettings((s) => ({
                   ...s,
@@ -546,18 +546,18 @@ export default function TradingSettings({ lang = "en" }: Props) {
                 key={s.id}
                 class={`flex items-center gap-3 p-3 rounded-lg cursor-pointer border transition-colors ${
                   settings.strategies.includes(s.id)
-                    ? "border-[--color-accent]/40 bg-[--color-accent]/5"
-                    : "border-transparent hover:bg-[--color-bg]/50"
+                    ? "border-(--color-accent)/40 bg-(--color-accent)/5"
+                    : "border-transparent hover:bg-(--color-bg)/50"
                 }`}
               >
                 <input
                   type="checkbox"
                   checked={settings.strategies.includes(s.id)}
                   onChange={() => toggleStrategy(s.id)}
-                  class="accent-[--color-accent]"
+                  class="accent-(--color-accent)"
                 />
                 <span class="text-sm">{s.name}</span>
-                <span class="text-[10px] font-mono text-[--color-up] bg-[--color-up]/10 px-1.5 rounded ml-auto">
+                <span class="text-[10px] font-mono text-(--color-up) bg-(--color-up)/10 px-1.5 rounded ml-auto">
                   {s.status}
                 </span>
               </label>
@@ -570,10 +570,10 @@ export default function TradingSettings({ lang = "en" }: Props) {
           <div class="flex items-center justify-between mb-3">
             <div>
               <h3 class="font-bold">{t.coins}</h3>
-              <p class="text-xs text-[--color-text-muted]">{t.coinsDesc}</p>
+              <p class="text-xs text-(--color-text-muted)">{t.coinsDesc}</p>
             </div>
             <button
-              class="text-xs text-[--color-accent] underline"
+              class="text-xs text-(--color-accent) underline"
               onClick={() =>
                 setSettings((s) => ({
                   ...s,
@@ -594,8 +594,8 @@ export default function TradingSettings({ lang = "en" }: Props) {
                 key={coin}
                 class={`px-3 py-1.5 rounded-lg text-sm font-mono border transition-colors ${
                   settings.coins.includes(coin)
-                    ? "border-[--color-accent] bg-[--color-accent]/10 text-[--color-accent]"
-                    : "border-[--color-border] text-[--color-text-muted] hover:border-[--color-accent]/40"
+                    ? "border-(--color-accent) bg-(--color-accent)/10 text-(--color-accent)"
+                    : "border-(--color-border) text-(--color-text-muted) hover:border-(--color-accent)/40"
                 }`}
                 onClick={() => toggleCoin(coin)}
               >
@@ -611,14 +611,14 @@ export default function TradingSettings({ lang = "en" }: Props) {
           <div>
             <div class="flex items-center justify-between mb-2">
               <label class="font-bold text-sm">{t.positionSize}</label>
-              <div class="flex rounded-lg border border-[--color-border] overflow-hidden text-xs">
+              <div class="flex rounded-lg border border-(--color-border) overflow-hidden text-xs">
                 {(["fixed", "percent"] as const).map((mode) => (
                   <button
                     key={mode}
                     class={`px-3 py-1 transition-colors ${
                       settings.position_size_mode === mode
-                        ? "bg-[--color-accent] text-white"
-                        : "text-[--color-text-muted] hover:bg-[--color-bg-elevated]"
+                        ? "bg-(--color-accent) text-white"
+                        : "text-(--color-text-muted) hover:bg-(--color-bg-elevated)"
                     }`}
                     onClick={() =>
                       setSettings((s) => ({ ...s, position_size_mode: mode }))
@@ -633,7 +633,7 @@ export default function TradingSettings({ lang = "en" }: Props) {
             </div>
             {settings.position_size_mode === "fixed" ? (
               <div>
-                <p class="text-xs text-[--color-text-muted] mb-2">
+                <p class="text-xs text-(--color-text-muted) mb-2">
                   {t.positionSizeUSDTDesc}
                 </p>
                 <input
@@ -649,12 +649,12 @@ export default function TradingSettings({ lang = "en" }: Props) {
                       ),
                     }))
                   }
-                  class="w-full p-2 rounded-lg bg-[--color-bg] border border-[--color-border] text-sm font-mono"
+                  class="w-full p-2 rounded-lg bg-(--color-bg) border border-(--color-border) text-sm font-mono"
                 />
               </div>
             ) : (
               <div>
-                <p class="text-xs text-[--color-text-muted] mb-2">
+                <p class="text-xs text-(--color-text-muted) mb-2">
                   {t.positionSizePctDesc}
                 </p>
                 <div class="flex items-center gap-3">
@@ -671,7 +671,7 @@ export default function TradingSettings({ lang = "en" }: Props) {
                         ),
                       }))
                     }
-                    class="flex-1 accent-[--color-accent]"
+                    class="flex-1 accent-(--color-accent)"
                   />
                   <span class="font-mono font-bold text-lg w-14 text-right">
                     {settings.position_size_pct}%
@@ -689,7 +689,7 @@ export default function TradingSettings({ lang = "en" }: Props) {
                 {settings.leverage}x
               </span>
             </div>
-            <p class="text-xs text-[--color-text-muted] mb-2">
+            <p class="text-xs text-(--color-text-muted) mb-2">
               {t.leverageDesc}
             </p>
             <input
@@ -703,9 +703,9 @@ export default function TradingSettings({ lang = "en" }: Props) {
                   leverage: Number((e.target as HTMLInputElement).value),
                 }))
               }
-              class="w-full accent-[--color-accent]"
+              class="w-full accent-(--color-accent)"
             />
-            <div class="flex justify-between text-[10px] text-[--color-text-muted] mt-1">
+            <div class="flex justify-between text-[10px] text-(--color-text-muted) mt-1">
               <span>1x</span>
               <span>25x</span>
               <span>50x</span>
@@ -723,8 +723,8 @@ export default function TradingSettings({ lang = "en" }: Props) {
                   key={mode}
                   class={`flex items-center gap-2 px-4 py-2 rounded-lg border cursor-pointer text-sm transition-colors ${
                     settings.td_mode === mode
-                      ? "border-[--color-accent] bg-[--color-accent]/10"
-                      : "border-[--color-border] hover:border-[--color-accent]/40"
+                      ? "border-(--color-accent) bg-(--color-accent)/10"
+                      : "border-(--color-border) hover:border-(--color-accent)/40"
                   }`}
                 >
                   <input
@@ -734,7 +734,7 @@ export default function TradingSettings({ lang = "en" }: Props) {
                     onChange={() =>
                       setSettings((s) => ({ ...s, td_mode: mode }))
                     }
-                    class="accent-[--color-accent]"
+                    class="accent-(--color-accent)"
                   />
                   {mode === "isolated" ? t.marginIsolated : t.marginCross}
                 </label>
@@ -752,7 +752,7 @@ export default function TradingSettings({ lang = "en" }: Props) {
               <label class="font-bold text-sm block mb-1">
                 {t.maxPositions}
               </label>
-              <p class="text-xs text-[--color-text-muted] mb-2">
+              <p class="text-xs text-(--color-text-muted) mb-2">
                 {t.maxPositionsDesc}
               </p>
               <input
@@ -768,12 +768,12 @@ export default function TradingSettings({ lang = "en" }: Props) {
                     ),
                   }))
                 }
-                class="w-full p-2 rounded-lg bg-[--color-bg] border border-[--color-border] text-sm font-mono"
+                class="w-full p-2 rounded-lg bg-(--color-bg) border border-(--color-border) text-sm font-mono"
               />
             </div>
             <div>
               <label class="font-bold text-sm block mb-1">{t.maxTrades}</label>
-              <p class="text-xs text-[--color-text-muted] mb-2">
+              <p class="text-xs text-(--color-text-muted) mb-2">
                 {t.maxTradesDesc}
               </p>
               <input
@@ -789,14 +789,14 @@ export default function TradingSettings({ lang = "en" }: Props) {
                     ),
                   }))
                 }
-                class="w-full p-2 rounded-lg bg-[--color-bg] border border-[--color-border] text-sm font-mono"
+                class="w-full p-2 rounded-lg bg-(--color-bg) border border-(--color-border) text-sm font-mono"
               />
             </div>
           </div>
 
           <div>
             <label class="font-bold text-sm block mb-1">{t.lossLimit}</label>
-            <p class="text-xs text-[--color-text-muted] mb-2">
+            <p class="text-xs text-(--color-text-muted) mb-2">
               {t.lossLimitDesc}
             </p>
             <input
@@ -812,13 +812,13 @@ export default function TradingSettings({ lang = "en" }: Props) {
                   ),
                 }))
               }
-              class="w-full p-2 rounded-lg bg-[--color-bg] border border-[--color-border] text-sm font-mono"
+              class="w-full p-2 rounded-lg bg-(--color-bg) border border-(--color-border) text-sm font-mono"
             />
           </div>
 
           {/* Conflict warnings */}
           {conflicts.length > 0 && (
-            <div class="space-y-1 pt-2 border-t border-[--color-border]">
+            <div class="space-y-1 pt-2 border-t border-(--color-border)">
               {conflicts.map((w) => (
                 <WarnBadge key={w} msg={w} />
               ))}
@@ -829,7 +829,7 @@ export default function TradingSettings({ lang = "en" }: Props) {
 
       {/* Save */}
       <button
-        class={`btn btn-lg w-full ${saving === "saved" ? "bg-[--color-up] text-white" : "btn-primary"}`}
+        class={`btn btn-lg w-full ${saving === "saved" ? "bg-(--color-up) text-white" : "btn-primary"}`}
         onClick={handleSave}
         disabled={saving === "saving"}
       >

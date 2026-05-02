@@ -75,9 +75,9 @@ const tagMap: Record<string, string> = {
 };
 
 const levelColorMap: Record<string, string> = {
-  green: 'bg-[--color-up]/10 text-[--color-up] border-[--color-up]/20',
-  yellow: 'bg-[--color-warning]/10 text-[--color-warning] border-[--color-warning]/20',
-  red: 'bg-[--color-down]/10 text-[--color-down] border-[--color-down]/20',
+  green: 'bg-(--color-up)/10 text-(--color-up) border-(--color-up)/20',
+  yellow: 'bg-(--color-warning)/10 text-(--color-warning) border-(--color-warning)/20',
+  red: 'bg-(--color-down)/10 text-(--color-down) border-(--color-down)/20',
 };
 
 const levelConfig = [
@@ -108,28 +108,28 @@ const levelConfig = [
   <!-- HERO -->
   <section class="pt-6 pb-10 md:pt-10 md:pb-16 section-elevated">
     <div class="max-w-5xl mx-auto px-4">
-      <p class="font-mono text-[--color-accent] text-sm mb-3 tracking-wider">{t('learn.tag')}</p>
+      <p class="font-mono text-(--color-accent) text-sm mb-3 tracking-wider">{t('learn.tag')}</p>
       <h1 class="text-3xl md:text-5xl lg:text-6xl font-extrabold mb-5 leading-[1.15]">
         {t('learn.title')}<br/><span class="gradient-text">{t('learn.title2')}</span>
       </h1>
-      <p class="text-[--color-text-muted] text-lg md:text-xl mb-6 max-w-2xl leading-relaxed">
+      <p class="text-(--color-text-muted) text-lg md:text-xl mb-6 max-w-2xl leading-relaxed">
         {t('learn.desc').replace('{count}', String(allPosts.length))}
       </p>
       <LearnProgress client:visible postIds={allPosts.map(p => p.id)} lang="ko" />
-      <noscript><p class="text-[--color-text-muted] text-sm py-4">JavaScript를 활성화하면 학습 진행률을 추적할 수 있습니다.</p></noscript>
+      <noscript><p class="text-(--color-text-muted) text-sm py-4">JavaScript를 활성화하면 학습 진행률을 추적할 수 있습니다.</p></noscript>
       <div class="mt-5 relative max-w-md">
         <input
           id="learn-search"
           type="search"
           placeholder="아티클 검색..."
           autocomplete="off"
-          class="w-full bg-[--color-bg-hover] border border-[--color-border] rounded-xl pl-10 pr-4 py-3 text-sm text-[--color-text] placeholder:text-[--color-text-muted] outline-none search-glow shadow-[var(--shadow-sm)] transition-all"
+          class="w-full bg-(--color-bg-hover) border border-(--color-border) rounded-xl pl-10 pr-4 py-3 text-sm text-(--color-text) placeholder:text-(--color-text-muted) outline-none search-glow shadow-[var(--shadow-sm)] transition-all"
         />
-        <svg class="absolute left-3 top-3.5 w-4 h-4 text-[--color-text-muted] pointer-events-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+        <svg class="absolute left-3 top-3.5 w-4 h-4 text-(--color-text-muted) pointer-events-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
           <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
         </svg>
       </div>
-      <p id="learn-search-count" class="text-xs text-[--color-text-muted] font-mono mt-2 hidden" aria-live="polite"></p>
+      <p id="learn-search-count" class="text-xs text-(--color-text-muted) font-mono mt-2 hidden" aria-live="polite"></p>
     </div>
   </section>
 
@@ -150,7 +150,7 @@ const levelConfig = [
             <h2 class="text-2xl md:text-3xl font-bold">{title}</h2>
             <span class="section-count-badge">{levelPosts.length}</span>
           </div>
-          <p class="text-[--color-text-muted] text-sm">{desc}</p>
+          <p class="text-(--color-text-muted) text-sm">{desc}</p>
         </div>
 
         <div class="grid md:grid-cols-2 gap-4">
@@ -189,15 +189,15 @@ const levelConfig = [
   <section class="pb-20 pt-16 section-accent-glow">
     <div class="max-w-5xl mx-auto px-4 text-center">
       <h2 class="text-2xl md:text-3xl font-bold mb-4">{t('learn.cta_title')}</h2>
-      <p class="text-[--color-text-muted] text-base mb-8 max-w-lg mx-auto">{t('learn.cta_desc')}</p>
+      <p class="text-(--color-text-muted) text-base mb-8 max-w-lg mx-auto">{t('learn.cta_desc')}</p>
       <a href="/ko/simulate" class="btn btn-primary btn-lg">
         {t('learn.cta_button')} &rarr;
       </a>
       <div class="flex flex-wrap gap-3 justify-center mt-5">
-        <a href="/ko/demo" class="btn btn-ghost btn-md hover:border-[--color-accent] transition-colors no-underline">
+        <a href="/ko/demo" class="btn btn-ghost btn-md hover:border-(--color-accent) transition-colors no-underline">
           {t('cross.demo_cta')} &rarr;
         </a>
-        <a href="/ko/strategies" class="btn btn-ghost btn-md hover:border-[--color-accent] transition-colors no-underline">
+        <a href="/ko/strategies" class="btn btn-ghost btn-md hover:border-(--color-accent) transition-colors no-underline">
           {t('cross.strategies_cta')} &rarr;
         </a>
       </div>

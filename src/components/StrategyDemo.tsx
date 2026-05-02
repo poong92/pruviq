@@ -90,13 +90,13 @@ const labels = {
 
 function DemoSkeleton() {
   return (
-    <div class="fade-in border-t border-[--color-border] pt-10 mt-10">
+    <div class="fade-in border-t border-(--color-border) pt-10 mt-10">
       <div class="mb-6">
         <div class="skeleton h-3 w-40 mb-2" />
         <div class="skeleton h-7 w-48 mb-2" />
         <div class="skeleton h-4 w-96 max-w-full" />
       </div>
-      <div class="p-5 bg-[--color-bg-card] border border-[--color-border] rounded-xl mb-6">
+      <div class="p-5 bg-(--color-bg-card) border border-(--color-border) rounded-xl mb-6">
         <div
           class="grid gap-4"
           style={{
@@ -111,7 +111,7 @@ function DemoSkeleton() {
         class="grid gap-6"
         style={{ gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))" }}
       >
-        <div class="p-5 bg-[--color-bg-card] border border-[--color-border] rounded-xl">
+        <div class="p-5 bg-(--color-bg-card) border border-(--color-border) rounded-xl">
           <div class="grid grid-cols-2 gap-2 mb-4">
             <div class="skeleton h-16 rounded-lg" />
             <div class="skeleton h-16 rounded-lg" />
@@ -120,7 +120,7 @@ function DemoSkeleton() {
           </div>
           <div class="skeleton h-1.5 w-full rounded-full" />
         </div>
-        <div class="bg-[--color-bg-card] border border-[--color-border] rounded-xl overflow-hidden">
+        <div class="bg-(--color-bg-card) border border-(--color-border) rounded-xl overflow-hidden">
           <div class="px-4 pt-3">
             <div class="skeleton h-3 w-36" />
           </div>
@@ -340,7 +340,7 @@ export default function StrategyDemo({
   if (error || !data) {
     return (
       <div class="py-8 text-center">
-        <p class="font-mono text-sm text-[--color-red] mb-3">{t.error}</p>
+        <p class="font-mono text-sm text-(--color-red) mb-3">{t.error}</p>
         <button
           onClick={() => {
             setError(null);
@@ -359,7 +359,7 @@ export default function StrategyDemo({
                 setLoading(false);
               });
           }}
-          class="px-4 py-2 rounded-lg border border-[--color-border] bg-[--color-bg-card] text-[--color-text] font-mono text-sm cursor-pointer hover:border-[--color-accent] transition-colors min-h-[44px]"
+          class="px-4 py-2 rounded-lg border border-(--color-border) bg-(--color-bg-card) text-(--color-text) font-mono text-sm cursor-pointer hover:border-(--color-accent) transition-colors min-h-[44px]"
         >
           {t.retry}
         </button>
@@ -372,14 +372,14 @@ export default function StrategyDemo({
   const isDefault = sl === defaultSl && tp === defaultTp;
 
   return (
-    <div id="demo" class="border-t border-[--color-border] pt-10 mt-10 fade-in">
+    <div id="demo" class="border-t border-(--color-border) pt-10 mt-10 fade-in">
       {/* Header */}
       <div class="mb-6">
-        <div class="font-mono text-xs text-[--color-accent] tracking-widest mb-2 uppercase">
+        <div class="font-mono text-xs text-(--color-accent) tracking-widest mb-2 uppercase">
           {t.tag}
         </div>
         <h2 class="text-2xl font-bold mb-2">{t.title}</h2>
-        <p class="text-[--color-text-muted] text-sm leading-relaxed">
+        <p class="text-(--color-text-muted) text-sm leading-relaxed">
           {t.desc(data.coins, data.data_range)}
         </p>
       </div>
@@ -387,7 +387,7 @@ export default function StrategyDemo({
       {/* Main content */}
       <div class="grid gap-6" style={{ gridTemplateColumns: "minmax(0, 1fr)" }}>
         {/* Sliders */}
-        <div class="p-5 bg-[--color-bg-card] border border-[--color-border] rounded-xl">
+        <div class="p-5 bg-(--color-bg-card) border border-(--color-border) rounded-xl">
           <div
             class="grid gap-4"
             style={{
@@ -418,18 +418,18 @@ export default function StrategyDemo({
             gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
           }}
         >
-          <div class="p-5 bg-[--color-bg-card] border border-[--color-border] rounded-xl">
+          <div class="p-5 bg-(--color-bg-card) border border-(--color-border) rounded-xl">
             {result ? (
               <ResultsCard data={result} isDefault={isDefault} lang={lang} />
             ) : (
-              <div class="font-mono text-sm text-[--color-text-muted]">
+              <div class="font-mono text-sm text-(--color-text-muted)">
                 {t.noData}
               </div>
             )}
           </div>
 
-          <div class="bg-[--color-bg-card] border border-[--color-border] rounded-xl overflow-hidden">
-            <div class="px-4 pt-3 font-mono text-[0.6875rem] text-[--color-text-muted] tracking-widest uppercase">
+          <div class="bg-(--color-bg-card) border border-(--color-border) rounded-xl overflow-hidden">
+            <div class="px-4 pt-3 font-mono text-[0.6875rem] text-(--color-text-muted) tracking-widest uppercase">
               {t.chart}
             </div>
             <div ref={chartContainerRef} class="w-full h-[300px]" />
@@ -438,14 +438,14 @@ export default function StrategyDemo({
       </div>
 
       {/* Disclaimer */}
-      <p class="font-mono text-[0.625rem] text-[--color-text-muted] mt-4 leading-relaxed">
+      <p class="font-mono text-[0.625rem] text-(--color-text-muted) mt-4 leading-relaxed">
         {t.disclaimer}
       </p>
 
       {/* CTA */}
-      <div class="mt-8 p-6 bg-[--color-bg-card] border border-[--color-border] rounded-xl card-hover">
+      <div class="mt-8 p-6 bg-(--color-bg-card) border border-(--color-border) rounded-xl card-hover">
         <h3 class="text-lg font-bold mb-2">{t.ctaTitle}</h3>
-        <p class="text-[--color-text-muted] text-sm mb-4">{t.ctaDesc}</p>
+        <p class="text-(--color-text-muted) text-sm mb-4">{t.ctaDesc}</p>
         <div class="flex gap-3 flex-wrap">
           <a
             href="https://accounts.binance.com/register?ref=PRUVIQ&utm_source=pruviq&utm_medium=referral&utm_campaign=strategy-demo"
@@ -458,7 +458,7 @@ export default function StrategyDemo({
           </a>
           <a
             href={lang === "ko" ? "/ko/fees" : "/fees"}
-            class="inline-block border border-[--color-border] text-[--color-text] px-5 py-2.5 rounded-lg font-semibold text-sm no-underline hover:border-[--color-accent] transition-colors"
+            class="inline-block border border-(--color-border) text-(--color-text) px-5 py-2.5 rounded-lg font-semibold text-sm no-underline hover:border-(--color-accent) transition-colors"
           >
             {t.ctaFees}
           </a>

@@ -46,13 +46,13 @@ export default class ErrorBoundary extends Component<Props, State> {
     if (this.state.error) {
       const t = labels[this.props.lang || 'en'] || labels.en;
       return (
-        <div className="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] text-center my-4">
-          <p className="font-mono text-sm text-[--color-red] mb-3">
+        <div className="border border-(--color-border) rounded-lg p-6 bg-(--color-bg-card) text-center my-4">
+          <p className="font-mono text-sm text-(--color-red) mb-3">
             {t.errorMsg(this.props.name)}
           </p>
           <button
             onClick={this.handleRetry}
-            className="px-4 py-2 rounded-lg border border-[--color-border] bg-[--color-bg-card] text-[--color-text] font-mono text-sm cursor-pointer hover:border-[--color-accent] transition-colors min-h-[44px]"
+            className="px-4 py-2 rounded-lg border border-(--color-border) bg-(--color-bg-card) text-(--color-text) font-mono text-sm cursor-pointer hover:border-(--color-accent) transition-colors min-h-[44px]"
           >
             {t.retry}
           </button>

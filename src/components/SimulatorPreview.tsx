@@ -119,13 +119,13 @@ export default function SimulatorPreview() {
           >
             ATR Breakout SHORT
           </span>
-          <span class="text-[--color-text-muted] text-[10px]">
+          <span class="text-(--color-text-muted) text-[10px]">
             {COINS_ANALYZED} coins · 2yr · verified · schematic
           </span>
         </div>
         <div class="flex items-center gap-1.5">
-          <span class="w-1.5 h-1.5 rounded-full bg-[--color-up] animate-pulse"></span>
-          <span class="text-[--color-text-muted] text-[10px]">
+          <span class="w-1.5 h-1.5 rounded-full bg-(--color-up) animate-pulse"></span>
+          <span class="text-(--color-text-muted) text-[10px]">
             1H · OKX USDT-SWAP
           </span>
         </div>
@@ -146,7 +146,7 @@ export default function SimulatorPreview() {
           )}
           %
         </div>
-        <div class="text-[--color-text-muted] text-sm mt-1.5">
+        <div class="text-(--color-text-muted) text-sm mt-1.5">
           $1,000 →{" "}
           {visible ? (
             <span style={{ color: "var(--color-up)" }}>
@@ -159,7 +159,7 @@ export default function SimulatorPreview() {
       </div>
 
       {/* Interactive equity curve */}
-      <div class="relative h-20 mb-5 overflow-visible rounded-lg bg-[--color-bg]/30 border border-(--color-border)">
+      <div class="relative h-20 mb-5 overflow-visible rounded-lg bg-(--color-bg)/30 border border-(--color-border)">
         <svg
           ref={svgRef as RefObject<SVGSVGElement>}
           viewBox="0 0 400 60"
@@ -243,7 +243,7 @@ export default function SimulatorPreview() {
         {/* Trade tooltip */}
         {hoveredTrade !== null && (
           <div
-            class="absolute pointer-events-none px-2.5 py-1.5 rounded-lg text-[10px] border border-[--color-accent]/30"
+            class="absolute pointer-events-none px-2.5 py-1.5 rounded-lg text-[10px] border border-(--color-accent)/30"
             style={{
               left: `${(TRADES[hoveredTrade].x / 400) * 100}%`,
               top: `${(TRADES[hoveredTrade].y / 60) * 100 - 15}%`,
@@ -253,10 +253,10 @@ export default function SimulatorPreview() {
               boxShadow: "0 4px 12px rgba(0,0,0,0.4)",
             }}
           >
-            <span class="text-[--color-accent] font-bold">
+            <span class="text-(--color-accent) font-bold">
               {TRADES[hoveredTrade].coin}
             </span>
-            <span class="text-[--color-text-muted] mx-1">SHORT</span>
+            <span class="text-(--color-text-muted) mx-1">SHORT</span>
             <span class="text-(--color-up) font-bold">
               {TRADES[hoveredTrade].pnl}
             </span>
@@ -271,9 +271,9 @@ export default function SimulatorPreview() {
         {STATS.map((s) => (
           <div
             key={s.label}
-            class="text-center p-2 rounded-lg bg-[--color-bg-tooltip] border border-(--color-border)"
+            class="text-center p-2 rounded-lg bg-(--color-bg-tooltip) border border-(--color-border)"
           >
-            <div class="text-[8px] text-[--color-text-muted] uppercase tracking-wider">
+            <div class="text-[8px] text-(--color-text-muted) uppercase tracking-wider">
               {s.label}
             </div>
             <div class="text-sm font-bold mt-0.5" style={{ color: s.color }}>

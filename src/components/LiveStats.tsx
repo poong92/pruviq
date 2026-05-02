@@ -106,29 +106,29 @@ export default function LiveStats({ lang = "en" }: Props) {
   return (
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
       <div class="text-center p-4">
-        <p class="font-mono text-[--color-accent] text-3xl md:text-4xl font-bold">
+        <p class="font-mono text-(--color-accent) text-3xl md:text-4xl font-bold">
           <AnimatedNumber value={stats.trading_days} suffix="+" />
         </p>
-        <p class="text-[--color-text-muted] text-sm mt-1">{t.trades}</p>
+        <p class="text-(--color-text-muted) text-sm mt-1">{t.trades}</p>
       </div>
       <div class="text-center p-4">
-        <p class="font-mono text-[--color-accent] text-3xl md:text-4xl font-bold">
+        <p class="font-mono text-(--color-accent) text-3xl md:text-4xl font-bold">
           <AnimatedNumber value={stats.coins_analyzed} suffix="+" />
         </p>
-        <p class="text-[--color-text-muted] text-sm mt-1">{t.coins}</p>
+        <p class="text-(--color-text-muted) text-sm mt-1">{t.coins}</p>
       </div>
       <div class="text-center p-4">
-        <p class="font-mono text-[--color-accent] text-3xl md:text-4xl font-bold">
+        <p class="font-mono text-(--color-accent) text-3xl md:text-4xl font-bold">
           <AnimatedNumber value={stats.strategies_tested} suffix="+" />
         </p>
-        <p class="text-[--color-text-muted] text-sm mt-1">{t.strategies}</p>
+        <p class="text-(--color-text-muted) text-sm mt-1">{t.strategies}</p>
       </div>
       <div class="text-center p-4">
-        <p class="font-mono text-[--color-accent] text-3xl md:text-4xl font-bold">
+        <p class="font-mono text-(--color-accent) text-3xl md:text-4xl font-bold">
           <AnimatedNumber value={2} suffix="+" />
           <span class="text-xl ml-1">{t.yrs}</span>
         </p>
-        <p class="text-[--color-text-muted] text-sm mt-1">{t.history}</p>
+        <p class="text-(--color-text-muted) text-sm mt-1">{t.history}</p>
       </div>
     </div>
   );

@@ -220,6 +220,6 @@ describe("Tabs primitive", () => {
     const { container } = render(<H />);
     const summary = container.querySelector('[data-tab-value="summary"]')!;
     expect(summary.className).toContain("rounded-full");
-    expect(summary.className).toContain("bg-[--color-accent]");
+    expect(summary.className).toContain("bg-(--color-accent)");
   });
 });

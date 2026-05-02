@@ -91,10 +91,10 @@ function formatPnl(pnl: number): string {
 
 function SkeletonRow() {
   return (
-    <tr class="border-b border-[--color-border]">
+    <tr class="border-b border-(--color-border)">
       {[1, 2, 3, 4, 5].map((i) => (
         <td key={i} class="px-4 py-3">
-          <div class="h-4 rounded bg-[--color-bg-elevated] animate-pulse w-20" />
+          <div class="h-4 rounded bg-(--color-bg-elevated) animate-pulse w-20" />
         </td>
       ))}
     </tr>
@@ -152,7 +152,7 @@ export default function LiveTradeHistory({ lang = "en" }: Props) {
           fill="none"
           stroke="currentColor"
           stroke-width="2"
-          class="text-[--color-accent]"
+          class="text-(--color-accent)"
           aria-hidden="true"
         >
           <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
@@ -162,7 +162,7 @@ export default function LiveTradeHistory({ lang = "en" }: Props) {
 
       {/* Unauthenticated */}
       {unauthed && (
-        <div class="flex items-center justify-center gap-2 py-10 text-[--color-text-muted]">
+        <div class="flex items-center justify-center gap-2 py-10 text-(--color-text-muted)">
           <svg
             width="16"
             height="16"
@@ -183,7 +183,7 @@ export default function LiveTradeHistory({ lang = "en" }: Props) {
       {!unauthed && error && (
         <div class="flex flex-col items-center gap-3 py-10">
           <p
-            class="text-sm text-[--color-down]"
+            class="text-sm text-(--color-down)"
             role="alert"
             aria-live="assertive"
           >
@@ -195,7 +195,7 @@ export default function LiveTradeHistory({ lang = "en" }: Props) {
               setError(null);
               fetchTrades();
             }}
-            class="text-xs text-[--color-accent] hover:underline cursor-pointer"
+            class="text-xs text-(--color-accent) hover:underline cursor-pointer"
           >
             {t.retry}
           </button>
@@ -206,8 +206,8 @@ export default function LiveTradeHistory({ lang = "en" }: Props) {
       {!unauthed && !error && (
         <div class="overflow-x-auto max-h-[480px] overflow-y-auto">
           <table class="w-full text-sm" role="table" aria-label={t.title}>
-            <thead class="sticky top-0 bg-[--color-bg-card] z-10">
-              <tr class="border-b border-[--color-border]">
+            <thead class="sticky top-0 bg-(--color-bg-card) z-10">
+              <tr class="border-b border-(--color-border)">
                 {(
                   [
                     "col_time",
@@ -220,7 +220,7 @@ export default function LiveTradeHistory({ lang = "en" }: Props) {
                   <th
                     key={col}
                     scope="col"
-                    class="px-4 py-2 text-left text-xs font-semibold text-[--color-text-muted] whitespace-nowrap"
+                    class="px-4 py-2 text-left text-xs font-semibold text-(--color-text-muted) whitespace-nowrap"
                   >
                     {t[col]}
                   </th>
@@ -240,7 +240,7 @@ export default function LiveTradeHistory({ lang = "en" }: Props) {
                 <tr>
                   <td
                     colSpan={5}
-                    class="px-4 py-10 text-center text-sm text-[--color-text-muted]"
+                    class="px-4 py-10 text-center text-sm text-(--color-text-muted)"
                   >
                     {t.no_trades}
                   </td>
@@ -256,15 +256,15 @@ export default function LiveTradeHistory({ lang = "en" }: Props) {
                     typeof dir === "string" && dir.toLowerCase() === "short";
 
                   const dirColor = isLong
-                    ? "text-[--color-up]"
+                    ? "text-(--color-up)"
                     : isShort
-                      ? "text-[--color-down]"
-                      : "text-[--color-text-secondary]";
+                      ? "text-(--color-down)"
+                      : "text-(--color-text-secondary)";
 
                   const pnlColor =
                     trade.pnl_usdt >= 0
-                      ? "text-[--color-up]"
-                      : "text-[--color-down]";
+                      ? "text-(--color-up)"
+                      : "text-(--color-down)";
 
                   // Use result.timestamp (ISO string) if available, else fall back to unix ms
                   const tsMs = trade.result.timestamp
@@ -274,12 +274,12 @@ export default function LiveTradeHistory({ lang = "en" }: Props) {
                   return (
                     <tr
                       key={`${trade.signal.coin}-${trade.signal.strategy}-${idx}`}
-                      class="border-b border-[--color-border] hover:bg-[--color-bg-elevated] transition-colors"
+                      class="border-b border-(--color-border) hover:bg-(--color-bg-elevated) transition-colors"
                     >
-                      <td class="px-4 py-3 font-mono text-xs text-[--color-text-muted] whitespace-nowrap">
+                      <td class="px-4 py-3 font-mono text-xs text-(--color-text-muted) whitespace-nowrap">
                         {timeAgo(tsMs)}
                       </td>
-                      <td class="px-4 py-3 text-xs text-[--color-text-secondary] whitespace-nowrap">
+                      <td class="px-4 py-3 text-xs text-(--color-text-secondary) whitespace-nowrap">
                         {trade.signal.strategy}
                       </td>
                       <td class="px-4 py-3 font-mono font-semibold whitespace-nowrap">

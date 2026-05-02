@@ -206,7 +206,7 @@ export default function QuickTestPanel({
         >
           {t.title}
         </h2>
-        <p class="text-[11px] text-[--color-text-muted] mt-1">{t.subtitle}</p>
+        <p class="text-[11px] text-(--color-text-muted) mt-1">{t.subtitle}</p>
       </div>
 
       {/* Category Cards Grid — 5 categories, clean layout */}
@@ -225,7 +225,7 @@ export default function QuickTestPanel({
               disabled={isRunning}
               class={`relative rounded-lg border p-3 text-center transition-all group min-h-[72px]
                 ${isRunning ? "cursor-not-allowed opacity-60" : "cursor-pointer hover:scale-[1.02] active:scale-[0.98]"}
-                ${isSelected ? "border-[--color-accent]" : "border-[--color-border] hover:border-[--color-text-muted]"}`}
+                ${isSelected ? "border-(--color-accent)" : "border-(--color-border) hover:border-(--color-text-muted)"}`}
               style={
                 isSelected
                   ? {
@@ -240,14 +240,14 @@ export default function QuickTestPanel({
 
               {/* Label */}
               <span
-                class={`font-mono text-xs font-bold block ${isSelected ? "" : "text-[--color-text-muted] group-hover:text-[--color-text]"}`}
+                class={`font-mono text-xs font-bold block ${isSelected ? "" : "text-(--color-text-muted) group-hover:text-(--color-text)"}`}
                 style={isSelected ? { color: COLORS.accent } : undefined}
               >
                 {catT[cat.id]}
               </span>
 
               {/* Description */}
-              <span class="text-[10px] text-[--color-text-muted] leading-tight block mt-0.5">
+              <span class="text-[10px] text-(--color-text-muted) leading-tight block mt-0.5">
                 {catT[`${cat.id}Desc`]}
               </span>
 
@@ -274,13 +274,13 @@ export default function QuickTestPanel({
             cat?.presets.filter((p) => p !== cat?.defaultPreset) || [];
           if (alts.length === 0) return null;
           return (
-            <div class="mt-3 flex flex-wrap items-center justify-center gap-1.5 text-[11px] text-[--color-text-muted]">
+            <div class="mt-3 flex flex-wrap items-center justify-center gap-1.5 text-[11px] text-(--color-text-muted)">
               <span>{t.alsoTry}</span>
               {alts.map((presetId) => (
                 <button
                   key={presetId}
                   onClick={() => handleAltPreset(presetId)}
-                  class="px-2.5 py-1.5 min-h-[36px] rounded border border-[--color-border] font-mono text-[10px] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors"
+                  class="px-2.5 py-1.5 min-h-[36px] rounded border border-(--color-border) font-mono text-[10px] hover:border-(--color-accent) hover:text-(--color-accent) transition-colors"
                 >
                   {PRESET_LABELS[presetId]?.[lang] || presetId}
                 </button>
@@ -291,7 +291,7 @@ export default function QuickTestPanel({
 
       {/* Result hint */}
       {hasResult && selectedCat && (
-        <p class="text-center text-[10px] text-[--color-text-muted] mt-2 animate-pulse">
+        <p class="text-center text-[10px] text-(--color-text-muted) mt-2 animate-pulse">
           ↓ {t.resultHint}
         </p>
       )}

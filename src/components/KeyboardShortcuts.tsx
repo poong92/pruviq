@@ -232,17 +232,17 @@ export default function KeyboardShortcuts({ lang = "en" }: Props) {
       <div
         ref={dialogRef}
         tabIndex={-1}
-        class="relative w-full max-w-lg max-h-[85vh] overflow-y-auto rounded-xl border border-[--color-border] bg-[--color-bg-card] shadow-[var(--shadow-lg)] focus:outline-none"
+        class="relative w-full max-w-lg max-h-[85vh] overflow-y-auto rounded-xl border border-(--color-border) bg-(--color-bg-card) shadow-[var(--shadow-lg)] focus:outline-none"
       >
-        <header class="flex items-center justify-between px-5 py-4 border-b border-[--color-border]">
+        <header class="flex items-center justify-between px-5 py-4 border-b border-(--color-border)">
           <div>
             <h2
               id="kbd-shortcuts-title"
-              class="font-semibold text-[--color-text] text-base"
+              class="font-semibold text-(--color-text) text-base"
             >
               {t("Keyboard Shortcuts", "키보드 단축키")}
             </h2>
-            <p class="text-xs text-[--color-text-muted] mt-0.5">
+            <p class="text-xs text-(--color-text-muted) mt-0.5">
               {t(
                 "Press ? anywhere to reopen this list",
                 "어디서든 ? 키로 이 목록을 다시 열 수 있습니다",
@@ -253,7 +253,7 @@ export default function KeyboardShortcuts({ lang = "en" }: Props) {
             type="button"
             onClick={() => setOpen(false)}
             aria-label={t("Close", "닫기")}
-            class="shrink-0 inline-flex items-center justify-center w-8 h-8 rounded text-[--color-text-muted] hover:text-[--color-text] hover:bg-[--color-bg-hover] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--color-accent]"
+            class="shrink-0 inline-flex items-center justify-center w-8 h-8 rounded text-(--color-text-muted) hover:text-(--color-text) hover:bg-(--color-bg-hover) transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-accent)"
           >
             <span aria-hidden="true">×</span>
           </button>
@@ -264,7 +264,7 @@ export default function KeyboardShortcuts({ lang = "en" }: Props) {
               key={group.title_en}
               aria-label={t(group.title_en, group.title_ko)}
             >
-              <h3 class="text-[10px] font-mono uppercase tracking-wider text-[--color-text-muted] mb-2">
+              <h3 class="text-[10px] font-mono uppercase tracking-wider text-(--color-text-muted) mb-2">
                 {t(group.title_en, group.title_ko)}
               </h3>
               <ul class="space-y-1.5">
@@ -273,7 +273,7 @@ export default function KeyboardShortcuts({ lang = "en" }: Props) {
                     key={item.keys.join("+") + item.label_en}
                     class="flex items-center justify-between gap-3 text-sm"
                   >
-                    <span class="text-[--color-text]">
+                    <span class="text-(--color-text)">
                       {t(item.label_en, item.label_ko)}
                     </span>
                     <span class="shrink-0 flex items-center gap-1">
@@ -281,7 +281,7 @@ export default function KeyboardShortcuts({ lang = "en" }: Props) {
                         <>
                           {i > 0 && (
                             <span
-                              class="text-[10px] text-[--color-text-muted]"
+                              class="text-[10px] text-(--color-text-muted)"
                               aria-hidden="true"
                             >
                               +
@@ -289,7 +289,7 @@ export default function KeyboardShortcuts({ lang = "en" }: Props) {
                           )}
                           <kbd
                             key={`${k}-${i}`}
-                            class="inline-flex items-center justify-center min-w-[24px] h-6 px-1.5 rounded border border-[--color-border] bg-[--color-bg-elevated] font-mono text-[11px] text-[--color-text-muted]"
+                            class="inline-flex items-center justify-center min-w-[24px] h-6 px-1.5 rounded border border-(--color-border) bg-(--color-bg-elevated) font-mono text-[11px] text-(--color-text-muted)"
                           >
                             {k}
                           </kbd>

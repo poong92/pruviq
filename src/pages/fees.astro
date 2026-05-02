@@ -46,15 +46,15 @@ const t = useTranslations('en');
   <!-- HERO -->
   <section class="pt-6 pb-10 md:pt-10 md:pb-12">
     <div class="max-w-5xl mx-auto px-4">
-      <p class="font-mono text-[--color-accent] text-sm mb-3 tracking-wider">{t('fees.tag')}</p>
+      <p class="font-mono text-(--color-accent) text-sm mb-3 tracking-wider">{t('fees.tag')}</p>
       <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-5">
         {t('fees.title1')}<br/><span class="gradient-text">{t('fees.title2')}</span>
       </h1>
-      <p class="text-[--color-text-muted] text-lg md:text-xl mb-5 max-w-2xl leading-relaxed">
+      <p class="text-(--color-text-muted) text-lg md:text-xl mb-5 max-w-2xl leading-relaxed">
         {t('fees.desc')}
       </p>
       <!-- Savings example callout -->
-      <div class="inline-flex items-center gap-2 px-5 py-3 rounded-xl border border-[--color-up]/30 bg-[--color-up]/5 text-[--color-up] font-mono shadow-[var(--shadow-md)]">
+      <div class="inline-flex items-center gap-2 px-5 py-3 rounded-xl border border-(--color-up)/30 bg-(--color-up)/5 text-(--color-up) font-mono shadow-[var(--shadow-md)]">
         <span class="text-3xl font-extrabold">&#9650;</span>
         <span class="text-base font-bold">{t('fees.savings_callout')}</span>
       </div>
@@ -63,10 +63,10 @@ const t = useTranslations('en');
   <!-- Quick Nav -->
   <nav class="pb-8">
     <div class="max-w-5xl mx-auto px-6 flex flex-wrap gap-3 text-sm font-mono">
-      <a href="#compare" class="px-3 py-1.5 rounded-lg border border-[--color-border] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">Compare</a>
-      <a href="#savings" class="px-3 py-1.5 rounded-lg border border-[--color-border] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">Savings</a>
-      <a href="#how" class="px-3 py-1.5 rounded-lg border border-[--color-border] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">How It Works</a>
-      <a href="#verify" class="px-3 py-1.5 rounded-lg border border-[--color-border] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">Verify</a>
+      <a href="#compare" class="px-3 py-1.5 rounded-lg border border-(--color-border) hover:border-(--color-accent) hover:text-(--color-accent) transition-colors">Compare</a>
+      <a href="#savings" class="px-3 py-1.5 rounded-lg border border-(--color-border) hover:border-(--color-accent) hover:text-(--color-accent) transition-colors">Savings</a>
+      <a href="#how" class="px-3 py-1.5 rounded-lg border border-(--color-border) hover:border-(--color-accent) hover:text-(--color-accent) transition-colors">How It Works</a>
+      <a href="#verify" class="px-3 py-1.5 rounded-lg border border-(--color-border) hover:border-(--color-accent) hover:text-(--color-accent) transition-colors">Verify</a>
     </div>
   </nav>
 
@@ -76,11 +76,11 @@ const t = useTranslations('en');
   <!-- INTERACTIVE FEE CALCULATOR -->
   <section class="reveal pb-12 pt-12 section-elevated">
     <div class="max-w-5xl mx-auto px-4">
-      <div class="shadow-[var(--shadow-lg)] rounded-2xl bg-[--color-bg-card] p-6 md:p-8">
+      <div class="shadow-[var(--shadow-lg)] rounded-2xl bg-(--color-bg-card) p-6 md:p-8">
         <FeeCalculator client:idle lang="en" />
       </div>
-      <noscript><p class="text-[--color-text-muted] text-sm py-4">Enable JavaScript to use the fee calculator.</p></noscript>
-      <p class="text-[--color-text-muted] text-xs mt-6">
+      <noscript><p class="text-(--color-text-muted) text-sm py-4">Enable JavaScript to use the fee calculator.</p></noscript>
+      <p class="text-(--color-text-muted) text-xs mt-6">
         {t('fees.disclosure')}
       </p>
       <a href="/simulate" class="btn btn-primary btn-md w-full sm:w-auto mt-8">{t('fees.ctaSimulate')} &rarr;</a>
@@ -93,107 +93,107 @@ const t = useTranslations('en');
   <section class="reveal pb-12 pt-12 section-accent-glow">
     <div class="max-w-5xl mx-auto px-4">
       <h2 id="compare" class="text-2xl font-bold mb-2">{t('fees.compare_title')}</h2>
-      <p class="text-[--color-text-muted] text-sm mb-8">{t('fees.compare_desc')}</p>
+      <p class="text-(--color-text-muted) text-sm mb-8">{t('fees.compare_desc')}</p>
 
       <div class="reveal grid md:grid-cols-2 gap-6">
         <!-- Binance Card -->
-        <div class="border border-[--color-accent]/30 rounded-xl p-6 md:p-8 flex flex-col shadow-[var(--shadow-lg)]">
+        <div class="border border-(--color-accent)/30 rounded-xl p-6 md:p-8 flex flex-col shadow-[var(--shadow-lg)]">
           <div class="flex items-center gap-3 mb-6">
             <h3 class="text-2xl font-bold">{binanceDisplay.name}</h3>
-            <span class="font-mono text-[--color-accent] text-xs font-bold px-2 py-0.5 rounded border border-[--color-accent]/30 bg-[--color-accent]/5">{binanceDisplay.tag}</span>
+            <span class="font-mono text-(--color-accent) text-xs font-bold px-2 py-0.5 rounded border border-(--color-accent)/30 bg-(--color-accent)/5">{binanceDisplay.tag}</span>
           </div>
 
           <!-- Discount highlight -->
-          <div class="text-center mb-6 py-4 rounded-lg bg-[--color-accent]/5 border border-[--color-accent]/20">
-            <p class="text-3xl font-bold font-mono text-[--color-accent]">{binanceConfig.spotDiscountPct}%</p>
-            <p class="text-xs text-[--color-text-muted]">Spot fee discount</p>
+          <div class="text-center mb-6 py-4 rounded-lg bg-(--color-accent)/5 border border-(--color-accent)/20">
+            <p class="text-3xl font-bold font-mono text-(--color-accent)">{binanceConfig.spotDiscountPct}%</p>
+            <p class="text-xs text-(--color-text-muted)">Spot fee discount</p>
           </div>
 
           <div class="space-y-3 text-sm flex-1">
             <div class="flex justify-between">
-              <span class="text-[--color-text-muted]">{t('fees.label_spot')}</span>
+              <span class="text-(--color-text-muted)">{t('fees.label_spot')}</span>
               <span class="font-mono">{formatFeeRange(binanceDisplay.spot, 'spot')}</span>
             </div>
             <div class="flex justify-between">
-              <span class="text-[--color-text-muted]">{t('fees.label_futures')}</span>
+              <span class="text-(--color-text-muted)">{t('fees.label_futures')}</span>
               <span class="font-mono">{formatFeeRange(binanceDisplay.futures, 'futures')}</span>
             </div>
-            <div class="border-t border-[--color-border] pt-3 mt-3 space-y-1.5">
+            <div class="border-t border-(--color-border) pt-3 mt-3 space-y-1.5">
               <div class="flex justify-between">
-                <span class="text-[--color-accent] font-medium text-xs">{t('fees.pruviq_discount')} (Spot)</span>
-                <span class="font-mono font-bold text-[--color-accent]">{binanceConfig.spotDiscountPct}% off</span>
+                <span class="text-(--color-accent) font-medium text-xs">{t('fees.pruviq_discount')} (Spot)</span>
+                <span class="font-mono font-bold text-(--color-accent)">{binanceConfig.spotDiscountPct}% off</span>
               </div>
               <div class="flex justify-between">
-                <span class="text-[--color-accent] font-medium text-xs">{t('fees.pruviq_discount')} (Futures)</span>
-                <span class="font-mono font-bold text-[--color-accent]">{binanceConfig.futuresDiscountPct}% off</span>
+                <span class="text-(--color-accent) font-medium text-xs">{t('fees.pruviq_discount')} (Futures)</span>
+                <span class="font-mono font-bold text-(--color-accent)">{binanceConfig.futuresDiscountPct}% off</span>
               </div>
             </div>
 
             <div class="flex flex-wrap items-center gap-2 pt-2">
-              <span class="inline-flex items-center gap-1 text-xs font-mono px-2 py-1 rounded border border-[--color-up]/40 bg-[--color-up]/5 text-[--color-up] font-semibold">
+              <span class="inline-flex items-center gap-1 text-xs font-mono px-2 py-1 rounded border border-(--color-up)/40 bg-(--color-up)/5 text-(--color-up) font-semibold">
                 Spot 19% · Futures 9% rebate
               </span>
-              <span class="inline-flex items-center gap-1 text-xs font-mono px-2 py-1 rounded border border-[--color-yellow]/40 bg-[--color-yellow]/5 text-[--color-yellow] font-semibold">
+              <span class="inline-flex items-center gap-1 text-xs font-mono px-2 py-1 rounded border border-(--color-yellow)/40 bg-(--color-yellow)/5 text-(--color-yellow) font-semibold">
                 Up to $600 Bonus
               </span>
             </div>
             {savingsBadge && (
-              <span class="inline-flex items-center gap-1 text-xs font-mono px-2 py-1 rounded border border-[--color-up]/40 bg-[--color-up]/5 text-[--color-up] font-semibold">
+              <span class="inline-flex items-center gap-1 text-xs font-mono px-2 py-1 rounded border border-(--color-up)/40 bg-(--color-up)/5 text-(--color-up) font-semibold">
                 &#9650; {savingsBadge}
-                <span class="font-normal text-[--color-text-muted]">at $10k/mo</span>
+                <span class="font-normal text-(--color-text-muted)">at $10k/mo</span>
               </span>
             )}
           </div>
 
           <a href={`${binanceDisplay.referralUrl}&utm_source=pruviq&utm_medium=referral&utm_campaign=fees`} target="_blank" rel="noopener noreferrer"
-             class="mt-6 block text-center bg-[--color-accent] text-[--color-bg] px-4 py-3 min-h-[48px] rounded text-sm font-bold hover:opacity-90 transition-opacity shadow-sm">
+             class="mt-6 block text-center bg-(--color-accent) text-(--color-bg) px-4 py-3 min-h-[48px] rounded text-sm font-bold hover:opacity-90 transition-opacity shadow-sm">
             Sign up on Binance &rarr;
           </a>
         </div>
 
         <!-- OKX Card -->
-        <div class="border border-[--color-border] rounded-xl p-6 md:p-8 flex flex-col relative overflow-hidden shadow-[var(--shadow-lg)]">
+        <div class="border border-(--color-border) rounded-xl p-6 md:p-8 flex flex-col relative overflow-hidden shadow-[var(--shadow-lg)]">
           <div class="flex items-center gap-3 mb-6">
             <h3 class="text-2xl font-bold">{okxDisplay.name}</h3>
-            <span class="font-mono text-[--color-up] text-xs font-bold px-2 py-0.5 rounded border border-[--color-up]/30 bg-[--color-up]/5">Official Partner</span>
+            <span class="font-mono text-(--color-up) text-xs font-bold px-2 py-0.5 rounded border border-(--color-up)/30 bg-(--color-up)/5">Official Partner</span>
           </div>
 
           <!-- Discount highlight -->
-          <div class="text-center mb-6 py-4 rounded-lg bg-[--color-up]/5 border border-[--color-up]/20">
-            <p class="text-3xl font-bold font-mono text-[--color-up]">{okxConfig.futuresDiscountPct}%</p>
-            <p class="text-xs text-[--color-text-muted]">Fee discount (Spot + Futures)</p>
+          <div class="text-center mb-6 py-4 rounded-lg bg-(--color-up)/5 border border-(--color-up)/20">
+            <p class="text-3xl font-bold font-mono text-(--color-up)">{okxConfig.futuresDiscountPct}%</p>
+            <p class="text-xs text-(--color-text-muted)">Fee discount (Spot + Futures)</p>
           </div>
 
           <div class="space-y-3 text-sm flex-1">
             <div class="flex justify-between">
-              <span class="text-[--color-text-muted]">{t('fees.label_spot')}</span>
+              <span class="text-(--color-text-muted)">{t('fees.label_spot')}</span>
               <span class="font-mono">{formatFeeRange(okxDisplay.spot, 'spot')}</span>
             </div>
             <div class="flex justify-between">
-              <span class="text-[--color-text-muted]">{t('fees.label_futures')}</span>
+              <span class="text-(--color-text-muted)">{t('fees.label_futures')}</span>
               <span class="font-mono">{formatFeeRange(okxDisplay.futures, 'futures')}</span>
             </div>
-            <div class="border-t border-[--color-border] pt-3 mt-3 space-y-1.5">
+            <div class="border-t border-(--color-border) pt-3 mt-3 space-y-1.5">
               <div class="flex justify-between">
-                <span class="text-[--color-up] font-medium text-xs">{t('fees.pruviq_discount')} (Spot)</span>
-                <span class="font-mono font-bold text-[--color-up]">{okxConfig.spotDiscountPct}% off</span>
+                <span class="text-(--color-up) font-medium text-xs">{t('fees.pruviq_discount')} (Spot)</span>
+                <span class="font-mono font-bold text-(--color-up)">{okxConfig.spotDiscountPct}% off</span>
               </div>
               <div class="flex justify-between">
-                <span class="text-[--color-up] font-medium text-xs">{t('fees.pruviq_discount')} (Futures)</span>
-                <span class="font-mono font-bold text-[--color-up]">{okxConfig.futuresDiscountPct}% off</span>
+                <span class="text-(--color-up) font-medium text-xs">{t('fees.pruviq_discount')} (Futures)</span>
+                <span class="font-mono font-bold text-(--color-up)">{okxConfig.futuresDiscountPct}% off</span>
               </div>
             </div>
 
             {okxSavingsBadge && (
-              <span class="inline-flex items-center gap-1 text-xs font-mono px-2 py-1 rounded border border-[--color-up]/40 bg-[--color-up]/5 text-[--color-up] font-semibold mt-2">
+              <span class="inline-flex items-center gap-1 text-xs font-mono px-2 py-1 rounded border border-(--color-up)/40 bg-(--color-up)/5 text-(--color-up) font-semibold mt-2">
                 &#9650; {okxSavingsBadge}
-                <span class="font-normal text-[--color-text-muted]">at $10k/mo</span>
+                <span class="font-normal text-(--color-text-muted)">at $10k/mo</span>
               </span>
             )}
           </div>
 
           <a href={`${okxDisplay.referralUrl}?utm_source=pruviq&utm_medium=referral&utm_campaign=fees`} target="_blank" rel="noopener noreferrer"
-             class="mt-6 block text-center border-2 border-[--color-up] text-[--color-up] px-4 py-3 min-h-[48px] rounded text-sm font-bold hover:bg-[--color-up]/10 transition-colors">
+             class="mt-6 block text-center border-2 border-(--color-up) text-(--color-up) px-4 py-3 min-h-[48px] rounded text-sm font-bold hover:bg-(--color-up)/10 transition-colors">
             Sign up on OKX &rarr;
           </a>
           <div class="mt-3">
@@ -202,7 +202,7 @@ const t = useTranslations('en');
         </div>
       </div>
 
-      <p class="text-[--color-text-muted] text-xs mt-6">
+      <p class="text-(--color-text-muted) text-xs mt-6">
         {t('fees.footnote')}
       </p>
     </div>
@@ -213,13 +213,13 @@ const t = useTranslations('en');
   <!-- BLOCK 1: PROBLEM HOOK -->
   <section class="reveal pb-12 pt-12 section-elevated">
     <div class="max-w-5xl mx-auto px-4">
-      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('fees.trust_tag')}</p>
+      <p class="font-mono text-(--color-accent) text-sm mb-2 tracking-wider">{t('fees.trust_tag')}</p>
       <h2 id="savings" class="text-2xl font-bold mb-2">{t('fees.referral.problem.headline')}</h2>
-      <p class="text-[--color-text-muted] text-sm mb-4 font-medium">{t('fees.referral.problem.subheading')}</p>
-      <p class="text-[--color-text-muted] text-sm mb-6 max-w-3xl">{t('fees.referral.problem.body')}</p>
+      <p class="text-(--color-text-muted) text-sm mb-4 font-medium">{t('fees.referral.problem.subheading')}</p>
+      <p class="text-(--color-text-muted) text-sm mb-6 max-w-3xl">{t('fees.referral.problem.body')}</p>
 
       <!-- Fact callout -->
-      <div class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-[--color-down]/30 bg-[--color-down]/5 text-[--color-down] text-sm">
+      <div class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-(--color-down)/30 bg-(--color-down)/5 text-(--color-down) text-sm">
         <span>{t('fees.referral.callout.fact')}</span>
       </div>
     </div>
@@ -231,52 +231,52 @@ const t = useTranslations('en');
   <section class="reveal pb-12 pt-12 section-accent-glow">
     <div class="max-w-5xl mx-auto px-4">
       <h2 id="how" class="text-2xl font-bold mb-2">{t('fees.referral.how.headline')}</h2>
-      <p class="text-[--color-text-muted] text-sm mb-6 max-w-3xl">{t('fees.referral.how.body')}</p>
+      <p class="text-(--color-text-muted) text-sm mb-6 max-w-3xl">{t('fees.referral.how.body')}</p>
 
       <!-- Comparison table -->
       <div class="overflow-x-auto mb-6">
         <table class="w-full text-sm border-collapse max-w-4xl">
           <caption class="sr-only">Referral commission comparison: advertised vs actual</caption>
           <thead>
-            <tr class="border-b border-[--color-border]">
-              <th class="text-left py-2 px-3 font-mono text-xs text-[--color-text-muted]">{t('fees.referral.table.column.scenario')}</th>
-              <th class="text-center py-2 px-3 font-mono text-xs text-[--color-text-muted]">{t('fees.referral.table.column.spotFees')}</th>
-              <th class="text-center py-2 px-3 font-mono text-xs text-[--color-text-muted]">{t('fees.referral.table.column.futuresFees')}</th>
-              <th class="text-center py-2 px-3 font-mono text-xs text-[--color-text-muted]">{t('fees.referral.table.column.yourActual')}</th>
-              <th class="text-center py-2 px-3 font-mono text-xs text-[--color-text-muted]">{t('fees.referral.table.column.referrerKeeps')}</th>
+            <tr class="border-b border-(--color-border)">
+              <th class="text-left py-2 px-3 font-mono text-xs text-(--color-text-muted)">{t('fees.referral.table.column.scenario')}</th>
+              <th class="text-center py-2 px-3 font-mono text-xs text-(--color-text-muted)">{t('fees.referral.table.column.spotFees')}</th>
+              <th class="text-center py-2 px-3 font-mono text-xs text-(--color-text-muted)">{t('fees.referral.table.column.futuresFees')}</th>
+              <th class="text-center py-2 px-3 font-mono text-xs text-(--color-text-muted)">{t('fees.referral.table.column.yourActual')}</th>
+              <th class="text-center py-2 px-3 font-mono text-xs text-(--color-text-muted)">{t('fees.referral.table.column.referrerKeeps')}</th>
             </tr>
           </thead>
           <tbody>
-            <tr class="border-b border-[--color-border]/50">
-              <td class="py-2 px-3 text-[--color-text-muted]">{t('fees.referral.table.row.typical')}</td>
-              <td class="py-2 px-3 text-center font-mono text-[--color-text-muted]">{t('fees.referral.table.row.typical.claim')}</td>
-              <td class="py-2 px-3 text-center font-mono text-[--color-text-muted]">{t('fees.referral.table.row.typical.claimFutures')}</td>
-              <td class="py-2 px-3 text-center font-mono text-[--color-down]">{t('fees.referral.table.row.typical.actual')}</td>
-              <td class="py-2 px-3 text-center font-mono text-[--color-down]">{t('fees.referral.table.row.typical.keeps')}</td>
+            <tr class="border-b border-(--color-border)/50">
+              <td class="py-2 px-3 text-(--color-text-muted)">{t('fees.referral.table.row.typical')}</td>
+              <td class="py-2 px-3 text-center font-mono text-(--color-text-muted)">{t('fees.referral.table.row.typical.claim')}</td>
+              <td class="py-2 px-3 text-center font-mono text-(--color-text-muted)">{t('fees.referral.table.row.typical.claimFutures')}</td>
+              <td class="py-2 px-3 text-center font-mono text-(--color-down)">{t('fees.referral.table.row.typical.actual')}</td>
+              <td class="py-2 px-3 text-center font-mono text-(--color-down)">{t('fees.referral.table.row.typical.keeps')}</td>
             </tr>
-            <tr class="border-b border-[--color-border]/50 bg-[--color-down]/5">
-              <td class="py-2 px-3 text-[--color-down]">{t('fees.referral.table.row.worst')}</td>
-              <td class="py-2 px-3 text-center font-mono text-[--color-text-muted]">{t('fees.referral.table.row.worst.claim')}</td>
-              <td class="py-2 px-3 text-center font-mono text-[--color-text-muted]">{t('fees.referral.table.row.worst.claimFutures')}</td>
-              <td class="py-2 px-3 text-center font-mono font-bold text-[--color-down]">{t('fees.referral.table.row.worst.actual')}</td>
-              <td class="py-2 px-3 text-center font-mono text-[--color-down]">{t('fees.referral.table.row.worst.keeps')}</td>
+            <tr class="border-b border-(--color-border)/50 bg-(--color-down)/5">
+              <td class="py-2 px-3 text-(--color-down)">{t('fees.referral.table.row.worst')}</td>
+              <td class="py-2 px-3 text-center font-mono text-(--color-text-muted)">{t('fees.referral.table.row.worst.claim')}</td>
+              <td class="py-2 px-3 text-center font-mono text-(--color-text-muted)">{t('fees.referral.table.row.worst.claimFutures')}</td>
+              <td class="py-2 px-3 text-center font-mono font-bold text-(--color-down)">{t('fees.referral.table.row.worst.actual')}</td>
+              <td class="py-2 px-3 text-center font-mono text-(--color-down)">{t('fees.referral.table.row.worst.keeps')}</td>
             </tr>
-            <tr class="border-b border-[--color-accent]/20 bg-[--color-accent]/5">
-              <td class="py-2 px-3 font-bold text-[--color-accent]">{t('fees.referral.table.row.pruviq')}</td>
-              <td class="py-2 px-3 text-center font-mono text-[--color-up]">{t('fees.referral.table.row.pruviq.claim')}</td>
-              <td class="py-2 px-3 text-center font-mono text-[--color-up]">{t('fees.referral.table.row.pruviq.claimFutures')}</td>
-              <td class="py-2 px-3 text-center font-mono font-bold text-[--color-up]">{t('fees.referral.table.row.pruviq.actual')}</td>
-              <td class="py-2 px-3 text-center font-mono text-[--color-up]">{t('fees.referral.table.row.pruviq.keeps')}</td>
+            <tr class="border-b border-(--color-accent)/20 bg-(--color-accent)/5">
+              <td class="py-2 px-3 font-bold text-(--color-accent)">{t('fees.referral.table.row.pruviq')}</td>
+              <td class="py-2 px-3 text-center font-mono text-(--color-up)">{t('fees.referral.table.row.pruviq.claim')}</td>
+              <td class="py-2 px-3 text-center font-mono text-(--color-up)">{t('fees.referral.table.row.pruviq.claimFutures')}</td>
+              <td class="py-2 px-3 text-center font-mono font-bold text-(--color-up)">{t('fees.referral.table.row.pruviq.actual')}</td>
+              <td class="py-2 px-3 text-center font-mono text-(--color-up)">{t('fees.referral.table.row.pruviq.keeps')}</td>
             </tr>
           </tbody>
         </table>
       </div>
 
       <!-- Warning callout -->
-      <div class="border border-[--color-down]/30 bg-[--color-down]/5 rounded-lg p-4 max-w-4xl mb-4">
-        <p class="text-[--color-down] text-sm font-medium">{t('fees.referral.callout.warning')}</p>
+      <div class="border border-(--color-down)/30 bg-(--color-down)/5 rounded-lg p-4 max-w-4xl mb-4">
+        <p class="text-(--color-down) text-sm font-medium">{t('fees.referral.callout.warning')}</p>
       </div>
-      <p class="text-[--color-text-muted] text-xs max-w-3xl">{t('fees.referral.how.check')}</p>
+      <p class="text-(--color-text-muted) text-xs max-w-3xl">{t('fees.referral.how.check')}</p>
     </div>
   </section>
 
@@ -286,24 +286,24 @@ const t = useTranslations('en');
   <section class="reveal pb-12 pt-12 section-elevated">
     <div class="max-w-5xl mx-auto px-4">
       <h2 class="text-2xl font-bold mb-2">{t('fees.referral.proof.headline')}</h2>
-      <p class="text-[--color-text-muted] text-sm mb-6">{t('fees.referral.proof.subheading')}</p>
+      <p class="text-(--color-text-muted) text-sm mb-6">{t('fees.referral.proof.subheading')}</p>
 
       <div class="grid md:grid-cols-2 gap-6 mb-6">
         <div class="text-center">
-          <img src="/images/binance-signup-rewards.png" alt="Binance signup page showing PRUVIQ referral rewards: up to 19% trade rebates and up to $600 new user bonus" class="rounded-lg border border-[--color-border] w-full" loading="lazy" decoding="async" width="1151" height="722" />
-          <p class="text-[--color-text-muted] text-xs mt-2">What you see when signing up via PRUVIQ</p>
+          <img src="/images/binance-signup-rewards.png" alt="Binance signup page showing PRUVIQ referral rewards: up to 19% trade rebates and up to $600 new user bonus" class="rounded-lg border border-(--color-border) w-full" loading="lazy" decoding="async" width="1151" height="722" />
+          <p class="text-(--color-text-muted) text-xs mt-2">What you see when signing up via PRUVIQ</p>
         </div>
         <div class="text-center">
-          <img src="/images/binance-referral-proof.png" alt="PRUVIQ Binance referral dashboard showing 1% platform, 19% spot and 9% futures commission to users" class="rounded-lg border border-[--color-border] w-full" loading="lazy" decoding="async" width="1255" height="248" />
-          <p class="text-[--color-text-muted] text-xs mt-2">{t('fees.referral.proof.imageCaption')}</p>
+          <img src="/images/binance-referral-proof.png" alt="PRUVIQ Binance referral dashboard showing 1% platform, 19% spot and 9% futures commission to users" class="rounded-lg border border-(--color-border) w-full" loading="lazy" decoding="async" width="1255" height="248" />
+          <p class="text-(--color-text-muted) text-xs mt-2">{t('fees.referral.proof.imageCaption')}</p>
         </div>
       </div>
-      <p class="text-[--color-text-muted] text-xs text-center mb-6 max-w-2xl mx-auto">{t('fees.referral.proof.timestamp')}</p>
+      <p class="text-(--color-text-muted) text-xs text-center mb-6 max-w-2xl mx-auto">{t('fees.referral.proof.timestamp')}</p>
 
       <!-- Why we show this -->
-      <div class="border border-[--color-up]/30 bg-[--color-up]/5 rounded-lg p-6 max-w-2xl mx-auto">
+      <div class="border border-(--color-up)/30 bg-(--color-up)/5 rounded-lg p-6 max-w-2xl mx-auto">
         <p class="text-sm mb-3 leading-relaxed">{t('fees.referral.proof.why')}</p>
-        <p class="text-[--color-text-muted] text-sm leading-relaxed">{t('fees.referral.proof.transparent')}</p>
+        <p class="text-(--color-text-muted) text-sm leading-relaxed">{t('fees.referral.proof.transparent')}</p>
       </div>
     </div>
   </section>
@@ -314,32 +314,32 @@ const t = useTranslations('en');
   <section class="reveal pb-12 pt-12 section-accent-glow">
     <div class="max-w-5xl mx-auto px-4">
       <h2 id="verify" class="text-2xl font-bold mb-2">{t('fees.referral.verify.headline')}</h2>
-      <p class="text-[--color-text-muted] text-sm mb-6 max-w-3xl">{t('fees.referral.verify.body')}</p>
+      <p class="text-(--color-text-muted) text-sm mb-6 max-w-3xl">{t('fees.referral.verify.body')}</p>
 
       <div class="reveal grid sm:grid-cols-2 gap-4 max-w-3xl mb-6">
-        <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card]">
-          <p class="font-mono text-[--color-accent] text-sm font-bold mb-2">{t('fees.referral.verify.step1.title')}</p>
-          <p class="text-[--color-text-muted] text-sm">{t('fees.referral.verify.step1.body')}</p>
+        <div class="border border-(--color-border) rounded-lg p-6 bg-(--color-bg-card)">
+          <p class="font-mono text-(--color-accent) text-sm font-bold mb-2">{t('fees.referral.verify.step1.title')}</p>
+          <p class="text-(--color-text-muted) text-sm">{t('fees.referral.verify.step1.body')}</p>
         </div>
-        <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card]">
-          <p class="font-mono text-[--color-accent] text-sm font-bold mb-2">{t('fees.referral.verify.step2.title')}</p>
-          <p class="text-[--color-text-muted] text-sm">{t('fees.referral.verify.step2.body')}</p>
+        <div class="border border-(--color-border) rounded-lg p-6 bg-(--color-bg-card)">
+          <p class="font-mono text-(--color-accent) text-sm font-bold mb-2">{t('fees.referral.verify.step2.title')}</p>
+          <p class="text-(--color-text-muted) text-sm">{t('fees.referral.verify.step2.body')}</p>
         </div>
-        <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card]">
-          <p class="font-mono text-[--color-accent] text-sm font-bold mb-2">{t('fees.referral.verify.step3.title')}</p>
-          <p class="text-[--color-text-muted] text-sm">{t('fees.referral.verify.step3.body')}</p>
+        <div class="border border-(--color-border) rounded-lg p-6 bg-(--color-bg-card)">
+          <p class="font-mono text-(--color-accent) text-sm font-bold mb-2">{t('fees.referral.verify.step3.title')}</p>
+          <p class="text-(--color-text-muted) text-sm">{t('fees.referral.verify.step3.body')}</p>
         </div>
-        <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card]">
-          <p class="font-mono text-[--color-accent] text-sm font-bold mb-2">{t('fees.referral.verify.step4.title')}</p>
-          <p class="text-[--color-text-muted] text-sm">{t('fees.referral.verify.step4.body')}</p>
+        <div class="border border-(--color-border) rounded-lg p-6 bg-(--color-bg-card)">
+          <p class="font-mono text-(--color-accent) text-sm font-bold mb-2">{t('fees.referral.verify.step4.title')}</p>
+          <p class="text-(--color-text-muted) text-sm">{t('fees.referral.verify.step4.body')}</p>
         </div>
       </div>
 
       <!-- Warning note -->
-      <div class="border border-[--color-down]/30 bg-[--color-down]/5 rounded-lg p-4 max-w-3xl mb-4">
-        <p class="text-[--color-down] text-sm font-medium">{t('fees.referral.verify.cta')}</p>
+      <div class="border border-(--color-down)/30 bg-(--color-down)/5 rounded-lg p-4 max-w-3xl mb-4">
+        <p class="text-(--color-down) text-sm font-medium">{t('fees.referral.verify.cta')}</p>
       </div>
-      <p class="text-[--color-text-muted] text-xs max-w-3xl">{t('fees.referral.verify.note')}</p>
+      <p class="text-(--color-text-muted) text-xs max-w-3xl">{t('fees.referral.verify.note')}</p>
     </div>
   </section>
 
@@ -351,44 +351,44 @@ const t = useTranslations('en');
       <h2 class="text-2xl font-bold mb-6">{t('fees.referral.faq.headline')}</h2>
 
       <div class="space-y-4 max-w-3xl">
-        <details class="border border-[--color-border] rounded-lg bg-[--color-bg-card] shadow-[var(--shadow-sm)] group">
+        <details class="border border-(--color-border) rounded-lg bg-(--color-bg-card) shadow-[var(--shadow-sm)] group">
           <summary class="p-4 cursor-pointer font-medium flex justify-between items-center min-h-[44px]">
             {t('fees.referral.faq.q1')}
-            <span class="text-[--color-text-muted] group-open:rotate-45 transition-transform text-xl leading-none">+</span>
+            <span class="text-(--color-text-muted) group-open:rotate-45 transition-transform text-xl leading-none">+</span>
           </summary>
-          <p class="px-4 pb-4 text-[--color-text-muted] text-sm leading-relaxed">{t('fees.referral.faq.a1')}</p>
+          <p class="px-4 pb-4 text-(--color-text-muted) text-sm leading-relaxed">{t('fees.referral.faq.a1')}</p>
         </details>
 
-        <details class="border border-[--color-border] rounded-lg bg-[--color-bg-card] shadow-[var(--shadow-sm)] group">
+        <details class="border border-(--color-border) rounded-lg bg-(--color-bg-card) shadow-[var(--shadow-sm)] group">
           <summary class="p-4 cursor-pointer font-medium flex justify-between items-center min-h-[44px]">
             {t('fees.referral.faq.q2')}
-            <span class="text-[--color-text-muted] group-open:rotate-45 transition-transform text-xl leading-none">+</span>
+            <span class="text-(--color-text-muted) group-open:rotate-45 transition-transform text-xl leading-none">+</span>
           </summary>
-          <p class="px-4 pb-4 text-[--color-text-muted] text-sm leading-relaxed">{t('fees.referral.faq.a2')}</p>
+          <p class="px-4 pb-4 text-(--color-text-muted) text-sm leading-relaxed">{t('fees.referral.faq.a2')}</p>
         </details>
 
-        <details class="border border-[--color-border] rounded-lg bg-[--color-bg-card] shadow-[var(--shadow-sm)] group">
+        <details class="border border-(--color-border) rounded-lg bg-(--color-bg-card) shadow-[var(--shadow-sm)] group">
           <summary class="p-4 cursor-pointer font-medium flex justify-between items-center min-h-[44px]">
             {t('fees.referral.faq.q3')}
-            <span class="text-[--color-text-muted] group-open:rotate-45 transition-transform text-xl leading-none">+</span>
+            <span class="text-(--color-text-muted) group-open:rotate-45 transition-transform text-xl leading-none">+</span>
           </summary>
-          <p class="px-4 pb-4 text-[--color-text-muted] text-sm leading-relaxed">{t('fees.referral.faq.a3')}</p>
+          <p class="px-4 pb-4 text-(--color-text-muted) text-sm leading-relaxed">{t('fees.referral.faq.a3')}</p>
         </details>
 
-        <details class="border border-[--color-border] rounded-lg bg-[--color-bg-card] shadow-[var(--shadow-sm)] group">
+        <details class="border border-(--color-border) rounded-lg bg-(--color-bg-card) shadow-[var(--shadow-sm)] group">
           <summary class="p-4 cursor-pointer font-medium flex justify-between items-center min-h-[44px]">
             {t('fees.referral.faq.q4')}
-            <span class="text-[--color-text-muted] group-open:rotate-45 transition-transform text-xl leading-none">+</span>
+            <span class="text-(--color-text-muted) group-open:rotate-45 transition-transform text-xl leading-none">+</span>
           </summary>
-          <p class="px-4 pb-4 text-[--color-text-muted] text-sm leading-relaxed">{t('fees.referral.faq.a4')}</p>
+          <p class="px-4 pb-4 text-(--color-text-muted) text-sm leading-relaxed">{t('fees.referral.faq.a4')}</p>
         </details>
 
-        <details class="border border-[--color-border] rounded-lg bg-[--color-bg-card] shadow-[var(--shadow-sm)] group">
+        <details class="border border-(--color-border) rounded-lg bg-(--color-bg-card) shadow-[var(--shadow-sm)] group">
           <summary class="p-4 cursor-pointer font-medium flex justify-between items-center min-h-[44px]">
             {t('fees.referral.faq.q5')}
-            <span class="text-[--color-text-muted] group-open:rotate-45 transition-transform text-xl leading-none">+</span>
+            <span class="text-(--color-text-muted) group-open:rotate-45 transition-transform text-xl leading-none">+</span>
           </summary>
-          <p class="px-4 pb-4 text-[--color-text-muted] text-sm leading-relaxed">{t('fees.referral.faq.a5')}</p>
+          <p class="px-4 pb-4 text-(--color-text-muted) text-sm leading-relaxed">{t('fees.referral.faq.a5')}</p>
         </details>
       </div>
     </div>
@@ -399,19 +399,19 @@ const t = useTranslations('en');
   <!-- BLOCK 6: FINAL CTA -->
   <section class="reveal pb-12 pt-12 section-accent-glow">
     <div class="max-w-5xl mx-auto px-4 text-center">
-      <p class="text-[--color-text-muted] text-sm mb-4">{t('fees.referral.cta.primary')}</p>
+      <p class="text-(--color-text-muted) text-sm mb-4">{t('fees.referral.cta.primary')}</p>
       <div class="flex flex-col sm:flex-row gap-4 justify-center mb-6">
         <a href={`${binanceDisplay.referralUrl}&utm_source=pruviq&utm_medium=referral&utm_campaign=fees`} target="_blank" rel="noopener noreferrer"
-           class="inline-flex items-center justify-center bg-[--color-accent] text-[--color-bg] px-6 py-3 min-h-[48px] rounded text-sm font-bold hover:opacity-90 transition-opacity shadow-sm">
+           class="inline-flex items-center justify-center bg-(--color-accent) text-(--color-bg) px-6 py-3 min-h-[48px] rounded text-sm font-bold hover:opacity-90 transition-opacity shadow-sm">
           {t('fees.referral.cta.button.signup')} &rarr;
         </a>
         <a href="https://www.binance.com/en/my/dashboard" target="_blank" rel="noopener noreferrer"
-           class="inline-flex items-center justify-center border border-[--color-border] px-6 py-3 min-h-[48px] rounded text-sm font-medium hover:border-[--color-accent] transition-colors">
+           class="inline-flex items-center justify-center border border-(--color-border) px-6 py-3 min-h-[48px] rounded text-sm font-medium hover:border-(--color-accent) transition-colors">
           {t('fees.referral.cta.button.check')} &rarr;
         </a>
       </div>
-      <p class="text-[--color-text-muted] text-xs mb-1">{t('fees.referral.cta.footer')}</p>
-      <p class="text-[--color-text-muted] text-xs">{t('fees.referral.cta.footer.existing')}</p>
+      <p class="text-(--color-text-muted) text-xs mb-1">{t('fees.referral.cta.footer')}</p>
+      <p class="text-(--color-text-muted) text-xs">{t('fees.referral.cta.footer.existing')}</p>
     </div>
   </section>
 
@@ -423,38 +423,38 @@ const t = useTranslations('en');
       <h2 class="text-2xl font-bold mb-6">{t('fees.faq_title')}</h2>
 
       <div class="space-y-4 max-w-3xl">
-        <details class="border border-[--color-border] rounded-lg bg-[--color-bg-card] shadow-[var(--shadow-sm)] group">
+        <details class="border border-(--color-border) rounded-lg bg-(--color-bg-card) shadow-[var(--shadow-sm)] group">
           <summary class="p-4 cursor-pointer font-medium flex justify-between items-center min-h-[44px]">
             {t('fees.faq1_q')}
-            <span class="text-[--color-text-muted] group-open:rotate-45 transition-transform text-xl leading-none">+</span>
+            <span class="text-(--color-text-muted) group-open:rotate-45 transition-transform text-xl leading-none">+</span>
           </summary>
-          <p class="px-4 pb-4 text-[--color-text-muted] text-sm leading-relaxed">
+          <p class="px-4 pb-4 text-(--color-text-muted) text-sm leading-relaxed">
             {t('fees.faq1_a')}
           </p>
         </details>
 
-        <details class="border border-[--color-border] rounded-lg bg-[--color-bg-card] shadow-[var(--shadow-sm)] group">
+        <details class="border border-(--color-border) rounded-lg bg-(--color-bg-card) shadow-[var(--shadow-sm)] group">
           <summary class="p-4 cursor-pointer font-medium flex justify-between items-center min-h-[44px]">
             {t('fees.faq2_q')}
-            <span class="text-[--color-text-muted] group-open:rotate-45 transition-transform text-xl leading-none">+</span>
+            <span class="text-(--color-text-muted) group-open:rotate-45 transition-transform text-xl leading-none">+</span>
           </summary>
-          <p class="px-4 pb-4 text-[--color-text-muted] text-sm leading-relaxed">
+          <p class="px-4 pb-4 text-(--color-text-muted) text-sm leading-relaxed">
             {t('fees.faq2_a')}
           </p>
         </details>
 
-        <details class="border border-[--color-border] rounded-lg bg-[--color-bg-card] shadow-[var(--shadow-sm)] group">
+        <details class="border border-(--color-border) rounded-lg bg-(--color-bg-card) shadow-[var(--shadow-sm)] group">
           <summary class="p-4 cursor-pointer font-medium flex justify-between items-center min-h-[44px]">
             {t('fees.faq3_q')}
-            <span class="text-[--color-text-muted] group-open:rotate-45 transition-transform text-xl leading-none">+</span>
+            <span class="text-(--color-text-muted) group-open:rotate-45 transition-transform text-xl leading-none">+</span>
           </summary>
-          <p class="px-4 pb-4 text-[--color-text-muted] text-sm leading-relaxed">
+          <p class="px-4 pb-4 text-(--color-text-muted) text-sm leading-relaxed">
             {t('fees.faq3_a')}
           </p>
         </details>
       </div>
 
-      <p class="text-[--color-text-muted] text-xs mt-8 max-w-lg">
+      <p class="text-(--color-text-muted) text-xs mt-8 max-w-lg">
         {t('fees.affiliate_disclosure')}
       </p>
     </div>
@@ -464,7 +464,7 @@ const t = useTranslations('en');
     <a href="/simulate" class="btn btn-primary btn-md no-underline">
       {t('cross.simulate_cta')} &rarr;
     </a>
-    <a href="/strategies" class="btn btn-ghost btn-md hover:border-[--color-accent] transition-colors no-underline">
+    <a href="/strategies" class="btn btn-ghost btn-md hover:border-(--color-accent) transition-colors no-underline">
       {t('cross.strategies_cta')} &rarr;
     </a>
   </div>

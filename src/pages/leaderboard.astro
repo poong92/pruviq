@@ -37,16 +37,16 @@ function formatDate(iso: string) {
       <StrategyTabs active="leaderboard" lang="en" />
 
       <!-- Header -->
-      <p class="font-mono text-[--color-accent] text-sm mb-3 tracking-wider">{t('leaderboard.tag')}</p>
+      <p class="font-mono text-(--color-accent) text-sm mb-3 tracking-wider">{t('leaderboard.tag')}</p>
       <h1 class="text-3xl md:text-5xl lg:text-6xl font-extrabold mb-5">{t('leaderboard.title')}</h1>
-      <p class="text-[--color-text-muted] text-lg md:text-xl mb-5 max-w-2xl leading-relaxed">
+      <p class="text-(--color-text-muted) text-lg md:text-xl mb-5 max-w-2xl leading-relaxed">
         {t('leaderboard.desc')}
       </p>
 
       <!-- SSR fallback: visible before JS loads or when API unavailable -->
       {ssrTop3.length > 0 && (
         <div id="leaderboard-ssr-fallback" class="mb-8">
-          <p class="font-mono text-[--color-accent] text-xs mb-3 tracking-wider">
+          <p class="font-mono text-(--color-accent) text-xs mb-3 tracking-wider">
             THIS WEEK'S BEST — {ssrWeekly?.date ? formatDate(ssrWeekly.date) : ''} · 7d · Top 50
           </p>
           <div class="grid md:grid-cols-3 gap-4">
@@ -56,33 +56,33 @@ function formatDate(iso: string) {
               const isLong = entry.direction === 'long';
               const isBoth = entry.direction === 'both';
               const dirLabel = isBoth ? 'BOTH↕' : isLong ? 'LONG↑' : 'SHORT↓';
-              const dirColor = isBoth ? 'text-[--color-yellow] border-[--color-yellow]/40' : isLong ? 'text-[--color-up] border-[--color-up]/40' : 'text-[--color-red] border-[--color-red]/40';
-              const wrColor = entry.win_rate >= 55 ? 'text-[--color-up]' : entry.win_rate >= 50 ? 'text-[--color-yellow]' : 'text-[--color-red]';
-              const pfColor = entry.profit_factor >= 1.5 ? 'text-[--color-up]' : entry.profit_factor >= 1.0 ? 'text-[--color-yellow]' : 'text-[--color-red]';
+              const dirColor = isBoth ? 'text-(--color-yellow) border-(--color-yellow)/40' : isLong ? 'text-(--color-up) border-(--color-up)/40' : 'text-(--color-red) border-(--color-red)/40';
+              const wrColor = entry.win_rate >= 55 ? 'text-(--color-up)' : entry.win_rate >= 50 ? 'text-(--color-yellow)' : 'text-(--color-red)';
+              const pfColor = entry.profit_factor >= 1.5 ? 'text-(--color-up)' : entry.profit_factor >= 1.0 ? 'text-(--color-yellow)' : 'text-(--color-red)';
               return (
-                <div class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card] card-hover">
+                <div class="border border-(--color-border) rounded-lg p-4 bg-(--color-bg-card) card-hover">
                   <div class="flex items-start justify-between gap-2 mb-3">
                     <div class="flex items-center gap-2 min-w-0">
                       <span class="text-xl shrink-0">{medal}</span>
                       <div class="min-w-0">
-                        <p class="font-semibold text-[--color-text] text-sm leading-tight truncate">{entry.name_en}</p>
-                        <p class="text-[--color-text-muted] text-xs font-mono">{entry.timeframe} · {entry.direction}</p>
+                        <p class="font-semibold text-(--color-text) text-sm leading-tight truncate">{entry.name_en}</p>
+                        <p class="text-(--color-text-muted) text-xs font-mono">{entry.timeframe} · {entry.direction}</p>
                       </div>
                     </div>
                     <span class={`font-mono text-xs px-2 py-0.5 rounded border shrink-0 ${dirColor}`}>{dirLabel}</span>
                   </div>
                   <div class="grid grid-cols-3 gap-2 font-mono text-sm">
                     <div>
-                      <p class="text-[--color-text-muted] text-xs mb-0.5">Win Rate</p>
+                      <p class="text-(--color-text-muted) text-xs mb-0.5">Win Rate</p>
                       <p class={`font-bold text-base ${wrColor}`}>{entry.win_rate.toFixed(1)}%</p>
                     </div>
                     <div>
-                      <p class="text-[--color-text-muted] text-xs mb-0.5">PF</p>
+                      <p class="text-(--color-text-muted) text-xs mb-0.5">PF</p>
                       <p class={`font-bold text-base ${pfColor}`}>{entry.profit_factor.toFixed(2)}</p>
                     </div>
                     <div>
-                      <p class="text-[--color-text-muted] text-xs mb-0.5">Trades</p>
-                      <p class="font-bold text-base text-[--color-text]">{entry.total_trades}</p>
+                      <p class="text-(--color-text-muted) text-xs mb-0.5">Trades</p>
+                      <p class="font-bold text-base text-(--color-text)">{entry.total_trades}</p>
                     </div>
                   </div>
                 </div>
@@ -102,15 +102,15 @@ function formatDate(iso: string) {
       {ssrTop3.length === 0 && (
         <div>
           <StaleBanner message="Weekly rankings are being refreshed. Check back Monday morning KST." />
-          <div class="rounded-xl border border-[--color-border] bg-[--color-bg-card] p-12 text-center">
+          <div class="rounded-xl border border-(--color-border) bg-(--color-bg-card) p-12 text-center">
             <p class="text-4xl mb-4">📊</p>
             <h3 class="text-xl font-semibold mb-3">Weekly Rankings Coming Soon</h3>
-            <p class="text-[--color-text-muted] text-sm mb-6 max-w-md mx-auto">
+            <p class="text-(--color-text-muted) text-sm mb-6 max-w-md mx-auto">
               We publish weekly strategy performance every Monday. Rankings compare real backtested results across 240 coins.
             </p>
             <div class="flex flex-col sm:flex-row gap-3 justify-center">
-              <a href="/strategies/ranking" class="inline-flex items-center justify-center bg-[--color-accent] text-[--color-bg] px-5 py-2.5 rounded font-semibold text-sm hover:bg-[--color-accent-dim] transition-colors no-underline">View Daily Rankings &rarr;</a>
-              <a href="/simulate" class="inline-flex items-center justify-center border border-[--color-border] px-5 py-2.5 rounded font-semibold text-sm hover:border-[--color-accent] transition-colors no-underline">Run Your Own Backtest</a>
+              <a href="/strategies/ranking" class="inline-flex items-center justify-center bg-(--color-accent) text-(--color-bg) px-5 py-2.5 rounded font-semibold text-sm hover:bg-(--color-accent-dim) transition-colors no-underline">View Daily Rankings &rarr;</a>
+              <a href="/simulate" class="inline-flex items-center justify-center border border-(--color-border) px-5 py-2.5 rounded font-semibold text-sm hover:border-(--color-accent) transition-colors no-underline">Run Your Own Backtest</a>
             </div>
           </div>
         </div>
@@ -120,7 +120,7 @@ function formatDate(iso: string) {
         <WeeklyLeaderboard lang="en" client:load />
       </ErrorBoundary>
       <noscript>
-        <div class="border border-[--color-border] rounded-lg p-6 text-center text-[--color-text-muted] text-sm font-mono mt-4">
+        <div class="border border-(--color-border) rounded-lg p-6 text-center text-(--color-text-muted) text-sm font-mono mt-4">
           <p class="mb-2 font-bold">{t('leaderboard.noscript_title')}</p>
           <p>{t('leaderboard.noscript_desc')}</p>
         </div>
@@ -154,7 +154,7 @@ function formatDate(iso: string) {
         <a href="/simulate" class="btn btn-primary btn-md no-underline">
           {t('cross.simulate_cta')} &rarr;
         </a>
-        <a href="/strategies" class="btn btn-ghost btn-md hover:border-[--color-accent] transition-colors no-underline">
+        <a href="/strategies" class="btn btn-ghost btn-md hover:border-(--color-accent) transition-colors no-underline">
           {t('cross.strategies_cta')} &rarr;
         </a>
       </div>

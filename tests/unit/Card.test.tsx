@@ -13,8 +13,8 @@ describe("Card primitive", () => {
     const el = container.firstChild as HTMLElement;
     expect(el.tagName).toBe("DIV");
     expect(el.textContent).toBe("Body");
-    expect(el.className).toContain("bg-[--color-bg-card]");
-    expect(el.className).toContain("border-[--color-border]");
+    expect(el.className).toContain("bg-(--color-bg-card)");
+    expect(el.className).toContain("border-(--color-border)");
     expect(el.className).toContain("p-4");
     expect(el.className).toContain("rounded-lg");
   });
@@ -34,8 +34,8 @@ describe("Card primitive", () => {
   test("variant=featured uses accent tokens", () => {
     const { container } = render(<Card variant="featured">x</Card>);
     const el = container.firstChild as HTMLElement;
-    expect(el.className).toContain("bg-[--color-accent]/5");
-    expect(el.className).toContain("border-[--color-accent]/30");
+    expect(el.className).toContain("bg-(--color-accent)/5");
+    expect(el.className).toContain("border-(--color-accent)/30");
   });
 
   test("variant=subtle has transparent bg", () => {
@@ -69,8 +69,8 @@ describe("Card primitive", () => {
     const { container } = render(<Card interactive>x</Card>);
     const el = container.firstChild as HTMLElement;
     expect(el.className).toContain("cursor-pointer");
-    expect(el.className).toContain("hover:border-[--color-accent]");
-    expect(el.className).toContain("focus-visible:ring-[--color-accent]");
+    expect(el.className).toContain("hover:border-(--color-accent)");
+    expect(el.className).toContain("focus-visible:ring-(--color-accent)");
   });
 
   test('as="section" renders <section>', () => {
@@ -109,6 +109,6 @@ describe("Card primitive", () => {
     const el = container.firstChild as HTMLElement;
     expect(el.className).toContain("ml-2");
     expect(el.className).toContain("mt-3");
-    expect(el.className).toContain("bg-[--color-accent]/5");
+    expect(el.className).toContain("bg-(--color-accent)/5");
   });
 });

@@ -39,7 +39,7 @@ export default function ResultHero({ result, t, simMode = "expert" }: Props) {
       </div>
 
       {/* Dollar translation */}
-      <div class="mt-1.5 text-sm font-mono text-[--color-text-muted]">
+      <div class="mt-1.5 text-sm font-mono text-(--color-text-muted)">
         ${initial.toLocaleString()} → ${Math.round(finalUsd).toLocaleString()}
       </div>
 
@@ -85,10 +85,10 @@ function Pill({
 }) {
   return (
     <div
-      class="px-2 py-1.5 sm:px-2.5 rounded-lg bg-[--color-bg-tooltip] border border-[--color-border] text-center min-w-[70px] sm:min-w-[80px] flex-1 max-w-[120px]"
+      class="px-2 py-1.5 sm:px-2.5 rounded-lg bg-(--color-bg-tooltip) border border-(--color-border) text-center min-w-[70px] sm:min-w-[80px] flex-1 max-w-[120px]"
       title={tooltip}
     >
-      <div class="text-[9px] font-mono text-[--color-text-muted] uppercase tracking-wider">
+      <div class="text-[9px] font-mono text-(--color-text-muted) uppercase tracking-wider">
         {label}
       </div>
       <div

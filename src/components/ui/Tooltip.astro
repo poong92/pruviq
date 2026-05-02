@@ -2,7 +2,7 @@
 interface Props { text: string; }
 const { text } = Astro.props;
 ---
-<span class="tooltip-wrap cursor-help border-b border-dotted border-[--color-text-muted]/30">
+<span class="tooltip-wrap cursor-help border-b border-dotted border-(--color-text-muted)/30">
   <slot />
   <span class="tooltip-text">{text}</span>
 </span>

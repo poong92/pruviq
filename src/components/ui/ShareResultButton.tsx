@@ -113,7 +113,7 @@ export default function ShareResultButton({
     <button
       type="button"
       onClick={handleClick}
-      class={`inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg border border-[--color-border] bg-[--color-bg-card] px-4 py-2.5 text-sm font-semibold text-[--color-text] transition-colors hover:border-[--color-accent] hover:text-[--color-accent] ${className}`.trim()}
+      class={`inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg border border-(--color-border) bg-(--color-bg-card) px-4 py-2.5 text-sm font-semibold text-(--color-text) transition-colors hover:border-(--color-accent) hover:text-(--color-accent) ${className}`.trim()}
       aria-live="polite"
       data-testid="share-result-btn"
     >

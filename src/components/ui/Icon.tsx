@@ -7,7 +7,7 @@
  * single way to consume them.
  *
  * Usage:
- *   <Icon name="bb" size={20} class="text-[--color-accent]" />
+ *   <Icon name="bb" size={20} class="text-(--color-accent)" />
  *
  * The sprite uses `currentColor` for stroke, so consumers color via
  * `class="text-..."` (Tailwind) or `style="color: ..."`.

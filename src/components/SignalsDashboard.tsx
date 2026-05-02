@@ -134,15 +134,15 @@ export default function SignalsDashboard({ lang = "en" }: Props) {
         <div class="flex flex-col items-center gap-4 mb-8">
           <div class="flex gap-1.5">
             <span
-              class="w-2 h-2 rounded-full bg-[--color-accent] animate-pulse"
+              class="w-2 h-2 rounded-full bg-(--color-accent) animate-pulse"
               style={{ animationDelay: "0s" }}
             ></span>
             <span
-              class="w-2 h-2 rounded-full bg-[--color-accent] animate-pulse"
+              class="w-2 h-2 rounded-full bg-(--color-accent) animate-pulse"
               style={{ animationDelay: "0.2s" }}
             ></span>
             <span
-              class="w-2 h-2 rounded-full bg-[--color-accent] animate-pulse"
+              class="w-2 h-2 rounded-full bg-(--color-accent) animate-pulse"
               style={{ animationDelay: "0.4s" }}
             ></span>
           </div>
@@ -150,11 +150,11 @@ export default function SignalsDashboard({ lang = "en" }: Props) {
             <p class="text-base font-semibold mb-1">
               {lang === "ko" ? "시그널 스캔 중" : "Scanning Signals"}
             </p>
-            <p class="text-sm text-[--color-text-muted]">
+            <p class="text-sm text-(--color-text-muted)">
               {lang === "ko" ? (
                 <>
                   전략 조건을{" "}
-                  <span class="font-mono text-[--color-accent]">
+                  <span class="font-mono text-(--color-accent)">
                     {COINS_ANALYZED}
                   </span>
                   개 코인에서 분석 중...
@@ -162,7 +162,7 @@ export default function SignalsDashboard({ lang = "en" }: Props) {
               ) : (
                 <>
                   Analyzing strategy conditions across{" "}
-                  <span class="font-mono text-[--color-accent]">
+                  <span class="font-mono text-(--color-accent)">
                     {COINS_ANALYZED}
                   </span>{" "}
                   coins...
@@ -175,7 +175,7 @@ export default function SignalsDashboard({ lang = "en" }: Props) {
           {[1, 2, 3, 4, 5].map((i) => (
             <div
               key={i}
-              class="flex items-center justify-between p-4 rounded-lg border border-[--color-border]"
+              class="flex items-center justify-between p-4 rounded-lg border border-(--color-border)"
               style={{
                 background:
                   "linear-gradient(90deg, var(--color-bg-card) 25%, var(--color-bg-elevated) 50%, var(--color-bg-card) 75%)",
@@ -184,13 +184,13 @@ export default function SignalsDashboard({ lang = "en" }: Props) {
               }}
             >
               <div class="flex items-center gap-4">
-                <div class="w-12 h-6 rounded bg-[--color-bg-elevated]"></div>
+                <div class="w-12 h-6 rounded bg-(--color-bg-elevated)"></div>
                 <div>
-                  <div class="w-24 h-4 rounded bg-[--color-bg-elevated] mb-1"></div>
-                  <div class="w-40 h-3 rounded bg-[--color-bg-elevated]"></div>
+                  <div class="w-24 h-4 rounded bg-(--color-bg-elevated) mb-1"></div>
+                  <div class="w-40 h-3 rounded bg-(--color-bg-elevated)"></div>
                 </div>
               </div>
-              <div class="w-16 h-4 rounded bg-[--color-bg-elevated]"></div>
+              <div class="w-16 h-4 rounded bg-(--color-bg-elevated)"></div>
             </div>
           ))}
         </div>
@@ -201,7 +201,7 @@ export default function SignalsDashboard({ lang = "en" }: Props) {
   if (error) {
     return (
       <div class="text-center py-16">
-        <div class="w-12 h-12 mx-auto mb-4 rounded-full bg-[--color-bg-card] border border-[--color-border] flex items-center justify-center">
+        <div class="w-12 h-12 mx-auto mb-4 rounded-full bg-(--color-bg-card) border border-(--color-border) flex items-center justify-center">
           <svg
             width="24"
             height="24"
@@ -215,14 +215,14 @@ export default function SignalsDashboard({ lang = "en" }: Props) {
           </svg>
         </div>
         <p class="text-lg font-semibold mb-2">{t.warming_up}</p>
-        <p class="text-sm text-[--color-text-muted] mb-4">{t.check_back}</p>
+        <p class="text-sm text-(--color-text-muted) mb-4">{t.check_back}</p>
         <button
           onClick={() => {
             setLoading(true);
             setError(null);
             fetchSignals();
           }}
-          class="text-sm font-mono text-[--color-accent] hover:underline cursor-pointer"
+          class="text-sm font-mono text-(--color-accent) hover:underline cursor-pointer"
         >
           {lang === "ko" ? "다시 시도 →" : "Try again →"}
         </button>
@@ -239,54 +239,54 @@ export default function SignalsDashboard({ lang = "en" }: Props) {
           aria-pressed={filter === "all"}
           class={`text-center p-3 rounded-lg border transition-all cursor-pointer ${
             filter === "all"
-              ? "border-[--color-accent] bg-[--color-accent]/10 shadow-[0_0_12px_rgba(var(--accent-rgb,99,102,241),0.3)]"
-              : "border-[--color-border] bg-[--color-bg-card] hover:border-[--color-accent]/50"
+              ? "border-(--color-accent) bg-(--color-accent)/10 shadow-[0_0_12px_rgba(var(--accent-rgb,99,102,241),0.3)]"
+              : "border-(--color-border) bg-(--color-bg-card) hover:border-(--color-accent)/50"
           }`}
         >
           <p class="text-2xl font-bold font-mono">{signals.length}</p>
-          <p class="text-xs text-[--color-text-muted]">{t.active}</p>
+          <p class="text-xs text-(--color-text-muted)">{t.active}</p>
         </button>
         <button
           onClick={() => setFilter("verified")}
           aria-pressed={filter === "verified"}
           class={`text-center p-3 rounded-lg border transition-all cursor-pointer ${
             filter === "verified"
-              ? "border-[--color-up] bg-[--color-up]/10 shadow-[0_0_12px_rgba(34,171,148,0.3)]"
-              : "border-[--color-border] bg-[--color-bg-card] hover:border-[--color-up]/50"
+              ? "border-(--color-up) bg-(--color-up)/10 shadow-[0_0_12px_rgba(34,171,148,0.3)]"
+              : "border-(--color-border) bg-(--color-bg-card) hover:border-(--color-up)/50"
           }`}
         >
-          <p class="text-2xl font-bold font-mono text-[--color-up]">
+          <p class="text-2xl font-bold font-mono text-(--color-up)">
             {verifiedCount}
           </p>
-          <p class="text-xs text-[--color-text-muted]">{t.verified}</p>
+          <p class="text-xs text-(--color-text-muted)">{t.verified}</p>
         </button>
         <button
           onClick={() => setFilter("short")}
           aria-pressed={filter === "short"}
           class={`text-center p-3 rounded-lg border transition-all cursor-pointer ${
             filter === "short"
-              ? "border-[--color-down] bg-[--color-down]/10 shadow-[0_0_12px_rgba(242,54,69,0.3)]"
-              : "border-[--color-border] bg-[--color-bg-card] hover:border-[--color-down]/50"
+              ? "border-(--color-down) bg-(--color-down)/10 shadow-[0_0_12px_rgba(242,54,69,0.3)]"
+              : "border-(--color-border) bg-(--color-bg-card) hover:border-(--color-down)/50"
           }`}
         >
-          <p class="text-2xl font-bold font-mono text-[--color-down]">
+          <p class="text-2xl font-bold font-mono text-(--color-down)">
             {shortCount}
           </p>
-          <p class="text-xs text-[--color-text-muted]">{t.short}</p>
+          <p class="text-xs text-(--color-text-muted)">{t.short}</p>
         </button>
         <button
           onClick={() => setFilter("long")}
           aria-pressed={filter === "long"}
           class={`text-center p-3 rounded-lg border transition-all cursor-pointer ${
             filter === "long"
-              ? "border-[--color-accent] bg-[--color-accent]/10 shadow-[0_0_12px_rgba(79,142,247,0.3)]"
-              : "border-[--color-border] bg-[--color-bg-card] hover:border-[--color-accent]/50"
+              ? "border-(--color-accent) bg-(--color-accent)/10 shadow-[0_0_12px_rgba(79,142,247,0.3)]"
+              : "border-(--color-border) bg-(--color-bg-card) hover:border-(--color-accent)/50"
           }`}
         >
-          <p class="text-2xl font-bold font-mono text-[--color-accent]">
+          <p class="text-2xl font-bold font-mono text-(--color-accent)">
             {longCount}
           </p>
-          <p class="text-xs text-[--color-text-muted]">{t.long}</p>
+          <p class="text-xs text-(--color-text-muted)">{t.long}</p>
         </button>
       </div>
 
@@ -295,14 +295,14 @@ export default function SignalsDashboard({ lang = "en" }: Props) {
         {Object.entries(byStrategy).map(([strategyName, sigs]) => (
           <div key={strategyName}>
             <div class="flex items-center gap-2 mb-3">
-              <h3 class="font-mono text-sm font-bold text-[--color-text-secondary]">
+              <h3 class="font-mono text-sm font-bold text-(--color-text-secondary)">
                 {strategyName}
               </h3>
-              <span class="text-xs bg-[--color-bg-card] border border-[--color-border] px-2 py-0.5 rounded font-mono">
+              <span class="text-xs bg-(--color-bg-card) border border-(--color-border) px-2 py-0.5 rounded font-mono">
                 {sigs.length} {sigs.length > 1 ? t.signals : t.signal}
               </span>
               {sigs[0]?.status === "verified" && (
-                <span class="text-[10px] bg-[--color-up]/20 text-[--color-up] px-1.5 py-0.5 rounded">
+                <span class="text-[10px] bg-(--color-up)/20 text-(--color-up) px-1.5 py-0.5 rounded">
                   {t.verified.toLowerCase()}
                 </span>
               )}
@@ -313,27 +313,27 @@ export default function SignalsDashboard({ lang = "en" }: Props) {
                   key={`${s.strategy}-${s.coin}-${i}`}
                   class={`flex items-center justify-between p-4 rounded-lg border transition-colors group border-l-4 ${
                     s.status === "verified"
-                      ? "border-l-[--color-up]"
-                      : "border-l-[--color-border]"
+                      ? "border-l-(--color-up)"
+                      : "border-l-(--color-border)"
                   } ${
                     s.direction === "long"
-                      ? "border-[--color-accent]/20 bg-[--color-accent]/5 hover:border-[--color-accent]/40"
-                      : "border-[--color-down]/20 bg-[--color-down]/5 hover:border-[--color-down]/40"
+                      ? "border-(--color-accent)/20 bg-(--color-accent)/5 hover:border-(--color-accent)/40"
+                      : "border-(--color-down)/20 bg-(--color-down)/5 hover:border-(--color-down)/40"
                   }`}
                 >
                   <div class="flex items-center gap-4">
                     <span
                       class={`text-xs font-mono font-bold px-2 py-1 rounded ${
                         s.direction === "short"
-                          ? "bg-[--color-down]/20 text-[--color-down]"
-                          : "bg-[--color-accent]/20 text-[--color-accent]"
+                          ? "bg-(--color-down)/20 text-(--color-down)"
+                          : "bg-(--color-accent)/20 text-(--color-accent)"
                       }`}
                     >
                       {s.direction.toUpperCase()}
                     </span>
                     <div>
                       <p class="font-semibold">{s.coin}</p>
-                      <p class="text-xs text-[--color-text-muted]">
+                      <p class="text-xs text-(--color-text-muted)">
                         Entry $
                         {s.entry_price < 1
                           ? s.entry_price.toFixed(6)
@@ -345,7 +345,7 @@ export default function SignalsDashboard({ lang = "en" }: Props) {
                   </div>
                   <a
                     href={buildSimUrl(s)}
-                    class="text-xs font-mono font-bold px-3 py-1.5 rounded border border-[--color-accent]/40 bg-[--color-accent]/10 text-[--color-accent] hover:bg-[--color-accent]/20 transition-colors"
+                    class="text-xs font-mono font-bold px-3 py-1.5 rounded border border-(--color-accent)/40 bg-(--color-accent)/10 text-(--color-accent) hover:bg-(--color-accent)/20 transition-colors"
                   >
                     {t.verify}
                   </a>
@@ -357,7 +357,7 @@ export default function SignalsDashboard({ lang = "en" }: Props) {
       </div>
 
       {filtered.length === 0 && (
-        <div class="text-center py-12 text-[--color-text-muted]">
+        <div class="text-center py-12 text-(--color-text-muted)">
           <p>
             {t.no_signals.replace("{filter}", filter !== "all" ? filter : "")}
           </p>
@@ -366,7 +366,7 @@ export default function SignalsDashboard({ lang = "en" }: Props) {
       )}
 
       {/* Footer */}
-      <div class="mt-8 pt-4 border-t border-[--color-border] flex items-center justify-between text-xs text-[--color-text-muted]">
+      <div class="mt-8 pt-4 border-t border-(--color-border) flex items-center justify-between text-xs text-(--color-text-muted)">
         <p>{t.updated.replace("{time}", lastUpdate || t.loading)}</p>
         <p>{t.disclaimer}</p>
       </div>

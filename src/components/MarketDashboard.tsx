@@ -95,7 +95,7 @@ const labels = {
 
 function SkeletonCard() {
   return (
-    <div class="border border-[--color-border] rounded-lg p-5 bg-[--color-bg-card]">
+    <div class="border border-(--color-border) rounded-lg p-5 bg-(--color-bg-card)">
       <div class="skeleton h-3 w-20 mb-3" />
       <div class="skeleton h-7 w-28 mb-2" />
       <div class="skeleton h-3 w-14" />
@@ -106,12 +106,12 @@ function SkeletonCard() {
 function SkeletonPriceBar() {
   return (
     <div class="flex gap-4 flex-wrap mb-4">
-      <div class="flex-1 min-w-[200px] border border-[--color-border] rounded-lg p-3 bg-[--color-bg-card] flex items-center gap-3">
+      <div class="flex-1 min-w-[200px] border border-(--color-border) rounded-lg p-3 bg-(--color-bg-card) flex items-center gap-3">
         <div class="skeleton h-4 w-10" />
         <div class="skeleton h-6 w-24" />
         <div class="skeleton h-4 w-16" />
       </div>
-      <div class="flex-1 min-w-[200px] border border-[--color-border] rounded-lg p-3 bg-[--color-bg-card] flex items-center gap-3">
+      <div class="flex-1 min-w-[200px] border border-(--color-border) rounded-lg p-3 bg-(--color-bg-card) flex items-center gap-3">
         <div class="skeleton h-4 w-10" />
         <div class="skeleton h-6 w-24" />
         <div class="skeleton h-4 w-16" />
@@ -126,7 +126,7 @@ function SkeletonNews() {
       {[...Array(5)].map((_, i) => (
         <div
           key={i}
-          class="px-4 py-3 border-b border-[--color-border] last:border-0"
+          class="px-4 py-3 border-b border-(--color-border) last:border-0"
         >
           <div class="skeleton h-4 w-3/4 mb-2" />
           <div class="skeleton h-3 w-1/2" />
@@ -153,10 +153,10 @@ function StatCard({
 }) {
   return (
     <div
-      class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card] card-hover"
+      class="border border-(--color-border) rounded-lg p-4 bg-(--color-bg-card) card-hover"
       style={style}
     >
-      <div class="text-[11px] text-[--color-text-muted] uppercase tracking-wider mb-1.5">
+      <div class="text-[11px] text-(--color-text-muted) uppercase tracking-wider mb-1.5">
         {label}
       </div>
       <div
@@ -165,7 +165,7 @@ function StatCard({
       >
         {value}
       </div>
-      {sub && <div class="text-xs text-[--color-text-muted] mt-1">{sub}</div>}
+      {sub && <div class="text-xs text-(--color-text-muted) mt-1">{sub}</div>}
     </div>
   );
 }
@@ -185,7 +185,7 @@ function ExpandButton({
     <div class="text-center py-2">
       <button
         onClick={onClick}
-        class="inline-flex items-center gap-1.5 text-xs text-[--color-accent] px-4 py-1.5 rounded-md border border-[--color-border] bg-[--color-bg-hover] cursor-pointer hover:border-[--color-accent] transition-colors"
+        class="inline-flex items-center gap-1.5 text-xs text-(--color-accent) px-4 py-1.5 rounded-md border border-(--color-border) bg-(--color-bg-hover) cursor-pointer hover:border-(--color-accent) transition-colors"
       >
         <span>{expanded ? collapseLabel : expandLabel}</span>
         <svg
@@ -445,13 +445,13 @@ export default function MarketDashboard({
 
       {hasError && (
         <div class="text-center py-10">
-          <p class="font-mono text-sm text-[--color-red] mb-3">{l.error}</p>
+          <p class="font-mono text-sm text-(--color-red) mb-3">{l.error}</p>
           <button
             onClick={() => {
               retryLive();
               retryMarket();
             }}
-            class="px-4 py-2 rounded-lg border border-[--color-border] bg-[--color-bg-card] text-[--color-text] font-mono text-sm cursor-pointer hover:border-[--color-accent] transition-colors min-h-[44px]"
+            class="px-4 py-2 rounded-lg border border-(--color-border) bg-(--color-bg-card) text-(--color-text) font-mono text-sm cursor-pointer hover:border-(--color-accent) transition-colors min-h-[44px]"
           >
             {l.retry}
           </button>
@@ -463,7 +463,7 @@ export default function MarketDashboard({
           {/* Staleness warning */}
           {isDataStale && (
             <div
-              class={`mb-4 px-4 py-2.5 rounded-lg border text-center ${isDataVeryStale ? "border-[--color-down]/30 bg-[--color-down]/10" : "border-[--color-warning]/30 bg-[--color-warning]/10"}`}
+              class={`mb-4 px-4 py-2.5 rounded-lg border text-center ${isDataVeryStale ? "border-(--color-down)/30 bg-(--color-down)/10" : "border-(--color-warning)/30 bg-(--color-warning)/10"}`}
             >
               <span
                 class="text-xs font-mono"
@@ -477,10 +477,10 @@ export default function MarketDashboard({
           {/* BTC + ETH Price Bar — 30s live refresh */}
           <div class="flex gap-4 flex-wrap mb-4">
             <div
-              class={`flex items-center gap-3 border border-[--color-border] rounded-lg py-3 px-5 bg-[--color-bg-card] flex-1 min-w-[200px] ${flash.btc}`}
+              class={`flex items-center gap-3 border border-(--color-border) rounded-lg py-3 px-5 bg-(--color-bg-card) flex-1 min-w-[200px] ${flash.btc}`}
             >
-              <span class="text-sm font-semibold text-[--color-btc]">BTC</span>
-              <span class="text-xl font-bold font-mono text-[--color-text]">
+              <span class="text-sm font-semibold text-(--color-btc)">BTC</span>
+              <span class="text-xl font-bold font-mono text-(--color-text)">
                 $
                 {displayBtcPrice.toLocaleString("en-US", {
                   maximumFractionDigits: 0,
@@ -495,10 +495,10 @@ export default function MarketDashboard({
               </span>
             </div>
             <div
-              class={`flex items-center gap-3 border border-[--color-border] rounded-lg py-3 px-5 bg-[--color-bg-card] flex-1 min-w-[200px] ${flash.eth}`}
+              class={`flex items-center gap-3 border border-(--color-border) rounded-lg py-3 px-5 bg-(--color-bg-card) flex-1 min-w-[200px] ${flash.eth}`}
             >
-              <span class="text-sm font-semibold text-[--color-eth]">ETH</span>
-              <span class="text-xl font-bold font-mono text-[--color-text]">
+              <span class="text-sm font-semibold text-(--color-eth)">ETH</span>
+              <span class="text-xl font-bold font-mono text-(--color-text)">
                 $
                 {displayEthPrice.toLocaleString("en-US", {
                   maximumFractionDigits: 0,
@@ -519,10 +519,10 @@ export default function MarketDashboard({
             {/* Fear & Greed with enhanced gauge */}
             {effectiveMarket ? (
               <div
-                class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card] card-hover"
+                class="border border-(--color-border) rounded-lg p-4 bg-(--color-bg-card) card-hover"
                 style={{ backgroundColor: `${fgSegment.color}10` }}
               >
-                <div class="text-[11px] text-[--color-text-muted] uppercase tracking-wider mb-1.5">
+                <div class="text-[11px] text-(--color-text-muted) uppercase tracking-wider mb-1.5">
                   {l.fearGreed}
                 </div>
                 <div class="flex items-baseline gap-1.5">
@@ -532,7 +532,7 @@ export default function MarketDashboard({
                   >
                     {effectiveMarket.fear_greed_index}
                   </span>
-                  <span class="text-sm font-mono text-[--color-text-muted]">
+                  <span class="text-sm font-mono text-(--color-text-muted)">
                     / 100
                   </span>
                 </div>
@@ -540,7 +540,7 @@ export default function MarketDashboard({
                 {/* Gauge bar */}
                 <div class="mt-3 mb-2">
                   <div
-                    class="w-full bg-[--color-bg-hover] rounded-full overflow-hidden"
+                    class="w-full bg-(--color-bg-hover) rounded-full overflow-hidden"
                     style={{ height: "8px" }}
                     role="img"
                     aria-label={`Fear and Greed gauge ${effectiveMarket.fear_greed_index} out of 100`}
@@ -556,19 +556,19 @@ export default function MarketDashboard({
                   </div>
                   {/* Scale markers */}
                   <div class="flex justify-between mt-1">
-                    <span class="text-[9px] text-[--color-text-muted] font-mono">
+                    <span class="text-[9px] text-(--color-text-muted) font-mono">
                       0
                     </span>
-                    <span class="text-[9px] text-[--color-text-muted] font-mono">
+                    <span class="text-[9px] text-(--color-text-muted) font-mono">
                       25
                     </span>
-                    <span class="text-[9px] text-[--color-text-muted] font-mono">
+                    <span class="text-[9px] text-(--color-text-muted) font-mono">
                       50
                     </span>
-                    <span class="text-[9px] text-[--color-text-muted] font-mono">
+                    <span class="text-[9px] text-(--color-text-muted) font-mono">
                       75
                     </span>
-                    <span class="text-[9px] text-[--color-text-muted] font-mono">
+                    <span class="text-[9px] text-(--color-text-muted) font-mono">
                       100
                     </span>
                   </div>
@@ -593,19 +593,19 @@ export default function MarketDashboard({
           </div>
 
           {/* Macro Economic Indicators — 30min refresh */}
-          <div class="border border-[--color-border] rounded-lg bg-[--color-bg-card] overflow-hidden mb-6">
-            <div class="px-4 py-3 border-b border-[--color-border] flex items-center justify-between">
-              <span class="text-xs font-semibold text-[--color-text-muted] uppercase tracking-wider">
+          <div class="border border-(--color-border) rounded-lg bg-(--color-bg-card) overflow-hidden mb-6">
+            <div class="px-4 py-3 border-b border-(--color-border) flex items-center justify-between">
+              <span class="text-xs font-semibold text-(--color-text-muted) uppercase tracking-wider">
                 {l.macroTitle}
               </span>
-              <span class="text-[0.6875rem] text-[--color-text-muted]">
+              <span class="text-[0.6875rem] text-(--color-text-muted)">
                 {l.macroNote}
               </span>
             </div>
             {!macro && !macroErr && (
               <div class="p-4 grid grid-cols-2 md:grid-cols-3 gap-3">
                 {[...Array(6)].map((_, i) => (
-                  <div key={i} class="p-3 bg-[--color-bg-hover] rounded-lg">
+                  <div key={i} class="p-3 bg-(--color-bg-hover) rounded-lg">
                     <div class="skeleton h-3 w-24 mb-2" />
                     <div class="skeleton h-5 w-16" />
                   </div>
@@ -613,7 +613,7 @@ export default function MarketDashboard({
               </div>
             )}
             {macroErr && (
-              <div class="p-4 text-center text-[--color-text-muted] text-xs">
+              <div class="p-4 text-center text-(--color-text-muted) text-xs">
                 {l.macroError}
               </div>
             )}
@@ -639,10 +639,10 @@ export default function MarketDashboard({
                   return (
                     <div
                       key={ind.id}
-                      class="p-2 sm:p-3 bg-[--color-bg-hover] rounded-lg"
+                      class="p-2 sm:p-3 bg-(--color-bg-hover) rounded-lg"
                     >
                       <div class="tooltip-wrap mb-1">
-                        <span class="text-[0.625rem] text-[--color-text-muted] uppercase tracking-wider truncate">
+                        <span class="text-[0.625rem] text-(--color-text-muted) uppercase tracking-wider truncate">
                           {ind.name}
                         </span>
                         {MACRO_TOOLTIPS[ind.id] && (
@@ -654,7 +654,7 @@ export default function MarketDashboard({
                               fill="none"
                               stroke="currentColor"
                               stroke-width="1.5"
-                              class="ml-1 shrink-0 text-[--color-text-muted] opacity-50"
+                              class="ml-1 shrink-0 text-(--color-text-muted) opacity-50"
                               aria-hidden="true"
                             >
                               <circle cx="6" cy="6" r="5" />
@@ -687,7 +687,7 @@ export default function MarketDashboard({
                           </span>
                         )}
                       </div>
-                      <div class="text-[0.5625rem] text-[--color-text-muted] mt-0.5">
+                      <div class="text-[0.5625rem] text-(--color-text-muted) mt-0.5">
                         {ind.source} · {ind.updated}
                       </div>
                     </div>
@@ -698,12 +698,12 @@ export default function MarketDashboard({
           </div>
 
           {/* TradingView Economic Calendar Widget */}
-          <div class="border border-[--color-border] rounded-lg bg-[--color-bg-card] overflow-hidden mb-6">
-            <div class="px-4 py-3 border-b border-[--color-border] flex items-center justify-between">
-              <span class="text-xs font-semibold text-[--color-text-muted] uppercase tracking-wider">
+          <div class="border border-(--color-border) rounded-lg bg-(--color-bg-card) overflow-hidden mb-6">
+            <div class="px-4 py-3 border-b border-(--color-border) flex items-center justify-between">
+              <span class="text-xs font-semibold text-(--color-text-muted) uppercase tracking-wider">
                 {l.economicCalendar}
               </span>
-              <span class="text-[0.6875rem] text-[--color-text-muted]">
+              <span class="text-[0.6875rem] text-(--color-text-muted)">
                 {l.calendarNote}
               </span>
             </div>
@@ -725,7 +725,7 @@ export default function MarketDashboard({
                   <button
                     type="button"
                     onClick={() => setCalendarArmed(true)}
-                    class="px-4 py-2 rounded-md bg-[--color-accent]/15 text-[--color-accent-bright] text-sm font-medium ring-1 ring-[--color-accent]/40 hover:bg-[--color-accent]/25 transition min-h-[44px]"
+                    class="px-4 py-2 rounded-md bg-(--color-accent)/15 text-(--color-accent-bright) text-sm font-medium ring-1 ring-(--color-accent)/40 hover:bg-(--color-accent)/25 transition min-h-[44px]"
                   >
                     {lang === "ko" ? "캘린더 불러오기" : "Load Calendar"}
                   </button>
@@ -735,15 +735,15 @@ export default function MarketDashboard({
           </div>
 
           {/* News Feed — 5min refresh */}
-          <div class="border border-[--color-border] rounded-lg bg-[--color-bg-card] overflow-hidden mb-6">
-            <div class="px-4 py-3 border-b border-[--color-border] flex flex-wrap items-center gap-2.5">
-              <span class="text-xs font-semibold text-[--color-text-muted] uppercase tracking-wider mr-auto">
+          <div class="border border-(--color-border) rounded-lg bg-(--color-bg-card) overflow-hidden mb-6">
+            <div class="px-4 py-3 border-b border-(--color-border) flex flex-wrap items-center gap-2.5">
+              <span class="text-xs font-semibold text-(--color-text-muted) uppercase tracking-wider mr-auto">
                 {l.latestNews}
               </span>
 
               {/* Crypto / Macro tab toggle */}
               <div
-                class="flex rounded-md overflow-hidden border border-[--color-border]"
+                class="flex rounded-md overflow-hidden border border-(--color-border)"
                 data-testid="news-tabs"
                 role="tablist"
               >
@@ -758,7 +758,7 @@ export default function MarketDashboard({
                   class={`px-3 py-1 text-[0.6875rem] font-semibold cursor-pointer border-none transition-colors min-h-[36px] ${
                     newsTab === "crypto"
                       ? ""
-                      : "bg-[--color-bg-hover] text-[--color-text-muted] hover:text-[--color-text]"
+                      : "bg-(--color-bg-hover) text-(--color-text-muted) hover:text-(--color-text)"
                   }`}
                   style={
                     newsTab === "crypto"
@@ -782,7 +782,7 @@ export default function MarketDashboard({
                   class={`px-3 py-1 text-[0.6875rem] font-semibold cursor-pointer border-none transition-colors min-h-[36px] ${
                     newsTab === "macro"
                       ? ""
-                      : "bg-[--color-bg-hover] text-[--color-text-muted] hover:text-[--color-text]"
+                      : "bg-(--color-bg-hover) text-(--color-text-muted) hover:text-(--color-text)"
                   }`}
                   style={
                     newsTab === "macro"
@@ -804,7 +804,7 @@ export default function MarketDashboard({
                 onInput={(e: Event) =>
                   setSearchQuery((e.target as HTMLInputElement).value)
                 }
-                class="bg-[--color-bg-hover] border border-[--color-border] rounded-md px-2.5 py-1 text-xs text-[--color-text] outline-none w-full sm:w-44 font-sans focus:border-[--color-accent] transition-colors"
+                class="bg-(--color-bg-hover) border border-(--color-border) rounded-md px-2.5 py-1 text-xs text-(--color-text) outline-none w-full sm:w-44 font-sans focus:border-(--color-accent) transition-colors"
               />
               <div class="flex flex-wrap gap-1">
                 <button
@@ -813,7 +813,7 @@ export default function MarketDashboard({
                   class={`px-2 py-1 text-[0.6875rem] rounded font-semibold cursor-pointer border-none transition-colors min-h-[44px] ${
                     !sourceFilter
                       ? ""
-                      : "bg-[--color-bg-hover] text-[--color-text-muted] hover:text-[--color-text]"
+                      : "bg-(--color-bg-hover) text-(--color-text-muted) hover:text-(--color-text)"
                   }`}
                   style={
                     !sourceFilter
@@ -834,7 +834,7 @@ export default function MarketDashboard({
                     class={`px-2 py-1 text-[0.6875rem] rounded font-semibold cursor-pointer border-none whitespace-nowrap transition-colors min-h-[44px] ${
                       sourceFilter === s
                         ? ""
-                        : "bg-[--color-bg-hover] text-[--color-text-muted] hover:text-[--color-text]"
+                        : "bg-(--color-bg-hover) text-(--color-text-muted) hover:text-(--color-text)"
                     }`}
                     style={
                       sourceFilter === s
@@ -856,12 +856,12 @@ export default function MarketDashboard({
             {!news && !newsErr && <SkeletonNews />}
             {newsErr && (
               <div class="text-center py-8">
-                <p class="font-mono text-sm text-[--color-red] mb-3">
+                <p class="font-mono text-sm text-(--color-red) mb-3">
                   {l.newsError}
                 </p>
                 <button
                   onClick={retryNews}
-                  class="px-4 py-2 rounded-lg border border-[--color-border] bg-[--color-bg-card] text-[--color-text] font-mono text-sm cursor-pointer hover:border-[--color-accent] transition-colors min-h-[44px]"
+                  class="px-4 py-2 rounded-lg border border-(--color-border) bg-(--color-bg-card) text-(--color-text) font-mono text-sm cursor-pointer hover:border-(--color-accent) transition-colors min-h-[44px]"
                 >
                   {l.retry}
                 </button>
@@ -881,29 +881,29 @@ export default function MarketDashboard({
                       href={item.link}
                       target="_blank"
                       rel="noopener noreferrer"
-                      class="block px-4 py-3 border-b border-[--color-border] last:border-0 no-underline text-inherit row-hover"
+                      class="block px-4 py-3 border-b border-(--color-border) last:border-0 no-underline text-inherit row-hover"
                     >
                       <div class="flex items-start gap-3">
                         <div class="flex-1 min-w-0">
-                          <div class="text-sm font-medium text-[--color-text] leading-snug mb-1 truncate">
+                          <div class="text-sm font-medium text-(--color-text) leading-snug mb-1 truncate">
                             {item.title}
                             {lang === "ko" && (
-                              <span class="ml-1.5 inline-flex align-middle text-[9px] font-mono font-bold text-[--color-text-muted] border border-[--color-border] rounded px-1 py-0.5 leading-none">
+                              <span class="ml-1.5 inline-flex align-middle text-[9px] font-mono font-bold text-(--color-text-muted) border border-(--color-border) rounded px-1 py-0.5 leading-none">
                                 EN
                               </span>
                             )}
                           </div>
                           {item.summary && (
-                            <div class="text-xs text-[--color-text-muted] leading-snug truncate">
+                            <div class="text-xs text-(--color-text-muted) leading-snug truncate">
                               {item.summary}
                             </div>
                           )}
                         </div>
                         <div class="shrink-0 text-right">
-                          <div class="text-[0.6875rem] text-[--color-accent] font-semibold tracking-wide">
+                          <div class="text-[0.6875rem] text-(--color-accent) font-semibold tracking-wide">
                             {item.source}
                           </div>
-                          <div class="text-[0.6875rem] text-[--color-text-muted] mt-0.5">
+                          <div class="text-[0.6875rem] text-(--color-text-muted) mt-0.5">
                             {timeAgo(item.published)}
                           </div>
                         </div>
@@ -924,7 +924,7 @@ export default function MarketDashboard({
             )}
             {news && filteredNews.length === 0 && (
               <div
-                class="text-center py-8 text-[--color-text-muted] text-[13px]"
+                class="text-center py-8 text-(--color-text-muted) text-[13px]"
                 data-testid="news-list-empty"
                 data-news-tab={newsTab}
               >
@@ -934,14 +934,14 @@ export default function MarketDashboard({
           </div>
 
           {/* CTA — ghost style to avoid competing with global bottom CTA bar */}
-          <div class="mt-8 px-4 py-3 border border-[--color-border] rounded-lg">
+          <div class="mt-8 px-4 py-3 border border-(--color-border) rounded-lg">
             <div class="flex items-center justify-between gap-3">
-              <p class="text-[--color-text-muted] text-xs truncate">
+              <p class="text-(--color-text-muted) text-xs truncate">
                 {l.ctaDesc.replace("{coins}", coinsCount)}
               </p>
               <a
                 href={lang === "ko" ? "/ko/simulate" : "/simulate"}
-                class="shrink-0 text-xs font-semibold text-[--color-accent] border border-[--color-accent]/30 px-4 py-2 rounded hover:bg-[--color-accent]/10 transition-colors no-underline whitespace-nowrap"
+                class="shrink-0 text-xs font-semibold text-(--color-accent) border border-(--color-accent)/30 px-4 py-2 rounded hover:bg-(--color-accent)/10 transition-colors no-underline whitespace-nowrap"
               >
                 {l.ctaButton} →
               </a>
@@ -950,11 +950,11 @@ export default function MarketDashboard({
 
           {/* Last Updated + Disclaimer */}
           {generated && (
-            <p class="text-[11px] text-[--color-text-muted] text-center mt-4 font-mono">
+            <p class="text-[11px] text-(--color-text-muted) text-center mt-4 font-mono">
               {l.lastUpdated}: {refreshAgo} {l.ago}
             </p>
           )}
-          <p class="text-[11px] text-[--color-text-muted] text-center mt-1">
+          <p class="text-[11px] text-(--color-text-muted) text-center mt-1">
             {l.disclaimer}
           </p>
         </div>

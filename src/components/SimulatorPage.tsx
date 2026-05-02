@@ -1508,7 +1508,7 @@ export default function SimulatorPage({
       {/* Mobile tabs — only for Standard/Expert (Quick has no chart/config split) */}
       {simMode !== "quick" && (
         <div
-          class="md:hidden flex border-b border-[--color-border] mb-3 gap-0"
+          class="md:hidden flex border-b border-(--color-border) mb-3 gap-0"
           role="tablist"
         >
           {(["chart", "config", "results"] as const).map((tab) => (
@@ -1519,7 +1519,7 @@ export default function SimulatorPage({
               aria-controls={`panel-${tab}`}
               onClick={() => handleMobileTabChange(tab)}
               class={`flex-1 py-2 min-h-[48px] text-xs font-mono uppercase tracking-wider transition-colors flex flex-col items-center justify-center
-                ${mobileTab === tab ? "font-bold border-b-2" : "text-[--color-text-muted] hover:text-[--color-text]"}`}
+                ${mobileTab === tab ? "font-bold border-b-2" : "text-(--color-text-muted) hover:text-(--color-text)"}`}
               style={
                 mobileTab === tab
                   ? {
@@ -1583,7 +1583,7 @@ export default function SimulatorPage({
             >
               {t.quickStart}
             </p>
-            <p class="text-[--color-text-muted] text-xs mt-0.5">
+            <p class="text-(--color-text-muted) text-xs mt-0.5">
               {t.quickStartDesc}
             </p>
           </div>
@@ -1609,7 +1609,7 @@ export default function SimulatorPage({
             </button>
             <button
               onClick={dismissQuickStart}
-              class="px-3 py-2 rounded font-mono text-[10px] text-[--color-text-muted] border border-[--color-border] hover:text-[--color-text] transition-colors"
+              class="px-3 py-2 rounded font-mono text-[10px] text-(--color-text-muted) border border-(--color-border) hover:text-(--color-text) transition-colors"
             >
               {t.quickStartDismiss}
             </button>
@@ -1849,7 +1849,7 @@ export default function SimulatorPage({
         mobileTab === "config" &&
         (simMode === "standard" || conditions.length > 0) && (
           <div
-            class="md:hidden fixed bottom-0 left-0 right-0 z-50 px-4 py-3 border-t border-[--color-border]"
+            class="md:hidden fixed bottom-0 left-0 right-0 z-50 px-4 py-3 border-t border-(--color-border)"
             style={{
               background: "var(--color-bg)",
               boxShadow: "0 -4px 12px rgba(0,0,0,0.3)",
@@ -1875,7 +1875,7 @@ export default function SimulatorPage({
                   <span class="spinner" />
                   {progressLabels[progressStep] || t.running}
                   {elapsedSec > 0 && (
-                    <span class="text-[10px] font-normal text-[--color-text-muted]">
+                    <span class="text-[10px] font-normal text-(--color-text-muted)">
                       {(t.elapsed || "{n}s").replace("{n}", String(elapsedSec))}
                     </span>
                   )}
@@ -1894,16 +1894,16 @@ export default function SimulatorPage({
       <div class="mt-6 mb-8 max-w-lg mx-auto">
         {t.simNotes && (
           <details class="mb-3 group">
-            <summary class="text-[11px] font-mono text-[--color-text-muted] cursor-pointer select-none hover:text-[--color-accent] transition-colors">
+            <summary class="text-[11px] font-mono text-(--color-text-muted) cursor-pointer select-none hover:text-(--color-accent) transition-colors">
               {t.simNotesTitle}{" "}
               <span class="opacity-50 group-open:rotate-90 inline-block transition-transform">
                 {"▶"}
               </span>
             </summary>
-            <ul class="mt-2 space-y-1.5 text-[11px] text-[--color-text-muted] list-none pl-0">
+            <ul class="mt-2 space-y-1.5 text-[11px] text-(--color-text-muted) list-none pl-0">
               {t.simNotes.map((note: string, i: number) => (
                 <li key={i} class="flex gap-2">
-                  <span class="text-[--color-accent] opacity-60 shrink-0">
+                  <span class="text-(--color-accent) opacity-60 shrink-0">
                     {"•"}
                   </span>
                   <span>{note}</span>
@@ -1912,7 +1912,7 @@ export default function SimulatorPage({
             </ul>
           </details>
         )}
-        <p class="text-[--color-text-muted] text-[10px] text-center">
+        <p class="text-(--color-text-muted) text-[10px] text-center">
           {t.disclaimer}
         </p>
       </div>

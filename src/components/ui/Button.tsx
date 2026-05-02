@@ -2,7 +2,7 @@
  * Button.tsx — Typed button primitive (W1-1).
  *
  * One source of truth for buttons across the site. Replaces the ~150
- * bespoke `<button class="inline-flex items-center bg-[--color-accent] ...">`
+ * bespoke `<button class="inline-flex items-center bg-(--color-accent) ...">`
  * patterns currently scattered across 47 files.
  *
  * Tokens-only (no raw hex). Light/dark themes adapted via tokens. 44px
@@ -67,15 +67,15 @@ export type ButtonProps = ButtonAsButton | ButtonAsAnchor;
 
 const variantClasses: Record<ButtonVariant, string> = {
   primary:
-    "bg-[--color-accent] text-white border border-transparent hover:bg-[--color-accent-dim] active:bg-[--color-accent-dim]",
+    "bg-(--color-accent) text-white border border-transparent hover:bg-(--color-accent-dim) active:bg-(--color-accent-dim)",
   secondary:
-    "bg-transparent border border-[--color-border] text-[--color-text] hover:border-[--color-accent] hover:text-[--color-accent] hover:bg-[--color-accent]/5",
+    "bg-transparent border border-(--color-border) text-(--color-text) hover:border-(--color-accent) hover:text-(--color-accent) hover:bg-(--color-accent)/5",
   ghost:
-    "bg-transparent border border-transparent text-[--color-text-muted] hover:text-[--color-text] hover:bg-[--color-bg-hover]",
+    "bg-transparent border border-transparent text-(--color-text-muted) hover:text-(--color-text) hover:bg-(--color-bg-hover)",
   danger:
-    "bg-[--color-down]/10 border border-[--color-down]/30 text-[--color-down] hover:bg-[--color-down]/15 hover:border-[--color-down]/50",
+    "bg-(--color-down)/10 border border-(--color-down)/30 text-(--color-down) hover:bg-(--color-down)/15 hover:border-(--color-down)/50",
   success:
-    "bg-[--color-up]/10 border border-[--color-up]/30 text-[--color-up] hover:bg-[--color-up]/15 hover:border-[--color-up]/50",
+    "bg-(--color-up)/10 border border-(--color-up)/30 text-(--color-up) hover:bg-(--color-up)/15 hover:border-(--color-up)/50",
 };
 
 // Size — `md` meets 44px a11y minimum. `sm` (32px) for dense inline use only.
@@ -93,8 +93,8 @@ const iconOnlySize: Record<ButtonSize, string> = {
 
 const baseClass =
   "inline-flex items-center justify-center rounded font-semibold transition-colors " +
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--color-accent] " +
-  "focus-visible:ring-offset-2 focus-visible:ring-offset-[--color-bg] " +
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-accent) " +
+  "focus-visible:ring-offset-2 focus-visible:ring-offset-(--color-bg) " +
   "disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none";
 
 function Spinner({ size }: { size: ButtonSize }) {

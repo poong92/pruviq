@@ -38,7 +38,7 @@ describe("Field primitive", () => {
     expect(errEl.getAttribute("aria-live")).toBe("assertive");
     expect(input.getAttribute("aria-invalid")).toBe("true");
     expect(input.getAttribute("aria-describedby")).toBe(errEl.id);
-    expect(input.className).toContain("border-[--color-down]");
+    expect(input.className).toContain("border-(--color-down)");
   });
 
   test("helper text wires aria-describedby when no error", () => {

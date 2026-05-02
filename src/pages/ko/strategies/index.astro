@@ -153,12 +153,12 @@ const presetDirColors: Record<string, string> = { long: '--color-accent', short:
 
       <StrategyTabs active="strategies" lang="ko" />
 
-      <p class="font-mono text-[--color-accent] text-sm mb-3 tracking-wider">{t('strategies.tag')}</p>
+      <p class="font-mono text-(--color-accent) text-sm mb-3 tracking-wider">{t('strategies.tag')}</p>
       <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-5">{t('strategies.title')}</h1>
-      <p class="text-[--color-text-muted] text-lg md:text-xl mb-5 max-w-2xl leading-relaxed">
+      <p class="text-(--color-text-muted) text-lg md:text-xl mb-5 max-w-2xl leading-relaxed">
         {t('strategies.desc')}
       </p>
-      <p class="text-[--color-text-muted] text-sm mb-3 max-w-2xl">
+      <p class="text-(--color-text-muted) text-sm mb-3 max-w-2xl">
         {t('strategies.count')
           .replace('{total}', String(strategies.length))
           .replace('{verified}', String(strategies.filter(s => s.data.status === 'verified').length))
@@ -166,11 +166,11 @@ const presetDirColors: Record<string, string> = { long: '--color-accent', short:
           .replace('{shelved}', String(strategies.filter(s => s.data.status === 'shelved').length))
         }
       </p>
-      <p class="font-mono text-xs text-[--color-accent]/80 mb-12 max-w-2xl">
+      <p class="font-mono text-xs text-(--color-accent)/80 mb-12 max-w-2xl">
         + 시뮬레이터 프리셋 {simulatorPresets.length}개 &rarr; <span class="font-bold">총 {strategies.length + simulatorPresets.length}개 테스트 가능한 전략 구성</span>
       </p>
 
-      <p class="text-sm text-[--color-accent] font-mono mb-6 max-w-2xl border border-[--color-accent]/20 rounded-lg px-4 py-3 bg-[--color-accent]/5">
+      <p class="text-sm text-(--color-accent) font-mono mb-6 max-w-2xl border border-(--color-accent)/20 rounded-lg px-4 py-3 bg-(--color-accent)/5">
         {t('strategies.funnel')
           .replace('{total}', String(strategies.length))
           .replace('{verified}', String(strategies.filter(s => s.data.status === 'verified').length))
@@ -183,7 +183,7 @@ const presetDirColors: Record<string, string> = { long: '--color-accent', short:
           {t('hero.cta_builder')} &rarr;
         </a>
         <a href="/ko/strategies/ranking"
-           class="inline-flex items-center gap-2 border border-[--color-border] text-[--color-text] px-5 py-2.5 rounded-lg font-semibold text-sm hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
+           class="inline-flex items-center gap-2 border border-(--color-border) text-(--color-text) px-5 py-2.5 rounded-lg font-semibold text-sm hover:border-(--color-accent) hover:text-(--color-accent) transition-colors">
           {t('ranking.tag')} &rarr;
         </a>
       </div>
@@ -191,22 +191,22 @@ const presetDirColors: Record<string, string> = { long: '--color-accent', short:
       <!-- 필터 + 정렬 바 -->
       <div class="mb-6 flex flex-wrap gap-4 strategy-filter-bar" id="strategy-filters-ko">
         <div class="flex items-center gap-1.5 flex-wrap">
-          <span class="font-mono text-xs text-[--color-text-muted] mr-1">상태:</span>
+          <span class="font-mono text-xs text-(--color-text-muted) mr-1">상태:</span>
           <button data-filter-group="status" data-filter-value="all" aria-label="모든 전략 표시"
-            class="font-mono text-xs border rounded px-3 py-2.5 transition-colors bg-[--color-accent] text-[--color-accent-text] border-[--color-accent]">전체</button>
+            class="font-mono text-xs border rounded px-3 py-2.5 transition-colors bg-(--color-accent) text-(--color-accent-text) border-(--color-accent)">전체</button>
           <button data-filter-group="status" data-filter-value="verified" aria-label="검증된 전략만 표시"
-            class="font-mono text-xs border border-[--color-border] rounded px-3 py-2.5 text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">검증됨</button>
+            class="font-mono text-xs border border-(--color-border) rounded px-3 py-2.5 text-(--color-text-muted) hover:border-(--color-accent) hover:text-(--color-accent) transition-colors">검증됨</button>
           <button data-filter-group="status" data-filter-value="killed" aria-label="종료된 전략만 표시"
-            class="font-mono text-xs border border-[--color-border] rounded px-3 py-2.5 text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">종료</button>
+            class="font-mono text-xs border border-(--color-border) rounded px-3 py-2.5 text-(--color-text-muted) hover:border-(--color-accent) hover:text-(--color-accent) transition-colors">종료</button>
         </div>
         <div class="flex items-center gap-1.5 flex-wrap">
-          <span class="font-mono text-xs text-[--color-text-muted] mr-1">정렬:</span>
+          <span class="font-mono text-xs text-(--color-text-muted) mr-1">정렬:</span>
           <button data-sort-value="default" aria-label="기본 정렬"
-            class="font-mono text-xs border rounded px-3 py-2.5 transition-colors bg-[--color-accent] text-[--color-accent-text] border-[--color-accent]">기본</button>
+            class="font-mono text-xs border rounded px-3 py-2.5 transition-colors bg-(--color-accent) text-(--color-accent-text) border-(--color-accent)">기본</button>
           <button data-sort-value="winrate" aria-label="승률 내림차순 정렬"
-            class="font-mono text-xs border border-[--color-border] rounded px-3 py-2.5 text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">승률 ↓</button>
+            class="font-mono text-xs border border-(--color-border) rounded px-3 py-2.5 text-(--color-text-muted) hover:border-(--color-accent) hover:text-(--color-accent) transition-colors">승률 ↓</button>
           <button data-sort-value="pf" aria-label="수익팩터 내림차순 정렬"
-            class="font-mono text-xs border border-[--color-border] rounded px-3 py-2.5 text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">수익팩터 ↓</button>
+            class="font-mono text-xs border border-(--color-border) rounded px-3 py-2.5 text-(--color-text-muted) hover:border-(--color-accent) hover:text-(--color-accent) transition-colors">수익팩터 ↓</button>
         </div>
       </div>
 
@@ -215,12 +215,12 @@ const presetDirColors: Record<string, string> = { long: '--color-accent', short:
           const isCollapsible = statusKey === 'killed' || statusKey === 'shelved';
           const header = (
             <div class={`flex items-center gap-3 mb-4 strategy-group-header strategy-group-header--${statusKey}`}>
-              <span class={`font-mono text-sm font-bold tracking-widest ${statusKey === 'verified' ? 'text-[--color-verified]' : statusKey === 'testing' ? 'text-[--color-yellow]' : 'text-[--color-text-muted]'}`}>
+              <span class={`font-mono text-sm font-bold tracking-widest ${statusKey === 'verified' ? 'text-(--color-verified)' : statusKey === 'testing' ? 'text-(--color-yellow)' : 'text-(--color-text-muted)'}`}>
                 {statusGroupLabels[statusKey]}
               </span>
-              <div class="flex-1 border-t border-[--color-border]"></div>
-              <span class="font-mono text-xs text-[--color-text-disabled]">{strategyGroups[statusKey].length}</span>
-              {isCollapsible && <span class="text-xs text-[--color-text-muted] transition-transform">▾</span>}
+              <div class="flex-1 border-t border-(--color-border)"></div>
+              <span class="font-mono text-xs text-(--color-text-disabled)">{strategyGroups[statusKey].length}</span>
+              {isCollapsible && <span class="text-xs text-(--color-text-muted) transition-transform">▾</span>}
             </div>
           );
           const cards = (
@@ -238,52 +238,52 @@ const presetDirColors: Record<string, string> = { long: '--color-accent', short:
                     {statusLabels[strategy.data.status]}
                   </span>
                   {!isKorean(strategy.id) && (
-                    <span class="font-mono text-xs px-1.5 py-0.5 rounded bg-[--color-border] text-[--color-text-muted]">EN</span>
+                    <span class="font-mono text-xs px-1.5 py-0.5 rounded bg-(--color-border) text-(--color-text-muted)">EN</span>
                   )}
-                  <span class="text-[--color-text-muted] text-xs font-mono">
+                  <span class="text-(--color-text-muted) text-xs font-mono">
                     {categoryLabels[strategy.data.category] || strategy.data.category} &middot; {strategy.data.direction.toUpperCase()} &middot; {strategy.data.timeframe}
                   </span>
                 </div>
-                <span class="text-xs font-mono px-2 py-0.5 rounded border border-[--color-border]"
+                <span class="text-xs font-mono px-2 py-0.5 rounded border border-(--color-border)"
                       style={`color: var(${difficultyColors[strategy.data.difficulty]})`}>
                   {difficultyLabels[strategy.data.difficulty] || strategy.data.difficulty.toUpperCase()}
                 </span>
               </div>
 
-              <h2 class="text-xl font-bold mb-2 group-hover:text-[--color-accent] transition-colors">
+              <h2 class="text-xl font-bold mb-2 group-hover:text-(--color-accent) transition-colors">
                 {strategy.data.name}
               </h2>
-              <p class="text-[--color-text-muted] text-sm mb-4 flex-grow">{strategy.data.description}</p>
+              <p class="text-(--color-text-muted) text-sm mb-4 flex-grow">{strategy.data.description}</p>
 
               {(strategy.data.winRate || strategy.data.profitFactor || strategy.data.totalPnl) && (
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 font-mono text-sm">
                   {strategy.data.winRate !== undefined && (
                     <div>
-                      <span class="text-[--color-text-muted] text-xs">{t('strategy.win_rate')}</span>
-                      <p class={`font-bold ${strategy.data.winRate >= 55 ? 'text-[--color-accent]' : strategy.data.winRate >= 50 ? 'text-[--color-yellow]' : 'text-[--color-red]'}`}>
+                      <span class="text-(--color-text-muted) text-xs">{t('strategy.win_rate')}</span>
+                      <p class={`font-bold ${strategy.data.winRate >= 55 ? 'text-(--color-accent)' : strategy.data.winRate >= 50 ? 'text-(--color-yellow)' : 'text-(--color-red)'}`}>
                         {strategy.data.winRate}%
                       </p>
                     </div>
                   )}
                   {strategy.data.profitFactor !== undefined && (
                     <div>
-                      <span class="text-[--color-text-muted] text-xs">{t('strategy.profit_factor')}</span>
-                      <p class={`font-bold ${strategy.data.profitFactor >= 1.5 ? 'text-[--color-accent]' : strategy.data.profitFactor >= 1.0 ? 'text-[--color-yellow]' : 'text-[--color-red]'}`}>
+                      <span class="text-(--color-text-muted) text-xs">{t('strategy.profit_factor')}</span>
+                      <p class={`font-bold ${strategy.data.profitFactor >= 1.5 ? 'text-(--color-accent)' : strategy.data.profitFactor >= 1.0 ? 'text-(--color-yellow)' : 'text-(--color-red)'}`}>
                         {strategy.data.profitFactor}
                       </p>
                     </div>
                   )}
                   {strategy.data.totalPnl && (
                     <div>
-                      <span class="text-[--color-text-muted] text-xs">{t('strategy.total_pnl')}</span>
-                      <p class={`font-bold ${strategy.data.totalPnl.startsWith('+') ? 'text-[--color-accent]' : 'text-[--color-red]'}`}>
+                      <span class="text-(--color-text-muted) text-xs">{t('strategy.total_pnl')}</span>
+                      <p class={`font-bold ${strategy.data.totalPnl.startsWith('+') ? 'text-(--color-accent)' : 'text-(--color-red)'}`}>
                         {strategy.data.totalPnl}
                       </p>
                     </div>
                   )}
                   {strategy.data.coins !== undefined && (
                     <div>
-                      <span class="text-[--color-text-muted] text-xs">{t('strategy.coins_tested')}</span>
+                      <span class="text-(--color-text-muted) text-xs">{t('strategy.coins_tested')}</span>
                       <p class="font-bold">{strategy.data.coins}</p>
                     </div>
                   )}
@@ -291,8 +291,8 @@ const presetDirColors: Record<string, string> = { long: '--color-accent', short:
               )}
             </a>
             {strategy.data.status === 'verified' && (
-              <div class="mt-4 pt-4 border-t border-[--color-border]/50 flex items-center justify-between">
-                <span class="text-xs text-[--color-up] font-mono">{t('strategies.verified_explanation')}</span>
+              <div class="mt-4 pt-4 border-t border-(--color-border)/50 flex items-center justify-between">
+                <span class="text-xs text-(--color-up) font-mono">{t('strategies.verified_explanation')}</span>
                 <a href={`/ko/simulate?preset=${strategy.id}`}
                    class="btn btn-primary btn-sm inline-flex items-center gap-1">
                   {t('strategies.simulate_button')} &rarr;
@@ -319,23 +319,23 @@ const presetDirColors: Record<string, string> = { long: '--color-accent', short:
         })}
       </div>
 
-      <p class="text-xs text-[--color-text-muted] mt-8 mb-2">
-        왜 실패한 전략을 보여주나요? <a href="/ko/about" class="text-[--color-accent] hover:underline">급진적 투명성</a> — 성공과 실패 모두 공개합니다.
+      <p class="text-xs text-(--color-text-muted) mt-8 mb-2">
+        왜 실패한 전략을 보여주나요? <a href="/ko/about" class="text-(--color-accent) hover:underline">급진적 투명성</a> — 성공과 실패 모두 공개합니다.
       </p>
 
       {simulatorPresets.length > 0 && (
-        <div class="mt-16 pt-12 border-t border-[--color-border]">
-          <p class="font-mono text-[--color-accent] text-sm mb-3 tracking-wider">시뮬레이터 프리셋</p>
+        <div class="mt-16 pt-12 border-t border-(--color-border)">
+          <p class="font-mono text-(--color-accent) text-sm mb-3 tracking-wider">시뮬레이터 프리셋</p>
           <h2 class="text-2xl md:text-3xl font-bold mb-3">{t('strategies.presets_title').replace('{count}', String(simulatorPresets.length)).replace(/\(\d+종?\)/, '').trim()} <span class="section-count-badge">{simulatorPresets.length}</span></h2>
-          <p class="text-[--color-text-muted] text-sm mb-8 max-w-2xl">
+          <p class="text-(--color-text-muted) text-sm mb-8 max-w-2xl">
             {t('strategies.presets_desc')}
           </p>
           {presetDirOrder.map((dir, idx) => (
             <div class={idx > 0 ? 'mt-8' : ''}>
               <div class="flex items-center gap-2 mb-4">
-                <span class={`font-mono text-sm font-bold tracking-wider py-1 px-3 rounded-md ${dir === 'long' ? 'bg-[--color-accent]/10' : dir === 'short' ? 'bg-[--color-red]/10' : 'bg-[--color-yellow]/10'}`} style={`color: var(${presetDirColors[dir]})`}>{presetDirLabels[dir]}</span>
-                <div class="flex-1 border-t border-[--color-border]"></div>
-                <span class="font-mono text-xs text-[--color-text-disabled]">{presetsByDirection[dir].length}</span>
+                <span class={`font-mono text-sm font-bold tracking-wider py-1 px-3 rounded-md ${dir === 'long' ? 'bg-(--color-accent)/10' : dir === 'short' ? 'bg-(--color-red)/10' : 'bg-(--color-yellow)/10'}`} style={`color: var(${presetDirColors[dir]})`}>{presetDirLabels[dir]}</span>
+                <div class="flex-1 border-t border-(--color-border)"></div>
+                <span class="font-mono text-xs text-(--color-text-disabled)">{presetsByDirection[dir].length}</span>
               </div>
               <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {presetsByDirection[dir].map((preset) => {
@@ -352,32 +352,32 @@ const presetDirColors: Record<string, string> = { long: '--color-accent', short:
                     class={`relative flex flex-col group preset-card-enhanced ${glowClass}`}
                   >
                     {isTodaysPick && (
-                      <span class="absolute -top-2.5 left-3 font-mono text-[10px] tracking-wider px-2 py-0.5 rounded-full bg-[--color-accent] text-[--color-accent-text] font-bold z-10">
+                      <span class="absolute -top-2.5 left-3 font-mono text-[10px] tracking-wider px-2 py-0.5 rounded-full bg-(--color-accent) text-(--color-accent-text) font-bold z-10">
                         {t('strategies.todays_pick')}
                       </span>
                     )}
                     <div class="flex items-center justify-between relative z-[1]">
                       <div class="min-w-0">
-                        <p class="font-semibold text-sm truncate group-hover:text-[--color-accent] transition-colors">{preset.name_ko ?? preset.name}</p>
+                        <p class="font-semibold text-sm truncate group-hover:text-(--color-accent) transition-colors">{preset.name_ko ?? preset.name}</p>
                         {stats && (
-                          <p class="text-xs font-mono text-[--color-text-muted] mt-1">
+                          <p class="text-xs font-mono text-(--color-text-muted) mt-1">
                             WR <span class={stats.win_rate >= 55 ? 'stat-positive' : stats.win_rate < 45 ? 'stat-negative' : 'stat-warning'}>{stats.win_rate.toFixed(1)}%</span> · PF <span class={stats.profit_factor >= 1.5 ? 'stat-positive' : stats.profit_factor < 1.0 ? 'stat-negative' : 'stat-warning'}>{stats.profit_factor.toFixed(2)}</span>
                             {stats.total_return !== undefined && (
-                              <span class={stats.total_return >= 0 ? 'text-[--color-up]' : 'text-[--color-red]'}> · {stats.total_return >= 0 ? '+' : ''}{stats.total_return.toFixed(1)}%</span>
+                              <span class={stats.total_return >= 0 ? 'text-(--color-up)' : 'text-(--color-red)'}> · {stats.total_return >= 0 ? '+' : ''}{stats.total_return.toFixed(1)}%</span>
                             )}
                           </p>
                         )}
                       </div>
                       <div class="flex items-center gap-2 shrink-0 ml-3">
                         {preset.direction && (
-                          <span class={`font-mono text-xs px-1.5 py-0.5 rounded border ${preset.direction === 'long' ? 'text-[--color-accent] border-[--color-accent]/30 bg-[--color-accent]/5' : preset.direction === 'short' ? 'text-[--color-red] border-[--color-red]/30 bg-[--color-red]/5' : 'text-[--color-yellow] border-[--color-yellow]/30 bg-[--color-yellow]/5'}`}>
+                          <span class={`font-mono text-xs px-1.5 py-0.5 rounded border ${preset.direction === 'long' ? 'text-(--color-accent) border-(--color-accent)/30 bg-(--color-accent)/5' : preset.direction === 'short' ? 'text-(--color-red) border-(--color-red)/30 bg-(--color-red)/5' : 'text-(--color-yellow) border-(--color-yellow)/30 bg-(--color-yellow)/5'}`}>
                             {preset.direction.toUpperCase()}
                           </span>
                         )}
-                        <span class="text-[--color-text-muted] text-xs group-hover:text-[--color-accent] transition-colors">&rarr;</span>
+                        <span class="text-(--color-text-muted) text-xs group-hover:text-(--color-accent) transition-colors">&rarr;</span>
                       </div>
                     </div>
-                    <p class="text-[10px] font-mono text-[--color-text-muted] mt-2 opacity-0 group-hover:opacity-100 transition-opacity relative z-[1]">
+                    <p class="text-[10px] font-mono text-(--color-text-muted) mt-2 opacity-0 group-hover:opacity-100 transition-opacity relative z-[1]">
                       {t('strategies.click_to_simulate')} &rarr;
                     </p>
                   </a>
@@ -389,16 +389,16 @@ const presetDirColors: Record<string, string> = { long: '--color-accent', short:
         </div>
       )}
 
-      <div class="mt-16 rounded-2xl p-8 md:p-10 text-center section-accent-glow border border-[--color-border] shadow-[var(--shadow-md)]">
-        <p class="font-mono text-[--color-accent] text-sm mb-3 tracking-wider">{t('strategies.more_tag')}</p>
-        <p class="text-[--color-text-muted] text-base mb-6 max-w-lg mx-auto">
+      <div class="mt-16 rounded-2xl p-8 md:p-10 text-center section-accent-glow border border-(--color-border) shadow-[var(--shadow-md)]">
+        <p class="font-mono text-(--color-accent) text-sm mb-3 tracking-wider">{t('strategies.more_tag')}</p>
+        <p class="text-(--color-text-muted) text-base mb-6 max-w-lg mx-auto">
           {t('strategies.more_desc')}
         </p>
         <div class="flex flex-wrap gap-3 justify-center">
-          <a href="/ko/performance" class="btn btn-ghost btn-md hover:border-[--color-accent] transition-colors no-underline">
+          <a href="/ko/performance" class="btn btn-ghost btn-md hover:border-(--color-accent) transition-colors no-underline">
             {t('strategies.performance_cta')} &rarr;
           </a>
-          <a href="/ko/fees" class="btn btn-ghost btn-md hover:border-[--color-accent] transition-colors no-underline">
+          <a href="/ko/fees" class="btn btn-ghost btn-md hover:border-(--color-accent) transition-colors no-underline">
             {t('strategies.fees_cta')} &rarr;
           </a>
         </div>

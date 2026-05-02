@@ -122,8 +122,8 @@ export default function ModeSwitcher({
             class={`relative flex-1 min-h-[44px] py-2.5 px-2 rounded-lg border transition-all text-center overflow-visible
               ${
                 active
-                  ? "border-[--color-accent]"
-                  : "border-[--color-border] hover:border-[--color-text-muted]"
+                  ? "border-(--color-accent)"
+                  : "border-(--color-border) hover:border-(--color-text-muted)"
               }`}
             style={
               active
@@ -152,12 +152,12 @@ export default function ModeSwitcher({
                 {ICONS[tab.key]}
               </span>
               <span
-                class={`font-mono text-xs font-bold ${active ? "" : "text-[--color-text-muted]"}`}
+                class={`font-mono text-xs font-bold ${active ? "" : "text-(--color-text-muted)"}`}
                 style={active ? { color: COLORS.accent } : undefined}
               >
                 {tab.label}
               </span>
-              <span class="text-[11px] text-[--color-text-muted] leading-tight">
+              <span class="text-[11px] text-(--color-text-muted) leading-tight">
                 {tab.sub}
               </span>
             </div>

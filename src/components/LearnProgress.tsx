@@ -54,16 +54,16 @@ export default function LearnProgress({ postIds, lang = "en" }: Props) {
       class="mb-8 shadow-[var(--shadow-sm)]"
     >
       <div class="flex items-center justify-between mb-2">
-        <span class="font-mono text-xs text-[--color-text-muted] uppercase tracking-wider">
+        <span class="font-mono text-xs text-(--color-text-muted) uppercase tracking-wider">
           {t.progress}
         </span>
-        <span class="font-mono text-xs text-[--color-text]">
+        <span class="font-mono text-xs text-(--color-text)">
           {count === total
             ? t.complete
             : `${count} ${t.of} ${total} ${t.articles}`}
         </span>
       </div>
-      <div class="h-2 rounded-full bg-[--color-border] overflow-hidden">
+      <div class="h-2 rounded-full bg-(--color-border) overflow-hidden">
         <div
           class="h-full rounded-full transition-[width] duration-500"
           style={{

@@ -303,15 +303,15 @@ export default function StrategyComparison({ lang = "en" }: Props) {
     return (
       <div class="space-y-6">
         <div class="animate-pulse space-y-3">
-          <div class="h-3 w-40 bg-[--color-border] rounded" />
-          <div class="h-8 w-64 bg-[--color-border] rounded" />
-          <div class="h-4 w-96 max-w-full bg-[--color-border] rounded" />
+          <div class="h-3 w-40 bg-(--color-border) rounded" />
+          <div class="h-8 w-64 bg-(--color-border) rounded" />
+          <div class="h-4 w-96 max-w-full bg-(--color-border) rounded" />
         </div>
         <div class="space-y-3">
           {[1, 2, 3, 4, 5].map((i) => (
             <div
               key={i}
-              class="h-16 bg-[--color-border] rounded-lg animate-pulse"
+              class="h-16 bg-(--color-border) rounded-lg animate-pulse"
             />
           ))}
         </div>
@@ -323,24 +323,24 @@ export default function StrategyComparison({ lang = "en" }: Props) {
     <div class="space-y-8">
       {/* Header */}
       <div>
-        <div class="font-mono text-xs text-[--color-accent] tracking-widest mb-2 uppercase">
+        <div class="font-mono text-xs text-(--color-accent) tracking-widest mb-2 uppercase">
           {t.tag}
         </div>
         <h2 class="text-3xl md:text-4xl font-bold mb-3">{t.title}</h2>
-        <p class="text-[--color-text-muted] text-lg max-w-2xl">{t.desc}</p>
+        <p class="text-(--color-text-muted) text-lg max-w-2xl">{t.desc}</p>
       </div>
 
       {/* Controls */}
-      <div class="border border-[--color-border] rounded-xl p-5 bg-[--color-bg-card]">
+      <div class="border border-(--color-border) rounded-xl p-5 bg-(--color-bg-card)">
         <div class="flex flex-col sm:flex-row items-start sm:items-end gap-4">
           <label class="flex items-center gap-2 cursor-pointer select-none">
             <input
               type="checkbox"
               checked={useDefaults}
               onChange={() => setUseDefaults(!useDefaults)}
-              class="accent-[--color-accent] w-4 h-4"
+              class="accent-(--color-accent) w-4 h-4"
             />
-            <span class="font-mono text-sm text-[--color-text-muted]">
+            <span class="font-mono text-sm text-(--color-text-muted)">
               {t.useDefault}
             </span>
           </label>
@@ -348,7 +348,7 @@ export default function StrategyComparison({ lang = "en" }: Props) {
           {!useDefaults && (
             <>
               <div>
-                <label class="font-mono text-xs text-[--color-text-muted] block mb-1">
+                <label class="font-mono text-xs text-(--color-text-muted) block mb-1">
                   {t.sl}
                 </label>
                 <input
@@ -362,11 +362,11 @@ export default function StrategyComparison({ lang = "en" }: Props) {
                       parseFloat((e.target as HTMLInputElement).value) || 10,
                     )
                   }
-                  class="w-20 bg-[--color-bg] border border-[--color-border] rounded px-2 py-1.5 text-sm font-mono text-[--color-text]"
+                  class="w-20 bg-(--color-bg) border border-(--color-border) rounded px-2 py-1.5 text-sm font-mono text-(--color-text)"
                 />
               </div>
               <div>
-                <label class="font-mono text-xs text-[--color-text-muted] block mb-1">
+                <label class="font-mono text-xs text-(--color-text-muted) block mb-1">
                   {t.tp}
                 </label>
                 <input
@@ -380,7 +380,7 @@ export default function StrategyComparison({ lang = "en" }: Props) {
                       parseFloat((e.target as HTMLInputElement).value) || 8,
                     )
                   }
-                  class="w-20 bg-[--color-bg] border border-[--color-border] rounded px-2 py-1.5 text-sm font-mono text-[--color-text]"
+                  class="w-20 bg-(--color-bg) border border-(--color-border) rounded px-2 py-1.5 text-sm font-mono text-(--color-text)"
                 />
               </div>
             </>
@@ -413,17 +413,17 @@ export default function StrategyComparison({ lang = "en" }: Props) {
       </div>
 
       {error && (
-        <div class="border border-[--color-red]/40 rounded-xl p-4 bg-[--color-red]/5">
-          <p class="font-mono text-sm text-[--color-red]">{error}</p>
+        <div class="border border-(--color-red)/40 rounded-xl p-4 bg-(--color-red)/5">
+          <p class="font-mono text-sm text-(--color-red)">{error}</p>
         </div>
       )}
 
       {/* Loading skeleton */}
       {isRunning && Object.keys(results).length === 0 && (
-        <div class="border border-[--color-border] rounded-xl p-8 bg-[--color-bg-card] text-center">
+        <div class="border border-(--color-border) rounded-xl p-8 bg-(--color-bg-card) text-center">
           <div class="animate-pulse space-y-3">
-            <div class="h-4 w-48 bg-[--color-border] rounded mx-auto" />
-            <div class="h-3 w-64 bg-[--color-border] rounded mx-auto" />
+            <div class="h-4 w-48 bg-(--color-border) rounded mx-auto" />
+            <div class="h-3 w-64 bg-(--color-border) rounded mx-auto" />
           </div>
         </div>
       )}
@@ -432,11 +432,11 @@ export default function StrategyComparison({ lang = "en" }: Props) {
       {Object.keys(results).length > 0 && (
         <>
           {/* Desktop table */}
-          <div class="hidden md:block overflow-x-auto border border-[--color-border] rounded-xl bg-[--color-bg-card]">
+          <div class="hidden md:block overflow-x-auto border border-(--color-border) rounded-xl bg-(--color-bg-card)">
             <table class="w-full font-mono text-sm">
               <caption class="sr-only">{t.title}</caption>
               <thead>
-                <tr class="border-b border-[--color-border] text-[--color-text-muted] text-xs uppercase tracking-wider">
+                <tr class="border-b border-(--color-border) text-(--color-text-muted) text-xs uppercase tracking-wider">
                   <th class="px-4 py-3 text-left">{t.strategy}</th>
                   <th class="px-3 py-3 text-center">{t.direction}</th>
                   <th class="px-3 py-3 text-right">{t.trades}</th>
@@ -457,7 +457,7 @@ export default function StrategyComparison({ lang = "en" }: Props) {
                   return (
                     <tr
                       key={preset.id}
-                      class="border-b border-[--color-border] last:border-0 hover:bg-[--color-bg-hover] transition-colors"
+                      class="border-b border-(--color-border) last:border-0 hover:bg-(--color-bg-hover) transition-colors"
                     >
                       <td class="px-4 py-3">
                         <div class="flex items-center gap-2">
@@ -472,7 +472,7 @@ export default function StrategyComparison({ lang = "en" }: Props) {
                           </span>
                           <a
                             href={`${strategyBase}/${preset.id}`}
-                            class="font-semibold text-[--color-text] hover:text-[--color-accent] transition-colors"
+                            class="font-semibold text-(--color-text) hover:text-(--color-accent) transition-colors"
                           >
                             {preset.name}
                           </a>
@@ -480,12 +480,12 @@ export default function StrategyComparison({ lang = "en" }: Props) {
                       </td>
                       <td class="px-3 py-3 text-center">
                         <span
-                          class={`text-xs ${preset.direction === "short" ? "text-[--color-red]" : "text-[--color-accent]"}`}
+                          class={`text-xs ${preset.direction === "short" ? "text-(--color-red)" : "text-(--color-accent)"}`}
                         >
                           {preset.direction.toUpperCase()}
                         </span>
                       </td>
-                      <td class="px-3 py-3 text-right text-[--color-text-muted]">
+                      <td class="px-3 py-3 text-right text-(--color-text-muted)">
                         {r.total_trades}
                       </td>
                       <td
@@ -507,25 +507,25 @@ export default function StrategyComparison({ lang = "en" }: Props) {
                         {r.total_return_pct > 0 ? "+" : ""}
                         {r.total_return_pct}%
                       </td>
-                      <td class="px-3 py-3 text-right text-[--color-red]">
+                      <td class="px-3 py-3 text-right text-(--color-red)">
                         {r.max_drawdown_pct}%
                       </td>
                       <td class="px-3 py-3 text-right text-xs">
-                        <span class="text-[--color-accent]">
+                        <span class="text-(--color-accent)">
                           {total > 0
                             ? Math.round((r.tp_count / total) * 100)
                             : 0}
                           %
                         </span>
                         {"/"}
-                        <span class="text-[--color-red]">
+                        <span class="text-(--color-red)">
                           {total > 0
                             ? Math.round((r.sl_count / total) * 100)
                             : 0}
                           %
                         </span>
                         {"/"}
-                        <span class="text-[--color-text-muted]">
+                        <span class="text-(--color-text-muted)">
                           {total > 0
                             ? Math.round((r.timeout_count / total) * 100)
                             : 0}
@@ -535,7 +535,7 @@ export default function StrategyComparison({ lang = "en" }: Props) {
                       <td class="px-3 py-3 text-center">
                         <a
                           href={`${strategyBase}/${preset.id}`}
-                          class="text-[--color-accent] text-xs hover:underline"
+                          class="text-(--color-accent) text-xs hover:underline"
                         >
                           {t.view} &rarr;
                         </a>
@@ -565,7 +565,7 @@ export default function StrategyComparison({ lang = "en" }: Props) {
                 <a
                   key={preset.id}
                   href={`${strategyBase}/${preset.id}`}
-                  class="block border border-[--color-border] rounded-xl p-4 bg-[--color-bg-card] hover:border-[--color-accent] transition-colors"
+                  class="block border border-(--color-border) rounded-xl p-4 bg-(--color-bg-card) hover:border-(--color-accent) transition-colors"
                 >
                   <div class="flex items-center gap-2 mb-3">
                     <span
@@ -581,15 +581,15 @@ export default function StrategyComparison({ lang = "en" }: Props) {
                       {preset.name}
                     </span>
                     <span
-                      class={`text-xs font-mono ml-auto ${preset.direction === "short" ? "text-[--color-red]" : "text-[--color-accent]"}`}
+                      class={`text-xs font-mono ml-auto ${preset.direction === "short" ? "text-(--color-red)" : "text-(--color-accent)"}`}
                     >
                       {preset.direction.toUpperCase()}
                     </span>
                   </div>
 
                   <div class="grid grid-cols-2 gap-2 font-mono text-xs sm:text-sm mb-3">
-                    <div class="p-1.5 sm:p-2 rounded bg-[--color-bg-tooltip] border border-[--color-border]">
-                      <div class="text-[0.625rem] sm:text-[0.6875rem] text-[--color-text-muted] uppercase">
+                    <div class="p-1.5 sm:p-2 rounded bg-(--color-bg-tooltip) border border-(--color-border)">
+                      <div class="text-[0.625rem] sm:text-[0.6875rem] text-(--color-text-muted) uppercase">
                         {t.winRate}
                       </div>
                       <div
@@ -599,8 +599,8 @@ export default function StrategyComparison({ lang = "en" }: Props) {
                         {r.win_rate}%
                       </div>
                     </div>
-                    <div class="p-1.5 sm:p-2 rounded bg-[--color-bg-tooltip] border border-[--color-border]">
-                      <div class="text-[0.625rem] sm:text-[0.6875rem] text-[--color-text-muted] uppercase">
+                    <div class="p-1.5 sm:p-2 rounded bg-(--color-bg-tooltip) border border-(--color-border)">
+                      <div class="text-[0.625rem] sm:text-[0.6875rem] text-(--color-text-muted) uppercase">
                         {t.pf}
                       </div>
                       <div
@@ -610,8 +610,8 @@ export default function StrategyComparison({ lang = "en" }: Props) {
                         {formatPF(r.profit_factor)}
                       </div>
                     </div>
-                    <div class="p-1.5 sm:p-2 rounded bg-[--color-bg-tooltip] border border-[--color-border]">
-                      <div class="text-[0.625rem] sm:text-[0.6875rem] text-[--color-text-muted] uppercase">
+                    <div class="p-1.5 sm:p-2 rounded bg-(--color-bg-tooltip) border border-(--color-border)">
+                      <div class="text-[0.625rem] sm:text-[0.6875rem] text-(--color-text-muted) uppercase">
                         {t.totalReturn}
                       </div>
                       <div
@@ -622,38 +622,38 @@ export default function StrategyComparison({ lang = "en" }: Props) {
                         {r.total_return_pct}%
                       </div>
                     </div>
-                    <div class="p-1.5 sm:p-2 rounded bg-[--color-bg-tooltip] border border-[--color-border]">
-                      <div class="text-[0.625rem] sm:text-[0.6875rem] text-[--color-text-muted] uppercase">
+                    <div class="p-1.5 sm:p-2 rounded bg-(--color-bg-tooltip) border border-(--color-border)">
+                      <div class="text-[0.625rem] sm:text-[0.6875rem] text-(--color-text-muted) uppercase">
                         {t.maxDD}
                       </div>
-                      <div class="font-bold text-[--color-red]">
+                      <div class="font-bold text-(--color-red)">
                         {r.max_drawdown_pct}%
                       </div>
                     </div>
                   </div>
 
                   {/* Exit bar */}
-                  <div class="flex h-1.5 rounded-full overflow-hidden bg-[--color-border] mb-1">
+                  <div class="flex h-1.5 rounded-full overflow-hidden bg-(--color-border) mb-1">
                     <div
-                      class="bg-[--color-accent]"
+                      class="bg-(--color-accent)"
                       style={{ width: `${tpPctVal}%` }}
                     />
                     <div
-                      class="bg-[--color-red]"
+                      class="bg-(--color-red)"
                       style={{ width: `${slPctVal}%` }}
                     />
                     <div
-                      class="bg-[--color-text-muted]"
+                      class="bg-(--color-text-muted)"
                       style={{ width: `${toPctVal}%` }}
                     />
                   </div>
                   <div class="flex gap-3 font-mono text-[0.6875rem]">
-                    <span class="text-[--color-accent]">TP {tpPctVal}%</span>
-                    <span class="text-[--color-red]">SL {slPctVal}%</span>
-                    <span class="text-[--color-text-muted]">
+                    <span class="text-(--color-accent)">TP {tpPctVal}%</span>
+                    <span class="text-(--color-red)">SL {slPctVal}%</span>
+                    <span class="text-(--color-text-muted)">
                       TO {toPctVal}%
                     </span>
-                    <span class="text-[--color-text-muted] ml-auto">
+                    <span class="text-(--color-text-muted) ml-auto">
                       {r.total_trades} {t.trades}
                     </span>
                   </div>
@@ -662,18 +662,18 @@ export default function StrategyComparison({ lang = "en" }: Props) {
             })}
           </div>
 
-          <div class="font-mono text-[0.6875rem] text-[--color-text-muted]">
+          <div class="font-mono text-[0.6875rem] text-(--color-text-muted)">
             {t.computeTime} {(totalTime / 1000).toFixed(1)}s
           </div>
         </>
       )}
 
       {/* CTA */}
-      <div class="mt-8 p-5 bg-[--color-bg-card] border border-[--color-border] rounded-xl">
+      <div class="mt-8 p-5 bg-(--color-bg-card) border border-(--color-border) rounded-xl">
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <div>
             <h3 class="font-bold text-sm mb-1">{t.ctaTitle}</h3>
-            <p class="text-[--color-text-muted] text-xs">{t.ctaDesc}</p>
+            <p class="text-(--color-text-muted) text-xs">{t.ctaDesc}</p>
           </div>
           <a
             href={lang === "ko" ? "/ko/simulate" : "/simulate"}
@@ -685,7 +685,7 @@ export default function StrategyComparison({ lang = "en" }: Props) {
         </div>
       </div>
 
-      <p class="font-mono text-[0.625rem] text-[--color-text-muted] leading-relaxed">
+      <p class="font-mono text-[0.625rem] text-(--color-text-muted) leading-relaxed">
         {t.disclaimer}
       </p>
     </div>
