@@ -87,10 +87,13 @@ function buildPath(pts: number[], width: number): string {
     .join(" ");
 }
 
+// SVG <animate> uses dur attr (not CSS animation-duration), so it bypasses the
+// global prefers-reduced-motion CSS rule. Evaluate once at module load (client only).
+const reducedMotion =
+  typeof window !== "undefined" &&
+  window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
 export default function SimulatorPreview() {
-  // SSR-visible: true so the big-number hero is the LCP candidate in initial HTML.
-  // AnimatedNumber animates from 0 client-side via requestAnimationFrame.
-  const [visible, setVisible] = useState(true);
   const [hoveredTrade, setHoveredTrade] = useState<number | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
 
@@ -132,22 +135,13 @@ export default function SimulatorPreview() {
           class="text-4xl md:text-5xl font-extrabold"
           style={{ color: "var(--color-up)" }}
         >
-          {visible ? (
-            <AnimatedNumber target={157.7} prefix="+" duration={2000} />
-          ) : (
-            "0.0"
-          )}
-          %
+          <AnimatedNumber target={157.7} prefix="+" duration={2000} />%
         </div>
         <div class="text-(--color-text-muted) text-sm mt-1.5">
           $1,000 →{" "}
-          {visible ? (
-            <span style={{ color: "var(--color-up)" }}>
-              $<AnimatedNumber target={2577} decimals={0} duration={2000} />
-            </span>
-          ) : (
-            "$1,000"
-          )}
+          <span style={{ color: "var(--color-up)" }}>
+            $<AnimatedNumber target={2577} decimals={0} duration={2000} />
+          </span>
         </div>
       </div>
 
@@ -180,7 +174,7 @@ export default function SimulatorPreview() {
             fill="url(#eq-grad)"
             stroke="none"
           >
-            {visible && (
+            {!reducedMotion && (
               <animate
                 attributeName="d"
                 from={`${flatPath} L400,60 L0,60 Z`}
@@ -198,7 +192,7 @@ export default function SimulatorPreview() {
             stroke-width="2"
             stroke-linecap="round"
           >
-            {visible && (
+            {!reducedMotion && (
               <animate
                 attributeName="d"
                 from={flatPath}
@@ -209,29 +203,26 @@ export default function SimulatorPreview() {
             )}
           </path>
           {/* Trade markers */}
-          {visible &&
-            TRADES.map((t, i) => (
-              <g
-                key={i}
-                onMouseEnter={() => setHoveredTrade(i)}
-                style={{ cursor: "pointer" }}
-              >
-                <circle cx={t.x} cy={t.y} r="6" fill="transparent" />
-                <circle
-                  cx={t.x}
-                  cy={t.y}
-                  r={hoveredTrade === i ? 4 : 2.5}
-                  fill={
-                    t.type === "short"
-                      ? "var(--color-accent)"
-                      : "var(--color-up)"
-                  }
-                  stroke="var(--color-bg)"
-                  stroke-width="1"
-                  style={{ transition: "r 0.2s" }}
-                />
-              </g>
-            ))}
+          {TRADES.map((t, i) => (
+            <g
+              key={i}
+              onMouseEnter={() => setHoveredTrade(i)}
+              style={{ cursor: "pointer" }}
+            >
+              <circle cx={t.x} cy={t.y} r="6" fill="transparent" />
+              <circle
+                cx={t.x}
+                cy={t.y}
+                r={hoveredTrade === i ? 4 : 2.5}
+                fill={
+                  t.type === "short" ? "var(--color-accent)" : "var(--color-up)"
+                }
+                stroke="var(--color-bg)"
+                stroke-width="1"
+                style={{ transition: "r 0.2s" }}
+              />
+            </g>
+          ))}
         </svg>
         {/* Trade tooltip */}
         {hoveredTrade !== null && (
@@ -268,16 +259,12 @@ export default function SimulatorPreview() {
               {s.label}
             </div>
             <div class="text-sm font-bold mt-0.5" style={{ color: s.color }}>
-              {visible ? (
-                <AnimatedNumber
-                  target={s.value}
-                  decimals={s.value % 1 === 0 ? 0 : s.suffix === "%" ? 1 : 2}
-                  prefix={s.prefix || ""}
-                  duration={1800}
-                />
-              ) : (
-                "0"
-              )}
+              <AnimatedNumber
+                target={s.value}
+                decimals={s.value % 1 === 0 ? 0 : s.suffix === "%" ? 1 : 2}
+                prefix={s.prefix || ""}
+                duration={1800}
+              />
               {s.suffix}
             </div>
           </div>

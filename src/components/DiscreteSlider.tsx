@@ -1,4 +1,4 @@
-import { useRef, useCallback } from 'preact/hooks';
+import { useRef, useCallback } from "preact/hooks";
 
 interface DiscreteSliderProps {
   label: string;
@@ -14,7 +14,7 @@ export default function DiscreteSlider({
   values,
   value,
   defaultValue,
-  unit = '%',
+  unit = "%",
   onChange,
 }: DiscreteSliderProps) {
   const trackRef = useRef<HTMLDivElement>(null);
@@ -30,7 +30,7 @@ export default function DiscreteSlider({
       const idx = Math.round(pct * (values.length - 1));
       onChange(values[idx]);
     },
-    [values, onChange]
+    [values, onChange],
   );
 
   const handlePointerDown = useCallback(
@@ -38,29 +38,29 @@ export default function DiscreteSlider({
       e.preventDefault();
       const move = (ev: PointerEvent) => resolveIndex(ev.clientX);
       const up = () => {
-        document.removeEventListener('pointermove', move);
-        document.removeEventListener('pointerup', up);
+        document.removeEventListener("pointermove", move);
+        document.removeEventListener("pointerup", up);
       };
-      document.addEventListener('pointermove', move);
-      document.addEventListener('pointerup', up);
+      document.addEventListener("pointermove", move);
+      document.addEventListener("pointerup", up);
       resolveIndex(e.clientX);
     },
-    [resolveIndex]
+    [resolveIndex],
   );
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
       let idx = currentIndex;
-      if (e.key === 'ArrowRight' || e.key === 'ArrowUp') {
+      if (e.key === "ArrowRight" || e.key === "ArrowUp") {
         idx = Math.min(values.length - 1, currentIndex + 1);
         e.preventDefault();
-      } else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') {
+      } else if (e.key === "ArrowLeft" || e.key === "ArrowDown") {
         idx = Math.max(0, currentIndex - 1);
         e.preventDefault();
-      } else if (e.key === 'Home') {
+      } else if (e.key === "Home") {
         idx = 0;
         e.preventDefault();
-      } else if (e.key === 'End') {
+      } else if (e.key === "End") {
         idx = values.length - 1;
         e.preventDefault();
       } else {
@@ -68,14 +68,17 @@ export default function DiscreteSlider({
       }
       onChange(values[idx]);
     },
-    [values, currentIndex, onChange]
+    [values, currentIndex, onChange],
   );
 
   return (
     <div class="mb-5">
       <div class="flex justify-between items-center mb-2">
         <span class="font-mono text-xs text-(--color-text-muted)">{label}</span>
-        <span class="font-mono text-lg font-bold text-(--color-accent)">{value}{unit}</span>
+        <span class="font-mono text-lg font-bold text-(--color-accent)">
+          {value}
+          {unit}
+        </span>
       </div>
 
       {/* Track */}
@@ -90,7 +93,7 @@ export default function DiscreteSlider({
         aria-valuetext={`${value}${unit}`}
         onPointerDown={handlePointerDown}
         onKeyDown={handleKeyDown}
-        class="relative h-10 cursor-pointer flex items-center touch-none outline-none focus:ring-1 focus:ring-(--color-accent) rounded"
+        class="relative h-10 cursor-pointer flex items-center touch-none outline-none focus-visible:ring-2 focus-visible:ring-(--color-accent) focus-visible:ring-offset-2 focus-visible:ring-offset-(--color-bg) rounded"
       >
         {/* Background */}
         <div class="absolute inset-x-0 h-1 bg-(--color-border) rounded-sm" />
@@ -106,7 +109,9 @@ export default function DiscreteSlider({
           const left = (i / (values.length - 1)) * 100;
           const isDefault = v === defaultValue;
           const isActive = i <= currentIndex;
-          const dotSize = isDefault ? 'w-2.5 h-2.5 border-2 border-(--color-accent)' : 'w-2 h-2';
+          const dotSize = isDefault
+            ? "w-2.5 h-2.5 border-2 border-(--color-accent)"
+            : "w-2 h-2";
           return (
             <div
               key={v}
@@ -114,10 +119,13 @@ export default function DiscreteSlider({
               style={{ left: `${left}%` }}
             >
               <div
-                class={`rounded-full transition-colors duration-100 ${dotSize} ${isActive ? 'bg-(--color-accent)' : 'bg-(--color-border)'}`}
+                class={`rounded-full transition-colors duration-100 ${dotSize} ${isActive ? "bg-(--color-accent)" : "bg-(--color-border)"}`}
               />
-              <span class={`font-mono text-[0.6875rem] mt-0.5 whitespace-nowrap ${isDefault ? 'text-(--color-accent)' : 'text-(--color-text-muted)'}`}>
-                {v}{isDefault ? '*' : ''}
+              <span
+                class={`font-mono text-[0.6875rem] mt-0.5 whitespace-nowrap ${isDefault ? "text-(--color-accent)" : "text-(--color-text-muted)"}`}
+              >
+                {v}
+                {isDefault ? "*" : ""}
               </span>
             </div>
           );
