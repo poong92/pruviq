@@ -79,7 +79,7 @@ export const ko: Record<TranslationKey, string> = {
   "problem.card1_source": "출처: PRUVIQ 검증 파이프라인, 2024-2026",
   "problem.card2_title": "4개 전략 제거",
   "problem.card2_desc":
-    "{coins}개 이상의 코인, 2년 이상 데이터로 5개 전략을 테스트했습니다. 4개가 탈락했고, 저희는 그 실패를 모두 공개했습니다. 대부분의 플랫폼은 이걸 숨깁니다. 저희는 그것을 핵심 기능으로 만들었습니다.",
+    "{coins}개 이상의 코인, 2년 이상 데이터로 5개 전략을 테스트했습니다. 4개가 탈락했고, 저희는 그 실패를 모두 공개했습니다. 대부분의 플랫폼은 이걸 숨깁니다. 저희는 이를 차별점으로 만들었습니다.",
   "problem.card2_source": "출처: PRUVIQ 전략 라이브러리 — 모든 결과 공개",
   "problem.card3_title": "전문가도 틀렸습니다",
   "problem.card3_desc":
@@ -125,7 +125,7 @@ export const ko: Record<TranslationKey, string> = {
   "evidence.publish3": "전략 변경 내역과 각 결정의 근거 데이터",
   "evidence.publish4": "실패한 실험과 중단 사유",
   "evidence.publish5": "리스크 파라미터와 포지션 사이징",
-  "evidence.nopromise_tag": "하지 않는 약속",
+  "evidence.nopromise_tag": "약속하지 않는 것들",
   "evidence.nopromise1": "보장된 수익 (누구도 할 수 없음)",
   "evidence.nopromise2": '레버리지로 "빠른 부자 되기"',
   "evidence.nopromise3": '비밀 독점 "AI" 마법',
@@ -327,7 +327,7 @@ export const ko: Record<TranslationKey, string> = {
     "* 기본 파라미터 (SL=10%, TP=8%)는 현재 검증된 라이브 설정입니다. 시뮬레이션은 0.05% 선물 수수료 + 0.02% 슬리피지를 포함합니다. 과거 성과는 미래 결과를 보장하지 않습니다.",
   "demo.live_badge": "현재 라이브 설정",
   "demo.total_return": "총 수익률",
-  "demo.trades_simulated": "건 시뮬레이션됨",
+  "demo.trades_simulated": "건 거래",
   "demo.interactive_tag": "인터랙티브 데모",
   "demo.hero_title": "직접 확인하세요",
   "demo.hero_desc":
