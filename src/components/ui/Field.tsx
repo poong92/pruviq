@@ -130,35 +130,35 @@ export default function Field({
   const widthCls = fullWidth ? "w-full" : "";
 
   const inputBaseCls =
-    "block w-full bg-[--color-bg-card] border rounded font-mono " +
-    "text-[--color-text] placeholder:text-[--color-text-muted] " +
+    "block w-full bg-(--color-bg-card) border rounded font-mono " +
+    "text-(--color-text) placeholder:text-(--color-text-muted) " +
     "transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 " +
-    "focus:ring-offset-[--color-bg] " +
+    "focus:ring-offset-(--color-bg) " +
     "disabled:opacity-50 disabled:cursor-not-allowed " +
-    "read-only:bg-[--color-bg-hover] read-only:cursor-default";
+    "read-only:bg-(--color-bg-hover) read-only:cursor-default";
 
   const inputStateCls = hasError
-    ? "border-[--color-down] focus:border-[--color-down] focus:ring-[--color-down]"
-    : "border-[--color-border] focus:border-[--color-accent] focus:ring-[--color-accent]";
+    ? "border-(--color-down) focus:border-(--color-down) focus:ring-(--color-down)"
+    : "border-(--color-border) focus:border-(--color-accent) focus:ring-(--color-accent)";
 
   const inputCls =
     `${inputBaseCls} ${inputSizeClasses[size]} ${inputStateCls} ${prefix || suffix ? "" : ""} ${inputClass}`.trim();
 
-  const labelCls = `font-mono uppercase tracking-wider mb-1 block ${labelSizeClasses[size]} ${disabled ? "opacity-50" : "text-[--color-text-muted]"}`;
+  const labelCls = `font-mono uppercase tracking-wider mb-1 block ${labelSizeClasses[size]} ${disabled ? "opacity-50" : "text-(--color-text-muted)"}`;
 
   return (
     <div class={`${widthCls} ${className}`.trim()}>
       <label htmlFor={id} class={labelCls}>
         {label}
         {required && (
-          <span class="text-[--color-down] ml-0.5" aria-hidden="true">
+          <span class="text-(--color-down) ml-0.5" aria-hidden="true">
             *
           </span>
         )}
       </label>
       <div class="relative">
         {prefix && (
-          <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-[--color-text-muted] text-sm">
+          <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-(--color-text-muted) text-sm">
             {prefix}
           </span>
         )}
@@ -191,7 +191,7 @@ export default function Field({
           {...rest}
         />
         {suffix && (
-          <span class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-[--color-text-muted] text-sm">
+          <span class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-(--color-text-muted) text-sm">
             {suffix}
           </span>
         )}
@@ -201,7 +201,7 @@ export default function Field({
           id={errorId}
           role="alert"
           aria-live="assertive"
-          class="mt-1 text-xs font-mono text-[--color-down]"
+          class="mt-1 text-xs font-mono text-(--color-down)"
         >
           {error}
         </p>
@@ -209,7 +209,7 @@ export default function Field({
       {helper && !error && (
         <p
           id={helperId}
-          class="mt-1 text-[11px] font-mono text-[--color-text-muted]"
+          class="mt-1 text-[11px] font-mono text-(--color-text-muted)"
         >
           {helper}
         </p>

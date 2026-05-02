@@ -186,7 +186,7 @@ export default function OptimizePanel({
         <table class="w-full text-xs font-mono border-collapse">
           <thead>
             <tr>
-              <th class="p-2 text-left text-[--color-text-muted]">
+              <th class="p-2 text-left text-(--color-text-muted)">
                 {lang === "ko" ? "SL\\ TP→" : "SL\\ TP→"}
               </th>
               {tp_steps.map((tp) => (

@@ -24,17 +24,17 @@ const rows = [
   <!-- HERO -->
   <section class="pt-2 pb-16">
     <div class="max-w-5xl mx-auto px-4">
-      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('vs.tag')}</p>
+      <p class="font-mono text-(--color-accent) text-sm mb-2 tracking-wider">{t('vs.tag')}</p>
       <h1 class="text-3xl md:text-5xl font-bold mb-4">
         {t('vs.title')}
-        <span class="block text-lg md:text-2xl font-normal text-[--color-text-muted] mt-2">{t('vs.subtitle')}</span>
+        <span class="block text-lg md:text-2xl font-normal text-(--color-text-muted) mt-2">{t('vs.subtitle')}</span>
       </h1>
-      <p class="text-[--color-text-muted] text-lg max-w-2xl mb-6">
+      <p class="text-(--color-text-muted) text-lg max-w-2xl mb-6">
         {t('vs.desc')}
       </p>
-      <div class="border border-[--color-accent]/30 rounded-lg p-4 bg-[--color-accent]/10 border-x border-[--color-accent]/20 max-w-2xl">
-        <p class="font-mono text-[--color-accent] text-xs font-bold mb-1">{t('vs.tldr')}</p>
-        <p class="text-sm text-[--color-text-muted]">{t('vs.tldr_text')}</p>
+      <div class="border border-(--color-accent)/30 rounded-lg p-4 bg-(--color-accent)/10 border-x border-(--color-accent)/20 max-w-2xl">
+        <p class="font-mono text-(--color-accent) text-xs font-bold mb-1">{t('vs.tldr')}</p>
+        <p class="text-sm text-(--color-text-muted)">{t('vs.tldr_text')}</p>
       </div>
     </div>
   </section>
@@ -48,17 +48,17 @@ const rows = [
         <table class="w-full text-sm">
           <caption class="sr-only">PRUVIQ vs TradingView 기능 비교표</caption>
           <thead>
-            <tr class="border-b border-[--color-border]">
-              <th class="text-left py-3 px-4 font-mono text-[--color-text-muted] text-xs uppercase tracking-wider w-1/4">{t('vs.feature')}</th>
-              <th class="text-left py-3 px-4 font-mono text-[--color-accent] text-xs uppercase tracking-wider w-[37.5%]">{t('vs.pruviq')}</th>
-              <th class="text-left py-3 px-4 font-mono text-[--color-text-muted] text-xs uppercase tracking-wider w-[37.5%]">{t('vs.tradingview')}</th>
+            <tr class="border-b border-(--color-border)">
+              <th class="text-left py-3 px-4 font-mono text-(--color-text-muted) text-xs uppercase tracking-wider w-1/4">{t('vs.feature')}</th>
+              <th class="text-left py-3 px-4 font-mono text-(--color-accent) text-xs uppercase tracking-wider w-[37.5%]">{t('vs.pruviq')}</th>
+              <th class="text-left py-3 px-4 font-mono text-(--color-text-muted) text-xs uppercase tracking-wider w-[37.5%]">{t('vs.tradingview')}</th>
             </tr>
           </thead>
           <tbody>
             {rows.map((row) => (
-              <tr class={`border-b border-[--color-border] ${row.highlight ? 'bg-[--color-accent]/10 border-x border-[--color-accent]/20' : ''}`}>
-                <td class="py-3.5 px-4 font-medium text-[--color-text-secondary] text-sm uppercase tracking-wide">{row.label}</td>
-                <td class={`py-3.5 px-4 text-sm ${row.win === 'p' ? 'text-[--color-up]' : row.win === 'both' ? 'text-[--color-accent]' : 'text-[--color-text-muted]'}`}>
+              <tr class={`border-b border-(--color-border) ${row.highlight ? 'bg-(--color-accent)/10 border-x border-(--color-accent)/20' : ''}`}>
+                <td class="py-3.5 px-4 font-medium text-(--color-text-secondary) text-sm uppercase tracking-wide">{row.label}</td>
+                <td class={`py-3.5 px-4 text-sm ${row.win === 'p' ? 'text-(--color-up)' : row.win === 'both' ? 'text-(--color-accent)' : 'text-(--color-text-muted)'}`}>
                   <span class="flex items-start gap-2">
                     <span class="mt-0.5 shrink-0 text-base leading-none" aria-hidden="true">
                       {row.win === 'p' ? '✓' : row.win === 'both' ? '~' : '—'}
@@ -66,7 +66,7 @@ const rows = [
                     <span>{row.p}</span>
                   </span>
                 </td>
-                <td class={`py-3.5 px-4 text-sm ${row.win === 'tv' ? 'text-[--color-up]' : row.win === 'both' ? 'text-[--color-accent]' : 'text-[--color-text-muted]'}`}>
+                <td class={`py-3.5 px-4 text-sm ${row.win === 'tv' ? 'text-(--color-up)' : row.win === 'both' ? 'text-(--color-accent)' : 'text-(--color-text-muted)'}`}>
                   <span class="flex items-start gap-2">
                     <span class="mt-0.5 shrink-0 text-base leading-none" aria-hidden="true">
                       {row.win === 'tv' ? '✓' : row.win === 'both' ? '~' : '—'}
@@ -83,16 +83,16 @@ const rows = [
       <!-- Mobile cards -->
       <div class="md:hidden space-y-4">
         {rows.map((row) => (
-          <div class={`border border-[--color-border] rounded-lg p-4 ${row.highlight ? 'bg-[--color-accent]/10 border-x border-[--color-accent]/20 border-[--color-accent]/30' : 'bg-[--color-bg-card]'}`}>
-            <p class="font-mono text-xs text-[--color-text-muted] uppercase tracking-wider mb-2">{row.label}</p>
+          <div class={`border border-(--color-border) rounded-lg p-4 ${row.highlight ? 'bg-(--color-accent)/10 border-x border-(--color-accent)/20 border-(--color-accent)/30' : 'bg-(--color-bg-card)'}`}>
+            <p class="font-mono text-xs text-(--color-text-muted) uppercase tracking-wider mb-2">{row.label}</p>
             <div class="grid grid-cols-2 gap-3">
               <div>
-                <p class="text-xs text-[--color-accent] font-mono mb-1">PRUVIQ</p>
-                <p class="text-sm text-[--color-accent]">{row.p}</p>
+                <p class="text-xs text-(--color-accent) font-mono mb-1">PRUVIQ</p>
+                <p class="text-sm text-(--color-accent)">{row.p}</p>
               </div>
               <div>
-                <p class="text-xs text-[--color-text-muted] font-mono mb-1">{t('vs.tradingview')}</p>
-                <p class="text-sm text-[--color-text-muted]">{row.tv}</p>
+                <p class="text-xs text-(--color-text-muted) font-mono mb-1">{t('vs.tradingview')}</p>
+                <p class="text-sm text-(--color-text-muted)">{row.tv}</p>
               </div>
             </div>
           </div>
@@ -107,51 +107,51 @@ const rows = [
     <div class="max-w-5xl mx-auto px-4">
       <div class="grid md:grid-cols-2 gap-8">
         <!-- Choose PRUVIQ -->
-        <div class="border border-[--color-accent]/30 rounded-lg p-6 bg-[--color-bg-card]">
+        <div class="border border-(--color-accent)/30 rounded-lg p-6 bg-(--color-bg-card)">
           <div class="flex items-center gap-3 mb-4">
-            <span class="inline-flex items-center justify-center w-8 h-8 rounded bg-[--color-accent]/10 text-[--color-accent] font-mono text-sm font-bold shrink-0">P</span>
+            <span class="inline-flex items-center justify-center w-8 h-8 rounded bg-(--color-accent)/10 text-(--color-accent) font-mono text-sm font-bold shrink-0">P</span>
             <h3 class="font-bold text-lg">{t('vs.when_pruviq')}</h3>
           </div>
           <ul class="space-y-3">
             <li class="flex gap-2 text-sm">
-              <span class="text-[--color-accent] shrink-0 mt-0.5">+</span>
+              <span class="text-(--color-accent) shrink-0 mt-0.5">+</span>
               <span>{t('vs.when_pruviq_1')}</span>
             </li>
             <li class="flex gap-2 text-sm">
-              <span class="text-[--color-accent] shrink-0 mt-0.5">+</span>
+              <span class="text-(--color-accent) shrink-0 mt-0.5">+</span>
               <span>{t('vs.when_pruviq_2')}</span>
             </li>
             <li class="flex gap-2 text-sm">
-              <span class="text-[--color-accent] shrink-0 mt-0.5">+</span>
+              <span class="text-(--color-accent) shrink-0 mt-0.5">+</span>
               <span>{t('vs.when_pruviq_3')}</span>
             </li>
             <li class="flex gap-2 text-sm">
-              <span class="text-[--color-accent] shrink-0 mt-0.5">+</span>
+              <span class="text-(--color-accent) shrink-0 mt-0.5">+</span>
               <span>{t('vs.when_pruviq_4')}</span>
             </li>
           </ul>
         </div>
 
         <!-- Choose TradingView -->
-        <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card]">
+        <div class="border border-(--color-border) rounded-lg p-6 bg-(--color-bg-card)">
           <div class="flex items-center gap-3 mb-4">
-            <span class="inline-flex items-center justify-center w-8 h-8 rounded bg-[var(--color-bg-subtle)] text-[--color-text-muted] font-mono text-sm font-bold shrink-0">TV</span>
+            <span class="inline-flex items-center justify-center w-8 h-8 rounded bg-[var(--color-bg-subtle)] text-(--color-text-muted) font-mono text-sm font-bold shrink-0">TV</span>
             <h3 class="font-bold text-lg">{t('vs.when_tv')}</h3>
           </div>
           <ul class="space-y-3">
-            <li class="flex gap-2 text-sm text-[--color-text-muted]">
+            <li class="flex gap-2 text-sm text-(--color-text-muted)">
               <span class="shrink-0 mt-0.5">+</span>
               <span>{t('vs.when_tv_1')}</span>
             </li>
-            <li class="flex gap-2 text-sm text-[--color-text-muted]">
+            <li class="flex gap-2 text-sm text-(--color-text-muted)">
               <span class="shrink-0 mt-0.5">+</span>
               <span>{t('vs.when_tv_2')}</span>
             </li>
-            <li class="flex gap-2 text-sm text-[--color-text-muted]">
+            <li class="flex gap-2 text-sm text-(--color-text-muted)">
               <span class="shrink-0 mt-0.5">+</span>
               <span>{t('vs.when_tv_3')}</span>
             </li>
-            <li class="flex gap-2 text-sm text-[--color-text-muted]">
+            <li class="flex gap-2 text-sm text-(--color-text-muted)">
               <span class="shrink-0 mt-0.5">+</span>
               <span>{t('vs.when_tv_4')}</span>
             </li>
@@ -166,20 +166,20 @@ const rows = [
   <section class="py-20 reveal">
     <div class="max-w-5xl mx-auto px-4 text-center">
       <h2 class="text-3xl md:text-4xl font-bold mb-4">
-        <span class="text-[--color-accent]">{t('vs.cta_title')}</span>
+        <span class="text-(--color-accent)">{t('vs.cta_title')}</span>
       </h2>
-      <p class="text-[--color-text-muted] text-lg mb-8 max-w-xl mx-auto">{t('vs.cta_desc')}</p>
+      <p class="text-(--color-text-muted) text-lg mb-8 max-w-xl mx-auto">{t('vs.cta_desc')}</p>
       <div class="flex flex-col sm:flex-row gap-4 justify-center mb-4">
         <a href="/ko/simulate"
            class="btn btn-primary btn-lg">
           {t('cta.button1')} &rarr;
         </a>
         <a href="/ko/strategies"
-           class="btn btn-ghost btn-lg hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
+           class="btn btn-ghost btn-lg hover:border-(--color-accent) hover:text-(--color-accent) transition-colors">
           {t('hero.cta1')}
         </a>
       </div>
-      <p class="text-[--color-text-muted] text-xs mt-6 max-w-lg mx-auto">{t('cta.disclaimer')}</p>
+      <p class="text-(--color-text-muted) text-xs mt-6 max-w-lg mx-auto">{t('cta.disclaimer')}</p>
     </div>
   </section>
 

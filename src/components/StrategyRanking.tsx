@@ -29,9 +29,9 @@ function SectionHeader({
 }) {
   return (
     <div class="mb-4">
-      <h2 class="text-lg font-bold text-[--color-text]">{title}</h2>
+      <h2 class="text-lg font-bold text-(--color-text)">{title}</h2>
       {subtitle && (
-        <p class="text-xs text-[--color-text-muted] font-mono mt-0.5">
+        <p class="text-xs text-(--color-text-muted) font-mono mt-0.5">
           {subtitle}
         </p>
       )}
@@ -41,19 +41,19 @@ function SectionHeader({
 
 function SkeletonCard() {
   return (
-    <div class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card] animate-pulse">
+    <div class="border border-(--color-border) rounded-lg p-4 bg-(--color-bg-card) animate-pulse">
       <div class="flex items-start gap-2 mb-3">
-        <div class="w-7 h-7 rounded bg-[--color-border]" />
+        <div class="w-7 h-7 rounded bg-(--color-border)" />
         <div class="flex-1 space-y-1.5">
-          <div class="h-3.5 rounded bg-[--color-border] w-3/4" />
-          <div class="h-3 rounded bg-[--color-border] w-1/2" />
+          <div class="h-3.5 rounded bg-(--color-border) w-3/4" />
+          <div class="h-3 rounded bg-(--color-border) w-1/2" />
         </div>
       </div>
       <div class="grid grid-cols-3 gap-2">
         {[0, 1, 2].map((i) => (
           <div key={i} class="space-y-1">
-            <div class="h-2.5 rounded bg-[--color-border] w-10" />
-            <div class="h-5 rounded bg-[--color-border] w-16" />
+            <div class="h-2.5 rounded bg-(--color-border) w-10" />
+            <div class="h-5 rounded bg-(--color-border) w-16" />
           </div>
         ))}
       </div>
@@ -242,20 +242,20 @@ export function StrategyRanking({ lang = "en" }: { lang?: Lang }) {
 
   if (error) {
     return (
-      <div class="rounded-lg border border-[--color-yellow]/20 p-6 bg-[--color-yellow]/5 text-center my-4">
-        <p class="text-[--color-yellow] font-medium mb-2">
+      <div class="rounded-lg border border-(--color-yellow)/20 p-6 bg-(--color-yellow)/5 text-center my-4">
+        <p class="text-(--color-yellow) font-medium mb-2">
           {lang === "ko"
             ? "랭킹 데이터를 일시적으로 불러올 수 없습니다"
             : "Rankings temporarily unavailable"}
         </p>
-        <p class="text-sm text-[--color-text-muted] mb-4">
+        <p class="text-sm text-(--color-text-muted) mb-4">
           {lang === "ko"
             ? "일일 랭킹은 매일 09:00 KST에 업데이트됩니다. 새로고침하거나 잠시 후 다시 확인해 주세요."
             : "Daily rankings update at 09:00 KST. Try refreshing or check back shortly."}
         </p>
         <button
           onClick={() => window.location.reload()}
-          class="border border-[--color-border] text-[--color-text-muted] px-4 py-2 rounded font-semibold text-xs hover:border-[--color-accent] hover:text-[--color-accent] transition-colors cursor-pointer"
+          class="border border-(--color-border) text-(--color-text-muted) px-4 py-2 rounded font-semibold text-xs hover:border-(--color-accent) hover:text-(--color-accent) transition-colors cursor-pointer"
         >
           &#8635; {lang === "ko" ? "새로고침" : "Refresh"}
         </button>
@@ -269,14 +269,14 @@ export function StrategyRanking({ lang = "en" }: { lang?: Lang }) {
       <div class="space-y-3">
         {/* Period tabs */}
         <div class="flex flex-wrap gap-1.5 items-center">
-          <span class="text-xs font-mono text-[--color-text-muted] mr-1">
+          <span class="text-xs font-mono text-(--color-text-muted) mr-1">
             {lbl.periodLabel}:
           </span>
           {isFirstLoad
             ? [0, 1, 2].map((i) => (
                 <div
                   key={i}
-                  class="w-16 h-6 rounded bg-[--color-border] animate-pulse"
+                  class="w-16 h-6 rounded bg-(--color-border) animate-pulse"
                 />
               ))
             : availablePeriods.map((p) => {
@@ -289,8 +289,8 @@ export function StrategyRanking({ lang = "en" }: { lang?: Lang }) {
                     disabled={loading}
                     class={`px-3 py-1 rounded font-mono text-xs border transition-colors disabled:cursor-wait ${
                       active
-                        ? "bg-[--color-accent] text-[--color-bg] border-[--color-accent] font-semibold"
-                        : "border-[--color-border] text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent]"
+                        ? "bg-(--color-accent) text-(--color-bg) border-(--color-accent) font-semibold"
+                        : "border-(--color-border) text-(--color-text-muted) hover:border-(--color-accent) hover:text-(--color-accent)"
                     }`}
                   >
                     {label}
@@ -299,20 +299,20 @@ export function StrategyRanking({ lang = "en" }: { lang?: Lang }) {
               })}
           {/* Subtle refresh indicator — visible only during re-fetch (not first load) */}
           {loading && !isFirstLoad && (
-            <span class="inline-block w-3 h-3 border-2 border-[--color-accent] border-t-transparent rounded-full animate-spin ml-1" />
+            <span class="inline-block w-3 h-3 border-2 border-(--color-accent) border-t-transparent rounded-full animate-spin ml-1" />
           )}
         </div>
 
         {/* Group filter */}
         <div class="flex flex-wrap gap-1.5 items-center">
-          <span class="text-xs font-mono text-[--color-text-muted] mr-1">
+          <span class="text-xs font-mono text-(--color-text-muted) mr-1">
             {lbl.groupLabel}:
           </span>
           {isFirstLoad
             ? [0, 1, 2, 3].map((i) => (
                 <div
                   key={i}
-                  class="w-16 h-6 rounded bg-[--color-border] animate-pulse"
+                  class="w-16 h-6 rounded bg-(--color-border) animate-pulse"
                 />
               ))
             : availableGroups.map((g) => {
@@ -325,8 +325,8 @@ export function StrategyRanking({ lang = "en" }: { lang?: Lang }) {
                     disabled={loading}
                     class={`px-3 py-1 rounded font-mono text-xs border transition-colors disabled:cursor-wait ${
                       active
-                        ? "bg-[--color-accent] text-[--color-bg] border-[--color-accent] font-semibold"
-                        : "border-[--color-border] text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent]"
+                        ? "bg-(--color-accent) text-(--color-bg) border-(--color-accent) font-semibold"
+                        : "border-(--color-border) text-(--color-text-muted) hover:border-(--color-accent) hover:text-(--color-accent)"
                     }`}
                   >
                     {label}
@@ -338,8 +338,8 @@ export function StrategyRanking({ lang = "en" }: { lang?: Lang }) {
 
       {/* Loading spinner — first load only (re-fetch keeps cards visible above) */}
       {isFirstLoad && (
-        <div class="flex items-center gap-2 text-[--color-text-muted] text-sm font-mono py-2">
-          <span class="animate-spin inline-block w-4 h-4 border-2 border-[--color-accent] border-t-transparent rounded-full" />
+        <div class="flex items-center gap-2 text-(--color-text-muted) text-sm font-mono py-2">
+          <span class="animate-spin inline-block w-4 h-4 border-2 border-(--color-accent) border-t-transparent rounded-full" />
           {lbl.loading}
         </div>
       )}
@@ -354,8 +354,8 @@ export function StrategyRanking({ lang = "en" }: { lang?: Lang }) {
       >
         <SectionHeader title={lbl.best3Title} subtitle={lbl.best3Sub} />
         {!loading && data?.top3?.[0]?.low_sample && (
-          <div class="mb-3 border border-[--color-yellow] rounded-lg px-3 py-2.5 bg-[--color-yellow]/10">
-            <p class="text-[--color-yellow] text-xs font-mono font-semibold">
+          <div class="mb-3 border border-(--color-yellow) rounded-lg px-3 py-2.5 bg-(--color-yellow)/10">
+            <p class="text-(--color-yellow) text-xs font-mono font-semibold">
               ⚠️ {lbl.top1LowSampleAlert(data.top3[0].total_trades)}
             </p>
           </div>
@@ -365,8 +365,8 @@ export function StrategyRanking({ lang = "en" }: { lang?: Lang }) {
           data.low_sample_count != null &&
           data.low_sample_count > 0 &&
           !data.top3?.[0]?.low_sample && (
-            <div class="mb-3 border border-[--color-yellow]/30 rounded-lg px-3 py-2 bg-[--color-yellow]/5">
-              <p class="text-[--color-yellow] text-xs font-mono">
+            <div class="mb-3 border border-(--color-yellow)/30 rounded-lg px-3 py-2 bg-(--color-yellow)/5">
+              <p class="text-(--color-yellow) text-xs font-mono">
                 ⚠️ {lbl.lowSampleWarning(data.low_sample_count)}
               </p>
             </div>
@@ -435,20 +435,20 @@ export function StrategyRanking({ lang = "en" }: { lang?: Lang }) {
 
       {/* Summary bar */}
       {!loading && data && (
-        <div class="border border-[--color-border] rounded-lg px-5 py-4 bg-[--color-bg-card] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <p class="font-mono text-sm text-[--color-text]">
+        <div class="border border-(--color-border) rounded-lg px-5 py-4 bg-(--color-bg-card) flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <p class="font-mono text-sm text-(--color-text)">
             {lbl.wr50Label}{" "}
-            <span class="text-[--color-accent] font-bold">
+            <span class="text-(--color-accent) font-bold">
               {data.summary.wr_50plus}
             </span>
-            <span class="text-[--color-text-muted]">
+            <span class="text-(--color-text-muted)">
               {" "}
               / {data.summary.total} {lbl.totalUnit}
             </span>
           </p>
           <a
             href={lang === "ko" ? "/ko/simulate" : "/simulate"}
-            class="shrink-0 inline-flex items-center gap-2 bg-[--color-accent] text-[--color-bg] px-5 py-2 rounded font-semibold text-sm hover:bg-[--color-accent-dim] transition-colors"
+            class="shrink-0 inline-flex items-center gap-2 bg-(--color-accent) text-(--color-bg) px-5 py-2 rounded font-semibold text-sm hover:bg-(--color-accent-dim) transition-colors"
           >
             {lbl.simCta} &rarr;
           </a>

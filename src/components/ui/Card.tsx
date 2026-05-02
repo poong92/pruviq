@@ -1,8 +1,8 @@
 /**
  * Card.tsx — Typed card primitive (W1-1c).
  *
- * Replaces the ~30+ inline `class="rounded-lg border border-[--color-border]
- * bg-[--color-bg-card] ..."` patterns repeated across React/Preact components.
+ * Replaces the ~30+ inline `class="rounded-lg border border-(--color-border)
+ * bg-(--color-bg-card) ..."` patterns repeated across React/Preact components.
  *
  * Note: existing Astro cards (BrowserFrame, MetricCard, StepCard) are
  * intentionally untouched — they have specialized layout semantics. Card
@@ -62,14 +62,14 @@ interface CardAsAnchor extends BaseProps {
 export type CardProps = CardAsDiv | CardAsAnchor;
 
 const variantClasses: Record<CardVariant, string> = {
-  default: "bg-[--color-bg-card] border border-[--color-border]",
+  default: "bg-(--color-bg-card) border border-(--color-border)",
   elevated:
-    "bg-[--color-bg-card] border border-[--color-border] shadow-[var(--shadow-md)]",
+    "bg-(--color-bg-card) border border-(--color-border) shadow-[var(--shadow-md)]",
   glass:
-    "bg-[--color-bg-card]/60 border border-[--color-border] backdrop-blur-md",
+    "bg-(--color-bg-card)/60 border border-(--color-border) backdrop-blur-md",
   featured:
-    "bg-[--color-accent]/5 border border-[--color-accent]/30 shadow-[var(--shadow-md)]",
-  subtle: "bg-transparent border border-[--color-border]",
+    "bg-(--color-accent)/5 border border-(--color-accent)/30 shadow-[var(--shadow-md)]",
+  subtle: "bg-transparent border border-(--color-border)",
 };
 
 const paddingClasses: Record<CardPadding, string> = {
@@ -86,10 +86,10 @@ const radiusClasses: Record<CardRadius, string> = {
 };
 
 const interactiveClass =
-  "cursor-pointer transition-colors hover:border-[--color-accent] " +
-  "hover:bg-[--color-bg-hover] focus-visible:outline-none focus-visible:ring-2 " +
-  "focus-visible:ring-[--color-accent] focus-visible:ring-offset-2 " +
-  "focus-visible:ring-offset-[--color-bg]";
+  "cursor-pointer transition-colors hover:border-(--color-accent) " +
+  "hover:bg-(--color-bg-hover) focus-visible:outline-none focus-visible:ring-2 " +
+  "focus-visible:ring-(--color-accent) focus-visible:ring-offset-2 " +
+  "focus-visible:ring-offset-(--color-bg)";
 
 export default function Card(props: CardProps) {
   const {

@@ -8,29 +8,29 @@ const t = useTranslations('ko');
 
 <Layout title={t('meta.demo_title')} description={t('meta.demo_desc')}>
   <section class="max-w-7xl mx-auto px-4 py-12">
-    <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">{t('demo.interactive_tag')}</p>
+    <p class="font-mono text-(--color-accent) text-sm mb-2 tracking-wider">{t('demo.interactive_tag')}</p>
     <h1 class="text-3xl md:text-5xl font-bold mb-4">{t('demo.hero_title')}</h1>
-    <p class="text-[--color-text-muted] mb-8 max-w-2xl">
+    <p class="text-(--color-text-muted) mb-8 max-w-2xl">
       {t('demo.hero_desc')}
     </p>
 
     <StrategyDemo client:visible lang="ko" />
-    <noscript><p class="text-[--color-text-muted] text-sm py-4">JavaScript를 활성화하면 전략 데모를 사용할 수 있습니다.</p></noscript>
+    <noscript><p class="text-(--color-text-muted) text-sm py-4">JavaScript를 활성화하면 전략 데모를 사용할 수 있습니다.</p></noscript>
 
     <!-- CTA to full simulator -->
-    <div class="mt-12 border-t border-[--color-border] pt-10 text-center">
+    <div class="mt-12 border-t border-(--color-border) pt-10 text-center">
       <h2 class="text-xl font-bold mb-3">{t('demo.want_more')}</h2>
-      <p class="text-[--color-text-muted] text-sm mb-6 max-w-lg mx-auto">
+      <p class="text-(--color-text-muted) text-sm mb-6 max-w-lg mx-auto">
         {t('demo.want_more_desc')}
       </p>
       <div class="flex flex-wrap gap-3 justify-center">
         <a href="/ko/simulate" class="btn btn-primary btn-md no-underline">
           {t('demo.open_simulator')} &rarr;
         </a>
-        <a href="/ko/strategies" class="btn btn-ghost btn-md hover:border-[--color-accent] transition-colors no-underline">
+        <a href="/ko/strategies" class="btn btn-ghost btn-md hover:border-(--color-accent) transition-colors no-underline">
           {t('demo.view_strategies')}
         </a>
-        <a href="/ko/fees" class="btn btn-ghost btn-md hover:border-[--color-accent] transition-colors no-underline">
+        <a href="/ko/fees" class="btn btn-ghost btn-md hover:border-(--color-accent) transition-colors no-underline">
           {t('demo.fees_cta')} &rarr;
         </a>
       </div>

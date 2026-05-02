@@ -82,10 +82,10 @@ export default function BotCodeSection({
   };
 
   return (
-    <div class="mt-4 border border-[--color-accent]/30 rounded-lg p-4 bg-[--color-accent]/5">
+    <div class="mt-4 border border-(--color-accent)/30 rounded-lg p-4 bg-(--color-accent)/5">
       <p class="font-semibold text-sm mb-1">{t.title}</p>
-      <p class="text-xs text-[--color-text-muted] mb-3">{t.desc}</p>
-      <p class="text-xs text-[--color-red] mb-3">{t.disclaimer}</p>
+      <p class="text-xs text-(--color-text-muted) mb-3">{t.desc}</p>
+      <p class="text-xs text-(--color-red) mb-3">{t.disclaimer}</p>
       <label class="flex items-center gap-2 text-xs mb-3 cursor-pointer">
         <input
           type="checkbox"
@@ -98,7 +98,7 @@ export default function BotCodeSection({
       <button
         onClick={handleDownload}
         disabled={!agreed || downloading}
-        class="px-4 py-2 bg-[--color-accent] text-[--color-bg] rounded text-sm font-medium disabled:opacity-40"
+        class="px-4 py-2 bg-(--color-accent) text-(--color-bg) rounded text-sm font-medium disabled:opacity-40"
         aria-label={t.download}
       >
         {downloading ? t.downloading : t.download}

@@ -231,13 +231,13 @@ export default function ChartPanel({
   }, [chartData, trades]);
 
   return (
-    <div class="border border-[--color-border] rounded-lg bg-[--color-bg-card] overflow-hidden">
+    <div class="border border-(--color-border) rounded-lg bg-(--color-bg-card) overflow-hidden">
       {/* Chart header */}
-      <div class="flex items-center justify-between px-3 py-2 border-b border-[--color-border]">
+      <div class="flex items-center justify-between px-3 py-2 border-b border-(--color-border)">
         <div class="flex items-center gap-2">
           <span class="font-mono text-sm font-bold">{chartSymbol}</span>
-          <span class="text-[--color-text-muted] text-xs">{timeframe}</span>
-          <span class="text-[--color-text-muted] text-xs font-mono hidden sm:inline">
+          <span class="text-(--color-text-muted) text-xs">{timeframe}</span>
+          <span class="text-(--color-text-muted) text-xs font-mono hidden sm:inline">
             OKX USDT-SWAP
           </span>
         </div>
@@ -249,7 +249,7 @@ export default function ChartPanel({
               aria-pressed={chartSymbol === sym}
               onClick={() => setChartSymbol(sym)}
               class={`min-w-[44px] min-h-[44px] px-3 text-xs font-mono rounded transition-colors
-                ${chartSymbol === sym ? "font-bold text-white" : "text-[--color-text-muted] hover:text-[--color-text] hover:bg-[--color-bg-hover]"}`}
+                ${chartSymbol === sym ? "font-bold text-white" : "text-(--color-text-muted) hover:text-(--color-text) hover:bg-(--color-bg-hover)"}`}
               style={
                 chartSymbol === sym
                   ? {
@@ -267,7 +267,7 @@ export default function ChartPanel({
             type="text"
             placeholder={symbolPlaceholder}
             aria-label={symbolPlaceholder}
-            class="w-20 px-2 py-1 text-xs font-mono bg-[--color-bg-tooltip] border border-[--color-border] rounded outline-none focus:border-[--color-accent] hidden sm:block"
+            class="w-20 px-2 py-1 text-xs font-mono bg-(--color-bg-tooltip) border border-(--color-border) rounded outline-none focus:border-(--color-accent) hidden sm:block"
             onKeyDown={(e: KeyboardEvent) => {
               if (e.key === "Enter") {
                 const target = e.target as HTMLInputElement;
@@ -293,20 +293,20 @@ export default function ChartPanel({
         style={{ minHeight: "300px" }}
       >
         {chartLoading && (
-          <div class="flex items-center justify-center h-full text-[--color-text-muted] text-sm">
+          <div class="flex items-center justify-center h-full text-(--color-text-muted) text-sm">
             <div class="spinner mr-2" />
             {loadingText}
           </div>
         )}
         {!chartLoading && chartData.length === 0 && (
           <div class="flex flex-col items-center justify-center h-full gap-3">
-            <div class="text-[--color-text-muted] text-sm font-mono text-center px-4">
+            <div class="text-(--color-text-muted) text-sm font-mono text-center px-4">
               {error || noDataError}
             </div>
             {onRetry && (
               <button
                 onClick={onRetry}
-                class="px-4 py-2 text-xs font-mono rounded border border-[--color-border] text-[--color-accent] hover:bg-[--color-bg-hover] transition-colors"
+                class="px-4 py-2 text-xs font-mono rounded border border-(--color-border) text-(--color-accent) hover:bg-(--color-bg-hover) transition-colors"
               >
                 {retryLabel}
               </button>

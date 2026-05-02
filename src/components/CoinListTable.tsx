@@ -122,12 +122,12 @@ function ChangeCell({
   if (value == null)
     return (
       <td
-        class={`px-2 py-2.5 text-right text-[--color-text-muted] ${className}`}
+        class={`px-2 py-2.5 text-right text-(--color-text-muted) ${className}`}
       >
         -
       </td>
     );
-  const color = value >= 0 ? "text-[--color-up]" : "text-[--color-down]";
+  const color = value >= 0 ? "text-(--color-up)" : "text-(--color-down)";
   const arrow = value >= 0 ? "\u25B2" : "\u25BC";
   return (
     <td class={`px-2 py-2.5 text-right ${color} ${className}`}>
@@ -144,7 +144,7 @@ function CoinLogo({ image, symbol }: { image: string; symbol: string }) {
   if (!image) {
     return (
       <div
-        class="w-6 h-6 rounded-full bg-[--color-border] flex items-center justify-center text-[0.625rem] font-bold text-[--color-text-muted] flex-shrink-0"
+        class="w-6 h-6 rounded-full bg-(--color-border) flex items-center justify-center text-[0.625rem] font-bold text-(--color-text-muted) flex-shrink-0"
         aria-hidden="true"
       >
         {letter}
@@ -167,7 +167,7 @@ function CoinLogo({ image, symbol }: { image: string; symbol: string }) {
 
 function SkeletonRow() {
   return (
-    <tr class="border-b border-[--color-border]">
+    <tr class="border-b border-(--color-border)">
       <td class="px-2 py-3 text-center">
         <div class="skeleton h-3 w-5 mx-auto" />
       </td>
@@ -231,7 +231,7 @@ function SortableHeader({
       scope="col"
       aria-sort={ariaSortValue}
       title={title}
-      class={`px-2 py-2 font-mono text-[0.6875rem] tracking-wider uppercase whitespace-nowrap border-b border-[--color-border] ${className} ${isActive ? "text-[--color-accent]" : "text-[--color-text-muted]"}`}
+      class={`px-2 py-2 font-mono text-[0.6875rem] tracking-wider uppercase whitespace-nowrap border-b border-(--color-border) ${className} ${isActive ? "text-(--color-accent)" : "text-(--color-text-muted)"}`}
     >
       <button
         type="button"
@@ -308,7 +308,7 @@ export default function CoinListTable({ lang = "en" }: { lang?: "en" | "ko" }) {
         <div class="mb-4">
           <div class="skeleton h-10 w-80 max-w-full rounded-lg" />
         </div>
-        <div class="relative overflow-x-auto border border-[--color-border] rounded-xl bg-[--color-bg-card]">
+        <div class="relative overflow-x-auto border border-(--color-border) rounded-xl bg-(--color-bg-card)">
           <table
             class="w-full md:min-w-[900px] border-collapse font-mono text-[0.8125rem]"
             aria-busy="true"
@@ -318,7 +318,7 @@ export default function CoinListTable({ lang = "en" }: { lang?: "en" | "ko" }) {
               <tr>
                 <th
                   scope="col"
-                  class="px-2 py-2 w-10 border-b border-[--color-border]"
+                  class="px-2 py-2 w-10 border-b border-(--color-border)"
                 />
                 {[
                   t.coin,
@@ -333,7 +333,7 @@ export default function CoinListTable({ lang = "en" }: { lang?: "en" | "ko" }) {
                   <th
                     scope="col"
                     key={i}
-                    class="px-2 py-2 text-left font-mono text-[0.6875rem] tracking-wider uppercase border-b border-[--color-border] text-[--color-text-muted]"
+                    class="px-2 py-2 text-left font-mono text-[0.6875rem] tracking-wider uppercase border-b border-(--color-border) text-(--color-text-muted)"
                   >
                     {h}
                   </th>
@@ -354,7 +354,7 @@ export default function CoinListTable({ lang = "en" }: { lang?: "en" | "ko" }) {
   if (error) {
     return (
       <div class="py-8 text-center">
-        <p class="font-mono text-sm text-[--color-red] mb-3">{t.error}</p>
+        <p class="font-mono text-sm text-(--color-red) mb-3">{t.error}</p>
         <button
           onClick={() => {
             setError(null);
@@ -369,7 +369,7 @@ export default function CoinListTable({ lang = "en" }: { lang?: "en" | "ko" }) {
                 setLoading(false);
               });
           }}
-          class="px-4 py-2 rounded-lg border border-[--color-border] bg-[--color-bg-card] text-[--color-text] font-mono text-sm cursor-pointer hover:border-[--color-accent] transition-colors min-h-[44px]"
+          class="px-4 py-2 rounded-lg border border-(--color-border) bg-(--color-bg-card) text-(--color-text) font-mono text-sm cursor-pointer hover:border-(--color-accent) transition-colors min-h-[44px]"
         >
           {t.retry}
         </button>
@@ -463,7 +463,7 @@ export default function CoinListTable({ lang = "en" }: { lang?: "en" | "ko" }) {
             setSearch((e.target as HTMLInputElement).value);
             setPage(0);
           }}
-          class="w-full max-w-xs px-4 py-2.5 bg-[--color-bg-card] border border-[--color-border] rounded-lg text-[--color-text] font-mono text-sm outline-none focus:border-[--color-accent] transition-colors"
+          class="w-full max-w-xs px-4 py-2.5 bg-(--color-bg-card) border border-(--color-border) rounded-lg text-(--color-text) font-mono text-sm outline-none focus:border-(--color-accent) transition-colors"
         />
         <a
           href={lang === "ko" ? "/ko/simulate" : "/simulate"}
@@ -476,7 +476,7 @@ export default function CoinListTable({ lang = "en" }: { lang?: "en" | "ko" }) {
           <button
             type="button"
             onClick={handleDownloadCsv}
-            class="px-3 py-2.5 border border-[--color-border] rounded-lg bg-[--color-bg-card] text-[--color-text] font-mono text-sm cursor-pointer hover:border-[--color-accent] transition-colors min-h-[44px] whitespace-nowrap"
+            class="px-3 py-2.5 border border-(--color-border) rounded-lg bg-(--color-bg-card) text-(--color-text) font-mono text-sm cursor-pointer hover:border-(--color-accent) transition-colors min-h-[44px] whitespace-nowrap"
             title={t.downloadCsv}
           >
             {t.downloadCsv}
@@ -485,20 +485,20 @@ export default function CoinListTable({ lang = "en" }: { lang?: "en" | "ko" }) {
       </div>
 
       {generatedAt && (
-        <div class="text-[--color-text-muted] text-xs mb-2">
+        <div class="text-(--color-text-muted) text-xs mb-2">
           {t.dataAsOf} {new Date(generatedAt).toLocaleString()}
         </div>
       )}
 
       {/* Table */}
-      <div class="relative overflow-x-auto border border-[--color-border] rounded-xl bg-[--color-bg-card]">
+      <div class="relative overflow-x-auto border border-(--color-border) rounded-xl bg-(--color-bg-card)">
         <table class="w-full md:min-w-[900px] border-collapse font-mono text-[0.8125rem]">
           <caption class="sr-only">{t.tableCaption}</caption>
           <thead>
             <tr>
               <th
                 scope="col"
-                class="px-2 py-2 text-center font-mono text-[0.6875rem] tracking-wider uppercase border-b border-[--color-border] text-[--color-text-muted] w-10 cursor-default select-none hidden sm:table-cell"
+                class="px-2 py-2 text-center font-mono text-[0.6875rem] tracking-wider uppercase border-b border-(--color-border) text-(--color-text-muted) w-10 cursor-default select-none hidden sm:table-cell"
               >
                 #
               </th>
@@ -567,13 +567,13 @@ export default function CoinListTable({ lang = "en" }: { lang?: "en" | "ko" }) {
               </SortableHeader>
               <th
                 scope="col"
-                class="px-2 py-2 text-center font-mono text-[0.6875rem] tracking-wider uppercase border-b border-[--color-border] text-[--color-text-muted] hidden lg:table-cell cursor-default select-none w-[140px]"
+                class="px-2 py-2 text-center font-mono text-[0.6875rem] tracking-wider uppercase border-b border-(--color-border) text-(--color-text-muted) hidden lg:table-cell cursor-default select-none w-[140px]"
               >
                 {t.chart}
               </th>
               <th
                 scope="col"
-                class="px-2 py-2 text-center font-mono text-[0.6875rem] tracking-wider uppercase border-b border-[--color-border] text-[--color-text-muted] hidden lg:table-cell cursor-default select-none"
+                class="px-2 py-2 text-center font-mono text-[0.6875rem] tracking-wider uppercase border-b border-(--color-border) text-(--color-text-muted) hidden lg:table-cell cursor-default select-none"
               >
                 TEST
               </th>
@@ -584,7 +584,7 @@ export default function CoinListTable({ lang = "en" }: { lang?: "en" | "ko" }) {
               <tr>
                 <td
                   colSpan={10}
-                  class="py-8 text-center text-[--color-text-muted]"
+                  class="py-8 text-center text-(--color-text-muted)"
                 >
                   {t.noResults}
                 </td>
@@ -616,16 +616,16 @@ export default function CoinListTable({ lang = "en" }: { lang?: "en" | "ko" }) {
                       window.location.href = coinUrl;
                     }
                   }}
-                  class="cursor-pointer border-b border-[--color-border] row-hover"
+                  class="cursor-pointer border-b border-(--color-border) row-hover"
                 >
-                  <td class="px-2 py-2.5 text-center text-[--color-text-muted] text-[0.6875rem] hidden sm:table-cell">
+                  <td class="px-2 py-2.5 text-center text-(--color-text-muted) text-[0.6875rem] hidden sm:table-cell">
                     {rank}
                   </td>
 
                   <td class="px-2 py-3 sm:py-2.5 whitespace-nowrap">
                     <a
                       href={coinUrl}
-                      class="flex items-center gap-2.5 hover:text-[--color-accent] transition-colors"
+                      class="flex items-center gap-2.5 hover:text-(--color-accent) transition-colors"
                       tabIndex={-1}
                       aria-hidden="true"
                     >
@@ -638,14 +638,14 @@ export default function CoinListTable({ lang = "en" }: { lang?: "en" | "ko" }) {
                               : coin.symbol}
                           </span>
                           {coin.name && (
-                            <span class="text-[--color-text-muted] text-[0.6875rem] hidden sm:inline">
+                            <span class="text-(--color-text-muted) text-[0.6875rem] hidden sm:inline">
                               {coin.name}
                             </span>
                           )}
                         </div>
                         {/* Mobile: coin name subtitle */}
                         {coin.name && (
-                          <span class="text-[--color-text-muted] text-[0.625rem] sm:hidden block truncate">
+                          <span class="text-(--color-text-muted) text-[0.625rem] sm:hidden block truncate">
                             {coin.name}
                           </span>
                         )}
@@ -656,7 +656,7 @@ export default function CoinListTable({ lang = "en" }: { lang?: "en" | "ko" }) {
                           ${formatPrice(coin.price)}
                         </span>
                         <span
-                          class={`text-[0.625rem] tabular-nums font-bold px-1.5 py-0.5 rounded ${(coin.change_24h ?? 0) >= 0 ? "text-[--color-up] bg-[--color-up]/10" : "text-[--color-down] bg-[--color-down]/10"}`}
+                          class={`text-[0.625rem] tabular-nums font-bold px-1.5 py-0.5 rounded ${(coin.change_24h ?? 0) >= 0 ? "text-(--color-up) bg-(--color-up)/10" : "text-(--color-down) bg-(--color-down)/10"}`}
                         >
                           {(coin.change_24h ?? 0) >= 0 ? "+" : ""}
                           {(coin.change_24h ?? 0).toFixed(1)}%
@@ -680,10 +680,10 @@ export default function CoinListTable({ lang = "en" }: { lang?: "en" | "ko" }) {
                     value={coin.change_7d}
                     className="hidden lg:table-cell"
                   />
-                  <td class="px-2 py-2.5 text-right text-[--color-text-muted] hidden md:table-cell tabular-nums">
+                  <td class="px-2 py-2.5 text-right text-(--color-text-muted) hidden md:table-cell tabular-nums">
                     {formatMarketCap(coin.market_cap)}
                   </td>
-                  <td class="px-2 py-2.5 text-right text-[--color-text-muted] hidden md:table-cell tabular-nums">
+                  <td class="px-2 py-2.5 text-right text-(--color-text-muted) hidden md:table-cell tabular-nums">
                     {formatVolume(coin.volume_24h)}
                   </td>
 
@@ -696,14 +696,14 @@ export default function CoinListTable({ lang = "en" }: { lang?: "en" | "ko" }) {
                         positive={sparkPositive}
                       />
                     ) : (
-                      <span class="text-[--color-text-muted]">-</span>
+                      <span class="text-(--color-text-muted)">-</span>
                     )}
                   </td>
                   <td class="px-2 py-2.5 hidden lg:table-cell text-center">
                     <a
                       href={`${lang === "ko" ? "/ko" : ""}/simulate?coin=${coin.symbol}`}
                       onClick={(e: MouseEvent) => e.stopPropagation()}
-                      class="text-xs font-mono text-[--color-accent] hover:underline"
+                      class="text-xs font-mono text-(--color-accent) hover:underline"
                     >
                       Test &rarr;
                     </a>
@@ -718,7 +718,7 @@ export default function CoinListTable({ lang = "en" }: { lang?: "en" | "ko" }) {
       {/* Pagination */}
       {totalPages > 1 && (
         <div class="flex justify-between items-center mt-4 font-mono text-xs">
-          <span class="text-[--color-text-muted]">
+          <span class="text-(--color-text-muted)">
             {t.showing(
               page * PER_PAGE + 1,
               Math.min((page + 1) * PER_PAGE, sorted.length),
@@ -730,18 +730,18 @@ export default function CoinListTable({ lang = "en" }: { lang?: "en" | "ko" }) {
               disabled={page === 0}
               onClick={() => setPage((p) => p - 1)}
               aria-label={t.prevPage}
-              class={`px-3 py-1.5 border border-[--color-border] rounded-md bg-transparent font-mono text-xs transition-colors min-h-12 min-w-12 ${page === 0 ? "text-[--color-text-muted] cursor-default" : "text-[--color-text] hover:border-[--color-accent] cursor-pointer"}`}
+              class={`px-3 py-1.5 border border-(--color-border) rounded-md bg-transparent font-mono text-xs transition-colors min-h-12 min-w-12 ${page === 0 ? "text-(--color-text-muted) cursor-default" : "text-(--color-text) hover:border-(--color-accent) cursor-pointer"}`}
             >
               &lt;
             </button>
-            <span class="px-2 py-1.5 text-[--color-text-muted]">
+            <span class="px-2 py-1.5 text-(--color-text-muted)">
               {page + 1}/{totalPages}
             </span>
             <button
               disabled={page >= totalPages - 1}
               onClick={() => setPage((p) => p + 1)}
               aria-label={t.nextPage}
-              class={`px-3 py-1.5 border border-[--color-border] rounded-md bg-transparent font-mono text-xs transition-colors min-h-12 min-w-12 ${page >= totalPages - 1 ? "text-[--color-text-muted] cursor-default" : "text-[--color-text] hover:border-[--color-accent] cursor-pointer"}`}
+              class={`px-3 py-1.5 border border-(--color-border) rounded-md bg-transparent font-mono text-xs transition-colors min-h-12 min-w-12 ${page >= totalPages - 1 ? "text-(--color-text-muted) cursor-default" : "text-(--color-text) hover:border-(--color-accent) cursor-pointer"}`}
             >
               &gt;
             </button>

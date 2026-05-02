@@ -163,7 +163,7 @@ export default function TrustGapPanel({ lang }: Props) {
     return (
       <section
         aria-label={t("simV2.trust.gap_heading")}
-        class="rounded-xl border border-[--color-accent]/20 bg-gradient-to-br from-[--color-accent]/5 to-zinc-900/60 p-5"
+        class="rounded-xl border border-(--color-accent)/20 bg-gradient-to-br from-(--color-accent)/5 to-zinc-900/60 p-5"
         data-testid="sim-v1-trust-gap"
       >
         <div class="mb-3 flex items-center gap-2">
@@ -174,7 +174,7 @@ export default function TrustGapPanel({ lang }: Props) {
             ⏸ {isKo ? "라이브 검증 중단" : "Live tracking paused"}
           </span>
         </div>
-        <h3 class="mb-1.5 text-sm font-semibold uppercase tracking-wide text-[--color-accent-bright]">
+        <h3 class="mb-1.5 text-sm font-semibold uppercase tracking-wide text-(--color-accent-bright)">
           {t("simV2.trust.gap_heading")}
         </h3>
         <p class="text-xs text-(--color-text-secondary) leading-relaxed mb-3">
@@ -185,7 +185,7 @@ export default function TrustGapPanel({ lang }: Props) {
         <div class="flex flex-wrap gap-2">
           <a
             href={postmortemHref}
-            class="inline-flex items-center rounded border border-[--color-border] bg-[--color-bg-card] px-3 py-1.5 text-xs text-(--color-text) hover:border-[--color-accent] hover:text-[--color-accent-bright] min-h-[32px]"
+            class="inline-flex items-center rounded border border-(--color-border) bg-(--color-bg-card) px-3 py-1.5 text-xs text-(--color-text) hover:border-(--color-accent) hover:text-(--color-accent-bright) min-h-[32px]"
           >
             {isKo
               ? "이전 실거래 결과 — BB Squeeze 59.6% 갭 포스트모템 →"
@@ -246,11 +246,11 @@ export default function TrustGapPanel({ lang }: Props) {
   return (
     <section
       aria-label={t("simV2.trust.gap_heading")}
-      class="rounded-xl border border-[--color-accent]/20 bg-gradient-to-br from-[--color-accent]/5 to-zinc-900/60 p-5"
+      class="rounded-xl border border-(--color-accent)/20 bg-gradient-to-br from-(--color-accent)/5 to-zinc-900/60 p-5"
       data-testid="sim-v1-trust-gap"
     >
       <div class="mb-3 flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between sm:gap-3">
-        <h3 class="text-sm font-semibold uppercase tracking-wide text-[--color-accent-bright]">
+        <h3 class="text-sm font-semibold uppercase tracking-wide text-(--color-accent-bright)">
           {t("simV2.trust.gap_heading")}
         </h3>
         <span class="font-mono text-xs text-(--color-text-muted)">
@@ -308,7 +308,7 @@ export default function TrustGapPanel({ lang }: Props) {
         </div>
       )}
 
-      <div class="mt-4 grid grid-cols-1 gap-1 border-t border-[--color-accent]/10 pt-3 font-mono text-xs text-(--color-text-muted) sm:flex sm:flex-wrap sm:items-center sm:justify-between sm:gap-2">
+      <div class="mt-4 grid grid-cols-1 gap-1 border-t border-(--color-accent)/10 pt-3 font-mono text-xs text-(--color-text-muted) sm:flex sm:flex-wrap sm:items-center sm:justify-between sm:gap-2">
         <span>
           {isKo ? "전략" : "Strategy"}: {data.strategy}
         </span>
@@ -348,7 +348,7 @@ export default function TrustGapPanel({ lang }: Props) {
           <div class="flex flex-wrap items-center gap-2">
             <a
               href="/simulate/?preset=atr-breakout"
-              class="inline-flex items-center gap-1 rounded bg-[--color-accent] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[--color-accent-bright] min-h-[32px]"
+              class="inline-flex items-center gap-1 rounded bg-(--color-accent) px-3 py-1.5 text-xs font-semibold text-white hover:bg-(--color-accent-bright) min-h-[32px]"
             >
               {isKo
                 ? "대신 ATR Breakout (PF 1.31) 시도"
@@ -445,7 +445,7 @@ function Figure({
   return (
     <div
       data-testid={testId}
-      class={`rounded-lg p-3 ${highlight ? "bg-[--color-accent]/10 ring-1 ring-[--color-accent]/30" : ""}`}
+      class={`rounded-lg p-3 ${highlight ? "bg-(--color-accent)/10 ring-1 ring-(--color-accent)/30" : ""}`}
     >
       <div class="mb-1 text-xs uppercase tracking-wide text-(--color-text-muted)">
         {label}

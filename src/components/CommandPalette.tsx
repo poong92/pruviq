@@ -301,7 +301,7 @@ export default function CommandPalette({ lang = "en" }: Props) {
         class="relative w-full max-w-lg mx-4 shadow-2xl overflow-hidden"
       >
         {/* Search input */}
-        <div class="flex items-center gap-3 px-4 py-3 border-b border-[--color-border]">
+        <div class="flex items-center gap-3 px-4 py-3 border-b border-(--color-border)">
           <svg
             width="16"
             height="16"
@@ -309,7 +309,7 @@ export default function CommandPalette({ lang = "en" }: Props) {
             fill="none"
             stroke="currentColor"
             stroke-width="2"
-            class="text-[--color-text-muted] shrink-0"
+            class="text-(--color-text-muted) shrink-0"
           >
             <circle cx="11" cy="11" r="8" />
             <line x1="21" y1="21" x2="16.65" y2="16.65" />
@@ -328,10 +328,10 @@ export default function CommandPalette({ lang = "en" }: Props) {
                 ? "페이지, 전략, 도구 검색..."
                 : "Search pages, strategies, tools..."
             }
-            class="flex-1 bg-transparent outline-none text-sm font-mono text-[--color-text] placeholder:text-[--color-text-muted]"
+            class="flex-1 bg-transparent outline-none text-sm font-mono text-(--color-text) placeholder:text-(--color-text-muted)"
             aria-label="Search"
           />
-          <kbd class="hidden sm:inline-flex items-center px-1.5 py-0.5 rounded border border-[--color-border] text-[10px] font-mono text-[--color-text-muted]">
+          <kbd class="hidden sm:inline-flex items-center px-1.5 py-0.5 rounded border border-(--color-border) text-[10px] font-mono text-(--color-text-muted)">
             ESC
           </kbd>
         </div>
@@ -339,14 +339,14 @@ export default function CommandPalette({ lang = "en" }: Props) {
         {/* Results */}
         <div ref={listRef} class="max-h-[50vh] overflow-y-auto py-2">
           {grouped.length === 0 ? (
-            <div class="px-4 py-8 text-center text-sm text-[--color-text-muted] font-mono">
+            <div class="px-4 py-8 text-center text-sm text-(--color-text-muted) font-mono">
               {lang === "ko" ? "결과 없음" : "No results found"}
             </div>
           ) : (
             grouped.map((group) => {
               return (
                 <div key={group.category}>
-                  <div class="px-4 py-1.5 text-[9px] font-mono text-[--color-text-muted] uppercase tracking-wider">
+                  <div class="px-4 py-1.5 text-[9px] font-mono text-(--color-text-muted) uppercase tracking-wider">
                     {CATEGORY_LABELS[group.category]}
                   </div>
                   {group.items.map((item) => {
@@ -360,8 +360,8 @@ export default function CommandPalette({ lang = "en" }: Props) {
                         onMouseEnter={() => setActiveIdx(idx)}
                         class={`w-full text-left px-4 py-2 flex items-center gap-3 text-sm transition-colors ${
                           isActive
-                            ? "bg-[--color-accent]/10 text-[--color-accent]"
-                            : "text-[--color-text] hover:bg-[--color-bg-hover]"
+                            ? "bg-(--color-accent)/10 text-(--color-accent)"
+                            : "text-(--color-text) hover:bg-(--color-bg-hover)"
                         }`}
                         role="option"
                         aria-selected={isActive}
@@ -371,13 +371,13 @@ export default function CommandPalette({ lang = "en" }: Props) {
                             {item.label}
                           </div>
                           {item.description && (
-                            <div class="text-[10px] text-[--color-text-muted] truncate">
+                            <div class="text-[10px] text-(--color-text-muted) truncate">
                               {item.description}
                             </div>
                           )}
                         </div>
                         {isActive && (
-                          <span class="text-[10px] font-mono text-[--color-text-muted] shrink-0">
+                          <span class="text-[10px] font-mono text-(--color-text-muted) shrink-0">
                             ↵
                           </span>
                         )}
@@ -391,7 +391,7 @@ export default function CommandPalette({ lang = "en" }: Props) {
         </div>
 
         {/* Footer hint */}
-        <div class="border-t border-[--color-border] px-4 py-2 flex items-center gap-4 text-[10px] font-mono text-[--color-text-muted]">
+        <div class="border-t border-(--color-border) px-4 py-2 flex items-center gap-4 text-[10px] font-mono text-(--color-text-muted)">
           <span>↑↓ navigate</span>
           <span>↵ open</span>
           <span>esc close</span>

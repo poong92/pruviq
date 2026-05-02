@@ -110,19 +110,19 @@ export default function EmailCapture({ lang }: Props) {
   if (submitted) {
     return (
       <div
-        class="mt-6 border border-[--color-accent]/30 rounded-lg p-4 bg-[--color-accent]/5"
+        class="mt-6 border border-(--color-accent)/30 rounded-lg p-4 bg-(--color-accent)/5"
         role="status"
         aria-live="polite"
       >
-        <p class="text-sm font-semibold text-[--color-accent]">{t.thanks}</p>
+        <p class="text-sm font-semibold text-(--color-accent)">{t.thanks}</p>
       </div>
     );
   }
 
   return (
-    <div class="mt-6 border border-[--color-accent]/30 rounded-lg p-4 bg-[--color-accent]/5">
+    <div class="mt-6 border border-(--color-accent)/30 rounded-lg p-4 bg-(--color-accent)/5">
       <p class="text-sm font-semibold mb-1">{t.headline}</p>
-      <p class="text-xs text-[--color-text-muted] mb-3">{t.subtext}</p>
+      <p class="text-xs text-(--color-text-muted) mb-3">{t.subtext}</p>
       <form onSubmit={handleSubmit} class="flex gap-2">
         <input
           type="email"
@@ -130,18 +130,18 @@ export default function EmailCapture({ lang }: Props) {
           required
           value={email}
           onInput={(e) => setEmail((e.target as HTMLInputElement).value)}
-          class="flex-1 px-3 py-2 rounded border border-[--color-border] bg-[--color-bg] text-sm"
+          class="flex-1 px-3 py-2 rounded border border-(--color-border) bg-(--color-bg) text-sm"
           aria-label="Email address"
         />
         <button
           type="submit"
           disabled={submitting}
-          class="px-4 py-2 bg-[--color-accent] text-[--color-bg] rounded text-sm font-medium hover:bg-[--color-accent-dim] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          class="px-4 py-2 bg-(--color-accent) text-(--color-bg) rounded text-sm font-medium hover:bg-(--color-accent-dim) transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {submitting ? "..." : t.subscribe}
         </button>
       </form>
-      <p class="text-xs text-[--color-text-muted] mt-2">{t.disclaimer}</p>
+      <p class="text-xs text-(--color-text-muted) mt-2">{t.disclaimer}</p>
     </div>
   );
 }

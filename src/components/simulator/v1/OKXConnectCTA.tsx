@@ -39,7 +39,7 @@ export default function OKXConnectCTA({ lang, presetId }: Props) {
       >
         <div class="mb-3 flex items-center justify-center gap-2">
           <span
-            class="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-mono font-bold uppercase tracking-wider rounded bg-[--color-accent]/10 text-[--color-accent-bright] border border-[--color-accent]/30"
+            class="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-mono font-bold uppercase tracking-wider rounded bg-(--color-accent)/10 text-(--color-accent-bright) border border-(--color-accent)/30"
             aria-label="Coming Soon"
           >
             ● {lang === "ko" ? "곧 출시" : "Coming Soon"}
@@ -54,7 +54,7 @@ export default function OKXConnectCTA({ lang, presetId }: Props) {
             disabled
             aria-disabled="true"
             data-testid="sim-v1-cta-connect-btn"
-            class="inline-flex min-h-[44px] items-center justify-center rounded-lg border border-[--color-border] bg-[--color-bg-elevated] px-6 py-3 text-sm font-semibold text-[--color-text-muted] cursor-not-allowed"
+            class="inline-flex min-h-[44px] items-center justify-center rounded-lg border border-(--color-border) bg-(--color-bg-elevated) px-6 py-3 text-sm font-semibold text-(--color-text-muted) cursor-not-allowed"
           >
             {t("simV2.cta.connect_button")} ·{" "}
             {lang === "ko" ? "준비중" : "Soon"}
@@ -78,7 +78,7 @@ export default function OKXConnectCTA({ lang, presetId }: Props) {
   return (
     <section
       aria-label={t("simV2.cta.connect_heading")}
-      class="rounded-xl border border-[--color-accent]/30 bg-[--color-accent]/5 p-6 text-center"
+      class="rounded-xl border border-(--color-accent)/30 bg-(--color-accent)/5 p-6 text-center"
       data-testid="sim-v1-okx-cta"
     >
       <h3 class="mb-2 text-xl font-bold text-(--color-text)">
@@ -92,7 +92,7 @@ export default function OKXConnectCTA({ lang, presetId }: Props) {
           href={href}
           onClick={() => emit("cta.connect_clicked", { preset: presetId })}
           data-testid="sim-v1-cta-connect-btn"
-          class="inline-flex min-h-[44px] items-center justify-center rounded-lg bg-[--color-accent] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[--color-accent-bright]"
+          class="inline-flex min-h-[44px] items-center justify-center rounded-lg bg-(--color-accent) px-6 py-3 text-sm font-semibold text-white transition hover:bg-(--color-accent-bright)"
         >
           {t("simV2.cta.connect_button")} →
         </a>

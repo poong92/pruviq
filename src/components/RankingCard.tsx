@@ -111,10 +111,10 @@ function directionTag(direction: string) {
   const isBoth = direction === "both";
   const label = isBoth ? "BOTH↕" : isLong ? "LONG↑" : "SHORT↓";
   const colorClass = isBoth
-    ? "text-[--color-yellow] border-[--color-yellow]/40"
+    ? "text-(--color-yellow) border-(--color-yellow)/40"
     : isLong
-      ? "text-[--color-up] border-[--color-up]/40"
-      : "text-[--color-red] border-[--color-red]/40";
+      ? "text-(--color-up) border-(--color-up)/40"
+      : "text-(--color-red) border-(--color-red)/40";
   return (
     <span class={`font-mono text-xs px-2 py-0.5 rounded border ${colorClass}`}>
       {label}
@@ -123,15 +123,15 @@ function directionTag(direction: string) {
 }
 
 function winRateColor(wr: number): string {
-  if (wr >= 55) return "text-[--color-up]";
-  if (wr >= 50) return "text-[--color-yellow]";
-  return "text-[--color-red]";
+  if (wr >= 55) return "text-(--color-up)";
+  if (wr >= 50) return "text-(--color-yellow)";
+  return "text-(--color-red)";
 }
 
 function pfColor(pf: number): string {
-  if (pf >= 1.5) return "text-[--color-up]";
-  if (pf >= 1.0) return "text-[--color-yellow]";
-  return "text-[--color-red]";
+  if (pf >= 1.5) return "text-(--color-up)";
+  if (pf >= 1.0) return "text-(--color-yellow)";
+  return "text-(--color-red)";
 }
 
 export function RankingCard({
@@ -153,7 +153,7 @@ export function RankingCard({
 
   return (
     <div
-      class={`rounded-lg p-4 bg-[--color-bg-card] card-hover ${lowSampleBest ? "border border-[--color-yellow]/50 hover:border-[--color-yellow]" : variant === "worst" ? "border border-[--color-down]/30 opacity-70" : "border border-[--color-up]/30"}`}
+      class={`rounded-lg p-4 bg-(--color-bg-card) card-hover ${lowSampleBest ? "border border-(--color-yellow)/50 hover:border-(--color-yellow)" : variant === "worst" ? "border border-(--color-down)/30 opacity-70" : "border border-(--color-up)/30"}`}
       style="box-shadow: var(--shadow-card);"
     >
       {/* Header row */}
@@ -164,12 +164,12 @@ export function RankingCard({
           </span>
           <div class="min-w-0">
             <p
-              class="font-semibold text-[--color-text] text-sm leading-tight truncate"
+              class="font-semibold text-(--color-text) text-sm leading-tight truncate"
               title={lang === "ko" ? entry.name_ko : entry.name_en}
             >
               {lang === "ko" ? entry.name_ko : entry.name_en}
             </p>
-            <p class="text-[--color-text-muted] text-xs font-mono truncate">
+            <p class="text-(--color-text-muted) text-xs font-mono truncate">
               {lang === "ko"
                 ? entry.name_en
                 : entry.timeframe + " · " + entry.direction}
@@ -177,7 +177,7 @@ export function RankingCard({
             {(() => {
               const desc = getStrategyDescription(entry.strategy, lang);
               return desc ? (
-                <p class="text-[--color-text-muted] text-[10px] mt-0.5 truncate">
+                <p class="text-(--color-text-muted) text-[10px] mt-0.5 truncate">
                   {desc}
                 </p>
               ) : null;
@@ -188,7 +188,7 @@ export function RankingCard({
           {directionTag(entry.direction)}
           {/* Show timeframe badge only in KO mode (EN shows timeframe in subtitle already) */}
           {!isWeekly && lang === "ko" && (
-            <span class="font-mono text-xs px-2 py-0.5 rounded border border-[--color-border] text-[--color-text-muted]">
+            <span class="font-mono text-xs px-2 py-0.5 rounded border border-(--color-border) text-(--color-text-muted)">
               {entry.timeframe}
             </span>
           )}
@@ -208,7 +208,7 @@ export function RankingCard({
       {/* Low sample warning badge */}
       {entry.low_sample && (
         <div class="mb-3">
-          <span class="inline-flex items-center gap-1 text-xs font-mono px-2 py-0.5 rounded border border-[--color-yellow]/40 text-[--color-yellow] bg-[--color-yellow]/5">
+          <span class="inline-flex items-center gap-1 text-xs font-mono px-2 py-0.5 rounded border border-(--color-yellow)/40 text-(--color-yellow) bg-(--color-yellow)/5">
             ⚠️ {lbl.lowSample(entry.total_trades)}
           </span>
         </div>
@@ -216,7 +216,7 @@ export function RankingCard({
 
       {/* Dollar translation */}
       {entry.total_return != null && (
-        <div class="mb-2 font-mono text-xs text-[--color-text-muted]">
+        <div class="mb-2 font-mono text-xs text-(--color-text-muted)">
           $1,000 →{" "}
           <span
             style={{
@@ -236,7 +236,7 @@ export function RankingCard({
       <div class="grid grid-cols-3 gap-2 font-mono text-sm ranking-metric-reveal">
         <div>
           <p
-            class="text-[--color-text-muted] text-xs mb-0.5 cursor-help"
+            class="text-(--color-text-muted) text-xs mb-0.5 cursor-help"
             title={
               lang === "ko"
                 ? "승률 = 수익 거래 비율. 55%+ 양호."
@@ -254,7 +254,7 @@ export function RankingCard({
         </div>
         <div>
           <p
-            class="text-[--color-text-muted] text-xs mb-0.5 cursor-help"
+            class="text-(--color-text-muted) text-xs mb-0.5 cursor-help"
             title={
               lang === "ko"
                 ? "수익팩터 = 평균 수익 ÷ 평균 손실. 1.0 = 본전, 1.5+ = 양호, 2.0+ = 강함. 샘플 부족 시 99.99로 제한."
@@ -272,7 +272,7 @@ export function RankingCard({
               title={lbl.pfCapped}
             >
               {entry.profit_factor.toFixed(2)}
-              <span class="ml-0.5 text-[0.6rem] font-normal text-[--color-text-muted]">
+              <span class="ml-0.5 text-[0.6rem] font-normal text-(--color-text-muted)">
                 (cap)
               </span>
             </p>
@@ -283,10 +283,10 @@ export function RankingCard({
           )}
         </div>
         <div>
-          <p class="text-[--color-text-muted] text-xs mb-0.5">
+          <p class="text-(--color-text-muted) text-xs mb-0.5">
             {isWeekly ? lbl.days : lbl.trades}
           </p>
-          <p class="font-bold text-base text-[--color-text]">
+          <p class="font-bold text-base text-(--color-text)">
             {isWeekly && entry.days_in_top != null
               ? `${entry.days_in_top}${lbl.daysUnit}`
               : entry.total_trades}
@@ -309,7 +309,7 @@ export function RankingCard({
           },
           lang,
         )}
-        class="mt-3 block text-center text-xs font-mono px-3 py-1.5 rounded border border-[--color-accent]/30 text-[--color-accent] hover:bg-[--color-accent]/10 transition-colors"
+        class="mt-3 block text-center text-xs font-mono px-3 py-1.5 rounded border border-(--color-accent)/30 text-(--color-accent) hover:bg-(--color-accent)/10 transition-colors"
       >
         {lang === "ko" ? "시뮬레이션 →" : "Simulate →"}
       </a>

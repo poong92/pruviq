@@ -159,7 +159,7 @@ export default function LoadingEquityAnimation({
         class="w-full max-w-md rounded-lg"
         style={{ height: "160px" }}
       />
-      <div class="mt-3 text-xs font-mono text-[--color-text-muted] flex items-center gap-2">
+      <div class="mt-3 text-xs font-mono text-(--color-text-muted) flex items-center gap-2">
         <span class="spinner" />
         {progressLabels[progressStep] || progressLabels[0]}
         {elapsedSec > 0 && <span class="opacity-70">{elapsedSec}s</span>}

@@ -19,30 +19,30 @@ const comparisons = [
 <Layout title={t('compare_index.meta_title')} description={t('compare_index.meta_desc')}>
   <section class="pt-6 pb-16 md:pt-10 md:pb-24 section-elevated">
     <div class="max-w-4xl mx-auto px-6">
-      <p class="font-mono text-[--color-accent] text-sm mb-3 tracking-wider">{t('compare_index.tag')}</p>
+      <p class="font-mono text-(--color-accent) text-sm mb-3 tracking-wider">{t('compare_index.tag')}</p>
       <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-5">
         {t('compare_index.title')}
-        <span class="block text-lg md:text-2xl font-normal text-[--color-text-muted] mt-3">
+        <span class="block text-lg md:text-2xl font-normal text-(--color-text-muted) mt-3">
           {t('compare_index.subtitle')}
         </span>
       </h1>
 
       <!-- Why PRUVIQ: 3 strengths -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10 mb-10 reveal">
-        <div class="border border-[--color-up]/30 rounded-lg p-6 bg-[--color-bg-card] shadow-[var(--shadow-md)]">
-          <p class="font-mono text-[--color-up] text-xs font-bold mb-2 tracking-wider">{t('compare_index.strength1_tag')}</p>
+        <div class="border border-(--color-up)/30 rounded-lg p-6 bg-(--color-bg-card) shadow-[var(--shadow-md)]">
+          <p class="font-mono text-(--color-up) text-xs font-bold mb-2 tracking-wider">{t('compare_index.strength1_tag')}</p>
           <p class="font-bold text-lg mb-2">{t('compare_index.strength1_title')}</p>
-          <p class="text-[--color-text-muted] text-sm leading-relaxed">{t('compare_index.strength1_desc')}</p>
+          <p class="text-(--color-text-muted) text-sm leading-relaxed">{t('compare_index.strength1_desc')}</p>
         </div>
-        <div class="border border-[--color-accent]/30 rounded-lg p-6 bg-[--color-bg-card] shadow-[var(--shadow-md)]">
-          <p class="font-mono text-[--color-accent] text-xs font-bold mb-2 tracking-wider">{t('compare_index.strength2_tag')}</p>
+        <div class="border border-(--color-accent)/30 rounded-lg p-6 bg-(--color-bg-card) shadow-[var(--shadow-md)]">
+          <p class="font-mono text-(--color-accent) text-xs font-bold mb-2 tracking-wider">{t('compare_index.strength2_tag')}</p>
           <p class="font-bold text-lg mb-2">{t('compare_index.strength2_title')}</p>
-          <p class="text-[--color-text-muted] text-sm leading-relaxed">{t('compare_index.strength2_desc')}</p>
+          <p class="text-(--color-text-muted) text-sm leading-relaxed">{t('compare_index.strength2_desc')}</p>
         </div>
-        <div class="border border-[--color-accent]/30 rounded-lg p-6 bg-[--color-bg-card] shadow-[var(--shadow-md)]">
-          <p class="font-mono text-[--color-accent] text-xs font-bold mb-2 tracking-wider">{t('compare_index.strength3_tag')}</p>
+        <div class="border border-(--color-accent)/30 rounded-lg p-6 bg-(--color-bg-card) shadow-[var(--shadow-md)]">
+          <p class="font-mono text-(--color-accent) text-xs font-bold mb-2 tracking-wider">{t('compare_index.strength3_tag')}</p>
           <p class="font-bold text-lg mb-2">{t('compare_index.strength3_title')}</p>
-          <p class="text-[--color-text-muted] text-sm leading-relaxed">{t('compare_index.strength3_desc')}</p>
+          <p class="text-(--color-text-muted) text-sm leading-relaxed">{t('compare_index.strength3_desc')}</p>
         </div>
       </div>
 
@@ -51,70 +51,70 @@ const comparisons = [
         <table class="w-full min-w-[700px] text-sm border-collapse" role="table">
           <caption class="sr-only">Feature comparison: PRUVIQ vs TradingView, 3Commas, Cryptohopper, Coinrule, Gainium</caption>
           <thead>
-            <tr class="border-b border-[--color-border]">
-              <th scope="col" class="text-left py-3 px-3 font-mono text-[--color-text-muted] text-xs">{t('compare_index.tbl_feature')}</th>
-              <th scope="col" class="text-center py-3 px-3 font-mono text-[--color-accent] text-xs bg-[--color-accent]/10 border-x border-[--color-accent]/20">PRUVIQ</th>
-              <th scope="col" class="text-center py-3 px-3 font-mono text-[--color-text-muted] text-xs">TradingView</th>
-              <th scope="col" class="text-center py-3 px-3 font-mono text-[--color-text-muted] text-xs">3Commas</th>
-              <th scope="col" class="text-center py-3 px-3 font-mono text-[--color-text-muted] text-xs">Cryptohopper</th>
-              <th scope="col" class="text-center py-3 px-3 font-mono text-[--color-text-muted] text-xs">Coinrule</th>
-              <th scope="col" class="text-center py-3 px-3 font-mono text-[--color-text-muted] text-xs">Gainium</th>
+            <tr class="border-b border-(--color-border)">
+              <th scope="col" class="text-left py-3 px-3 font-mono text-(--color-text-muted) text-xs">{t('compare_index.tbl_feature')}</th>
+              <th scope="col" class="text-center py-3 px-3 font-mono text-(--color-accent) text-xs bg-(--color-accent)/10 border-x border-(--color-accent)/20">PRUVIQ</th>
+              <th scope="col" class="text-center py-3 px-3 font-mono text-(--color-text-muted) text-xs">TradingView</th>
+              <th scope="col" class="text-center py-3 px-3 font-mono text-(--color-text-muted) text-xs">3Commas</th>
+              <th scope="col" class="text-center py-3 px-3 font-mono text-(--color-text-muted) text-xs">Cryptohopper</th>
+              <th scope="col" class="text-center py-3 px-3 font-mono text-(--color-text-muted) text-xs">Coinrule</th>
+              <th scope="col" class="text-center py-3 px-3 font-mono text-(--color-text-muted) text-xs">Gainium</th>
             </tr>
           </thead>
           <tbody>
-            <tr class="border-b border-[--color-border]/50">
-              <td class="py-3 px-3 text-[--color-text-muted]">{t('compare_index.tbl_price')}</td>
-              <td class="py-3 px-3 text-center text-[--color-up] font-semibold bg-[--color-accent]/10 border-x border-[--color-accent]/20">$0</td>
-              <td class="py-3 px-3 text-center text-[--color-text-muted]">Free / $15+/mo</td>
-              <td class="py-3 px-3 text-center text-[--color-text-muted]">$22+/mo</td>
-              <td class="py-3 px-3 text-center text-[--color-text-muted]">$19+/mo</td>
-              <td class="py-3 px-3 text-center text-[--color-text-muted]">$29+/mo</td>
-              <td class="py-3 px-3 text-center text-[--color-text-muted]">$29+/mo</td>
+            <tr class="border-b border-(--color-border)/50">
+              <td class="py-3 px-3 text-(--color-text-muted)">{t('compare_index.tbl_price')}</td>
+              <td class="py-3 px-3 text-center text-(--color-up) font-semibold bg-(--color-accent)/10 border-x border-(--color-accent)/20">$0</td>
+              <td class="py-3 px-3 text-center text-(--color-text-muted)">Free / $15+/mo</td>
+              <td class="py-3 px-3 text-center text-(--color-text-muted)">$22+/mo</td>
+              <td class="py-3 px-3 text-center text-(--color-text-muted)">$19+/mo</td>
+              <td class="py-3 px-3 text-center text-(--color-text-muted)">$29+/mo</td>
+              <td class="py-3 px-3 text-center text-(--color-text-muted)">$29+/mo</td>
             </tr>
-            <tr class="border-b border-[--color-border]/50">
-              <td class="py-3 px-3 text-[--color-text-muted]">{t('compare_index.tbl_no_account')}</td>
-              <td class="py-3 px-3 text-center text-[--color-up] bg-[--color-accent]/10 border-x border-[--color-accent]/20"><span class="font-bold">&#10003;</span> <span class="text-xs block mt-0.5">Instant access</span></td>
-              <td class="py-3 px-3 text-center text-[--color-down]"><span class="font-bold">&#10007;</span> <span class="text-xs block mt-0.5">Email + KYC</span></td>
-              <td class="py-3 px-3 text-center text-[--color-down]"><span class="font-bold">&#10007;</span> <span class="text-xs block mt-0.5">Email + KYC</span></td>
-              <td class="py-3 px-3 text-center text-[--color-down]"><span class="font-bold">&#10007;</span> <span class="text-xs block mt-0.5">Email + KYC</span></td>
-              <td class="py-3 px-3 text-center text-[--color-down]"><span class="font-bold">&#10007;</span> <span class="text-xs block mt-0.5">Email req.</span></td>
-              <td class="py-3 px-3 text-center text-[--color-down]"><span class="font-bold">&#10007;</span> <span class="text-xs block mt-0.5">Email req.</span></td>
+            <tr class="border-b border-(--color-border)/50">
+              <td class="py-3 px-3 text-(--color-text-muted)">{t('compare_index.tbl_no_account')}</td>
+              <td class="py-3 px-3 text-center text-(--color-up) bg-(--color-accent)/10 border-x border-(--color-accent)/20"><span class="font-bold">&#10003;</span> <span class="text-xs block mt-0.5">Instant access</span></td>
+              <td class="py-3 px-3 text-center text-(--color-down)"><span class="font-bold">&#10007;</span> <span class="text-xs block mt-0.5">Email + KYC</span></td>
+              <td class="py-3 px-3 text-center text-(--color-down)"><span class="font-bold">&#10007;</span> <span class="text-xs block mt-0.5">Email + KYC</span></td>
+              <td class="py-3 px-3 text-center text-(--color-down)"><span class="font-bold">&#10007;</span> <span class="text-xs block mt-0.5">Email + KYC</span></td>
+              <td class="py-3 px-3 text-center text-(--color-down)"><span class="font-bold">&#10007;</span> <span class="text-xs block mt-0.5">Email req.</span></td>
+              <td class="py-3 px-3 text-center text-(--color-down)"><span class="font-bold">&#10007;</span> <span class="text-xs block mt-0.5">Email req.</span></td>
             </tr>
-            <tr class="border-b border-[--color-border]/50">
-              <td class="py-3 px-3 text-[--color-text-muted]">{t('compare_index.tbl_multicoin')}</td>
-              <td class="py-3 px-3 text-center text-[--color-up] font-semibold bg-[--color-accent]/10 border-x border-[--color-accent]/20">{coinsAnalyzed}+ coins</td>
-              <td class="py-3 px-3 text-center text-[--color-down]">1 at a time</td>
-              <td class="py-3 px-3 text-center text-[--color-down]">Limited</td>
-              <td class="py-3 px-3 text-center text-[--color-down]">Limited</td>
-              <td class="py-3 px-3 text-center text-[--color-down]">Limited</td>
-              <td class="py-3 px-3 text-center text-[--color-down]">Limited</td>
+            <tr class="border-b border-(--color-border)/50">
+              <td class="py-3 px-3 text-(--color-text-muted)">{t('compare_index.tbl_multicoin')}</td>
+              <td class="py-3 px-3 text-center text-(--color-up) font-semibold bg-(--color-accent)/10 border-x border-(--color-accent)/20">{coinsAnalyzed}+ coins</td>
+              <td class="py-3 px-3 text-center text-(--color-down)">1 at a time</td>
+              <td class="py-3 px-3 text-center text-(--color-down)">Limited</td>
+              <td class="py-3 px-3 text-center text-(--color-down)">Limited</td>
+              <td class="py-3 px-3 text-center text-(--color-down)">Limited</td>
+              <td class="py-3 px-3 text-center text-(--color-down)">Limited</td>
             </tr>
-            <tr class="border-b border-[--color-border]/50">
-              <td class="py-3 px-3 text-[--color-text-muted]">{t('compare_index.tbl_transparency')}</td>
-              <td class="py-3 px-3 text-center text-[--color-up] bg-[--color-accent]/10 border-x border-[--color-accent]/20"><span class="font-bold">&#10003;</span> <span class="text-xs block mt-0.5">Failures published</span></td>
-              <td class="py-3 px-3 text-center text-[--color-down]"><span class="font-bold">&#10007;</span> <span class="text-xs block mt-0.5">Winners only</span></td>
-              <td class="py-3 px-3 text-center text-[--color-down]"><span class="font-bold">&#10007;</span> <span class="text-xs block mt-0.5">Winners only</span></td>
-              <td class="py-3 px-3 text-center text-[--color-down]"><span class="font-bold">&#10007;</span> <span class="text-xs block mt-0.5">Winners only</span></td>
-              <td class="py-3 px-3 text-center text-[--color-down]"><span class="font-bold">&#10007;</span> <span class="text-xs block mt-0.5">Winners only</span></td>
-              <td class="py-3 px-3 text-center text-[--color-down]"><span class="font-bold">&#10007;</span> <span class="text-xs block mt-0.5">Winners only</span></td>
+            <tr class="border-b border-(--color-border)/50">
+              <td class="py-3 px-3 text-(--color-text-muted)">{t('compare_index.tbl_transparency')}</td>
+              <td class="py-3 px-3 text-center text-(--color-up) bg-(--color-accent)/10 border-x border-(--color-accent)/20"><span class="font-bold">&#10003;</span> <span class="text-xs block mt-0.5">Failures published</span></td>
+              <td class="py-3 px-3 text-center text-(--color-down)"><span class="font-bold">&#10007;</span> <span class="text-xs block mt-0.5">Winners only</span></td>
+              <td class="py-3 px-3 text-center text-(--color-down)"><span class="font-bold">&#10007;</span> <span class="text-xs block mt-0.5">Winners only</span></td>
+              <td class="py-3 px-3 text-center text-(--color-down)"><span class="font-bold">&#10007;</span> <span class="text-xs block mt-0.5">Winners only</span></td>
+              <td class="py-3 px-3 text-center text-(--color-down)"><span class="font-bold">&#10007;</span> <span class="text-xs block mt-0.5">Winners only</span></td>
+              <td class="py-3 px-3 text-center text-(--color-down)"><span class="font-bold">&#10007;</span> <span class="text-xs block mt-0.5">Winners only</span></td>
             </tr>
-            <tr class="border-b border-[--color-border]/50">
-              <td class="py-3 px-3 text-[--color-text-muted]">{t('compare_index.tbl_no_code')}</td>
-              <td class="py-3 px-3 text-center text-[--color-up] bg-[--color-accent]/10 border-x border-[--color-accent]/20"><span class="font-bold">&#10003;</span> <span class="text-xs block mt-0.5">Visual builder</span></td>
-              <td class="py-3 px-3 text-center text-[--color-down]">Pine Script</td>
-              <td class="py-3 px-3 text-center text-base font-bold text-[--color-up]">&#10003;</td>
-              <td class="py-3 px-3 text-center text-base font-bold text-[--color-up]">&#10003;</td>
-              <td class="py-3 px-3 text-center text-base font-bold text-[--color-up]">&#10003;</td>
-              <td class="py-3 px-3 text-center text-base font-bold text-[--color-up]">&#10003;</td>
+            <tr class="border-b border-(--color-border)/50">
+              <td class="py-3 px-3 text-(--color-text-muted)">{t('compare_index.tbl_no_code')}</td>
+              <td class="py-3 px-3 text-center text-(--color-up) bg-(--color-accent)/10 border-x border-(--color-accent)/20"><span class="font-bold">&#10003;</span> <span class="text-xs block mt-0.5">Visual builder</span></td>
+              <td class="py-3 px-3 text-center text-(--color-down)">Pine Script</td>
+              <td class="py-3 px-3 text-center text-base font-bold text-(--color-up)">&#10003;</td>
+              <td class="py-3 px-3 text-center text-base font-bold text-(--color-up)">&#10003;</td>
+              <td class="py-3 px-3 text-center text-base font-bold text-(--color-up)">&#10003;</td>
+              <td class="py-3 px-3 text-center text-base font-bold text-(--color-up)">&#10003;</td>
             </tr>
             <tr>
-              <td class="py-3 px-3 text-[--color-text-muted]">{t('compare_index.tbl_autobot')}</td>
-              <td class="py-3 px-3 text-center text-[--color-up] bg-[--color-accent]/10 border-x border-[--color-accent]/20"><span class="font-bold">&#10003;</span> <span class="text-xs block mt-0.5">OKX · no API key</span></td>
-              <td class="py-3 px-3 text-center text-[--color-down]"><span class="font-bold">&#10007;</span> <span class="text-xs block mt-0.5">Alerts only</span></td>
-              <td class="py-3 px-3 text-center text-[--color-up]"><span class="font-bold">&#10003;</span> <span class="text-xs block mt-0.5">$22+/mo</span></td>
-              <td class="py-3 px-3 text-center text-[--color-up]"><span class="font-bold">&#10003;</span> <span class="text-xs block mt-0.5">$19+/mo</span></td>
-              <td class="py-3 px-3 text-center text-[--color-up]"><span class="font-bold">&#10003;</span> <span class="text-xs block mt-0.5">$29+/mo</span></td>
-              <td class="py-3 px-3 text-center text-[--color-up]"><span class="font-bold">&#10003;</span> <span class="text-xs block mt-0.5">$29+/mo</span></td>
+              <td class="py-3 px-3 text-(--color-text-muted)">{t('compare_index.tbl_autobot')}</td>
+              <td class="py-3 px-3 text-center text-(--color-up) bg-(--color-accent)/10 border-x border-(--color-accent)/20"><span class="font-bold">&#10003;</span> <span class="text-xs block mt-0.5">OKX · no API key</span></td>
+              <td class="py-3 px-3 text-center text-(--color-down)"><span class="font-bold">&#10007;</span> <span class="text-xs block mt-0.5">Alerts only</span></td>
+              <td class="py-3 px-3 text-center text-(--color-up)"><span class="font-bold">&#10003;</span> <span class="text-xs block mt-0.5">$22+/mo</span></td>
+              <td class="py-3 px-3 text-center text-(--color-up)"><span class="font-bold">&#10003;</span> <span class="text-xs block mt-0.5">$19+/mo</span></td>
+              <td class="py-3 px-3 text-center text-(--color-up)"><span class="font-bold">&#10003;</span> <span class="text-xs block mt-0.5">$29+/mo</span></td>
+              <td class="py-3 px-3 text-center text-(--color-up)"><span class="font-bold">&#10003;</span> <span class="text-xs block mt-0.5">$29+/mo</span></td>
             </tr>
           </tbody>
         </table>
@@ -123,10 +123,10 @@ const comparisons = [
       <!-- Why These Numbers Matter -->
       <div class="max-w-3xl mx-auto mt-10 mb-6">
         <h3 class="text-lg font-bold mb-3">Why These Numbers Matter</h3>
-        <div class="space-y-4 text-sm text-[--color-text-muted] leading-relaxed">
-          <p><strong class="text-[--color-text]">Multi-coin testing</strong> — Most platforms test one coin at a time. PRUVIQ runs your strategy across {coinsAnalyzed}+ coins simultaneously, revealing which markets it actually works in and which it doesn't. This eliminates cherry-picking bias.</p>
-          <p><strong class="text-[--color-text]">Failure transparency</strong> — We publish every strategy that failed, with full data. 87 out of 88 strategy combinations were eliminated. Other platforms show only winners, hiding the survivorship bias that inflates backtesting results.</p>
-          <p><strong class="text-[--color-text]">No account required</strong> — Test any strategy immediately. No email, no KYC, no credit card. Your data stays in your browser. This matters because signup walls create friction that prevents honest evaluation.</p>
+        <div class="space-y-4 text-sm text-(--color-text-muted) leading-relaxed">
+          <p><strong class="text-(--color-text)">Multi-coin testing</strong> — Most platforms test one coin at a time. PRUVIQ runs your strategy across {coinsAnalyzed}+ coins simultaneously, revealing which markets it actually works in and which it doesn't. This eliminates cherry-picking bias.</p>
+          <p><strong class="text-(--color-text)">Failure transparency</strong> — We publish every strategy that failed, with full data. 87 out of 88 strategy combinations were eliminated. Other platforms show only winners, hiding the survivorship bias that inflates backtesting results.</p>
+          <p><strong class="text-(--color-text)">No account required</strong> — Test any strategy immediately. No email, no KYC, no credit card. Your data stays in your browser. This matters because signup walls create friction that prevents honest evaluation.</p>
         </div>
       </div>
 
@@ -135,39 +135,39 @@ const comparisons = [
         <a href="/simulate" class="btn btn-primary btn-lg">
           {t('compare_index.primary_cta')} &rarr;
         </a>
-        <p class="text-xs text-[--color-text-muted] mt-3 font-mono">{t('compare_index.cta_note')}</p>
+        <p class="text-xs text-(--color-text-muted) mt-3 font-mono">{t('compare_index.cta_note')}</p>
       </div>
 
       <hr class="section-divider mb-10" />
 
-      <p class="font-mono text-[--color-accent] text-sm mb-6 tracking-wider">{t('compare_index.detailed_label')}</p>
+      <p class="font-mono text-(--color-accent) text-sm mb-6 tracking-wider">{t('compare_index.detailed_label')}</p>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 reveal">
         {comparisons.map((c) => (
           <a
             href={`/compare/${c.slug}`}
-            class="group relative border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] card-hover shadow-[var(--shadow-md)] overflow-hidden"
+            class="group relative border border-(--color-border) rounded-lg p-6 bg-(--color-bg-card) card-hover shadow-[var(--shadow-md)] overflow-hidden"
             style={`--card-accent: ${c.accent};`}
           >
             {/* Subtle accent line top */}
             <div class="absolute top-0 left-0 right-0 h-[2px] opacity-40" style={`background: ${c.accent};`} aria-hidden="true"></div>
             {c.badge && (
-              <span class="absolute top-4 right-4 text-xs font-mono bg-[--color-accent] text-[--color-accent-text] px-2 py-0.5 rounded">
+              <span class="absolute top-4 right-4 text-xs font-mono bg-(--color-accent) text-(--color-accent-text) px-2 py-0.5 rounded">
                 {c.badge}
               </span>
             )}
             <div class="flex items-center gap-3 mb-2">
               <span class="text-2xl" aria-hidden="true">{c.icon}</span>
-              <h2 class="text-lg font-bold group-hover:text-[--color-accent] transition-colors">
+              <h2 class="text-lg font-bold group-hover:text-(--color-accent) transition-colors">
                 PRUVIQ vs {c.name}
               </h2>
             </div>
-            <p class="text-sm text-[--color-text-muted]">{c.desc}</p>
+            <p class="text-sm text-(--color-text-muted)">{c.desc}</p>
           </a>
         ))}
       </div>
-      <p class="text-sm text-[--color-text-muted] mt-6">Learn more: <a href="/learn" class="text-[--color-accent] hover:underline">Trading Guides</a> · <a href="/fees" class="text-[--color-accent] hover:underline">Fee Comparison</a> · <a href="/strategies/ranking" class="text-[--color-accent] hover:underline">Strategy Rankings</a></p>
-      <p class="mt-10 text-sm text-[--color-text-muted] font-mono">
-        {t('compare_index.footer')} <a href="/simulate" class="text-[--color-accent] hover:underline">{t('compare_index.try_cta')}</a>
+      <p class="text-sm text-(--color-text-muted) mt-6">Learn more: <a href="/learn" class="text-(--color-accent) hover:underline">Trading Guides</a> · <a href="/fees" class="text-(--color-accent) hover:underline">Fee Comparison</a> · <a href="/strategies/ranking" class="text-(--color-accent) hover:underline">Strategy Rankings</a></p>
+      <p class="mt-10 text-sm text-(--color-text-muted) font-mono">
+        {t('compare_index.footer')} <a href="/simulate" class="text-(--color-accent) hover:underline">{t('compare_index.try_cta')}</a>
       </p>
     </div>
   </section>

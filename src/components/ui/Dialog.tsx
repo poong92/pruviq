@@ -194,23 +194,23 @@ export default function Dialog({
         aria-labelledby={title || titleNode ? titleId : undefined}
         aria-describedby={ariaDescribedBy}
         tabIndex={-1}
-        class={`relative w-full ${sizeClasses[size]} max-h-[85vh] overflow-y-auto rounded-xl border border-[--color-border] bg-[--color-bg-card] shadow-[var(--shadow-lg)] focus:outline-none ${className}`.trim()}
+        class={`relative w-full ${sizeClasses[size]} max-h-[85vh] overflow-y-auto rounded-xl border border-(--color-border) bg-(--color-bg-card) shadow-[var(--shadow-lg)] focus:outline-none ${className}`.trim()}
       >
         {(title || titleNode || !hideCloseButton) && (
-          <header class="flex items-start justify-between gap-3 px-5 py-4 border-b border-[--color-border]">
+          <header class="flex items-start justify-between gap-3 px-5 py-4 border-b border-(--color-border)">
             <div class="flex-1 min-w-0">
               {titleNode ? (
                 <div id={titleId}>{titleNode}</div>
               ) : title ? (
                 <h2
                   id={titleId}
-                  class="font-semibold text-[--color-text] text-base"
+                  class="font-semibold text-(--color-text) text-base"
                 >
                   {title}
                 </h2>
               ) : null}
               {description && (
-                <p id={descId} class="text-xs text-[--color-text-muted] mt-1">
+                <p id={descId} class="text-xs text-(--color-text-muted) mt-1">
                   {description}
                 </p>
               )}
@@ -220,7 +220,7 @@ export default function Dialog({
                 type="button"
                 onClick={onClose}
                 aria-label="Close"
-                class="shrink-0 inline-flex items-center justify-center w-8 h-8 rounded text-[--color-text-muted] hover:text-[--color-text] hover:bg-[--color-bg-hover] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--color-accent]"
+                class="shrink-0 inline-flex items-center justify-center w-8 h-8 rounded text-(--color-text-muted) hover:text-(--color-text) hover:bg-(--color-bg-hover) transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-accent)"
               >
                 <span aria-hidden="true">×</span>
               </button>
@@ -254,7 +254,7 @@ export function DialogActions({
 }: DialogActionsProps) {
   return (
     <div
-      class={`mt-5 -mx-5 -mb-4 px-5 py-3 border-t border-[--color-border] flex items-center gap-2 ${alignClass[align]} ${className}`.trim()}
+      class={`mt-5 -mx-5 -mb-4 px-5 py-3 border-t border-(--color-border) flex items-center gap-2 ${alignClass[align]} ${className}`.trim()}
     >
       {children}
     </div>

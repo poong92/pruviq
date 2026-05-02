@@ -12,65 +12,65 @@ const marketDataJson = JSON.stringify(marketDataRaw);
 <Layout title={t('meta.market_title')} description={t('meta.market_desc')}>
   <section class="pt-6 pb-16 md:pt-10 md:pb-24 reveal">
     <div class="max-w-7xl mx-auto px-6">
-      <p class="font-mono text-[--color-accent] text-sm mb-3 tracking-wider">{t('market.tag')}</p>
+      <p class="font-mono text-(--color-accent) text-sm mb-3 tracking-wider">{t('market.tag')}</p>
       <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-5">{t('market.title')}</h1>
-      <p class="text-[--color-text-muted] text-lg md:text-xl mb-5 max-w-2xl leading-relaxed">
+      <p class="text-(--color-text-muted) text-lg md:text-xl mb-5 max-w-2xl leading-relaxed">
         {t('market.desc')}
       </p>
-      <div class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-[--color-accent]/20 bg-[--color-accent]/5 text-sm mb-8">
-        <span class="text-[--color-accent] font-mono text-xs font-bold">TIP</span>
-        <span class="text-[--color-text-muted]">{t('market.context_tip')}</span>
-        <a href="/ko/simulate" class="text-[--color-accent] font-semibold hover:underline whitespace-nowrap">{t('market.context_cta')} &rarr;</a>
+      <div class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-(--color-accent)/20 bg-(--color-accent)/5 text-sm mb-8">
+        <span class="text-(--color-accent) font-mono text-xs font-bold">TIP</span>
+        <span class="text-(--color-text-muted)">{t('market.context_tip')}</span>
+        <a href="/ko/simulate" class="text-(--color-accent) font-semibold hover:underline whitespace-nowrap">{t('market.context_cta')} &rarr;</a>
       </div>
       <div id="market-mount" data-initial-market={marketDataJson}>
         <div class="animate-pulse space-y-4">
           <div class="flex gap-4 flex-wrap">
-            <div class="flex-1 min-w-[200px] h-16 bg-[--color-bg-hover] rounded-lg"></div>
-            <div class="flex-1 min-w-[200px] h-16 bg-[--color-bg-hover] rounded-lg"></div>
+            <div class="flex-1 min-w-[200px] h-16 bg-(--color-bg-hover) rounded-lg"></div>
+            <div class="flex-1 min-w-[200px] h-16 bg-(--color-bg-hover) rounded-lg"></div>
           </div>
           <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div class="h-24 bg-[--color-bg-hover] rounded-lg"></div>
-            <div class="h-24 bg-[--color-bg-hover] rounded-lg"></div>
-            <div class="h-24 bg-[--color-bg-hover] rounded-lg"></div>
-            <div class="h-24 bg-[--color-bg-hover] rounded-lg"></div>
+            <div class="h-24 bg-(--color-bg-hover) rounded-lg"></div>
+            <div class="h-24 bg-(--color-bg-hover) rounded-lg"></div>
+            <div class="h-24 bg-(--color-bg-hover) rounded-lg"></div>
+            <div class="h-24 bg-(--color-bg-hover) rounded-lg"></div>
           </div>
-          <div class="h-64 bg-[--color-bg-hover] rounded-lg"></div>
+          <div class="h-64 bg-(--color-bg-hover) rounded-lg"></div>
         </div>
         <noscript>
-          <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] mt-4">
+          <div class="border border-(--color-border) rounded-lg p-6 bg-(--color-bg-card) mt-4">
             <h2 class="text-lg font-bold mb-4">{t('market.noscript_title')}</h2>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-              <div class="p-3 rounded-lg bg-[--color-bg-hover]">
-                <p class="text-xs text-[--color-text-muted]">BTC 가격</p>
+              <div class="p-3 rounded-lg bg-(--color-bg-hover)">
+                <p class="text-xs text-(--color-text-muted)">BTC 가격</p>
                 <p class="font-bold font-mono">${marketDataRaw.btc_price?.toLocaleString('en-US', { maximumFractionDigits: 0 })}</p>
               </div>
-              <div class="p-3 rounded-lg bg-[--color-bg-hover]">
-                <p class="text-xs text-[--color-text-muted]">BTC 도미넌스</p>
+              <div class="p-3 rounded-lg bg-(--color-bg-hover)">
+                <p class="text-xs text-(--color-text-muted)">BTC 도미넌스</p>
                 <p class="font-bold font-mono">{marketDataRaw.btc_dominance}%</p>
               </div>
-              <div class="p-3 rounded-lg bg-[--color-bg-hover]">
-                <p class="text-xs text-[--color-text-muted]">공포 & 탐욕</p>
+              <div class="p-3 rounded-lg bg-(--color-bg-hover)">
+                <p class="text-xs text-(--color-text-muted)">공포 & 탐욕</p>
                 <p class="font-bold font-mono">{marketDataRaw.fear_greed_index} — {marketDataRaw.fear_greed_label}</p>
               </div>
-              <div class="p-3 rounded-lg bg-[--color-bg-hover]">
-                <p class="text-xs text-[--color-text-muted]">총 시가총액</p>
+              <div class="p-3 rounded-lg bg-(--color-bg-hover)">
+                <p class="text-xs text-(--color-text-muted)">총 시가총액</p>
                 <p class="font-bold font-mono">${marketDataRaw.total_market_cap_b}B</p>
               </div>
             </div>
-            <p class="text-[--color-text-muted] text-sm mb-4">{t('market.noscript_desc')}</p>
+            <p class="text-(--color-text-muted) text-sm mb-4">{t('market.noscript_desc')}</p>
             <div class="flex flex-wrap gap-3">
-              <a href="/ko/coins" class="text-[--color-accent] text-sm font-semibold hover:underline">{coinsAnalyzed}+ 코인 탐색 &rarr;</a>
-              <a href="/ko/simulate" class="text-[--color-accent] text-sm font-semibold hover:underline">시뮬레이션 실행 &rarr;</a>
-              <a href="/ko/strategies" class="text-[--color-accent] text-sm font-semibold hover:underline">전략 보기 &rarr;</a>
+              <a href="/ko/coins" class="text-(--color-accent) text-sm font-semibold hover:underline">{coinsAnalyzed}+ 코인 탐색 &rarr;</a>
+              <a href="/ko/simulate" class="text-(--color-accent) text-sm font-semibold hover:underline">시뮬레이션 실행 &rarr;</a>
+              <a href="/ko/strategies" class="text-(--color-accent) text-sm font-semibold hover:underline">전략 보기 &rarr;</a>
             </div>
           </div>
         </noscript>
       </div>
     </div>
     <div class="max-w-5xl mx-auto px-4 mt-10">
-      <div class="border border-[--color-accent]/20 rounded-lg p-5 bg-[--color-accent]/5 card-enterprise">
-        <p class="font-mono text-[--color-accent] text-xs mb-2">다음 행동</p>
-        <p class="text-sm text-[--color-text-secondary] mb-3">
+      <div class="border border-(--color-accent)/20 rounded-lg p-5 bg-(--color-accent)/5 card-enterprise">
+        <p class="font-mono text-(--color-accent) text-xs mb-2">다음 행동</p>
+        <p class="text-sm text-(--color-text-secondary) mb-3">
           흥미로운 점을 발견하셨나요? 이 시장에서 전략이 어떻게 수행될지 테스트해 보세요.
         </p>
         <div class="flex flex-wrap gap-3">
@@ -85,7 +85,7 @@ const marketDataJson = JSON.stringify(marketDataRaw);
         <a href="/ko/simulate" class="btn btn-primary btn-md no-underline">
           {t('cross.simulate_cta')} &rarr;
         </a>
-        <a href="/ko/strategies" class="btn btn-ghost btn-md hover:border-[--color-accent] transition-colors no-underline">
+        <a href="/ko/strategies" class="btn btn-ghost btn-md hover:border-(--color-accent) transition-colors no-underline">
           {t('cross.strategies_cta')} &rarr;
         </a>
       </div>

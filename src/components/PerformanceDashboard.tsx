@@ -156,7 +156,7 @@ function MetricCard({
       radius="md"
       class="p-3 md:p-4 text-center min-w-0"
     >
-      <div class="font-mono text-[0.6875rem] text-[--color-text-muted] uppercase tracking-wider mb-1.5 whitespace-nowrap overflow-hidden text-ellipsis">
+      <div class="font-mono text-[0.6875rem] text-(--color-text-muted) uppercase tracking-wider mb-1.5 whitespace-nowrap overflow-hidden text-ellipsis">
         {label}
       </div>
       <div
@@ -360,8 +360,8 @@ export default function PerformanceDashboard({
           </div>
         </div>
         <SkeletonMetrics />
-        <div class="bg-[--color-bg] border border-[--color-border] rounded-xl overflow-hidden mb-6">
-          <div class="px-4 py-3 border-b border-[--color-border] flex justify-between items-center">
+        <div class="bg-(--color-bg) border border-(--color-border) rounded-xl overflow-hidden mb-6">
+          <div class="px-4 py-3 border-b border-(--color-border) flex justify-between items-center">
             <div class="skeleton h-3 w-28" />
             <div class="skeleton h-4 w-16" />
           </div>
@@ -373,7 +373,7 @@ export default function PerformanceDashboard({
 
   if (error || !data) {
     return (
-      <div class="py-12 text-center font-mono text-sm text-[--color-text-muted] bg-[--color-bg-card] border border-[--color-border] rounded-xl">
+      <div class="py-12 text-center font-mono text-sm text-(--color-text-muted) bg-(--color-bg-card) border border-(--color-border) rounded-xl">
         <div class="text-2xl mb-4 opacity-30">!</div>
         {t.error}
       </div>
@@ -395,7 +395,7 @@ export default function PerformanceDashboard({
     <div class="fade-in" data-perf-loaded>
       {/* Header */}
       <div class="mb-8">
-        <div class="font-mono text-[0.6875rem] text-[--color-accent] tracking-[0.15em] uppercase mb-3">
+        <div class="font-mono text-[0.6875rem] text-(--color-accent) tracking-[0.15em] uppercase mb-3">
           {t.tag}
         </div>
         <h1
@@ -404,17 +404,17 @@ export default function PerformanceDashboard({
         >
           {t.title}
         </h1>
-        <p class="text-[--color-text-muted] text-base leading-relaxed max-w-[600px] mb-4">
+        <p class="text-(--color-text-muted) text-base leading-relaxed max-w-[600px] mb-4">
           {t.desc.replace("{coins}", coinsCount)}
         </p>
-        <div class="font-mono text-xs text-[--color-text-muted] flex gap-6 flex-wrap">
+        <div class="font-mono text-xs text-(--color-text-muted) flex gap-6 flex-wrap">
           <span>
             {t.strategy}:{" "}
-            <span class="text-[--color-text]">{data.strategy}</span>
+            <span class="text-(--color-text)">{data.strategy}</span>
           </span>
           <span>
             {t.period}:{" "}
-            <span class="text-[--color-text]">
+            <span class="text-(--color-text)">
               {formatDateFull(data.period.from)} &mdash;{" "}
               {formatDateFull(data.period.to)}
             </span>
@@ -422,7 +422,7 @@ export default function PerformanceDashboard({
           {data.generated && (
             <span>
               {t.updated}:{" "}
-              <span class="text-[--color-text]">
+              <span class="text-(--color-text)">
                 {formatDateFull(data.generated.split("T")[0])}
               </span>
             </span>
@@ -460,9 +460,9 @@ export default function PerformanceDashboard({
       </div>
 
       {/* Cumulative PnL Chart */}
-      <div class="bg-[--color-bg] border border-[--color-border] rounded-xl overflow-hidden mb-6">
-        <div class="px-4 py-3 border-b border-[--color-border] flex justify-between items-center">
-          <span class="font-mono text-[0.6875rem] text-[--color-accent] tracking-widest uppercase font-semibold">
+      <div class="bg-(--color-bg) border border-(--color-border) rounded-xl overflow-hidden mb-6">
+        <div class="px-4 py-3 border-b border-(--color-border) flex justify-between items-center">
+          <span class="font-mono text-[0.6875rem] text-(--color-accent) tracking-widest uppercase font-semibold">
             {t.dailyChart}
           </span>
           <span
@@ -478,7 +478,7 @@ export default function PerformanceDashboard({
             href="https://www.tradingview.com/"
             target="_blank"
             rel="noopener noreferrer"
-            class="text-[--color-text-muted] no-underline hover:text-[--color-text] transition-colors"
+            class="text-(--color-text-muted) no-underline hover:text-(--color-text) transition-colors"
           >
             Powered by TradingView
           </a>
@@ -488,30 +488,30 @@ export default function PerformanceDashboard({
       {/* Daily Stats + Exit Breakdown */}
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
         {/* Daily Stats */}
-        <div class="p-5 bg-[--color-bg-card] border border-[--color-border] rounded-xl">
-          <div class="font-mono text-[0.6875rem] text-[--color-text-muted] tracking-widest uppercase mb-4">
+        <div class="p-5 bg-(--color-bg-card) border border-(--color-border) rounded-xl">
+          <div class="font-mono text-[0.6875rem] text-(--color-text-muted) tracking-widest uppercase mb-4">
             {t.dailyStats}
           </div>
           <div class="flex flex-col gap-3">
             <div class="flex justify-between items-center">
-              <span class="font-mono text-[0.8125rem] text-[--color-text-muted]">
+              <span class="font-mono text-[0.8125rem] text-(--color-text-muted)">
                 {t.bestDay}
               </span>
-              <span class="font-mono text-base font-bold text-[--color-accent]">
+              <span class="font-mono text-base font-bold text-(--color-accent)">
                 {formatUsd(s.best_day_pnl)}
               </span>
             </div>
             <div class="flex justify-between items-center">
-              <span class="font-mono text-[0.8125rem] text-[--color-text-muted]">
+              <span class="font-mono text-[0.8125rem] text-(--color-text-muted)">
                 {t.worstDay}
               </span>
-              <span class="font-mono text-base font-bold text-[--color-red]">
+              <span class="font-mono text-base font-bold text-(--color-red)">
                 {formatUsd(s.worst_day_pnl)}
               </span>
             </div>
-            <div class="h-px bg-[--color-border]" />
+            <div class="h-px bg-(--color-border)" />
             <div class="flex justify-between items-center">
-              <span class="font-mono text-[0.8125rem] text-[--color-text-muted]">
+              <span class="font-mono text-[0.8125rem] text-(--color-text-muted)">
                 {t.avgTrade}
               </span>
               <span
@@ -526,12 +526,12 @@ export default function PerformanceDashboard({
                 {formatUsd(s.avg_trade_pnl)}
               </span>
             </div>
-            <div class="h-px bg-[--color-border]" />
+            <div class="h-px bg-(--color-border)" />
             <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-1 sm:gap-0">
-              <span class="font-mono text-[0.8125rem] text-[--color-text-muted]">
+              <span class="font-mono text-[0.8125rem] text-(--color-text-muted)">
                 {t.balance}
               </span>
-              <span class="font-mono text-xs sm:text-[0.8125rem] text-[--color-text-muted] truncate">
+              <span class="font-mono text-xs sm:text-[0.8125rem] text-(--color-text-muted) truncate">
                 ${s.starting_balance.toLocaleString()} &rarr;{" "}
                 <span
                   class="font-semibold"
@@ -550,24 +550,24 @@ export default function PerformanceDashboard({
         </div>
 
         {/* Exit Breakdown */}
-        <div class="p-5 bg-[--color-bg-card] border border-[--color-border] rounded-xl">
-          <div class="font-mono text-[0.6875rem] text-[--color-text-muted] tracking-widest uppercase mb-4">
+        <div class="p-5 bg-(--color-bg-card) border border-(--color-border) rounded-xl">
+          <div class="font-mono text-[0.6875rem] text-(--color-text-muted) tracking-widest uppercase mb-4">
             {t.exitBreakdown}
           </div>
           <div class="flex flex-col gap-3">
             {/* TP */}
             <div>
               <div class="flex justify-between mb-1">
-                <span class="font-mono text-xs text-[--color-accent]">
+                <span class="font-mono text-xs text-(--color-accent)">
                   {t.tp} ({s.tp_count})
                 </span>
-                <span class="font-mono text-xs text-[--color-accent] font-semibold">
+                <span class="font-mono text-xs text-(--color-accent) font-semibold">
                   {tpPct.toFixed(1)}%
                 </span>
               </div>
-              <div class="h-1.5 rounded-full bg-[--color-border] overflow-hidden">
+              <div class="h-1.5 rounded-full bg-(--color-border) overflow-hidden">
                 <div
-                  class="h-full bg-[--color-accent] rounded-full transition-[width] duration-500"
+                  class="h-full bg-(--color-accent) rounded-full transition-[width] duration-500"
                   style={{ width: `${tpPct}%` }}
                 />
               </div>
@@ -575,16 +575,16 @@ export default function PerformanceDashboard({
             {/* SL */}
             <div>
               <div class="flex justify-between mb-1">
-                <span class="font-mono text-xs text-[--color-red]">
+                <span class="font-mono text-xs text-(--color-red)">
                   {t.sl} ({s.sl_count})
                 </span>
-                <span class="font-mono text-xs text-[--color-red] font-semibold">
+                <span class="font-mono text-xs text-(--color-red) font-semibold">
                   {slPct.toFixed(1)}%
                 </span>
               </div>
-              <div class="h-1.5 rounded-full bg-[--color-border] overflow-hidden">
+              <div class="h-1.5 rounded-full bg-(--color-border) overflow-hidden">
                 <div
-                  class="h-full bg-[--color-red] rounded-full transition-[width] duration-500"
+                  class="h-full bg-(--color-red) rounded-full transition-[width] duration-500"
                   style={{ width: `${slPct}%` }}
                 />
               </div>
@@ -592,16 +592,16 @@ export default function PerformanceDashboard({
             {/* TO */}
             <div>
               <div class="flex justify-between mb-1">
-                <span class="font-mono text-xs text-[--color-text-muted]">
+                <span class="font-mono text-xs text-(--color-text-muted)">
                   {t.to} ({s.timeout_count})
                 </span>
-                <span class="font-mono text-xs text-[--color-text-muted] font-semibold">
+                <span class="font-mono text-xs text-(--color-text-muted) font-semibold">
                   {toPct.toFixed(1)}%
                 </span>
               </div>
-              <div class="h-1.5 rounded-full bg-[--color-border] overflow-hidden">
+              <div class="h-1.5 rounded-full bg-(--color-border) overflow-hidden">
                 <div
-                  class="h-full bg-[--color-text-muted] rounded-full transition-[width] duration-500"
+                  class="h-full bg-(--color-text-muted) rounded-full transition-[width] duration-500"
                   style={{ width: `${toPct}%` }}
                 />
               </div>
@@ -610,16 +610,16 @@ export default function PerformanceDashboard({
             {s.other_count > 0 && (
               <div>
                 <div class="flex justify-between mb-1">
-                  <span class="font-mono text-xs text-[--color-yellow]">
+                  <span class="font-mono text-xs text-(--color-yellow)">
                     {t.other} ({s.other_count})
                   </span>
-                  <span class="font-mono text-xs text-[--color-yellow] font-semibold">
+                  <span class="font-mono text-xs text-(--color-yellow) font-semibold">
                     {otherPct.toFixed(1)}%
                   </span>
                 </div>
-                <div class="h-1.5 rounded-full bg-[--color-border] overflow-hidden">
+                <div class="h-1.5 rounded-full bg-(--color-border) overflow-hidden">
                   <div
-                    class="h-full bg-[--color-yellow] rounded-full transition-[width] duration-500"
+                    class="h-full bg-(--color-yellow) rounded-full transition-[width] duration-500"
                     style={{ width: `${otherPct}%` }}
                   />
                 </div>
@@ -628,15 +628,15 @@ export default function PerformanceDashboard({
           </div>
           {/* Combined bar */}
           <div class="flex flex-wrap h-1 rounded-sm overflow-hidden mt-3">
-            <div class="bg-[--color-accent]" style={{ width: `${tpPct}%` }} />
-            <div class="bg-[--color-red]" style={{ width: `${slPct}%` }} />
+            <div class="bg-(--color-accent)" style={{ width: `${tpPct}%` }} />
+            <div class="bg-(--color-red)" style={{ width: `${slPct}%` }} />
             <div
-              class="bg-[--color-text-muted]"
+              class="bg-(--color-text-muted)"
               style={{ width: `${toPct}%` }}
             />
             {s.other_count > 0 && (
               <div
-                class="bg-[--color-yellow]"
+                class="bg-(--color-yellow)"
                 style={{ width: `${otherPct}%` }}
               />
             )}
@@ -646,10 +646,10 @@ export default function PerformanceDashboard({
 
       {/* Recent Trades */}
       {data.recent_trades && data.recent_trades.length > 0 && (
-        <div class="bg-[--color-bg-card] border border-[--color-border] rounded-xl overflow-hidden mb-6">
+        <div class="bg-(--color-bg-card) border border-(--color-border) rounded-xl overflow-hidden mb-6">
           <button
             onClick={() => setShowTrades(!showTrades)}
-            class={`w-full px-4 py-3 min-h-[44px] bg-transparent border-none text-[--color-text] font-mono text-[0.8125rem] font-semibold cursor-pointer text-left flex justify-between items-center hover:bg-[--color-bg-hover] transition-colors ${showTrades ? "border-b border-[--color-border]" : ""}`}
+            class={`w-full px-4 py-3 min-h-[44px] bg-transparent border-none text-(--color-text) font-mono text-[0.8125rem] font-semibold cursor-pointer text-left flex justify-between items-center hover:bg-(--color-bg-hover) transition-colors ${showTrades ? "border-b border-(--color-border)" : ""}`}
           >
             <span>
               {showTrades ? "\u25BC" : "\u25B6"} {t.recentTrades} (
@@ -661,23 +661,23 @@ export default function PerformanceDashboard({
               <table class="w-full border-collapse font-mono text-xs">
                 <caption class="sr-only">{t.tableCaption}</caption>
                 <thead>
-                  <tr class="border-b border-[--color-border]">
-                    <th class="px-3 py-2 text-left text-[--color-text-muted] text-[0.6875rem] font-semibold">
+                  <tr class="border-b border-(--color-border)">
+                    <th class="px-3 py-2 text-left text-(--color-text-muted) text-[0.6875rem] font-semibold">
                       {t.symbol}
                     </th>
-                    <th class="px-3 py-2 text-right text-[--color-text-muted] text-[0.6875rem] font-semibold hidden md:table-cell">
+                    <th class="px-3 py-2 text-right text-(--color-text-muted) text-[0.6875rem] font-semibold hidden md:table-cell">
                       {t.exitPrice}
                     </th>
-                    <th class="px-3 py-2 text-right text-[--color-text-muted] text-[0.6875rem] font-semibold">
+                    <th class="px-3 py-2 text-right text-(--color-text-muted) text-[0.6875rem] font-semibold">
                       {t.pnlPct}
                     </th>
-                    <th class="px-3 py-2 text-right text-[--color-text-muted] text-[0.6875rem] font-semibold hidden sm:table-cell">
+                    <th class="px-3 py-2 text-right text-(--color-text-muted) text-[0.6875rem] font-semibold hidden sm:table-cell">
                       {t.pnlUsd}
                     </th>
-                    <th class="px-3 py-2 text-center text-[--color-text-muted] text-[0.6875rem] font-semibold">
+                    <th class="px-3 py-2 text-center text-(--color-text-muted) text-[0.6875rem] font-semibold">
                       {t.result}
                     </th>
-                    <th class="px-3 py-2 text-right text-[--color-text-muted] text-[0.6875rem] font-semibold hidden md:table-cell">
+                    <th class="px-3 py-2 text-right text-(--color-text-muted) text-[0.6875rem] font-semibold hidden md:table-cell">
                       {t.date}
                     </th>
                   </tr>
@@ -697,12 +697,12 @@ export default function PerformanceDashboard({
                     return (
                       <tr
                         key={i}
-                        class="border-b border-[--color-border] row-hover"
+                        class="border-b border-(--color-border) row-hover"
                       >
-                        <td class="px-3 py-2 font-semibold text-[--color-text]">
+                        <td class="px-3 py-2 font-semibold text-(--color-text)">
                           {trade.symbol.replace("USDT", "")}
                         </td>
-                        <td class="px-3 py-2 text-right text-[--color-text-muted] hidden md:table-cell">
+                        <td class="px-3 py-2 text-right text-(--color-text-muted) hidden md:table-cell">
                           ${formatPrice(trade.exit_price)}
                         </td>
                         <td
@@ -724,7 +724,7 @@ export default function PerformanceDashboard({
                         >
                           {formatReasonLabel(trade.reason)}
                         </td>
-                        <td class="px-3 py-2 text-right text-[--color-text-muted] hidden md:table-cell">
+                        <td class="px-3 py-2 text-right text-(--color-text-muted) hidden md:table-cell">
                           {formatDate(trade.closed_at)}
                         </td>
                       </tr>
@@ -738,7 +738,7 @@ export default function PerformanceDashboard({
       )}
 
       {/* Disclaimer */}
-      <p class="font-mono text-[0.6875rem] text-[--color-text-muted] leading-relaxed px-4 py-3 bg-[--color-bg-subtle] border border-[--color-border] rounded-lg">
+      <p class="font-mono text-[0.6875rem] text-(--color-text-muted) leading-relaxed px-4 py-3 bg-(--color-bg-subtle) border border-(--color-border) rounded-lg">
         * {t.disclaimer}
       </p>
     </div>

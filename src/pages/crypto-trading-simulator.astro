@@ -38,12 +38,12 @@ const jsonLd = {
   <!-- HERO -->
   <section class="pt-2 pb-8 reveal">
     <div class="max-w-5xl mx-auto px-4">
-      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">TRADING SIMULATOR</p>
+      <p class="font-mono text-(--color-accent) text-sm mb-2 tracking-wider">TRADING SIMULATOR</p>
       <h1 class="text-3xl md:text-5xl font-bold mb-4">
         Free Crypto Trading Simulator — No Account Needed
-        <span class="block text-lg md:text-2xl font-normal text-[--color-text-muted] mt-2">Test strategies with real market data before risking real money.</span>
+        <span class="block text-lg md:text-2xl font-normal text-(--color-text-muted) mt-2">Test strategies with real market data before risking real money.</span>
       </h1>
-      <p class="text-[--color-text-muted] text-lg max-w-2xl mb-6">
+      <p class="text-(--color-text-muted) text-lg max-w-2xl mb-6">
         PRUVIQ's trading simulator lets you backtest any strategy on {coinsAnalyzed}+ cryptocurrencies
         with realistic fees — completely free, no signup required.
       </p>
@@ -55,7 +55,7 @@ const jsonLd = {
   <section class="pb-12 pt-12 reveal">
     <div class="max-w-5xl mx-auto px-4">
       <h2 class="text-2xl md:text-3xl font-bold mb-6">What Is a Crypto Trading Simulator?</h2>
-      <div class="space-y-4 text-[--color-text-muted] max-w-3xl">
+      <div class="space-y-4 text-(--color-text-muted) max-w-3xl">
         <p>
           A crypto trading simulator runs your strategy against historical market data to show you how it would
           have performed — without risking any real money. Think of it as a flight simulator for traders: you
@@ -77,12 +77,12 @@ const jsonLd = {
       <h2 class="text-2xl md:text-3xl font-bold mb-8">How PRUVIQ's Simulator Works</h2>
       <div class="grid md:grid-cols-3 gap-8">
         {steps.map((step) => (
-          <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] card-hover">
+          <div class="border border-(--color-border) rounded-lg p-6 bg-(--color-bg-card) card-hover">
             <div class="flex items-center gap-3 mb-4">
-              <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-[--color-accent]/10 text-[--color-accent] font-mono text-sm font-bold shrink-0">{step.num}</span>
+              <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-(--color-accent)/10 text-(--color-accent) font-mono text-sm font-bold shrink-0">{step.num}</span>
               <h3 class="font-bold text-lg">{step.title}</h3>
             </div>
-            <p class="text-sm text-[--color-text-muted]">{step.desc}</p>
+            <p class="text-sm text-(--color-text-muted)">{step.desc}</p>
           </div>
         ))}
       </div>
@@ -96,10 +96,10 @@ const jsonLd = {
       <h2 class="text-2xl md:text-3xl font-bold mb-8">Key Features</h2>
       <div class="grid sm:grid-cols-2 md:grid-cols-4 gap-6">
         {features.map((f) => (
-          <div class="text-center border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] card-hover">
-            <p class="text-3xl font-bold text-[--color-accent] mb-1">{f.stat}</p>
-            <p class="font-mono text-xs text-[--color-text-muted] uppercase tracking-wider mb-2">{f.label}</p>
-            <p class="text-sm text-[--color-text-muted]">{f.desc}</p>
+          <div class="text-center border border-(--color-border) rounded-lg p-6 bg-(--color-bg-card) card-hover">
+            <p class="text-3xl font-bold text-(--color-accent) mb-1">{f.stat}</p>
+            <p class="font-mono text-xs text-(--color-text-muted) uppercase tracking-wider mb-2">{f.label}</p>
+            <p class="text-sm text-(--color-text-muted)">{f.desc}</p>
           </div>
         ))}
       </div>
@@ -111,21 +111,21 @@ const jsonLd = {
   <section class="pb-12 pt-12 bg-[var(--color-bg-subtle)] reveal">
     <div class="max-w-5xl mx-auto px-4 text-center">
       <h2 class="text-2xl md:text-3xl font-bold mb-4">See It in Action</h2>
-      <p class="text-[--color-text-muted] text-lg mb-8 max-w-2xl mx-auto">
+      <p class="text-(--color-text-muted) text-lg mb-8 max-w-2xl mx-auto">
         Try the interactive demo to see how a backtest looks, or jump straight into the full simulator.
       </p>
       <div class="flex flex-col sm:flex-row gap-4 justify-center">
         <a href="/simulate" class="btn btn-primary btn-lg">
           Open Simulator &rarr;
         </a>
-        <a href="/demo" class="btn btn-ghost btn-lg hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
+        <a href="/demo" class="btn btn-ghost btn-lg hover:border-(--color-accent) hover:text-(--color-accent) transition-colors">
           Interactive Demo
         </a>
       </div>
-      <p class="text-xs text-[--color-text-muted] mt-6">
-        Also explore: <a href="/strategies" class="text-[--color-accent] underline">Strategy Library</a> |
-        <a href="/compare/tradingview" class="text-[--color-accent] underline">Compare with TradingView</a> |
-        <a href="/learn" class="text-[--color-accent] underline">Learn Trading</a>
+      <p class="text-xs text-(--color-text-muted) mt-6">
+        Also explore: <a href="/strategies" class="text-(--color-accent) underline">Strategy Library</a> |
+        <a href="/compare/tradingview" class="text-(--color-accent) underline">Compare with TradingView</a> |
+        <a href="/learn" class="text-(--color-accent) underline">Learn Trading</a>
       </p>
     </div>
   </section>
@@ -135,18 +135,18 @@ const jsonLd = {
   <section class="py-20 reveal">
     <div class="max-w-5xl mx-auto px-4 text-center">
       <h2 class="text-3xl md:text-4xl font-bold mb-4">
-        <span class="text-[--color-accent]">Open Simulator</span>
+        <span class="text-(--color-accent)">Open Simulator</span>
       </h2>
-      <p class="text-[--color-text-muted] text-lg mb-8 max-w-xl mx-auto">No signup, no fees, no risk. Run your first backtest in under 30 seconds.</p>
+      <p class="text-(--color-text-muted) text-lg mb-8 max-w-xl mx-auto">No signup, no fees, no risk. Run your first backtest in under 30 seconds.</p>
       <div class="flex flex-col sm:flex-row gap-4 justify-center mb-4">
         <a href="/simulate" class="btn btn-primary btn-lg">
           {t('cta.button1')} &rarr;
         </a>
-        <a href="/strategies" class="btn btn-ghost btn-lg hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
+        <a href="/strategies" class="btn btn-ghost btn-lg hover:border-(--color-accent) hover:text-(--color-accent) transition-colors">
           Browse Strategies
         </a>
       </div>
-      <p class="text-[--color-text-muted] text-xs mt-6 max-w-lg mx-auto">{t('cta.disclaimer')}</p>
+      <p class="text-(--color-text-muted) text-xs mt-6 max-w-lg mx-auto">{t('cta.disclaimer')}</p>
     </div>
   </section>
 

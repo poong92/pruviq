@@ -8,7 +8,7 @@ const t = useTranslations('ko');
 <Layout title={t('meta.compare_title')} description={t('meta.compare_desc')}>
   <section class="pt-6 md:pt-8 pb-12">
     <div class="max-w-5xl mx-auto px-4">
-      <a href="/ko/strategies" class="text-[--color-text-muted] text-sm hover:text-[--color-accent] transition-colors mb-8 inline-block">
+      <a href="/ko/strategies" class="text-(--color-text-muted) text-sm hover:text-(--color-accent) transition-colors mb-8 inline-block">
         &larr; {t('compare.back')}
       </a>
 
@@ -16,31 +16,31 @@ const t = useTranslations('ko');
 
       <div id="compare-mount">
         <div class="animate-pulse space-y-4">
-          <div class="h-10 bg-[--color-bg-hover] rounded w-1/2"></div>
-          <div class="h-64 bg-[--color-bg-hover] rounded"></div>
+          <div class="h-10 bg-(--color-bg-hover) rounded w-1/2"></div>
+          <div class="h-64 bg-(--color-bg-hover) rounded"></div>
         </div>
       </div>
 
       <noscript>
-        <div class="border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] mt-6">
+        <div class="border border-(--color-border) rounded-lg p-6 bg-(--color-bg-card) mt-6">
           <h2 class="text-xl font-bold mb-3">{t('compare.noscript_title')}</h2>
-          <p class="text-[--color-text-muted] text-sm mb-4">{t('compare.noscript_desc')}</p>
-          <p class="text-[--color-text-muted] text-xs mb-4">{t('compare.noscript_strategies')}</p>
-          <p class="text-[--color-text-muted] text-xs italic mb-4">{t('compare.noscript_text')}</p>
-          <a href="/ko/strategies" class="text-[--color-accent] text-sm hover:underline inline-block">&larr; {t('compare.back')}</a>
+          <p class="text-(--color-text-muted) text-sm mb-4">{t('compare.noscript_desc')}</p>
+          <p class="text-(--color-text-muted) text-xs mb-4">{t('compare.noscript_strategies')}</p>
+          <p class="text-(--color-text-muted) text-xs italic mb-4">{t('compare.noscript_text')}</p>
+          <a href="/ko/strategies" class="text-(--color-accent) text-sm hover:underline inline-block">&larr; {t('compare.back')}</a>
         </div>
       </noscript>
     </div>
   </section>
 
   <!-- Footer CTAs -->
-  <section class="pb-12 border-t border-[--color-border] pt-8">
+  <section class="pb-12 border-t border-(--color-border) pt-8">
     <div class="max-w-5xl mx-auto px-4 text-center">
       <div class="flex flex-wrap gap-3 justify-center">
         <a href="/ko/simulate" class="btn btn-primary btn-md no-underline">
           {t('cross.simulate_cta')} &rarr;
         </a>
-        <a href="/ko/strategies" class="btn btn-ghost btn-md hover:border-[--color-accent] transition-colors no-underline">
+        <a href="/ko/strategies" class="btn btn-ghost btn-md hover:border-(--color-accent) transition-colors no-underline">
           {t('cross.strategies_cta')} &rarr;
         </a>
       </div>

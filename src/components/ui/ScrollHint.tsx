@@ -58,7 +58,7 @@ export default function ScrollHint({
           class="absolute right-0 top-0 h-full w-8 pointer-events-none flex items-start pt-2 justify-end pr-1 md:hidden scroll-hint-fade"
           aria-hidden="true"
         >
-          <span class="text-[10px] font-mono text-[--color-text-muted] bg-[--color-bg]/80 px-1 py-0.5 rounded border border-[--color-border]/50 backdrop-blur-sm">
+          <span class="text-[10px] font-mono text-(--color-text-muted) bg-(--color-bg)/80 px-1 py-0.5 rounded border border-(--color-border)/50 backdrop-blur-sm">
             {label}
           </span>
         </div>

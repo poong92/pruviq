@@ -43,12 +43,12 @@ const jsonLd = {
   <!-- HERO -->
   <section class="pt-2 pb-8 reveal">
     <div class="max-w-5xl mx-auto px-4">
-      <p class="font-mono text-[--color-accent] text-sm mb-2 tracking-wider">BACKTESTING GUIDE</p>
+      <p class="font-mono text-(--color-accent) text-sm mb-2 tracking-wider">BACKTESTING GUIDE</p>
       <h1 class="text-3xl md:text-5xl font-bold mb-4">
         Best Free Crypto Backtesting Platform (2026)
-        <span class="block text-lg md:text-2xl font-normal text-[--color-text-muted] mt-2">Compare features, costs, and transparency across top platforms.</span>
+        <span class="block text-lg md:text-2xl font-normal text-(--color-text-muted) mt-2">Compare features, costs, and transparency across top platforms.</span>
       </h1>
-      <p class="text-[--color-text-muted] text-lg max-w-2xl mb-6">
+      <p class="text-(--color-text-muted) text-lg max-w-2xl mb-6">
         Most backtesting tools charge monthly fees, require coding, and only show winning strategies.
         We built PRUVIQ to fix all three problems.
       </p>
@@ -60,7 +60,7 @@ const jsonLd = {
   <section class="pb-12 pt-12 reveal">
     <div class="max-w-5xl mx-auto px-4">
       <h2 class="text-2xl md:text-3xl font-bold mb-6">Why Backtesting Matters</h2>
-      <div class="space-y-4 text-[--color-text-muted] max-w-3xl">
+      <div class="space-y-4 text-(--color-text-muted) max-w-3xl">
         <p>
           Every profitable crypto strategy looks obvious in hindsight. The problem is that most traders skip
           backtesting entirely — or use tools that hide the ugly parts. Without testing against historical data,
@@ -89,10 +89,10 @@ const jsonLd = {
       <div class="space-y-6">
         {criteria.map((item) => (
           <div class="flex gap-4 items-start">
-            <span class="text-[--color-up] text-xl mt-0.5 shrink-0" aria-hidden="true">&#10003;</span>
+            <span class="text-(--color-up) text-xl mt-0.5 shrink-0" aria-hidden="true">&#10003;</span>
             <div>
               <h3 class="font-bold text-lg mb-1">{item.label}</h3>
-              <p class="text-[--color-text-muted] text-sm">{item.desc}</p>
+              <p class="text-(--color-text-muted) text-sm">{item.desc}</p>
             </div>
           </div>
         ))}
@@ -108,19 +108,19 @@ const jsonLd = {
       <div class="grid md:grid-cols-2 gap-6">
         <div class="card-enterprise card-hover p-6">
           <h3 class="font-bold mb-2">{coinsAnalyzed}+ Coins, Real Data</h3>
-          <p class="text-sm text-[--color-text-muted]">Test on any OKX Futures pair with 2+ years of OHLCV data. Not just the top 10 — every listed coin.</p>
+          <p class="text-sm text-(--color-text-muted)">Test on any OKX Futures pair with 2+ years of OHLCV data. Not just the top 10 — every listed coin.</p>
         </div>
         <div class="card-enterprise card-hover p-6">
           <h3 class="font-bold mb-2">Realistic Fee Modeling</h3>
-          <p class="text-sm text-[--color-text-muted]">Maker/taker fees, funding rates, and slippage are baked into every simulation. No surprise costs when you go live.</p>
+          <p class="text-sm text-(--color-text-muted)">Maker/taker fees, funding rates, and slippage are baked into every simulation. No surprise costs when you go live.</p>
         </div>
         <div class="card-enterprise card-hover p-6">
           <h3 class="font-bold mb-2">88 Strategies We Killed</h3>
-          <p class="text-sm text-[--color-text-muted]">We don't hide failures. Browse our <a href="/strategies" class="text-[--color-accent] underline">strategy library</a> to see what didn't work — and why.</p>
+          <p class="text-sm text-(--color-text-muted)">We don't hide failures. Browse our <a href="/strategies" class="text-(--color-accent) underline">strategy library</a> to see what didn't work — and why.</p>
         </div>
         <div class="card-enterprise card-hover p-6">
           <h3 class="font-bold mb-2">Zero Coding Required</h3>
-          <p class="text-sm text-[--color-text-muted]">Select indicators, set SL/TP, and run. The <a href="/simulate" class="text-[--color-accent] underline">simulator</a> handles everything — no Pine Script, no Python.</p>
+          <p class="text-sm text-(--color-text-muted)">Select indicators, set SL/TP, and run. The <a href="/simulate" class="text-(--color-accent) underline">simulator</a> handles everything — no Pine Script, no Python.</p>
         </div>
       </div>
     </div>
@@ -137,30 +137,30 @@ const jsonLd = {
         <table class="w-full text-sm">
           <caption class="sr-only">Crypto backtesting platform comparison table</caption>
           <thead>
-            <tr class="border-b border-[--color-border]">
-              <th class="text-left py-3 px-4 font-mono text-[--color-text-muted] text-xs uppercase tracking-wider w-1/4">Feature</th>
-              <th class="text-left py-3 px-4 font-mono text-[--color-accent] text-xs uppercase tracking-wider">PRUVIQ</th>
-              <th class="text-left py-3 px-4 font-mono text-[--color-text-muted] text-xs uppercase tracking-wider">TradingView</th>
-              <th class="text-left py-3 px-4 font-mono text-[--color-text-muted] text-xs uppercase tracking-wider">3Commas</th>
+            <tr class="border-b border-(--color-border)">
+              <th class="text-left py-3 px-4 font-mono text-(--color-text-muted) text-xs uppercase tracking-wider w-1/4">Feature</th>
+              <th class="text-left py-3 px-4 font-mono text-(--color-accent) text-xs uppercase tracking-wider">PRUVIQ</th>
+              <th class="text-left py-3 px-4 font-mono text-(--color-text-muted) text-xs uppercase tracking-wider">TradingView</th>
+              <th class="text-left py-3 px-4 font-mono text-(--color-text-muted) text-xs uppercase tracking-wider">3Commas</th>
             </tr>
           </thead>
           <tbody>
             {comparisonRows.map((row) => (
-              <tr class="border-b border-[--color-border]">
-                <td class="py-3 px-4 font-medium text-[--color-text-secondary] text-xs uppercase tracking-wide">{row.feature}</td>
-                <td class={`py-3 px-4 ${row.win === 'p' || row.win === 'both' ? 'text-[--color-up]' : 'text-[--color-text-muted]'}`}>
+              <tr class="border-b border-(--color-border)">
+                <td class="py-3 px-4 font-medium text-(--color-text-secondary) text-xs uppercase tracking-wide">{row.feature}</td>
+                <td class={`py-3 px-4 ${row.win === 'p' || row.win === 'both' ? 'text-(--color-up)' : 'text-(--color-text-muted)'}`}>
                   <span class="flex items-start gap-2">
                     <span class="mt-0.5 shrink-0 text-base leading-none" aria-hidden="true">{row.win === 'p' ? '\u2713' : row.win === 'both' ? '~' : '\u2014'}</span>
                     <span>{row.pruviq}</span>
                   </span>
                 </td>
-                <td class="py-3 px-4 text-[--color-text-muted]">
+                <td class="py-3 px-4 text-(--color-text-muted)">
                   <span class="flex items-start gap-2">
                     <span class="mt-0.5 shrink-0 text-base leading-none" aria-hidden="true">{row.win === 'tv' ? '\u2713' : '\u2014'}</span>
                     <span>{row.tv}</span>
                   </span>
                 </td>
-                <td class="py-3 px-4 text-[--color-text-muted]">
+                <td class="py-3 px-4 text-(--color-text-muted)">
                   <span class="flex items-start gap-2">
                     <span class="mt-0.5 shrink-0 text-base leading-none" aria-hidden="true">\u2014</span>
                     <span>{row.c3}</span>
@@ -175,29 +175,29 @@ const jsonLd = {
       <!-- Mobile cards -->
       <div class="md:hidden space-y-4">
         {comparisonRows.map((row) => (
-          <div class="border border-[--color-border] rounded-lg p-4 bg-[--color-bg-card]">
-            <p class="font-mono text-xs text-[--color-text-muted] uppercase tracking-wider mb-2">{row.feature}</p>
+          <div class="border border-(--color-border) rounded-lg p-4 bg-(--color-bg-card)">
+            <p class="font-mono text-xs text-(--color-text-muted) uppercase tracking-wider mb-2">{row.feature}</p>
             <div class="grid grid-cols-3 gap-2">
               <div>
-                <p class="text-xs text-[--color-accent] font-mono mb-1">PRUVIQ</p>
-                <p class="text-sm text-[--color-accent]">{row.pruviq}</p>
+                <p class="text-xs text-(--color-accent) font-mono mb-1">PRUVIQ</p>
+                <p class="text-sm text-(--color-accent)">{row.pruviq}</p>
               </div>
               <div>
-                <p class="text-xs text-[--color-text-muted] font-mono mb-1">TV</p>
-                <p class="text-sm text-[--color-text-muted]">{row.tv}</p>
+                <p class="text-xs text-(--color-text-muted) font-mono mb-1">TV</p>
+                <p class="text-sm text-(--color-text-muted)">{row.tv}</p>
               </div>
               <div>
-                <p class="text-xs text-[--color-text-muted] font-mono mb-1">3C</p>
-                <p class="text-sm text-[--color-text-muted]">{row.c3}</p>
+                <p class="text-xs text-(--color-text-muted) font-mono mb-1">3C</p>
+                <p class="text-sm text-(--color-text-muted)">{row.c3}</p>
               </div>
             </div>
           </div>
         ))}
       </div>
 
-      <p class="text-xs text-[--color-text-muted] mt-4">
-        See full comparisons: <a href="/compare/tradingview" class="text-[--color-accent] underline">PRUVIQ vs TradingView</a> |
-        <a href="/compare/3commas" class="text-[--color-accent] underline">PRUVIQ vs 3Commas</a>
+      <p class="text-xs text-(--color-text-muted) mt-4">
+        See full comparisons: <a href="/compare/tradingview" class="text-(--color-accent) underline">PRUVIQ vs TradingView</a> |
+        <a href="/compare/3commas" class="text-(--color-accent) underline">PRUVIQ vs 3Commas</a>
       </p>
     </div>
   </section>
@@ -207,18 +207,18 @@ const jsonLd = {
   <section class="py-20 reveal">
     <div class="max-w-5xl mx-auto px-4 text-center">
       <h2 class="text-3xl md:text-4xl font-bold mb-4">
-        <span class="text-[--color-accent]">Open Simulator Free</span>
+        <span class="text-(--color-accent)">Open Simulator Free</span>
       </h2>
-      <p class="text-[--color-text-muted] text-lg mb-8 max-w-xl mx-auto">No account, no credit card, no Pine Script. Pick a strategy, run a backtest, see real results.</p>
+      <p class="text-(--color-text-muted) text-lg mb-8 max-w-xl mx-auto">No account, no credit card, no Pine Script. Pick a strategy, run a backtest, see real results.</p>
       <div class="flex flex-col sm:flex-row gap-4 justify-center mb-4">
         <a href="/simulate" class="btn btn-primary btn-lg">
           {t('cta.button1')} &rarr;
         </a>
-        <a href="/learn" class="btn btn-ghost btn-lg hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
+        <a href="/learn" class="btn btn-ghost btn-lg hover:border-(--color-accent) hover:text-(--color-accent) transition-colors">
           Learn More
         </a>
       </div>
-      <p class="text-[--color-text-muted] text-xs mt-6 max-w-lg mx-auto">{t('cta.disclaimer')}</p>
+      <p class="text-(--color-text-muted) text-xs mt-6 max-w-lg mx-auto">{t('cta.disclaimer')}</p>
     </div>
   </section>
 

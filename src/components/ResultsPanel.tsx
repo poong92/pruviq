@@ -374,18 +374,18 @@ export default function ResultsPanel({
     <div>
       {error && (
         <div
-          class="border border-[--color-red]/30 rounded-lg p-4 bg-[--color-red]/5 mb-3"
+          class="border border-(--color-red)/30 rounded-lg p-4 bg-(--color-red)/5 mb-3"
           role="alert"
           aria-live="assertive"
         >
-          <span class="font-mono text-sm text-[--color-red]">
+          <span class="font-mono text-sm text-(--color-red)">
             {t.error}: {error}
           </span>
         </div>
       )}
 
       {result ? (
-        <div class="border border-[--color-border] rounded-lg bg-[--color-bg-card] overflow-hidden">
+        <div class="border border-(--color-border) rounded-lg bg-(--color-bg-card) overflow-hidden">
           {/* ── Results Action Bar — shown immediately when results load ── */}
           {(() => {
             const isProfitable = result.total_return_pct > 0;
@@ -433,7 +433,7 @@ export default function ResultsPanel({
                     if (!first || !last) return null;
                     const fmt = (t: string | number) => String(t).slice(0, 10);
                     return (
-                      <span class="font-mono text-[--color-text-muted]">
+                      <span class="font-mono text-(--color-text-muted)">
                         {fmt(first)} → {fmt(last)}
                       </span>
                     );
@@ -513,7 +513,7 @@ export default function ResultsPanel({
             );
           })()}
           {/* Result tabs + CSV button */}
-          <div class="flex flex-col sm:flex-row border-b border-[--color-border]">
+          <div class="flex flex-col sm:flex-row border-b border-(--color-border)">
             <div class="flex flex-1" role="tablist">
               {visibleTabs.map((tab) => (
                 <button
@@ -523,7 +523,7 @@ export default function ResultsPanel({
                   aria-selected={resultTab === tab}
                   onClick={() => setResultTab(tab)}
                   class={`flex-1 py-2.5 text-xs font-mono uppercase tracking-wider transition-colors
-                    ${resultTab === tab ? "font-bold border-b-2" : "text-[--color-text-muted] hover:text-[--color-text] hover:bg-[--color-bg-hover]/20"}`}
+                    ${resultTab === tab ? "font-bold border-b-2" : "text-(--color-text-muted) hover:text-(--color-text) hover:bg-(--color-bg-hover)/20"}`}
                   style={resultTab === tab ? tabActiveStyle : undefined}
                 >
                   {tab === "coins"
@@ -539,18 +539,18 @@ export default function ResultsPanel({
               ))}
             </div>
             {simMode !== "quick" && (
-              <div class="flex items-center justify-center gap-1 px-3 py-1.5 sm:py-0 border-t sm:border-t-0 border-[--color-border] flex-wrap">
+              <div class="flex items-center justify-center gap-1 px-3 py-1.5 sm:py-0 border-t sm:border-t-0 border-(--color-border) flex-wrap">
                 <button
                   data-testid="download-csv"
                   onClick={downloadCsv}
-                  class="px-3 py-1.5 text-xs font-mono bg-[--color-bg-tooltip] border border-[--color-border] rounded hover:border-[--color-accent] transition-colors hover:bg-[--color-bg-hover]"
+                  class="px-3 py-1.5 text-xs font-mono bg-(--color-bg-tooltip) border border-(--color-border) rounded hover:border-(--color-accent) transition-colors hover:bg-(--color-bg-hover)"
                 >
                   {t.exportCsv}
                 </button>
                 {onModifyRerun && (
                   <button
                     onClick={onModifyRerun}
-                    class="px-3 py-1.5 text-xs font-mono bg-[--color-bg-tooltip] border border-[--color-border] rounded hover:border-[--color-accent] transition-colors hover:bg-[--color-bg-hover]"
+                    class="px-3 py-1.5 text-xs font-mono bg-(--color-bg-tooltip) border border-(--color-border) rounded hover:border-(--color-accent) transition-colors hover:bg-(--color-bg-hover)"
                   >
                     {t.modifyRerun || "Modify & Re-run"}
                   </button>
@@ -559,7 +559,7 @@ export default function ResultsPanel({
                   <button
                     data-testid="copy-link"
                     onClick={onCopyLink}
-                    class="px-3 py-1.5 text-xs font-mono bg-[--color-bg-tooltip] border border-[--color-border] rounded hover:border-[--color-accent] transition-colors hover:bg-[--color-bg-hover]"
+                    class="px-3 py-1.5 text-xs font-mono bg-(--color-bg-tooltip) border border-(--color-border) rounded hover:border-(--color-accent) transition-colors hover:bg-(--color-bg-hover)"
                     style={
                       linkCopied
                         ? { borderColor: COLORS.green, color: COLORS.green }
@@ -574,14 +574,14 @@ export default function ResultsPanel({
                 <button
                   data-testid="quick-adjust-toggle"
                   onClick={() => setShowQuickAdjust(!showQuickAdjust)}
-                  class={`px-3 py-1.5 text-xs font-mono border rounded transition-colors ${showQuickAdjust ? "border-[--color-accent] text-[--color-accent] bg-[--color-accent]/10" : "bg-[--color-bg-tooltip] border-[--color-border] hover:border-[--color-accent] hover:bg-[--color-bg-hover]"}`}
+                  class={`px-3 py-1.5 text-xs font-mono border rounded transition-colors ${showQuickAdjust ? "border-(--color-accent) text-(--color-accent) bg-(--color-accent)/10" : "bg-(--color-bg-tooltip) border-(--color-border) hover:border-(--color-accent) hover:bg-(--color-bg-hover)"}`}
                 >
                   {t.quickAdjust || "Quick Adjust"}
                 </button>
                 {history.length > 1 && (
                   <button
                     onClick={() => setShowHistory?.(!showHistory)}
-                    class={`px-3 py-1.5 text-xs font-mono border rounded transition-colors ${showHistory ? "border-[--color-accent] text-[--color-accent] bg-[--color-accent]/10" : "bg-[--color-bg-tooltip] border-[--color-border] hover:border-[--color-accent] hover:bg-[--color-bg-hover]"}`}
+                    class={`px-3 py-1.5 text-xs font-mono border rounded transition-colors ${showHistory ? "border-(--color-accent) text-(--color-accent) bg-(--color-accent)/10" : "bg-(--color-bg-tooltip) border-(--color-border) hover:border-(--color-accent) hover:bg-(--color-bg-hover)"}`}
                   >
                     {t.history || "History"} ({history.length})
                   </button>
@@ -592,12 +592,12 @@ export default function ResultsPanel({
 
           {/* Quick Adjust Panel */}
           {showQuickAdjust && (
-            <div class="px-4 py-3 border-b border-[--color-border] bg-[--color-bg]/50">
+            <div class="px-4 py-3 border-b border-(--color-border) bg-(--color-bg)/50">
               <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
-                  <label class="text-[10px] font-mono text-[--color-text-muted] uppercase flex justify-between">
+                  <label class="text-[10px] font-mono text-(--color-text-muted) uppercase flex justify-between">
                     <span>SL %</span>
-                    <span class="text-[--color-text]">{qaSl}%</span>
+                    <span class="text-(--color-text)">{qaSl}%</span>
                   </label>
                   <input
                     type="range"
@@ -616,9 +616,9 @@ export default function ResultsPanel({
                   />
                 </div>
                 <div>
-                  <label class="text-[10px] font-mono text-[--color-text-muted] uppercase flex justify-between">
+                  <label class="text-[10px] font-mono text-(--color-text-muted) uppercase flex justify-between">
                     <span>TP %</span>
-                    <span class="text-[--color-text]">{qaTp}%</span>
+                    <span class="text-(--color-text)">{qaTp}%</span>
                   </label>
                   <input
                     type="range"
@@ -637,9 +637,9 @@ export default function ResultsPanel({
                   />
                 </div>
                 <div>
-                  <label class="text-[10px] font-mono text-[--color-text-muted] uppercase flex justify-between">
+                  <label class="text-[10px] font-mono text-(--color-text-muted) uppercase flex justify-between">
                     <span>{t.coins || "Coins"}</span>
-                    <span class="text-[--color-text]">{qaCoins}</span>
+                    <span class="text-(--color-text)">{qaCoins}</span>
                   </label>
                   <input
                     type="range"
@@ -684,14 +684,14 @@ export default function ResultsPanel({
 
           {/* History Comparison Panel */}
           {showHistory && history.length > 1 && (
-            <div class="px-4 py-3 border-b border-[--color-border] bg-[--color-bg]/50">
+            <div class="px-4 py-3 border-b border-(--color-border) bg-(--color-bg)/50">
               <div class="flex items-center justify-between mb-2">
-                <span class="text-[10px] font-mono text-[--color-text-muted] uppercase">
+                <span class="text-[10px] font-mono text-(--color-text-muted) uppercase">
                   {t.history || "History"}
                 </span>
                 <button
                   onClick={onClearHistory}
-                  class="text-[10px] font-mono text-[--color-text-muted] hover:text-[--color-red] transition-colors"
+                  class="text-[10px] font-mono text-(--color-text-muted) hover:text-(--color-red) transition-colors"
                 >
                   {t.clearHistory || "Clear"}
                 </button>
@@ -700,7 +700,7 @@ export default function ResultsPanel({
                 <table class="w-full text-[10px] font-mono">
                   <caption class="sr-only">{t.history || "History"}</caption>
                   <thead>
-                    <tr class="text-[--color-text-muted] border-b border-[--color-border]">
+                    <tr class="text-(--color-text-muted) border-b border-(--color-border)">
                       <th class="py-1 px-2 text-left">#</th>
                       <th class="py-1 px-2 text-left">
                         {t.config || "Config"}
@@ -728,10 +728,10 @@ export default function ResultsPanel({
                       return (
                         <tr
                           key={i}
-                          class="border-b border-[--color-border]/30 hover:bg-[--color-bg-hover]/30"
+                          class="border-b border-(--color-border)/30 hover:bg-(--color-bg-hover)/30"
                         >
                           <td class="py-1 px-2">{labels[i]}</td>
-                          <td class="py-1 px-2 text-[--color-text-muted]">
+                          <td class="py-1 px-2 text-(--color-text-muted)">
                             {h.label}
                           </td>
                           <td class="py-1 px-2 text-right">{r.total_trades}</td>
@@ -765,7 +765,7 @@ export default function ResultsPanel({
                           <td class="py-1 px-2">
                             <button
                               onClick={() => onSelectHistory?.(i)}
-                              class="text-[--color-accent] hover:underline"
+                              class="text-(--color-accent) hover:underline"
                             >
                               {t.compareWith || "View"}
                             </button>
@@ -786,12 +786,12 @@ export default function ResultsPanel({
               <ResultHero result={result} t={t} simMode={simMode} />
               {/* Results interpretation guide banner */}
               {showResultsGuide && (
-                <div class="mb-3 px-3 py-2.5 rounded-lg border border-[--color-accent]/30 bg-[--color-accent]/5 flex items-start justify-between gap-2">
+                <div class="mb-3 px-3 py-2.5 rounded-lg border border-(--color-accent)/30 bg-(--color-accent)/5 flex items-start justify-between gap-2">
                   <div class="font-mono text-xs">
-                    <span class="text-[--color-accent] font-bold">
+                    <span class="text-(--color-accent) font-bold">
                       {t.resultsGuide || "How to read results:"}
                     </span>
-                    <span class="text-[--color-text-muted] ml-2">
+                    <span class="text-(--color-text-muted) ml-2">
                       {"\u2022"} {t.resultsGuideWr || "Win Rate > 50%: Good"}
                       {"  \u2022 "}
                       {t.resultsGuidePf || "Profit Factor > 1.5: Strong"}
@@ -801,7 +801,7 @@ export default function ResultsPanel({
                   </div>
                   <button
                     onClick={() => setShowResultsGuide(false)}
-                    class="text-[--color-text-muted] hover:text-[--color-text] transition-colors text-sm font-mono shrink-0 p-2 -m-1 min-w-12 min-h-12 flex items-center justify-center"
+                    class="text-(--color-text-muted) hover:text-(--color-text) transition-colors text-sm font-mono shrink-0 p-2 -m-1 min-w-12 min-h-12 flex items-center justify-center"
                     aria-label={t.closeGuideAria || "Close guide"}
                   >
                     &times;
@@ -832,20 +832,20 @@ export default function ResultsPanel({
                     {/* Yearly */}
                     {result.yearly_stats && result.yearly_stats.length > 0 && (
                       <div class="mb-3">
-                        <div class="text-[10px] font-mono text-[--color-text-muted] uppercase mb-2">
+                        <div class="text-[10px] font-mono text-(--color-text-muted) uppercase mb-2">
                           {t.yearlyBreakdown || "Yearly Breakdown"}
                         </div>
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
                           {result.yearly_stats.map((y) => (
                             <div
                               key={y.year}
-                              class="p-2 rounded bg-[--color-bg-tooltip] border border-[--color-border]"
+                              class="p-2 rounded bg-(--color-bg-tooltip) border border-(--color-border)"
                             >
                               <div class="font-mono text-xs font-bold mb-1">
                                 {y.year}
                               </div>
                               <div class="grid grid-cols-2 gap-x-2 text-[10px]">
-                                <span class="text-[--color-text-muted]">
+                                <span class="text-(--color-text-muted)">
                                   WR
                                 </span>
                                 <span
@@ -854,7 +854,7 @@ export default function ResultsPanel({
                                 >
                                   {y.win_rate.toFixed(1)}%
                                 </span>
-                                <span class="text-[--color-text-muted]">
+                                <span class="text-(--color-text-muted)">
                                   PF
                                 </span>
                                 <span
@@ -865,11 +865,11 @@ export default function ResultsPanel({
                                 >
                                   {formatPF(y.profit_factor)}
                                 </span>
-                                <span class="text-[--color-text-muted]">
+                                <span class="text-(--color-text-muted)">
                                   Trades
                                 </span>
                                 <span class="font-mono">{y.trades}</span>
-                                <span class="text-[--color-text-muted]">
+                                <span class="text-(--color-text-muted)">
                                   Return
                                 </span>
                                 <span
@@ -892,7 +892,7 @@ export default function ResultsPanel({
                     {result.monthly_stats &&
                       result.monthly_stats.length > 0 && (
                         <div class="mb-3">
-                          <div class="text-[10px] font-mono text-[--color-text-muted] uppercase mb-2">
+                          <div class="text-[10px] font-mono text-(--color-text-muted) uppercase mb-2">
                             {t.monthlyReturns || "Monthly Returns"}
                           </div>
                           <ScrollHint
@@ -929,7 +929,7 @@ export default function ResultsPanel({
                                         }}
                                       />
                                     </div>
-                                    <span class="text-[7px] font-mono text-[--color-text-muted] mt-0.5 rotate-[-45deg] origin-top-left translate-x-[6px]">
+                                    <span class="text-[7px] font-mono text-(--color-text-muted) mt-0.5 rotate-[-45deg] origin-top-left translate-x-[6px]">
                                       {m.month.slice(2)}
                                     </span>
                                   </div>
@@ -945,7 +945,7 @@ export default function ResultsPanel({
                       result.pnl_distribution.length > 0 &&
                       result.pnl_buckets && (
                         <div>
-                          <div class="text-[10px] font-mono text-[--color-text-muted] uppercase mb-2">
+                          <div class="text-[10px] font-mono text-(--color-text-muted) uppercase mb-2">
                             {t.pnlDistribution || "PnL Distribution"}
                           </div>
                           <div class="flex items-end gap-px h-16">
@@ -978,7 +978,7 @@ export default function ResultsPanel({
                               );
                             })}
                           </div>
-                          <div class="flex justify-between text-[8px] font-mono text-[--color-text-muted] mt-0.5">
+                          <div class="flex justify-between text-[8px] font-mono text-(--color-text-muted) mt-0.5">
                             <span>-10%</span>
                             <span>0%</span>
                             <span>+10%</span>
@@ -990,25 +990,25 @@ export default function ResultsPanel({
               )}
 
               {/* Meta info */}
-              <div class="mt-3 flex flex-wrap gap-3 text-[10px] text-[--color-text-muted] font-mono">
+              <div class="mt-3 flex flex-wrap gap-3 text-[10px] text-(--color-text-muted) font-mono">
                 <span>
                   {result.coins_used} {t.coinsUnit}
                 </span>
                 <span>{result.data_range}</span>
                 <span>{result.compute_time_ms}ms</span>
                 {result._isDemo && (
-                  <span class="text-[--color-yellow]">DEMO</span>
+                  <span class="text-(--color-yellow)">DEMO</span>
                 )}
                 {result.positions_skipped != null &&
                   result.positions_skipped > 0 && (
-                    <span class="text-[--color-yellow]">
+                    <span class="text-(--color-yellow)">
                       {result.positions_skipped} skipped (max {100} concurrent)
                     </span>
                   )}
               </div>
 
               {/* Share & Copy Settings — consolidated action row */}
-              <div class="mt-4 pt-3 border-t border-[--color-border] flex flex-wrap items-center gap-3">
+              <div class="mt-4 pt-3 border-t border-(--color-border) flex flex-wrap items-center gap-3">
                 {onCopyLink && (
                   <button
                     onClick={onCopyLink}
@@ -1077,7 +1077,7 @@ export default function ResultsPanel({
                 </button>
                 <a
                   href={lang === "ko" ? "/ko/fees" : "/fees"}
-                  class="flex items-center gap-1.5 px-4 py-2 text-xs font-mono rounded border border-[--color-border] text-[--color-text-muted] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors"
+                  class="flex items-center gap-1.5 px-4 py-2 text-xs font-mono rounded border border-(--color-border) text-(--color-text-muted) hover:border-(--color-accent) hover:text-(--color-accent) transition-colors"
                 >
                   {t.saveOnFees} &rarr;
                 </a>
@@ -1105,14 +1105,14 @@ export default function ResultsPanel({
           {resultTab === "equity" && (
             <div class="p-3 md:p-4">
               <div class="flex items-baseline justify-between mb-1">
-                <div class="font-mono text-[0.625rem] text-[--color-text-muted] uppercase tracking-wider">
+                <div class="font-mono text-[0.625rem] text-(--color-text-muted) uppercase tracking-wider">
                   {t.equityCurve || "Equity Curve"}
                 </div>
                 {/* Phase 1.2: crosshair hover readout */}
                 <div class="font-mono text-xs text-right min-w-[120px]">
                   {equityHover ? (
                     <>
-                      <span class="text-[--color-text-muted] mr-1.5">
+                      <span class="text-(--color-text-muted) mr-1.5">
                         {equityHover.date}
                       </span>
                       <span
@@ -1147,7 +1147,7 @@ export default function ResultsPanel({
               />
               {/* Phase 1.3: legend */}
               {result?.btc_hold_return_pct != null && (
-                <div class="flex items-center gap-3 mt-1 text-[10px] font-mono text-[--color-text-muted]">
+                <div class="flex items-center gap-3 mt-1 text-[10px] font-mono text-(--color-text-muted)">
                   <span class="flex items-center gap-1">
                     <span
                       class="inline-block w-3 h-0.5 rounded"
@@ -1171,18 +1171,18 @@ export default function ResultsPanel({
                   </span>
                 </div>
               )}
-              <div class="font-mono text-[0.625rem] text-[--color-text-muted] uppercase tracking-wider mt-3 mb-1">
+              <div class="font-mono text-[0.625rem] text-(--color-text-muted) uppercase tracking-wider mt-3 mb-1">
                 {t.drawdown || "Drawdown"}
               </div>
               <div ref={ddChartRef} style={{ height: "120px" }} />
               {result && result.max_drawdown_pct !== undefined && (
-                <div class="mt-2 font-mono text-xs text-[--color-text-muted]">
+                <div class="mt-2 font-mono text-xs text-(--color-text-muted)">
                   {t.maxDrawdown || "Max Drawdown"}:{" "}
                   <span style={{ color: COLORS.red }}>
                     {result.max_drawdown_pct.toFixed(1)}%
                   </span>
                   {result.max_drawdown_pct > 100 && (
-                    <span class="ml-1.5 text-[10px] text-[--color-text-muted]">
+                    <span class="ml-1.5 text-[10px] text-(--color-text-muted)">
                       ({t.cumulativePct})
                     </span>
                   )}
@@ -1201,7 +1201,7 @@ export default function ResultsPanel({
                       {t.tradeTableCaption || "Simulated trade details"}
                     </caption>
                     <thead>
-                      <tr class="text-[--color-text-muted] border-b border-[--color-border]">
+                      <tr class="text-(--color-text-muted) border-b border-(--color-border)">
                         <th class="py-2 px-2 text-left">{t.symbol}</th>
                         <th class="py-2 px-2 text-left hidden sm:table-cell">
                           {t.entryTime}
@@ -1220,7 +1220,7 @@ export default function ResultsPanel({
                           <>
                             <tr
                               key={i}
-                              class={`border-b border-[--color-border]/30 hover:bg-[--color-bg-hover]/30 cursor-pointer select-none ${isExpanded ? "bg-[--color-bg-hover]/20" : ""}`}
+                              class={`border-b border-(--color-border)/30 hover:bg-(--color-bg-hover)/30 cursor-pointer select-none ${isExpanded ? "bg-(--color-bg-hover)/20" : ""}`}
                               onClick={() =>
                                 setExpandedTrade(isExpanded ? null : i)
                               }
@@ -1237,10 +1237,10 @@ export default function ResultsPanel({
                               <td class="py-1.5 px-2">
                                 {tr.symbol?.replace("USDT", "")}
                               </td>
-                              <td class="py-1.5 px-2 text-[--color-text-muted] hidden sm:table-cell">
+                              <td class="py-1.5 px-2 text-(--color-text-muted) hidden sm:table-cell">
                                 {tr.entry_time?.slice(0, 16)}
                               </td>
-                              <td class="py-1.5 px-2 text-[--color-text-muted]">
+                              <td class="py-1.5 px-2 text-(--color-text-muted)">
                                 {tr.exit_time?.slice(0, 16)}
                               </td>
                               <td
@@ -1261,38 +1261,38 @@ export default function ResultsPanel({
                                 <span
                                   class={`px-1.5 py-0.5 rounded text-[10px] ${
                                     tr.exit_reason === "TP"
-                                      ? "bg-[--color-green]/10 text-[--color-green]"
+                                      ? "bg-(--color-green)/10 text-(--color-green)"
                                       : tr.exit_reason === "SL"
-                                        ? "bg-[--color-red]/10 text-[--color-red]"
-                                        : "bg-[--color-yellow]/10 text-[--color-yellow]"
+                                        ? "bg-(--color-red)/10 text-(--color-red)"
+                                        : "bg-(--color-yellow)/10 text-(--color-yellow)"
                                   }`}
                                 >
                                   {tr.exit_reason}
                                 </span>
                               </td>
-                              <td class="py-1.5 px-2 text-right text-[--color-text-muted]">
+                              <td class="py-1.5 px-2 text-right text-(--color-text-muted)">
                                 {tr.bars_held}h
                               </td>
                             </tr>
                             {isExpanded && (
                               <tr
                                 key={`detail-${i}`}
-                                class="border-b border-[--color-border]/30 bg-[--color-bg-hover]/10"
+                                class="border-b border-(--color-border)/30 bg-(--color-bg-hover)/10"
                               >
                                 <td colSpan={7} class="px-3 py-2.5">
                                   <div class="grid grid-cols-2 sm:grid-cols-4 gap-x-4 gap-y-1.5 text-[10px] font-mono">
                                     <div>
-                                      <span class="text-[--color-text-muted] uppercase">
+                                      <span class="text-(--color-text-muted) uppercase">
                                         {t.tradeDirection || "Direction"}
                                       </span>
                                       <div
-                                        class={`font-bold ${tr.direction === "SHORT" ? "text-[--color-red]" : "text-[--color-green]"}`}
+                                        class={`font-bold ${tr.direction === "SHORT" ? "text-(--color-red)" : "text-(--color-green)"}`}
                                       >
                                         {tr.direction}
                                       </div>
                                     </div>
                                     <div>
-                                      <span class="text-[--color-text-muted] uppercase">
+                                      <span class="text-(--color-text-muted) uppercase">
                                         {t.tradeEntryPrice || "Entry Price"}
                                       </span>
                                       <div>
@@ -1307,7 +1307,7 @@ export default function ResultsPanel({
                                       </div>
                                     </div>
                                     <div>
-                                      <span class="text-[--color-text-muted] uppercase">
+                                      <span class="text-(--color-text-muted) uppercase">
                                         {t.tradeExitPrice || "Exit Price"}
                                       </span>
                                       <div>
@@ -1322,7 +1322,7 @@ export default function ResultsPanel({
                                       </div>
                                     </div>
                                     <div>
-                                      <span class="text-[--color-text-muted] uppercase">
+                                      <span class="text-(--color-text-muted) uppercase">
                                         {t.tradeHoldTime || "Hold Time"}
                                       </span>
                                       <div>
@@ -1342,7 +1342,7 @@ export default function ResultsPanel({
                   </table>
                 </ScrollHint>
               ) : (
-                <div class="text-center py-8 text-[--color-text-muted] text-sm">
+                <div class="text-center py-8 text-(--color-text-muted) text-sm">
                   {t.noTradeDetails ||
                     "Trade details not available for this backtest type."}
                 </div>
@@ -1389,7 +1389,7 @@ export default function ResultsPanel({
               const coins = result.coin_results || [];
               if (coins.length === 0) {
                 return (
-                  <div class="text-center py-8 text-[--color-text-muted] text-sm font-mono">
+                  <div class="text-center py-8 text-(--color-text-muted) text-sm font-mono">
                     {t.noCoinData || "No per-coin data available."}
                   </div>
                 );
@@ -1439,7 +1439,7 @@ export default function ResultsPanel({
 
               return (
                 <div class="p-3 sm:p-4">
-                  <div class="flex flex-wrap gap-3 mb-3 px-2 text-[10px] font-mono text-[--color-text-muted]">
+                  <div class="flex flex-wrap gap-3 mb-3 px-2 text-[10px] font-mono text-(--color-text-muted)">
                     <span style={{ color: COLORS.green }}>
                       {profitable} {t.profitableUnit}
                     </span>
@@ -1461,36 +1461,36 @@ export default function ResultsPanel({
                         Per-coin backtest results
                       </caption>
                       <thead>
-                        <tr class="text-[--color-text-muted] border-b border-[--color-border]">
+                        <tr class="text-(--color-text-muted) border-b border-(--color-border)">
                           <th
-                            class="py-2 px-2 text-left cursor-pointer select-none hover:text-[--color-text]"
+                            class="py-2 px-2 text-left cursor-pointer select-none hover:text-(--color-text)"
                             onClick={() => toggleSort("symbol")}
                           >
                             {t.coinHeader}
                             {arrow("symbol")}
                           </th>
                           <th
-                            class="py-2 px-2 text-right cursor-pointer select-none hover:text-[--color-text]"
+                            class="py-2 px-2 text-right cursor-pointer select-none hover:text-(--color-text)"
                             onClick={() => toggleSort("trades")}
                           >
                             {t.tradesHeader}
                             {arrow("trades")}
                           </th>
                           <th
-                            class="py-2 px-2 text-right cursor-pointer select-none hover:text-[--color-text]"
+                            class="py-2 px-2 text-right cursor-pointer select-none hover:text-(--color-text)"
                             onClick={() => toggleSort("win_rate")}
                           >
                             {t.winRateHeader}
                             {arrow("win_rate")}
                           </th>
                           <th
-                            class="py-2 px-2 text-right cursor-pointer select-none hover:text-[--color-text]"
+                            class="py-2 px-2 text-right cursor-pointer select-none hover:text-(--color-text)"
                             onClick={() => toggleSort("profit_factor")}
                           >
                             PF{arrow("profit_factor")}
                           </th>
                           <th
-                            class="py-2 px-2 text-right cursor-pointer select-none hover:text-[--color-text]"
+                            class="py-2 px-2 text-right cursor-pointer select-none hover:text-(--color-text)"
                             onClick={() => toggleSort("total_return_pct")}
                           >
                             {t.returnHeader}
@@ -1505,7 +1505,7 @@ export default function ResultsPanel({
                         {sorted.map((coin: CoinResult) => (
                           <tr
                             key={coin.symbol}
-                            class="border-b border-[--color-border]/30 hover:bg-[--color-bg-hover]/30"
+                            class="border-b border-(--color-border)/30 hover:bg-(--color-bg-hover)/30"
                           >
                             <td class="py-1.5 px-2 font-bold">
                               {coin.symbol.replace("USDT", "")}
@@ -1536,7 +1536,7 @@ export default function ResultsPanel({
                               {coin.total_return_pct > 0 ? "+" : ""}
                               {coin.total_return_pct.toFixed(1)}%
                             </td>
-                            <td class="py-1.5 px-2 text-center text-[10px] text-[--color-text-muted] hidden sm:table-cell">
+                            <td class="py-1.5 px-2 text-center text-[10px] text-(--color-text-muted) hidden sm:table-cell">
                               <span style={{ color: COLORS.green }}>
                                 {coin.tp_count}
                               </span>
@@ -1558,11 +1558,11 @@ export default function ResultsPanel({
         </div>
       ) : (
         !error && (
-          <div class="border border-[--color-border] rounded-lg bg-[--color-bg-card] p-8 text-center space-y-2">
-            <div class="text-[--color-text-muted] text-sm font-mono">
+          <div class="border border-(--color-border) rounded-lg bg-(--color-bg-card) p-8 text-center space-y-2">
+            <div class="text-(--color-text-muted) text-sm font-mono">
               {t.noResults}
             </div>
-            <div class="text-[--color-text-muted] text-xs font-mono">
+            <div class="text-(--color-text-muted) text-xs font-mono">
               {t.noResultsHint ?? ""}
             </div>
           </div>
@@ -1580,8 +1580,8 @@ export default function ResultsPanel({
       {/* Next Actions — keep users engaged after results */}
       {result && result.total_trades > 0 && (
         <div class="px-3 pb-4 md:px-4 md:pb-5">
-          <div class="border border-[--color-border] rounded-lg bg-[--color-bg-card] p-4">
-            <p class="text-xs font-mono text-[--color-text-muted] mb-3 uppercase tracking-wider">
+          <div class="border border-(--color-border) rounded-lg bg-(--color-bg-card) p-4">
+            <p class="text-xs font-mono text-(--color-text-muted) mb-3 uppercase tracking-wider">
               {lang === "ko" ? "다음 단계" : "What's Next"}
             </p>
             <div class="grid gap-2">
@@ -1589,9 +1589,9 @@ export default function ResultsPanel({
                 href="https://t.me/PRUVIQ"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="flex items-center gap-3 p-3 rounded-lg border border-[--color-border] hover:border-[--color-accent]/30 hover:bg-[--color-accent]/5 transition-colors"
+                class="flex items-center gap-3 p-3 rounded-lg border border-(--color-border) hover:border-(--color-accent)/30 hover:bg-(--color-accent)/5 transition-colors"
               >
-                <span class="w-8 h-8 rounded-lg bg-[--color-accent]/10 flex items-center justify-center shrink-0">
+                <span class="w-8 h-8 rounded-lg bg-(--color-accent)/10 flex items-center justify-center shrink-0">
                   <svg
                     width="16"
                     height="16"
@@ -1607,7 +1607,7 @@ export default function ResultsPanel({
                   <p class="text-sm font-semibold">
                     {lang === "ko" ? "실시간 시그널 받기" : "Get Live Signals"}
                   </p>
-                  <p class="text-xs text-[--color-text-muted]">
+                  <p class="text-xs text-(--color-text-muted)">
                     {lang === "ko"
                       ? "텔레그램에서 매매 신호 알림"
                       : "Trading alerts via Telegram"}
@@ -1620,9 +1620,9 @@ export default function ResultsPanel({
                     ? "/ko/strategies/ranking"
                     : "/strategies/ranking"
                 }
-                class="flex items-center gap-3 p-3 rounded-lg border border-[--color-border] hover:border-[--color-accent]/30 hover:bg-[--color-accent]/5 transition-colors"
+                class="flex items-center gap-3 p-3 rounded-lg border border-(--color-border) hover:border-(--color-accent)/30 hover:bg-(--color-accent)/5 transition-colors"
               >
-                <span class="w-8 h-8 rounded-lg bg-[--color-up]/10 flex items-center justify-center shrink-0">
+                <span class="w-8 h-8 rounded-lg bg-(--color-up)/10 flex items-center justify-center shrink-0">
                   <svg
                     width="16"
                     height="16"
@@ -1640,7 +1640,7 @@ export default function ResultsPanel({
                       ? "오늘의 Top 전략 보기"
                       : "Today's Top Strategies"}
                   </p>
-                  <p class="text-xs text-[--color-text-muted]">
+                  <p class="text-xs text-(--color-text-muted)">
                     {lang === "ko"
                       ? "매일 갱신되는 전략 랭킹"
                       : "Daily updated strategy rankings"}

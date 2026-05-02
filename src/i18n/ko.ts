@@ -1599,7 +1599,7 @@ export const ko: Record<TranslationKey, string> = {
   // Changelog context callout
   "changelog.context_title": "여기서 추적하는 버전은?",
   "changelog.context_desc":
-    '이 변경 기록은 OKX USDT-SWAP에서 실시간 운영 중인 <strong class="text-[--color-text]">BB Squeeze SHORT 매매 전략</strong>을 추적합니다. 플랫폼 버전(웹사이트, 시뮬레이터, API)은 별도로 관리됩니다.',
+    '이 변경 기록은 OKX USDT-SWAP에서 실시간 운영 중인 <strong class="text-(--color-text)">BB Squeeze SHORT 매매 전략</strong>을 추적합니다. 플랫폼 버전(웹사이트, 시뮬레이터, API)은 별도로 관리됩니다.',
 
   // Meta: Privacy & Terms
   "meta.privacy_title": "개인정보처리방침 — 프루빅(PRUVIQ)",

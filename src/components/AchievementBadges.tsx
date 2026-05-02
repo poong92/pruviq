@@ -121,8 +121,8 @@ export default function AchievementBadges({ lang }: Props) {
             title={isEarned ? (isKo ? b.ko : b.en) : "???"}
             class={`text-xs px-2 py-1 rounded-full border ${
               isEarned
-                ? "border-[--color-accent]/50 bg-[--color-accent]/10 text-[--color-accent]"
-                : "border-[--color-border] text-[--color-text-muted] opacity-30"
+                ? "border-(--color-accent)/50 bg-(--color-accent)/10 text-(--color-accent)"
+                : "border-(--color-border) text-(--color-text-muted) opacity-30"
             }`}
           >
             {b.icon} {isEarned ? (isKo ? b.ko : b.en) : "???"}

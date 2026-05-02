@@ -126,24 +126,24 @@ export default function OKXConnectButton({
     if (showCard) {
       return (
         <div
-          class="border border-[--color-border] rounded-xl p-5 bg-[--color-bg-card]"
+          class="border border-(--color-border) rounded-xl p-5 bg-(--color-bg-card)"
           data-testid="okx-connect-coming-soon-card"
         >
           <div class="flex items-start justify-between gap-3 mb-2">
             <h4 class="font-bold text-sm">{t.connect}</h4>
             <span
-              class="shrink-0 inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-mono font-bold uppercase tracking-wider rounded bg-[--color-accent]/10 text-[--color-accent-bright] border border-[--color-accent]/30"
+              class="shrink-0 inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-mono font-bold uppercase tracking-wider rounded bg-(--color-accent)/10 text-(--color-accent-bright) border border-(--color-accent)/30"
               aria-label={t.comingSoonBadge}
             >
               ● {t.comingSoonBadge}
             </span>
           </div>
-          <p class="text-xs text-[--color-text-muted] mb-3">{t.desc}</p>
+          <p class="text-xs text-(--color-text-muted) mb-3">{t.desc}</p>
           <ul class="space-y-1.5 mb-4">
             {t.benefits.map((b) => (
-              <li class="flex items-center gap-2 text-xs text-[--color-text-secondary]">
+              <li class="flex items-center gap-2 text-xs text-(--color-text-secondary)">
                 <svg
-                  class="w-3.5 h-3.5 text-[--color-text-muted] shrink-0"
+                  class="w-3.5 h-3.5 text-(--color-text-muted) shrink-0"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -195,12 +195,12 @@ export default function OKXConnectButton({
   if (connected) {
     return (
       <div class="flex items-center gap-3">
-        <span class="flex items-center gap-2 text-sm text-[--color-up] font-medium">
-          <span class="w-2 h-2 rounded-full bg-[--color-up] animate-pulse" />
+        <span class="flex items-center gap-2 text-sm text-(--color-up) font-medium">
+          <span class="w-2 h-2 rounded-full bg-(--color-up) animate-pulse" />
           {t.connected}
         </span>
         <button
-          class="text-xs text-[--color-text-muted] hover:text-[--color-down] underline"
+          class="text-xs text-(--color-text-muted) hover:text-(--color-down) underline"
           onClick={handleDisconnect}
         >
           {t.disconnect}
@@ -212,14 +212,14 @@ export default function OKXConnectButton({
   // Card variant with benefits
   if (showCard) {
     return (
-      <div class="border border-[--color-accent]/20 rounded-xl p-5 bg-[--color-accent]/5">
+      <div class="border border-(--color-accent)/20 rounded-xl p-5 bg-(--color-accent)/5">
         <h4 class="font-bold text-sm mb-2">{t.connect}</h4>
-        <p class="text-xs text-[--color-text-muted] mb-3">{t.desc}</p>
+        <p class="text-xs text-(--color-text-muted) mb-3">{t.desc}</p>
         <ul class="space-y-1.5 mb-4">
           {t.benefits.map((b) => (
-            <li class="flex items-center gap-2 text-xs text-[--color-text-secondary]">
+            <li class="flex items-center gap-2 text-xs text-(--color-text-secondary)">
               <svg
-                class="w-3.5 h-3.5 text-[--color-up] shrink-0"
+                class="w-3.5 h-3.5 text-(--color-up) shrink-0"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -251,7 +251,7 @@ export default function OKXConnectButton({
   return (
     <div class="flex flex-col gap-1">
       {error && (
-        <p class="text-xs text-[--color-down]" role="alert">
+        <p class="text-xs text-(--color-down)" role="alert">
           {error}
         </p>
       )}

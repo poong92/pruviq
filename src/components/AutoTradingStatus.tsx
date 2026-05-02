@@ -66,9 +66,9 @@ const i18n = {
 
 function StatusLight({ status }: { status: BotStatus["status"] }) {
   const colors: Record<BotStatus["status"], string> = {
-    running: "bg-[--color-up]",
-    stopped: "bg-[--color-text-muted]",
-    paused: "bg-[--color-warning]",
+    running: "bg-(--color-up)",
+    stopped: "bg-(--color-text-muted)",
+    paused: "bg-(--color-warning)",
   };
   const pulse = status === "running" ? "animate-pulse" : "";
   return (
@@ -122,7 +122,7 @@ export default function AutoTradingStatus({ lang = "en" }: Props) {
   // Not connected
   if (!loading && unauthed) {
     return (
-      <div class="card-enterprise rounded-xl p-5 flex items-center gap-3 text-[--color-text-muted]">
+      <div class="card-enterprise rounded-xl p-5 flex items-center gap-3 text-(--color-text-muted)">
         <svg
           width="16"
           height="16"
@@ -145,14 +145,14 @@ export default function AutoTradingStatus({ lang = "en" }: Props) {
     return (
       <div class="card-enterprise rounded-xl p-5">
         <div class="flex items-center gap-2 mb-4">
-          <div class="w-2.5 h-2.5 rounded-full bg-[--color-bg-elevated] animate-pulse" />
-          <div class="h-4 w-24 rounded bg-[--color-bg-elevated] animate-pulse" />
+          <div class="w-2.5 h-2.5 rounded-full bg-(--color-bg-elevated) animate-pulse" />
+          <div class="h-4 w-24 rounded bg-(--color-bg-elevated) animate-pulse" />
         </div>
         <div class="grid grid-cols-3 gap-4">
           {[1, 2, 3].map((i) => (
             <div
               key={i}
-              class="h-14 rounded-lg bg-[--color-bg-elevated] animate-pulse"
+              class="h-14 rounded-lg bg-(--color-bg-elevated) animate-pulse"
             />
           ))}
         </div>
@@ -163,7 +163,7 @@ export default function AutoTradingStatus({ lang = "en" }: Props) {
   const statusText = t.status[botStatus.status];
   const modeText = t.mode[botStatus.execution_mode];
   const pnlColor =
-    botStatus.pnl_today >= 0 ? "text-[--color-up]" : "text-[--color-down]";
+    botStatus.pnl_today >= 0 ? "text-(--color-up)" : "text-(--color-down)";
   const pnlSign = botStatus.pnl_today >= 0 ? "+" : "";
   const settingsPath = lang === "ko" ? "/ko/dashboard" : "/dashboard";
 
@@ -174,13 +174,13 @@ export default function AutoTradingStatus({ lang = "en" }: Props) {
         <div class="flex items-center gap-2">
           <StatusLight status={botStatus.status} />
           <h2 class="font-bold text-sm">{t.title}</h2>
-          <span class="text-xs font-mono text-[--color-text-muted]">
+          <span class="text-xs font-mono text-(--color-text-muted)">
             ({statusText} · {modeText})
           </span>
         </div>
         <a
           href={settingsPath}
-          class="text-xs text-[--color-accent] hover:underline"
+          class="text-xs text-(--color-accent) hover:underline"
         >
           {t.configure}
         </a>
@@ -189,7 +189,7 @@ export default function AutoTradingStatus({ lang = "en" }: Props) {
       {/* Loss limit warning */}
       {botStatus.limit_reached && (
         <div
-          class="mb-4 px-3 py-2 rounded-lg bg-[--color-down]/10 border border-[--color-down]/20 text-xs text-[--color-down]"
+          class="mb-4 px-3 py-2 rounded-lg bg-(--color-down)/10 border border-(--color-down)/20 text-xs text-(--color-down)"
           role="alert"
           aria-live="assertive"
         >
@@ -199,24 +199,24 @@ export default function AutoTradingStatus({ lang = "en" }: Props) {
 
       {/* Stats grid */}
       <div class="grid grid-cols-3 gap-3 mb-4">
-        <div class="bg-[--color-bg]/50 rounded-xl p-3 text-center">
-          <p class="text-xs text-[--color-text-muted] mb-1">{t.trades_today}</p>
+        <div class="bg-(--color-bg)/50 rounded-xl p-3 text-center">
+          <p class="text-xs text-(--color-text-muted) mb-1">{t.trades_today}</p>
           <p class="text-2xl font-bold">{botStatus.trades_today}</p>
         </div>
-        <div class="bg-[--color-bg]/50 rounded-xl p-3 text-center">
-          <p class="text-xs text-[--color-text-muted] mb-1">{t.pnl_today}</p>
+        <div class="bg-(--color-bg)/50 rounded-xl p-3 text-center">
+          <p class="text-xs text-(--color-text-muted) mb-1">{t.pnl_today}</p>
           <p class={`text-2xl font-bold ${pnlColor}`}>
             {pnlSign}${botStatus.pnl_today.toFixed(2)}
           </p>
         </div>
-        <div class="bg-[--color-bg]/50 rounded-xl p-3 text-center">
-          <p class="text-xs text-[--color-text-muted] mb-1">Loss Limit</p>
+        <div class="bg-(--color-bg)/50 rounded-xl p-3 text-center">
+          <p class="text-xs text-(--color-text-muted) mb-1">Loss Limit</p>
           <p class="text-2xl font-bold">${botStatus.daily_loss_limit}</p>
         </div>
       </div>
 
       {/* Last trade */}
-      <div class="flex items-center justify-between text-xs text-[--color-text-muted]">
+      <div class="flex items-center justify-between text-xs text-(--color-text-muted)">
         <span>{t.last_trade}:</span>
         {botStatus.last_trade ? (
           <span class="font-mono">
@@ -230,7 +230,7 @@ export default function AutoTradingStatus({ lang = "en" }: Props) {
       </div>
 
       {lastUpdated && (
-        <p class="text-xs text-[--color-text-muted] mt-2 text-right">
+        <p class="text-xs text-(--color-text-muted) mt-2 text-right">
           {t.updated}
         </p>
       )}

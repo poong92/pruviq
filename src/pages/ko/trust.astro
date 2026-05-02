@@ -17,87 +17,87 @@ const t = useTranslations('ko');
 >
   <main class="max-w-4xl mx-auto px-4 py-16 md:py-24">
     <header class="mb-12 text-center">
-      <p class="font-mono text-[--color-accent] text-xs tracking-widest uppercase mb-4">{t('trust.moat_label')}</p>
+      <p class="font-mono text-(--color-accent) text-xs tracking-widest uppercase mb-4">{t('trust.moat_label')}</p>
       <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight mb-4">{t('trust.heading')}</h1>
-      <p class="text-lg text-[--color-text-secondary] max-w-2xl mx-auto">
+      <p class="text-lg text-(--color-text-secondary) max-w-2xl mx-auto">
         {t('trust.intro')}
       </p>
     </header>
 
     <section id="metrics" class="reveal reveal-child grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
       <div class="card-enterprise rounded-2xl p-6">
-        <p class="text-xs font-mono text-[--color-text-muted] uppercase mb-2">{t('trust.trades_24h')}</p>
+        <p class="text-xs font-mono text-(--color-text-muted) uppercase mb-2">{t('trust.trades_24h')}</p>
         <p class="text-4xl font-extrabold" data-metric="trades_24h">—</p>
       </div>
       <div class="card-enterprise rounded-2xl p-6">
-        <p class="text-xs font-mono text-[--color-text-muted] uppercase mb-2">{t('trust.trades_7d')}</p>
+        <p class="text-xs font-mono text-(--color-text-muted) uppercase mb-2">{t('trust.trades_7d')}</p>
         <p class="text-4xl font-extrabold" data-metric="trades_7d">—</p>
       </div>
       <div class="card-enterprise rounded-2xl p-6">
-        <p class="text-xs font-mono text-[--color-text-muted] uppercase mb-2">{t('trust.slippage_median')}</p>
+        <p class="text-xs font-mono text-(--color-text-muted) uppercase mb-2">{t('trust.slippage_median')}</p>
         <p class="text-4xl font-extrabold" data-metric="slippage_median_pct">—</p>
-        <p class="text-xs text-[--color-text-muted] mt-2">{t('trust.slippage_formula')}</p>
+        <p class="text-xs text-(--color-text-muted) mt-2">{t('trust.slippage_formula')}</p>
       </div>
       <div class="card-enterprise rounded-2xl p-6">
-        <p class="text-xs font-mono text-[--color-text-muted] uppercase mb-2">{t('trust.slippage_p90')}</p>
+        <p class="text-xs font-mono text-(--color-text-muted) uppercase mb-2">{t('trust.slippage_p90')}</p>
         <p class="text-4xl font-extrabold" data-metric="slippage_p90_pct">—</p>
-        <p class="text-xs text-[--color-text-muted] mt-2">{t('trust.slippage_p90_note')}</p>
+        <p class="text-xs text-(--color-text-muted) mt-2">{t('trust.slippage_p90_note')}</p>
       </div>
       <div class="card-enterprise rounded-2xl p-6 md:col-span-2">
-        <p class="text-xs font-mono text-[--color-text-muted] uppercase mb-2">{t('trust.sl_tp_rate')}</p>
+        <p class="text-xs font-mono text-(--color-text-muted) uppercase mb-2">{t('trust.sl_tp_rate')}</p>
         <p class="text-4xl font-extrabold" data-metric="sl_tp_set_rate">—</p>
-        <p class="text-xs text-[--color-text-muted] mt-2">
+        <p class="text-xs text-(--color-text-muted) mt-2">
           {t('trust.sl_tp_note')}
         </p>
       </div>
     </section>
 
-    <p class="text-xs text-[--color-text-muted] text-center font-mono" data-metric="generated_at">
+    <p class="text-xs text-(--color-text-muted) text-center font-mono" data-metric="generated_at">
       {t('trust.loading')}
     </p>
 
-    <section id="platform-health" class="reveal mt-16 border-t border-[--color-border] pt-12">
+    <section id="platform-health" class="reveal mt-16 border-t border-(--color-border) pt-12">
       <header class="mb-6 text-center">
-        <p class="font-mono text-[--color-accent] text-xs tracking-widest uppercase mb-3">{t('trust.platform_tag')}</p>
+        <p class="font-mono text-(--color-accent) text-xs tracking-widest uppercase mb-3">{t('trust.platform_tag')}</p>
         <h2 class="text-2xl md:text-3xl font-bold mb-2">{t('trust.platform_heading')}</h2>
-        <p class="text-sm text-[--color-text-secondary] max-w-xl mx-auto">{t('trust.platform_intro')}</p>
+        <p class="text-sm text-(--color-text-secondary) max-w-xl mx-auto">{t('trust.platform_intro')}</p>
       </header>
 
       <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4" data-platform-health>
         <div class="card-enterprise rounded-xl p-4">
-          <p class="text-xs font-mono text-[--color-text-muted] uppercase mb-2">{t('trust.platform_api_status')}</p>
+          <p class="text-xs font-mono text-(--color-text-muted) uppercase mb-2">{t('trust.platform_api_status')}</p>
           <p class="text-xl font-bold" data-health="status">—</p>
         </div>
         <div class="card-enterprise rounded-xl p-4">
-          <p class="text-xs font-mono text-[--color-text-muted] uppercase mb-2">{t('trust.platform_api_version')}</p>
+          <p class="text-xs font-mono text-(--color-text-muted) uppercase mb-2">{t('trust.platform_api_version')}</p>
           <p class="text-xl font-bold font-mono" data-health="version">—</p>
         </div>
         <div class="card-enterprise rounded-xl p-4">
-          <p class="text-xs font-mono text-[--color-text-muted] uppercase mb-2">{t('trust.platform_coins')}</p>
+          <p class="text-xs font-mono text-(--color-text-muted) uppercase mb-2">{t('trust.platform_coins')}</p>
           <p class="text-xl font-bold" data-health="coins_loaded">—</p>
         </div>
         <div class="card-enterprise rounded-xl p-4">
-          <p class="text-xs font-mono text-[--color-text-muted] uppercase mb-2">{t('trust.platform_uptime')}</p>
+          <p class="text-xs font-mono text-(--color-text-muted) uppercase mb-2">{t('trust.platform_uptime')}</p>
           <p class="text-xl font-bold" data-health="uptime_seconds">—</p>
         </div>
         <div class="card-enterprise rounded-xl p-4" data-data-age-cell>
-          <p class="text-xs font-mono text-[--color-text-muted] uppercase mb-2">{t('trust.platform_data_age')}</p>
+          <p class="text-xs font-mono text-(--color-text-muted) uppercase mb-2">{t('trust.platform_data_age')}</p>
           <p class="text-xl font-bold" data-data-age>—</p>
         </div>
       </div>
 
-      <p class="text-xs text-[--color-text-muted] text-center font-mono mt-4" data-health-note>
+      <p class="text-xs text-(--color-text-muted) text-center font-mono mt-4" data-health-note>
         {t('trust.platform_note')}
       </p>
     </section>
 
-    <footer class="mt-16 text-sm text-[--color-text-muted] space-y-3 max-w-3xl mx-auto">
+    <footer class="mt-16 text-sm text-(--color-text-muted) space-y-3 max-w-3xl mx-auto">
       <p>
-        <strong class="text-[--color-text]">{t('trust.why_title')}</strong>
+        <strong class="text-(--color-text)">{t('trust.why_title')}</strong>
         {t('trust.why_body')}
       </p>
       <p>
-        <strong class="text-[--color-text]">{t('trust.what_not_title')}</strong>
+        <strong class="text-(--color-text)">{t('trust.what_not_title')}</strong>
         {t('trust.what_not_body')}
       </p>
     </footer>

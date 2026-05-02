@@ -59,11 +59,11 @@ export default function HotStrategies({ lang = "en" }: { lang?: string }) {
       : "Top strategies by recent 30-day BTC performance";
 
   return (
-    <div class="rounded-lg border border-[--color-warning]/20 bg-[--color-warning]/5 p-4 mb-6">
+    <div class="rounded-lg border border-(--color-warning)/20 bg-(--color-warning)/5 p-4 mb-6">
       <div class="flex items-center gap-2 mb-3">
         <span class="text-lg">🔥</span>
-        <h3 class="text-sm font-semibold text-[--color-warning]">{title}</h3>
-        <span class="text-xs text-[--color-text-muted]">{subtitle}</span>
+        <h3 class="text-sm font-semibold text-(--color-warning)">{title}</h3>
+        <span class="text-xs text-(--color-text-muted)">{subtitle}</span>
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -82,29 +82,29 @@ export default function HotStrategies({ lang = "en" }: { lang?: string }) {
               radius="sm"
               padding="sm"
               interactive
-              class="hover:border-[--color-warning]/40 no-underline"
+              class="hover:border-(--color-warning)/40 no-underline"
             >
               <div class="flex items-center justify-between mb-1">
-                <span class="text-xs font-medium text-[--color-text]">
+                <span class="text-xs font-medium text-(--color-text)">
                   #{i + 1} {s.strategy_name}
                 </span>
                 {s.status === "verified" && (
-                  <span class="text-[10px] bg-[--color-up]/20 text-[--color-up] px-1.5 py-0.5 rounded">
+                  <span class="text-[10px] bg-(--color-up)/20 text-(--color-up) px-1.5 py-0.5 rounded">
                     verified
                   </span>
                 )}
               </div>
-              <div class="flex items-center gap-3 text-xs text-[--color-text-secondary]">
+              <div class="flex items-center gap-3 text-xs text-(--color-text-secondary)">
                 <span class="uppercase">{s.direction}</span>
                 <span>
                   PF{" "}
                   <span
                     class={
                       s.profit_factor > 1.5
-                        ? "text-[--color-up] font-bold"
+                        ? "text-(--color-up) font-bold"
                         : s.profit_factor > 1.0
-                          ? "text-[--color-up]"
-                          : "text-[--color-down]"
+                          ? "text-(--color-up)"
+                          : "text-(--color-down)"
                     }
                   >
                     {s.profit_factor.toFixed(2)}

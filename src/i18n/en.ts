@@ -1631,7 +1631,7 @@ export const en = {
   // Changelog context callout
   "changelog.context_title": "What\u2019s versioned here?",
   "changelog.context_desc":
-    'This changelog tracks the <strong class="text-[--color-text]">BB Squeeze SHORT trading strategy</strong> running live on OKX USDT-SWAP. Platform version (website, simulator, API) is managed separately.',
+    'This changelog tracks the <strong class="text-(--color-text)">BB Squeeze SHORT trading strategy</strong> running live on OKX USDT-SWAP. Platform version (website, simulator, API) is managed separately.',
 
   // Meta: Privacy & Terms
   "meta.privacy_title": "Privacy Policy — PRUVIQ",

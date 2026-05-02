@@ -69,33 +69,33 @@ function getReadingTime(body: string | undefined): string {
   })} />
   <section class="pt-6 pb-16 md:pt-10 md:pb-24">
     <div class="max-w-4xl mx-auto px-4">
-      <p class="font-mono text-[--color-accent] text-sm mb-3 tracking-wider">{t('blog.tag')}</p>
+      <p class="font-mono text-(--color-accent) text-sm mb-3 tracking-wider">{t('blog.tag')}</p>
       <h1 class="text-3xl md:text-5xl lg:text-6xl font-extrabold mb-5">{t('blog.title')}</h1>
-      <p class="text-[--color-text-muted] text-lg md:text-xl leading-relaxed mb-5 max-w-2xl">
+      <p class="text-(--color-text-muted) text-lg md:text-xl leading-relaxed mb-5 max-w-2xl">
         {t('blog.desc')}
       </p>
 
       {posts.length === 0 ? (
-        <div class="border border-[--color-border] rounded-lg p-12 bg-[--color-bg-card] text-center">
-          <p class="font-mono text-[--color-accent] text-sm mb-4">{t('blog.coming_soon')}</p>
-          <p class="text-[--color-text-muted] mb-6">
+        <div class="border border-(--color-border) rounded-lg p-12 bg-(--color-bg-card) text-center">
+          <p class="font-mono text-(--color-accent) text-sm mb-4">{t('blog.coming_soon')}</p>
+          <p class="text-(--color-text-muted) mb-6">
             {t('blog.coming_desc')}
           </p>
-          <p class="text-[--color-text-muted] text-sm">
+          <p class="text-(--color-text-muted) text-sm">
             {t('blog.coming_cta')}
-            <a href="https://x.com/pruviq" target="_blank" rel="noopener noreferrer" class="text-[--color-accent] hover:underline">X / Twitter</a>
+            <a href="https://x.com/pruviq" target="_blank" rel="noopener noreferrer" class="text-(--color-accent) hover:underline">X / Twitter</a>
             {t('blog.coming_cta2')}
           </p>
-          <div class="mt-8 pt-6 border-t border-[--color-border] text-center">
-            <p class="text-[--color-text-muted] text-sm mb-4">While we prepare more content:</p>
+          <div class="mt-8 pt-6 border-t border-(--color-border) text-center">
+            <p class="text-(--color-text-muted) text-sm mb-4">While we prepare more content:</p>
             <div class="flex flex-wrap gap-3 justify-center">
-              <a href="/learn" class="btn btn-ghost btn-md hover:border-[--color-accent] transition-colors no-underline">
+              <a href="/learn" class="btn btn-ghost btn-md hover:border-(--color-accent) transition-colors no-underline">
                 {t('blog.learn_cta')} &rarr;
               </a>
-              <a href="/strategies" class="btn btn-ghost btn-md hover:border-[--color-accent] transition-colors no-underline">
+              <a href="/strategies" class="btn btn-ghost btn-md hover:border-(--color-accent) transition-colors no-underline">
                 {t('blog.strategies_cta')} &rarr;
               </a>
-              <a href="/simulate" class="btn btn-ghost btn-md hover:border-[--color-accent] transition-colors no-underline">
+              <a href="/simulate" class="btn btn-ghost btn-md hover:border-(--color-accent) transition-colors no-underline">
                 {t('blog.simulate_cta')} &rarr;
               </a>
             </div>
@@ -106,7 +106,7 @@ function getReadingTime(body: string | undefined): string {
           <div class="space-y-6">
             {posts.map((post) => (
               <a href={`/blog/${post.id}`}
-                 class="block border border-[--color-border] rounded-lg p-6 bg-[--color-bg-card] card-hover card-glow group"
+                 class="block border border-(--color-border) rounded-lg p-6 bg-(--color-bg-card) card-hover card-glow group"
                  style={`border-left: 3px solid ${categoryBorderColors[post.data.category] || 'var(--color-text-muted)'};`}>
                 <div class="flex items-center gap-2 mb-3">
                   <span class={`text-xs font-mono font-semibold px-2 py-0.5 rounded ${categoryBadgeClass[post.data.category] || 'badge-education'}`}>
@@ -115,25 +115,25 @@ function getReadingTime(body: string | undefined): string {
                   {isNew(post.data.date) && (
                     <span class="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded badge-new">NEW</span>
                   )}
-                  <span class="text-[--color-text] text-xs font-mono font-medium">{post.data.date}</span>
-                  <span class="text-[--color-text-disabled] text-xs font-mono ml-auto">{getReadingTime(post.body)}</span>
+                  <span class="text-(--color-text) text-xs font-mono font-medium">{post.data.date}</span>
+                  <span class="text-(--color-text-disabled) text-xs font-mono ml-auto">{getReadingTime(post.body)}</span>
                 </div>
-                <h2 class="text-xl font-bold mb-2 group-hover:text-[--color-accent] transition-colors">
+                <h2 class="text-xl font-bold mb-2 group-hover:text-(--color-accent) transition-colors">
                   {post.data.title}
                 </h2>
-                <p class="text-[--color-text-muted] text-sm">{post.data.description}</p>
+                <p class="text-(--color-text-muted) text-sm">{post.data.description}</p>
               </a>
             ))}
           </div>
-          <div class="mt-12 pt-8 border-t border-[--color-border] text-center">
+          <div class="mt-12 pt-8 border-t border-(--color-border) text-center">
             <a href="/simulate" class="btn btn-primary btn-md no-underline">
               {t('blog.simulate_cta')} &rarr;
             </a>
             <div class="flex flex-wrap gap-3 justify-center mt-4">
-              <a href="/strategies/ranking" class="btn btn-ghost btn-md hover:border-[--color-accent] transition-colors no-underline">
+              <a href="/strategies/ranking" class="btn btn-ghost btn-md hover:border-(--color-accent) transition-colors no-underline">
                 {t('ranking.tag')} &rarr;
               </a>
-              <a href="/learn" class="btn btn-ghost btn-md hover:border-[--color-accent] transition-colors no-underline">
+              <a href="/learn" class="btn btn-ghost btn-md hover:border-(--color-accent) transition-colors no-underline">
                 {t('blog.learn_cta')} &rarr;
               </a>
             </div>

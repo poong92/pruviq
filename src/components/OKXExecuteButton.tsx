@@ -188,11 +188,11 @@ export default function OKXExecuteButton({
   // Not connected — show feature preview + connect CTA
   if (!connected) {
     return (
-      <div class="border border-[--color-accent]/20 rounded-xl p-6 bg-[--color-accent]/5">
+      <div class="border border-(--color-accent)/20 rounded-xl p-6 bg-(--color-accent)/5">
         <div class="flex items-center gap-3 mb-3">
-          <div class="w-10 h-10 rounded-lg bg-[--color-accent]/10 flex items-center justify-center shrink-0">
+          <div class="w-10 h-10 rounded-lg bg-(--color-accent)/10 flex items-center justify-center shrink-0">
             <svg
-              class="w-5 h-5 text-[--color-accent]"
+              class="w-5 h-5 text-(--color-accent)"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -207,14 +207,14 @@ export default function OKXExecuteButton({
           </div>
           <div>
             <h4 class="font-bold text-sm">{t.featureTitle}</h4>
-            <p class="text-xs text-[--color-text-muted]">{t.featureDesc}</p>
+            <p class="text-xs text-(--color-text-muted)">{t.featureDesc}</p>
           </div>
         </div>
         <ul class="space-y-1.5 mb-4">
           {t.features.map((f) => (
-            <li class="flex items-center gap-2 text-xs text-[--color-text-secondary]">
+            <li class="flex items-center gap-2 text-xs text-(--color-text-secondary)">
               <svg
-                class="w-3.5 h-3.5 text-[--color-up] shrink-0"
+                class="w-3.5 h-3.5 text-(--color-up) shrink-0"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -252,62 +252,62 @@ export default function OKXExecuteButton({
 
       {showModal && (
         <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-          <div class="bg-[--color-bg-card] border border-[--color-border] rounded-2xl p-6 max-w-md w-full mx-4 shadow-2xl">
+          <div class="bg-(--color-bg-card) border border-(--color-border) rounded-2xl p-6 max-w-md w-full mx-4 shadow-2xl">
             <h3 class="text-lg font-bold mb-2">{t.confirmTitle}</h3>
-            <p class="text-sm text-[--color-text-muted] mb-4">
+            <p class="text-sm text-(--color-text-muted) mb-4">
               {t.confirmDesc}
             </p>
 
             <div class="space-y-2 mb-4 text-sm">
               <div class="flex justify-between">
-                <span class="text-[--color-text-muted]">{t.strategy}</span>
+                <span class="text-(--color-text-muted)">{t.strategy}</span>
                 <span class="font-mono">{strategy}</span>
               </div>
               <div class="flex justify-between">
-                <span class="text-[--color-text-muted]">{t.direction}</span>
+                <span class="text-(--color-text-muted)">{t.direction}</span>
                 <span
-                  class={`font-mono font-bold ${direction === "long" ? "text-[--color-up]" : "text-[--color-down]"}`}
+                  class={`font-mono font-bold ${direction === "long" ? "text-(--color-up)" : "text-(--color-down)"}`}
                 >
                   {direction.toUpperCase()}
                 </span>
               </div>
               <div class="flex justify-between">
-                <span class="text-[--color-text-muted]">{t.symbol}</span>
+                <span class="text-(--color-text-muted)">{t.symbol}</span>
                 <span class="font-mono">{symbol}</span>
               </div>
               <div class="flex justify-between">
-                <span class="text-[--color-text-muted]">{t.slTp}</span>
+                <span class="text-(--color-text-muted)">{t.slTp}</span>
                 <span class="font-mono">
                   {slPct}% / {tpPct}%
                 </span>
               </div>
-              <div class="border-t border-[--color-border] pt-2 mt-2 space-y-2">
+              <div class="border-t border-(--color-border) pt-2 mt-2 space-y-2">
                 <div class="flex justify-between">
-                  <span class="text-[--color-text-muted]">
+                  <span class="text-(--color-text-muted)">
                     {t.positionSize}
                   </span>
                   <span class="font-mono font-bold">
                     ${effectivePositionUsdt.toFixed(0)} USDT
                     {userSettings.position_size_mode === "percent" && (
-                      <span class="text-[--color-text-muted] font-normal ml-1">
+                      <span class="text-(--color-text-muted) font-normal ml-1">
                         ({userSettings.position_size_pct}%)
                       </span>
                     )}
                   </span>
                 </div>
                 <div class="flex justify-between">
-                  <span class="text-[--color-text-muted]">{t.leverage}</span>
+                  <span class="text-(--color-text-muted)">{t.leverage}</span>
                   <span class="font-mono font-bold">
                     {userSettings.leverage}x
                   </span>
                 </div>
                 <div class="flex justify-between">
-                  <span class="text-[--color-text-muted]">{t.marginMode}</span>
+                  <span class="text-(--color-text-muted)">{t.marginMode}</span>
                   <span class="font-mono capitalize">
                     {userSettings.td_mode}
                   </span>
                 </div>
-                <div class="flex justify-between text-[--color-text-muted]">
+                <div class="flex justify-between text-(--color-text-muted)">
                   <span>{t.estFee}</span>
                   <span class="font-mono">
                     ~$
@@ -320,7 +320,7 @@ export default function OKXExecuteButton({
               </div>
             </div>
 
-            <p class="text-xs text-[--color-text-muted] border-t border-[--color-border] pt-3 mb-4">
+            <p class="text-xs text-(--color-text-muted) border-t border-(--color-border) pt-3 mb-4">
               {t.disclaimer}
             </p>
 
@@ -333,7 +333,7 @@ export default function OKXExecuteButton({
                 {t.cancel}
               </button>
               <button
-                class={`btn btn-md flex-1 ${status === "success" ? "bg-[--color-up] text-white" : status === "failed" ? "bg-[--color-down] text-white" : "btn-primary"}`}
+                class={`btn btn-md flex-1 ${status === "success" ? "bg-(--color-up) text-white" : status === "failed" ? "bg-(--color-down) text-white" : "btn-primary"}`}
                 onClick={handleExecute}
                 disabled={status === "executing" || status === "success"}
               >

@@ -75,30 +75,30 @@ const statusLabels: Record<string, string> = {
   })} />
   <article class="py-12">
     <div class="max-w-3xl mx-auto px-4">
-      <a href="/ko/strategies" class="text-[--color-text-muted] text-sm hover:text-[--color-accent] transition-colors mb-8 inline-block">
+      <a href="/ko/strategies" class="text-(--color-text-muted) text-sm hover:text-(--color-accent) transition-colors mb-8 inline-block">
         &larr; {t('strategies.back')}
       </a>
 
       {!isKorean && (
-        <div class="mb-4 px-3 py-2 border border-[--color-border] rounded-xl bg-[--color-bg-card] shadow-[var(--shadow-sm)] text-sm text-[--color-text-muted]">
+        <div class="mb-4 px-3 py-2 border border-(--color-border) rounded-xl bg-(--color-bg-card) shadow-[var(--shadow-sm)] text-sm text-(--color-text-muted)">
           {t('strategy_detail.english_only')}
         </div>
       )}
 
       {/* Research-status warning banner for testing / shelved strategies */}
       {(strategy.data.status === 'testing' || strategy.data.status === 'shelved') && (
-        <div class="mb-6 flex items-start gap-3 border border-[--color-yellow]/40 rounded-lg px-4 py-3 bg-[--color-yellow]/5">
-          <span class="text-[--color-yellow] font-bold text-base shrink-0 mt-0.5">&#9888;</span>
-          <p class="font-mono text-xs font-bold text-[--color-yellow]">{t('strategy.research_warning')}</p>
+        <div class="mb-6 flex items-start gap-3 border border-(--color-yellow)/40 rounded-lg px-4 py-3 bg-(--color-yellow)/5">
+          <span class="text-(--color-yellow) font-bold text-base shrink-0 mt-0.5">&#9888;</span>
+          <p class="font-mono text-xs font-bold text-(--color-yellow)">{t('strategy.research_warning')}</p>
         </div>
       )}
 
       {/* Verified badge for strategies that passed OOS validation */}
       {strategy.data.status === 'verified' && (
-        <div class="mb-6 flex items-center gap-2 border border-[--color-accent]/40 rounded-lg px-4 py-2.5 bg-[--color-accent]/5 w-fit">
-          <span class="text-[--color-accent] font-bold">&#10003;</span>
-          <span class="font-mono text-xs font-bold text-[--color-accent]">{t('strategy.verified_badge')}</span>
-          <span class="font-mono text-xs text-[--color-accent]/60">&mdash; {t('strategy.oos_label')}</span>
+        <div class="mb-6 flex items-center gap-2 border border-(--color-accent)/40 rounded-lg px-4 py-2.5 bg-(--color-accent)/5 w-fit">
+          <span class="text-(--color-accent) font-bold">&#10003;</span>
+          <span class="font-mono text-xs font-bold text-(--color-accent)">{t('strategy.verified_badge')}</span>
+          <span class="font-mono text-xs text-(--color-accent)/60">&mdash; {t('strategy.oos_label')}</span>
         </div>
       )}
 
@@ -108,12 +108,12 @@ const statusLabels: Record<string, string> = {
                 style={`color: var(${statusColors[strategy.data.status]}); border-color: var(${statusColors[strategy.data.status]})`}>
             {statusLabels[strategy.data.status]}
           </span>
-          <span class="text-[--color-text-muted] text-xs font-mono">
+          <span class="text-(--color-text-muted) text-xs font-mono">
             {strategy.data.direction.toUpperCase()} &middot; {strategy.data.timeframe} &middot; {strategy.data.difficulty.toUpperCase()}
           </span>
         </div>
         <h1 class="text-3xl md:text-5xl font-bold mt-2 mb-4">{strategy.data.name}</h1>
-        <p class="text-[--color-text-muted]">{strategy.data.description}</p>
+        <p class="text-(--color-text-muted)">{strategy.data.description}</p>
       </div>
 
       <ReproBadge client:visible strategy={strategy.id} lang="ko" />
@@ -122,44 +122,44 @@ const statusLabels: Record<string, string> = {
         <div class="reveal card-enterprise grid grid-cols-2 sm:grid-cols-4 gap-4 font-mono text-sm p-4 mb-8">
           {strategy.data.winRate !== undefined && (
             <div>
-              <Tooltip text={t('tooltip.wr')}><span class="text-[--color-text-muted] text-xs">{t('strategy.win_rate')}</span></Tooltip>
-              <p class={`text-xl font-bold ${strategy.data.winRate >= 55 ? 'text-[--color-accent]' : strategy.data.winRate >= 50 ? 'text-[--color-yellow]' : 'text-[--color-red]'}`}>
+              <Tooltip text={t('tooltip.wr')}><span class="text-(--color-text-muted) text-xs">{t('strategy.win_rate')}</span></Tooltip>
+              <p class={`text-xl font-bold ${strategy.data.winRate >= 55 ? 'text-(--color-accent)' : strategy.data.winRate >= 50 ? 'text-(--color-yellow)' : 'text-(--color-red)'}`}>
                 {strategy.data.winRate}%
               </p>
               <div class="metric-bar"><div class="metric-bar-fill" style={`width: ${strategy.data.winRate}%; background: var(--color-up);`}></div></div>
-              <p class="text-[--color-text-muted] text-[10px] mt-0.5 leading-tight">{t('strategy.wr_desc')}</p>
+              <p class="text-(--color-text-muted) text-[10px] mt-0.5 leading-tight">{t('strategy.wr_desc')}</p>
             </div>
           )}
           {strategy.data.profitFactor !== undefined && (
             <div>
-              <Tooltip text={t('tooltip.pf')}><span class="text-[--color-text-muted] text-xs">{t('strategy.profit_factor')}</span></Tooltip>
-              <p class={`text-xl font-bold ${strategy.data.profitFactor >= 1.5 ? 'text-[--color-accent]' : strategy.data.profitFactor >= 1.0 ? 'text-[--color-yellow]' : 'text-[--color-red]'}`}>
+              <Tooltip text={t('tooltip.pf')}><span class="text-(--color-text-muted) text-xs">{t('strategy.profit_factor')}</span></Tooltip>
+              <p class={`text-xl font-bold ${strategy.data.profitFactor >= 1.5 ? 'text-(--color-accent)' : strategy.data.profitFactor >= 1.0 ? 'text-(--color-yellow)' : 'text-(--color-red)'}`}>
                 {strategy.data.profitFactor}
               </p>
               <div class="metric-bar"><div class="metric-bar-fill" style={`width: ${Math.min(strategy.data.profitFactor / 3 * 100, 100)}%; background: var(--color-up);`}></div></div>
-              <p class="text-[--color-text-muted] text-[10px] mt-0.5 leading-tight">{t('strategy.pf_desc')}</p>
+              <p class="text-(--color-text-muted) text-[10px] mt-0.5 leading-tight">{t('strategy.pf_desc')}</p>
             </div>
           )}
           {strategy.data.totalPnl && (
             <div>
-              <span class="text-[--color-text-muted] text-xs">{t('strategy.total_pnl')}</span>
-              <p class={`text-xl font-bold ${strategy.data.totalPnl.startsWith('+') ? 'text-[--color-accent]' : 'text-[--color-red]'}`}>
+              <span class="text-(--color-text-muted) text-xs">{t('strategy.total_pnl')}</span>
+              <p class={`text-xl font-bold ${strategy.data.totalPnl.startsWith('+') ? 'text-(--color-accent)' : 'text-(--color-red)'}`}>
                 {strategy.data.totalPnl}
               </p>
-              <p class="text-[--color-text-muted] text-[10px] mt-0.5 leading-tight">{t('strategy.pnl_desc')}</p>
+              <p class="text-(--color-text-muted) text-[10px] mt-0.5 leading-tight">{t('strategy.pnl_desc')}</p>
             </div>
           )}
           {strategy.data.maxDrawdown !== undefined && (
             <div>
-              <Tooltip text={t('tooltip.mdd')}><span class="text-[--color-text-muted] text-xs">{t('strategy.max_drawdown')}</span></Tooltip>
-              <p class="text-xl font-bold text-[--color-red]">{strategy.data.maxDrawdown}%</p>
-              <p class="text-[--color-text-muted] text-[10px] mt-0.5 leading-tight">{t('strategy.mdd_desc')}</p>
+              <Tooltip text={t('tooltip.mdd')}><span class="text-(--color-text-muted) text-xs">{t('strategy.max_drawdown')}</span></Tooltip>
+              <p class="text-xl font-bold text-(--color-red)">{strategy.data.maxDrawdown}%</p>
+              <p class="text-(--color-text-muted) text-[10px] mt-0.5 leading-tight">{t('strategy.mdd_desc')}</p>
             </div>
           )}
         </div>
       )}
 
-      <div class="reveal flex flex-wrap gap-4 text-xs font-mono text-[--color-text-muted] mb-8">
+      <div class="reveal flex flex-wrap gap-4 text-xs font-mono text-(--color-text-muted) mb-8">
         <span>{t('strategy.added')}: {strategy.data.dateAdded}</span>
         {strategy.data.dateKilled && <span>{t('strategy.killed_date')}: {strategy.data.dateKilled}</span>}
         {strategy.data.coins && <span>{strategy.data.coins} {t('strategy.coins_tested')}</span>}
@@ -175,9 +175,9 @@ const statusLabels: Record<string, string> = {
       <hr class="section-divider" />
 
       {strategy.data.status === 'verified' && (
-        <div class="reveal mt-8 mb-8 border border-[--color-yellow]/30 rounded-lg p-4 bg-[--color-yellow]/5">
-          <p class="font-mono text-[--color-yellow] text-xs font-bold mb-2">{t('strategy.leverage_warning_title')}</p>
-          <p class="text-[--color-text-muted] text-sm leading-relaxed">{t('strategy.leverage_warning')}</p>
+        <div class="reveal mt-8 mb-8 border border-(--color-yellow)/30 rounded-lg p-4 bg-(--color-yellow)/5">
+          <p class="font-mono text-(--color-yellow) text-xs font-bold mb-2">{t('strategy.leverage_warning_title')}</p>
+          <p class="text-(--color-text-muted) text-sm leading-relaxed">{t('strategy.leverage_warning')}</p>
         </div>
       )}
 
@@ -204,14 +204,14 @@ const statusLabels: Record<string, string> = {
             lang="ko"
           />
           <button disabled aria-disabled="true"
-             class="flex items-center justify-center gap-2 w-full px-5 py-3 min-h-[44px] rounded-lg border border-[--color-border] bg-[--color-bg-elevated] text-[--color-text-muted] text-sm font-semibold cursor-not-allowed">
+             class="flex items-center justify-center gap-2 w-full px-5 py-3 min-h-[44px] rounded-lg border border-(--color-border) bg-(--color-bg-elevated) text-(--color-text-muted) text-sm font-semibold cursor-not-allowed">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/>
             </svg>
             자동매매 봇으로 실행
-            <span class="ml-1 px-1.5 py-0.5 text-[10px] font-mono font-bold uppercase tracking-wider rounded bg-[--color-accent]/10 text-[--color-accent-bright] border border-[--color-accent]/30">곧 출시</span>
+            <span class="ml-1 px-1.5 py-0.5 text-[10px] font-mono font-bold uppercase tracking-wider rounded bg-(--color-accent)/10 text-(--color-accent-bright) border border-(--color-accent)/30">곧 출시</span>
           </button>
-          <p class="text-xs text-[--color-text-muted] text-center">자동매매는 안정화 작업 중입니다. 시뮬레이션 + 검증은 계속 무료로 사용 가능합니다.</p>
+          <p class="text-xs text-(--color-text-muted) text-center">자동매매는 안정화 작업 중입니다. 시뮬레이션 + 검증은 계속 무료로 사용 가능합니다.</p>
         </div>
       )}
 
@@ -220,7 +220,7 @@ const statusLabels: Record<string, string> = {
       <hr class="section-divider" />
 
       <div class="reveal mt-4 pt-8 text-center">
-        <p class="text-[--color-text-muted] text-sm mb-4">
+        <p class="text-(--color-text-muted) text-sm mb-4">
           {demo ? t('strategies.detail_demo_footer') : t('strategies.detail_nodemo_footer')}
         </p>
         <div class="flex flex-col sm:flex-row gap-3 justify-center">
@@ -231,11 +231,11 @@ const statusLabels: Record<string, string> = {
             </a>
           )}
           <a href="/ko/strategies"
-             class={`inline-block ${strategy.data.status !== 'verified' ? 'bg-[--color-accent] text-[--color-bg] hover:bg-[--color-accent-dim]' : 'border border-[--color-border] text-[--color-text] hover:border-[--color-accent] hover:text-[--color-accent] transition-colors'} px-6 py-2 rounded font-semibold text-sm`}>
+             class={`inline-block ${strategy.data.status !== 'verified' ? 'bg-(--color-accent) text-(--color-bg) hover:bg-(--color-accent-dim)' : 'border border-(--color-border) text-(--color-text) hover:border-(--color-accent) hover:text-(--color-accent) transition-colors'} px-6 py-2 rounded font-semibold text-sm`}>
             {t('strategies.explore')} &rarr;
           </a>
           <a href="/ko/fees"
-             class="btn btn-ghost btn-md hover:border-[--color-accent] hover:text-[--color-accent] transition-colors">
+             class="btn btn-ghost btn-md hover:border-(--color-accent) hover:text-(--color-accent) transition-colors">
             {t('cta.button3')}
           </a>
         </div>

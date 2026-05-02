@@ -51,7 +51,7 @@ function PresetButton({
         ${
           isActive
             ? "font-bold"
-            : "bg-[--color-bg-tooltip] text-[--color-text-muted] border-[--color-border] hover:border-[--color-accent]/30 hover:text-[--color-text]"
+            : "bg-(--color-bg-tooltip) text-(--color-text-muted) border-(--color-border) hover:border-(--color-accent)/30 hover:text-(--color-text)"
         }`}
       style={isActive ? activeStyle : undefined}
       title={friendlyName ? p.name : undefined}
@@ -85,7 +85,7 @@ export default function PresetBar({
 
   return (
     <div
-      class="px-4 py-2 border-b border-[--color-border]"
+      class="px-4 py-2 border-b border-(--color-border)"
       style={{
         background: `linear-gradient(135deg, ${COLORS.accentBg}, transparent)`,
       }}
@@ -108,7 +108,7 @@ export default function PresetBar({
             ${
               activePreset === null
                 ? "font-bold"
-                : "bg-[--color-bg-tooltip] text-[--color-text-muted] border-[--color-border] hover:border-[--color-accent]/30 hover:text-[--color-text]"
+                : "bg-(--color-bg-tooltip) text-(--color-text-muted) border-(--color-border) hover:border-(--color-accent)/30 hover:text-(--color-text)"
             }`}
           style={activePreset === null ? activeStyle : undefined}
         >
@@ -130,7 +130,7 @@ export default function PresetBar({
         <>
           <button
             onClick={() => setShowAll((v) => !v)}
-            class="text-[0.65rem] font-mono text-[--color-text-muted] hover:text-[--color-accent] transition-colors flex items-center gap-1.5 mb-1.5 min-h-[44px] px-1"
+            class="text-[0.65rem] font-mono text-(--color-text-muted) hover:text-(--color-accent) transition-colors flex items-center gap-1.5 mb-1.5 min-h-[44px] px-1"
           >
             <span
               style={{

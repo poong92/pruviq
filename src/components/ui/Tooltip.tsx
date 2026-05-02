@@ -152,13 +152,13 @@ export default function Tooltip({
         <span
           id={tooltipId}
           role="tooltip"
-          class={`absolute z-[120] pointer-events-none max-w-xs text-wrap rounded px-2 py-1 text-xs font-mono bg-[--color-bg-elevated] text-[--color-text] border border-[--color-border] shadow-[var(--shadow-md)] animate-[fadeIn_120ms_ease-out] ${placementClasses[placement]} ${tooltipClass}`.trim()}
+          class={`absolute z-[120] pointer-events-none max-w-xs text-wrap rounded px-2 py-1 text-xs font-mono bg-(--color-bg-elevated) text-(--color-text) border border-(--color-border) shadow-[var(--shadow-md)] animate-[fadeIn_120ms_ease-out] ${placementClasses[placement]} ${tooltipClass}`.trim()}
           data-placement={placement}
         >
           {content}
           <span
             aria-hidden="true"
-            class={`absolute w-2 h-2 bg-[--color-bg-elevated] border-r border-b border-[--color-border] ${arrowClasses[placement]}`}
+            class={`absolute w-2 h-2 bg-(--color-bg-elevated) border-r border-b border-(--color-border) ${arrowClasses[placement]}`}
           />
         </span>
       )}

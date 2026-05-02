@@ -111,7 +111,7 @@ export function TopStrategyWidget({ lang = "en" }: { lang?: Lang }) {
           {[0, 1, 2].map((i) => (
             <div
               key={i}
-              class="rounded-lg p-3 border border-[--color-border] bg-[--color-bg]"
+              class="rounded-lg p-3 border border-(--color-border) bg-(--color-bg)"
             >
               <div class="h-2 w-14 rounded skeleton mb-2" />
               <div class="h-6 w-16 rounded skeleton" />
@@ -133,16 +133,16 @@ export function TopStrategyWidget({ lang = "en" }: { lang?: Lang }) {
     <Card
       radius="lg"
       padding="none"
-      class="border-[--color-border-accent] overflow-hidden shadow-[var(--shadow-accent-glow)]"
+      class="border-(--color-border-accent) overflow-hidden shadow-[var(--shadow-accent-glow)]"
     >
       {/* Header bar */}
-      <div class="flex items-center justify-between px-5 py-3 border-b border-[--color-border] bg-[--color-bg]">
-        <span class="font-mono text-[10px] tracking-widest text-[--color-accent] uppercase">
+      <div class="flex items-center justify-between px-5 py-3 border-b border-(--color-border) bg-(--color-bg)">
+        <span class="font-mono text-[10px] tracking-widest text-(--color-accent) uppercase">
           {t.tag}
         </span>
-        <span class="inline-flex items-center gap-1.5 font-mono text-[10px] text-[--color-up]">
+        <span class="inline-flex items-center gap-1.5 font-mono text-[10px] text-(--color-up)">
           <span
-            class="w-1.5 h-1.5 rounded-full bg-[--color-up]"
+            class="w-1.5 h-1.5 rounded-full bg-(--color-up)"
             style="animation: live-pulse 2s ease-in-out infinite;"
           />
           {t.live}
@@ -154,7 +154,7 @@ export function TopStrategyWidget({ lang = "en" }: { lang?: Lang }) {
         {/* Strategy name + meta */}
         <div class="mb-4">
           <h3
-            class="font-bold text-xl text-[--color-text] mb-1"
+            class="font-bold text-xl text-(--color-text) mb-1"
             style="letter-spacing: -0.02em;"
           >
             {name}
@@ -166,10 +166,10 @@ export function TopStrategyWidget({ lang = "en" }: { lang?: Lang }) {
             >
               {dirLabel}
             </span>
-            <span class="font-mono text-xs text-[--color-text-muted]">
+            <span class="font-mono text-xs text-(--color-text-muted)">
               {top.timeframe}
             </span>
-            <span class="font-mono text-xs text-[--color-text-muted]">
+            <span class="font-mono text-xs text-(--color-text-muted)">
               · {t.period}
             </span>
           </div>
@@ -178,8 +178,8 @@ export function TopStrategyWidget({ lang = "en" }: { lang?: Lang }) {
         {/* Stats grid */}
         <div class="grid grid-cols-3 gap-2 mb-4">
           {/* Win Rate */}
-          <div class="rounded-lg p-3 bg-[--color-bg] border border-[--color-border]">
-            <p class="font-mono text-[9px] tracking-wider text-[--color-text-muted] uppercase mb-1">
+          <div class="rounded-lg p-3 bg-(--color-bg) border border-(--color-border)">
+            <p class="font-mono text-[9px] tracking-wider text-(--color-text-muted) uppercase mb-1">
               {t.wr}
             </p>
             <p
@@ -197,8 +197,8 @@ export function TopStrategyWidget({ lang = "en" }: { lang?: Lang }) {
             </p>
           </div>
           {/* Profit Factor */}
-          <div class="rounded-lg p-3 bg-[--color-bg] border border-[--color-border]">
-            <p class="font-mono text-[9px] tracking-wider text-[--color-text-muted] uppercase mb-1">
+          <div class="rounded-lg p-3 bg-(--color-bg) border border-(--color-border)">
+            <p class="font-mono text-[9px] tracking-wider text-(--color-text-muted) uppercase mb-1">
               {t.pf}
             </p>
             <p
@@ -216,11 +216,11 @@ export function TopStrategyWidget({ lang = "en" }: { lang?: Lang }) {
             </p>
           </div>
           {/* Trades */}
-          <div class="rounded-lg p-3 bg-[--color-bg] border border-[--color-border]">
-            <p class="font-mono text-[9px] tracking-wider text-[--color-text-muted] uppercase mb-1">
+          <div class="rounded-lg p-3 bg-(--color-bg) border border-(--color-border)">
+            <p class="font-mono text-[9px] tracking-wider text-(--color-text-muted) uppercase mb-1">
               {t.trades}
             </p>
-            <p class="font-mono text-lg font-bold text-[--color-text]">
+            <p class="font-mono text-lg font-bold text-(--color-text)">
               {formatLocalizedCount(top.total_trades, lang)}
             </p>
           </div>
@@ -245,8 +245,8 @@ export function TopStrategyWidget({ lang = "en" }: { lang?: Lang }) {
       </div>
 
       {/* Disclaimer footer */}
-      <div class="px-5 py-2 border-t border-[--color-border] bg-[--color-bg]">
-        <p class="font-mono text-[9px] text-[--color-text-disabled] text-center">
+      <div class="px-5 py-2 border-t border-(--color-border) bg-(--color-bg)">
+        <p class="font-mono text-[9px] text-(--color-text-disabled) text-center">
           {t.disclaimer}
         </p>
       </div>

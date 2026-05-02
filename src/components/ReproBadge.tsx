@@ -58,13 +58,13 @@ export default function ReproBadge({ strategy, lang = "en" }: Props) {
 
   return (
     <div class="mt-3 mb-3 flex items-center gap-3">
-      <div class="px-2 py-1 rounded border border-[--color-border] bg-[--color-bg-card] text-sm flex items-center gap-3">
-        <span class="font-mono text-xs text-[--color-accent] border border-[--color-accent] px-2 py-0.5 rounded">
+      <div class="px-2 py-1 rounded border border-(--color-border) bg-(--color-bg-card) text-sm flex items-center gap-3">
+        <span class="font-mono text-xs text-(--color-accent) border border-(--color-accent) px-2 py-0.5 rounded">
           VERIFIED
         </span>
-        <div class="text-sm text-[--color-text-muted]">
-          <div class="font-semibold text-[--color-text]">{t.packageLabel}</div>
-          <div class="text-[--color-text-muted] text-[12px]">
+        <div class="text-sm text-(--color-text-muted)">
+          <div class="font-semibold text-(--color-text)">{t.packageLabel}</div>
+          <div class="text-(--color-text-muted) text-[12px]">
             Data v{meta.data_version || "N/A"} • Engine{" "}
             {meta.engine_version || "N/A"}
           </div>
@@ -75,7 +75,7 @@ export default function ReproBadge({ strategy, lang = "en" }: Props) {
         {meta.package_url ? (
           <a
             href={meta.package_url}
-            class="inline-block border border-[--color-border] text-[--color-text] px-3 py-2 rounded font-mono text-sm hover:border-[--color-accent]"
+            class="inline-block border border-(--color-border) text-(--color-text) px-3 py-2 rounded font-mono text-sm hover:border-(--color-accent)"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -84,7 +84,7 @@ export default function ReproBadge({ strategy, lang = "en" }: Props) {
         ) : (
           <a
             href={`/data/reproducible/${strategy}.zip`}
-            class="inline-block border border-[--color-border] text-[--color-text] px-3 py-2 rounded font-mono text-sm hover:border-[--color-accent]"
+            class="inline-block border border-(--color-border) text-(--color-text) px-3 py-2 rounded font-mono text-sm hover:border-(--color-accent)"
             target="_blank"
             rel="noopener noreferrer"
           >

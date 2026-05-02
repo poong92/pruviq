@@ -73,16 +73,16 @@ for (const seg of segments) {
 
 {segments.length > 0 && (
   <nav aria-label="Breadcrumb" class="max-w-7xl mx-auto px-4 py-2">
-    <ol class="flex flex-wrap items-center gap-2 text-sm text-[--color-text-secondary]">
+    <ol class="flex flex-wrap items-center gap-2 text-sm text-(--color-text-secondary)">
       {items.map((item, i) => (
         <li class="flex items-center gap-1.5">
-          {i > 0 && <span class="text-[--color-text-disabled] opacity-60">/</span>}
+          {i > 0 && <span class="text-(--color-text-disabled) opacity-60">/</span>}
           {i < items.length - 1 ? (
-            <a href={item.href} class="hover:text-[--color-accent] transition-colors">
+            <a href={item.href} class="hover:text-(--color-accent) transition-colors">
               <span>{item.label}</span>
             </a>
           ) : (
-            <span class="text-[--color-text]">{item.label}</span>
+            <span class="text-(--color-text)">{item.label}</span>
           )}
         </li>
       ))}

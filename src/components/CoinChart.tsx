@@ -136,7 +136,7 @@ function ToggleBtn({
 
 function ChartSkeleton() {
   return (
-    <div class="bg-[--color-bg] border border-[--color-border] rounded-xl overflow-hidden mb-3">
+    <div class="bg-(--color-bg) border border-(--color-border) rounded-xl overflow-hidden mb-3">
       <div class="w-full h-[320px] md:h-[480px] relative">
         <div class="absolute top-4 left-4 flex gap-2">
           <div class="skeleton h-3 w-8" />
@@ -460,8 +460,8 @@ export default function CoinChart({
   }
   if (error || !ohlcv) {
     return (
-      <div class="py-12 text-center border border-[--color-border] rounded-xl bg-[--color-bg-card]">
-        <div class="w-12 h-12 mx-auto mb-4 rounded-full bg-[--color-red]/10 flex items-center justify-center">
+      <div class="py-12 text-center border border-(--color-border) rounded-xl bg-(--color-bg-card)">
+        <div class="w-12 h-12 mx-auto mb-4 rounded-full bg-(--color-red)/10 flex items-center justify-center">
           <svg
             width="24"
             height="24"
@@ -474,7 +474,7 @@ export default function CoinChart({
             <path d="M12 8v4M12 16h.01" />
           </svg>
         </div>
-        <p class="font-mono text-sm text-[--color-text-muted] mb-4">
+        <p class="font-mono text-sm text-(--color-text-muted) mb-4">
           {t.error}
         </p>
         <button
@@ -495,7 +495,7 @@ export default function CoinChart({
                 setLoading(false);
               });
           }}
-          class="px-4 py-2 rounded-lg border border-[--color-border] bg-[--color-bg-card] text-[--color-text] font-mono text-sm cursor-pointer hover:border-[--color-accent] transition-colors min-h-[44px]"
+          class="px-4 py-2 rounded-lg border border-(--color-border) bg-(--color-bg-card) text-(--color-text) font-mono text-sm cursor-pointer hover:border-(--color-accent) transition-colors min-h-[44px]"
         >
           {t.retry}
         </button>
@@ -523,30 +523,30 @@ export default function CoinChart({
         <div class="flex items-baseline gap-3 flex-wrap mb-2">
           <h2 class="text-[1.375rem] font-bold font-mono m-0">
             {SYMBOL.endsWith("USDT") ? SYMBOL.slice(0, -4) : SYMBOL}
-            <span class="text-[--color-text-muted] font-normal">/USDT</span>
+            <span class="text-(--color-text-muted) font-normal">/USDT</span>
           </h2>
           <span class="font-mono text-xl font-semibold">
             ${formatChartPrice(lastBar.c)}
           </span>
           <span
-            class={`font-mono text-[0.8125rem] font-semibold px-2 py-0.5 rounded ${change >= 0 ? "text-[--color-up] bg-[var(--color-up-fill)]" : "text-[--color-red] bg-[var(--color-down-fill)]"}`}
+            class={`font-mono text-[0.8125rem] font-semibold px-2 py-0.5 rounded ${change >= 0 ? "text-(--color-up) bg-[var(--color-up-fill)]" : "text-(--color-red) bg-[var(--color-down-fill)]"}`}
           >
             {change > 0 ? "+" : ""}
             {change.toFixed(2)}%
           </span>
         </div>
-        <div class="flex gap-6 flex-wrap font-mono text-[0.6875rem] text-[--color-text-muted]">
+        <div class="flex gap-6 flex-wrap font-mono text-[0.6875rem] text-(--color-text-muted)">
           <span>
             {t.h24high}:{" "}
-            <span class="text-[--color-up]">${formatChartPrice(high24)}</span>
+            <span class="text-(--color-up)">${formatChartPrice(high24)}</span>
           </span>
           <span>
             {t.h24low}:{" "}
-            <span class="text-[--color-red]">${formatChartPrice(low24)}</span>
+            <span class="text-(--color-red)">${formatChartPrice(low24)}</span>
           </span>
           <span>
             {t.h24vol}:{" "}
-            <span class="text-[--color-text]">{formatVolumeRaw(vol24)}</span>
+            <span class="text-(--color-text)">{formatVolumeRaw(vol24)}</span>
           </span>
           <span>
             {t.dataRange}: {formatDateRange(ohlcv[0].t, lastBar.t)}
@@ -555,28 +555,28 @@ export default function CoinChart({
       </div>
 
       {/* Chart Container */}
-      <div class="bg-[--color-bg] border border-[--color-border] rounded-xl overflow-hidden mb-3 relative">
+      <div class="bg-(--color-bg) border border-(--color-border) rounded-xl overflow-hidden mb-3 relative">
         {/* OHLCV Overlay */}
         <div class="absolute top-2 left-3 z-10 font-mono text-[0.5625rem] md:text-[0.6875rem] flex gap-1.5 md:gap-2.5 flex-wrap pointer-events-none">
-          <span class="text-[--color-text-muted]">
+          <span class="text-(--color-text-muted)">
             {t.open}{" "}
-            <span class="text-[--color-text]">
+            <span class="text-(--color-text)">
               {formatChartPrice(displayBar.o)}
             </span>
           </span>
-          <span class="text-[--color-text-muted]">
+          <span class="text-(--color-text-muted)">
             {t.high}{" "}
-            <span class="text-[--color-up]">
+            <span class="text-(--color-up)">
               {formatChartPrice(displayBar.h)}
             </span>
           </span>
-          <span class="text-[--color-text-muted]">
+          <span class="text-(--color-text-muted)">
             {t.low}{" "}
-            <span class="text-[--color-red]">
+            <span class="text-(--color-red)">
               {formatChartPrice(displayBar.l)}
             </span>
           </span>
-          <span class="text-[--color-text-muted]">
+          <span class="text-(--color-text-muted)">
             {t.close}{" "}
             <span
               style={{
@@ -589,14 +589,14 @@ export default function CoinChart({
               {formatChartPrice(displayBar.c)}
             </span>
           </span>
-          <span class="text-[--color-text-muted] hidden sm:inline">
+          <span class="text-(--color-text-muted) hidden sm:inline">
             {t.vol}{" "}
-            <span class="text-[--color-text-muted]">
+            <span class="text-(--color-text-muted)">
               {formatVolumeRaw(displayBar.v)}
             </span>
           </span>
           <span
-            class={`font-semibold hidden sm:inline ${displayChange >= 0 ? "text-[--color-up]" : "text-[--color-red]"}`}
+            class={`font-semibold hidden sm:inline ${displayChange >= 0 ? "text-(--color-up)" : "text-(--color-red)"}`}
           >
             {displayChange > 0 ? "+" : ""}
             {displayChange.toFixed(2)}%
@@ -626,7 +626,7 @@ export default function CoinChart({
           <button
             onClick={() => chartRef.current?.timeScale().fitContent()}
             aria-label={t.resetChartZoomAria}
-            class="px-2 py-1 rounded border border-[--color-border] bg-[--color-bg-tooltip] text-[--color-text-muted] font-mono text-[0.5625rem] md:text-[0.6875rem] cursor-pointer hover:border-[--color-accent] transition-colors min-h-[44px]"
+            class="px-2 py-1 rounded border border-(--color-border) bg-(--color-bg-tooltip) text-(--color-text-muted) font-mono text-[0.5625rem] md:text-[0.6875rem] cursor-pointer hover:border-(--color-accent) transition-colors min-h-[44px]"
           >
             {t.resetZoom}
           </button>
@@ -640,7 +640,7 @@ export default function CoinChart({
             href="https://www.tradingview.com/"
             target="_blank"
             rel="noopener noreferrer"
-            class="text-[--color-text-muted] no-underline hover:text-[--color-text] transition-colors"
+            class="text-(--color-text-muted) no-underline hover:text-(--color-text) transition-colors"
           >
             Powered by TradingView
           </a>
@@ -648,11 +648,11 @@ export default function CoinChart({
       </div>
 
       {/* CTA */}
-      <div class="mt-6 p-5 bg-[--color-bg-card] border border-[--color-border] rounded-xl">
+      <div class="mt-6 p-5 bg-(--color-bg-card) border border-(--color-border) rounded-xl">
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <div>
             <h3 class="font-bold text-sm mb-1">{t.ctaTitle}</h3>
-            <p class="text-[--color-text-muted] text-xs">{t.ctaDesc}</p>
+            <p class="text-(--color-text-muted) text-xs">{t.ctaDesc}</p>
           </div>
           <div class="flex gap-2 shrink-0">
             <a
@@ -664,7 +664,7 @@ export default function CoinChart({
             </a>
             <a
               href={lang === "ko" ? "/ko/fees" : "/fees"}
-              class="border border-[--color-border] text-[--color-text] px-4 py-2 rounded-lg font-semibold text-xs no-underline hover:border-[--color-accent] transition-colors whitespace-nowrap"
+              class="border border-(--color-border) text-(--color-text) px-4 py-2 rounded-lg font-semibold text-xs no-underline hover:border-(--color-accent) transition-colors whitespace-nowrap"
             >
               {t.ctaFees}
             </a>

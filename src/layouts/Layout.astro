@@ -496,18 +496,18 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
 </head>
   <body class="min-h-screen">
     <div class="scroll-progress" aria-hidden="true"></div>
-    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:bg-[--color-accent] focus:text-white focus:rounded">
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:bg-(--color-accent) focus:text-white focus:rounded">
       {lang === 'ko' ? '본문으로 건너뛰기' : 'Skip to main content'}
     </a>
     <div id="page-loader"></div>
     <header>
     <!-- shadow-nav handles visual separation — no border-b needed -->
-    <nav class="fixed top-0 w-full z-50 bg-[--color-bg-surface]/90 backdrop-blur-xl" role="navigation" aria-label="Main" style="box-shadow: var(--shadow-nav);">
+    <nav class="fixed top-0 w-full z-50 bg-(--color-bg-surface)/90 backdrop-blur-xl" role="navigation" aria-label="Main" style="box-shadow: var(--shadow-nav);">
       <div class="w-full px-6 lg:px-28 h-14 grid grid-cols-[max-content_1fr_max-content] items-center">
         <!-- 1열: Logo (좌측) — max-content로 sizing해서 wordmark가 column 2(가운데 nav)로 bleed 안 함 (2026-04-28 P0 fix) -->
         <a href={lang === 'ko' ? '/ko/' : '/'} class="flex items-center gap-2 min-w-max">
           <img src="/favicon.svg" alt="PRUVIQ" width="32" height="32" class="w-8 h-8" loading="eager" />
-          <span class="font-mono font-bold text-2xl tracking-wider"><span class="text-[--color-text]">PRUV</span><span class="text-[var(--color-accent)]">IQ</span></span>
+          <span class="font-mono font-bold text-2xl tracking-wider"><span class="text-(--color-text)">PRUV</span><span class="text-[var(--color-accent)]">IQ</span></span>
         </a>
         <!-- 2열: Nav (정중앙, 데스크톱 only) -->
         <div class="hidden md:flex items-center justify-center gap-12 text-base">
@@ -521,32 +521,32 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" class="opacity-50 transition-transform duration-200 group-hover:rotate-180" aria-hidden="true"><path d="M2.5 4.5l3.5 3 3.5-3"/></svg>
               </a>
               <div class="absolute top-full left-1/2 -translate-x-1/2 pt-2 hidden group-hover:block group-focus-within:block z-50" role="menu">
-                <div class="bg-[--color-bg-card]/95 border border-(--color-border) rounded-2xl p-1.5 min-w-[260px] backdrop-blur-2xl" style="box-shadow: 0 16px 48px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.08), 0 0 32px rgba(44,181,232,0.04);">
-                  <a href={rankingPath} class="flex items-center gap-3.5 px-4 py-3.5 rounded-xl text-[15px] text-[--color-text] hover:bg-[--color-accent]/8 transition-all group/item">
-                    <span class="w-9 h-9 rounded-xl bg-[--color-accent]/12 flex items-center justify-center shrink-0 transition-colors group-hover/item:bg-[--color-accent]/20"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="2" aria-hidden="true"><path d="M12 20V10M18 20V4M6 20v-4"/></svg></span>
-                    <div><div class="font-semibold text-[15px]">{t('nav.ranking')}</div><div class="text-[11px] text-[--color-text-muted] mt-0.5 leading-tight">{t('nav.ranking_desc')}</div></div>
+                <div class="bg-(--color-bg-card)/95 border border-(--color-border) rounded-2xl p-1.5 min-w-[260px] backdrop-blur-2xl" style="box-shadow: 0 16px 48px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.08), 0 0 32px rgba(44,181,232,0.04);">
+                  <a href={rankingPath} class="flex items-center gap-3.5 px-4 py-3.5 rounded-xl text-[15px] text-(--color-text) hover:bg-(--color-accent)/8 transition-all group/item">
+                    <span class="w-9 h-9 rounded-xl bg-(--color-accent)/12 flex items-center justify-center shrink-0 transition-colors group-hover/item:bg-(--color-accent)/20"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="2" aria-hidden="true"><path d="M12 20V10M18 20V4M6 20v-4"/></svg></span>
+                    <div><div class="font-semibold text-[15px]">{t('nav.ranking')}</div><div class="text-[11px] text-(--color-text-muted) mt-0.5 leading-tight">{t('nav.ranking_desc')}</div></div>
                   </a>
-                  <a href={leaderboardPath} class="flex items-center gap-3.5 px-4 py-3.5 rounded-xl text-[15px] text-[--color-text] hover:bg-[--color-up]/8 transition-all group/item">
-                    <span class="w-9 h-9 rounded-xl bg-[--color-up]/12 flex items-center justify-center shrink-0 transition-colors group-hover/item:bg-[--color-up]/20"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-up)" stroke-width="2" aria-hidden="true"><path d="M8 21V11M16 21V3M12 21v-6"/></svg></span>
-                    <div><div class="font-semibold text-[15px]">{t('nav.leaderboard')}</div><div class="text-[11px] text-[--color-text-muted] mt-0.5 leading-tight">{t('nav.leaderboard_desc')}</div></div>
+                  <a href={leaderboardPath} class="flex items-center gap-3.5 px-4 py-3.5 rounded-xl text-[15px] text-(--color-text) hover:bg-(--color-up)/8 transition-all group/item">
+                    <span class="w-9 h-9 rounded-xl bg-(--color-up)/12 flex items-center justify-center shrink-0 transition-colors group-hover/item:bg-(--color-up)/20"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-up)" stroke-width="2" aria-hidden="true"><path d="M8 21V11M16 21V3M12 21v-6"/></svg></span>
+                    <div><div class="font-semibold text-[15px]">{t('nav.leaderboard')}</div><div class="text-[11px] text-(--color-text-muted) mt-0.5 leading-tight">{t('nav.leaderboard_desc')}</div></div>
                   </a>
                   <div class="border-t border-(--color-border) my-1.5 mx-3"></div>
-                  <a href={lp('/compare')} class="flex items-center gap-3.5 px-4 py-3.5 rounded-xl text-[15px] text-[--color-text-muted] hover:text-[--color-text] hover:bg-[--color-bg-elevated] transition-all group/item">
-                    <span class="w-9 h-9 rounded-xl bg-[--color-purple]/10 flex items-center justify-center shrink-0 transition-colors group-hover/item:bg-[--color-purple]/18"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-purple)" stroke-width="2" aria-hidden="true"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg></span>
-                    <div><div class="font-semibold text-[15px]">{t('nav.compare_tools')}</div><div class="text-[11px] text-[--color-text-muted] mt-0.5 leading-tight">{t('nav.compare_tools_desc')}</div></div>
+                  <a href={lp('/compare')} class="flex items-center gap-3.5 px-4 py-3.5 rounded-xl text-[15px] text-(--color-text-muted) hover:text-(--color-text) hover:bg-(--color-bg-elevated) transition-all group/item">
+                    <span class="w-9 h-9 rounded-xl bg-(--color-purple)/10 flex items-center justify-center shrink-0 transition-colors group-hover/item:bg-(--color-purple)/18"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-purple)" stroke-width="2" aria-hidden="true"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg></span>
+                    <div><div class="font-semibold text-[15px]">{t('nav.compare_tools')}</div><div class="text-[11px] text-(--color-text-muted) mt-0.5 leading-tight">{t('nav.compare_tools_desc')}</div></div>
                   </a>
                 </div>
               </div>
             </div>
           ) : (
-            <a href={item.href} aria-current={isActive(item.match) ? "page" : undefined} class="transition-colors nav-slide-underline inline-flex items-center gap-1.5 min-h-11" style={isActive(item.match) ? 'color:var(--color-accent);font-weight:500' : 'color:var(--color-text-muted)'}>{item.label}{item.badge && <span class="text-[9px] font-bold px-1 py-0.5 rounded bg-[--color-accent] text-[--color-accent-text] leading-none tracking-wide">{item.badge}</span>}</a>
+            <a href={item.href} aria-current={isActive(item.match) ? "page" : undefined} class="transition-colors nav-slide-underline inline-flex items-center gap-1.5 min-h-11" style={isActive(item.match) ? 'color:var(--color-accent);font-weight:500' : 'color:var(--color-text-muted)'}>{item.label}{item.badge && <span class="text-[9px] font-bold px-1 py-0.5 rounded bg-(--color-accent) text-(--color-accent-text) leading-none tracking-wide">{item.badge}</span>}</a>
           ))}
         </div>
         <!-- 3열: Theme toggle + Lang + Mobile hamburger (우측) -->
         <div class="flex items-center justify-end gap-2">
           <!-- Theme toggle (light/dark) — PR-4 of light-mode rollout -->
           <button id="theme-toggle" type="button"
-                  class="inline-flex items-center justify-center w-11 h-11 md:w-9 md:h-9 rounded-lg border border-[--color-border] hover:border-[--color-accent] hover:text-[--color-accent] hover:bg-[--color-accent]/5 text-[--color-text-muted] transition-colors"
+                  class="inline-flex items-center justify-center w-11 h-11 md:w-9 md:h-9 rounded-lg border border-(--color-border) hover:border-(--color-accent) hover:text-(--color-accent) hover:bg-(--color-accent)/5 text-(--color-text-muted) transition-colors"
                   aria-label={t('theme.toggle_label')}
                   aria-pressed="false"
                   data-theme-toggle>
@@ -562,7 +562,7 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
           </button>
           <!-- 데스크톱: 지구본 아이콘 + 언어코드 -->
           <a href={altPath} hreflang={altHreflang}
-             class="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[--color-border] hover:border-[--color-accent] hover:text-[--color-accent] hover:bg-[--color-accent]/5 text-[--color-text-muted] transition-colors"
+             class="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-(--color-border) hover:border-(--color-accent) hover:text-(--color-accent) hover:bg-(--color-accent)/5 text-(--color-text-muted) transition-colors"
              aria-label={lang === 'ko' ? 'Switch to English' : '한국어로 전환'}>
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <circle cx="12" cy="12" r="10"/>
@@ -573,7 +573,7 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
           <!-- 모바일: 지구본 버튼 + 언어 선택 드롭다운 -->
           <div class="md:hidden relative">
             <button id="mobile-lang-btn"
-                    class="flex items-center justify-center w-10 h-10 rounded-lg text-[--color-text-muted] hover:bg-[--color-bg-hover] transition-colors"
+                    class="flex items-center justify-center w-10 h-10 rounded-lg text-(--color-text-muted) hover:bg-(--color-bg-hover) transition-colors"
                     aria-haspopup="true" aria-expanded="false" aria-controls="mobile-lang-dropdown"
                     aria-label="Select language">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -586,13 +586,13 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
                  class="hidden absolute right-0 top-full mt-1 w-36 rounded-xl shadow-lg z-[60] overflow-hidden"
                  role="menu">
               <a href={enURL.href} hreflang="en" role="menuitem"
-                 class="flex items-center justify-between px-4 py-3 text-sm transition-colors hover:bg-[--color-bg-hover]"
+                 class="flex items-center justify-between px-4 py-3 text-sm transition-colors hover:bg-(--color-bg-hover)"
                  style={lang === 'en' ? 'color:var(--color-accent);font-weight:600' : 'color:var(--color-text-muted)'}>
                 <span>English</span>
                 {lang === 'en' && <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>}
               </a>
               <a href={koURL.href} hreflang="ko" role="menuitem"
-                 class="flex items-center justify-between px-4 py-3 text-sm transition-colors hover:bg-[--color-bg-hover]"
+                 class="flex items-center justify-between px-4 py-3 text-sm transition-colors hover:bg-(--color-bg-hover)"
                  style={lang === 'ko' ? 'color:var(--color-accent);font-weight:600' : 'color:var(--color-text-muted)'}>
                 <span>한국어</span>
                 {lang === 'ko' && <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>}
@@ -600,7 +600,7 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
             </div>
           </div>
           <!-- 모바일: 햄버거 -->
-          <button id="mobile-menu-btn" class="md:hidden flex items-center justify-center w-11 h-11 rounded-lg text-[--color-text-muted] hover:bg-[--color-bg-hover] transition-colors" aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-menu">
+          <button id="mobile-menu-btn" class="md:hidden flex items-center justify-center w-11 h-11 rounded-lg text-(--color-text-muted) hover:bg-(--color-bg-hover) transition-colors" aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-menu">
             <svg id="menu-icon-open" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
             <svg id="menu-icon-close" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="hidden" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
           </button>
@@ -608,7 +608,7 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
       </div>
 
       <!-- 모바일 메뉴 (nav 안 in-flow — 화면 좌우 딱 맞음) -->
-      <div id="mobile-menu" class="hidden md:hidden border-t border-[--color-border]" aria-hidden="true">
+      <div id="mobile-menu" class="hidden md:hidden border-t border-(--color-border)" aria-hidden="true">
         <div class="flex flex-col px-4 py-3 gap-1 text-sm">
 
           <!-- 네비게이션 아이템 -->
@@ -617,14 +617,14 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
               {item.match === '/strategies' ? (
                 <div>
                   <!-- Strategies: link + chevron toggle -->
-                  <div class="flex items-center rounded-lg hover:bg-[--color-bg-hover] transition-colors"
+                  <div class="flex items-center rounded-lg hover:bg-(--color-bg-hover) transition-colors"
                        style={isActive(item.match) ? 'color:var(--color-accent)' : 'color:var(--color-text-muted)'}>
                     <a href={item.href} aria-current={isActive(item.match) ? "page" : undefined}
                        class="flex-1 min-h-[48px] flex items-center px-3 text-[15px] font-medium">
                       {item.label}
                     </a>
                     <button id="strategies-toggle"
-                            class="w-12 h-12 flex items-center justify-center rounded-lg transition-colors hover:bg-[--color-bg-hover] shrink-0"
+                            class="w-12 h-12 flex items-center justify-center rounded-lg transition-colors hover:bg-(--color-bg-hover) shrink-0"
                             aria-expanded={isActive('/strategies') ? "true" : "false"}
                             aria-controls="strategies-submenu"
                             aria-label="Toggle Strategies submenu">
@@ -638,27 +638,27 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
                   </div>
                   <!-- Strategies 서브메뉴 -->
                   <div id="strategies-submenu"
-                       class={`flex flex-col ml-3 mb-1 rounded-lg bg-[--color-bg-surface] overflow-hidden${isActive('/strategies') ? '' : ' hidden'}`}>
+                       class={`flex flex-col ml-3 mb-1 rounded-lg bg-(--color-bg-surface) overflow-hidden${isActive('/strategies') ? '' : ' hidden'}`}>
                     <a href={rankingPath} aria-current={isActive('/strategies/ranking') ? "page" : undefined}
-                       class="min-h-[44px] flex items-center gap-2.5 px-4 text-sm transition-colors hover:bg-[--color-bg-hover]"
+                       class="min-h-[44px] flex items-center gap-2.5 px-4 text-sm transition-colors hover:bg-(--color-bg-hover)"
                        style={isActive('/strategies/ranking') ? 'color:var(--color-accent);font-weight:500' : 'color:var(--color-text-secondary)'}>
-                      <span class="text-[--color-text-muted] text-xs shrink-0">›</span>
+                      <span class="text-(--color-text-muted) text-xs shrink-0">›</span>
                       {t('nav.ranking')}
                     </a>
                     <a href={leaderboardPath} aria-current={isActive('/leaderboard') ? "page" : undefined}
-                       class="min-h-[44px] flex items-center gap-2.5 px-4 text-sm transition-colors hover:bg-[--color-bg-hover]"
+                       class="min-h-[44px] flex items-center gap-2.5 px-4 text-sm transition-colors hover:bg-(--color-bg-hover)"
                        style={isActive('/leaderboard') ? 'color:var(--color-accent);font-weight:500' : 'color:var(--color-text-secondary)'}>
-                      <span class="text-[--color-text-muted] text-xs shrink-0">›</span>
+                      <span class="text-(--color-text-muted) text-xs shrink-0">›</span>
                       {t('nav.leaderboard')}
                     </a>
                   </div>
                 </div>
               ) : (
                 <a href={item.href} aria-current={isActive(item.match) ? "page" : undefined}
-                   class="min-h-[48px] flex items-center px-3 rounded-lg text-[15px] font-medium transition-colors hover:bg-[--color-bg-hover]"
+                   class="min-h-[48px] flex items-center px-3 rounded-lg text-[15px] font-medium transition-colors hover:bg-(--color-bg-hover)"
                    style={isActive(item.match) ? 'color:var(--color-accent);font-weight:500' : 'color:var(--color-text-muted)'}>
                   {item.label}
-                  {item.badge && <span class="ml-1.5 text-[9px] font-bold px-1 py-0.5 rounded bg-[--color-accent] text-[--color-accent-text] leading-none tracking-wide">{item.badge}</span>}
+                  {item.badge && <span class="ml-1.5 text-[9px] font-bold px-1 py-0.5 rounded bg-(--color-accent) text-(--color-accent-text) leading-none tracking-wide">{item.badge}</span>}
                 </a>
               )}
             </Fragment>
@@ -687,82 +687,82 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
       <slot />
     </main>
 
-    <footer class="border-t border-[--color-border] mt-0 bg-[--color-bg-surface]" role="contentinfo" aria-label="Site footer">
+    <footer class="border-t border-(--color-border) mt-0 bg-(--color-bg-surface)" role="contentinfo" aria-label="Site footer">
       <div class="max-w-7xl mx-auto px-6 lg:px-10 py-16">
         <!-- Brand + 3-column links -->
         <div class="flex flex-col md:flex-row gap-10 mb-10">
           <div class="md:w-1/3">
             <span class="flex items-center gap-1.5">
               <img src="/favicon.svg" alt="PRUVIQ" width="24" height="24" class="w-6 h-6" loading="lazy" decoding="async" />
-              <span class="font-mono font-bold text-lg tracking-wider"><span class="text-[--color-text]">PRUV</span><span class="text-[var(--color-accent)]">IQ</span></span>
+              <span class="font-mono font-bold text-lg tracking-wider"><span class="text-(--color-text)">PRUV</span><span class="text-[var(--color-accent)]">IQ</span></span>
             </span>
-            <p class="text-[--color-text-muted] text-sm mt-2">{t('footer.tagline')}</p>
+            <p class="text-(--color-text-muted) text-sm mt-2">{t('footer.tagline')}</p>
           </div>
           <div class="grid grid-cols-2 gap-4 sm:grid-cols-4 sm:gap-6 md:w-2/3 text-sm">
             <div>
-              <p class="font-mono text-[--color-text-muted] text-xs uppercase tracking-wider mb-3">{t('footer.col_product')}</p>
+              <p class="font-mono text-(--color-text-muted) text-xs uppercase tracking-wider mb-3">{t('footer.col_product')}</p>
               <div class="flex flex-col gap-2">
-                <a href={marketPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('nav.market')}</a>
-                <a href={simulatePath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('nav.simulate')}</a>
-                <a href={strategiesPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('nav.strategies')}</a>
-                <a href={coinsPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('nav.coins')}</a>
-                <a href={feesPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('footer.fees')}</a>
-                <a href={leaderboardPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('nav.leaderboard')}</a>
+                <a href={marketPath} class="text-(--color-text-muted) hover:text-(--color-text) transition-colors">{t('nav.market')}</a>
+                <a href={simulatePath} class="text-(--color-text-muted) hover:text-(--color-text) transition-colors">{t('nav.simulate')}</a>
+                <a href={strategiesPath} class="text-(--color-text-muted) hover:text-(--color-text) transition-colors">{t('nav.strategies')}</a>
+                <a href={coinsPath} class="text-(--color-text-muted) hover:text-(--color-text) transition-colors">{t('nav.coins')}</a>
+                <a href={feesPath} class="text-(--color-text-muted) hover:text-(--color-text) transition-colors">{t('footer.fees')}</a>
+                <a href={leaderboardPath} class="text-(--color-text-muted) hover:text-(--color-text) transition-colors">{t('nav.leaderboard')}</a>
               </div>
             </div>
             <div>
-              <p class="font-mono text-[--color-text-muted] text-xs uppercase tracking-wider mb-3">{t('footer.col_resources')}</p>
+              <p class="font-mono text-(--color-text-muted) text-xs uppercase tracking-wider mb-3">{t('footer.col_resources')}</p>
               <div class="flex flex-col gap-2">
-                <a href={learnPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('nav.learn')}</a>
-                <a href={blogPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('nav.blog')}</a>
-                <a href={aboutPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('footer.about')}</a>
-                <a href={changelogPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('footer.changelog')}</a>
-                <a href={methodologyPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('footer.methodology')}</a>
-                <a href={apiPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('footer.api')}</a>
-                <a href="https://x.com/pruviq" target="_blank" rel="noopener noreferrer" class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">X / Twitter</a>
-                <a href="https://t.me/PRUVIQ" target="_blank" rel="noopener noreferrer" class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">Telegram</a>
-                <a href="mailto:contact@pruviq.com" class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">contact@pruviq.com</a>
+                <a href={learnPath} class="text-(--color-text-muted) hover:text-(--color-text) transition-colors">{t('nav.learn')}</a>
+                <a href={blogPath} class="text-(--color-text-muted) hover:text-(--color-text) transition-colors">{t('nav.blog')}</a>
+                <a href={aboutPath} class="text-(--color-text-muted) hover:text-(--color-text) transition-colors">{t('footer.about')}</a>
+                <a href={changelogPath} class="text-(--color-text-muted) hover:text-(--color-text) transition-colors">{t('footer.changelog')}</a>
+                <a href={methodologyPath} class="text-(--color-text-muted) hover:text-(--color-text) transition-colors">{t('footer.methodology')}</a>
+                <a href={apiPath} class="text-(--color-text-muted) hover:text-(--color-text) transition-colors">{t('footer.api')}</a>
+                <a href="https://x.com/pruviq" target="_blank" rel="noopener noreferrer" class="text-(--color-text-muted) hover:text-(--color-text) transition-colors">X / Twitter</a>
+                <a href="https://t.me/PRUVIQ" target="_blank" rel="noopener noreferrer" class="text-(--color-text-muted) hover:text-(--color-text) transition-colors">Telegram</a>
+                <a href="mailto:contact@pruviq.com" class="text-(--color-text-muted) hover:text-(--color-text) transition-colors">contact@pruviq.com</a>
               </div>
             </div>
             <div>
-              <p class="font-mono text-[--color-text-muted] text-xs uppercase tracking-wider mb-3">{t('footer.col_compare')}</p>
+              <p class="font-mono text-(--color-text-muted) text-xs uppercase tracking-wider mb-3">{t('footer.col_compare')}</p>
               <div class="flex flex-col gap-2">
-                <a href={compareTvPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">vs TradingView</a>
-                <a href={compareCoinrulePath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">vs Coinrule</a>
-                <a href={compareCryptohopperPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">vs Cryptohopper</a>
-                <a href={compare3commasPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">vs 3Commas</a>
-                <a href={compareGainiumPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">vs Gainium</a>
-                <a href={compareStreakPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">vs Streak</a>
+                <a href={compareTvPath} class="text-(--color-text-muted) hover:text-(--color-text) transition-colors">vs TradingView</a>
+                <a href={compareCoinrulePath} class="text-(--color-text-muted) hover:text-(--color-text) transition-colors">vs Coinrule</a>
+                <a href={compareCryptohopperPath} class="text-(--color-text-muted) hover:text-(--color-text) transition-colors">vs Cryptohopper</a>
+                <a href={compare3commasPath} class="text-(--color-text-muted) hover:text-(--color-text) transition-colors">vs 3Commas</a>
+                <a href={compareGainiumPath} class="text-(--color-text-muted) hover:text-(--color-text) transition-colors">vs Gainium</a>
+                <a href={compareStreakPath} class="text-(--color-text-muted) hover:text-(--color-text) transition-colors">vs Streak</a>
               </div>
             </div>
             <div>
-              <p class="font-mono text-[--color-text-muted] text-xs uppercase tracking-wider mb-3">{t('footer.col_legal')}</p>
+              <p class="font-mono text-(--color-text-muted) text-xs uppercase tracking-wider mb-3">{t('footer.col_legal')}</p>
               <div class="flex flex-col gap-2">
-                <a href={privacyPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('footer.privacy')}</a>
-                <a href={termsPath} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('footer.terms')}</a>
-                <a href={`mailto:${t('about.contact_email')}`} class="text-[--color-text-muted] hover:text-[--color-text] transition-colors">{t('about.contact_email')}</a>
-                <span class="text-[--color-text-muted] text-xs">PRUVIQ · {lang === 'ko' ? '투명한 퀀트 리서치 플랫폼' : 'Transparent quant research platform'}</span>
+                <a href={privacyPath} class="text-(--color-text-muted) hover:text-(--color-text) transition-colors">{t('footer.privacy')}</a>
+                <a href={termsPath} class="text-(--color-text-muted) hover:text-(--color-text) transition-colors">{t('footer.terms')}</a>
+                <a href={`mailto:${t('about.contact_email')}`} class="text-(--color-text-muted) hover:text-(--color-text) transition-colors">{t('about.contact_email')}</a>
+                <span class="text-(--color-text-muted) text-xs">PRUVIQ · {lang === 'ko' ? '투명한 퀀트 리서치 플랫폼' : 'Transparent quant research platform'}</span>
               </div>
             </div>
           </div>
         </div>
         <!-- Legal entity info -->
         <div class="mb-6">
-          <p class="text-[--color-text-muted] text-xs mt-2 font-mono">
+          <p class="text-(--color-text-muted) text-xs mt-2 font-mono">
             {t('footer.legal_entity')}
           </p>
-          <p class="text-[--color-text-muted] text-xs">
+          <p class="text-(--color-text-muted) text-xs">
             {t('footer.legal_entity_notice')}
           </p>
         </div>
         <!-- Divider -->
-        <div class="border-t border-[--color-border] pt-6 flex flex-col md:flex-row justify-between items-center gap-3 text-xs text-[--color-text-muted]">
+        <div class="border-t border-(--color-border) pt-6 flex flex-col md:flex-row justify-between items-center gap-3 text-xs text-(--color-text-muted)">
           <p>{t('footer.disclaimer')}</p>
           <div class="flex items-center gap-4 flex-wrap">
             <span class="font-mono">{lang === 'ko' ? '독립 리서치 플랫폼' : 'Independent Research'}</span>
             <span class="font-mono">v0.3.0</span>
             {lang === 'ko' && <span>운영: PRUVIQ</span>}
-            <p>{t('footer.affiliate')} <a href={feesPath} class="text-[--color-accent] hover:underline">{t('footer.details')}</a></p>
+            <p>{t('footer.affiliate')} <a href={feesPath} class="text-(--color-accent) hover:underline">{t('footer.details')}</a></p>
             <span>&copy; {currentYear} PRUVIQ</span>
           </div>
         </div>
@@ -770,12 +770,12 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
     </footer>
 
     <!-- Sticky CTA Bar (mobile-only, appears on scroll past hero) -->
-    <div id="sticky-cta" data-hide-in-hero class="sm:hidden fixed bottom-0 left-0 right-0 z-50 translate-y-full transition-transform duration-300 border-t border-[--color-border] bg-[--color-bg]/95 backdrop-blur-md safe-area-bottom" role="complementary" aria-label="Quick action bar">
+    <div id="sticky-cta" data-hide-in-hero class="sm:hidden fixed bottom-0 left-0 right-0 z-50 translate-y-full transition-transform duration-300 border-t border-(--color-border) bg-(--color-bg)/95 backdrop-blur-md safe-area-bottom" role="complementary" aria-label="Quick action bar">
       <div class="px-4 py-3 flex items-center justify-between gap-3">
         <a href={simulatePath} class="btn btn-primary btn-md flex-1 text-center no-underline whitespace-nowrap">
           {t('hero.cta_primary')} →
         </a>
-        <button id="sticky-cta-dismiss" aria-label="Dismiss" class="shrink-0 w-11 h-11 flex items-center justify-center rounded text-[--color-text-muted] hover:text-[--color-text] hover:bg-[--color-bg-hover] transition-colors">
+        <button id="sticky-cta-dismiss" aria-label="Dismiss" class="shrink-0 w-11 h-11 flex items-center justify-center rounded text-(--color-text-muted) hover:text-(--color-text) hover:bg-(--color-bg-hover) transition-colors">
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M2 2l10 10M12 2L2 12"/></svg>
         </button>
       </div>
@@ -958,16 +958,16 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
     </script>
     <!-- Sticky bottom CTA bar (non-simulator pages only) -->
     {!basePath.startsWith('/simulate') && (
-      <div id="bottom-cta-bar" data-hide-in-hero class="fixed bottom-0 left-0 right-0 z-40 border-t border-[--color-border] bg-[--color-bg-elevated] transition-transform duration-300 translate-y-full" style="height:48px;" role="complementary" aria-label="Try simulator">
+      <div id="bottom-cta-bar" data-hide-in-hero class="fixed bottom-0 left-0 right-0 z-40 border-t border-(--color-border) bg-(--color-bg-elevated) transition-transform duration-300 translate-y-full" style="height:48px;" role="complementary" aria-label="Try simulator">
         <div class="max-w-7xl mx-auto px-6 lg:px-10 h-full flex items-center justify-between gap-3">
-          <p class="text-sm text-[--color-text-muted] truncate">
+          <p class="text-sm text-(--color-text-muted) truncate">
             {lang === 'ko' ? `${C}+ 코인에서 전략 테스트` : `Test your strategy on ${C}+ coins`}
           </p>
           <div class="flex items-center gap-2 shrink-0">
             <a href={simulatePath} class="btn btn-primary btn-sm no-underline whitespace-nowrap text-xs">
               {lang === 'ko' ? '무료 시작 →' : 'Start Free →'}
             </a>
-            <button id="bottom-cta-dismiss" aria-label="Dismiss" class="w-11 h-11 flex items-center justify-center rounded text-[--color-text-muted] hover:text-[--color-text] hover:bg-[--color-bg-hover] transition-colors">
+            <button id="bottom-cta-dismiss" aria-label="Dismiss" class="w-11 h-11 flex items-center justify-center rounded text-(--color-text-muted) hover:text-(--color-text) hover:bg-(--color-bg-hover) transition-colors">
               <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 2l10 10M12 2L2 12"/></svg>
             </button>
           </div>

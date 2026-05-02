@@ -191,30 +191,30 @@ export default function DemoRunner({ lang = "en" }: Props) {
 
       {data && (
         <div class="mt-4">
-          <div class="text-sm text-[--color-text-muted] mb-2">
+          <div class="text-sm text-(--color-text-muted) mb-2">
             {data.strategy} | {data.coins} {t.coins} | {data.data_range}
           </div>
           <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div class="border rounded p-3 bg-[--color-bg-card]">
-              <div class="text-sm text-[--color-text-muted]">
+            <div class="border rounded p-3 bg-(--color-bg-card)">
+              <div class="text-sm text-(--color-text-muted)">
                 {t.totalReturn}
               </div>
               <div class="text-xl font-bold">{data.total_return}%</div>
             </div>
-            <div class="border rounded p-3 bg-[--color-bg-card]">
-              <div class="text-sm text-[--color-text-muted]">{t.winRate}</div>
+            <div class="border rounded p-3 bg-(--color-bg-card)">
+              <div class="text-sm text-(--color-text-muted)">{t.winRate}</div>
               <div class="text-xl font-bold">{data.win_rate}%</div>
             </div>
-            <div class="border rounded p-3 bg-[--color-bg-card]">
-              <div class="text-sm text-[--color-text-muted]">
+            <div class="border rounded p-3 bg-(--color-bg-card)">
+              <div class="text-sm text-(--color-text-muted)">
                 {t.profitFactor}
               </div>
               <div class="text-xl font-bold">
                 {formatPF(data.profit_factor)}
               </div>
             </div>
-            <div class="border rounded p-3 bg-[--color-bg-card]">
-              <div class="text-sm text-[--color-text-muted]">
+            <div class="border rounded p-3 bg-(--color-bg-card)">
+              <div class="text-sm text-(--color-text-muted)">
                 {t.maxDrawdown}
               </div>
               <div class="text-xl font-bold cursor-help" title={t.mddTooltip}>
@@ -223,18 +223,18 @@ export default function DemoRunner({ lang = "en" }: Props) {
             </div>
           </div>
           <div class="grid grid-cols-3 gap-4 mt-3">
-            <div class="border rounded p-3 bg-[--color-bg-card] text-center">
-              <div class="text-sm text-[--color-text-muted]">{t.trades}</div>
+            <div class="border rounded p-3 bg-(--color-bg-card) text-center">
+              <div class="text-sm text-(--color-text-muted)">{t.trades}</div>
               <div class="font-bold">{data.total_trades}</div>
             </div>
-            <div class="border rounded p-3 bg-[--color-bg-card] text-center">
-              <div class="text-sm text-[--color-text-muted]">{t.tpSl}</div>
+            <div class="border rounded p-3 bg-(--color-bg-card) text-center">
+              <div class="text-sm text-(--color-text-muted)">{t.tpSl}</div>
               <div class="font-bold">
                 {data.tp_count} / {data.sl_count}
               </div>
             </div>
-            <div class="border rounded p-3 bg-[--color-bg-card] text-center">
-              <div class="text-sm text-[--color-text-muted]">{t.timeout}</div>
+            <div class="border rounded p-3 bg-(--color-bg-card) text-center">
+              <div class="text-sm text-(--color-text-muted)">{t.timeout}</div>
               <div class="font-bold">{data.timeout_count}</div>
             </div>
           </div>

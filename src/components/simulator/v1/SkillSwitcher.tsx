@@ -63,7 +63,7 @@ export default function SkillSwitcher({
           const active = mode === m;
           const baseClass = `relative min-h-[44px] rounded-md px-4 py-2 text-sm font-medium transition ${
             active
-              ? "bg-[--color-accent]/15 text-[--color-accent-bright] ring-1 ring-[--color-accent]/40"
+              ? "bg-(--color-accent)/15 text-(--color-accent-bright) ring-1 ring-(--color-accent)/40"
               : "text-(--color-text-secondary) hover:bg-(--color-bg-elevated)"
           }`;
           const label = lang === "ko" ? meta.label.ko : meta.label.en;

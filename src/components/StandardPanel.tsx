@@ -155,10 +155,10 @@ export default function StandardPanel({
   };
 
   return (
-    <div class="mb-3 border border-[--color-border] rounded-lg overflow-hidden">
+    <div class="mb-3 border border-(--color-border) rounded-lg overflow-hidden">
       {/* Strategy Selector */}
       <div
-        class="px-4 py-3 border-b border-[--color-border]"
+        class="px-4 py-3 border-b border-(--color-border)"
         style={{
           background: `linear-gradient(135deg, ${COLORS.accentBg}, transparent)`,
         }}
@@ -178,7 +178,7 @@ export default function StandardPanel({
               key={p.id}
               onClick={() => onSelectPreset(p.id)}
               class={`px-3 py-1.5 text-xs font-mono rounded-md transition-all border
-                ${activePreset === p.id ? "font-bold" : "text-[--color-text-muted] border-[--color-border] hover:border-[--color-accent]/30 hover:text-[--color-text]"}`}
+                ${activePreset === p.id ? "font-bold" : "text-(--color-text-muted) border-(--color-border) hover:border-(--color-accent)/30 hover:text-(--color-text)"}`}
               style={
                 activePreset === p.id
                   ? {
@@ -209,7 +209,7 @@ export default function StandardPanel({
 
         {/* Direction */}
         <div>
-          <label class="text-[11px] text-[--color-text-muted] font-mono mb-1 block">
+          <label class="text-[11px] text-(--color-text-muted) font-mono mb-1 block">
             {t.direction}
           </label>
           <div class="flex gap-1.5">
@@ -219,7 +219,7 @@ export default function StandardPanel({
                 data-testid={`std-dir-${d}`}
                 onClick={() => setDirection(d)}
                 class={`flex-1 py-2 rounded-md text-xs font-mono font-bold transition-all border
-                  ${direction === d ? "" : "text-[--color-text-muted] border-[--color-border] hover:text-[--color-text]"}`}
+                  ${direction === d ? "" : "text-(--color-text-muted) border-(--color-border) hover:text-(--color-text)"}`}
                 style={
                   direction === d
                     ? d === "both"
@@ -248,7 +248,7 @@ export default function StandardPanel({
         {/* SL Slider */}
         <div>
           <div class="flex justify-between items-center mb-1">
-            <label class="text-[11px] text-[--color-text-muted] font-mono">
+            <label class="text-[11px] text-(--color-text-muted) font-mono">
               {t.sl}
             </label>
             <span
@@ -267,9 +267,9 @@ export default function StandardPanel({
             onInput={(e) =>
               setSlPct(Number((e.target as HTMLInputElement).value))
             }
-            class="w-full accent-[--color-down] h-1.5"
+            class="w-full accent-(--color-down) h-1.5"
           />
-          <div class="flex justify-between text-[9px] text-[--color-text-muted] mt-0.5">
+          <div class="flex justify-between text-[9px] text-(--color-text-muted) mt-0.5">
             <span>3%</span>
             <span>10%</span>
             <span>20%</span>
@@ -279,7 +279,7 @@ export default function StandardPanel({
         {/* TP Slider */}
         <div>
           <div class="flex justify-between items-center mb-1">
-            <label class="text-[11px] text-[--color-text-muted] font-mono">
+            <label class="text-[11px] text-(--color-text-muted) font-mono">
               {t.tp}
             </label>
             <span
@@ -298,9 +298,9 @@ export default function StandardPanel({
             onInput={(e) =>
               setTpPct(Number((e.target as HTMLInputElement).value))
             }
-            class="w-full accent-[--color-up] h-1.5"
+            class="w-full accent-(--color-up) h-1.5"
           />
-          <div class="flex justify-between text-[9px] text-[--color-text-muted] mt-0.5">
+          <div class="flex justify-between text-[9px] text-(--color-text-muted) mt-0.5">
             <span>2%</span>
             <span>8%</span>
             <span>15%</span>
@@ -309,7 +309,7 @@ export default function StandardPanel({
 
         {/* Leverage */}
         <div>
-          <label class="text-[11px] text-[--color-text-muted] font-mono mb-1 block">
+          <label class="text-[11px] text-(--color-text-muted) font-mono mb-1 block">
             {t.leverage}
           </label>
           <div class="flex gap-1.5">
@@ -318,7 +318,7 @@ export default function StandardPanel({
                 key={lev}
                 onClick={() => setLeverage(lev)}
                 class={`flex-1 py-2 rounded-md text-xs font-mono font-bold transition-all border
-                  ${leverage === lev ? "" : "text-[--color-text-muted] border-[--color-border] hover:text-[--color-text]"}`}
+                  ${leverage === lev ? "" : "text-(--color-text-muted) border-(--color-border) hover:text-(--color-text)"}`}
                 style={
                   leverage === lev
                     ? {
@@ -337,7 +337,7 @@ export default function StandardPanel({
 
         {/* Coins */}
         <div>
-          <label class="text-[11px] text-[--color-text-muted] font-mono mb-1 block">
+          <label class="text-[11px] text-(--color-text-muted) font-mono mb-1 block">
             {t.coins}
           </label>
           <div class="flex gap-1.5">
@@ -345,7 +345,7 @@ export default function StandardPanel({
             <button
               onClick={() => setCoinMode("all")}
               class={`flex-1 py-2 rounded-md text-xs font-mono font-bold transition-all border
-                ${coinMode === "all" ? "" : "text-[--color-text-muted] border-[--color-border] hover:text-[--color-text]"}`}
+                ${coinMode === "all" ? "" : "text-(--color-text-muted) border-(--color-border) hover:text-(--color-text)"}`}
               style={
                 coinMode === "all"
                   ? {
@@ -369,7 +369,7 @@ export default function StandardPanel({
                     setTopN(n);
                   }}
                   class={`flex-1 py-2 rounded-md text-xs font-mono font-bold transition-all border
-                    ${isActive ? "" : "text-[--color-text-muted] border-[--color-border] hover:text-[--color-text]"}`}
+                    ${isActive ? "" : "text-(--color-text-muted) border-(--color-border) hover:text-(--color-text)"}`}
                   style={
                     isActive
                       ? {
@@ -389,9 +389,9 @@ export default function StandardPanel({
 
         {/* Period */}
         <div>
-          <label class="text-[11px] text-[--color-text-muted] font-mono mb-1 block">
+          <label class="text-[11px] text-(--color-text-muted) font-mono mb-1 block">
             {t.period}:{" "}
-            <span class="font-bold text-[--color-text]">
+            <span class="font-bold text-(--color-text)">
               {diffMonths} {t.months}
             </span>
           </label>
@@ -406,7 +406,7 @@ export default function StandardPanel({
             }
             class="w-full h-1.5"
           />
-          <div class="flex justify-between text-[9px] text-[--color-text-muted] mt-0.5">
+          <div class="flex justify-between text-[9px] text-(--color-text-muted) mt-0.5">
             <span>3</span>
             <span>12★</span>
             <span>24</span>
@@ -416,9 +416,9 @@ export default function StandardPanel({
         {/* Fee Rate */}
         {setFeePct && (
           <div>
-            <label class="text-[11px] text-[--color-text-muted] font-mono mb-1 block">
+            <label class="text-[11px] text-(--color-text-muted) font-mono mb-1 block">
               {t.fee}:{" "}
-              <span class="font-bold text-[--color-text]">
+              <span class="font-bold text-(--color-text)">
                 {feePct.toFixed(2)}%
               </span>
             </label>
@@ -433,7 +433,7 @@ export default function StandardPanel({
               }
               class="w-full h-1.5"
             />
-            <div class="flex justify-between text-[9px] text-[--color-text-muted] mt-0.5">
+            <div class="flex justify-between text-[9px] text-(--color-text-muted) mt-0.5">
               <span>0.01%</span>
               <span>0.05%</span>
               <span>0.20%</span>
@@ -455,7 +455,7 @@ export default function StandardPanel({
       </div>
 
       {/* Run Button */}
-      <div class="px-4 py-3 border-t border-[--color-border]">
+      <div class="px-4 py-3 border-t border-(--color-border)">
         <button
           data-testid="run-simulate"
           onClick={onRun}
