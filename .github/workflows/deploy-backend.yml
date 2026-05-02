@@ -215,6 +215,7 @@ jobs:
               /opt/pruviq/current/backend/deploy/systemd/pruviq-*.service \
               /opt/pruviq/current/backend/deploy/systemd/pruviq-*.timer \
               /etc/systemd/system/
+            mkdir -p /opt/pruviq/cache && chown pruviq:pruviq /opt/pruviq/cache
             systemctl daemon-reload
             systemctl enable --now pruviq-indicator-builder.timer 2>/dev/null || true
             echo 'wrapper + unit sync + daemon-reload done'
