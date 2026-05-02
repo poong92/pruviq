@@ -53,16 +53,17 @@ test.describe("Interactive QA — 기능 클릭 테스트", () => {
     await page.goto("/simulate/");
     await page.waitForLoadState("domcontentloaded");
 
-    // Breakout 클릭
-    const breakoutCard = page
-      .locator('[data-testid="quick-cat-breakout"]')
+    // SimulatorV1: sim-v1-preset-* 카드 클릭 (atr-breakout = 기본 첫 번째 프리셋)
+    const presetCard = page
+      .locator('[data-testid="sim-v1-preset-atr-breakout"]')
       .first();
-    await expect(breakoutCard).toBeVisible({ timeout: 10000 });
-    await breakoutCard.click();
+    await expect(presetCard).toBeVisible({ timeout: 15000 });
+    await presetCard.click();
 
-    await expect(page.locator("text=/\\d+\\.?\\d*%/").first()).toBeVisible({
-      timeout: 60000,
-    });
+    // ResultsPanel ok 상태 대기 (API 응답 포함, 최대 60초)
+    await expect(
+      page.locator('[data-testid="sim-v1-results-ok"]').first(),
+    ).toBeVisible({ timeout: 60000 });
 
     const bodyText = await page.textContent("body");
 
@@ -287,28 +288,27 @@ test.describe("Interactive QA — 기능 클릭 테스트", () => {
 
   // ── 8. Copy Link 버튼 클릭 ────────────────────────────────────────────────
 
-  test("simulate: Copy Link 버튼 클릭 → Copied 표시", async ({ page }) => {
+  test("simulate: 프리셋 클릭 후 URL에 preset 파라미터 포함", async ({
+    page,
+  }) => {
     await page.goto("/simulate/");
     await page.waitForLoadState("domcontentloaded");
 
-    // Breakout 클릭
-    const breakoutCard = page
-      .locator('[data-testid="quick-cat-breakout"]')
+    // SimulatorV1: 프리셋 클릭 시 URL에 ?preset= 파라미터 추가됨
+    const presetCard = page
+      .locator('[data-testid="sim-v1-preset-atr-breakout"]')
       .first();
-    await expect(breakoutCard).toBeVisible({ timeout: 10000 });
-    await breakoutCard.click();
+    await expect(presetCard).toBeVisible({ timeout: 15000 });
+    await presetCard.click();
 
-    // 결과 대기
-    await expect(page.locator("text=/\\d+\\.?\\d*%/").first()).toBeVisible({
-      timeout: 60000,
-    });
-
-    // Copy Link 버튼 클릭 (headless에서 clipboard API 제한 → 클릭 에러 없음만 확인)
-    const copyBtn = page.locator('[data-testid="copy-link"]').first();
-    await expect(copyBtn).toBeVisible({ timeout: 10000 });
-    await copyBtn.click();
-    await page.waitForTimeout(500);
-    console.log("✅ Copy Link 버튼 클릭 → 에러 없음");
+    // URL 파라미터 확인 (pushState 후 최대 3초)
+    await page.waitForFunction(
+      () => window.location.search.includes("preset="),
+      { timeout: 5000 },
+    );
+    const url = page.url();
+    expect(url).toContain("preset=");
+    console.log("✅ 프리셋 클릭 → URL preset 파라미터 포함:", url);
   });
 
   // ── 9. CSV Download 버튼 존재 확인 ────────────────────────────────────────
@@ -317,20 +317,21 @@ test.describe("Interactive QA — 기능 클릭 테스트", () => {
     await page.goto("/simulate/");
     await page.waitForLoadState("domcontentloaded");
 
-    // Breakout 클릭
-    const breakoutCard = page
-      .locator('[data-testid="quick-cat-breakout"]')
+    // SimulatorV1: 프리셋 클릭 → 결과 대기
+    const presetCard = page
+      .locator('[data-testid="sim-v1-preset-atr-breakout"]')
       .first();
-    await expect(breakoutCard).toBeVisible({ timeout: 10000 });
-    await breakoutCard.click();
+    await expect(presetCard).toBeVisible({ timeout: 15000 });
+    await presetCard.click();
 
-    // 결과 대기
-    await expect(page.locator("text=/\\d+\\.?\\d*%/").first()).toBeVisible({
-      timeout: 60000,
-    });
+    await expect(
+      page.locator('[data-testid="sim-v1-results-ok"]').first(),
+    ).toBeVisible({ timeout: 60000 });
 
-    // Download CSV 버튼 존재 확인
-    const downloadBtn = page.locator('[data-testid="download-csv"]').first();
+    // SimulatorV1 CSV 버튼: data-testid="sim-v1-csv-download"
+    const downloadBtn = page
+      .locator('[data-testid="sim-v1-csv-download"]')
+      .first();
     await expect(downloadBtn).toBeVisible({ timeout: 10000 });
 
     console.log("✅ Download CSV 버튼 존재 확인");
@@ -378,36 +379,27 @@ test.describe("Interactive QA — 기능 클릭 테스트", () => {
 
   // ── 11. Quick Adjust 토글 ────────────────────────────────────────────────
 
-  test("simulate: Quick Adjust 토글 → 슬라이더 표시", async ({ page }) => {
+  test("simulate: Standard 모드 전환 → 슬라이더 표시", async ({ page }) => {
     await page.goto("/simulate/");
     await page.waitForLoadState("domcontentloaded");
 
-    // Breakout 클릭
-    const breakoutCard = page
-      .locator('[data-testid="quick-cat-breakout"]')
+    // SkillSwitcher → Standard 모드 전환 (StandardControls + 슬라이더 노출)
+    const standardBtn = page
+      .locator('[data-testid="sim-v1-skill-standard"]')
       .first();
-    await expect(breakoutCard).toBeVisible({ timeout: 10000 });
-    await breakoutCard.click();
+    await expect(standardBtn).toBeVisible({ timeout: 15000 });
+    await standardBtn.click();
 
-    // 결과 대기
-    await expect(page.locator("text=/\\d+\\.?\\d*%/").first()).toBeVisible({
-      timeout: 60000,
-    });
-
-    // Quick Adjust 토글 클릭
-    const toggleBtn = page
-      .locator('[data-testid="quick-adjust-toggle"]')
-      .first();
-    await expect(toggleBtn).toBeVisible({ timeout: 10000 });
-    await toggleBtn.click();
-
-    // 슬라이더 visible 확인
-    const slider = page
-      .locator('input[type="range"], [class*="slider"]')
-      .first();
+    // StandardControls 패널 + 슬라이더 표시 확인
+    await expect(
+      page.locator('[data-testid="sim-v1-standard-controls"]').first(),
+    ).toBeVisible({ timeout: 5000 });
+    const slider = page.locator('input[type="range"]').first();
     await expect(slider).toBeVisible({ timeout: 5000 });
 
-    console.log("✅ Quick Adjust 토글 → 슬라이더 표시 확인");
+    console.log(
+      "✅ Standard 모드 전환 → StandardControls + 슬라이더 표시 확인",
+    );
   });
 
   // ── 12. Expert 프리셋 3개 순차 클릭 ──────────────────────────────────────
