@@ -52,7 +52,7 @@ interface RankingData {
 // crawler-friendly.
 function formatRankingTimestamp(iso?: string): string | null {
   if (!iso) return null;
-  const d = new Date(iso);
+  const d = new Date(iso.endsWith('Z') || iso.includes('+') ? iso : iso + 'Z');
   if (Number.isNaN(d.getTime())) return null;
   return d.toISOString().replace('T', ' ').slice(0, 16) + ' UTC';
 }
