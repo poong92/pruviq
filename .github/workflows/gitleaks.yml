@@ -10,7 +10,6 @@ on:
     # Weekly baseline scan — catches anything that slipped through PRs
     # (e.g., if an automerge PR was force-pushed between CI runs).
     - cron: "0 3 * * 1"  # Monday 03:00 UTC
-  workflow_dispatch: {}
 
 permissions:
   contents: read
