@@ -19,6 +19,7 @@ import time
 import requests
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timedelta
+from pathlib import Path
 from typing import Optional
 
 # === Configuration ===
@@ -26,6 +27,27 @@ API_BASE = os.getenv("PRUVIQ_API_BASE", "http://localhost:8080").strip()
 INTERNAL_API_KEY = os.getenv("INTERNAL_API_KEY", "").strip()
 TELEGRAM_BOT_TOKEN = os.getenv("PRUVIQ_SNS_BOT_TOKEN", "").strip()  # 8058630215 SNS 봇
 TELEGRAM_CHAT_ID = os.getenv("PRUVIQ_SNS_CHAT_ID", "").strip()
+
+# === Direct import mode (bypasses HTTP /simulate) ===
+# When running inside the backend virtualenv the simulation modules are on the
+# path; inject the backend root so relative imports work the same way they do
+# inside uvicorn.
+_BACKEND_ROOT = Path(__file__).resolve().parent.parent  # …/backend/
+if str(_BACKEND_ROOT) not in sys.path:
+    sys.path.insert(0, str(_BACKEND_ROOT))
+
+_DIRECT_MODE = False
+_data_manager = None  # DataManager singleton (populated by _init_direct_mode)
+
+try:
+    from api.data_manager import DataManager as _DataManager
+    from src.simulation.engine import CostModel as _CostModel
+    from src.simulation.engine_fast import run_fast as _run_fast
+    from src.simulation.aggregator import aggregate_trades as _aggregate_trades
+    from src.strategies.registry import get_strategy as _get_strategy
+    _DIRECT_MODE = True
+except ImportError:
+    pass  # Fall back to HTTP mode
 
 AVOID_HOURS_1H = [2, 3, 10, 20, 21, 22, 23]  # 1H 전략용 시간 필터
 
@@ -192,6 +214,151 @@ def parse_period(period_str: str) -> tuple[str, str]:
     return start.strftime("%Y-%m-%d"), end.strftime("%Y-%m-%d")
 
 
+def _init_direct_mode() -> bool:
+    """Load DataManager once at startup. Returns True if direct mode is ready."""
+    global _data_manager, _DIRECT_MODE
+    if not _DIRECT_MODE:
+        return False
+    if _data_manager is not None:
+        return True
+    data_dir = Path(os.getenv(
+        "PRUVIQ_DATA_DIR",
+        str(_BACKEND_ROOT / "data" / "futures"),
+    ))
+    if not data_dir.exists():
+        print(f"[direct-mode] PRUVIQ_DATA_DIR={data_dir} not found — falling back to HTTP", file=sys.stderr)
+        _DIRECT_MODE = False
+        return False
+    _data_manager = _DataManager(data_dir)
+    n = _data_manager.coin_count
+    if n == 0:
+        print(f"[direct-mode] DataManager loaded 0 coins from {data_dir} — falling back to HTTP", file=sys.stderr)
+        _DIRECT_MODE = False
+        return False
+    print(f"[direct-mode] DataManager ready: {n} coins from {data_dir}")
+    return True
+
+
+def _filter_df_by_date(df, start_date=None, end_date=None):
+    """Date-range filter (mirrors api/main.py logic)."""
+    import pandas as pd
+    if not start_date and not end_date:
+        return df
+    if "timestamp" not in df.columns:
+        return df
+    ts = pd.to_datetime(df["timestamp"])
+    mask = pd.Series(True, index=df.index)
+    if start_date:
+        mask &= ts >= pd.Timestamp(start_date)
+    if end_date:
+        mask &= ts <= pd.Timestamp(end_date) + pd.Timedelta(hours=23)
+    return df[mask].copy()
+
+
+def run_simulation_direct(
+    strategy_id: str, direction: str, top_n: int,
+    start_date: str, end_date: str,
+    timeframe: str = "1H", sl_pct: float = 10.0,
+    tp_pct: float = 8.0, max_bars: int = 48,
+    symbols: Optional[list] = None,
+) -> Optional[dict]:
+    """Run simulation by directly calling the simulation engine (no HTTP).
+
+    Mirrors the /simulate endpoint logic. Returns the same metric keys as
+    the HTTP response so extract_metrics() works unchanged.
+    """
+    avoid_hours = AVOID_HOURS_1H if timeframe == "1H" else None
+    direction_lower = direction.lower()
+    is_both = direction_lower == "both"
+    directions_to_run = ["short", "long"] if is_both else [direction_lower]
+
+    try:
+        strategy_obj, _, _ = _get_strategy(strategy_id)
+    except Exception as e:
+        print(f"  ⚠ [direct] get_strategy({strategy_id}) failed: {e}", file=sys.stderr)
+        return None
+
+    if avoid_hours:
+        strategy_obj.avoid_hours = avoid_hours
+
+    # Get coin data (resampled for non-1H)
+    resampled = timeframe != "1H"
+    if symbols:
+        syms_upper = [s.upper() for s in symbols]
+        if resampled:
+            coins = [(s, _data_manager.get_resampled(s, timeframe)) for s in syms_upper]
+            coins = [(s, df) for s, df in coins if df is not None]
+        else:
+            coins = _data_manager.get_symbols(syms_upper)
+    else:
+        if resampled:
+            coins = []
+            for info in _data_manager.coins:
+                if len(coins) >= top_n:
+                    break
+                df = _data_manager.get_resampled(info["symbol"], timeframe)
+                if df is not None:
+                    coins.append((info["symbol"], df))
+        else:
+            coins = _data_manager.get_top_n(top_n)
+
+    if not coins:
+        return None
+
+    cost_model = _CostModel.futures()
+    all_trades = []
+
+    for run_dir in directions_to_run:
+        for sym, df in coins:
+            try:
+                df = strategy_obj.calculate_indicators(df.copy())
+                df = _filter_df_by_date(df, start_date, end_date)
+                result = _run_fast(
+                    df, strategy_obj, sym,
+                    sl_pct=sl_pct / 100,
+                    tp_pct=tp_pct / 100,
+                    max_bars=max_bars,
+                    fee_pct=cost_model.fee_pct,
+                    slippage_pct=cost_model.slippage_pct,
+                    direction=run_dir,
+                    market_type="futures",
+                    strategy_id=strategy_id,
+                    funding_rate_8h=cost_model.funding_rate_8h,
+                    timeframe=timeframe,
+                    leverage=1.0,
+                )
+                for trade in result.trades:
+                    all_trades.append({
+                        "pnl_pct": trade.pnl_pct,
+                        "exit_reason": trade.exit_reason,
+                        "time": trade.entry_time,
+                        "exit_time": trade.exit_time,
+                    })
+            except Exception as e:
+                print(f"  ⚠ [direct] {sym}/{run_dir}: {e}", file=sys.stderr)
+                continue
+
+    n_coins = len(coins)
+    agg = _aggregate_trades(all_trades, n_coins, is_compounding=False)
+
+    # Return same shape as HTTP response so extract_metrics() works unchanged
+    return {
+        "total_trades": agg["total_trades"],
+        "win_rate": agg["win_rate"],
+        "profit_factor": agg["profit_factor"],
+        "total_return_pct": agg["total_return_pct"],
+        "metrics": {
+            "total_trades": agg["total_trades"],
+            "win_rate": agg["win_rate"],
+            "profit_factor": agg["profit_factor"],
+            "total_return_pct": agg["total_return_pct"],
+            "sharpe_ratio": agg["sharpe_ratio"],
+            "sortino_ratio": agg["sortino_ratio"],
+            "max_drawdown_pct": agg["max_drawdown_pct"],
+        },
+    }
+
+
 def run_simulation(
     strategy: str, direction: str, top_n: int,
     start_date: str, end_date: str,
@@ -200,7 +367,14 @@ def run_simulation(
     timeout: int = 60,
     symbols: Optional[list] = None,
 ) -> Optional[dict]:
-    """Call PRUVIQ /simulate API and return results."""
+    """Run a simulation — direct engine import if available, else HTTP fallback."""
+    if _DIRECT_MODE and _data_manager is not None:
+        return run_simulation_direct(
+            strategy, direction, top_n, start_date, end_date,
+            timeframe=timeframe, sl_pct=sl_pct, tp_pct=tp_pct,
+            max_bars=max_bars, symbols=symbols,
+        )
+    # HTTP fallback
     # 4H 전략은 시간 필터 제거 (4H 캔들에서 hourly 필터 비효율)
     avoid_hours = AVOID_HOURS_1H if timeframe == "1H" else None
 
@@ -794,6 +968,10 @@ def main():
     if args.api_base:
         global API_BASE
         API_BASE = args.api_base
+
+    # Initialize direct-import mode (loads DataManager from PRUVIQ_DATA_DIR)
+    if _DIRECT_MODE:
+        _init_direct_mode()
 
     # --period (legacy single period) overrides --periods
     if args.period:
