@@ -94,7 +94,7 @@ jobs:
       # deploy behind `pytest backend/tests/`. Fast: ~1min including pip.
       - name: Setup Python (for pytest gate)
         if: steps.guard.outputs.skip != 'true'
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.12'
           cache: 'pip'
