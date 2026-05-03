@@ -147,13 +147,21 @@ jobs:
             echo "DO is current — no drift, skipping deploy"
             echo "skip=true" >> "$GITHUB_OUTPUT"
           else
-            changed=$(git diff --name-only "$do_sha" "$main_sha" -- backend/ 2>/dev/null | head -1)
-            if [ -z "$changed" ]; then
-              echo "DO is behind but no backend changes — skipping deploy"
-              echo "skip=true" >> "$GITHUB_OUTPUT"
-            else
-              echo "Backend drift detected ($do_sha → $main_sha): $changed"
+            # If do_sha is outside the shallow clone, git diff silently returns
+            # empty — causing a false "no backend changes" skip. Deploy whenever
+            # we can't confirm the diff (safe default: extra restart > silent skip).
+            if ! git cat-file -e "$do_sha" 2>/dev/null; then
+              echo "DO commit $do_sha not in runner history (shallow clone) — deploying to be safe"
               echo "skip=false" >> "$GITHUB_OUTPUT"
+            else
+              changed=$(git diff --name-only "$do_sha" "$main_sha" -- backend/ 2>/dev/null | head -1)
+              if [ -z "$changed" ]; then
+                echo "DO is behind but no backend changes — skipping deploy"
+                echo "skip=true" >> "$GITHUB_OUTPUT"
+              else
+                echo "Backend drift detected ($do_sha → $main_sha): $changed"
+                echo "skip=false" >> "$GITHUB_OUTPUT"
+              fi
             fi
           fi
 
