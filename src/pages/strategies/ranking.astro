@@ -7,17 +7,11 @@ import { useTranslations } from '../../i18n/index';
 import StrategyTabs from '../../components/ui/StrategyTabs.astro';
 
 const t = useTranslations('en');
-const today = new Date().toLocaleDateString('en-US', {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric',
-  timeZone: 'Asia/Seoul',
-});
-// Helper to format API date string (e.g. "2026-03-19") to match page header format
+// Helper to format API date string as UTC date (global standard)
 function formatRankingDate(isoDate: string): string {
   try {
-    return new Date(isoDate + 'T00:00:00').toLocaleDateString('en-US', {
-      year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Asia/Seoul',
+    return new Date(isoDate + 'T00:00:00Z').toLocaleDateString('en-US', {
+      year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC',
     });
   } catch {
     return isoDate;
@@ -100,7 +94,7 @@ if (!ssrRanking) {
         {t('ranking.title')}
       </h1>
       <p class="text-(--color-text-muted) text-sm mb-1">
-        {t('ranking.date_label').replace('{date}', today)}
+        {t('ranking.date_label').replace('{date}', formatRankingDate(ssrRanking?.date ?? new Date().toISOString().slice(0, 10)))}
       </p>
       {ssrRanking?.generated_at && formatRankingTimestamp(ssrRanking.generated_at) && (
         <p class="font-mono text-[11px] text-(--color-text-muted) opacity-70 mb-1">
@@ -257,7 +251,7 @@ if (!ssrRanking) {
       {!ssrRanking && (
         <ErrorFallback
           message="Rankings temporarily unavailable"
-          detail="Daily rankings update at 09:00 KST. Try refreshing or check back shortly."
+          detail="Daily rankings update at 01:00 UTC. Try refreshing or check back shortly."
         />
       )}
 

@@ -250,8 +250,8 @@ export function StrategyRanking({ lang = "en" }: { lang?: Lang }) {
         </p>
         <p class="text-sm text-(--color-text-muted) mb-4">
           {lang === "ko"
-            ? "일일 랭킹은 매일 09:00 KST에 업데이트됩니다. 새로고침하거나 잠시 후 다시 확인해 주세요."
-            : "Daily rankings update at 09:00 KST. Try refreshing or check back shortly."}
+            ? "일일 랭킹은 매일 01:00 UTC에 업데이트됩니다. 새로고침하거나 잠시 후 다시 확인해 주세요."
+            : "Daily rankings update at 01:00 UTC. Try refreshing or check back shortly."}
         </p>
         <button
           onClick={() => window.location.reload()}
