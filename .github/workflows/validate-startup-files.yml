@@ -3,6 +3,7 @@ name: validate-startup-files
 on:
   pull_request:
     types: [opened, edited, synchronize, reopened]
+  workflow_dispatch: {}
 
 jobs:
   validate:
