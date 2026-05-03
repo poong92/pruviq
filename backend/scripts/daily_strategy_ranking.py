@@ -74,7 +74,7 @@ STRATEGIES = [
     ("keltner-squeeze", "short", "켈트너 스퀴즈",           "Keltner Squeeze",       "1H", 10.0,  8.0, 48),
     ("keltner-squeeze", "long",  "켈트너 스퀴즈 LONG",      "Keltner Squeeze LONG",  "1H", 10.0,  8.0, 48),
     ("keltner-squeeze", "both",  "켈트너 스퀴즈 BOTH",      "Keltner Squeeze BOTH",  "1H", 10.0,  8.0, 48),
-    ("keltner-squeeze", "short", "켈트너 스퀴즈 4H",        "Keltner Squeeze 4H",    "4H", 12.0, 10.0, 12),
+    ("keltner-squeeze", "short", "켈트너 스퀴즈 4H",        "Keltner Squeeze 4H",    "4H",  3.0, 10.0, 12),
     ("keltner-squeeze", "short", "켈트너 스퀴즈 6H",        "Keltner Squeeze 6H",    "6H", 12.0, 12.0,  8),
     ("keltner-squeeze", "long",  "켈트너 스퀴즈 LONG 6H",   "Keltner Squeeze LONG 6H","6H",12.0, 12.0,  8),
 
@@ -119,7 +119,7 @@ STRATEGIES = [
     ("ichimoku", "long",  "일목균형표 LONG",          "Ichimoku LONG",       "1H", 10.0,  8.0, 48),
     ("ichimoku", "both",  "일목균형표 BOTH",          "Ichimoku BOTH",       "1H", 10.0,  8.0, 48),
     ("ichimoku", "long",  "일목균형표 LONG 와이드",   "Ichimoku LONG Wide",  "1H",  8.0, 15.0, 72),
-    ("ichimoku", "short", "일목균형표 4H",            "Ichimoku 4H",         "4H", 12.0, 12.0, 12),
+    ("ichimoku", "short", "일목균형표 4H",            "Ichimoku 4H",         "4H", 15.0, 15.0, 12),
     ("ichimoku", "long",  "일목균형표 LONG 4H",       "Ichimoku LONG 4H",    "4H", 12.0, 12.0, 12),
     ("ichimoku", "both",  "일목균형표 6H",            "Ichimoku 6H",         "6H", 12.0, 15.0,  8),
 
@@ -135,7 +135,7 @@ STRATEGIES = [
     # ─── ATR Breakout (7 variants) ───
     ("atr-breakout", "both",  "ATR 돌파",               "ATR Breakout",          "1H", 10.0,  8.0, 48),
     ("atr-breakout", "long",  "ATR 돌파 LONG",          "ATR Breakout LONG",     "1H", 10.0,  8.0, 48),
-    ("atr-breakout", "short", "ATR 돌파 SHORT",         "ATR Breakout SHORT",    "1H", 10.0,  8.0, 48),
+    ("atr-breakout", "short", "ATR 돌파 SHORT",         "ATR Breakout SHORT",    "1H",  3.0, 10.0, 48),
     ("atr-breakout", "long",  "ATR 돌파 LONG 와이드",   "ATR Breakout LONG Wide","1H",  8.0, 15.0, 72),
     ("atr-breakout", "both",  "ATR 돌파 4H",            "ATR Breakout 4H",       "4H", 12.0, 15.0, 12),
     ("atr-breakout", "long",  "ATR 돌파 LONG 4H",       "ATR Breakout LONG 4H",  "4H", 12.0, 15.0, 12),
