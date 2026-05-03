@@ -199,9 +199,38 @@ jobs:
                   repo: context.repo.repo,
                   pull_number: prNumber,
                 });
-                core.info(`update-branch dispatched for PR #${prNumber}; checks will rerun, next cron tick will retry merge.`);
+                core.info(`update-branch dispatched for PR #${prNumber}.`);
               } catch (err) {
                 core.warning(`update-branch failed for PR #${prNumber}: ${err.message}`);
+                return;
+              }
+              // GITHUB_TOKEN push (update-branch) does NOT re-trigger CI workflows
+              // (GitHub recursive-workflow prevention). Explicitly dispatch each CI
+              // workflow for the PR branch so checks run on the new merge commit.
+              // workflow_dispatch is exempt from the recursive restriction.
+              const prBranch = prDetail.data.head.ref;
+              const ciWorkflows = [
+                'unit-tests.yml',
+                'e2e.yml',
+                'accessibility.yml',
+                'visual-regression.yml',
+                'gitleaks.yml',
+                'codeql.yml',
+                'validate-startup-files.yml',
+                'docs-lint.yml',
+              ];
+              for (const wf of ciWorkflows) {
+                try {
+                  await github.rest.actions.createWorkflowDispatch({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    workflow_id: wf,
+                    ref: prBranch,
+                  });
+                  core.info(`Dispatched ${wf} on ${prBranch}`);
+                } catch (err) {
+                  core.warning(`Could not dispatch ${wf}: ${err.message}`);
+                }
               }
               return;
             }

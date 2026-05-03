@@ -5,6 +5,7 @@ on:
     branches: [main]
   push:
     branches: [main]
+  workflow_dispatch: {}
   schedule:
     # Weekly baseline scan — catches anything that slipped through PRs
     # (e.g., if an automerge PR was force-pushed between CI runs).
