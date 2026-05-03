@@ -346,8 +346,6 @@ def run_group_simulations(
                 print(f"  [{done_count}/{total}] {group_key} {cat_en}/{direction}/{timeframe} WR={wr:.0f}% PF={pf:.2f} ret={ret:+.1f}%")
             else:
                 print(f"  [{done_count}/{total}] {group_key} {cat_en}/{direction}/{timeframe} FAILED")
-            # 각 시뮬레이션 사이 0.3s 휴식 — uvicorn 이벤트루프에 외부 요청 처리 틈을 줌
-            time.sleep(0.3)
 
     return results
 
