@@ -1,9 +1,9 @@
 [Unit]
-Description=PRUVIQ Daily Strategy Ranking timer (daily 00:05 UTC = 09:05 KST)
+Description=PRUVIQ Daily Strategy Ranking timer (daily 20:00 UTC = 05:00 KST+1)
 Requires=pruviq-daily-ranking.service
 
 [Timer]
-OnCalendar=*-*-* 00:05:00
+OnCalendar=*-*-* 20:00:00
 RandomizedDelaySec=30
 Persistent=true
 Unit=pruviq-daily-ranking.service

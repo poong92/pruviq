@@ -11,4 +11,5 @@ exec /opt/pruviq/app/.venv/bin/python \
     /opt/pruviq/current/backend/scripts/daily_strategy_ranking.py \
     --periods 7d,30d,365d \
     --groups 30,50,100,BTC \
-    --telegram
+    --telegram \
+    --workers 1
