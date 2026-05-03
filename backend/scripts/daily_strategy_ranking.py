@@ -292,7 +292,7 @@ def run_group_simulations(
     start_date: str, end_date: str,
     top_n: int, group_key: str,
     symbols: Optional[list] = None,
-    max_workers: int = 5,
+    max_workers: int = 1,
 ) -> list:
     """Run simulations for all strategies in a single group, in parallel."""
     tasks = []
@@ -346,6 +346,8 @@ def run_group_simulations(
                 print(f"  [{done_count}/{total}] {group_key} {cat_en}/{direction}/{timeframe} WR={wr:.0f}% PF={pf:.2f} ret={ret:+.1f}%")
             else:
                 print(f"  [{done_count}/{total}] {group_key} {cat_en}/{direction}/{timeframe} FAILED")
+            # 각 시뮬레이션 사이 0.3s 휴식 — uvicorn 이벤트루프에 외부 요청 처리 틈을 줌
+            time.sleep(0.3)
 
     return results
 
@@ -353,7 +355,7 @@ def run_group_simulations(
 def run_all_simulations_matrix(
     periods: list[str],
     groups: list[str],
-    max_workers: int = 5,
+    max_workers: int = 1,
 ) -> dict:
     """Run all period × group combinations and return nested results dict.
 
@@ -788,7 +790,7 @@ def main():
     parser.add_argument("--groups", default="30,50,100,BTC", help="Coin groups (e.g., 30,50,100,BTC)")
     parser.add_argument("--api-base", default=None, help="API base URL override")
     parser.add_argument("--date", default=None, help="Backfill date (YYYY-MM-DD). If set, compute period from this date to next day")
-    parser.add_argument("--workers", default=5, type=int, help="Parallel worker threads per group (default: 5)")
+    parser.add_argument("--workers", default=1, type=int, help="Parallel worker threads per group (default: 1, sequential to avoid API saturation)")
     args = parser.parse_args()
 
     if args.api_base:
