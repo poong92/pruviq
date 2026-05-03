@@ -144,6 +144,7 @@ from api.indicator_cache import IndicatorCache
 from src.simulation.engine import CostModel
 from src.simulation.engine_fast import run_fast
 from src.simulation.monte_carlo import bootstrap_trades, compute_oos_metrics
+from src.simulation.aggregator import aggregate_trades as _aggregate_trades
 from src.strategies.bb_squeeze import BBSqueezeStrategy
 from src.strategies.registry import STRATEGY_REGISTRY, get_strategy, get_all_strategies
 
@@ -1465,106 +1466,27 @@ async def simulate(req: SimulationRequest):
         set_cached(ckey, resp.model_dump())
         return resp
 
-    wins = [t for t in all_trades if t["pnl_pct"] > 0]
-    losses = [t for t in all_trades if t["pnl_pct"] <= 0]
-    gross_profit = sum(t["pnl_pct"] for t in wins) if wins else 0
-    gross_loss = abs(sum(t["pnl_pct"] for t in losses)) if losses else 0.0
+    n_coins = len(coins) if coins else 1
     is_compounding = getattr(req, 'compounding', False)
 
-    # total_return: compound vs simple (normalized by coin count)
-    n_coins = len(coins) if coins else 1
-    if is_compounding:
-        _compound_eq = 100.0
-        for _t in all_trades:
-            _compound_eq *= (1 + _t["pnl_pct"] / (100 * n_coins))
-        total_return = round((_compound_eq / 100.0 - 1) * 100, 4)
-    else:
-        total_return = round(sum(t["pnl_pct"] for t in all_trades) / n_coins, 4)
+    # Aggregated metrics — SSoT: src/simulation/aggregator.py
+    agg = _aggregate_trades(all_trades, n_coins, is_compounding)
 
     total_fees = len(all_trades) * (cost_model.fee_pct * 2 * 100) / n_coins
     total_funding = sum(t.get('funding_pct', 0) for t in all_trades) / n_coins
 
-    avg_win = (sum(t["pnl_pct"] for t in wins) / len(wins)) if wins else 0
-    avg_loss = (sum(t["pnl_pct"] for t in losses) / len(losses)) if losses else 0
-
-    # Equity curve + MDD (100-based for both modes)
-    # n_coins defined above — each coin uses 1/N of capital
-    equity = 100.0
-    peak = equity
-    max_dd = 0.0
-    eq_times = []
-    eq_values = []
-    max_consec = 0
-    cur_consec = 0
-
+    # Equity curve for frontend visualization (time-series, not needed by ranking)
+    eq_equity = 100.0
+    eq_times: list = []
+    eq_values: list = []
     for t in all_trades:
         if is_compounding:
-            equity = max(equity * (1 + t["pnl_pct"] / (100 * n_coins)), 0.0)
+            eq_equity = max(eq_equity * (1 + t["pnl_pct"] / (100 * n_coins)), 0.0)
         else:
-            equity += t["pnl_pct"] / n_coins  # Normalize: each trade uses 1/N of capital
-        peak = max(peak, equity)
-        dd = (peak - equity) / peak * 100 if peak > 0 else 0.0  # % of peak (not absolute points)
-        dd = min(dd, 100.0)  # Cap at 100%
-        max_dd = max(max_dd, dd)
+            eq_equity += t["pnl_pct"] / n_coins
         _eq_t = t.get("exit_time", t["time"])[:10]
         eq_times.append(_eq_t if _eq_t and _eq_t != "NaT" else "1970-01-01")
-        eq_values.append(equity - 100.0)  # Convert to return % for frontend
-
-        if t["pnl_pct"] <= 0:
-            cur_consec += 1
-            max_consec = max(max_consec, cur_consec)
-        else:
-            cur_consec = 0
-
-    tp_count = sum(1 for t in all_trades if t["exit_reason"] == "tp")
-    sl_count = sum(1 for t in all_trades if t["exit_reason"] == "sl")
-    timeout_count = sum(1 for t in all_trades if t["exit_reason"] == "timeout")
-
-    # Risk-adjusted metrics — daily-return based (annualized sqrt(365))
-    from collections import defaultdict as _dd_sim
-    daily_pnl_sim = _dd_sim(float)
-    for t in all_trades:
-        day_key = t.get("exit_time", t["time"])[:10]  # YYYY-MM-DD (exit time)
-        if day_key and day_key != "NaT" and len(day_key) == 10:
-            daily_pnl_sim[day_key] += t["pnl_pct"]
-    # Portfolio daily returns: divide by n_coins (same denominator as total_return).
-    # This keeps Sharpe sign consistent with total_return direction.
-    # Fill zero-return days so Sharpe isn't inflated by excluding non-trading days.
-    if daily_pnl_sim and len(daily_pnl_sim) >= 2:
-        from datetime import datetime as _dt_sim, timedelta as _td_sim
-        sorted_days = sorted(daily_pnl_sim.keys())
-        d_start = _dt_sim.strptime(sorted_days[0], "%Y-%m-%d")
-        d_end = _dt_sim.strptime(sorted_days[-1], "%Y-%m-%d")
-        all_days = [(d_start + _td_sim(days=i)).strftime("%Y-%m-%d") for i in range((d_end - d_start).days + 1)]
-        daily_returns_sim = np.array([
-            daily_pnl_sim[d] / n_coins if d in daily_pnl_sim else 0.0
-            for d in all_days
-        ])
-    elif daily_pnl_sim:
-        daily_returns_sim = np.array([
-            pnl / n_coins
-            for pnl in daily_pnl_sim.values()
-        ])
-    else:
-        daily_returns_sim = np.array([])
-
-    if len(daily_returns_sim) >= 5:
-        dr_avg = float(np.mean(daily_returns_sim))
-        dr_std = float(np.std(daily_returns_sim, ddof=1))
-        sharpe = round(dr_avg / dr_std * np.sqrt(365), 2) if dr_std > 0 else 0.0
-        # TDD Sortino (Sortino & van der Meer 1991): sqrt(mean(min(r,0)^2)) over ALL N
-        downside_sim = np.minimum(daily_returns_sim, 0)
-        tdd = float(np.sqrt(np.mean(downside_sim ** 2)))
-        sortino = round(dr_avg / tdd * np.sqrt(365), 2) if tdd > 0 else 0.0
-        # Calmar: CAGR / MDD (compound annualized growth rate — industry standard)
-        # Use calendar days from daily_returns_sim (already zero-filled) for accurate annualization
-        n_days_sim = len(daily_returns_sim)
-        growth_ratio_sim = equity / 100.0 if equity > 0 else 0.001
-        years_sim = max(n_days_sim, 1) / 365
-        cagr_pct_sim = (growth_ratio_sim ** (1 / years_sim) - 1) * 100 if years_sim > 0 else 0.0
-        calmar = round(cagr_pct_sim / max_dd, 2) if max_dd > 0 else 0.0
-    else:
-        sharpe, sortino, calmar = 0.0, 0.0, 0.0
+        eq_values.append(eq_equity - 100.0)
 
     # Use actual date range: actual candle range > requested range > full dataset range
     if actual_date_min and actual_date_max:
@@ -1606,24 +1528,24 @@ async def simulate(req: SimulationRequest):
         "direction": direction,
         "params": strategy.get_params(),
         "market_type": req.market_type,
-        "total_trades": len(all_trades),
-        "wins": len(wins),
-        "losses": len(losses),
-        "win_rate": _safe_float(round(len(wins) / len(all_trades) * 100, 2)),
-        "total_return_pct": _safe_float(round(total_return, 2)),
-        "profit_factor": _safe_float(round(gross_profit / gross_loss, 2) if gross_loss > 0 else (999.99 if gross_profit > 0 else 0.0)),
-        "avg_win_pct": _safe_float(round(avg_win, 4)),
-        "avg_loss_pct": _safe_float(round(avg_loss, 4)),
-        "max_drawdown_pct": _safe_float(round(max_dd, 2)),
-        "max_consecutive_losses": max_consec,
+        "total_trades": agg["total_trades"],
+        "wins": agg["wins"],
+        "losses": agg["losses"],
+        "win_rate": _safe_float(agg["win_rate"]),
+        "total_return_pct": _safe_float(agg["total_return_pct"]),
+        "profit_factor": _safe_float(agg["profit_factor"]),
+        "avg_win_pct": _safe_float(agg["avg_win_pct"]),
+        "avg_loss_pct": _safe_float(agg["avg_loss_pct"]),
+        "max_drawdown_pct": _safe_float(agg["max_drawdown_pct"]),
+        "max_consecutive_losses": agg["max_consecutive_losses"],
         "total_fees_pct": _safe_float(round(total_fees, 2)),
         "total_funding_pct": _safe_float(round(total_funding, 2)),
-        "tp_count": tp_count,
-        "sl_count": sl_count,
-        "timeout_count": timeout_count,
-        "sharpe_ratio": _safe_float(sharpe),
-        "sortino_ratio": _safe_float(sortino),
-        "calmar_ratio": _safe_float(calmar),
+        "tp_count": agg["tp_count"],
+        "sl_count": agg["sl_count"],
+        "timeout_count": agg["timeout_count"],
+        "sharpe_ratio": _safe_float(agg["sharpe_ratio"]),
+        "sortino_ratio": _safe_float(agg["sortino_ratio"]),
+        "calmar_ratio": _safe_float(agg["calmar_ratio"]),
         "coins_used": len(coins),
         "data_range": data_range,
         "equity_curve": downsample_equity(eq_times, eq_values),
