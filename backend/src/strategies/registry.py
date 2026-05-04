@@ -131,10 +131,10 @@ STRATEGY_REGISTRY = {
         "class": StochasticRSIStrategy,
         "init_kwargs": {"avoid_hours": []},
         "direction": "both",
-        "defaults": {"sl": 7, "tp": 5},
+        "defaults": {"sl": 15, "tp": 15},
         "name": "Stochastic RSI",
-        "description": "Stochastic oscillator applied to RSI. Enters on golden/death cross in oversold/overbought zones.",
-        "status": "research",
+        "description": "Stochastic oscillator applied to RSI. SHORT 12H: PF 1.22, OOS/IS=1.38, 2,674 trades. Death cross in overbought zone.",
+        "status": "testing",
     },
     "ma-cross": {
         "class": MACrossStrategy,
