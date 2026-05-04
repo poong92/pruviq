@@ -112,7 +112,7 @@ STRATEGIES = [
     ("adx-trend", "long",  "ADX 추세 LONG 와이드",  "ADX Trend LONG Wide", "1H",  8.0, 15.0, 72),
     ("adx-trend", "short", "ADX 추세 4H",           "ADX Trend 4H",        "4H", 12.0, 12.0, 12),
     ("adx-trend", "long",  "ADX 추세 LONG 4H",      "ADX Trend LONG 4H",   "4H", 12.0, 12.0, 12),
-    ("adx-trend", "short", "ADX 추세 SHORT 6H",     "ADX Trend SHORT 6H",  "6H", 10.0,  7.0,  8),
+    ("adx-trend", "short", "ADX 추세 SHORT 12H",    "ADX Trend SHORT 12H", "12H", 15.0,  5.0,  4),
 
     # ─── Ichimoku (7 variants) ───
     ("ichimoku", "short", "일목균형표",               "Ichimoku",            "1H", 10.0,  8.0, 48),
