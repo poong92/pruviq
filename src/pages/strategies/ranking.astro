@@ -140,7 +140,7 @@ if (!ssrRanking) {
         <div id="ranking-ssr-fallback" class="mb-8">
           <p class="font-mono text-(--color-accent) text-xs mb-3 tracking-wider">BEST 3 — {formatRankingDate(ssrRanking.date)} · 30d · Top 50</p>
           <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-            {ssrRanking.top3.map((entry) => {
+            {ssrRanking.top3.filter(e => e.total_trades >= 30).map((entry) => {
               const isLong = entry.direction === 'long';
               const isBoth = entry.direction === 'both';
               const medals = ['🥇','🥈','🥉'];

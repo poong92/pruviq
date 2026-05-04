@@ -4287,8 +4287,8 @@ def _get_daily_rankings_sync(
             seen.add(key)
             unique_entries.append(e)
 
-    # Filter out 0-trade entries (no data = not meaningful for ranking)
-    unique_entries = [e for e in unique_entries if e.get("total_trades", 0) > 0]
+    # Filter out low-sample entries (< 30 trades = statistically meaningless for ranking)
+    unique_entries = [e for e in unique_entries if e.get("total_trades", 0) >= 30]
 
     # Rank by profit_factor desc (then win_rate as tiebreaker)
     ranked = sorted(

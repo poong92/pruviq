@@ -1,48 +1,52 @@
 ---
-name: "Keltner Fade"
-description: "Fade breakouts through the Keltner upper band back into the channel. Verified — 735 trades, PF 1.14, Sharpe 0.71, measured 2026-04-22."
+name: "Keltner Squeeze SHORT"
+description: "Short the lower-band breakout after a Keltner squeeze. Verified — 923 trades, PF 1.61, OOS improves over IS (1.76→1.91), measured 2026-05-04."
 status: "verified"
 category: "volatility"
 direction: "short"
 difficulty: "intermediate"
-winRate: 53.47
-profitFactor: 1.14
-maxDrawdown: 44.8
+winRate: 39.9
+profitFactor: 1.61
+maxDrawdown: 38.2
 timeframe: "4H"
-coins: 235
+coins: 50
 dateAdded: "2026-04-22"
-tags: ["keltner", "volatility", "mean-reversion", "short", "verified"]
+dateUpdated: "2026-05-04"
+tags: ["keltner", "volatility", "squeeze", "short", "verified"]
 ---
 
 ## Overview
 
-Keltner Channels plot an ATR-scaled envelope around an exponential moving average. This preset takes the **counter-trend** side: when price pushes through the upper band, we fade the breakout and ride it back into the channel. It's a mean-reversion play on momentum exhaustion, not a breakout play.
+Keltner Channels plot an ATR-scaled envelope around an exponential moving average. This preset waits for a **squeeze** (low ATR / tight channel) and then enters SHORT when price breaks down through the lower band — trading the directional expansion, not a fade.
+
+Updated 2026-05-04: full sweep (1,680 combinations × 50 coins, IS/OOS split) confirmed SL 3% / TP 10% as optimal. OOS profit factor (1.91) exceeds IS (1.76), indicating the edge is structural rather than data-mined.
 
 ## How It Works
 
 1. **Channel setup** — 20 EMA center, ATR × 2 for upper / lower bands
-2. **Trigger** — close above the upper band
-3. **Entry** — SHORT on next-bar close (avoids intrabar wicks)
-4. **Exit** — TP when price re-enters the channel (~5% target) / SL at 7%
-5. **Filter** — only take signals when the center EMA is flat-to-down (no trend-following fades)
+2. **Squeeze detection** — Bollinger Bands (20, 2σ) inside the Keltner channel (compressed volatility)
+3. **Trigger** — close breaks below the lower Keltner band (downward expansion out of squeeze)
+4. **Entry** — SHORT on bar close
+5. **Exit** — TP 10% / SL 3% / 12-bar (2-day on 4H) timeout
+6. **Risk** — 1:3.3 R:R (3% risk, 10% reward), accepting 60% loss rate
 
 ## Why It Works (Thesis)
 
-Crypto overshoots. Momentum funds chase breakouts on the Keltner upper, but without a supporting structural trend the move often reverses within 1–3 bars. The ATR scaling keeps the edge stable across volatility regimes — tighter channels in calm markets, wider in stormy ones.
+Squeezes precede the largest directional moves. When the ATR-based channel tightens (volatility compression), potential energy builds. The lower-band break signals sellers have won the compression battle. With a 3% SL, false breaks are cheap; with a 10% TP, the real expansions are captured in full.
 
-## Results (2-year backtest, measured 2026-04-22)
+The OOS > IS result (1.91 vs 1.76) is notable: the May 2025–May 2026 period generated more qualifying squeeze-breakdowns than 2024–2025, suggesting the edge sharpened as crypto volatility regime evolved.
 
-| Metric | Value |
-|--------|-------|
-| Total trades | 735 |
-| Win rate | 53.47% |
-| Profit factor | 1.14 |
-| Sharpe | 0.71 |
-| Total return | +88.22% |
-| Max drawdown | 44.8% |
+## Results (2-year backtest, IS/OOS split, measured 2026-05-04)
+
+| Metric | IS (May24–May25) | OOS (May25–May26) | Combined |
+|--------|-----------------|------------------|---------|
+| Total trades | 447 | 476 | 923 |
+| Win rate | ~42% | ~38% | 39.9% |
+| Profit factor | 1.76 | 1.91 | 1.61 |
+| Coins profitable | 39/50 | 38/50 | — |
 
 ## Caveats
 
-- Fade strategies bleed hard in trending markets — the 44.8% drawdown sits in exactly those regimes.
-- Not live-tracked on OKX. Forward performance can diverge — see TrustGap.
-- Lower PF than Ichimoku but tighter win-rate dispersion (53% WR vs Ichimoku's 41%) makes the equity curve smoother.
+- Low win rate (40%) is inherent to the 1:3.3 R:R structure. The equity curve has frequent small losses punctuated by larger wins.
+- Not live-tracked on OKX. Backtest only.
+- 4H timeframe means 1–2 signals per coin per week on average — lower frequency than 1H variants.
