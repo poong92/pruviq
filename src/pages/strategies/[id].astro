@@ -21,11 +21,13 @@ const { strategy } = Astro.props;
 const { Content } = await render(strategy);
 
 const demoDefaults: Record<string, { sl: number; tp: number; direction: string }> = {
-  'bb-squeeze-short': { sl: 10, tp: 8, direction: 'short' },
-  'bb-squeeze-long':  { sl: 7,  tp: 6, direction: 'long' },
-  'momentum-long':    { sl: 5, tp: 10, direction: 'long' },
-  'atr-breakout':     { sl: 7, tp: 10, direction: 'long' },
-  'hv-squeeze':       { sl: 10, tp: 6, direction: 'short' },
+  'bb-squeeze-short':      { sl: 10, tp: 8,  direction: 'short' },
+  'bb-squeeze-long':       { sl: 7,  tp: 6,  direction: 'long' },
+  'momentum-long':         { sl: 5,  tp: 10, direction: 'long' },
+  'atr-breakout':          { sl: 7,  tp: 10, direction: 'long' },
+  'hv-squeeze':            { sl: 10, tp: 6,  direction: 'short' },
+  'keltner-squeeze-long':  { sl: 15, tp: 30, direction: 'long' },
+  'stochastic-rsi':        { sl: 15, tp: 15, direction: 'short' },
 };
 const demo = demoDefaults[strategy.id];
 
