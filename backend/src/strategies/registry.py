@@ -149,10 +149,10 @@ STRATEGY_REGISTRY = {
         "class": ADXTrendStrategy,
         "init_kwargs": {"avoid_hours": []},
         "direction": "both",
-        "defaults": {"sl": 8, "tp": 10},
+        "defaults": {"sl": 10, "tp": 7},
         "name": "ADX Trend",
-        "description": "ADX + DMI directional crossover. Enters only when trend strength (ADX > 25) is confirmed.",
-        "status": "research",
+        "description": "ADX + DMI directional crossover. SHORT 6H: PF 1.51, W=4/4 multi-window. Enters only when trend strength (ADX > 25) is confirmed.",
+        "status": "testing",
     },
     "ichimoku": {
         "class": IchimokuStrategy,
