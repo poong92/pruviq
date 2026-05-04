@@ -74,9 +74,10 @@ STRATEGIES = [
     ("keltner-squeeze", "short", "켈트너 스퀴즈",           "Keltner Squeeze",       "1H", 10.0,  8.0, 48),
     ("keltner-squeeze", "long",  "켈트너 스퀴즈 LONG",      "Keltner Squeeze LONG",  "1H", 10.0,  8.0, 48),
     ("keltner-squeeze", "both",  "켈트너 스퀴즈 BOTH",      "Keltner Squeeze BOTH",  "1H", 10.0,  8.0, 48),
-    ("keltner-squeeze", "short", "켈트너 스퀴즈 4H",        "Keltner Squeeze 4H",    "4H", 12.0, 10.0, 12),
+    ("keltner-squeeze", "short", "켈트너 스퀴즈 4H",        "Keltner Squeeze 4H",    "4H",  3.0, 10.0, 12),
     ("keltner-squeeze", "short", "켈트너 스퀴즈 6H",        "Keltner Squeeze 6H",    "6H", 12.0, 12.0,  8),
     ("keltner-squeeze", "long",  "켈트너 스퀴즈 LONG 6H",   "Keltner Squeeze LONG 6H","6H",12.0, 12.0,  8),
+    ("keltner-squeeze", "long",  "켈트너 스퀴즈 LONG 4H",   "Keltner Squeeze LONG 4H","4H",15.0, 30.0,  8),
 
     # ─── SuperTrend (7 variants) ───
     ("supertrend", "short", "슈퍼트렌드",             "SuperTrend",           "1H", 10.0,  8.0, 48),
@@ -112,14 +113,14 @@ STRATEGIES = [
     ("adx-trend", "long",  "ADX 추세 LONG 와이드",  "ADX Trend LONG Wide", "1H",  8.0, 15.0, 72),
     ("adx-trend", "short", "ADX 추세 4H",           "ADX Trend 4H",        "4H", 12.0, 12.0, 12),
     ("adx-trend", "long",  "ADX 추세 LONG 4H",      "ADX Trend LONG 4H",   "4H", 12.0, 12.0, 12),
-    ("adx-trend", "both",  "ADX 추세 6H",           "ADX Trend 6H",        "6H", 12.0, 15.0,  8),
+    ("adx-trend", "short", "ADX 추세 SHORT 12H",    "ADX Trend SHORT 12H", "12H", 15.0,  5.0,  4),
 
     # ─── Ichimoku (7 variants) ───
     ("ichimoku", "short", "일목균형표",               "Ichimoku",            "1H", 10.0,  8.0, 48),
     ("ichimoku", "long",  "일목균형표 LONG",          "Ichimoku LONG",       "1H", 10.0,  8.0, 48),
     ("ichimoku", "both",  "일목균형표 BOTH",          "Ichimoku BOTH",       "1H", 10.0,  8.0, 48),
     ("ichimoku", "long",  "일목균형표 LONG 와이드",   "Ichimoku LONG Wide",  "1H",  8.0, 15.0, 72),
-    ("ichimoku", "short", "일목균형표 4H",            "Ichimoku 4H",         "4H", 12.0, 12.0, 12),
+    ("ichimoku", "short", "일목균형표 4H",            "Ichimoku 4H",         "4H", 15.0, 15.0, 12),
     ("ichimoku", "long",  "일목균형표 LONG 4H",       "Ichimoku LONG 4H",    "4H", 12.0, 12.0, 12),
     ("ichimoku", "both",  "일목균형표 6H",            "Ichimoku 6H",         "6H", 12.0, 15.0,  8),
 
@@ -135,7 +136,7 @@ STRATEGIES = [
     # ─── ATR Breakout (7 variants) ───
     ("atr-breakout", "both",  "ATR 돌파",               "ATR Breakout",          "1H", 10.0,  8.0, 48),
     ("atr-breakout", "long",  "ATR 돌파 LONG",          "ATR Breakout LONG",     "1H", 10.0,  8.0, 48),
-    ("atr-breakout", "short", "ATR 돌파 SHORT",         "ATR Breakout SHORT",    "1H", 10.0,  8.0, 48),
+    ("atr-breakout", "short", "ATR 돌파 SHORT",         "ATR Breakout SHORT",    "1H",  3.0, 10.0, 48),
     ("atr-breakout", "long",  "ATR 돌파 LONG 와이드",   "ATR Breakout LONG Wide","1H",  8.0, 15.0, 72),
     ("atr-breakout", "both",  "ATR 돌파 4H",            "ATR Breakout 4H",       "4H", 12.0, 15.0, 12),
     ("atr-breakout", "long",  "ATR 돌파 LONG 4H",       "ATR Breakout LONG 4H",  "4H", 12.0, 15.0, 12),
@@ -179,6 +180,7 @@ STRATEGIES = [
     ("stochastic-rsi", "short", "스토캐스틱 RSI 4H",         "Stochastic RSI 4H",       "4H", 10.0,  8.0, 12),
     ("stochastic-rsi", "long",  "스토캐스틱 RSI LONG 4H",    "Stochastic RSI LONG 4H",  "4H", 10.0,  8.0, 12),
     ("stochastic-rsi", "both",  "스토캐스틱 RSI 6H",         "Stochastic RSI 6H",       "6H", 10.0, 10.0,  8),
+    ("stochastic-rsi", "short", "스토캐스틱 RSI SHORT 12H",  "Stochastic RSI SHORT 12H","12H", 15.0, 15.0,  4),
 
     # ─── Heikin Ashi (7 variants) ───
     ("heikin-ashi", "short", "하이킨아시",             "Heikin Ashi",          "1H",  8.0,  7.0, 48),
@@ -571,7 +573,7 @@ def run_all_simulations_matrix(
             # Normalize key: "30" → "top30", "btc" stays "btc"
             storage_key = group_key_lower if group_key_lower == "btc" else f"top{group_key_lower}"
             all_results[period][storage_key] = results
-            valid = [s for s in results if s["total_trades"] >= 10]
+            valid = [s for s in results if s["total_trades"] >= 30]
             wr50 = len([s for s in valid if s["win_rate"] >= 50])
             print(f"  {display}: {len(results)} results ({len(valid)} valid, WR50+: {wr50}) in {elapsed:.0f}s")
 
@@ -638,8 +640,8 @@ def generate_content_ko(results: dict, period: str, start_date: str, end_date: s
         if not strats:
             continue
 
-        # 최소 10건 이상만 신뢰
-        valid = [s for s in strats if s["total_trades"] >= 10]
+        # 최소 30건 이상만 신뢰 (MIN_TRADES consistent with main.py ranking)
+        valid = [s for s in strats if s["total_trades"] >= 30]
         if not valid:
             valid = strats
 
@@ -713,7 +715,7 @@ def generate_content_en(results: dict, period: str, start_date: str, end_date: s
         if not strats:
             continue
 
-        valid = [s for s in strats if s["total_trades"] >= 10]
+        valid = [s for s in strats if s["total_trades"] >= 30]
         if not valid:
             valid = strats
 
@@ -1053,7 +1055,7 @@ def main():
     # Summary
     for period_key, period_groups in periods_data.items():
         for group_key, strats in period_groups.items():
-            valid = [s for s in strats if s["total_trades"] >= 10]
+            valid = [s for s in strats if s["total_trades"] >= 30]
             wr50 = len([s for s in valid if s["win_rate"] >= 50])
             if valid:
                 best = max(valid, key=lambda x: x["win_rate"])
