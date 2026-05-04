@@ -5,6 +5,7 @@ import { useTranslations } from '../../../i18n/index';
 import presetsJson from '../../../../public/data/builder-presets.json';
 import rankingsJson from '../../../../public/data/rankings-daily.json';
 import StrategyTabs from '../../../components/ui/StrategyTabs.astro';
+import RegimeBanner from '../../../components/RegimeBanner';
 
 const rankingsData = rankingsJson as { top3?: Array<{strategy: string; direction: string; win_rate: number; profit_factor: number; total_return: number}>; worst3?: Array<{strategy: string; direction: string; win_rate: number; profit_factor: number; total_return: number}> };
 
@@ -176,6 +177,8 @@ const presetDirColors: Record<string, string> = { long: '--color-accent', short:
           .replace('{verified}', String(strategies.filter(s => s.data.status === 'verified').length))
         }
       </p>
+
+      <RegimeBanner client:visible lang="ko" apiBase="https://api.pruviq.com" />
 
       <div class="mb-6 flex flex-col sm:flex-row gap-3">
         <a href="/ko/simulate"
