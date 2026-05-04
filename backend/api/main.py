@@ -126,6 +126,7 @@ from api.schemas import (
     CoinSimRequest, CoinSimResponse, TradeDetail,
     CoinStats, CoinStatsResponse,
     MarketOverview, MarketMover, FundingRate,
+    RegimeStrategy, RegimeResponse,
     NewsItem, NewsResponse,
     CompareRequest, CompareResponse, StrategyResult,
     MacroIndicator, DerivativesData, EconomicEvent, MacroResponse,
@@ -2815,6 +2816,133 @@ def _build_live_coins(spot_tickers: list, futures_tickers: list) -> list:
         })
         seen_symbols.add(sym)
     return [c for c in coins if c["price"] > 0]
+
+
+@app.get("/regime", response_model=RegimeResponse)
+async def get_regime():
+    """Current market regime based on Fear & Greed Index + recommended strategies.
+
+    Regime boundaries (L6 research, 2026-03-28):
+      Extreme Fear (<25): Keltner Squeeze SHORT — volatility spike, squeeze plays dominate
+      Fear (25-44):       Ichimoku SHORT — confirmed downtrend, multi-component filter
+      Neutral (45-59):    ATR Breakout SHORT + ADX Trend SHORT — momentum strategies
+      Greed (60-79):      ATR Breakout SHORT — trend continuation works
+      Extreme Greed (≥80): ATR Breakout SHORT — but position size down (mean-reversion risk)
+    """
+    global _market_cache
+
+    fng = 50
+    fng_label = "Neutral"
+    if _market_cache:
+        fng = _market_cache.get("fear_greed_index", 50)
+        fng_label = _market_cache.get("fear_greed_label", "Neutral")
+
+    _STRATEGY_MAP = {
+        "extreme_fear": [
+            RegimeStrategy(
+                id="keltner-squeeze", name_en="Keltner Squeeze Short", name_ko="켈트너 스퀴즈 SHORT",
+                direction="short", timeframe="6H", sl_pct=2.0, tp_pct=10.0, profit_factor=1.64,
+                simulate_url_en="/simulate?strategy=keltner-squeeze&direction=short&sl=2&tp=10",
+                simulate_url_ko="/ko/simulate?strategy=keltner-squeeze&direction=short&sl=2&tp=10",
+            ),
+            RegimeStrategy(
+                id="bb-squeeze-short", name_en="BB Squeeze Short", name_ko="볼린저 스퀴즈 SHORT",
+                direction="short", timeframe="1H", sl_pct=2.0, tp_pct=20.0, profit_factor=1.39,
+                simulate_url_en="/simulate?strategy=bb-squeeze-short&direction=short&sl=2&tp=20",
+                simulate_url_ko="/ko/simulate?strategy=bb-squeeze-short&direction=short&sl=2&tp=20",
+            ),
+        ],
+        "fear": [
+            RegimeStrategy(
+                id="ichimoku", name_en="Ichimoku Bearish", name_ko="일목균형표 베어리시",
+                direction="short", timeframe="4H", sl_pct=15.0, tp_pct=15.0, profit_factor=1.55,
+                simulate_url_en="/simulate?strategy=ichimoku&direction=short&sl=15&tp=15",
+                simulate_url_ko="/ko/simulate?strategy=ichimoku&direction=short&sl=15&tp=15",
+            ),
+            RegimeStrategy(
+                id="keltner-squeeze", name_en="Keltner Squeeze Short 4H", name_ko="켈트너 스퀴즈 SHORT 4H",
+                direction="short", timeframe="4H", sl_pct=3.0, tp_pct=10.0, profit_factor=1.61,
+                simulate_url_en="/simulate?strategy=keltner-squeeze&direction=short&sl=3&tp=10",
+                simulate_url_ko="/ko/simulate?strategy=keltner-squeeze&direction=short&sl=3&tp=10",
+            ),
+        ],
+        "neutral": [
+            RegimeStrategy(
+                id="atr-breakout", name_en="ATR Breakout Short", name_ko="ATR 돌파 SHORT",
+                direction="short", timeframe="1H", sl_pct=3.0, tp_pct=10.0, profit_factor=1.42,
+                simulate_url_en="/simulate?strategy=atr-breakout&direction=short&sl=3&tp=10",
+                simulate_url_ko="/ko/simulate?strategy=atr-breakout&direction=short&sl=3&tp=10",
+            ),
+            RegimeStrategy(
+                id="adx-trend", name_en="ADX Trend Short", name_ko="ADX 추세 SHORT",
+                direction="short", timeframe="6H", sl_pct=10.0, tp_pct=7.0, profit_factor=1.51,
+                simulate_url_en="/simulate?strategy=adx-trend&direction=short&sl=10&tp=7",
+                simulate_url_ko="/ko/simulate?strategy=adx-trend&direction=short&sl=10&tp=7",
+            ),
+        ],
+        "greed": [
+            RegimeStrategy(
+                id="atr-breakout", name_en="ATR Breakout Short", name_ko="ATR 돌파 SHORT",
+                direction="short", timeframe="1H", sl_pct=3.0, tp_pct=10.0, profit_factor=1.42,
+                simulate_url_en="/simulate?strategy=atr-breakout&direction=short&sl=3&tp=10",
+                simulate_url_ko="/ko/simulate?strategy=atr-breakout&direction=short&sl=3&tp=10",
+            ),
+            RegimeStrategy(
+                id="ichimoku", name_en="Ichimoku Bearish", name_ko="일목균형표 베어리시",
+                direction="short", timeframe="4H", sl_pct=15.0, tp_pct=15.0, profit_factor=1.55,
+                simulate_url_en="/simulate?strategy=ichimoku&direction=short&sl=15&tp=15",
+                simulate_url_ko="/ko/simulate?strategy=ichimoku&direction=short&sl=15&tp=15",
+            ),
+        ],
+        "extreme_greed": [
+            RegimeStrategy(
+                id="atr-breakout", name_en="ATR Breakout Short", name_ko="ATR 돌파 SHORT",
+                direction="short", timeframe="1H", sl_pct=3.0, tp_pct=10.0, profit_factor=1.42,
+                simulate_url_en="/simulate?strategy=atr-breakout&direction=short&sl=3&tp=10",
+                simulate_url_ko="/ko/simulate?strategy=atr-breakout&direction=short&sl=3&tp=10",
+            ),
+            RegimeStrategy(
+                id="adx-trend", name_en="ADX Trend Short", name_ko="ADX 추세 SHORT",
+                direction="short", timeframe="6H", sl_pct=10.0, tp_pct=7.0, profit_factor=1.51,
+                simulate_url_en="/simulate?strategy=adx-trend&direction=short&sl=10&tp=7",
+                simulate_url_ko="/ko/simulate?strategy=adx-trend&direction=short&sl=10&tp=7",
+            ),
+        ],
+    }
+
+    _LABELS = {
+        "extreme_fear":  ("Extreme Fear",  "극도의 공포",  "Market in extreme fear. Squeeze and volatility expansion strategies outperform.", "극도의 공포 레짐. 스퀴즈·변동성 확장 전략이 가장 유리합니다."),
+        "fear":          ("Fear",          "공포",         "Fear regime. Trend-following short strategies confirm directional bias.", "공포 레짐. 추세 추종 숏 전략이 방향성을 확인합니다."),
+        "neutral":       ("Neutral",       "중립",         "Neutral regime. Momentum breakout strategies work best here.", "중립 레짐. 모멘텀 돌파 전략이 가장 잘 작동합니다."),
+        "greed":         ("Greed",         "탐욕",         "Greed regime. Trend continuation favors breakout shorts.", "탐욕 레짐. 추세 지속으로 브레이크아웃 숏이 유리합니다."),
+        "extreme_greed": ("Extreme Greed", "극도의 탐욕",  "Extreme greed — reduce position size. Mean-reversion risk is elevated.", "극도의 탐욕 — 포지션 크기를 줄이세요. 평균 회귀 위험이 높습니다."),
+    }
+
+    if fng < 25:
+        key = "extreme_fear"
+    elif fng < 45:
+        key = "fear"
+    elif fng < 60:
+        key = "neutral"
+    elif fng < 80:
+        key = "greed"
+    else:
+        key = "extreme_greed"
+
+    label_en, label_ko, desc_en, desc_ko = _LABELS[key]
+
+    from datetime import timezone
+    return RegimeResponse(
+        regime=key,
+        regime_label_en=label_en,
+        regime_label_ko=label_ko,
+        fng_index=fng,
+        fng_label=fng_label,
+        description_en=desc_en,
+        description_ko=desc_ko,
+        recommended=_STRATEGY_MAP[key],
+        generated=datetime.now(timezone.utc).isoformat(),
+    )
 
 
 @app.get("/market/live")
