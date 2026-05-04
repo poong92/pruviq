@@ -17,10 +17,16 @@
 //     with top_n=10, fee_pct=0.0005, leverage=5. These are honest numbers;
 //     cards can display them because the same click will reproduce them.
 //
-// Scope: 5 winners at registry-default SL/TP. Losing strategies
+// Scope: 7 winners at registry-default SL/TP. Losing strategies
 // (donchian-breakout, volume-profile, supertrend, rsi-divergence,
-// heikin-ashi, stochastic-rsi, macd-cross) omitted — showing a losing
-// preset as the first thing a user sees contradicts the brand promise.
+// heikin-ashi, macd-cross) omitted — showing a losing preset as the
+// first thing a user sees contradicts the brand promise.
+//
+// 2026-05-04: Added keltner-squeeze LONG (sl15/tp30, PF 1.15) and
+// stochastic-rsi SHORT (sl15/tp15, PF 1.22) — newly swept strategies
+// with updated registry defaults. Both are status=testing → verified:false.
+// Note: stochastic-rsi was previously omitted (old sl7/tp5 defaults were
+// losing); new defaults (sl15/tp15 from IS/OOS sweep) pass the PF≥1.05 gate.
 
 export type PresetDirection = "long" | "short" | "both";
 export type PresetRisk = "low" | "medium" | "high";
@@ -108,6 +114,34 @@ export const SIMULATOR_PRESETS: readonly SimulatorPreset[] = [
     },
   },
   {
+    // Formerly omitted (old sl7/tp5 defaults were losing). Re-measured
+    // 2026-05-04 at new sl15/tp15 defaults from IS/OOS sweep: PF 1.22.
+    // Status=testing → verified:false until OOS tracking confirms.
+    id: "stochastic-rsi",
+    direction: "short",
+    risk: "medium",
+    verified: false,
+    liveTracked: false,
+    labels: {
+      en: "Stoch RSI ↓",
+      ko: "스토캐스틱 RSI ↓",
+    },
+    tagline: {
+      en: "Short overbought momentum reversals on top-50 coins.",
+      ko: "상위 50개 코인의 과매수 모멘텀 반전 숏.",
+    },
+    defaults: { sl: 15, tp: 15, coin: "BTC" },
+    metrics: {
+      pf: 1.22,
+      sharpe: 0.8,
+      totalReturn: 110.49,
+      winRate: 48.47,
+      mdd: 49.24,
+      trades: 491,
+      measuredAt: "2026-05-04",
+    },
+  },
+  {
     // Live-tracked on OKX: backtest PF 1.17 (2yr) vs live PF 0.88 (2026-01
     // to 2026-03). TrustGapPanel surfaces this delta. Kept on the grid
     // because honest live tracking IS the product differentiator.
@@ -133,6 +167,34 @@ export const SIMULATOR_PRESETS: readonly SimulatorPreset[] = [
       mdd: 46.6,
       trades: 494,
       measuredAt: "2026-04-22",
+    },
+  },
+  {
+    // Newly swept LONG variant (sl15/tp30, 4H bull-regime).
+    // PF 1.15 on 2yr full dataset; MDD 38.6% is best of any LONG in the set.
+    // Status=testing → verified:false until OOS tracking confirms.
+    id: "keltner-squeeze",
+    direction: "long",
+    risk: "medium",
+    verified: false,
+    liveTracked: false,
+    labels: {
+      en: "Keltner Squeeze ↑",
+      ko: "켈트너 스퀴즈 ↑",
+    },
+    tagline: {
+      en: "Long the squeeze breakout — lowest MDD (38.6%) of the LONG set.",
+      ko: "스퀴즈 돌파 롱 — LONG 전략 중 최저 MDD (38.6%).",
+    },
+    defaults: { sl: 15, tp: 30, coin: "BTC" },
+    metrics: {
+      pf: 1.15,
+      sharpe: 0.58,
+      totalReturn: 75.81,
+      winRate: 49.24,
+      mdd: 38.63,
+      trades: 463,
+      measuredAt: "2026-05-04",
     },
   },
   {
