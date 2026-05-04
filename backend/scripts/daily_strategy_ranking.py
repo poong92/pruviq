@@ -77,6 +77,7 @@ STRATEGIES = [
     ("keltner-squeeze", "short", "켈트너 스퀴즈 4H",        "Keltner Squeeze 4H",    "4H", 12.0, 10.0, 12),
     ("keltner-squeeze", "short", "켈트너 스퀴즈 6H",        "Keltner Squeeze 6H",    "6H", 12.0, 12.0,  8),
     ("keltner-squeeze", "long",  "켈트너 스퀴즈 LONG 6H",   "Keltner Squeeze LONG 6H","6H",12.0, 12.0,  8),
+    ("keltner-squeeze", "long",  "켈트너 스퀴즈 LONG 4H",   "Keltner Squeeze LONG 4H","4H",15.0, 30.0,  8),
 
     # ─── SuperTrend (7 variants) ───
     ("supertrend", "short", "슈퍼트렌드",             "SuperTrend",           "1H", 10.0,  8.0, 48),
@@ -179,6 +180,7 @@ STRATEGIES = [
     ("stochastic-rsi", "short", "스토캐스틱 RSI 4H",         "Stochastic RSI 4H",       "4H", 10.0,  8.0, 12),
     ("stochastic-rsi", "long",  "스토캐스틱 RSI LONG 4H",    "Stochastic RSI LONG 4H",  "4H", 10.0,  8.0, 12),
     ("stochastic-rsi", "both",  "스토캐스틱 RSI 6H",         "Stochastic RSI 6H",       "6H", 10.0, 10.0,  8),
+    ("stochastic-rsi", "short", "스토캐스틱 RSI SHORT 12H",  "Stochastic RSI SHORT 12H","12H", 15.0, 15.0,  4),
 
     # ─── Heikin Ashi (7 variants) ───
     ("heikin-ashi", "short", "하이킨아시",             "Heikin Ashi",          "1H",  8.0,  7.0, 48),
