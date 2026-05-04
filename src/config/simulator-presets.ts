@@ -173,7 +173,7 @@ export const SIMULATOR_PRESETS: readonly SimulatorPreset[] = [
     // Newly swept LONG variant (sl15/tp30, 4H bull-regime).
     // PF 1.15 on 2yr full dataset; MDD 38.6% is best of any LONG in the set.
     // Status=testing → verified:false until OOS tracking confirms.
-    id: "keltner-squeeze",
+    id: "keltner-squeeze-long",
     direction: "long",
     risk: "medium",
     verified: false,
