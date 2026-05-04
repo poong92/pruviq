@@ -127,6 +127,15 @@ STRATEGY_REGISTRY = {
         "description": "Enters when BB exits Keltner Channel (squeeze release) with directional breakout. SHORT PF 1.76 in recent 30d, strong in Fear+Greed regimes.",
         "status": "verified",
     },
+    "keltner-squeeze-long": {
+        "class": KeltnerSqueezeStrategy,
+        "init_kwargs": {"avoid_hours": []},
+        "direction": "long",
+        "defaults": {"sl": 15, "tp": 30},
+        "name": "Keltner Squeeze Long",
+        "description": "Squeeze breakout LONG variant (4H bull-regime). PF 1.15 on 2yr backtest, MDD 38.6% — best LONG MDD in the tested set.",
+        "status": "testing",
+    },
     "stochastic-rsi": {
         "class": StochasticRSIStrategy,
         "init_kwargs": {"avoid_hours": []},
