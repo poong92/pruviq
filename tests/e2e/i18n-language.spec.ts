@@ -177,8 +177,12 @@ test.describe("Ranking page: EN component language", () => {
   async function shouldSkipRankingTest(
     request: APIRequestContext,
   ): Promise<string | null> {
+    // Use the same URL the component fetches (period=30d&group=top50 defaults)
+    // so the skip decision matches what the UI will actually render.
     const probe = await request
-      .get(`${API_BASE}/rankings/daily`, { timeout: 10000 })
+      .get(`${API_BASE}/rankings/daily?period=30d&group=top50`, {
+        timeout: 10000,
+      })
       .catch(() => null);
     if (!probe || probe.status() >= 500) {
       return `API returned ${probe?.status() ?? "unreachable"}`;
