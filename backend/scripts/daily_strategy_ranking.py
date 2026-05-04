@@ -75,7 +75,7 @@ STRATEGIES = [
     ("keltner-squeeze", "long",  "켈트너 스퀴즈 LONG",      "Keltner Squeeze LONG",  "1H", 10.0,  8.0, 48),
     ("keltner-squeeze", "both",  "켈트너 스퀴즈 BOTH",      "Keltner Squeeze BOTH",  "1H", 10.0,  8.0, 48),
     ("keltner-squeeze", "short", "켈트너 스퀴즈 4H",        "Keltner Squeeze 4H",    "4H",  3.0, 10.0, 12),
-    ("keltner-squeeze", "short", "켈트너 스퀴즈 6H",        "Keltner Squeeze 6H",    "6H",  2.0, 10.0,  8),
+    ("keltner-squeeze", "short", "켈트너 스퀴즈 6H",        "Keltner Squeeze 6H",    "6H", 12.0, 12.0,  8),
     ("keltner-squeeze", "long",  "켈트너 스퀴즈 LONG 6H",   "Keltner Squeeze LONG 6H","6H",12.0, 12.0,  8),
     ("keltner-squeeze", "long",  "켈트너 스퀴즈 LONG 4H",   "Keltner Squeeze LONG 4H","4H",15.0, 30.0,  8),
 
