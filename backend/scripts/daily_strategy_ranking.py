@@ -113,7 +113,7 @@ STRATEGIES = [
     ("adx-trend", "long",  "ADX 추세 LONG 와이드",  "ADX Trend LONG Wide", "1H",  8.0, 15.0, 72),
     ("adx-trend", "short", "ADX 추세 4H",           "ADX Trend 4H",        "4H", 12.0, 12.0, 12),
     ("adx-trend", "long",  "ADX 추세 LONG 4H",      "ADX Trend LONG 4H",   "4H", 12.0, 12.0, 12),
-    ("adx-trend", "both",  "ADX 추세 6H",           "ADX Trend 6H",        "6H", 12.0, 15.0,  8),
+    ("adx-trend", "short", "ADX 추세 SHORT 12H",    "ADX Trend SHORT 12H", "12H", 15.0,  5.0,  4),
 
     # ─── Ichimoku (7 variants) ───
     ("ichimoku", "short", "일목균형표",               "Ichimoku",            "1H", 10.0,  8.0, 48),
@@ -573,7 +573,7 @@ def run_all_simulations_matrix(
             # Normalize key: "30" → "top30", "btc" stays "btc"
             storage_key = group_key_lower if group_key_lower == "btc" else f"top{group_key_lower}"
             all_results[period][storage_key] = results
-            valid = [s for s in results if s["total_trades"] >= 10]
+            valid = [s for s in results if s["total_trades"] >= 30]
             wr50 = len([s for s in valid if s["win_rate"] >= 50])
             print(f"  {display}: {len(results)} results ({len(valid)} valid, WR50+: {wr50}) in {elapsed:.0f}s")
 
@@ -640,8 +640,8 @@ def generate_content_ko(results: dict, period: str, start_date: str, end_date: s
         if not strats:
             continue
 
-        # 최소 10건 이상만 신뢰
-        valid = [s for s in strats if s["total_trades"] >= 10]
+        # 최소 30건 이상만 신뢰 (MIN_TRADES consistent with main.py ranking)
+        valid = [s for s in strats if s["total_trades"] >= 30]
         if not valid:
             valid = strats
 
@@ -715,7 +715,7 @@ def generate_content_en(results: dict, period: str, start_date: str, end_date: s
         if not strats:
             continue
 
-        valid = [s for s in strats if s["total_trades"] >= 10]
+        valid = [s for s in strats if s["total_trades"] >= 30]
         if not valid:
             valid = strats
 
@@ -1055,7 +1055,7 @@ def main():
     # Summary
     for period_key, period_groups in periods_data.items():
         for group_key, strats in period_groups.items():
-            valid = [s for s in strats if s["total_trades"] >= 10]
+            valid = [s for s in strats if s["total_trades"] >= 30]
             wr50 = len([s for s in valid if s["win_rate"] >= 50])
             if valid:
                 best = max(valid, key=lambda x: x["win_rate"])

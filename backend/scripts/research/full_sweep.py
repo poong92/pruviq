@@ -91,7 +91,8 @@ def load_top50_coins() -> list[tuple[str, pd.DataFrame]]:
                 coins.append((sym, df))
                 if len(coins) >= 50:
                     break
-        except Exception:
+        except Exception as e:
+            print(f"  WARN: skipping {f.name}: {e}")
             continue
     print(f"Loaded {len(coins)} coins with ≥1Y data")
     return coins
@@ -156,7 +157,8 @@ def run_on_coins(strategy_id: str, strategy_obj, coins_with_indicators: list, di
                 timeframe=timeframe,
             )
             all_pnls.extend([t.pnl_pct for t in result.trades])
-        except Exception:
+        except Exception as e:
+            print(f"    WARN: {sym} sim failed: {e}")
             continue
     return all_pnls
 
@@ -172,7 +174,8 @@ def precompute_indicators(strategy_id: str, coins: list, timeframe: str):
             df_rs = resample_df(df_raw.copy(), timeframe)
             df_ind = strategy.calculate_indicators(df_rs)
             result.append((sym, df_ind))
-        except Exception:
+        except Exception as e:
+            print(f"    WARN: {sym} indicator failed: {e}")
             continue
     return strategy, result
 
