@@ -118,7 +118,7 @@ export default function PresetGrid({ activePresetId, lang, onSelect }: Props) {
                   default SL/TP, so a card click reproduces these exactly.
                   Keeping metrics ON the card is the trust contract — users
                   see what they'll get BEFORE clicking. */}
-              <dl class="mt-1 grid grid-cols-3 gap-x-2 gap-y-1 rounded-md bg-(--color-bg)/40 px-2 py-1.5 text-center font-mono text-[11px] tabular-nums">
+              <dl class="mt-1 grid grid-cols-5 gap-x-1 gap-y-1 rounded-md bg-(--color-bg)/40 px-2 py-1.5 text-center font-mono text-[11px] tabular-nums">
                 <div>
                   <dt class="text-[10px] uppercase tracking-wide text-(--color-text-muted)">
                     PF
@@ -131,7 +131,7 @@ export default function PresetGrid({ activePresetId, lang, onSelect }: Props) {
                 </div>
                 <div>
                   <dt class="text-[10px] uppercase tracking-wide text-(--color-text-muted)">
-                    {lang === "ko" ? "수익률" : "Return"}
+                    {lang === "ko" ? "수익률" : "Ret"}
                   </dt>
                   <dd
                     class={`font-semibold ${p.metrics.totalReturn >= 0 ? "text-(--color-up)" : "text-(--color-down)"}`}
@@ -146,6 +146,24 @@ export default function PresetGrid({ activePresetId, lang, onSelect }: Props) {
                   </dt>
                   <dd class="font-semibold text-(--color-down)">
                     {p.metrics.mdd.toFixed(0)}%
+                  </dd>
+                </div>
+                <div>
+                  <dt class="text-[10px] uppercase tracking-wide text-(--color-text-muted)">
+                    {lang === "ko" ? "승률" : "WR"}
+                  </dt>
+                  <dd class="font-semibold text-(--color-text-secondary)">
+                    {p.metrics.winRate.toFixed(0)}%
+                  </dd>
+                </div>
+                <div>
+                  <dt class="text-[10px] uppercase tracking-wide text-(--color-text-muted)">
+                    Sharpe
+                  </dt>
+                  <dd
+                    class={`font-semibold ${p.metrics.sharpe >= 0.8 ? "text-(--color-up)" : "text-(--color-text-secondary)"}`}
+                  >
+                    {p.metrics.sharpe.toFixed(2)}
                   </dd>
                 </div>
               </dl>
