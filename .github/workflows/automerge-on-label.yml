@@ -104,7 +104,20 @@ jobs:
                   ref: `heads/${headBranch}`,
                   sha: newCommit.sha,
                 });
-                core.info(`PR #${prNumber}: empty commit ${newCommit.sha.slice(0,8)} pushed — CI will re-run`);
+                core.info(`PR #${prNumber}: empty commit ${newCommit.sha.slice(0,8)} pushed — dispatching CI`);
+                for (const wf of CI_WORKFLOWS) {
+                  try {
+                    await github.rest.actions.createWorkflowDispatch({
+                      owner: context.repo.owner,
+                      repo: context.repo.repo,
+                      workflow_id: wf,
+                      ref: headBranch,
+                    });
+                    core.info(`Dispatched ${wf} on ${headBranch}`);
+                  } catch (err) {
+                    core.warning(`Could not dispatch ${wf}: ${err.message}`);
+                  }
+                }
                 return true;
               } catch (err) {
                 core.warning(`PR #${prNumber}: resetStuckCheckSuite failed: ${err.message}`);
