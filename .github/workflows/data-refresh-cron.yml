@@ -25,6 +25,7 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  actions: write
 
 concurrency:
   group: data-refresh-cron
@@ -106,21 +107,16 @@ jobs:
             git diff --stat public/data/
           fi
 
-      # GitHub의 documented 한계: GITHUB_TOKEN으로 만든 PR은 다른 workflow trigger
-      # 못 함. Vitest/Playwright 등 PR-trigger workflow가 안 돌아 → check runs 0 →
-      # ruleset의 7 required checks 충족 못함 → automerge 영원히 stuck.
-      # 해결: PRUVIQ_GH_TOKEN (PAT) 사용 — contents:write + pull-requests:write +
-      # workflows:write 권한. repo Settings → Secrets → Actions에 PRUVIQ_GH_TOKEN으로
-      # 저장돼 있어야 함 (2026-02-21 설정 확인).
-      # 미설정 시 fallback (GITHUB_TOKEN) — PR은 만들어지지만 CI 안 돌아 manual
-      # rekick 필요.
-      - name: Create or update PR (with PAT for CI re-trigger)
+      # 2026-05-05: PRUVIQ_GH_TOKEN (poong92 PAT) → 403 "Permission denied" 확인.
+      # poong92 계정이 pruviq org repo 쓰기 권한 없음. GITHUB_TOKEN으로 전환.
+      # GITHUB_TOKEN PR은 pull_request 이벤트 workflow를 trigger 못 함 →
+      # 다음 스텝에서 workflow_dispatch로 직접 CI dispatch (automerge BEHIND 처리와 동일 패턴).
+      - name: Create or update PR
+        id: create-pr
         if: steps.changes.outputs.has_changes == 'true'
         uses: peter-evans/create-pull-request@v8
         with:
-          # PRUVIQ_GH_TOKEN: PAT with contents:write + pull-requests:write + workflows:write
-          # Previously referenced as PRUVIQ_BOT_TOKEN (wrong name — secret is PRUVIQ_GH_TOKEN)
-          token: ${{ secrets.PRUVIQ_GH_TOKEN || secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           branch: auto/data-refresh
           delete-branch: false
           base: main
@@ -131,8 +127,6 @@ jobs:
             This PR is **continuously updated** — last refresh embedded in commit message.
 
             **Replaces**: local Mac Mini `*/20 refresh_static.sh` cron (silent-failing since 2026-04-20 ruleset activation).
-
-            **CI trigger**: PRUVIQ_GH_TOKEN (PAT) 사용 시 정상 trigger. GITHUB_TOKEN fallback 시 CI 안 돌아 manual rekick 필요.
           commit-message: |
             chore(data): cron refresh
           author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
@@ -140,3 +134,15 @@ jobs:
           labels: automerge
           add-paths: |
             public/data/**
+
+      - name: Dispatch CI workflows for data-refresh PR
+        if: steps.changes.outputs.has_changes == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          BRANCH="auto/data-refresh"
+          for WF in unit-tests.yml e2e.yml accessibility.yml visual-regression.yml gitleaks.yml codeql.yml validate-startup-files.yml docs-lint.yml; do
+            gh workflow run "$WF" --ref "$BRANCH" 2>/dev/null \
+              && echo "Dispatched $WF on $BRANCH" \
+              || echo "WARN: $WF dispatch failed (may not support workflow_dispatch)"
+          done
