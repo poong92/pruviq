@@ -54,232 +54,242 @@ jobs:
               'playwright.config.ts',
             ];
             const MIN_CHECK_RUNS = 2;
+            const CI_WORKFLOWS = [
+              'unit-tests.yml',
+              'e2e.yml',
+              'accessibility.yml',
+              'visual-regression.yml',
+              'gitleaks.yml',
+              'codeql.yml',
+              'validate-startup-files.yml',
+              'docs-lint.yml',
+            ];
 
-            let pr = null;
+            // ── Fix: Claude check-suite stuck queued → push empty commit ──────────
+            // Root cause (observed PR #1733, #1712, 2026-05-04~05):
+            //   GitHub's Claude app check-suite gets stuck in `queued` state after
+            //   a force-push or rebase. GitHub merge API returns 405 "Repository
+            //   rule violations found / 7 of 7 required status checks are expected"
+            //   even though all GitHub Actions check-runs are SUCCESS. The only fix
+            //   is a new HEAD SHA, which creates a fresh check-suite.
+            //   This function detects the pattern and self-heals automatically.
+            async function resetStuckCheckSuiteIfNeeded(prNumber, headSha, headBranch) {
+              try {
+                const { data: suitesData } = await github.rest.checks.listSuitesForRef({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  ref: headSha,
+                });
+                const claudeStuck = suitesData.check_suites.find(
+                  s => s.app?.name === 'Claude' && s.status === 'queued'
+                );
+                if (!claudeStuck) return false;
+
+                core.info(`PR #${prNumber}: Claude check-suite stuck (queued) — pushing empty commit`);
+                const { data: currentCommit } = await github.rest.git.getCommit({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  commit_sha: headSha,
+                });
+                const { data: newCommit } = await github.rest.git.createCommit({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  message: 'chore: reset check-suite (Claude app stuck queued)',
+                  tree: currentCommit.tree.sha,
+                  parents: [headSha],
+                });
+                await github.rest.git.updateRef({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  ref: `heads/${headBranch}`,
+                  sha: newCommit.sha,
+                });
+                core.info(`PR #${prNumber}: empty commit ${newCommit.sha.slice(0,8)} pushed — CI will re-run`);
+                return true;
+              } catch (err) {
+                core.warning(`PR #${prNumber}: resetStuckCheckSuite failed: ${err.message}`);
+                return false;
+              }
+            }
+
+            // ── Process a single PR ───────────────────────────────────────────────
+            async function processPR(pr) {
+              const prNumber = pr.number;
+              core.info(`Found PR #${prNumber}`);
+
+              const labels = pr.labels ? pr.labels.map(l => l.name) : [];
+              if (!labels.includes(labelName)) {
+                core.info(`PR #${prNumber} no longer has ${labelName} label; skipping.`);
+                return;
+              }
+
+              // Restricted files check
+              const files = await github.paginate(github.rest.pulls.listFiles, {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: prNumber,
+              });
+              const restrictedHits = files.filter(f => restrictedExactFiles.includes(f.filename));
+              if (restrictedHits.length > 0) {
+                const list = restrictedHits.map(f => `- \`${f.filename}\``).join('\n');
+                core.info(`PR #${prNumber}: touches restricted files — skipping`);
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: prNumber,
+                  body: `⚠️ **Auto-merge skipped** — infrastructure files detected:\n${list}\n\nManual merge required after review.`,
+                });
+                return;
+              }
+
+              const headSha = pr.head?.sha;
+              if (!headSha) { core.info(`PR #${prNumber}: no head SHA; skipping`); return; }
+
+              // Check-runs status
+              const { data: checksData } = await github.rest.checks.listForRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: headSha,
+              });
+              const checkRuns = checksData.check_runs.filter(c => c.name !== 'attempt-merge');
+              const total = checkRuns.length;
+              const allCompleted = checkRuns.every(c => c.status === 'completed');
+              const allSuccess = checkRuns.every(c => c.conclusion === 'success' || c.conclusion === 'skipped');
+
+              core.info(`Check runs for ${headSha}: ${total} total, allCompleted=${allCompleted}, allSuccess=${allSuccess}`);
+              checkRuns.forEach(c => core.info(`  - ${c.name}: ${c.status} / ${c.conclusion}`));
+
+              if (total < MIN_CHECK_RUNS) {
+                core.info(`PR #${prNumber}: only ${total} check runs (min ${MIN_CHECK_RUNS}); waiting`);
+                return;
+              }
+              if (!allCompleted) {
+                core.info(`PR #${prNumber}: checks still running; will retry when next check completes`);
+                return;
+              }
+              if (!allSuccess) {
+                core.info(`PR #${prNumber}: some checks failed; skipping`);
+                return;
+              }
+
+              // BEHIND check → update-branch + dispatch CI
+              const { data: prDetail } = await github.rest.pulls.get({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: prNumber,
+              });
+              if (prDetail.mergeable_state === 'behind') {
+                core.info(`PR #${prNumber}: BEHIND main — triggering update-branch`);
+                try {
+                  await github.rest.pulls.updateBranch({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    pull_number: prNumber,
+                  });
+                  core.info(`PR #${prNumber}: update-branch dispatched`);
+                } catch (err) {
+                  core.warning(`PR #${prNumber}: update-branch failed: ${err.message}`);
+                  return;
+                }
+                const prBranch = prDetail.head.ref;
+                for (const wf of CI_WORKFLOWS) {
+                  try {
+                    await github.rest.actions.createWorkflowDispatch({
+                      owner: context.repo.owner,
+                      repo: context.repo.repo,
+                      workflow_id: wf,
+                      ref: prBranch,
+                    });
+                    core.info(`Dispatched ${wf} on ${prBranch}`);
+                  } catch (err) {
+                    core.warning(`Could not dispatch ${wf}: ${err.message}`);
+                  }
+                }
+                return;
+              }
+
+              // Merge
+              let mergeSucceeded = false;
+              try {
+                await github.rest.pulls.merge({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  pull_number: prNumber,
+                  merge_method: 'squash',
+                });
+                core.info(`PR #${prNumber}: merged successfully`);
+                mergeSucceeded = true;
+              } catch (err) {
+                core.warning(`PR #${prNumber}: merge failed: ${err.message}`);
+                // Auto-fix Claude check-suite stuck (root-cause fix 2026-05-05)
+                if (err.message?.includes('Repository rule violations found')) {
+                  const prBranch = prDetail.head.ref;
+                  await resetStuckCheckSuiteIfNeeded(prNumber, headSha, prBranch);
+                }
+              }
+
+              // data-deploy dispatch after successful merge
+              if (mergeSucceeded) {
+                try {
+                  await github.rest.actions.createWorkflowDispatch({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    workflow_id: 'data-deploy.yml',
+                    ref: 'main',
+                  });
+                  core.info(`Dispatched data-deploy.yml on main for PR #${prNumber}`);
+                } catch (err) {
+                  core.warning(`data-deploy dispatch failed (push event or 1h cron will backstop): ${err.message}`);
+                }
+              }
+            }
+
+            // ── Route by event → collect PRs to process ───────────────────────────
+
+            let prsToProcess = [];
 
             if (context.eventName === 'pull_request') {
-              pr = context.payload.pull_request;
+              prsToProcess = [context.payload.pull_request];
 
             } else if (context.eventName === 'check_suite') {
               const headSha = context.payload.check_suite.head_sha;
-              const prs = await github.rest.repos.listPullRequestsAssociatedWithCommit({
+              const { data: associated } = await github.rest.repos.listPullRequestsAssociatedWithCommit({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 commit_sha: headSha,
               });
-              if (!prs.data || prs.data.length === 0) {
-                core.info(`No PRs associated with commit ${headSha}`);
-                return;
-              }
-              const candidate = prs.data.find(p =>
-                p.state === 'open' && p.labels.some(l => l.name === labelName)
+              const candidate = associated.find(
+                p => p.state === 'open' && p.labels.some(l => l.name === labelName)
               );
               if (!candidate) {
-                core.info('No open PRs with automerge label found for this commit');
+                core.info(`No open labeled PRs for commit ${headSha}`);
                 return;
               }
-              pr = candidate;
+              prsToProcess = [candidate];
 
             } else if (context.eventName === 'workflow_dispatch' || context.eventName === 'schedule') {
-              // schedule + workflow_dispatch share the same logic: paginate
-              // every open PR with the automerge label. Fan-out: when several
-              // PRs are simultaneously waiting, schedule processes the FIRST
-              // one each tick — subsequent ticks pick up the next ones, so
-              // a backlog of N stale PRs clears within N*3 minutes.
+              // 2026-05-05: Process ALL labeled PRs per tick (not just first).
+              // Previous design processed only the first labeled PR, so a stuck PR
+              // (e.g. Claude check-suite queued on PR #1712) blocked the entire queue
+              // — PRs #1709-1711 waited hours while #1712 failed on every cron tick.
               const openPRs = await github.paginate(github.rest.pulls.list, {
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 state: 'open',
                 per_page: 50,
               });
-              const candidate = openPRs.find(p =>
-                p.labels.some(l => l.name === labelName)
-              );
-              if (!candidate) {
-                core.info(`No open PRs with automerge label found (event=${context.eventName})`);
+              prsToProcess = openPRs.filter(p => p.labels.some(l => l.name === labelName));
+              if (prsToProcess.length === 0) {
+                core.info(`No open PRs with automerge label (event=${context.eventName})`);
                 return;
               }
-              pr = candidate;
+              core.info(`Found ${prsToProcess.length} labeled PRs to process`);
 
             } else {
               core.info(`Unsupported event: ${context.eventName}`);
               return;
             }
 
-            const prNumber = pr.number;
-            core.info(`Found PR #${prNumber}`);
-
-            // Ensure the PR still has the automerge label
-            const labels = pr.labels ? pr.labels.map(l => l.name) : [];
-            if (!labels.includes(labelName)) {
-              core.info(`PR #${prNumber} does not have label ${labelName}; aborting.`);
-              return;
-            }
-
-            // Check changed files for restricted paths
-            const files = await github.paginate(github.rest.pulls.listFiles, {
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: prNumber,
-            });
-
-            const restrictedHits = [];
-            for (const f of files) {
-              if (restrictedExactFiles.includes(f.filename)) {
-                restrictedHits.push(f.filename);
-              }
-            }
-            if (restrictedHits.length > 0) {
-              const list = restrictedHits.map(f => `- \`${f}\``).join('\n');
-              core.info(`Skipping: PR touches restricted files:\n${list}`);
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: prNumber,
-                body: `⚠️ **Auto-merge skipped** — infrastructure files detected:\n${list}\n\nManual merge required after review.`,
-              });
-              return;
-            }
-
-            // Check all runs for the PR head SHA
-            const headSha = pr.head && pr.head.sha ? pr.head.sha : null;
-            if (!headSha) {
-              core.info('No head SHA found for PR; aborting.');
-              return;
-            }
-
-            const checks = await github.rest.checks.listForRef({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: headSha,
-            });
-
-            const checkRuns = checks.data.check_runs.filter(
-              c => c.name !== 'attempt-merge'  // exclude self
-            );
-            const total = checkRuns.length;
-            const allCompleted = checkRuns.every(c => c.status === 'completed');
-            const allSuccess = checkRuns.every(c => c.conclusion === 'success' || c.conclusion === 'skipped');
-
-            core.info(`Check runs for ${headSha}: ${total} total, allCompleted=${allCompleted}, allSuccess=${allSuccess}`);
-            checkRuns.forEach(c => core.info(`  - ${c.name}: ${c.status} / ${c.conclusion}`));
-
-            if (total < MIN_CHECK_RUNS) {
-              core.info(`Only ${total} check runs (minimum ${MIN_CHECK_RUNS}). Waiting.`);
-              return;
-            }
-
-            if (!allCompleted) {
-              core.info('Some checks still running; will retry when next check completes.');
-              return;
-            }
-
-            if (!allSuccess) {
-              core.info('Some checks failed; will not merge.');
-              return;
-            }
-
-            // 2026-04-26: queue-drain root-cause fix.
-            // PRUVIQ ruleset has strict_required_status_checks_policy=true →
-            // PR must be up-to-date with main before merge. When the schedule
-            // cron picks up a BEHIND PR, the merge call below fails with 405
-            // "Base branch was modified" and the next cron retries the same
-            // stuck PR forever. Detect BEHIND state up front and trigger
-            // update-branch so the next cron tick can actually merge.
-            const prDetail = await github.rest.pulls.get({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: prNumber,
-            });
-            if (prDetail.data.mergeable_state === 'behind') {
-              core.info(`PR #${prNumber} is BEHIND main — triggering update-branch.`);
-              try {
-                await github.rest.pulls.updateBranch({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  pull_number: prNumber,
-                });
-                core.info(`update-branch dispatched for PR #${prNumber}.`);
-              } catch (err) {
-                core.warning(`update-branch failed for PR #${prNumber}: ${err.message}`);
-                return;
-              }
-              // GITHUB_TOKEN push (update-branch) does NOT re-trigger CI workflows
-              // (GitHub recursive-workflow prevention). Explicitly dispatch each CI
-              // workflow for the PR branch so checks run on the new merge commit.
-              // workflow_dispatch is exempt from the recursive restriction.
-              const prBranch = prDetail.data.head.ref;
-              const ciWorkflows = [
-                'unit-tests.yml',
-                'e2e.yml',
-                'accessibility.yml',
-                'visual-regression.yml',
-                'gitleaks.yml',
-                'codeql.yml',
-                'validate-startup-files.yml',
-                'docs-lint.yml',
-              ];
-              for (const wf of ciWorkflows) {
-                try {
-                  await github.rest.actions.createWorkflowDispatch({
-                    owner: context.repo.owner,
-                    repo: context.repo.repo,
-                    workflow_id: wf,
-                    ref: prBranch,
-                  });
-                  core.info(`Dispatched ${wf} on ${prBranch}`);
-                } catch (err) {
-                  core.warning(`Could not dispatch ${wf}: ${err.message}`);
-                }
-              }
-              return;
-            }
-
-            // All checks green + up-to-date with main — merge.
-            let mergeSucceeded = false;
-            try {
-              await github.rest.pulls.merge({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                pull_number: prNumber,
-                merge_method: 'squash',
-              });
-              core.info(`Successfully merged PR #${prNumber}`);
-              mergeSucceeded = true;
-            } catch (err) {
-              // Merge can still fail in race conditions (concurrent push to main
-              // between BEHIND check above and merge call). Next check_suite
-              // completion or cron tick retries.
-              core.warning(`Merge attempt for PR #${prNumber} did not succeed: ${err.message}`);
-            }
-
-            // 2026-04-30: explicit data-deploy dispatch after successful merge.
-            // Workaround (NOT root-cause fix) for GitHub push-event silent
-            // drops observed on #1594 and #1599 even after the paths-filter
-            // removal in #1586. The actual root cause is unknown GitHub
-            // workflow registry behavior. The 1h cron drift detector in
-            // data-deploy.yml remains the second backstop — this dispatch is
-            // the first, deterministic trigger.
-            //
-            // GITHUB_TOKEN is permitted to call workflow_dispatch (recursive
-            // workflow restriction does NOT apply to dispatch events).
-            //
-            // Concurrency in data-deploy.yml (group: data-deploy,
-            // cancel-in-progress: false) serializes any double-trigger that
-            // happens when push event ALSO fires. Cost on PUBLIC repo: zero.
-            //
-            // Failure here MUST NOT bubble — merge already succeeded and is
-            // irreversible. Log warning and rely on push event / 1h cron.
-            if (mergeSucceeded) {
-              try {
-                await github.rest.actions.createWorkflowDispatch({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  workflow_id: 'data-deploy.yml',
-                  ref: 'main',
-                });
-                core.info(`Dispatched data-deploy.yml on main for PR #${prNumber}`);
-              } catch (err) {
-                core.warning(`data-deploy dispatch failed (push event or 1h cron will backstop): ${err.message}`);
-              }
+            for (const pr of prsToProcess) {
+              await processPR(pr);
             }
