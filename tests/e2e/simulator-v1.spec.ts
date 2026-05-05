@@ -33,11 +33,11 @@ test.describe("SimulatorV1 — Quick Start surface", () => {
     const pageH1 = page.locator("h1").first();
     await expect(pageH1).toBeVisible();
 
-    // 5 real presets (previously 7 fakes, 5 of which were silent fallbacks)
+    // 7 real presets (5 verified + 2 testing: keltner-squeeze LONG + stochastic-rsi SHORT added 2026-05-04)
     const cards = page.locator(
       "[data-testid^=sim-v1-preset-]:not([data-testid$=-grid])",
     );
-    expect(await cards.count()).toBe(5);
+    expect(await cards.count()).toBe(7);
 
     // Skill switcher with 3 tabs
     const tabs = page.locator("[data-testid^=sim-v1-skill-]");

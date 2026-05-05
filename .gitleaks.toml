@@ -1,4 +1,4 @@
-# gitleaks config — extends defaults + allowlists known-public OKX broker codes.
+# gitleaks config — extends defaults + allowlists known false positives.
 #
 # Background (BD Jun Kim 2026-04-28):
 #   OKX broker code values are public identifiers, not secrets. They appear in
@@ -19,21 +19,73 @@
 #      OKX broker code format. If real secrets ever leak with similar entropy,
 #      the allowlist is intentionally narrow (exact strings) and won't mask
 #      them.
+#
+# Additional false positives added 2026-05-04:
+#   OPENCLAW docs: docs/OPENCLAW_RESEARCH_20260214.md and docs/OPENCLAW_ROADMAP.md
+#     contain example `curl -u user:pass` and `curl -H Authorization:` commands in
+#     research documentation. These files were deleted from the working tree in
+#     cleanup PRs but exist in git history. curl-auth-header / curl-auth-user rules
+#     fire on example documentation, not real credentials.
+#   i18n strings: src/i18n/en.ts and ko.ts contain "Free open REST API" /
+#     "무료 오픈 REST API" as user-facing UI copy. generic-api-key rule fires on
+#     the word "API" in a key-value context — false positive.
+#   backend/.coingecko_key: CoinGecko API key file committed to history in early
+#     development, rotated to environment variable before public launch.
 
 [extend]
 useDefault = true
 
 # gitleaks v8.24 uses singular `[allowlist]` (array form `[[allowlists]]`
 # was added later). regexTarget="match" tests against the captured secret.
-# Using both `regexes` (value match) and `commits` (origin commit) — belt
-# and braces against the gitleaks v8.24 regex engine quirks.
+# Using paths (file-level skip), regexes (value match), and commits (origin
+# commit) — belt and braces against gitleaks v8.24 regex engine quirks.
 [allowlist]
-description = "OKX broker codes — public identifiers, not secrets (BD Jun Kim 2026-04-28)"
+description = "Known false positives: OKX broker codes, OPENCLAW historical docs, i18n API text, CoinGecko key (2026-05-04)"
 regexTarget = "match"
 regexes = [
+    # OKX broker codes — public identifiers, not secrets (BD Jun Kim 2026-04-28)
     '''c12571e26a02OCDE''',
     '''5f7403144b80BCDE''',
+    # i18n strings "Free open REST API" — UI display copy in en.ts/ko.ts, not a secret
+    '''Free open REST API''',
+    '''open REST API''',
+]
+paths = [
+    # OPENCLAW research docs (deleted from working tree, historical only) —
+    # contain example curl -u / curl -H Authorization commands in documentation
+    '''docs/OPENCLAW_RESEARCH_20260214\.md''',
+    '''docs/OPENCLAW_ROADMAP\.md''',
+    # CoinGecko API key committed in early development — rotated to env var before launch
+    '''backend/\.coingecko_key''',
 ]
 commits = [
+    # OKX broker code commit (2026-04-28)
     "d842ebf364e79d9c95f2e8c5003420e372c687a5",
+    # i18n "Free open REST API" generic-api-key false positives
+    "e6467c1709b4843c4c47035e15afa5835de8d986",
+    "187f875c044f9bb54daeef98ba70d5ad918c6a05",
+    "4aa90e2b8823a127c623bd1bbb9cb7ed41c97096",
+    "b92c44688f6770bc0a6f8076f8dbe8972e595af6",
+    # backend API docs + weekly email — generic-api-key false positive (2026-03 i18n)
+    "03991d057406a9624d3cf75193b08bd150ed04ae",
+    # backend/.coingecko_key committed to history — key rotated to env var
+    "f6222729c13cd5120b789caf038531c55361fd52",
+    # OPENCLAW docs — curl example auth headers (historical, files deleted from main)
+    "a0428a511a40579b6a1e6cdc30afb3dca40f1a48",
+    "53e63e9a1dab4eec754e1aca57ef8023fff393e3",
+    "1a0320bbc5a756f05025d13e871321bbcf1b6ad3",
+    "e2b9f959e3a5713f28824cf573ce149196f00b9b",
+    "6d3b3a904511ff97bdc85b1eb3e94e7028d87a5e",
+    "41d684912405c4f0edc5d5d7c80b1862ced81007",
+    "ffc07c6352ca3180d5c63cfac87279955ab27b26",
+    "d328086712bc84966767dcf076069a27c1232bc2",
+    "ceb5a4738c6272a4317b27d7b48671f5d0c6ed4f",
+    "9263de3c8d61b9d66337e45d56fa44045e10f0e4",
+    "06f8368d004872245fbf5fc09fc0f7ba4f4f2aed",
+    "ed00bb5e9142650cff1fffa352de36638c64e421",
+    "0a0cff19de3f0a3ad0ce1ea96eebf17fa530b798",
+    "52da80370caf8ea1ef1c8650dd88fe71dfd7566b",
+    "b173e87109d78fb1b5169ca4d206dd77629d3068",
+    "9356cfcfb406e8c1fb19a7752e94f2f1231abff7",
+    "9f6e43d89e01b8b4df1c96b217e179d44933359c",
 ]
