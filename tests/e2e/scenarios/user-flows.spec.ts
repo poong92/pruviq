@@ -29,7 +29,7 @@ test.describe("Flow 1: New visitor → simulator quickstart", () => {
       const cards = page.locator(
         "[data-testid^=sim-v1-preset-]:not([data-testid$=-grid])",
       );
-      expect(await cards.count()).toBe(5);
+      expect(await cards.count()).toBe(7);
     });
 
     await test.step("Step 2: click atr-breakout preset → URL reflects selection", async () => {

@@ -181,9 +181,24 @@ export function StrategyRanking({ lang = "en" }: { lang?: Lang }) {
             setLoading(false);
             return;
           }
-          // Map HTTP status → user-facing i18n, never expose raw message.
-          setError(lbl.loadFail);
-          setLoading(false);
+          // API failed — try static fallback before showing error.
+          // /data/rankings-daily.json is always present in the build (refreshed
+          // every 20 min by cron). Parametrized period/group are ignored — the
+          // static file reflects the latest daily run which is good enough when
+          // the live API is unreachable.
+          fetch("/data/rankings-daily.json")
+            .then((r) =>
+              r.ok ? (r.json() as Promise<RankingData>) : Promise.reject(),
+            )
+            .then((json) => {
+              setData(json);
+              setLoading(false);
+            })
+            .catch(() => {
+              // Static also unavailable — show error state as before.
+              setError(lbl.loadFail);
+              setLoading(false);
+            });
         })
         .finally(() => {
           clearTimeout(timeoutId);

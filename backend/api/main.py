@@ -126,6 +126,7 @@ from api.schemas import (
     CoinSimRequest, CoinSimResponse, TradeDetail,
     CoinStats, CoinStatsResponse,
     MarketOverview, MarketMover, FundingRate,
+    RegimeStrategy, RegimeResponse,
     NewsItem, NewsResponse,
     CompareRequest, CompareResponse, StrategyResult,
     MacroIndicator, DerivativesData, EconomicEvent, MacroResponse,
@@ -2817,6 +2818,133 @@ def _build_live_coins(spot_tickers: list, futures_tickers: list) -> list:
     return [c for c in coins if c["price"] > 0]
 
 
+@app.get("/regime", response_model=RegimeResponse)
+async def get_regime():
+    """Current market regime based on Fear & Greed Index + recommended strategies.
+
+    Regime boundaries (L6 research, 2026-03-28):
+      Extreme Fear (<25): Keltner Squeeze SHORT — volatility spike, squeeze plays dominate
+      Fear (25-44):       Ichimoku SHORT — confirmed downtrend, multi-component filter
+      Neutral (45-59):    ATR Breakout SHORT + ADX Trend SHORT — momentum strategies
+      Greed (60-79):      ATR Breakout SHORT — trend continuation works
+      Extreme Greed (≥80): ATR Breakout SHORT — but position size down (mean-reversion risk)
+    """
+    global _market_cache
+
+    fng = 50
+    fng_label = "Neutral"
+    if _market_cache:
+        fng = _market_cache.get("fear_greed_index", 50)
+        fng_label = _market_cache.get("fear_greed_label", "Neutral")
+
+    _STRATEGY_MAP = {
+        "extreme_fear": [
+            RegimeStrategy(
+                id="keltner-squeeze", name_en="Keltner Squeeze Short", name_ko="켈트너 스퀴즈 SHORT",
+                direction="short", timeframe="6H", sl_pct=2.0, tp_pct=10.0, profit_factor=1.64,
+                simulate_url_en="/simulate?strategy=keltner-squeeze&direction=short&sl=2&tp=10",
+                simulate_url_ko="/ko/simulate?strategy=keltner-squeeze&direction=short&sl=2&tp=10",
+            ),
+            RegimeStrategy(
+                id="bb-squeeze-short", name_en="BB Squeeze Short", name_ko="볼린저 스퀴즈 SHORT",
+                direction="short", timeframe="1H", sl_pct=2.0, tp_pct=20.0, profit_factor=1.39,
+                simulate_url_en="/simulate?strategy=bb-squeeze-short&direction=short&sl=2&tp=20",
+                simulate_url_ko="/ko/simulate?strategy=bb-squeeze-short&direction=short&sl=2&tp=20",
+            ),
+        ],
+        "fear": [
+            RegimeStrategy(
+                id="ichimoku", name_en="Ichimoku Bearish", name_ko="일목균형표 베어리시",
+                direction="short", timeframe="4H", sl_pct=15.0, tp_pct=15.0, profit_factor=1.55,
+                simulate_url_en="/simulate?strategy=ichimoku&direction=short&sl=15&tp=15",
+                simulate_url_ko="/ko/simulate?strategy=ichimoku&direction=short&sl=15&tp=15",
+            ),
+            RegimeStrategy(
+                id="keltner-squeeze", name_en="Keltner Squeeze Short 4H", name_ko="켈트너 스퀴즈 SHORT 4H",
+                direction="short", timeframe="4H", sl_pct=3.0, tp_pct=10.0, profit_factor=1.61,
+                simulate_url_en="/simulate?strategy=keltner-squeeze&direction=short&sl=3&tp=10",
+                simulate_url_ko="/ko/simulate?strategy=keltner-squeeze&direction=short&sl=3&tp=10",
+            ),
+        ],
+        "neutral": [
+            RegimeStrategy(
+                id="atr-breakout", name_en="ATR Breakout Short", name_ko="ATR 돌파 SHORT",
+                direction="short", timeframe="1H", sl_pct=3.0, tp_pct=10.0, profit_factor=1.42,
+                simulate_url_en="/simulate?strategy=atr-breakout&direction=short&sl=3&tp=10",
+                simulate_url_ko="/ko/simulate?strategy=atr-breakout&direction=short&sl=3&tp=10",
+            ),
+            RegimeStrategy(
+                id="adx-trend", name_en="ADX Trend Short 12H", name_ko="ADX 추세 SHORT 12H",
+                direction="short", timeframe="12H", sl_pct=15.0, tp_pct=5.0, profit_factor=1.68,
+                simulate_url_en="/simulate?strategy=adx-trend&direction=short&sl=15&tp=5",
+                simulate_url_ko="/ko/simulate?strategy=adx-trend&direction=short&sl=15&tp=5",
+            ),
+        ],
+        "greed": [
+            RegimeStrategy(
+                id="atr-breakout", name_en="ATR Breakout Short", name_ko="ATR 돌파 SHORT",
+                direction="short", timeframe="1H", sl_pct=3.0, tp_pct=10.0, profit_factor=1.42,
+                simulate_url_en="/simulate?strategy=atr-breakout&direction=short&sl=3&tp=10",
+                simulate_url_ko="/ko/simulate?strategy=atr-breakout&direction=short&sl=3&tp=10",
+            ),
+            RegimeStrategy(
+                id="keltner-squeeze", name_en="Keltner Squeeze Long (Bull)", name_ko="켈트너 스퀴즈 LONG (강세)",
+                direction="long", timeframe="4H", sl_pct=15.0, tp_pct=30.0, profit_factor=2.28,
+                simulate_url_en="/simulate?strategy=keltner-squeeze&direction=long&sl=15&tp=30",
+                simulate_url_ko="/ko/simulate?strategy=keltner-squeeze&direction=long&sl=15&tp=30",
+            ),
+        ],
+        "extreme_greed": [
+            RegimeStrategy(
+                id="keltner-squeeze", name_en="Keltner Squeeze Long (Bull)", name_ko="켈트너 스퀴즈 LONG (강세)",
+                direction="long", timeframe="4H", sl_pct=15.0, tp_pct=30.0, profit_factor=2.28,
+                simulate_url_en="/simulate?strategy=keltner-squeeze&direction=long&sl=15&tp=30",
+                simulate_url_ko="/ko/simulate?strategy=keltner-squeeze&direction=long&sl=15&tp=30",
+            ),
+            RegimeStrategy(
+                id="adx-trend", name_en="ADX Trend Short 12H", name_ko="ADX 추세 SHORT 12H",
+                direction="short", timeframe="12H", sl_pct=15.0, tp_pct=5.0, profit_factor=1.68,
+                simulate_url_en="/simulate?strategy=adx-trend&direction=short&sl=15&tp=5",
+                simulate_url_ko="/ko/simulate?strategy=adx-trend&direction=short&sl=15&tp=5",
+            ),
+        ],
+    }
+
+    _LABELS = {
+        "extreme_fear":  ("Extreme Fear",  "극도의 공포",  "Market in extreme fear. Squeeze and volatility expansion strategies outperform.", "극도의 공포 레짐. 스퀴즈·변동성 확장 전략이 가장 유리합니다."),
+        "fear":          ("Fear",          "공포",         "Fear regime. Trend-following short strategies confirm directional bias.", "공포 레짐. 추세 추종 숏 전략이 방향성을 확인합니다."),
+        "neutral":       ("Neutral",       "중립",         "Neutral regime. Momentum breakout strategies work best here.", "중립 레짐. 모멘텀 돌파 전략이 가장 잘 작동합니다."),
+        "greed":         ("Greed",         "탐욕",         "Greed regime. Bull momentum active — Keltner Squeeze LONG captures upside breakouts.", "탐욕 레짐. 강세 모멘텀 활성 — 켈트너 스퀴즈 LONG이 상승 돌파를 포착합니다."),
+        "extreme_greed": ("Extreme Greed", "극도의 탐욕",  "Extreme greed — mean-reversion risk elevated. Keltner LONG captures remaining upside; ADX SHORT hedges reversal.", "극도의 탐욕 — 평균 회귀 위험 상승. 켈트너 LONG으로 남은 상승을 포착하고 ADX SHORT으로 반전을 헤지합니다."),
+    }
+
+    if fng < 25:
+        key = "extreme_fear"
+    elif fng < 45:
+        key = "fear"
+    elif fng < 60:
+        key = "neutral"
+    elif fng < 80:
+        key = "greed"
+    else:
+        key = "extreme_greed"
+
+    label_en, label_ko, desc_en, desc_ko = _LABELS[key]
+
+    from datetime import timezone
+    return RegimeResponse(
+        regime=key,
+        regime_label_en=label_en,
+        regime_label_ko=label_ko,
+        fng_index=fng,
+        fng_label=fng_label,
+        description_en=desc_en,
+        description_ko=desc_ko,
+        recommended=_STRATEGY_MAP[key],
+        generated=datetime.now(timezone.utc).isoformat(),
+    )
+
+
 @app.get("/market/live")
 async def market_live():
     """Real-time Binance prices (30s TTL cache).
@@ -4159,8 +4287,8 @@ def _get_daily_rankings_sync(
             seen.add(key)
             unique_entries.append(e)
 
-    # Filter out 0-trade entries (no data = not meaningful for ranking)
-    unique_entries = [e for e in unique_entries if e.get("total_trades", 0) > 0]
+    # Filter out low-sample entries (< 30 trades = statistically meaningless for ranking)
+    unique_entries = [e for e in unique_entries if e.get("total_trades", 0) >= 30]
 
     # Rank by profit_factor desc (then win_rate as tiebreaker)
     ranked = sorted(

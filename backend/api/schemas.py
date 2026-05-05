@@ -258,6 +258,31 @@ class MarketOverview(BaseModel):
     generated: str = ""
 
 
+class RegimeStrategy(BaseModel):
+    id: str
+    name_en: str
+    name_ko: str
+    direction: str
+    timeframe: str
+    sl_pct: float
+    tp_pct: float
+    profit_factor: float
+    simulate_url_en: str
+    simulate_url_ko: str
+
+
+class RegimeResponse(BaseModel):
+    regime: str
+    regime_label_en: str
+    regime_label_ko: str
+    fng_index: int
+    fng_label: str
+    description_en: str
+    description_ko: str
+    recommended: List[RegimeStrategy]
+    generated: str
+
+
 class NewsItem(BaseModel):
     title: str
     link: str
