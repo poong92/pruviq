@@ -95,7 +95,7 @@ client:load / client:visible 로 API 데이터 fetch하는 페이지:
 
 ### 룰 3: 파트너 수수료율 — 단일 소스 of Truth
 ```
-모든 거래소 레퍼럴 수수료율 → src/config/partners.ts 에서만 정의
+모든 거래소 레퍼럴 수수료율 → src/config/exchanges.ts 에서만 정의
 콘텐츠/컴포넌트에서 하드코딩 절대 금지 (10%, 20%, 40% 혼용 방지)
 ```
 **근거**: Binance 할인율 10% vs 40% 불일치 (fees.astro vs CLAUDE.md, 2026-03-15 감사).
