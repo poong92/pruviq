@@ -1,74 +1,55 @@
 ---
-name: "ATR Breakout"
-description: "Average True Range based breakout detection. Shelved — tested 12 configurations across SHORT and LONG, none outperformed BB Squeeze."
-status: "shelved"
+name: "ATR Breakout SHORT"
+description: "Short when ATR spike signals a volatility expansion to the downside. Verified — 2,839 trades, PF 1.42, OOS-validated (IS→OOS: 1.57→1.28), measured 2026-05-04."
+status: "verified"
 category: "breakout"
-direction: "both"
+direction: "short"
 difficulty: "intermediate"
-winRate: 48.7
-profitFactor: 0.91
+winRate: 35.9
+profitFactor: 1.42
+maxDrawdown: 42.1
 timeframe: "1H"
-coins: 235
+coins: 50
 dateAdded: "2026-01-18"
-dateUpdated: "2026-04-10"
-tags: ["atr", "breakout", "shelved"]
+dateUpdated: "2026-05-04"
+tags: ["atr", "breakout", "short", "verified"]
 ---
 
 ## Overview
 
-ATR Breakout triggers trades when price moves beyond a multiple of ATR (Average True Range) from a moving average, indicating a volatility breakout. Unlike BB Squeeze which detects compression-then-expansion, ATR Breakout detects the expansion itself.
+ATR Breakout SHORT fires when the Average True Range (14-period) spikes above its moving average threshold — signalling a volatility expansion — and price is moving downward. Unlike BB Squeeze which waits for compression first, this strategy catches the early momentum of a directional volatility burst.
 
-The hypothesis: ATR directly measures "true" price movement including gaps, potentially catching breakouts that Bollinger Bands miss.
+Re-verified 2026-05-04 via full sweep (1,680 combinations × 50 coins, IS/OOS split). Prior shelved status was based on comparison with BB Squeeze (now killed) using ATR-multiple configs. Fixed SL/TP format reveals a clear short-side edge.
 
 ## How It Works
 
-1. **Calculate ATR** — 14-period Average True Range (includes high-low range and gaps)
-2. **Set Breakout Threshold** — Price must move > N × ATR from 20-period MA
-3. **Volume Confirmation** — Volume >= 2.0x average
-4. **Enter Position** — SHORT if price breaks below, LONG if above
-5. **Risk Management** — SL based on ATR multiple, TP at fixed %, 48h max hold
+1. **ATR spike** — 14-period ATR crosses above 1.5× its 20-period moving average
+2. **Directional filter** — price below its 20-period MA confirms downward bias
+3. **Volume confirmation** — volume ≥ 1.5× 20-period average
+4. **Entry** — SHORT on bar close
+5. **Exit** — TP 10% / SL 3% / 48-bar (2-day) timeout
+6. **Risk** — asymmetric: 1:3.3 R:R (3% risk, 10% reward)
 
-## Configurations Tested
+## Why It Works (Thesis)
 
-| Config | ATR Multiple | Direction | Win Rate | PF | PnL |
-|--------|-------------|-----------|----------|-----|-----|
-| A1 | 1.5x | SHORT | 52.3% | 1.08 | +$31 |
-| A2 | 2.0x | SHORT | 49.1% | 0.94 | -$47 |
-| A3 | 2.5x | SHORT | 46.8% | 0.87 | -$112 |
-| A4 | 3.0x | SHORT | 44.2% | 0.79 | -$189 |
-| B1 | 1.5x | LONG | 48.1% | 0.88 | -$98 |
-| B2 | 2.0x | LONG | 45.6% | 0.81 | -$167 |
-| ... | ... | ... | ... | ... | ... |
+ATR spikes in crypto typically mean one of two things: a genuine directional move, or a wick-spike that reverts. On a 1H timeframe with the 3% SL, you get stopped out quickly when it's a wick. When it's a real downward expansion — an altcoin breaks support, a leverage cascade starts — the 10% TP captures the bulk of the move.
 
-**Best result (A1)**: +$31 — marginally profitable but nowhere near BB Squeeze's +$794.
+The SHORT edge (not LONG) is structural: in crypto, downward volatility expansions tend to be sharper and less frequently faded by new buyers in the first 2 hours. Upward expansions attract FOMO buyers that compress the follow-through.
 
-12 configurations tested across ATR multiples (1.5x to 3.0x) and both directions. None came close to BB Squeeze performance.
+## Results (2-year backtest, IS/OOS split, measured 2026-05-04)
 
-## Why It Was Shelved
+| Metric | IS (May24–May25) | OOS (May25–May26) | Combined |
+|--------|-----------------|------------------|---------|
+| Total trades | 1,513 | 1,326 | 2,839 |
+| Win rate | ~38% | ~34% | 35.9% |
+| Profit factor | 1.57 | 1.28 | 1.42 |
+| Coins profitable | 48/50 | 36/50 | — |
 
-1. **No configuration outperformed BB Squeeze** — Best case: +$31 vs BB Squeeze's +$794 (25x worse)
-2. **Higher false signal rate** — ATR breakout triggers on any large move, including noise. BB Squeeze's compression-first requirement filters out most false breakouts
-3. **Less precise timing** — BB/KC squeeze pinpoints the exact moment of compression release. ATR just measures "big move happened" without context
-4. **Direction problem** — SHORT configurations were marginal, LONG configurations all negative (same structural issue as other LONG strategies)
+Low win rate is by design — the 1:3.3 R:R means each win covers 3+ losses.
 
-## Lesson Learned
+## Caveats
 
-> Breakout detection without compression context is just noise detection.
-
-The key insight: what makes BB Squeeze work isn't detecting the breakout — it's detecting the compression *before* the breakout. ATR measures volatility expansion but can't distinguish between meaningful expansion (from a squeeze) and random large candles.
-
-This is why BB Squeeze uses the Bollinger-inside-Keltner condition: it specifically identifies the quiet-before-the-storm pattern that precedes directional moves.
-
-## Comparison with BB Squeeze
-
-| Aspect | ATR Breakout | BB Squeeze |
-|--------|-------------|-----------|
-| Detection | Expansion only | Compression → Expansion |
-| False signals | High (any big candle) | Low (requires prior squeeze) |
-| Best PnL | +$31 | +$794 |
-| Signal quality | Low | High |
-| Complexity | Simple | Moderate |
-
-## Status: SHELVED
-
-Not actively traded. Tested January 2026 on 577 coins with 2+ years of data. All 12 configurations archived. May be revisited if combined with BB Squeeze as a confirmation signal.
+- OOS PF (1.28) is lower than IS (1.57) — some IS outperformance did not carry forward. This is the weakest of the three sweep survivors.
+- Tight 3% SL generates frequent stop-outs. Requires accepting 64% loss rate.
+- Not live-tracked. Backtest only.
+- All LONG configurations remain unprofitable on OOS data.
