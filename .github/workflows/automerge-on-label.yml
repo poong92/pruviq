@@ -44,13 +44,6 @@ jobs:
       - name: Attempt auto-merge if labeled and checks pass
         uses: actions/github-script@v9
         with:
-          # AUTOMERGE_PAT (repo+workflow scopes, repo owner account) is required for
-          # update-branch and empty-commit pushes to fire pull_request.synchronize events.
-          # GITHUB_TOKEN pushes are silently blocked by GitHub to prevent workflow loops,
-          # so CI triggered after a GITHUB_TOKEN push never appears in statusCheckRollup
-          # → branch protection blocks merge forever. PAT-authenticated pushes are not
-          # subject to this restriction and DO fire pull_request.synchronize correctly.
-          github-token: ${{ secrets.AUTOMERGE_PAT || secrets.GITHUB_TOKEN }}
           script: |
             const labelName = 'automerge';
             const restrictedExactFiles = [
