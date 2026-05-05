@@ -370,12 +370,12 @@ def build_market_json(global_data: Optional[dict], fear_index: int, fear_label: 
     top_gainers = [
         {"symbol": c["symbol"], "name": c["name"], "image": c["image"], "price": c["price"],
          "change_24h": c["change_24h"], "volume_24h": c.get("volume_24h", 0)}
-        for c in by_change[:10] if c.get("change_24h", 0) > 0
+        for c in by_change[:10] if (c.get("change_24h") or 0) > 0
     ]
     top_losers = [
         {"symbol": c["symbol"], "name": c["name"], "image": c["image"], "price": c["price"],
          "change_24h": c["change_24h"], "volume_24h": c.get("volume_24h", 0)}
-        for c in reversed(by_change) if c.get("change_24h", 0) < 0
+        for c in reversed(by_change) if (c.get("change_24h") or 0) < 0
     ][:10]
 
     btc = next((c for c in coins if c["symbol"] == "BTCUSDT"), {})
@@ -393,10 +393,10 @@ def build_market_json(global_data: Optional[dict], fear_index: int, fear_label: 
         btc_dominance = (btc_market_cap / total_market_cap_usd * 100) if total_market_cap_usd else 0
 
     return {
-        "btc_price": btc.get("price", 0),
-        "btc_change_24h": btc.get("change_24h", 0),
-        "eth_price": eth.get("price", 0),
-        "eth_change_24h": eth.get("change_24h", 0),
+        "btc_price": btc.get("price") or 0,
+        "btc_change_24h": btc.get("change_24h") or 0,
+        "eth_price": eth.get("price") or 0,
+        "eth_change_24h": eth.get("change_24h") or 0,
         "fear_greed_index": fear_index,
         "fear_greed_label": fear_label,
         "total_market_cap_b": round((total_market_cap_usd / 1e9) if total_market_cap_usd else 0, 1),
@@ -658,10 +658,10 @@ def main():
                     "symbol": c["symbol"].upper() + "USDT",
                     "name": c["name"],
                     "image": c.get("image", ""),
-                    "price": c.get("current_price", 0),
+                    "price": c.get("current_price") or 0,
                     "change_24h": c.get("price_change_percentage_24h") or 0,
-                    "volume_24h": c.get("total_volume", 0),
-                    "market_cap": c.get("market_cap", 0),
+                    "volume_24h": c.get("total_volume") or 0,
+                    "market_cap": c.get("market_cap") or 0,
                 }
                 for c in cg_fallback
             ]
