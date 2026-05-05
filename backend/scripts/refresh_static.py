@@ -365,7 +365,7 @@ def build_market_json(global_data: Optional[dict], fear_index: int, fear_label: 
     If CoinGecko /global API fails (rate limit), fallback to calculating totals
     from the coins list to avoid zeros showing in the UI.
     """
-    by_change = sorted(coins, key=lambda c: c.get("change_24h", 0), reverse=True)
+    by_change = sorted(coins, key=lambda c: c.get("change_24h") or 0, reverse=True)
 
     top_gainers = [
         {"symbol": c["symbol"], "name": c["name"], "image": c["image"], "price": c["price"],
@@ -659,7 +659,7 @@ def main():
                     "name": c["name"],
                     "image": c.get("image", ""),
                     "price": c.get("current_price", 0),
-                    "change_24h": c.get("price_change_percentage_24h", 0),
+                    "change_24h": c.get("price_change_percentage_24h") or 0,
                     "volume_24h": c.get("total_volume", 0),
                     "market_cap": c.get("market_cap", 0),
                 }
