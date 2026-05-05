@@ -647,11 +647,27 @@ def main():
     # 2. Fetch Binance tickers (PRIMARY — unlimited, real-time)
     binance_tickers = fetch_binance_tickers()
     if not binance_tickers:
-        print("ERROR: Binance unavailable (HTTP 451 from US/cloud IPs is expected). market.json NOT updated.")
-        print("  Partial refresh: writing macro + news only.")
-        # Still refresh macro + news — exit 0 so GH Actions creates the PR
-        # with whatever data we have. market.json stays stale until Mac Mini
-        # (non-US IP) refreshes it via the auto/mac-data-refresh PR branch.
+        print("WARN: Binance unavailable (HTTP 451 from US/cloud IPs). Falling back to CoinGecko for market.json.")
+        cg_fallback = fetch_coingecko_markets()
+        global_data = fetch_global_data()
+        fear_index, fear_label = fetch_fear_greed()
+        if cg_fallback:
+            # Build a minimal coins list from CoinGecko so market.json stays fresh
+            fallback_coins = [
+                {
+                    "symbol": c["symbol"].upper() + "USDT",
+                    "name": c["name"],
+                    "image": c.get("image", ""),
+                    "price": c.get("current_price", 0),
+                    "change_24h": c.get("price_change_percentage_24h", 0),
+                    "volume_24h": c.get("total_volume", 0),
+                    "market_cap": c.get("market_cap", 0),
+                }
+                for c in cg_fallback
+            ]
+            market = build_market_json(global_data, fear_index, fear_label, fallback_coins)
+            (OUTPUT_DIR / "market.json").write_text(json.dumps(market, ensure_ascii=False))
+            print(f"  market.json updated via CoinGecko fallback (btc=${market.get('btc_price',0):,.0f})")
         macro_json = build_macro_json()
         if macro_json:
             (OUTPUT_DIR / "macro.json").write_text(json.dumps(macro_json, ensure_ascii=False))
