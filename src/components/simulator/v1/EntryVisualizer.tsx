@@ -121,7 +121,7 @@ function renderStrategy(
     // 2026-04-22: new real-registry presets (PR fix/simulator-real-data).
     case "atr-breakout":
       return (
-        <TurtleBreakout
+        <ATRBreakout
           dir={direction === "long" ? "long" : "short"}
           lang={lang}
         />
@@ -168,8 +168,11 @@ function renderStrategy(
     case "adx-trend-short":
       return <ADXTrend dir="short" lang={lang} />;
     case "ichimoku-cloud-long":
-    case "ichimoku":
       return <Ichimoku dir="long" lang={lang} />;
+    case "ichimoku":
+      return (
+        <Ichimoku dir={direction === "long" ? "long" : "short"} lang={lang} />
+      );
     case "ichimoku-cloud-short":
       return <Ichimoku dir="short" lang={lang} />;
     case "psar-reversal-long":
@@ -682,6 +685,94 @@ function EMACrossover({
   );
 }
 
+// ── ATR Breakout ────────────────────────────────────────────────────────
+// EMA trend line + ATR bands (EMA ± multiplier·ATR). Entry when price
+// breaks out of the band in the trend direction.
+
+function ATRBreakout({
+  dir,
+  lang,
+}: {
+  dir: "long" | "short";
+  lang: "en" | "ko";
+}) {
+  const ema = "M0,75 L40,72 L80,68 L120,62 L160,55 L200,48 L240,42";
+  const upperBand =
+    dir === "long"
+      ? "M0,52 L40,48 L80,44 L120,36 L160,28 L200,20 L240,14"
+      : "M0,52 L40,50 L80,48 L120,45 L160,42 L200,38 L240,34";
+  const lowerBand =
+    dir === "long"
+      ? "M0,98 L40,96 L80,92 L120,88 L160,82 L200,76 L240,70"
+      : "M0,98 L40,94 L80,88 L120,79 L160,68 L200,58 L240,50";
+  const price =
+    dir === "long"
+      ? "M0,80 L40,76 L80,70 L120,62 L150,50 L170,32 L200,20 L240,12"
+      : "M0,68 L40,70 L80,72 L120,75 L150,82 L170,95 L200,108 L240,118";
+  const entryX = 150;
+  const entryY = dir === "long" ? 50 : 82;
+
+  return (
+    <g>
+      <AxisBase />
+      <path
+        d={upperBand}
+        fill="none"
+        stroke="var(--color-up)"
+        stroke-width="0.7"
+        stroke-dasharray="3,3"
+        opacity="0.5"
+      />
+      <path
+        d={lowerBand}
+        fill="none"
+        stroke="var(--color-down)"
+        stroke-width="0.7"
+        stroke-dasharray="3,3"
+        opacity="0.5"
+      />
+      <path
+        d={ema}
+        fill="none"
+        stroke="var(--color-accent)"
+        stroke-width="0.9"
+        opacity="0.6"
+      />
+      <path
+        d={price}
+        fill="none"
+        stroke="var(--color-text)"
+        stroke-width="1.5"
+      />
+      <EntryMarker
+        x={entryX}
+        y={entryY}
+        dir={dir}
+        labelX={entryX - 40}
+        labelY={dir === "long" ? entryY + 30 : entryY - 20}
+        labelText={`${L("breakout", lang)} ${dir === "long" ? "↑" : "↓"}`}
+      />
+      <text
+        x={10}
+        y={14}
+        fill="var(--color-text-muted)"
+        font-size="9"
+        font-family="monospace"
+      >
+        ATR Band + EMA
+      </text>
+      <g font-size="7" font-family="monospace" opacity="0.6">
+        <text x={200} y={dir === "long" ? 12 : 32} fill="var(--color-up)">
+          ATR+
+        </text>
+        <text x={200} y={dir === "long" ? 72 : 112} fill="var(--color-down)">
+          ATR−
+        </text>
+      </g>
+    </g>
+  );
+}
+
 // ── Turtle Breakout ─────────────────────────────────────────────────────
 
 function TurtleBreakout({
@@ -742,7 +833,7 @@ function TurtleBreakout({
         dir={dir}
         labelX={entryX - 35}
         labelY={entryY + 28}
-        labelText={`${L("breakout", lang)} ↑`}
+        labelText={`${L("breakout", lang)} ${dir === "long" ? "↑" : "↓"}`}
       />
       <text
         x={10}
