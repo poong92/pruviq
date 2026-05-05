@@ -16,7 +16,9 @@
 
 /sitemap.xml /sitemap-index.xml 301
 
-# /rankings/ → canonical /strategies/ranking
+# /ranking/ and /rankings/ → canonical /strategies/ranking
+/ranking /strategies/ranking 301
+/ranking/ /strategies/ranking 301
 /rankings /strategies/ranking 301
 /rankings/ /strategies/ranking 301
 
@@ -30,5 +32,7 @@
 /ko/builder /ko/simulate/ 301
 /ko/builder/* /ko/simulate/ 301
 # /ko/performance page exists — no redirect needed
+/ko/ranking /ko/strategies/ranking 301
+/ko/ranking/ /ko/strategies/ranking 301
 /ko/rankings /ko/strategies/ranking 301
 /ko/rankings/ /ko/strategies/ranking 301
