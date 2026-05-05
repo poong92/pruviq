@@ -126,6 +126,8 @@ function renderStrategy(
           lang={lang}
         />
       );
+    case "keltner-squeeze-long":
+      return <BBSqueeze dir="long" lang={lang} />;
     case "keltner-squeeze":
       return (
         <BBSqueeze dir={direction === "long" ? "long" : "short"} lang={lang} />
@@ -146,6 +148,8 @@ function renderStrategy(
     case "macd-crossover-short":
       return <MACDMomentum dir="short" lang={lang} />;
     case "stochastic-overbought-short":
+      return <StochasticOverbought dir="short" lang={lang} />;
+    case "stochastic-rsi":
       return <StochasticOverbought dir="short" lang={lang} />;
     case "stoch-rsi-overbought-short":
       return <StochasticOverbought dir="short" lang={lang} />;
@@ -341,7 +345,13 @@ function BBSqueeze({
         labelY={dir === "long" ? entryY + 38 : entryY - 26}
         labelText={`${L("breakout", lang)} ${dir === "long" ? "↑" : "↓"}`}
       />
-      <text x={10} y={14} fill="var(--color-text-muted)" font-size="9" font-family="monospace">
+      <text
+        x={10}
+        y={14}
+        fill="var(--color-text-muted)"
+        font-size="9"
+        font-family="monospace"
+      >
         BB (2σ)
       </text>
       <text
@@ -407,7 +417,13 @@ function RSIReversal({
         stroke-dasharray="2,2"
         opacity="0.6"
       />
-      <text x={4} y={113} fill="var(--color-up)" font-size="7" font-family="monospace">
+      <text
+        x={4}
+        y={113}
+        fill="var(--color-up)"
+        font-size="7"
+        font-family="monospace"
+      >
         RSI 30
       </text>
       {/* RSI line */}
@@ -426,7 +442,13 @@ function RSIReversal({
         labelY={entryY + 35}
         labelText={L("oversold_up", lang)}
       />
-      <text x={10} y={14} fill="var(--color-text-muted)" font-size="9" font-family="monospace">
+      <text
+        x={10}
+        y={14}
+        fill="var(--color-text-muted)"
+        font-size="9"
+        font-family="monospace"
+      >
         Price · RSI
       </text>
     </g>
@@ -500,7 +522,13 @@ function MACDMomentum({
         labelY={entryY - 18}
         labelText={L("macd_cross_zero", lang)}
       />
-      <text x={10} y={14} fill="var(--color-text-muted)" font-size="9" font-family="monospace">
+      <text
+        x={10}
+        y={14}
+        fill="var(--color-text-muted)"
+        font-size="9"
+        font-family="monospace"
+      >
         Price · MACD
       </text>
     </g>
@@ -543,11 +571,27 @@ function StochasticOverbought({
         stroke-dasharray="2,2"
         opacity="0.6"
       />
-      <text x={4} y={108} fill="var(--color-down)" font-size="7" font-family="monospace">
+      <text
+        x={4}
+        y={108}
+        fill="var(--color-down)"
+        font-size="7"
+        font-family="monospace"
+      >
         STOCH 80
       </text>
-      <path d={price} fill="none" stroke="var(--color-text)" stroke-width="1.5" />
-      <path d={stoch} fill="none" stroke="var(--color-purple)" stroke-width="1.5" />
+      <path
+        d={price}
+        fill="none"
+        stroke="var(--color-text)"
+        stroke-width="1.5"
+      />
+      <path
+        d={stoch}
+        fill="none"
+        stroke="var(--color-purple)"
+        stroke-width="1.5"
+      />
       <EntryMarker
         x={150}
         y={55}
@@ -556,7 +600,13 @@ function StochasticOverbought({
         labelY={55 - 15}
         labelText={L("overbought_down", lang)}
       />
-      <text x={10} y={14} fill="var(--color-text-muted)" font-size="9" font-family="monospace">
+      <text
+        x={10}
+        y={14}
+        fill="var(--color-text-muted)"
+        font-size="9"
+        font-family="monospace"
+      >
         Price · Stoch
       </text>
     </g>
@@ -591,8 +641,18 @@ function EMACrossover({
         stroke-width="1.1"
         opacity="0.7"
       />
-      <path d={emaFast} fill="none" stroke="var(--color-warning)" stroke-width="1.1" />
-      <path d={price} fill="none" stroke="var(--color-text)" stroke-width="1.5" />
+      <path
+        d={emaFast}
+        fill="none"
+        stroke="var(--color-warning)"
+        stroke-width="1.1"
+      />
+      <path
+        d={price}
+        fill="none"
+        stroke="var(--color-text)"
+        stroke-width="1.5"
+      />
       <EntryMarker
         x={entryX}
         y={entryY}
@@ -601,7 +661,13 @@ function EMACrossover({
         labelY={entryY + 30}
         labelText={L("golden_cross", lang)}
       />
-      <text x={10} y={14} fill="var(--color-text-muted)" font-size="9" font-family="monospace">
+      <text
+        x={10}
+        y={14}
+        fill="var(--color-text-muted)"
+        font-size="9"
+        font-family="monospace"
+      >
         EMA20 × EMA50
       </text>
       <g font-size="8" font-family="monospace">
@@ -664,7 +730,12 @@ function TurtleBreakout({
       >
         20-day HIGH
       </text>
-      <path d={price} fill="none" stroke="var(--color-text)" stroke-width="1.5" />
+      <path
+        d={price}
+        fill="none"
+        stroke="var(--color-text)"
+        stroke-width="1.5"
+      />
       <EntryMarker
         x={entryX}
         y={entryY}
@@ -673,7 +744,13 @@ function TurtleBreakout({
         labelY={entryY + 28}
         labelText={`${L("breakout", lang)} ↑`}
       />
-      <text x={10} y={14} fill="var(--color-text-muted)" font-size="9" font-family="monospace">
+      <text
+        x={10}
+        y={14}
+        fill="var(--color-text-muted)"
+        font-size="9"
+        font-family="monospace"
+      >
         Donchian 20
       </text>
     </g>
@@ -711,7 +788,12 @@ function ADXTrend({ dir, lang }: { dir: "long" | "short"; lang: "en" | "ko" }) {
       >
         ADX 25
       </text>
-      <path d={price} fill="none" stroke="var(--color-text)" stroke-width="1.5" />
+      <path
+        d={price}
+        fill="none"
+        stroke="var(--color-text)"
+        stroke-width="1.5"
+      />
       <path
         d={adx}
         fill="none"
@@ -727,7 +809,13 @@ function ADXTrend({ dir, lang }: { dir: "long" | "short"; lang: "en" | "ko" }) {
         labelY={dir === "long" ? entryY + 30 : entryY - 20}
         labelText={`${L("trend", lang)} ${dir === "long" ? "↑" : "↓"}`}
       />
-      <text x={10} y={14} fill="var(--color-text-muted)" font-size="9" font-family="monospace">
+      <text
+        x={10}
+        y={14}
+        fill="var(--color-text-muted)"
+        font-size="9"
+        font-family="monospace"
+      >
         Price · ADX
       </text>
     </g>
@@ -768,7 +856,12 @@ function Ichimoku({ dir, lang }: { dir: "long" | "short"; lang: "en" | "ko" }) {
         stroke-width="0.6"
         opacity="0.6"
       />
-      <path d={price} fill="none" stroke="var(--color-text)" stroke-width="1.5" />
+      <path
+        d={price}
+        fill="none"
+        stroke="var(--color-text)"
+        stroke-width="1.5"
+      />
       <EntryMarker
         x={entryX}
         y={entryY}
@@ -779,7 +872,13 @@ function Ichimoku({ dir, lang }: { dir: "long" | "short"; lang: "en" | "ko" }) {
           dir === "long" ? L("above_cloud", lang) : L("below_cloud", lang)
         }
       />
-      <text x={10} y={14} fill="var(--color-text-muted)" font-size="9" font-family="monospace">
+      <text
+        x={10}
+        y={14}
+        fill="var(--color-text-muted)"
+        font-size="9"
+        font-family="monospace"
+      >
         Ichimoku Kumo
       </text>
     </g>
@@ -829,7 +928,12 @@ function PsarReversal({
   return (
     <g>
       <AxisBase />
-      <path d={price} fill="none" stroke="var(--color-text)" stroke-width="1.5" />
+      <path
+        d={price}
+        fill="none"
+        stroke="var(--color-text)"
+        stroke-width="1.5"
+      />
       {psarPoints.map(([x, y]) => (
         <circle
           key={`${x},${y}`}
@@ -848,7 +952,13 @@ function PsarReversal({
         labelY={dir === "long" ? entryY + 28 : entryY - 18}
         labelText={`${L("sar_flip", lang)} ${dir === "long" ? "↑" : "↓"}`}
       />
-      <text x={10} y={14} fill="var(--color-text-muted)" font-size="9" font-family="monospace">
+      <text
+        x={10}
+        y={14}
+        fill="var(--color-text-muted)"
+        font-size="9"
+        font-family="monospace"
+      >
         Parabolic SAR
       </text>
     </g>
@@ -896,8 +1006,18 @@ function WilliamsR({
       >
         %R {dir === "long" ? "−80" : "−20"}
       </text>
-      <path d={price} fill="none" stroke="var(--color-text)" stroke-width="1.5" />
-      <path d={willr} fill="none" stroke="var(--color-warning)" stroke-width="1.5" />
+      <path
+        d={price}
+        fill="none"
+        stroke="var(--color-text)"
+        stroke-width="1.5"
+      />
+      <path
+        d={willr}
+        fill="none"
+        stroke="var(--color-warning)"
+        stroke-width="1.5"
+      />
       <EntryMarker
         x={entryX}
         y={entryY}
@@ -908,7 +1028,13 @@ function WilliamsR({
           dir === "long" ? L("wr_oversold", lang) : L("wr_overbought", lang)
         }
       />
-      <text x={10} y={14} fill="var(--color-text-muted)" font-size="9" font-family="monospace">
+      <text
+        x={10}
+        y={14}
+        fill="var(--color-text-muted)"
+        font-size="9"
+        font-family="monospace"
+      >
         Price · Williams
       </text>
     </g>
@@ -945,7 +1071,12 @@ function RSIBB({ dir, lang }: { dir: "long" | "short"; lang: "en" | "ko" }) {
         stroke-dasharray="3,2"
         opacity="0.5"
       />
-      <path d={price} fill="none" stroke="var(--color-text)" stroke-width="1.5" />
+      <path
+        d={price}
+        fill="none"
+        stroke="var(--color-text)"
+        stroke-width="1.5"
+      />
       <EntryMarker
         x={entryX}
         y={entryY}
@@ -958,7 +1089,13 @@ function RSIBB({ dir, lang }: { dir: "long" | "short"; lang: "en" | "ko" }) {
             : L("double_overbought", lang)
         }
       />
-      <text x={10} y={14} fill="var(--color-text-muted)" font-size="9" font-family="monospace">
+      <text
+        x={10}
+        y={14}
+        fill="var(--color-text-muted)"
+        font-size="9"
+        font-family="monospace"
+      >
         BB + RSI
       </text>
     </g>
@@ -1005,7 +1142,12 @@ function BBBounce({ dir, lang }: { dir: "long" | "short"; lang: "en" | "ko" }) {
         stroke-dasharray="1,2"
         opacity="0.4"
       />
-      <path d={price} fill="none" stroke="var(--color-text)" stroke-width="1.5" />
+      <path
+        d={price}
+        fill="none"
+        stroke="var(--color-text)"
+        stroke-width="1.5"
+      />
       <EntryMarker
         x={entryX}
         y={entryY}
@@ -1018,7 +1160,13 @@ function BBBounce({ dir, lang }: { dir: "long" | "short"; lang: "en" | "ko" }) {
             : L("band_reject_down", lang)
         }
       />
-      <text x={10} y={14} fill="var(--color-text-muted)" font-size="9" font-family="monospace">
+      <text
+        x={10}
+        y={14}
+        fill="var(--color-text-muted)"
+        font-size="9"
+        font-family="monospace"
+      >
         BB Band Bounce
       </text>
     </g>
@@ -1060,7 +1208,12 @@ function Supertrend({
         stroke-width="1.5"
         opacity="0.9"
       />
-      <path d={price} fill="none" stroke="var(--color-text)" stroke-width="1.5" />
+      <path
+        d={price}
+        fill="none"
+        stroke="var(--color-text)"
+        stroke-width="1.5"
+      />
       <EntryMarker
         x={entryX}
         y={entryY}
@@ -1069,7 +1222,13 @@ function Supertrend({
         labelY={dir === "long" ? entryY + 30 : entryY - 20}
         labelText={`${L("st_flip", lang)} ${dir === "long" ? "↑" : "↓"}`}
       />
-      <text x={10} y={14} fill="var(--color-text-muted)" font-size="9" font-family="monospace">
+      <text
+        x={10}
+        y={14}
+        fill="var(--color-text-muted)"
+        font-size="9"
+        font-family="monospace"
+      >
         Supertrend
       </text>
     </g>
@@ -1096,7 +1255,13 @@ function GenericViz({
         stroke-width="1.5"
       />
       <circle cx={180} cy={55} r="5" fill={hex} />
-      <text x={10} y={14} fill="var(--color-text-muted)" font-size="9" font-family="monospace">
+      <text
+        x={10}
+        y={14}
+        fill="var(--color-text-muted)"
+        font-size="9"
+        font-family="monospace"
+      >
         Entry signal
       </text>
     </g>
