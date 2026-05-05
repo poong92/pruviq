@@ -50,8 +50,10 @@ jobs:
               'astro.config.mjs',
               'wrangler.toml',
               'wrangler.jsonc',
-              'public/_redirects',
               'playwright.config.ts',
+              // public/_redirects removed: CI already validates via qa-redirects.sh
+              // (Verify _redirects vs dist/ check). Manual guard caused PRs like
+              // #1745 to be stuck despite passing all CI checks.
             ];
             const MIN_CHECK_RUNS = 2;
             const CI_WORKFLOWS = [
