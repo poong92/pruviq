@@ -7,12 +7,6 @@ import { useTranslations } from '../../../i18n/index';
 import StrategyTabs from '../../../components/ui/StrategyTabs.astro';
 
 const t = useTranslations('ko');
-const today = new Date().toLocaleDateString('ko-KR', {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric',
-  timeZone: 'Asia/Seoul',
-});
 
 // Fetch ranking data at build time for SSR fallback
 interface RankingEntry {
@@ -38,9 +32,19 @@ interface RankingData {
   worst3: RankingEntry[];
 }
 
+function formatRankingDate(isoDate: string): string {
+  try {
+    return new Date(isoDate + 'T00:00:00Z').toLocaleDateString('ko-KR', {
+      year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC',
+    });
+  } catch {
+    return isoDate;
+  }
+}
+
 function formatRankingTimestamp(iso?: string): string | null {
   if (!iso) return null;
-  const d = new Date(iso);
+  const d = new Date(iso.endsWith('Z') || iso.includes('+') ? iso : iso + 'Z');
   if (Number.isNaN(d.getTime())) return null;
   return d.toISOString().replace('T', ' ').slice(0, 16) + ' UTC';
 }
@@ -82,7 +86,7 @@ if (!ssrRanking) {
         {t('ranking.title')}
       </h1>
       <p class="text-(--color-text-muted) text-sm mb-1">
-        {t('ranking.date_label').replace('{date}', today)}
+        {t('ranking.date_label').replace('{date}', formatRankingDate(ssrRanking?.date ?? new Date().toISOString().slice(0, 10)))}
       </p>
       {ssrRanking?.generated_at && formatRankingTimestamp(ssrRanking.generated_at) && (
         <p class="font-mono text-[11px] text-(--color-text-muted) opacity-70 mb-1">
@@ -228,7 +232,7 @@ if (!ssrRanking) {
       {!ssrRanking && (
         <ErrorFallback
           message="랭킹 데이터를 일시적으로 불러올 수 없습니다"
-          detail="일일 랭킹은 매일 09:00 KST에 업데이트됩니다. 새로고침하거나 잠시 후 다시 확인해 주세요."
+          detail="일일 랭킹은 매일 01:00 UTC에 업데이트됩니다. 새로고침하거나 잠시 후 다시 확인해 주세요."
         />
       )}
 
