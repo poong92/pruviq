@@ -142,7 +142,24 @@ export default {
       return Response.redirect(url.toString(), 301);
     }
 
-    // Serve static assets for everything else
-    return env.ASSETS.fetch(request);
+    // Serve static assets for everything else.
+    // env.ASSETS.fetch() throws (not 404) for unknown paths in Advanced Mode;
+    // catch and serve the pre-built 404 page so users see 404 not 500/1101.
+    try {
+      return await env.ASSETS.fetch(request);
+    } catch {
+      const notFoundUrl = new URL("/404", request.url);
+      try {
+        const page = await env.ASSETS.fetch(
+          new Request(notFoundUrl.toString()),
+        );
+        return new Response(page.body, {
+          status: 404,
+          headers: page.headers,
+        });
+      } catch {
+        return new Response("Not found", { status: 404 });
+      }
+    }
   },
 };
