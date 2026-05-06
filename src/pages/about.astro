@@ -3,9 +3,10 @@ import Layout from '../layouts/Layout.astro';
 import { useTranslations } from '../i18n/index';
 import siteStats from '../../public/data/site-stats.json';
 import HeroGlow from '../components/ui/HeroGlow.astro';
+import { COINS_ANALYZED } from '../config/site-stats';
 
 const t = useTranslations('en');
-const coinsAnalyzed = (siteStats as { coins_analyzed: number }).coins_analyzed;
+const coinsAnalyzed = COINS_ANALYZED;
 const simulationsRun = (siteStats as { simulations_run: number }).simulations_run.toLocaleString('en-US');
 ---
 
