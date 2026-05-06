@@ -111,10 +111,6 @@ jobs:
             git diff --stat public/data/
           fi
 
-      # 2026-05-05: PRUVIQ_GH_TOKEN (poong92 PAT) → 403 "Permission denied" 확인.
-      # poong92 계정이 pruviq org repo 쓰기 권한 없음. GITHUB_TOKEN으로 전환.
-      # GITHUB_TOKEN PR은 pull_request 이벤트 workflow를 trigger 못 함 →
-      # 다음 스텝에서 workflow_dispatch로 직접 CI dispatch (automerge BEHIND 처리와 동일 패턴).
       - name: Create or update PR
         id: create-pr
         if: steps.changes.outputs.has_changes == 'true'
@@ -142,14 +138,3 @@ jobs:
           add-paths: |
             public/data/**
 
-      - name: Dispatch CI workflows for data-refresh PR
-        if: steps.changes.outputs.has_changes == 'true'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          BRANCH="auto/data-refresh"
-          for WF in unit-tests.yml e2e.yml accessibility.yml visual-regression.yml gitleaks.yml codeql.yml validate-startup-files.yml docs-lint.yml; do
-            gh workflow run "$WF" --ref "$BRANCH" 2>/dev/null \
-              && echo "Dispatched $WF on $BRANCH" \
-              || echo "WARN: $WF dispatch failed (may not support workflow_dispatch)"
-          done

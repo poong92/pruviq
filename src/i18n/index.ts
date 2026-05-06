@@ -1,6 +1,10 @@
 import { en, type TranslationKey } from "./en";
 import { ko } from "./ko";
-import { COINS_ANALYZED, STRATEGIES_COUNT } from "../config/site-stats";
+import {
+  COINS_ANALYZED,
+  STRATEGIES_COUNT,
+  PRESETS_COUNT,
+} from "../config/site-stats";
 
 const translations = { en, ko } as const;
 
@@ -8,6 +12,7 @@ const translations = { en, ko } as const;
 const GLOBAL_VARS: Record<string, string> = {
   "{coins}": String(COINS_ANALYZED),
   "{strategies}": String(STRATEGIES_COUNT),
+  "{presets}": String(PRESETS_COUNT),
 };
 
 export type Lang = keyof typeof translations;
