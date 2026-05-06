@@ -12,6 +12,7 @@ import StepCard from '../../components/ui/StepCard.astro';
 import CountUp from '../../components/ui/CountUp';
 import siteStats from '../../../public/data/site-stats.json';
 import presetsJson from '../../../public/data/builder-presets.json';
+import { COINS_ANALYZED } from '../../config/site-stats';
 
 const t = useTranslations('ko');
 const allStrategies = await getCollection('strategies');
@@ -21,7 +22,7 @@ const stats = siteStats as Record<string, number>;
 const presets = presetsJson as Array<unknown>;
 const simulatorPresetCount = presets.length;
 const simulationsRun = (stats.simulations_run ?? 0).toLocaleString('ko-KR');
-const coinsAnalyzed = stats.coins_analyzed ?? 0;
+const coinsAnalyzed = COINS_ANALYZED;
 const tradingDays = (stats.trading_days ?? 0).toLocaleString('ko-KR');
 const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1) + 'M';
 ---
