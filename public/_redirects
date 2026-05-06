@@ -28,6 +28,12 @@
 /compare/binance-vs-okx /fees 301
 /compare/binance-vs-okx/ /fees 301
 
+# Blog slug renames (why-backtests-fail → why-backtests-lie)
+/blog/why-backtests-fail /blog/why-backtests-lie/ 301
+/blog/why-backtests-fail/ /blog/why-backtests-lie/ 301
+/ko/blog/why-backtests-fail /ko/blog/why-backtests-lie/ 301
+/ko/blog/why-backtests-fail/ /ko/blog/why-backtests-lie/ 301
+
 # KO equivalents
 /ko/builder /ko/simulate/ 301
 /ko/builder/* /ko/simulate/ 301
