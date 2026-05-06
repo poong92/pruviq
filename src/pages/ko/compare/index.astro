@@ -1,10 +1,10 @@
 ---
 import Layout from '../../../layouts/Layout.astro';
 import { useTranslations } from '../../../i18n/index';
-import siteStats from '../../../../public/data/site-stats.json';
+import { COINS_ANALYZED } from '../../../config/site-stats';
 
 const t = useTranslations('ko');
-const coinsAnalyzed = (siteStats as Record<string, number>).coins_analyzed ?? 240;
+const coinsAnalyzed = COINS_ANALYZED;
 
 const comparisons = [
   { slug: 'tradingview', name: 'TradingView', desc: t('compare_index.tradingview_desc'), badge: t('compare_index.most_popular'), accent: '#2962FF', icon: '📈' },
