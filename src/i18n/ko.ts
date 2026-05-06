@@ -2015,7 +2015,7 @@ export const ko: Record<TranslationKey, string> = {
   "meta.crypto_simulator_title":
     "무료 크립토 트레이딩 시뮬레이터 — 회원가입 불필요 | 프루빅(PRUVIQ)",
   "meta.crypto_simulator_desc":
-    "무료 시뮬레이터로 크립토 트레이딩을 연습하세요. {coins}개 이상 코인, 실제 수수료, 36개 전략, 2년 이상의 과거 데이터로 테스트할 수 있습니다.",
+    "무료 시뮬레이터로 크립토 트레이딩을 연습하세요. {coins}개 이상 코인, 실제 수수료, {strategies}개 전략, 2년 이상의 과거 데이터로 테스트할 수 있습니다.",
   "meta.why_backtests_fail_title":
     "백테스트가 실패하는 이유 — 그리고 피하는 방법 | 프루빅(PRUVIQ)",
   "meta.why_backtests_fail_desc":

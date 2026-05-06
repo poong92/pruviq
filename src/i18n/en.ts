@@ -2056,7 +2056,7 @@ export const en = {
   "meta.crypto_simulator_title":
     "Free Crypto Trading Simulator — No Account Needed | PRUVIQ",
   "meta.crypto_simulator_desc":
-    "Practice crypto trading with a free simulator. Test {coins}+ coins with real fees, 36 strategies, and 2+ years of historical data. No signup required.",
+    "Practice crypto trading with a free simulator. Test {coins}+ coins with real fees, {strategies} strategies, and 2+ years of historical data. No signup required.",
   "meta.why_backtests_fail_title":
     "Why Backtests Fail — And How to Avoid It | PRUVIQ",
   "meta.why_backtests_fail_desc":
