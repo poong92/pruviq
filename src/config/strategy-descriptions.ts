@@ -48,6 +48,10 @@ export const STRATEGY_DESCRIPTIONS: Record<string, { en: string; ko: string }> =
       en: "BB exits Keltner Channel — strong in Fear & Greed regimes",
       ko: "BB가 켈트너 채널 이탈 — 공포/탐욕 구간에서 강함",
     },
+    "keltner-squeeze-long": {
+      en: "Keltner squeeze breakout (long only) — best LONG MDD in the tested set",
+      ko: "켈트너 스퀴즈 돌파 (롱 전용) — 테스트 전략 중 최저 롱 MDD",
+    },
     "stochastic-rsi": {
       en: "Stochastic RSI golden/death cross in oversold/overbought zones",
       ko: "스토캐스틱 RSI 골든/데드 크로스 — 과매도/과매수 구간",

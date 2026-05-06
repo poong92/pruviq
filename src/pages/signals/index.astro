@@ -3,6 +3,7 @@ import Layout from '../../layouts/Layout.astro';
 import { useTranslations } from '../../i18n/index';
 import SignalsDashboard from '../../components/SignalsDashboard';
 import ErrorBoundary from '../../components/ErrorBoundary';
+import { STRATEGIES_COUNT } from '../../config/site-stats';
 const t = useTranslations('en');
 ---
 
@@ -26,7 +27,7 @@ const t = useTranslations('en');
       <!-- Stats -->
       <div class="grid grid-cols-3 gap-4 mb-8">
         <div class="card-premium p-4 text-center">
-          <p class="text-2xl md:text-3xl font-bold font-mono text-(--color-text)">17</p>
+          <p class="text-2xl md:text-3xl font-bold font-mono text-(--color-text)">{STRATEGIES_COUNT}</p>
           <p class="text-xs text-(--color-text-muted) mt-1 font-mono uppercase tracking-wider">{t('signals.stat_strategies')}</p>
         </div>
         <div class="card-premium p-4 text-center">
@@ -71,7 +72,7 @@ const t = useTranslations('en');
   <noscript>
     <div class="max-w-4xl mx-auto px-4 py-12">
       <h1 class="text-2xl font-bold mb-4">Live Trading Signals</h1>
-      <p class="mb-4">17 strategies scan 30+ coins every hour at candle close. Signals include entry price, stop-loss, and take-profit levels.</p>
+      <p class="mb-4">{STRATEGIES_COUNT} strategies scan 30+ coins every hour at candle close. Signals include entry price, stop-loss, and take-profit levels.</p>
       <h2 class="text-lg font-semibold mb-2">Active Strategies</h2>
       <ul class="list-disc pl-6 space-y-1 mb-6">
         <li><a href="/strategies/bb-squeeze-short" class="text-(--color-accent) hover:underline">BB Squeeze Short</a> — Bollinger Band squeeze breakdowns (verified, 68.6% win rate)</li>
