@@ -171,7 +171,18 @@ jobs:
                 repo: context.repo.repo,
                 ref: headSha,
               });
-              const checkRuns = checksData.check_runs.filter(c => c.name !== 'attempt-merge');
+              // Deduplicate: keep only the latest run per check name.
+              // Stale cancelled/queued runs (e.g. from a superseded CI trigger) would
+              // otherwise permanently block merge even when the latest run is success.
+              const allRuns = checksData.check_runs.filter(c => c.name !== 'attempt-merge');
+              const latestByName = new Map();
+              for (const run of allRuns) {
+                const existing = latestByName.get(run.name);
+                if (!existing || new Date(run.started_at) > new Date(existing.started_at)) {
+                  latestByName.set(run.name, run);
+                }
+              }
+              const checkRuns = Array.from(latestByName.values());
               const total = checkRuns.length;
               const allCompleted = checkRuns.every(c => c.status === 'completed');
               const allSuccess = checkRuns.every(c => c.conclusion === 'success' || c.conclusion === 'skipped');
@@ -206,25 +217,15 @@ jobs:
                     repo: context.repo.repo,
                     pull_number: prNumber,
                   });
-                  core.info(`PR #${prNumber}: update-branch dispatched`);
+                  core.info(`PR #${prNumber}: update-branch dispatched — pull_request.synchronize will trigger CI`);
                 } catch (err) {
                   core.warning(`PR #${prNumber}: update-branch failed: ${err.message}`);
                   return;
                 }
-                const prBranch = prDetail.head.ref;
-                for (const wf of CI_WORKFLOWS) {
-                  try {
-                    await github.rest.actions.createWorkflowDispatch({
-                      owner: context.repo.owner,
-                      repo: context.repo.repo,
-                      workflow_id: wf,
-                      ref: prBranch,
-                    });
-                    core.info(`Dispatched ${wf} on ${prBranch}`);
-                  } catch (err) {
-                    core.warning(`Could not dispatch ${wf}: ${err.message}`);
-                  }
-                }
+                // No manual createWorkflowDispatch here: updateBranch() via AUTOMERGE_PAT
+                // fires pull_request.synchronize which triggers all CI workflows automatically.
+                // Manual dispatch caused duplicate Playwright runs → cancelled stale runs →
+                // allSuccess=false → permanent merge block.
                 return;
               }
 

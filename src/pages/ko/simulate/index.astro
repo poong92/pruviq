@@ -3,11 +3,12 @@ import Layout from '../../../layouts/Layout.astro';
 import { useTranslations } from '../../../i18n/index';
 import presetsJson from '../../../../public/data/builder-presets.json';
 import siteStats from '../../../../public/data/site-stats.json';
+import { COINS_ANALYZED } from '../../../config/site-stats';
 
 const t = useTranslations('ko');
 const presetCount = (presetsJson as Array<unknown>).length;
 const simulationsRun = (siteStats as { simulations_run: number }).simulations_run.toLocaleString('ko-KR');
-const coinsAnalyzed = (siteStats as { coins_analyzed: number }).coins_analyzed;
+const coinsAnalyzed = COINS_ANALYZED;
 // 2026-04-22: rankings-daily.json top-3 parse removed (EN mirror parity).
 
 // SEO: SoftwareApplication JSON-LD (ko). See EN variant for rationale.

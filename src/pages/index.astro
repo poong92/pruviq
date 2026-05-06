@@ -12,6 +12,7 @@ import StepCard from '../components/ui/StepCard.astro';
 import CountUp from '../components/ui/CountUp';
 import siteStats from '../../public/data/site-stats.json';
 import presetsJson from '../../public/data/builder-presets.json';
+import { COINS_ANALYZED } from '../config/site-stats';
 
 const t = useTranslations('en');
 const allStrategies = await getCollection('strategies');
@@ -21,7 +22,7 @@ const stats = siteStats as Record<string, number>;
 const presets = presetsJson as Array<unknown>;
 const simulatorPresetCount = presets.length;
 const simulationsRun = (stats.simulations_run ?? 0).toLocaleString('en-US');
-const coinsAnalyzed = stats.coins_analyzed ?? 0;
+const coinsAnalyzed = COINS_ANALYZED;
 const tradingDays = (stats.trading_days ?? 0).toLocaleString('en-US');
 const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1) + 'M';
 ---
@@ -112,7 +113,8 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
 
   <!-- HOW IT WORKS -->
   <hr class="section-divider" />
-  <section class="reveal max-w-7xl mx-auto px-6 py-24 md:py-32 section-elevated">
+  <section class="reveal py-24 md:py-32 section-elevated">
+    <div class="max-w-7xl mx-auto px-6">
     <p class="font-mono text-(--color-accent) text-sm tracking-wider text-center mb-4">HOW IT WORKS</p>
     <h2 class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-center mb-5">Three Steps to Verified Results</h2>
     <p class="text-(--color-text-secondary) text-center text-xl mb-14 max-w-xl mx-auto">From strategy idea to data-backed decision.</p>
@@ -149,11 +151,13 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
         <p class="text-base font-semibold group-hover:text-(--color-accent) transition-colors">Learn more →</p>
       </a>
     </div>
+    </div>
   </section>
 
   <!-- HOW AUTOTRADING WORKS -->
   <hr class="section-divider" />
-  <section class="reveal max-w-7xl mx-auto px-6 py-24 md:py-32 section-elevated" aria-labelledby="autotrading-heading">
+  <section class="reveal py-24 md:py-32 section-elevated" aria-labelledby="autotrading-heading">
+    <div class="max-w-7xl mx-auto px-6">
     <p class="font-mono text-(--color-accent) text-sm tracking-wider text-center mb-4">AUTOTRADING</p>
     <h2 id="autotrading-heading" class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-center mb-5">From Verified Strategy to Running Bot</h2>
     <p class="text-(--color-text-secondary) text-center text-xl mb-14 max-w-xl mx-auto">Backtested. Verified. Executing 24/7 on OKX.</p>
@@ -169,6 +173,7 @@ const candlesProcessed = ((stats.candles_processed ?? 0) / 1_000_000).toFixed(1)
         <span class="px-2 py-0.5 text-[10px] font-mono font-bold uppercase tracking-wider rounded bg-(--color-accent)/10 text-(--color-accent-bright) border border-(--color-accent)/30">Coming Soon</span>
       </a>
       <p class="text-xs text-(--color-text-muted) mt-3">Auto-trading is being hardened. Simulator + verification stay fully free.</p>
+    </div>
     </div>
   </section>
 
