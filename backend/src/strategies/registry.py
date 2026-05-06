@@ -216,3 +216,20 @@ def get_all_strategies() -> dict:
         kwargs = entry.get("init_kwargs", {})
         result[strategy_id] = entry["class"](**kwargs)
     return result
+
+
+_CACHEABLE_STATUSES = frozenset({"verified", "research"})
+
+
+def get_cacheable_strategies() -> dict:
+    """Strategies eligible for indicator pre-caching (verified + research only).
+
+    Excludes killed/shelved/testing entries — those have no active users and
+    would waste ~175MB pickle + ~600MB Python memory each restart cycle.
+    """
+    result = {}
+    for strategy_id, entry in STRATEGY_REGISTRY.items():
+        if entry.get("status") in _CACHEABLE_STATUSES:
+            kwargs = entry.get("init_kwargs", {})
+            result[strategy_id] = entry["class"](**kwargs)
+    return result

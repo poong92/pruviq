@@ -147,7 +147,7 @@ from src.simulation.engine_fast import run_fast
 from src.simulation.monte_carlo import bootstrap_trades, compute_oos_metrics
 from src.simulation.aggregator import aggregate_trades as _aggregate_trades
 from src.strategies.bb_squeeze import BBSqueezeStrategy
-from src.strategies.registry import STRATEGY_REGISTRY, get_strategy, get_all_strategies
+from src.strategies.registry import STRATEGY_REGISTRY, get_strategy, get_all_strategies, get_cacheable_strategies
 
 # Config
 VERSION = "0.3.0"
@@ -215,8 +215,7 @@ def _refresh_data():
                             for sym, info in _cg_metadata.items()
                             if info.get("market_cap_rank")}
                 data_manager.sort_by_market_cap(mc_ranks)
-            all_strategies = get_all_strategies()
-            indicator_cache.build_multi(data_manager, all_strategies)
+            indicator_cache.build_multi(data_manager, get_cacheable_strategies())
             strategy = BBSqueezeStrategy(avoid_hours=AVOID_HOURS)
             global coin_stats_cache
             coin_stats_cache = _build_coin_stats(strategy)
@@ -454,10 +453,10 @@ async def lifespan(app: FastAPI):
                 # so future restarts use the fast path.
                 print(f"No fresh indicator cache at {cache_path} — building in-process (GIL-yield fallback)...")
                 def _build():
-                    print("Pre-computing indicators for all strategies...")
-                    all_strategies = get_all_strategies()
-                    indicator_cache.build_multi(data_manager, all_strategies)
-                    for sid in all_strategies:
+                    print("Pre-computing indicators for verified+research strategies...")
+                    cacheable = get_cacheable_strategies()
+                    indicator_cache.build_multi(data_manager, cacheable)
+                    for sid in cacheable:
                         cnt = indicator_cache.strategy_count(sid)
                         print(f"  {sid}: {cnt} coins cached")
                     print(f"Total build time: {indicator_cache._build_time:.1f}s")
