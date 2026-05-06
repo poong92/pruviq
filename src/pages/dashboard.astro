@@ -12,6 +12,7 @@ import TradingSettings from '../components/TradingSettings';
 import LivePositions from '../components/LivePositions';
 import LiveTradeHistory from '../components/LiveTradeHistory';
 import { AUTOTRADE_COMING_SOON } from '../config/feature-flags';
+import { OKX_DISCOUNT_PCT } from '../config/exchanges';
 ---
 
 <Layout title="Dashboard — PRUVIQ" description="Auto-trading dashboard (coming soon). Simulations remain fully free.">
@@ -53,7 +54,7 @@ import { AUTOTRADE_COMING_SOON } from '../config/feature-flags';
                 </div>
                 <div>
                   <h2 class="text-xl font-bold">OKX Broker</h2>
-                  <p class="text-sm text-(--color-text-muted)">Official Broker Partner — 20% fee discount</p>
+                  <p class="text-sm text-(--color-text-muted)">Official Broker Partner — {OKX_DISCOUNT_PCT}% fee discount</p>
                 </div>
               </div>
               <OKXConnectButton client:load lang="en" size="md" />
@@ -61,7 +62,7 @@ import { AUTOTRADE_COMING_SOON } from '../config/feature-flags';
             <div class="grid grid-cols-3 gap-4 mt-4">
               <div class="bg-(--color-bg)/50 rounded-xl p-3 text-center">
                 <p class="text-xs text-(--color-text-muted) mb-1">Fee Discount</p>
-                <p class="text-xl font-bold text-(--color-up)">20%</p>
+                <p class="text-xl font-bold text-(--color-up)">{OKX_DISCOUNT_PCT}%</p>
               </div>
               <div class="bg-(--color-bg)/50 rounded-xl p-3 text-center">
                 <p class="text-xs text-(--color-text-muted) mb-1">Execution</p>

@@ -9,8 +9,8 @@ import AutoTradingStatus from '../../components/AutoTradingStatus';
 import TradingSettings from '../../components/TradingSettings';
 import LivePositions from '../../components/LivePositions';
 import LiveTradeHistory from '../../components/LiveTradeHistory';
-
-const AUTOTRADE_COMING_SOON = true;
+import { AUTOTRADE_COMING_SOON } from '../../config/feature-flags';
+import { OKX_DISCOUNT_PCT } from '../../config/exchanges';
 ---
 
 <Layout title="대시보드 — PRUVIQ" description="OKX 연결 및 자동매매 설정을 관리합니다." lang="ko">
@@ -52,7 +52,7 @@ const AUTOTRADE_COMING_SOON = true;
                 </div>
                 <div>
                   <h2 class="text-xl font-bold">OKX 브로커</h2>
-                  <p class="text-sm text-(--color-text-muted)">공식 브로커 파트너 — 수수료 20% 할인</p>
+                  <p class="text-sm text-(--color-text-muted)">공식 브로커 파트너 — 수수료 {OKX_DISCOUNT_PCT}% 할인</p>
                 </div>
               </div>
               <OKXConnectButton client:load lang="ko" size="md" />
@@ -60,7 +60,7 @@ const AUTOTRADE_COMING_SOON = true;
             <div class="grid grid-cols-3 gap-4 mt-4">
               <div class="bg-(--color-bg)/50 rounded-xl p-3 text-center">
                 <p class="text-xs text-(--color-text-muted) mb-1">수수료 할인</p>
-                <p class="text-xl font-bold text-(--color-up)">20%</p>
+                <p class="text-xl font-bold text-(--color-up)">{OKX_DISCOUNT_PCT}%</p>
               </div>
               <div class="bg-(--color-bg)/50 rounded-xl p-3 text-center">
                 <p class="text-xs text-(--color-text-muted) mb-1">실행 방식</p>

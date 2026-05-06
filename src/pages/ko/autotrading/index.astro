@@ -4,6 +4,7 @@
 // is still gated by AUTOTRADE_COMING_SOON in OKXConnectButton, so visitors
 // land on the coming-soon hero rather than a non-functional connect step.
 import Layout from '../../../layouts/Layout.astro';
+import { OKX_DISCOUNT_PCT } from '../../../config/exchanges';
 ---
 
 <Layout
@@ -200,7 +201,7 @@ import Layout from '../../../layouts/Layout.astro';
           </div>
           <div>
             <h3 class="font-bold text-base mb-1">OKX 공식 브로커 파트너</h3>
-            <p class="text-(--color-text-muted) text-sm">공식 브로커 파트너십으로 PRUVIQ 사용자에게 수수료 20% 할인 제공.</p>
+            <p class="text-(--color-text-muted) text-sm">공식 브로커 파트너십으로 PRUVIQ 사용자에게 수수료 {OKX_DISCOUNT_PCT}% 할인 제공.</p>
           </div>
         </div>
 
@@ -268,7 +269,7 @@ import Layout from '../../../layouts/Layout.astro';
         <span class="px-4 py-2 rounded-full border border-(--color-up)/20 text-(--color-up) bg-(--color-up)/5">OKX 공식 파트너</span>
         <span class="px-4 py-2 rounded-full border border-(--color-up)/20 text-(--color-up) bg-(--color-up)/5">OAuth만 사용</span>
         <span class="px-4 py-2 rounded-full border border-(--color-up)/20 text-(--color-up) bg-(--color-up)/5">출금 권한 없음</span>
-        <span class="px-4 py-2 rounded-full border border-(--color-up)/20 text-(--color-up) bg-(--color-up)/5">수수료 20% 할인</span>
+        <span class="px-4 py-2 rounded-full border border-(--color-up)/20 text-(--color-up) bg-(--color-up)/5">수수료 {OKX_DISCOUNT_PCT}% 할인</span>
       </div>
 
       <a href="/ko/dashboard" class="btn btn-primary btn-lg">
