@@ -541,7 +541,7 @@ async def get_trade_history(request: Request, limit: int = Query(50, le=200)):
 
 # ── User Strategies (saved auto-trading configs) ───────────
 
-@router.post("/strategies")
+@router.post("/user-strategies")
 async def create_user_strategy(request: Request):
     """Create a new saved strategy for the current session."""
     session_id = _get_session(request)
@@ -560,7 +560,7 @@ async def create_user_strategy(request: Request):
     return {"strategy": strategy}
 
 
-@router.get("/strategies")
+@router.get("/user-strategies")
 async def list_user_strategies(request: Request):
     """List all strategies owned by the current session."""
     session_id = _get_session(request)
@@ -572,7 +572,7 @@ async def list_user_strategies(request: Request):
     return {"strategies": get_strategies(session_id)}
 
 
-@router.put("/strategies/{strategy_id}")
+@router.put("/user-strategies/{strategy_id}")
 async def update_user_strategy(strategy_id: str, request: Request):
     """Update selected fields of a strategy (partial update)."""
     session_id = _get_session(request)
@@ -594,7 +594,7 @@ async def update_user_strategy(strategy_id: str, request: Request):
     return {"strategy": strategy}
 
 
-@router.delete("/strategies/{strategy_id}")
+@router.delete("/user-strategies/{strategy_id}")
 async def delete_user_strategy(strategy_id: str, request: Request):
     """Delete a strategy owned by the current session."""
     session_id = _get_session(request)
@@ -608,7 +608,7 @@ async def delete_user_strategy(strategy_id: str, request: Request):
     return {"status": "deleted", "id": strategy_id}
 
 
-@router.post("/strategies/{strategy_id}/activate")
+@router.post("/user-strategies/{strategy_id}/activate")
 async def activate_user_strategy(strategy_id: str, request: Request):
     """Activate a strategy (deactivates all others for this session)."""
     session_id = _get_session(request)
@@ -624,7 +624,7 @@ async def activate_user_strategy(strategy_id: str, request: Request):
     return {"strategy": strategy}
 
 
-@router.post("/strategies/validate")
+@router.post("/user-strategies/validate")
 async def validate_strategy_params(request: Request):
     """
     Run the constraint engine against proposed params + live context.
