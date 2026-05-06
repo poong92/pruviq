@@ -1566,7 +1566,7 @@ export const en = {
   "coin_detail.data_period": "DATA PERIOD",
   "coin_detail.data_period_val": "2+ years (1H)",
   "coin_detail.strategy_desc":
-    "The BB Squeeze strategy identifies periods of low volatility (Bollinger Band compression) on {name}. When the bands expand and price breaks downward, a short position is entered. The strategy has been validated across 240 coins with out-of-sample testing and Monte Carlo simulation.",
+    "The BB Squeeze strategy identifies periods of low volatility (Bollinger Band compression) on {name}. When the bands expand and price breaks downward, a short position is entered. The strategy has been validated across {coins}+ coins with out-of-sample testing and Monte Carlo simulation.",
   "coin_detail.faq_title": "FAQ",
   "coin_detail.faq_q1": "What is the BB Squeeze SHORT strategy for {name}?",
   "coin_detail.faq_a1":
@@ -1701,7 +1701,7 @@ export const en = {
   "vs_3commas.row_coding_p": "No code — visual indicator builder",
   "vs_3commas.row_coding_other": "No coding — DCA/Grid bot wizard",
   "vs_3commas.row_coins": "Coins Supported",
-  "vs_3commas.row_coins_p": "240+ coins (OKX USDT-SWAP)",
+  "vs_3commas.row_coins_p": "{coins}+ coins (OKX USDT-SWAP)",
   "vs_3commas.row_coins_other": "Multiple exchanges, varies by plan",
   "vs_3commas.row_data": "Backtest Data",
   "vs_3commas.row_data_p": "2+ years hourly OHLCV with fee & slippage modeling",
@@ -1711,7 +1711,7 @@ export const en = {
   "vs_3commas.row_fees_p": "0.08% maker/taker + funding rate built-in",
   "vs_3commas.row_fees_other": "Live trading fees only (no backtest fee model)",
   "vs_3commas.row_multi": "Multi-coin Test",
-  "vs_3commas.row_multi_p": "240+ coins in one click",
+  "vs_3commas.row_multi_p": "{coins}+ coins in one click",
   "vs_3commas.row_multi_other": "Bot-by-bot setup, no batch backtest",
   "vs_3commas.row_transparency": "Failed Strategy Disclosure",
   "vs_3commas.row_transparency_p":
@@ -1732,7 +1732,7 @@ export const en = {
   "vs_3commas.why_title": "Why traders use PRUVIQ before 3Commas",
   "vs_3commas.why_1_title": "Validate Before You Automate",
   "vs_3commas.why_1_desc":
-    "Running a DCA bot on a coin that trends down loses money regardless of configuration. PRUVIQ lets you test your thesis across 240+ coins with real fee modeling before committing capital.",
+    "Running a DCA bot on a coin that trends down loses money regardless of configuration. PRUVIQ lets you test your thesis across {coins}+ coins with real fee modeling before committing capital.",
   "vs_3commas.why_2_title": "See the Failures, Not Just the Wins",
   "vs_3commas.why_2_desc":
     "PRUVIQ publishes failed strategies alongside successful ones. Seeing a strategy fail on 160 out of 240 coins is more valuable than cherry-picked wins.",
