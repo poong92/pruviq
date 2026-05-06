@@ -34,7 +34,7 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from api.data_manager import DataManager
 from api.indicator_cache import _strip_ohlcv
-from src.strategies.registry import get_all_strategies
+from src.strategies.registry import get_cacheable_strategies
 
 DATA_DIR = Path(os.environ.get(
     "PRUVIQ_DATA_DIR",
@@ -87,9 +87,9 @@ def main() -> None:
     else:
         logger.warning("Market cap ranks unavailable — falling back to data-size order")
 
-    strategies = get_all_strategies()
+    strategies = get_cacheable_strategies()
     coins_to_cache = dm.coins[:MAX_COINS]
-    logger.info(f"Building {len(strategies)} strategies × {len(coins_to_cache)} coins")
+    logger.info(f"Building {len(strategies)} cacheable strategies × {len(coins_to_cache)} coins (killed/shelved/testing skipped)")
 
     multi_cache: dict = {}
     t_build = time.time()
