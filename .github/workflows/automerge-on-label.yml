@@ -171,7 +171,18 @@ jobs:
                 repo: context.repo.repo,
                 ref: headSha,
               });
-              const checkRuns = checksData.check_runs.filter(c => c.name !== 'attempt-merge');
+              // Deduplicate: keep only the latest run per check name.
+              // Stale cancelled/queued runs (e.g. from a superseded CI trigger) would
+              // otherwise permanently block merge even when the latest run is success.
+              const allRuns = checksData.check_runs.filter(c => c.name !== 'attempt-merge');
+              const latestByName = new Map();
+              for (const run of allRuns) {
+                const existing = latestByName.get(run.name);
+                if (!existing || new Date(run.started_at) > new Date(existing.started_at)) {
+                  latestByName.set(run.name, run);
+                }
+              }
+              const checkRuns = Array.from(latestByName.values());
               const total = checkRuns.length;
               const allCompleted = checkRuns.every(c => c.status === 'completed');
               const allSuccess = checkRuns.every(c => c.conclusion === 'success' || c.conclusion === 'skipped');
