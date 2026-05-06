@@ -347,7 +347,11 @@ export default function TrustGapPanel({ lang }: Props) {
           </p>
           <div class="flex flex-wrap items-center gap-2">
             <a
-              href="/simulate/?preset=atr-breakout"
+              href={
+                isKo
+                  ? "/ko/simulate/?preset=atr-breakout"
+                  : "/simulate/?preset=atr-breakout"
+              }
               class="inline-flex items-center gap-1 rounded bg-(--color-accent) px-3 py-1.5 text-xs font-semibold text-white hover:bg-(--color-accent-bright) min-h-[32px]"
             >
               {isKo
@@ -356,7 +360,7 @@ export default function TrustGapPanel({ lang }: Props) {
               →
             </a>
             <a
-              href="/methodology"
+              href={isKo ? "/ko/methodology" : "/methodology"}
               class="inline-flex items-center gap-1 rounded border border-(--color-border-hover) px-3 py-1.5 text-xs text-(--color-text-secondary) hover:border-(--color-border-hover) min-h-[32px]"
             >
               {isKo ? "갭 측정 방식" : "How we measure gap"} →

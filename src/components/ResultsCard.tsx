@@ -783,7 +783,7 @@ export default function ResultsCard({
                     {t.totalCost}
                   </span>
                   <a
-                    href="/fees"
+                    href={lang === "ko" ? "/ko/fees" : "/fees"}
                     class="text-[10px] font-mono text-(--color-accent) hover:underline"
                   >
                     {t.feeSaveTip} &rarr;
@@ -1164,7 +1164,7 @@ export default function ResultsCard({
 
       {/* Referral CTA banner */}
       <a
-        href="/fees"
+        href={lang === "ko" ? "/ko/fees" : "/fees"}
         class="mt-1 flex items-center justify-between gap-2 px-3 py-2.5 rounded-lg border border-(--color-yellow)/40 bg-(--color-yellow)/5 hover:border-(--color-yellow)/70 hover:bg-(--color-yellow)/10 transition-colors no-underline group"
       >
         <span class="font-mono text-[11px] text-(--color-yellow) group-hover:text-(--color-yellow)">
