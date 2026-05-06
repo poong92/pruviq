@@ -184,7 +184,7 @@ export const en = {
   "how.tag": "HOW IT WORKS",
   "how.title": "3 Steps",
   "how.step1": "Choose",
-  "how.step1_desc": "36 presets or build your own with 14 indicators.",
+  "how.step1_desc": "{presets} presets or build your own with 14 indicators.",
   "how.step2": "Simulate",
   "how.step2_desc": "SL, TP, leverage, time filters. Real fees included.",
   "how.step3": "Verify",
@@ -674,7 +674,7 @@ export const en = {
   "about.roadmap_title": "Roadmap",
   "about.roadmap_desc":
     "PRUVIQ is actively developed. Here's what we're working on:",
-  "about.roadmap_done1": "Strategy simulator with 36 presets",
+  "about.roadmap_done1": "Strategy simulator with {presets} presets",
   "about.roadmap_done2": "{coins}+ coin backtesting engine",
   "about.roadmap_done3": "29 educational guides (EN + KO)",
   "about.roadmap_done4": "Daily strategy rankings",
