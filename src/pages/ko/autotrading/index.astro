@@ -4,11 +4,13 @@
 // is still gated by AUTOTRADE_COMING_SOON in OKXConnectButton, so visitors
 // land on the coming-soon hero rather than a non-functional connect step.
 import Layout from '../../../layouts/Layout.astro';
+import { OKX_DISCOUNT_PCT } from '../../../config/exchanges';
+import { COINS_ANALYZED } from '../../../config/site-stats';
 ---
 
 <Layout
   title="자동매매 — 곧 출시 (OKX OAuth 승인 대기) | PRUVIQ"
-  description="프루빅이 240개 이상의 코인으로 전략을 검증합니다. 자동매매는 OKX OAuth 승인 이후 공개 예정 — 대기자 명단에 등록하세요."
+  description={`프루빅이 ${COINS_ANALYZED}개 이상의 코인으로 전략을 검증합니다. 자동매매는 OKX OAuth 승인 이후 공개 예정 — 대기자 명단에 등록하세요.`}
 >
 
   <!-- HERO -->
@@ -27,7 +29,7 @@ import Layout from '../../../layouts/Layout.astro';
       </h1>
 
       <p class="text-xl md:text-2xl text-(--color-text-secondary) leading-relaxed max-w-2xl mx-auto mb-10">
-        프루빅이 현재 <strong class="text-(--color-text)">240개 이상의 코인</strong>으로 전략을 검증하고 있습니다. 자동매매는 OKX OAuth 승인 이후 오픈 예정 — 브로커 심사 진행 중입니다.
+        프루빅이 현재 <strong class="text-(--color-text)">{COINS_ANALYZED}개 이상의 코인</strong>으로 전략을 검증하고 있습니다. 자동매매는 OKX OAuth 승인 이후 오픈 예정 — 브로커 심사 진행 중입니다.
       </p>
 
       <div class="flex flex-col sm:flex-row gap-4 justify-center">
@@ -63,7 +65,7 @@ import Layout from '../../../layouts/Layout.astro';
         </div>
         <h3 class="font-bold text-xl mb-3">프루빅이 검증</h3>
         <p class="text-(--color-text-muted) leading-relaxed">
-          240개 이상의 코인과 실제 시장 조건으로 전략을 테스트합니다. 검증된 우위를 가진 전략만 배포 가능합니다.
+          {COINS_ANALYZED}개 이상의 코인과 실제 시장 조건으로 전략을 테스트합니다. 검증된 우위를 가진 전략만 배포 가능합니다.
         </p>
       </div>
 
@@ -200,7 +202,7 @@ import Layout from '../../../layouts/Layout.astro';
           </div>
           <div>
             <h3 class="font-bold text-base mb-1">OKX 공식 브로커 파트너</h3>
-            <p class="text-(--color-text-muted) text-sm">공식 브로커 파트너십으로 PRUVIQ 사용자에게 수수료 20% 할인 제공.</p>
+            <p class="text-(--color-text-muted) text-sm">공식 브로커 파트너십으로 PRUVIQ 사용자에게 수수료 {OKX_DISCOUNT_PCT}% 할인 제공.</p>
           </div>
         </div>
 
@@ -268,7 +270,7 @@ import Layout from '../../../layouts/Layout.astro';
         <span class="px-4 py-2 rounded-full border border-(--color-up)/20 text-(--color-up) bg-(--color-up)/5">OKX 공식 파트너</span>
         <span class="px-4 py-2 rounded-full border border-(--color-up)/20 text-(--color-up) bg-(--color-up)/5">OAuth만 사용</span>
         <span class="px-4 py-2 rounded-full border border-(--color-up)/20 text-(--color-up) bg-(--color-up)/5">출금 권한 없음</span>
-        <span class="px-4 py-2 rounded-full border border-(--color-up)/20 text-(--color-up) bg-(--color-up)/5">수수료 20% 할인</span>
+        <span class="px-4 py-2 rounded-full border border-(--color-up)/20 text-(--color-up) bg-(--color-up)/5">수수료 {OKX_DISCOUNT_PCT}% 할인</span>
       </div>
 
       <a href="/ko/dashboard" class="btn btn-primary btn-lg">
