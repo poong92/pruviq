@@ -1,5 +1,6 @@
 import stats from "../../public/data/site-stats.json";
 import coinsStats from "../../public/data/coins-stats.json";
+import presetsData from "../../public/data/builder-presets.json";
 
 /** Total coins currently loaded into the scanner.
  *
@@ -14,6 +15,9 @@ export const COINS_ANALYZED: number =
 
 /** Total strategies tested */
 export const STRATEGIES_COUNT: number = stats.strategies_tested ?? 16;
+
+/** Preset count — derived from builder-presets.json (SSoT) */
+export const PRESETS_COUNT: number = (presetsData as unknown[]).length;
 
 /** Indicator count (not in site-stats.json, manually maintained) */
 export const INDICATORS_COUNT: number = 14;

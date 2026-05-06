@@ -181,7 +181,7 @@ export const ko: Record<TranslationKey, string> = {
   "how.tag": "이렇게 작동합니다",
   "how.title": "3단계",
   "how.step1": "선택",
-  "how.step1_desc": "36개 프리셋 또는 14개 지표로 직접 구성.",
+  "how.step1_desc": "{presets}개 프리셋 또는 14개 지표로 직접 구성.",
   "how.step2": "시뮬레이션",
   "how.step2_desc": "SL, TP, 레버리지, 시간 필터. 실제 수수료 포함.",
   "how.step3": "검증",
@@ -667,7 +667,7 @@ export const ko: Record<TranslationKey, string> = {
   "about.roadmap_tag": "다음 단계",
   "about.roadmap_title": "로드맵",
   "about.roadmap_desc": "PRUVIQ는 활발히 개발 중입니다. 현재 작업 중인 내용:",
-  "about.roadmap_done1": "36개 프리셋 전략 시뮬레이터",
+  "about.roadmap_done1": "{presets}개 프리셋 전략 시뮬레이터",
   "about.roadmap_done2": "{coins}+ 코인 백테스팅 엔진",
   "about.roadmap_done3": "29개 교육 가이드 (영어 + 한국어)",
   "about.roadmap_done4": "일일 전략 랭킹",
@@ -2015,7 +2015,7 @@ export const ko: Record<TranslationKey, string> = {
   "meta.crypto_simulator_title":
     "무료 크립토 트레이딩 시뮬레이터 — 회원가입 불필요 | 프루빅(PRUVIQ)",
   "meta.crypto_simulator_desc":
-    "무료 시뮬레이터로 크립토 트레이딩을 연습하세요. {coins}개 이상 코인, 실제 수수료, 36개 전략, 2년 이상의 과거 데이터로 테스트할 수 있습니다.",
+    "무료 시뮬레이터로 크립토 트레이딩을 연습하세요. {coins}개 이상 코인, 실제 수수료, {strategies}개 전략, 2년 이상의 과거 데이터로 테스트할 수 있습니다.",
   "meta.why_backtests_fail_title":
     "백테스트가 실패하는 이유 — 그리고 피하는 방법 | 프루빅(PRUVIQ)",
   "meta.why_backtests_fail_desc":
