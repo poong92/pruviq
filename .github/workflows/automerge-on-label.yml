@@ -217,25 +217,15 @@ jobs:
                     repo: context.repo.repo,
                     pull_number: prNumber,
                   });
-                  core.info(`PR #${prNumber}: update-branch dispatched`);
+                  core.info(`PR #${prNumber}: update-branch dispatched — pull_request.synchronize will trigger CI`);
                 } catch (err) {
                   core.warning(`PR #${prNumber}: update-branch failed: ${err.message}`);
                   return;
                 }
-                const prBranch = prDetail.head.ref;
-                for (const wf of CI_WORKFLOWS) {
-                  try {
-                    await github.rest.actions.createWorkflowDispatch({
-                      owner: context.repo.owner,
-                      repo: context.repo.repo,
-                      workflow_id: wf,
-                      ref: prBranch,
-                    });
-                    core.info(`Dispatched ${wf} on ${prBranch}`);
-                  } catch (err) {
-                    core.warning(`Could not dispatch ${wf}: ${err.message}`);
-                  }
-                }
+                // No manual createWorkflowDispatch here: updateBranch() via AUTOMERGE_PAT
+                // fires pull_request.synchronize which triggers all CI workflows automatically.
+                // Manual dispatch caused duplicate Playwright runs → cancelled stale runs →
+                // allSuccess=false → permanent merge block.
                 return;
               }
 
