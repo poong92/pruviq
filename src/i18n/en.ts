@@ -184,7 +184,7 @@ export const en = {
   "how.tag": "HOW IT WORKS",
   "how.title": "3 Steps",
   "how.step1": "Choose",
-  "how.step1_desc": "36 presets or build your own with 14 indicators.",
+  "how.step1_desc": "{presets} presets or build your own with 14 indicators.",
   "how.step2": "Simulate",
   "how.step2_desc": "SL, TP, leverage, time filters. Real fees included.",
   "how.step3": "Verify",
@@ -674,7 +674,7 @@ export const en = {
   "about.roadmap_title": "Roadmap",
   "about.roadmap_desc":
     "PRUVIQ is actively developed. Here's what we're working on:",
-  "about.roadmap_done1": "Strategy simulator with 36 presets",
+  "about.roadmap_done1": "Strategy simulator with {presets} presets",
   "about.roadmap_done2": "{coins}+ coin backtesting engine",
   "about.roadmap_done3": "29 educational guides (EN + KO)",
   "about.roadmap_done4": "Daily strategy rankings",
@@ -1167,16 +1167,16 @@ export const en = {
   // Signals page
   "meta.signals_title": "Live Trading Signals — PRUVIQ",
   "meta.signals_desc":
-    "Real-time crypto trading signals from 17 verified strategies across 30+ coins. Updated every hour. Verify any signal with the simulator.",
+    "Real-time crypto trading signals from {strategies} verified strategies across 30+ coins. Updated every hour. Verify any signal with the simulator.",
   "signals.title": "Live Signals",
   "signals.desc":
-    'Real-time trading signals from 17 strategies scanning 30 coins every hour. Each signal shows entry price, stop-loss, and take-profit levels. Click "Verify" to backtest any signal in the simulator.',
+    'Real-time trading signals from {strategies} strategies scanning 30+ coins every hour. Each signal shows entry price, stop-loss, and take-profit levels. Click "Verify" to backtest any signal in the simulator.',
   "signals.stat_strategies": "Strategies",
   "signals.stat_coins": "Coins Scanned",
   "signals.stat_interval": "Scan Interval",
   "signals.how_title": "How it works:",
   "signals.how_desc":
-    "Our engine scans 17 strategies on the latest completed 1H candles. When a strategy's entry conditions are met, a signal appears here. Signals are not trade recommendations — always verify with the simulator first.",
+    "Our engine scans {strategies} strategies on the latest completed 1H candles. When a strategy's entry conditions are met, a signal appears here. Signals are not trade recommendations — always verify with the simulator first.",
   "signals.cta_tag": "VERIFY & EXECUTE",
   "signals.cta_title": "See a signal you want to test?",
   "signals.cta_desc":
@@ -1566,7 +1566,7 @@ export const en = {
   "coin_detail.data_period": "DATA PERIOD",
   "coin_detail.data_period_val": "2+ years (1H)",
   "coin_detail.strategy_desc":
-    "The BB Squeeze strategy identifies periods of low volatility (Bollinger Band compression) on {name}. When the bands expand and price breaks downward, a short position is entered. The strategy has been validated across 240 coins with out-of-sample testing and Monte Carlo simulation.",
+    "The BB Squeeze strategy identifies periods of low volatility (Bollinger Band compression) on {name}. When the bands expand and price breaks downward, a short position is entered. The strategy has been validated across {coins}+ coins with out-of-sample testing and Monte Carlo simulation.",
   "coin_detail.faq_title": "FAQ",
   "coin_detail.faq_q1": "What is the BB Squeeze SHORT strategy for {name}?",
   "coin_detail.faq_a1":
@@ -1679,7 +1679,7 @@ export const en = {
   "meta.vs_3commas_title":
     "PRUVIQ vs 3Commas — Free Crypto Backtesting Alternative",
   "meta.vs_3commas_desc":
-    "Compare PRUVIQ with 3Commas for crypto strategy backtesting. No subscription fees. $0 — no subscription. 240+ coins with real fee simulation.",
+    "Compare PRUVIQ with 3Commas for crypto strategy backtesting. No subscription fees. $0 — no subscription. {coins}+ coins with real fee simulation.",
   "vs_3commas.tag": "HONEST COMPARISON",
   "vs_3commas.title": "PRUVIQ vs 3Commas",
   "vs_3commas.subtitle": "Backtesting research vs. automated trading bots",
@@ -1687,7 +1687,7 @@ export const en = {
     "3Commas is a leading automated trading platform with DCA and Grid bots. PRUVIQ is a dedicated backtesting research tool. Different purposes — here is how they compare when you need to validate a strategy before risking real money.",
   "vs_3commas.tldr": "TL;DR",
   "vs_3commas.tldr_text":
-    "3Commas automates live trading ($15-110/mo). PRUVIQ validates strategies before you trade — free, no-code, 240+ coins, with real fees and slippage. Use PRUVIQ to research, then 3Commas to execute.",
+    "3Commas automates live trading ($15-110/mo). PRUVIQ validates strategies before you trade — free, no-code, {coins}+ coins, with real fees and slippage. Use PRUVIQ to research, then 3Commas to execute.",
   "vs_3commas.feature": "Feature",
   "vs_3commas.pruviq": "PRUVIQ",
   "vs_3commas.other": "3Commas",
@@ -1701,7 +1701,7 @@ export const en = {
   "vs_3commas.row_coding_p": "No code — visual indicator builder",
   "vs_3commas.row_coding_other": "No coding — DCA/Grid bot wizard",
   "vs_3commas.row_coins": "Coins Supported",
-  "vs_3commas.row_coins_p": "240+ coins (OKX USDT-SWAP)",
+  "vs_3commas.row_coins_p": "{coins}+ coins (OKX USDT-SWAP)",
   "vs_3commas.row_coins_other": "Multiple exchanges, varies by plan",
   "vs_3commas.row_data": "Backtest Data",
   "vs_3commas.row_data_p": "2+ years hourly OHLCV with fee & slippage modeling",
@@ -1711,7 +1711,7 @@ export const en = {
   "vs_3commas.row_fees_p": "0.08% maker/taker + funding rate built-in",
   "vs_3commas.row_fees_other": "Live trading fees only (no backtest fee model)",
   "vs_3commas.row_multi": "Multi-coin Test",
-  "vs_3commas.row_multi_p": "240+ coins in one click",
+  "vs_3commas.row_multi_p": "{coins}+ coins in one click",
   "vs_3commas.row_multi_other": "Bot-by-bot setup, no batch backtest",
   "vs_3commas.row_transparency": "Failed Strategy Disclosure",
   "vs_3commas.row_transparency_p":
@@ -1732,7 +1732,7 @@ export const en = {
   "vs_3commas.why_title": "Why traders use PRUVIQ before 3Commas",
   "vs_3commas.why_1_title": "Validate Before You Automate",
   "vs_3commas.why_1_desc":
-    "Running a DCA bot on a coin that trends down loses money regardless of configuration. PRUVIQ lets you test your thesis across 240+ coins with real fee modeling before committing capital.",
+    "Running a DCA bot on a coin that trends down loses money regardless of configuration. PRUVIQ lets you test your thesis across {coins}+ coins with real fee modeling before committing capital.",
   "vs_3commas.why_2_title": "See the Failures, Not Just the Wins",
   "vs_3commas.why_2_desc":
     "PRUVIQ publishes failed strategies alongside successful ones. Seeing a strategy fail on 160 out of 240 coins is more valuable than cherry-picked wins.",
@@ -1743,7 +1743,7 @@ export const en = {
   "vs_3commas.when_pruviq_1":
     "Free strategy validation before committing to a paid bot",
   "vs_3commas.when_pruviq_2":
-    "Test one strategy across 240+ coins in one click",
+    "Test one strategy across {coins}+ coins in one click",
   "vs_3commas.when_pruviq_3":
     "See honest results including fees, slippage, and failures",
   "vs_3commas.when_pruviq_4":
@@ -1766,7 +1766,7 @@ export const en = {
   "meta.vs_coinrule_title":
     "PRUVIQ vs Coinrule — Free Crypto Backtesting Alternative",
   "meta.vs_coinrule_desc":
-    "Compare PRUVIQ with Coinrule for crypto strategy backtesting. $0 — no subscription, no IF-THEN limits, 240+ coins with real fee simulation.",
+    "Compare PRUVIQ with Coinrule for crypto strategy backtesting. $0 — no subscription, no IF-THEN limits, {coins}+ coins with real fee simulation.",
 
   "vs_coinrule.tag": "HONEST COMPARISON",
   "vs_coinrule.title": "PRUVIQ vs Coinrule",
@@ -1775,7 +1775,7 @@ export const en = {
     "Coinrule lets you automate trading with IF-THEN rules. If you want to rigorously backtest a strategy on hundreds of coins before deploying it, PRUVIQ is built for that — and it's free.",
   "vs_coinrule.tldr": "TL;DR",
   "vs_coinrule.tldr_text":
-    "Coinrule is a rule-based automation tool. PRUVIQ is a backtesting-first research tool — free, no-code, 240+ coins, with slippage and fees built in.",
+    "Coinrule is a rule-based automation tool. PRUVIQ is a backtesting-first research tool — free, no-code, {coins}+ coins, with slippage and fees built in.",
   "vs_coinrule.feature": "Feature",
   "vs_coinrule.pruviq": "PRUVIQ",
   "vs_coinrule.other": "Coinrule",
@@ -1786,7 +1786,7 @@ export const en = {
   "vs_coinrule.row_coding_p": "No code — visual builder",
   "vs_coinrule.row_coding_other": "No coding — IF-THEN rule builder",
   "vs_coinrule.row_coins": "Coins Supported",
-  "vs_coinrule.row_coins_p": "240+ coins (OKX USDT-SWAP)",
+  "vs_coinrule.row_coins_p": "{coins}+ coins (OKX USDT-SWAP)",
   "vs_coinrule.row_coins_other": "Multiple exchanges, plan-dependent limits",
   "vs_coinrule.row_data": "Backtest Data",
   "vs_coinrule.row_data_p": "Real OHLCV with fees & slippage",
@@ -1795,7 +1795,7 @@ export const en = {
   "vs_coinrule.row_fees_p": "0.08% maker/taker, funding included",
   "vs_coinrule.row_fees_other": "Live trading fees via exchange",
   "vs_coinrule.row_multi": "Multi-coin Test",
-  "vs_coinrule.row_multi_p": "240+ coins simultaneously",
+  "vs_coinrule.row_multi_p": "{coins}+ coins simultaneously",
   "vs_coinrule.row_multi_other": "Rule runs per coin, not batch backtest",
   "vs_coinrule.row_live": "Live Trading",
   "vs_coinrule.row_live_p": "Research tool — backtest only",
@@ -1830,7 +1830,7 @@ export const en = {
   "meta.vs_cryptohopper_title":
     "PRUVIQ vs Cryptohopper — Free Crypto Backtesting Alternative",
   "meta.vs_cryptohopper_desc":
-    "Compare PRUVIQ with Cryptohopper for crypto strategy backtesting. $0 — no subscription, no cloud subscription, 240+ coins with real fee and slippage simulation.",
+    "Compare PRUVIQ with Cryptohopper for crypto strategy backtesting. $0 — no subscription, no cloud subscription, {coins}+ coins with real fee and slippage simulation.",
   "vs_cryptohopper.tag": "HONEST COMPARISON",
   "vs_cryptohopper.title": "PRUVIQ vs Cryptohopper",
   "vs_cryptohopper.subtitle": "Backtesting research vs. cloud trading bots",
@@ -1838,7 +1838,7 @@ export const en = {
     "Cryptohopper is a cloud-based automated trading platform with a strategy marketplace. PRUVIQ is a dedicated backtesting research tool. Both serve crypto traders — at different stages of the workflow.",
   "vs_cryptohopper.tldr": "TL;DR",
   "vs_cryptohopper.tldr_text":
-    "Cryptohopper executes trades via cloud bots ($24-107/mo). PRUVIQ validates strategies before you trade — free, no-code, 240+ coins, with realistic fee and slippage modeling. Research first, then automate.",
+    "Cryptohopper executes trades via cloud bots ($24-107/mo). PRUVIQ validates strategies before you trade — free, no-code, {coins}+ coins, with realistic fee and slippage modeling. Research first, then automate.",
   "vs_cryptohopper.feature": "Feature",
   "vs_cryptohopper.pruviq": "PRUVIQ",
   "vs_cryptohopper.other": "Cryptohopper",
@@ -1853,7 +1853,7 @@ export const en = {
   "vs_cryptohopper.row_coding_other":
     "No coding — template-based + marketplace strategies",
   "vs_cryptohopper.row_coins": "Coins Supported",
-  "vs_cryptohopper.row_coins_p": "240+ coins (OKX USDT-SWAP)",
+  "vs_cryptohopper.row_coins_p": "{coins}+ coins (OKX USDT-SWAP)",
   "vs_cryptohopper.row_coins_other":
     "Multiple exchanges, coin count varies by plan",
   "vs_cryptohopper.row_data": "Backtest Data",
@@ -1866,7 +1866,7 @@ export const en = {
   "vs_cryptohopper.row_fees_other":
     "Exchange fees at live execution (no backtest fee model)",
   "vs_cryptohopper.row_multi": "Multi-coin Test",
-  "vs_cryptohopper.row_multi_p": "240+ coins in one click",
+  "vs_cryptohopper.row_multi_p": "{coins}+ coins in one click",
   "vs_cryptohopper.row_multi_other":
     "Per-bot setup, no batch backtest across all coins",
   "vs_cryptohopper.row_transparency": "Failed Strategy Disclosure",
@@ -1893,7 +1893,7 @@ export const en = {
   "vs_cryptohopper.why_title": "Why traders use PRUVIQ before Cryptohopper",
   "vs_cryptohopper.why_1_title": "Test Before You Subscribe",
   "vs_cryptohopper.why_1_desc":
-    "At $24-107/mo, Cryptohopper is an investment. PRUVIQ lets you validate your strategy idea across 240+ coins for free before committing to a subscription.",
+    "At $24-107/mo, Cryptohopper is an investment. PRUVIQ lets you validate your strategy idea across {coins}+ coins for free before committing to a subscription.",
   "vs_cryptohopper.why_2_title": "Marketplace Strategies Need Verification",
   "vs_cryptohopper.why_2_desc":
     "Cryptohopper's marketplace shows strategy descriptions but limited backtest proof. Use PRUVIQ to independently verify any strategy logic across hundreds of coins with real fee modeling.",
@@ -1904,7 +1904,7 @@ export const en = {
   "vs_cryptohopper.when_pruviq_1":
     "Free strategy research before subscribing to a cloud bot",
   "vs_cryptohopper.when_pruviq_2":
-    "Verify a marketplace strategy idea across 240+ coins",
+    "Verify a marketplace strategy idea across {coins}+ coins",
   "vs_cryptohopper.when_pruviq_3":
     "See honest results including fees, slippage, and failures",
   "vs_cryptohopper.when_pruviq_4":
@@ -1929,7 +1929,7 @@ export const en = {
   "meta.vs_gainium_title":
     "PRUVIQ vs Gainium — Free Crypto Backtesting Alternative",
   "meta.vs_gainium_desc":
-    "Compare PRUVIQ with Gainium for crypto strategy backtesting. $0 — no subscription, no DCA-only limits, 240+ coins with real slippage and fee simulation.",
+    "Compare PRUVIQ with Gainium for crypto strategy backtesting. $0 — no subscription, no DCA-only limits, {coins}+ coins with real slippage and fee simulation.",
   "vs_gainium.tag": "HONEST COMPARISON",
   "vs_gainium.title": "PRUVIQ vs Gainium",
   "vs_gainium.subtitle": "for crypto backtesting",
@@ -1937,7 +1937,7 @@ export const en = {
     "Gainium specializes in DCA bots with solid portfolio management on Binance. If you want to rigorously backtest a strategy across hundreds of coins before committing capital, PRUVIQ provides that research layer for free.",
   "vs_gainium.tldr": "TL;DR",
   "vs_gainium.tldr_text":
-    "Gainium focuses on DCA execution and portfolio management. PRUVIQ is built for research-first backtesting — free, no-code, 240+ coins, with real cost simulation.",
+    "Gainium focuses on DCA execution and portfolio management. PRUVIQ is built for research-first backtesting — free, no-code, {coins}+ coins, with real cost simulation.",
   "vs_gainium.feature": "Feature",
   "vs_gainium.pruviq": "PRUVIQ",
   "vs_gainium.other": "Gainium",
@@ -1948,7 +1948,7 @@ export const en = {
   "vs_gainium.row_coding_p": "No code — visual builder",
   "vs_gainium.row_coding_other": "No coding — DCA bot configuration",
   "vs_gainium.row_coins": "Coins Supported",
-  "vs_gainium.row_coins_p": "240+ coins (OKX USDT-SWAP)",
+  "vs_gainium.row_coins_p": "{coins}+ coins (OKX USDT-SWAP)",
   "vs_gainium.row_coins_other": "Binance-focused, curated coin list",
   "vs_gainium.row_data": "Backtest Data",
   "vs_gainium.row_data_p": "Real OHLCV with fees & slippage",
@@ -1957,7 +1957,7 @@ export const en = {
   "vs_gainium.row_fees_p": "0.08% maker/taker, funding included",
   "vs_gainium.row_fees_other": "Fees applied at live execution",
   "vs_gainium.row_multi": "Multi-coin Test",
-  "vs_gainium.row_multi_p": "240+ coins simultaneously",
+  "vs_gainium.row_multi_p": "{coins}+ coins simultaneously",
   "vs_gainium.row_multi_other": "Portfolio view, not batch backtest",
   "vs_gainium.row_live": "Live Trading",
   "vs_gainium.row_live_p": "Research tool — backtest only",
@@ -1984,13 +1984,13 @@ export const en = {
   "vs_gainium.when_other_4": "Automated live trading without manual execution",
   "vs_gainium.cta_title": "Try PRUVIQ Free Today",
   "vs_gainium.cta_desc":
-    "Research your strategy across 240+ coins for free before deploying any DCA bot. No account needed.",
+    "Research your strategy across {coins}+ coins for free before deploying any DCA bot. No account needed.",
 
   // Comparison pages: Streak
   "meta.vs_streak_title":
     "PRUVIQ vs Streak — Free Crypto Backtesting Alternative",
   "meta.vs_streak_desc":
-    "Compare PRUVIQ with Streak for crypto strategy backtesting. $0 — no subscription, no Pine Script required, 240+ coins with real fee and slippage simulation.",
+    "Compare PRUVIQ with Streak for crypto strategy backtesting. $0 — no subscription, no Pine Script required, {coins}+ coins with real fee and slippage simulation.",
   "vs_streak.tag": "HONEST COMPARISON",
   "vs_streak.title": "PRUVIQ vs Streak",
   "vs_streak.subtitle": "for crypto backtesting",
@@ -2010,7 +2010,7 @@ export const en = {
   "vs_streak.row_coding_other":
     "Pine Script (TradingView integration required)",
   "vs_streak.row_coins": "Coins Supported",
-  "vs_streak.row_coins_p": "240+ coins (OKX USDT-SWAP)",
+  "vs_streak.row_coins_p": "{coins}+ coins (OKX USDT-SWAP)",
   "vs_streak.row_coins_other": "Depends on TradingView data connection",
   "vs_streak.row_data": "Backtest Data",
   "vs_streak.row_data_p": "Real OHLCV with fees & slippage",
@@ -2019,7 +2019,7 @@ export const en = {
   "vs_streak.row_fees_p": "0.08% maker/taker, funding included",
   "vs_streak.row_fees_other": "Configured manually in Pine Script",
   "vs_streak.row_multi": "Multi-coin Test",
-  "vs_streak.row_multi_p": "240+ coins simultaneously",
+  "vs_streak.row_multi_p": "{coins}+ coins simultaneously",
   "vs_streak.row_multi_other": "One chart at a time via TradingView",
   "vs_streak.row_live": "Live Trading",
   "vs_streak.row_live_p": "Research tool — backtest only",
@@ -2046,17 +2046,17 @@ export const en = {
   "vs_streak.when_other_4": "Multi-asset coverage beyond crypto futures",
   "vs_streak.cta_title": "Try PRUVIQ Free Today",
   "vs_streak.cta_desc":
-    "No Pine Script, no TradingView account, no fees. Test 240+ coins and see real results in seconds.",
+    "No Pine Script, no TradingView account, no fees. Test {coins}+ coins and see real results in seconds.",
 
   // SEO landing pages
   "meta.best_backtesting_title":
     "Best Free Crypto Backtesting Platform (2026) | PRUVIQ",
   "meta.best_backtesting_desc":
-    "Compare the best crypto backtesting platforms in 2026. PRUVIQ offers free, no-code backtesting with 240+ coins, real fees, and transparent failure data.",
+    "Compare the best crypto backtesting platforms in 2026. PRUVIQ offers free, no-code backtesting with {coins}+ coins, real fees, and transparent failure data.",
   "meta.crypto_simulator_title":
     "Free Crypto Trading Simulator — No Account Needed | PRUVIQ",
   "meta.crypto_simulator_desc":
-    "Practice crypto trading with a free simulator. Test 240+ coins with real fees, 36 strategies, and 2+ years of historical data. No signup required.",
+    "Practice crypto trading with a free simulator. Test {coins}+ coins with real fees, {strategies} strategies, and 2+ years of historical data. No signup required.",
   "meta.why_backtests_fail_title":
     "Why Backtests Fail — And How to Avoid It | PRUVIQ",
   "meta.why_backtests_fail_desc":

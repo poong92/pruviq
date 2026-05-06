@@ -3,6 +3,7 @@ import Layout from '../../../layouts/Layout.astro';
 import { useTranslations } from '../../../i18n/index';
 import SignalsDashboard from '../../../components/SignalsDashboard';
 import ErrorBoundary from '../../../components/ErrorBoundary';
+import { STRATEGIES_COUNT } from '../../../config/site-stats';
 const t = useTranslations('ko');
 ---
 
@@ -26,7 +27,7 @@ const t = useTranslations('ko');
       <!-- Stats -->
       <div class="grid grid-cols-3 gap-4 mb-8">
         <div class="card-premium p-4 text-center">
-          <p class="text-2xl md:text-3xl font-bold font-mono text-(--color-text)">17</p>
+          <p class="text-2xl md:text-3xl font-bold font-mono text-(--color-text)">{STRATEGIES_COUNT}</p>
           <p class="text-xs text-(--color-text-muted) mt-1 font-mono uppercase tracking-wider">{t('signals.stat_strategies')}</p>
         </div>
         <div class="card-premium p-4 text-center">
@@ -71,7 +72,7 @@ const t = useTranslations('ko');
   <noscript>
     <div class="max-w-4xl mx-auto px-4 py-12">
       <h1 class="text-2xl font-bold mb-4">실시간 매매 시그널</h1>
-      <p class="mb-4">17개 전략이 매시간 캔들 마감 시 30개 이상의 코인을 스캔합니다. 시그널에는 진입가, 손절, 익절 수준이 포함됩니다.</p>
+      <p class="mb-4">{STRATEGIES_COUNT}개 전략이 매시간 캔들 마감 시 30개 이상의 코인을 스캔합니다. 시그널에는 진입가, 손절, 익절 수준이 포함됩니다.</p>
       <h2 class="text-lg font-semibold mb-2">활성 전략</h2>
       <ul class="list-disc pl-6 space-y-1 mb-6">
         <li><a href="/ko/strategies/bb-squeeze-short" class="text-(--color-accent) hover:underline">BB Squeeze Short</a> — 볼린저 밴드 스퀴즈 하방 돌파 (검증됨, 승률 68.6%)</li>
