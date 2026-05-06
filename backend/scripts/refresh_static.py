@@ -652,22 +652,37 @@ def main():
         global_data = fetch_global_data()
         fear_index, fear_label = fetch_fear_greed()
         if cg_fallback:
-            # Build a minimal coins list from CoinGecko so market.json stays fresh
+            # Build a coins list from CoinGecko so market.json and coins-stats.json stay fresh
             fallback_coins = [
                 {
                     "symbol": c["symbol"].upper() + "USDT",
                     "name": c["name"],
                     "image": c.get("image", ""),
                     "price": c.get("current_price") or 0,
+                    "change_1h": round(c.get("price_change_percentage_1h_in_currency") or 0, 2),
                     "change_24h": c.get("price_change_percentage_24h") or 0,
+                    "change_7d": round(c.get("price_change_percentage_7d_in_currency") or 0, 2),
                     "volume_24h": c.get("total_volume") or 0,
                     "market_cap": c.get("market_cap") or 0,
+                    "market_cap_rank": c.get("market_cap_rank"),
+                    "sparkline_7d": downsample_sparkline(c.get("sparkline_in_7d", {}).get("price", [])),
                 }
                 for c in cg_fallback
             ]
+            fallback_coins.sort(key=lambda c: (c.get("market_cap") or 0), reverse=True)
             market = build_market_json(global_data, fear_index, fear_label, fallback_coins)
             (OUTPUT_DIR / "market.json").write_text(json.dumps(market, ensure_ascii=False))
             print(f"  market.json updated via CoinGecko fallback (btc=${market.get('btc_price',0):,.0f})")
+            coins_out = {
+                "generated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+                "total_coins": len(fallback_coins),
+                "coins": fallback_coins,
+            }
+            OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+            coins_path = OUTPUT_DIR / "coins-stats.json"
+            with open(coins_path, "w") as f:
+                json.dump(coins_out, f, separators=(",", ":"))
+            print(f"  coins-stats.json updated via CoinGecko fallback ({len(fallback_coins)} coins)")
         macro_json = build_macro_json()
         if macro_json:
             (OUTPUT_DIR / "macro.json").write_text(json.dumps(macro_json, ensure_ascii=False))
