@@ -66,19 +66,23 @@ jobs:
         run: |
           python3 - <<'PY'
           import json, datetime, urllib.request, sys
+          HEADERS = {"User-Agent": "PRUVIQ-Cron/1.0 (https://pruviq.com)"}
+          def fetch(url, timeout=10):
+              req = urllib.request.Request(url, headers=HEADERS)
+              return json.loads(urllib.request.urlopen(req, timeout=timeout).read())
           path = "public/data/site-stats.json"
           with open(path) as f:
               d = json.load(f)
           try:
-              health = json.loads(urllib.request.urlopen("https://api.pruviq.com/health", timeout=10).read())
+              health = fetch("https://api.pruviq.com/health")
               d["coins_analyzed"] = health.get("coins_loaded", d.get("coins_analyzed", 240))
           except Exception as e:
-              print(f"WARN: /health fetch failed — coins_analyzed unchanged ({e.__class__.__name__})", file=sys.stderr)
+              print(f"WARN: /health fetch failed — coins_analyzed unchanged ({e.__class__.__name__}: {e})", file=sys.stderr)
           try:
-              strats = json.loads(urllib.request.urlopen("https://api.pruviq.com/strategies", timeout=10).read())
+              strats = fetch("https://api.pruviq.com/strategies")
               d["strategies_tested"] = len(strats) if isinstance(strats, list) else d.get("strategies_tested", 17)
           except Exception as e:
-              print(f"WARN: /strategies fetch failed — strategies_tested unchanged ({e.__class__.__name__})", file=sys.stderr)
+              print(f"WARN: /strategies fetch failed — strategies_tested unchanged ({e.__class__.__name__}: {e})", file=sys.stderr)
           start = datetime.date(2023, 12, 30)
           d["trading_days"] = (datetime.date.today() - start).days
           d["last_updated"] = datetime.date.today().isoformat()
