@@ -5,6 +5,7 @@
 // users can now reach the OKX autotrade setup directly.
 import Layout from '../../layouts/Layout.astro';
 import { COINS_ANALYZED } from '../../config/site-stats';
+import { OKX_DISCOUNT_PCT } from '../../config/exchanges';
 ---
 
 <Layout
@@ -201,7 +202,7 @@ import { COINS_ANALYZED } from '../../config/site-stats';
           </div>
           <div>
             <h3 class="font-bold text-base mb-1">OKX Official Broker Partner</h3>
-            <p class="text-(--color-text-muted) text-sm">20% fee discount for PRUVIQ users via official broker partnership.</p>
+            <p class="text-(--color-text-muted) text-sm">{OKX_DISCOUNT_PCT}% fee discount for PRUVIQ users via official broker partnership.</p>
           </div>
         </div>
 
@@ -269,7 +270,7 @@ import { COINS_ANALYZED } from '../../config/site-stats';
         <span class="px-4 py-2 rounded-full border border-(--color-up)/20 text-(--color-up) bg-(--color-up)/5">OKX Official Partner</span>
         <span class="px-4 py-2 rounded-full border border-(--color-up)/20 text-(--color-up) bg-(--color-up)/5">OAuth Only</span>
         <span class="px-4 py-2 rounded-full border border-(--color-up)/20 text-(--color-up) bg-(--color-up)/5">No Withdrawal Access</span>
-        <span class="px-4 py-2 rounded-full border border-(--color-up)/20 text-(--color-up) bg-(--color-up)/5">20% Fee Discount</span>
+        <span class="px-4 py-2 rounded-full border border-(--color-up)/20 text-(--color-up) bg-(--color-up)/5">{OKX_DISCOUNT_PCT}% Fee Discount</span>
       </div>
 
       <a href="/dashboard" class="btn btn-primary btn-lg">

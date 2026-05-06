@@ -2,11 +2,12 @@
 import Layout from "../../../layouts/Layout.astro";
 import SimulatorV1 from "../../../components/simulator/v1/SimulatorV1";
 import { useTranslations } from "../../../i18n/index";
+import { COINS_ANALYZED } from "../../../config/site-stats";
 
 const t = useTranslations("en");
 const title = "PRUVIQ Simulator — Click a preset, see proof";
 const description =
-  "Quick-Start crypto strategy simulator. Click a preset, see a real backtest, compare it to our live OKX results. 7 curated presets, 240+ coins.";
+  `Quick-Start crypto strategy simulator. Click a preset, see a real backtest, compare it to our live OKX results. 7 curated presets, ${COINS_ANALYZED}+ coins.`;
 ---
 
 <Layout title={title} description={description}>
