@@ -17,7 +17,11 @@ test.describe("Interactive QA — 기능 클릭 테스트", () => {
   test("simulate: Breakout 시나리오 클릭 → 결과 표시", async ({ page }) => {
     await page.goto("/simulate/");
     await page.waitForLoadState("domcontentloaded");
-    await page.waitForLoadState("networkidle");
+    // 2026-05-07: networkidle never settles on /simulate/ — page sends analytics
+    // beacon (emit("sim.view")) on mount. Cap at 8s; real wait is toBeVisible(30s).
+    await page
+      .waitForLoadState("networkidle", { timeout: 8000 })
+      .catch(() => {});
 
     // 2026-04-19: QuickTestPanel 이 client:visible 로 hydrate → viewport 진입
     // 전엔 data-testid 렌더 안 됨. 하단 스크롤해서 hydration 강제.
