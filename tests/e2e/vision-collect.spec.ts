@@ -449,8 +449,9 @@ test.describe("Vision QA: collect screenshots and data", () => {
           h1_text: h1Text,
           h1_visible: h1Visible,
           coin_count_in_html: coinCountStr,
-          has_stale_549:
-            visibleText.includes("549") && !visibleText.includes("569"),
+          // 2026-05-07: Use coinCountStr (context-specific coin count) not raw
+          // visibleText.includes("549") — prices/volumes trigger false positives.
+          has_stale_549: coinCountStr?.includes("549") ?? false,
           has_skeleton: hasSkeleton,
           visible_text_sample: visibleText.slice(0, 500),
           korean_text_visible: /[\uAC00-\uD7AF]/.test(visibleText),
