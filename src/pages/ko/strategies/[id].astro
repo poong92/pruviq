@@ -228,7 +228,7 @@ const statusLabels: Record<string, string> = {
         </p>
         <div class="flex flex-col sm:flex-row gap-3 justify-center">
           {strategy.data.status === 'verified' && (
-            <a href={`/ko/simulate?preset=${strategy.id}`}
+            <a href={`/ko/simulate/builder/?strategy=${strategy.id}&dir=${strategy.data.direction}`}
                class="btn btn-primary btn-md">
               {t('strategy_detail.simulate_this')} &rarr;
             </a>
