@@ -44,4 +44,4 @@ Not every strategy works in every market. LONG strategies struggle in bearish ma
 
 Think different parameters could save this strategy? Test it yourself:
 
-[Simulate Momentum Long →](/simulate?strategy=momentum-long&dir=long)
+[Simulate Momentum Long →](/simulate/builder/?strategy=momentum-long&dir=long)
