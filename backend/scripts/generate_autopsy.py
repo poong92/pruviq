@@ -124,7 +124,7 @@ tags: ["autopsy", "{strategy_id}", "{direction}"]
 
 Think different parameters could save this strategy? Test it yourself:
 
-[Simulate {name} →](/simulate?strategy={strategy_id}&dir={direction})
+[Simulate {name} →](/simulate/builder/?strategy={strategy_id}&dir={direction})
 """
     else:  # ko
         title = f"전략 부검: {name}"
@@ -169,7 +169,7 @@ tags: ["autopsy", "{strategy_id}", "{direction}"]
 
 다른 파라미터로 이 전략을 살릴 수 있을까요?
 
-[{name} 시뮬레이션 →](/ko/simulate?strategy={strategy_id}&dir={direction})
+[{name} 시뮬레이션 →](/ko/simulate/builder/?strategy={strategy_id}&dir={direction})
 """
     return content
 
