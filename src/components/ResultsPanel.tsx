@@ -140,11 +140,12 @@ export default function ResultsPanel({
     const timeframeLabel = t.timeframe ?? "Timeframe";
     const coinsLabel = t.coins ?? "Coins";
     const directionLabel = t.direction ?? "Direction";
+    const topLabel = t.topN ?? "Top";
     const simulatePath = lang === "ko" ? "/ko/simulate" : "/simulate";
     const lines = [
       `${strategyLabel}: ${presetName}`,
       `${directionLabel}: ${dir} | SL: ${result.sl_pct ?? slPct}% | TP: ${result.tp_pct ?? tpPct}%`,
-      `${coinsLabel}: Top ${result.coins_used ?? topN} | ${timeframeLabel}: ${tf}`,
+      `${coinsLabel}: ${topLabel} ${result.coins_used ?? topN} | ${timeframeLabel}: ${tf}`,
       `Backtest via pruviq.com${simulatePath}`,
     ];
     navigator.clipboard.writeText(lines.join("\n")).then(() => {
