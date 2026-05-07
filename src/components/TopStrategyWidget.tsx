@@ -12,6 +12,7 @@ interface RankingEntry {
   rank: number;
   name_en: string;
   name_ko: string;
+  strategy: string;
   direction: string;
   timeframe: string;
   win_rate: number;
@@ -87,7 +88,10 @@ export function TopStrategyWidget({ lang = "en" }: { lang?: Lang }) {
     return () => ctrl.abort();
   }, []);
 
-  const simulatePath = lang === "ko" ? "/ko/simulate" : "/simulate";
+  const simulatePath = (top: RankingEntry) => {
+    const prefix = lang === "ko" ? "/ko" : "";
+    return `${prefix}/simulate/builder/?strategy=${top.strategy}&dir=${top.direction}`;
+  };
 
   if (loading) {
     return (
@@ -228,7 +232,7 @@ export function TopStrategyWidget({ lang = "en" }: { lang?: Lang }) {
 
         {/* CTA */}
         <a
-          href={simulatePath}
+          href={simulatePath(top)}
           class="block w-full text-center py-2.5 rounded-lg font-semibold text-sm transition-colors"
           style="background: var(--color-accent); color: #000; box-shadow: var(--shadow-accent-glow);"
           onMouseEnter={(e) => {
