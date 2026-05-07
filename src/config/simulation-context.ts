@@ -49,7 +49,7 @@ export function buildSimulatorUrl(
   ctx: SimulationContext,
   lang: "en" | "ko" = "en",
 ): string {
-  const base = lang === "ko" ? "/ko/simulate" : "/simulate";
+  const base = lang === "ko" ? "/ko/simulate/builder/" : "/simulate/builder/";
   const params = new URLSearchParams();
 
   for (const [key, param] of PARAM_MAP) {

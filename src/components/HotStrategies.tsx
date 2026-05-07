@@ -68,10 +68,10 @@ export default function HotStrategies({ lang = "en" }: { lang?: string }) {
 
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
         {top3.map((s, i) => {
-          const url = buildSimulatorUrl({
-            strategy: s.strategy_id,
-            direction: s.direction,
-          });
+          const url = buildSimulatorUrl(
+            { strategy: s.strategy_id, direction: s.direction },
+            lang === "ko" ? "ko" : "en",
+          );
 
           return (
             <Card
