@@ -95,9 +95,9 @@ There's no consensus on "correct" crypto Ichimoku settings. Any modification sho
 
 > Ichimoku is a powerful visual framework for understanding market structure, but its default parameters don't translate well to crypto's 24/7 volatility. Use individual components (Kijun, Cloud direction) as filters rather than trading the full system.
 
-Try combining Ichimoku's cloud as a trend filter with other indicators in [PRUVIQ's Strategy Builder](/simulate).
+Try combining Ichimoku's cloud as a trend filter with other indicators in [PRUVIQ's Strategy Builder](/simulate/builder/).
 
-[Open Strategy Builder →](/simulate)
+[Open Strategy Builder →](/simulate/builder/)
 
 ---
 
