@@ -129,11 +129,9 @@ jobs:
 
   api-response-contract:
     name: API endpoint contract (production)
-    # Runs on github-hosted runner against the live public API.
-    # Root cause of previous self-hosted dependency: test was hitting localhost:8080,
-    # requiring Mac Mini to be online. Structural fix: test against api.pruviq.com
-    # so this check always runs regardless of Mac Mini state.
-    runs-on: ubuntu-latest
+    # Uses ops self-hosted runner: Cloudflare WAF blocks GitHub-hosted runner IPs
+    # with 403 on api.pruviq.com. Mac Mini ops runner IP is not blocked.
+    runs-on: [self-hosted, ops]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
