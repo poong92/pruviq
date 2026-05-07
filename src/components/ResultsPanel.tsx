@@ -139,11 +139,13 @@ export default function ResultsPanel({
     const strategyLabel = t.strategyLabel?.replace(/:$/, "") ?? "Strategy";
     const timeframeLabel = t.timeframe ?? "Timeframe";
     const coinsLabel = t.coins ?? "Coins";
+    const directionLabel = t.direction ?? "Direction";
+    const simulatePath = lang === "ko" ? "/ko/simulate" : "/simulate";
     const lines = [
       `${strategyLabel}: ${presetName}`,
-      `Direction: ${dir} | SL: ${result.sl_pct ?? slPct}% | TP: ${result.tp_pct ?? tpPct}%`,
+      `${directionLabel}: ${dir} | SL: ${result.sl_pct ?? slPct}% | TP: ${result.tp_pct ?? tpPct}%`,
       `${coinsLabel}: Top ${result.coins_used ?? topN} | ${timeframeLabel}: ${tf}`,
-      `Backtest via pruviq.com/simulate`,
+      `Backtest via pruviq.com${simulatePath}`,
     ];
     navigator.clipboard.writeText(lines.join("\n")).then(() => {
       setSettingsCopied(true);
