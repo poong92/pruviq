@@ -60,7 +60,7 @@ def _rank_change_str(rc, lang: str) -> str:
 
 
 def _strategy_link(strategy: str, direction: str) -> str:
-    return f"https://pruviq.com/simulate?strategy={strategy}&direction={direction}"
+    return f"https://pruviq.com/simulate/builder/?strategy={strategy}&dir={direction}"
 
 
 # ── EN template ──────────────────────────────────────────────────────
