@@ -296,7 +296,7 @@ const presetDirColors: Record<string, string> = { long: '--color-accent', short:
             {strategy.data.status === 'verified' && (
               <div class="mt-4 pt-4 border-t border-(--color-border)/50 flex items-center justify-between">
                 <span class="text-xs text-(--color-up) font-mono">{t('strategies.verified_explanation')}</span>
-                <a href={`/ko/simulate?preset=${strategy.id}`}
+                <a href={`/ko/simulate/builder/?strategy=${strategy.id}`}
                    class="btn btn-primary btn-sm inline-flex items-center gap-1">
                   {t('strategies.simulate_button')} &rarr;
                 </a>
@@ -351,7 +351,7 @@ const presetDirColors: Record<string, string> = { long: '--color-accent', short:
                     : '';
                   return (
                   <a
-                    href={`/ko/simulate?preset=${preset.id}`}
+                    href={`/ko/simulate/builder/?preset=${preset.id}`}
                     class={`relative flex flex-col group preset-card-enhanced ${glowClass}`}
                   >
                     {isTodaysPick && (

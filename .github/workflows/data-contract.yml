@@ -180,9 +180,9 @@ jobs:
           try:
               import datetime
               resp = json.loads(urllib.request.urlopen(f"{API_BASE}/ohlcv/BTCUSDT?limit=1", timeout=10).read())
-              candles = resp.get("candles", resp) if isinstance(resp, dict) else resp
+              candles = resp.get("data", []) if isinstance(resp, dict) else resp
               if isinstance(candles, list) and candles:
-                  last_ts = candles[-1][0] / 1000  # ms → sec
+                  last_ts = candles[-1]["t"]  # seconds; API uses {"t":epoch_s,...}
                   age_hours = (datetime.datetime.utcnow().timestamp() - last_ts) / 3600
                   if age_hours > 2:
                       errors.append(f"/ohlcv/BTCUSDT: last candle is {age_hours:.1f}h old (max 2h)")
