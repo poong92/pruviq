@@ -32,4 +32,4 @@ All 26 strategies run on 1H timeframe with standardized SL/TP (10%/8%). No cherr
 
 ---
 
-Want to test these strategies yourself? [Try the simulator](/simulate?preset=ichimoku-cloud-long) with real market data.
+Want to test these strategies yourself? [Try the simulator](/simulate/builder/?preset=ichimoku-cloud-long) with real market data.
