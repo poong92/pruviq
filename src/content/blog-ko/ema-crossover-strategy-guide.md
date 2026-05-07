@@ -55,9 +55,9 @@ EMA는 쓸모없는 게 아니라 **잘못 사용**되는 것입니다. **추세
 
 > EMA 크로스오버는 추세 추종 도구이지 수정 구슬이 아닙니다. 방향 확인에 사용하세요, 신호 생성이 아닌. 조합의 힘이 핵심입니다.
 
-[Strategy Builder](/ko/builder)에서 EMA 기반 전략을 만들고 직접 확인해보세요.
+[Strategy Builder](/ko/simulate/builder/)에서 EMA 기반 전략을 만들고 직접 확인해보세요.
 
-[Strategy Builder 열기 →](/ko/builder)
+[Strategy Builder 열기 →](/ko/simulate/builder/)
 
 ---
 
