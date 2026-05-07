@@ -95,9 +95,9 @@ tags: ["ichimoku", "cloud", "trend", "indicators", "support-resistance"]
 
 > 일목균형표는 시장 구조를 이해하는 강력한 시각적 프레임워크이지만, 기본 파라미터는 크립토의 24/7 변동성에 잘 맞지 않습니다. 전체 시스템을 거래하기보다 개별 요소(기준선, 구름 방향)를 필터로 활용하세요.
 
-[PRUVIQ Strategy Builder](/ko/simulate)에서 일목 구름을 추세 필터로 조합해보세요.
+[PRUVIQ Strategy Builder](/ko/simulate/builder/)에서 일목 구름을 추세 필터로 조합해보세요.
 
-[Strategy Builder 열기 →](/ko/simulate)
+[Strategy Builder 열기 →](/ko/simulate/builder/)
 
 ---
 
