@@ -39,4 +39,4 @@ tags: ["autopsy", "momentum-long", "long"]
 
 다른 파라미터로 이 전략을 살릴 수 있을까요?
 
-[Momentum Long 시뮬레이션 →](/ko/simulate?strategy=momentum-long&dir=long)
+[Momentum Long 시뮬레이션 →](/ko/simulate/builder/?strategy=momentum-long&dir=long)

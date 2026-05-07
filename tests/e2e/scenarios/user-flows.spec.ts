@@ -145,11 +145,13 @@ test.describe("Flow 4: Strategy explorer → ranking → detail", () => {
       expect(hasMetric).toBe(true);
     });
 
-    await test.step("Step 2: ranking card → /simulate?strategy=... with ranking source", async () => {
-      // Ranking page CTAs link to the simulator with the strategy pre-selected
-      // (?strategy=X&src=ranking) rather than to /strategies/<id>/. Keep the
-      // assertion aligned with the actual UX.
-      const simLink = page.locator('a[href*="/simulate?strategy="]').first();
+    await test.step("Step 2: ranking card → /simulate/builder/?strategy=... with ranking source", async () => {
+      // Ranking page CTAs link to the builder with the strategy pre-selected
+      // (/simulate/builder/?strategy=X&src=ranking). Keep the assertion
+      // aligned with the actual UX post-PR #1802.
+      const simLink = page
+        .locator('a[href*="simulate/builder/"][href*="strategy="]')
+        .first();
       await expect(simLink).toBeVisible({ timeout: 10000 });
       const href = await simLink.getAttribute("href");
       expect(href).toMatch(/strategy=[a-z0-9-]+/);
@@ -158,8 +160,8 @@ test.describe("Flow 4: Strategy explorer → ranking → detail", () => {
       await page.waitForLoadState("domcontentloaded");
       expect(page.url()).toContain("strategy=");
       expect(page.url()).toContain("src=ranking");
-      // Simulator root must mount on the destination page
-      await page.waitForSelector("[data-testid=sim-v1-root]", {
+      // Builder page must load on the destination page
+      await page.waitForSelector("[data-testid=builder-back-quick]", {
         timeout: 15000,
       });
     });

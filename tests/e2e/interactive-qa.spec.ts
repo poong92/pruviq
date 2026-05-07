@@ -560,8 +560,10 @@ test.describe("Interactive QA — 기능 클릭 테스트", () => {
     await page.goto("/strategies/ranking");
     await page.waitForLoadState("domcontentloaded");
 
-    // 랭킹 카드의 "Simulate →" 링크 찾기 (?strategy= 형태)
-    const simLink = page.locator('a[href*="/simulate?strategy="]').first();
+    // 랭킹 카드의 "Simulate →" 링크 찾기 (builder route with ?strategy=)
+    const simLink = page
+      .locator('a[href*="simulate/builder/"][href*="strategy="]')
+      .first();
     await expect(simLink).toBeVisible({ timeout: 15000 });
 
     // href에서 파라미터 확인
@@ -589,7 +591,9 @@ test.describe("Interactive QA — 기능 클릭 테스트", () => {
     await page.goto("/strategies/ranking");
     await page.waitForLoadState("domcontentloaded");
 
-    const simLinks = page.locator('a[href*="/simulate?strategy="]');
+    const simLinks = page.locator(
+      'a[href*="simulate/builder/"][href*="strategy="]',
+    );
     const count = await simLinks.count();
 
     if (count >= 2) {
