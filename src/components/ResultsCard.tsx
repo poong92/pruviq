@@ -157,6 +157,7 @@ const labels = {
     sectionTradeAnalysis: "Trade Analysis",
     sectionRiskMetrics: "Risk Metrics",
     sectionValidation: "Validation",
+    sectionRegime: "Market Regime Performance",
     gradePrefix: "Grade",
     mcBeats: (pct: number) => `Beats ${pct}% of random strategies`,
     referralCta: `Ready to trade this strategy? Save up to ${OKX_DISCOUNT_PCT}% on trading fees`,
@@ -235,6 +236,7 @@ const labels = {
     sectionTradeAnalysis: "\uAC70\uB798 \uBD84\uC11D",
     sectionRiskMetrics: "\uB9AC\uC2A4\uD06C \uC9C0\uD45C",
     sectionValidation: "\uAC80\uC99D",
+    sectionRegime: "\uC2DC\uC7A5 \uD658\uACBD\uBCC4 \uC131\uACFC",
     gradePrefix: "\uB4F1\uAE09",
     mcBeats: (pct: number) =>
       `\uB79C\uB364 \uC804\uB7B5 \uC911 \uC0C1\uC704 ${(100 - pct).toFixed(0)}%`,
