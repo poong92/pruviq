@@ -45,6 +45,7 @@ from .oauth import (
     get_api_credentials,
     is_authenticated,
 )
+from .storage import validate_csrf_state
 from .orders import build_dry_run_payload, execute_from_simulation
 
 logger = logging.getLogger("okx_router")
@@ -160,8 +161,15 @@ async def oauth_callback(
         # out of the querystring (prevents header injection + XSS in any
         # downstream component that happens to render ?reason= unescaped).
         err_param = error or "no_code"
+        # Try to recover lang from CSRF state so KO users land on /ko/dashboard
+        _err_lang = "en"
+        if state:
+            _state_result = validate_csrf_state(state)
+            if _state_result is not None:
+                _err_lang = _state_result[1]  # (redirect_url, lang, code_verifier)
+        _err_dash = "/ko/dashboard" if _err_lang == "ko" else "/dashboard"
         return RedirectResponse(
-            url=f"{FRONTEND_URL}/dashboard?okx=error&reason={urlquote(err_param[:50], safe='')}",
+            url=f"{FRONTEND_URL}{_err_dash}?okx=error&reason={urlquote(err_param[:50], safe='')}",
             status_code=302,
         )
     try:
