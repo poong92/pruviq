@@ -49,11 +49,12 @@ const LABELS = {
   },
 };
 
-function buildShareUrl(presetId?: string | null): string {
+function buildShareUrl(presetId?: string | null, lang?: "en" | "ko"): string {
+  const simulatePath = lang === "ko" ? "/ko/simulate" : "/simulate";
   const base =
     typeof window !== "undefined"
-      ? `${window.location.origin}/simulate`
-      : "https://pruviq.com/simulate";
+      ? `${window.location.origin}${simulatePath}`
+      : `https://pruviq.com${simulatePath}`;
   if (!presetId) return base;
   const url = new URL(base);
   url.searchParams.set("preset", presetId);
@@ -74,7 +75,7 @@ export default function ShareResultButton({
 }: Props) {
   const [copied, setCopied] = useState(false);
   const t = LABELS[lang];
-  const shareUrl = buildShareUrl(presetId);
+  const shareUrl = buildShareUrl(presetId, lang);
   const text = t.bodyTpl(
     strategyName,
     profitFactor.toFixed(2),
