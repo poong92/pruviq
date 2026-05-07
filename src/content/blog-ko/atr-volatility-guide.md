@@ -101,9 +101,9 @@ ATR이 특정 범위 내일 때만 진입:
 
 > ATR은 크립토 트레이더 도구 중 가장 과소평가된 지표입니다. 어떤 방향으로 거래할지 알려주지는 않지만, 거래에 얼마나 여유를 줘야 하는지와 얼마나 많은 리스크를 감수하는지 알려줍니다. 모든 전략에 변동성 인식을 반영해야 합니다.
 
-[PRUVIQ Strategy Builder](/ko/simulate)에서 ATR 기반 전략을 탐색해보세요.
+[PRUVIQ Strategy Builder](/ko/simulate/builder/)에서 ATR 기반 전략을 탐색해보세요.
 
-[Strategy Builder 열기 →](/ko/simulate)
+[Strategy Builder 열기 →](/ko/simulate/builder/)
 
 ---
 

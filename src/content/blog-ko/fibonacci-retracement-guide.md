@@ -74,9 +74,9 @@ tags: ["fibonacci", "retracement", "support-resistance", "technical-analysis"]
 
 > 피보나치 되돌림은 잠재적 지지/저항 구간을 식별하는 인기 프레임워크이지만, 그 자체로 예측력은 없습니다. 가치는 다른 도구와의 합류와 널리 주시되는 레벨의 자기 실현적 특성에서 나옵니다.
 
-[PRUVIQ Strategy Builder](/ko/simulate)에서 피보나치와 실제 지표를 함께 테스트해보세요.
+[PRUVIQ Strategy Builder](/ko/simulate/builder/)에서 피보나치와 실제 지표를 함께 테스트해보세요.
 
-[Strategy Builder 열기 →](/ko/simulate)
+[Strategy Builder 열기 →](/ko/simulate/builder/)
 
 ---
 
