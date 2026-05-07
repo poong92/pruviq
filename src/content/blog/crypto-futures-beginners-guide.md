@@ -129,7 +129,7 @@ Not all futures contracts are the same. The two main types in crypto are **perpe
 - **Quarterly futures** are better for longer-term hedging or basis trading strategies. If you plan to hold a position for weeks and funding rates are high (say 0.05%+ per 8 hours), quarterlies can be cheaper since you avoid funding entirely.
 - **Basis trading** involves buying spot and shorting the quarterly future to capture the premium — a relatively low-risk strategy that yields 10-30% annualized in bull markets.
 
-For most beginners, perpetuals are the right choice. They are simpler, more liquid, and supported on every major exchange. Quarterly futures become relevant when you start building more sophisticated strategies or want to avoid funding rate drag. You can explore strategy options on our [strategy builder](/simulate).
+For most beginners, perpetuals are the right choice. They are simpler, more liquid, and supported on every major exchange. Quarterly futures become relevant when you start building more sophisticated strategies or want to avoid funding rate drag. You can explore strategy options on our [strategy builder](/simulate/builder/).
 
 ## Understanding Funding Rates in Depth
 
@@ -242,7 +242,7 @@ Start with 2-3x. This gives you meaningful exposure while keeping your liquidati
 On the leveraged amount. If you use $100 margin with 5x leverage, your $500 position is what gets charged the trading fee. At 0.04% taker fee, that is $0.20 per side ($0.40 round trip), or 0.4% of your actual margin. This is why [understanding fees](/blog/crypto-trading-fees-explained) matters more with leverage.
 
 **Should I use a bot or trade manually?**
-For your first 50-100 trades, trade manually. You need to feel the psychology — the urge to move your stop-loss, the fear of missing out, the temptation to oversize. Once you have internalized discipline, automation removes emotion from the equation. See how our [strategy builder](/simulate) handles automated entries and exits.
+For your first 50-100 trades, trade manually. You need to feel the psychology — the urge to move your stop-loss, the fear of missing out, the temptation to oversize. Once you have internalized discipline, automation removes emotion from the equation. See how our [strategy builder](/simulate/builder/) handles automated entries and exits.
 
 ---
 

@@ -127,9 +127,9 @@ Not a complex pattern — just a basic directional filter. This simplicity often
 
 > Candlestick patterns are a visual language for understanding buyer/seller dynamics, not prediction tools. They add value as confirmation at key levels with volume, but alone they're barely better than random. In crypto, simpler is usually better.
 
-Test candlestick-based strategies in [PRUVIQ's Strategy Builder](/simulate).
+Test candlestick-based strategies in [PRUVIQ's Strategy Builder](/simulate/builder/).
 
-[Open Strategy Builder →](/simulate)
+[Open Strategy Builder →](/simulate/builder/)
 
 ---
 

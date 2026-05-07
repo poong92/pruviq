@@ -118,9 +118,9 @@ Shorter periods react faster to volatility changes. Longer periods give a more s
 
 > ATR is the most underrated tool in a crypto trader's kit. It won't tell you which direction to trade, but it will tell you how much room to give your trades and how much risk you're taking. Every strategy should incorporate volatility awareness.
 
-Explore ATR-based strategies in [PRUVIQ's Strategy Builder](/simulate).
+Explore ATR-based strategies in [PRUVIQ's Strategy Builder](/simulate/builder/).
 
-[Open Strategy Builder →](/simulate)
+[Open Strategy Builder →](/simulate/builder/)
 
 ---
 

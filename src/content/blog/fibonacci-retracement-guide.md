@@ -87,9 +87,9 @@ If you want to use Fibonacci:
 
 > Fibonacci retracement is a popular framework for identifying potential support/resistance zones, but it has no predictive power on its own. Its value comes from confluence with other tools and the self-fulfilling nature of widely-watched levels.
 
-Test Fibonacci alongside real indicators in [PRUVIQ's Strategy Builder](/simulate).
+Test Fibonacci alongside real indicators in [PRUVIQ's Strategy Builder](/simulate/builder/).
 
-[Open Strategy Builder →](/simulate)
+[Open Strategy Builder →](/simulate/builder/)
 
 ---
 

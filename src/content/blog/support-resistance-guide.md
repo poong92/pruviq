@@ -103,9 +103,9 @@ Rather than subjective line drawing, use measurable approaches:
 
 > Support and resistance form the foundation of price action trading. They work because of human psychology and order clustering, not magic. Use them as zones (not exact lines), combine with other tools, and respect the timeframe hierarchy.
 
-Build strategies around key levels in [PRUVIQ's Strategy Builder](/simulate).
+Build strategies around key levels in [PRUVIQ's Strategy Builder](/simulate/builder/).
 
-[Open Strategy Builder →](/simulate)
+[Open Strategy Builder →](/simulate/builder/)
 
 ---
 

@@ -86,9 +86,9 @@ VWAP works best as a context layer:
 
 > VWAP is the single most important price level for institutional traders. In crypto, it works best as a dynamic support/resistance level and fair-value benchmark. Use it to gauge whether you're buying expensive or cheap, not as a standalone signal.
 
-Explore VWAP-based strategies in [PRUVIQ's Strategy Builder](/simulate).
+Explore VWAP-based strategies in [PRUVIQ's Strategy Builder](/simulate/builder/).
 
-[Open Strategy Builder →](/simulate)
+[Open Strategy Builder →](/simulate/builder/)
 
 ---
 
