@@ -273,7 +273,8 @@ def _create_pr(slug: str, date_str: str):
         subprocess.run(
             ["gh", "pr", "create",
              "--title", f"Weekly blog: {date_str}",
-             "--body", f"Auto-generated weekly rankings blog post for {date_str}.\n\nReview before merging."],
+             "--label", "automerge",
+             "--body", f"Auto-generated weekly rankings blog post for {date_str}."],
             check=True, cwd=PROJECT_ROOT,
         )
         print(f"[weekly-blog] PR created for {branch}")
