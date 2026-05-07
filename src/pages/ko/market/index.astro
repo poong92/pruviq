@@ -2,10 +2,10 @@
 import Layout from '../../../layouts/Layout.astro';
 import { useTranslations } from '../../../i18n/index';
 import marketDataRaw from '../../../../public/data/market.json';
-import siteStats from '../../../../public/data/site-stats.json';
+import { COINS_ANALYZED } from '../../../config/site-stats';
 
 const t = useTranslations('ko');
-const coinsAnalyzed = (siteStats as Record<string, number>).coins_analyzed ?? 240;
+const coinsAnalyzed = COINS_ANALYZED;
 const marketDataJson = JSON.stringify(marketDataRaw);
 ---
 
