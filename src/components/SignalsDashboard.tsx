@@ -125,7 +125,7 @@ export default function SignalsDashboard({ lang = "en" }: Props) {
   }
 
   function buildSimUrl(s: Signal): string {
-    return `${prefix}/simulate?strategy=${s.strategy}&symbol=${s.coin}&dir=${s.direction}&sl=${s.sl_pct}&tp=${s.tp_pct}`;
+    return `${prefix}/simulate/builder/?strategy=${s.strategy}&symbol=${s.coin}&dir=${s.direction}&sl=${s.sl_pct}&tp=${s.tp_pct}`;
   }
 
   if (loading) {
