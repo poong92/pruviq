@@ -251,8 +251,7 @@ export default function CommandPalette({ lang = "en" }: Props) {
 
   const navigate = useCallback(
     (item: SearchItem) => {
-      const prefix =
-        lang === "ko" && !item.href.startsWith("/simulate") ? "/ko" : "";
+      const prefix = lang === "ko" ? "/ko" : "";
       window.location.href = prefix + item.href;
       setOpen(false);
     },
