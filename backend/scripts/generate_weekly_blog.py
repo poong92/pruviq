@@ -59,8 +59,9 @@ def _rank_change_str(rc, lang: str) -> str:
     return "—"
 
 
-def _strategy_link(strategy: str, direction: str) -> str:
-    return f"https://pruviq.com/simulate/builder/?strategy={strategy}&dir={direction}"
+def _strategy_link(strategy: str, direction: str, lang: str = "en") -> str:
+    prefix = "/ko" if lang == "ko" else ""
+    return f"https://pruviq.com{prefix}/simulate/builder/?strategy={strategy}&dir={direction}"
 
 
 # ── EN template ──────────────────────────────────────────────────────
@@ -149,7 +150,7 @@ def build_ko(weekly: dict, monthly: dict, date_str: str) -> str:
     top_rows = []
     for s in top3:
         top_rows.append(
-            f"| {s['rank']} | [{s['name_ko']}]({_strategy_link(s['strategy'], s['direction'])}) "
+            f"| {s['rank']} | [{s['name_ko']}]({_strategy_link(s['strategy'], s['direction'], 'ko')}) "
             f"| {s['win_rate']:.1f}% | {s['profit_factor']:.2f} "
             f"| {_sign(s['total_return'])}% | {_rank_change_str(s['rank_change'], 'ko')} |"
         )
@@ -157,7 +158,7 @@ def build_ko(weekly: dict, monthly: dict, date_str: str) -> str:
     worst_rows = []
     for s in worst3:
         worst_rows.append(
-            f"| {s['rank']} | [{s['name_ko']}]({_strategy_link(s['strategy'], s['direction'])}) "
+            f"| {s['rank']} | [{s['name_ko']}]({_strategy_link(s['strategy'], s['direction'], 'ko')}) "
             f"| {s['win_rate']:.1f}% | {s['profit_factor']:.2f} "
             f"| {_sign(s['total_return'])}% | {_rank_change_str(s['rank_change'], 'ko')} |"
         )
