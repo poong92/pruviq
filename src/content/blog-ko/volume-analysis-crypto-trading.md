@@ -67,9 +67,9 @@ Z > 3.0  → 극도로 비정상적 (확률 < 0.3%)
 
 > 거래량은 기술적 분석의 거짓말 탐지기입니다. 가격은 무엇이 일어났는지, 거래량은 그것이 중요한지를 알려줍니다. 돌파를 신뢰하기 전에 항상 거래량을 확인하세요.
 
-[Strategy Builder](/ko/builder)에서 거래량 기반 전략을 만들어보세요.
+[Strategy Builder](/ko/simulate/builder/)에서 거래량 기반 전략을 만들어보세요.
 
-[Strategy Builder 열기 →](/ko/builder)
+[Strategy Builder 열기 →](/ko/simulate/builder/)
 
 ---
 

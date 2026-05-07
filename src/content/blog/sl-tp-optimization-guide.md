@@ -109,11 +109,11 @@ The parameters must work across all conditions, not just favorable ones.
 
 ## Try It Yourself
 
-PRUVIQ's [Strategy Builder](/builder) lets you test different SL/TP combinations on any strategy across 535+ coins. Adjust the sliders and see the impact instantly.
+PRUVIQ's [Strategy Builder](/simulate/builder/) lets you test different SL/TP combinations on any strategy across 535+ coins. Adjust the sliders and see the impact instantly.
 
 The [Interactive Demo](/strategies/bb-squeeze-short) on the BB Squeeze page shows a 5×5 SL/TP grid with pre-computed results. Move the sliders to see how your changes affect win rate, profit factor, and total return.
 
-[Open Strategy Builder →](/builder)
+[Open Strategy Builder →](/simulate/builder/)
 
 ---
 

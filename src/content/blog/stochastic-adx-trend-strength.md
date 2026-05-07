@@ -109,9 +109,9 @@ Fade overbought moves when the market is range-bound. ADX confirms there's no tr
 
 > Stochastic tells you where momentum is. ADX tells you if momentum matters. Use them together to avoid applying trending strategies in ranges and range strategies in trends.
 
-Build a strategy combining Stochastic and ADX in [PRUVIQ's Strategy Builder](/builder).
+Build a strategy combining Stochastic and ADX in [PRUVIQ's Strategy Builder](/simulate/builder/).
 
-[Open Strategy Builder →](/builder)
+[Open Strategy Builder →](/simulate/builder/)
 
 ---
 
