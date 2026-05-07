@@ -81,9 +81,9 @@ VWAP은 맥락 레이어로 가장 효과적:
 
 > VWAP은 기관 트레이더에게 가장 중요한 가격 레벨입니다. 크립토에서는 동적 지지/저항과 공정가치 기준으로 활용하세요. 비싸게 사는지 싸게 사는지 판단하는 도구이지, 단독 시그널이 아닙니다.
 
-[PRUVIQ Strategy Builder](/ko/simulate)에서 VWAP 기반 전략을 탐색해보세요.
+[PRUVIQ Strategy Builder](/ko/simulate/builder/)에서 VWAP 기반 전략을 탐색해보세요.
 
-[Strategy Builder 열기 →](/ko/simulate)
+[Strategy Builder 열기 →](/ko/simulate/builder/)
 
 ---
 
