@@ -962,7 +962,9 @@ export default function MarketDashboard({
                 {l.ctaDesc.replace("{coins}", coinsCount)}
               </p>
               <a
-                href={lang === "ko" ? "/ko/simulate" : "/simulate"}
+                href={
+                  lang === "ko" ? "/ko/simulate/builder/" : "/simulate/builder/"
+                }
                 class="shrink-0 text-xs font-semibold text-(--color-accent) border border-(--color-accent)/30 px-4 py-2 rounded hover:bg-(--color-accent)/10 transition-colors no-underline whitespace-nowrap"
               >
                 {l.ctaButton} →
