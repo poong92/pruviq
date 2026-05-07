@@ -7,8 +7,8 @@
 /en /  301
 /en/* /:splat 301
 
-/builder /simulate/ 301
-/builder/* /simulate/ 301
+/builder /simulate/builder/ 301
+/builder/* /simulate/builder/ 301
 /simulator /simulate/ 301
 /simulator/* /simulate/ 301
 
@@ -29,8 +29,8 @@
 /compare/binance-vs-okx/ /fees 301
 
 # KO equivalents
-/ko/builder /ko/simulate/ 301
-/ko/builder/* /ko/simulate/ 301
+/ko/builder /ko/simulate/builder/ 301
+/ko/builder/* /ko/simulate/builder/ 301
 # /ko/performance page exists — no redirect needed
 /ko/ranking /ko/strategies/ranking 301
 /ko/ranking/ /ko/strategies/ranking 301

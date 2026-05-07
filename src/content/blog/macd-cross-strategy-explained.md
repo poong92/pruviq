@@ -73,9 +73,9 @@ Across PRUVIQ's tested universe of 500+ coins, strategies that require MACD mome
 
 > MACD crossover is a momentum confirmation tool, not a standalone entry signal. Its strength is eliminating entries where momentum disagrees with the setup. Use it alongside volatility and volume signals for higher-quality trades.
 
-Test a MACD cross strategy against real historical data in [PRUVIQ's Strategy Builder](/builder).
+Test a MACD cross strategy against real historical data in [PRUVIQ's Strategy Builder](/simulate/builder/).
 
-[Open Strategy Builder →](/builder)
+[Open Strategy Builder →](/simulate/builder/)
 
 ---
 

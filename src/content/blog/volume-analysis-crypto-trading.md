@@ -103,9 +103,9 @@ Remove the volume filter and win rate drops from ~68% to ~55%. Volume is doing h
 
 > Volume is the lie detector of technical analysis. Price tells you what happened. Volume tells you if it matters. Always check volume before trusting a breakout.
 
-Build a volume-based strategy in [PRUVIQ's Strategy Builder](/builder).
+Build a volume-based strategy in [PRUVIQ's Strategy Builder](/simulate/builder/).
 
-[Open Strategy Builder →](/builder)
+[Open Strategy Builder →](/simulate/builder/)
 
 ---
 

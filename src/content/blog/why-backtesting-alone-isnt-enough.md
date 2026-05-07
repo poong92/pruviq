@@ -85,7 +85,7 @@ PRUVIQ's simulator is built around these three issues:
 
 > Backtesting is necessary but not sufficient. A backtest without look-ahead prevention, overfitting controls, and real execution costs is closer to financial fiction than research. The threshold for confidence is a strategy that survives unseen data with realistic costs applied.
 
-[Open Strategy Builder →](/builder)
+[Open Strategy Builder →](/simulate/builder/)
 
 ---
 
