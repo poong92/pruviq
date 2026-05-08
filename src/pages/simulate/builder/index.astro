@@ -3,17 +3,13 @@
 // Reuses the legacy SimulatorPage component as the Expert surface so
 // users who need indicator-level config can still reach it without the
 // new Quick Start onboarding getting in the way.
-//
-// noindex for now — linked from SkillSwitcher Expert tab after feature
-// flag flip. Legacy deep-link compatibility left unchanged.
 import Layout from "../../../layouts/Layout.astro";
 ---
 
 <Layout
-  title="PRUVIQ Simulator — Expert Builder"
-  description="Full condition builder with indicator-level control: custom entry rules, multi-indicator strategies, backtest with real OKX data."
+  title="PRUVIQ Strategy Builder — Expert Backtesting"
+  description="Build custom crypto trading strategies with indicator-level control: MACD, RSI, Stochastic, BB, ADX and more. Backtest on 238+ coins with real OKX data and fees."
 >
-  <meta slot="head" name="robots" content="noindex, nofollow" />
   <main class="min-h-screen bg-(--color-bg)">
     <div class="mx-auto max-w-6xl px-4 pt-8">
       <nav class="mb-6 flex items-center gap-3 text-sm" aria-label="breadcrumb">
