@@ -27,14 +27,29 @@ jobs:
         with:
           fetch-depth: 1
 
+      - name: Detect data-only PR
+        id: gate
+        run: |
+          git fetch origin main --depth=1 2>/dev/null || true
+          CHANGED=$(git diff --name-only origin/main HEAD 2>/dev/null || echo "")
+          if [ -z "$CHANGED" ] || echo "$CHANGED" | grep -qvE '^public/data/'; then
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "Data-only change — skipping Vitest"
+          fi
+
       - name: Setup Node 22
+        if: steps.gate.outputs.skip != 'true'
         uses: actions/setup-node@v6
         with:
           node-version: '22'
           cache: npm
 
       - name: Install dependencies
+        if: steps.gate.outputs.skip != 'true'
         run: npm ci
 
       - name: Run vitest
+        if: steps.gate.outputs.skip != 'true'
         run: npm run test:unit
