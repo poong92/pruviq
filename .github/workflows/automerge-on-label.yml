@@ -134,11 +134,12 @@ jobs:
               }
 
               // BEHIND check → update-branch + dispatch CI
-              // 2026-05-08 Fix 3: Always use compareCommits — never rely on mergeable_state.
-              // mergeable_state is async/stale (GitHub computes lazily): returns 'clean' when
-              // branch is actually BEHIND, causing automerge to skip update-branch → merge 405.
-              // Root cause confirmed: 08:09 run saw allSuccess=true but merge failed for 5 PRs
-              // because mergeable_state='clean' (stale) while branches were genuinely BEHIND.
+              // 2026-05-08 Fix 3: Always use fresh mainSha from getRef — never rely on
+              // mergeable_state or prDetail.base.sha (both stale/async-computed by GitHub).
+              // Evidence: 09:50 run — compareCommits(base=pr_head, head=prDetail.base.sha)
+              // returned ahead_by=0 (stale base.sha already in PR history) but merge still
+              // failed 405 — GraphQL mergeStateStatus=BEHIND was correct, REST was stale.
+              // Fix: getRef('heads/main') gives fresh mainSha, bypassing both stale fields.
               const { data: prDetail } = await github.rest.pulls.get({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
@@ -146,13 +147,20 @@ jobs:
               });
               let actuallyBehind = false;
               try {
+                const { data: mainRef } = await github.rest.git.getRef({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  ref: 'heads/main',
+                });
+                const mainSha = mainRef.object.sha;
                 const { data: cmp } = await github.rest.repos.compareCommits({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
                   base: prDetail.head.sha,
-                  head: prDetail.base.sha,
+                  head: mainSha,
                 });
-                actuallyBehind = cmp.ahead_by > 0; // base is ahead of feature = feature is behind
+                actuallyBehind = cmp.ahead_by > 0; // main is ahead of feature = feature is behind
+                core.info(`PR #${prNumber}: pr_head=${prDetail.head.sha.slice(0,7)} main=${mainSha.slice(0,7)} ahead_by=${cmp.ahead_by}`);
               } catch (cmpErr) {
                 core.warning(`PR #${prNumber}: compare API failed (${cmpErr.message}), assuming up-to-date`);
               }
