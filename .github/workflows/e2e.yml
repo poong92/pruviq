@@ -26,24 +26,43 @@ jobs:
       with:
         fetch-depth: 1
 
+    - name: Detect data-only PR
+      id: gate
+      run: |
+        git fetch origin main --depth=1 2>/dev/null || true
+        CHANGED=$(git diff --name-only origin/main HEAD 2>/dev/null || echo "")
+        if [ -z "$CHANGED" ] || echo "$CHANGED" | grep -qvE '^public/data/'; then
+          echo "skip=false" >> "$GITHUB_OUTPUT"
+          echo "Code changes detected — running full E2E"
+        else
+          echo "skip=true" >> "$GITHUB_OUTPUT"
+          echo "Data-only change (public/data/ only) — skipping E2E"
+        fi
+
     - name: Use Node 22
+      if: steps.gate.outputs.skip != 'true'
       run: |
         node --version
         npm --version
 
     - name: Install dependencies
+      if: steps.gate.outputs.skip != 'true'
       run: npm ci
 
     - name: Install Chromium
+      if: steps.gate.outputs.skip != 'true'
       run: npx playwright install chromium
 
     - name: Check i18n key completeness
+      if: steps.gate.outputs.skip != 'true'
       run: npx tsx scripts/check-i18n-keys.ts
 
     - name: Build site
+      if: steps.gate.outputs.skip != 'true'
       run: npm run build
 
     - name: Check API health
+      if: steps.gate.outputs.skip != 'true'
       run: |
         echo "Checking api.pruviq.com reachability..."
         for i in {1..6}; do
@@ -59,6 +78,7 @@ jobs:
         echo "::warning::API unreachable after 60s — API-dependent tests will skip"
 
     - name: Run simulator golden harness
+      if: steps.gate.outputs.skip != 'true'
       continue-on-error: true
       run: npx tsx tests/harness/run-golden.ts
       env:
@@ -66,9 +86,11 @@ jobs:
       timeout-minutes: 3
 
     - name: Kill orphaned dev server on port 4321
+      if: steps.gate.outputs.skip != 'true'
       run: lsof -ti:4321 | xargs kill -9 2>/dev/null || true
 
     - name: Run E2E tests
+      if: steps.gate.outputs.skip != 'true'
       id: e2e
       run: |
         npx playwright test tests/e2e/ \
@@ -85,7 +107,7 @@ jobs:
         CI: true
 
     - name: Upload test results
-      if: always()
+      if: steps.gate.outputs.skip != 'true' && always()
       uses: actions/upload-artifact@v7
       with:
         name: playwright-report
@@ -93,7 +115,7 @@ jobs:
         retention-days: 14
 
     - name: Upload visual snapshots
-      if: always()
+      if: steps.gate.outputs.skip != 'true' && always()
       uses: actions/upload-artifact@v7
       with:
         name: visual-snapshots-${{ github.event.pull_request.number || github.run_id }}
