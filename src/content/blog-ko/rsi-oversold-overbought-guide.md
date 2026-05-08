@@ -66,9 +66,9 @@ RSI는 **횡보장**에서 가장 잘 작동합니다 — 가격이 지지선과
 
 > RSI는 **필터**이지 신호 생성기가 아닙니다. 변동성 및 거래량 지표와 결합할 때 가장 강력합니다.
 
-[PRUVIQ Strategy Builder](/ko/builder)에서 RSI를 활용한 전략을 직접 만들어보세요.
+[PRUVIQ Strategy Builder](/ko/simulate/builder/)에서 RSI를 활용한 전략을 직접 만들어보세요.
 
-[Strategy Builder 열기 →](/ko/builder)
+[Strategy Builder 열기 →](/ko/simulate/builder/)
 
 ---
 

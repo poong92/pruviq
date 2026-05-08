@@ -68,9 +68,9 @@ ADX가 이 불일치를 피하게 해줍니다.
 
 > 스토캐스틱은 모멘텀이 어디 있는지, ADX는 모멘텀이 중요한지를 알려줍니다. 함께 사용하여 횡보장에서 추세전략을, 추세장에서 횡보전략을 적용하는 실수를 피하세요.
 
-[Strategy Builder](/ko/builder)에서 스토캐스틱과 ADX를 결합한 전략을 만들어보세요.
+[Strategy Builder](/ko/simulate/builder/)에서 스토캐스틱과 ADX를 결합한 전략을 만들어보세요.
 
-[Strategy Builder 열기 →](/ko/builder)
+[Strategy Builder 열기 →](/ko/simulate/builder/)
 
 ---
 
