@@ -144,7 +144,10 @@ jobs:
                 repo: context.repo.repo,
                 pull_number: prNumber,
               });
-              if (prDetail.mergeable_state === 'behind') {
+              // 2026-05-08: also check 'unknown' — GitHub returns 'unknown' right after a
+              // base-branch merge (async computation). Without this, automerge attempts merge
+              // immediately → 405 "Repository rule violations" because branch is genuinely behind.
+              if (prDetail.mergeable_state === 'behind' || prDetail.mergeable_state === 'unknown') {
                 // Verify with git compare API to avoid acting on stale mergeable_state
                 let actuallyBehind = true;
                 try {
