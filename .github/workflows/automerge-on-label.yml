@@ -134,54 +134,47 @@ jobs:
               }
 
               // BEHIND check → update-branch + dispatch CI
-              // Root cause fix (2026-05-08): GitHub REST API mergeable_state='behind' can be
-              // stale (async computation) even when the branch is fully up-to-date. This caused
-              // an infinite update-branch loop: E2E passes → automerge sees 'behind' → update-branch
-              // → fresh E2E → passes → 'behind' again (merge-base = main HEAD all along).
-              // Fix: verify with compare API (behind_by > 0) before triggering update-branch.
+              // 2026-05-08 Fix 3: Always use compareCommits — never rely on mergeable_state.
+              // mergeable_state is async/stale (GitHub computes lazily): returns 'clean' when
+              // branch is actually BEHIND, causing automerge to skip update-branch → merge 405.
+              // Root cause confirmed: 08:09 run saw allSuccess=true but merge failed for 5 PRs
+              // because mergeable_state='clean' (stale) while branches were genuinely BEHIND.
               const { data: prDetail } = await github.rest.pulls.get({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 pull_number: prNumber,
               });
-              // 2026-05-08: also check 'unknown' — GitHub returns 'unknown' right after a
-              // base-branch merge (async computation). Without this, automerge attempts merge
-              // immediately → 405 "Repository rule violations" because branch is genuinely behind.
-              if (prDetail.mergeable_state === 'behind' || prDetail.mergeable_state === 'unknown') {
-                // Verify with git compare API to avoid acting on stale mergeable_state
-                let actuallyBehind = true;
+              let actuallyBehind = false;
+              try {
+                const { data: cmp } = await github.rest.repos.compareCommits({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  base: prDetail.head.sha,
+                  head: prDetail.base.sha,
+                });
+                actuallyBehind = cmp.ahead_by > 0; // base is ahead of feature = feature is behind
+              } catch (cmpErr) {
+                core.warning(`PR #${prNumber}: compare API failed (${cmpErr.message}), assuming up-to-date`);
+              }
+              core.info(`PR #${prNumber}: mergeable_state=${prDetail.mergeable_state}, actuallyBehind=${actuallyBehind}`);
+              if (actuallyBehind) {
+                core.info(`PR #${prNumber}: BEHIND main — triggering update-branch`);
                 try {
-                  const { data: cmp } = await github.rest.repos.compareCommits({
+                  await github.rest.pulls.updateBranch({
                     owner: context.repo.owner,
                     repo: context.repo.repo,
-                    base: prDetail.head.sha,
-                    head: prDetail.base.sha,
+                    pull_number: prNumber,
                   });
-                  actuallyBehind = cmp.ahead_by > 0; // base is ahead of feature = feature is behind
-                } catch (cmpErr) {
-                  core.warning(`PR #${prNumber}: compare API failed (${cmpErr.message}), assuming behind`);
-                }
-                if (!actuallyBehind) {
-                  core.info(`PR #${prNumber}: API says BEHIND but git confirms 0 commits behind — skipping update-branch, proceeding to merge`);
-                } else {
-                  core.info(`PR #${prNumber}: BEHIND main — triggering update-branch`);
-                  try {
-                    await github.rest.pulls.updateBranch({
-                      owner: context.repo.owner,
-                      repo: context.repo.repo,
-                      pull_number: prNumber,
-                    });
-                    core.info(`PR #${prNumber}: update-branch dispatched — pull_request.synchronize will trigger CI`);
-                  } catch (err) {
-                    core.warning(`PR #${prNumber}: update-branch failed: ${err.message}`);
-                    return;
-                  }
-                  // No manual createWorkflowDispatch here: updateBranch() via AUTOMERGE_PAT
-                  // fires pull_request.synchronize which triggers all CI workflows automatically.
-                  // Manual dispatch caused duplicate Playwright runs → cancelled stale runs →
-                  // allSuccess=false → permanent merge block.
+                  core.info(`PR #${prNumber}: update-branch dispatched — pull_request.synchronize will trigger CI`);
+                } catch (err) {
+                  core.warning(`PR #${prNumber}: update-branch failed: ${err.message}`);
                   return;
                 }
+                // No manual createWorkflowDispatch here: updateBranch() via AUTOMERGE_PAT
+                // fires pull_request.synchronize which triggers all CI workflows automatically.
+                // Manual dispatch caused duplicate Playwright runs → cancelled stale runs →
+                // allSuccess=false → permanent merge block.
+                return;
               }
 
               // Merge
