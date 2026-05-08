@@ -5,7 +5,7 @@
 # → ruleset 의도(PR 통과만 허용)와 충돌. 원론 fix: cron이 PR 만들어 통과.
 #
 # 동작:
-#   1. 매 20분 schedule + workflow_dispatch
+#   1. 매 60분 schedule + workflow_dispatch
 #   2. backend/scripts/refresh_static.py 실행 (로컬 cron과 동일 로직)
 #   3. public/data/ 변경 있으면 dedicated 브랜치(`auto/data-refresh`)에 force push
 #   4. PR 1개 유지 (automerge 라벨) — peter-evans/create-pull-request가 같은 브랜치 update
