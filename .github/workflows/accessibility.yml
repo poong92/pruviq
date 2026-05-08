@@ -14,29 +14,47 @@ jobs:
       with:
         fetch-depth: 1
 
+    - name: Detect data-only PR
+      id: gate
+      run: |
+        git fetch origin main --depth=1 2>/dev/null || true
+        CHANGED=$(git diff --name-only origin/main HEAD 2>/dev/null || echo "")
+        if [ -z "$CHANGED" ] || echo "$CHANGED" | grep -qvE '^public/data/'; then
+          echo "skip=false" >> "$GITHUB_OUTPUT"
+        else
+          echo "skip=true" >> "$GITHUB_OUTPUT"
+          echo "Data-only change — skipping axe audit"
+        fi
+
     - uses: actions/setup-node@v6
+      if: steps.gate.outputs.skip != 'true'
       with:
         node-version: '22'
 
     - name: Install dependencies
+      if: steps.gate.outputs.skip != 'true'
       run: npm ci
 
     - name: Install test dependencies
+      if: steps.gate.outputs.skip != 'true'
       run: npm install -D @playwright/test axe-core
 
     - name: Install Chromium
+      if: steps.gate.outputs.skip != 'true'
       run: npx playwright install --with-deps chromium
 
     - name: Build site
+      if: steps.gate.outputs.skip != 'true'
       run: npm run build
 
     - name: Run accessibility tests
+      if: steps.gate.outputs.skip != 'true'
       run: npx playwright test tests/accessibility/
       env:
         CI: true
 
     - name: Upload axe reports
-      if: always()
+      if: steps.gate.outputs.skip != 'true' && always()
       uses: actions/upload-artifact@v7
       with:
         name: axe-reports
