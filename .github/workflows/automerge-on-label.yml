@@ -61,76 +61,6 @@ jobs:
               'playwright.config.ts',
             ];
             const MIN_CHECK_RUNS = 2;
-            const CI_WORKFLOWS = [
-              'unit-tests.yml',
-              'e2e.yml',
-              'accessibility.yml',
-              'visual-regression.yml',
-              'gitleaks.yml',
-              'codeql.yml',
-              'validate-startup-files.yml',
-              'docs-lint.yml',
-            ];
-
-            // ── Fix: Claude check-suite stuck queued → push empty commit ──────────
-            // Root cause (observed PR #1733, #1712, 2026-05-04~05):
-            //   GitHub's Claude app check-suite gets stuck in `queued` state after
-            //   a force-push or rebase. GitHub merge API returns 405 "Repository
-            //   rule violations found / 7 of 7 required status checks are expected"
-            //   even though all GitHub Actions check-runs are SUCCESS. The only fix
-            //   is a new HEAD SHA, which creates a fresh check-suite.
-            //   This function detects the pattern and self-heals automatically.
-            async function resetStuckCheckSuiteIfNeeded(prNumber, headSha, headBranch) {
-              try {
-                const { data: suitesData } = await github.rest.checks.listSuitesForRef({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  ref: headSha,
-                });
-                const claudeStuck = suitesData.check_suites.find(
-                  s => s.app?.name === 'Claude' && s.status === 'queued'
-                );
-                if (!claudeStuck) return false;
-
-                core.info(`PR #${prNumber}: Claude check-suite stuck (queued) — pushing empty commit`);
-                const { data: currentCommit } = await github.rest.git.getCommit({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  commit_sha: headSha,
-                });
-                const { data: newCommit } = await github.rest.git.createCommit({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  message: 'chore: reset check-suite (Claude app stuck queued)',
-                  tree: currentCommit.tree.sha,
-                  parents: [headSha],
-                });
-                await github.rest.git.updateRef({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  ref: `heads/${headBranch}`,
-                  sha: newCommit.sha,
-                });
-                core.info(`PR #${prNumber}: empty commit ${newCommit.sha.slice(0,8)} pushed — dispatching CI`);
-                for (const wf of CI_WORKFLOWS) {
-                  try {
-                    await github.rest.actions.createWorkflowDispatch({
-                      owner: context.repo.owner,
-                      repo: context.repo.repo,
-                      workflow_id: wf,
-                      ref: headBranch,
-                    });
-                    core.info(`Dispatched ${wf} on ${headBranch}`);
-                  } catch (err) {
-                    core.warning(`Could not dispatch ${wf}: ${err.message}`);
-                  }
-                }
-                return true;
-              } catch (err) {
-                core.warning(`PR #${prNumber}: resetStuckCheckSuite failed: ${err.message}`);
-                return false;
-              }
-            }
 
             // ── Process a single PR ───────────────────────────────────────────────
             async function processPR(pr) {
@@ -214,7 +144,10 @@ jobs:
                 repo: context.repo.repo,
                 pull_number: prNumber,
               });
-              if (prDetail.mergeable_state === 'behind') {
+              // 2026-05-08: also check 'unknown' — GitHub returns 'unknown' right after a
+              // base-branch merge (async computation). Without this, automerge attempts merge
+              // immediately → 405 "Repository rule violations" because branch is genuinely behind.
+              if (prDetail.mergeable_state === 'behind' || prDetail.mergeable_state === 'unknown') {
                 // Verify with git compare API to avoid acting on stale mergeable_state
                 let actuallyBehind = true;
                 try {
@@ -264,11 +197,6 @@ jobs:
                 mergeSucceeded = true;
               } catch (err) {
                 core.warning(`PR #${prNumber}: merge failed: ${err.message}`);
-                // Auto-fix Claude check-suite stuck (root-cause fix 2026-05-05)
-                if (err.message?.includes('Repository rule violations found')) {
-                  const prBranch = prDetail.head.ref;
-                  await resetStuckCheckSuiteIfNeeded(prNumber, headSha, prBranch);
-                }
               }
 
               // data-deploy dispatch after successful merge

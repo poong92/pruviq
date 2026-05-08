@@ -81,9 +81,9 @@ RSI is a **filter**, not a signal generator. It's most powerful when combined wi
 
 ## Try It Yourself
 
-Build a strategy using RSI in [PRUVIQ's Strategy Builder](/builder). Select the RSI indicator, set your conditions, and backtest on 535+ coins with 2+ years of data. Free.
+Build a strategy using RSI in [PRUVIQ's Strategy Builder](/simulate/builder/). Select the RSI indicator, set your conditions, and backtest on 535+ coins with 2+ years of data. Free.
 
-[Open Strategy Builder →](/builder)
+[Open Strategy Builder →](/simulate/builder/)
 
 ---
 

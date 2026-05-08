@@ -92,9 +92,9 @@ Longer periods = smoother, fewer signals, more reliable.
 
 > EMA crossovers are a trend-following tool, not a crystal ball. Use them to confirm direction, not to generate signals. The power is in combination, not isolation.
 
-Try building an EMA-based strategy in [PRUVIQ's Strategy Builder](/builder) and see for yourself.
+Try building an EMA-based strategy in [PRUVIQ's Strategy Builder](/simulate/builder/) and see for yourself.
 
-[Open Strategy Builder →](/builder)
+[Open Strategy Builder →](/simulate/builder/)
 
 ---
 
