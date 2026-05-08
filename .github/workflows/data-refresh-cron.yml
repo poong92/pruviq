@@ -12,14 +12,17 @@
 #   5. 머지 schedule(`*/10` automerge cron)이 다음 tick에 머지 → data-deploy.yml trigger
 #
 # 빈도 trade-off:
-#   - 매 20분 cron tick + 최대 10분 머지 schedule + 5분 deploy = 사이트 반영까지 ~25-35분
-#   - 로컬 cron(매 20분 직접 push)은 silent fail + 누적 8일이라 신선도 0
-#   - 즉 이 workflow가 신선도 33-40배 개선
+#   - 60분 cron: E2E(12min) vs data-refresh 충돌 확률 20% (20분 대비 60% → 3x 개선)
+#   - feature PR들이 update-branch 후 E2E 12분 내에 완주할 여유 확보
+#   - 2026-05-09: 20min→60min 변경. 이유: 20min 간격으로 main이 앞서면서
+#     feature PR E2E가 계속 리셋되는 구조적 레이스 컨디션 해소 목적.
+#     market/signals 등 시간민감 페이지는 client-side live hook이 30s 이내
+#     갱신하므로 60min 정적 데이터는 first-paint/SEO에만 영향.
 
 name: Data Refresh Cron
 on:
   schedule:
-    - cron: "*/20 * * * *"
+    - cron: "0 * * * *"
   workflow_dispatch:
 
 permissions:
@@ -123,7 +126,7 @@ jobs:
           branch: auto/data-refresh
           delete-branch: false
           base: main
-          title: "chore(data): cron auto-refresh (every 20min)"
+          title: "chore(data): cron auto-refresh (every 60min)"
           body: |
             Automated data refresh from `data-refresh-cron.yml` workflow.
 
