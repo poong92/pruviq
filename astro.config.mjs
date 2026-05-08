@@ -56,16 +56,18 @@ export default defineConfig({
         const pathname = new URL(page).pathname;
         const coinMatch = pathname.match(/^(?:\/ko)?\/coins\/([^/]+)\/?$/);
         if (coinMatch && !coinMatch[1].endsWith('usdt')) return false;
-        return !(/\/learn\/.+/.test(page)) && !page.includes('/demo/') && !page.includes('/builder/') && !page.includes('/404');
+        if (/^(?:\/ko)?\/builder\/?$/.test(pathname)) return false;
+        return !(/\/learn\/.+/.test(page)) && !page.includes('/demo/') && !page.includes('/simulate/v1') && !page.includes('/simulate/v2') && !page.includes('/404');
       },
       serialize(item) {
         if (!item || !item.url) return item;
         if (/\/learn\/.+/.test(item.url)) return undefined;
         if (item.url.includes('/demo/')) return undefined;
-        if (item.url.includes('/builder/')) return undefined;
+        if (item.url.includes('/simulate/v1') || item.url.includes('/simulate/v2')) return undefined;
         if (item.url.includes('/404')) return undefined;
 
         const url = new URL(item.url);
+        if (/\/builder\/?$/.test(url.pathname) && !url.pathname.includes('/simulate/')) return undefined;
         const isKo = url.pathname.startsWith('/ko/') || url.pathname === '/ko';
         const basePath = isKo ? url.pathname.replace(/^\/ko/, '') || '/' : url.pathname;
         const enUrl = `https://pruviq.com${basePath}`;
@@ -85,7 +87,7 @@ export default defineConfig({
         const today = new Date().toISOString().slice(0, 10);
         if (p === '/') {
           item.priority = 1.0; item.changefreq = /** @type {any} */ ('daily'); item.lastmod = today;
-        } else if (['/simulate', '/strategies', '/market', '/leaderboard'].includes(p)) {
+        } else if (['/simulate', '/strategies', '/market', '/leaderboard'].includes(p) || p === '/simulate/builder/') {
           item.priority = 0.9; item.changefreq = /** @type {any} */ ('daily'); item.lastmod = today;
         } else if (p === '/strategies/ranking') {
           item.priority = 0.9; item.changefreq = /** @type {any} */ ('daily'); item.lastmod = today;
