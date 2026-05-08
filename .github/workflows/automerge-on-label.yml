@@ -197,7 +197,25 @@ jobs:
                 core.info(`PR #${prNumber}: merged successfully`);
                 mergeSucceeded = true;
               } catch (err) {
-                core.warning(`PR #${prNumber}: merge failed: ${err.message}`);
+                // 2026-05-08 reactive fallback: if merge fails with 405 (branch BEHIND at merge
+                // time — data-refresh cron raced with CI window), auto-trigger update-branch so
+                // CI re-runs on fresh HEAD. automerge retries on next check_suite.completed.
+                // This breaks the manual-intervention loop without user action.
+                if (err.status === 405 || (err.message && err.message.includes('Repository rule violations'))) {
+                  core.info(`PR #${prNumber}: merge blocked (405) — branch likely BEHIND at merge time; triggering update-branch`);
+                  try {
+                    await github.rest.pulls.updateBranch({
+                      owner: context.repo.owner,
+                      repo: context.repo.repo,
+                      pull_number: prNumber,
+                    });
+                    core.info(`PR #${prNumber}: update-branch dispatched — CI will re-run, automerge retries on check_suite.completed`);
+                  } catch (ubErr) {
+                    core.warning(`PR #${prNumber}: update-branch fallback failed: ${ubErr.message}`);
+                  }
+                } else {
+                  core.warning(`PR #${prNumber}: merge failed: ${err.message}`);
+                }
               }
 
               // data-deploy dispatch after successful merge
