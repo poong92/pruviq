@@ -25,22 +25,39 @@ jobs:
           fetch-depth: 1
           token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Detect data-only PR
+        id: gate
+        run: |
+          git fetch origin main --depth=1 2>/dev/null || true
+          CHANGED=$(git diff --name-only origin/main HEAD 2>/dev/null || echo "")
+          if [ -z "$CHANGED" ] || echo "$CHANGED" | grep -qvE '^public/data/'; then
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "Data-only change — skipping visual regression"
+          fi
+
       - uses: actions/setup-node@v6
+        if: steps.gate.outputs.skip != 'true'
         with:
           node-version: 20
           cache: npm
 
       - run: npm ci
+        if: steps.gate.outputs.skip != 'true'
 
       - name: Install Playwright browsers
+        if: steps.gate.outputs.skip != 'true'
         run: npx playwright install chromium --with-deps
 
       - name: Build site
+        if: steps.gate.outputs.skip != 'true'
         run: npm run build
         env:
           PUBLIC_API_URL: https://api.pruviq.com
 
       - name: Check if baselines exist
+        if: steps.gate.outputs.skip != 'true'
         id: check_baselines
         run: |
           if ls tests/visual/visual-regression.spec.ts-snapshots/*.png 2>/dev/null | head -1 | grep -q '.'; then
@@ -50,13 +67,13 @@ jobs:
           fi
 
       - name: Run visual regression tests (PR — compare)
-        if: github.event_name == 'pull_request' && steps.check_baselines.outputs.exists == 'true'
+        if: steps.gate.outputs.skip != 'true' && github.event_name == 'pull_request' && steps.check_baselines.outputs.exists == 'true'
         run: npx playwright test tests/visual/visual-regression.spec.ts --project=desktop
         continue-on-error: true
         id: visual_test
 
       - name: Generate baselines (PR — first run, no baselines)
-        if: github.event_name == 'pull_request' && steps.check_baselines.outputs.exists == 'false'
+        if: steps.gate.outputs.skip != 'true' && github.event_name == 'pull_request' && steps.check_baselines.outputs.exists == 'false'
         run: |
           echo "No baselines found — generating on first run (will commit to branch)"
           npx playwright test tests/visual/visual-regression.spec.ts --project=desktop --update-snapshots || true
@@ -67,7 +84,7 @@ jobs:
           git push || true
 
       - name: Upload diff artifacts (PR)
-        if: github.event_name == 'pull_request'
+        if: steps.gate.outputs.skip != 'true' && github.event_name == 'pull_request'
         uses: actions/upload-artifact@v7
         with:
           name: visual-regression-diff
@@ -77,7 +94,7 @@ jobs:
           retention-days: 14
 
       - name: Fail if screenshots differ
-        if: github.event_name == 'pull_request' && steps.visual_test.outcome == 'failure'
+        if: steps.gate.outputs.skip != 'true' && github.event_name == 'pull_request' && steps.visual_test.outcome == 'failure'
         run: |
           echo "Visual regression detected. Review diffs in artifacts: visual-regression-diff"
           echo "To update baselines: gh workflow run visual-regression.yml -f update_snapshots=true"
