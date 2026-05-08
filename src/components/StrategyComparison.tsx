@@ -676,7 +676,9 @@ export default function StrategyComparison({ lang = "en" }: Props) {
             <p class="text-(--color-text-muted) text-xs">{t.ctaDesc}</p>
           </div>
           <a
-            href={lang === "ko" ? "/ko/simulate" : "/simulate"}
+            href={
+              lang === "ko" ? "/ko/simulate/builder/" : "/simulate/builder/"
+            }
             class="shrink-0 px-5 py-2.5 rounded-lg font-semibold text-sm no-underline hover:opacity-90 transition-opacity whitespace-nowrap"
             style="background:var(--color-accent);color:var(--color-accent-text)"
           >
