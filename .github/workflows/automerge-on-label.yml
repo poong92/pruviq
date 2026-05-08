@@ -269,6 +269,8 @@ jobs:
                 per_page: 50,
               });
               prsToProcess = openPRs.filter(p => p.labels.some(l => l.name === labelName));
+              // 2026-05-09: oldest-first — feature PRs merge before data-refresh (newest)
+              prsToProcess.sort((a, b) => a.number - b.number);
               if (prsToProcess.length === 0) {
                 core.info(`No open PRs with automerge label (event=${context.eventName})`);
                 return;
