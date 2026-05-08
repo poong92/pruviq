@@ -93,9 +93,9 @@ In the Strategy Builder, adjust these in the indicator parameter tuning panel.
 
 > MACD is a lagging indicator that confirms what already happened. Its power is in filtering — not predicting. Use the histogram for momentum strength, the zero line for trend direction, and divergence for early warning signs.
 
-Build a MACD-based strategy in [PRUVIQ's Strategy Builder](/builder) and backtest it on real data.
+Build a MACD-based strategy in [PRUVIQ's Strategy Builder](/simulate/builder/) and backtest it on real data.
 
-[Open Strategy Builder →](/builder)
+[Open Strategy Builder →](/simulate/builder/)
 
 ---
 

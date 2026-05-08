@@ -85,9 +85,9 @@ TP 8%가 타임아웃 결과를 67% 개선.
 
 ## 직접 테스트해보세요
 
-PRUVIQ의 [Strategy Builder](/ko/builder)에서 다양한 SL/TP 조합을 535개 이상의 코인에서 테스트할 수 있습니다.
+PRUVIQ의 [Strategy Builder](/ko/simulate/builder/)에서 다양한 SL/TP 조합을 535개 이상의 코인에서 테스트할 수 있습니다.
 
-[Strategy Builder 열기 →](/ko/builder)
+[Strategy Builder 열기 →](/ko/simulate/builder/)
 
 ---
 
