@@ -530,7 +530,9 @@ export default function CoinChart({
           </span>
           <span
             class={`font-mono text-[0.8125rem] font-semibold px-2 py-0.5 rounded ${change >= 0 ? "bg-[var(--color-up-fill)]" : "bg-[var(--color-down-fill)]"}`}
-            style={{ color: change >= 0 ? "var(--color-up)" : "var(--color-red)" }}
+            style={{
+              color: change >= 0 ? "var(--color-up)" : "var(--color-red)",
+            }}
           >
             {change > 0 ? "+" : ""}
             {change.toFixed(2)}%
@@ -598,7 +600,10 @@ export default function CoinChart({
           </span>
           <span
             class="font-semibold hidden sm:inline"
-            style={{ color: displayChange >= 0 ? "var(--color-up)" : "var(--color-red)" }}
+            style={{
+              color:
+                displayChange >= 0 ? "var(--color-up)" : "var(--color-red)",
+            }}
           >
             {displayChange > 0 ? "+" : ""}
             {displayChange.toFixed(2)}%
@@ -658,7 +663,7 @@ export default function CoinChart({
           </div>
           <div class="flex gap-2 shrink-0">
             <a
-              href={`${lang === "ko" ? "/ko/simulate" : "/simulate"}?symbol=${symbol}`}
+              href={`${lang === "ko" ? "/ko/simulate/builder/" : "/simulate/builder/"}?symbol=${symbol}`}
               class="px-4 py-2 rounded-lg font-semibold text-xs no-underline hover:opacity-90 transition-opacity whitespace-nowrap"
               style="background:var(--color-accent);color:var(--color-accent-text)"
             >
