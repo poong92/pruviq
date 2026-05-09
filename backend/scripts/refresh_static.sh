@@ -142,7 +142,7 @@ if [[ "$CURRENT_BRANCH" != "main" ]]; then
     # may be dirty. This preserves the 2026-04-18 invariant (no WIP code loss).
     COMMITS_AHEAD=$(git log main..HEAD --oneline 2>/dev/null | wc -l | tr -d ' ')
     CODE_CHANGES=$(git status --porcelain 2>/dev/null \
-        | grep -E "^[ MADRCU][MADRCU] " \
+        | grep -v "^??" \
         | grep -vE " public/data/| tests/visual-baselines/" \
         | wc -l | tr -d ' ')
     if [[ "$COMMITS_AHEAD" == "0" && "$CODE_CHANGES" == "0" && "$IDLE_SEC" -gt 3600 ]]; then
