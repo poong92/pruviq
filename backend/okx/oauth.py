@@ -7,9 +7,9 @@ Flow:
   3. get_api_credentials(sid)  → returns {api_key, secret_key, passphrase}
   4. disconnect(sid)           → delete session
 
-scope="fast_api" — REQUIRED for OKX Broker OAuth (OKX_API_SPECS.md §1).
-scope="read_only,trade" silently routes user to /account/users (OKX drop). Do NOT use.
-(Earlier comment had this reversed — corrected 2026-04-19 after /users drop confirmed live.)
+scope="read_only,trade" — REQUIRED for OKX Broker OAuth Fast API (OKX_BROKER_DOCS_FULL.md:1015).
+scope="fast_api" was wrong — not a valid OKX scope value. Previous /account/users redirect
+was caused by channelId mismatch, not the scope. (corrected 2026-05-09 after full docs review)
 
 PKCE (2026-04-25):
   Per OKX broker docs, OAuth 2.0 supports authorization code mode AND PKCE
@@ -139,19 +139,21 @@ def generate_oauth_params(redirect_after: str = "", lang: str = "en") -> dict:
         "client_id": OKX_CLIENT_ID,
         "response_type": "code",
         "access_type": "offline",
-        "scope": "fast_api",
+        "scope": "read_only,trade",
         "redirect_uri": OKX_REDIRECT_URI,
     }
     if OKX_OAUTH_PKCE_ENABLED:
         code_verifier, code_challenge = _gen_pkce_pair()
         params["code_challenge"] = code_challenge
         params["code_challenge_method"] = "S256"
-    # channelId 제거 (2026-05-01): Jun Kim(OKX BD) 확인 — channelId는 affiliate
-    # 레퍼럴 코드이며 broker code와 별개. 브로커 코드를 channelId로 넘기면
-    # OKX가 consent 화면 대신 /account/users로 silent redirect함.
-    # affiliate 등록 완료 후 OKX_AFFILIATE_CHANNEL_ID 발급받으면 그때 추가.
-    if OKX_AFFILIATE_CHANNEL_ID:
-        params["channelId"] = OKX_AFFILIATE_CHANNEL_ID
+    # channelId: OKX broker channel ID (provided by OKX upon approval).
+    # Official docs (OKX_BROKER_DOCS_FULL.md:1014): links created API keys to
+    # broker for rebate tracking. Prefer OKX_AFFILIATE_CHANNEL_ID if set,
+    # else fall back to OKX_BROKER_CODE_OAUTH (same value OKX issued).
+    # scope=fast_api was wrong — official docs specify read_only,trade (2026-05-09).
+    _channel_id = OKX_AFFILIATE_CHANNEL_ID or OKX_BROKER_CODE_OAUTH
+    if _channel_id:
+        params["channelId"] = _channel_id
     save_csrf_state(state, redirect_after or "", lang, code_verifier)
     return params
 
@@ -167,19 +169,16 @@ def generate_auth_url(redirect_after: str = "", lang: str = "en") -> str:
         "response_type": "code",
         "access_type": "offline",
         "redirect_uri": OKX_REDIRECT_URI,
-        "scope": "fast_api",
+        "scope": "read_only,trade",
         "state": state,
     }
     if OKX_OAUTH_PKCE_ENABLED:
         code_verifier, code_challenge = _gen_pkce_pair()
         params["code_challenge"] = code_challenge
         params["code_challenge_method"] = "S256"
-    # channelId 제거 (2026-05-01): Jun Kim(OKX BD) 확인 — channelId는 affiliate
-    # 레퍼럴 코드이며 broker code와 별개. 브로커 코드를 channelId로 넘기면
-    # OKX가 consent 화면 대신 /account/users로 silent redirect함.
-    # affiliate 등록 완료 후 OKX_AFFILIATE_CHANNEL_ID 발급받으면 그때 추가.
-    if OKX_AFFILIATE_CHANNEL_ID:
-        params["channelId"] = OKX_AFFILIATE_CHANNEL_ID
+    _channel_id = OKX_AFFILIATE_CHANNEL_ID or OKX_BROKER_CODE_OAUTH
+    if _channel_id:
+        params["channelId"] = _channel_id
     save_csrf_state(state, redirect_after or "", lang, code_verifier)
     return f"{OKX_OAUTH_AUTHORIZE}?{urlencode(params)}"
 
