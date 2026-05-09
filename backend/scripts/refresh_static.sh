@@ -134,7 +134,23 @@ if [[ "$CURRENT_BRANCH" != "main" ]]; then
         PUSHED=true
     fi
 
-    if [[ "$UNCOMMITTED" == "0" && "$PUSHED" == "true" && "$IDLE_SEC" -gt 3600 ]]; then
+    # Path A: all code commits already merged into main → only data/baseline files remain
+    # uncommitted may be >0 (cron itself generates public/data/ changes), but safe to discard.
+    COMMITS_AHEAD=$(git log main..HEAD --oneline 2>/dev/null | wc -l | tr -d ' ')
+    if [[ "$COMMITS_AHEAD" == "0" && "$IDLE_SEC" -gt 3600 ]]; then
+        log "Branch '$CURRENT_BRANCH' fully merged into main (0 code commits ahead, idle=${IDLE_SEC}s) — force-recovering"
+        git checkout -- . 2>/dev/null || true
+        git clean -fd -- public/data/ tests/visual-baselines/ 2>/dev/null || true
+        if git checkout main 2>&1 | while read l; do log "  $l"; done; then
+            git pull --ff-only origin main -q 2>/dev/null || true
+            send_alert "INFO" "refresh_static force-recovered to main from '$CURRENT_BRANCH' (all commits merged, idle $((IDLE_SEC/60))min). Data-only uncommitted changes discarded safely."
+        else
+            log "git checkout main failed during force-recovery — skipping"
+            send_alert "ERROR" "refresh_static force-recovery FAILED on '$CURRENT_BRANCH'. Manual intervention needed."
+            exit 1
+        fi
+    # Path B: clean + pushed + idle → standard auto-recovery (original)
+    elif [[ "$UNCOMMITTED" == "0" && "$PUSHED" == "true" && "$IDLE_SEC" -gt 3600 ]]; then
         log "Feature branch '$CURRENT_BRANCH' safe-to-recover (clean=true, pushed=true, idle=${IDLE_SEC}s) — auto checkout main"
         if git checkout main 2>&1 | while read l; do log "  $l"; done; then
             send_alert "INFO" "refresh_static auto-recovered to main from '$CURRENT_BRANCH' (idle $((IDLE_SEC/60))min, all commits pushed). Your branch is preserved — \`git checkout $CURRENT_BRANCH\` to resume."
@@ -144,7 +160,7 @@ if [[ "$CURRENT_BRANCH" != "main" ]]; then
             exit 1
         fi
     else
-        REASON="uncommitted=$UNCOMMITTED, pushed=$PUSHED, idle_min=$((IDLE_SEC/60))"
+        REASON="uncommitted=$UNCOMMITTED, pushed=$PUSHED, idle_min=$((IDLE_SEC/60)), commits_ahead=$COMMITS_AHEAD"
         log "Not on main (on $CURRENT_BRANCH) — skip cycle (recovery blocked: $REASON)"
         send_alert "WARN" "refresh_static cron skipped: branch '$CURRENT_BRANCH' ($REASON). Auto-recovery requires uncommitted=0 + pushed + idle>60min. Will retry in 20min."
         exit 0
