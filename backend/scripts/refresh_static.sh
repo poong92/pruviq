@@ -134,12 +134,20 @@ if [[ "$CURRENT_BRANCH" != "main" ]]; then
         PUSHED=true
     fi
 
-    # Path A: all code commits already merged into main → only data/baseline files remain
-    # uncommitted may be >0 (cron itself generates public/data/ changes), but safe to discard.
+    # Path A: all code commits already merged into main AND no uncommitted code changes.
+    # Handles the case where cron runs on a merged branch generate public/data/ changes
+    # that keep UNCOMMITTED > 0 forever, blocking Path B.
+    #
+    # Safety gate: CODE_CHANGES must be 0 — only public/data/ and tests/visual-baselines/
+    # may be dirty. This preserves the 2026-04-18 invariant (no WIP code loss).
     COMMITS_AHEAD=$(git log main..HEAD --oneline 2>/dev/null | wc -l | tr -d ' ')
-    if [[ "$COMMITS_AHEAD" == "0" && "$IDLE_SEC" -gt 3600 ]]; then
-        log "Branch '$CURRENT_BRANCH' fully merged into main (0 code commits ahead, idle=${IDLE_SEC}s) — force-recovering"
-        git checkout -- . 2>/dev/null || true
+    CODE_CHANGES=$(git status --porcelain 2>/dev/null \
+        | grep -E "^[ MADRCU][MADRCU] " \
+        | grep -vE " public/data/| tests/visual-baselines/" \
+        | wc -l | tr -d ' ')
+    if [[ "$COMMITS_AHEAD" == "0" && "$CODE_CHANGES" == "0" && "$IDLE_SEC" -gt 3600 ]]; then
+        log "Branch '$CURRENT_BRANCH' fully merged + no code WIP (commits_ahead=0, code_changes=0, idle=${IDLE_SEC}s) — force-recovering"
+        git checkout -- public/data/ tests/visual-baselines/ 2>/dev/null || true
         git clean -fd -- public/data/ tests/visual-baselines/ 2>/dev/null || true
         if git checkout main 2>&1 | while read l; do log "  $l"; done; then
             git pull --ff-only origin main -q 2>/dev/null || true
