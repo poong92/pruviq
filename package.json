@@ -19,7 +19,7 @@
     "@fontsource-variable/geist": "^5.2.8",
     "@fontsource-variable/geist-mono": "^5.2.7",
     "@resvg/resvg-js": "^2.6.2",
-    "@tailwindcss/vite": "^4.2.4",
+    "@tailwindcss/vite": "^4.3.0",
     "astro": "^5.17.1",
     "lightweight-charts": "^5.2.0",
     "preact": "^10.29.1",
@@ -33,7 +33,7 @@
     "@testing-library/preact": "^3.2.4",
     "axe-core": "^4.10.0",
     "jsdom": "^29.1.1",
-    "puppeteer": "^24.42.0",
+    "puppeteer": "^24.43.0",
     "tsx": "^4.21.0",
     "vitest": "^4.1.5"
   }
