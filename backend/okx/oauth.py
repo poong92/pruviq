@@ -138,19 +138,17 @@ def generate_oauth_params(redirect_after: str = "", lang: str = "en") -> dict:
         "state": state,
         "client_id": OKX_CLIENT_ID,
         "response_type": "code",
-        "scope": "read_only,trade",
+        "scope": "fast_api",
         "redirect_uri": OKX_REDIRECT_URI,
     }
     if OKX_OAUTH_PKCE_ENABLED:
         code_verifier, code_challenge = _gen_pkce_pair()
         params["code_challenge"] = code_challenge
         params["code_challenge_method"] = "S256"
-    # channelId: OKX broker channel ID (provided by OKX upon approval).
-    # Official docs (OKX_BROKER_DOCS_FULL.md:1014): links created API keys to
-    # broker for rebate tracking. Prefer OKX_AFFILIATE_CHANNEL_ID if set,
-    # else fall back to OKX_BROKER_CODE_OAUTH (same value OKX issued).
-    # scope=fast_api was wrong — official docs specify read_only,trade (2026-05-09).
-    _channel_id = OKX_AFFILIATE_CHANNEL_ID or OKX_BROKER_CODE_OAUTH
+    # channelId = affiliate 레퍼럴 코드 (Jun Kim 2026-04-28 확인).
+    # OKX_AFFILIATE_CHANNEL_ID=PRUVIQ 설정 시 자동 적용.
+    # 브로커 코드(OKX_BROKER_CODE_OAUTH)를 channelId로 넘기면 /account/users 유발.
+    _channel_id = OKX_AFFILIATE_CHANNEL_ID
     if _channel_id:
         params["channelId"] = _channel_id
     save_csrf_state(state, redirect_after or "", lang, code_verifier)
@@ -167,14 +165,14 @@ def generate_auth_url(redirect_after: str = "", lang: str = "en") -> str:
         "client_id": OKX_CLIENT_ID,
         "response_type": "code",
         "redirect_uri": OKX_REDIRECT_URI,
-        "scope": "read_only,trade",
+        "scope": "fast_api",
         "state": state,
     }
     if OKX_OAUTH_PKCE_ENABLED:
         code_verifier, code_challenge = _gen_pkce_pair()
         params["code_challenge"] = code_challenge
         params["code_challenge_method"] = "S256"
-    _channel_id = OKX_AFFILIATE_CHANNEL_ID or OKX_BROKER_CODE_OAUTH
+    _channel_id = OKX_AFFILIATE_CHANNEL_ID
     if _channel_id:
         params["channelId"] = _channel_id
     save_csrf_state(state, redirect_after or "", lang, code_verifier)
