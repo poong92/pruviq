@@ -24,7 +24,7 @@
 | `client_id` | Yes | |
 | `response_type` | Yes | `"code"` |
 | `redirect_uri` | Yes | must exactly match portal-registered URL |
-| `scope` | Yes | **`"fast_api"`** — REQUIRED. `"read_only,trade"` silently routes to `/account/users`. |
+| `scope` | Yes | **`"read_only,trade"`** — REQUIRED for Broker OAuth Fast API. (`fast_api` is not a valid OKX scope value; previous `/account/users` redirect was caused by `channelId` mismatch, not scope.) |
 | `state` | Yes | CSRF token |
 | `access_type` | No | `"offline"` for refresh_token |
 | `channelId` | No | broker code for affiliate tracking |
@@ -641,7 +641,7 @@ Sign: `Base64(HMAC-SHA256(timestamp + 'GET' + '/users/self/verify', secretKey))`
 
 ## 11. Critical Notes
 
-1. **`scope=fast_api`** required — `read_only,trade` silently fails (routes to /account/users)
+1. **`scope=read_only,trade`** required — `fast_api` is not a valid OKX scope (previous `/account/users` redirect was a `channelId` mismatch)
 2. **Token endpoint**: `/v5/users/oauth/token` — NO `/api/` prefix
 3. **53017 error**: BD must activate Fast API permissions in OKX portal
 4. **IP binding recommended**: keys without IP + trade perm expire after 14d inactivity
