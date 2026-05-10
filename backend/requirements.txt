@@ -1,5 +1,5 @@
 ccxt>=4.5.50
-pandas>=2.0.0
+pandas>=3.0.2
 numpy>=2.4.4
 fastapi>=0.136.1
 uvicorn[standard]>=0.46.0
