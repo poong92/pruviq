@@ -149,7 +149,7 @@ ranking-fallback.json  OHLCV 데이터           시장 컨텍스트
 ├─────────────────────────────────────────────────────┤
 │  For you   Following                                 │
 ├─────────────────────────────────────────────────────┤
-│  🟣  PRUVIQ  @pruviq_io  ·  4h                      │
+│  🟣  PRUVIQ  @pruviq  ·  4h                      │
 │                                                     │
 │  extreme fear isn't a buy signal.                   │
 │                                                     │
@@ -177,7 +177,7 @@ ranking-fallback.json  OHLCV 데이터           시장 컨텍스트
 #### Threads 모바일 피드뷰 (3파트):
 ```
 ┌─────────────────────────────────────────────────────┐
-│  🟣  pruviq_io  ·  4h                     ···       │
+│  🟣  pruviq  ·  4h                     ···       │
 │                                                     │
 │  extreme fear isn't a buy signal.                   │
 │                                                     │
@@ -189,7 +189,7 @@ ranking-fallback.json  OHLCV 데이터           시장 컨텍스트
 │                                                     │
 │  ❤️ 89   💬 Reply                                   │
 │  ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─         │
-│  🟣  pruviq_io                                      │
+│  🟣  pruviq                                      │
 │                                                     │
 │  why?                                               │
 │  extreme fear = markets in free fall.               │
@@ -199,7 +199,7 @@ ranking-fallback.json  OHLCV 데이터           시장 컨텍스트
 │                                                     │
 │  ❤️ 67   💬 Reply                                   │
 │  ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─         │
-│  🟣  pruviq_io                                      │
+│  🟣  pruviq                                      │
 │                                                     │
 │  sometimes doing nothing is the trade.              │
 │                                                     │
@@ -217,7 +217,7 @@ ranking-fallback.json  OHLCV 데이터           시장 컨텍스트
 #### X 모바일 피드뷰:
 ```
 ┌─────────────────────────────────────────────────────┐
-│  🟣  PRUVIQ  @pruviq_io  ·  2h                      │
+│  🟣  PRUVIQ  @pruviq  ·  2h                      │
 │                                                     │
 │  the most dangerous strategies look clean.          │
 │                                                     │
@@ -244,7 +244,7 @@ ranking-fallback.json  OHLCV 데이터           시장 컨텍스트
 #### Threads 모바일 피드뷰 (3파트):
 ```
 ┌─────────────────────────────────────────────────────┐
-│  🟣  pruviq_io  ·  2h                     ···       │
+│  🟣  pruviq  ·  2h                     ···       │
 │                                                     │
 │  the most dangerous strategies look clean.          │
 │                                                     │
@@ -254,7 +254,7 @@ ranking-fallback.json  OHLCV 데이터           시장 컨텍스트
 │                                                     │
 │  ❤️ 89   💬 Reply                                   │
 │  ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─         │
-│  🟣  pruviq_io                                      │
+│  🟣  pruviq                                      │
 │                                                     │
 │  why did it fail?                                   │
 │  momentum strategies need trending markets.         │
@@ -263,7 +263,7 @@ ranking-fallback.json  OHLCV 데이터           시장 컨텍스트
 │                                                     │
 │  ❤️ 67   💬 Reply                                   │
 │  ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─         │
-│  🟣  pruviq_io                                      │
+│  🟣  pruviq                                      │
 │                                                     │
 │  momentum needs trending markets.                   │
 │  the last 90 days were sideways.                    │
@@ -286,7 +286,7 @@ ranking-fallback.json  OHLCV 데이터           시장 컨텍스트
 ├─────────────────────────────────────────────────────┤
 │  For you   Following                                 │
 ├─────────────────────────────────────────────────────┤
-│  🟣  PRUVIQ  @pruviq_io  ·  8h                      │
+│  🟣  PRUVIQ  @pruviq  ·  8h                      │
 │                                                     │
 │  win rate is a vanity metric.                       │
 │                                                     │
@@ -303,14 +303,14 @@ ranking-fallback.json  OHLCV 데이터           시장 컨텍스트
 │  anyone else figure this out late?                  │
 │                                                     │
 │  💬 61   🔁 143   ❤️ 521   📊 11.2K                 │
-│  ↳ @pruviq_io: "check your PF, not WR ↓ [link]"   │
+│  ↳ @pruviq: "check your PF, not WR ↓ [link]"   │
 └─────────────────────────────────────────────────────┘
 ```
 
 #### Threads 모바일 피드뷰 (3파트):
 ```
 ┌─────────────────────────────────────────────────────┐
-│  🟣  pruviq_io  ·  8h                     ···       │
+│  🟣  pruviq  ·  8h                     ···       │
 │                                                     │
 │  win rate is a vanity metric.                       │
 │                                                     │
@@ -323,7 +323,7 @@ ranking-fallback.json  OHLCV 데이터           시장 컨텍스트
 │                                                     │
 │  ❤️ 112   💬 Reply                                  │
 │  ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─         │
-│  🟣  pruviq_io                                      │
+│  🟣  pruviq                                      │
 │                                                     │
 │  the math:                                          │
 │  52% win rate sounds like you're winning.           │
@@ -332,7 +332,7 @@ ranking-fallback.json  OHLCV 데이터           시장 컨텍스트
 │                                                     │
 │  ❤️ 89   💬 Reply                                   │
 │  ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─         │
-│  🟣  pruviq_io                                      │
+│  🟣  pruviq                                      │
 │                                                     │
 │  now i check profit factor first.                   │
 │  win rate is the last thing i look at.              │
@@ -350,7 +350,7 @@ ranking-fallback.json  OHLCV 데이터           시장 컨텍스트
 #### X 모바일 피드뷰:
 ```
 ┌─────────────────────────────────────────────────────┐
-│  🟣  PRUVIQ  @pruviq_io  ·  6h                      │
+│  🟣  PRUVIQ  @pruviq  ·  6h                      │
 │                                                     │
 │  regime beats strategy every time.                  │
 │                                                     │
@@ -376,7 +376,7 @@ ranking-fallback.json  OHLCV 데이터           시장 컨텍스트
 #### Threads 모바일 피드뷰 (3파트):
 ```
 ┌─────────────────────────────────────────────────────┐
-│  🟣  pruviq_io  ·  6h                     ···       │
+│  🟣  pruviq  ·  6h                     ···       │
 │                                                     │
 │  regime beats strategy every time.                  │
 │                                                     │
@@ -386,7 +386,7 @@ ranking-fallback.json  OHLCV 데이터           시장 컨텍스트
 │                                                     │
 │  ❤️ 123   💬 Reply                                  │
 │  ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─         │
-│  🟣  pruviq_io                                      │
+│  🟣  pruviq                                      │
 │                                                     │
 │  why does it work?                                  │
 │  bollinger band squeeze = low volatility period.    │
@@ -395,7 +395,7 @@ ranking-fallback.json  OHLCV 데이터           시장 컨텍스트
 │                                                     │
 │  ❤️ 89   💬 Reply                                   │
 │  ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─         │
-│  🟣  pruviq_io                                      │
+│  🟣  pruviq                                      │
 │                                                     │
 │  the catch: only works when markets go nowhere.     │
 │  trending? it breaks.                               │
