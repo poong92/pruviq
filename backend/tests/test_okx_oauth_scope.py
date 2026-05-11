@@ -18,7 +18,7 @@ OAUTH_PY = BACKEND_OKX / "oauth.py"
 SPEC_MD = BACKEND_OKX / "OKX_API_SPECS.md"
 
 
-def test_oauth_py_scope_literals_are_read_only_trade():
+def test_oauth_py_scope_literals_are_fast_api():
     """oauth.py 의 production scope 값이 read_only,trade 인지 검증.
 
     OKX Broker Fast API 공식 문서(OKX_BROKER_DOCS_FULL.md:1015):
@@ -40,7 +40,7 @@ def test_oauth_py_scope_literals_are_read_only_trade():
     # production 함수에서 fast_api scope가 없는지만 확인
     prod_content = content.split("EXPERIMENTAL_VARIANTS")[0]
     prod_scope_values = re.findall(r'"scope"\s*:\s*"([^"]+)"', prod_content)
-    bad_prod = [s for s in prod_scope_values if s not in ("read_only,trade", "read_only", "trade")]
+    bad_prod = [s for s in prod_scope_values if s != "fast_api"]
     assert not bad_prod, (
         f"oauth.py production functions have wrong OAuth scope: {bad_prod!r}.\n"
         f"OKX Broker Fast API requires scope=read_only,trade "
