@@ -81,7 +81,8 @@ if [ ${#ISSUES[@]} -gt 0 ]; then
     else
         echo "ALERT suppressed (cooldown): ${#ISSUES[@]} issues"
     fi
-    exit 1
+    # exit 0: monitor ran successfully (issues detected + reported via Telegram)
+    # exit 1 here causes systemd to mark the unit as FAILED → false alert storm
 else
     echo "OK: all checks passed"
     # Clear cooldown markers on recovery
