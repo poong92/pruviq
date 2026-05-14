@@ -62,10 +62,11 @@ def test_experimental_endpoint_gated_by_env(monkeypatch):
 
 def test_read_only_trade_variant_produces_expected_scope(monkeypatch):
     """read_only_trade variant must set scope=read_only,trade and KEEP
-    PKCE + channelId so we can isolate the scope flip alone."""
+    PKCE + brokerCode + channelId so we can isolate the scope flip alone."""
     monkeypatch.setenv("OKX_CLIENT_ID", "test-client")
     monkeypatch.setenv("OKX_REDIRECT_URI", "https://api.example/callback")
     monkeypatch.setenv("OKX_BROKER_CODE", "BROKER123")
+    monkeypatch.setenv("OKX_AFFILIATE_CHANNEL_ID", "AFF456")
     monkeypatch.setenv("OKX_OAUTH_PKCE_ENABLED", "true")
 
     import importlib
@@ -82,7 +83,8 @@ def test_read_only_trade_variant_produces_expected_scope(monkeypatch):
     qs = parse_qs(urlparse(url).query)
 
     assert qs["scope"] == ["read_only,trade"]
-    assert qs["channelId"] == ["BROKER123"]
+    assert qs["brokerCode"] == ["BROKER123"]
+    assert qs["channelId"] == ["AFF456"]
     assert "code_challenge" in qs
     assert qs["code_challenge_method"] == ["S256"]
 
