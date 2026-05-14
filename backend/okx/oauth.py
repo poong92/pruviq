@@ -138,6 +138,7 @@ def generate_oauth_params(redirect_after: str = "", lang: str = "en") -> dict:
         "state": state,
         "client_id": OKX_CLIENT_ID,
         "response_type": "code",
+        "access_type": "offline",
         "scope": "fast_api",
         "redirect_uri": OKX_REDIRECT_URI,
     }
@@ -165,6 +166,7 @@ def generate_auth_url(redirect_after: str = "", lang: str = "en") -> str:
     params = {
         "client_id": OKX_CLIENT_ID,
         "response_type": "code",
+        "access_type": "offline",
         "redirect_uri": OKX_REDIRECT_URI,
         "scope": "fast_api",
         "state": state,
