@@ -145,12 +145,13 @@ def generate_oauth_params(redirect_after: str = "", lang: str = "en") -> dict:
         code_verifier, code_challenge = _gen_pkce_pair()
         params["code_challenge"] = code_challenge
         params["code_challenge_method"] = "S256"
-    # channelId = affiliate 레퍼럴 코드 (Jun Kim 2026-04-28 확인).
-    # OKX_AFFILIATE_CHANNEL_ID=PRUVIQ 설정 시 자동 적용.
-    # 브로커 코드(OKX_BROKER_CODE_OAUTH)를 channelId로 넘기면 /account/users 유발.
-    _channel_id = OKX_AFFILIATE_CHANNEL_ID
-    if _channel_id:
-        params["channelId"] = _channel_id
+    # brokerCode = Required per OKX docs /oauth/authorize parameter table.
+    # OKX_BROKER_CODE_OAUTH is the OAuth broker code (distinct from API broker code).
+    if OKX_BROKER_CODE_OAUTH:
+        params["brokerCode"] = OKX_BROKER_CODE_OAUTH
+    # channelId = Optional affiliate referral code (Jun Kim 2026-04-28 확인).
+    if OKX_AFFILIATE_CHANNEL_ID:
+        params["channelId"] = OKX_AFFILIATE_CHANNEL_ID
     save_csrf_state(state, redirect_after or "", lang, code_verifier)
     return params
 
@@ -172,9 +173,10 @@ def generate_auth_url(redirect_after: str = "", lang: str = "en") -> str:
         code_verifier, code_challenge = _gen_pkce_pair()
         params["code_challenge"] = code_challenge
         params["code_challenge_method"] = "S256"
-    _channel_id = OKX_AFFILIATE_CHANNEL_ID
-    if _channel_id:
-        params["channelId"] = _channel_id
+    if OKX_BROKER_CODE_OAUTH:
+        params["brokerCode"] = OKX_BROKER_CODE_OAUTH
+    if OKX_AFFILIATE_CHANNEL_ID:
+        params["channelId"] = OKX_AFFILIATE_CHANNEL_ID
     save_csrf_state(state, redirect_after or "", lang, code_verifier)
     return f"{OKX_OAUTH_AUTHORIZE}?{urlencode(params)}"
 
@@ -232,14 +234,10 @@ def generate_auth_url_experimental(
         code_verifier, code_challenge = _gen_pkce_pair()
         params["code_challenge"] = code_challenge
         params["code_challenge_method"] = "S256"
-    # OAuth `channelId` — per OKX BD 2026-04-28 (Jun Kim) this is likely
-    # the affiliate referral code, separate from broker code. Two-stage:
-    # if OKX_AFFILIATE_CHANNEL_ID set → use it; else fallback to
-    # OKX_BROKER_CODE_OAUTH (legacy behavior, preserved until affiliate
-    # registration completes).
-    _channel_id = OKX_AFFILIATE_CHANNEL_ID or OKX_BROKER_CODE_OAUTH
-    if _channel_id:
-        params["channelId"] = _channel_id
+    if OKX_BROKER_CODE_OAUTH:
+        params["brokerCode"] = OKX_BROKER_CODE_OAUTH
+    if OKX_AFFILIATE_CHANNEL_ID:
+        params["channelId"] = OKX_AFFILIATE_CHANNEL_ID
 
     if variant == "read_only_trade":
         params["scope"] = "read_only,trade"
