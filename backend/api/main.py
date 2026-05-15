@@ -4199,7 +4199,7 @@ def _get_daily_rankings_sync(
     period: str,
     group: str,
 ) -> dict:
-    VALID_PERIODS = {"7d", "30d", "365d"}
+    VALID_PERIODS = {"1d", "7d", "30d", "365d"}
     VALID_GROUPS = {"top30", "top50", "top100", "btc"}
 
     # Normalise inputs
@@ -4286,8 +4286,9 @@ def _get_daily_rankings_sync(
             seen.add(key)
             unique_entries.append(e)
 
-    # Filter out low-sample entries (< 30 trades = statistically meaningless for ranking)
-    unique_entries = [e for e in unique_entries if e.get("total_trades", 0) >= 30]
+    # 1d window has fewer candles — lower threshold to 10 (mostly 1H strategies pass)
+    min_trades = 10 if period == "1d" else 30
+    unique_entries = [e for e in unique_entries if e.get("total_trades", 0) >= min_trades]
 
     # Rank by profit_factor desc (then win_rate as tiebreaker)
     ranked = sorted(
@@ -4369,6 +4370,7 @@ def _get_daily_rankings_sync(
         strat_key = (e.get("strategy"), e.get("direction"), e.get("timeframe", "1H"))
         yrank = yesterday_rank_map.get(strat_key)
         rank_change = (yrank - rank) if yrank is not None else None  # positive = improved
+        low_sample_threshold = 20 if period == "1d" else 100
         return {
             "rank": rank,
             "name_ko": e.get("category_ko", e.get("strategy", "")),
@@ -4384,7 +4386,7 @@ def _get_daily_rankings_sync(
             "timeframe": e.get("timeframe", "1H"),
             "sl_pct": e.get("sl_pct"),
             "tp_pct": e.get("tp_pct"),
-            "low_sample": trades < 100,
+            "low_sample": trades < low_sample_threshold,
             "rank_change": rank_change,
             "streak": streak_map.get(strat_key, 1),
         }
