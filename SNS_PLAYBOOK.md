@@ -128,6 +128,15 @@ ranking-fallback.json  OHLCV 데이터           시장 컨텍스트
 
 **Best/Worst 식별**: `chart_insight`는 입력 배열 순서가 아닌 **값으로 ranking** (`generate_chart.py:107-108`). 호출부 labels/values 순서 자유. 변수명 inversion 위험 제거.
 
+**색 SSoT (`generate_chart.py:color_for_pf`)**: 모든 차트의 PF→색 결정은 이 한 함수만 사용. 함수 내 inline 임계값 금지.
+
+| Mode | PF < 1.0 | 1.0 ≤ PF < 1.3 | PF ≥ 1.3 |
+|------|----------|----------------|----------|
+| `tier3` (기본, `chart_insight` / `chart_regime`) | RED | BLUE | GREEN |
+| `binary` (`chart_comparison`: winner/loser 강한 대비) | RED | RED | GREEN |
+
+임계값 변경 시 `generate_chart.py:color_for_pf`만 수정. 자동으로 3개 차트 전부 동기화.
+
 ---
 
 ## 섹션 2: 30일 콘텐츠 캘린더
