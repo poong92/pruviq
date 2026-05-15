@@ -111,6 +111,23 @@ ranking-fallback.json  OHLCV 데이터           시장 컨텍스트
 
 > Phase 1 현재 자동 발행 코드는 없음. 사용자가 Telegram Approve를 누른 시점에 `telegram_approval_bot.py:242,331`이 `social_poster.post_x/post_threads`를 즉시 호출. 위 "권장 시각"은 수동 발행 가이드.
 
+### 1-F. 차트 데이터 정책 (`generate_chart.py` + `generate_chart_for_day`)
+
+**SSoT 규칙**: 차트의 모든 숫자는 (a) 라이브 ranking API, (b) `_verified_fallback` 검증된 정적 데이터, (c) `data/*_seed.json` 시드 파일 중 한 곳에서만 옴. 함수 내부 하드코딩 금지.
+
+**단위 일관성**: 차트 막대 라벨은 본문과 동일한 환산식 사용 (`pf_to_plain`: PF × 100 = `$X out`). 차트의 `$100 → $X` 와 본문의 `every $100 → $X`는 같은 값. matplotlib에서 `$` 는 `\$`로 escape 필수 (`generate_chart.py:_dollar_label`).
+
+**검증 앵커**: 모든 차트 footer 왼쪽에 데이터 스코프 표시 (`"238 coins · 2y real ohlcv"` 등). `_verified=false` 시드는 자동으로 `· verification pending` 추가. `_verified_fallback` 데이터는 자동으로 `· verified YYYY-MM-DD` 추가.
+
+**시드 파일**:
+| 시드 | 경로 | 사용처 |
+|------|------|--------|
+| Monday F&G regime | `~/scripts/social/data/monday_regime_seed.json` | `sns_daily_post.py:563-583` chart_regime |
+
+새 시드 추가 시 `_meta.{_verified, source_commit, last_verified, verification_anchor}` 필드 의무.
+
+**Best/Worst 식별**: `chart_insight`는 입력 배열 순서가 아닌 **값으로 ranking** (`generate_chart.py:107-108`). 호출부 labels/values 순서 자유. 변수명 inversion 위험 제거.
+
 ---
 
 ## 섹션 2: 30일 콘텐츠 캘린더
