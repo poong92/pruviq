@@ -4437,6 +4437,8 @@ def _get_daily_rankings_sync(
                 key = (e.get("strategy"), e.get("direction"), e.get("timeframe", "1H"))
                 if key in WF_FAILED_KEYS:
                     continue
+                if e.get("total_trades", 0) < 30:
+                    continue
                 if key not in weekly_map:
                     weekly_map[key] = {"entries": [], "meta": e}
                 weekly_map[key]["entries"].append(e)
@@ -4449,7 +4451,7 @@ def _get_daily_rankings_sync(
         for key, data in weekly_map.items():
             entries = data["entries"]
             meta = data["meta"]
-            avg_pf = sum(e.get("profit_factor", 0) for e in entries) / len(entries)
+            avg_pf = sum(min(e.get("profit_factor", 0), 20.0) for e in entries) / len(entries)
             avg_wr = sum(e.get("win_rate", 0) for e in entries) / len(entries)
             weekly_agg.append({
                 "key": key,
