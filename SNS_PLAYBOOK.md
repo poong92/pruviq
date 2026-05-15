@@ -1,9 +1,13 @@
-# PRUVIQ SNS 통합 플레이북 v2.0
+# PRUVIQ SNS 통합 플레이북 v2.1
 > 2026-05-10 통합 작성. **이 파일이 SSoT** — 다른 SNS_*.md 발견 시 이 파일과 통합.
+
+**관련 보조 문서** (운영 디렉토리, git 외부):
+- `/Users/jepo/scripts/social/SNS_STABLE_LOCKIN.md` — 14일 데이터 락인 룰 + 포맷 변경 게이트 + 락인 포맷 사양
 
 ## 통합 이력
 - v1.0 (2026-05-10 오전): 0해시/0이모지/소문자 톤 정의
 - v2.0 (2026-05-10): SNS_AUTOMATION_PLAYBOOK 흡수 후 단일화. 포스트 4개 주제우선 구조(클레임→데이터→질문) + 섹션 10 팔로워 성장 엔진 추가.
+- v2.1 (2026-05-15): 코드 정합 — plist 시각(08:00→20:30 KST), 큐 자동 archive(`archive_stale_queue()` 구현), 발행 정책(승인=즉시발행) 코드 동작과 일치. `scripts/social/SNS_PLAYBOOK.md`(137줄) → `SNS_STABLE_LOCKIN.md` rename (SSoT 동일명 충돌 해소).
 - archive: `docs/archive/SNS_AUTOMATION_PLAYBOOK_20260510.md.archived`
 
 ---
@@ -19,8 +23,8 @@ ranking-fallback.json  OHLCV 데이터           시장 컨텍스트
         └───────────────────┼─────────────────────┘
                             ▼
               ┌─────────────────────────┐
-              │  sns_daily_post.py      │  ← 매일 08:00 KST LaunchAgent
-              │  (613줄 메인 진입점)     │
+              │  sns_daily_post.py      │  ← 매일 20:30 KST LaunchAgent
+              │  (896줄 메인 진입점)     │
               │                         │
               │  요일 판단 (월/수/목/금) │
               │  + 풀 선택              │
@@ -29,7 +33,7 @@ ranking-fallback.json  OHLCV 데이터           시장 컨텍스트
               └───────────┬─────────────┘
                           │
               ┌───────────▼─────────────┐
-              │  validate_content()     │  ← sns_daily_post.py:136
+              │  validate_content()     │  ← sns_daily_post.py:225
               │  - 글자수 280/500 체크  │
               │  - BANNED_WORDS 14개   │
               │  - "#" 완전 차단        │
@@ -39,16 +43,16 @@ ranking-fallback.json  OHLCV 데이터           시장 컨텍스트
               │  Telegram 미리보기 발송  │  ← 사용자(제포) 승인 게이트
               │  [✅ Approve] [❌ Reject]│
               └───────────┬─────────────┘
-                          │ 승인 클릭 → 22:00 KST 대기
+                          │ 승인 클릭 즉시 발행 (Phase 1 수동 모드)
                           ▼
               ┌─────────────────────────┐
               │  social_poster.py       │  ← 718줄
               │  (718줄 발행 엔진)      │
               │                         │
-              │  X API ──────────────▶ 📱  KST 22:00
+              │  X API ──────────────▶ 📱  (즉시)
               │  (tweepy OAuth1.0a)     │
               │                         │
-              │  Threads API ────────▶ 📱  KST 22:30
+              │  Threads API ────────▶ 📱  (X 직후)
               │  (graph.threads.net)    │
               └─────────────────────────┘
                           │
@@ -63,30 +67,34 @@ ranking-fallback.json  OHLCV 데이터           시장 컨텍스트
 
 | 파일 | 줄수 | 역할 |
 |------|------|------|
-| `/Users/jepo/scripts/social/sns_daily_post.py` | 613 | 메인 진입점, 콘텐츠 생성, 검증 |
+| `/Users/jepo/scripts/social/sns_daily_post.py` | 896 | 메인 진입점, 콘텐츠 생성, 검증, 큐 자동 archive |
 | `/Users/jepo/scripts/social/social_poster.py` | 718 | X tweepy + Threads graph API 발행 |
-| `/Users/jepo/scripts/social/telegram_approval_bot.py` | 479 | 승인/거절 콜백 핸들러 |
-| `/Users/jepo/scripts/social/generate_chart.py` | 173 | 독립 차트 모듈 |
+| `/Users/jepo/scripts/social/telegram_approval_bot.py` | 484 | 승인/거절 콜백 핸들러 |
+| `/Users/jepo/scripts/social/generate_chart.py` | 182 | 독립 차트 모듈 |
+| `/Users/jepo/scripts/social/sns_approval_reminder.py` | 45 | 21:00 미승인 알림 |
 
-**핵심 코드 라인 (톤 게이트)**:
-- `sns_daily_post.py:29-30` — BANNED_WORDS 14개
-- `sns_daily_post.py:136` — `validate_content()` 진입점
-- `sns_daily_post.py:163-165` — `if "#" in text` 해시태그 차단
-- `sns_daily_post.py:589-591` — `--auto` 플래그 (Phase 2 전환용, 현재 미사용)
+**핵심 코드 라인** (`grep -n` 으로 재확인 권장 — 코드 변경 시 drift 가능):
+- `sns_daily_post.py:34` — BANNED_WORDS 14개
+- `sns_daily_post.py:225` — `validate_content()` 진입점
+- `sns_daily_post.py:250` — `if "#" in text` 해시태그 절대 차단
+- `sns_daily_post.py:705` — `archive_stale_queue()` (어제 이전 큐 자동 archive)
+- `sns_daily_post.py:736` — `--auto` 플래그 (Phase 2 전환용, 현재 미사용)
 
-### 1-C. LaunchAgent 3개 (현재 활성)
+### 1-C. LaunchAgent 3개 (현재 활성, plist 실측)
 
-| Label | 트리거 | plist 경로 |
-|-------|--------|-----------|
-| `com.pruviq.sns-daily-post` | 매일 08:00 KST | `~/Library/LaunchAgents/com.pruviq.sns-daily-post.plist` |
-| `com.pruviq.sns-preflight` | 매일 08:30 KST | `~/Library/LaunchAgents/com.pruviq.sns-preflight.plist` |
-| `com.pruviq.telegram-approval-poller` | 120초마다 | `~/Library/LaunchAgents/com.pruviq.telegram-approval-poller.plist` |
+| Label | 트리거 (KST) | plist 경로 |
+|-------|------------|-----------|
+| `com.pruviq.sns-daily-post` | **20:30** (Hour=20, Minute=30) | `~/Library/LaunchAgents/com.pruviq.sns-daily-post.plist` |
+| `com.pruviq.sns-preflight` | **08:30** (Hour=8, Minute=30) | `~/Library/LaunchAgents/com.pruviq.sns-preflight.plist` |
+| `com.pruviq.sns-approval-reminder` | **21:00** (Hour=21, Minute=0) | `~/Library/LaunchAgents/com.pruviq.sns-approval-reminder.plist` |
+
+> launchd는 시스템 로컬 TZ(KST) 기준. JSON 큐의 `created` 필드(`+00:00`) + `social_poster.py` 내부 timestamp는 UTC. 로그 파일 mtime(`ls -la`)은 KST.
 
 ### 1-D. queue/posted/failed 정책
 
 | 디렉토리 | 경로 | 정책 |
 |---------|------|------|
-| queue/ | `/Users/jepo/scripts/social/queue/` | 당일 21:30 KST 미승인 시 자동 폐기 |
+| queue/ | `/Users/jepo/scripts/social/queue/` | 다음 sns-daily-post 실행 시작 시 어제(KST) 이전 created 항목 자동 `.archived` 처리 (`sns_daily_post.py:705 archive_stale_queue()`). 당일 재실행은 보존. |
 | posted/ | `/Users/jepo/scripts/social/posted/` | 영구 보존 (발행 기록) |
 | failed/ | `/Users/jepo/scripts/social/failed/` | 영구 보존 (디버깅 자료) |
 
@@ -96,16 +104,44 @@ ranking-fallback.json  OHLCV 데이터           시장 컨텍스트
 |------|---|---------|
 | 최대 글자 | 280자 | 500자 |
 | 최소 글자 | 50자 | 50자 |
-| 해시태그 | **0개** (코드 강제 차단) | **0개** |
+| 해시태그 | **0개** (`sns_daily_post.py:250` 강제 차단; cashtag `$BTC`는 `$` 사용으로 허용) | **0개** |
 | 이미지 | 수/금 필수, 나머지 선택 | 선택 |
 | 링크 | 첫 댓글에만 (본문 X) | 첫 댓글에만 |
-| 발행 시간 | KST 22:00 | KST 22:30 |
+| 권장 발행 시각 | KST 22:00 | KST 22:30 |
+
+> Phase 1 현재 자동 발행 코드는 없음. 사용자가 Telegram Approve를 누른 시점에 `telegram_approval_bot.py:242,331`이 `social_poster.post_x/post_threads`를 즉시 호출. 위 "권장 시각"은 수동 발행 가이드.
+
+### 1-F. 차트 데이터 정책 (`generate_chart.py` + `generate_chart_for_day`)
+
+**SSoT 규칙**: 차트의 모든 숫자는 (a) 라이브 ranking API, (b) `_verified_fallback` 검증된 정적 데이터, (c) `data/*_seed.json` 시드 파일 중 한 곳에서만 옴. 함수 내부 하드코딩 금지.
+
+**단위 일관성**: 차트 막대 라벨은 본문과 동일한 환산식 사용 (`pf_to_plain`: PF × 100 = `$X out`). 차트의 `$100 → $X` 와 본문의 `every $100 → $X`는 같은 값. matplotlib에서 `$` 는 `\$`로 escape 필수 (`generate_chart.py:_dollar_label`).
+
+**검증 앵커**: 모든 차트 footer 왼쪽에 데이터 스코프 표시 (`"238 coins · 2y real ohlcv"` 등). `_verified=false` 시드는 자동으로 `· verification pending` 추가. `_verified_fallback` 데이터는 자동으로 `· verified YYYY-MM-DD` 추가.
+
+**시드 파일**:
+| 시드 | 경로 | 사용처 |
+|------|------|--------|
+| Monday F&G regime | `~/scripts/social/data/monday_regime_seed.json` | `sns_daily_post.py:563-583` chart_regime |
+
+새 시드 추가 시 `_meta.{_verified, source_commit, last_verified, verification_anchor}` 필드 의무.
+
+**Best/Worst 식별**: `chart_insight`는 입력 배열 순서가 아닌 **값으로 ranking** (`generate_chart.py:107-108`). 호출부 labels/values 순서 자유. 변수명 inversion 위험 제거.
+
+**색 SSoT (`generate_chart.py:color_for_pf`)**: 모든 차트의 PF→색 결정은 이 한 함수만 사용. 함수 내 inline 임계값 금지.
+
+| Mode | PF < 1.0 | 1.0 ≤ PF < 1.3 | PF ≥ 1.3 |
+|------|----------|----------------|----------|
+| `tier3` (기본, `chart_insight` / `chart_regime`) | RED | BLUE | GREEN |
+| `binary` (`chart_comparison`: winner/loser 강한 대비) | RED | RED | GREEN |
+
+임계값 변경 시 `generate_chart.py:color_for_pf`만 수정. 자동으로 3개 차트 전부 동기화.
 
 ---
 
 ## 섹션 2: 30일 콘텐츠 캘린더
 
-**발행 요일**: 월/수/목/금 (`sns_daily_post.py:258, 264, 289, 313`)
+**발행 요일**: 월/수/목/금 (`sns_daily_post.py:409, 418, 444, 479` — `generate_content()` 내부 day 분기)
 **휴식 요일**: 화/토/일 (코드 자동 스킵)
 
 ```
@@ -129,8 +165,9 @@ ranking-fallback.json  OHLCV 데이터           시장 컨텍스트
 ```
 
 **풀 회전 방식**: `date.toordinal() % len(pool)` (date hash, 반복 시 30일 내 충돌 2건 발생 — pool 확장 권장)
-- INSIGHTS pool 12개: `sns_daily_post.py:215-254`
-- MISTAKES pool 8개: `sns_daily_post.py:291-308`
+- INSIGHTS pool: `sns_daily_post.py:352` (`INSIGHTS = [...]`)
+- MISTAKES pool: `sns_daily_post.py:445` (`mistakes = [...]`)
+- 풀 회전: `week_num % len(pool)` (`sns_daily_post.py:410`, `:471`)
 
 ---
 
@@ -573,24 +610,30 @@ we're posting all of them.
 
 ## 섹션 8: 발행 정책
 
-### 1단계 (2026-05-11 ~ 2026-06-09, 30일): Telegram 승인 모드
+### 1단계 (2026-05-11 ~ 2026-06-09, 30일): Telegram 수동 승인 모드
 
-**발행 시간**:
+**권장 발행 시각**:
 - X: KST 22:00
 - Threads: KST 22:30 (30분 간격 — dwell time 알고리즘 분리)
 
-**일일 승인 플로우**:
+> 현재 자동 발행 코드는 없음. 22:00/22:30 시각에 사용자가 직접 Telegram Approve 버튼을 눌러야 발행됨. 자동화는 Phase 2 (`--auto`) 전환 후.
+
+**일일 승인 플로우 (실측 동작)**:
 ```
-08:00 KST  LaunchAgent → 콘텐츠 + 차트 생성 → Telegram 미리보기 발송
-           (이미지 + [✅ Approve] [❌ Reject] 버튼)
+20:30 KST  com.pruviq.sns-daily-post → 콘텐츠 + 차트 생성 → Telegram 미리보기
+           - 시작 시 archive_stale_queue() (sns_daily_post.py:705)
+             → 어제 이전 큐 자동 .archived
+           - queue/YYYYMMDD_HHMMSS-sns-daily.json 작성
               │
-              ▼ (사용자 제포: 21:30 이전 클릭)
-21:30 KST  미승인 시 → 자동 폐기 (queue/ 정리)
+              ▼
+21:00 KST  com.pruviq.sns-approval-reminder → 미승인 시 Telegram 알림
               │
-22:00 KST  승인 시 → X 발행 (social_poster.py:390-432)
-22:30 KST  → Threads 발행 (social_poster.py:434-492)
+              ▼ (사용자 제포가 22:00경 클릭 — 권장)
+승인 시점   telegram_approval_bot.py:242,331 → social_poster import
+           → post_x (즉시) → post_threads (즉시 또는 직후)
               │
-22:35 KST  → posted/ 저장 + Telegram 결과 알림 (social_poster.py:574-617)
+              ▼
+발행 직후  posted/ 저장 + Telegram 결과 알림 (social_poster.py:574-617)
 ```
 
 **첫 댓글 정책** (X 알고리즘 도달 보호):
