@@ -1,0 +1,10 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import TradeHistoryFull from '../../../components/TradeHistoryFull';
+---
+
+<Layout title="거래 이력 — PRUVIQ" description="자동매매 거래 이력 전체. 필터·정렬·CSV 내보내기 지원." lang="ko">
+  <main class="max-w-6xl mx-auto px-4 py-10 md:py-16">
+    <TradeHistoryFull client:load lang="ko" />
+  </main>
+</Layout>
