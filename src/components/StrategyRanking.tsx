@@ -62,10 +62,26 @@ function SkeletonCard() {
 }
 
 const PERIOD_LABELS: Record<string, Record<Lang, string>> = {
+  "1d": { en: "Today (24h)", ko: "오늘 (24시간)" },
   "7d": { en: "7 Days", ko: "7일" },
   "30d": { en: "30 Days", ko: "30일" },
   "365d": { en: "365 Days", ko: "365일" },
 };
+
+// Chronological ordering — API returns alphabetical ["1d","30d","365d","7d"]
+// which would render in nonsensical order without this explicit sort.
+const PERIOD_ORDER = ["1d", "7d", "30d", "365d"];
+
+function sortPeriods(periods: string[]): string[] {
+  return [...periods].sort((a, b) => {
+    const ai = PERIOD_ORDER.indexOf(a);
+    const bi = PERIOD_ORDER.indexOf(b);
+    if (ai === -1 && bi === -1) return a.localeCompare(b);
+    if (ai === -1) return 1;
+    if (bi === -1) return -1;
+    return ai - bi;
+  });
+}
 
 const GROUP_LABELS: Record<string, Record<Lang, string>> = {
   top30: { en: "Top 30", ko: "Top 30" },
@@ -93,6 +109,13 @@ const rankingLabels = {
     periodLabel: "Period",
     groupLabel: "Group",
     loading: "Loading...",
+    dailyCaveat:
+      "24-hour window. Refreshes daily. Expect high variance vs 30d baseline.",
+    btcDailyEmptyTitle: "Single-coin 24h sample too small.",
+    btcDailyEmptyHint: "Try Top 30, Top 50, or Top 100.",
+    btcDailyEmptyCta: "Switch to Top 50",
+    periodTablistLabel: "Ranking period",
+    groupTablistLabel: "Coin group",
   },
   ko: {
     loadFail: "데이터 로드 실패",
@@ -112,6 +135,13 @@ const rankingLabels = {
     periodLabel: "기간",
     groupLabel: "그룹",
     loading: "로딩 중...",
+    dailyCaveat:
+      "24시간 윈도우. 매일 갱신됩니다. 30일 기준 대비 변동성이 큽니다.",
+    btcDailyEmptyTitle: "단일 코인 24시간 표본이 부족합니다.",
+    btcDailyEmptyHint: "Top 30, Top 50, Top 100으로 전환하세요.",
+    btcDailyEmptyCta: "Top 50으로 전환",
+    periodTablistLabel: "랭킹 기간",
+    groupTablistLabel: "코인 그룹",
   },
 };
 
@@ -231,8 +261,18 @@ export function StrategyRanking({ lang = "en" }: { lang?: Lang }) {
   // isFirstLoad: never fetched yet → show skeleton buttons
   // Re-fetch (data exists): keep buttons visible, show spinner on cards instead
   const isFirstLoad = loading && data === null;
-  const availablePeriods = data?.available_periods ?? [];
+  // sortPeriods enforces chronological 1d → 7d → 30d → 365d
+  // (API returns alphabetical which would render 1d, 30d, 365d, 7d)
+  const availablePeriods = sortPeriods(data?.available_periods ?? []);
   const availableGroups = data?.available_groups ?? [];
+
+  // BTC + 1d combo returns 0 entries (single-coin 24h sample too small)
+  // — show empty state placeholder instead of blank grid.
+  const isBtcDailyEmpty =
+    !loading &&
+    group === "btc" &&
+    period === "1d" &&
+    (data?.top3?.length ?? 0) === 0;
 
   // Auto-correct selected period/group if not in available list after load
   useEffect(() => {
@@ -283,7 +323,11 @@ export function StrategyRanking({ lang = "en" }: { lang?: Lang }) {
       {/* ── Period + Group filters ── */}
       <div class="space-y-3">
         {/* Period tabs */}
-        <div class="flex flex-wrap gap-1.5 items-center">
+        <div
+          class="flex flex-wrap gap-1.5 items-center"
+          role="tablist"
+          aria-label={lbl.periodTablistLabel}
+        >
           <span class="text-xs font-mono text-(--color-text-muted) mr-1">
             {lbl.periodLabel}:
           </span>
@@ -302,7 +346,9 @@ export function StrategyRanking({ lang = "en" }: { lang?: Lang }) {
                     key={p}
                     onClick={() => handlePeriodChange(p)}
                     disabled={loading}
-                    class={`px-3 py-1 rounded font-mono text-xs border transition-colors disabled:cursor-wait ${
+                    role="tab"
+                    aria-selected={active}
+                    class={`px-3 py-1 rounded font-mono text-xs border transition-colors disabled:cursor-wait focus:outline-none focus:ring-2 focus:ring-(--color-accent) ${
                       active
                         ? "bg-(--color-accent) text-(--color-bg) border-(--color-accent) font-semibold"
                         : "border-(--color-border) text-(--color-text-muted) hover:border-(--color-accent) hover:text-(--color-accent)"
@@ -319,7 +365,11 @@ export function StrategyRanking({ lang = "en" }: { lang?: Lang }) {
         </div>
 
         {/* Group filter */}
-        <div class="flex flex-wrap gap-1.5 items-center">
+        <div
+          class="flex flex-wrap gap-1.5 items-center"
+          role="tablist"
+          aria-label={lbl.groupTablistLabel}
+        >
           <span class="text-xs font-mono text-(--color-text-muted) mr-1">
             {lbl.groupLabel}:
           </span>
@@ -338,7 +388,9 @@ export function StrategyRanking({ lang = "en" }: { lang?: Lang }) {
                     key={g}
                     onClick={() => handleGroupChange(g)}
                     disabled={loading}
-                    class={`px-3 py-1 rounded font-mono text-xs border transition-colors disabled:cursor-wait ${
+                    role="tab"
+                    aria-selected={active}
+                    class={`px-3 py-1 rounded font-mono text-xs border transition-colors disabled:cursor-wait focus:outline-none focus:ring-2 focus:ring-(--color-accent) ${
                       active
                         ? "bg-(--color-accent) text-(--color-bg) border-(--color-accent) font-semibold"
                         : "border-(--color-border) text-(--color-text-muted) hover:border-(--color-accent) hover:text-(--color-accent)"
@@ -349,6 +401,24 @@ export function StrategyRanking({ lang = "en" }: { lang?: Lang }) {
                 );
               })}
         </div>
+
+        {/* 1d caveat banner — informational note, not alert */}
+        {period === "1d" && !isFirstLoad && (
+          <div
+            role="note"
+            class="border border-(--color-yellow)/30 rounded-lg px-3 py-2 bg-(--color-yellow)/5 flex items-start gap-2"
+          >
+            <span
+              aria-hidden="true"
+              class="text-(--color-yellow) text-sm leading-tight shrink-0"
+            >
+              ⚠
+            </span>
+            <p class="text-(--color-yellow) text-xs font-mono leading-snug">
+              {lbl.dailyCaveat}
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Loading spinner — first load only (re-fetch keeps cards visible above) */}
@@ -386,20 +456,44 @@ export function StrategyRanking({ lang = "en" }: { lang?: Lang }) {
               </p>
             </div>
           )}
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-          {isFirstLoad
-            ? [0, 1, 2].map((i) => <SkeletonCard key={i} />)
-            : data?.top3.map((entry) => (
-                <div class="ranking-card-enter" key={`top-${entry.rank}`}>
-                  <RankingCard
-                    entry={entry}
-                    lang={lang}
-                    variant="best"
-                    period={period}
-                  />
-                </div>
-              ))}
-        </div>
+        {isBtcDailyEmpty ? (
+          <div
+            class="border-2 border-dashed border-(--color-border) rounded-lg p-6 bg-(--color-bg-card) flex flex-col items-center text-center gap-3"
+            role="status"
+          >
+            <span aria-hidden="true" class="text-(--color-text-muted) text-2xl">
+              ⊘
+            </span>
+            <p class="text-(--color-text) text-sm font-semibold">
+              {lbl.btcDailyEmptyTitle}
+            </p>
+            <p class="text-(--color-text-muted) text-xs font-mono">
+              {lbl.btcDailyEmptyHint}
+            </p>
+            <button
+              type="button"
+              onClick={() => handleGroupChange("top50")}
+              class="min-h-[44px] min-w-[44px] inline-flex items-center justify-center px-5 py-2 rounded font-semibold text-sm bg-(--color-accent) text-(--color-bg) hover:bg-(--color-accent-dim) focus:outline-none focus:ring-2 focus:ring-(--color-accent) transition-colors"
+            >
+              {lbl.btcDailyEmptyCta} &rarr;
+            </button>
+          </div>
+        ) : (
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            {isFirstLoad
+              ? [0, 1, 2].map((i) => <SkeletonCard key={i} />)
+              : data?.top3.map((entry) => (
+                  <div class="ranking-card-enter" key={`top-${entry.rank}`}>
+                    <RankingCard
+                      entry={entry}
+                      lang={lang}
+                      variant="best"
+                      period={period}
+                    />
+                  </div>
+                ))}
+          </div>
+        )}
       </section>
 
       {/* Worst 3 — exclude 0-trade sentinel entries */}
