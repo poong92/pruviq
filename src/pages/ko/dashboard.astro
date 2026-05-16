@@ -8,6 +8,7 @@ import OKXConnectButton from '../../components/OKXConnectButton';
 import AutoTradingStatus from '../../components/AutoTradingStatus';
 import TradingSettings from '../../components/TradingSettings';
 import StrategyBuilder from '../../components/StrategyBuilder';
+import PendingSignalsApproval from '../../components/PendingSignalsApproval';
 import LivePositions from '../../components/LivePositions';
 import LiveTradeHistory from '../../components/LiveTradeHistory';
 import { AUTOTRADE_COMING_SOON } from '../../config/feature-flags';
@@ -89,6 +90,11 @@ import { OKX_DISCOUNT_PCT } from '../../config/exchanges';
         <!-- client:visible: below-fold, defer hydration until scrolled. -->
         <section class="mb-8">
           <TradingSettings client:visible lang="ko" />
+        </section>
+
+        <!-- 대기 중인 신호 — manual/approval 모드 승인 큐 -->
+        <section class="mb-8">
+          <PendingSignalsApproval client:visible lang="ko" />
         </section>
 
         <!-- 오픈 포지션 -->
