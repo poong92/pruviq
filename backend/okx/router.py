@@ -1104,6 +1104,56 @@ async def grid_orders_list(bot_id: str, request: Request):
     return {"orders": list_grid_orders(bot_id, session_id)}
 
 
+@router.post("/grid-bots/simulate")
+async def grid_simulate(request: Request):
+    """Backtest Grid params on historical OHLCV. No DB writes, no orders.
+    Body: {params, symbol, start?, end?, taker_fee_pct?}
+    Sim is pair-based ("approx" accuracy) — within ±10% of executor reality
+    for healthy grids. Response field `accuracy: "approx"` is explicit.
+    """
+    session_id = _get_session(request)
+    if not is_authenticated(session_id):
+        raise HTTPException(401, "Not connected to OKX.")
+    body = await request.json()
+    if not isinstance(body, dict):
+        raise HTTPException(400, "body must be a JSON object")
+    params = body.get("params") or {}
+    if not isinstance(params, dict):
+        raise HTTPException(400, "params must be an object")
+    symbol = (body.get("symbol") or "").upper()
+    if not symbol:
+        raise HTTPException(400, "symbol required (e.g. BTCUSDT)")
+    start = body.get("start")
+    end = body.get("end")
+    taker_fee_pct = float(body.get("taker_fee_pct") or 0.05)
+
+    from .grid_bots import validate_grid_params, DEFAULT_GRID
+    merged = {**DEFAULT_GRID, **params}
+    errs = validate_grid_params(merged)
+    if errs:
+        raise HTTPException(400, "; ".join(errs))
+
+    from api.data_manager import DataManager
+    dm = DataManager()
+    df = dm.get_df(symbol)
+    if df is None or len(df) == 0:
+        raise HTTPException(404, f"no candles for symbol={symbol}")
+    sliced = df
+    if start:
+        sliced = sliced[sliced["timestamp"] >= start]
+    if end:
+        sliced = sliced[sliced["timestamp"] <= end]
+    if len(sliced) < 2:
+        raise HTTPException(
+            400,
+            f"window has only {len(sliced)} candle(s) — need at least 2",
+        )
+
+    from .grid_backtest import simulate_grid
+    res = simulate_grid(merged, sliced, taker_fee_pct=taker_fee_pct)
+    return {"result": res.to_dict(), "candle_count": int(len(sliced))}
+
+
 # ── Admin: session overview ─────────────────────────────────
 
 @router.get("/admin/sessions")
