@@ -175,7 +175,7 @@ export default function OnboardingWizard({ lang = "en" }: Props) {
         strategy: { id: string };
       };
       const actRes = await fetch(
-        `${API_BASE_URL}/user-strategies/${strategy.id}/activate`,
+        `${API_BASE_URL}/user-strategies/${strategy.id}/activate?exclusive=true`,
         { method: "POST", credentials: "include" },
       );
       if (!actRes.ok) throw new Error(`activate ${actRes.status}`);
