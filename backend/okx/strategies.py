@@ -385,8 +385,18 @@ def delete_strategy(strategy_id: str, session_id: str) -> bool:
     return deleted
 
 
-def activate_strategy(strategy_id: str, session_id: str) -> dict[str, Any]:
-    """Activate a strategy — deactivates all other strategies of the same session atomically."""
+def activate_strategy(
+    strategy_id: str, session_id: str, exclusive: bool = False
+) -> dict[str, Any]:
+    """Activate a strategy.
+
+    exclusive=True (legacy, default at /activate endpoint for backward
+    compat with first-time onboarding): deactivates ALL other strategies
+    of the same session atomically.
+    exclusive=False (multi-active mode): leaves other active strategies
+    alone — the user can run several signal-based strategies in parallel
+    (e.g. BB-Squeeze-SHORT for volatility + MA-Cross-LONG for trend).
+    """
     _ensure_tables()
     existing = get_strategy(strategy_id, session_id)
     if not existing:
@@ -394,35 +404,109 @@ def activate_strategy(strategy_id: str, session_id: str) -> dict[str, Any]:
 
     now = time.time()
     with _get_conn() as conn:
-        # Deactivate all others, then activate this one — single transaction
-        conn.execute(
-            "UPDATE user_strategies SET is_active = 0, updated_at = ? "
-            "WHERE session_id = ? AND id != ?",
-            (now, session_id, strategy_id),
-        )
+        if exclusive:
+            conn.execute(
+                "UPDATE user_strategies SET is_active = 0, updated_at = ? "
+                "WHERE session_id = ? AND id != ?",
+                (now, session_id, strategy_id),
+            )
         conn.execute(
             "UPDATE user_strategies SET is_active = 1, updated_at = ? "
             "WHERE id = ? AND session_id = ?",
             (now, strategy_id, session_id),
         )
 
-    logger.info("Strategy activated id=%s session=%s", strategy_id[:8], session_id[:8])
+    logger.info(
+        "Strategy activated id=%s session=%s exclusive=%s",
+        strategy_id[:8], session_id[:8], exclusive,
+    )
     activated = get_strategy(strategy_id, session_id)
     if activated is None:
         raise RuntimeError("strategy disappeared during activate")
     return activated
 
 
+def deactivate_strategy(strategy_id: str, session_id: str) -> dict[str, Any]:
+    """Deactivate a single strategy without touching others."""
+    _ensure_tables()
+    existing = get_strategy(strategy_id, session_id)
+    if not existing:
+        raise ValueError("strategy not found")
+    now = time.time()
+    with _get_conn() as conn:
+        conn.execute(
+            "UPDATE user_strategies SET is_active = 0, updated_at = ? "
+            "WHERE id = ? AND session_id = ?",
+            (now, strategy_id, session_id),
+        )
+    logger.info(
+        "Strategy deactivated id=%s session=%s", strategy_id[:8], session_id[:8]
+    )
+    deactivated = get_strategy(strategy_id, session_id)
+    if deactivated is None:
+        raise RuntimeError("strategy disappeared during deactivate")
+    return deactivated
+
+
 def get_active_strategy(session_id: str) -> Optional[dict[str, Any]]:
-    """Return the active strategy for a session, or None if none active."""
+    """Return ONE active strategy for a session (most recently updated), or None.
+
+    Kept for callers that pre-date multi-active (auto_executor.py,
+    reconciler.py). With multi-active, prefer `get_active_strategies()`
+    + filter by signal.base_strategy for precise resolution.
+    Sort order is deterministic so the same "first active" is returned
+    across calls in the same session-window — important when the value
+    is used to pick SL/TP/leverage overrides that must be stable across
+    a tick.
+    """
     _ensure_tables()
     with _get_conn() as conn:
         row = conn.execute(
             f"SELECT {', '.join(_STRATEGY_COLUMNS)} FROM user_strategies "
-            "WHERE session_id = ? AND is_active = 1 LIMIT 1",
+            "WHERE session_id = ? AND is_active = 1 "
+            "ORDER BY updated_at DESC, id LIMIT 1",
             (session_id,),
         ).fetchone()
     return _row_to_strategy(row) if row else None
+
+
+def get_active_strategies(session_id: str) -> list[dict[str, Any]]:
+    """Return all active strategies for a session, newest first."""
+    _ensure_tables()
+    with _get_conn() as conn:
+        rows = conn.execute(
+            f"SELECT {', '.join(_STRATEGY_COLUMNS)} FROM user_strategies "
+            "WHERE session_id = ? AND is_active = 1 "
+            "ORDER BY updated_at DESC, id",
+            (session_id,),
+        ).fetchall()
+    return [_row_to_strategy(r) for r in rows]
+
+
+def find_active_for_signal(
+    session_id: str, base_strategy: str
+) -> Optional[dict[str, Any]]:
+    """Match a fired signal to the user's active strategy by base.
+
+    Multi-active resolution rule:
+      - 0 active matching base: return None (executor uses signal defaults)
+      - 1 active matching base: return it
+      - 2+ active matching base: return most recently updated; log warn
+        (operator should keep at most one active strategy per base)
+    """
+    actives = [
+        s for s in get_active_strategies(session_id)
+        if s.get("base_strategy") == base_strategy
+    ]
+    if not actives:
+        return None
+    if len(actives) > 1:
+        logger.warning(
+            "multi-active conflict session=%s base=%s — using id=%s "
+            "(most recent of %d candidates)",
+            session_id[:8], base_strategy, actives[0]["id"][:8], len(actives),
+        )
+    return actives[0]
 
 
 # ── Pending signal queue ───────────────────────────────────
