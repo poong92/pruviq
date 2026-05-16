@@ -7,6 +7,7 @@ import Layout from '../../layouts/Layout.astro';
 import OKXConnectButton from '../../components/OKXConnectButton';
 import AutoTradingStatus from '../../components/AutoTradingStatus';
 import TradingSettings from '../../components/TradingSettings';
+import StrategyBuilder from '../../components/StrategyBuilder';
 import LivePositions from '../../components/LivePositions';
 import LiveTradeHistory from '../../components/LiveTradeHistory';
 import { AUTOTRADE_COMING_SOON } from '../../config/feature-flags';
@@ -77,6 +78,11 @@ import { OKX_DISCOUNT_PCT } from '../../config/exchanges';
         <!-- 봇 상태 위젯 -->
         <section class="mb-8">
           <AutoTradingStatus client:load lang="ko" />
+        </section>
+
+        <!-- 내 전략 — 사용자 정의 매매 규칙 -->
+        <section class="mb-8">
+          <StrategyBuilder client:visible lang="ko" />
         </section>
 
         <!-- 자동매매 설정 -->
