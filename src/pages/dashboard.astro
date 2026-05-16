@@ -11,6 +11,7 @@ import AutoTradingStatus from '../components/AutoTradingStatus';
 import TradingSettings from '../components/TradingSettings';
 import StrategyBuilder from '../components/StrategyBuilder';
 import DCABots from '../components/DCABots';
+import GridBots from '../components/GridBots';
 import PendingSignalsApproval from '../components/PendingSignalsApproval';
 import LivePositions from '../components/LivePositions';
 import LiveTradeHistory from '../components/LiveTradeHistory';
@@ -92,6 +93,11 @@ import { OKX_DISCOUNT_PCT } from '../config/exchanges';
         <!-- DCA Bots — Dollar-cost averaging (different paradigm) -->
         <section class="mb-8">
           <DCABots client:visible lang="en" />
+        </section>
+
+        <!-- Grid Bots — Range-bound limit-order grid (third paradigm) -->
+        <section class="mb-8">
+          <GridBots client:visible lang="en" />
         </section>
 
         <!-- Auto-Trading Settings -->
