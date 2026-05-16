@@ -324,7 +324,12 @@ def run_simulation_direct(
         for sym, df in coins:
             try:
                 df = strategy_obj.calculate_indicators(df.copy())
-                if not short_window:
+                if short_window:
+                    # tail(500) >> engine guard (n<100); indicators already
+                    # calculated on full history, so all 500 rows have valid
+                    # values. Post-filter trades by entry_time below.
+                    df = df.tail(500).copy()
+                else:
                     df = _filter_df_by_date(df, start_date, end_date)
                 result = _run_fast(
                     df, strategy_obj, sym,
