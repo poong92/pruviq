@@ -617,8 +617,19 @@ async def delete_user_strategy(strategy_id: str, request: Request):
 
 
 @router.post("/user-strategies/{strategy_id}/activate")
-async def activate_user_strategy(strategy_id: str, request: Request):
-    """Activate a strategy (deactivates all others for this session)."""
+async def activate_user_strategy(
+    strategy_id: str,
+    request: Request,
+    exclusive: bool = Query(
+        False,
+        description=(
+            "true: deactivate all other strategies first (legacy / onboarding). "
+            "false (default): activate alongside any other active strategies "
+            "— multi-active mode."
+        ),
+    ),
+):
+    """Activate a strategy. See `exclusive` query param for single vs multi-active."""
     session_id = _get_session(request)
     if not is_authenticated(session_id):
         raise HTTPException(401, "Not connected to OKX.")
@@ -626,7 +637,23 @@ async def activate_user_strategy(strategy_id: str, request: Request):
     from .strategies import activate_strategy
 
     try:
-        strategy = activate_strategy(strategy_id, session_id)
+        strategy = activate_strategy(strategy_id, session_id, exclusive=exclusive)
+    except ValueError as e:
+        raise HTTPException(404, str(e))
+    return {"strategy": strategy}
+
+
+@router.post("/user-strategies/{strategy_id}/deactivate")
+async def deactivate_user_strategy(strategy_id: str, request: Request):
+    """Deactivate a strategy without touching others (multi-active toggle off)."""
+    session_id = _get_session(request)
+    if not is_authenticated(session_id):
+        raise HTTPException(401, "Not connected to OKX.")
+
+    from .strategies import deactivate_strategy
+
+    try:
+        strategy = deactivate_strategy(strategy_id, session_id)
     except ValueError as e:
         raise HTTPException(404, str(e))
     return {"strategy": strategy}
