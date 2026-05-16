@@ -10,6 +10,7 @@ import OKXConnectButton from '../components/OKXConnectButton';
 import AutoTradingStatus from '../components/AutoTradingStatus';
 import TradingSettings from '../components/TradingSettings';
 import StrategyBuilder from '../components/StrategyBuilder';
+import DCABots from '../components/DCABots';
 import PendingSignalsApproval from '../components/PendingSignalsApproval';
 import LivePositions from '../components/LivePositions';
 import LiveTradeHistory from '../components/LiveTradeHistory';
@@ -86,6 +87,11 @@ import { OKX_DISCOUNT_PCT } from '../config/exchanges';
         <!-- My Strategies — user-defined trading rules -->
         <section class="mb-8">
           <StrategyBuilder client:visible lang="en" />
+        </section>
+
+        <!-- DCA Bots — Dollar-cost averaging (different paradigm) -->
+        <section class="mb-8">
+          <DCABots client:visible lang="en" />
         </section>
 
         <!-- Auto-Trading Settings -->
