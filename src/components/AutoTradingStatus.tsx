@@ -44,6 +44,11 @@ const i18n = {
     configure: "Configure →",
     updated: "Auto-refreshes every 30s",
     not_connected: "Connect OKX to see bot status",
+    stop_bot: "Stop Bot",
+    stopping: "Stopping…",
+    stop_confirm:
+      "Stop the bot now? It will not open new positions until you re-enable it. Open positions are NOT closed automatically.",
+    stop_error: "Could not stop the bot. Try the toggle on the Settings page.",
   },
   ko: {
     title: "봇 상태",
@@ -61,6 +66,11 @@ const i18n = {
     configure: "설정 →",
     updated: "30초마다 자동 갱신",
     not_connected: "봇 상태 확인을 위해 OKX를 연결하세요",
+    stop_bot: "봇 중지",
+    stopping: "중지 중…",
+    stop_confirm:
+      "지금 봇을 중지할까요? 다시 활성화 전까지 새 포지션을 열지 않습니다. 열린 포지션은 자동으로 청산되지 않습니다.",
+    stop_error: "봇 중지 실패. 설정 페이지의 토글을 사용해 주세요.",
   },
 } as const;
 
@@ -86,6 +96,8 @@ export default function AutoTradingStatus({ lang = "en" }: Props) {
   const [unauthed, setUnauthed] = useState(false);
   const [loading, setLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState("");
+  const [stopping, setStopping] = useState(false);
+  const [stopError, setStopError] = useState("");
 
   const fetchStatus = useCallback(async () => {
     try {
@@ -118,6 +130,27 @@ export default function AutoTradingStatus({ lang = "en" }: Props) {
     const id = setInterval(fetchStatus, POLL_MS);
     return () => clearInterval(id);
   }, [fetchStatus]);
+
+  const handleStop = useCallback(async () => {
+    if (!window.confirm(t.stop_confirm)) return;
+    setStopping(true);
+    setStopError("");
+    try {
+      const res = await fetch(`${API_BASE_URL}/settings/trading`, {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ enabled: false }),
+        signal: AbortSignal.timeout(10_000),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      await fetchStatus();
+    } catch {
+      setStopError(t.stop_error);
+    } finally {
+      setStopping(false);
+    }
+  }, [fetchStatus, t.stop_confirm, t.stop_error]);
 
   // Not connected
   if (!loading && unauthed) {
@@ -228,6 +261,30 @@ export default function AutoTradingStatus({ lang = "en" }: Props) {
           <span class="italic">{t.no_trades}</span>
         )}
       </div>
+
+      {/* Stop Bot — only when actively running */}
+      {botStatus.status === "running" && (
+        <div class="mt-4 pt-4 border-t border-(--color-border)">
+          <button
+            type="button"
+            onClick={handleStop}
+            disabled={stopping}
+            class="w-full min-h-[44px] rounded-lg border border-(--color-down)/40 bg-(--color-down)/10 hover:bg-(--color-down)/20 text-(--color-down) font-bold text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            aria-label={t.stop_bot}
+          >
+            {stopping ? t.stopping : `■ ${t.stop_bot}`}
+          </button>
+          {stopError && (
+            <p
+              class="mt-2 text-xs text-(--color-down)"
+              role="alert"
+              aria-live="assertive"
+            >
+              {stopError}
+            </p>
+          )}
+        </div>
+      )}
 
       {lastUpdated && (
         <p class="text-xs text-(--color-text-muted) mt-2 text-right">

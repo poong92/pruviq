@@ -133,6 +133,19 @@ const labels = {
     masterSwitch: "Enable Bot",
     masterSwitchDesc: "Bot only executes in Alert or Auto mode",
     manualModeNote: "Switch to Alert or Auto mode to enable the bot",
+    runs247Title: "Runs 24/7 on our servers",
+    runs247Desc:
+      "The bot keeps trading after you close this browser or shut down your device. Stop it by toggling this switch OFF or by clicking Stop Bot on the status widget.",
+    confirmTitle: "Confirm bot activation",
+    confirmIntro:
+      "This will run real trades on your OKX account. Please confirm you understand:",
+    confirmCheck1: "Real funds will be traded — losses are possible.",
+    confirmCheck2:
+      "The bot runs 24/7 on our servers — closing this browser does NOT stop it.",
+    confirmCheck3:
+      "To stop, toggle Enable Bot OFF here, or click Stop Bot on the status widget, or disconnect OKX.",
+    confirmCancel: "Cancel",
+    confirmActivate: "Activate Bot",
     save: "Save Settings",
     saving: "Saving...",
     saved: "Saved!",
@@ -195,6 +208,19 @@ const labels = {
     masterSwitch: "봇 활성화",
     masterSwitchDesc: "알림 또는 자동 모드에서만 작동합니다",
     manualModeNote: "봇을 활성화하려면 알림 또는 자동 모드로 변경하세요",
+    runs247Title: "서버에서 24시간 실행됩니다",
+    runs247Desc:
+      "브라우저를 닫거나 디바이스를 꺼도 봇은 계속 거래합니다. 중지하려면 이 토글을 OFF하거나 봇 상태 위젯의 '봇 중지'를 누르세요.",
+    confirmTitle: "봇 활성화 확인",
+    confirmIntro:
+      "실거래 자금으로 작동합니다. 아래 사항을 모두 이해하셨는지 확인해 주세요.",
+    confirmCheck1: "실제 자금으로 거래되며 손실이 발생할 수 있습니다.",
+    confirmCheck2:
+      "봇은 서버에서 24시간 실행됩니다 — 브라우저를 닫아도 중지되지 않습니다.",
+    confirmCheck3:
+      "중지는 이 페이지의 토글을 OFF하거나, 봇 상태 위젯의 '봇 중지', 또는 OKX 연결 해제로 가능합니다.",
+    confirmCancel: "취소",
+    confirmActivate: "봇 활성화",
     save: "설정 저장",
     saving: "저장 중...",
     saved: "저장됨!",
@@ -273,6 +299,13 @@ export default function TradingSettings({ lang = "en" }: Props) {
   const [dailyStats, setDailyStats] = useState({
     trades_today: 0,
     pnl_today: 0,
+  });
+  // ── First-activation confirmation modal ──────────────────────
+  const [showActivateConfirm, setShowActivateConfirm] = useState(false);
+  const [confirmChecks, setConfirmChecks] = useState({
+    funds: false,
+    runs247: false,
+    stop: false,
   });
 
   // ── Derived state ──────────────────────────────────────────
@@ -480,31 +513,52 @@ export default function TradingSettings({ lang = "en" }: Props) {
 
       {/* ── Master switch — disabled + note when manual ── */}
       <div
-        class={`card-enterprise rounded-xl p-5 flex items-center justify-between ${isManualMode ? "opacity-50" : ""}`}
+        class={`card-enterprise rounded-xl p-5 ${isManualMode ? "opacity-50" : ""}`}
       >
-        <div>
-          <h3 class="font-bold">{t.masterSwitch}</h3>
-          <p class="text-xs text-(--color-text-muted)">
-            {isManualMode ? t.manualModeNote : t.masterSwitchDesc}
-          </p>
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="font-bold">{t.masterSwitch}</h3>
+            <p class="text-xs text-(--color-text-muted)">
+              {isManualMode ? t.manualModeNote : t.masterSwitchDesc}
+            </p>
+          </div>
+          <label
+            class={`relative inline-flex items-center ${isManualMode ? "cursor-not-allowed" : "cursor-pointer"}`}
+          >
+            <input
+              type="checkbox"
+              checked={settings.enabled && !isManualMode}
+              disabled={isManualMode}
+              onChange={(e) => {
+                const next = (e.target as HTMLInputElement).checked;
+                // Toggling OFF — apply directly (no confirm; Stop is always safe)
+                if (!next) {
+                  setSettings((s) => ({ ...s, enabled: false }));
+                  return;
+                }
+                // Toggling ON — require explicit 3-checkbox confirmation
+                setConfirmChecks({ funds: false, runs247: false, stop: false });
+                setShowActivateConfirm(true);
+              }}
+              class="sr-only peer"
+            />
+            <div class="w-11 h-6 bg-(--color-border) peer-checked:bg-(--color-up) rounded-full peer-focus:ring-2 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full" />
+          </label>
         </div>
-        <label
-          class={`relative inline-flex items-center ${isManualMode ? "cursor-not-allowed" : "cursor-pointer"}`}
-        >
-          <input
-            type="checkbox"
-            checked={settings.enabled && !isManualMode}
-            disabled={isManualMode}
-            onChange={(e) =>
-              setSettings((s) => ({
-                ...s,
-                enabled: (e.target as HTMLInputElement).checked,
-              }))
-            }
-            class="sr-only peer"
-          />
-          <div class="w-11 h-6 bg-(--color-border) peer-checked:bg-(--color-up) rounded-full peer-focus:ring-2 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full" />
-        </label>
+        {/* 24/7 disclosure — shown when bot is enabled */}
+        {settings.enabled && !isManualMode && (
+          <div
+            class="mt-4 p-3 rounded-lg bg-(--color-warning)/10 border border-(--color-warning)/30 text-xs"
+            role="note"
+          >
+            <p class="font-bold text-(--color-warning) mb-1">
+              ⏱ {t.runs247Title}
+            </p>
+            <p class="text-(--color-text-secondary) leading-relaxed">
+              {t.runs247Desc}
+            </p>
+          </div>
+        )}
       </div>
 
       {/* ── Bot settings — grayed out when manual mode ── */}
@@ -835,6 +889,80 @@ export default function TradingSettings({ lang = "en" }: Props) {
       >
         {saving === "idle" ? t.save : saving === "saving" ? t.saving : t.saved}
       </button>
+
+      {/* Activation confirmation modal */}
+      {showActivateConfirm && (
+        <div
+          class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="activate-confirm-title"
+          onClick={() => setShowActivateConfirm(false)}
+        >
+          <div
+            class="card-enterprise rounded-2xl p-6 max-w-md w-full"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 id="activate-confirm-title" class="font-bold text-lg mb-2">
+              {t.confirmTitle}
+            </h3>
+            <p class="text-sm text-(--color-text-muted) mb-4">
+              {t.confirmIntro}
+            </p>
+            <div class="space-y-3 mb-5">
+              {(
+                [
+                  ["funds", t.confirmCheck1],
+                  ["runs247", t.confirmCheck2],
+                  ["stop", t.confirmCheck3],
+                ] as const
+              ).map(([key, label]) => (
+                <label
+                  key={key}
+                  class="flex items-start gap-3 cursor-pointer text-sm"
+                >
+                  <input
+                    type="checkbox"
+                    class="mt-1 accent-(--color-accent) w-4 h-4 shrink-0"
+                    checked={confirmChecks[key]}
+                    onChange={(e) =>
+                      setConfirmChecks((c) => ({
+                        ...c,
+                        [key]: (e.target as HTMLInputElement).checked,
+                      }))
+                    }
+                  />
+                  <span class="leading-relaxed">{label}</span>
+                </label>
+              ))}
+            </div>
+            <div class="flex gap-2">
+              <button
+                type="button"
+                class="btn btn-ghost btn-md flex-1 min-h-[44px]"
+                onClick={() => setShowActivateConfirm(false)}
+              >
+                {t.confirmCancel}
+              </button>
+              <button
+                type="button"
+                class="btn btn-primary btn-md flex-1 min-h-[44px] disabled:opacity-50"
+                disabled={
+                  !confirmChecks.funds ||
+                  !confirmChecks.runs247 ||
+                  !confirmChecks.stop
+                }
+                onClick={() => {
+                  setSettings((s) => ({ ...s, enabled: true }));
+                  setShowActivateConfirm(false);
+                }}
+              >
+                {t.confirmActivate}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
