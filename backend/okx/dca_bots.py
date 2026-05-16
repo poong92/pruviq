@@ -44,6 +44,7 @@ DEFAULT_DCA: dict[str, Any] = {
     "tp_pct": 3.0,                       # 3% above average → TP
     "stop_scaling_price": 0.0,           # 0 = no floor; else stop adding below
     "is_active": 0,
+    "paper_mode": 1,                     # 1 = simulated fills only (default, safe)
 }
 
 _VALID_DIRECTION = {"long", "short"}
@@ -94,7 +95,7 @@ _DCA_COLUMNS = [
     "base_price_usdt", "position_size_usdt", "leverage",
     "price_step_pct", "size_multiplier", "max_safety_orders",
     "tp_pct", "stop_scaling_price",
-    "is_active", "created_at", "updated_at",
+    "is_active", "created_at", "updated_at", "paper_mode",
 ]
 
 
@@ -103,6 +104,7 @@ def _row_to_dca(row: tuple) -> dict[str, Any]:
 
 
 def _ensure_tables() -> None:
+    import sqlite3 as _sqlite3
     with _get_conn() as conn:
         conn.execute("""
             CREATE TABLE IF NOT EXISTS dca_bots (
@@ -121,9 +123,18 @@ def _ensure_tables() -> None:
                 stop_scaling_price    REAL NOT NULL DEFAULT 0,
                 is_active             INTEGER NOT NULL DEFAULT 0,
                 created_at            REAL NOT NULL,
-                updated_at            REAL NOT NULL
+                updated_at            REAL NOT NULL,
+                paper_mode            INTEGER NOT NULL DEFAULT 1
             )
         """)
+        # Migration for older DBs without paper_mode column.
+        try:
+            conn.execute(
+                "ALTER TABLE dca_bots ADD COLUMN paper_mode INTEGER NOT NULL DEFAULT 1"
+            )
+        except _sqlite3.OperationalError as e:
+            if "duplicate column" not in str(e).lower():
+                raise
         conn.execute(
             "CREATE INDEX IF NOT EXISTS idx_dca_bots_session "
             "ON dca_bots(session_id)"
@@ -171,8 +182,8 @@ def create_dca_bot(session_id: str, data: dict[str, Any]) -> dict[str, Any]:
             "id, session_id, name, symbol, direction, base_price_usdt, "
             "position_size_usdt, leverage, price_step_pct, size_multiplier, "
             "max_safety_orders, tp_pct, stop_scaling_price, "
-            "is_active, created_at, updated_at"
-            ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?)",
+            "is_active, created_at, updated_at, paper_mode"
+            ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?)",
             (
                 bot_id, session_id, merged["name"], merged["symbol"],
                 merged["direction"], float(merged["base_price_usdt"]),
@@ -183,6 +194,7 @@ def create_dca_bot(session_id: str, data: dict[str, Any]) -> dict[str, Any]:
                 float(merged["tp_pct"]),
                 float(merged["stop_scaling_price"]),
                 now, now,
+                1 if merged.get("paper_mode", 1) else 0,
             ),
         )
     logger.info("DCA bot created id=%s session=%s", bot_id[:8], session_id[:8])

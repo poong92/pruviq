@@ -532,6 +532,14 @@ async def lifespan(app: FastAPI):
         print("OKX auto-trading loop SKIPPED (OKX_AUTO_TRADE_LOCAL=false — DO server handles it)")
     okx_token_task = asyncio.create_task(_okx_token_refresh_loop())
 
+    # DCA paper-mode execution loop. Default is paper (paper_mode=1) — real
+    # OKX orders only fire after a future PR explicitly enables paper_mode=0
+    # behaviour. Lets the owner dog-foot DCA configs against live market
+    # data without putting money at risk.
+    from okx.dca_loop import dca_loop as _dca_loop
+    okx_dca_task = asyncio.create_task(_dca_loop())
+    print("OKX DCA paper-mode loop started")
+
     # Emergency kill-switch: Telegram /halt listener. Runs independently of
     # the auto-trading loop so it remains responsive even under load.
     from okx.telegram_halt import telegram_halt_loop
@@ -552,8 +560,12 @@ async def lifespan(app: FastAPI):
     if okx_pnl_retry_task is not None:
         okx_pnl_retry_task.cancel()
     okx_token_task.cancel()
+    okx_dca_task.cancel()
     okx_halt_task.cancel()
-    _tasks = [indicator_task, refresh_task, market_task, okx_token_task, okx_halt_task]
+    _tasks = [
+        indicator_task, refresh_task, market_task,
+        okx_token_task, okx_dca_task, okx_halt_task,
+    ]
     if okx_auto_task is not None:
         _tasks.append(okx_auto_task)
     if okx_reconcile_task is not None:
