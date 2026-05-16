@@ -758,6 +758,125 @@ async def reject_pending_signal(signal_id: str, request: Request):
     return {"signal": signal}
 
 
+# ── DCA bots — separate paradigm from signal-based user_strategies ─────────
+
+@router.post("/dca-bots")
+async def dca_create(request: Request):
+    """Create a DCA bot for this session (starts inactive)."""
+    session_id = _get_session(request)
+    if not is_authenticated(session_id):
+        raise HTTPException(401, "Not connected to OKX.")
+    from .dca_bots import create_dca_bot
+    body = await request.json()
+    if not isinstance(body, dict):
+        raise HTTPException(400, "body must be a JSON object")
+    try:
+        bot = create_dca_bot(session_id, body)
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+    return {"bot": bot}
+
+
+@router.get("/dca-bots")
+async def dca_list(request: Request):
+    """List all DCA bots owned by this session."""
+    session_id = _get_session(request)
+    if not is_authenticated(session_id):
+        raise HTTPException(401, "Not connected to OKX.")
+    from .dca_bots import list_dca_bots
+    return {"bots": list_dca_bots(session_id)}
+
+
+@router.get("/dca-bots/{bot_id}")
+async def dca_detail(bot_id: str, request: Request):
+    """Bot detail + fills + computed avg entry + safety_orders_used."""
+    session_id = _get_session(request)
+    if not is_authenticated(session_id):
+        raise HTTPException(401, "Not connected to OKX.")
+    from .dca_bots import get_dca_bot_with_fills
+    bot = get_dca_bot_with_fills(bot_id, session_id)
+    if bot is None:
+        raise HTTPException(404, "dca bot not found")
+    return {"bot": bot}
+
+
+@router.put("/dca-bots/{bot_id}")
+async def dca_update(bot_id: str, request: Request):
+    """Partial update. Refused if bot is active (would invalidate fills)."""
+    session_id = _get_session(request)
+    if not is_authenticated(session_id):
+        raise HTTPException(401, "Not connected to OKX.")
+    from .dca_bots import update_dca_bot
+    body = await request.json()
+    if not isinstance(body, dict):
+        raise HTTPException(400, "body must be a JSON object")
+    try:
+        bot = update_dca_bot(bot_id, session_id, body)
+    except ValueError as e:
+        if "not found" in str(e):
+            raise HTTPException(404, str(e))
+        raise HTTPException(400, str(e))
+    return {"bot": bot}
+
+
+@router.delete("/dca-bots/{bot_id}")
+async def dca_delete(bot_id: str, request: Request):
+    """Delete bot + cascade fills. Refused if bot is active."""
+    session_id = _get_session(request)
+    if not is_authenticated(session_id):
+        raise HTTPException(401, "Not connected to OKX.")
+    from .dca_bots import delete_dca_bot
+    try:
+        ok = delete_dca_bot(bot_id, session_id)
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+    if not ok:
+        raise HTTPException(404, "dca bot not found")
+    return {"status": "deleted", "id": bot_id}
+
+
+@router.post("/dca-bots/{bot_id}/activate")
+async def dca_activate(bot_id: str, request: Request):
+    """Activate — sets is_active=1. The dca_loop (separate module) picks
+    this up on its next tick and places the base order.
+    """
+    session_id = _get_session(request)
+    if not is_authenticated(session_id):
+        raise HTTPException(401, "Not connected to OKX.")
+    from .dca_bots import activate_dca_bot
+    try:
+        bot = activate_dca_bot(bot_id, session_id)
+    except ValueError as e:
+        raise HTTPException(404, str(e))
+    return {"bot": bot}
+
+
+@router.post("/dca-bots/{bot_id}/deactivate")
+async def dca_deactivate(bot_id: str, request: Request):
+    """Deactivate — sets is_active=0. Existing fills are NOT auto-closed."""
+    session_id = _get_session(request)
+    if not is_authenticated(session_id):
+        raise HTTPException(401, "Not connected to OKX.")
+    from .dca_bots import deactivate_dca_bot
+    try:
+        bot = deactivate_dca_bot(bot_id, session_id)
+    except ValueError as e:
+        raise HTTPException(404, str(e))
+    return {"bot": bot}
+
+
+@router.get("/dca-bots/{bot_id}/fills")
+async def dca_fills(bot_id: str, request: Request):
+    """List of fills for this bot — used by detail page + history charts."""
+    session_id = _get_session(request)
+    if not is_authenticated(session_id):
+        raise HTTPException(401, "Not connected to OKX.")
+    from .dca_bots import get_dca_bot, list_dca_fills
+    if get_dca_bot(bot_id, session_id) is None:
+        raise HTTPException(404, "dca bot not found")
+    return {"fills": list_dca_fills(bot_id, session_id)}
+
+
 # ── Admin: session overview ─────────────────────────────────
 
 @router.get("/admin/sessions")
