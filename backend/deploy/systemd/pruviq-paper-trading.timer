@@ -1,0 +1,14 @@
+[Unit]
+Description=PRUVIQ Paper Trading Daily Tick timer (daily 01:30 UTC = 10:30 KST)
+Requires=pruviq-paper-trading.service
+
+[Timer]
+# 30 minutes after pruviq-daily-ranking.timer (01:00 UTC) so today's ranking
+# is already written before paper-trading reads it.
+OnCalendar=*-*-* 01:30:00
+RandomizedDelaySec=30
+Persistent=true
+Unit=pruviq-paper-trading.service
+
+[Install]
+WantedBy=timers.target

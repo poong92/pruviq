@@ -1172,6 +1172,258 @@ async def signals_history(hours: int = 24):
     return _signal_scanner.get_history(min(hours, 72))
 
 
+# ---------------------------------------------------------------------------
+# /signals/realtime — verified-only enriched live signals
+# ---------------------------------------------------------------------------
+
+# Human-readable "what condition just fired" labels. Kept here as a flat dict
+# instead of attached to each strategy class because (a) it's the API output
+# language layer, not strategy logic, and (b) the registry already owns
+# strategy metadata — adding two more fields per entry just for these strings
+# is more coupling than enrichment is worth.
+_ENTRY_CONDITION_LABELS = {
+    "bb-squeeze-short": "Bollinger Band volatility expansion after squeeze (bearish breakout)",
+    "bb-squeeze-long": "Bollinger Band volatility expansion after squeeze (bullish breakout)",
+    "momentum-long": "20-bar high breakout with volume + trend confirmation",
+    "atr-breakout": "Price crossed ATR upper band with EMA trend agreement",
+    "hv-squeeze": "Historical-volatility contraction released with bearish candle",
+    "rsi-divergence": "Price/RSI divergence at recent extreme",
+    "macd-cross": "MACD line crossed signal line with zero-line filter",
+    "donchian-breakout": "20-period channel breakout (Turtle Trading)",
+    "mean-reversion": "Price reverted toward 20-SMA from >2σ deviation",
+    "supertrend": "SuperTrend direction flip (ATR-based)",
+    "keltner-squeeze": "Bollinger Band exited Keltner Channel with directional breakout",
+    "keltner-squeeze-long": "Keltner squeeze release in bull-regime (LONG variant)",
+    "stochastic-rsi": "Stochastic RSI crossover from overbought/oversold zone",
+    "ma-cross": "EMA 50/200 golden/death cross",
+    "adx-trend": "ADX > 25 with DMI directional cross",
+    "ichimoku": "Tenkan/Kijun cross with cloud agreement",
+    "heikin-ashi": "N consecutive HA candles with no opposing wick",
+    "volume-profile": "Mean reversion toward Volume Profile Point of Control",
+}
+
+
+def _load_30d_ranking_index() -> tuple[dict, str]:
+    """Load (and cache) the latest 30d top50 ranking as a lookup index.
+
+    Returns:
+        ({(strategy, direction, timeframe): entry_dict}, ranking_date_str).
+        Empty dict + "" when no ranking is available — caller must tolerate.
+
+    Cached for 5 minutes via get_cached/set_cached so /signals/realtime
+    doesn't open the file on every request.
+    """
+    cache_key = "_signals_realtime_ranking_idx"
+    cached = get_cached(cache_key)
+    if cached:
+        return cached
+
+    ranking_dir = Path(RANKING_DIR)
+    if not ranking_dir.exists():
+        return {}, ""
+    candidates = sorted(ranking_dir.glob("ranking_*.json"), reverse=True)
+    if not candidates:
+        return {}, ""
+    latest = candidates[0]
+    try:
+        with latest.open("r", encoding="utf-8") as f:
+            raw = json.load(f)
+    except Exception as exc:
+        logger.warning("/signals/realtime: ranking load failed %s: %s", latest, exc)
+        return {}, ""
+    entries = raw.get("periods", {}).get("30d", {}).get("top50", [])
+    idx: dict[tuple[str, str, str], dict] = {}
+    for e in entries:
+        key = (
+            e.get("strategy"),
+            e.get("direction"),
+            e.get("timeframe", "1H"),
+        )
+        # Keep highest-PF entry per key (rankings can contain duplicates from
+        # multiple SL/TP presets for the same strategy/direction/timeframe).
+        existing = idx.get(key)
+        if existing is None or e.get("profit_factor", 0) > existing.get("profit_factor", 0):
+            idx[key] = e
+    date_str = latest.stem.replace("ranking_", "")
+    result = (idx, date_str)
+    set_cached(cache_key, result)
+    return result
+
+
+@app.get("/signals/realtime")
+async def signals_realtime(min_pf: float = 2.0, max_results: int = 10):
+    """Enriched live signals filtered by verified 30d performance.
+
+    Combines:
+        - `_signal_scanner.scan()` for the current 1H bar's active signals
+          (same data /signals/live serves; 5-min cache shared via the
+          scanner's single-flight lock)
+        - 30d top50 ranking entries from `RANKING_DIR/ranking_<date>.json`
+          for the PF / win_rate / n_trades trust metrics
+
+    A signal is returned only when:
+        1. The scanner reports it on the last completed 1H candle, AND
+        2. The same (strategy, direction, timeframe) appears in the 30d
+           ranking with `profit_factor >= min_pf`.
+
+    Note on timeframe coupling: the scanner runs on 1H candles regardless of
+    the strategy's preferred timeframe (this is a known limitation of the
+    current scanner, documented at api/signal_scanner.py:74). We join the
+    ranking by `timeframe == "1H"` first, then fall back to the most
+    profitable timeframe variant if no 1H entry exists for that strategy.
+    This intentionally returns *fewer* signals on cycles where strategies
+    only have higher-timeframe entries in the ranking — better to emit
+    nothing than emit a signal whose backtest PF doesn't match the
+    timeframe the scanner actually fired on.
+
+    Response: list of enriched signal dicts (max `max_results` items).
+    Empty list when no qualifying signals exist OR scanner not yet warm.
+
+    Caching: 5 minutes (scanner + ranking index both 5-min cached).
+    Response size: capped at ~50KB by max_results clamp.
+    """
+    if max_results < 1:
+        raise HTTPException(400, "max_results must be >= 1")
+    if max_results > 100:
+        max_results = 100
+    if min_pf < 0:
+        raise HTTPException(400, "min_pf must be >= 0")
+
+    if _signal_scanner is None:
+        logger.warning("/signals/realtime: scanner not ready yet")
+        return []
+
+    try:
+        live_signals = await asyncio.wait_for(
+            asyncio.to_thread(_signal_scanner.scan), timeout=30,
+        )
+    except asyncio.TimeoutError:
+        cache = _signal_scanner._cache
+        cache_age = time.time() - _signal_scanner._cache_ts
+        if cache and cache_age < 3600:
+            logger.warning(
+                "/signals/realtime scan timeout — serving stale cache (n=%d, age=%ds)",
+                len(cache), int(cache_age),
+            )
+            live_signals = cache
+        else:
+            return []
+
+    ranking_idx, ranking_date = _load_30d_ranking_index()
+    if not ranking_idx:
+        # No ranking yet (cold infra / fresh deployment). Return empty so
+        # callers don't show unverified signals as if they were verified.
+        logger.warning("/signals/realtime: no ranking file in %s — returning []", RANKING_DIR)
+        return []
+
+    enriched: list[dict] = []
+    for sig in live_signals:
+        strategy_id = sig.get("strategy")
+        direction = sig.get("direction")
+        # Scanner emits on 1H candles; first match by 1H, then fall back to
+        # the highest-PF timeframe variant for that (strategy, direction).
+        key_1h = (strategy_id, direction, "1H")
+        rank_entry = ranking_idx.get(key_1h)
+        if rank_entry is None:
+            # Fall back: any timeframe variant for this strategy+direction
+            variants = [
+                v for k, v in ranking_idx.items()
+                if k[0] == strategy_id and k[1] == direction
+            ]
+            if not variants:
+                continue
+            rank_entry = max(variants, key=lambda v: v.get("profit_factor", 0))
+
+        pf = float(rank_entry.get("profit_factor", 0))
+        if pf < min_pf:
+            continue
+        n_trades = int(rank_entry.get("total_trades", 0))
+        if n_trades < 30:
+            # Same filter the daily ranking applies (rules out under-sampled
+            # strategies that look great purely from small N).
+            continue
+
+        # Resolve current_price from data_manager (cheap: in-memory)
+        current_price = sig.get("entry_price")
+        try:
+            df_now = data_manager.get_df(sig.get("coin", ""))
+            if df_now is not None and len(df_now) > 0:
+                current_price = round(float(df_now.iloc[-1]["close"]), 6)
+        except Exception:
+            pass
+
+        enriched.append({
+            "coin": sig.get("coin"),
+            "strategy": strategy_id,
+            "strategy_name": sig.get("strategy_name"),
+            "direction": direction,
+            "timeframe": rank_entry.get("timeframe", "1H"),
+            "current_price": current_price,
+            "entry_price": sig.get("entry_price"),
+            "entry_condition": _ENTRY_CONDITION_LABELS.get(
+                strategy_id, "Strategy entry condition met",
+            ),
+            "signal_time": sig.get("signal_time"),
+            "sl_pct": sig.get("sl_pct"),
+            "tp_pct": sig.get("tp_pct"),
+            "strategy_metrics_30d": {
+                "pf": round(pf, 2),
+                "win_rate": round(float(rank_entry.get("win_rate", 0)), 1),
+                "n_trades": n_trades,
+                "sharpe": round(float(rank_entry.get("sharpe", 0)), 2),
+                "max_drawdown": round(float(rank_entry.get("max_drawdown", 0)), 2),
+            },
+            "ranking_date": ranking_date,
+        })
+
+    # Sort: best 30d PF first — gives the SNS template a clean "top signal
+    # right now" choice.
+    enriched.sort(key=lambda x: x["strategy_metrics_30d"]["pf"], reverse=True)
+    return enriched[:max_results]
+
+
+@app.get("/paper-trading")
+async def paper_trading_status(cycle: Optional[int] = None):
+    """Current PRUVIQ paper-trading portfolio state.
+
+    Reads the cycle file written by `backend/scripts/paper_trading_tracker.py`
+    (run daily via `pruviq-paper-trading.timer`). No simulation runs inside
+    this request — it's a JSON read of the most recent state.
+
+    Query:
+        cycle: optional cycle id (e.g. 1). Defaults to the latest.
+
+    Response shape (when a cycle exists):
+        {
+            "cycle_id": 1,
+            "cycle_status": "active",
+            "cycle_day": 14,
+            "cycle_length_days": 30,
+            "start_date": "2026-04-16",
+            "starting_capital": 1000.0,
+            "current_equity": 1247.50,
+            "total_return_pct": 24.75,
+            "yesterday_pnl": 21.30,
+            "open_positions": [...],
+            "closed_positions": [...],     # most recent 20
+            "history": [{"date", "equity", "open_count", "closed_count"}, ...],
+            ...
+        }
+
+    When no cycle exists, returns 404 — callers should treat that as "not
+    initialized yet" rather than "feature off".
+    """
+    from scripts.paper_trading_tracker import get_portfolio_status
+
+    status = await asyncio.to_thread(get_portfolio_status, cycle)
+    if status.get("cycle_status") == "none":
+        raise HTTPException(
+            404,
+            detail=status.get("message", "No paper-trading cycle initialized"),
+        )
+    return status
+
+
 @app.get("/hot-strategies")
 async def hot_strategies():
     """Return top-performing strategies in the last 30 days.
