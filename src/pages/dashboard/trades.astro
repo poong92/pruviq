@@ -1,0 +1,10 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import TradeHistoryFull from '../../components/TradeHistoryFull';
+---
+
+<Layout title="Trade History — PRUVIQ" description="Full auto-trading history. Filter, sort, and export to CSV.">
+  <main class="max-w-6xl mx-auto px-4 py-10 md:py-16">
+    <TradeHistoryFull client:load lang="en" />
+  </main>
+</Layout>
