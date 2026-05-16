@@ -1,0 +1,20 @@
+[Unit]
+Description=PRUVIQ Paper Trading Daily Tick
+After=pruviq-daily-ranking.service
+OnFailure=pruviq-alert@%n.service
+
+[Service]
+Type=oneshot
+User=pruviq
+Group=pruviq
+WorkingDirectory=/opt/pruviq/current
+EnvironmentFile=/opt/pruviq/shared/.env
+# PAPER_TRADING_DIR comes from /opt/pruviq/shared/.env (single SSoT).
+# Default fallback inside the script writes to backend/data/paper_trading
+# which is fine for local dev but useless on the droplet — the .env must
+# set PAPER_TRADING_DIR=/opt/pruviq/data/paper_trading.
+ExecStart=/opt/pruviq/bin/paper-trading-tick.sh
+TimeoutStartSec=900
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=pruviq-paper-trading
