@@ -9,40 +9,40 @@ import { OKX_DISCOUNT_PCT } from '../../config/exchanges';
 ---
 
 <Layout
-  title="Autotrading — Coming Soon (OKX OAuth pending) | PRUVIQ"
-  description={`PRUVIQ backtests ${COINS_ANALYZED}+ coins. Autotrading gated on OKX OAuth approval — join the waitlist to deploy verified strategies automatically.`}
+  title="Autotrading — connect OKX & deploy verified strategies | PRUVIQ"
+  description={`PRUVIQ auto-executes verified strategies on OKX. Connect via API key today (OAuth review in progress). Backtested across ${COINS_ANALYZED}+ coins.`}
 >
 
   <!-- HERO -->
   <section class="relative overflow-hidden hero-bg-depth section-glow-green">
     <div class="absolute left-1/2 top-1/3 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] rounded-full bg-(--color-accent)/[0.05] blur-[140px] pointer-events-none" aria-hidden="true"></div>
     <div class="relative max-w-4xl mx-auto px-6 pt-16 pb-20 md:pt-24 md:pb-32 text-center hero-enter">
-      <!-- Status badge: honest about gated state -->
-      <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-(--color-accent)/30 bg-(--color-accent)/8 mb-8">
-        <span class="inline-block w-2 h-2 rounded-full bg-(--color-accent)" aria-hidden="true"></span>
-        <span class="font-mono text-xs font-bold tracking-widest text-(--color-accent) uppercase">Coming Soon · OKX OAuth pending</span>
+      <!-- Status badge: live + honest about OAuth in progress -->
+      <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-(--color-up)/30 bg-(--color-up)/8 mb-8">
+        <span class="inline-block w-2 h-2 rounded-full bg-(--color-up) animate-pulse" aria-hidden="true"></span>
+        <span class="font-mono text-xs font-bold tracking-widest text-(--color-up) uppercase">Live · Connect via API key (OAuth in progress)</span>
       </div>
 
       <h1 class="text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-[-0.04em] leading-[1.05] text-balance mb-8">
         Verified Strategies,<br/>
-        <span class="gradient-text-shimmer">Deploy When Ready</span>
+        <span class="gradient-text-shimmer">Auto-Executed on OKX</span>
       </h1>
 
       <p class="text-xl md:text-2xl text-(--color-text-secondary) leading-relaxed max-w-2xl mx-auto mb-10">
-        PRUVIQ backtests <strong class="text-(--color-text)">{COINS_ANALYZED}+ coins</strong> today. Autotrading opens once our OKX OAuth integration is approved — the broker review is in progress.
+        Backtested across <strong class="text-(--color-text)">{COINS_ANALYZED}+ coins</strong>. Connect your OKX account by pasting a Read+Trade API key, pick a strategy, set your risk caps. OAuth one-click connect is under broker review.
       </p>
 
       <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <a href="/simulate" class="btn btn-primary btn-lg text-center">
-          Verify a Strategy Now &rarr;
+        <a href="/dashboard" class="btn btn-primary btn-lg text-center">
+          Connect OKX & Start &rarr;
         </a>
-        <a href="/strategies" class="btn btn-ghost btn-lg text-center">
-          See verified strategies &rarr;
+        <a href="/simulate" class="btn btn-ghost btn-lg text-center">
+          Verify a strategy first &rarr;
         </a>
       </div>
 
       <p class="text-[10px] text-(--color-text-muted)/50 mt-6 font-mono">
-        No live trading yet. Simulation results do not guarantee future performance.
+        Auto-trading executes real trades with real money. Simulation results do not guarantee live performance.
       </p>
     </div>
   </section>
@@ -77,7 +77,7 @@ import { OKX_DISCOUNT_PCT } from '../../config/exchanges';
         </div>
         <h3 class="font-bold text-xl mb-3">You Connect</h3>
         <p class="text-(--color-text-muted) leading-relaxed">
-          Link your OKX account via OAuth. No API keys shared. No withdrawal access. Secure by design.
+          Paste a Read+Trade OKX API key (or use OAuth once approved). No withdrawal access. AES-256 token storage. Disconnect anytime.
         </p>
       </div>
 
@@ -215,8 +215,8 @@ import { OKX_DISCOUNT_PCT } from '../../config/exchanges';
             </svg>
           </div>
           <div>
-            <h3 class="font-bold text-base mb-1">OAuth Only — No API Keys</h3>
-            <p class="text-(--color-text-muted) text-sm">No API keys shared. No withdrawal access. Secure OAuth connection only.</p>
+            <h3 class="font-bold text-base mb-1">Read + Trade Only — No Withdrawal</h3>
+            <p class="text-(--color-text-muted) text-sm">Connect via API key today (OAuth one-click in review). Trade and read permissions only — withdrawal disabled by design.</p>
           </div>
         </div>
 
@@ -270,7 +270,7 @@ import { OKX_DISCOUNT_PCT } from '../../config/exchanges';
 
       <div class="flex flex-wrap gap-3 justify-center mb-10 font-mono text-xs">
         <span class="px-4 py-2 rounded-full border border-(--color-up)/20 text-(--color-up) bg-(--color-up)/5">OKX Official Partner</span>
-        <span class="px-4 py-2 rounded-full border border-(--color-up)/20 text-(--color-up) bg-(--color-up)/5">OAuth Only</span>
+        <span class="px-4 py-2 rounded-full border border-(--color-up)/20 text-(--color-up) bg-(--color-up)/5">Read + Trade Only</span>
         <span class="px-4 py-2 rounded-full border border-(--color-up)/20 text-(--color-up) bg-(--color-up)/5">No Withdrawal Access</span>
         <span class="px-4 py-2 rounded-full border border-(--color-up)/20 text-(--color-up) bg-(--color-up)/5">{OKX_DISCOUNT_PCT}% Fee Discount</span>
       </div>
