@@ -103,6 +103,9 @@ const i18n = {
     active: "ACTIVE",
     inactive: "inactive",
     activate: "Activate",
+    deactivate: "Deactivate",
+    multiActiveNote:
+      "You can run multiple strategies in parallel — toggle each independently.",
     edit: "Edit",
     deleteBtn: "Delete",
     deleteConfirm: "Delete this strategy?",
@@ -157,6 +160,8 @@ const i18n = {
     active: "활성",
     inactive: "비활성",
     activate: "활성화",
+    deactivate: "비활성화",
+    multiActiveNote: "여러 전략을 동시에 운영할 수 있습니다 — 각각 토글하세요.",
     edit: "수정",
     deleteBtn: "삭제",
     deleteConfirm: "이 전략을 삭제할까요?",
@@ -317,7 +322,17 @@ export default function StrategyBuilder({ lang = "en" }: Props) {
   }
 
   async function handleActivate(id: string) {
+    // Multi-active: do NOT pass exclusive=true. Other active strategies
+    // keep running. Onboarding wizard uses exclusive=true for first bot.
     await fetch(`${API_BASE_URL}/user-strategies/${id}/activate`, {
+      method: "POST",
+      credentials: "include",
+    });
+    await reloadSaved();
+  }
+
+  async function handleDeactivate(id: string) {
+    await fetch(`${API_BASE_URL}/user-strategies/${id}/deactivate`, {
       method: "POST",
       credentials: "include",
     });
@@ -352,43 +367,59 @@ export default function StrategyBuilder({ lang = "en" }: Props) {
         {saved.length === 0 ? (
           <p class="text-sm text-(--color-text-muted) italic">{t.none}</p>
         ) : (
-          <ul class="space-y-2">
-            {saved.map((s) => (
-              <li
-                key={s.id}
-                class="flex items-center justify-between p-3 rounded-lg border border-(--color-border) bg-(--color-bg)/40"
-              >
-                <div class="min-w-0">
-                  <p class="font-bold text-sm truncate">{s.name}</p>
-                  <p class="text-xs font-mono text-(--color-text-muted)">
-                    {s.base_strategy}
-                  </p>
-                </div>
-                <div class="flex items-center gap-2 shrink-0">
-                  {s.is_active ? (
-                    <span class="text-xs font-mono font-bold text-(--color-up)">
-                      ● {t.active}
-                    </span>
-                  ) : (
+          <>
+            <p class="text-xs text-(--color-text-muted) mb-2">
+              {t.multiActiveNote}
+            </p>
+            <ul class="space-y-2">
+              {saved.map((s) => (
+                <li
+                  key={s.id}
+                  class="flex items-center justify-between p-3 rounded-lg border border-(--color-border) bg-(--color-bg)/40"
+                >
+                  <div class="min-w-0">
+                    <p class="font-bold text-sm truncate">{s.name}</p>
+                    <p class="text-xs font-mono text-(--color-text-muted)">
+                      {s.base_strategy}
+                    </p>
+                  </div>
+                  <div class="flex items-center gap-2 shrink-0">
+                    {s.is_active ? (
+                      <>
+                        <span class="text-xs font-mono font-bold text-(--color-up) shrink-0">
+                          ● {t.active}
+                        </span>
+                        <button
+                          type="button"
+                          class="text-xs text-(--color-text-muted) hover:text-(--color-down) underline min-h-[36px] px-2"
+                          onClick={() => handleDeactivate(s.id)}
+                          aria-label={`${t.deactivate} ${s.name}`}
+                        >
+                          {t.deactivate}
+                        </button>
+                      </>
+                    ) : (
+                      <button
+                        type="button"
+                        class="btn btn-ghost btn-sm min-h-[36px]"
+                        onClick={() => handleActivate(s.id)}
+                        aria-label={`${t.activate} ${s.name}`}
+                      >
+                        {t.activate}
+                      </button>
+                    )}
                     <button
                       type="button"
-                      class="btn btn-ghost btn-sm min-h-[36px]"
-                      onClick={() => handleActivate(s.id)}
+                      class="text-xs text-(--color-down) hover:underline min-h-[36px] px-2"
+                      onClick={() => handleDelete(s.id)}
                     >
-                      {t.activate}
+                      {t.deleteBtn}
                     </button>
-                  )}
-                  <button
-                    type="button"
-                    class="text-xs text-(--color-down) hover:underline min-h-[36px] px-2"
-                    onClick={() => handleDelete(s.id)}
-                  >
-                    {t.deleteBtn}
-                  </button>
-                </div>
-              </li>
-            ))}
-          </ul>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </>
         )}
       </div>
 
