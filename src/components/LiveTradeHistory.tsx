@@ -37,6 +37,7 @@ interface Props {
 const i18n = {
   en: {
     title: "Trade History",
+    seeAll: "See all →",
     connect_prompt: "Connect OKX to see trade history",
     no_trades: "No trades yet. Auto-trading will log here.",
     col_time: "Time",
@@ -53,6 +54,7 @@ const i18n = {
   },
   ko: {
     title: "거래 내역",
+    seeAll: "전체 보기 →",
     connect_prompt: "거래 내역을 보려면 OKX를 연결하세요",
     no_trades: "아직 거래 없음. 자동매매 시작 후 여기에 기록됩니다.",
     col_time: "시간",
@@ -141,23 +143,34 @@ export default function LiveTradeHistory({ lang = "en" }: Props) {
     fetchTrades();
   }, [fetchTrades]);
 
+  const tradesPath =
+    lang === "ko" ? "/ko/dashboard/trades" : "/dashboard/trades";
+
   return (
     <div class="card-enterprise rounded-xl p-5">
       {/* Header */}
-      <div class="flex items-center gap-2 mb-4">
-        <svg
-          width="16"
-          height="16"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          class="text-(--color-accent)"
-          aria-hidden="true"
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center gap-2">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            class="text-(--color-accent)"
+            aria-hidden="true"
+          >
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+          </svg>
+          <h2 class="font-bold text-sm">{t.title}</h2>
+        </div>
+        <a
+          href={tradesPath}
+          class="text-xs text-(--color-accent) hover:underline"
         >
-          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
-        </svg>
-        <h2 class="font-bold text-sm">{t.title}</h2>
+          {t.seeAll}
+        </a>
       </div>
 
       {/* Unauthenticated */}
