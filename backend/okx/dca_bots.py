@@ -155,6 +155,14 @@ def _ensure_tables() -> None:
             "CREATE INDEX IF NOT EXISTS idx_dca_fills_bot "
             "ON dca_fills(bot_id)"
         )
+        # Race guard: prevent two dca_loop ticks (in case uvicorn ever runs
+        # with --workers >1) from inserting duplicate base/safety fills for
+        # the same bot+order_num. Duplicate inserts will raise IntegrityError
+        # the caller can catch + log.
+        conn.execute(
+            "CREATE UNIQUE INDEX IF NOT EXISTS idx_dca_fills_bot_order "
+            "ON dca_fills(bot_id, order_num)"
+        )
 
 
 def _merge_defaults(data: dict[str, Any]) -> dict[str, Any]:
