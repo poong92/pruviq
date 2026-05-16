@@ -877,6 +877,61 @@ async def dca_fills(bot_id: str, request: Request):
     return {"fills": list_dca_fills(bot_id, session_id)}
 
 
+@router.get("/dca-bots/{bot_id}/preview")
+async def dca_preview(bot_id: str, request: Request):
+    """Read-only live preview: pulls OKX public mark price for the bot's
+    symbol and returns next-trigger / TP distance + would_fire_next.
+    No DB writes, no orders. Safe to poll from the dashboard at 5–10 s.
+    """
+    session_id = _get_session(request)
+    if not is_authenticated(session_id):
+        raise HTTPException(401, "Not connected to OKX.")
+    from .dca_bots import get_dca_bot, compute_preview
+    bot = get_dca_bot(bot_id, session_id)
+    if bot is None:
+        raise HTTPException(404, "dca bot not found")
+
+    # Pull mark price from OKX public market endpoint (no auth needed).
+    # Convert PRUVIQ symbol to OKX-SWAP format if needed.
+    raw_symbol = str(bot["symbol"]).upper()
+    if "-" in raw_symbol:
+        okx_sym = raw_symbol
+    elif raw_symbol.endswith("USDT"):
+        okx_sym = raw_symbol[:-4] + "-USDT-SWAP"
+    else:
+        okx_sym = raw_symbol
+
+    import httpx
+    from .config import OKX_BASE_URL
+    mark_price = 0.0
+    try:
+        async with httpx.AsyncClient(timeout=8) as client:
+            resp = await client.get(
+                f"{OKX_BASE_URL}/api/v5/market/ticker",
+                params={"instId": okx_sym},
+            )
+            if resp.status_code == 200:
+                body = resp.json()
+                if body.get("code") == "0" and body.get("data"):
+                    mark_price = float(body["data"][0].get("last") or 0.0)
+    except Exception as e:
+        logger.warning("dca preview ticker fetch failed: %s", e)
+
+    if mark_price <= 0:
+        return {
+            "bot_id": bot_id,
+            "symbol_resolved": okx_sym,
+            "error": "could not fetch mark price",
+        }
+
+    preview = compute_preview(bot, mark_price)
+    return {
+        "bot_id": bot_id,
+        "symbol_resolved": okx_sym,
+        "preview": preview,
+    }
+
+
 @router.post("/dca-bots/simulate")
 async def dca_simulate(request: Request):
     """Backtest DCA params on historical OHLCV. No DB writes, no orders.
