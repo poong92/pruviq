@@ -128,6 +128,14 @@ const labels = {
     alertChatId: "Telegram Chat ID",
     alertChatIdDesc: "Send /start to @userinfobot to find your chat ID",
     alertChatIdRequired: "Required for alert and auto modes",
+    telegramWizardTitle: "Set up Telegram alerts in 3 steps",
+    telegramStep1: "1. Open the PRUVIQ alert bot",
+    telegramStep1Btn: "Open @Claw_pruviq_alerts_bot",
+    telegramStep2: "2. Send /start to enable messages from PRUVIQ",
+    telegramStep3:
+      "3. Open @userinfobot in a new chat, send /start, copy the numeric Chat ID it replies with, then paste it below",
+    telegramWhy:
+      "Why two bots? PRUVIQ's bot delivers alerts; @userinfobot only reveals your numeric Chat ID — Telegram doesn't expose it directly.",
     autoModeAlertNote:
       "Auto mode also sends Telegram notifications on every trade",
     masterSwitch: "Enable Bot",
@@ -204,6 +212,14 @@ const labels = {
     alertChatId: "텔레그램 채팅 ID",
     alertChatIdDesc: "@userinfobot에게 /start 전송 후 확인",
     alertChatIdRequired: "알림/자동 모드에 필수입니다",
+    telegramWizardTitle: "텔레그램 알림 설정 — 3단계",
+    telegramStep1: "1. PRUVIQ 알림 봇 열기",
+    telegramStep1Btn: "@Claw_pruviq_alerts_bot 열기",
+    telegramStep2: "2. /start 를 보내 PRUVIQ 알림 수신 활성화",
+    telegramStep3:
+      "3. 새 대화창에서 @userinfobot 검색 → /start → 받은 숫자 Chat ID를 아래에 붙여 넣기",
+    telegramWhy:
+      "왜 봇 두 개? PRUVIQ 봇이 알림을 보내고, @userinfobot은 본인의 숫자 Chat ID를 알려줍니다 — 텔레그램이 Chat ID를 직접 노출하지 않기 때문.",
     autoModeAlertNote: "자동 모드에서도 매 거래마다 텔레그램 알림이 전송됩니다",
     masterSwitch: "봇 활성화",
     masterSwitchDesc: "알림 또는 자동 모드에서만 작동합니다",
@@ -483,12 +499,39 @@ export default function TradingSettings({ lang = "en" }: Props) {
         {needsTelegram && (
           <div class="mt-4 pt-4 border-t border-(--color-border)">
             <label class="font-bold text-sm block mb-1">{t.alertChatId}</label>
-            <p class="text-xs text-(--color-text-muted) mb-1">
-              {t.alertChatIdDesc}
-            </p>
             {settings.execution_mode === "auto" && (
               <InfoBadge msg={t.autoModeAlertNote} />
             )}
+
+            {/* 3-step wizard */}
+            <div class="mt-3 mb-3 p-4 rounded-lg bg-(--color-accent)/5 border border-(--color-accent)/20 space-y-3">
+              <p class="text-xs font-mono font-bold uppercase tracking-wider text-(--color-accent)">
+                {t.telegramWizardTitle}
+              </p>
+              <div class="space-y-2">
+                <p class="text-sm text-(--color-text-secondary)">
+                  {t.telegramStep1}
+                </p>
+                <a
+                  href="https://t.me/Claw_pruviq_alerts_bot"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-(--color-accent)/10 border border-(--color-accent)/30 text-(--color-accent) text-xs font-mono font-bold hover:bg-(--color-accent)/20 min-h-[36px]"
+                >
+                  💬 {t.telegramStep1Btn}
+                </a>
+              </div>
+              <p class="text-sm text-(--color-text-secondary)">
+                {t.telegramStep2}
+              </p>
+              <p class="text-sm text-(--color-text-secondary)">
+                {t.telegramStep3}
+              </p>
+              <p class="text-xs text-(--color-text-muted) italic pt-1 border-t border-(--color-accent)/15">
+                {t.telegramWhy}
+              </p>
+            </div>
+
             <input
               type="text"
               placeholder="e.g. 123456789"
@@ -499,7 +542,8 @@ export default function TradingSettings({ lang = "en" }: Props) {
                   alert_telegram_chat_id: (e.target as HTMLInputElement).value,
                 }))
               }
-              class={`w-full p-2 mt-2 rounded-lg bg-(--color-bg) border text-sm font-mono ${
+              inputMode="numeric"
+              class={`w-full p-2 rounded-lg bg-(--color-bg) border text-sm font-mono ${
                 missingTelegram
                   ? "border-(--color-warning)"
                   : "border-(--color-border)"
