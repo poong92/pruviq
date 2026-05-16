@@ -310,11 +310,22 @@ def run_simulation_direct(
     cost_model = _CostModel.futures()
     all_trades = []
 
+    # Short windows (<= 2 days) fail engine warmup guards (n < 100 in signal
+    # detection). Run engine on full history instead, then filter trades by
+    # entry_time. Otherwise 1d period returns 0 trades for all strategies.
+    import pandas as pd
+    from datetime import datetime as _dt
+    window_days = (_dt.strptime(end_date, "%Y-%m-%d") - _dt.strptime(start_date, "%Y-%m-%d")).days
+    short_window = window_days <= 2
+    window_start_ts = pd.Timestamp(start_date) if short_window else None
+    window_end_ts = pd.Timestamp(end_date) + pd.Timedelta(hours=23) if short_window else None
+
     for run_dir in directions_to_run:
         for sym, df in coins:
             try:
                 df = strategy_obj.calculate_indicators(df.copy())
-                df = _filter_df_by_date(df, start_date, end_date)
+                if not short_window:
+                    df = _filter_df_by_date(df, start_date, end_date)
                 result = _run_fast(
                     df, strategy_obj, sym,
                     sl_pct=sl_pct / 100,
@@ -330,6 +341,10 @@ def run_simulation_direct(
                     leverage=1.0,
                 )
                 for trade in result.trades:
+                    if short_window:
+                        entry_ts = pd.Timestamp(trade.entry_time)
+                        if entry_ts < window_start_ts or entry_ts > window_end_ts:
+                            continue
                     all_trades.append({
                         "pnl_pct": trade.pnl_pct,
                         "exit_reason": trade.exit_reason,
