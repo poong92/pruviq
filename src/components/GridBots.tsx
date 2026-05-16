@@ -120,6 +120,7 @@ const i18n = {
     duration: "Duration",
     hours: "h",
     exitReason: "Exit reason",
+    exitAt: "Exit @",
     accuracy: "Sim accuracy",
     warns: "Warnings",
   },
@@ -165,6 +166,7 @@ const i18n = {
     duration: "기간",
     hours: "시간",
     exitReason: "종료 사유",
+    exitAt: "종료 가격",
     accuracy: "시뮬 정확도",
     warns: "경고",
   },
@@ -658,7 +660,7 @@ export default function GridBots({ lang = "en" }: Props) {
                 </p>
               </div>
               <div>
-                <p class="text-xs text-(--color-text-muted)">Exit @</p>
+                <p class="text-xs text-(--color-text-muted)">{t.exitAt}</p>
                 <p class="font-mono font-bold">${sim.exit_price.toFixed(2)}</p>
               </div>
             </div>

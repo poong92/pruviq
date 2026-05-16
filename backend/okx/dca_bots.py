@@ -257,7 +257,7 @@ def update_dca_bot(
             "name=?, symbol=?, direction=?, base_price_usdt=?, "
             "position_size_usdt=?, leverage=?, price_step_pct=?, "
             "size_multiplier=?, max_safety_orders=?, tp_pct=?, "
-            "stop_scaling_price=?, updated_at=? "
+            "stop_scaling_price=?, paper_mode=?, updated_at=? "
             "WHERE id=? AND session_id=?",
             (
                 merged["name"], merged["symbol"], merged["direction"],
@@ -269,6 +269,7 @@ def update_dca_bot(
                 int(merged["max_safety_orders"]),
                 float(merged["tp_pct"]),
                 float(merged["stop_scaling_price"]),
+                1 if merged.get("paper_mode", 1) else 0,
                 now, bot_id, session_id,
             ),
         )

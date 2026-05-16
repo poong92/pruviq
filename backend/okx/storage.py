@@ -182,7 +182,47 @@ def update_session(session_id: str, tokens: dict) -> None:
 
 
 def delete_session(session_id: str) -> None:
+    """Delete the session row and cascade any per-session bot state.
+
+    Without this cascade, dca_bots + grid_bots rows with is_active=1 left
+    pointing at a deleted session keep running in the dca_loop / future
+    grid_loop, generating paper fills nobody can ever see (the owner
+    session that could query them is gone). Over time → unbounded DB
+    growth + log spam. See debugger audit scenario 7.
+    """
     with _get_conn() as conn:
+        # Capture bot ids first so we can fan out to their child tables
+        dca_ids = [
+            r[0] for r in conn.execute(
+                "SELECT id FROM dca_bots WHERE session_id = ?", (session_id,)
+            ).fetchall()
+        ]
+        grid_ids = [
+            r[0] for r in conn.execute(
+                "SELECT id FROM grid_bots WHERE session_id = ?", (session_id,)
+            ).fetchall()
+        ]
+        for table, ids in (("dca_fills", dca_ids), ("grid_orders", grid_ids)):
+            if ids:
+                placeholders = ",".join("?" * len(ids))
+                conn.execute(
+                    f"DELETE FROM {table} WHERE bot_id IN ({placeholders})",
+                    ids,
+                )
+        conn.execute("DELETE FROM dca_bots WHERE session_id = ?", (session_id,))
+        conn.execute("DELETE FROM grid_bots WHERE session_id = ?", (session_id,))
+        # Per-session trading config + strategies + pending queue also belong
+        # to the departing user.
+        conn.execute("DELETE FROM trading_settings WHERE session_id = ?", (session_id,))
+        try:
+            conn.execute("DELETE FROM user_strategies WHERE session_id = ?", (session_id,))
+        except Exception:
+            # Table may not exist if upgrade ordering differs in dev DBs.
+            pass
+        try:
+            conn.execute("DELETE FROM pending_signals WHERE session_id = ?", (session_id,))
+        except Exception:
+            pass
         conn.execute("DELETE FROM okx_sessions WHERE session_id = ?", (session_id,))
 
 
