@@ -17,31 +17,11 @@
  */
 import { useCallback, useEffect, useState } from "preact/hooks";
 import { API_BASE_URL } from "../config/api";
+import { BASE_STRATEGIES } from "../config/base-strategies";
 
 interface Props {
   lang?: "en" | "ko";
 }
-
-const BASE_STRATEGIES = [
-  "bb-squeeze-short",
-  "bb-squeeze-long",
-  "momentum-long",
-  "atr-breakout",
-  "hv-squeeze",
-  "rsi-divergence",
-  "macd-cross",
-  "donchian-breakout",
-  "mean-reversion",
-  "supertrend",
-  "keltner-squeeze",
-  "keltner-squeeze-long",
-  "stochastic-rsi",
-  "ma-cross",
-  "adx-trend",
-  "ichimoku",
-  "heikin-ashi",
-  "volume-profile",
-] as const;
 
 const i18n = {
   en: {
