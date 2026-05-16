@@ -195,11 +195,18 @@ export default function OnboardingWizard({ lang = "en" }: Props) {
       </div>
 
       {/* Progress */}
-      <div class="flex items-center gap-1 mb-6">
+      <div
+        role="progressbar"
+        aria-valuenow={step}
+        aria-valuemin={1}
+        aria-valuemax={4}
+        aria-label={t.stepOf.replace("{n}", String(step))}
+        class="flex items-center gap-1 mb-6"
+      >
         {[1, 2, 3, 4].map((n) => (
           <div
             key={n}
-            class={`flex-1 h-1.5 rounded-full ${
+            class={`flex-1 h-1.5 rounded-full motion-safe:transition-colors ${
               n <= step ? "bg-(--color-accent)" : "bg-(--color-border)"
             }`}
             aria-hidden="true"
