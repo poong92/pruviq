@@ -380,3 +380,64 @@ def get_dca_bot_with_fills(
         "avg_entry_price": avg_entry,
         "safety_orders_used": max(0, len(open_fills) - 1) if open_fills else 0,
     }
+
+
+def compute_preview(
+    bot: dict[str, Any], mark_price: float
+) -> dict[str, Any]:
+    """Read-only computation: given a bot config and current mark price,
+    what's the next trigger price, would the next safety order fire now,
+    where is the TP, and how far is mark from each?
+
+    No DB writes, no orders. Used by GET /dca-bots/:id/preview so the user
+    can dry-run their config against live market data before flipping
+    is_active on. Math mirrors the simulator + executor.
+    """
+    direction = bot.get("direction", "long")
+    base_price = float(bot.get("base_price_usdt", 0.0)) or mark_price
+    step_pct = float(bot["price_step_pct"]) / 100.0
+    tp_pct = float(bot["tp_pct"]) / 100.0
+    stop = float(bot.get("stop_scaling_price", 0.0))
+
+    if direction == "long":
+        next_trigger = base_price * (1.0 - step_pct)
+        tp_price = base_price * (1.0 + tp_pct)
+        distance_to_trigger_pct = (
+            (mark_price - next_trigger) / mark_price * 100.0
+            if mark_price > 0
+            else 0.0
+        )
+        distance_to_tp_pct = (
+            (tp_price - mark_price) / mark_price * 100.0
+            if mark_price > 0
+            else 0.0
+        )
+        would_fire_next = mark_price <= next_trigger
+        scaling_halted = stop > 0 and mark_price <= stop
+    else:  # short
+        next_trigger = base_price * (1.0 + step_pct)
+        tp_price = base_price * (1.0 - tp_pct)
+        distance_to_trigger_pct = (
+            (next_trigger - mark_price) / mark_price * 100.0
+            if mark_price > 0
+            else 0.0
+        )
+        distance_to_tp_pct = (
+            (mark_price - tp_price) / mark_price * 100.0
+            if mark_price > 0
+            else 0.0
+        )
+        would_fire_next = mark_price >= next_trigger
+        scaling_halted = stop > 0 and mark_price >= stop
+
+    return {
+        "mark_price": mark_price,
+        "base_price": base_price,
+        "next_trigger_price": next_trigger,
+        "tp_price": tp_price,
+        "distance_to_trigger_pct": distance_to_trigger_pct,
+        "distance_to_tp_pct": distance_to_tp_pct,
+        "would_fire_next_safety": would_fire_next,
+        "scaling_halted": scaling_halted,
+        "direction": direction,
+    }
