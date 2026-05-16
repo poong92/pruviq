@@ -374,13 +374,17 @@ def get_api_credentials(session_id: str) -> dict:
     """
     Get stored API key credentials for a session.
     Returns {api_key, secret_key, passphrase} or raises ValueError.
+
+    Filters to OKXClient.__init__ args only — manual_paste sessions store
+    `perm` and `created_at` metadata that would TypeError on `**creds`
+    unpack at all 10 caller sites.
     """
     creds = get_session(session_id)
     if not creds:
         raise ValueError("Session not found. Connect OKX first.")
     if "api_key" not in creds:
         raise ValueError("Session has no API key. Please reconnect OKX.")
-    return creds
+    return {k: creds[k] for k in ("api_key", "secret_key", "passphrase")}
 
 
 def is_authenticated(session_id: str) -> bool:
