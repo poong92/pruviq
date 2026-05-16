@@ -1,0 +1,10 @@
+---
+import Layout from '../layouts/Layout.astro';
+import OnboardingWizard from '../components/OnboardingWizard';
+---
+
+<Layout title="Get started — PRUVIQ" description="Set up your first PRUVIQ bot in 4 guided steps.">
+  <main class="max-w-3xl mx-auto px-4 py-10 md:py-16">
+    <OnboardingWizard client:load lang="en" />
+  </main>
+</Layout>
