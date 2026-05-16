@@ -64,6 +64,8 @@ const i18n = {
     s4Activate: "Save strategy & open dashboard",
     s4Saving: "Saving strategy…",
     s4Error: "Could not save — go to dashboard and try My Strategies manually.",
+    s4Retry: "Try again",
+    s4GoDashboard: "Go to dashboard",
   },
   ko: {
     title: "PRUVIQ 봇 처음 설정",
@@ -101,6 +103,8 @@ const i18n = {
     s4Activate: "전략 저장 후 대시보드로",
     s4Saving: "전략 저장 중…",
     s4Error: "저장 실패 — 대시보드에서 '내 전략'으로 직접 만들어 주세요.",
+    s4Retry: "다시 시도",
+    s4GoDashboard: "대시보드로 이동",
   },
 } as const;
 
@@ -331,13 +335,27 @@ export default function OnboardingWizard({ lang = "en" }: Props) {
               ))}
             </div>
             {err && (
-              <p
-                class="text-sm text-(--color-down)"
-                role="alert"
-                aria-live="assertive"
-              >
-                {err}
-              </p>
+              <div class="space-y-2" role="alert" aria-live="assertive">
+                <p class="text-sm text-(--color-down)">{err}</p>
+                <div class="flex gap-2">
+                  <button
+                    type="button"
+                    class="btn btn-ghost btn-sm min-h-[36px]"
+                    onClick={() => {
+                      setErr("");
+                      void handleActivate();
+                    }}
+                  >
+                    ↻ {t.s4Retry}
+                  </button>
+                  <a
+                    href={dashboardPath}
+                    class="btn btn-ghost btn-sm min-h-[36px] inline-flex items-center"
+                  >
+                    {t.s4GoDashboard} →
+                  </a>
+                </div>
+              </div>
             )}
           </>
         )}
