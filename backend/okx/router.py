@@ -989,6 +989,121 @@ async def dca_simulate(request: Request):
     return {"result": res.to_dict(), "candle_count": int(len(sliced))}
 
 
+# ── Grid bots — third paradigm (range-bound limit-order grid) ──────────────
+
+@router.post("/grid-bots")
+async def grid_create(request: Request):
+    """Create a grid bot for this session (starts inactive)."""
+    session_id = _get_session(request)
+    if not is_authenticated(session_id):
+        raise HTTPException(401, "Not connected to OKX.")
+    from .grid_bots import create_grid_bot
+    body = await request.json()
+    if not isinstance(body, dict):
+        raise HTTPException(400, "body must be a JSON object")
+    try:
+        bot = create_grid_bot(session_id, body)
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+    return {"bot": bot}
+
+
+@router.get("/grid-bots")
+async def grid_list(request: Request):
+    """List all grid bots owned by this session."""
+    session_id = _get_session(request)
+    if not is_authenticated(session_id):
+        raise HTTPException(401, "Not connected to OKX.")
+    from .grid_bots import list_grid_bots
+    return {"bots": list_grid_bots(session_id)}
+
+
+@router.get("/grid-bots/{bot_id}")
+async def grid_detail(bot_id: str, request: Request):
+    """Bot detail + orders + computed grid_lines + per_grid_size_usdt."""
+    session_id = _get_session(request)
+    if not is_authenticated(session_id):
+        raise HTTPException(401, "Not connected to OKX.")
+    from .grid_bots import get_grid_bot_with_orders
+    bot = get_grid_bot_with_orders(bot_id, session_id)
+    if bot is None:
+        raise HTTPException(404, "grid bot not found")
+    return {"bot": bot}
+
+
+@router.put("/grid-bots/{bot_id}")
+async def grid_update(bot_id: str, request: Request):
+    """Partial update. Refused if bot is active."""
+    session_id = _get_session(request)
+    if not is_authenticated(session_id):
+        raise HTTPException(401, "Not connected to OKX.")
+    from .grid_bots import update_grid_bot
+    body = await request.json()
+    if not isinstance(body, dict):
+        raise HTTPException(400, "body must be a JSON object")
+    try:
+        bot = update_grid_bot(bot_id, session_id, body)
+    except ValueError as e:
+        if "not found" in str(e):
+            raise HTTPException(404, str(e))
+        raise HTTPException(400, str(e))
+    return {"bot": bot}
+
+
+@router.delete("/grid-bots/{bot_id}")
+async def grid_delete(bot_id: str, request: Request):
+    """Delete bot + cascade orders. Refused if bot is active."""
+    session_id = _get_session(request)
+    if not is_authenticated(session_id):
+        raise HTTPException(401, "Not connected to OKX.")
+    from .grid_bots import delete_grid_bot
+    try:
+        ok = delete_grid_bot(bot_id, session_id)
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+    if not ok:
+        raise HTTPException(404, "grid bot not found")
+    return {"status": "deleted", "id": bot_id}
+
+
+@router.post("/grid-bots/{bot_id}/activate")
+async def grid_activate(bot_id: str, request: Request):
+    session_id = _get_session(request)
+    if not is_authenticated(session_id):
+        raise HTTPException(401, "Not connected to OKX.")
+    from .grid_bots import activate_grid_bot
+    try:
+        bot = activate_grid_bot(bot_id, session_id)
+    except ValueError as e:
+        raise HTTPException(404, str(e))
+    return {"bot": bot}
+
+
+@router.post("/grid-bots/{bot_id}/deactivate")
+async def grid_deactivate(bot_id: str, request: Request):
+    session_id = _get_session(request)
+    if not is_authenticated(session_id):
+        raise HTTPException(401, "Not connected to OKX.")
+    from .grid_bots import deactivate_grid_bot
+    try:
+        bot = deactivate_grid_bot(bot_id, session_id)
+    except ValueError as e:
+        raise HTTPException(404, str(e))
+    return {"bot": bot}
+
+
+@router.get("/grid-bots/{bot_id}/orders")
+async def grid_orders_list(bot_id: str, request: Request):
+    """All limit orders placed by this grid bot, newest first."""
+    session_id = _get_session(request)
+    if not is_authenticated(session_id):
+        raise HTTPException(401, "Not connected to OKX.")
+    from .grid_bots import get_grid_bot, list_grid_orders
+    if get_grid_bot(bot_id, session_id) is None:
+        raise HTTPException(404, "grid bot not found")
+    return {"orders": list_grid_orders(bot_id, session_id)}
+
+
 # ── Admin: session overview ─────────────────────────────────
 
 @router.get("/admin/sessions")
