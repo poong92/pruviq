@@ -8,6 +8,7 @@ import OKXConnectButton from '../../components/OKXConnectButton';
 import AutoTradingStatus from '../../components/AutoTradingStatus';
 import TradingSettings from '../../components/TradingSettings';
 import StrategyBuilder from '../../components/StrategyBuilder';
+import DCABots from '../../components/DCABots';
 import PendingSignalsApproval from '../../components/PendingSignalsApproval';
 import LivePositions from '../../components/LivePositions';
 import LiveTradeHistory from '../../components/LiveTradeHistory';
@@ -84,6 +85,11 @@ import { OKX_DISCOUNT_PCT } from '../../config/exchanges';
         <!-- 내 전략 — 사용자 정의 매매 규칙 -->
         <section class="mb-8">
           <StrategyBuilder client:visible lang="ko" />
+        </section>
+
+        <!-- DCA 봇 — 분할 매수 (별도 패러다임) -->
+        <section class="mb-8">
+          <DCABots client:visible lang="ko" />
         </section>
 
         <!-- 자동매매 설정 -->
