@@ -66,7 +66,7 @@ interface Props {
 
 const DEFAULT_DRAFT: GridDraft = {
   name: "My Grid Bot",
-  symbol: "BTCUSDT",
+  symbol: "BTC-USDT-SWAP",
   direction: "neutral",
   upper_price: 70000,
   lower_price: 60000,

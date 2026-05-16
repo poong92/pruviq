@@ -34,6 +34,8 @@ ADMIN_KEY = os.environ.get("ADMIN_API_KEY", "")
 # ── Rate limiting for /execute/order ─────────────────────
 # {session_id: last_call_timestamp} — prevents accidental double-fire
 _order_rate_limit: dict[str, float] = {}
+_simulate_rate_limit: dict[str, float] = {}
+SIMULATE_RATE_LIMIT_SECONDS = 5
 ORDER_RATE_LIMIT_SECONDS = 10
 from .models import SimToExecRequest
 from .oauth import (
@@ -1114,6 +1116,15 @@ async def grid_simulate(request: Request):
     session_id = _get_session(request)
     if not is_authenticated(session_id):
         raise HTTPException(401, "Not connected to OKX.")
+
+    # Rate limit: 5 seconds between simulate calls per session
+    now = time.time()
+    last_sim = _simulate_rate_limit.get(session_id, 0)
+    if now - last_sim < SIMULATE_RATE_LIMIT_SECONDS:
+        wait = int(SIMULATE_RATE_LIMIT_SECONDS - (now - last_sim))
+        raise HTTPException(429, f"Rate limit: wait {wait}s before next simulate")
+    _simulate_rate_limit[session_id] = now
+
     body = await request.json()
     if not isinstance(body, dict):
         raise HTTPException(400, "body must be a JSON object")
