@@ -258,27 +258,62 @@ export default function GridBots({ lang = "en" }: Props) {
       setSaveErr(e instanceof Error ? e.message : String(e));
     }
   }
+  const [actionErr, setActionErr] = useState("");
+
   async function handleActivate(id: string) {
-    await fetch(`${API_BASE_URL}/grid-bots/${id}/activate`, {
-      method: "POST",
-      credentials: "include",
-    });
-    await reload();
+    setActionErr("");
+    try {
+      const res = await fetch(`${API_BASE_URL}/grid-bots/${id}/activate`, {
+        method: "POST",
+        credentials: "include",
+      });
+      if (!res.ok) {
+        const detail = (await res.json().catch(() => null)) as {
+          detail?: string;
+        } | null;
+        throw new Error(detail?.detail || `HTTP ${res.status}`);
+      }
+      await reload();
+    } catch (e) {
+      setActionErr(e instanceof Error ? e.message : String(e));
+    }
   }
   async function handleDeactivate(id: string) {
-    await fetch(`${API_BASE_URL}/grid-bots/${id}/deactivate`, {
-      method: "POST",
-      credentials: "include",
-    });
-    await reload();
+    setActionErr("");
+    try {
+      const res = await fetch(`${API_BASE_URL}/grid-bots/${id}/deactivate`, {
+        method: "POST",
+        credentials: "include",
+      });
+      if (!res.ok) {
+        const detail = (await res.json().catch(() => null)) as {
+          detail?: string;
+        } | null;
+        throw new Error(detail?.detail || `HTTP ${res.status}`);
+      }
+      await reload();
+    } catch (e) {
+      setActionErr(e instanceof Error ? e.message : String(e));
+    }
   }
   async function handleDelete(id: string) {
     if (!window.confirm(t.deleteConfirm)) return;
-    await fetch(`${API_BASE_URL}/grid-bots/${id}`, {
-      method: "DELETE",
-      credentials: "include",
-    });
-    await reload();
+    setActionErr("");
+    try {
+      const res = await fetch(`${API_BASE_URL}/grid-bots/${id}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+      if (!res.ok) {
+        const detail = (await res.json().catch(() => null)) as {
+          detail?: string;
+        } | null;
+        throw new Error(detail?.detail || `HTTP ${res.status}`);
+      }
+      await reload();
+    } catch (e) {
+      setActionErr(e instanceof Error ? e.message : String(e));
+    }
   }
 
   const totalPnlColor = useMemo(() => {
@@ -544,6 +579,15 @@ export default function GridBots({ lang = "en" }: Props) {
           </button>
         </div>
 
+        {actionErr && (
+          <p
+            class="text-sm text-(--color-down)"
+            role="alert"
+            aria-live="assertive"
+          >
+            {actionErr}
+          </p>
+        )}
         {simErr && (
           <p
             class="text-sm text-(--color-down)"

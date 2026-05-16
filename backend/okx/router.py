@@ -958,7 +958,8 @@ async def dca_simulate(request: Request):
         raise HTTPException(400, "symbol required (e.g. BTCUSDT)")
     start = body.get("start")
     end = body.get("end")
-    taker_fee_pct = float(body.get("taker_fee_pct") or 0.05)
+    raw_fee = body.get("taker_fee_pct")
+    taker_fee_pct = float(raw_fee) if raw_fee is not None else 0.05
 
     # Validate params against the same bounds as create_dca_bot
     from .dca_bots import validate_dca_params, DEFAULT_DCA
@@ -1136,7 +1137,8 @@ async def grid_simulate(request: Request):
         raise HTTPException(400, "symbol required (e.g. BTCUSDT)")
     start = body.get("start")
     end = body.get("end")
-    taker_fee_pct = float(body.get("taker_fee_pct") or 0.05)
+    raw_fee = body.get("taker_fee_pct")
+    taker_fee_pct = float(raw_fee) if raw_fee is not None else 0.05
 
     from .grid_bots import validate_grid_params, DEFAULT_GRID
     merged = {**DEFAULT_GRID, **params}
