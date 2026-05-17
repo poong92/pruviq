@@ -801,6 +801,76 @@ async def dca_pause_all(request: Request):
     return pause_all_dca_bots(session_id)
 
 
+@router.get("/dca-bots/previews")
+async def dca_previews(request: Request):
+    """Cross-bot live previews. For each ACTIVE bot in this session,
+    fetch the OKX public ticker for its resolved symbol and compute
+    a running preview (next trigger + TP + distances + fire flags).
+
+    Ticker fetches run in parallel via asyncio.gather so 3 bots take
+    ~one round-trip instead of three.
+
+    Output: {previews: [{bot_id, symbol_resolved, preview, error?}, ...]}.
+    Errors on a per-bot basis don't fail the whole call.
+    """
+    session_id = _get_session(request)
+    if not is_authenticated(session_id):
+        raise HTTPException(401, "Not connected to OKX.")
+    from .dca_bots import list_dca_bots, list_dca_fills, compute_preview
+    import asyncio
+    import httpx
+    from .config import OKX_BASE_URL
+
+    bots = [b for b in list_dca_bots(session_id) if b.get("is_active")]
+    if not bots:
+        return {"previews": []}
+
+    def _resolve(symbol_raw: str) -> str:
+        s = symbol_raw.upper()
+        if "-" in s:
+            return s
+        if s.endswith("USDT"):
+            return s[:-4] + "-USDT-SWAP"
+        return s
+
+    async def _fetch_one(bot: dict, client: httpx.AsyncClient) -> dict:
+        okx_sym = _resolve(str(bot["symbol"]))
+        try:
+            resp = await client.get(
+                f"{OKX_BASE_URL}/api/v5/market/ticker",
+                params={"instId": okx_sym},
+            )
+            body = resp.json() if resp.status_code == 200 else {}
+            mark = (
+                float(body.get("data", [{}])[0].get("last") or 0.0)
+                if body.get("code") == "0" and body.get("data")
+                else 0.0
+            )
+        except Exception as e:
+            logger.warning(
+                "previews ticker fetch failed bot=%s: %s", bot["id"][:8], e
+            )
+            mark = 0.0
+        if mark <= 0:
+            return {
+                "bot_id": bot["id"],
+                "symbol_resolved": okx_sym,
+                "error": "could not fetch mark price",
+            }
+        fills = list_dca_fills(bot["id"], session_id)
+        open_fills = [f for f in fills if f["status"] == "open"]
+        preview = compute_preview(bot, mark, open_fills)
+        return {
+            "bot_id": bot["id"],
+            "symbol_resolved": okx_sym,
+            "preview": preview,
+        }
+
+    async with httpx.AsyncClient(timeout=6) as client:
+        results = await asyncio.gather(*[_fetch_one(b, client) for b in bots])
+    return {"previews": results}
+
+
 @router.get("/dca-bots/summary")
 async def dca_summary(request: Request, hours: int = Query(24, ge=1, le=168)):
     """Rolling-window activity KPIs across all DCA bots in this session.
@@ -970,7 +1040,10 @@ async def dca_preview(bot_id: str, request: Request):
             "error": "could not fetch mark price",
         }
 
-    preview = compute_preview(bot, mark_price)
+    from .dca_bots import list_dca_fills
+    fills = list_dca_fills(bot_id, session_id)
+    open_fills = [f for f in fills if f["status"] == "open"]
+    preview = compute_preview(bot, mark_price, open_fills)
     return {
         "bot_id": bot_id,
         "symbol_resolved": okx_sym,
