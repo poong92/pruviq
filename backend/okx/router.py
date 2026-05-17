@@ -833,20 +833,19 @@ async def dca_previews(request: Request):
             return s[:-4] + "-USDT-SWAP"
         return s
 
-    async def _fetch_one(bot: dict) -> dict:
+    async def _fetch_one(bot: dict, client: httpx.AsyncClient) -> dict:
         okx_sym = _resolve(str(bot["symbol"]))
         try:
-            async with httpx.AsyncClient(timeout=6) as client:
-                resp = await client.get(
-                    f"{OKX_BASE_URL}/api/v5/market/ticker",
-                    params={"instId": okx_sym},
-                )
-                body = resp.json() if resp.status_code == 200 else {}
-                mark = (
-                    float(body.get("data", [{}])[0].get("last") or 0.0)
-                    if body.get("code") == "0" and body.get("data")
-                    else 0.0
-                )
+            resp = await client.get(
+                f"{OKX_BASE_URL}/api/v5/market/ticker",
+                params={"instId": okx_sym},
+            )
+            body = resp.json() if resp.status_code == 200 else {}
+            mark = (
+                float(body.get("data", [{}])[0].get("last") or 0.0)
+                if body.get("code") == "0" and body.get("data")
+                else 0.0
+            )
         except Exception as e:
             logger.warning(
                 "previews ticker fetch failed bot=%s: %s", bot["id"][:8], e
@@ -867,7 +866,8 @@ async def dca_previews(request: Request):
             "preview": preview,
         }
 
-    results = await asyncio.gather(*[_fetch_one(b) for b in bots])
+    async with httpx.AsyncClient(timeout=6) as client:
+        results = await asyncio.gather(*[_fetch_one(b, client) for b in bots])
     return {"previews": results}
 
 

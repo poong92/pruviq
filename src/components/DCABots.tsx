@@ -109,6 +109,7 @@ const i18n = {
     pvAway: "away",
     pvWouldFire: "Would fire now",
     pvHalted: "Scaling halted",
+    pvMark: "Mark",
     pvOpenFills: "open fill(s)",
     none: "No DCA bots yet — define one below and run a backtest first.",
     active: "ACTIVE",
@@ -170,6 +171,7 @@ const i18n = {
     pvAway: "남음",
     pvWouldFire: "지금 발사 조건",
     pvHalted: "추가 매수 중단됨",
+    pvMark: "현재가",
     pvOpenFills: "열린 체결",
     none: "DCA 봇이 없습니다 — 아래에서 정의 후 먼저 백테스트를 돌려보세요.",
     active: "활성",
@@ -595,7 +597,7 @@ export default function DCABots({ lang = "en" }: Props) {
                         </span>
                       </div>
                       <div>
-                        <span class="text-(--color-text-muted)">Mark: </span>
+                        <span class="text-(--color-text-muted)">{t.pvMark}: </span>
                         <span class="font-bold">${fmtP(pv.mark_price)}</span>
                       </div>
                       <div>
