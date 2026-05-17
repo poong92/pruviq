@@ -37,6 +37,25 @@ from .storage import _get_conn
 
 logger = logging.getLogger("okx_dca_loop")
 
+# Heartbeat for /dca-bots/loop-health. In-memory by design: a missing
+# value means the loop has not started since the last process boot,
+# which is exactly what we want owners to see during dog-foot.
+_LAST_TICK_AT: float = 0.0
+_LAST_TICK_BOTS: int = 0
+
+
+def loop_heartbeat() -> dict[str, float | int | bool]:
+    """Public read for the loop-health endpoint."""
+    now = time.time()
+    return {
+        "last_tick_at": _LAST_TICK_AT,
+        "seconds_ago": (now - _LAST_TICK_AT) if _LAST_TICK_AT else -1,
+        "interval_s": 60,
+        "bots_last_tick": _LAST_TICK_BOTS,
+        # Healthy = ticked within the last 2 intervals
+        "healthy": bool(_LAST_TICK_AT and (now - _LAST_TICK_AT) < 130),
+    }
+
 
 async def _fetch_mark_price(symbol: str) -> float:
     """Fetch last trade price from OKX public ticker. Returns 0 on failure."""
@@ -217,6 +236,7 @@ async def dca_loop() -> None:
     preview see fresher numbers between ticks."""
     interval = 60
     logger.info("dca_loop started interval=%ds (paper-mode only)", interval)
+    global _LAST_TICK_AT, _LAST_TICK_BOTS
     while True:
         try:
             bots = await asyncio.to_thread(_list_active_bots)
@@ -228,6 +248,8 @@ async def dca_loop() -> None:
                         "dca tick failed bot=%s: %s",
                         bot["id"][:8], e,
                     )
+            _LAST_TICK_AT = time.time()
+            _LAST_TICK_BOTS = len(bots)
         except asyncio.CancelledError:
             raise
         except Exception as e:
