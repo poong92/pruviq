@@ -560,16 +560,32 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
               <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
             </svg>
           </button>
-          <!-- 언어 토글 — 모든 viewport에서 한 번 클릭으로 EN/KO 즉시 전환 -->
-          <a href={altPath} hreflang={altHreflang}
-             class="inline-flex items-center gap-1.5 px-3 min-h-[44px] md:min-h-9 rounded-lg border border-(--color-border) hover:border-(--color-accent) hover:text-(--color-accent) hover:bg-(--color-accent)/5 text-(--color-text-muted) transition-colors"
-             aria-label={lang === 'ko' ? 'Switch to English' : '한국어로 전환'}>
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <circle cx="12" cy="12" r="10"/>
-              <path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/>
-            </svg>
-            <span class="font-mono text-xs font-semibold">{t('nav.lang')}</span>
-          </a>
+          <!-- 언어 selector — 드롭다운 (현재 언어 + 펼치면 EN/KO 두 옵션) -->
+          <div class="relative">
+            <button id="lang-btn" type="button"
+                    class="inline-flex items-center gap-1.5 px-3 min-h-[44px] md:min-h-9 rounded-lg border border-(--color-border) hover:border-(--color-accent) hover:text-(--color-accent) hover:bg-(--color-accent)/5 text-(--color-text-muted) transition-colors"
+                    aria-label={lang === 'ko' ? '언어 선택' : 'Select language'}
+                    aria-haspopup="true" aria-expanded="false" aria-controls="lang-dropdown">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/>
+              </svg>
+              <span class="font-mono text-xs font-semibold">{lang === 'ko' ? '한국어' : 'EN'}</span>
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M6 9l6 6 6-6"/>
+              </svg>
+            </button>
+            <div id="lang-dropdown" class="hidden absolute right-0 mt-1 w-36 rounded-lg border border-(--color-border) bg-(--color-bg-card) shadow-lg overflow-hidden z-50" role="menu" aria-labelledby="lang-btn">
+              <a href={enURL.pathname} hreflang="en" role="menuitem"
+                 class:list={["block px-3 py-2 text-sm font-mono hover:bg-(--color-bg-hover) transition-colors", lang === 'en' ? 'bg-(--color-accent)/10 text-(--color-accent) font-semibold' : 'text-(--color-text)']}>
+                English
+              </a>
+              <a href={koURL.pathname} hreflang="ko" role="menuitem"
+                 class:list={["block px-3 py-2 text-sm font-mono hover:bg-(--color-bg-hover) transition-colors", lang === 'ko' ? 'bg-(--color-accent)/10 text-(--color-accent) font-semibold' : 'text-(--color-text)']}>
+                한국어
+              </a>
+            </div>
+          </div>
           <!-- 모바일: 햄버거 -->
           <button id="mobile-menu-btn" class="md:hidden flex items-center justify-center w-11 h-11 rounded-lg text-(--color-text-muted) hover:bg-(--color-bg-hover) transition-colors" aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-menu">
             <svg id="menu-icon-open" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 12h18M3 6h18M3 18h18"/></svg>

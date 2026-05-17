@@ -269,29 +269,48 @@ test.describe("Mobile menu: alignment consistency", () => {
   });
 });
 
-// ─── Language toggle (header) ────────────────────────
-// 2026-05-18 PR #2056: mobile dropdown removed. Both viewports now use a
-// single toggle link that switches EN↔KO in one tap. Old dropdown tests
-// were asserting the obsolete UX.
+// ─── Language dropdown (header) ────────────────────────
+// 2026-05-18 PR after #2056: dropdown restored. Both viewports share one
+// dropdown (#lang-btn → #lang-dropdown) that exposes EN + KO options. The
+// current language is highlighted; clicking the other option navigates.
 
-test.describe("Mobile header: language toggle (1-tap)", () => {
-  test("EN page: toggle link points to KO with proper hreflang", async ({
+test.describe("Header: language dropdown", () => {
+  test("EN page: button opens dropdown with KO option visible", async ({
     page,
   }) => {
     await page.goto("/simulate", { waitUntil: "domcontentloaded" });
-
-    // Single toggle link visible on all viewports
-    const koLink = page.locator("a[hreflang='ko']").first();
-    await expect(koLink).toBeVisible();
-    await expect(koLink).toHaveAttribute("href", /\/ko\//);
+    const btn = page.locator("#lang-btn");
+    const dropdown = page.locator("#lang-dropdown");
+    await expect(btn).toBeVisible();
+    await expect(dropdown).toBeHidden();
+    await btn.click();
+    await expect(dropdown).toBeVisible();
+    const koOption = dropdown.locator("a[hreflang='ko']");
+    await expect(koOption).toBeVisible();
+    await expect(koOption).toHaveAttribute("href", /\/ko/);
   });
 
-  test("KO page: toggle link points to EN", async ({ page }) => {
+  test("KO page: button opens dropdown with EN option visible", async ({
+    page,
+  }) => {
     await page.goto("/ko/simulate", { waitUntil: "domcontentloaded" });
+    const btn = page.locator("#lang-btn");
+    const dropdown = page.locator("#lang-dropdown");
+    await btn.click();
+    await expect(dropdown).toBeVisible();
+    const enOption = dropdown.locator("a[hreflang='en']");
+    await expect(enOption).toBeVisible();
+    const href = await enOption.getAttribute("href");
+    expect(href, "EN option should not point to /ko").not.toMatch(/\/ko/);
+  });
 
-    const enLink = page.locator("a[hreflang='en']").first();
-    await expect(enLink).toBeVisible();
-    const href = await enLink.getAttribute("href");
-    expect(href, "Toggle should point to EN version").not.toMatch(/\/ko\//);
+  test("Escape key closes dropdown", async ({ page }) => {
+    await page.goto("/", { waitUntil: "domcontentloaded" });
+    const btn = page.locator("#lang-btn");
+    const dropdown = page.locator("#lang-dropdown");
+    await btn.click();
+    await expect(dropdown).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(dropdown).toBeHidden();
   });
 });
