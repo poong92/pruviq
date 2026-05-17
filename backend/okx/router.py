@@ -903,6 +903,77 @@ async def dca_loop_health(request: Request):
     return loop_heartbeat()
 
 
+@router.get("/dca-bots/fills.csv")
+async def dca_fills_csv(request: Request):
+    """CSV export of every DCA fill in this session. Replaces the
+    `ssh + sqlite3` workflow in the dog-foot manual — owners can pull
+    their fills for offline analysis (Excel, pandas, etc.) directly
+    from the dashboard.
+
+    Format (UTF-8 BOM for Excel):
+      filled_at_iso, bot_name, symbol, direction, order_num,
+      kind, fill_price, fill_size_usdt, status, paper_mode
+
+    Auth-gated, session-scoped. Streams in-memory since fill rows are
+    small and typical sessions max out at hundreds of rows per week.
+    """
+    session_id = _get_session(request)
+    if not is_authenticated(session_id):
+        raise HTTPException(401, "Not connected to OKX.")
+    from .dca_bots import recent_dca_fills
+    # Pull a large window — 5000 is well above typical dog-foot week
+    fills = recent_dca_fills(session_id, limit=5000)
+
+    import csv
+    import io
+    from datetime import datetime, timezone
+    buf = io.StringIO()
+    writer = csv.writer(buf, lineterminator="\r\n")
+    writer.writerow([
+        "filled_at_iso", "bot_name", "symbol", "direction",
+        "order_num", "kind", "fill_price", "fill_size_usdt",
+        "status", "paper_mode",
+    ])
+    # Oldest first reads more naturally in spreadsheets even though
+    # the API returned newest-first. Reverse in Python is cheap here.
+    for f in reversed(fills):
+        ts = float(f.get("filled_at") or 0.0)
+        iso = (
+            datetime.fromtimestamp(ts, tz=timezone.utc).isoformat()
+            if ts > 0 else ""
+        )
+        order_num = int(f.get("order_num", 0))
+        kind = (
+            "TP"
+            if f.get("status") == "tp_closed"
+            else ("BASE" if order_num == 0 else f"SAFETY_{order_num}")
+        )
+        writer.writerow([
+            iso,
+            f.get("bot_name", ""),
+            f.get("symbol", ""),
+            f.get("direction", ""),
+            order_num,
+            kind,
+            f.get("fill_price", 0),
+            f.get("fill_size_usdt", 0),
+            f.get("status", ""),
+            "1" if f.get("paper_mode", True) else "0",
+        ])
+
+    # UTF-8 BOM so Excel auto-detects the encoding
+    body = "﻿" + buf.getvalue()
+    filename = f"dca-fills-{int(time.time())}.csv"
+    return Response(
+        content=body,
+        media_type="text/csv; charset=utf-8",
+        headers={
+            "Content-Disposition": f'attachment; filename="{filename}"',
+            "Cache-Control": "no-store",
+        },
+    )
+
+
 @router.get("/dca-bots/{bot_id}")
 async def dca_detail(bot_id: str, request: Request):
     """Bot detail + fills + computed avg entry + safety_orders_used."""

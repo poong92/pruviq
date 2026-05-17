@@ -56,6 +56,7 @@ const i18n = {
       status: "Status",
     },
     updated: "Auto-refreshes every 30s",
+    exportCsv: "Export CSV",
   },
   ko: {
     title: "최근 체결",
@@ -79,6 +80,7 @@ const i18n = {
       status: "상태",
     },
     updated: "30초마다 자동 갱신",
+    exportCsv: "CSV 내보내기",
   },
 } as const;
 
@@ -165,7 +167,18 @@ export default function RecentDCAFills({ lang = "en" }: Props) {
     <div class="card-enterprise rounded-2xl p-5 md:p-6">
       <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
         <h2 class="font-bold text-lg">{t.title}</h2>
-        <span class="text-xs text-(--color-text-muted)">{t.subtitle}</span>
+        <div class="flex items-center gap-3">
+          {fills.length > 0 && (
+            <a
+              href={`${API_BASE_URL}/dca-bots/fills.csv`}
+              class="text-xs font-bold text-(--color-accent) hover:underline min-h-[44px] inline-flex items-center"
+              download
+            >
+              ⬇ {t.exportCsv}
+            </a>
+          )}
+          <span class="text-xs text-(--color-text-muted)">{t.subtitle}</span>
+        </div>
       </div>
 
       {err && (
