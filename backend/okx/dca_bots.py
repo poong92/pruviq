@@ -87,6 +87,31 @@ def validate_dca_params(p: dict[str, Any]) -> list[str]:
         sp = p["stop_scaling_price"]
         if not isinstance(sp, (int, float)) or sp < 0:
             errs.append("stop_scaling_price: must be a non-negative number")
+
+    # Cumulative position cap.
+    # With size_multiplier=m and max_safety_orders=n, total notional placed
+    # over a full cycle is `base × (m^(n+1) - 1) / (m - 1)` for m != 1, or
+    # `base × (n + 1)` for m == 1. Without this guard, m=3, n=20 yields
+    # ~17 billion USDT — the per-fill bound check alone misses it.
+    # Cap at 50,000 USDT to keep dog-foot + future real-mode within a
+    # sane account size; high-end users can raise per-bot via PUT (future).
+    try:
+        base = float(p.get("position_size_usdt", 0.0))
+        m = float(p.get("size_multiplier", 1.0))
+        n = int(p.get("max_safety_orders", 0))
+        if base > 0 and n >= 0 and m > 0:
+            if abs(m - 1.0) < 1e-9:
+                cumulative = base * (n + 1)
+            else:
+                cumulative = base * (m ** (n + 1) - 1.0) / (m - 1.0)
+            if cumulative > 50_000.0:
+                errs.append(
+                    f"cumulative_position_usdt={cumulative:.0f} exceeds "
+                    "50,000 cap — lower size_multiplier or max_safety_orders"
+                )
+    except (TypeError, ValueError, OverflowError):
+        errs.append("cumulative_position calc failed — check numeric inputs")
+
     return errs
 
 
