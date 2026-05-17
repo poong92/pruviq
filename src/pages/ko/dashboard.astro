@@ -10,6 +10,7 @@ import OKXBalance from '../../components/OKXBalance';
 import TradingSettings from '../../components/TradingSettings';
 import StrategyBuilder from '../../components/StrategyBuilder';
 import DCABots from '../../components/DCABots';
+import DCASummaryStrip from '../../components/DCASummaryStrip';
 import RecentDCAFills from '../../components/RecentDCAFills';
 import GridBots from '../../components/GridBots';
 import PendingSignalsApproval from '../../components/PendingSignalsApproval';
@@ -98,6 +99,11 @@ import { OKX_DISCOUNT_PCT } from '../../config/exchanges';
         <!-- DCA 봇 — 분할 매수 (별도 패러다임) -->
         <section class="mb-8">
           <DCABots client:visible lang="ko" />
+        </section>
+
+        <!-- 24시간 활동 KPI 스트립 -->
+        <section class="mb-4">
+          <DCASummaryStrip client:visible lang="ko" />
         </section>
 
         <!-- 최근 체결 — 모든 DCA 봇 활동 한눈에 -->

@@ -801,6 +801,17 @@ async def dca_pause_all(request: Request):
     return pause_all_dca_bots(session_id)
 
 
+@router.get("/dca-bots/summary")
+async def dca_summary(request: Request, hours: int = Query(24, ge=1, le=168)):
+    """Rolling-window activity KPIs across all DCA bots in this session.
+    Used by the dashboard summary strip. Session-scoped + auth-gated."""
+    session_id = _get_session(request)
+    if not is_authenticated(session_id):
+        raise HTTPException(401, "Not connected to OKX.")
+    from .dca_bots import session_dca_summary
+    return session_dca_summary(session_id, hours)
+
+
 @router.get("/dca-bots/recent-fills")
 async def dca_recent_fills(request: Request, limit: int = Query(20, le=100)):
     """Cross-bot recent fills feed for the dashboard. Owner-only —

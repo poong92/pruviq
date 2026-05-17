@@ -268,6 +268,63 @@ def list_dca_bots(session_id: str) -> list[dict[str, Any]]:
     return [_row_to_dca(r) for r in rows]
 
 
+def session_dca_summary(session_id: str, hours: int = 24) -> dict[str, Any]:
+    """Rolling-window activity KPIs for the dashboard. Returns counts +
+    a rough simulated P&L estimate. The P&L is approximate: each
+    tp_closed fill contributes `fill_size_usdt × bot.tp_pct / 100`
+    which is exact for paper mode (the loop closes at avg × (1+tp))
+    and directionally right for any future real mode. Real numbers
+    will come from a future fills.realized_pnl column."""
+    _ensure_tables()
+    hours = max(1, min(int(hours), 168))  # cap at 7 days
+    cutoff = time.time() - hours * 3600
+    with _get_conn() as conn:
+        # Counts grouped by base/safety/tp
+        rows = conn.execute(
+            """
+            SELECT f.order_num, f.status, f.fill_size_usdt, b.tp_pct
+            FROM dca_fills f
+            JOIN dca_bots b ON b.id = f.bot_id
+            WHERE b.session_id = ? AND f.filled_at >= ?
+            """,
+            (session_id, cutoff),
+        ).fetchall()
+        active = conn.execute(
+            "SELECT COUNT(*) FROM dca_bots "
+            "WHERE session_id = ? AND is_active = 1",
+            (session_id,),
+        ).fetchone()[0]
+        open_bots = conn.execute(
+            """
+            SELECT COUNT(DISTINCT f.bot_id)
+            FROM dca_fills f
+            JOIN dca_bots b ON b.id = f.bot_id
+            WHERE b.session_id = ? AND f.status = 'open'
+            """,
+            (session_id,),
+        ).fetchone()[0]
+    base = safety = tp_closes = 0
+    paper_pnl = 0.0
+    for order_num, status, size, tp_pct in rows:
+        if status == "tp_closed":
+            tp_closes += 1
+            paper_pnl += float(size) * float(tp_pct) / 100.0
+        elif order_num == 0:
+            base += 1
+        else:
+            safety += 1
+    return {
+        "window_hours": hours,
+        "total_fills": base + safety + tp_closes,
+        "base_fills": base,
+        "safety_fills": safety,
+        "tp_closes": tp_closes,
+        "active_bots": int(active),
+        "bots_with_open_position": int(open_bots),
+        "paper_pnl_usdt": round(paper_pnl, 2),
+    }
+
+
 def recent_dca_fills(session_id: str, limit: int = 20) -> list[dict[str, Any]]:
     """Cross-bot fills feed for the dashboard. Joins dca_fills × dca_bots
     so each row carries enough context (bot name, symbol, direction) to
