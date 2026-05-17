@@ -98,8 +98,10 @@ class OKXClient:
 
     # ── Account ─────────────────────────────────────
 
-    async def get_balance(self, ccy: str = "USDT") -> list[BalanceInfo]:
-        data = await self._get("/api/v5/account/balance", {"ccy": ccy})
+    async def get_balance(self, ccy: str = "") -> list[BalanceInfo]:
+        # OKX returns all currencies when ccy is omitted.
+        params = {"ccy": ccy} if ccy else {}
+        data = await self._get("/api/v5/account/balance", params)
         results = []
         for acct in data.get("data", []):
             for detail in acct.get("details", []):

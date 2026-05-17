@@ -6,6 +6,7 @@
 import Layout from '../../layouts/Layout.astro';
 import OKXConnectButton from '../../components/OKXConnectButton';
 import AutoTradingStatus from '../../components/AutoTradingStatus';
+import OKXBalance from '../../components/OKXBalance';
 import TradingSettings from '../../components/TradingSettings';
 import StrategyBuilder from '../../components/StrategyBuilder';
 import DCABots from '../../components/DCABots';
@@ -76,6 +77,11 @@ import { OKX_DISCOUNT_PCT } from '../../config/exchanges';
               </div>
             </div>
           </div>
+        </section>
+
+        <!-- OKX 잔고 — 거래 계정 자산 (읽기 전용) -->
+        <section class="mb-8">
+          <OKXBalance client:visible lang="ko" />
         </section>
 
         <!-- 봇 상태 위젯 -->

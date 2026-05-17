@@ -491,7 +491,7 @@ async def get_positions_history(request: Request, limit: int = Query(20, le=100)
 
 
 @router.get("/execute/balance")
-async def get_balance(request: Request, ccy: str = Query("USDT")):
+async def get_balance(request: Request, ccy: str = Query("")):
     """Get account balance."""
     session_id = _get_session(request)
     if not is_authenticated(session_id):
