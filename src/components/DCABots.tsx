@@ -116,6 +116,9 @@ const i18n = {
     staleWarn: "No fills in %dh — config check?",
     staleHint:
       "Active but quiet. Common causes: price_step_pct too tight (market hasn't moved %), or symbol has low volatility today.",
+    activateConfirmTitle: "Activate %s?",
+    activateConfirmBody:
+      "Paper-mode (simulated fills). If all safety orders fire, total notional could reach %s USDT.\n\n• %s · ×%s leverage · step %s%%\n• Max %s safety orders · TP %s%%\n\nThe loop starts ticking within ~60s and writes a base fill at the mark price.",
     none: "No DCA bots yet — define one below and run a backtest first.",
     active: "ACTIVE",
     activate: "Activate",
@@ -181,6 +184,9 @@ const i18n = {
     staleWarn: "%d시간 체결 없음 — 설정 점검?",
     staleHint:
       "활성 상태인데 조용합니다. 흔한 원인: price_step_pct가 너무 좁음 (시장이 % 만큼 움직이지 않음), 또는 오늘 종목 변동성 낮음.",
+    activateConfirmTitle: "%s 활성화?",
+    activateConfirmBody:
+      "Paper-mode (모의 체결). 모든 안전 매수가 발사되면 총 노출이 %s USDT까지 도달할 수 있습니다.\n\n• %s · 레버리지 ×%s · step %s%%\n• 최대 안전 매수 %s회 · TP %s%%\n\n약 60초 안에 루프가 마크 가격으로 기준 체결을 기록합니다.",
     none: "DCA 봇이 없습니다 — 아래에서 정의 후 먼저 백테스트를 돌려보세요.",
     active: "활성",
     activate: "활성화",
@@ -406,6 +412,27 @@ export default function DCABots({ lang = "en" }: Props) {
   }
 
   async function handleActivate(id: string) {
+    const bot = bots.find((b) => b.id === id);
+    if (bot) {
+      // Mirrors backend validate_dca_params cumulative calc so the
+      // confirm dialog shows the same exposure the API would compute.
+      const base = Number(bot.position_size_usdt) || 0;
+      const m = Number(bot.size_multiplier) || 1;
+      const n = Number(bot.max_safety_orders) || 0;
+      const cumulative =
+        Math.abs(m - 1) < 1e-9
+          ? base * (n + 1)
+          : (base * (Math.pow(m, n + 1) - 1)) / (m - 1);
+      const title = t.activateConfirmTitle.replace("%s", bot.name);
+      const body = t.activateConfirmBody
+        .replace("%s", cumulative.toFixed(0))
+        .replace("%s", bot.symbol)
+        .replace("%s", String(bot.leverage))
+        .replace("%s", String(bot.price_step_pct))
+        .replace("%s", String(bot.max_safety_orders))
+        .replace("%s", String(bot.tp_pct));
+      if (!window.confirm(`${title}\n\n${body}`)) return;
+    }
     await fetch(`${API_BASE_URL}/dca-bots/${id}/activate`, {
       method: "POST",
       credentials: "include",
@@ -620,7 +647,9 @@ export default function DCABots({ lang = "en" }: Props) {
                         </span>
                       </div>
                       <div>
-                        <span class="text-(--color-text-muted)">{t.pvMark}: </span>
+                        <span class="text-(--color-text-muted)">
+                          {t.pvMark}:{" "}
+                        </span>
                         <span class="font-bold">${fmtP(pv.mark_price)}</span>
                       </div>
                       <div>
