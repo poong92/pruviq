@@ -561,7 +561,14 @@ export default function DCABots({ lang = "en" }: Props) {
                 title={`${t.loopAgo}: ${Math.round(loopHealth.seconds_ago)}s ago · bots=${loopHealth.bots_last_tick}`}
                 role="status"
               >
-                <span aria-hidden="true">{loopHealth.healthy ? "●" : "○"}</span>
+                <span
+                  aria-hidden="true"
+                  class={
+                    loopHealth.healthy
+                      ? "inline-block w-1.5 h-1.5 rounded-full bg-(--color-up) motion-safe:animate-pulse"
+                      : "inline-block w-1.5 h-1.5 rounded-full border border-(--color-down)"
+                  }
+                />
                 {loopHealth.healthy ? t.loopHealthy : t.loopStale}
                 <span class="text-(--color-text-muted)">
                   · {Math.round(loopHealth.seconds_ago)}s
