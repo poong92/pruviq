@@ -1128,11 +1128,42 @@ async def dca_parity(bot_id: str, request: Request):
             "hint": "data pipeline hasn't ingested candles for this window yet",
         }
 
-    # Run backtest with bot's exact params
+    # Run backtest with bot's exact params — loop over multiple cycles
+    # simulate_dca models a single DCA cycle (breaks on first TP). To get
+    # an apples-to-apples comparison with paper mode (which accumulates N
+    # cycles over the window), we restart the simulation after each TP.
     merged = {**DEFAULT_DCA, **{k: bot[k] for k in DEFAULT_DCA if k in bot}}
     from .dca_backtest import simulate_dca
-    sim = simulate_dca(merged, sliced)
-    sim_dict = sim.to_dict()
+
+    bt_tp_closed = 0
+    bt_fills_count = 0
+    bt_avg_entries: list[tuple[float, float]] = []  # (avg_price, total_size)
+    remaining = sliced.reset_index(drop=True)
+
+    while len(remaining) >= 2:
+        sim = simulate_dca(merged, remaining)
+        sim_dict = sim.to_dict()
+        bt_fills_count += len(sim_dict.get("fills", []))
+        avg_p = float(sim_dict.get("avg_entry_price") or 0.0)
+        total_s = float(sim_dict.get("total_size_usdt") or 0.0)
+        if avg_p > 0:
+            bt_avg_entries.append((avg_p, total_s))
+
+        if sim_dict.get("exit_reason") != "tp":
+            break
+        bt_tp_closed += 1
+
+        # Advance past the TP candle and restart
+        exit_iso = sim_dict.get("exit_time_iso", "")
+        if not exit_iso:
+            break
+        remaining = remaining[remaining["timestamp"] > exit_iso].reset_index(drop=True)
+
+    # Weighted average entry across all cycles
+    bt_avg = 0.0
+    total_bt_size = sum(s for _, s in bt_avg_entries)
+    if total_bt_size > 0:
+        bt_avg = sum(p * s for p, s in bt_avg_entries) / total_bt_size
 
     # Paper side
     paper_total_size = sum(f["fill_size_usdt"] for f in fills)
@@ -1144,16 +1175,6 @@ async def dca_parity(bot_id: str, request: Request):
     )
     paper_tp_closed = sum(1 for f in fills if f["status"] == "tp_closed")
     paper_fills_count = len(fills)
-
-    # Backtest side
-    bt_fills_count = len(sim_dict.get("fills", []))
-    bt_avg = float(sim_dict.get("avg_entry_price") or 0.0)
-    # Backtest's "fills count" includes the closed cycle's fills too —
-    # one TP cycle leaves no open fills. Reconstruct TP cycles from
-    # exit_reason for an apples-to-apples count.
-    bt_tp_closed = (
-        1 if sim_dict.get("exit_reason") == "tp" else 0
-    )
 
     # Deltas per dog-foot manual
     def _pct_diff(a: float, b: float) -> float:
@@ -1187,7 +1208,6 @@ async def dca_parity(bot_id: str, request: Request):
             "fills_count": bt_fills_count,
             "avg_entry_price": bt_avg,
             "tp_cycles": bt_tp_closed,
-            "exit_reason": sim_dict.get("exit_reason"),
         },
         "deltas": {
             "fills_diff_pct": fills_diff_pct,
