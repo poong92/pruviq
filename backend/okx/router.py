@@ -789,6 +789,16 @@ async def dca_list(request: Request):
     return {"bots": list_dca_bots(session_id)}
 
 
+@router.get("/dca-bots/loop-health")
+async def dca_loop_health(request: Request):
+    """Owner-facing dca_loop heartbeat. No auth required — read-only and
+    only exposes liveness, not user data. Useful during paper-mode
+    dog-foot to confirm the loop is actually ticking when a newly
+    activated bot has no fills yet."""
+    from .dca_loop import loop_heartbeat
+    return loop_heartbeat()
+
+
 @router.get("/dca-bots/{bot_id}")
 async def dca_detail(bot_id: str, request: Request):
     """Bot detail + fills + computed avg entry + safety_orders_used."""

@@ -95,7 +95,11 @@ const i18n = {
       "Dollar-cost averaging — buy base, add on dips, take profit above running avg.",
     notConnected: "Connect OKX on the dashboard to manage DCA bots.",
     notLiveYet:
-      "Execution loop ships in Phase B2 — activating only flags is_active. No real orders fire yet.",
+      "Paper-mode loop is live (60s tick, simulated fills). Real-money execution is gated and ships in a later phase.",
+    loopHealthy: "Loop ticking",
+    loopStale: "Loop stalled",
+    loopUnknown: "Loop status unknown",
+    loopAgo: "last tick",
     none: "No DCA bots yet — define one below and run a backtest first.",
     active: "ACTIVE",
     activate: "Activate",
@@ -142,7 +146,11 @@ const i18n = {
       "분할 매수 — 기준가에서 시작, 하락 시 추가 매수, 평단가 위에서 익절.",
     notConnected: "DCA 봇 관리를 위해 대시보드에서 OKX를 연결하세요.",
     notLiveYet:
-      "실행 루프는 Phase B2에서 출시됩니다 — 활성화 시 is_active 플래그만 켜지고 실거래는 아직 실행되지 않습니다.",
+      "Paper-mode 루프 가동 중 (60초 tick, 모의 체결). 실거래 실행은 별도 단계에서 출시됩니다.",
+    loopHealthy: "루프 가동 중",
+    loopStale: "루프 멈춤",
+    loopUnknown: "루프 상태 확인 불가",
+    loopAgo: "마지막 tick",
     none: "DCA 봇이 없습니다 — 아래에서 정의 후 먼저 백테스트를 돌려보세요.",
     active: "활성",
     activate: "활성화",
@@ -199,6 +207,11 @@ export default function DCABots({ lang = "en" }: Props) {
   const [simErr, setSimErr] = useState("");
   const [sim, setSim] = useState<SimResult | null>(null);
   const [reloadErr, setReloadErr] = useState("");
+  const [loopHealth, setLoopHealth] = useState<{
+    healthy: boolean;
+    seconds_ago: number;
+    bots_last_tick: number;
+  } | null>(null);
 
   const reload = useCallback(async () => {
     try {
@@ -226,6 +239,31 @@ export default function DCABots({ lang = "en" }: Props) {
   useEffect(() => {
     void reload();
   }, [reload]);
+
+  // Loop heartbeat — public, no auth. Surfaces "is the dca_loop ticking?"
+  // during paper-mode dog-foot so owners don't need SSH to debug a newly
+  // activated bot with no fills.
+  useEffect(() => {
+    const fetchHealth = async () => {
+      try {
+        const res = await fetch(`${API_BASE_URL}/dca-bots/loop-health`, {
+          signal: AbortSignal.timeout(8_000),
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+        setLoopHealth({
+          healthy: !!data.healthy,
+          seconds_ago: Number(data.seconds_ago ?? -1),
+          bots_last_tick: Number(data.bots_last_tick ?? 0),
+        });
+      } catch {
+        // silent — heartbeat is best-effort, not user-blocking
+      }
+    };
+    void fetchHealth();
+    const id = setInterval(() => void fetchHealth(), 30_000);
+    return () => clearInterval(id);
+  }, []);
 
   async function handleSimulate() {
     setSimulating(true);
@@ -323,8 +361,27 @@ export default function DCABots({ lang = "en" }: Props) {
     <div class="space-y-5">
       {/* Saved list */}
       <div class="card-enterprise rounded-2xl p-5 md:p-6">
-        <div class="flex items-center justify-between mb-2">
-          <h2 class="font-bold text-lg">{t.title}</h2>
+        <div class="flex items-center justify-between mb-2 flex-wrap gap-2">
+          <div class="flex items-center gap-3">
+            <h2 class="font-bold text-lg">{t.title}</h2>
+            {loopHealth && loopHealth.seconds_ago >= 0 && (
+              <span
+                class={`inline-flex items-center gap-1.5 px-2 py-0.5 text-xs font-mono rounded-full border ${
+                  loopHealth.healthy
+                    ? "bg-(--color-up)/10 border-(--color-up)/30 text-(--color-up)"
+                    : "bg-(--color-down)/10 border-(--color-down)/30 text-(--color-down)"
+                }`}
+                title={`${t.loopAgo}: ${Math.round(loopHealth.seconds_ago)}s ago · bots=${loopHealth.bots_last_tick}`}
+                role="status"
+              >
+                <span aria-hidden="true">{loopHealth.healthy ? "●" : "○"}</span>
+                {loopHealth.healthy ? t.loopHealthy : t.loopStale}
+                <span class="text-(--color-text-muted)">
+                  · {Math.round(loopHealth.seconds_ago)}s
+                </span>
+              </span>
+            )}
+          </div>
           <span class="text-xs text-(--color-text-muted)">{t.subtitle}</span>
         </div>
         <div
