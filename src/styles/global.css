@@ -1033,6 +1033,23 @@ textarea:focus-visible,
   background-color: rgba(0,0,0,0.04);
 }
 
+/* ─── 9.8 polish: smooth scroll + universal focus-visible ─── */
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+/* Stronger focus ring for keyboard users (mouse :focus already invisible) */
+*:focus-visible {
+  outline: 2px solid var(--color-accent-bright, var(--color-accent));
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Subtle lift on interactive cards (cards that are clickable) */
+.card-enterprise[role="button"],
+.card-enterprise a:not(.btn):not(.btn-primary):hover {
+  transition: transform 200ms var(--ease-smooth);
+}
+
 /* ─── Active press feedback — scoped to interactive elements only ─── */
 .btn, .btn-primary, .btn-ghost, .btn-lg, .btn-md, .btn-sm,
 button[type="submit"], button[type="button"],
