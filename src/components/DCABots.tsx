@@ -112,6 +112,8 @@ const i18n = {
     pvWouldFire: "Would fire now",
     pvHalted: "Scaling halted",
     pvMark: "Mark",
+    pvAvg: "Avg",
+    pvUnrealized: "Unrealized",
     pvOpenFills: "open fill(s)",
     staleWarn: "No fills in %dh — config check?",
     staleHint:
@@ -125,6 +127,10 @@ const i18n = {
     deactivate: "Deactivate",
     deleteBtn: "Delete",
     deleteConfirm: "Delete this DCA bot?",
+    editBtn: "Edit",
+    editing: "Editing: %s",
+    editCancel: "Cancel edit",
+    updateBtn: "Update bot",
     new: "New DCA Bot",
     name: "Name",
     symbol: "Symbol",
@@ -180,6 +186,8 @@ const i18n = {
     pvWouldFire: "지금 발사 조건",
     pvHalted: "추가 매수 중단됨",
     pvMark: "현재가",
+    pvAvg: "평단",
+    pvUnrealized: "미실현",
     pvOpenFills: "열린 체결",
     staleWarn: "%d시간 체결 없음 — 설정 점검?",
     staleHint:
@@ -193,6 +201,10 @@ const i18n = {
     deactivate: "비활성화",
     deleteBtn: "삭제",
     deleteConfirm: "이 DCA 봇을 삭제할까요?",
+    editBtn: "편집",
+    editing: "편집 중: %s",
+    editCancel: "편집 취소",
+    updateBtn: "봇 업데이트",
     new: "새 DCA 봇",
     name: "이름",
     symbol: "심볼",
@@ -233,6 +245,10 @@ export default function DCABots({ lang = "en" }: Props) {
   const t = i18n[lang] ?? i18n.en;
 
   const [draft, setDraft] = useState<DcaDraft>(DEFAULT_DRAFT);
+  // When set, the builder form is editing this bot (PUT instead of POST).
+  // Cleared on save success or cancel. PUT is rejected by the backend if
+  // the bot is active, so the Edit button only renders on inactive rows.
+  const [editingBotId, setEditingBotId] = useState<string | null>(null);
   const [bots, setBots] = useState<DcaBot[]>([]);
   const [unauthed, setUnauthed] = useState(false);
   const [saving, setSaving] = useState<"idle" | "saving" | "saved" | "error">(
@@ -258,12 +274,14 @@ export default function DCABots({ lang = "en" }: Props) {
         mark_price: number;
         next_trigger_price: number;
         tp_price: number;
+        weighted_avg_entry: number;
         distance_to_trigger_pct: number;
         distance_to_tp_pct: number;
         would_fire_next_safety: boolean;
         scaling_halted: boolean;
         running: boolean;
         open_fills_count: number;
+        direction: "long" | "short";
       }
     >
   >({});
@@ -390,8 +408,15 @@ export default function DCABots({ lang = "en" }: Props) {
     setSaving("saving");
     setSaveErr("");
     try {
-      const res = await fetch(`${API_BASE_URL}/dca-bots`, {
-        method: "POST",
+      // Edit mode: PUT to /dca-bots/:id. Backend rejects edits on active
+      // bots; we only render Edit on inactive rows so this should rarely
+      // race with an activation.
+      const url = editingBotId
+        ? `${API_BASE_URL}/dca-bots/${encodeURIComponent(editingBotId)}`
+        : `${API_BASE_URL}/dca-bots`;
+      const method = editingBotId ? "PUT" : "POST";
+      const res = await fetch(url, {
+        method,
         credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(draft),
@@ -404,11 +429,43 @@ export default function DCABots({ lang = "en" }: Props) {
       }
       await reload();
       setSaving("saved");
+      if (editingBotId) {
+        setEditingBotId(null);
+        setDraft(DEFAULT_DRAFT);
+      }
       setTimeout(() => setSaving("idle"), 2000);
     } catch (e) {
       setSaving("error");
       setSaveErr(e instanceof Error ? e.message : String(e));
     }
+  }
+
+  function handleEdit(bot: DcaBot) {
+    setDraft({
+      name: bot.name,
+      symbol: bot.symbol,
+      direction: bot.direction,
+      position_size_usdt: bot.position_size_usdt,
+      leverage: bot.leverage,
+      price_step_pct: bot.price_step_pct,
+      size_multiplier: bot.size_multiplier,
+      max_safety_orders: bot.max_safety_orders,
+      tp_pct: bot.tp_pct,
+      stop_scaling_price: bot.stop_scaling_price,
+    });
+    setEditingBotId(bot.id);
+    setSaving("idle");
+    setSaveErr("");
+    setTimeout(() => {
+      const el = document.getElementById("dca-builder-form");
+      el?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 50);
+  }
+
+  function handleCancelEdit() {
+    setEditingBotId(null);
+    setDraft(DEFAULT_DRAFT);
+    setSaveErr("");
   }
 
   async function handleActivate(id: string) {
@@ -603,13 +660,22 @@ export default function DCABots({ lang = "en" }: Props) {
                           </button>
                         </>
                       ) : (
-                        <button
-                          type="button"
-                          class="btn btn-ghost btn-sm min-h-[44px]"
-                          onClick={() => handleActivate(b.id)}
-                        >
-                          {t.activate}
-                        </button>
+                        <>
+                          <button
+                            type="button"
+                            class="text-xs text-(--color-text-muted) hover:text-(--color-accent) underline min-h-[44px] px-2"
+                            onClick={() => handleEdit(b)}
+                          >
+                            {t.editBtn}
+                          </button>
+                          <button
+                            type="button"
+                            class="btn btn-ghost btn-sm min-h-[44px]"
+                            onClick={() => handleActivate(b.id)}
+                          >
+                            {t.activate}
+                          </button>
+                        </>
                       )}
                       <button
                         type="button"
@@ -651,6 +717,40 @@ export default function DCABots({ lang = "en" }: Props) {
                           {t.pvMark}:{" "}
                         </span>
                         <span class="font-bold">${fmtP(pv.mark_price)}</span>
+                        {pv.weighted_avg_entry > 0 && (
+                          <>
+                            {" "}
+                            <span class="text-(--color-text-muted)">
+                              · {t.pvAvg}:{" "}
+                            </span>
+                            <span class="font-bold">
+                              ${fmtP(pv.weighted_avg_entry)}
+                            </span>
+                            {(() => {
+                              const upl =
+                                pv.direction === "long"
+                                  ? ((pv.mark_price - pv.weighted_avg_entry) /
+                                      pv.weighted_avg_entry) *
+                                    100
+                                  : ((pv.weighted_avg_entry - pv.mark_price) /
+                                      pv.weighted_avg_entry) *
+                                    100;
+                              const cls =
+                                upl > 0
+                                  ? "text-(--color-up)"
+                                  : upl < 0
+                                    ? "text-(--color-down)"
+                                    : "text-(--color-text-muted)";
+                              const sign = upl > 0 ? "+" : "";
+                              return (
+                                <span class={`ml-2 font-bold ${cls}`}>
+                                  ({t.pvUnrealized} {sign}
+                                  {upl.toFixed(2)}%)
+                                </span>
+                              );
+                            })()}
+                          </>
+                        )}
                       </div>
                       <div>
                         <span class="text-(--color-text-muted)">
@@ -677,8 +777,29 @@ export default function DCABots({ lang = "en" }: Props) {
       </div>
 
       {/* Builder form */}
-      <div class="card-enterprise rounded-2xl p-5 md:p-6 space-y-4">
-        <h3 class="font-bold text-lg">{t.new}</h3>
+      <div
+        id="dca-builder-form"
+        class={`card-enterprise rounded-2xl p-5 md:p-6 space-y-4 ${editingBotId ? "ring-2 ring-(--color-accent)/40" : ""}`}
+      >
+        <div class="flex items-center justify-between flex-wrap gap-2">
+          <h3 class="font-bold text-lg">
+            {editingBotId
+              ? t.editing.replace(
+                  "%s",
+                  bots.find((b) => b.id === editingBotId)?.name ?? "",
+                )
+              : t.new}
+          </h3>
+          {editingBotId && (
+            <button
+              type="button"
+              class="text-xs text-(--color-text-muted) hover:text-(--color-down) underline min-h-[44px] px-2"
+              onClick={handleCancelEdit}
+            >
+              {t.editCancel}
+            </button>
+          )}
+        </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
           <label class="block">
@@ -883,7 +1004,9 @@ export default function DCABots({ lang = "en" }: Props) {
               ? t.saving
               : saving === "saved"
                 ? t.saved
-                : t.save}
+                : editingBotId
+                  ? t.updateBtn
+                  : t.save}
           </button>
         </div>
 

@@ -44,6 +44,10 @@ const i18n = {
     },
     updated: "Auto-refreshes every 30s",
     openOkx: "Open OKX Assets ↗",
+    fundingTitle: "Funding (Wallet) — ready to transfer",
+    fundingHint:
+      "These assets sit in your Funding account. Bots only fill against Trading. Move them on OKX → Assets → Transfer → Funding to Trading.",
+    fundingTransferCta: "Transfer on OKX ↗",
   },
   ko: {
     title: "OKX 거래 계정 잔고",
@@ -62,6 +66,10 @@ const i18n = {
     },
     updated: "30초마다 자동 갱신",
     openOkx: "OKX 자산 페이지 열기 ↗",
+    fundingTitle: "Funding 계정 — 이체 대기 자산",
+    fundingHint:
+      "이 자산은 Funding 계정에 있습니다. 봇은 Trading 계정만 사용합니다. OKX → 자산 → 이체 → Funding → Trading 으로 이동하세요.",
+    fundingTransferCta: "OKX에서 이체 ↗",
   },
 } as const;
 
@@ -76,6 +84,7 @@ function fmtNumber(s: string): string {
 export default function OKXBalance({ lang = "en" }: Props) {
   const t = i18n[lang] ?? i18n.en;
   const [rows, setRows] = useState<BalanceRow[]>([]);
+  const [fundingRows, setFundingRows] = useState<BalanceRow[]>([]);
   const [unauthed, setUnauthed] = useState(false);
   const [err, setErr] = useState("");
   const [loading, setLoading] = useState(true);
@@ -83,23 +92,42 @@ export default function OKXBalance({ lang = "en" }: Props) {
 
   const fetchBalance = useCallback(async () => {
     try {
-      // No ccy filter → all assets
-      const res = await fetch(`${API_BASE_URL}/execute/balance`, {
-        credentials: "include",
-        signal: AbortSignal.timeout(10_000),
-      });
-      if (res.status === 401) {
+      // Fetch both buckets in parallel — Trading + Funding
+      const [tradingRes, fundingRes] = await Promise.all([
+        fetch(`${API_BASE_URL}/execute/balance`, {
+          credentials: "include",
+          signal: AbortSignal.timeout(10_000),
+        }),
+        fetch(`${API_BASE_URL}/execute/funding-balance`, {
+          credentials: "include",
+          signal: AbortSignal.timeout(10_000),
+        }),
+      ]);
+      if (tradingRes.status === 401 || fundingRes.status === 401) {
         setUnauthed(true);
         setLoading(false);
         return;
       }
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = (await res.json()) as { balances: BalanceRow[] };
-      // Drop zero rows so empty-state hint shows when account is truly empty
-      const nonZero = (data.balances ?? []).filter(
+      if (!tradingRes.ok) throw new Error(`Trading HTTP ${tradingRes.status}`);
+      const tradingData = (await tradingRes.json()) as {
+        balances: BalanceRow[];
+      };
+      const nonZero = (tradingData.balances ?? []).filter(
         (r) => Number(r.bal) > 0 || Number(r.avail_bal) > 0,
       );
       setRows(nonZero);
+      // Funding is best-effort: surface but don't fail the whole load
+      if (fundingRes.ok) {
+        const fundingData = (await fundingRes.json()) as {
+          balances: BalanceRow[];
+        };
+        const fundingNonZero = (fundingData.balances ?? []).filter(
+          (r) => Number(r.bal) > 0 || Number(r.avail_bal) > 0,
+        );
+        setFundingRows(fundingNonZero);
+      } else {
+        setFundingRows([]);
+      }
       setUnauthed(false);
       setErr("");
       setLastUpdated(new Date().toLocaleTimeString());
@@ -226,6 +254,52 @@ export default function OKXBalance({ lang = "en" }: Props) {
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {fundingRows.length > 0 && (
+        <div class="mt-5 pt-4 border-t border-(--color-border)">
+          <div class="flex items-center justify-between mb-2 flex-wrap gap-2">
+            <h3 class="font-bold text-sm text-(--color-warning)">
+              💰 {t.fundingTitle}
+            </h3>
+            <a
+              href="https://www.okx.com/balance/main-account"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-xs text-(--color-accent) hover:underline"
+            >
+              {t.fundingTransferCta}
+            </a>
+          </div>
+          <p class="text-xs text-(--color-text-muted) mb-3 leading-relaxed">
+            {t.fundingHint}
+          </p>
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead>
+                <tr class="border-b border-(--color-border) bg-(--color-bg)/30">
+                  <th class="text-left p-3 font-bold">{t.columns.ccy}</th>
+                  <th class="text-right p-3 font-bold">{t.columns.bal}</th>
+                  <th class="text-right p-3 font-bold">{t.columns.avail}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {fundingRows.map((r) => (
+                  <tr
+                    key={r.ccy}
+                    class="border-b border-(--color-border)/40 hover:bg-(--color-bg)/30"
+                  >
+                    <td class="p-3 font-mono font-bold">{r.ccy}</td>
+                    <td class="p-3 font-mono text-right">{fmtNumber(r.bal)}</td>
+                    <td class="p-3 font-mono text-right">
+                      {fmtNumber(r.avail_bal)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 
