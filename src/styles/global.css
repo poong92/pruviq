@@ -1033,6 +1033,15 @@ textarea:focus-visible,
   background-color: rgba(0,0,0,0.04);
 }
 
+/* ─── 9.8 polish: 44px nav touch targets on small viewports ─── */
+@media (max-width: 768px) {
+  nav a, header a, header button {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+}
+
 /* ─── 9.8 polish: smooth scroll + universal focus-visible ─── */
 html { scroll-behavior: smooth; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
