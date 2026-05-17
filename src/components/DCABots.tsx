@@ -79,7 +79,7 @@ interface Props {
 
 const DEFAULT_DRAFT: DcaDraft = {
   name: "My DCA Bot",
-  symbol: "BTCUSDT",
+  symbol: "BTC-USDT-SWAP",
   direction: "long",
   position_size_usdt: 50,
   leverage: 1,
@@ -129,7 +129,7 @@ const i18n = {
       "Active but quiet. Common causes: price_step_pct too tight (market hasn't moved %), or symbol has low volatility today.",
     activateConfirmTitle: "Activate %s?",
     activateConfirmBody:
-      "Paper-mode (simulated fills). If all safety orders fire, total notional could reach %s USDT.\n\n• %s · ×%s leverage · step %s%%\n• Max %s safety orders · TP %s%%\n\nThe loop starts ticking within ~60s and writes a base fill at the mark price.",
+      "Paper-mode (simulated fills). If all safety orders fire, total notional could reach %s USDT.\n\n• %s · ×%s leverage · step %s%\n• Max %s safety orders · TP %s%\n\nThe loop starts ticking within ~60s and writes a base fill at the mark price.",
     none: "No DCA bots yet — define one below and run a backtest first.",
     active: "ACTIVE",
     activate: "Activate",
@@ -143,7 +143,8 @@ const i18n = {
     new: "New DCA Bot",
     name: "Name",
     symbol: "Symbol",
-    symbolHelp: "Match the simulator naming (e.g. BTCUSDT)",
+    symbolHelp:
+      "OKX swap format: BASE-USDT-SWAP (e.g. BTC-USDT-SWAP, ETH-USDT-SWAP)",
     direction: "Direction",
     long: "Long",
     short: "Short",
@@ -212,7 +213,7 @@ const i18n = {
       "활성 상태인데 조용합니다. 흔한 원인: price_step_pct가 너무 좁음 (시장이 % 만큼 움직이지 않음), 또는 오늘 종목 변동성 낮음.",
     activateConfirmTitle: "%s 활성화?",
     activateConfirmBody:
-      "Paper-mode (모의 체결). 모든 안전 매수가 발사되면 총 노출이 %s USDT까지 도달할 수 있습니다.\n\n• %s · 레버리지 ×%s · step %s%%\n• 최대 안전 매수 %s회 · TP %s%%\n\n약 60초 안에 루프가 마크 가격으로 기준 체결을 기록합니다.",
+      "Paper-mode (모의 체결). 모든 안전 매수가 발사되면 총 노출이 %s USDT까지 도달할 수 있습니다.\n\n• %s · 레버리지 ×%s · step %s%\n• 최대 안전 매수 %s회 · TP %s%\n\n약 60초 안에 루프가 마크 가격으로 기준 체결을 기록합니다.",
     none: "DCA 봇이 없습니다 — 아래에서 정의 후 먼저 백테스트를 돌려보세요.",
     active: "활성",
     activate: "활성화",
@@ -226,7 +227,8 @@ const i18n = {
     new: "새 DCA 봇",
     name: "이름",
     symbol: "심볼",
-    symbolHelp: "시뮬레이터와 동일한 표기 (예: BTCUSDT)",
+    symbolHelp:
+      "OKX 스왑 형식: BASE-USDT-SWAP (예: BTC-USDT-SWAP, ETH-USDT-SWAP)",
     direction: "방향",
     long: "롱",
     short: "숏",
