@@ -394,6 +394,31 @@ def activate_dca_bot(bot_id: str, session_id: str) -> dict[str, Any]:
     return activated
 
 
+def pause_all_dca_bots(session_id: str) -> dict[str, Any]:
+    """User-facing emergency stop — deactivates every active DCA bot
+    owned by this session in a single SQL UPDATE. Returns the number
+    of bots flipped. Existing fills are NOT auto-closed; the loop
+    simply stops adding new ones on the next tick.
+
+    Use case: paper-mode dog-foot review uncovers a bad config, owner
+    wants every bot paused at once instead of toggling each row.
+    """
+    _ensure_tables()
+    now = time.time()
+    with _get_conn() as conn:
+        cur = conn.execute(
+            "UPDATE dca_bots SET is_active = 0, updated_at = ? "
+            "WHERE session_id = ? AND is_active = 1",
+            (now, session_id),
+        )
+        paused = cur.rowcount
+    if paused:
+        logger.warning(
+            "DCA pause-all session=%s paused=%d", session_id[:8], paused
+        )
+    return {"paused": paused}
+
+
 def deactivate_dca_bot(bot_id: str, session_id: str) -> dict[str, Any]:
     """Flip is_active = 0. Existing fills are NOT auto-closed — the user
     must explicitly close positions on the exchange or use a future

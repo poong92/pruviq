@@ -789,6 +789,18 @@ async def dca_list(request: Request):
     return {"bots": list_dca_bots(session_id)}
 
 
+@router.post("/dca-bots/pause-all")
+async def dca_pause_all(request: Request):
+    """User-facing emergency stop — deactivates every active DCA bot
+    owned by this session. Returns {paused: N}. Existing fills stay;
+    no orders are closed — the loop just stops adding new ones."""
+    session_id = _get_session(request)
+    if not is_authenticated(session_id):
+        raise HTTPException(401, "Not connected to OKX.")
+    from .dca_bots import pause_all_dca_bots
+    return pause_all_dca_bots(session_id)
+
+
 @router.get("/dca-bots/recent-fills")
 async def dca_recent_fills(request: Request, limit: int = Query(20, le=100)):
     """Cross-bot recent fills feed for the dashboard. Owner-only —

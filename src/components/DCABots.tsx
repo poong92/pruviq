@@ -100,6 +100,10 @@ const i18n = {
     loopStale: "Loop stalled",
     loopUnknown: "Loop status unknown",
     loopAgo: "last tick",
+    pauseAll: "Pause all active",
+    pauseAllConfirm: "Pause %d active bot(s)? Existing fills stay open.",
+    pauseAllResult: "Paused %d bot(s).",
+    pauseAllErr: "Failed to pause all bots",
     none: "No DCA bots yet — define one below and run a backtest first.",
     active: "ACTIVE",
     activate: "Activate",
@@ -151,6 +155,10 @@ const i18n = {
     loopStale: "루프 멈춤",
     loopUnknown: "루프 상태 확인 불가",
     loopAgo: "마지막 tick",
+    pauseAll: "모든 활성 봇 일괄 중단",
+    pauseAllConfirm: "활성 봇 %d개를 모두 중단할까요? 기존 체결은 유지됩니다.",
+    pauseAllResult: "봇 %d개를 중단했습니다.",
+    pauseAllErr: "일괄 중단 실패",
     none: "DCA 봇이 없습니다 — 아래에서 정의 후 먼저 백테스트를 돌려보세요.",
     active: "활성",
     activate: "활성화",
@@ -334,6 +342,24 @@ export default function DCABots({ lang = "en" }: Props) {
     });
     await reload();
   }
+  async function handlePauseAll() {
+    const activeCount = bots.filter((b) => b.is_active).length;
+    if (activeCount === 0) return;
+    if (!window.confirm(t.pauseAllConfirm.replace("%d", String(activeCount))))
+      return;
+    try {
+      const res = await fetch(`${API_BASE_URL}/dca-bots/pause-all`, {
+        method: "POST",
+        credentials: "include",
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = (await res.json()) as { paused: number };
+      await reload();
+      window.alert(t.pauseAllResult.replace("%d", String(data.paused ?? 0)));
+    } catch (e) {
+      window.alert(`${t.pauseAllErr}: ${e instanceof Error ? e.message : e}`);
+    }
+  }
   async function handleDelete(id: string) {
     if (!window.confirm(t.deleteConfirm)) return;
     await fetch(`${API_BASE_URL}/dca-bots/${id}`, {
@@ -382,7 +408,19 @@ export default function DCABots({ lang = "en" }: Props) {
               </span>
             )}
           </div>
-          <span class="text-xs text-(--color-text-muted)">{t.subtitle}</span>
+          <div class="flex items-center gap-2">
+            {bots.some((b) => b.is_active) && (
+              <button
+                type="button"
+                class="text-xs font-bold text-(--color-down) hover:bg-(--color-down)/10 border border-(--color-down)/30 rounded-lg px-3 min-h-[44px]"
+                onClick={handlePauseAll}
+                aria-label={t.pauseAll}
+              >
+                ⏸ {t.pauseAll}
+              </button>
+            )}
+            <span class="text-xs text-(--color-text-muted)">{t.subtitle}</span>
+          </div>
         </div>
         <div
           class="p-2.5 mb-3 rounded-lg bg-(--color-warning)/10 border border-(--color-warning)/30 text-xs"
