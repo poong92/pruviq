@@ -213,7 +213,7 @@ export default function AutoTradingStatus({ lang = "en" }: Props) {
         </div>
         <a
           href={settingsPath}
-          class="text-xs text-(--color-accent) hover:underline"
+          class="inline-flex items-center min-h-[44px] px-3 -mx-3 text-xs text-(--color-accent) hover:underline rounded-lg"
         >
           {t.configure}
         </a>

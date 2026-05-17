@@ -693,7 +693,7 @@ export default function StrategyBuilder({ lang = "en" }: Props) {
         <div>
           <button
             type="button"
-            class="text-sm text-(--color-accent) hover:underline"
+            class="inline-flex items-center min-h-[44px] px-3 -mx-3 text-sm text-(--color-accent) hover:underline rounded-lg"
             onClick={() => setShowAdvanced((s) => !s)}
             aria-expanded={showAdvanced}
             aria-controls="strategy-advanced-panel"

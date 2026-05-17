@@ -220,7 +220,7 @@ export default function OKXBalance({ lang = "en" }: Props) {
             href="https://www.okx.com/balance/main-account"
             target="_blank"
             rel="noopener noreferrer"
-            class="inline-flex items-center text-xs text-(--color-accent) hover:underline mt-1"
+            class="inline-flex items-center min-h-[44px] px-3 -mx-3 text-xs text-(--color-accent) hover:underline mt-1"
           >
             {t.openOkx}
           </a>
@@ -267,7 +267,7 @@ export default function OKXBalance({ lang = "en" }: Props) {
               href="https://www.okx.com/balance/main-account"
               target="_blank"
               rel="noopener noreferrer"
-              class="text-xs text-(--color-accent) hover:underline"
+              class="inline-flex items-center min-h-[44px] px-3 -mx-3 text-xs font-bold text-(--color-accent) hover:underline rounded-lg hover:bg-(--color-accent)/10"
             >
               {t.fundingTransferCta}
             </a>
