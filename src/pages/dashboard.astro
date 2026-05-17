@@ -12,6 +12,7 @@ import OKXBalance from '../components/OKXBalance';
 import TradingSettings from '../components/TradingSettings';
 import StrategyBuilder from '../components/StrategyBuilder';
 import DCABots from '../components/DCABots';
+import DCASummaryStrip from '../components/DCASummaryStrip';
 import RecentDCAFills from '../components/RecentDCAFills';
 import GridBots from '../components/GridBots';
 import PendingSignalsApproval from '../components/PendingSignalsApproval';
@@ -100,6 +101,11 @@ import { OKX_DISCOUNT_PCT } from '../config/exchanges';
         <!-- DCA Bots — Dollar-cost averaging (different paradigm) -->
         <section class="mb-8">
           <DCABots client:visible lang="en" />
+        </section>
+
+        <!-- 24h activity KPI strip -->
+        <section class="mb-4">
+          <DCASummaryStrip client:visible lang="en" />
         </section>
 
         <!-- Recent fills — cross-bot paper-mode activity feed -->
