@@ -316,6 +316,16 @@ def session_dca_summary(session_id: str, hours: int = 24) -> dict[str, Any]:
             "WHERE session_id = ? AND is_active = 1",
             (session_id,),
         ).fetchone()[0]
+        # Cumulative max-notional exposure across ALL active bots — sum of
+        # each bot's cap (base × (m^(n+1)-1)/(m-1) for m≠1, base × (n+1)
+        # for m=1). Mirrors validate_dca_params so the number matches the
+        # backend 50k-per-bot cap math. Real safety value: owner sees
+        # "$X total max exposure" without doing the multiplication by hand.
+        active_rows = conn.execute(
+            "SELECT position_size_usdt, size_multiplier, max_safety_orders "
+            "FROM dca_bots WHERE session_id = ? AND is_active = 1",
+            (session_id,),
+        ).fetchall()
         open_bots = conn.execute(
             """
             SELECT COUNT(DISTINCT f.bot_id)
@@ -335,6 +345,25 @@ def session_dca_summary(session_id: str, hours: int = 24) -> dict[str, Any]:
             base += 1
         else:
             safety += 1
+
+    # Cumulative max-notional across all active bots
+    cumulative_max_exposure = 0.0
+    for base_size, mult, max_safe in active_rows:
+        try:
+            b = float(base_size)
+            m = float(mult)
+            n = int(max_safe)
+            if b > 0 and n >= 0 and m > 0:
+                cumulative_max_exposure += (
+                    b * (n + 1) if abs(m - 1.0) < 1e-9
+                    else b * (m ** (n + 1) - 1.0) / (m - 1.0)
+                )
+        except (TypeError, ValueError, OverflowError):
+            # Skip bots with malformed params; doesn't affect the sum for
+            # well-formed peers. validate_dca_params guards on the way in
+            # so this branch is defensive only.
+            continue
+
     return {
         "window_hours": hours,
         "total_fills": base + safety + tp_closes,
@@ -344,6 +373,7 @@ def session_dca_summary(session_id: str, hours: int = 24) -> dict[str, Any]:
         "active_bots": int(active),
         "bots_with_open_position": int(open_bots),
         "paper_pnl_usdt": round(paper_pnl, 2),
+        "cumulative_max_exposure_usdt": round(cumulative_max_exposure, 2),
     }
 
 
