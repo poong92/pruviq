@@ -112,6 +112,8 @@ const i18n = {
     pvWouldFire: "Would fire now",
     pvHalted: "Scaling halted",
     pvMark: "Mark",
+    pvAvg: "Avg",
+    pvUnrealized: "Unrealized",
     pvOpenFills: "open fill(s)",
     staleWarn: "No fills in %dh — config check?",
     staleHint:
@@ -180,6 +182,8 @@ const i18n = {
     pvWouldFire: "지금 발사 조건",
     pvHalted: "추가 매수 중단됨",
     pvMark: "현재가",
+    pvAvg: "평단",
+    pvUnrealized: "미실현",
     pvOpenFills: "열린 체결",
     staleWarn: "%d시간 체결 없음 — 설정 점검?",
     staleHint:
@@ -258,12 +262,14 @@ export default function DCABots({ lang = "en" }: Props) {
         mark_price: number;
         next_trigger_price: number;
         tp_price: number;
+        weighted_avg_entry: number;
         distance_to_trigger_pct: number;
         distance_to_tp_pct: number;
         would_fire_next_safety: boolean;
         scaling_halted: boolean;
         running: boolean;
         open_fills_count: number;
+        direction: "long" | "short";
       }
     >
   >({});
@@ -651,6 +657,40 @@ export default function DCABots({ lang = "en" }: Props) {
                           {t.pvMark}:{" "}
                         </span>
                         <span class="font-bold">${fmtP(pv.mark_price)}</span>
+                        {pv.weighted_avg_entry > 0 && (
+                          <>
+                            {" "}
+                            <span class="text-(--color-text-muted)">
+                              · {t.pvAvg}:{" "}
+                            </span>
+                            <span class="font-bold">
+                              ${fmtP(pv.weighted_avg_entry)}
+                            </span>
+                            {(() => {
+                              const upl =
+                                pv.direction === "long"
+                                  ? ((pv.mark_price - pv.weighted_avg_entry) /
+                                      pv.weighted_avg_entry) *
+                                    100
+                                  : ((pv.weighted_avg_entry - pv.mark_price) /
+                                      pv.weighted_avg_entry) *
+                                    100;
+                              const cls =
+                                upl > 0
+                                  ? "text-(--color-up)"
+                                  : upl < 0
+                                    ? "text-(--color-down)"
+                                    : "text-(--color-text-muted)";
+                              const sign = upl > 0 ? "+" : "";
+                              return (
+                                <span class={`ml-2 font-bold ${cls}`}>
+                                  ({t.pvUnrealized} {sign}
+                                  {upl.toFixed(2)}%)
+                                </span>
+                              );
+                            })()}
+                          </>
+                        )}
                       </div>
                       <div>
                         <span class="text-(--color-text-muted)">
