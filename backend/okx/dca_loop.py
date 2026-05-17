@@ -159,32 +159,40 @@ async def _tick_bot(bot: dict[str, Any]) -> None:
         )
         return
 
-    # 2) Compute next trigger off last fill
+    # 2) Compute next trigger off last fill — multi-fire loop so a single
+    # 60s tick mirrors dca_backtest.simulate_dca's `while` behaviour. When
+    # mark moves through several step%s between ticks (gap-down / fast
+    # selloff), live and backtest should produce the SAME number of fills.
+    # Without this loop, live would only place one safety per tick → user
+    # backtests show e.g. 5 fills while live shows 1, breaking the parity
+    # rule (rules/feedback_engine_parity.md).
     last_fill = fills[-1]
-    next_order_num = last_fill["order_num"] + 1
     last_price = float(last_fill["fill_price"])
     last_size = float(last_fill["fill_size_usdt"])
+    next_order_num = last_fill["order_num"] + 1
 
-    if direction == "long":
-        next_trigger = last_price * (1.0 - step_pct)
-        should_fire = mark <= next_trigger
-    else:
-        next_trigger = last_price * (1.0 + step_pct)
-        should_fire = mark >= next_trigger
-
-    # 3) Safety fire conditions
-    if (
-        should_fire
-        and not scaling_halted
-        and next_order_num <= max_safety
-    ):
+    while not scaling_halted and next_order_num <= max_safety:
+        if direction == "long":
+            next_trigger = last_price * (1.0 - step_pct)
+            should_fire = mark <= next_trigger
+        else:
+            next_trigger = last_price * (1.0 + step_pct)
+            should_fire = mark >= next_trigger
+        if not should_fire:
+            break
         next_size = last_size * multiplier
         _write_paper_fill(bot_id, next_order_num, next_trigger, next_size)
         logger.info(
             "dca paper safety #%d bot=%s price=%.6f size=%.2f",
             next_order_num, bot_id[:8], next_trigger, next_size,
         )
-        fills = _list_open_fills(bot_id)
+        # Update for next iteration
+        last_price = next_trigger
+        last_size = next_size
+        next_order_num += 1
+
+    # Refresh fills view if any safeties fired
+    fills = _list_open_fills(bot_id)
 
     # 4) TP check
     avg = _weighted_avg(fills)
