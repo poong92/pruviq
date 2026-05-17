@@ -257,7 +257,7 @@ export default function PendingSignalsApproval({ lang = "en" }: Props) {
                       type="button"
                       onClick={() => act(s.id, "reject")}
                       disabled={busy || isExpired}
-                      class="min-h-[36px] px-3 rounded-lg border border-(--color-border) text-xs font-bold text-(--color-text-muted) hover:text-(--color-down) hover:border-(--color-down)/40 disabled:opacity-50 disabled:cursor-not-allowed"
+                      class="min-h-[44px] px-3 rounded-lg border border-(--color-border) text-xs font-bold text-(--color-text-muted) hover:text-(--color-down) hover:border-(--color-down)/40 disabled:opacity-50 disabled:cursor-not-allowed"
                       aria-label={`${t.reject} ${s.symbol}`}
                     >
                       {busy && busyAction === "reject" ? t.rejecting : t.reject}
@@ -266,7 +266,7 @@ export default function PendingSignalsApproval({ lang = "en" }: Props) {
                       type="button"
                       onClick={() => act(s.id, "approve")}
                       disabled={busy || isExpired}
-                      class="min-h-[36px] px-3 rounded-lg bg-(--color-up)/10 border border-(--color-up)/40 text-xs font-bold text-(--color-up) hover:bg-(--color-up)/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                      class="min-h-[44px] px-3 rounded-lg bg-(--color-up)/10 border border-(--color-up)/40 text-xs font-bold text-(--color-up) hover:bg-(--color-up)/20 disabled:opacity-50 disabled:cursor-not-allowed"
                       aria-label={`${t.approve} ${s.symbol}`}
                     >
                       {busy && busyAction === "approve"

@@ -943,10 +943,19 @@ async def dca_simulate(request: Request):
     to the full available candle window if start/end omitted.
     Auth is required to keep the endpoint behind the cookie wall, but
     the call hits no per-session state.
+
+    Rate-limited the same as /grid-bots/simulate (5s/session) — backtest
+    walks the full candle window so concurrent calls peg the worker.
     """
     session_id = _get_session(request)
     if not is_authenticated(session_id):
         raise HTTPException(401, "Not connected to OKX.")
+    now_ts = time.time()
+    last_sim = _simulate_rate_limit.get(session_id, 0)
+    if now_ts - last_sim < SIMULATE_RATE_LIMIT_SECONDS:
+        wait = int(SIMULATE_RATE_LIMIT_SECONDS - (now_ts - last_sim))
+        raise HTTPException(429, f"simulate rate limit: wait {wait}s")
+    _simulate_rate_limit[session_id] = now_ts
     body = await request.json()
     if not isinstance(body, dict):
         raise HTTPException(400, "body must be a JSON object")

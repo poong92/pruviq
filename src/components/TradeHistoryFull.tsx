@@ -140,7 +140,9 @@ function downloadCsv(rows: Trade[]) {
         .join(","),
     );
   }
-  const blob = new Blob([lines.join("\n")], {
+  // RFC 4180 specifies CRLF line endings — Excel on Windows renders LF-only
+  // as a single line. Use CRLF for cross-platform compatibility.
+  const blob = new Blob([lines.join("\r\n") + "\r\n"], {
     type: "text/csv;charset=utf-8",
   });
   const url = URL.createObjectURL(blob);
@@ -445,7 +447,7 @@ export default function TradeHistoryFull({ lang = "en" }: Props) {
       <div class="flex items-center justify-between gap-3">
         <button
           type="button"
-          class="btn btn-ghost btn-sm min-h-[36px]"
+          class="btn btn-ghost btn-sm min-h-[44px]"
           onClick={() => void load()}
           disabled={loading}
         >
@@ -453,7 +455,7 @@ export default function TradeHistoryFull({ lang = "en" }: Props) {
         </button>
         <button
           type="button"
-          class="btn btn-primary btn-sm min-h-[36px]"
+          class="btn btn-primary btn-sm min-h-[44px]"
           onClick={() => downloadCsv(filtered)}
           disabled={filtered.length === 0}
         >
