@@ -167,7 +167,7 @@ export default function LiveTradeHistory({ lang = "en" }: Props) {
         </div>
         <a
           href={tradesPath}
-          class="text-xs text-(--color-accent) hover:underline"
+          class="inline-flex items-center min-h-[44px] px-3 -mx-3 text-xs text-(--color-accent) hover:underline rounded-lg"
         >
           {t.seeAll}
         </a>

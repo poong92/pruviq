@@ -696,9 +696,10 @@ async def validate_strategy_params(request: Request):
     context = body.get("context") or {}
     if not isinstance(params, dict) or not isinstance(context, dict):
         raise HTTPException(400, "params and context must be JSON objects")
+    lang = str(body.get("lang") or "en")
 
     try:
-        result = _validate(params, context)
+        result = _validate(params, context, lang=lang)
     except (TypeError, ValueError) as e:
         raise HTTPException(400, f"invalid input: {e}")
 

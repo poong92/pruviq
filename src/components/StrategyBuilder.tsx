@@ -257,7 +257,7 @@ export default function StrategyBuilder({ lang = "en" }: Props) {
             method: "POST",
             credentials: "include",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ params: draft, context: {} }),
+            body: JSON.stringify({ params: draft, context: {}, lang }),
             signal: AbortSignal.timeout(8_000),
           });
           if (res.ok) setValidation((await res.json()) as ValidateResponse);
@@ -693,7 +693,7 @@ export default function StrategyBuilder({ lang = "en" }: Props) {
         <div>
           <button
             type="button"
-            class="text-sm text-(--color-accent) hover:underline"
+            class="inline-flex items-center min-h-[44px] px-3 -mx-3 text-sm text-(--color-accent) hover:underline rounded-lg"
             onClick={() => setShowAdvanced((s) => !s)}
             aria-expanded={showAdvanced}
             aria-controls="strategy-advanced-panel"

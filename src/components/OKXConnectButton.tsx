@@ -272,7 +272,7 @@ export default function OKXConnectButton({
           {t.connected}
         </span>
         <button
-          class="text-xs text-(--color-text-muted) hover:text-(--color-down) underline"
+          class="text-xs text-(--color-text-muted) hover:text-(--color-down) underline min-h-[44px] px-3 -mx-3"
           onClick={handleDisconnect}
         >
           {t.disconnect}
