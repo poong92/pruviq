@@ -172,7 +172,11 @@ export default function OKXBalance({ lang = "en" }: Props) {
       <div class="flex items-center justify-between mb-4">
         <h2 class="font-bold text-lg">{t.title}</h2>
         {lastUpdated && (
-          <span class="text-xs text-(--color-text-muted) font-mono">
+          <span class="inline-flex items-center gap-1.5 text-xs text-(--color-text-muted) font-mono">
+            <span
+              aria-hidden="true"
+              class="inline-block w-1.5 h-1.5 rounded-full bg-(--color-up) motion-safe:animate-pulse"
+            />
             {lastUpdated}
           </span>
         )}
@@ -199,13 +203,37 @@ export default function OKXBalance({ lang = "en" }: Props) {
       )}
 
       {loading && rows.length === 0 ? (
-        <div class="space-y-2">
-          {[1, 2].map((i) => (
-            <div
-              key={i}
-              class="h-12 rounded-lg bg-(--color-bg-elevated) motion-safe:animate-pulse"
-            />
-          ))}
+        // Content-shaped skeleton: 3 rows of (asset / total / available / frozen)
+        // matching the final table layout so the visual jump is minimal.
+        <div class="overflow-x-auto" aria-hidden="true">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-(--color-border) bg-(--color-bg)/30">
+                <th class="text-left p-3 font-bold">{t.columns.ccy}</th>
+                <th class="text-right p-3 font-bold">{t.columns.bal}</th>
+                <th class="text-right p-3 font-bold">{t.columns.avail}</th>
+                <th class="text-right p-3 font-bold">{t.columns.frozen}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[1, 2, 3].map((i) => (
+                <tr key={i} class="border-b border-(--color-border)/40">
+                  <td class="p-3">
+                    <div class="h-4 w-12 rounded bg-(--color-bg-elevated) motion-safe:animate-pulse" />
+                  </td>
+                  <td class="p-3">
+                    <div class="h-4 w-20 ml-auto rounded bg-(--color-bg-elevated) motion-safe:animate-pulse" />
+                  </td>
+                  <td class="p-3">
+                    <div class="h-4 w-20 ml-auto rounded bg-(--color-bg-elevated) motion-safe:animate-pulse" />
+                  </td>
+                  <td class="p-3">
+                    <div class="h-4 w-16 ml-auto rounded bg-(--color-bg-elevated) motion-safe:animate-pulse" />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       ) : rows.length === 0 ? (
         <div
