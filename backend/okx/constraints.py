@@ -192,38 +192,54 @@ def validate(params: dict, context: dict, lang: str = "en") -> ConstraintResult:
     if position_size < symbol_min_order:
         errors.append(
             f"포지션 크기 ${position_size:.2f}가 OKX 최소 주문액 ${symbol_min_order:.2f} 미만"
+            if ko else
+            f"Position size ${position_size:.2f} is below OKX min order ${symbol_min_order:.2f}"
         )
 
     # 2. Margin overflow
     if available_margin > 0 and margin_req > available_margin * 0.95:
         errors.append(
             f"증거금 ${margin_req:.2f} 필요 — 가용잔고 ${available_margin:.2f}의 95% 초과"
+            if ko else
+            f"Margin ${margin_req:.2f} needed — exceeds 95% of ${available_margin:.2f} available"
         )
 
     # 3. TP smaller than fees (guaranteed loss)
     if calc["net_profit_usdt"] <= 0:
         errors.append(
             f"수수료 ${fee_cost:.4f} 이후 순이익이 0 이하 — TP를 높이거나 포지션 크기를 키우세요"
+            if ko else
+            f"Net profit ≤ 0 after fees ${fee_cost:.4f} — raise TP or increase position size"
         )
 
     # 4. SL direction error
     if sl_pct <= 0:
-        errors.append("손절(SL)은 0보다 커야 합니다")
+        errors.append(
+            "손절(SL)은 0보다 커야 합니다" if ko else "Stop-loss (SL) must be > 0"
+        )
 
     if tp_pct <= 0:
-        errors.append("익절(TP)은 0보다 커야 합니다")
+        errors.append(
+            "익절(TP)은 0보다 커야 합니다" if ko else "Take-profit (TP) must be > 0"
+        )
 
     # 5. SL > TP (would stop out before profiting in wrong direction logic)
     if sl_pct >= tp_pct * 3:
         errors.append(
             f"손절({sl_pct}%)이 익절({tp_pct}%)의 3배 이상 — 설정을 확인하세요"
+            if ko else
+            f"SL {sl_pct}% is ≥ 3× TP {tp_pct}% — review your settings"
         )
 
     # 6. Leverage bounds
     if leverage < 1:
-        errors.append("레버리지는 최소 1x")
+        errors.append(
+            "레버리지는 최소 1x" if ko else "Leverage must be ≥ 1x"
+        )
     if leverage > 125:
-        errors.append("OKX 최대 레버리지 125x 초과")
+        errors.append(
+            "OKX 최대 레버리지 125x 초과" if ko else "Exceeds OKX max leverage 125x"
+        )
 
     # 7. Per-trade USD cap (execution-time safety, separate from fixed-mode input cap)
     if "max_per_trade_usdt" in params:
