@@ -342,7 +342,7 @@ export default function GridBots({ lang = "en" }: Props) {
         </div>
         <div
           class="p-2.5 mb-3 rounded-lg bg-(--color-warning)/10 border border-(--color-warning)/30 text-xs"
-          role="note"
+          role="status"
         >
           ⚠️ {t.notLiveYet}
         </div>
@@ -371,7 +371,7 @@ export default function GridBots({ lang = "en" }: Props) {
                       </span>
                       <button
                         type="button"
-                        class="text-xs text-(--color-text-muted) hover:text-(--color-down) underline min-h-[36px] px-2"
+                        class="text-xs text-(--color-text-muted) hover:text-(--color-down) underline min-h-[44px] px-2"
                         onClick={() => handleDeactivate(b.id)}
                       >
                         {t.deactivate}
@@ -380,7 +380,7 @@ export default function GridBots({ lang = "en" }: Props) {
                   ) : (
                     <button
                       type="button"
-                      class="btn btn-ghost btn-sm min-h-[36px]"
+                      class="btn btn-ghost btn-sm min-h-[44px]"
                       onClick={() => handleActivate(b.id)}
                     >
                       {t.activate}
@@ -388,7 +388,7 @@ export default function GridBots({ lang = "en" }: Props) {
                   )}
                   <button
                     type="button"
-                    class="text-xs text-(--color-down) hover:underline min-h-[36px] px-2"
+                    class="text-xs text-(--color-down) hover:underline min-h-[44px] px-2"
                     onClick={() => handleDelete(b.id)}
                   >
                     {t.deleteBtn}

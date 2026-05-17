@@ -198,6 +198,7 @@ export default function DCABots({ lang = "en" }: Props) {
   const [simulating, setSimulating] = useState(false);
   const [simErr, setSimErr] = useState("");
   const [sim, setSim] = useState<SimResult | null>(null);
+  const [reloadErr, setReloadErr] = useState("");
 
   const reload = useCallback(async () => {
     try {
@@ -207,15 +208,18 @@ export default function DCABots({ lang = "en" }: Props) {
       });
       if (res.status === 401) {
         setUnauthed(true);
+        setReloadErr("");
         return;
       }
-      if (res.ok) {
-        const data = (await res.json()) as { bots: DcaBot[] };
-        setBots(data.bots ?? []);
-        setUnauthed(false);
-      }
-    } catch {
-      /* silent — preserves dashboard render */
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = (await res.json()) as { bots: DcaBot[] };
+      setBots(data.bots ?? []);
+      setUnauthed(false);
+      setReloadErr("");
+    } catch (e) {
+      if (e instanceof DOMException && e.name === "AbortError") return;
+      // Surface instead of silent fail (rules/llm-anti-patterns.md #3)
+      setReloadErr(e instanceof Error ? e.message : "Failed to load bots");
     }
   }, []);
 
@@ -325,10 +329,19 @@ export default function DCABots({ lang = "en" }: Props) {
         </div>
         <div
           class="p-2.5 mb-3 rounded-lg bg-(--color-warning)/10 border border-(--color-warning)/30 text-xs"
-          role="note"
+          role="status"
         >
           ⚠️ {t.notLiveYet}
         </div>
+        {reloadErr && (
+          <div
+            class="p-2.5 mb-3 rounded-lg bg-(--color-down)/10 border border-(--color-down)/30 text-xs text-(--color-down)"
+            role="alert"
+            aria-live="assertive"
+          >
+            ⚠ {reloadErr}
+          </div>
+        )}
         {bots.length === 0 ? (
           <p class="text-sm text-(--color-text-muted) italic">{t.none}</p>
         ) : (
@@ -359,7 +372,7 @@ export default function DCABots({ lang = "en" }: Props) {
                         </span>
                         <button
                           type="button"
-                          class="text-xs text-(--color-text-muted) hover:text-(--color-down) underline min-h-[36px] px-2"
+                          class="text-xs text-(--color-text-muted) hover:text-(--color-down) underline min-h-[44px] px-2"
                           onClick={() => handleDeactivate(b.id)}
                         >
                           {t.deactivate}
@@ -368,7 +381,7 @@ export default function DCABots({ lang = "en" }: Props) {
                     ) : (
                       <button
                         type="button"
-                        class="btn btn-ghost btn-sm min-h-[36px]"
+                        class="btn btn-ghost btn-sm min-h-[44px]"
                         onClick={() => handleActivate(b.id)}
                       >
                         {t.activate}
@@ -376,7 +389,7 @@ export default function DCABots({ lang = "en" }: Props) {
                     )}
                     <button
                       type="button"
-                      class="text-xs text-(--color-down) hover:underline min-h-[36px] px-2"
+                      class="text-xs text-(--color-down) hover:underline min-h-[44px] px-2"
                       onClick={() => handleDelete(b.id)}
                     >
                       {t.deleteBtn}
