@@ -136,6 +136,7 @@ const i18n = {
     advanced: "Advanced — regime filters",
     advancedHide: "Hide advanced",
     fngMin: "Fear & Greed min (skip below)",
+    fngMinPlaceholder: "0–100 (blank = off)",
     fundingGateShort: "SHORT only when funding rate > 0",
     save: "Save & Activate",
     saving: "Saving…",
@@ -192,6 +193,7 @@ const i18n = {
     advanced: "고급 — 시장 레짐 필터",
     advancedHide: "고급 숨기기",
     fngMin: "Fear & Greed 최저값 (미만은 진입 안 함)",
+    fngMinPlaceholder: "0–100 (비워두면 비활성)",
     fundingGateShort: "SHORT는 펀딩비 > 0일 때만",
     save: "저장하고 활성화",
     saving: "저장 중…",
@@ -709,7 +711,7 @@ export default function StrategyBuilder({ lang = "en" }: Props) {
                   type="number"
                   min={0}
                   max={100}
-                  placeholder="0–100 (blank = off)"
+                  placeholder={t.fngMinPlaceholder}
                   value={draft.regime_filters.fng_min ?? ""}
                   onInput={(e) => {
                     const raw = (e.target as HTMLInputElement).value;
