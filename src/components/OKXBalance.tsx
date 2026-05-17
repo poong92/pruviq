@@ -172,7 +172,11 @@ export default function OKXBalance({ lang = "en" }: Props) {
       <div class="flex items-center justify-between mb-4">
         <h2 class="font-bold text-lg">{t.title}</h2>
         {lastUpdated && (
-          <span class="text-xs text-(--color-text-muted) font-mono">
+          <span class="inline-flex items-center gap-1.5 text-xs text-(--color-text-muted) font-mono">
+            <span
+              aria-hidden="true"
+              class="inline-block w-1.5 h-1.5 rounded-full bg-(--color-up) motion-safe:animate-pulse"
+            />
             {lastUpdated}
           </span>
         )}
