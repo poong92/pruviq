@@ -34,6 +34,8 @@ interface DcaBot {
   is_active: number;
   created_at: number;
   updated_at: number;
+  last_fill_at?: number;
+  hours_since_last_fill?: number;
 }
 
 interface DcaDraft {
@@ -111,6 +113,9 @@ const i18n = {
     pvHalted: "Scaling halted",
     pvMark: "Mark",
     pvOpenFills: "open fill(s)",
+    staleWarn: "No fills in %dh — config check?",
+    staleHint:
+      "Active but quiet. Common causes: price_step_pct too tight (market hasn't moved %), or symbol has low volatility today.",
     none: "No DCA bots yet — define one below and run a backtest first.",
     active: "ACTIVE",
     activate: "Activate",
@@ -173,6 +178,9 @@ const i18n = {
     pvHalted: "추가 매수 중단됨",
     pvMark: "현재가",
     pvOpenFills: "열린 체결",
+    staleWarn: "%d시간 체결 없음 — 설정 점검?",
+    staleHint:
+      "활성 상태인데 조용합니다. 흔한 원인: price_step_pct가 너무 좁음 (시장이 % 만큼 움직이지 않음), 또는 오늘 종목 변동성 낮음.",
     none: "DCA 봇이 없습니다 — 아래에서 정의 후 먼저 백테스트를 돌려보세요.",
     active: "활성",
     activate: "활성화",
@@ -539,6 +547,21 @@ export default function DCABots({ lang = "en" }: Props) {
                       </p>
                     </div>
                     <div class="flex items-center gap-2 shrink-0">
+                      {b.is_active &&
+                        typeof b.hours_since_last_fill === "number" &&
+                        b.hours_since_last_fill > 24 && (
+                          <span
+                            class="text-xs font-mono font-bold px-2 py-0.5 rounded-full bg-(--color-warning)/10 border border-(--color-warning)/30 text-(--color-warning)"
+                            title={t.staleHint}
+                            role="status"
+                          >
+                            ⚠{" "}
+                            {t.staleWarn.replace(
+                              "%d",
+                              String(Math.floor(b.hours_since_last_fill)),
+                            )}
+                          </span>
+                        )}
                       {b.is_active ? (
                         <>
                           <span class="text-xs font-mono font-bold text-(--color-up)">

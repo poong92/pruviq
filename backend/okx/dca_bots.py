@@ -258,14 +258,36 @@ def get_dca_bot(bot_id: str, session_id: str) -> Optional[dict[str, Any]]:
 
 
 def list_dca_bots(session_id: str) -> list[dict[str, Any]]:
+    """Bot list with two computed liveness fields per row:
+      - `last_fill_at` (epoch sec) or 0 if no fills
+      - `hours_since_last_fill` (float) — useful to flag stale active bots
+
+    Computed in one extra LEFT JOIN so the dashboard list can render
+    "active 36h with no fills" warnings without N+1 queries.
+    """
     _ensure_tables()
     with _get_conn() as conn:
         rows = conn.execute(
-            f"SELECT {', '.join(_DCA_COLUMNS)} FROM dca_bots "
-            "WHERE session_id = ? ORDER BY updated_at DESC, id",
+            f"SELECT {', '.join('b.' + c for c in _DCA_COLUMNS)}, "
+            "       MAX(f.filled_at) AS last_fill_at "
+            "FROM dca_bots b "
+            "LEFT JOIN dca_fills f ON f.bot_id = b.id "
+            "WHERE b.session_id = ? "
+            "GROUP BY b.id "
+            "ORDER BY b.updated_at DESC, b.id",
             (session_id,),
         ).fetchall()
-    return [_row_to_dca(r) for r in rows]
+    now = time.time()
+    out: list[dict[str, Any]] = []
+    for r in rows:
+        bot = _row_to_dca(r[: len(_DCA_COLUMNS)])
+        last_fill_at = r[len(_DCA_COLUMNS)] or 0.0
+        bot["last_fill_at"] = float(last_fill_at) if last_fill_at else 0.0
+        bot["hours_since_last_fill"] = (
+            (now - last_fill_at) / 3600.0 if last_fill_at else -1.0
+        )
+        out.append(bot)
+    return out
 
 
 def session_dca_summary(session_id: str, hours: int = 24) -> dict[str, Any]:
