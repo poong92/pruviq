@@ -113,6 +113,31 @@ class OKXClient:
                 ))
         return results
 
+    async def get_funding_balance(self, ccy: str = "") -> list[BalanceInfo]:
+        """Funding (Wallet) account balance — a separate OKX bucket from
+        the Trading account. New deposits and external transfers land
+        here by default; users must explicitly move funds to Trading
+        before bots can fill against them. Returning this is how the
+        dashboard surfaces "you have $X in Funding ready to transfer"
+        when Trading is empty.
+
+        OKX endpoint: GET /api/v5/asset/balances
+        Returns the same BalanceInfo shape as get_balance for symmetry.
+        """
+        params = {"ccy": ccy} if ccy else {}
+        data = await self._get("/api/v5/asset/balances", params)
+        results = []
+        # asset/balances returns rows directly under data[], not nested
+        # under details like account/balance. avail/frozen are bal/availBal/frozenBal too.
+        for row in data.get("data", []):
+            results.append(BalanceInfo(
+                ccy=row.get("ccy", ""),
+                bal=row.get("bal", "0"),
+                avail_bal=row.get("availBal", "0"),
+                frozen_bal=row.get("frozenBal", "0"),
+            ))
+        return results
+
     async def get_positions(self, inst_id: str | None = None) -> list[PositionInfo]:
         params = {}
         if inst_id:
