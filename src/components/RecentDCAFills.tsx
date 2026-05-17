@@ -211,7 +211,17 @@ export default function RecentDCAFills({ lang = "en" }: Props) {
           ))}
         </div>
       ) : fills.length === 0 ? (
-        <p class="text-sm text-(--color-text-muted) italic">{t.empty}</p>
+        <div class="flex flex-col items-center justify-center py-10 px-4 text-center gap-3">
+          <div
+            class="w-12 h-12 rounded-full bg-(--color-bg-elevated) border border-(--color-border) flex items-center justify-center text-2xl"
+            aria-hidden="true"
+          >
+            ⏳
+          </div>
+          <p class="text-sm text-(--color-text-muted) max-w-md leading-relaxed">
+            {t.empty}
+          </p>
+        </div>
       ) : (
         <div class="overflow-x-auto">
           <table class="w-full text-sm">
