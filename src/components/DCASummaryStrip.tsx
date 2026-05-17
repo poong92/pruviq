@@ -22,6 +22,7 @@ interface Summary {
   active_bots: number;
   bots_with_open_position: number;
   paper_pnl_usdt: number;
+  cumulative_max_exposure_usdt?: number;
 }
 
 interface Props {
@@ -40,6 +41,9 @@ const i18n = {
     paperPnl: "Paper P&L",
     activeBots: "active",
     openBots: "with open positions",
+    maxExposure: "Max exposure",
+    maxExposureHint:
+      "If every safety order fires across all active bots, total notional reaches this number.",
   },
   ko: {
     title: "최근 24시간",
@@ -50,6 +54,9 @@ const i18n = {
     paperPnl: "모의 P&L",
     activeBots: "활성",
     openBots: "포지션 보유",
+    maxExposure: "최대 노출",
+    maxExposureHint:
+      "활성 봇 전체의 모든 안전 매수가 발사되면 총 노출이 이 금액에 도달합니다.",
   },
 } as const;
 
@@ -106,6 +113,18 @@ export default function DCASummaryStrip({ lang = "en" }: Props) {
           {sum.bots_with_open_position > 0 && (
             <span class="px-2 py-0.5 rounded-full bg-(--color-warning)/10 border border-(--color-warning)/30 text-(--color-warning)">
               {sum.bots_with_open_position} {t.openBots}
+            </span>
+          )}
+          {(sum.cumulative_max_exposure_usdt ?? 0) > 0 && (
+            <span
+              class="px-2 py-0.5 rounded-full bg-(--color-bg-elevated) border border-(--color-border)"
+              title={t.maxExposureHint}
+            >
+              {t.maxExposure}: $
+              {(sum.cumulative_max_exposure_usdt ?? 0).toLocaleString(
+                undefined,
+                { maximumFractionDigits: 0 },
+              )}
             </span>
           )}
         </div>
