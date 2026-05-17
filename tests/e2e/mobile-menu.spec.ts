@@ -269,42 +269,29 @@ test.describe("Mobile menu: alignment consistency", () => {
   });
 });
 
-// ─── Language globe dropdown (header) ────────────────────────
+// ─── Language toggle (header) ────────────────────────
+// 2026-05-18 PR #2056: mobile dropdown removed. Both viewports now use a
+// single toggle link that switches EN↔KO in one tap. Old dropdown tests
+// were asserting the obsolete UX.
 
-test.describe("Mobile header: language globe dropdown", () => {
-  // Language toggle is now a globe button in the nav header (#mobile-lang-btn)
-  // Clicking it opens #mobile-lang-dropdown with EN/KO links
-  test("EN page: globe button opens dropdown with KO link", async ({
+test.describe("Mobile header: language toggle (1-tap)", () => {
+  test("EN page: toggle link points to KO with proper hreflang", async ({
     page,
   }) => {
     await page.goto("/simulate", { waitUntil: "domcontentloaded" });
 
-    // Click globe button to open dropdown
-    await page.locator("#mobile-lang-btn").click({ force: true });
-    await page.waitForSelector("#mobile-lang-dropdown:not(.hidden)");
-
-    const langLink = page.locator("#mobile-lang-dropdown a[hreflang]");
-    await expect(langLink.first()).toBeVisible();
-    // EN page → dropdown has a KO link
-    const koLink = page.locator("#mobile-lang-dropdown a[hreflang='ko']");
+    // Single toggle link visible on all viewports
+    const koLink = page.locator("a[hreflang='ko']").first();
+    await expect(koLink).toBeVisible();
     await expect(koLink).toHaveAttribute("href", /\/ko\//);
   });
 
-  test("KO page: globe button opens dropdown with EN link", async ({
-    page,
-  }) => {
+  test("KO page: toggle link points to EN", async ({ page }) => {
     await page.goto("/ko/simulate", { waitUntil: "domcontentloaded" });
 
-    // Click globe button to open dropdown
-    await page.locator("#mobile-lang-btn").click({ force: true });
-    await page.waitForSelector("#mobile-lang-dropdown:not(.hidden)");
-
-    const enLink = page.locator("#mobile-lang-dropdown a[hreflang='en']");
+    const enLink = page.locator("a[hreflang='en']").first();
     await expect(enLink).toBeVisible();
-    // Verify it links to EN version (no /ko/ prefix)
     const href = await enLink.getAttribute("href");
-    expect(href, "Language toggle should point to EN version").not.toMatch(
-      /\/ko\//,
-    );
+    expect(href, "Toggle should point to EN version").not.toMatch(/\/ko\//);
   });
 });
