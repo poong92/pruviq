@@ -479,7 +479,7 @@ export default function TradeHistoryFull({ lang = "en" }: Props) {
             {[1, 2, 3, 4].map((i) => (
               <div
                 key={i}
-                class="h-10 rounded-lg bg-(--color-bg-elevated) animate-pulse"
+                class="h-10 rounded-lg bg-(--color-bg-elevated) motion-safe:animate-pulse"
               />
             ))}
           </div>

@@ -696,11 +696,15 @@ export default function StrategyBuilder({ lang = "en" }: Props) {
             class="text-sm text-(--color-accent) hover:underline"
             onClick={() => setShowAdvanced((s) => !s)}
             aria-expanded={showAdvanced}
+            aria-controls="strategy-advanced-panel"
           >
             {showAdvanced ? `▼ ${t.advancedHide}` : `▶ ${t.advanced}`}
           </button>
           {showAdvanced && (
-            <div class="mt-3 space-y-3 p-4 rounded-lg bg-(--color-bg)/40 border border-(--color-border)">
+            <div
+              id="strategy-advanced-panel"
+              class="mt-3 space-y-3 p-4 rounded-lg bg-(--color-bg)/40 border border-(--color-border)"
+            >
               <label class="block">
                 <span class="text-sm font-bold">{t.fngMin}</span>
                 <input

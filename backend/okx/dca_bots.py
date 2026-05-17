@@ -60,6 +60,11 @@ _BOUNDS = {
 }
 
 
+_SYMBOL_RE = __import__("re").compile(
+    r"^[A-Z0-9]{2,12}-USDT(?:-SWAP)?$"
+)
+
+
 def validate_dca_params(p: dict[str, Any]) -> list[str]:
     """Return list of human-readable validation errors (empty = ok)."""
     errs: list[str] = []
@@ -67,8 +72,12 @@ def validate_dca_params(p: dict[str, Any]) -> list[str]:
         errs.append("name: required")
     elif len(p["name"]) > 80:
         errs.append("name: max 80 chars")
-    if not isinstance(p.get("symbol"), str) or "-" not in p.get("symbol", ""):
-        errs.append("symbol: must look like 'BTC-USDT-SWAP'")
+    sym = p.get("symbol")
+    if not isinstance(sym, str) or not _SYMBOL_RE.match(sym):
+        errs.append(
+            "symbol: must match '<BASE>-USDT' or '<BASE>-USDT-SWAP' "
+            "(e.g. BTC-USDT-SWAP); only A-Z0-9 in BASE"
+        )
     if p.get("direction") not in _VALID_DIRECTION:
         errs.append("direction: must be 'long' or 'short'")
     for key, (lo, hi) in _BOUNDS.items():
