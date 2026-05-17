@@ -558,25 +558,57 @@ def get_dca_bot_with_fills(
 
 
 def compute_preview(
-    bot: dict[str, Any], mark_price: float
+    bot: dict[str, Any],
+    mark_price: float,
+    open_fills: Optional[list[dict[str, Any]]] = None,
 ) -> dict[str, Any]:
-    """Read-only computation: given a bot config and current mark price,
-    what's the next trigger price, would the next safety order fire now,
-    where is the TP, and how far is mark from each?
+    """Read-only computation: given a bot config + current mark + (optionally)
+    its currently-open fills, what's the next trigger price, would the next
+    safety order fire now, where is TP, and how far is mark from each?
 
-    No DB writes, no orders. Used by GET /dca-bots/:id/preview so the user
-    can dry-run their config against live market data before flipping
-    is_active on. Math mirrors the simulator + executor.
+    Two modes:
+      - `open_fills` empty / None → "pre-activation" preview keyed off
+        `base_price_usdt` (or mark when 0). Used in the Save/Test flow
+        before the bot has any fills.
+      - `open_fills` present → "running" preview keyed off the LAST fill
+        price for the trigger and the weighted average for TP. Mirrors
+        `dca_loop._tick_bot` exactly so the dashboard row's "next trigger"
+        matches what the loop will actually evaluate against on its next
+        tick. Without this, an active bot with 3 safeties would still
+        show base-relative numbers and confuse owners during dog-foot.
+
+    No DB writes, no orders.
     """
     direction = bot.get("direction", "long")
-    base_price = float(bot.get("base_price_usdt", 0.0)) or mark_price
     step_pct = float(bot["price_step_pct"]) / 100.0
     tp_pct = float(bot["tp_pct"]) / 100.0
     stop = float(bot.get("stop_scaling_price", 0.0))
+    base_price = float(bot.get("base_price_usdt", 0.0)) or mark_price
+
+    running = bool(open_fills)
+    if running:
+        # Last fill = trigger reference; weighted avg = TP reference
+        last_price = float(open_fills[-1]["fill_price"])
+        total_size = sum(float(f["fill_size_usdt"]) for f in open_fills)
+        weighted_avg = (
+            sum(
+                float(f["fill_price"]) * float(f["fill_size_usdt"])
+                for f in open_fills
+            )
+            / total_size
+            if total_size > 0
+            else last_price
+        )
+        trigger_ref = last_price
+        tp_ref = weighted_avg
+    else:
+        trigger_ref = base_price
+        tp_ref = base_price
+        weighted_avg = 0.0
 
     if direction == "long":
-        next_trigger = base_price * (1.0 - step_pct)
-        tp_price = base_price * (1.0 + tp_pct)
+        next_trigger = trigger_ref * (1.0 - step_pct)
+        tp_price = tp_ref * (1.0 + tp_pct)
         distance_to_trigger_pct = (
             (mark_price - next_trigger) / mark_price * 100.0
             if mark_price > 0
@@ -590,8 +622,8 @@ def compute_preview(
         would_fire_next = mark_price <= next_trigger
         scaling_halted = stop > 0 and mark_price <= stop
     else:  # short
-        next_trigger = base_price * (1.0 + step_pct)
-        tp_price = base_price * (1.0 - tp_pct)
+        next_trigger = trigger_ref * (1.0 + step_pct)
+        tp_price = tp_ref * (1.0 - tp_pct)
         distance_to_trigger_pct = (
             (next_trigger - mark_price) / mark_price * 100.0
             if mark_price > 0
@@ -608,6 +640,9 @@ def compute_preview(
     return {
         "mark_price": mark_price,
         "base_price": base_price,
+        "running": running,
+        "weighted_avg_entry": weighted_avg,
+        "open_fills_count": len(open_fills) if open_fills else 0,
         "next_trigger_price": next_trigger,
         "tp_price": tp_price,
         "distance_to_trigger_pct": distance_to_trigger_pct,
