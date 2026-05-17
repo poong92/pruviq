@@ -34,6 +34,8 @@ interface DcaBot {
   is_active: number;
   created_at: number;
   updated_at: number;
+  last_fill_at?: number;
+  hours_since_last_fill?: number;
 }
 
 interface DcaDraft {
@@ -104,6 +106,19 @@ const i18n = {
     pauseAllConfirm: "Pause %d active bot(s)? Existing fills stay open.",
     pauseAllResult: "Paused %d bot(s).",
     pauseAllErr: "Failed to pause all bots",
+    pvNextTrigger: "Next trigger",
+    pvTp: "TP",
+    pvAway: "away",
+    pvWouldFire: "Would fire now",
+    pvHalted: "Scaling halted",
+    pvMark: "Mark",
+    pvOpenFills: "open fill(s)",
+    staleWarn: "No fills in %dh — config check?",
+    staleHint:
+      "Active but quiet. Common causes: price_step_pct too tight (market hasn't moved %), or symbol has low volatility today.",
+    activateConfirmTitle: "Activate %s?",
+    activateConfirmBody:
+      "Paper-mode (simulated fills). If all safety orders fire, total notional could reach %s USDT.\n\n• %s · ×%s leverage · step %s%%\n• Max %s safety orders · TP %s%%\n\nThe loop starts ticking within ~60s and writes a base fill at the mark price.",
     none: "No DCA bots yet — define one below and run a backtest first.",
     active: "ACTIVE",
     activate: "Activate",
@@ -159,6 +174,19 @@ const i18n = {
     pauseAllConfirm: "활성 봇 %d개를 모두 중단할까요? 기존 체결은 유지됩니다.",
     pauseAllResult: "봇 %d개를 중단했습니다.",
     pauseAllErr: "일괄 중단 실패",
+    pvNextTrigger: "다음 트리거",
+    pvTp: "익절",
+    pvAway: "남음",
+    pvWouldFire: "지금 발사 조건",
+    pvHalted: "추가 매수 중단됨",
+    pvMark: "현재가",
+    pvOpenFills: "열린 체결",
+    staleWarn: "%d시간 체결 없음 — 설정 점검?",
+    staleHint:
+      "활성 상태인데 조용합니다. 흔한 원인: price_step_pct가 너무 좁음 (시장이 % 만큼 움직이지 않음), 또는 오늘 종목 변동성 낮음.",
+    activateConfirmTitle: "%s 활성화?",
+    activateConfirmBody:
+      "Paper-mode (모의 체결). 모든 안전 매수가 발사되면 총 노출이 %s USDT까지 도달할 수 있습니다.\n\n• %s · 레버리지 ×%s · step %s%%\n• 최대 안전 매수 %s회 · TP %s%%\n\n약 60초 안에 루프가 마크 가격으로 기준 체결을 기록합니다.",
     none: "DCA 봇이 없습니다 — 아래에서 정의 후 먼저 백테스트를 돌려보세요.",
     active: "활성",
     activate: "활성화",
@@ -221,6 +249,25 @@ export default function DCABots({ lang = "en" }: Props) {
     bots_last_tick: number;
   } | null>(null);
 
+  // Cross-bot previews — map bot_id → {next_trigger, tp, distances}.
+  // Populated only for active bots; null for inactive.
+  const [previews, setPreviews] = useState<
+    Record<
+      string,
+      {
+        mark_price: number;
+        next_trigger_price: number;
+        tp_price: number;
+        distance_to_trigger_pct: number;
+        distance_to_tp_pct: number;
+        would_fire_next_safety: boolean;
+        scaling_halted: boolean;
+        running: boolean;
+        open_fills_count: number;
+      }
+    >
+  >({});
+
   const reload = useCallback(async () => {
     try {
       const res = await fetch(`${API_BASE_URL}/dca-bots`, {
@@ -272,6 +319,42 @@ export default function DCABots({ lang = "en" }: Props) {
     const id = setInterval(() => void fetchHealth(), 30_000);
     return () => clearInterval(id);
   }, []);
+
+  // Cross-bot previews — only fetch if there's ≥1 active bot to avoid
+  // pointless ticker calls. Re-runs when bots list changes so flipping
+  // a bot active immediately starts populating its row.
+  const hasActive = bots.some((b) => b.is_active);
+  useEffect(() => {
+    if (!hasActive) {
+      setPreviews({});
+      return;
+    }
+    const fetchPreviews = async () => {
+      try {
+        const res = await fetch(`${API_BASE_URL}/dca-bots/previews`, {
+          credentials: "include",
+          signal: AbortSignal.timeout(10_000),
+        });
+        if (!res.ok) return;
+        const data = (await res.json()) as {
+          previews: { bot_id: string; preview?: Record<string, unknown> }[];
+        };
+        const map: Record<string, never> = {};
+        for (const p of data.previews ?? []) {
+          if (p.preview) {
+            (map as Record<string, unknown>)[p.bot_id] = p.preview;
+          }
+        }
+        setPreviews(map as unknown as typeof previews);
+      } catch {
+        // silent — preview is best-effort
+      }
+    };
+    void fetchPreviews();
+    const id = setInterval(() => void fetchPreviews(), 30_000);
+    return () => clearInterval(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hasActive, bots.length]);
 
   async function handleSimulate() {
     setSimulating(true);
@@ -329,6 +412,27 @@ export default function DCABots({ lang = "en" }: Props) {
   }
 
   async function handleActivate(id: string) {
+    const bot = bots.find((b) => b.id === id);
+    if (bot) {
+      // Mirrors backend validate_dca_params cumulative calc so the
+      // confirm dialog shows the same exposure the API would compute.
+      const base = Number(bot.position_size_usdt) || 0;
+      const m = Number(bot.size_multiplier) || 1;
+      const n = Number(bot.max_safety_orders) || 0;
+      const cumulative =
+        Math.abs(m - 1) < 1e-9
+          ? base * (n + 1)
+          : (base * (Math.pow(m, n + 1) - 1)) / (m - 1);
+      const title = t.activateConfirmTitle.replace("%s", bot.name);
+      const body = t.activateConfirmBody
+        .replace("%s", cumulative.toFixed(0))
+        .replace("%s", bot.symbol)
+        .replace("%s", String(bot.leverage))
+        .replace("%s", String(bot.price_step_pct))
+        .replace("%s", String(bot.max_safety_orders))
+        .replace("%s", String(bot.tp_pct));
+      if (!window.confirm(`${title}\n\n${body}`)) return;
+    }
     await fetch(`${API_BASE_URL}/dca-bots/${id}/activate`, {
       method: "POST",
       credentials: "include",
@@ -446,50 +550,125 @@ export default function DCABots({ lang = "en" }: Props) {
                 b.direction === "long"
                   ? "text-(--color-up)"
                   : "text-(--color-down)";
+              const pv = previews[b.id];
+              const fmtP = (n: number) =>
+                n >= 1000
+                  ? n.toLocaleString(undefined, { maximumFractionDigits: 2 })
+                  : n >= 1
+                    ? n.toLocaleString(undefined, { maximumFractionDigits: 4 })
+                    : n.toLocaleString(undefined, { maximumFractionDigits: 8 });
               return (
                 <li
                   key={b.id}
-                  class="flex items-center justify-between p-3 rounded-lg border border-(--color-border) bg-(--color-bg)/40"
+                  class="p-3 rounded-lg border border-(--color-border) bg-(--color-bg)/40"
                 >
-                  <div class="min-w-0">
-                    <p class="font-bold text-sm truncate">{b.name}</p>
-                    <p class="text-xs font-mono text-(--color-text-muted)">
-                      <span class={dirColor}>{b.direction.toUpperCase()}</span>{" "}
-                      · {b.symbol} · ×{b.leverage} · step {b.price_step_pct}% ·
-                      TP {b.tp_pct}%
-                    </p>
-                  </div>
-                  <div class="flex items-center gap-2 shrink-0">
-                    {b.is_active ? (
-                      <>
-                        <span class="text-xs font-mono font-bold text-(--color-up)">
-                          ● {t.active}
-                        </span>
+                  <div class="flex items-center justify-between gap-2 flex-wrap">
+                    <div class="min-w-0">
+                      <p class="font-bold text-sm truncate">{b.name}</p>
+                      <p class="text-xs font-mono text-(--color-text-muted)">
+                        <span class={dirColor}>
+                          {b.direction.toUpperCase()}
+                        </span>{" "}
+                        · {b.symbol} · ×{b.leverage} · step {b.price_step_pct}%
+                        · TP {b.tp_pct}%
+                      </p>
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0">
+                      {b.is_active &&
+                        typeof b.hours_since_last_fill === "number" &&
+                        b.hours_since_last_fill > 24 && (
+                          <span
+                            class="text-xs font-mono font-bold px-2 py-0.5 rounded-full bg-(--color-warning)/10 border border-(--color-warning)/30 text-(--color-warning)"
+                            title={t.staleHint}
+                            role="status"
+                          >
+                            ⚠{" "}
+                            {t.staleWarn.replace(
+                              "%d",
+                              String(Math.floor(b.hours_since_last_fill)),
+                            )}
+                          </span>
+                        )}
+                      {b.is_active ? (
+                        <>
+                          <span class="text-xs font-mono font-bold text-(--color-up)">
+                            ● {t.active}
+                          </span>
+                          <button
+                            type="button"
+                            class="text-xs text-(--color-text-muted) hover:text-(--color-down) underline min-h-[44px] px-2"
+                            onClick={() => handleDeactivate(b.id)}
+                          >
+                            {t.deactivate}
+                          </button>
+                        </>
+                      ) : (
                         <button
                           type="button"
-                          class="text-xs text-(--color-text-muted) hover:text-(--color-down) underline min-h-[44px] px-2"
-                          onClick={() => handleDeactivate(b.id)}
+                          class="btn btn-ghost btn-sm min-h-[44px]"
+                          onClick={() => handleActivate(b.id)}
                         >
-                          {t.deactivate}
+                          {t.activate}
                         </button>
-                      </>
-                    ) : (
+                      )}
                       <button
                         type="button"
-                        class="btn btn-ghost btn-sm min-h-[44px]"
-                        onClick={() => handleActivate(b.id)}
+                        class="text-xs text-(--color-down) hover:underline min-h-[44px] px-2"
+                        onClick={() => handleDelete(b.id)}
                       >
-                        {t.activate}
+                        {t.deleteBtn}
                       </button>
-                    )}
-                    <button
-                      type="button"
-                      class="text-xs text-(--color-down) hover:underline min-h-[44px] px-2"
-                      onClick={() => handleDelete(b.id)}
-                    >
-                      {t.deleteBtn}
-                    </button>
+                    </div>
                   </div>
+                  {b.is_active && pv && (
+                    <div class="mt-2 pt-2 border-t border-(--color-border)/40 grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs font-mono">
+                      <div>
+                        <span class="text-(--color-text-muted)">
+                          {t.pvNextTrigger}:{" "}
+                        </span>
+                        <span class="font-bold">
+                          ${fmtP(pv.next_trigger_price)}
+                        </span>
+                        <span class="text-(--color-text-muted)">
+                          {" "}
+                          ({pv.distance_to_trigger_pct.toFixed(2)}% {t.pvAway})
+                        </span>
+                      </div>
+                      <div>
+                        <span class="text-(--color-text-muted)">
+                          {t.pvTp}:{" "}
+                        </span>
+                        <span class="font-bold text-(--color-up)">
+                          ${fmtP(pv.tp_price)}
+                        </span>
+                        <span class="text-(--color-text-muted)">
+                          {" "}
+                          ({pv.distance_to_tp_pct.toFixed(2)}% {t.pvAway})
+                        </span>
+                      </div>
+                      <div>
+                        <span class="text-(--color-text-muted)">
+                          {t.pvMark}:{" "}
+                        </span>
+                        <span class="font-bold">${fmtP(pv.mark_price)}</span>
+                      </div>
+                      <div>
+                        <span class="text-(--color-text-muted)">
+                          {pv.open_fills_count} {t.pvOpenFills}
+                        </span>
+                        {pv.would_fire_next_safety && (
+                          <span class="ml-2 text-(--color-warning) font-bold">
+                            ⚡ {t.pvWouldFire}
+                          </span>
+                        )}
+                        {pv.scaling_halted && (
+                          <span class="ml-2 text-(--color-down) font-bold">
+                            ⛔ {t.pvHalted}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </li>
               );
             })}
