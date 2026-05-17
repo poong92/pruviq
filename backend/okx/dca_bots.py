@@ -268,6 +268,44 @@ def list_dca_bots(session_id: str) -> list[dict[str, Any]]:
     return [_row_to_dca(r) for r in rows]
 
 
+def recent_dca_fills(session_id: str, limit: int = 20) -> list[dict[str, Any]]:
+    """Cross-bot fills feed for the dashboard. Joins dca_fills × dca_bots
+    so each row carries enough context (bot name, symbol, direction) to
+    render without a second query per row."""
+    _ensure_tables()
+    with _get_conn() as conn:
+        rows = conn.execute(
+            """
+            SELECT f.id, f.bot_id, f.order_num, f.fill_price, f.fill_size_usdt,
+                   f.okx_order_id, f.filled_at, f.status,
+                   b.name AS bot_name, b.symbol, b.direction, b.paper_mode
+            FROM dca_fills f
+            JOIN dca_bots b ON b.id = f.bot_id
+            WHERE b.session_id = ?
+            ORDER BY f.filled_at DESC
+            LIMIT ?
+            """,
+            (session_id, max(1, min(limit, 100))),
+        ).fetchall()
+    return [
+        {
+            "id": r[0],
+            "bot_id": r[1],
+            "order_num": r[2],
+            "fill_price": r[3],
+            "fill_size_usdt": r[4],
+            "okx_order_id": r[5],
+            "filled_at": r[6],
+            "status": r[7],
+            "bot_name": r[8],
+            "symbol": r[9],
+            "direction": r[10],
+            "paper_mode": bool(r[11]) if r[11] is not None else True,
+        }
+        for r in rows
+    ]
+
+
 def update_dca_bot(
     bot_id: str, session_id: str, data: dict[str, Any]
 ) -> dict[str, Any]:
@@ -354,6 +392,31 @@ def activate_dca_bot(bot_id: str, session_id: str) -> dict[str, Any]:
     if activated is None:
         raise RuntimeError("dca bot vanished after activate")
     return activated
+
+
+def pause_all_dca_bots(session_id: str) -> dict[str, Any]:
+    """User-facing emergency stop — deactivates every active DCA bot
+    owned by this session in a single SQL UPDATE. Returns the number
+    of bots flipped. Existing fills are NOT auto-closed; the loop
+    simply stops adding new ones on the next tick.
+
+    Use case: paper-mode dog-foot review uncovers a bad config, owner
+    wants every bot paused at once instead of toggling each row.
+    """
+    _ensure_tables()
+    now = time.time()
+    with _get_conn() as conn:
+        cur = conn.execute(
+            "UPDATE dca_bots SET is_active = 0, updated_at = ? "
+            "WHERE session_id = ? AND is_active = 1",
+            (now, session_id),
+        )
+        paused = cur.rowcount
+    if paused:
+        logger.warning(
+            "DCA pause-all session=%s paused=%d", session_id[:8], paused
+        )
+    return {"paused": paused}
 
 
 def deactivate_dca_bot(bot_id: str, session_id: str) -> dict[str, Any]:
