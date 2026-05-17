@@ -12,6 +12,7 @@ import TradingSettings from '../../components/TradingSettings';
 import StrategyBuilder from '../../components/StrategyBuilder';
 import DCABots from '../../components/DCABots';
 import DCASummaryStrip from '../../components/DCASummaryStrip';
+import DCAParityCheck from '../../components/DCAParityCheck';
 import RecentDCAFills from '../../components/RecentDCAFills';
 import GridBots from '../../components/GridBots';
 import PendingSignalsApproval from '../../components/PendingSignalsApproval';
@@ -115,6 +116,11 @@ import { OKX_DISCOUNT_PCT } from '../../config/exchanges';
         <!-- 최근 체결 — 모든 DCA 봇 활동 한눈에 -->
         <section class="mb-8">
           <RecentDCAFills client:visible lang="ko" />
+        </section>
+
+        <!-- 패리티 검증 — backtest vs paper Day-7 합격 기준 -->
+        <section class="mb-8">
+          <DCAParityCheck client:visible lang="ko" />
         </section>
 
         <!-- Grid 봇 — 격자 매매 (세 번째 패러다임) -->
