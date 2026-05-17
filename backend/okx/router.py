@@ -789,6 +789,17 @@ async def dca_list(request: Request):
     return {"bots": list_dca_bots(session_id)}
 
 
+@router.get("/dca-bots/recent-fills")
+async def dca_recent_fills(request: Request, limit: int = Query(20, le=100)):
+    """Cross-bot recent fills feed for the dashboard. Owner-only —
+    session-scoped so a user can never see another session's fills."""
+    session_id = _get_session(request)
+    if not is_authenticated(session_id):
+        raise HTTPException(401, "Not connected to OKX.")
+    from .dca_bots import recent_dca_fills
+    return {"fills": recent_dca_fills(session_id, limit)}
+
+
 @router.get("/dca-bots/loop-health")
 async def dca_loop_health(request: Request):
     """Owner-facing dca_loop heartbeat. No auth required — read-only and
