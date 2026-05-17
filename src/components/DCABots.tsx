@@ -115,6 +115,15 @@ const i18n = {
     pvAvg: "Avg",
     pvUnrealized: "Unrealized",
     pvOpenFills: "open fill(s)",
+    historyShow: "▶ Fills history",
+    historyHide: "▼ Hide history",
+    historyEmpty: "No fills recorded for this bot yet.",
+    historyHeader: ["#", "When", "Kind", "Price", "Size", "Status"],
+    cumPreviewOk: "If all safeties fire, total notional: %s USDT",
+    cumPreviewWarn:
+      "If all safeties fire, total notional: %s USDT — approaching the 50,000 cap",
+    cumPreviewBlock:
+      "If all safeties fire, total notional: %s USDT — exceeds the 50,000 cap. Save will be rejected.",
     staleWarn: "No fills in %dh — config check?",
     staleHint:
       "Active but quiet. Common causes: price_step_pct too tight (market hasn't moved %), or symbol has low volatility today.",
@@ -189,6 +198,15 @@ const i18n = {
     pvAvg: "평단",
     pvUnrealized: "미실현",
     pvOpenFills: "열린 체결",
+    historyShow: "▶ 체결 히스토리",
+    historyHide: "▼ 히스토리 숨김",
+    historyEmpty: "이 봇의 체결 기록이 아직 없습니다.",
+    historyHeader: ["#", "시각", "종류", "가격", "크기", "상태"],
+    cumPreviewOk: "모든 안전 매수 발사 시 총 노출: %s USDT",
+    cumPreviewWarn:
+      "모든 안전 매수 발사 시 총 노출: %s USDT — 50,000 한도에 근접",
+    cumPreviewBlock:
+      "모든 안전 매수 발사 시 총 노출: %s USDT — 50,000 한도 초과. 저장이 거부됩니다.",
     staleWarn: "%d시간 체결 없음 — 설정 점검?",
     staleHint:
       "활성 상태인데 조용합니다. 흔한 원인: price_step_pct가 너무 좁음 (시장이 % 만큼 움직이지 않음), 또는 오늘 종목 변동성 낮음.",
@@ -264,6 +282,22 @@ export default function DCABots({ lang = "en" }: Props) {
     seconds_ago: number;
     bots_last_tick: number;
   } | null>(null);
+
+  // Bot history drawer — expanded set + fetched fills cache.
+  const [expandedBots, setExpandedBots] = useState<Set<string>>(new Set());
+  const [botFills, setBotFills] = useState<
+    Record<
+      string,
+      Array<{
+        id: number;
+        order_num: number;
+        fill_price: number;
+        fill_size_usdt: number;
+        filled_at: number;
+        status: string;
+      }>
+    >
+  >({});
 
   // Cross-bot previews — map bot_id → {next_trigger, tp, distances}.
   // Populated only for active bots; null for inactive.
@@ -529,6 +563,32 @@ export default function DCABots({ lang = "en" }: Props) {
     });
     await reload();
   }
+  async function toggleHistory(id: string) {
+    const next = new Set(expandedBots);
+    if (next.has(id)) {
+      next.delete(id);
+      setExpandedBots(next);
+      return;
+    }
+    next.add(id);
+    setExpandedBots(next);
+    // Lazy-fetch on first expansion only
+    if (!botFills[id]) {
+      try {
+        const res = await fetch(
+          `${API_BASE_URL}/dca-bots/${encodeURIComponent(id)}/fills`,
+          { credentials: "include", signal: AbortSignal.timeout(10_000) },
+        );
+        if (!res.ok) return;
+        const data = (await res.json()) as {
+          fills: (typeof botFills)[string];
+        };
+        setBotFills((m) => ({ ...m, [id]: data.fills ?? [] }));
+      } catch {
+        // silent — drawer just stays empty
+      }
+    }
+  }
 
   const totalFills = sim?.fills.length ?? 0;
   const netPnlColor = useMemo(() => {
@@ -776,6 +836,76 @@ export default function DCABots({ lang = "en" }: Props) {
                       </div>
                     </div>
                   )}
+
+                  <div class="mt-2 pt-2 border-t border-(--color-border)/40">
+                    <button
+                      type="button"
+                      class="text-xs text-(--color-text-muted) hover:text-(--color-accent) min-h-[44px] px-1"
+                      onClick={() => toggleHistory(b.id)}
+                      aria-expanded={expandedBots.has(b.id)}
+                    >
+                      {expandedBots.has(b.id) ? t.historyHide : t.historyShow}
+                    </button>
+                    {expandedBots.has(b.id) && (
+                      <div class="mt-2">
+                        {(botFills[b.id] ?? []).length === 0 ? (
+                          <p class="text-xs italic text-(--color-text-muted)">
+                            {t.historyEmpty}
+                          </p>
+                        ) : (
+                          <div class="overflow-x-auto">
+                            <table class="w-full text-xs font-mono">
+                              <thead>
+                                <tr class="border-b border-(--color-border) bg-(--color-bg)/30 text-left">
+                                  {t.historyHeader.map((h) => (
+                                    <th key={h} class="p-2 font-bold">
+                                      {h}
+                                    </th>
+                                  ))}
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {(botFills[b.id] ?? []).map((f) => {
+                                  const dt = new Date(
+                                    f.filled_at * 1000,
+                                  ).toLocaleString();
+                                  const kind =
+                                    f.status === "tp_closed"
+                                      ? "TP"
+                                      : f.order_num === 0
+                                        ? "BASE"
+                                        : `SAFETY ${f.order_num}`;
+                                  return (
+                                    <tr
+                                      key={f.id}
+                                      class="border-b border-(--color-border)/40"
+                                    >
+                                      <td class="p-2 text-(--color-text-muted)">
+                                        {f.order_num}
+                                      </td>
+                                      <td class="p-2 whitespace-nowrap">
+                                        {dt}
+                                      </td>
+                                      <td class="p-2">{kind}</td>
+                                      <td class="p-2 text-right">
+                                        ${fmtP(f.fill_price)}
+                                      </td>
+                                      <td class="p-2 text-right">
+                                        {f.fill_size_usdt.toFixed(2)}
+                                      </td>
+                                      <td class="p-2 text-(--color-text-muted)">
+                                        {f.status}
+                                      </td>
+                                    </tr>
+                                  );
+                                })}
+                              </tbody>
+                            </table>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </li>
               );
             })}
@@ -990,6 +1120,44 @@ export default function DCABots({ lang = "en" }: Props) {
             class="mt-1 w-full rounded-lg border border-(--color-border) bg-(--color-bg) px-3 py-2 text-sm"
           />
         </label>
+
+        {/* Live cumulative-exposure preview — mirrors backend
+            validate_dca_params formula so owners see the cap math before
+            hitting Save. */}
+        {(() => {
+          const base = Number(draft.position_size_usdt) || 0;
+          const m = Number(draft.size_multiplier) || 1;
+          const n = Number(draft.max_safety_orders) || 0;
+          if (base <= 0 || n < 0 || m <= 0) return null;
+          const cum =
+            Math.abs(m - 1) < 1e-9
+              ? base * (n + 1)
+              : (base * (Math.pow(m, n + 1) - 1)) / (m - 1);
+          const fmt = cum.toLocaleString(undefined, {
+            maximumFractionDigits: 0,
+          });
+          const over = cum > 50_000;
+          const warn = !over && cum > 40_000;
+          const text = over
+            ? t.cumPreviewBlock.replace("%s", fmt)
+            : warn
+              ? t.cumPreviewWarn.replace("%s", fmt)
+              : t.cumPreviewOk.replace("%s", fmt);
+          const cls = over
+            ? "bg-(--color-down)/10 border-(--color-down)/40 text-(--color-down)"
+            : warn
+              ? "bg-(--color-warning)/10 border-(--color-warning)/40 text-(--color-warning)"
+              : "bg-(--color-bg-elevated) border-(--color-border) text-(--color-text-secondary)";
+          return (
+            <div
+              class={`text-xs font-mono p-2.5 rounded-lg border ${cls}`}
+              role={over ? "alert" : "status"}
+              aria-live={over ? "assertive" : "polite"}
+            >
+              {text}
+            </div>
+          );
+        })()}
 
         {/* Action buttons */}
         <div class="flex gap-3 pt-2">
