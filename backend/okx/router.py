@@ -1137,6 +1137,178 @@ async def dca_preview(bot_id: str, request: Request):
     }
 
 
+@router.get("/dca-bots/{bot_id}/parity")
+async def dca_parity(bot_id: str, request: Request):
+    """Day-7 parity check: how closely does this bot's paper-mode fills
+    match what its own backtest would predict for the same window?
+
+    Window: bot.created_at → now (or → last fill if more recent). For
+    bots active < 2h we return early since the window has too few
+    candles for a stable comparison.
+
+    Returns side-by-side counts + a `pass` flag per the dog-foot
+    manual's acceptance criteria:
+      - fills count: diff ≤ 10%
+      - avg entry: diff ≤ 1%
+      - TP cycles: diff ≤ 1 absolute
+
+    Auth-gated, session-scoped. Rate-limit shared with /simulate
+    since both walk the full candle window.
+    """
+    session_id = _get_session(request)
+    if not is_authenticated(session_id):
+        raise HTTPException(401, "Not connected to OKX.")
+    now_ts = time.time()
+    last_sim = _simulate_rate_limit.get(session_id, 0)
+    if now_ts - last_sim < SIMULATE_RATE_LIMIT_SECONDS:
+        wait = int(SIMULATE_RATE_LIMIT_SECONDS - (now_ts - last_sim))
+        raise HTTPException(429, f"parity rate limit: wait {wait}s")
+    _simulate_rate_limit[session_id] = now_ts
+
+    from .dca_bots import get_dca_bot, list_dca_fills, DEFAULT_DCA
+    bot = get_dca_bot(bot_id, session_id)
+    if bot is None:
+        raise HTTPException(404, "dca bot not found")
+
+    fills = list_dca_fills(bot_id, session_id)
+    if not fills:
+        return {
+            "bot_id": bot_id,
+            "skipped": "no_paper_fills_yet",
+            "hint": "wait for the loop to write at least a base fill",
+        }
+
+    # Window: bot creation → now
+    created_at = float(bot.get("created_at", now_ts))
+    if now_ts - created_at < 2 * 3600:
+        return {
+            "bot_id": bot_id,
+            "skipped": "window_too_short",
+            "hours_elapsed": (now_ts - created_at) / 3600.0,
+            "hint": "parity needs ≥ 2h of activity for stable comparison",
+        }
+
+    # Resolve symbol to DataManager naming (strip -SWAP / -USDT suffix)
+    raw = str(bot["symbol"]).upper()
+    if raw.endswith("-USDT-SWAP"):
+        dm_symbol = raw.replace("-USDT-SWAP", "USDT")
+    elif raw.endswith("-USDT"):
+        dm_symbol = raw.replace("-USDT", "USDT")
+    else:
+        dm_symbol = raw
+
+    from api.data_manager import DataManager
+    dm = DataManager()
+    df = dm.get_df(dm_symbol)
+    if df is None or len(df) == 0:
+        raise HTTPException(404, f"no candles for symbol={dm_symbol}")
+
+    # Slice window: bot activation → now (use ISO8601 from timestamps)
+    from datetime import datetime, timezone
+    start_iso = datetime.fromtimestamp(created_at, tz=timezone.utc).isoformat()
+    sliced = df[df["timestamp"] >= start_iso]
+    if len(sliced) < 2:
+        return {
+            "bot_id": bot_id,
+            "skipped": "candles_not_yet_indexed",
+            "hint": "data pipeline hasn't ingested candles for this window yet",
+        }
+
+    # Run backtest with bot's exact params — loop over multiple cycles
+    # simulate_dca models a single DCA cycle (breaks on first TP). To get
+    # an apples-to-apples comparison with paper mode (which accumulates N
+    # cycles over the window), we restart the simulation after each TP.
+    merged = {**DEFAULT_DCA, **{k: bot[k] for k in DEFAULT_DCA if k in bot}}
+    from .dca_backtest import simulate_dca
+
+    bt_tp_closed = 0
+    bt_fills_count = 0
+    bt_avg_entries: list[tuple[float, float]] = []  # (avg_price, total_size)
+    remaining = sliced.reset_index(drop=True)
+
+    while len(remaining) >= 2:
+        sim = simulate_dca(merged, remaining)
+        sim_dict = sim.to_dict()
+        bt_fills_count += len(sim_dict.get("fills", []))
+        avg_p = float(sim_dict.get("avg_entry_price") or 0.0)
+        total_s = float(sim_dict.get("total_size_usdt") or 0.0)
+        if avg_p > 0:
+            bt_avg_entries.append((avg_p, total_s))
+
+        if sim_dict.get("exit_reason") != "tp":
+            break
+        bt_tp_closed += 1
+
+        # Advance past the TP candle and restart
+        exit_iso = sim_dict.get("exit_time_iso", "")
+        if not exit_iso:
+            break
+        remaining = remaining[remaining["timestamp"] > exit_iso].reset_index(drop=True)
+
+    # Weighted average entry across all cycles
+    bt_avg = 0.0
+    total_bt_size = sum(s for _, s in bt_avg_entries)
+    if total_bt_size > 0:
+        bt_avg = sum(p * s for p, s in bt_avg_entries) / total_bt_size
+
+    # Paper side
+    paper_total_size = sum(f["fill_size_usdt"] for f in fills)
+    paper_avg = (
+        sum(f["fill_price"] * f["fill_size_usdt"] for f in fills)
+        / paper_total_size
+        if paper_total_size > 0
+        else 0.0
+    )
+    paper_tp_closed = sum(1 for f in fills if f["status"] == "tp_closed")
+    paper_fills_count = len(fills)
+
+    # Deltas per dog-foot manual
+    def _pct_diff(a: float, b: float) -> float:
+        if a == 0 and b == 0:
+            return 0.0
+        denom = max(abs(a), abs(b), 1e-9)
+        return abs(a - b) / denom * 100.0
+
+    fills_diff_pct = _pct_diff(paper_fills_count, bt_fills_count)
+    avg_diff_pct = _pct_diff(paper_avg, bt_avg)
+    tp_abs_diff = abs(paper_tp_closed - bt_tp_closed)
+
+    pass_fills = fills_diff_pct <= 10.0
+    pass_avg = avg_diff_pct <= 1.0
+    pass_tp = tp_abs_diff <= 1
+    overall_pass = pass_fills and pass_avg and pass_tp
+
+    return {
+        "bot_id": bot_id,
+        "window": {
+            "start_iso": start_iso,
+            "hours_elapsed": (now_ts - created_at) / 3600.0,
+            "candle_count": int(len(sliced)),
+        },
+        "paper": {
+            "fills_count": paper_fills_count,
+            "avg_entry_price": paper_avg,
+            "tp_cycles": paper_tp_closed,
+        },
+        "backtest": {
+            "fills_count": bt_fills_count,
+            "avg_entry_price": bt_avg,
+            "tp_cycles": bt_tp_closed,
+        },
+        "deltas": {
+            "fills_diff_pct": fills_diff_pct,
+            "avg_diff_pct": avg_diff_pct,
+            "tp_abs_diff": tp_abs_diff,
+        },
+        "pass": {
+            "fills": pass_fills,
+            "avg_entry": pass_avg,
+            "tp_cycles": pass_tp,
+            "overall": overall_pass,
+        },
+    }
+
+
 @router.post("/dca-bots/simulate")
 async def dca_simulate(request: Request):
     """Backtest DCA params on historical OHLCV. No DB writes, no orders.
