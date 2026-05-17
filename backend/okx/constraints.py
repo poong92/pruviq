@@ -158,16 +158,22 @@ def calculate(params: dict, context: dict) -> dict[str, Any]:
 
 # ── Constraint validation ──────────────────────────────────────────────
 
-def validate(params: dict, context: dict) -> ConstraintResult:
+def validate(params: dict, context: dict, lang: str = "en") -> ConstraintResult:
     """
     Full validation: hard errors + soft warnings + disabled fields + calculator.
 
     Hard errors   → execution is impossible (UI blocks submit)
     Warnings      → suboptimal but allowed (UI shows yellow)
+
+    `lang` selects the language for human-readable warning copy. Caller
+    passes "ko" for /ko/* pages, "en" otherwise. Defaults to "en" so an
+    upstream caller forgetting the param gets a sensible global default
+    (not silently leaking Korean to English users).
     """
     errors: list[str] = []
     warnings: list[str] = []
     disabled = get_disabled_fields(params)
+    ko = (lang or "en").lower().startswith("ko")
 
     available_margin = float(context.get("available_margin", 0))
     symbol_min_order = float(context.get("symbol_min_order", 5))  # USDT
@@ -239,15 +245,25 @@ def validate(params: dict, context: dict) -> ConstraintResult:
     if rr < 1.0 and not errors:
         warnings.append(
             f"손익비 {rr:.2f} — 100번 이기고 100번 지면 손해. 1.0 이상 권장"
+            if ko else
+            f"R:R {rr:.2f} — 100 wins / 100 losses = net loss. Recommended ≥ 1.0"
         )
 
     # High leverage
     if leverage >= 10:
-        warnings.append(f"레버리지 {leverage:.0f}x — 청산 위험. 10x 이하 권장")
+        warnings.append(
+            f"레버리지 {leverage:.0f}x — 청산 위험. 10x 이하 권장"
+            if ko else
+            f"Leverage {leverage:.0f}x — liquidation risk. Recommended ≤ 10x"
+        )
 
     # SL too tight (noise zone)
     if sl_pct < 0.5:
-        warnings.append(f"손절 {sl_pct}% — 시장 노이즈에 오작동 가능. 0.5% 이상 권장")
+        warnings.append(
+            f"손절 {sl_pct}% — 시장 노이즈에 오작동 가능. 0.5% 이상 권장"
+            if ko else
+            f"Stop-loss {sl_pct}% — vulnerable to market noise. Recommended ≥ 0.5%"
+        )
 
     # Large position relative to balance
     if available_margin > 0:
@@ -255,6 +271,8 @@ def validate(params: dict, context: dict) -> ConstraintResult:
         if pct_of_balance > 30:
             warnings.append(
                 f"계좌의 {pct_of_balance:.1f}% 사용 — 30% 이하 권장"
+                if ko else
+                f"Using {pct_of_balance:.1f}% of account — recommended ≤ 30%"
             )
 
     # Win rate needed to break even
@@ -263,6 +281,8 @@ def validate(params: dict, context: dict) -> ConstraintResult:
         if breakeven_wr > 50:
             warnings.append(
                 f"이 손익비에서 손익분기 승률: {breakeven_wr}% 이상 필요"
+                if ko else
+                f"At this R:R, need ≥ {breakeven_wr}% win rate to break even"
             )
 
     return ConstraintResult(

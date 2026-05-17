@@ -257,7 +257,7 @@ export default function StrategyBuilder({ lang = "en" }: Props) {
             method: "POST",
             credentials: "include",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ params: draft, context: {} }),
+            body: JSON.stringify({ params: draft, context: {}, lang }),
             signal: AbortSignal.timeout(8_000),
           });
           if (res.ok) setValidation((await res.json()) as ValidateResponse);
