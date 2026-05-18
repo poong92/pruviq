@@ -134,7 +134,8 @@
       langDropdown &&
       !langDropdown.classList.contains("hidden") &&
       !langDropdown.contains(e.target) &&
-      e.target !== langBtn
+      e.target !== langBtn &&
+      !langBtn?.contains(e.target)
     ) {
       closeLang();
     }
