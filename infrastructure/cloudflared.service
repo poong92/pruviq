@@ -1,0 +1,31 @@
+[Unit]
+Description=Cloudflare Tunnel — api.pruviq.com → DO :8080
+Documentation=https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=pruviq
+Group=pruviq
+ExecStart=/usr/local/bin/cloudflared tunnel --config /etc/cloudflared/config.yml run
+Restart=always
+RestartSec=10
+# Resource limits — cloudflared has been observed using <100MB on this host.
+# Pin a reasonable ceiling so a goroutine leak can't OOM the box.
+LimitNOFILE=65536
+MemoryMax=512M
+
+# Logging — journalctl -u cloudflared is the canonical place.
+StandardOutput=journal
+StandardError=journal
+
+# Hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/log/cloudflared /etc/cloudflared
+
+[Install]
+WantedBy=multi-user.target

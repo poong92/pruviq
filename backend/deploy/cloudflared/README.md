@@ -10,6 +10,7 @@ on the box until someone audited it.
 | File | Purpose |
 |------|---------|
 | `config.yml` | Ingress rules. Deploy to `/etc/cloudflared/config.yml` on DO. |
+| `pruviq-cloudflared.service` | systemd unit. Deploy to `/etc/systemd/system/pruviq-cloudflared.service` on DO. |
 
 ## What it routes
 
@@ -85,7 +86,5 @@ curl -sf http://127.0.0.1:8081/health
 
 - `/etc/cloudflared/a3a723e9-*.json` — tunnel credentials (secrets). Rotated via
   `cloudflared tunnel create` on DO; not pushed to version control.
-- `pruviq-cloudflared.service` — the systemd unit lives at
-  `/etc/systemd/system/pruviq-cloudflared.service` on DO. If we ever move
-  it to the repo (similar to how `pruviq-api.service` lives under
-  `backend/deploy/systemd/`), reference it from here.
+- `pruviq-cloudflared.service` — now version-controlled in this directory.
+  Deploy to `/etc/systemd/system/pruviq-cloudflared.service` on DO.
