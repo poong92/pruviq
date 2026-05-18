@@ -575,14 +575,24 @@ for (let i = 0; i < breadcrumbSegments.length; i++) {
                 <path d="M6 9l6 6 6-6"/>
               </svg>
             </button>
-            <div id="lang-dropdown" class="hidden absolute right-0 mt-1 w-32 rounded-lg border border-(--color-border-hover) bg-(--color-bg-card) shadow-xl overflow-hidden z-50" role="menu" aria-labelledby="lang-btn">
+            <div id="lang-dropdown" class="hidden absolute right-0 mt-1 w-40 rounded-lg border border-(--color-border-hover) bg-(--color-bg-card) shadow-xl overflow-hidden z-50" role="menu" aria-labelledby="lang-btn">
               <a href={enURL.pathname} hreflang="en" role="menuitem"
-                 class:list={["block px-3 py-2 text-sm hover:bg-(--color-bg-hover) transition-colors", lang === 'en' ? 'bg-(--color-accent)/10 text-(--color-accent) font-semibold' : 'text-(--color-text)']}>
-                English
+                 class:list={["flex items-center justify-between px-4 py-3 text-sm hover:bg-(--color-bg-hover) transition-colors", lang === 'en' ? 'text-(--color-accent) font-semibold' : 'text-(--color-text-muted)']}>
+                <span>English</span>
+                {lang === 'en' && (
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M20 6L9 17l-5-5"/>
+                  </svg>
+                )}
               </a>
               <a href={koURL.pathname} hreflang="ko" role="menuitem"
-                 class:list={["block px-3 py-2 text-sm hover:bg-(--color-bg-hover) transition-colors", lang === 'ko' ? 'bg-(--color-accent)/10 text-(--color-accent) font-semibold' : 'text-(--color-text)']}>
-                한국어
+                 class:list={["flex items-center justify-between px-4 py-3 text-sm hover:bg-(--color-bg-hover) transition-colors", lang === 'ko' ? 'text-(--color-accent) font-semibold' : 'text-(--color-text-muted)']}>
+                <span>한국어</span>
+                {lang === 'ko' && (
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M20 6L9 17l-5-5"/>
+                  </svg>
+                )}
               </a>
             </div>
           </div>
