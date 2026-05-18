@@ -160,29 +160,41 @@ def simulate_dca(
     exit_time_iso = str(candles.iloc[-1]["timestamp"])
 
     # 2) Walk subsequent candles
+    #
+    # B4 audit (wick parity fix): trigger/TP/stop-scaling decisions use the
+    # candle CLOSE, not low/high. The live paper-loop polls a single
+    # mark-price every 60s and cannot see an intra-candle wick, so a
+    # simulator that fires on wick reports more fills/sooner-TPs than paper
+    # ever observes — breaking the dog-foot parity gate (Day 7 PASS hinges
+    # on this). Real OKX limit orders also won't reliably fill on a 1-tick
+    # wick, so close is also the safer real-mode anchor. Drawdown still
+    # tracks the candle low/high since that's an MTM observation, not an
+    # order-execution signal.
     for i in range(1, len(candles)):
         c = candles.iloc[i]
         low = float(c["low"])
         high = float(c["high"])
+        close = float(c["close"])
 
         # Stop-scaling guard (operator-set floor — never add below this).
         # For shorts the analogue is "ceiling"; treat stop_scaling_price as
         # a "halt further safety orders" signal regardless of direction.
         scaling_halted = False
         if stop_scaling_price > 0:
-            if direction == "long" and low <= stop_scaling_price:
+            if direction == "long" and close <= stop_scaling_price:
                 scaling_halted = True
-            elif direction == "short" and high >= stop_scaling_price:
+            elif direction == "short" and close >= stop_scaling_price:
                 scaling_halted = True
 
-        # Trigger safety orders while the candle range crosses the next
-        # trigger and we still have capacity.
+        # Trigger safety orders while the candle close crosses the next
+        # trigger and we still have capacity. Paper-loop polls mark every
+        # 60s — close is the nearest in-spirit proxy.
         while (
             len(result.fills) - 1 < max_safety  # safety count
             and not scaling_halted
             and (
-                (direction == "long" and low <= next_trigger)
-                or (direction == "short" and high >= next_trigger)
+                (direction == "long" and close <= next_trigger)
+                or (direction == "short" and close >= next_trigger)
             )
         ):
             fill = SimFill(
@@ -201,7 +213,8 @@ def simulate_dca(
                 next_trigger = next_trigger * (1.0 + price_step_pct)
             next_size = next_size * size_multiplier
 
-        # Update worst drawdown
+        # Update worst drawdown — keep low/high here, this is a MTM
+        # observation independent of order-trigger semantics.
         avg = _weighted_avg(result.fills)
         if direction == "long" and avg > 0:
             mtm_pct = (low - avg) / avg * 100.0  # negative when underwater
@@ -212,7 +225,7 @@ def simulate_dca(
             if mtm_pct < worst_unrealized_pct:
                 worst_unrealized_pct = mtm_pct
 
-        # TP check: candle high (or low for short) reaches TP price?
+        # TP check: candle CLOSE reaches TP price (was high/low — wick).
         if avg > 0:
             tp_price = (
                 avg * (1.0 + tp_pct)
@@ -220,8 +233,8 @@ def simulate_dca(
                 else avg * (1.0 - tp_pct)
             )
             tp_hit = (
-                (direction == "long" and high >= tp_price)
-                or (direction == "short" and low <= tp_price)
+                (direction == "long" and close >= tp_price)
+                or (direction == "short" and close <= tp_price)
             )
             if tp_hit:
                 exit_reason = "tp"
