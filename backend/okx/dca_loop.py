@@ -128,6 +128,34 @@ def _close_all_open_fills(bot_id: str, reason: str = "tp_closed") -> int:
         return cur.rowcount
 
 
+# Per-bot consecutive ticker-fetch failure counts. Reset on first success.
+# After _TICKER_MAX_FAILS we auto-deactivate so a botched symbol or extended
+# OKX outage doesn't silently keep the loop "ticking" with mark=0 forever.
+_TICKER_FAIL_COUNTS: dict[str, int] = {}
+_TICKER_MAX_FAILS = 5  # 5 × 60s = 5 min outage tolerance
+
+
+def _is_bot_still_active(bot_id: str) -> bool:
+    """Re-read is_active right before any side-effects. Closes the pause-vs-
+    tick window between _list_active_bots and _tick_bot (M1 from audit)."""
+    with _get_conn() as conn:
+        row = conn.execute(
+            "SELECT is_active FROM dca_bots WHERE id = ?", (bot_id,)
+        ).fetchone()
+    return bool(row) and row[0] == 1
+
+
+def _deactivate_bot(bot_id: str, reason: str) -> None:
+    with _get_conn() as conn:
+        conn.execute(
+            "UPDATE dca_bots SET is_active = 0, updated_at = ? WHERE id = ?",
+            (time.time(), bot_id),
+        )
+    logger.warning(
+        "dca bot auto-deactivated bot=%s reason=%s", bot_id[:8], reason
+    )
+
+
 def _weighted_avg(fills: list[dict[str, Any]]) -> float:
     total = sum(f["fill_size_usdt"] for f in fills)
     if total <= 0:
@@ -145,9 +173,30 @@ async def _tick_bot(bot: dict[str, Any]) -> None:
         )
         return
 
+    # M1: pause-vs-tick race. _list_active_bots ran ≥1 SELECT ago; user may
+    # have hit pause-all in between. Re-check before any DB mutation.
+    if not _is_bot_still_active(bot_id):
+        logger.info(
+            "dca tick skip bot=%s — deactivated between list and tick",
+            bot_id[:8],
+        )
+        _TICKER_FAIL_COUNTS.pop(bot_id, None)
+        return
+
     mark = await _fetch_mark_price(bot["symbol"])
     if mark <= 0:
+        # M2: count consecutive failures, deactivate after _TICKER_MAX_FAILS
+        # so a stale symbol or extended OKX outage stops the silent loop.
+        fails = _TICKER_FAIL_COUNTS.get(bot_id, 0) + 1
+        _TICKER_FAIL_COUNTS[bot_id] = fails
+        if fails >= _TICKER_MAX_FAILS:
+            _deactivate_bot(
+                bot_id, f"ticker_fetch_failed_{fails}x_consecutive"
+            )
+            _TICKER_FAIL_COUNTS.pop(bot_id, None)
         return
+    # Success — reset counter so a single transient failure doesn't accumulate
+    _TICKER_FAIL_COUNTS.pop(bot_id, None)
 
     direction = bot.get("direction", "long")
     step_pct = float(bot["price_step_pct"]) / 100.0
