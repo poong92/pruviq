@@ -112,6 +112,45 @@
     link.addEventListener("click", closeMenu);
   });
 
+  // Language dropdown (#lang-btn → #lang-dropdown)
+  const langBtn = document.getElementById("lang-btn");
+  const langDropdown = document.getElementById("lang-dropdown");
+  function closeLang() {
+    langDropdown?.classList.add("hidden");
+    langBtn?.setAttribute("aria-expanded", "false");
+  }
+  langBtn?.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const isHidden = langDropdown?.classList.contains("hidden");
+    if (isHidden) {
+      langDropdown?.classList.remove("hidden");
+      langBtn.setAttribute("aria-expanded", "true");
+    } else {
+      closeLang();
+    }
+  });
+  document.addEventListener("click", (e) => {
+    if (
+      langDropdown &&
+      !langDropdown.classList.contains("hidden") &&
+      !langDropdown.contains(e.target) &&
+      e.target !== langBtn &&
+      !langBtn?.contains(e.target)
+    ) {
+      closeLang();
+    }
+  });
+  document.addEventListener("keydown", (e) => {
+    if (
+      e.key === "Escape" &&
+      langDropdown &&
+      !langDropdown.classList.contains("hidden")
+    ) {
+      closeLang();
+      langBtn?.focus();
+    }
+  });
+
   // Hide sticky banners when hero section is in viewport (M3)
   const heroSection = document.getElementById("hero-section");
   if (heroSection && window.IntersectionObserver) {

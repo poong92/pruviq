@@ -105,7 +105,6 @@
     link.addEventListener("click", closeMenu);
   });
 
-
   // ── Strategies submenu toggle ────────────────────────────────
   const strategiesToggle = document.getElementById("strategies-toggle");
   const strategiesSubmenu = document.getElementById("strategies-submenu");
@@ -121,6 +120,45 @@
       strategiesSubmenu?.classList.add("hidden");
       strategiesToggle.setAttribute("aria-expanded", "false");
       strategiesChevron?.style.setProperty("transform", "rotate(0deg)");
+    }
+  });
+
+  // ── Language dropdown (#lang-btn → #lang-dropdown) ───────────
+  const langBtn = document.getElementById("lang-btn");
+  const langDropdown = document.getElementById("lang-dropdown");
+  function closeLang() {
+    langDropdown?.classList.add("hidden");
+    langBtn?.setAttribute("aria-expanded", "false");
+  }
+  langBtn?.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const isHidden = langDropdown?.classList.contains("hidden");
+    if (isHidden) {
+      langDropdown?.classList.remove("hidden");
+      langBtn.setAttribute("aria-expanded", "true");
+    } else {
+      closeLang();
+    }
+  });
+  document.addEventListener("click", (e) => {
+    if (
+      langDropdown &&
+      !langDropdown.classList.contains("hidden") &&
+      !langDropdown.contains(e.target) &&
+      e.target !== langBtn &&
+      !langBtn?.contains(e.target)
+    ) {
+      closeLang();
+    }
+  });
+  document.addEventListener("keydown", (e) => {
+    if (
+      e.key === "Escape" &&
+      langDropdown &&
+      !langDropdown.classList.contains("hidden")
+    ) {
+      closeLang();
+      langBtn?.focus();
     }
   });
 
