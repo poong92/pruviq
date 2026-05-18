@@ -1310,6 +1310,111 @@ async def dca_parity(bot_id: str, request: Request):
     }
 
 
+@router.get("/dca-bots/{bot_id}/parity-multi-window")
+async def dca_parity_multi_window(
+    bot_id: str, request: Request,
+    windows: int = 5, window_days: int = 7,
+):
+    """Gate 2 (V1 from audit): single-trial parity → distribution comparison.
+
+    Slices the bot symbol's candle history into N disjoint window_days
+    windows and runs the bot's exact config against each. Returns mean ±
+    σ of fills_count / avg_entry_price / tp_cycles so the UI / Day-7
+    decision can check "paper result inside ±2σ band" instead of a single
+    ±10% gate.
+
+    Owner-controllable knobs: ?windows= (default 5, max 10),
+    ?window_days= (default 7, max 30). Empty result with
+    `skipped` field if history is too short.
+    """
+    session_id = _require_session(request)
+    bot = get_dca_bot(bot_id, session_id)
+    if bot is None:
+        raise HTTPException(404, f"DCA bot {bot_id[:8]} not found")
+    # Cap the knobs — multi-window backtest is O(windows × candles) and
+    # we don't want UI clicks to wedge the API.
+    windows = max(1, min(windows, 10))
+    window_days = max(1, min(window_days, 30))
+
+    raw = str(bot["symbol"]).upper()
+    if raw.endswith("-USDT-SWAP"):
+        dm_symbol = raw.replace("-USDT-SWAP", "USDT")
+    elif raw.endswith("-USDT"):
+        dm_symbol = raw.replace("-USDT", "USDT")
+    else:
+        dm_symbol = raw
+
+    from api.data_manager import DataManager
+    dm = DataManager()
+    df = dm.get_df(dm_symbol)
+    if df is None or len(df) == 0:
+        raise HTTPException(404, f"no candles for symbol={dm_symbol}")
+
+    merged = {**DEFAULT_DCA, **{k: bot[k] for k in DEFAULT_DCA if k in bot}}
+    from .dca_backtest import simulate_dca_multi_window
+    result = simulate_dca_multi_window(
+        merged, df, n_windows=windows, window_days=window_days,
+    )
+
+    return {
+        "bot_id": bot_id,
+        "config_echo": {
+            "symbol": bot["symbol"],
+            "price_step_pct": merged["price_step_pct"],
+            "size_multiplier": merged["size_multiplier"],
+            "tp_pct": merged["tp_pct"],
+            "max_safety_orders": merged["max_safety_orders"],
+        },
+        **result,
+    }
+
+
+@router.get("/dca-bots/{bot_id}/sensitivity-sweep")
+async def dca_sensitivity_sweep(bot_id: str, request: Request):
+    """Gate 3 (V2 from audit): parameter sensitivity.
+
+    Varies step ±20%, multiplier ±10%, TP ±0.5pp around the bot's config
+    and reports the fill-count coefficient of variation across the 3×3×3
+    grid. CV < 0.25 → robust; CV ≥ 0.25 → fragile under live stress.
+    """
+    session_id = _require_session(request)
+    bot = get_dca_bot(bot_id, session_id)
+    if bot is None:
+        raise HTTPException(404, f"DCA bot {bot_id[:8]} not found")
+
+    raw = str(bot["symbol"]).upper()
+    if raw.endswith("-USDT-SWAP"):
+        dm_symbol = raw.replace("-USDT-SWAP", "USDT")
+    elif raw.endswith("-USDT"):
+        dm_symbol = raw.replace("-USDT", "USDT")
+    else:
+        dm_symbol = raw
+    from api.data_manager import DataManager
+    dm = DataManager()
+    df = dm.get_df(dm_symbol)
+    if df is None or len(df) == 0:
+        raise HTTPException(404, f"no candles for symbol={dm_symbol}")
+    # Limit window to last 30 days so 27-config sweep stays under ~3s
+    df_recent = df.tail(30 * 24).reset_index(drop=True)
+
+    merged = {**DEFAULT_DCA, **{k: bot[k] for k in DEFAULT_DCA if k in bot}}
+    from .dca_backtest import simulate_dca_sensitivity
+    result = simulate_dca_sensitivity(merged, df_recent)
+
+    cv = float(result.get("cv", 0.0))
+    return {
+        "bot_id": bot_id,
+        "config_echo": {
+            "step": merged["price_step_pct"],
+            "m": merged["size_multiplier"],
+            "tp": merged["tp_pct"],
+        },
+        **result,
+        "pass": cv > 0 and cv < 0.25,
+        "gate": "V2_sensitivity_cv<0.25",
+    }
+
+
 @router.post("/dca-bots/simulate")
 async def dca_simulate(request: Request):
     """Backtest DCA params on historical OHLCV. No DB writes, no orders.
