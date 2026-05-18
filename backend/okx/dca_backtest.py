@@ -290,3 +290,176 @@ def simulate_dca(
         result.warnings.append("stop_scaling_price_breached")
 
     return result
+
+
+# ── 4-gate parity additions (V1/V2/V3 from audit) ──────────────
+
+def simulate_dca_multi_window(
+    params: dict[str, Any],
+    candles: pd.DataFrame,
+    *,
+    n_windows: int = 5,
+    window_days: int = 7,
+    taker_fee_pct: float = DEFAULT_TAKER_FEE_PCT,
+) -> dict[str, Any]:
+    """V1 (validation audit): single-trial parity → distribution comparison.
+
+    Slices the candle DataFrame into N disjoint window_days windows ending
+    at the latest available timestamp and runs simulate_dca on each. Builds
+    mean/std of three metrics (fills_count, avg_entry_price, tp_cycles) so
+    Gate 2 of the dogfoot manual can check "paper result ± 2σ" instead of
+    one-shot ±10%.
+
+    Returns:
+      {
+        "n_windows": int (actual count, may be < requested),
+        "window_days": int,
+        "windows": [{"start_iso", "end_iso", "fills_count",
+                     "avg_entry_price", "tp_cycles", "exit_reason"}, ...],
+        "stats": {"fills_count": {"mean": .., "std": .., "cv": ..},
+                  "avg_entry_price": {...},
+                  "tp_cycles": {...}},
+      }
+    """
+    import numpy as np  # local import — keep module import cheap
+
+    if candles is None or len(candles) < 2:
+        return {"n_windows": 0, "window_days": window_days, "windows": [],
+                "stats": {}, "skipped": "insufficient_candles"}
+
+    # Assume 1-hour candles (matches DataManager). window_days * 24 rows.
+    rows_per_window = window_days * 24
+    total = len(candles)
+    if total < rows_per_window * n_windows:
+        # Fall back to as many full windows as fit
+        n_windows = max(1, total // rows_per_window)
+    if n_windows == 0:
+        return {"n_windows": 0, "window_days": window_days, "windows": [],
+                "stats": {}, "skipped": "candle_history_too_short"}
+
+    windows_out: list[dict[str, Any]] = []
+    end = total
+    for _ in range(n_windows):
+        start = end - rows_per_window
+        if start < 0:
+            break
+        slice_df = candles.iloc[start:end].reset_index(drop=True)
+        # simulate_dca breaks on first TP, but for Gate 2 we count cycles
+        # over the window — mirror the loop pattern from router.py
+        bt_fills = 0
+        bt_avg_entries: list[tuple[float, float]] = []
+        bt_tp = 0
+        rem = slice_df
+        while len(rem) >= 2:
+            sim = simulate_dca(params, rem, taker_fee_pct=taker_fee_pct)
+            bt_fills += len(sim.fills)
+            if sim.avg_entry_price > 0:
+                bt_avg_entries.append(
+                    (sim.avg_entry_price, sim.total_size_usdt)
+                )
+            if sim.exit_reason != "tp":
+                break
+            bt_tp += 1
+            # Skip past exit timestamp to start a new cycle
+            exit_iso = sim.exit_time_iso
+            mask = rem["timestamp"] > exit_iso
+            rem = rem[mask].reset_index(drop=True)
+        # Aggregate avg entry (size-weighted across cycles)
+        wsum = sum(p * s for p, s in bt_avg_entries)
+        ssum = sum(s for _, s in bt_avg_entries)
+        agg_avg = (wsum / ssum) if ssum > 0 else 0.0
+        windows_out.append({
+            "start_iso": str(slice_df.iloc[0]["timestamp"]),
+            "end_iso": str(slice_df.iloc[-1]["timestamp"]),
+            "fills_count": bt_fills,
+            "avg_entry_price": agg_avg,
+            "tp_cycles": bt_tp,
+        })
+        end = start  # disjoint windows
+
+    # Stats
+    def _stat(values: list[float]) -> dict[str, float]:
+        arr = np.array([v for v in values if v > 0], dtype=float)
+        if len(arr) == 0:
+            return {"mean": 0.0, "std": 0.0, "cv": 0.0, "n": 0}
+        mean = float(arr.mean())
+        std = float(arr.std(ddof=1)) if len(arr) > 1 else 0.0
+        cv = (std / mean) if mean > 0 else 0.0
+        return {"mean": mean, "std": std, "cv": cv, "n": len(arr)}
+
+    stats = {
+        "fills_count": _stat([w["fills_count"] for w in windows_out]),
+        "avg_entry_price": _stat(
+            [w["avg_entry_price"] for w in windows_out]
+        ),
+        "tp_cycles": _stat([w["tp_cycles"] for w in windows_out]),
+    }
+    return {
+        "n_windows": len(windows_out),
+        "window_days": window_days,
+        "windows": windows_out,
+        "stats": stats,
+    }
+
+
+def simulate_dca_sensitivity(
+    params: dict[str, Any],
+    candles: pd.DataFrame,
+    *,
+    taker_fee_pct: float = DEFAULT_TAKER_FEE_PCT,
+) -> dict[str, Any]:
+    """V2 (validation audit): parameter sensitivity sweep.
+
+    Varies price_step_pct (±20%), size_multiplier (±10%), tp_pct (±0.5pp)
+    around the bot's current config and reports fill-count CV across the
+    grid. Gate 3 of the dogfoot manual requires CV < 0.25 — bots that are
+    extremely sensitive to small param tweaks are fragile under live
+    stress.
+
+    Returns:
+      {
+        "grid": [{"step", "m", "tp", "fills_count"}, ...],
+        "cv": float, "mean": float, "n": int,
+      }
+    """
+    import numpy as np
+
+    if candles is None or len(candles) < 2:
+        return {"grid": [], "cv": 0.0, "mean": 0.0, "n": 0,
+                "skipped": "insufficient_candles"}
+
+    base_step = float(params.get("price_step_pct", 2.0))
+    base_m = float(params.get("size_multiplier", 1.0))
+    base_tp = float(params.get("tp_pct", 3.0))
+
+    step_grid = [base_step * 0.8, base_step, base_step * 1.2]
+    m_grid = [base_m * 0.9, base_m, base_m * 1.1]
+    tp_grid = [base_tp - 0.5, base_tp, base_tp + 0.5]
+
+    grid_out: list[dict[str, Any]] = []
+    counts: list[int] = []
+    for step in step_grid:
+        for m in m_grid:
+            for tp in tp_grid:
+                p = dict(params)
+                p["price_step_pct"] = step
+                p["size_multiplier"] = m
+                p["tp_pct"] = tp
+                # Run one cycle per param combo — cheaper than full multi-
+                # cycle and CV still surfaces the sensitivity signal.
+                sim = simulate_dca(
+                    p, candles, taker_fee_pct=taker_fee_pct
+                )
+                fc = len(sim.fills)
+                counts.append(fc)
+                grid_out.append({
+                    "step": round(step, 4),
+                    "m": round(m, 4),
+                    "tp": round(tp, 4),
+                    "fills_count": fc,
+                })
+    arr = np.array(counts, dtype=float)
+    mean = float(arr.mean()) if len(arr) > 0 else 0.0
+    std = float(arr.std(ddof=1)) if len(arr) > 1 else 0.0
+    cv = (std / mean) if mean > 0 else 0.0
+    return {"grid": grid_out, "cv": cv, "mean": mean, "n": len(arr)}
