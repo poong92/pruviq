@@ -371,23 +371,37 @@ async def _place_real_order(
 
 
 async def _tick_bot(bot: dict[str, Any]) -> None:
-    """One pass for one bot. Paper mode only — real mode is skipped."""
+    """One pass for one bot. Routes between paper and real branches.
+
+    Real branch requires BOTH:
+      - OKX_DCA_REAL_ENABLED env var set to "true" (deploy-time gate)
+      - bot.paper_mode == 0 (per-bot toggle)
+    Either missing → skip with warning, no DB mutation.
+    """
     bot_id = bot["id"]
-    if not bot.get("paper_mode", 1):
-        logger.warning(
-            "dca_loop skip bot=%s — paper_mode=0 not yet implemented",
-            bot_id[:8],
-        )
-        return
 
     # M1: pause-vs-tick race. _list_active_bots ran ≥1 SELECT ago; user may
-    # have hit pause-all in between. Re-check before any DB mutation.
+    # have hit pause-all in between. Re-check before any DB mutation. Done
+    # before the paper/real branch so both paths benefit from the same
+    # guard with one DB hit.
     if not _is_bot_still_active(bot_id):
         logger.info(
             "dca tick skip bot=%s — deactivated between list and tick",
             bot_id[:8],
         )
         _TICKER_FAIL_COUNTS.pop(bot_id, None)
+        return
+
+    paper_mode = bot.get("paper_mode", 1)
+    if not paper_mode:
+        # B2-B (audit): dispatch to real-mode path only when both gates pass.
+        if not OKX_DCA_REAL_ENABLED:
+            logger.warning(
+                "dca_loop skip bot=%s — paper_mode=0 but OKX_DCA_REAL_ENABLED unset",
+                bot_id[:8],
+            )
+            return
+        await _tick_bot_real(bot)
         return
 
     mark = await _fetch_mark_price(bot["symbol"])
@@ -484,6 +498,186 @@ async def _tick_bot(bot: dict[str, Any]) -> None:
                 "dca paper TP hit bot=%s avg=%.6f tp=%.6f mark=%.6f closed=%d",
                 bot_id[:8], avg, tp_price, mark, closed,
             )
+
+
+async def _tick_bot_real(bot: dict[str, Any]) -> None:
+    """Real-mode one-bot tick. Audit-mandated safety pre-checks run BEFORE
+    any OKX call:
+
+      1. Daily session loss limit (R1) — pause-all session if hit
+      2. Circuit breaker (1h/5 fills) — auto-deactivate
+      3. Credentials present — else auto-deactivate (M4)
+      4. Mark price fetch (shares failure counter with paper-mode)
+
+    Order placement uses _place_real_order which handles:
+      - sz unit conversion (B1)
+      - tdMode=isolated (B2)
+      - deterministic clOrdId (B3)
+      - tickSz rounding
+      - 10s fill poll
+
+    Any single failed order halts the bot — DCA cannot recover from a
+    partial fill mid-cycle without owner attention.
+    """
+    bot_id = bot["id"]
+    session_id = bot.get("session_id", "")
+
+    # 1) Daily session loss limit
+    daily_limit = float(bot.get("daily_loss_limit_usdt", 0.0))
+    tripped, today_pnl = _session_daily_loss_check(session_id, daily_limit)
+    if tripped:
+        _deactivate_bot(
+            bot_id, f"daily_loss_limit_hit_pnl={today_pnl:.2f}usdt"
+        )
+        return
+
+    # 2) Circuit breaker
+    cb_tripped, fill_count_hr = _circuit_breaker_check(bot_id)
+    if cb_tripped:
+        _deactivate_bot(
+            bot_id, f"circuit_breaker_{fill_count_hr}_fills_in_1h"
+        )
+        return
+
+    # 3) Credentials
+    client = _get_okx_client_for_session(session_id)
+    if client is None:
+        _deactivate_bot(bot_id, "credentials_missing_or_invalid")
+        return
+
+    try:
+        # 4) Mark price (shares fail counter with paper path)
+        mark = await _fetch_mark_price(bot["symbol"])
+        if mark <= 0:
+            fails = _TICKER_FAIL_COUNTS.get(bot_id, 0) + 1
+            _TICKER_FAIL_COUNTS[bot_id] = fails
+            if fails >= _TICKER_MAX_FAILS:
+                _deactivate_bot(
+                    bot_id, f"ticker_fetch_failed_{fails}x_consecutive"
+                )
+                _TICKER_FAIL_COUNTS.pop(bot_id, None)
+            return
+        _TICKER_FAIL_COUNTS.pop(bot_id, None)
+
+        direction = bot.get("direction", "long")
+        side = "buy" if direction == "long" else "sell"
+        step_pct = float(bot["price_step_pct"]) / 100.0
+        multiplier = float(bot.get("size_multiplier", 1.0))
+        max_safety = int(bot["max_safety_orders"])
+        tp_pct = float(bot["tp_pct"]) / 100.0
+        stop = float(bot.get("stop_scaling_price", 0.0))
+        base_size = float(bot["position_size_usdt"])
+        base_override = float(bot.get("base_price_usdt", 0.0))
+
+        fills = _list_open_fills(bot_id)
+
+        scaling_halted = False
+        if stop > 0:
+            if direction == "long" and mark <= stop:
+                scaling_halted = True
+            elif direction == "short" and mark >= stop:
+                scaling_halted = True
+
+        # 5) Base order (real OKX)
+        if not fills:
+            base_target = base_override if base_override > 0 else mark
+            result = await _place_real_order(
+                client, bot, side, base_target, base_size, 0
+            )
+            if result is None:
+                _deactivate_bot(bot_id, "real_base_order_failed")
+                return
+            fill_price, ord_id = result
+            _write_real_fill(bot_id, 0, fill_price, base_size, ord_id)
+            logger.warning(
+                "dca REAL base fill bot=%s price=%.6f size=%.2f ord=%s",
+                bot_id[:8], fill_price, base_size, ord_id,
+            )
+            return
+
+        # 6) Safety orders — multi-fire matches paper logic
+        last_fill = fills[-1]
+        last_price = float(last_fill["fill_price"])
+        last_size = float(last_fill["fill_size_usdt"])
+        next_order_num = last_fill["order_num"] + 1
+
+        while not scaling_halted and next_order_num <= max_safety:
+            if direction == "long":
+                next_trigger = last_price * (1.0 - step_pct)
+                should_fire = mark <= next_trigger
+            else:
+                next_trigger = last_price * (1.0 + step_pct)
+                should_fire = mark >= next_trigger
+            if not should_fire:
+                break
+            next_size = last_size * multiplier
+            result = await _place_real_order(
+                client, bot, side, next_trigger, next_size, next_order_num
+            )
+            if result is None:
+                # Partial-fill catastrophe. DCA cannot keep computing average
+                # off "next_trigger" when the actual fill never happened.
+                # Halt and let the owner reconcile via OKX UI.
+                _deactivate_bot(
+                    bot_id, f"real_safety_{next_order_num}_order_failed"
+                )
+                return
+            fill_price, ord_id = result
+            _write_real_fill(
+                bot_id, next_order_num, fill_price, next_size, ord_id
+            )
+            logger.warning(
+                "dca REAL safety #%d bot=%s price=%.6f size=%.2f ord=%s",
+                next_order_num, bot_id[:8], fill_price, next_size, ord_id,
+            )
+            last_price = fill_price  # use actual fill price for next trigger
+            last_size = next_size
+            next_order_num += 1
+
+        # Refresh fills if any safety fired
+        fills = _list_open_fills(bot_id)
+
+        # 7) TP check — close entire position via opposite-side order
+        avg = _weighted_avg(fills)
+        if avg > 0:
+            if direction == "long":
+                tp_price = avg * (1.0 + tp_pct)
+                tp_hit = mark >= tp_price
+            else:
+                tp_price = avg * (1.0 - tp_pct)
+                tp_hit = mark <= tp_price
+            if tp_hit:
+                opposite = "sell" if direction == "long" else "buy"
+                total_size = sum(f["fill_size_usdt"] for f in fills)
+                # order_num=999 reserves a deterministic clOrdId slot for
+                # the close so retry-after-fail is idempotent on OKX side.
+                close_result = await _place_real_order(
+                    client, bot, opposite, mark, total_size, 999
+                )
+                if close_result is None:
+                    # Open position remains. Owner reconciles via OKX UI.
+                    # We deliberately DO NOT mark fills as closed in the DB.
+                    logger.error(
+                        "dca REAL TP close failed bot=%s — open position "
+                        "remains, manual close required",
+                        bot_id[:8],
+                    )
+                    return
+                close_price, close_ord_id = close_result
+                closed = _close_all_open_fills(bot_id, "tp_closed")
+                logger.warning(
+                    "dca REAL TP hit bot=%s avg=%.6f close=%.6f closed=%d ord=%s",
+                    bot_id[:8], avg, close_price, closed, close_ord_id,
+                )
+                # auto_recycle: spec L70-72. Off = deactivate after one cycle
+                # so a runaway compounding loop is impossible without owner
+                # explicit opt-in.
+                if not int(bot.get("auto_recycle", 0)):
+                    _deactivate_bot(
+                        bot_id, "tp_completed_auto_recycle_off"
+                    )
+    finally:
+        await client.close()
 
 
 async def dca_loop() -> None:
