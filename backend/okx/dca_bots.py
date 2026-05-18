@@ -45,6 +45,13 @@ DEFAULT_DCA: dict[str, Any] = {
     "stop_scaling_price": 0.0,           # 0 = no floor; else stop adding below
     "is_active": 0,
     "paper_mode": 1,                     # 1 = simulated fills only (default, safe)
+    # R1 (audit) — per-bot daily realised PnL cap. 0 = no limit (paper-mode
+    # default). validate_dca_params requires >0 when paper_mode=0.
+    "daily_loss_limit_usdt": 0.0,
+    # R2 (audit) — when TP closes a cycle, should the bot re-arm and start a
+    # new cycle? 0 = deactivate after one cycle (safe default). Owner must
+    # explicitly opt in for compounding real-mode behaviour.
+    "auto_recycle": 0,
 }
 
 _VALID_DIRECTION = {"long", "short"}
@@ -121,6 +128,23 @@ def validate_dca_params(p: dict[str, Any]) -> list[str]:
     except (TypeError, ValueError, OverflowError):
         errs.append("cumulative_position calc failed — check numeric inputs")
 
+    # Real-mode (paper_mode=0) safety gates — surfaced by audit. Paper-mode
+    # bots are unaffected so dog-foot keeps working with permissive defaults.
+    if int(p.get("paper_mode", 1)) == 0:
+        # R1 — daily realised PnL cap must be set (no silent unbounded loss)
+        if float(p.get("daily_loss_limit_usdt", 0.0)) <= 0.0:
+            errs.append(
+                "daily_loss_limit_usdt must be > 0 for real-mode bots "
+                "(no silent unbounded loss)"
+            )
+        # R3 — stop_scaling_price must define a floor (catastrophe brake).
+        # Strategy audit: w/o this, BTC -50% costs 94.6× one TP win.
+        if float(p.get("stop_scaling_price", 0.0)) <= 0.0:
+            errs.append(
+                "stop_scaling_price must be > 0 for real-mode bots "
+                "(catastrophe brake — no SL field otherwise)"
+            )
+
     return errs
 
 
@@ -130,6 +154,7 @@ _DCA_COLUMNS = [
     "price_step_pct", "size_multiplier", "max_safety_orders",
     "tp_pct", "stop_scaling_price",
     "is_active", "created_at", "updated_at", "paper_mode",
+    "daily_loss_limit_usdt", "auto_recycle",
 ]
 
 
@@ -158,13 +183,33 @@ def _ensure_tables() -> None:
                 is_active             INTEGER NOT NULL DEFAULT 0,
                 created_at            REAL NOT NULL,
                 updated_at            REAL NOT NULL,
-                paper_mode            INTEGER NOT NULL DEFAULT 1
+                paper_mode            INTEGER NOT NULL DEFAULT 1,
+                daily_loss_limit_usdt REAL NOT NULL DEFAULT 0,
+                auto_recycle          INTEGER NOT NULL DEFAULT 0
             )
         """)
         # Migration for older DBs without paper_mode column.
         try:
             conn.execute(
                 "ALTER TABLE dca_bots ADD COLUMN paper_mode INTEGER NOT NULL DEFAULT 1"
+            )
+        except _sqlite3.OperationalError as e:
+            if "duplicate column" not in str(e).lower():
+                raise
+        # R1 audit migration — per-bot daily realised PnL cap.
+        try:
+            conn.execute(
+                "ALTER TABLE dca_bots ADD COLUMN "
+                "daily_loss_limit_usdt REAL NOT NULL DEFAULT 0"
+            )
+        except _sqlite3.OperationalError as e:
+            if "duplicate column" not in str(e).lower():
+                raise
+        # R2 audit migration — TP cycle auto re-arm flag.
+        try:
+            conn.execute(
+                "ALTER TABLE dca_bots ADD COLUMN "
+                "auto_recycle INTEGER NOT NULL DEFAULT 0"
             )
         except _sqlite3.OperationalError as e:
             if "duplicate column" not in str(e).lower():
@@ -224,8 +269,9 @@ def create_dca_bot(session_id: str, data: dict[str, Any]) -> dict[str, Any]:
             "id, session_id, name, symbol, direction, base_price_usdt, "
             "position_size_usdt, leverage, price_step_pct, size_multiplier, "
             "max_safety_orders, tp_pct, stop_scaling_price, "
-            "is_active, created_at, updated_at, paper_mode"
-            ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?)",
+            "is_active, created_at, updated_at, paper_mode, "
+            "daily_loss_limit_usdt, auto_recycle"
+            ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?, ?)",
             (
                 bot_id, session_id, merged["name"], merged["symbol"],
                 merged["direction"], float(merged["base_price_usdt"]),
@@ -237,6 +283,8 @@ def create_dca_bot(session_id: str, data: dict[str, Any]) -> dict[str, Any]:
                 float(merged["stop_scaling_price"]),
                 now, now,
                 1 if merged.get("paper_mode", 1) else 0,
+                float(merged.get("daily_loss_limit_usdt", 0.0)),
+                1 if merged.get("auto_recycle", 0) else 0,
             ),
         )
     logger.info("DCA bot created id=%s session=%s", bot_id[:8], session_id[:8])
@@ -438,7 +486,8 @@ def update_dca_bot(
             "name=?, symbol=?, direction=?, base_price_usdt=?, "
             "position_size_usdt=?, leverage=?, price_step_pct=?, "
             "size_multiplier=?, max_safety_orders=?, tp_pct=?, "
-            "stop_scaling_price=?, paper_mode=?, updated_at=? "
+            "stop_scaling_price=?, paper_mode=?, "
+            "daily_loss_limit_usdt=?, auto_recycle=?, updated_at=? "
             "WHERE id=? AND session_id=?",
             (
                 merged["name"], merged["symbol"], merged["direction"],
@@ -451,6 +500,8 @@ def update_dca_bot(
                 float(merged["tp_pct"]),
                 float(merged["stop_scaling_price"]),
                 1 if merged.get("paper_mode", 1) else 0,
+                float(merged.get("daily_loss_limit_usdt", 0.0)),
+                1 if merged.get("auto_recycle", 0) else 0,
                 now, bot_id, session_id,
             ),
         )
