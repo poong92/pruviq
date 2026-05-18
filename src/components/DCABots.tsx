@@ -36,6 +36,9 @@ interface DcaBot {
   updated_at: number;
   last_fill_at?: number;
   hours_since_last_fill?: number;
+  // Real-mode safety gates (#2071 schema, surfaced in UI here)
+  daily_loss_limit_usdt: number;
+  auto_recycle: number;
 }
 
 interface DcaDraft {
@@ -49,6 +52,8 @@ interface DcaDraft {
   max_safety_orders: number;
   tp_pct: number;
   stop_scaling_price: number;
+  daily_loss_limit_usdt: number;
+  auto_recycle: number;
 }
 
 interface SimResult {
@@ -88,6 +93,10 @@ const DEFAULT_DRAFT: DcaDraft = {
   max_safety_orders: 5,
   tp_pct: 3,
   stop_scaling_price: 0,
+  // 0 = paper-mode permissible. Real-mode (paper_mode=0) backend rejects
+  // bot save unless owner sets > 0 (see dca_bots.py:validate_dca_params).
+  daily_loss_limit_usdt: 0,
+  auto_recycle: 0,
 };
 
 const i18n = {
@@ -155,6 +164,8 @@ const i18n = {
     maxSafety: "Max safety orders",
     tpPct: "TP % above running avg",
     stopScaling: "Stop scaling price (0 = off)",
+    dailyLossLimit: "Daily loss limit (USDT, 0 = off; real-mode requires > 0)",
+    autoRecycle: "Auto-recycle after TP (re-arm a fresh cycle)",
     simulate: "Simulate on historical data",
     simulating: "Simulating…",
     save: "Save bot (inactive)",
@@ -239,6 +250,8 @@ const i18n = {
     maxSafety: "최대 안전 매수 횟수",
     tpPct: "평단가 위 익절 %",
     stopScaling: "추가 매수 중단 가격 (0 = 미사용)",
+    dailyLossLimit: "일일 손실 한도 (USDT, 0 = 미사용; 실거래는 > 0 필수)",
+    autoRecycle: "익절 후 자동 재가동 (새 사이클 자동 시작)",
     simulate: "과거 데이터로 시뮬레이션",
     simulating: "시뮬레이션 중…",
     save: "봇 저장 (비활성)",
@@ -488,6 +501,8 @@ export default function DCABots({ lang = "en" }: Props) {
       max_safety_orders: bot.max_safety_orders,
       tp_pct: bot.tp_pct,
       stop_scaling_price: bot.stop_scaling_price,
+      daily_loss_limit_usdt: bot.daily_loss_limit_usdt ?? 0,
+      auto_recycle: bot.auto_recycle ?? 0,
     });
     setEditingBotId(bot.id);
     setSaving("idle");
@@ -1121,6 +1136,42 @@ export default function DCABots({ lang = "en" }: Props) {
             }
             class="mt-1 w-full rounded-lg border border-(--color-border) bg-(--color-bg) px-3 py-2 text-sm"
           />
+        </label>
+
+        {/* Real-mode safety gates (#2071 schema). Paper-mode permits 0/0;
+            real-mode (paper_mode=0) backend rejects on validate. */}
+        <label class="block">
+          <span class="text-sm font-bold">{t.dailyLossLimit}</span>
+          <input
+            type="number"
+            min={0}
+            step={0.01}
+            value={draft.daily_loss_limit_usdt}
+            onInput={(e) =>
+              setDraft((d) => ({
+                ...d,
+                daily_loss_limit_usdt: Number(
+                  (e.target as HTMLInputElement).value,
+                ),
+              }))
+            }
+            class="mt-1 w-full rounded-lg border border-(--color-border) bg-(--color-bg) px-3 py-2 text-sm"
+          />
+        </label>
+
+        <label class="flex items-center gap-2 min-h-[44px]">
+          <input
+            type="checkbox"
+            checked={!!draft.auto_recycle}
+            onInput={(e) =>
+              setDraft((d) => ({
+                ...d,
+                auto_recycle: (e.target as HTMLInputElement).checked ? 1 : 0,
+              }))
+            }
+            class="w-5 h-5"
+          />
+          <span class="text-sm">{t.autoRecycle}</span>
         </label>
 
         {/* Live cumulative-exposure preview — mirrors backend

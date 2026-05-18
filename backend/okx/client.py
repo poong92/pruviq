@@ -4,7 +4,9 @@ All orders include broker tag for commission tracking.
 """
 from __future__ import annotations
 
+import asyncio
 import base64
+import decimal
 import hashlib
 import hmac
 import json
@@ -73,11 +75,42 @@ class OKXClient:
     async def __aexit__(self, *args):
         await self.close()
 
+    # Retry-eligible upstream statuses. 429 = rate limit, 5xx = transient.
+    # OKX `code` ≠ "0" is a business error and is NOT retried.
+    _RETRY_STATUS = {429, 500, 502, 503, 504}
+    _MAX_RETRIES = 3  # ~7s worst-case (1+2+4)
+
+    async def _retry_request(self, fn) -> "httpx.Response":
+        """Wrap an httpx request with exponential backoff for 429 / 5xx.
+
+        Audit (debugger 2026-05-18): client had zero rate-limit handling.
+        Multi-bot real-mode could fan out > 60req/2s to /trade/order and hit
+        OKX 429 with no retry. fn must be an async callable that returns
+        an httpx.Response.
+        """
+        for attempt in range(self._MAX_RETRIES):
+            resp = await fn()
+            if resp.status_code not in self._RETRY_STATUS:
+                return resp
+            if attempt == self._MAX_RETRIES - 1:
+                # Last attempt — return as-is so raise_for_status surfaces
+                return resp
+            wait = 2 ** attempt  # 1s, 2s, 4s
+            logger.warning(
+                "OKX retry %d/%d after %ds: status=%s url=%s",
+                attempt + 1, self._MAX_RETRIES, wait,
+                resp.status_code, resp.request.url,
+            )
+            await asyncio.sleep(wait)
+        return resp  # unreachable but mypy-friendly
+
     async def _get(self, path: str, params: dict | None = None) -> dict[str, Any]:
         qs = ("?" + urlencode(params)) if params else ""
         full_path = path + qs
         headers = self._auth_headers("GET", full_path)
-        resp = await self._http.get(path, params=params, headers=headers)
+        resp = await self._retry_request(
+            lambda: self._http.get(path, params=params, headers=headers)
+        )
         resp.raise_for_status()
         data = resp.json()
         if data.get("code") != "0":
@@ -88,13 +121,35 @@ class OKXClient:
     async def _post(self, path: str, body: dict | list) -> dict[str, Any]:
         body_str = json.dumps(body)
         headers = self._auth_headers("POST", path, body_str)
-        resp = await self._http.post(path, content=body_str, headers=headers)
+        resp = await self._retry_request(
+            lambda: self._http.post(path, content=body_str, headers=headers)
+        )
         resp.raise_for_status()
         data = resp.json()
         if data.get("code") != "0":
             logger.error("OKX API error: %s %s", data.get("code"), data.get("msg"))
             raise ValueError(f"OKX API error {data.get('code')}: {data.get('msg')}")
         return data
+
+    @staticmethod
+    def round_to_tick(price: float, tick_sz: float) -> str:
+        """Quantize a price to the instrument's tick size, returned as a
+        string with the correct decimal precision for the OKX API.
+
+        Audit (debugger 2026-05-18): place_order received `px=str(price)`
+        without rounding. BTC tickSz=0.1 + raw price 78309.61234 → OKX
+        51116 reject. DOGE tickSz=0.00001 + naive `.2f` → "0.00" silent
+        truncation. Use Decimal.quantize so 0.1 stays 0.1, not 0.10000001.
+        """
+        if tick_sz <= 0:
+            return str(price)
+        d_tick = decimal.Decimal(str(tick_sz))
+        d_price = decimal.Decimal(str(price))
+        # Round half-even to nearest tick, then quantize to tick precision
+        ticks = (d_price / d_tick).quantize(
+            decimal.Decimal("1"), rounding=decimal.ROUND_HALF_EVEN,
+        )
+        return str((ticks * d_tick).quantize(d_tick))
 
     # ── Account ─────────────────────────────────────
 
