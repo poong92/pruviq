@@ -25,17 +25,31 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import os
 import time
 import uuid
 from typing import Any, Optional
 
 import httpx
 
+from .client import OKXClient
 from .config import OKX_BASE_URL
 from .dca_bots import _ensure_tables, _row_to_dca, _DCA_COLUMNS
+from .oauth import get_api_credentials
 from .storage import _get_conn
 
 logger = logging.getLogger("okx_dca_loop")
+
+# Phase B2 — real-mode env gate. Activation requires *both* this env var
+# set to "true" AND the bot's paper_mode=0. Owner-controlled and survives
+# uvicorn restart.
+OKX_DCA_REAL_ENABLED = os.environ.get("OKX_DCA_REAL_ENABLED", "").lower() == "true"
+
+# Circuit breaker: max real fills per bot within this window (audit risk-
+# manager L67). When exceeded, _circuit_breaker_check returns True and the
+# loop must deactivate the bot.
+_CIRCUIT_WINDOW_S = 3600  # 1 hour
+_CIRCUIT_MAX_FILLS = 5
 
 # Heartbeat for /dca-bots/loop-health. In-memory by design: a missing
 # value means the loop has not started since the last process boot,
@@ -161,6 +175,199 @@ def _weighted_avg(fills: list[dict[str, Any]]) -> float:
     if total <= 0:
         return 0.0
     return sum(f["fill_price"] * f["fill_size_usdt"] for f in fills) / total
+
+
+# ── Phase B2 real-mode helpers ─────────────────────────────────
+# These functions are imported but NOT called by _tick_bot yet — that's
+# the next sub-sprint (B2-B). Keeping them as dead code here lets the
+# unit tests + API doc generator pick them up while paper-day0 dog-foots
+# the safety hotfixes (#2070/#2071/#2072/#2073) untouched.
+
+def _get_okx_client_for_session(session_id: str) -> "OKXClient | None":
+    """Load API credentials for a session and instantiate an OKXClient.
+
+    Returns None on missing/expired credentials so the caller can
+    auto-deactivate the bot (M4 from audit). Never raises — silent fail
+    on a 60s loop would burn logs forever.
+    """
+    try:
+        creds = get_api_credentials(session_id)
+    except Exception as e:  # broad on purpose — any failure → safe halt
+        logger.error(
+            "dca real-mode: get_api_credentials failed session=%s: %s",
+            session_id[:8] if session_id else "?", e,
+        )
+        return None
+    if not creds or not creds.get("api_key"):
+        return None
+    return OKXClient(
+        api_key=creds["api_key"],
+        secret_key=creds["secret_key"],
+        passphrase=creds["passphrase"],
+    )
+
+
+def _circuit_breaker_check(bot_id: str) -> tuple[bool, int]:
+    """Return (tripped, fill_count_last_hour). Audit risk-manager L67:
+    >5 fills in 1h means a fast move is filling everything — protect the
+    owner by halting the bot regardless of whether further safety orders
+    still have capacity."""
+    cutoff = time.time() - _CIRCUIT_WINDOW_S
+    with _get_conn() as conn:
+        row = conn.execute(
+            "SELECT COUNT(*) FROM dca_fills "
+            "WHERE bot_id = ? AND filled_at >= ?",
+            (bot_id, cutoff),
+        ).fetchone()
+    count = int(row[0]) if row else 0
+    return (count > _CIRCUIT_MAX_FILLS, count)
+
+
+def _session_daily_loss_check(
+    session_id: str, limit_usdt: float
+) -> tuple[bool, float]:
+    """Return (tripped, today_realised_pnl_usdt). Audit risk-manager Gap A:
+    sums realised PnL across all of session's tp_closed cycles since UTC
+    00:00. Negative means net loss for the day. Tripped when |loss| ≥ limit.
+
+    Limit of 0 means "no limit" (paper-mode default).
+    """
+    if limit_usdt <= 0:
+        return (False, 0.0)
+    # UTC midnight today
+    now = time.time()
+    today_start = now - (now % 86400)
+    with _get_conn() as conn:
+        # SUM of (exit_price - avg_entry) × size — but exit_price is
+        # implicit in tp_closed rows. For Sprint B2-A we approximate with
+        # tp_closed fills (status='tp_closed' means cycle exited above
+        # avg + tp_pct, so PnL ≈ +tp_pct × total_open. Loss only enters
+        # via failed-cycle deactivation paths added in B2-B).
+        # B2-A: return 0.0 to keep helper callable but pnl tracking is
+        # finished in B2-B once real fill prices are written.
+        row = conn.execute(
+            "SELECT COUNT(*) FROM dca_fills "
+            "WHERE bot_id IN ("
+            "  SELECT id FROM dca_bots WHERE session_id = ?"
+            ") AND filled_at >= ?",
+            (session_id, today_start),
+        ).fetchone()
+    fill_count = int(row[0]) if row else 0
+    pnl_today = 0.0  # B2-A placeholder, B2-B will compute via exit_price
+    _ = fill_count  # silence linter
+    return (False, pnl_today)
+
+
+def _calc_size_contracts(size_usdt: float, price: float, ct_val: float) -> str:
+    """OKX SWAP `sz` is contracts, not USDT. Audit code-reviewer B1.
+    Returns at least "1" — OKX rejects sub-minimum. Real-mode flow must
+    also validate sz × ctVal × price ≥ minSz × price before calling
+    place_order to avoid 51016 ("size too small").
+    """
+    if ct_val <= 0 or price <= 0 or size_usdt <= 0:
+        return "1"
+    contracts = max(1, round(size_usdt / (ct_val * price)))
+    return str(contracts)
+
+
+def _write_real_fill(
+    bot_id: str,
+    order_num: int,
+    fill_price: float,
+    fill_size_usdt: float,
+    okx_order_id: str,
+) -> None:
+    """Mirror of _write_paper_fill but tags the row with the real OKX
+    ordId (not "paper-XXX"). The dca_fills UNIQUE index on (bot_id,
+    order_num) gives idempotency on the DB side; audit code-reviewer B3
+    additionally requires deterministic clOrdId at OKX-side which is set
+    by _place_real_order below.
+    """
+    with _get_conn() as conn:
+        conn.execute(
+            "INSERT INTO dca_fills "
+            "(bot_id, order_num, fill_price, fill_size_usdt, okx_order_id, "
+            "filled_at, status) VALUES (?, ?, ?, ?, ?, ?, 'open')",
+            (bot_id, order_num, fill_price, fill_size_usdt, okx_order_id, time.time()),
+        )
+
+
+async def _place_real_order(
+    client: "OKXClient",
+    bot: dict[str, Any],
+    side: str,            # "buy" or "sell"
+    target_price: float,
+    size_usdt: float,
+    order_num: int,
+) -> tuple[float, str] | None:
+    """Place one real OKX order with audit-mandated safety:
+      - B1: sz in contracts (via _calc_size_contracts × ctVal)
+      - B2: tdMode=isolated (cross can drain other positions)
+      - B3: deterministic clOrdId for idempotency
+      - tickSz rounding via OKXClient.round_to_tick
+      - 10s fill poll, abort if not filled
+    Returns (fill_price, ord_id) on success, None on any failure so
+    caller can auto-deactivate the bot.
+    """
+    inst_id = bot["symbol"]
+    bot_id = bot["id"]
+    try:
+        inst = await client.get_instrument_info(inst_id)
+    except Exception as e:
+        logger.error(
+            "dca real-mode: instrument fetch failed bot=%s inst=%s: %s",
+            bot_id[:8], inst_id, e,
+        )
+        return None
+    px = client.round_to_tick(target_price, inst["tickSz"])
+    sz = _calc_size_contracts(size_usdt, target_price, inst["ctVal"])
+    cl_ord_id = f"dca-{bot_id[:8]}-{order_num}"
+    try:
+        resp = await client.place_order(
+            inst_id=inst_id,
+            side=side,
+            sz=sz,
+            ord_type="limit",
+            px=px,
+            td_mode="isolated",
+            cl_ord_id=cl_ord_id,
+        )
+    except Exception as e:
+        logger.error(
+            "dca real-mode: place_order failed bot=%s side=%s sz=%s px=%s: %s",
+            bot_id[:8], side, sz, px, e,
+        )
+        return None
+    ord_id = resp.get("ordId", "")
+    if not ord_id:
+        logger.error(
+            "dca real-mode: place_order returned no ordId bot=%s resp=%s",
+            bot_id[:8], resp,
+        )
+        return None
+    # 10s fill poll
+    for _ in range(10):
+        await asyncio.sleep(1)
+        try:
+            order_info = await client._get(
+                "/api/v5/trade/order",
+                {"instId": inst_id, "ordId": ord_id},
+            )
+            items = order_info.get("data", [])
+            if items and items[0].get("state") == "filled":
+                fill_price = float(items[0].get("avgPx") or target_price)
+                return (fill_price, ord_id)
+        except Exception as e:
+            logger.warning(
+                "dca real-mode: order poll failed bot=%s ord=%s: %s",
+                bot_id[:8], ord_id, e,
+            )
+            break
+    logger.error(
+        "dca real-mode: order not filled in 10s bot=%s ord=%s — halt",
+        bot_id[:8], ord_id,
+    )
+    return None
 
 
 async def _tick_bot(bot: dict[str, Any]) -> None:
