@@ -450,9 +450,9 @@ export default function DCAParityCheck({ lang = "en" }: Props) {
                 {/* 4-Gate audit verdict (V1+V2+V3 from validation-analyst).
                     Surfaces only after runParity successfully fetched the
                     multi-window/sensitivity endpoints. */}
-                {fourGate[bot.id]?.loaded &&
+                {fourGate[b.id]?.loaded &&
                   (() => {
-                    const g = fourGate[bot.id]!;
+                    const g = fourGate[b.id]!;
                     const g1 = g.parity?.pass?.overall;
                     const g2 = gate2Verdict(g);
                     const g3 = g.sensitivity;
