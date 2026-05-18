@@ -258,12 +258,23 @@ export default function DCAParityCheck({ lang = "en" }: Props) {
         parityRes.value.status === 429
       ) {
         throw new Error(t.rateLimitHint);
+      } else if (parityRes.status === "fulfilled" && !parityRes.value.ok) {
+        const body = await parityRes.value.json().catch(() => null);
+        throw new Error(
+          (body as { detail?: string } | null)?.detail ||
+            `HTTP ${parityRes.value.status}`,
+        );
       }
       if (mwRes.status === "fulfilled" && mwRes.value.ok) {
         next.multiWindow = (await mwRes.value.json()) as MultiWindowResult;
       }
       if (sensRes.status === "fulfilled" && sensRes.value.ok) {
         next.sensitivity = (await sensRes.value.json()) as SensitivityResult;
+      }
+
+      // If Gate 1 network-failed and no other gate returned data, surface error
+      if (!next.parity && !next.multiWindow && !next.sensitivity) {
+        throw new Error(t.error);
       }
 
       setFourGate((s) => ({ ...s, [botId]: next }));
