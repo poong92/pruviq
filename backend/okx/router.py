@@ -919,6 +919,22 @@ async def dca_loop_health(request: Request):
     return loop_heartbeat()
 
 
+@router.get("/dca-bots/real-mode-status")
+async def dca_real_mode_status():
+    """Server-side real-mode env gate status. No auth required — boolean
+    only, no user data.
+
+    Why exposed: a bot with paper_mode=0 (live OKX orders) silently
+    skips every tick while OKX_DCA_REAL_ENABLED is unset. The owner
+    has no way to tell from the bot UI alone that their activated
+    real-mode bot is a zombie. This endpoint lets the frontend render
+    a warning banner when at least one of the owner's bots is in that
+    misconfigured state.
+    """
+    from .dca_loop import OKX_DCA_REAL_ENABLED
+    return {"real_mode_env_enabled": bool(OKX_DCA_REAL_ENABLED)}
+
+
 @router.get("/dca-bots/fills.csv")
 async def dca_fills_csv(request: Request):
     """CSV export of every DCA fill in this session. Replaces the
