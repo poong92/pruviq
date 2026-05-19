@@ -329,7 +329,16 @@ class OKXClient:
         px: str | None = None,
         td_mode: str = "isolated",
         cl_ord_id: str | None = None,
+        tp_trigger_px: str | None = None,
+        tp_ord_px: str = "-1",
+        sl_trigger_px: str | None = None,
+        sl_ord_px: str = "-1",
     ) -> dict[str, str]:
+        """Audit follow-up (live test #5 + owner question): attach TP/SL
+        at entry so the bot can deactivate / server can crash and OKX
+        still closes the position. tp_ord_px / sl_ord_px = '-1' = market
+        on trigger (audit recommended for DCA dog-foot).
+        """
         body: dict[str, Any] = {
             "instId": inst_id,
             "tdMode": td_mode,
@@ -342,9 +351,18 @@ class OKXClient:
             body["px"] = px
         if cl_ord_id:
             body["clOrdId"] = cl_ord_id
+        if tp_trigger_px:
+            body["tpTriggerPx"] = tp_trigger_px
+            body["tpOrdPx"] = tp_ord_px
+        if sl_trigger_px:
+            body["slTriggerPx"] = sl_trigger_px
+            body["slOrdPx"] = sl_ord_px
         logger.warning(
-            "→ place-order instId=%s side=%s sz=%s ordType=%s tdMode=%s clOrdId=%s",
-            inst_id, side, sz, ord_type, td_mode, cl_ord_id or "-",
+            "→ place-order instId=%s side=%s sz=%s ordType=%s tdMode=%s "
+            "clOrdId=%s tp=%s sl=%s",
+            inst_id, side, sz, ord_type, td_mode,
+            cl_ord_id or "-",
+            tp_trigger_px or "-", sl_trigger_px or "-",
         )
         data = await self._post("/api/v5/trade/order", body)
         result = data.get("data", [{}])[0]
