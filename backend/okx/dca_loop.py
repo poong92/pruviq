@@ -458,7 +458,20 @@ async def _place_real_order(
             items = order_info.get("data", [])
             if items and items[0].get("state") == "filled":
                 fill_price = float(items[0].get("avgPx") or target_price)
-                return (fill_price, ord_id)
+                # Live test #5 (2026-05-19): the bot logged
+                # fill_size_usdt=22 (form intent) while the actual OKX
+                # exposure was 0.1 contract × 0.1 ctVal × $2114.76 =
+                # $211.48 (10× the intent). Compute the REAL notional
+                # from filled contracts × ctVal × fill_price so DB +
+                # avg_entry math reflect what the OKX account actually
+                # holds. accFillSz is the filled contracts (string).
+                try:
+                    filled_contracts = float(items[0].get("accFillSz") or sz)
+                except (TypeError, ValueError):
+                    filled_contracts = float(sz)
+                ct_val = float(inst.get("ctVal", 1.0))
+                actual_size_usdt = filled_contracts * ct_val * fill_price
+                return (fill_price, actual_size_usdt, ord_id)
         except Exception as e:
             logger.warning(
                 "dca real-mode: order poll failed bot=%s ord=%s: %s",
@@ -705,11 +718,14 @@ async def _tick_bot_real(bot: dict[str, Any]) -> None:
             if result is None:
                 _deactivate_bot(bot_id, "real_base_order_failed")
                 return
-            fill_price, ord_id = result
-            _write_real_fill(bot_id, 0, fill_price, base_size, ord_id)
+            fill_price, actual_size_usdt, ord_id = result
+            _write_real_fill(
+                bot_id, 0, fill_price, actual_size_usdt, ord_id
+            )
             logger.warning(
-                "dca REAL base fill bot=%s price=%.6f size=%.2f ord=%s",
-                bot_id[:8], fill_price, base_size, ord_id,
+                "dca REAL base fill bot=%s price=%.6f size_intent=%.2f "
+                "actual=%.2f ord=%s",
+                bot_id[:8], fill_price, base_size, actual_size_usdt, ord_id,
             )
             return
 
@@ -740,16 +756,18 @@ async def _tick_bot_real(bot: dict[str, Any]) -> None:
                     bot_id, f"real_safety_{next_order_num}_order_failed"
                 )
                 return
-            fill_price, ord_id = result
+            fill_price, actual_size_usdt, ord_id = result
             _write_real_fill(
-                bot_id, next_order_num, fill_price, next_size, ord_id
+                bot_id, next_order_num, fill_price, actual_size_usdt, ord_id
             )
             logger.warning(
-                "dca REAL safety #%d bot=%s price=%.6f size=%.2f ord=%s",
-                next_order_num, bot_id[:8], fill_price, next_size, ord_id,
+                "dca REAL safety #%d bot=%s price=%.6f size_intent=%.2f "
+                "actual=%.2f ord=%s",
+                next_order_num, bot_id[:8], fill_price, next_size,
+                actual_size_usdt, ord_id,
             )
             last_price = fill_price  # use actual fill price for next trigger
-            last_size = next_size
+            last_size = actual_size_usdt  # use ACTUAL for next multiplier
             next_order_num += 1
 
         # Refresh fills if any safety fired
@@ -781,7 +799,7 @@ async def _tick_bot_real(bot: dict[str, Any]) -> None:
                         bot_id[:8],
                     )
                     return
-                close_price, close_ord_id = close_result
+                close_price, _close_actual, close_ord_id = close_result
                 closed = _close_all_open_fills(bot_id, "tp_closed")
                 logger.warning(
                     "dca REAL TP hit bot=%s avg=%.6f close=%.6f closed=%d ord=%s",
