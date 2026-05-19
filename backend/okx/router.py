@@ -1327,7 +1327,10 @@ async def dca_parity_multi_window(
     ?window_days= (default 7, max 30). Empty result with
     `skipped` field if history is too short.
     """
-    session_id = _require_session(request)
+    session_id = _get_session(request)
+    if not is_authenticated(session_id):
+        raise HTTPException(401, "Not connected to OKX.")
+    from .dca_bots import get_dca_bot, DEFAULT_DCA
     bot = get_dca_bot(bot_id, session_id)
     if bot is None:
         raise HTTPException(404, f"DCA bot {bot_id[:8]} not found")
@@ -1377,7 +1380,10 @@ async def dca_sensitivity_sweep(bot_id: str, request: Request):
     and reports the fill-count coefficient of variation across the 3×3×3
     grid. CV < 0.25 → robust; CV ≥ 0.25 → fragile under live stress.
     """
-    session_id = _require_session(request)
+    session_id = _get_session(request)
+    if not is_authenticated(session_id):
+        raise HTTPException(401, "Not connected to OKX.")
+    from .dca_bots import get_dca_bot, DEFAULT_DCA
     bot = get_dca_bot(bot_id, session_id)
     if bot is None:
         raise HTTPException(404, f"DCA bot {bot_id[:8]} not found")
