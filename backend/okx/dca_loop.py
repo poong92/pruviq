@@ -379,7 +379,10 @@ async def _place_real_order(
     target_price: float,
     size_usdt: float,
     order_num: int,
-) -> tuple[float, str] | None:
+    *,
+    tp_trigger_px: float | None = None,
+    sl_trigger_px: float | None = None,
+) -> tuple[float, float, str] | None:
     """Place one real OKX order with audit-mandated safety:
       - B1: sz in contracts (via _calc_size_contracts × ctVal)
       - B2: tdMode=isolated (cross can drain other positions)
@@ -424,6 +427,19 @@ async def _place_real_order(
     # exact tick in 10s. paper-mode simulate_dca fills at candle close
     # (i.e. market) — for parity AND owner-money safety the BASE order
     # is now MARKET. px is None for market in OKX; tickSz rounding moot.
+    # Compute TP/SL trigger prices in tick-aligned form. OKX rejects
+    # non-tick-aligned trigger prices on algo attachment.
+    tick_sz = inst["tickSz"]
+    tp_px_str = (
+        client.round_to_tick(tp_trigger_px, tick_sz)
+        if tp_trigger_px and tp_trigger_px > 0
+        else None
+    )
+    sl_px_str = (
+        client.round_to_tick(sl_trigger_px, tick_sz)
+        if sl_trigger_px and sl_trigger_px > 0
+        else None
+    )
     try:
         resp = await client.place_order(
             inst_id=inst_id,
@@ -433,6 +449,10 @@ async def _place_real_order(
             px=None,
             td_mode="isolated",
             cl_ord_id=cl_ord_id,
+            tp_trigger_px=tp_px_str,
+            tp_ord_px="-1",  # market on TP trigger
+            sl_trigger_px=sl_px_str,
+            sl_ord_px="-1",  # market on SL trigger
         )
     except Exception as e:
         logger.error(
@@ -709,11 +729,23 @@ async def _tick_bot_real(bot: dict[str, Any]) -> None:
             elif direction == "short" and mark >= stop:
                 scaling_halted = True
 
-        # 5) Base order (real OKX)
+        # 5) Base order (real OKX) — attach TP/SL at entry so OKX
+        # auto-closes even if PRUVIQ crashes / bot deactivates. TP =
+        # entry × (1 + tp_pct). SL = stop_scaling_price (if set).
+        # Note: avg drifts when safety orders fire; for now BASE-level
+        # TP. A follow-up PR will amend the attached TP on each safety
+        # fill so the closure target tracks the true weighted avg.
         if not fills:
             base_target = base_override if base_override > 0 else mark
+            if direction == "long":
+                tp_px = base_target * (1.0 + tp_pct)
+            else:
+                tp_px = base_target * (1.0 - tp_pct)
+            sl_px = stop if stop > 0 else None
             result = await _place_real_order(
-                client, bot, side, base_target, base_size, 0
+                client, bot, side, base_target, base_size, 0,
+                tp_trigger_px=tp_px,
+                sl_trigger_px=sl_px,
             )
             if result is None:
                 _deactivate_bot(bot_id, "real_base_order_failed")
