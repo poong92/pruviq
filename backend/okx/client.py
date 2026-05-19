@@ -351,12 +351,20 @@ class OKXClient:
             body["px"] = px
         if cl_ord_id:
             body["clOrdId"] = cl_ord_id
-        if tp_trigger_px:
-            body["tpTriggerPx"] = tp_trigger_px
-            body["tpOrdPx"] = tp_ord_px
-        if sl_trigger_px:
-            body["slTriggerPx"] = sl_trigger_px
-            body["slOrdPx"] = sl_ord_px
+        # OKX SWAP rejects tpTriggerPx / slTriggerPx as top-level fields
+        # (sCode 54070 'use the attachAlgoOrds array'). Wrap them in the
+        # required nested structure. Live test #7 (2026-05-19).
+        if tp_trigger_px or sl_trigger_px:
+            algo: dict[str, Any] = {}
+            if tp_trigger_px:
+                algo["tpTriggerPx"] = tp_trigger_px
+                algo["tpOrdPx"] = tp_ord_px
+                algo["tpTriggerPxType"] = "last"
+            if sl_trigger_px:
+                algo["slTriggerPx"] = sl_trigger_px
+                algo["slOrdPx"] = sl_ord_px
+                algo["slTriggerPxType"] = "last"
+            body["attachAlgoOrds"] = [algo]
         logger.warning(
             "→ place-order instId=%s side=%s sz=%s ordType=%s tdMode=%s "
             "clOrdId=%s tp=%s sl=%s",
