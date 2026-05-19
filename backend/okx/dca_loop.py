@@ -201,7 +201,9 @@ async def _alert_deactivation(
     try:
         from .settings import get_settings
         settings = get_settings(session_id)
-        chat_id = settings.get("alert_telegram_chat_id", "")
+        chat_id = settings.get("alert_telegram_chat_id", "") or os.environ.get(
+            "TELEGRAM_CHAT_ID", ""
+        )
         if not chat_id:
             return
         msg = (
