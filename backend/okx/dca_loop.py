@@ -412,7 +412,13 @@ async def _place_real_order(
             bot_id[:8], size_usdt, e,
         )
         return None
-    cl_ord_id = f"dca-{bot_id[:8]}-{order_num}"
+    # OKX clOrdId rule: 1-32 chars, letters + numbers ONLY (no dashes,
+    # no underscores). audit B3 spec used 'dca-{bot_id[:8]}-{order_num}'
+    # which OKX rejects with sCode=51000 'Parameter clOrdId error'
+    # (live test 2026-05-19). Drop the dashes — bot_id[:8] is already
+    # hex so concatenation stays alphanumeric. order_num zero-padded to
+    # 3 digits keeps deterministic length + ordering.
+    cl_ord_id = f"dca{bot_id[:8]}{order_num:03d}"
     try:
         resp = await client.place_order(
             inst_id=inst_id,
