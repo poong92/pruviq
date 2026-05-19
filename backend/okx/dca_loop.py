@@ -160,7 +160,12 @@ def _is_bot_still_active(bot_id: str) -> bool:
 
 
 def _deactivate_bot(bot_id: str, reason: str) -> None:
+    # Capture bot identity BEFORE the UPDATE so the alert payload is correct.
     with _get_conn() as conn:
+        bot_row = conn.execute(
+            "SELECT session_id, name, symbol FROM dca_bots WHERE id = ?",
+            (bot_id,),
+        ).fetchone()
         conn.execute(
             "UPDATE dca_bots SET is_active = 0, updated_at = ? WHERE id = ?",
             (time.time(), bot_id),
@@ -168,6 +173,48 @@ def _deactivate_bot(bot_id: str, reason: str) -> None:
     logger.warning(
         "dca bot auto-deactivated bot=%s reason=%s", bot_id[:8], reason
     )
+    # Telegram alert (audit follow-up): owner shouldn't discover a silent
+    # deactivation only on the next dashboard glance (up to 24h delay per
+    # dogfoot manual). Fire-and-forget; loop continues regardless.
+    if bot_row is not None:
+        try:
+            loop = asyncio.get_event_loop()
+            if loop.is_running():
+                asyncio.create_task(
+                    _alert_deactivation(
+                        session_id=str(bot_row[0]),
+                        bot_name=str(bot_row[1]),
+                        symbol=str(bot_row[2]),
+                        reason=reason,
+                    )
+                )
+        except RuntimeError:
+            # No running loop (e.g. sync test caller) — skip alert
+            pass
+
+
+async def _alert_deactivation(
+    session_id: str, bot_name: str, symbol: str, reason: str,
+) -> None:
+    """Best-effort Telegram alert. Never raises.
+    Skips silently if user has no chat_id or TELEGRAM_TOKEN unset."""
+    try:
+        from .settings import get_settings
+        settings = get_settings(session_id)
+        chat_id = settings.get("alert_telegram_chat_id", "")
+        if not chat_id:
+            return
+        msg = (
+            "⚠️ <b>DCA bot auto-deactivated</b>\n"
+            f"bot: <b>{bot_name}</b> ({symbol})\n"
+            f"reason: <code>{reason}</code>\n\n"
+            "Check the dashboard. Existing fills remain open; "
+            "no new orders will be placed until you reactivate."
+        )
+        from .notifications import _send
+        await _send(chat_id, msg)
+    except Exception as e:
+        logger.warning("dca deactivation alert failed: %s", e)
 
 
 def _weighted_avg(fills: list[dict[str, Any]]) -> float:
