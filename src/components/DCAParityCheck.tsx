@@ -141,6 +141,17 @@ const i18n = {
     sensGridSize: "27-cell grid",
     paperFills: "Paper fills",
     paperCycles: "Paper TP cycles",
+    goCardTitle: "🎉 4-Gate PASS — eligible for real-mode",
+    goCardBody:
+      "All four gates passed. To promote this bot to real-mode (live OKX orders):",
+    goStep1:
+      "1. SSH server → add OKX_DCA_REAL_ENABLED=true to /etc/pruviq/env → systemctl restart pruviq-api",
+    goStep2: "2. Deactivate this paper-mode bot",
+    goStep3:
+      "3. Edit → toggle 'Switch to REAL mode' → set daily_loss_limit_usdt > 0 + stop_scaling_price > 0 → Save",
+    goStep4: "4. Activate. First real fill should land within 60s.",
+    goCaveat:
+      "⚠ Recommended first real-mode params: BASE 20 USDT · n=4 safety · step 2.5% · multiplier 1.0 · TP 2% · stop_scaling = current_price × 0.85 · daily_loss = 10 USDT.",
   },
   ko: {
     title: "패리티 검증 (백테스트 vs 모의)",
@@ -185,6 +196,16 @@ const i18n = {
     sensGridSize: "27-셀 그리드",
     paperFills: "Paper 체결",
     paperCycles: "Paper TP 사이클",
+    goCardTitle: "🎉 4-Gate PASS — Real 모드 진입 가능",
+    goCardBody: "4 게이트 모두 통과. 이 봇을 Real 모드(실거래)로 전환하려면:",
+    goStep1:
+      "1. SSH 서버 → /etc/pruviq/env에 OKX_DCA_REAL_ENABLED=true 추가 → systemctl restart pruviq-api",
+    goStep2: "2. 이 paper 봇 Deactivate",
+    goStep3:
+      "3. Edit → 'Switch to REAL mode' 토글 → daily_loss_limit_usdt > 0 + stop_scaling_price > 0 설정 → Save",
+    goStep4: "4. Activate. 첫 실주문은 60초 이내 체결.",
+    goCaveat:
+      "⚠ Real 모드 첫 봇 권장값: BASE 20 USDT · 안전주문 4개 · step 2.5% · multiplier 1.0 · TP 2% · stop_scaling = 현재가 × 0.85 · daily_loss = 10 USDT.",
   },
 } as const;
 
@@ -525,6 +546,28 @@ export default function DCAParityCheck({ lang = "en" }: Props) {
                             }
                           />
                         </div>
+                        {overall && (
+                          <div
+                            class="mt-4 rounded-lg border border-(--color-up)/40 bg-(--color-up)/10 p-4"
+                            role="status"
+                          >
+                            <div class="font-bold text-(--color-up) mb-2">
+                              {t.goCardTitle}
+                            </div>
+                            <div class="text-xs text-(--color-text) mb-2">
+                              {t.goCardBody}
+                            </div>
+                            <ol class="text-xs font-mono text-(--color-text-muted) space-y-1 leading-relaxed">
+                              <li>{t.goStep1}</li>
+                              <li>{t.goStep2}</li>
+                              <li>{t.goStep3}</li>
+                              <li>{t.goStep4}</li>
+                            </ol>
+                            <div class="mt-3 text-xs text-(--color-down) font-mono leading-relaxed">
+                              {t.goCaveat}
+                            </div>
+                          </div>
+                        )}
                       </div>
                     );
                   })()}
