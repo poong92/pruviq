@@ -176,6 +176,9 @@ const i18n = {
       "⚠ Real mode places LIVE orders on OKX with real funds. Required: server env OKX_DCA_REAL_ENABLED=true + daily_loss_limit_usdt > 0 + stop_scaling_price > 0.",
     realModeBlocker:
       "Real-mode save blocked: set daily_loss_limit_usdt > 0 AND stop_scaling_price > 0 first.",
+    envBannerTitle: "⚠ Real-mode env gate DISABLED",
+    envBannerBody:
+      "Active real-mode bot detected but server env OKX_DCA_REAL_ENABLED is not set. Bots will skip every tick silently — no orders, no fills. SSH the server and add OKX_DCA_REAL_ENABLED=true to /etc/pruviq/env, then `systemctl restart pruviq-api`.",
     dailyLossLimit: "Daily loss limit (USDT, 0 = off; real-mode requires > 0)",
     autoRecycle: "Auto-recycle after TP (re-arm a fresh cycle)",
     // Backend ValueError → i18n mapping
@@ -280,6 +283,9 @@ const i18n = {
       "⚠ Real 모드는 OKX에 실주문을 보내고 실제 자금이 움직입니다. 필수: 서버 env OKX_DCA_REAL_ENABLED=true + daily_loss_limit_usdt > 0 + stop_scaling_price > 0.",
     realModeBlocker:
       "Real 모드 저장 차단: daily_loss_limit_usdt > 0 AND stop_scaling_price > 0 먼저 설정.",
+    envBannerTitle: "⚠ Real-mode env gate 비활성",
+    envBannerBody:
+      "Real 모드 봇이 활성화돼 있지만 서버 env OKX_DCA_REAL_ENABLED 미설정 — 봇이 매 tick silent skip 중 (주문 0건). SSH 접속 후 /etc/pruviq/env에 OKX_DCA_REAL_ENABLED=true 추가 → `systemctl restart pruviq-api`.",
     dailyLossLimit: "일일 손실 한도 (USDT, 0 = 미사용; 실거래는 > 0 필수)",
     autoRecycle: "익절 후 자동 재가동 (새 사이클 자동 시작)",
     // 백엔드 ValueError → i18n 매핑
@@ -357,6 +363,12 @@ export default function DCABots({ lang = "en" }: Props) {
   const [editingBotId, setEditingBotId] = useState<string | null>(null);
   const [bots, setBots] = useState<DcaBot[]>([]);
   const [unauthed, setUnauthed] = useState(false);
+  // Server-side OKX_DCA_REAL_ENABLED env state. null = unknown (loading or
+  // endpoint not yet deployed), true/false otherwise. Banner only renders
+  // when this is explicitly false AND at least one bot is real-mode + active.
+  const [realModeEnvEnabled, setRealModeEnvEnabled] = useState<boolean | null>(
+    null,
+  );
   const [saving, setSaving] = useState<"idle" | "saving" | "saved" | "error">(
     "idle",
   );
@@ -434,6 +446,35 @@ export default function DCABots({ lang = "en" }: Props) {
   useEffect(() => {
     void reload();
   }, [reload]);
+
+  // Real-mode env gate status (#2090 endpoint). Public, no auth. Fetched
+  // once on mount + every 5 min so a server-side env change reaches the
+  // banner without a hard reload.
+  useEffect(() => {
+    let cancelled = false;
+    const fetchEnvStatus = async () => {
+      try {
+        const res = await fetch(`${API_BASE_URL}/dca-bots/real-mode-status`, {
+          signal: AbortSignal.timeout(6_000),
+        });
+        if (!res.ok) return;
+        const data = (await res.json()) as {
+          real_mode_env_enabled: boolean;
+        };
+        if (!cancelled) {
+          setRealModeEnvEnabled(!!data.real_mode_env_enabled);
+        }
+      } catch {
+        // silent — banner won't render while we don't know
+      }
+    };
+    void fetchEnvStatus();
+    const id = setInterval(() => void fetchEnvStatus(), 5 * 60_000);
+    return () => {
+      cancelled = true;
+      clearInterval(id);
+    };
+  }, []);
 
   // Loop heartbeat — public, no auth. Surfaces "is the dca_loop ticking?"
   // during paper-mode dog-foot so owners don't need SSH to debug a newly
@@ -696,8 +737,29 @@ export default function DCABots({ lang = "en" }: Props) {
     );
   }
 
+  // Real-mode env gate banner — only when server env is OFF AND owner
+  // has at least one active real-mode bot. Catches the silent-zombie
+  // case where paper_mode=0 + OKX_DCA_REAL_ENABLED unset = every tick
+  // skipped with no UI signal otherwise.
+  const showEnvBanner =
+    realModeEnvEnabled === false &&
+    bots.some((b) => b.paper_mode === 0 && b.is_active === 1);
+
   return (
     <div class="space-y-5">
+      {showEnvBanner && (
+        <div
+          class="rounded-xl border border-(--color-down)/50 bg-(--color-down)/10 p-4 text-sm"
+          role="alert"
+        >
+          <div class="font-bold text-(--color-down) mb-1">
+            {t.envBannerTitle}
+          </div>
+          <div class="font-mono text-xs leading-relaxed text-(--color-text)">
+            {t.envBannerBody}
+          </div>
+        </div>
+      )}
       {/* Saved list */}
       <div class="card-enterprise rounded-2xl p-5 md:p-6">
         <div class="flex items-center justify-between mb-2 flex-wrap gap-2">
