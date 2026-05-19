@@ -37,6 +37,7 @@ interface DcaBot {
   last_fill_at?: number;
   hours_since_last_fill?: number;
   // Real-mode safety gates (#2071 schema, surfaced in UI here)
+  paper_mode: number;
   daily_loss_limit_usdt: number;
   auto_recycle: number;
 }
@@ -52,6 +53,8 @@ interface DcaDraft {
   max_safety_orders: number;
   tp_pct: number;
   stop_scaling_price: number;
+  // 1 = paper (simulated fills), 0 = real (live OKX orders)
+  paper_mode: number;
   daily_loss_limit_usdt: number;
   auto_recycle: number;
 }
@@ -93,8 +96,11 @@ const DEFAULT_DRAFT: DcaDraft = {
   max_safety_orders: 5,
   tp_pct: 3,
   stop_scaling_price: 0,
-  // 0 = paper-mode permissible. Real-mode (paper_mode=0) backend rejects
-  // bot save unless owner sets > 0 (see dca_bots.py:validate_dca_params).
+  // Paper-mode by default. Real-mode (paper_mode=0) is the explicit
+  // opt-in required for live OKX orders; backend validate also enforces
+  // daily_loss_limit > 0 + stop_scaling_price > 0 + env gate
+  // OKX_DCA_REAL_ENABLED before any real fill.
+  paper_mode: 1,
   daily_loss_limit_usdt: 0,
   auto_recycle: 0,
 };
@@ -164,6 +170,12 @@ const i18n = {
     maxSafety: "Max safety orders",
     tpPct: "TP % above running avg",
     stopScaling: "Stop scaling price (0 = off)",
+    paperMode: "Paper mode (simulated fills, safe)",
+    realModeToggle: "Switch to REAL mode (live OKX orders, funds at risk)",
+    realModeWarn:
+      "⚠ Real mode places LIVE orders on OKX with real funds. Required: server env OKX_DCA_REAL_ENABLED=true + daily_loss_limit_usdt > 0 + stop_scaling_price > 0.",
+    realModeBlocker:
+      "Real-mode save blocked: set daily_loss_limit_usdt > 0 AND stop_scaling_price > 0 first.",
     dailyLossLimit: "Daily loss limit (USDT, 0 = off; real-mode requires > 0)",
     autoRecycle: "Auto-recycle after TP (re-arm a fresh cycle)",
     simulate: "Simulate on historical data",
@@ -250,6 +262,12 @@ const i18n = {
     maxSafety: "최대 안전 매수 횟수",
     tpPct: "평단가 위 익절 %",
     stopScaling: "추가 매수 중단 가격 (0 = 미사용)",
+    paperMode: "Paper 모드 (모의 체결, 안전)",
+    realModeToggle: "REAL 모드 전환 (실거래 — 자금 위험)",
+    realModeWarn:
+      "⚠ Real 모드는 OKX에 실주문을 보내고 실제 자금이 움직입니다. 필수: 서버 env OKX_DCA_REAL_ENABLED=true + daily_loss_limit_usdt > 0 + stop_scaling_price > 0.",
+    realModeBlocker:
+      "Real 모드 저장 차단: daily_loss_limit_usdt > 0 AND stop_scaling_price > 0 먼저 설정.",
     dailyLossLimit: "일일 손실 한도 (USDT, 0 = 미사용; 실거래는 > 0 필수)",
     autoRecycle: "익절 후 자동 재가동 (새 사이클 자동 시작)",
     simulate: "과거 데이터로 시뮬레이션",
@@ -501,6 +519,7 @@ export default function DCABots({ lang = "en" }: Props) {
       max_safety_orders: bot.max_safety_orders,
       tp_pct: bot.tp_pct,
       stop_scaling_price: bot.stop_scaling_price,
+      paper_mode: bot.paper_mode ?? 1,
       daily_loss_limit_usdt: bot.daily_loss_limit_usdt ?? 0,
       auto_recycle: bot.auto_recycle ?? 0,
     });
@@ -1174,6 +1193,47 @@ export default function DCABots({ lang = "en" }: Props) {
           <span class="text-sm">{t.autoRecycle}</span>
         </label>
 
+        {/* paper_mode toggle — explicit opt-in for real OKX orders.
+            Backend additionally enforces OKX_DCA_REAL_ENABLED env gate +
+            daily_loss_limit > 0 + stop_scaling_price > 0 before any
+            real fill. We surface the same checks on the frontend so the
+            owner sees the warning + the missing prerequisites before
+            submitting. */}
+        <div class="rounded-lg border border-(--color-border) p-3 space-y-2">
+          <label class="flex items-center gap-2 min-h-[44px]">
+            <input
+              type="checkbox"
+              checked={!draft.paper_mode}
+              onInput={(e) =>
+                setDraft((d) => ({
+                  ...d,
+                  paper_mode: (e.target as HTMLInputElement).checked ? 0 : 1,
+                }))
+              }
+              class="w-5 h-5"
+            />
+            <span class="text-sm font-bold">
+              {draft.paper_mode ? t.paperMode : t.realModeToggle}
+            </span>
+          </label>
+          {!draft.paper_mode && (
+            <>
+              <p class="text-xs text-(--color-down) font-mono">
+                {t.realModeWarn}
+              </p>
+              {(draft.daily_loss_limit_usdt <= 0 ||
+                draft.stop_scaling_price <= 0) && (
+                <p
+                  class="text-xs text-(--color-down) font-bold font-mono"
+                  role="alert"
+                >
+                  {t.realModeBlocker}
+                </p>
+              )}
+            </>
+          )}
+        </div>
+
         {/* Live cumulative-exposure preview — mirrors backend
             validate_dca_params formula so owners see the cap math before
             hitting Save. */}
@@ -1226,7 +1286,12 @@ export default function DCABots({ lang = "en" }: Props) {
             type="button"
             class={`btn btn-md flex-1 min-h-[44px] ${saving === "saved" ? "bg-(--color-up) text-white" : "btn-primary"}`}
             onClick={handleSave}
-            disabled={saving === "saving"}
+            disabled={
+              saving === "saving" ||
+              (!draft.paper_mode &&
+                (draft.daily_loss_limit_usdt <= 0 ||
+                  draft.stop_scaling_price <= 0))
+            }
           >
             {saving === "saving"
               ? t.saving
