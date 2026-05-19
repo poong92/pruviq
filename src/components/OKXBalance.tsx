@@ -42,6 +42,8 @@ const i18n = {
       avail: "Available",
       frozen: "Frozen",
     },
+    crossMarginHint:
+      "Cross-margin: Total may show 0 while Available > 0 — other assets are collateralizing USDT. This is OKX normal.",
     updated: "Auto-refreshes every 30s",
     openOkx: "Open OKX Assets ↗",
     fundingTitle: "Funding (Wallet) — ready to transfer",
@@ -64,6 +66,8 @@ const i18n = {
       avail: "사용 가능",
       frozen: "잠김",
     },
+    crossMarginHint:
+      "통합 마진: 다른 자산이 USDT 담보로 잡혀 있으면 총량은 0, 사용 가능은 > 0으로 표시될 수 있습니다 (OKX 정상).",
     updated: "30초마다 자동 갱신",
     openOkx: "OKX 자산 페이지 열기 ↗",
     fundingTitle: "Funding 계정 — 이체 대기 자산",
@@ -282,6 +286,13 @@ export default function OKXBalance({ lang = "en" }: Props) {
               ))}
             </tbody>
           </table>
+          {/* Cross-margin quirk explanation — Total can show 0 while
+              Available > 0 when other assets collateralize USDT. */}
+          {rows.some((r) => Number(r.bal) === 0 && Number(r.avail_bal) > 0) && (
+            <p class="mt-3 text-xs text-(--color-text-muted) italic">
+              ℹ {t.crossMarginHint}
+            </p>
+          )}
         </div>
       )}
 
