@@ -419,20 +419,25 @@ async def _place_real_order(
     # hex so concatenation stays alphanumeric. order_num zero-padded to
     # 3 digits keeps deterministic length + ordering.
     cl_ord_id = f"dca{bot_id[:8]}{order_num:03d}"
+    # Live test #4 fallout (2026-05-19): audit-spec limit @ target_price
+    # + 10s poll = ~100% miss because the market price rarely sits on the
+    # exact tick in 10s. paper-mode simulate_dca fills at candle close
+    # (i.e. market) — for parity AND owner-money safety the BASE order
+    # is now MARKET. px is None for market in OKX; tickSz rounding moot.
     try:
         resp = await client.place_order(
             inst_id=inst_id,
             side=side,
             sz=sz,
-            ord_type="limit",
-            px=px,
+            ord_type="market",
+            px=None,
             td_mode="isolated",
             cl_ord_id=cl_ord_id,
         )
     except Exception as e:
         logger.error(
-            "dca real-mode: place_order failed bot=%s side=%s sz=%s px=%s: %s",
-            bot_id[:8], side, sz, px, e,
+            "dca real-mode: place_order failed bot=%s side=%s sz=%s: %s",
+            bot_id[:8], side, sz, e,
         )
         return None
     ord_id = resp.get("ordId", "")
@@ -442,8 +447,8 @@ async def _place_real_order(
             bot_id[:8], resp,
         )
         return None
-    # 10s fill poll
-    for _ in range(10):
+    # Market order fills near-instantly; 5s poll is plenty.
+    for _ in range(5):
         await asyncio.sleep(1)
         try:
             order_info = await client._get(
@@ -461,9 +466,25 @@ async def _place_real_order(
             )
             break
     logger.error(
-        "dca real-mode: order not filled in 10s bot=%s ord=%s — halt",
+        "dca real-mode: order not filled in 5s bot=%s ord=%s — halt",
         bot_id[:8], ord_id,
     )
+    # Cancel the unfilled order so the owner's funds aren't tied up in
+    # a pending OKX order after auto-deactivation. Live test #4
+    # (2026-05-19): a limit + 10s flow left ordId=3579636902523576320
+    # active and required manual cancel via OKX UI.
+    try:
+        await client.cancel_order(inst_id, ord_id)
+        logger.warning(
+            "dca real-mode: cancelled unfilled order bot=%s ord=%s",
+            bot_id[:8], ord_id,
+        )
+    except Exception as e:
+        logger.error(
+            "dca real-mode: cancel failed bot=%s ord=%s: %s — "
+            "OWNER must manually cancel via OKX UI",
+            bot_id[:8], ord_id, e,
+        )
     return None
 
 
