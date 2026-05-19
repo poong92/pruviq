@@ -305,16 +305,49 @@ def _session_daily_loss_check(
     return (False, pnl_today)
 
 
-def _calc_size_contracts(size_usdt: float, price: float, ct_val: float) -> str:
-    """OKX SWAP `sz` is contracts, not USDT. Audit code-reviewer B1.
-    Returns at least "1" — OKX rejects sub-minimum. Real-mode flow must
-    also validate sz × ctVal × price ≥ minSz × price before calling
-    place_order to avoid 51016 ("size too small").
+def _calc_size_contracts(
+    size_usdt: float,
+    price: float,
+    ct_val: float,
+    min_sz: float = 0.01,
+    lot_sz: float = 0.01,
+) -> str:
+    """OKX SWAP `sz` is contracts (fractional, lot-quantized), not USDT.
+    Audit code-reviewer B1 → real-world test (2026-05-19) showed first
+    real-mode order tried sz=1 contract = $213 when owner intended $22.
+    Root cause: the earlier `max(1, round(...))` floored sub-1-contract
+    requests up to 1 — a 10× silent oversize.
+
+    Correct flow:
+      contracts = size_usdt / (ct_val × price)
+      if contracts < min_sz   → raise (size too small)
+      quantize to lot_sz floor (e.g. 0.01) so we never round UP and
+      accidentally exceed the user's intent
     """
+    import decimal as _d
+
     if ct_val <= 0 or price <= 0 or size_usdt <= 0:
-        return "1"
-    contracts = max(1, round(size_usdt / (ct_val * price)))
-    return str(contracts)
+        raise ValueError(
+            f"invalid sz inputs: size_usdt={size_usdt} "
+            f"price={price} ct_val={ct_val}"
+        )
+    contracts = size_usdt / (ct_val * price)
+    if contracts < min_sz:
+        raise ValueError(
+            f"size too small: {size_usdt} USDT → "
+            f"{contracts:.6f} contracts < min_sz={min_sz}. "
+            f"Raise BASE size_usdt to ≥ {ct_val * price * min_sz:.2f} USDT."
+        )
+    # Floor-quantize to lot_sz so we never silently round UP.
+    d_lot = _d.Decimal(str(lot_sz))
+    d_ct = _d.Decimal(str(contracts))
+    lots = (d_ct / d_lot).quantize(_d.Decimal("1"), rounding=_d.ROUND_DOWN)
+    quantized = lots * d_lot
+    if quantized < _d.Decimal(str(min_sz)):
+        raise ValueError(
+            f"size after lot-quantize too small: {quantized} < {min_sz}"
+        )
+    return str(quantized.quantize(d_lot))
 
 
 def _write_real_fill(
@@ -367,7 +400,18 @@ async def _place_real_order(
         )
         return None
     px = client.round_to_tick(target_price, inst["tickSz"])
-    sz = _calc_size_contracts(size_usdt, target_price, inst["ctVal"])
+    try:
+        sz = _calc_size_contracts(
+            size_usdt, target_price, inst["ctVal"],
+            min_sz=inst.get("minSz", 0.01),
+            lot_sz=inst.get("lotSz", 0.01),
+        )
+    except ValueError as e:
+        logger.error(
+            "dca real-mode: sz calc rejected bot=%s size_usdt=%s: %s",
+            bot_id[:8], size_usdt, e,
+        )
+        return None
     cl_ord_id = f"dca-{bot_id[:8]}-{order_num}"
     try:
         resp = await client.place_order(
