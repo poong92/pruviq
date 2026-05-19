@@ -178,6 +178,18 @@ const i18n = {
       "Real-mode save blocked: set daily_loss_limit_usdt > 0 AND stop_scaling_price > 0 first.",
     dailyLossLimit: "Daily loss limit (USDT, 0 = off; real-mode requires > 0)",
     autoRecycle: "Auto-recycle after TP (re-arm a fresh cycle)",
+    // Backend ValueError → i18n mapping
+    errEditActive: "This bot is active — deactivate first to edit.",
+    errDeleteActive: "This bot is active — deactivate first to delete.",
+    errBotNotFound: "Bot not found (already deleted in another tab?).",
+    errRealModeDailyLoss:
+      "Real-mode requires daily_loss_limit_usdt > 0. Set a kill-switch amount before saving.",
+    errRealModeStopScaling:
+      "Real-mode requires stop_scaling_price > 0. Set a price floor before saving.",
+    errCumulativeCap:
+      "Cumulative position would exceed the 50,000 USDT cap. Lower size_multiplier or max_safety_orders.",
+    errSymbolFormat:
+      "Symbol must follow OKX format: BASE-USDT-SWAP (e.g. BTC-USDT-SWAP).",
     simulate: "Simulate on historical data",
     simulating: "Simulating…",
     save: "Save bot (inactive)",
@@ -270,6 +282,20 @@ const i18n = {
       "Real 모드 저장 차단: daily_loss_limit_usdt > 0 AND stop_scaling_price > 0 먼저 설정.",
     dailyLossLimit: "일일 손실 한도 (USDT, 0 = 미사용; 실거래는 > 0 필수)",
     autoRecycle: "익절 후 자동 재가동 (새 사이클 자동 시작)",
+    // 백엔드 ValueError → i18n 매핑
+    errEditActive:
+      "활성 봇은 편집할 수 없습니다 — 먼저 비활성화 후 편집하세요.",
+    errDeleteActive:
+      "활성 봇은 삭제할 수 없습니다 — 먼저 비활성화 후 삭제하세요.",
+    errBotNotFound: "봇을 찾을 수 없습니다 (다른 탭에서 삭제됨?).",
+    errRealModeDailyLoss:
+      "Real 모드는 daily_loss_limit_usdt > 0 필수. 저장 전 손실 한도를 설정하세요.",
+    errRealModeStopScaling:
+      "Real 모드는 stop_scaling_price > 0 필수. 저장 전 가격 하한선을 설정하세요.",
+    errCumulativeCap:
+      "누적 포지션이 50,000 USDT 한도를 초과합니다. size_multiplier 또는 max_safety_orders를 낮추세요.",
+    errSymbolFormat:
+      "심볼은 OKX 형식이어야 합니다: BASE-USDT-SWAP (예: BTC-USDT-SWAP).",
     simulate: "과거 데이터로 시뮬레이션",
     simulating: "시뮬레이션 중…",
     save: "봇 저장 (비활성)",
@@ -291,6 +317,35 @@ const i18n = {
     warns: "경고",
   },
 } as const;
+
+/** Map known backend ValueError text to i18n keys so KO users don't see
+ *  raw English. Falls back to the raw message if no pattern matches —
+ *  better to surface an unknown error than to swallow it.
+ *  Source patterns: backend/okx/dca_bots.py validate_dca_params + CRUD. */
+function translateBackendError(
+  raw: string,
+  t: typeof i18n.en | typeof i18n.ko,
+): string {
+  const s = raw.toLowerCase();
+  if (s.includes("cannot edit an active")) return t.errEditActive;
+  if (s.includes("cannot delete an active")) return t.errDeleteActive;
+  if (s.includes("dca bot not found") || s.includes("not found")) {
+    return t.errBotNotFound;
+  }
+  if (s.includes("daily_loss_limit_usdt must be > 0")) {
+    return t.errRealModeDailyLoss;
+  }
+  if (s.includes("stop_scaling_price must be > 0")) {
+    return t.errRealModeStopScaling;
+  }
+  if (s.includes("exceeds") && s.includes("50,000")) {
+    return t.errCumulativeCap;
+  }
+  if (s.includes("symbol") && s.includes("must match")) {
+    return t.errSymbolFormat;
+  }
+  return raw;
+}
 
 export default function DCABots({ lang = "en" }: Props) {
   const t = i18n[lang] ?? i18n.en;
@@ -503,7 +558,8 @@ export default function DCABots({ lang = "en" }: Props) {
       setTimeout(() => setSaving("idle"), 2000);
     } catch (e) {
       setSaving("error");
-      setSaveErr(e instanceof Error ? e.message : String(e));
+      const raw = e instanceof Error ? e.message : String(e);
+      setSaveErr(translateBackendError(raw, t));
     }
   }
 
