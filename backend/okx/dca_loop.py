@@ -409,6 +409,24 @@ async def _place_real_order(
             bot_id[:8], inst_id, e,
         )
         return None
+    # Live test #9 (2026-05-19): #2100 PR description promised set_leverage
+    # sync but the actual commit was missing the call — OKX kept the
+    # instrument's previous leverage (3) even when the bot form set
+    # leverage=1. Now actually call it. set_leverage is idempotent on OKX
+    # side; failure halts before any real-money order goes out with the
+    # wrong margin posture.
+    try:
+        await client.set_leverage(
+            inst_id=inst_id,
+            lever=int(bot.get("leverage", 1)),
+            mgn_mode="isolated",
+        )
+    except Exception as e:
+        logger.error(
+            "dca real-mode: set_leverage failed bot=%s lever=%s: %s",
+            bot_id[:8], bot.get("leverage", 1), e,
+        )
+        return None
     px = client.round_to_tick(target_price, inst["tickSz"])
     try:
         sz = _calc_size_contracts(
