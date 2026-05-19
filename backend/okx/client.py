@@ -114,6 +114,22 @@ class OKXClient:
         resp.raise_for_status()
         data = resp.json()
         if data.get("code") != "0":
+            # OKX batch endpoints (e.g. /trade/order) return code=1 outer
+            # ("All operations failed") and the actual reason in data[0].
+            # sCode / sMsg. Surface that so debugging doesn't require
+            # journalctl raw body inspection.
+            inner = (data.get("data") or [{}])[0] if isinstance(data.get("data"), list) else {}
+            s_code = inner.get("sCode") if isinstance(inner, dict) else None
+            s_msg = inner.get("sMsg") if isinstance(inner, dict) else None
+            if s_code:
+                logger.error(
+                    "OKX API error: code=%s msg=%s sCode=%s sMsg=%s",
+                    data.get("code"), data.get("msg"), s_code, s_msg,
+                )
+                raise ValueError(
+                    f"OKX API error {data.get('code')}/{s_code}: "
+                    f"{data.get('msg')} | {s_msg}"
+                )
             logger.error("OKX API error: %s %s", data.get("code"), data.get("msg"))
             raise ValueError(f"OKX API error {data.get('code')}: {data.get('msg')}")
         return data
@@ -127,6 +143,22 @@ class OKXClient:
         resp.raise_for_status()
         data = resp.json()
         if data.get("code") != "0":
+            # OKX batch endpoints (e.g. /trade/order) return code=1 outer
+            # ("All operations failed") and the actual reason in data[0].
+            # sCode / sMsg. Surface that so debugging doesn't require
+            # journalctl raw body inspection.
+            inner = (data.get("data") or [{}])[0] if isinstance(data.get("data"), list) else {}
+            s_code = inner.get("sCode") if isinstance(inner, dict) else None
+            s_msg = inner.get("sMsg") if isinstance(inner, dict) else None
+            if s_code:
+                logger.error(
+                    "OKX API error: code=%s msg=%s sCode=%s sMsg=%s",
+                    data.get("code"), data.get("msg"), s_code, s_msg,
+                )
+                raise ValueError(
+                    f"OKX API error {data.get('code')}/{s_code}: "
+                    f"{data.get('msg')} | {s_msg}"
+                )
             logger.error("OKX API error: %s %s", data.get("code"), data.get("msg"))
             raise ValueError(f"OKX API error {data.get('code')}: {data.get('msg')}")
         return data
