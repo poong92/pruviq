@@ -210,38 +210,101 @@ async def _handle_command(text: str) -> None:
         # Lazy import — avoids cycle during startup
         from .settings import _ensure_table
         from .storage import _get_conn
+        from .dca_loop import loop_heartbeat, OKX_DCA_REAL_ENABLED
         import json as _json
+        import time as _time
 
         _ensure_table()
-        total = 0
-        active = 0
+        autotrader_total = 0
+        autotrader_active = 0
         try:
             with _get_conn() as conn:
                 rows = conn.execute(
                     "SELECT settings FROM trading_settings"
                 ).fetchall()
-            total = len(rows)
+            autotrader_total = len(rows)
             for (settings_json,) in rows:
                 try:
                     if _json.loads(settings_json).get("enabled"):
-                        active += 1
+                        autotrader_active += 1
                 except Exception:
                     continue
         except Exception as e:
             await _send_telegram(
-                "\u26a0\ufe0f <b>STATUS FAILED</b>\n"
+                "⚠️ <b>STATUS FAILED</b>\n"
                 f"DB error: <code>{e}</code>"
             )
             return
 
+        dca_total = 0
+        dca_active = 0
+        dca_real_active = 0
+        fills_24h = 0
+        deactivations_24h: list[str] = []
+        try:
+            from .dca_bots import _ensure_tables as _dca_ensure
+            _dca_ensure()
+            cutoff_24h = _time.time() - 24 * 3600
+            with _get_conn() as conn:
+                rows = conn.execute(
+                    "SELECT name, is_active, paper_mode, updated_at "
+                    "FROM dca_bots"
+                ).fetchall()
+                dca_total = len(rows)
+                for name, is_active, paper_mode, updated_at in rows:
+                    if is_active:
+                        dca_active += 1
+                        if not paper_mode:
+                            dca_real_active += 1
+                    else:
+                        if updated_at and float(updated_at) >= cutoff_24h:
+                            deactivations_24h.append(str(name))
+                fill_row = conn.execute(
+                    "SELECT COUNT(*) FROM dca_fills WHERE filled_at >= ?",
+                    (cutoff_24h,),
+                ).fetchone()
+                if fill_row:
+                    fills_24h = int(fill_row[0])
+        except Exception as e:
+            logger.warning("dca status query failed: %s", e)
+
+        hb = loop_heartbeat()
+        loop_age = int(hb.get("seconds_ago", -1) or 0)
+        loop_emoji = "✅" if hb.get("healthy") else "⚠️"
+
         ts = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
-        await _send_telegram(
-            "\U0001f4ca <b>AutoTrader Status</b>\n"
-            f"Active sessions: <b>{active}</b> / {total}\n"
-            f"Server time: <code>{ts}</code>\n"
-            "Commands: <code>/halt</code> to disable all, "
-            "<code>/status</code> to re-check."
+        lines = [
+            "\U0001f4ca <b>PRUVIQ Status</b>",
+            f"Server: <code>{ts}</code>",
+            "",
+            "<b>AutoTrader (signal-based)</b>",
+            f"  Active sessions: <b>{autotrader_active}</b> / "
+            f"{autotrader_total}",
+            "",
+            "<b>DCA bots</b>",
+            f"  Active: <b>{dca_active}</b> / {dca_total}"
+            + (f" (real-mode: {dca_real_active})" if dca_real_active else ""),
+            f"  24h fills: <b>{fills_24h}</b>",
+            f"  Loop {loop_emoji} last tick {loop_age}s ago",
+            "  Real-mode env: <code>"
+            + ("ENABLED" if OKX_DCA_REAL_ENABLED else "OFF")
+            + "</code>",
+        ]
+        if deactivations_24h:
+            lines.append("")
+            lines.append(
+                "⚠️ <b>24h deactivations: "
+                + str(len(deactivations_24h))
+                + "</b>"
+            )
+            for name in deactivations_24h[:5]:
+                lines.append(f"  · {name}")
+        lines.append("")
+        lines.append(
+            "Commands: <code>/halt</code> to disable all · "
+            "<code>/status</code> to re-check"
         )
+        await _send_telegram("\n".join(lines))
 
 
 async def telegram_halt_loop() -> None:
