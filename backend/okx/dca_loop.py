@@ -201,7 +201,15 @@ async def _alert_deactivation(
     try:
         from .settings import get_settings
         settings = get_settings(session_id)
-        chat_id = settings.get("alert_telegram_chat_id", "")
+        # Owner-scoped fallback: DCA dog-foot is single-tenant. If the user
+        # never configured alert_telegram_chat_id in settings, fall back to
+        # the deployment-level TELEGRAM_CHAT_ID env (same source as the
+        # /halt listener). Per-user alert paths in auto_executor/reconciler
+        # intentionally do NOT use this fallback — they would leak other
+        # users' positions to the owner's chat.
+        chat_id = settings.get("alert_telegram_chat_id", "") or os.environ.get(
+            "TELEGRAM_CHAT_ID", ""
+        )
         if not chat_id:
             return
         msg = (
