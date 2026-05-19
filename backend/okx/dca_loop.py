@@ -363,9 +363,16 @@ def _write_real_fill(
     additionally requires deterministic clOrdId at OKX-side which is set
     by _place_real_order below.
     """
+    # Live test #8 (2026-05-19): UNIQUE constraint failed when a prior
+    # cycle left a non-'open' row with the same (bot_id, order_num).
+    # Without REPLACE, the next BASE attempt errored, _tick_bot caught
+    # the exception, and the bot stayed active — re-firing the same
+    # OKX order on every tick (real money leak risk).
+    # INSERT OR REPLACE atomically swaps the historical row for the
+    # new one. History accountability moves to a future ledger PR.
     with _get_conn() as conn:
         conn.execute(
-            "INSERT INTO dca_fills "
+            "INSERT OR REPLACE INTO dca_fills "
             "(bot_id, order_num, fill_price, fill_size_usdt, okx_order_id, "
             "filled_at, status) VALUES (?, ?, ?, ?, ?, ?, 'open')",
             (bot_id, order_num, fill_price, fill_size_usdt, okx_order_id, time.time()),
