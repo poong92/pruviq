@@ -240,17 +240,7 @@ jobs:
           ssh -p "$DO_PORT" -o IdentitiesOnly=yes -i ~/.ssh/do_deploy \
               "$DO_USER@$DO_HOST" "
             REAL_DB=\$(readlink -f /opt/pruviq/current)/backend/data/okx_sessions.db
-            python3 -c \"
-import re, sys
-conf='/etc/litestream.yml'
-with open(conf) as f: content=f.read()
-new=re.sub(r'path:\s*/opt/pruviq/[^\n]+okx_sessions\.db', 'path: '+sys.argv[1], content)
-if new != content:
-    with open(conf,'w') as f: f.write(new)
-    print('litestream.yml updated to:', sys.argv[1])
-else:
-    print('litestream.yml already correct')
-\" \"\$REAL_DB\"
+            python3 -c \"import re,sys;c=open('/etc/litestream.yml').read();n=re.sub(r'path: /opt/pruviq/[^\\\n]+okx_sessions\.db','path: '+sys.argv[1],c);open('/etc/litestream.yml','w').write(n);print('updated' if n!=c else 'already correct')\" \"\$REAL_DB\"
             systemctl reload-or-restart litestream 2>/dev/null || true
           "
 
