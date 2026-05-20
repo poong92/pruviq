@@ -212,6 +212,8 @@ const i18n = {
     hours: "h",
     exitReason: "Exit reason",
     warns: "Warnings",
+    confirmCancelBtn: "Cancel",
+    confirmOkBtn: "Confirm",
   },
   ko: {
     title: "DCA 봇",
@@ -321,6 +323,8 @@ const i18n = {
     hours: "시간",
     exitReason: "종료 사유",
     warns: "경고",
+    confirmCancelBtn: "취소",
+    confirmOkBtn: "확인",
   },
 } as const;
 
@@ -377,6 +381,12 @@ export default function DCABots({ lang = "en" }: Props) {
   const [simErr, setSimErr] = useState("");
   const [sim, setSim] = useState<SimResult | null>(null);
   const [reloadErr, setReloadErr] = useState("");
+  const [confirmModal, setConfirmModal] = useState<{
+    title: string;
+    body: string;
+    onConfirm: () => void;
+  } | null>(null);
+  const [toast, setToast] = useState("");
   const [loopHealth, setLoopHealth] = useState<{
     healthy: boolean;
     seconds_ago: number;
@@ -655,7 +665,19 @@ export default function DCABots({ lang = "en" }: Props) {
         .replace("%s", String(bot.price_step_pct))
         .replace("%s", String(bot.max_safety_orders))
         .replace("%s", String(bot.tp_pct));
-      if (!window.confirm(`${title}\n\n${body}`)) return;
+      setConfirmModal({
+        title,
+        body,
+        onConfirm: async () => {
+          setConfirmModal(null);
+          await fetch(`${API_BASE_URL}/dca-bots/${id}/activate`, {
+            method: "POST",
+            credentials: "include",
+          });
+          await reload();
+        },
+      });
+      return;
     }
     await fetch(`${API_BASE_URL}/dca-bots/${id}/activate`, {
       method: "POST",
@@ -673,28 +695,39 @@ export default function DCABots({ lang = "en" }: Props) {
   async function handlePauseAll() {
     const activeCount = bots.filter((b) => b.is_active).length;
     if (activeCount === 0) return;
-    if (!window.confirm(t.pauseAllConfirm.replace("%d", String(activeCount))))
-      return;
-    try {
-      const res = await fetch(`${API_BASE_URL}/dca-bots/pause-all`, {
-        method: "POST",
-        credentials: "include",
-      });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = (await res.json()) as { paused: number };
-      await reload();
-      window.alert(t.pauseAllResult.replace("%d", String(data.paused ?? 0)));
-    } catch (e) {
-      window.alert(`${t.pauseAllErr}: ${e instanceof Error ? e.message : e}`);
-    }
+    setConfirmModal({
+      title: t.pauseAllConfirm.replace("%d", String(activeCount)),
+      body: "",
+      onConfirm: async () => {
+        setConfirmModal(null);
+        try {
+          const res = await fetch(`${API_BASE_URL}/dca-bots/pause-all`, {
+            method: "POST",
+            credentials: "include",
+          });
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          const data = (await res.json()) as { paused: number };
+          await reload();
+          setToast(t.pauseAllResult.replace("%d", String(data.paused ?? 0)));
+        } catch (e) {
+          setToast(`${t.pauseAllErr}: ${e instanceof Error ? e.message : e}`);
+        }
+      },
+    });
   }
   async function handleDelete(id: string) {
-    if (!window.confirm(t.deleteConfirm)) return;
-    await fetch(`${API_BASE_URL}/dca-bots/${id}`, {
-      method: "DELETE",
-      credentials: "include",
+    setConfirmModal({
+      title: t.deleteConfirm,
+      body: "",
+      onConfirm: async () => {
+        setConfirmModal(null);
+        await fetch(`${API_BASE_URL}/dca-bots/${id}`, {
+          method: "DELETE",
+          credentials: "include",
+        });
+        await reload();
+      },
     });
-    await reload();
   }
   async function toggleHistory(id: string) {
     const next = new Set(expandedBots);
@@ -746,422 +779,539 @@ export default function DCABots({ lang = "en" }: Props) {
     bots.some((b) => b.paper_mode === 0 && b.is_active === 1);
 
   return (
-    <div class="space-y-5">
-      {showEnvBanner && (
-        <div
-          class="rounded-xl border border-(--color-down)/50 bg-(--color-down)/10 p-4 text-sm"
-          role="alert"
-        >
-          <div class="font-bold text-(--color-down) mb-1">
-            {t.envBannerTitle}
-          </div>
-          <div class="font-mono text-xs leading-relaxed text-(--color-text)">
-            {t.envBannerBody}
-          </div>
-        </div>
-      )}
-      {/* Saved list */}
-      <div class="card-enterprise rounded-2xl p-5 md:p-6">
-        <div class="flex items-center justify-between mb-2 flex-wrap gap-2">
-          <div class="flex items-center gap-3">
-            <h2 class="font-bold text-lg">{t.title}</h2>
-            {loopHealth && loopHealth.seconds_ago >= 0 && (
-              <span
-                class={`inline-flex items-center gap-1.5 px-2 py-0.5 text-xs font-mono rounded-full border ${
-                  loopHealth.healthy
-                    ? "bg-(--color-up)/10 border-(--color-up)/30 text-(--color-up)"
-                    : "bg-(--color-down)/10 border-(--color-down)/30 text-(--color-down)"
-                }`}
-                title={`${t.loopAgo}: ${Math.round(loopHealth.seconds_ago)}s ago · bots=${loopHealth.bots_last_tick}`}
-                role="status"
-              >
-                <span
-                  aria-hidden="true"
-                  class={
-                    loopHealth.healthy
-                      ? "inline-block w-1.5 h-1.5 rounded-full bg-(--color-up) motion-safe:animate-pulse"
-                      : "inline-block w-1.5 h-1.5 rounded-full border border-(--color-down)"
-                  }
-                />
-                {loopHealth.healthy ? t.loopHealthy : t.loopStale}
-                <span class="text-(--color-text-muted)">
-                  · {Math.round(loopHealth.seconds_ago)}s
-                </span>
-              </span>
-            )}
-          </div>
-          <div class="flex items-center gap-2">
-            {bots.some((b) => b.is_active) && (
-              <button
-                type="button"
-                class="text-xs font-bold text-(--color-down) hover:bg-(--color-down)/10 border border-(--color-down)/30 rounded-lg px-3 min-h-[44px]"
-                onClick={handlePauseAll}
-                aria-label={t.pauseAll}
-              >
-                ⏸ {t.pauseAll}
-              </button>
-            )}
-            <span class="text-xs text-(--color-text-muted)">{t.subtitle}</span>
-          </div>
-        </div>
-        <div
-          class="p-2.5 mb-3 rounded-lg bg-(--color-warning)/10 border border-(--color-warning)/30 text-xs"
-          role="status"
-        >
-          ⚠️ {t.notLiveYet}
-        </div>
-        {reloadErr && (
+    <>
+      <div class="space-y-5">
+        {showEnvBanner && (
           <div
-            class="p-2.5 mb-3 rounded-lg bg-(--color-down)/10 border border-(--color-down)/30 text-xs text-(--color-down)"
+            class="rounded-xl border border-(--color-down)/50 bg-(--color-down)/10 p-4 text-sm"
             role="alert"
-            aria-live="assertive"
           >
-            ⚠ {reloadErr}
+            <div class="font-bold text-(--color-down) mb-1">
+              {t.envBannerTitle}
+            </div>
+            <div class="font-mono text-xs leading-relaxed text-(--color-text)">
+              {t.envBannerBody}
+            </div>
           </div>
         )}
-        {bots.length === 0 ? (
-          <p class="text-sm text-(--color-text-muted) italic">{t.none}</p>
-        ) : (
-          <ul class="space-y-2">
-            {bots.map((b) => {
-              const dirColor =
-                b.direction === "long"
-                  ? "text-(--color-up)"
-                  : "text-(--color-down)";
-              const pv = previews[b.id];
-              const fmtP = (n: number) =>
-                n >= 1000
-                  ? n.toLocaleString(undefined, { maximumFractionDigits: 2 })
-                  : n >= 1
-                    ? n.toLocaleString(undefined, { maximumFractionDigits: 4 })
-                    : n.toLocaleString(undefined, { maximumFractionDigits: 8 });
-              return (
-                <li
-                  key={b.id}
-                  class="p-3 rounded-lg border border-(--color-border) bg-(--color-bg)/40"
+        {/* Saved list */}
+        <div class="card-enterprise rounded-2xl p-5 md:p-6">
+          <div class="flex items-center justify-between mb-2 flex-wrap gap-2">
+            <div class="flex items-center gap-3">
+              <h2 class="font-bold text-lg">{t.title}</h2>
+              {loopHealth && loopHealth.seconds_ago >= 0 && (
+                <span
+                  class={`inline-flex items-center gap-1.5 px-2 py-0.5 text-xs font-mono rounded-full border ${
+                    loopHealth.healthy
+                      ? "bg-(--color-up)/10 border-(--color-up)/30 text-(--color-up)"
+                      : "bg-(--color-down)/10 border-(--color-down)/30 text-(--color-down)"
+                  }`}
+                  title={`${t.loopAgo}: ${Math.round(loopHealth.seconds_ago)}s ago · bots=${loopHealth.bots_last_tick}`}
+                  role="status"
                 >
-                  <div class="flex items-center justify-between gap-2 flex-wrap">
-                    <div class="min-w-0">
-                      <p class="font-bold text-sm truncate">{b.name}</p>
-                      <p class="text-xs font-mono text-(--color-text-muted)">
-                        <span class={dirColor}>
-                          {b.direction.toUpperCase()}
-                        </span>{" "}
-                        · {b.symbol} · ×{b.leverage} · step {b.price_step_pct}%
-                        · TP {b.tp_pct}%
-                      </p>
-                    </div>
-                    <div class="flex items-center gap-2 shrink-0">
-                      {b.is_active &&
-                        typeof b.hours_since_last_fill === "number" &&
-                        b.hours_since_last_fill > 24 && (
-                          <span
-                            class="text-xs font-mono font-bold px-2 py-0.5 rounded-full bg-(--color-warning)/10 border border-(--color-warning)/30 text-(--color-warning)"
-                            title={t.staleHint}
-                            role="status"
-                          >
-                            ⚠{" "}
-                            {t.staleWarn.replace(
-                              "%d",
-                              String(Math.floor(b.hours_since_last_fill)),
-                            )}
-                          </span>
-                        )}
-                      {b.is_active ? (
-                        <>
-                          <span class="text-xs font-mono font-bold text-(--color-up)">
-                            ● {t.active}
-                          </span>
-                          <button
-                            type="button"
-                            class="text-xs text-(--color-text-muted) hover:text-(--color-down) underline min-h-[44px] px-2"
-                            onClick={() => handleDeactivate(b.id)}
-                          >
-                            {t.deactivate}
-                          </button>
-                        </>
-                      ) : (
-                        <>
-                          <button
-                            type="button"
-                            class="text-xs text-(--color-text-muted) hover:text-(--color-accent) underline min-h-[44px] px-2"
-                            onClick={() => handleEdit(b)}
-                          >
-                            {t.editBtn}
-                          </button>
-                          <button
-                            type="button"
-                            class="btn btn-ghost btn-sm min-h-[44px]"
-                            onClick={() => handleActivate(b.id)}
-                          >
-                            {t.activate}
-                          </button>
-                        </>
-                      )}
-                      <button
-                        type="button"
-                        class="text-xs text-(--color-down) hover:underline min-h-[44px] px-2"
-                        onClick={() => handleDelete(b.id)}
-                      >
-                        {t.deleteBtn}
-                      </button>
-                    </div>
-                  </div>
-                  {b.is_active && pv && (
-                    <div class="mt-2 pt-2 border-t border-(--color-border)/40 grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs font-mono">
-                      <div>
-                        <span class="text-(--color-text-muted)">
-                          {t.pvNextTrigger}:{" "}
-                        </span>
-                        <span class="font-bold">
-                          ${fmtP(pv.next_trigger_price)}
-                        </span>
-                        <span class="text-(--color-text-muted)">
-                          {" "}
-                          ({pv.distance_to_trigger_pct.toFixed(2)}% {t.pvAway})
-                        </span>
+                  <span
+                    aria-hidden="true"
+                    class={
+                      loopHealth.healthy
+                        ? "inline-block w-1.5 h-1.5 rounded-full bg-(--color-up) motion-safe:animate-pulse"
+                        : "inline-block w-1.5 h-1.5 rounded-full border border-(--color-down)"
+                    }
+                  />
+                  {loopHealth.healthy ? t.loopHealthy : t.loopStale}
+                  <span class="text-(--color-text-muted)">
+                    · {Math.round(loopHealth.seconds_ago)}s
+                  </span>
+                </span>
+              )}
+            </div>
+            <div class="flex items-center gap-2">
+              {bots.some((b) => b.is_active) && (
+                <button
+                  type="button"
+                  class="text-xs font-bold text-(--color-down) hover:bg-(--color-down)/10 border border-(--color-down)/30 rounded-lg px-3 min-h-[44px]"
+                  onClick={handlePauseAll}
+                  aria-label={t.pauseAll}
+                >
+                  ⏸ {t.pauseAll}
+                </button>
+              )}
+              <span class="text-xs text-(--color-text-muted)">
+                {t.subtitle}
+              </span>
+            </div>
+          </div>
+          <div
+            class="p-2.5 mb-3 rounded-lg bg-(--color-warning)/10 border border-(--color-warning)/30 text-xs"
+            role="status"
+          >
+            ⚠️ {t.notLiveYet}
+          </div>
+          {reloadErr && (
+            <div
+              class="p-2.5 mb-3 rounded-lg bg-(--color-down)/10 border border-(--color-down)/30 text-xs text-(--color-down)"
+              role="alert"
+              aria-live="assertive"
+            >
+              ⚠ {reloadErr}
+            </div>
+          )}
+          {bots.length === 0 ? (
+            <p class="text-sm text-(--color-text-muted) italic">{t.none}</p>
+          ) : (
+            <ul class="space-y-2">
+              {bots.map((b) => {
+                const dirColor =
+                  b.direction === "long"
+                    ? "text-(--color-up)"
+                    : "text-(--color-down)";
+                const pv = previews[b.id];
+                const fmtP = (n: number) =>
+                  n >= 1000
+                    ? n.toLocaleString(undefined, { maximumFractionDigits: 2 })
+                    : n >= 1
+                      ? n.toLocaleString(undefined, {
+                          maximumFractionDigits: 4,
+                        })
+                      : n.toLocaleString(undefined, {
+                          maximumFractionDigits: 8,
+                        });
+                return (
+                  <li
+                    key={b.id}
+                    class="p-3 rounded-lg border border-(--color-border) bg-(--color-bg)/40"
+                  >
+                    <div class="flex items-center justify-between gap-2 flex-wrap">
+                      <div class="min-w-0">
+                        <p class="font-bold text-sm truncate">{b.name}</p>
+                        <p class="text-xs font-mono text-(--color-text-muted)">
+                          <span class={dirColor}>
+                            {b.direction.toUpperCase()}
+                          </span>{" "}
+                          · {b.symbol} · ×{b.leverage} · step {b.price_step_pct}
+                          % · TP {b.tp_pct}%
+                        </p>
                       </div>
-                      <div>
-                        <span class="text-(--color-text-muted)">
-                          {t.pvTp}:{" "}
-                        </span>
-                        <span class="font-bold text-(--color-up)">
-                          ${fmtP(pv.tp_price)}
-                        </span>
-                        <span class="text-(--color-text-muted)">
-                          {" "}
-                          ({pv.distance_to_tp_pct.toFixed(2)}% {t.pvAway})
-                        </span>
-                      </div>
-                      <div>
-                        <span class="text-(--color-text-muted)">
-                          {t.pvMark}:{" "}
-                        </span>
-                        <span class="font-bold">${fmtP(pv.mark_price)}</span>
-                        {pv.weighted_avg_entry > 0 && (
+                      <div class="flex items-center gap-2 shrink-0">
+                        {b.is_active &&
+                          typeof b.hours_since_last_fill === "number" &&
+                          b.hours_since_last_fill > 24 && (
+                            <span
+                              class="text-xs font-mono font-bold px-2 py-0.5 rounded-full bg-(--color-warning)/10 border border-(--color-warning)/30 text-(--color-warning)"
+                              title={t.staleHint}
+                              role="status"
+                            >
+                              ⚠{" "}
+                              {t.staleWarn.replace(
+                                "%d",
+                                String(Math.floor(b.hours_since_last_fill)),
+                              )}
+                            </span>
+                          )}
+                        {b.is_active ? (
                           <>
-                            {" "}
-                            <span class="text-(--color-text-muted)">
-                              · {t.pvAvg}:{" "}
+                            <span class="text-xs font-mono font-bold text-(--color-up)">
+                              ● {t.active}
                             </span>
-                            <span class="font-bold">
-                              ${fmtP(pv.weighted_avg_entry)}
-                            </span>
-                            {(() => {
-                              const upl =
-                                pv.direction === "long"
-                                  ? ((pv.mark_price - pv.weighted_avg_entry) /
-                                      pv.weighted_avg_entry) *
-                                    100
-                                  : ((pv.weighted_avg_entry - pv.mark_price) /
-                                      pv.weighted_avg_entry) *
-                                    100;
-                              const cls =
-                                upl > 0
-                                  ? "text-(--color-up)"
-                                  : upl < 0
-                                    ? "text-(--color-down)"
-                                    : "text-(--color-text-muted)";
-                              const sign = upl > 0 ? "+" : "";
-                              return (
-                                <span class={`ml-2 font-bold ${cls}`}>
-                                  ({t.pvUnrealized} {sign}
-                                  {upl.toFixed(2)}%)
-                                </span>
-                              );
-                            })()}
+                            <button
+                              type="button"
+                              class="text-xs text-(--color-text-muted) hover:text-(--color-down) underline min-h-[44px] px-2"
+                              onClick={() => handleDeactivate(b.id)}
+                            >
+                              {t.deactivate}
+                            </button>
+                          </>
+                        ) : (
+                          <>
+                            <button
+                              type="button"
+                              class="text-xs text-(--color-text-muted) hover:text-(--color-accent) underline min-h-[44px] px-2"
+                              onClick={() => handleEdit(b)}
+                            >
+                              {t.editBtn}
+                            </button>
+                            <button
+                              type="button"
+                              class="btn btn-ghost btn-sm min-h-[44px]"
+                              onClick={() => handleActivate(b.id)}
+                            >
+                              {t.activate}
+                            </button>
                           </>
                         )}
-                      </div>
-                      <div>
-                        <span class="text-(--color-text-muted)">
-                          {pv.open_fills_count} {t.pvOpenFills}
-                        </span>
-                        {pv.would_fire_next_safety && (
-                          <span class="ml-2 text-(--color-warning) font-bold">
-                            ⚡ {t.pvWouldFire}
-                          </span>
-                        )}
-                        {pv.scaling_halted && (
-                          <span class="ml-2 text-(--color-down) font-bold">
-                            ⛔ {t.pvHalted}
-                          </span>
-                        )}
+                        <button
+                          type="button"
+                          class="text-xs text-(--color-down) hover:underline min-h-[44px] px-2"
+                          onClick={() => handleDelete(b.id)}
+                        >
+                          {t.deleteBtn}
+                        </button>
                       </div>
                     </div>
-                  )}
-
-                  <div class="mt-2 pt-2 border-t border-(--color-border)/40">
-                    <button
-                      type="button"
-                      class="text-xs text-(--color-text-muted) hover:text-(--color-accent) min-h-[44px] px-1"
-                      onClick={() => toggleHistory(b.id)}
-                      aria-expanded={expandedBots.has(b.id)}
-                    >
-                      {expandedBots.has(b.id) ? t.historyHide : t.historyShow}
-                    </button>
-                    {expandedBots.has(b.id) && (
-                      <div class="mt-2">
-                        {(botFills[b.id] ?? []).length === 0 ? (
-                          <p class="text-xs italic text-(--color-text-muted)">
-                            {t.historyEmpty}
-                          </p>
-                        ) : (
-                          <div class="overflow-x-auto">
-                            <table class="w-full text-xs font-mono">
-                              <thead>
-                                <tr class="border-b border-(--color-border) bg-(--color-bg)/30 text-left">
-                                  {t.historyHeader.map((h) => (
-                                    <th key={h} class="p-2 font-bold">
-                                      {h}
-                                    </th>
-                                  ))}
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {(botFills[b.id] ?? []).map((f) => {
-                                  const dt = new Date(
-                                    f.filled_at * 1000,
-                                  ).toLocaleString();
-                                  const kind =
-                                    f.status === "tp_closed"
-                                      ? "TP"
-                                      : f.order_num === 0
-                                        ? "BASE"
-                                        : `SAFETY ${f.order_num}`;
-                                  return (
-                                    <tr
-                                      key={f.id}
-                                      class="border-b border-(--color-border)/40"
-                                    >
-                                      <td class="p-2 text-(--color-text-muted)">
-                                        {f.order_num}
-                                      </td>
-                                      <td class="p-2 whitespace-nowrap">
-                                        {dt}
-                                      </td>
-                                      <td class="p-2">{kind}</td>
-                                      <td class="p-2 text-right">
-                                        ${fmtP(f.fill_price)}
-                                      </td>
-                                      <td class="p-2 text-right">
-                                        {f.fill_size_usdt.toFixed(2)}
-                                      </td>
-                                      <td class="p-2 text-(--color-text-muted)">
-                                        {f.status}
-                                      </td>
-                                    </tr>
-                                  );
-                                })}
-                              </tbody>
-                            </table>
-                          </div>
-                        )}
+                    {b.is_active && pv && (
+                      <div class="mt-2 pt-2 border-t border-(--color-border)/40 grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs font-mono">
+                        <div>
+                          <span class="text-(--color-text-muted)">
+                            {t.pvNextTrigger}:{" "}
+                          </span>
+                          <span class="font-bold">
+                            ${fmtP(pv.next_trigger_price)}
+                          </span>
+                          <span class="text-(--color-text-muted)">
+                            {" "}
+                            ({pv.distance_to_trigger_pct.toFixed(2)}% {t.pvAway}
+                            )
+                          </span>
+                        </div>
+                        <div>
+                          <span class="text-(--color-text-muted)">
+                            {t.pvTp}:{" "}
+                          </span>
+                          <span class="font-bold text-(--color-up)">
+                            ${fmtP(pv.tp_price)}
+                          </span>
+                          <span class="text-(--color-text-muted)">
+                            {" "}
+                            ({pv.distance_to_tp_pct.toFixed(2)}% {t.pvAway})
+                          </span>
+                        </div>
+                        <div>
+                          <span class="text-(--color-text-muted)">
+                            {t.pvMark}:{" "}
+                          </span>
+                          <span class="font-bold">${fmtP(pv.mark_price)}</span>
+                          {pv.weighted_avg_entry > 0 && (
+                            <>
+                              {" "}
+                              <span class="text-(--color-text-muted)">
+                                · {t.pvAvg}:{" "}
+                              </span>
+                              <span class="font-bold">
+                                ${fmtP(pv.weighted_avg_entry)}
+                              </span>
+                              {(() => {
+                                const upl =
+                                  pv.direction === "long"
+                                    ? ((pv.mark_price - pv.weighted_avg_entry) /
+                                        pv.weighted_avg_entry) *
+                                      100
+                                    : ((pv.weighted_avg_entry - pv.mark_price) /
+                                        pv.weighted_avg_entry) *
+                                      100;
+                                const cls =
+                                  upl > 0
+                                    ? "text-(--color-up)"
+                                    : upl < 0
+                                      ? "text-(--color-down)"
+                                      : "text-(--color-text-muted)";
+                                const sign = upl > 0 ? "+" : "";
+                                return (
+                                  <span class={`ml-2 font-bold ${cls}`}>
+                                    ({t.pvUnrealized} {sign}
+                                    {upl.toFixed(2)}%)
+                                  </span>
+                                );
+                              })()}
+                            </>
+                          )}
+                        </div>
+                        <div>
+                          <span class="text-(--color-text-muted)">
+                            {pv.open_fills_count} {t.pvOpenFills}
+                          </span>
+                          {pv.would_fire_next_safety && (
+                            <span class="ml-2 text-(--color-warning) font-bold">
+                              ⚡ {t.pvWouldFire}
+                            </span>
+                          )}
+                          {pv.scaling_halted && (
+                            <span class="ml-2 text-(--color-down) font-bold">
+                              ⛔ {t.pvHalted}
+                            </span>
+                          )}
+                        </div>
                       </div>
                     )}
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
-        )}
-      </div>
 
-      {/* Builder form */}
-      <div
-        id="dca-builder-form"
-        class={`card-enterprise rounded-2xl p-5 md:p-6 space-y-4 ${editingBotId ? "ring-2 ring-(--color-accent)/40" : ""}`}
-      >
-        <div class="flex items-center justify-between flex-wrap gap-2">
-          <h3 class="font-bold text-lg">
-            {editingBotId
-              ? t.editing.replace(
-                  "%s",
-                  bots.find((b) => b.id === editingBotId)?.name ?? "",
-                )
-              : t.new}
-          </h3>
-          {editingBotId && (
-            <button
-              type="button"
-              class="text-xs text-(--color-text-muted) hover:text-(--color-down) underline min-h-[44px] px-2"
-              onClick={handleCancelEdit}
-            >
-              {t.editCancel}
-            </button>
+                    <div class="mt-2 pt-2 border-t border-(--color-border)/40">
+                      <button
+                        type="button"
+                        class="text-xs text-(--color-text-muted) hover:text-(--color-accent) min-h-[44px] px-1"
+                        onClick={() => toggleHistory(b.id)}
+                        aria-expanded={expandedBots.has(b.id)}
+                      >
+                        {expandedBots.has(b.id) ? t.historyHide : t.historyShow}
+                      </button>
+                      {expandedBots.has(b.id) && (
+                        <div class="mt-2">
+                          {(botFills[b.id] ?? []).length === 0 ? (
+                            <p class="text-xs italic text-(--color-text-muted)">
+                              {t.historyEmpty}
+                            </p>
+                          ) : (
+                            <div class="overflow-x-auto">
+                              <table class="w-full text-xs font-mono">
+                                <thead>
+                                  <tr class="border-b border-(--color-border) bg-(--color-bg)/30 text-left">
+                                    {t.historyHeader.map((h) => (
+                                      <th key={h} class="p-2 font-bold">
+                                        {h}
+                                      </th>
+                                    ))}
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {(botFills[b.id] ?? []).map((f) => {
+                                    const dt = new Date(
+                                      f.filled_at * 1000,
+                                    ).toLocaleString();
+                                    const kind =
+                                      f.status === "tp_closed"
+                                        ? "TP"
+                                        : f.order_num === 0
+                                          ? "BASE"
+                                          : `SAFETY ${f.order_num}`;
+                                    return (
+                                      <tr
+                                        key={f.id}
+                                        class="border-b border-(--color-border)/40"
+                                      >
+                                        <td class="p-2 text-(--color-text-muted)">
+                                          {f.order_num}
+                                        </td>
+                                        <td class="p-2 whitespace-nowrap">
+                                          {dt}
+                                        </td>
+                                        <td class="p-2">{kind}</td>
+                                        <td class="p-2 text-right">
+                                          ${fmtP(f.fill_price)}
+                                        </td>
+                                        <td class="p-2 text-right">
+                                          {f.fill_size_usdt.toFixed(2)}
+                                        </td>
+                                        <td class="p-2 text-(--color-text-muted)">
+                                          {f.status}
+                                        </td>
+                                      </tr>
+                                    );
+                                  })}
+                                </tbody>
+                              </table>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
           )}
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <label class="block">
-            <span class="text-sm font-bold">{t.name}</span>
-            <input
-              type="text"
-              maxLength={80}
-              value={draft.name}
-              onInput={(e) =>
-                setDraft((d) => ({
-                  ...d,
-                  name: (e.target as HTMLInputElement).value,
-                }))
-              }
-              class="mt-1 w-full rounded-lg border border-(--color-border) bg-(--color-bg) px-3 py-2 text-sm"
-            />
-          </label>
-          <label class="block">
-            <span class="text-sm font-bold">{t.symbol}</span>
-            <input
-              type="text"
-              value={draft.symbol}
-              onInput={(e) =>
-                setDraft((d) => ({
-                  ...d,
-                  symbol: (e.target as HTMLInputElement).value
-                    .toUpperCase()
-                    .trim(),
-                }))
-              }
-              class="mt-1 w-full rounded-lg border border-(--color-border) bg-(--color-bg) px-3 py-2 text-sm font-mono"
-            />
-            <span class="text-xs text-(--color-text-muted)">
-              {t.symbolHelp}
-            </span>
-          </label>
-        </div>
-
-        <fieldset>
-          <legend class="text-sm font-bold mb-2">{t.direction}</legend>
-          <div class="flex gap-3">
-            {(["long", "short"] as const).map((d) => (
-              <label
-                key={d}
-                class="inline-flex items-center gap-2 cursor-pointer"
+        {/* Builder form */}
+        <div
+          id="dca-builder-form"
+          class={`card-enterprise rounded-2xl p-5 md:p-6 space-y-4 ${editingBotId ? "ring-2 ring-(--color-accent)/40" : ""}`}
+        >
+          <div class="flex items-center justify-between flex-wrap gap-2">
+            <h3 class="font-bold text-lg">
+              {editingBotId
+                ? t.editing.replace(
+                    "%s",
+                    bots.find((b) => b.id === editingBotId)?.name ?? "",
+                  )
+                : t.new}
+            </h3>
+            {editingBotId && (
+              <button
+                type="button"
+                class="text-xs text-(--color-text-muted) hover:text-(--color-down) underline min-h-[44px] px-2"
+                onClick={handleCancelEdit}
               >
-                <input
-                  type="radio"
-                  name="dca_direction"
-                  checked={draft.direction === d}
-                  onChange={() => setDraft((s) => ({ ...s, direction: d }))}
-                  class="accent-(--color-accent)"
-                />
-                <span class="text-sm">{d === "long" ? t.long : t.short}</span>
-              </label>
-            ))}
+                {t.editCancel}
+              </button>
+            )}
           </div>
-        </fieldset>
 
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <label class="block">
+              <span class="text-sm font-bold">{t.name}</span>
+              <input
+                type="text"
+                maxLength={80}
+                value={draft.name}
+                onInput={(e) =>
+                  setDraft((d) => ({
+                    ...d,
+                    name: (e.target as HTMLInputElement).value,
+                  }))
+                }
+                class="mt-1 w-full rounded-lg border border-(--color-border) bg-(--color-bg) px-3 py-2 text-sm"
+              />
+            </label>
+            <label class="block">
+              <span class="text-sm font-bold">{t.symbol}</span>
+              <input
+                type="text"
+                value={draft.symbol}
+                onInput={(e) =>
+                  setDraft((d) => ({
+                    ...d,
+                    symbol: (e.target as HTMLInputElement).value
+                      .toUpperCase()
+                      .trim(),
+                  }))
+                }
+                class="mt-1 w-full rounded-lg border border-(--color-border) bg-(--color-bg) px-3 py-2 text-sm font-mono"
+              />
+              <span class="text-xs text-(--color-text-muted)">
+                {t.symbolHelp}
+              </span>
+            </label>
+          </div>
+
+          <fieldset>
+            <legend class="text-sm font-bold mb-2">{t.direction}</legend>
+            <div class="flex gap-3">
+              {(["long", "short"] as const).map((d) => (
+                <label
+                  key={d}
+                  class="inline-flex items-center gap-2 cursor-pointer"
+                >
+                  <input
+                    type="radio"
+                    name="dca_direction"
+                    checked={draft.direction === d}
+                    onChange={() => setDraft((s) => ({ ...s, direction: d }))}
+                    class="accent-(--color-accent)"
+                  />
+                  <span class="text-sm">{d === "long" ? t.long : t.short}</span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
+
+          <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+            <label class="block">
+              <span class="text-sm font-bold">{t.positionSize}</span>
+              <input
+                type="number"
+                min={1}
+                max={5000}
+                value={draft.position_size_usdt}
+                onInput={(e) =>
+                  setDraft((d) => ({
+                    ...d,
+                    position_size_usdt: Number(
+                      (e.target as HTMLInputElement).value,
+                    ),
+                  }))
+                }
+                class="mt-1 w-full rounded-lg border border-(--color-border) bg-(--color-bg) px-3 py-2 text-sm"
+              />
+            </label>
+            <label class="block">
+              <span class="text-sm font-bold">{t.leverage}</span>
+              <input
+                type="number"
+                min={1}
+                max={125}
+                value={draft.leverage}
+                onInput={(e) =>
+                  setDraft((d) => ({
+                    ...d,
+                    leverage: Number((e.target as HTMLInputElement).value),
+                  }))
+                }
+                class="mt-1 w-full rounded-lg border border-(--color-border) bg-(--color-bg) px-3 py-2 text-sm"
+              />
+            </label>
+            <label class="block">
+              <span class="text-sm font-bold">{t.maxSafety}</span>
+              <input
+                type="number"
+                min={1}
+                max={20}
+                value={draft.max_safety_orders}
+                onInput={(e) =>
+                  setDraft((d) => ({
+                    ...d,
+                    max_safety_orders: Number(
+                      (e.target as HTMLInputElement).value,
+                    ),
+                  }))
+                }
+                class="mt-1 w-full rounded-lg border border-(--color-border) bg-(--color-bg) px-3 py-2 text-sm"
+              />
+            </label>
+            <label class="block">
+              <span class="text-sm font-bold">{t.priceStep}</span>
+              <input
+                type="number"
+                min={0.1}
+                max={20}
+                step={0.1}
+                value={draft.price_step_pct}
+                onInput={(e) =>
+                  setDraft((d) => ({
+                    ...d,
+                    price_step_pct: Number(
+                      (e.target as HTMLInputElement).value,
+                    ),
+                  }))
+                }
+                class="mt-1 w-full rounded-lg border border-(--color-border) bg-(--color-bg) px-3 py-2 text-sm"
+              />
+            </label>
+            <label class="block">
+              <span class="text-sm font-bold">{t.sizeMultiplier}</span>
+              <input
+                type="number"
+                min={0.5}
+                max={3}
+                step={0.1}
+                value={draft.size_multiplier}
+                onInput={(e) =>
+                  setDraft((d) => ({
+                    ...d,
+                    size_multiplier: Number(
+                      (e.target as HTMLInputElement).value,
+                    ),
+                  }))
+                }
+                class="mt-1 w-full rounded-lg border border-(--color-border) bg-(--color-bg) px-3 py-2 text-sm"
+              />
+            </label>
+            <label class="block">
+              <span class="text-sm font-bold">{t.tpPct}</span>
+              <input
+                type="number"
+                min={0.1}
+                max={50}
+                step={0.1}
+                value={draft.tp_pct}
+                onInput={(e) =>
+                  setDraft((d) => ({
+                    ...d,
+                    tp_pct: Number((e.target as HTMLInputElement).value),
+                  }))
+                }
+                class="mt-1 w-full rounded-lg border border-(--color-border) bg-(--color-bg) px-3 py-2 text-sm"
+              />
+            </label>
+          </div>
+
           <label class="block">
-            <span class="text-sm font-bold">{t.positionSize}</span>
+            <span class="text-sm font-bold">{t.stopScaling}</span>
             <input
               type="number"
-              min={1}
-              max={5000}
-              value={draft.position_size_usdt}
+              min={0}
+              step={0.01}
+              value={draft.stop_scaling_price}
               onInput={(e) =>
                 setDraft((d) => ({
                   ...d,
-                  position_size_usdt: Number(
+                  stop_scaling_price: Number(
                     (e.target as HTMLInputElement).value,
                   ),
                 }))
@@ -1169,345 +1319,298 @@ export default function DCABots({ lang = "en" }: Props) {
               class="mt-1 w-full rounded-lg border border-(--color-border) bg-(--color-bg) px-3 py-2 text-sm"
             />
           </label>
-          <label class="block">
-            <span class="text-sm font-bold">{t.leverage}</span>
-            <input
-              type="number"
-              min={1}
-              max={125}
-              value={draft.leverage}
-              onInput={(e) =>
-                setDraft((d) => ({
-                  ...d,
-                  leverage: Number((e.target as HTMLInputElement).value),
-                }))
-              }
-              class="mt-1 w-full rounded-lg border border-(--color-border) bg-(--color-bg) px-3 py-2 text-sm"
-            />
-          </label>
-          <label class="block">
-            <span class="text-sm font-bold">{t.maxSafety}</span>
-            <input
-              type="number"
-              min={1}
-              max={20}
-              value={draft.max_safety_orders}
-              onInput={(e) =>
-                setDraft((d) => ({
-                  ...d,
-                  max_safety_orders: Number(
-                    (e.target as HTMLInputElement).value,
-                  ),
-                }))
-              }
-              class="mt-1 w-full rounded-lg border border-(--color-border) bg-(--color-bg) px-3 py-2 text-sm"
-            />
-          </label>
-          <label class="block">
-            <span class="text-sm font-bold">{t.priceStep}</span>
-            <input
-              type="number"
-              min={0.1}
-              max={20}
-              step={0.1}
-              value={draft.price_step_pct}
-              onInput={(e) =>
-                setDraft((d) => ({
-                  ...d,
-                  price_step_pct: Number((e.target as HTMLInputElement).value),
-                }))
-              }
-              class="mt-1 w-full rounded-lg border border-(--color-border) bg-(--color-bg) px-3 py-2 text-sm"
-            />
-          </label>
-          <label class="block">
-            <span class="text-sm font-bold">{t.sizeMultiplier}</span>
-            <input
-              type="number"
-              min={0.5}
-              max={3}
-              step={0.1}
-              value={draft.size_multiplier}
-              onInput={(e) =>
-                setDraft((d) => ({
-                  ...d,
-                  size_multiplier: Number((e.target as HTMLInputElement).value),
-                }))
-              }
-              class="mt-1 w-full rounded-lg border border-(--color-border) bg-(--color-bg) px-3 py-2 text-sm"
-            />
-          </label>
-          <label class="block">
-            <span class="text-sm font-bold">{t.tpPct}</span>
-            <input
-              type="number"
-              min={0.1}
-              max={50}
-              step={0.1}
-              value={draft.tp_pct}
-              onInput={(e) =>
-                setDraft((d) => ({
-                  ...d,
-                  tp_pct: Number((e.target as HTMLInputElement).value),
-                }))
-              }
-              class="mt-1 w-full rounded-lg border border-(--color-border) bg-(--color-bg) px-3 py-2 text-sm"
-            />
-          </label>
-        </div>
 
-        <label class="block">
-          <span class="text-sm font-bold">{t.stopScaling}</span>
-          <input
-            type="number"
-            min={0}
-            step={0.01}
-            value={draft.stop_scaling_price}
-            onInput={(e) =>
-              setDraft((d) => ({
-                ...d,
-                stop_scaling_price: Number(
-                  (e.target as HTMLInputElement).value,
-                ),
-              }))
-            }
-            class="mt-1 w-full rounded-lg border border-(--color-border) bg-(--color-bg) px-3 py-2 text-sm"
-          />
-        </label>
-
-        {/* Real-mode safety gates (#2071 schema). Paper-mode permits 0/0;
+          {/* Real-mode safety gates (#2071 schema). Paper-mode permits 0/0;
             real-mode (paper_mode=0) backend rejects on validate. */}
-        <label class="block">
-          <span class="text-sm font-bold">{t.dailyLossLimit}</span>
-          <input
-            type="number"
-            min={0}
-            step={0.01}
-            value={draft.daily_loss_limit_usdt}
-            onInput={(e) =>
-              setDraft((d) => ({
-                ...d,
-                daily_loss_limit_usdt: Number(
-                  (e.target as HTMLInputElement).value,
-                ),
-              }))
-            }
-            class="mt-1 w-full rounded-lg border border-(--color-border) bg-(--color-bg) px-3 py-2 text-sm"
-          />
-        </label>
+          <label class="block">
+            <span class="text-sm font-bold">{t.dailyLossLimit}</span>
+            <input
+              type="number"
+              min={0}
+              step={0.01}
+              value={draft.daily_loss_limit_usdt}
+              onInput={(e) =>
+                setDraft((d) => ({
+                  ...d,
+                  daily_loss_limit_usdt: Number(
+                    (e.target as HTMLInputElement).value,
+                  ),
+                }))
+              }
+              class="mt-1 w-full rounded-lg border border-(--color-border) bg-(--color-bg) px-3 py-2 text-sm"
+            />
+          </label>
 
-        <label class="flex items-center gap-2 min-h-[44px]">
-          <input
-            type="checkbox"
-            checked={!!draft.auto_recycle}
-            onInput={(e) =>
-              setDraft((d) => ({
-                ...d,
-                auto_recycle: (e.target as HTMLInputElement).checked ? 1 : 0,
-              }))
-            }
-            class="w-5 h-5"
-          />
-          <span class="text-sm">{t.autoRecycle}</span>
-        </label>
+          <label class="flex items-center gap-2 min-h-[44px]">
+            <input
+              type="checkbox"
+              checked={!!draft.auto_recycle}
+              onInput={(e) =>
+                setDraft((d) => ({
+                  ...d,
+                  auto_recycle: (e.target as HTMLInputElement).checked ? 1 : 0,
+                }))
+              }
+              class="w-5 h-5"
+            />
+            <span class="text-sm">{t.autoRecycle}</span>
+          </label>
 
-        {/* paper_mode toggle — explicit opt-in for real OKX orders.
+          {/* paper_mode toggle — explicit opt-in for real OKX orders.
             Backend additionally enforces OKX_DCA_REAL_ENABLED env gate +
             daily_loss_limit > 0 + stop_scaling_price > 0 before any
             real fill. We surface the same checks on the frontend so the
             owner sees the warning + the missing prerequisites before
             submitting. */}
-        <div class="rounded-lg border border-(--color-border) p-3 space-y-2">
-          <label class="flex items-center gap-2 min-h-[44px]">
-            <input
-              type="checkbox"
-              checked={!draft.paper_mode}
-              onInput={(e) =>
-                setDraft((d) => ({
-                  ...d,
-                  paper_mode: (e.target as HTMLInputElement).checked ? 0 : 1,
-                }))
-              }
-              class="w-5 h-5"
-            />
-            <span class="text-sm font-bold">
-              {draft.paper_mode ? t.paperMode : t.realModeToggle}
-            </span>
-          </label>
-          {!draft.paper_mode && (
-            <>
-              <p class="text-xs text-(--color-down) font-mono">
-                {t.realModeWarn}
-              </p>
-              {(draft.daily_loss_limit_usdt <= 0 ||
-                draft.stop_scaling_price <= 0) && (
-                <p
-                  class="text-xs text-(--color-down) font-bold font-mono"
-                  role="alert"
-                >
-                  {t.realModeBlocker}
+          <div class="rounded-lg border border-(--color-border) p-3 space-y-2">
+            <label class="flex items-center gap-2 min-h-[44px]">
+              <input
+                type="checkbox"
+                checked={!draft.paper_mode}
+                onInput={(e) =>
+                  setDraft((d) => ({
+                    ...d,
+                    paper_mode: (e.target as HTMLInputElement).checked ? 0 : 1,
+                  }))
+                }
+                class="w-5 h-5"
+              />
+              <span class="text-sm font-bold">
+                {draft.paper_mode ? t.paperMode : t.realModeToggle}
+              </span>
+            </label>
+            {!draft.paper_mode && (
+              <>
+                <p class="text-xs text-(--color-down) font-mono">
+                  {t.realModeWarn}
                 </p>
-              )}
-            </>
-          )}
-        </div>
-
-        {/* Live cumulative-exposure preview — mirrors backend
-            validate_dca_params formula so owners see the cap math before
-            hitting Save. */}
-        {(() => {
-          const base = Number(draft.position_size_usdt) || 0;
-          const m = Number(draft.size_multiplier) || 1;
-          const n = Number(draft.max_safety_orders) || 0;
-          if (base <= 0 || n < 0 || m <= 0) return null;
-          const cum =
-            Math.abs(m - 1) < 1e-9
-              ? base * (n + 1)
-              : (base * (Math.pow(m, n + 1) - 1)) / (m - 1);
-          const fmt = cum.toLocaleString(undefined, {
-            maximumFractionDigits: 0,
-          });
-          const over = cum > 50_000;
-          const warn = !over && cum > 40_000;
-          const text = over
-            ? t.cumPreviewBlock.replace("%s", fmt)
-            : warn
-              ? t.cumPreviewWarn.replace("%s", fmt)
-              : t.cumPreviewOk.replace("%s", fmt);
-          const cls = over
-            ? "bg-(--color-down)/10 border-(--color-down)/40 text-(--color-down)"
-            : warn
-              ? "bg-(--color-warning)/10 border-(--color-warning)/40 text-(--color-warning)"
-              : "bg-(--color-bg-elevated) border-(--color-border) text-(--color-text-secondary)";
-          return (
-            <div
-              class={`text-xs font-mono p-2.5 rounded-lg border ${cls}`}
-              role={over ? "alert" : "status"}
-              aria-live={over ? "assertive" : "polite"}
-            >
-              {text}
-            </div>
-          );
-        })()}
-
-        {/* Action buttons */}
-        <div class="flex gap-3 pt-2">
-          <button
-            type="button"
-            class="btn btn-ghost btn-md flex-1 min-h-[44px]"
-            onClick={handleSimulate}
-            disabled={simulating}
-          >
-            {simulating ? t.simulating : `📊 ${t.simulate}`}
-          </button>
-          <button
-            type="button"
-            class={`btn btn-md flex-1 min-h-[44px] ${saving === "saved" ? "bg-(--color-up) text-white" : "btn-primary"}`}
-            onClick={handleSave}
-            disabled={
-              saving === "saving" ||
-              (!draft.paper_mode &&
-                (draft.daily_loss_limit_usdt <= 0 ||
-                  draft.stop_scaling_price <= 0))
-            }
-          >
-            {saving === "saving"
-              ? t.saving
-              : saving === "saved"
-                ? t.saved
-                : editingBotId
-                  ? t.updateBtn
-                  : t.save}
-          </button>
-        </div>
-
-        {simErr && (
-          <p
-            class="text-sm text-(--color-down)"
-            role="alert"
-            aria-live="assertive"
-          >
-            {t.simErr}: {simErr}
-          </p>
-        )}
-        {saving === "error" && (
-          <p
-            class="text-sm text-(--color-down)"
-            role="alert"
-            aria-live="assertive"
-          >
-            {t.saveErr}: {saveErr}
-          </p>
-        )}
-
-        {/* Simulate result */}
-        {sim && (
-          <div class="mt-3 p-4 rounded-lg bg-(--color-accent)/5 border border-(--color-accent)/20">
-            <p class="text-xs font-mono font-bold uppercase tracking-wider text-(--color-accent) mb-3">
-              {t.simResult} · {sim.exit_reason}
-            </p>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
-              <div>
-                <p class="text-xs text-(--color-text-muted)">{t.fillsCount}</p>
-                <p class="font-mono font-bold">{totalFills}</p>
-              </div>
-              <div>
-                <p class="text-xs text-(--color-text-muted)">{t.safetyUsed}</p>
-                <p class="font-mono font-bold">{sim.safety_orders_used}</p>
-              </div>
-              <div>
-                <p class="text-xs text-(--color-text-muted)">{t.avgEntry}</p>
-                <p class="font-mono font-bold">
-                  ${sim.avg_entry_price.toFixed(4)}
-                </p>
-              </div>
-              <div>
-                <p class="text-xs text-(--color-text-muted)">{t.netPnl}</p>
-                <p class={`font-mono font-bold ${netPnlColor}`}>
-                  {sim.net_pnl_usdt >= 0 ? "+" : ""}$
-                  {sim.net_pnl_usdt.toFixed(2)}
-                </p>
-              </div>
-              <div>
-                <p class="text-xs text-(--color-text-muted)">{t.grossPnl}</p>
-                <p class="font-mono font-bold">
-                  {sim.gross_pnl_usdt >= 0 ? "+" : ""}$
-                  {sim.gross_pnl_usdt.toFixed(2)}
-                </p>
-              </div>
-              <div>
-                <p class="text-xs text-(--color-text-muted)">{t.fees}</p>
-                <p class="font-mono font-bold">
-                  ${sim.total_fees_usdt.toFixed(2)}
-                </p>
-              </div>
-              <div>
-                <p class="text-xs text-(--color-text-muted)">{t.drawdown}</p>
-                <p class="font-mono font-bold text-(--color-down)">
-                  −{sim.peak_drawdown_pct.toFixed(2)}%
-                </p>
-              </div>
-              <div>
-                <p class="text-xs text-(--color-text-muted)">{t.duration}</p>
-                <p class="font-mono font-bold">
-                  {sim.duration_hours}
-                  {t.hours}
-                </p>
-              </div>
-            </div>
-            {sim.warnings.length > 0 && (
-              <div class="mt-3 p-2 rounded-lg bg-(--color-warning)/10 border border-(--color-warning)/30 text-xs">
-                <p class="font-bold text-(--color-warning) mb-1">{t.warns}</p>
-                <ul class="list-disc pl-5 space-y-0.5">
-                  {sim.warnings.map((w) => (
-                    <li key={w}>{w}</li>
-                  ))}
-                </ul>
-              </div>
+                {(draft.daily_loss_limit_usdt <= 0 ||
+                  draft.stop_scaling_price <= 0) && (
+                  <p
+                    class="text-xs text-(--color-down) font-bold font-mono"
+                    role="alert"
+                  >
+                    {t.realModeBlocker}
+                  </p>
+                )}
+              </>
             )}
           </div>
-        )}
+
+          {/* Live cumulative-exposure preview — mirrors backend
+            validate_dca_params formula so owners see the cap math before
+            hitting Save. */}
+          {(() => {
+            const base = Number(draft.position_size_usdt) || 0;
+            const m = Number(draft.size_multiplier) || 1;
+            const n = Number(draft.max_safety_orders) || 0;
+            if (base <= 0 || n < 0 || m <= 0) return null;
+            const cum =
+              Math.abs(m - 1) < 1e-9
+                ? base * (n + 1)
+                : (base * (Math.pow(m, n + 1) - 1)) / (m - 1);
+            const fmt = cum.toLocaleString(undefined, {
+              maximumFractionDigits: 0,
+            });
+            const over = cum > 50_000;
+            const warn = !over && cum > 40_000;
+            const text = over
+              ? t.cumPreviewBlock.replace("%s", fmt)
+              : warn
+                ? t.cumPreviewWarn.replace("%s", fmt)
+                : t.cumPreviewOk.replace("%s", fmt);
+            const cls = over
+              ? "bg-(--color-down)/10 border-(--color-down)/40 text-(--color-down)"
+              : warn
+                ? "bg-(--color-warning)/10 border-(--color-warning)/40 text-(--color-warning)"
+                : "bg-(--color-bg-elevated) border-(--color-border) text-(--color-text-secondary)";
+            return (
+              <div
+                class={`text-xs font-mono p-2.5 rounded-lg border ${cls}`}
+                role={over ? "alert" : "status"}
+                aria-live={over ? "assertive" : "polite"}
+              >
+                {text}
+              </div>
+            );
+          })()}
+
+          {/* Action buttons */}
+          <div class="flex gap-3 pt-2">
+            <button
+              type="button"
+              class="btn btn-ghost btn-md flex-1 min-h-[44px]"
+              onClick={handleSimulate}
+              disabled={simulating}
+            >
+              {simulating ? t.simulating : `📊 ${t.simulate}`}
+            </button>
+            <button
+              type="button"
+              class={`btn btn-md flex-1 min-h-[44px] ${saving === "saved" ? "bg-(--color-up) text-white" : "btn-primary"}`}
+              onClick={handleSave}
+              disabled={
+                saving === "saving" ||
+                (!draft.paper_mode &&
+                  (draft.daily_loss_limit_usdt <= 0 ||
+                    draft.stop_scaling_price <= 0))
+              }
+            >
+              {saving === "saving"
+                ? t.saving
+                : saving === "saved"
+                  ? t.saved
+                  : editingBotId
+                    ? t.updateBtn
+                    : t.save}
+            </button>
+          </div>
+
+          {simErr && (
+            <p
+              class="text-sm text-(--color-down)"
+              role="alert"
+              aria-live="assertive"
+            >
+              {t.simErr}: {simErr}
+            </p>
+          )}
+          {saving === "error" && (
+            <p
+              class="text-sm text-(--color-down)"
+              role="alert"
+              aria-live="assertive"
+            >
+              {t.saveErr}: {saveErr}
+            </p>
+          )}
+
+          {/* Simulate result */}
+          {sim && (
+            <div class="mt-3 p-4 rounded-lg bg-(--color-accent)/5 border border-(--color-accent)/20">
+              <p class="text-xs font-mono font-bold uppercase tracking-wider text-(--color-accent) mb-3">
+                {t.simResult} · {sim.exit_reason}
+              </p>
+              <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                <div>
+                  <p class="text-xs text-(--color-text-muted)">
+                    {t.fillsCount}
+                  </p>
+                  <p class="font-mono font-bold">{totalFills}</p>
+                </div>
+                <div>
+                  <p class="text-xs text-(--color-text-muted)">
+                    {t.safetyUsed}
+                  </p>
+                  <p class="font-mono font-bold">{sim.safety_orders_used}</p>
+                </div>
+                <div>
+                  <p class="text-xs text-(--color-text-muted)">{t.avgEntry}</p>
+                  <p class="font-mono font-bold">
+                    ${sim.avg_entry_price.toFixed(4)}
+                  </p>
+                </div>
+                <div>
+                  <p class="text-xs text-(--color-text-muted)">{t.netPnl}</p>
+                  <p class={`font-mono font-bold ${netPnlColor}`}>
+                    {sim.net_pnl_usdt >= 0 ? "+" : ""}$
+                    {sim.net_pnl_usdt.toFixed(2)}
+                  </p>
+                </div>
+                <div>
+                  <p class="text-xs text-(--color-text-muted)">{t.grossPnl}</p>
+                  <p class="font-mono font-bold">
+                    {sim.gross_pnl_usdt >= 0 ? "+" : ""}$
+                    {sim.gross_pnl_usdt.toFixed(2)}
+                  </p>
+                </div>
+                <div>
+                  <p class="text-xs text-(--color-text-muted)">{t.fees}</p>
+                  <p class="font-mono font-bold">
+                    ${sim.total_fees_usdt.toFixed(2)}
+                  </p>
+                </div>
+                <div>
+                  <p class="text-xs text-(--color-text-muted)">{t.drawdown}</p>
+                  <p class="font-mono font-bold text-(--color-down)">
+                    −{sim.peak_drawdown_pct.toFixed(2)}%
+                  </p>
+                </div>
+                <div>
+                  <p class="text-xs text-(--color-text-muted)">{t.duration}</p>
+                  <p class="font-mono font-bold">
+                    {sim.duration_hours}
+                    {t.hours}
+                  </p>
+                </div>
+              </div>
+              {sim.warnings.length > 0 && (
+                <div class="mt-3 p-2 rounded-lg bg-(--color-warning)/10 border border-(--color-warning)/30 text-xs">
+                  <p class="font-bold text-(--color-warning) mb-1">{t.warns}</p>
+                  <ul class="list-disc pl-5 space-y-0.5">
+                    {sim.warnings.map((w) => (
+                      <li key={w}>{w}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+
+      {/* Confirm modal — replaces OS window.confirm so Chrome MCP / automation can proceed */}
+      {confirmModal && (
+        <div
+          class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60"
+          role="dialog"
+          aria-modal="true"
+          onClick={() => setConfirmModal(null)}
+        >
+          <div
+            class="card-enterprise rounded-2xl p-6 max-w-md w-full"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 class="font-bold text-lg mb-2">{confirmModal.title}</h3>
+            {confirmModal.body && (
+              <p class="text-sm text-(--color-text-muted) mb-4 whitespace-pre-line">
+                {confirmModal.body}
+              </p>
+            )}
+            <div class="flex gap-2 mt-4">
+              <button
+                type="button"
+                class="btn btn-ghost btn-md flex-1 min-h-[44px]"
+                onClick={() => setConfirmModal(null)}
+              >
+                {t.confirmCancelBtn}
+              </button>
+              <button
+                type="button"
+                class="btn btn-primary btn-md flex-1 min-h-[44px]"
+                onClick={() => confirmModal.onConfirm()}
+              >
+                {t.confirmOkBtn}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Toast — replaces OS window.alert */}
+      {toast && (
+        <div class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 px-5 py-3 rounded-xl bg-(--color-card-enterprise) border border-(--color-border) shadow-lg text-sm">
+          {toast}
+          <button
+            type="button"
+            class="ml-4 text-(--color-text-muted) hover:text-(--color-text)"
+            onClick={() => setToast("")}
+            aria-label="dismiss"
+          >
+            ✕
+          </button>
+        </div>
+      )}
+    </>
   );
 }
