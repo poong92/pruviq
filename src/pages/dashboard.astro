@@ -5,23 +5,12 @@
 // flows.
 // Phase 3b: AUTOTRADE_COMING_SOON SSoT-imported from src/config/feature-flags
 // (env-driven via PUBLIC_AUTOTRADE_LIVE). Phase 4 flip = single YAML change.
+// 2026-05-20: Active dashboard restructured into 3 tabs (Status/Bots/History)
+// to reduce scroll depth and improve onboarding flow for beginners.
 import Layout from '../layouts/Layout.astro';
-import OKXConnectButton from '../components/OKXConnectButton';
-import AutoTradingStatus from '../components/AutoTradingStatus';
 import Day0Checklist from '../components/Day0Checklist';
-import OKXBalance from '../components/OKXBalance';
-import TradingSettings from '../components/TradingSettings';
-import StrategyBuilder from '../components/StrategyBuilder';
-import DCABots from '../components/DCABots';
-import DCASummaryStrip from '../components/DCASummaryStrip';
-import DCAParityCheck from '../components/DCAParityCheck';
-import RecentDCAFills from '../components/RecentDCAFills';
-import GridBots from '../components/GridBots';
-import PendingSignalsApproval from '../components/PendingSignalsApproval';
-import LivePositions from '../components/LivePositions';
-import LiveTradeHistory from '../components/LiveTradeHistory';
+import DashboardTabs from '../components/DashboardTabs';
 import { AUTOTRADE_COMING_SOON } from '../config/feature-flags';
-import { OKX_DISCOUNT_PCT } from '../config/exchanges';
 ---
 
 <Layout title="Dashboard — PRUVIQ" description="Auto-trading dashboard (coming soon). Simulations remain fully free.">
@@ -51,122 +40,31 @@ import { OKX_DISCOUNT_PCT } from '../config/exchanges';
 
     {!AUTOTRADE_COMING_SOON && (
       <>
-        <!-- Day 0 Quick Start — auto-hides once 3 steps done -->
+        <!-- Day 0 Quick Start — auto-hides once 3 steps done (above tabs) -->
         <section class="mb-6">
           <Day0Checklist client:load lang="en" />
         </section>
 
-        <!-- OKX Connection Card -->
-        <section class="mb-8">
-          <div class="card-enterprise rounded-2xl p-6 md:p-8">
-            <div class="flex items-center justify-between mb-4 flex-wrap gap-4">
-              <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-xl bg-(--color-accent)/10 flex items-center justify-center">
-                  <svg class="w-7 h-7 text-(--color-accent)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                  </svg>
-                </div>
-                <div>
-                  <h2 class="text-xl font-bold">OKX Broker</h2>
-                  <p class="text-sm text-(--color-text-muted)">Official Broker Partner — {OKX_DISCOUNT_PCT}% fee discount</p>
-                </div>
-              </div>
-              <OKXConnectButton client:load lang="en" size="md" />
-            </div>
-            <div class="grid grid-cols-3 gap-4 mt-4">
-              <div class="bg-(--color-bg)/50 rounded-xl p-3 text-center">
-                <p class="text-xs text-(--color-text-muted) mb-1">Fee Discount</p>
-                <p class="text-xl font-bold text-(--color-up)">{OKX_DISCOUNT_PCT}%</p>
-              </div>
-              <div class="bg-(--color-bg)/50 rounded-xl p-3 text-center">
-                <p class="text-xs text-(--color-text-muted) mb-1">Execution</p>
-                <p class="text-xl font-bold">Auto</p>
-              </div>
-              <div class="bg-(--color-bg)/50 rounded-xl p-3 text-center">
-                <p class="text-xs text-(--color-text-muted) mb-1">API Key Sharing</p>
-                <p class="text-xl font-bold text-(--color-up)">Not required</p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- OKX Balance — read-only Trading-account assets -->
-        <section class="mb-8">
-          <OKXBalance client:visible lang="en" />
-        </section>
-
-        <!-- Bot Status Widget -->
-        <section class="mb-8">
-          <AutoTradingStatus client:load lang="en" />
-        </section>
-
-        <!-- My Strategies — user-defined trading rules -->
-        <section class="mb-8">
-          <StrategyBuilder client:visible lang="en" />
-        </section>
-
-        <!-- DCA Bots — Dollar-cost averaging (different paradigm) -->
-        <section class="mb-8">
-          <DCABots client:visible lang="en" />
-        </section>
-
-        <!-- 24h activity KPI strip -->
-        <section class="mb-4">
-          <DCASummaryStrip client:visible lang="en" />
-        </section>
-
-        <!-- Recent fills — cross-bot paper-mode activity feed -->
-        <section class="mb-8">
-          <RecentDCAFills client:visible lang="en" />
-        </section>
-
-        <!-- Parity check — backtest vs paper Day-7 acceptance -->
-        <section class="mb-8">
-          <DCAParityCheck client:visible lang="en" />
-        </section>
-
-        <!-- Grid Bots — Range-bound limit-order grid (third paradigm) -->
-        <section class="mb-8">
-          <GridBots client:visible lang="en" />
-        </section>
-
-        <!-- Auto-Trading Settings -->
-        <section class="mb-8">
-          <TradingSettings client:visible lang="en" />
-        </section>
-
-        <!-- Pending Signals — approve/reject queue for manual/approval mode -->
-        <section class="mb-8">
-          <PendingSignalsApproval client:visible lang="en" />
-        </section>
-
-        <!-- Live Positions -->
-        <section class="mb-8">
-          <LivePositions client:visible lang="en" />
-        </section>
-
-        <!-- Trade History -->
-        <section class="mb-8">
-          <LiveTradeHistory client:visible lang="en" />
-        </section>
+        <!-- Tabbed dashboard layout (Status / Bots / History) -->
+        <DashboardTabs client:load lang="en" />
       </>
     )}
 
     <!-- Security Info -->
-    <section>
+    <section class="mt-10">
       <div class="card-enterprise rounded-xl p-5">
         <h3 class="font-bold mb-3">Security</h3>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
           <div class="flex items-center gap-2 text-(--color-text-muted)">
-            <span class="w-2 h-2 rounded-full bg-(--color-up)"></span>
+            <span class="w-2 h-2 rounded-full bg-(--color-up)" aria-hidden="true"></span>
             OAuth — no API keys shared
           </div>
           <div class="flex items-center gap-2 text-(--color-text-muted)">
-            <span class="w-2 h-2 rounded-full bg-(--color-up)"></span>
+            <span class="w-2 h-2 rounded-full bg-(--color-up)" aria-hidden="true"></span>
             No withdrawal permission
           </div>
           <div class="flex items-center gap-2 text-(--color-text-muted)">
-            <span class="w-2 h-2 rounded-full bg-(--color-up)"></span>
+            <span class="w-2 h-2 rounded-full bg-(--color-up)" aria-hidden="true"></span>
             AES-256 encrypted tokens
           </div>
         </div>
