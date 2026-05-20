@@ -133,7 +133,7 @@ export default function DashboardTabs({ lang = "en" }: Props) {
                 <p class="text-xs text-(--color-text-muted) mb-1">
                   {t.statFeeLabel}
                 </p>
-                <p class="text-xl font-bold text-(--color-success)">
+                <p class="text-xl font-bold text-(--color-up)">
                   {OKX_DISCOUNT_PCT}%
                 </p>
               </div>
@@ -147,7 +147,7 @@ export default function DashboardTabs({ lang = "en" }: Props) {
                 <p class="text-xs text-(--color-text-muted) mb-1">
                   {t.statApiLabel}
                 </p>
-                <p class="text-lg font-bold text-(--color-success)">
+                <p class="text-lg font-bold text-(--color-up)">
                   {t.statApiValue}
                 </p>
               </div>
