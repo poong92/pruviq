@@ -10,7 +10,7 @@ import logging
 import time
 
 from .oauth import is_authenticated
-from .storage import _get_conn, delete_session, get_session
+from .storage import _get_conn, get_session
 
 logger = logging.getLogger("okx_token_refresh")
 
@@ -40,16 +40,26 @@ async def refresh_all_sessions() -> dict:
             stats["expired"] += 1
             continue
 
-        # 🔴 2026-04-19 버그 수정: `tokens["expires_at"]` 은 존재하지 않음 (save_session 은
-        # created_at / updated_at 만 기록). OKX Fast API는 API 키 방식이라 refresh 불필요 →
-        # stale 세션 제거만 수행. 과거 로직은 매 실행 KeyError 발생해 cleanup 정지.
+        # OKX Fast API HMAC keys do NOT expire on OKX side. Auto-deleting
+        # based on created_at age cascades via storage.delete_session through
+        # dca_bots / dca_fills / trading_settings / user_strategies / pending_signals
+        # and CAN wipe live-money state.
+        #
+        # Incident 2026-05-20 04:44 UTC: a 3-day cascade ran while an ETH-USDT-SWAP
+        # 0.1 contract was live; the OKX OCO TP/SL kept the position safe but the
+        # bot row, fills history, and OAuth creds were all destroyed. Litestream
+        # backup was pointing at the wrong DB path so recovery was impossible.
+        #
+        # Resolution: keep the session indefinitely. The only valid removal path
+        # is the explicit owner UI disconnect (POST /auth/okx/disconnect →
+        # oauth.py:402). Log staleness as WARNING for observability.
         created_at = float(tokens.get("created_at") or 0)
         if created_at and time.time() > created_at + REFRESH_TOKEN_MAX_AGE:
-            delete_session(session_id)
-            stats["expired"] += 1
-            logger.info("Session %s expired (age > %ds)", session_id[:8], REFRESH_TOKEN_MAX_AGE)
-            continue
-        # OKX Fast API (API keys): no refresh; just keep stats aligned.
+            logger.warning(
+                "Session %s is stale (age > %ds) but kept — HMAC keys don't "
+                "expire OKX-side. Owner must explicitly disconnect to remove.",
+                session_id[:8], REFRESH_TOKEN_MAX_AGE,
+            )
         stats["refreshed"] += 1
 
     logger.info(
