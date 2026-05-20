@@ -229,6 +229,31 @@ jobs:
             echo 'wrapper + unit sync + daemon-reload done'
           "
 
+      - name: Sync litestream.yml DB path to current release
+        # 2026-05-20 incident: litestream watched /opt/pruviq/data/okx_sessions.db
+        # (old path) while app used releases/97350cd8/backend/data/okx_sessions.db —
+        # backup pointed at wrong file, recovery impossible after DB wipe.
+        # Fix: always rewrite litestream.yml path after deploy so it tracks
+        # the actual DB the app uses (resolved via readlink of /opt/pruviq/current).
+        if: steps.guard.outputs.skip != 'true' && steps.drift.outputs.skip != 'true'
+        run: |
+          ssh -p "$DO_PORT" -o IdentitiesOnly=yes -i ~/.ssh/do_deploy \
+              "$DO_USER@$DO_HOST" "
+            REAL_DB=\$(readlink -f /opt/pruviq/current)/backend/data/okx_sessions.db
+            python3 -c \"
+import re, sys
+conf='/etc/litestream.yml'
+with open(conf) as f: content=f.read()
+new=re.sub(r'path:\s*/opt/pruviq/[^\n]+okx_sessions\.db', 'path: '+sys.argv[1], content)
+if new != content:
+    with open(conf,'w') as f: f.write(new)
+    print('litestream.yml updated to:', sys.argv[1])
+else:
+    print('litestream.yml already correct')
+\" \"\$REAL_DB\"
+            systemctl reload-or-restart litestream 2>/dev/null || true
+          "
+
       - name: Restart pruviq-api.service
         if: steps.guard.outputs.skip != 'true' && steps.drift.outputs.skip != 'true'
         run: |
