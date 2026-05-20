@@ -3,23 +3,12 @@
 // KO un-hid 2026-05-01. AUTOTRADE_COMING_SOON gates the page — shows a
 // Coming Soon banner and hides live widgets, matching the EN dashboard.
 // Flip AUTOTRADE_COMING_SOON below to restore the active dashboard.
+// 2026-05-20: Active dashboard restructured into 3 tabs (현황/봇 관리/기록)
+// to reduce scroll depth and improve onboarding flow for beginners.
 import Layout from '../../layouts/Layout.astro';
-import OKXConnectButton from '../../components/OKXConnectButton';
-import AutoTradingStatus from '../../components/AutoTradingStatus';
 import Day0Checklist from '../../components/Day0Checklist';
-import OKXBalance from '../../components/OKXBalance';
-import TradingSettings from '../../components/TradingSettings';
-import StrategyBuilder from '../../components/StrategyBuilder';
-import DCABots from '../../components/DCABots';
-import DCASummaryStrip from '../../components/DCASummaryStrip';
-import DCAParityCheck from '../../components/DCAParityCheck';
-import RecentDCAFills from '../../components/RecentDCAFills';
-import GridBots from '../../components/GridBots';
-import PendingSignalsApproval from '../../components/PendingSignalsApproval';
-import LivePositions from '../../components/LivePositions';
-import LiveTradeHistory from '../../components/LiveTradeHistory';
+import DashboardTabs from '../../components/DashboardTabs';
 import { AUTOTRADE_COMING_SOON } from '../../config/feature-flags';
-import { OKX_DISCOUNT_PCT } from '../../config/exchanges';
 ---
 
 <Layout title="대시보드 — PRUVIQ" description="OKX 연결 및 자동매매 설정을 관리합니다." lang="ko">
@@ -49,123 +38,31 @@ import { OKX_DISCOUNT_PCT } from '../../config/exchanges';
 
     {!AUTOTRADE_COMING_SOON && (
       <>
-        <!-- Day 0 빠른 시작 — 3단계 완료 시 자동 숨김 -->
+        <!-- Day 0 빠른 시작 — 3단계 완료 시 자동 숨김 (탭 위에 배치) -->
         <section class="mb-6">
           <Day0Checklist client:load lang="ko" />
         </section>
 
-        <!-- OKX 연결 카드 -->
-        <section class="mb-8">
-          <div class="card-enterprise rounded-2xl p-6 md:p-8">
-            <div class="flex items-center justify-between mb-4 flex-wrap gap-4">
-              <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-xl bg-(--color-accent)/10 flex items-center justify-center">
-                  <svg class="w-7 h-7 text-(--color-accent)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                  </svg>
-                </div>
-                <div>
-                  <h2 class="text-xl font-bold">OKX 브로커</h2>
-                  <p class="text-sm text-(--color-text-muted)">공식 브로커 파트너 — 수수료 {OKX_DISCOUNT_PCT}% 할인</p>
-                </div>
-              </div>
-              <OKXConnectButton client:load lang="ko" size="md" />
-            </div>
-            <div class="grid grid-cols-3 gap-4 mt-4">
-              <div class="bg-(--color-bg)/50 rounded-xl p-3 text-center">
-                <p class="text-xs text-(--color-text-muted) mb-1">수수료 할인</p>
-                <p class="text-xl font-bold text-(--color-up)">{OKX_DISCOUNT_PCT}%</p>
-              </div>
-              <div class="bg-(--color-bg)/50 rounded-xl p-3 text-center">
-                <p class="text-xs text-(--color-text-muted) mb-1">실행 방식</p>
-                <p class="text-xl font-bold">자동</p>
-              </div>
-              <div class="bg-(--color-bg)/50 rounded-xl p-3 text-center">
-                <p class="text-xs text-(--color-text-muted) mb-1">API 키</p>
-                <p class="text-xl font-bold text-(--color-up)">불필요</p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- OKX 잔고 — 거래 계정 자산 (읽기 전용) -->
-        <section class="mb-8">
-          <OKXBalance client:visible lang="ko" />
-        </section>
-
-        <!-- 봇 상태 위젯 -->
-        <section class="mb-8">
-          <AutoTradingStatus client:load lang="ko" />
-        </section>
-
-        <!-- 내 전략 — 사용자 정의 매매 규칙 -->
-        <section class="mb-8">
-          <StrategyBuilder client:visible lang="ko" />
-        </section>
-
-        <!-- DCA 봇 — 분할 매수 (별도 패러다임) -->
-        <section class="mb-8">
-          <DCABots client:visible lang="ko" />
-        </section>
-
-        <!-- 24시간 활동 KPI 스트립 -->
-        <section class="mb-4">
-          <DCASummaryStrip client:visible lang="ko" />
-        </section>
-
-        <!-- 최근 체결 — 모든 DCA 봇 활동 한눈에 -->
-        <section class="mb-8">
-          <RecentDCAFills client:visible lang="ko" />
-        </section>
-
-        <!-- 패리티 검증 — backtest vs paper Day-7 합격 기준 -->
-        <section class="mb-8">
-          <DCAParityCheck client:visible lang="ko" />
-        </section>
-
-        <!-- Grid 봇 — 격자 매매 (세 번째 패러다임) -->
-        <section class="mb-8">
-          <GridBots client:visible lang="ko" />
-        </section>
-
-        <!-- 자동매매 설정 -->
-        <!-- client:visible: below-fold, defer hydration until scrolled. -->
-        <section class="mb-8">
-          <TradingSettings client:visible lang="ko" />
-        </section>
-
-        <!-- 대기 중인 신호 — manual/approval 모드 승인 큐 -->
-        <section class="mb-8">
-          <PendingSignalsApproval client:visible lang="ko" />
-        </section>
-
-        <!-- 오픈 포지션 -->
-        <section class="mb-8">
-          <LivePositions client:visible lang="ko" />
-        </section>
-
-        <!-- 거래 내역 -->
-        <section class="mb-8">
-          <LiveTradeHistory client:visible lang="ko" />
-        </section>
+        <!-- 탭 레이아웃 (현황 / 봇 관리 / 기록) -->
+        <DashboardTabs client:load lang="ko" />
       </>
     )}
 
     <!-- 보안 정보 -->
-    <section>
+    <section class="mt-10">
       <div class="card-enterprise rounded-xl p-5">
         <h3 class="font-bold mb-3">보안</h3>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
           <div class="flex items-center gap-2 text-(--color-text-muted)">
-            <span class="w-2 h-2 rounded-full bg-(--color-up)"></span>
+            <span class="w-2 h-2 rounded-full bg-(--color-success)" aria-hidden="true"></span>
             OAuth — API 키 미공유
           </div>
           <div class="flex items-center gap-2 text-(--color-text-muted)">
-            <span class="w-2 h-2 rounded-full bg-(--color-up)"></span>
+            <span class="w-2 h-2 rounded-full bg-(--color-success)" aria-hidden="true"></span>
             출금 권한 없음
           </div>
           <div class="flex items-center gap-2 text-(--color-text-muted)">
-            <span class="w-2 h-2 rounded-full bg-(--color-up)"></span>
+            <span class="w-2 h-2 rounded-full bg-(--color-success)" aria-hidden="true"></span>
             AES-256 암호화 토큰
           </div>
         </div>
