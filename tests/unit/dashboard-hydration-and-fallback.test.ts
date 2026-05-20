@@ -17,36 +17,32 @@ import { resolve } from "node:path";
 const R = (p: string) => readFileSync(resolve(__dirname, "../..", p), "utf-8");
 
 describe("dashboard hydration defers below-fold islands", () => {
-  // Components that should hydrate immediately (first-paint semantics).
-  const IMMEDIATE = ["OKXConnectButton", "AutoTradingStatus"];
-  // Components that should defer to client:visible.
-  const DEFERRED = ["TradingSettings", "LivePositions", "LiveTradeHistory"];
-
+  // PR #2126: all dashboard sections are now wrapped in DashboardTabs (client:load).
+  // Individual component client:* directives are now internal to DashboardTabs.tsx.
+  // The Astro pages only mount the single DashboardTabs island.
   for (const page of [
     "src/pages/dashboard.astro",
     "src/pages/ko/dashboard.astro",
   ]) {
-    it(`${page} — deferred components use client:visible`, () => {
+    it(`${page} — DashboardTabs island uses client:load`, () => {
       const src = R(page);
-      for (const c of DEFERRED) {
-        const loadPat = new RegExp(`<${c}\\s+client:load\\b`);
-        const visPat = new RegExp(`<${c}\\s+client:visible\\b`);
-        expect(src, `${page}: ${c} still uses client:load`).not.toMatch(
-          loadPat,
-        );
-        expect(src, `${page}: ${c} missing client:visible`).toMatch(visPat);
-      }
+      expect(src, `${page}: DashboardTabs missing client:load`).toMatch(
+        /<DashboardTabs\s+client:load\b/,
+      );
     });
 
-    it(`${page} — immediate components remain client:load`, () => {
+    it(`${page} — individual components not mounted directly (inside DashboardTabs)`, () => {
       const src = R(page);
-      for (const c of IMMEDIATE) {
-        // Must have a client:load usage somewhere
-        const pat = new RegExp(`<${c}\\s+client:load\\b`);
+      // These are rendered inside DashboardTabs.tsx, not as top-level Astro islands
+      for (const c of [
+        "TradingSettings",
+        "LivePositions",
+        "LiveTradeHistory",
+      ]) {
         expect(
           src,
-          `${page}: ${c} lost client:load (should stay immediate)`,
-        ).toMatch(pat);
+          `${page}: ${c} should not be a top-level Astro island`,
+        ).not.toMatch(new RegExp(`<${c}\\s+client:`));
       }
     });
   }
