@@ -850,6 +850,39 @@ async def _tick_bot_real(bot: dict[str, Any]) -> None:
             if tp_hit:
                 opposite = "sell" if direction == "long" else "buy"
                 total_size = sum(f["fill_size_usdt"] for f in fills)
+
+                # P0 double-close guard: OKX attached TP/SL (set at fill time)
+                # may have already closed this position. Placing a close order
+                # on a zero position opens a REVERSE position — live incident
+                # risk confirmed 2026-05-20. Fetch actual OKX pos first.
+                try:
+                    positions = await client.get_positions(bot["symbol"])
+                    actual = next(
+                        (p for p in positions if p.inst_id == bot["symbol"]),
+                        None,
+                    )
+                    okx_pos = abs(float(actual.pos)) if actual else 0.0
+                except Exception as _pos_err:
+                    logger.error(
+                        "dca REAL TP: position check failed bot=%s: %s",
+                        bot_id[:8], _pos_err,
+                    )
+                    return
+
+                if okx_pos < 0.001:
+                    # Attached TP/SL already fired — sync DB, no order needed.
+                    closed = _close_all_open_fills(bot_id, "tp_closed")
+                    logger.warning(
+                        "dca REAL TP: OKX pos=0 bot=%s — attached TP already "
+                        "fired, DB synced closed=%d",
+                        bot_id[:8], closed,
+                    )
+                    if not int(bot.get("auto_recycle", 0)):
+                        _deactivate_bot(
+                            bot_id, "tp_completed_auto_recycle_off"
+                        )
+                    return
+
                 # order_num=999 reserves a deterministic clOrdId slot for
                 # the close so retry-after-fail is idempotent on OKX side.
                 close_result = await _place_real_order(
