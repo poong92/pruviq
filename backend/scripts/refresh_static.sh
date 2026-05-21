@@ -373,6 +373,7 @@ fi
 PR_NUM=$(gh pr list --head "$PR_BRANCH" --state open --json number --jq '.[0].number' 2>/dev/null)
 if [[ -z "$PR_NUM" ]]; then
     gh pr create \
+        --head "$PR_BRANCH" \
         --title "chore(data): mac-mini data refresh (Binance market data)" \
         --label automerge \
         --base main \
