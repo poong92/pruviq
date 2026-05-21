@@ -872,7 +872,7 @@ async def _tick_bot_real(bot: dict[str, Any]) -> None:
 
                 if okx_pos < 0.001:
                     # Attached TP/SL already fired — sync DB, no order needed.
-                    closed = _close_all_open_fills(bot_id, "tp_closed")
+                    closed = _close_all_open_fills(bot_id, "tp_closed", exit_price=tp_price)
                     logger.warning(
                         "dca REAL TP: OKX pos=0 bot=%s — attached TP already "
                         "fired, DB synced closed=%d",
