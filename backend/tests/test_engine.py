@@ -89,7 +89,7 @@ def test_cost_model():
     futures = CostModel.futures()
 
     assert spot.fee_pct == 0.001, "현물 수수료 0.1%"
-    assert futures.fee_pct == 0.0008, "선물 수수료 0.08% (taker, AT parity)"
+    assert futures.fee_pct == 0.0005, "선물 수수료 0.05% (OKX taker fee — constraints.py SSoT)"
     assert futures.slippage_pct == 0.0002, "선물 슬리피지 0.02% (realistic)"
     assert spot.slippage_pct == 0.0002, "현물 슬리피지 0.02%"
 
