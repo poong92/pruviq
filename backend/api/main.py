@@ -981,11 +981,26 @@ def _get_resampled_coins(
 
 @app.get("/health", response_model=HealthResponse)
 async def health():
+    # DB liveness: check okx_sessions.db reachable and report age.
+    # age > 7200s (2h) = litestream likely stalled; oncall should check B2.
+    db_ok = True
+    db_age_s: float | None = None
+    try:
+        from okx.storage import _db_path as _okx_db_path
+        db_file = Path(_okx_db_path())
+        if db_file.exists():
+            db_age_s = round(time.time() - db_file.stat().st_mtime, 1)
+        else:
+            db_ok = False
+    except Exception:
+        db_ok = False
     return HealthResponse(
         status="ok",
         version=VERSION,
         coins_loaded=data_manager.coin_count,
         uptime_seconds=round(time.time() - start_time, 1),
+        db_ok=db_ok,
+        db_age_s=db_age_s,
     )
 
 

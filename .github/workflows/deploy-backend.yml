@@ -111,10 +111,7 @@ jobs:
           # predate today's 26-PR sweep — tracked separately, not in scope
           # for the gate (do not want to block deploys on legacy test drift).
           python -m pytest tests/ -q --tb=short \
-            -m "not okx_live" \
-            --deselect tests/test_api.py::test_strategies \
-            --deselect tests/test_bb_squeeze_parity.py::test_cost_model_futures_parity \
-            --deselect tests/test_engine.py::test_cost_model
+            -m "not okx_live"
 
       - name: Configure SSH (key + known_hosts)
         if: steps.guard.outputs.skip != 'true'

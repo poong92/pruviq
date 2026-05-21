@@ -169,11 +169,11 @@ def test_preset_shifts_correct():
 
 
 def test_cost_model_futures_parity():
-    """Futures cost model: 0.08% fee, 0% slippage (AT parity)."""
+    """Futures cost model: 0.05% fee (OKX taker), 0.02% slippage."""
     cm = CostModel.futures()
-    assert cm.fee_pct == 0.0008, f"Expected 0.0008 (0.08%), got {cm.fee_pct}"
+    assert cm.fee_pct == 0.0005, f"Expected 0.0005 (0.05% OKX taker), got {cm.fee_pct}"
     assert cm.slippage_pct == 0.0002, f"Expected 0.0002 slippage, got {cm.slippage_pct}"
-    print("  Futures: 0.08% fee, 0.02% slippage (realistic)")
+    print("  Futures: 0.05% fee (OKX), 0.02% slippage")
 
 
 def test_three_paths_consistent():

@@ -122,6 +122,8 @@ class HealthResponse(BaseModel):
     version: str
     coins_loaded: int
     uptime_seconds: float
+    db_ok: bool = True
+    db_age_s: Optional[float] = None
 
 
 # --- Coin Explorer Schemas ---
