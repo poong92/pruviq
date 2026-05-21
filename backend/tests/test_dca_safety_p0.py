@@ -17,7 +17,7 @@ import pytest
 # ---------------------------------------------------------------------------
 # 1. _calc_size_contracts
 # ---------------------------------------------------------------------------
-from backend.okx.dca_loop import _calc_size_contracts
+from okx.dca_loop import _calc_size_contracts
 
 
 class TestCalcSizeContracts:
@@ -64,7 +64,7 @@ class TestCalcSizeContracts:
 # ---------------------------------------------------------------------------
 # 2. token_refresh — no cascade delete on stale session
 # ---------------------------------------------------------------------------
-from backend.okx.token_refresh import refresh_all_sessions, REFRESH_TOKEN_MAX_AGE
+from okx.token_refresh import refresh_all_sessions, REFRESH_TOKEN_MAX_AGE
 
 
 class TestTokenRefreshNoCascade:
@@ -95,9 +95,9 @@ class TestTokenRefreshNoCascade:
         ctx, gs = self._make_storage_mock(sessions)
 
         with (
-            mock.patch("backend.okx.token_refresh._get_conn", return_value=ctx),
-            mock.patch("backend.okx.token_refresh.get_session", side_effect=gs),
-            mock.patch("backend.okx.token_refresh.logger") as log_mock,
+            mock.patch("okx.token_refresh._get_conn", return_value=ctx),
+            mock.patch("okx.token_refresh.get_session", side_effect=gs),
+            mock.patch("okx.token_refresh.logger") as log_mock,
         ):
             # If delete_session were called here the test would fail
             # (we don't patch it, so it would raise ImportError or hit real DB).
@@ -115,8 +115,8 @@ class TestTokenRefreshNoCascade:
         ctx, _ = self._make_storage_mock(sessions)
 
         with (
-            mock.patch("backend.okx.token_refresh._get_conn", return_value=ctx),
-            mock.patch("backend.okx.token_refresh.get_session", return_value=None),
+            mock.patch("okx.token_refresh._get_conn", return_value=ctx),
+            mock.patch("okx.token_refresh.get_session", return_value=None),
         ):
             stats = await refresh_all_sessions()
 
@@ -127,7 +127,7 @@ class TestTokenRefreshNoCascade:
 # ---------------------------------------------------------------------------
 # 3. _circuit_breaker_check
 # ---------------------------------------------------------------------------
-from backend.okx.dca_loop import _circuit_breaker_check, _CIRCUIT_MAX_FILLS
+from okx.dca_loop import _circuit_breaker_check, _CIRCUIT_MAX_FILLS
 
 
 class TestCircuitBreakerCheck:
@@ -137,7 +137,7 @@ class TestCircuitBreakerCheck:
         ctx_mock = mock.MagicMock()
         ctx_mock.__enter__ = mock.Mock(return_value=conn_mock)
         ctx_mock.__exit__ = mock.Mock(return_value=False)
-        return mock.patch("backend.okx.dca_loop._get_conn", return_value=ctx_mock)
+        return mock.patch("okx.dca_loop._get_conn", return_value=ctx_mock)
 
     def test_under_limit_not_tripped(self):
         with self._patch_conn(_CIRCUIT_MAX_FILLS):
@@ -163,7 +163,7 @@ class TestCircuitBreakerCheck:
         ctx_mock = mock.MagicMock()
         ctx_mock.__enter__ = mock.Mock(return_value=conn_mock)
         ctx_mock.__exit__ = mock.Mock(return_value=False)
-        with mock.patch("backend.okx.dca_loop._get_conn", return_value=ctx_mock):
+        with mock.patch("okx.dca_loop._get_conn", return_value=ctx_mock):
             tripped, count = _circuit_breaker_check("bot-1")
         assert not tripped
         assert count == 0
