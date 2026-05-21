@@ -57,6 +57,12 @@ const i18n = {
     },
     updated: "Auto-refreshes every 30s",
     exportCsv: "Export CSV",
+    filterAll: "All",
+    filterOpen: "Open",
+    filterTpClosed: "TP closed",
+    filterAllBots: "All bots",
+    filteredEmpty: "No fills match current filters.",
+    showingN: "%d of %d",
   },
   ko: {
     title: "최근 체결",
@@ -81,6 +87,12 @@ const i18n = {
     },
     updated: "30초마다 자동 갱신",
     exportCsv: "CSV 내보내기",
+    filterAll: "전체",
+    filterOpen: "열림",
+    filterTpClosed: "익절 완료",
+    filterAllBots: "모든 봇",
+    filteredEmpty: "현재 필터에 맞는 체결이 없습니다.",
+    showingN: "%d / %d",
   },
 } as const;
 
@@ -112,6 +124,10 @@ export default function RecentDCAFills({ lang = "en" }: Props) {
   const [err, setErr] = useState("");
   const [loading, setLoading] = useState(true);
   const [now, setNow] = useState(Date.now() / 1000);
+  const [statusFilter, setStatusFilter] = useState<
+    "all" | "open" | "tp_closed"
+  >("all");
+  const [botFilter, setBotFilter] = useState<string>("");
 
   const fetchFills = useCallback(async () => {
     try {
@@ -163,10 +179,34 @@ export default function RecentDCAFills({ lang = "en" }: Props) {
     );
   }
 
+  // Unique bots in the current fills list — drives the bot-filter dropdown.
+  // Hidden when ≤1 unique bot since filtering by "the only bot" is pointless.
+  const uniqueBots = Array.from(
+    new Map(fills.map((f) => [f.bot_id, f.bot_name])).entries(),
+  );
+
+  const filtered = fills.filter((f) => {
+    if (statusFilter === "open" && f.status !== "open") return false;
+    if (statusFilter === "tp_closed" && f.status !== "tp_closed") return false;
+    if (botFilter && f.bot_id !== botFilter) return false;
+    return true;
+  });
+
   return (
     <div class="card-enterprise rounded-2xl p-5 md:p-6">
       <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
-        <h2 class="font-bold text-lg">{t.title}</h2>
+        <h2 class="font-bold text-lg">
+          {t.title}
+          {(statusFilter !== "all" || botFilter) && (
+            <span class="ml-2 text-xs font-mono font-normal text-(--color-text-muted)">
+              (
+              {t.showingN
+                .replace("%d", String(filtered.length))
+                .replace("%d", String(fills.length))}
+              )
+            </span>
+          )}
+        </h2>
         <div class="flex items-center gap-3">
           {fills.length > 0 && (
             <a
@@ -180,6 +220,51 @@ export default function RecentDCAFills({ lang = "en" }: Props) {
           <span class="text-xs text-(--color-text-muted)">{t.subtitle}</span>
         </div>
       </div>
+
+      {fills.length > 0 && (
+        <div
+          class="flex items-center gap-2 flex-wrap mb-3 text-xs"
+          role="group"
+          aria-label="filters"
+        >
+          {(["all", "open", "tp_closed"] as const).map((s) => (
+            <button
+              key={s}
+              type="button"
+              class={`px-2.5 py-1 rounded-full border min-h-[44px] ${
+                statusFilter === s
+                  ? "bg-(--color-accent)/10 border-(--color-accent)/40 text-(--color-accent-bright) font-bold"
+                  : "border-(--color-border) text-(--color-text-muted) hover:text-(--color-text-secondary)"
+              }`}
+              onClick={() => setStatusFilter(s)}
+              aria-pressed={statusFilter === s}
+            >
+              {s === "all"
+                ? t.filterAll
+                : s === "open"
+                  ? t.filterOpen
+                  : t.filterTpClosed}
+            </button>
+          ))}
+          {uniqueBots.length > 1 && (
+            <select
+              class="px-2.5 py-1 rounded-full border border-(--color-border) bg-(--color-bg) text-xs min-h-[44px]"
+              value={botFilter}
+              onChange={(e) =>
+                setBotFilter((e.target as HTMLSelectElement).value)
+              }
+              aria-label="bot filter"
+            >
+              <option value="">{t.filterAllBots}</option>
+              {uniqueBots.map(([id, name]) => (
+                <option key={id} value={id}>
+                  {name}
+                </option>
+              ))}
+            </select>
+          )}
+        </div>
+      )}
 
       {err && (
         <div
@@ -222,6 +307,10 @@ export default function RecentDCAFills({ lang = "en" }: Props) {
             {t.empty}
           </p>
         </div>
+      ) : filtered.length === 0 ? (
+        <p class="text-sm text-(--color-text-muted) italic">
+          {t.filteredEmpty}
+        </p>
       ) : (
         <div class="overflow-x-auto">
           <table class="w-full text-sm">
@@ -236,7 +325,7 @@ export default function RecentDCAFills({ lang = "en" }: Props) {
               </tr>
             </thead>
             <tbody>
-              {fills.map((f) => {
+              {filtered.map((f) => {
                 const kind =
                   f.order_num === 0
                     ? t.base
