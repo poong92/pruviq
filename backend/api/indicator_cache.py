@@ -9,6 +9,7 @@ Memory optimization (2026-03-22): 16 strategies x 569 coins was 13GB.
 Now stores only indicator columns per strategy (~2.5GB, 77% reduction).
 """
 
+import gc
 import logging
 import pickle
 import time
@@ -138,7 +139,14 @@ class IndicatorCache:
         50 coins x 17 strategies ≈ 500MB (93% reduction).
         """
         start = time.time()
+        # Release old DataFrames before allocating new ones. Without this,
+        # self._cache holds a reference to the old primary-strategy dict even
+        # after _multi_cache.clear(), keeping ~100 MB alive during rebuild.
+        # Combined with a double-OHLCV spike (old + new data_manager load),
+        # peak allocation hit the 2.5 GiB cgroup limit → OOM kill (2026-05-21).
+        self._cache = {}
         self._multi_cache.clear()
+        gc.collect()  # return freed DataFrames to OS before allocating new ones
         self._data_manager = data_manager
 
         # Only cache top N coins (by market cap order from DataManager)
