@@ -874,9 +874,9 @@ async def _tick_bot_real(bot: dict[str, Any]) -> None:
                     # Attached TP/SL already fired — sync DB, no order needed.
                     closed = _close_all_open_fills(bot_id, "tp_closed", exit_price=tp_price)
                     logger.warning(
-                        "dca REAL TP: OKX pos=0 bot=%s — attached TP already "
+                        "dca REAL TP: OKX pos=%.4f bot=%s — attached TP already "
                         "fired, DB synced closed=%d",
-                        bot_id[:8], closed,
+                        okx_pos, bot_id[:8], closed,
                     )
                     if not int(bot.get("auto_recycle", 0)):
                         _deactivate_bot(
