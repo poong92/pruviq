@@ -9,6 +9,7 @@ Usage:
     NOTE: Must use --workers 1 (background tasks use in-process global cache)
 """
 
+import gc
 import os
 import sys
 import time
@@ -209,6 +210,11 @@ def _refresh_data():
         if updated > 0:
             logger.info(f"Updated {updated} symbols from Binance, reloading...")
             data_manager.load(DATA_DIR)
+            # Free old OHLCV DataFrames before building the indicator cache.
+            # data_manager.load() swaps _data atomically, but the old dict
+            # lingers until GC runs. Without this, peak = old+new OHLCV
+            # (~760 MB) + new indicator build (~1.3 GB) → 2.5 GB OOM.
+            gc.collect()
             _load_coingecko_metadata()
             if _cg_metadata:
                 mc_ranks = {sym.upper(): info["market_cap_rank"]
