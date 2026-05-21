@@ -132,12 +132,16 @@ def _write_paper_fill(
         )
 
 
-def _close_all_open_fills(bot_id: str, reason: str = "tp_closed") -> int:
+def _close_all_open_fills(
+    bot_id: str,
+    reason: str = "tp_closed",
+    exit_price: float | None = None,
+) -> int:
     with _get_conn() as conn:
         cur = conn.execute(
-            "UPDATE dca_fills SET status = ? "
+            "UPDATE dca_fills SET status = ?, exit_price = ? "
             "WHERE bot_id = ? AND status = 'open'",
-            (reason, bot_id),
+            (reason, exit_price, bot_id),
         )
         return cur.rowcount
 
@@ -281,36 +285,33 @@ def _circuit_breaker_check(bot_id: str) -> tuple[bool, int]:
 def _session_daily_loss_check(
     session_id: str, limit_usdt: float
 ) -> tuple[bool, float]:
-    """Return (tripped, today_realised_pnl_usdt). Audit risk-manager Gap A:
-    sums realised PnL across all of session's tp_closed cycles since UTC
-    00:00. Negative means net loss for the day. Tripped when |loss| ≥ limit.
-
-    Limit of 0 means "no limit" (paper-mode default).
+    """Return (tripped, today_realised_pnl_usdt). Sums realised PnL across
+    all of session's tp_closed cycles since UTC 00:00. Negative = net loss.
+    Tripped when |loss| >= limit. Limit of 0 means "no limit".
     """
     if limit_usdt <= 0:
         return (False, 0.0)
-    # UTC midnight today
-    now = time.time()
-    today_start = now - (now % 86400)
+    today_start = time.time()
+    today_start -= today_start % 86400  # UTC midnight
     with _get_conn() as conn:
-        # SUM of (exit_price - avg_entry) × size — but exit_price is
-        # implicit in tp_closed rows. For Sprint B2-A we approximate with
-        # tp_closed fills (status='tp_closed' means cycle exited above
-        # avg + tp_pct, so PnL ≈ +tp_pct × total_open. Loss only enters
-        # via failed-cycle deactivation paths added in B2-B).
-        # B2-A: return 0.0 to keep helper callable but pnl tracking is
-        # finished in B2-B once real fill prices are written.
-        row = conn.execute(
-            "SELECT COUNT(*) FROM dca_fills "
-            "WHERE bot_id IN ("
-            "  SELECT id FROM dca_bots WHERE session_id = ?"
-            ") AND filled_at >= ?",
+        rows = conn.execute(
+            "SELECT f.fill_price, f.fill_size_usdt, f.exit_price, b.direction "
+            "FROM dca_fills f "
+            "JOIN dca_bots b ON b.id = f.bot_id "
+            "WHERE b.session_id = ? "
+            "  AND f.filled_at >= ? "
+            "  AND f.status = 'tp_closed' "
+            "  AND f.exit_price IS NOT NULL",
             (session_id, today_start),
-        ).fetchone()
-    fill_count = int(row[0]) if row else 0
-    pnl_today = 0.0  # B2-A placeholder, B2-B will compute via exit_price
-    _ = fill_count  # silence linter
-    return (False, pnl_today)
+        ).fetchall()
+    pnl_today = 0.0
+    for fill_price, fill_size_usdt, exit_price, direction in rows:
+        if direction == "long":
+            pnl_today += (exit_price - fill_price) / fill_price * fill_size_usdt
+        else:
+            pnl_today += (fill_price - exit_price) / fill_price * fill_size_usdt
+    tripped = pnl_today < 0 and abs(pnl_today) >= limit_usdt
+    return (tripped, pnl_today)
 
 
 def _calc_size_contracts(
@@ -677,7 +678,7 @@ async def _tick_bot(bot: dict[str, Any]) -> None:
             tp_price = avg * (1.0 - tp_pct)
             tp_hit = mark <= tp_price
         if tp_hit:
-            closed = _close_all_open_fills(bot_id, "tp_closed")
+            closed = _close_all_open_fills(bot_id, "tp_closed", exit_price=mark)
             logger.info(
                 "dca paper TP hit bot=%s avg=%.6f tp=%.6f mark=%.6f closed=%d",
                 bot_id[:8], avg, tp_price, mark, closed,
@@ -898,7 +899,9 @@ async def _tick_bot_real(bot: dict[str, Any]) -> None:
                     )
                     return
                 close_price, _close_actual, close_ord_id = close_result
-                closed = _close_all_open_fills(bot_id, "tp_closed")
+                closed = _close_all_open_fills(
+                    bot_id, "tp_closed", exit_price=close_price
+                )
                 logger.warning(
                     "dca REAL TP hit bot=%s avg=%.6f close=%.6f closed=%d ord=%s",
                     bot_id[:8], avg, close_price, closed, close_ord_id,

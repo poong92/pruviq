@@ -242,6 +242,14 @@ def _ensure_tables() -> None:
             "CREATE UNIQUE INDEX IF NOT EXISTS idx_dca_fills_bot_order "
             "ON dca_fills(bot_id, order_num)"
         )
+        # B2-B migration: track actual exit price for realized-PnL computation.
+        try:
+            conn.execute(
+                "ALTER TABLE dca_fills ADD COLUMN exit_price REAL DEFAULT NULL"
+            )
+        except _sqlite3.OperationalError as e:
+            if "duplicate column" not in str(e).lower():
+                raise
 
 
 def _merge_defaults(data: dict[str, Any]) -> dict[str, Any]:
